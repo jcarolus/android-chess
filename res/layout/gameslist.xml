@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    >
+	<TableLayout android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" android:stretchColumns="1">
+	    <TableRow >
+	        <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+	         	android:src="@drawable/action_search"   
+	         />
+			<EditText android:id="@+id/EditTextGamesList"
+				android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:singleLine="true"
+			/>        
+	    </TableRow>
+	</TableLayout>
+	
+	<TableLayout android:id="@+id/TableFirstRow"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content">
+		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:layout_marginTop="5dip">
+		     <TextView android:id="@+id/sort_rating"  android:text="Stars"
+		     	style="@style/MyNormalTextStyle"
+		     	android:layout_weight="1" android:layout_height="30dip"
+	     	/>
+		     <TextView android:id="@+id/sort_text_date" android:text="Date"
+		     	style="@style/MyNormalTextStyle"
+		     	android:layout_weight="1" android:layout_height="30dip"
+		     />
+		     <TextView android:id="@+id/sort_text_event" android:text="Event"
+		     	style="@style/MyNormalTextStyle"
+		        android:layout_weight="1" android:layout_height="30dip"
+		     />
+	     </TableRow>
+	</TableLayout>
+	<TableLayout style="@style/MyRowStyle"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content">
+		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:layout_marginTop="5dip">
+			<TextView android:id="@+id/sort_text_id" android:text="Id"
+	     		style="@style/MyNormalTextStyle"
+		        android:layout_weight="1" android:layout_height="30dip"
+		     />
+		    <TextView android:id="@+id/sort_text_name1" android:text="White pieces"
+		     	style="@style/MyNormalTextStyle"
+		        android:layout_weight="3" android:layout_height="30dip"/>
+	     	<TextView android:id="@+id/sort_text_name2" android:text="Black pieces"
+	     		style="@style/MyNormalTextStyle"
+		        android:layout_weight="3" android:layout_height="30dip"/>
+	     </TableRow>
+	</TableLayout>
+	
+	
+	<ListView android:id="@android:id/list"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:drawSelectorOnTop="false"
+	    android:entries="@array/levels_ply"
+	/>
+    	
+</LinearLayout>

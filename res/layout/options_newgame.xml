@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" 
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+	style="@style/MyDialogStyle"
+>
+	<TableLayout android:id="@+id/TableOptions"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		>
+		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+		 	style="@style/MyRowStyle"
+		>
+			<TextView android:text="Mode" style="@style/MyRowTextStyle"/>
+			<Spinner android:id="@+id/SpinnerNewGamePlayMode"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+			/>	
+		</TableRow>
+		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+		 	style="@style/MyRowStyle"
+		>
+			<TextView android:text="Level" style="@style/MyRowTextStyle"/>
+			<Spinner android:id="@+id/SpinnerNewGameLevel"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+			/>	
+		</TableRow>
+		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+		 	style="@style/MyRowStyle"
+		>
+			<TextView android:text="Clock" style="@style/MyRowTextStyle"/>
+			<Spinner android:id="@+id/SpinnerNewGameClock"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+			/>	
+		</TableRow>
+	</TableLayout>
+
+	<TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_below="@id/TableOptions"
+    	android:layout_alignParentBottom="true" android:stretchColumns="*"
+    >
+    	<TableRow>
+    		<Button android:id="@+id/ButtonNewGameCancel"
+    			android:text="@string/button_cancel" 
+    			android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    		<Button android:id="@+id/ButtonNewGameOk"
+    			android:text="@string/button_ok" 
+    			android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    	</TableRow>
+    
+    </TableLayout>
+</RelativeLayout>
+</ScrollView>

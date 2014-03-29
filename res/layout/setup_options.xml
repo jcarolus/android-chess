@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" 
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content" 
+	style="@style/MyDialogStyle"
+	>
+	
+	<TextView android:id="@+id/TextViewSetupTurn" 
+		android:text="@string/msg_setup_turn"
+		style="@style/MyLabelTextStyle"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+	/>
+
+	<RadioGroup android:id="@+id/RadioGroupSetup" 
+		android:orientation="horizontal"
+		android:layout_below="@id/TextViewSetupTurn"
+		style="@style/MyRowStyle"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+	>
+		<RadioButton android:id="@+id/RadioSetupTurnWhite"
+			android:text="@string/msg_setup_turn_white"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+		/>	
+		<RadioButton android:id="@+id/RadioSetupTurnBlack"
+			android:text="@string/msg_setup_turn_black"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+		/>
+	</RadioGroup>
+
+	<TableLayout android:id="@+id/TableSetupEnPassant" 
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_below="@id/RadioGroupSetup"
+	>
+		<TableRow style="@style/MyRowStyle">
+			<TextView android:text="@string/msg_setup_enpassant"
+				style="@style/MyLabelTextStyle"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+			/>
+			<Spinner android:id="@+id/SpinnerOptionsEnPassant"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+			/>
+		</TableRow>
+
+	</TableLayout>
+		
+	<TableLayout android:id="@+id/TableSetupCastling" 
+			android:layout_below="@id/TableSetupEnPassant"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:stretchColumns="*"
+	>
+		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+		 	style="@style/MyRowStyle"
+		>
+			<TextView android:text="@string/msg_setup_castle_white"
+				style="@style/MyLabelTextStyle"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+			/>
+			<CheckBox android:id="@+id/CheckBoxSetupWhiteCastleShort"
+				android:text="0-0"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+			/>	
+			<CheckBox android:id="@+id/CheckBoxSetupWhiteCastleLong"
+				android:text="0-0-0"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+			/>
+		</TableRow>
+		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+		 	style="@style/MyRowStyle"
+		>
+			<TextView android:text="@string/msg_setup_castle_black"
+				style="@style/MyLabelTextStyle"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+			/>
+			<CheckBox android:id="@+id/CheckBoxSetupBlackCastleShort"
+				android:text="0-0" 
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+			/>	
+			<CheckBox android:id="@+id/CheckBoxSetupBlackCastleLong"
+				android:text="0-0-0" 
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+			/>
+		</TableRow>
+	</TableLayout>
+	<TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+    	android:layout_below="@id/TableSetupCastling" android:stretchColumns="*"
+    >
+    	<TableRow style="@style/MyRowStyle">
+    		<Button android:id="@+id/ButtonSetupOptionsCancel"
+    			android:text="@string/button_cancel" 
+    			android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    		<Button android:id="@+id/ButtonSetupOptionsOk"
+    			android:text="@string/button_ok" 
+    			android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    	</TableRow>
+    
+    </TableLayout>
+	
+</RelativeLayout>
+
+</ScrollView>

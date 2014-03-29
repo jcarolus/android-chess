@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:gravity="center" android:id="@+id/LayoutMain"
+	>
+	<include android:id="@+id/includeboard"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+        layout="@layout/board"
+
+    />
+	<TableLayout android:id="@+id/LayoutTitle" 
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_marginBottom="2dip" android:layout_marginTop="2dip"
+		android:background="@color/bgColorText"
+		android:layout_below="@id/includeboard"
+		>
+		<TableRow android:gravity="center_vertical">
+			<ImageView android:id="@+id/ImageTurn" android:src="@drawable/turnwhite"
+					android:layout_height="wrap_content" android:layout_width="wrap_content"
+					android:layout_marginLeft="8dip" android:layout_marginRight="4dip"
+				/>
+			<TextView android:id="@+id/TextViewPuzzleText"
+				android:text=" to move, mate in "
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				style="@style/MyTextStyle"
+			/>
+		</TableRow>
+		
+	</TableLayout>
+	
+	<TableLayout android:id="@+id/LayoutButtons"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_below="@id/LayoutTitle"
+		android:background="@color/bgColorText"
+		android:paddingTop="4dip" android:paddingBottom="4dip"
+	>
+		<TableRow android:gravity="center">
+		    <ImageView android:id="@+id/ImageStatus" android:src="@drawable/indicator_none"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_marginRight="8dip"
+			/>
+			<ImageButton android:id="@+id/ButtonPuzzleHelp" android:src="@drawable/action_about" 
+				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+			/>
+			<ImageButton android:id="@+id/ButtonPuzzlePrevious" android:src="@drawable/navigation_previous_item" 
+				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+			/>
+			<Button android:id="@+id/ButtonPuzzle"
+				android:text="show" android:paddingLeft="8dip" android:paddingRight="8dip"
+				android:layout_height="40dip" android:layout_width="wrap_content"
+			/>
+			<ImageButton android:id="@+id/ButtonPuzzleNext" android:src="@drawable/navigation_next_item" 
+				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+			/>
+		</TableRow>
+	</TableLayout>
+	<SeekBar android:id="@+id/SeekBarPuzzle"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:paddingTop="4dip" android:paddingBottom="4dip"
+		android:layout_below="@id/LayoutButtons"
+	/>
+	
+</RelativeLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+   >
+	
+     <TableRow android:paddingTop="4dip" android:paddingLeft="4dip"  android:paddingRight="4dip"     	
+     > 
+     	<TextView android:id="@+id/nr_stored"
+	         android:textSize="16sp" android:textColor="@color/textColor"
+	         android:text="001" 
+	         android:layout_width="0px" android:layout_height="wrap_content" android:layout_weight="1"
+	     />
+     	<TextView android:id="@+id/color_stored"
+	         android:textSize="16sp" android:textColor="@color/textColor"
+	         android:text="W" 
+	         android:layout_width="0px" android:layout_height="wrap_content"  android:layout_weight="1"
+	     />
+     	<TextView android:id="@+id/text_name_stored"
+	         android:textSize="16sp" android:textColor="@color/textColor"
+	         android:text="name" 
+	         android:layout_width="0px" android:layout_height="wrap_content"  android:layout_weight="5"
+	     />
+     	 <TextView android:id="@+id/available_stored"
+	         android:textSize="16sp" android:textColor="@color/textColor"
+	         android:text="*" 
+	         android:layout_width="0px" android:layout_height="wrap_content"  android:layout_weight="1"
+	     />
+	 </TableRow>
+	 
+</TableLayout>

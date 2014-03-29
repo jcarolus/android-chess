@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:orientation="vertical">
+	<TableLayout android:id="@+id/TableFirstRow"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content">
+		<TableRow android:layout_marginTop="5dip">
+			 
+			<RelativeLayout android:layout_weight="1" android:layout_height="wrap_content">
+			     <RatingBar  
+			     	android:layout_width="wrap_content" android:layout_height="wrap_content"
+			     	android:isIndicator="true" android:max="5"
+			     	android:numStars="5" android:id="@+id/rating" style="?android:attr/ratingBarStyleSmall"
+		     	/>
+		     </RelativeLayout>
+		      
+		     <TextView android:id="@+id/text_date" android:text="date"
+		     	style="@style/MyNormalTextStyle"
+		     	android:layout_weight="3" android:layout_height="wrap_content"
+		     />
+		     <TextView android:id="@+id/text_event" android:text="event"
+		     	style="@style/MyNormalTextStyle"
+		        android:layout_weight="3" android:layout_height="wrap_content"
+		     />
+	     </TableRow>
+	</TableLayout>
+	<TableLayout
+		android:layout_below="@id/TableFirstRow"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content">
+		<TableRow android:layout_marginBottom="5dip">
+			<TextView android:id="@+id/text_id" android:text="id"
+	     		style="@style/MyNormalTextStyle"
+		        android:layout_weight="1" android:layout_height="wrap_content"
+		     />
+		    <TextView android:id="@+id/text_name1" android:text="white"
+		     	style="@style/MyNormalTextStyle"
+		        android:layout_weight="3" android:layout_height="wrap_content"/>
+	     	<TextView android:id="@+id/text_name2" android:text="black"
+	     		style="@style/MyNormalTextStyle"
+		        android:layout_weight="3" android:layout_height="wrap_content"/>
+	     </TableRow>
+	</TableLayout>
+</RelativeLayout>

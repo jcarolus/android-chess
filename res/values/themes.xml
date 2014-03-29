@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="ChessTheme" parent="@android:style/Theme.Black">
+        <item name="android:buttonStyle">@style/button</item>
+        <item name="android:imageButtonStyle">@style/imageButton</item>
+        <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
+        <item name="android:textAppearance">@style/ChessTextAppearance</item>
+    </style>
+     <style name="ChessTheme.Dialog" parent="@android:style/Theme.Dialog">
+    	<item name="android:buttonStyle">@style/button</item>
+        <item name="android:imageButtonStyle">@style/imageButton</item>
+        <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
+        <item name="android:textAppearance">@style/ChessTextAppearance</item>
+    </style>
+    <style name="ChessTheme.NoTitleBar" parent="@android:style/Theme.Black">
+        <item name="android:buttonStyle">@style/button</item>
+        <item name="android:imageButtonStyle">@style/imageButton</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
+        <item name="android:textAppearance">@style/ChessTextAppearance</item>
+    </style>
+     
+</resources>

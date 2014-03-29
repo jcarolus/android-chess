@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<dimen name="boardSquare">40dp</dimen>
+	<dimen name="boardSize">320dp</dimen>
+	
+	<dimen name="normalTextSize">12sp</dimen>
+	<dimen name="normalPaddingX">8dp</dimen>
+	<dimen name="normalPaddingY">1dp</dimen>
+	
+	<dimen name="headerTextSize">12sp</dimen>
+	<dimen name="headerPaddingX">8dp</dimen>
+	<dimen name="headerPaddingY">4dp</dimen>
+	
+	<dimen name="titleTextSize">30sp</dimen>
+	
+</resources>

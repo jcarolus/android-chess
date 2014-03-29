@@ -1,0 +1,19 @@
+<TableLayout 
+	android:layout_width="fill_parent" android:layout_height="fill_parent" 
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<TableRow android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_marginRight="2px"
+	>
+		<TextView android:id="@+id/TextViewNumMove" 
+			android:background="@color/bgColor"
+			android:textColor="@color/textColor"
+			android:padding="8px"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+		<TextView android:id="@+id/TextViewMove"
+			android:textColor="@color/textColor"
+			android:background="@color/bgColorText"
+			android:padding="8px"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+		
+	</TableRow>
+</TableLayout>

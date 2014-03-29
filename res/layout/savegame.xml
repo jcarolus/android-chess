@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" 
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+		style="@style/MyDialogStyle"
+	>
+		<RatingBar  
+	     	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	     	android:isIndicator="false" android:max="5"
+	     	android:rating="2.5"
+	     	android:numStars="5" android:id="@+id/RatingBarSave"
+		/>
+		<TableLayout android:id="@+id/TableSaveOptions"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:layout_below="@id/RatingBarSave"
+		>
+			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+			>
+				<TextView android:layout_width="100dip" android:layout_height="wrap_content" 
+					android:text="Event" style="@style/MyLabelTextStyle"
+				/>
+				<EditText android:id="@+id/EditTextSaveEvent"
+					android:layout_width="200dip" android:layout_height="wrap_content"
+				/>	
+			</TableRow>
+			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+			>
+				<TextView android:layout_width="100dip" android:layout_height="wrap_content" 
+					android:text="White" style="@style/MyLabelTextStyle"
+				/>
+				<EditText android:id="@+id/EditTextSaveWhite"
+					android:layout_width="200dip" android:layout_height="wrap_content"
+				/>	
+			</TableRow>
+			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+			>
+				<TextView android:layout_width="100dip" android:layout_height="wrap_content" 
+					android:text="Black" style="@style/MyLabelTextStyle"
+				/>
+				<EditText android:id="@+id/EditTextSaveBlack"
+					android:layout_width="200dip" android:layout_height="wrap_content"
+				/>	
+			</TableRow>
+			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+			>
+				<TextView android:layout_width="100dip" android:layout_height="wrap_content"
+					android:text="Date" style="@style/MyLabelTextStyle"
+				/>
+				<Button android:id="@+id/ButtonSaveDate" android:text="YYYY.MM.DD"
+					android:layout_width="200dip" android:layout_height="wrap_content"
+					/>
+			</TableRow>
+		</TableLayout>
+		
+		<TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:layout_below="@id/TableSaveOptions"
+		>
+			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+			>
+				<Button android:id="@+id/ButtonSaveSave" android:text="@string/button_save"
+					android:layout_weight="1"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_margin="0px"
+				/>
+				<Button android:id="@+id/ButtonSaveCopy" android:text="@string/button_save_copy"
+					android:layout_weight="1"
+					android:enabled="false"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_margin="0px"
+				/>
+				<Button android:id="@+id/ButtonSaveCancel" android:text="@string/button_cancel"
+					android:layout_weight="1"
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_margin="0px"
+				/>
+			</TableRow>
+		</TableLayout>
+		
+	</RelativeLayout>
+</ScrollView>

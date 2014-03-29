@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:background="@color/bgColor" android:id="@+id/LayoutMain" 
+	>
+	
+	 <TableLayout android:id="@+id/LayoutTopTitle" 
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_marginBottom="2dip"
+		android:background="@color/bgColorText"
+		>
+		<TableRow android:gravity="center_vertical">
+			<ViewSwitcher android:id="@+id/ImageTurnOpp"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
+			>
+				<ImageView 
+					android:src="@drawable/turnblack"
+					android:layout_height="wrap_content" android:layout_width="wrap_content"
+				/>
+				<ImageView 
+					android:src="@drawable/turnwhite"
+					android:layout_height="wrap_content" android:layout_width="wrap_content"
+				/>
+			</ViewSwitcher>
+			<TextView android:id="@+id/TextViewClockTimeOpp"
+				android:layout_height="wrap_content" android:layout_width="50dip"
+				android:text="00:00" 
+				style="@style/MyNormalTextStyle"
+			/>
+			<TextView android:id="@+id/TextViewTopTitle" 
+				android:layout_width="200dip" android:layout_height="wrap_content"
+				style="@style/MyNormalTextStyle"
+				android:text="Title..."
+			/>
+		</TableRow>
+			
+	</TableLayout>
+	
+	
+	<include
+        layout="@layout/board"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_below="@id/LayoutTopTitle" 
+        android:id="@+id/includeboard" 
+     />
+	
+	<!-- 
+	<TextView android:layout_width="wrap_content" android:layout_height="320dip"
+		        android:id="@+id/includeboard" 
+		        android:layout_below="@id/LayoutTopTitle"/>
+	 -->	       
+        
+     <TableLayout android:id="@+id/LayoutBottomTitle" 
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_marginTop="2dip"
+		android:layout_below="@id/includeboard"
+		android:background="@color/bgColorText"
+		>
+		<TableRow android:gravity="center_vertical">
+			<ViewSwitcher android:id="@+id/ImageTurnMe"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
+			> 
+				<ImageView  
+					android:src="@drawable/turnblack"
+					android:layout_height="wrap_content" android:layout_width="wrap_content"
+				/>
+				<ImageView  
+					android:src="@drawable/turnwhite"
+					android:layout_height="wrap_content" android:layout_width="wrap_content"
+				/>
+			</ViewSwitcher>
+			<TextView android:id="@+id/TextViewClockTimeMe"
+					android:layout_height="wrap_content" android:layout_width="50dip"
+					android:text="00:00" 
+					style="@style/MyNormalTextStyle" 
+				/>
+			<TextView android:id="@+id/TextViewTitle" 
+				android:layout_width="200dip" android:layout_height="wrap_content"
+				style="@style/MyNormalTextStyle"
+				android:text="Title..."
+			/>
+		</TableRow>
+	</TableLayout>
+    
+	<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_below="@id/LayoutBottomTitle" android:gravity="center_vertical"
+	>
+	
+		<TableLayout android:id="@+id/LayoutPlayButtons" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:background="@color/bgColorText" android:layout_marginTop="2dip"
+		>	
+
+			<TableRow
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:gravity="center_horizontal" >
+
+				<ImageButton android:id="@+id/ButtonSwitch" android:src="@drawable/navigation_expand"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:layout_margin="2dip" 
+				/>
+				<Button android:text="new" android:id="@+id/ButtonNewGame" android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
+				    android:layout_margin="2dip" 
+				/>
+				<ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:layout_margin="2dip" 
+				/>
+				<ImageButton android:id="@+id/ButtonSave" android:src="@drawable/content_save"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:layout_margin="2dip" 
+				/>
+				<ImageButton android:id="@+id/ButtonPrevious" android:src="@drawable/navigation_previous_item" 
+					android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+					android:layout_margin="2dip" 
+				/>
+				<ImageButton android:id="@+id/ButtonNext" android:src="@drawable/navigation_next_item" 
+					android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+					android:layout_margin="2dip"  
+				/>	
+				<ImageButton android:id="@+id/ButtonPlay" android:src="@drawable/av_play"  
+					android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+					android:layout_margin="2dip" 
+				/>
+				<ProgressBar android:id="@+id/ProgressBarPlay" android:layout_width="40dip" android:layout_height="40dip"
+					style="?android:attr/progressBarStyleLarge" android:visibility="gone"
+					android:layout_margin="2dip" 
+				/>
+			</TableRow>
+		</TableLayout>
+		 
+		 <ViewAnimator android:id="@+id/ViewAnimatorMain"
+			android:layout_below="@id/LayoutPlayButtons"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:layout_marginTop="2dip" android:layout_marginBottom="2dip" 
+			android:background="@color/bgColorText"
+		>
+			<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:background="@color/bgColorText" 
+			>
+				<TextView android:id="@+id/TextViewEngine" style="@style/MyNormalTextStyle"
+					android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="4dip"
+				/>
+				<TextView android:id="@+id/TextViewEngineValue" style="@style/MyNormalTextStyle"
+					android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="4dip"
+					android:layout_below="@id/TextViewEngine"
+				/>
+			</RelativeLayout>
+			<TableLayout  
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:background="@color/bgColorText" 
+			>
+				<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:background="@color/bgColor"
+				>
+					<ImageView android:id="@+id/ImageCapturedBlackPawn" android:src="@drawable/small_bpb"
+						style="@style/CaptureImageStyle"  
+					 />
+					<ImageView android:id="@+id/ImageCapturedBlackKnight" android:src="@drawable/small_bnb" 
+						style="@style/CaptureImageStyle"
+					 />
+					<ImageView android:id="@+id/ImageCapturedBlackBishop" android:src="@drawable/small_bbb" 
+						style="@style/CaptureImageStyle"
+					 />
+					 <ImageView android:id="@+id/ImageCapturedBlackRook" android:src="@drawable/small_brb" 
+						style="@style/CaptureImageStyle"
+					 />			 
+					 <ImageView android:id="@+id/ImageCapturedBlackQueen" android:src="@drawable/small_bqb" 
+						style="@style/CaptureImageStyle"
+					 />	
+					 
+					 <ImageView android:id="@+id/ImageCapturedWhitePawn" android:src="@drawable/small_wpb"  
+						style="@style/CaptureImageStyle"
+						 />
+					<ImageView android:id="@+id/ImageCapturedWhiteKnight" android:src="@drawable/small_wnb" 
+						style="@style/CaptureImageStyle"
+					 />
+					<ImageView android:id="@+id/ImageCapturedWhiteBishop" android:src="@drawable/small_wbb" 
+						style="@style/CaptureImageStyle"
+					 />
+					 <ImageView android:id="@+id/ImageCapturedWhiteRook" android:src="@drawable/small_wrb" 
+						style="@style/CaptureImageStyle"
+					 />			 
+					 <ImageView android:id="@+id/ImageCapturedWhiteQueen" android:src="@drawable/small_wqb" 
+						style="@style/CaptureImageStyle"
+					 />		 
+				</TableRow>
+				<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content">
+						 <TextView android:id="@+id/TextViewCapturedBlackPawn"
+				 	style="@style/CaptureTextStyle"
+				 />
+					 <TextView android:id="@+id/TextViewCapturedBlackKnight"
+					 	style="@style/CaptureTextStyle"
+					 />
+					 <TextView android:id="@+id/TextViewCapturedBlackBishop"
+					 	style="@style/CaptureTextStyle"
+					 />
+					 <TextView android:id="@+id/TextViewCapturedBlackRook"
+					 	style="@style/CaptureTextStyle"
+					 />
+					 <TextView android:id="@+id/TextViewCapturedBlackQueen"
+					 	style="@style/CaptureTextStyle"
+					 />
+					 
+					 <TextView android:id="@+id/TextViewCapturedWhitePawn"
+					 	style="@style/CaptureTextStyle"
+					 />
+					 <TextView android:id="@+id/TextViewCapturedWhiteKnight"
+					 	style="@style/CaptureTextStyle"
+					 />
+					 <TextView android:id="@+id/TextViewCapturedWhiteBishop"
+					 	style="@style/CaptureTextStyle"
+					 />
+					 <TextView android:id="@+id/TextViewCapturedWhiteRook"
+					 	style="@style/CaptureTextStyle"
+					 />
+					 <TextView android:id="@+id/TextViewCapturedWhiteQueen"
+					 	style="@style/CaptureTextStyle"
+					 />		
+				</TableRow>
+			</TableLayout>
+			
+			<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:background="@color/bgColorText" 
+			>	
+				<SeekBar android:id="@+id/SeekBarMain" android:paddingLeft="8dip" android:paddingRight="8dip"
+					android:layout_width="fill_parent" android:layout_height="40dip"
+				/>
+			</RelativeLayout>
+		
+			<HorizontalScrollView android:id="@+id/HScrollViewHistory"
+		    	android:layout_width="fill_parent" android:layout_height="40dip"
+				android:background="@color/bgColor" android:textColor="@color/textColor" 
+				android:padding="2dip"
+			>
+				<RelativeLayout android:id="@+id/LayoutHistory"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				/>
+			</HorizontalScrollView>
+			
+			<ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:fadingEdge="none" android:padding="2dip"
+				android:background="@color/bgColorText"
+			>
+				<TextView android:id="@+id/TextViewAnnotate" 
+					android:background="@android:drawable/editbox_background_normal" android:textColor="#000000"
+					android:padding="8dip"
+					android:layout_width="fill_parent" android:layout_height="wrap_content" 
+					android:minHeight="50dip"/>
+			</ScrollView>
+
+			
+			<TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:padding="2dip" 	android:background="@color/bgColorText" 
+				android:stretchColumns="2"
+			>
+				<TableRow>
+					<ImageView android:id="@+id/ImageStatusGuess" android:src="@drawable/indicator_none"
+							android:layout_height="wrap_content" android:layout_width="wrap_content"
+							android:layout_margin="8dip" 
+					/>
+					<Button android:id="@+id/ButtonHintGuess" android:text="hint" android:layout_width="wrap_content" android:layout_height="40dip"/>
+					<TextView android:id="@+id/TextViewGuess"
+						android:text="" android:singleLine="false" android:layout_margin="0dip"
+						android:layout_width="72dip" android:layout_height="40dip"
+						style="@style/textViewPlain"
+					/>
+				</TableRow>
+			</TableLayout>
+			
+			<TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:padding="2dip" 
+				android:background="@color/bgColorText"
+			>
+			    <TableRow android:gravity="center">"
+			        <ImageButton android:id="@+id/ButtonBlindfoldLocations" android:src="@drawable/collections_view_as_grid" 
+						android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+					/>
+				    <ImageButton android:id="@+id/ButtonBlindfoldHide" android:src="@drawable/navigation_cancel" 
+						android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+					/>
+					<ImageButton android:id="@+id/ButtonBlindfoldShow" android:src="@drawable/navigation_accept" 
+						android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+					/>
+				</TableRow>
+			</TableLayout>	
+			
+		</ViewAnimator>
+		
+	</RelativeLayout>
+	
+</RelativeLayout>

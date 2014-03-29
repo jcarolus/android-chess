@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    style="@style/MyDialogStyle"
+    >
+     		
+	<TextView android:id="@+id/TextViewConfirm"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		style="@style/MyTextStyle"
+	/>
+	<TableLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_below="@id/TextViewConfirm"
+		android:stretchColumns="*"
+		>
+		<TableRow>
+		<Button android:id="@+id/ButtonConfirmYes" android:text="@string/alert_yes"
+			android:layout_width="80dip"
+			android:layout_height="wrap_content"
+			
+		/>
+		<Button android:id="@+id/ButtonConfirmNo" android:text="@string/alert_no"
+			android:layout_width="80dip"
+			android:layout_height="wrap_content"
+		/>
+		</TableRow>
+     </TableLayout>   
+</RelativeLayout>

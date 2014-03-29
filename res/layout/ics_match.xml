@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent" 
+	xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" >
+	<TableLayout 
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		style="@style/MyDialogStyle"
+		>
+	
+		<TableRow>
+			<TextView android:text="Player" android:gravity="fill"
+				style="@style/MyHeaderTextStyle"
+			/>
+			<EditText android:id="@+id/EditTextMatchOpponent" android:gravity="fill"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:text="Time (min)" android:gravity="fill"
+				style="@style/MyHeaderTextStyle"
+			/>
+			<Spinner android:id="@+id/SpinnerMatchTime"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+		</TableRow>		
+		<TableRow>
+			<TextView android:text="Time increment (sec)" android:gravity="fill"
+				style="@style/MyHeaderTextStyle"
+			/>
+			<Spinner android:id="@+id/SpinnerMatchTimeIncrement"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:text="Variant" android:gravity="fill"
+				style="@style/MyHeaderTextStyle"
+			/>
+			<Spinner android:id="@+id/SpinnerMatchVariant"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+		</TableRow>
+		<TableRow>
+			<TextView android:text="Rated" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				style="@style/MyHeaderTextStyle"
+				/>
+			<CheckBox android:id="@+id/CheckBoxSeekRated"
+		    	android:layout_width="wrap_content"	android:layout_height="wrap_content"
+		     	/>
+		</TableRow>
+		<TableRow>
+			<Button android:text="@string/button_cancel" android:id="@+id/ButtonMatchCancel"/>
+			<Button android:text="@string/button_ok" android:id="@+id/ButtonMatchOk"/>
+		</TableRow>
+	     
+	</TableLayout>
+</ScrollView>
