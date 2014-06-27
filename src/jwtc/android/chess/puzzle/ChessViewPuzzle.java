@@ -1,29 +1,37 @@
 package jwtc.android.chess.puzzle;
 
-import jwtc.android.chess.*;
-
 import java.io.InputStream;
 
-import jwtc.chess.*;
+import jwtc.android.chess.ChessImageView;
+import jwtc.android.chess.ChessViewBase;
+import jwtc.android.chess.HtmlActivity;
+import jwtc.android.chess.R;
+import jwtc.android.chess.UI;
+import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-
-import android.view.View;
-import android.view.View.*;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.widget.*;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 
@@ -41,6 +49,9 @@ public class ChessViewPuzzle extends UI{
 	private Cursor _cursor = null;
 	private int _cnt, _num;
 	private SeekBar _seekBar;
+	private Button _butGoToPuzzle;
+	private EditText _editGoToPuzzle;
+	private TextView _tvTotalPuzzles;
 	
 	protected ContentResolver _cr; 
 	
@@ -69,6 +80,7 @@ public class ChessViewPuzzle extends UI{
 	        }
 	        
 	    };
+
 	
 	    
 	public void getNumPuzzles(){
@@ -130,6 +142,29 @@ public class ChessViewPuzzle extends UI{
 			
 			_seekBar.setMax(_num);
 		}		
+
+		_butGoToPuzzle = (Button)_parent.findViewById(R.id.GoToPuzzle);
+		_editGoToPuzzle = (EditText)_parent.findViewById(R.id.NumOfPuzzle);
+		_tvTotalPuzzles = (TextView)_parent.findViewById(R.id.TotalOfPuzzle);
+		
+		_tvTotalPuzzles.setText("Total Puzzles: " + _num);
+		
+		_butGoToPuzzle.setOnClickListener(new OnClickListener() {
+	       public void onClick(View arg0) {
+	    	   int puzzleNum = Integer.parseInt(_editGoToPuzzle.getText().toString());
+	    	   if (puzzleNum < _num) {
+	    		   _iPos = puzzleNum -1;
+	    		   play();
+	    	   }
+               else {
+                   // Show some error message
+               }
+	    		
+    		   //if(_arrPGN.size() == m_game.getBoard().getNumBoard()-1)
+	    		//   _butPuzzle.setText("Next");
+	    	   
+	       }
+		});
 		
 		_iPos = 0;
 		
