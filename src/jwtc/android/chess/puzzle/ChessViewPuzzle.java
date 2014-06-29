@@ -398,6 +398,14 @@ public class ChessViewPuzzle extends UI{
 	public void OnResume(final SharedPreferences prefs){
 		super.OnResume();
 		
+		if(prefs.getBoolean("PuzzleShowSeekBar", true)){
+			_seekBar.setVisibility(View.VISIBLE);
+			
+		} else {
+			_seekBar.setVisibility(View.GONE);
+			
+		}
+		
 		_view.OnResume();
 		
 		ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);

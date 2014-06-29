@@ -89,6 +89,15 @@
 			android:entryValues="@array/UCIArray" />
 		 -->
 	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="Puzzle settings">
+	    <CheckBoxPreference
+			android:title="@string/pref_puzzle_show_seekbar"
+			android:defaultValue="true"
+			android:summary="@string/pref_puzzle_show_seekbar_desc"
+			android:key="PuzzleShowSeekBar" />
+	</PreferenceCategory>
+	
 	<PreferenceCategory android:title="Play online settings">
 		<CheckBoxPreference
 			android:title="@string/pref_icsconfirmmove"
