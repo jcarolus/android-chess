@@ -320,7 +320,7 @@ static JNINativeMethod sMethods[] = {
  {"isLegalPosition", "()I", (void*)Java_jwtc_chess_JNI_isLegalPosition},
  {"isAmbiguousCastle", "(II)I", (void*)Java_jwtc_chess_JNI_isAmbiguousCastle},
  {"doCastleMove", "(II)I", (void*)Java_jwtc_chess_JNI_doCastleMove},
- {"toFEN", "()Ljava/lang/String;", (void*)JNICALL Java_jwtc_chess_JNI_toFEN},
+ {"toFEN", "()Ljava/lang/String;", (void*)Java_jwtc_chess_JNI_toFEN},
  {"removePiece", "(II)V", (void*)Java_jwtc_chess_JNI_removePiece},
  {"getHashKey", "()J", (void*)Java_jwtc_chess_JNI_getHashKey},
  {"loadDB", "(Ljava/lang/String;I)V", (void*)Java_jwtc_chess_JNI_loadDB},
