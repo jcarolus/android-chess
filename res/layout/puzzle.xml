@@ -60,5 +60,36 @@
 		android:paddingTop="4dip" android:paddingBottom="4dip"
 		android:layout_below="@id/LayoutButtons"
 	/>
+
+	<TextView
+	    android:id="@+id/TotalOfPuzzle"
+	    android:layout_width="wrap_content"
+	    android:layout_height="40dip"
+	    android:layout_alignParentLeft="true"
+	    android:layout_alignTop="@+id/NumOfPuzzle"
+	    android:layout_marginLeft="18dp"
+	    android:text="Max" />
+
+	<EditText
+	    android:id="@+id/NumOfPuzzle"
+	    android:layout_width="70dip"
+	    android:layout_height="40dip"
+	    android:layout_below="@+id/SeekBarPuzzle"
+	    android:layout_centerHorizontal="true"
+	    android:ems="10"
+	    android:paddingLeft="10dip" >
+
+	    <requestFocus />
+	</EditText>
+
+	<Button
+	    android:id="@+id/GoToPuzzle"
+	    android:layout_width="50dip"
+	    android:layout_height="40dip"
+	    android:layout_alignBaseline="@+id/NumOfPuzzle"
+	    android:layout_alignBottom="@+id/NumOfPuzzle"
+	    android:layout_alignRight="@+id/includeboard"
+	    android:layout_marginRight="18dp"
+	    android:text="Jump" />
 	
 </RelativeLayout>
