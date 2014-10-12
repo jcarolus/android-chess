@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="app_name">Scacchi</string>
+<string name="app_name_play">Scacchi - gioca</string>
+<string name="app_name_playonline">Scacchi - gioca online</string>
+<string name="app_name_setup">Scacchi - Impostazioni</string>
+<string name="app_name_help">Scacchi - aiuto</string>
+<string name="app_name_import">Scacchi - importa</string>
+<string name="app_name_pgntools">Scacchi - avanzate</string>
+<string name="app_name_save_games">Giochi salvati</string>
+
+<string name="language">it</string>
+
+<string name="start_play">Gioca</string>
+<string name="start_lessons">Lezioni</string>
+<string name="start_practice">Pratica</string>
+<string name="start_puzzles">Enigmi</string>
+<string name="start_about">Informazioni</string>
+<string name="start_pgn">Avanzate</string>
+<string name="start_ics">Gioca online</string>
+<string name="start_globalpreferences">Preferenze</string>
+<string name="start_exit">Esci</string>
+<string name="start_convergence">Schermo TV</string>
+
+<string name="globalpreferences">Scacchi - preferenze globali</string>
+<string name="pref_wakelock">Usa blocco sospensione</string>
+<string name="pref_wakelock_desc">Questo impedirà al telefono di andare in sospensione</string>
+<string name="pref_colorscheme">Schema colori</string>
+<string name="pref_colorscheme_desc">Colore delle caselle della schacchiera</string>
+<string name="pref_showCoords">Coordinate</string>
+<string name="pref_showCoords_desc">Mostra le coordinate della scacchiera</string>
+<string name="pref_showLastMove">Mostra ultima mossa</string>
+<string name="pref_showLastMove_desc">Mostra l\'ultima mossa evidenziando le caselle</string>
+<string name="pref_sound">Suono</string>
+<string name="pref_sound_desc">Eseguito quando l\'avversario muove</string>
+<string name="pref_speech">Parlato</string>
+<string name="pref_speech_desc">Comunica la mossa fatta (in inglese)</string>
+<string name="pref_eco">ECO info</string>
+<string name="pref_eco_desc">Mostra informazioni di apertura ECO quando disponibili</string>
+<string name="pref_extrahighlight">Evidenziazione extra</string>
+<string name="pref_extrahighlight_desc">Rende l\'evidenziazione della mossa più visibile</string>
+<string name="pref_fullscreen">Abilita lo schermo intero</string>
+<string name="pref_fullscreen_desc">Consigliato per schermi piccoli e vista panoramica; in caso contrario gli elementi possono cadere fuori dallo schermo</string>
+<string name="pref_onLoadJumpToLastMove">Vai all\'ultima mossa</string>
+<string name="pref_onLoadJumpToLastMove_desc">Quando si ritorna all\'App, si salta all\'ultima mossa</string>
+<string name="pref_uci">Motore UCI</string>
+<string name="pref_uci_desc">Seleziona il motore scacchistico da usare</string>
+<string name="pref_pieceset">Set di pezzi</string>
+<string name="pref_pieceset_desc">Il tipo di set di pezzi utilizzato sulla scacchiera</string>
+<string name="pref_tileset">Decorazione delle caselle</string>
+<string name="pref_tileset_desc">Decorazione usata sulle caselle della scacchiera</string>
+<string name="pref_icsconfirmmove">Conferma mossa</string>
+<string name="pref_icsconfirmmove_desc">Conferma manualmente mossa</string>
+<string name="pref_icscustomcommand">Comandi personalizzati</string>
+<string name="pref_icscustomcommand_desc">Crea i tuoi comandi personalizzati</string>
+<string name="pref_icsautosought">Ricerca automatica</string>
+<string name="pref_icsautosought_desc">Aggiorna automaticamente lo schermo delle sfide</string>
+<string name="pref_puzzle_show_seekbar">Mostra barra di ricerca</string>
+<string name="pref_puzzle_show_seekbar_desc">Naviga rapidamente attraverso gli enigmi con la barra di ricerca</string>
+
+<string name="button_play">Gioca</string>
+<string name="button_undo">Annulla</string>
+<string name="button_ok">OK</string>
+<string name="button_menu">Menu</string>
+<string name="button_cancel">Annulla</string>
+<string name="button_login">Accedi</string>
+<string name="button_register">Registrati</string>
+<string name="button_close">Chiudi</string>
+<string name="button_save">Salva</string>
+<string name="button_save_copy">Salva una copia</string>
+
+<string name="alert_yes">Si</string>
+<string name="alert_no">No</string>
+<string name="alert_cancel">Annulla</string>
+<string name="alert_ok">OK</string>
+
+<string name="title_challenge">Sfida</string>
+<string name="title_loading">Caricamento...</string>
+<string name="title_error">Errore</string>
+<string name="title_offers_abort">Richiesta di interruzione</string>
+<string name="title_offers_takeback">Richiesta ritiro mossa</string>
+<string name="title_offers_draw">Richiesta di patta</string>
+<string name="title_offers_adjourn">Richiesta di aggiornamento</string>
+<string name="title_pick_level">Scegli livello di gioco</string>
+<string name="title_pick_wakelock">Scegli opzione di sospensione</string>
+<string name="title_info">Informazioni</string>
+<string name="title_menu">Menu</string>
+<string name="title_welcome">Benvenuto</string>
+<string name="title_annotate">Annota</string>
+<string name="title_save_game">Salva gioco</string>
+<string name="title_options">Opzioni</string>
+<string name="title_delete_game">Cancella gioco</string>
+<string name="title_notice">Avviso</string>
+<string name="title_pick_promo">Scegli promozione pezzo</string>
+<string name="title_castle">Arroccare?</string>
+<string name="title_pick_en_passant">En-passant file</string>
+<string name="title_pick_colorscheme">Scegli colore</string>
+<string name="title_pick_playmode">Scegli modalità di gioco</string>
+<string name="title_create_new_line">Crea nuova linea?</string>
+
+<string name="menu_help">Aiuto</string>
+<string name="menu_new">Nuova partita</string>
+<string name="menu_clear">Libera</string>
+<string name="menu_options">Opzioni</string>
+<string name="menu_email_game">Gioca via e-mail</string>
+<string name="menu_clip_pgn">Copia partita negli appunti</string>
+<string name="menu_fromclip">Richiama partita dagli appunti</string>
+<string name="menu_save_game">Salva partita</string>
+<string name="menu_load_game">Carica partita</string>
+<string name="menu_random_fischer">Scacchi 960</string>
+<string name="menu_puzzles">Enigmi</string>
+<string name="menu_practice">Pratica</string>
+<string name="menu_pgn_tool">Strumento PGN</string>
+<string name="menu_about">Informazioni</string>
+<string name="menu_exit">Esci</string>
+<string name="menu_flip">Inverti la scacchiera</string>
+<string name="menu_more">Altro…</string>
+<string name="menu_setup">Disponi la scacchiera</string>
+<string name="menu_from_qrcode">Da QR-code</string>
+<string name="menu_to_qrcode">A QR-code</string>
+<string name="menu_new_command">Nuovo comando</string>
+<string name="menu_set_clock">Imposta orologio</string>
+
+<string name="menu_subview_title">Scegli sottocontrolli</string>
+<string name="menu_subview_cpu">Informazioni motore</string>
+<string name="menu_subview_moves">Sposta la storia</string>
+<string name="menu_subview_seek">Sposta la barra di ricerca</string>
+<string name="menu_subview_captured">Pezzi catturati</string>
+<string name="menu_subview_annotate">Annota mossa</string>
+<string name="menu_subview_guess">Indovina la mossa</string>
+<string name="menu_subview_blindfold">Modalità alla cieca</string>
+
+<string name="options_play_android">Giocatore vs Android</string>
+<string name="options_960">Scacchi 960 - Fischer Random</string>
+<string name="options_load_database">Carica database aperture</string>
+<string name="options_auto_flip">Auto-inversione scacchiera</string>
+<string name="options_flip">Inverti la scacchiera</string>
+<string name="options_setup">Disponi la scacchiera</string>
+<string name="options_show_moves">Mostra le mosse</string>
+
+<string name="state_play">in gioco</string>
+<string name="state_draw">patta</string>
+<string name="state_draw_material">patta(per pezzi)</string>
+<string name="state_draw_50">patta (regola delle 50 mosse)</string>
+<string name="state_draw_stalemate">patta (stallo)</string>
+<string name="state_draw_repeat">patta (mossa ripetuta 3 volte)</string>
+<string name="state_mate">matto</string>
+<string name="state_check">scacco</string>
+<string name="state_time">tempo</string>
+<string name="state_resigned">abbandonata</string>
+<string name="state_aborted">interrotta</string>
+<string name="state_adjourned">aggiornata</string>
+
+<string name="level_format">Livello: %s</string>
+<string name="choice_level_1">1 sec</string>
+<string name="choice_level_2">2 sec </string>
+<string name="choice_level_3">4 sec</string>
+<string name="choice_level_4">8 sec (medio) </string>
+<string name="choice_level_5">10 sec</string>
+<string name="choice_level_6">20 sec</string>
+<string name="choice_level_7">30 sec (esperto) </string>
+<string name="choice_level_8">1 minuto</string>
+<string name="choice_level_9">5 minuti</string>
+<string name="choice_level_10">15 minuti</string>
+
+<string name="choice_queen">Regina</string>
+<string name="choice_rook">Torre</string>
+<string name="choice_bishop">Alfiere</string>
+<string name="choice_knight">Cavallo</string>
+
+<string name="choice_match_rated">con punteggio</string>
+<string name="choice_match_unrated">senza punteggio</string>
+
+<string name="msg_illegal_move">Mossa illegale</string>
+<string name="msg_state_format">%1$s</string>
+<string name="msg_thinking">Sto riflettendo...</string>
+<string name="msg_wait">Per favore attendere...</string>
+<string name="msg_calc_format">Mossa %1$s\tStima %2$s</string>
+<string name="msg_calc_summary_format">Sommario motore: %1$s</string>
+<string name="msg_setup_turn">Turno</string>
+<string name="msg_setup_turn_white">bianco</string>
+<string name="msg_setup_turn_black">nero</string>
+<string name="msg_setup_enpassant">Casella en-passant</string>
+<string name="msg_setup_castle_white">Bianco</string>
+<string name="msg_setup_castle_black">Nero</string>
+<string name="msg_setup_extra">Premi menu per le opzioni di setup</string>
+
+<string name="err_sd_not_mounted">
+Al fine di elaborare la tua richiesta, la tua SD-card deve essere montata.
+</string>
+<string name="err_send_email">
+L\'e-mail potrebbe non essere stata creata.
+</string>
+<string name="err_load_fen">La posizione scacchistica FEN potrebbe non essere stata caricata</string>
+<string name="err_load_pgn">La storia scacchistica PGN potrebbe non essere stata caricata</string>
+<string name="err_no_clip_text">Non c\'è testo negli appunti</string>
+
+<string name="pgntool_export_explanation">Esporta il database di gioco nella sd-card</string>
+<string name="pgntool_import_explanation">Importa le partite nel database di gioco</string>
+<string name="pgntool_delete_explanation">Cancella tutte le partite nel database di gioco</string>
+<string name="pgntool_add_db_explanation">Aggiungi partite a openingdatabase</string>
+<string name="pgntool_create_db_explanation">Crea openingdatabase</string>
+<string name="pgntool_point_db_explanation">Imposta openingdatabase</string>
+<string name="pgntool_point_uci_engine">Installa motore UCI</string>
+<string name="pgntool_unset_uci_engine">Disinstalla motore UCI</string>
+<string name="pgntool_help">Aiuto</string>
+<string name="pgntool_numexport">Esportata partita %1$d in chess.pgn</string>
+<string name="pgntool_confirm_delete">Sei sicuro?</string>
+<string name="pgntool_deleted">Tutte le partite sono state cancellate</string>
+<string name="pgntool_create_practice_explanation">Crea set di pratica</string>
+<string name="pgntool_import_practice">Importa set di pratica</string>
+<string name="pgntool_reset_practice">Azzera pratica - ricomincia </string>
+<string name="pgntool_confirm_practice_reset">Sei sicuro di voler azzerare?</string>
+<string name="pgntool_import_puzzle">Importa enigmi</string>
+<string name="pgntool_import_opening">Usato dallo sviluppatore</string>
+
+<string name="ics_menu_players">Giocatori</string>
+<string name="ics_menu_games">Partite</string>
+<string name="ics_menu_stored">Archiviato</string>
+<string name="ics_menu_challenges">Sfide</string>
+<string name="ics_menu_seek">Cerca</string>
+<string name="ics_menu_resume">Riprendi</string>
+<string name="ics_menu_board">Scacchiera</string>
+<string name="ics_menu_help">Aiuto</string>
+<string name="ics_menu_abort">Interrompi</string>
+<string name="ics_menu_adjourn">Aggiorna</string>
+<string name="ics_menu_draw">Patta</string>
+<string name="ics_menu_flag">Bandierina</string>
+<string name="ics_menu_resign">Abbandona</string>
+<string name="ics_menu_refresh">Ricarica</string>
+<string name="ics_menu_welcome">Benvenuto</string>
+<string name="ics_menu_chat">Chat</string>
+<string name="ics_menu_quit">Esci</string>
+<string name="ics_menu_takeback">Ritira mossa</string>
+<string name="ics_menu_closeboard">Chiudi scacchiera</string>
+<string name="ics_menu_console">Console</string>
+<string name="ics_menu_unobserve">Ferma osservazione</string>
+<string name="ics_menu_stop_puzzle">Ferma enigma</string>
+
+<string name="ics_progress_title_login">Accedi</string>
+<string name="ics_progress_msg_login">Stai accedendo...</string>
+<string name="ics_offers_abort">Il tuo avversario vorrebbe interrompere la partita.\nDesideri accettare?</string>
+<string name="ics_offers_draw">Il tuo avversario offre una patta.\nDesideri accettare?</string>
+<string name="ics_offers_adjourn">Il tuo avversario vorrebbe aggiornare la partita.\nDesideri accettare?</string>
+<string name="ics_offers_takeback">Il tuo avversario vorrebbe ritirare la mossa.\nDesideri accettare?</string>
+<string name="ics_request_sent">Richiesta inviata</string>
+<string name="ics_game_over">Partita fermata</string>
+<string name="ics_game_over_format">Fine partita: %1$s</string>
+<string name="ics_tells_you">%1$s ti dice: %2$s</string>
+
+<string name="ics_error_connection">Impossibile connettersi al server. Assicurati di avere una connessione internet attiva</string>
+
+<string name="ics_welcome_format">Benvenuto <b>%1$s</b></string>
+<string name="ics_start_text">(password vuota per accedere come ospite)</string>
+
+</resources>
