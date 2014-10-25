@@ -348,12 +348,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     	String s = "";
     	int viewMode = this.get_view()._viewMode;
     	switch(viewMode){
-    	case ICSChessView.VIEW_NONE: s = "Idle"; break;
-    	case ICSChessView.VIEW_PLAY: s = "Play"; break;
-    	case ICSChessView.VIEW_WATCH: s = "Watch"; break;
-    	case ICSChessView.VIEW_EXAMINE: s = "Examine"; break;
-    	case ICSChessView.VIEW_PUZZLE: s = "Puzzle"; break;
-    	case ICSChessView.VIEW_ENDGAME: s = "Endgame"; break;
+    	case ICSChessView.VIEW_NONE: s = getString(R.string.title_ics_mode_idle); break;
+    	case ICSChessView.VIEW_PLAY: s = getString(R.string.title_ics_mode_play); break;
+    	case ICSChessView.VIEW_WATCH: s = getString(R.string.title_ics_mode_watch); break;
+    	case ICSChessView.VIEW_EXAMINE: s = getString(R.string.title_ics_mode_examine); break;
+    	case ICSChessView.VIEW_PUZZLE: s = getString(R.string.title_ics_mode_puzzle); break;
+    	case ICSChessView.VIEW_ENDGAME: s = getString(R.string.title_ics_mode_endgame); break;
     	}
     	ArrayList<String> arrList = new ArrayList<String>();
     	
@@ -628,7 +628,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     public void startSession(final String h, final String p){
     	
     	if(h == ""){
-    		globalToast("Please enter your handle");
+    		globalToast(getString(R.string.msg_ics_enter_handle));
     		return;
     	}
     	
@@ -643,7 +643,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     	_handle = _ficsHandle;
     	_pwd = _ficsPwd;
     	if(_handle != "guest" && _pwd == ""){
-    		globalToast("Please enter your password");
+    		globalToast(getString(R.string.msg_ics_enter_password));
     		return;
     	}
     	
