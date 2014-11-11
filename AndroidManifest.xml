@@ -73,11 +73,6 @@
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
   		</activity>
-  		<activity android:name="jwtc.android.chess.puzzle.lesson" android:label="@string/app_name">
-			<intent-filter>
-  				<action android:name="android.intent.action.VIEW" /> 
-  			</intent-filter>
-  		</activity>
   		<!-- <service android:name="jwtc.android.chess.ics.ICSService"/> -->
   		<activity android:name="jwtc.android.chess.ics.ICSClient" android:label="@string/app_name_playonline">
 			<intent-filter>
@@ -113,11 +108,6 @@
             	<category android:name="android.intent.category.DEFAULT" />
             	<data android:mimeType="application/x-chess-pgn" />
             </intent-filter>
-  		</activity>
-  		<activity android:name="jwtc.android.chess.tools.EngineTester" android:label="@string/app_name">
-			<intent-filter>
-  				<action android:name="android.intent.action.VIEW" /> 
-  			</intent-filter>
   		</activity>
     </application>
     <supports-screens 
