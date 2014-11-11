@@ -11,3 +11,4 @@ Roadmap
 - new high-res piece-sets
 - layout improvements for tablets in landscape mode
 - take items from the feature-request list
+- translation to other languages (starting with Italian)
