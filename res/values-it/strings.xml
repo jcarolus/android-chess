@@ -98,15 +98,15 @@
 <string name="title_pick_colorscheme">Scegli colore</string>
 <string name="title_pick_playmode">Scegli modalità di gioco</string>
 <string name="title_create_new_line">Crea nuova linea?</string>
-<string name="title_chess960_manual_random">Chess 960 :: Manual position nr or random?</string>
-<string name="title_edit_or_delete">Edit or delete?</string>
-<string name="title_edit_command">Edit command</string>
-<string name="title_ics_mode_idle">Idle</string>
-<string name="title_ics_mode_play">Play</string>
-<string name="title_ics_mode_watch">Watch</string>
-<string name="title_ics_mode_examine">Examine</string>
-<string name="title_ics_mode_puzzle">Puzzle</string>
-<string name="title_ics_mode_endgame">Endgame</string>
+<string name="title_chess960_manual_random">Scacchi 960 :: posizionamento manuale o casuale?</string>
+<string name="title_edit_or_delete">Modifica o cancella?</string>
+<string name="title_edit_command">Modifica comando</string>
+<string name="title_ics_mode_idle">In attesa</string>
+<string name="title_ics_mode_play">Gioca</string>
+<string name="title_ics_mode_watch">Osserva</string>
+<string name="title_ics_mode_examine">Esamina</string>
+<string name="title_ics_mode_puzzle">Enigma</string>
+<string name="title_ics_mode_endgame">Finale di partita</string>
 
 <string name="menu_help">Aiuto</string>
 <string name="menu_new">Nuova partita</string>
@@ -178,10 +178,10 @@
 <string name="choice_knight">Cavallo</string>
 <string name="choice_match_rated">con punteggio</string>
 <string name="choice_match_unrated">senza punteggio</string>
-<string name="choice_clock_num_minutes">%d minutes</string>
-<string name="choice_manually">Manually</string>
-<string name="choice_edit">Edit</string>
-<string name="choice_delete">Delete</string>
+<string name="choice_clock_num_minutes">% minuti</string>
+<string name="choice_manually">Manualmente</string>
+<string name="choice_edit">Modifica</string>
+<string name="choice_delete">Cancella</string>
 
 <string name="msg_illegal_move">Mossa illegale</string>
 <string name="msg_state_format">%1$s</string>
@@ -196,13 +196,13 @@
 <string name="msg_setup_castle_white">Bianco</string>
 <string name="msg_setup_castle_black">Nero</string>
 <string name="msg_setup_extra">Premi menu per le opzioni di setup</string>
-<string name="msg_qr_code_on_clipboard">Link to QR code is on your clipboard...</string>
-<string name="chess960_position_nr">"Chess 960 position nr %d"</string>
-<string name="msg_ics_enter_handle">Please enter your handle</string>
-<string name="msg_ics_enter_password">Please enter your password</string>
+<string name="msg_qr_code_on_clipboard">Link al codice QR copiato negli appunti...</string>
+<string name="chess960_position_nr">"Scacchi 960 positione n. %d"</string>
+<string name="msg_ics_enter_handle">Inserisci il tuo nome</string>
+<string name="msg_ics_enter_password">Inserisci la password</string>
 
 <string name="err_sd_not_mounted">
-Al fine di elaborare la tua richiesta, la tua SD-card deve essere montata.
+Al fine di elaborare la tua richiesta, la SD-card deve essere montata.
 </string>
 <string name="err_send_email">
 L\'e-mail potrebbe non essere stata creata.
@@ -210,9 +210,9 @@ L\'e-mail potrebbe non essere stata creata.
 <string name="err_load_fen">La posizione scacchistica FEN potrebbe non essere stata caricata</string>
 <string name="err_load_pgn">La storia scacchistica PGN potrebbe non essere stata caricata</string>
 <string name="err_no_clip_text">Non c\'è testo negli appunti</string>
-<string name="err_install_barcode_scanner">Please install Barcode scanner (ZXing)</string>
-<string name="err_chess960_position_range">Invalid position, enter a number between 0 and 960</string>
-<string name="err_chess960_postion_format">Invalid position, enter a number</string>
+<string name="err_install_barcode_scanner">Per favore installa uno scanner di codici a barre (ZXing)</string>
+<string name="err_chess960_position_range">Posizione non valida, inserisci un numero tra 0 e 960</string>
+<string name="err_chess960_postion_format">Posizione non valida, inserisci un numero</string>
 
 <string name="pgntool_export_explanation">Esporta il database di gioco nella sd-card</string>
 <string name="pgntool_import_explanation">Importa le partite nel database di gioco</string>

@@ -41,8 +41,8 @@
         <item>@string/choice_knight</item>
     </string-array>
     <string-array name="playmodes">
-        <item>Tu vs Android</item>
-        <item>Android vs te</item>
+        <item>Tu contro Android</item>
+        <item>Android contro di te</item>
         <item>Scacchiera di gioco</item>
     </string-array>
     <string-array name="clockchoices">
