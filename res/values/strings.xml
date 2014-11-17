@@ -69,6 +69,8 @@
 <string name="button_close">Close</string>
 <string name="button_save">Save</string>
 <string name="button_save_copy">Save copy</string>
+<string name="button_new">New</string>
+<string name="button_show">Show</string>
 
 <string name="alert_yes">Yes</string>
 <string name="alert_no">No</string>
@@ -107,6 +109,7 @@
 <string name="title_ics_mode_examine">Examine</string>
 <string name="title_ics_mode_puzzle">Puzzle</string>
 <string name="title_ics_mode_endgame">Endgame</string>
+<string name="title_installing">Installing</string>
 
 <string name="menu_help">Help</string>
 <string name="menu_new">New Game</string>
@@ -130,6 +133,10 @@
 <string name="menu_to_qrcode">To QR-code</string>
 <string name="menu_new_command">New command</string>
 <string name="menu_set_clock">Set clock</string>
+<string name="menu_start">Start</string>
+<string name="menu_stop">Stop</string>
+<string name="menu_test_convergence">Test convergence</string>
+<string name="menu_test_DIAL">Test DIAL</string>
 
 <string name="menu_subview_title">Choose sub controls</string>
 <string name="menu_subview_cpu">Engine info</string>
@@ -180,6 +187,7 @@
 <string name="choice_match_unrated">Unrated</string>
 <string name="choice_clock_num_minutes">%d minutes</string>
 <string name="choice_manually">Manually</string>
+<string name="choice_random">Random</string>
 <string name="choice_edit">Edit</string>
 <string name="choice_delete">Delete</string>
 
@@ -200,6 +208,11 @@
 <string name="chess960_position_nr">"Chess 960 position nr %d"</string>
 <string name="msg_ics_enter_handle">Please enter your handle</string>
 <string name="msg_ics_enter_password">Please enter your password</string>
+<string name="msg_progress">Progress:</string>
+<string name="msg_server_stopped">Server stopped</string>
+<string name="msg_your_code">"Your code: "</string>
+<string name="msg_not_valid_ip">"You are not on a valid LAN IP address\nIP: "</string>
+<string name="msg_server">Could not start server</string>
 
 <string name="err_sd_not_mounted">
 In order to process your request, your SD-card needs to be mounted.
@@ -232,6 +245,9 @@ E-mail could not be created.
 <string name="pgntool_confirm_practice_reset">Are you sure you want to reset?</string>
 <string name="pgntool_import_puzzle">Import puzzles</string>
 <string name="pgntool_import_opening">Used by developer</string>
+
+<string name="ics_client_handle">Handle</string>
+<string name="ics_client_password">Password</string>
 
 <string name="ics_menu_players">Players</string>
 <string name="ics_menu_games">Games</string>

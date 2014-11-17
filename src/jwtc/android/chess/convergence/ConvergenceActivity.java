@@ -122,7 +122,7 @@ public class ConvergenceActivity extends Activity  {
 			if(isAlive()){
 				_restServer.stop();
 				_restServer = null;
-				_tvIpPort.setText("Server stopped");
+				_tvIpPort.setText(getString(R.string.msg_server_stopped));
 			} else {
 				//String sPort = prefs.getString("restServerPort", "8092");
 				//_restServer = new RestServer(Integer.parseInt(sPort));
@@ -148,15 +148,15 @@ public class ConvergenceActivity extends Activity  {
 						}
 					}
 					if(sCode.length() > 0){
-						_tvIpPort.setText("Your code: " + sCode + "\nIP: " + sAddr);
+						_tvIpPort.setText(getString(R.string.msg_your_code) + sCode + "\nIP: " + sAddr);
 					} else {
-						_tvIpPort.setText("You are not on a valid LAN IP address\nIP: " + sAddr);
+						_tvIpPort.setText(getString(R.string.msg_not_valid_ip) + sAddr);
 						_restServer.stop();
 						_restServer = null;
 					}
 				} else {
 					_restServer = null;
-					_tvIpPort.setText("Could not start server");
+					_tvIpPort.setText(getString(R.string.msg_server));
 				}
 			}
 			
@@ -168,16 +168,16 @@ public class ConvergenceActivity extends Activity  {
     protected boolean isAlive(){
     	if(_restServer == null){
     		Log.i(TAG, "isAlive -> restServer = null");
-    		_butStartStop.setText("Start");
+    		_butStartStop.setText(getString(R.string.menu_start));
     		return false;
     	}
     	if(_restServer.isAlive()){
     		Log.i(TAG, "isAlive -> restServer.isAlive = true");
-    		_butStartStop.setText("Stop");
+    		_butStartStop.setText(getString(R.string.menu_stop));
     		return true;
     	} else {
     		Log.i(TAG, "isAlive -> restServer.isAlive = false");
-    		_butStartStop.setText("Start");
+    		_butStartStop.setText(getString(R.string.menu_start));
     		return false;
     	}
     }

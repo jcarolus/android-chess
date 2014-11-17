@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
 import android.view.View;
 import android.view.View.*;
 import android.content.ContentResolver;
@@ -62,7 +61,7 @@ public class ChessViewPractice extends UI{
         		_numTotal = _cursor.getCount();
         		firstPlay();
         	} else if(msg.what == 2){
-        		_progressDlg.setMessage("Progress: " + String.format("%d", (_cnt * 100) / _num) + " %");
+        		_progressDlg.setMessage(_parent.getString(R.string.msg_progress) + String.format(" %d", (_cnt * 100) / _num) + " %");
         	} else if(msg.what == 3){
         		_progressDlg.hide();
         		_tvPracticeMove.setText("An error occured during install");
@@ -378,7 +377,7 @@ public class ChessViewPractice extends UI{
 			if(_numTotal == 0){
 				_tvPracticeMove.setText("Installing...");
 				
-				 _progressDlg = ProgressDialog.show(_parent, "Installing", "Plese wait...", false, false);
+				 _progressDlg = ProgressDialog.show(_parent, _parent.getString(R.string.title_installing), _parent.getString(R.string.msg_wait), false, false);
 				
 				_thread = new Thread(new Runnable(){
 		        	public void run(){

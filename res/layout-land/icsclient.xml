@@ -111,7 +111,7 @@
 						android:stretchColumns="*">
 						<TableRow>
 							<Button android:id="@+id/ButtonCancelMove" 
-								android:text="Cancel" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+								android:text="@string/alert_cancel" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 							<Button android:id="@+id/ButtonConfirmMove"
 								android:text="Confirm" android:layout_width="fill_parent" android:layout_height="wrap_content"/>	
 		    			</TableRow>
@@ -183,7 +183,7 @@
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 						</TableRow>
 						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
-							<TextView android:text="Handle" style="@style/MyLabelTextStyle"
+							<TextView android:text="@string/ics_client_handle" style="@style/MyLabelTextStyle"
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 							<EditText android:text="guest" android:id="@+id/EditICSHandle" 
 								android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -191,7 +191,7 @@
 							/>
 						</TableRow>
 						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
-							<TextView android:text="Password" style="@style/MyLabelTextStyle"
+							<TextView android:text="@string/ics_client_password" style="@style/MyLabelTextStyle"
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 							<EditText android:id="@+id/EditICSPwd" 
 								android:layout_width="wrap_content" android:layout_height="wrap_content" android:password="true"

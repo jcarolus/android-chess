@@ -49,7 +49,7 @@
 			android:layout_below="@id/ButtonPuzzlePrevious"
 		/>
 		<Button android:id="@+id/ButtonPuzzle" android:layout_width="wrap_content" android:layout_height="40dip"
-			android:text="show" android:paddingLeft="8dip" android:paddingRight="8dip"
+			android:text="@string/button_show" android:paddingLeft="8dip" android:paddingRight="8dip"
 			android:layout_below="@id/ButtonPuzzleNext"
 		/>
 		<ImageView android:id="@+id/ImageStatus" android:src="@drawable/indicator_none"

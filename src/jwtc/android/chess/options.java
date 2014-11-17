@@ -131,7 +131,7 @@ public class options extends Activity {
         	    	    	}
         	    	    }
         	    	});
-        	    	builder.setNegativeButton("Random", new DialogInterface.OnClickListener() {
+        	    	builder.setNegativeButton(getString(R.string.choice_random), new DialogInterface.OnClickListener() {
 
         	            public void onClick(DialogInterface dialog, int which) {
         	            	int seed = -1;

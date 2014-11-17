@@ -359,7 +359,7 @@ public class importactivity extends Activity {
 	        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle("Import " + uri.getLastPathSegment() + "?");
 				
-				builder.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+				builder.setPositiveButton(getString(R.string.alert_yes), new DialogInterface.OnClickListener(){
 	
 					public void onClick(DialogInterface dialog, int which) {
 						
@@ -392,7 +392,7 @@ public class importactivity extends Activity {
 					}
 				});
 				
-				builder.setNegativeButton("No", new DialogInterface.OnClickListener(){
+				builder.setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener(){
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 						finish();
