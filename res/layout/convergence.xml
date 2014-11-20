@@ -23,11 +23,11 @@
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent">
 	    <TableRow>
-		    <Button android:id="@+id/ButtonStartStopServer" android:text="Start"
+		    <Button android:id="@+id/ButtonStartStopServer" android:text="@string/menu_start"
 		        android:layout_margin="10dip" android:padding="10dip"
 			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
 		    />
-		     <Button android:id="@+id/ButtonHelpConvergence" android:text="Help"
+		     <Button android:id="@+id/ButtonHelpConvergence" android:text="@string/menu_help"
 		        android:layout_margin="10dip" android:padding="10dip"
 			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
 		    />
@@ -40,11 +40,11 @@
 		        android:layout_height="wrap_content" android:layout_weight="2"/>
 	    </TableRow>
 	    <TableRow>
-		    <Button android:id="@+id/ButtonTestConvergence" android:text="Test convergence"
+		    <Button android:id="@+id/ButtonTestConvergence" android:text="@string/menu_test_convergence"
 		        android:layout_margin="10dip" android:padding="10dip"
 			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
 		    />
-		    <Button android:id="@+id/ButtonTestDial" android:text="Test DIAL"
+		    <Button android:id="@+id/ButtonTestDial" android:text="@string/menu_test_DIAL"
 		        android:layout_margin="10dip" android:padding="10dip"
 			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
 		    />

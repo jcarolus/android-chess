@@ -160,7 +160,8 @@ public class main extends MyBaseActivity  implements OnInitListener{
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_set_clock))){
 		        	AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
 	    			builder.setTitle(getString(R.string.title_menu));
-	    			final String[] itemsMenu = new String[]{"no clock", "2 minutes", "5 minutes", "10 minutes", "30 minutes", "60 minutes"};
+	    			String sTime = getString(R.string.choice_clock_num_minutes); 
+	    			final String[] itemsMenu = new String[]{"no clock", String.format(sTime, 2), String.format(sTime, 5), String.format(sTime, 10), String.format(sTime, 30), String.format(sTime, 60)};
 	    			builder.setItems(itemsMenu, new DialogInterface.OnClickListener() {
 	    			    public void onClick(DialogInterface dialog, int item) {
 	    			        dialog.dismiss();
@@ -200,14 +201,14 @@ public class main extends MyBaseActivity  implements OnInitListener{
 			            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 			            startActivityForResult(intent, REQUEST_FROM_QR_CODE);
 		        	}catch(Exception ex){
-		        		doToast("Please install Barcode scanner (ZXing)");
+		        		doToast(getString(R.string.err_install_barcode_scanner));
 		        	}
 		        }else if(_itemsMenu[item].equals(getString(R.string.menu_to_qrcode))){
 		        
 		        	String s = "http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl="; 
 		        	s += java.net.URLEncoder.encode(_chessView.getJNI().toFEN());
 		        	copyToClipBoard(s);
-		        	doToast("Link to QR code is on your clipboard...");
+		        	doToast(getString(R.string.msg_qr_code_on_clipboard));
 		        }
 		       
 		    }
@@ -558,7 +559,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
     	
     	int seed = getSharedPreferences("ChessPlayer", MODE_PRIVATE).getInt("randomFischerSeed", -1);
     	seed = _chessView.newGameRandomFischer(seed);
-    	doToast("Chess 960 position nr " + seed);
+    	doToast(String.format(getString(R.string.chess960_position_nr), seed));
     	
     	SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
         editor.putString("FEN", _chessView.getJNI().toFEN());

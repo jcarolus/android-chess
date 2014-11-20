@@ -97,7 +97,7 @@
 			/>
 		</TableRow>
 		<TableRow>
-			<Button android:text="new" android:id="@+id/ButtonNewGame" android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
+			<Button android:text="@string/button_new" android:id="@+id/ButtonNewGame" android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
 			    android:layout_marginLeft="2dip" android:layout_marginRight="2dip" 
 			/>
 		</TableRow>
