@@ -105,11 +105,11 @@ public class options extends Activity {
         			
         			
         			AlertDialog.Builder builder = new AlertDialog.Builder(options.this);
-        	    	builder.setTitle("Chess 960 :: Manual position nr or random?");
+        	    	builder.setTitle(getString(R.string.title_chess960_manual_random));
         	    	final EditText input = new EditText(options.this);
         	    	input.setInputType(InputType.TYPE_CLASS_PHONE);
         	    	builder.setView(input);
-        	    	builder.setPositiveButton("Manual", new DialogInterface.OnClickListener() {  
+        	    	builder.setPositiveButton(getString(R.string.choice_manually), new DialogInterface.OnClickListener() {  
         	    	    public void onClick(DialogInterface dialog, int whichButton) {
         	    	    	try{
         		    	    	int seed = Integer.parseInt(input.getText().toString());
@@ -124,14 +124,14 @@ public class options extends Activity {
 	        		    	        
 	        		    	        finish();
         		    	    	} else {
-        		    	    		doToast("Invalid position, enter a number between 0 and 960");
+        		    	    		doToast(getString(R.string.err_chess960_position_range));
         		    	    	}
         	    	    	} catch(Exception ex){
-        	    	    		doToast("Invalid position, enter a number");
+        	    	    		doToast(getString(R.string.err_chess960_postion_format));
         	    	    	}
         	    	    }
         	    	});
-        	    	builder.setNegativeButton("Random", new DialogInterface.OnClickListener() {
+        	    	builder.setNegativeButton(getString(R.string.choice_random), new DialogInterface.OnClickListener() {
 
         	            public void onClick(DialogInterface dialog, int which) {
         	            	int seed = -1;
@@ -156,9 +156,6 @@ public class options extends Activity {
         			setResult(RESULT_OK);
         			finish();
         		}
-        		
-        		
-        		
         	}
 		});
 	}

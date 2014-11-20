@@ -43,9 +43,9 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 		final int position = arg2;
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Edit or delete?");
+		builder.setTitle(getString(R.string.title_edit_or_delete));
 		
-		builder.setPositiveButton("Edit", new DialogInterface.OnClickListener(){
+		builder.setPositiveButton(getString(R.string.choice_edit), new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface dialog, int which) {
 				
 				final FrameLayout fl = new FrameLayout(CustomCommands.this);
@@ -57,7 +57,7 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 				
 				AlertDialog.Builder builder = new AlertDialog.Builder(CustomCommands.this)
 					.setView(fl)
-					.setTitle("Edit command")
+					.setTitle(getString(R.string.title_edit_command))
 					.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						String s = input.getText().toString();
@@ -75,13 +75,11 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 				alert.show();
 				
 				dialog.dismiss();
-				
-				
 			}
 			
 		});
 		
-		builder.setNegativeButton("Delete", new DialogInterface.OnClickListener(){
+		builder.setNegativeButton(getString(R.string.choice_delete), new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface dialog, int which) {
 				
 				_adapter.remove(_adapter.getItem(position));				
