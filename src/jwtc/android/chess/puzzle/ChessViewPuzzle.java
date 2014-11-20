@@ -13,7 +13,6 @@ import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
 import android.view.View;
 import android.view.View.*;
 import android.content.ContentResolver;
@@ -61,7 +60,7 @@ public class ChessViewPuzzle extends UI{
 	        		
 	        		play();
 	        	} else if(msg.what == 2){
-	        		_progressDlg.setMessage(String.format("Progress: %d", (_cnt * 100) / _num) + " %");
+	        		_progressDlg.setMessage(_parent.getString(R.string.msg_progress) + String.format(" %d", (_cnt * 100) / _num) + " %");
 	        	} else if(msg.what == 3){
 	        		_progressDlg.hide();
 	        		_tvPuzzleText.setText("An error occured during install");
@@ -419,7 +418,7 @@ public class ChessViewPuzzle extends UI{
 		if(_num == 0){
 
 			_num = 500; // first puzzle set has fixed amount
-			_progressDlg = ProgressDialog.show(_parent, "Installing", "Plese wait...", false, false);
+			_progressDlg = ProgressDialog.show(_parent, _parent.getString(R.string.title_installing), _parent.getString(R.string.msg_wait), false, false);
 			
 			//if(iTmp > 0)
 			//	_cr.delete(MyPuzzleProvider.CONTENT_URI_PUZZLES, "1=1", null);

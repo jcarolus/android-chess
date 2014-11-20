@@ -378,7 +378,7 @@ public class setup extends MyBaseActivity {
         {
         	new AlertDialog.Builder(this)
 			.setTitle("Use illegal position?")
-			.setPositiveButton("Yes",
+			.setPositiveButton(getString(R.string.alert_yes),
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,	int whichButton) {
 						dialog.dismiss();
@@ -387,7 +387,7 @@ public class setup extends MyBaseActivity {
 						setup.this.finish();
 					}
 				})
-			.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			.setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					dialog.dismiss();
 				}

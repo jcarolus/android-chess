@@ -551,7 +551,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 	    			
 	    			new AlertDialog.Builder(ICSClient.this)
 					.setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
-					.setPositiveButton("Yes",
+					.setPositiveButton(getString(R.string.alert_yes),
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,	int whichButton) {
 								dialog.dismiss();
@@ -561,7 +561,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 								
 							}
 						})
-					.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					.setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							dialog.dismiss();
 						}
@@ -576,14 +576,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 	    				
 		    			new AlertDialog.Builder(ICSClient.this)
 						.setTitle(ICSClient.this.getString(R.string.ics_menu_quit) + "?")
-						.setPositiveButton("Yes",
+						.setPositiveButton(getString(R.string.alert_yes),
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,	int whichButton) {
 									dialog.dismiss();
 									finish();
 								}
 							})
-						.setNegativeButton("No", new DialogInterface.OnClickListener() {
+						.setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int whichButton) {
 								dialog.dismiss();
 							}
@@ -1004,14 +1004,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 		 		   				.setMessage(opponent + 
 		 		   						" [" + rating +  
 		 		   						"]\nchallenges you for a " +  match.group(7) + " min.+" + match.group(8) + "s " + match.group(5) + " " + match.group(6) + ".\nDo you wish to accept?")
-		 		   				.setPositiveButton("Yes",
+		 		   				.setPositiveButton(getString(R.string.alert_yes),
 		 		   					new DialogInterface.OnClickListener() {
 		 		   						public void onClick(DialogInterface dialog,	int whichButton) {
 		 		   							sendString("accept");
 		 		   							dialog.dismiss();
 		 		   						}
 		 		   					})
-		 		   				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+		 		   				.setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
 		 		   					public void onClick(DialogInterface dialog, int whichButton) {
 		 		   						dialog.dismiss();
 		 		   					}
@@ -1466,7 +1466,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 			new AlertDialog.Builder(ICSClient.this)
 			.setTitle(R.string.title_error)
 			.setMessage("Connection to server is broken.")
-			.setPositiveButton("Ok",
+			.setPositiveButton(getString(R.string.alert_ok),
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,	int whichButton) {
 						dialog.dismiss();
