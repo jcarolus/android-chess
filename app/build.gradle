@@ -1,15 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            storeFile file('/Users/jcarolus/Projecten/Chess/android-keystore')
+        }
+    }
     compileSdkVersion 8
     buildToolsVersion "21.1.2"
-
     defaultConfig {
         applicationId "jwtc.android.chess"
         minSdkVersion 4
         targetSdkVersion 8
     }
-
     buildTypes {
         release {
             minifyEnabled false

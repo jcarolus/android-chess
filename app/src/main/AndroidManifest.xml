@@ -7,7 +7,7 @@
       >
     <application android:icon="@drawable/icon" android:label="@string/app_name" 
     	android:theme="@style/ChessTheme" 
-    	android:debuggable="false">
+    >
     	
     	<provider android:name="MyPGNProvider"
             android:authorities="jwtc.android.chess.MyPGNProvider"
