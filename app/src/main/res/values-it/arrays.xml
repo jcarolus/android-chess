@@ -118,15 +118,6 @@
     	<item>@string/pgntool_import_opening</item>
     	<item>@string/pgntool_help</item>
     </string-array>
-    <string-array name="pieceSetArray">
-    	<item>merida</item>
-    	<item>elisa</item>
-    	<item>alpha</item>
-    	<item>kingdom</item>
-    	<item>magnetic</item>
-    	<item>usual</item>
-    	<item>highres</item>
-    </string-array>
     <string-array name="tileKeyArray">
     	<item></item>
     	<item>shade</item>

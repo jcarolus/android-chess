@@ -18,7 +18,7 @@ import android.view.View;
 public class ChessImageView extends View {
 
 	public static Bitmap[][] _arrPieceBitmaps = new Bitmap[2][6];
-	public static Bitmap _bmpBorder, _bmpSelect, _bmpSelectLight;
+	public static Bitmap _bmpSelect, _bmpSelectLight;
 	public static Bitmap _bmpTile;
 	
 	//public static SVG _svgTest = null;
@@ -26,8 +26,6 @@ public class ChessImageView extends View {
 	// 5 colorschemes with 2 colors each
 	public static int[][] _arrColorScheme = new int[6][3];
 	public static int _colorScheme = 0;
-	//public static Bitmap _bmpBorder, _bmpSelect;
-	//public static Bitmap[] _arrFieldBitmaps = new Bitmap[2];
 	public static Paint _paint = new Paint();
 	public static Matrix _matrix = null;
 	public static Matrix _matrixTile = null;

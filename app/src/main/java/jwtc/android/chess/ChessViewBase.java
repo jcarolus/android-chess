@@ -137,17 +137,17 @@ public class ChessViewBase{
 		AssetManager am = _activity.getAssets();
 		SharedPreferences prefs = _activity.getSharedPreferences("ChessPlayer", Activity.MODE_PRIVATE);
 		
-		String sFolder = prefs.getString("pieceSet", "highres") + "/";
+		//String sFolder = prefs.getString("pieceSet", "highres") + "/";
+        String sFolder = "highres/";
 		String sPat  	= prefs.getString("tileSet", "");
 		
 		try{
 			
 			//ChessImageView._svgTest =  SVGParser.getSVGFromAsset(activity.getAssets(), "svg/kb.svg");
 			//ChessImageView._svgTest =  SVGParser.getSVGFromInputStream(am.open("svg/kb.svg"));
-			
-			ChessImageView._bmpBorder = BitmapFactory.decodeStream(am.open("merida/border" + (prefs.getBoolean("extrahighlight", false) ? "_extra" : "") + ".png"));
-			ChessImageView._bmpSelect = BitmapFactory.decodeStream(am.open("merida/select.png"));
-			ChessImageView._bmpSelectLight = BitmapFactory.decodeStream(am.open("merida/select_light.png"));
+
+			ChessImageView._bmpSelect = BitmapFactory.decodeStream(am.open(sFolder + "select.png"));
+			ChessImageView._bmpSelectLight = BitmapFactory.decodeStream(am.open(sFolder + "select_light.png"));
 			
 			if(sPat.length() > 0){
 				ChessImageView._bmpTile = BitmapFactory.decodeStream(am.open("tiles/" + sPat + ".png"));

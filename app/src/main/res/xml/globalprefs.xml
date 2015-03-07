@@ -18,15 +18,7 @@
 			android:title="@string/pref_colorscheme"
 			android:summary="@string/pref_colorscheme_desc"
 			android:key="colorSchemeHandle" />
-			
-		<ListPreference
-			android:title="@string/pref_pieceset"
-			android:summary="@string/pref_pieceset_desc"
-			android:key="pieceSet"
-			android:defaultValue="highres"
-			android:entries="@array/pieceSetArray"
-			android:entryValues="@array/pieceSetArray" />
-		
+
 		<ListPreference
 			android:title="@string/pref_tileset"
 			android:summary="@string/pref_tileset_desc"
