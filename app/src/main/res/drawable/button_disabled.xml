@@ -8,14 +8,6 @@
         android:right="6dp"
         android:bottom="6dp" />
     
-    <gradient
-        android:angle="90"
-        android:startColor="#333333"
-        android:centerColor="#444444"
-        android:endColor="#333333"
-        android:type="linear"
-        />
-    
    <stroke
         android:width="2dip"
         android:color="#00000000" />

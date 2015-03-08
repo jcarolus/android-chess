@@ -105,7 +105,6 @@ public class ChessImageView extends View {
         if(ChessImageView._bmpTile != null){
         	canvas.drawBitmap(_bmpTile, _matrixTile, _paint);
         }
-
         
         //_paint.setColor(Color.BLACK);
         if(_bmpBorder != null && (ico._selected || hasFocus())){
