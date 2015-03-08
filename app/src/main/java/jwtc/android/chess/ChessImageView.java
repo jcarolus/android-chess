@@ -18,7 +18,7 @@ import android.view.View;
 public class ChessImageView extends View {
 
 	public static Bitmap[][] _arrPieceBitmaps = new Bitmap[2][6];
-	public static Bitmap _bmpSelect, _bmpSelectLight;
+	public static Bitmap _bmpBorder, _bmpSelect, _bmpSelectLight;
 	public static Bitmap _bmpTile;
 	
 	//public static SVG _svgTest = null;
@@ -108,14 +108,12 @@ public class ChessImageView extends View {
 
         
         //_paint.setColor(Color.BLACK);
-        /*
-        if(ico._selected || hasFocus()){
+        if(_bmpBorder != null && (ico._selected || hasFocus())){
         	canvas.drawBitmap(_bmpBorder, _matrix, _paint);
         }
-        */
         
         if(ico._selectedPos){
-        	//if(ico._fieldColor == 0){ 
+        	//if(ico._fieldColor == 0){
         	//	canvas.drawBitmap(_bmpSelect, _matrix, _paint);
         	//} else {
         		canvas.drawBitmap(_bmpSelectLight, _matrix, _paint);

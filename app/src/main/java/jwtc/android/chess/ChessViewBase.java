@@ -145,6 +145,11 @@ public class ChessViewBase{
 			
 			//ChessImageView._svgTest =  SVGParser.getSVGFromAsset(activity.getAssets(), "svg/kb.svg");
 			//ChessImageView._svgTest =  SVGParser.getSVGFromInputStream(am.open("svg/kb.svg"));
+            if(prefs.getBoolean("extrahighlight", false)) {
+                ChessImageView._bmpBorder = BitmapFactory.decodeStream(am.open(sFolder + "border.png"));
+            } else {
+                ChessImageView._bmpBorder = null;
+            }
 
 			ChessImageView._bmpSelect = BitmapFactory.decodeStream(am.open(sFolder + "select.png"));
 			ChessImageView._bmpSelectLight = BitmapFactory.decodeStream(am.open(sFolder + "select_light.png"));
@@ -189,12 +194,12 @@ public class ChessViewBase{
 		// blue
 		ChessImageView._arrColorScheme[1][0] = 0xff28628b;
 		ChessImageView._arrColorScheme[1][1] = 0xff7dbdea;
-		ChessImageView._arrColorScheme[1][2] = 0xccf3ed4b;
+		ChessImageView._arrColorScheme[1][2] = 0xcc9fdef3;
 		
 		// green
 		ChessImageView._arrColorScheme[2][0] = 0xff8eb59b;
 		ChessImageView._arrColorScheme[2][1] = 0xffcae787;
-		ChessImageView._arrColorScheme[2][2] = 0xccf3ed4b;
+		ChessImageView._arrColorScheme[2][2] = 0xcc9ff3b4;
 		
 		// grey
 		ChessImageView._arrColorScheme[3][0] = 0xffc0c0c0;

@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
@@ -12,7 +13,7 @@
    height="45"
    id="svg3059"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="select_light.svg">
+   sodipodi:docname="border.svg">
   <metadata
      id="metadata3077">
     <rdf:RDF>
@@ -40,21 +41,49 @@
      inkscape:window-height="802"
      id="namedview3073"
      showgrid="false"
-     inkscape:zoom="16.444444"
-     inkscape:cx="4.1047292"
+     inkscape:zoom="11.627978"
+     inkscape:cx="2.511307"
      inkscape:cy="22.5"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg3059" />
-  <path
-     sodipodi:type="arc"
-     style="fill:#666666;fill-opacity:1;opacity:0.29999999999999999"
-     id="path2995"
-     sodipodi:cx="24.081081"
-     sodipodi:cy="24.689188"
-     sodipodi:rx="15.324325"
-     sodipodi:ry="15.324325"
-     d="m 39.405406,24.689188 a 15.324325,15.324325 0 1 1 -30.6486492,0 15.324325,15.324325 0 1 1 30.6486492,0 z"
-     transform="translate(-1.5810814,-2.189188)" />
+     inkscape:current-layer="svg3059"
+     inkscape:showpageshadow="false" />
+  <rect
+     style="opacity:0.3;fill:#ff0000;fill-rule:evenodd;stroke:none"
+     id="rect2990"
+     width="41"
+     height="2"
+     x="2"
+     y="41"
+     ry="1"
+     rx="0" />
+  <rect
+     style="opacity:0.3;fill:#ff0000;fill-rule:evenodd;stroke:none"
+     id="rect2991"
+     width="41"
+     height="2"
+     x="2"
+     y="2"
+     ry="1"
+     rx="0" />
+  <rect
+     style="opacity:0.3;fill:#ff0000;fill-rule:evenodd;stroke:none"
+     id="rect2992"
+     width="2"
+     height="37"
+     x="2"
+     y="4"
+     ry="1"
+     rx="0" />
+  <rect
+     style="opacity:0.3;fill:#ff0000;fill-rule:evenodd;stroke:none"
+     id="rect2993"
+     width="2"
+     height="37"
+     x="41"
+     y="4"
+     ry="1"
+     rx="0" />
+  
 </svg>
