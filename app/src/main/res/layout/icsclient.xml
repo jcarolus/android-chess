@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:background="@color/bgColor" android:id="@+id/LayoutMain"
+    >
+    
+    <ViewAnimator android:id="@+id/ViewAnimatorMain"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_marginTop="2dip"
+	>
+		
+<!-- 0 ############################################# -->	     
+	     <RelativeLayout android:id="@+id/ICSPlay" 
+	     	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	     >
+	     	 <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+		    	android:id="@+id/TablePlayerTop" 
+		    	android:background="@color/bgColorText"
+		    	android:stretchColumns="1"
+		    	android:layout_marginBottom="2dip"
+		    >
+		    	<TableRow>
+		    		<TextView android:id="@+id/TextViewClockTop"
+						android:layout_height="wrap_content" android:layout_width="wrap_content"
+						android:text="00:00" android:gravity="center_vertical"
+						style="@style/MyNormalTextStyle"
+						android:layout_marginLeft="8dip"
+					/>
+				    <TextView android:text="Player 2" android:id="@+id/TextViewTop" 
+				    	android:layout_height="wrap_content"
+				    	android:layout_width="fill_parent"   
+				    	style="@style/MyHeaderTextStyle"
+				    />	
+				     <TextView android:id="@+id/TextViewICSBoardNum"
+						android:text="# 0"
+						style="@style/MyHeaderTextStyle"
+						android:layout_width="48dip" android:layout_height="wrap_content"
+					/>
+		    	</TableRow>
+		    
+		    </TableLayout>
+	     
+			<include
+		        layout="@layout/board"
+		        android:layout_width="wrap_content" android:layout_height="wrap_content"
+		        android:id="@+id/includeboard" 
+		        android:layout_below="@id/TablePlayerTop"/>
+		 	<!--         
+		    <TextView android:layout_width="wrap_content" android:layout_height="320dip"
+		        android:id="@+id/includeboard" 
+		        android:layout_below="@id/TablePlayerTop"/>
+		     -->    
+		    <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+		    	android:id="@+id/TablePlayerBottom" android:layout_below="@id/includeboard"
+		    	android:layout_marginTop="2dip"
+		    	android:stretchColumns="1"
+		    	android:background="@color/bgColorText"
+		    >
+		    	<TableRow>
+			    	<TextView android:id="@+id/TextViewClockBottom"
+						android:layout_height="wrap_content" android:layout_width="wrap_content"
+						android:text="00:00" android:gravity="center_vertical"
+						style="@style/MyNormalTextStyle"
+						android:layout_marginLeft="8dip"
+					/>
+				    <TextView android:text="Player 1" android:id="@+id/TextViewBottom" 
+				    	android:layout_height="wrap_content" 
+				    	android:layout_width="fill_parent"  
+				    	style="@style/MyHeaderTextStyle"
+				    />
+				    <TextView android:id="@+id/TextViewICSBoardLastMove"
+						android:text="./.-."
+						style="@style/MyNormalTextStyle"
+						android:layout_width="70dip" android:layout_height="wrap_content"
+					/>
+		    	</TableRow>
+		    </TableLayout>
+		    
+		    <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+		    	android:id="@+id/LayoutPlayerControl" 
+		    	android:layout_below="@id/TablePlayerBottom"
+		    	android:background="@color/bgColorText"
+		    	android:layout_marginTop="2dip"
+		    >
+		    	<TableLayout android:id="@+id/TableICSPlayButtons" 
+					android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:layout_alignParentRight="true"
+					android:stretchColumns="0"
+				>	
+					<TableRow>
+					    <EditText android:id="@+id/EditICSBoard" 
+				   			android:layout_width="fill_parent" android:layout_height="wrap_content"
+				   			android:text=""
+				   		/>
+						<ImageButton android:id="@+id/ButtonICSQuickCmd" android:src="@drawable/collections_view_as_list"
+							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+						/>
+						<ImageButton android:id="@+id/ButtonICSChat" android:src="@drawable/social_chat"
+							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+						/>
+					</TableRow>
+				</TableLayout>
+				<!-- ############### -->
+				<ViewSwitcher android:id="@+id/ViewSitcherConfirmAndText" 
+					android:layout_width="fill_parent" android:layout_height="fill_parent"
+					android:layout_below="@id/TableICSPlayButtons"
+				>
+		    		<TextView android:text="Welcome to ICS, press menu to continue" android:id="@+id/TextViewICSPlayConsole"
+				     	android:layout_width="fill_parent" android:layout_height="wrap_content"
+				    	style="@style/MyTextStyle" 
+		    		/>
+		    		<TableLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+		    		    android:layout_marginTop="16dip"
+						android:stretchColumns="*">
+						<TableRow>
+							<Button android:id="@+id/ButtonCancelMove" 
+								android:text="@string/alert_cancel" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+							<Button android:id="@+id/ButtonConfirmMove"
+								android:text="Confirm" android:layout_width="fill_parent" android:layout_height="wrap_content"/>	
+		    			</TableRow>
+		    		</TableLayout>
+		    		
+	    		</ViewSwitcher>
+		    </RelativeLayout>
+		</RelativeLayout>
+		
+	 <!--  1  -->
+	    <RelativeLayout android:id="@+id/ICSLobby"
+	     	android:layout_width="fill_parent" android:layout_height="fill_parent" 
+	 	>
+			<TextView android:text="@string/title_loading" android:id="@+id/TextViewHeader" 
+	     		android:layout_width="fill_parent" android:layout_height="wrap_content" 
+	     		android:background="@color/bgColorText"
+	      		style="@style/MyHeaderTextStyle" 
+	     	/>
+	     	 <ViewAnimator android:id="@+id/ViewAnimatorLobby"
+	     	 	android:layout_below="@id/TextViewHeader"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:layout_marginTop="2dip"
+			>
+				<!--  0.0  -->
+		     	<ListView android:id="@+id/ICSPlayers" 
+		     		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		     	/>
+		     	<!--  0.1  -->
+		     	<ListView android:id="@+id/ICSGames" 
+		     		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		     	/>
+		     	<!--  0.2  -->
+		     	<ListView android:id="@+id/ICSWelcome" 
+					android:layout_width="fill_parent" android:layout_height="fill_parent" 
+				/>
+		     	<!--  0.3  -->
+				<RelativeLayout 
+		     		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		     	>
+		     		<TextView android:text="Touch to accept challenge" android:id="@+id/TextViewRefresh"
+		     			android:layout_width="fill_parent" android:layout_height="wrap_content"
+		     			style="@style/MySmallTextStyle"
+		     		/>
+		     		<ListView android:id="@+id/ICSChallenges" 
+		     			android:layout_below="@id/TextViewRefresh"
+		     			android:layout_width="fill_parent" android:layout_height="fill_parent"
+		     		/>
+		     	</RelativeLayout>
+		     	<!--  0.4  -->
+		     	<RelativeLayout 
+		     		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		     		android:gravity="center"
+		     	>
+			     	<ProgressBar android:layout_width="40dip" android:layout_height="40dip"
+			     		style="?android:attr/progressBarStyleLarge"
+			     	/>
+		     	</RelativeLayout>
+		     	<!--  0.5  -->
+		     	<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+		     	    android:background="@color/bgColorText"
+		     		android:gravity="center">
+		     		<TableLayout android:id="@+id/TableICSLogin" 
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:background="@color/bgColor"
+						android:stretchColumns="*"
+						android:gravity="center" 
+					>
+						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
+							<TextView android:text="Server" style="@style/MyLabelTextStyle"
+								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+							<TextView android:text="FICS" style="@style/MyLabelTextStyle"
+								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+						</TableRow>
+						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
+							<TextView android:text="@string/ics_client_handle" style="@style/MyLabelTextStyle"
+								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+							<EditText android:text="guest" android:id="@+id/EditICSHandle" 
+								android:layout_width="wrap_content" android:layout_height="wrap_content"
+								android:minWidth="100dip"
+							/>
+						</TableRow>
+						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
+							<TextView android:text="@string/ics_client_password" style="@style/MyLabelTextStyle"
+								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+							<EditText android:id="@+id/EditICSPwd" 
+								android:layout_width="wrap_content" android:layout_height="wrap_content" android:password="true"
+								android:minWidth="100dip"
+							/>
+						</TableRow>
+						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
+						<Button android:text="@string/button_register" android:id="@+id/ButICSRegister"
+							android:layout_alignParentLeft="true" 
+							android:layout_width="40dip" android:layout_height="wrap_content"/>
+						<Button android:text="@string/button_login" android:id="@+id/ButICSLogin"
+							android:layout_alignParentRight="true" 
+							android:layout_width="40dip" android:layout_height="wrap_content"/>
+						</TableRow>
+					</TableLayout>
+				</RelativeLayout>
+				<!-- 0.6 -->
+				<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+			        android:id="@+id/LayoutICSBoardConsole"
+			        android:padding="2dip"
+			        android:background="#ffffffff">
+			       
+				    <TableLayout android:id="@+id/TableConsoleEditAndButton" 
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:layout_alignParentBottom="true"
+						android:stretchColumns="0"
+					>	
+						<TableRow>
+							<EditText android:id="@+id/EditICSConsole" 
+					   			android:layout_width="fill_parent" android:layout_height="wrap_content"
+					   			android:text=""
+					   		/>
+							
+							<ImageButton android:id="@+id/ButtonICSConsoleQuickCmd" android:src="@drawable/collections_view_as_list"
+								android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+							/>
+						</TableRow>
+					</TableLayout>
+				    
+			        <ScrollView android:id="@+id/ScrollICSConsole"
+			        	android:layout_alignParentTop="true"
+			        	android:layout_width="fill_parent" android:layout_height="fill_parent"
+			        	android:layout_above="@id/TableConsoleEditAndButton"
+			        	>
+				        <TextView android:text="..." android:id="@+id/TextViewICSBoardConsole" 
+				        	android:layout_width="fill_parent" android:layout_height="wrap_content"
+				        	android:padding="2dip"
+				        	android:textColor="#ff000000" 
+				        	android:textSize="9sp"
+				        />
+			        </ScrollView>
+			   		
+			    </RelativeLayout>
+		     	<!--  0.7  -->
+		     	<ListView android:id="@+id/ICSStored" 
+					android:layout_width="fill_parent" android:layout_height="fill_parent" 
+				/>
+		     </ViewAnimator>
+	     </RelativeLayout>
+	     
+<!-- 2 ############################################# -->	
+		<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+	   		android:gravity="center"
+	   	>
+	   		<TextView android:text="Not connected" android:id="@+id/TextViewNotConnected" 
+	   			android:layout_width="fill_parent" android:layout_height="wrap_content"
+	   			style="@style/MyTextStyle"
+	   		/>
+	   		<Button android:id="@+id/ButtonLogin" android:text="Connect"
+	   			android:layout_below="@id/TextViewNotConnected"
+	   			android:layout_width="wrap_content" android:layout_height="wrap_content"
+	   		/>
+	   	</RelativeLayout>
+	   	
+	   	
+	   	
+	
+	</ViewAnimator>
+</RelativeLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:background="@color/bgColor"
+	>
+
+	<TableLayout android:id="@+id/LaoutAppTop"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:stretchColumns="0" android:background="@color/bgColorText" android:padding="10dip" 
+	>
+		<TableRow>
+			<TextView android:text="Chess TV Screen" 
+				android:layout_gravity="center_vertical" 
+				style="@style/MyTitleTextStyle"
+			/>
+		</TableRow>
+	</TableLayout>
+	<TableLayout android:layout_below="@+id/LaoutAppTop"
+	    android:layout_marginTop="2dip" android:paddingTop="10dip" 
+		android:layout_alignParentBottom="true" android:background="@color/bgColorText"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="fill_parent">
+	    <TableRow>
+		    <Button android:id="@+id/ButtonStartStopServer" android:text="@string/menu_start"
+		        android:layout_margin="10dip" android:padding="10dip"
+			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
+		    />
+		     <Button android:id="@+id/ButtonHelpConvergence" android:text="@string/menu_help"
+		        android:layout_margin="10dip" android:padding="10dip"
+			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
+		    />
+	    </TableRow>
+	    <TableRow>
+		    <TextView android:text="-" android:layout_width="0dip" 
+		        android:id="@+id/TextViewServerIpPort"
+		        android:layout_margin="10dip" android:padding="10dip"
+		        android:textSize="20sp"
+		        android:layout_height="wrap_content" android:layout_weight="2"/>
+	    </TableRow>
+	    <TableRow>
+		    <Button android:id="@+id/ButtonTestConvergence" android:text="@string/menu_test_convergence"
+		        android:layout_margin="10dip" android:padding="10dip"
+			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
+		    />
+		    <Button android:id="@+id/ButtonTestDial" android:text="@string/menu_test_DIAL"
+		        android:layout_margin="10dip" android:padding="10dip"
+			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
+		    />
+	    </TableRow>
+	</TableLayout>
+</RelativeLayout>

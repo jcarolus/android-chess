@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     
+     <PreferenceCategory android:title="Global settings">   
+		<CheckBoxPreference
+			android:title="@string/pref_wakelock"
+			android:defaultValue="false"
+			android:summary="@string/pref_wakelock_desc"
+			android:key="wakeLock" />
+
+		<CheckBoxPreference
+			android:title="@string/pref_fullscreen"
+			android:defaultValue="true"
+			android:summary="@string/pref_fullscreen_desc"
+			android:key="fullScreen" />
+
+		<Preference
+			android:title="@string/pref_colorscheme"
+			android:summary="@string/pref_colorscheme_desc"
+			android:key="colorSchemeHandle" />
+
+		<ListPreference
+			android:title="@string/pref_tileset"
+			android:summary="@string/pref_tileset_desc"
+			android:key="tileSet"
+			android:defaultValue=""
+			android:entries="@array/tileArray"
+			android:entryValues="@array/tileKeyArray" />
+
+		<CheckBoxPreference
+			android:title="@string/pref_showLastMove"
+			android:defaultValue="true"
+			android:summary="@string/pref_showLastMove_desc"
+			android:key="showLastMove" />
+		
+		<CheckBoxPreference
+			android:title="@string/pref_showCoords"
+			android:defaultValue="false"
+			android:summary="@string/pref_showCoords_desc"
+			android:key="showCoords" />
+		
+		<Preference
+			android:title="@string/pref_sound"
+			android:summary="@string/pref_sound_desc"
+			android:key="soundHandle" />
+		
+		
+		<CheckBoxPreference
+			android:title="@string/pref_extrahighlight"
+			android:defaultValue="false"
+			android:summary="@string/pref_extrahighlight_desc"
+			android:key="extrahighlight" />
+		
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="Play settings">
+		<CheckBoxPreference
+			android:title="@string/pref_onLoadJumpToLastMove"
+			android:defaultValue="false"
+			android:summary="@string/pref_onLoadJumpToLastMove_desc"
+			android:key="onLoadJumpToLastMove" />
+		<CheckBoxPreference 
+		    android:title="@string/pref_speech"
+		    android:defaultValue="false"
+		    android:summary="@string/pref_speech_desc"
+		    android:key="speechNotification"
+		    />
+		<CheckBoxPreference 
+		    android:title="@string/pref_eco"
+		    android:defaultValue="true"
+		    android:summary="@string/pref_eco_desc"
+		    android:key="showECO"
+		    />
+		<!-- 
+		<ListPreference
+			android:title="@string/pref_uci"
+			android:summary="@string/pref_uci_desc"
+			android:key="UCIEngine"
+			android:defaultValue="default"
+			android:entries="@array/UCIArray"
+			android:entryValues="@array/UCIArray" />
+		 -->
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="Puzzle settings">
+	    <CheckBoxPreference
+			android:title="@string/pref_puzzle_show_seekbar"
+			android:defaultValue="true"
+			android:summary="@string/pref_puzzle_show_seekbar_desc"
+			android:key="PuzzleShowSeekBar" />
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="Play online settings">
+		<CheckBoxPreference
+			android:title="@string/pref_icsconfirmmove"
+			android:defaultValue="true"
+			android:summary="@string/pref_icsconfirmmove_desc"
+			android:key="ICSConfirmMove" />
+		<Preference
+			android:title="@string/pref_icscustomcommand"
+			android:summary="@string/pref_icscustomcommand_desc"
+			android:key="icscustomcommandHandle" />
+		
+		<CheckBoxPreference
+			android:title="@string/pref_icsautosought"
+			android:defaultValue="true"
+			android:summary="@string/pref_icsautosought_desc"
+			android:key="ICSAutoSought" />
+		
+	</PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="start_menu">
+		<item>@string/start_play</item>
+		<item>@string/start_practice</item>
+		<item>@string/start_puzzles</item>
+		<item>@string/start_ics</item>
+		<item>@string/start_globalpreferences</item>
+		<item>@string/start_about</item>
+		<item>@string/start_pgn</item>
+		<item>@string/start_exit</item>
+	</string-array>
+    <string-array name="levels_ply">
+        <item>1 ply</item>
+        <item>2 ply</item>
+        <item>3 ply</item>
+        <item>4 ply</item>
+        <item>5 ply</item>
+        <item>6 ply</item>
+        <item>7 ply</item>
+        <item>8 ply</item>
+        <item>9 ply</item>
+        <item>10 ply</item>
+    </string-array>
+    <string-array name="levels_time">
+        <item>@string/choice_level_1</item>
+        <item>@string/choice_level_2</item>
+        <item>@string/choice_level_3</item>
+        <item>@string/choice_level_4</item>
+        <item>@string/choice_level_5</item>
+        <item>@string/choice_level_6</item>
+        <item>@string/choice_level_7</item>
+        <item>@string/choice_level_8</item>
+        <item>@string/choice_level_9</item>
+        <item>@string/choice_level_10</item>
+    </string-array>
+     <string-array name="promotionpieces">
+        <item>@string/choice_queen</item>
+        <item>@string/choice_rook</item>
+        <item>@string/choice_bishop</item>
+        <item>@string/choice_knight</item>
+    </string-array>
+    <string-array name="playmodes">
+        <item>You vs Android</item>
+        <item>Android vs you</item>
+        <item>Playing board</item>
+    </string-array>
+    <string-array name="clockchoices">
+    	<item>no clock</item>
+    	<item>2 minutes</item>
+    	<item>5 minutes</item>
+    	<item>10 minutes</item>
+    	<item>30 minutes</item>
+    </string-array>
+    <string-array name="colorschemes">
+        <item>Yellow</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Grey</item>
+        <item>Brown</item>
+        <item>Red</item>
+    </string-array>
+    <!-- 
+    <integer-array name="colorscheme_indexes">
+        <item>0</item>
+        <item>2</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </integer-array>
+     -->
+    <string-array name="options_wakelock">
+    	<item>Use wake lock</item>
+    	<item>Do not use wake lock</item>
+    </string-array>
+     <string-array name="match_time_minutes">
+        <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
+        <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
+        <item>20</item><item>30</item><item>40</item><item>60</item>
+    </string-array>
+    <string-array name="match_time_increments">
+        <item>0</item><item>2</item><item>3</item><item>4</item>
+        <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
+        <item>20</item><item>30</item><item>40</item><item>60</item>
+    </string-array>
+    <string-array name="match_rated">
+    	<item>@string/choice_match_unrated</item>
+    	<item>@string/choice_match_rated</item>
+    </string-array>
+    <string-array name="match_variant">
+    	<item>Standard</item>
+    	<item>Chess 960 (experimental)</item>
+    </string-array>
+    <string-array name="field_files">
+    	<item>none</item>
+    	<item>a</item>
+    	<item>b</item>
+    	<item>c</item>
+    	<item>d</item>
+    	<item>e</item>
+    	<item>f</item>
+    	<item>g</item>
+    	<item>h</item>
+    </string-array>
+    <string-array name="pgn_tool_menu">
+    	<item>@string/pgntool_export_explanation</item>
+    	<item>@string/pgntool_import_explanation</item>
+    	<item>@string/pgntool_delete_explanation</item>
+    	<!-- <item>@string/pgntool_add_db_explanation</item> -->
+    	<item>@string/pgntool_create_db_explanation</item>
+    	<item>@string/pgntool_point_db_explanation</item>
+    	<item>@string/pgntool_point_uci_engine</item>
+    	<item>@string/pgntool_unset_uci_engine</item>
+    	<item>@string/pgntool_create_practice_explanation</item>
+    	<!-- <item>@string/pgntool_import_practice</item> -->
+    	<item>@string/pgntool_reset_practice</item>
+    	<item>@string/pgntool_import_puzzle</item>
+    	<item>@string/pgntool_import_opening</item>
+    	<item>@string/pgntool_help</item>
+    </string-array>
+    <string-array name="tileKeyArray">
+    	<item></item>
+    	<item>shade</item>
+    	<item>shade_bottom</item>
+    	<item>stripes</item>
+    	<item>clouds</item>
+    	<item>circuit</item>
+    </string-array>
+    <string-array name="tileArray">
+    	<item>none</item>
+    	<item>double shade</item>
+    	<item>single shade</item>
+    	<item>stripes</item>
+    	<item>clouds</item>
+    	<item>circuit</item>
+    </string-array>
+    <string-array name="UCIArray">
+    	<item>default</item>
+    	<item>robollito</item>
+    	<item>bik</item>
+    </string-array>
+</resources>

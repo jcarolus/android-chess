@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="jwtc.android.chess"
+      android:versionCode="116"
+      android:versionName="8.4.4"
+      android:installLocation="auto"
+      >
+    <application android:icon="@drawable/icon" android:label="@string/app_name" 
+    	android:theme="@style/ChessTheme" 
+    >
+    	
+    	<provider android:name="MyPGNProvider"
+            android:authorities="jwtc.android.chess.MyPGNProvider"
+        />
+        <provider android:name=".puzzle.MyPuzzleProvider"
+            android:authorities="jwtc.android.chess.puzzle.MyPuzzleProvider"
+        />
+    	<activity android:name=".start" android:label="@string/app_name"
+    	>
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" /> 
+  				<category android:name="android.intent.category.LAUNCHER" /> 
+  			</intent-filter>
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+  		<activity
+	        android:name=".ChessPreferences"
+	        android:label="@string/globalpreferences">
+		</activity>
+		<activity
+	        android:name=".HtmlActivity"
+	        android:label="@string/app_name_help">
+		</activity>
+		<activity android:name=".main" android:label="@string/app_name_play">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  			<intent-filter> 
+            	<action android:name="android.intent.action.VIEW" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            	<data android:mimeType="application/x-chess-pgn" />
+            </intent-filter>
+  		</activity>
+  		<activity android:name=".options" android:label="@string/app_name">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+		<activity android:name=".setup" android:label="@string/app_name_setup">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  			<intent-filter> 
+            	<action android:name="android.intent.action.VIEW" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            	<data android:mimeType="application/x-chess-fen" />
+            </intent-filter>
+  		</activity>
+  		<activity android:name=".GamesListView" android:label="@string/app_name_save_games">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+		<activity android:name="jwtc.android.chess.puzzle.puzzle" android:label="@string/app_name">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+  		<activity android:name="jwtc.android.chess.puzzle.practice" android:label="@string/app_name">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+  		<!-- <service android:name="jwtc.android.chess.ics.ICSService"/> -->
+  		<activity android:name="jwtc.android.chess.ics.ICSClient" android:label="@string/app_name_playonline">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+  		<activity android:name="jwtc.android.chess.convergence.ConvergenceActivity" android:label="@string/app_name">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+  		<activity android:name="jwtc.android.chess.ics.CustomCommands" android:label="@string/globalpreferences">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+  		<activity android:name="jwtc.android.chess.tools.pgntool" android:label="@string/app_name_pgntools">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+  		<activity android:name="jwtc.android.chess.tools.FileListView" android:label="@string/app_name">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  		</activity>
+  		<activity android:name="jwtc.android.chess.tools.importactivity" android:label="@string/app_name_import">
+			<intent-filter>
+  				<action android:name="android.intent.action.VIEW" /> 
+  			</intent-filter>
+  			<intent-filter> 
+            	<action android:name="android.intent.action.VIEW" />
+            	<category android:name="android.intent.category.DEFAULT" />
+            	<data android:mimeType="application/x-chess-pgn" />
+            </intent-filter>
+  		</activity>
+    </application>
+    <supports-screens 
+    	android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:anyDensity="true" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="8"/>
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.FULLSCREEN" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+</manifest>

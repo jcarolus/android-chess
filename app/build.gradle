@@ -1,0 +1,26 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        config {
+            storeFile file('/Users/jcarolus/Projecten/Chess/android-keystore')
+        }
+    }
+    compileSdkVersion 8
+    buildToolsVersion "21.1.2"
+    defaultConfig {
+        applicationId "jwtc.android.chess"
+        minSdkVersion 4
+        targetSdkVersion 8
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:18.0.0'
+}
