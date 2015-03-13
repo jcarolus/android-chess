@@ -78,7 +78,7 @@
 <string name="alert_ok">OK</string>
 
 <string name="title_challenge">Challenge</string>
-<string name="title_loading">Loading...</string>
+<string name="title_loading">Loading&#8230;</string>
 <string name="title_error">Error</string>
 <string name="title_offers_abort">Abort request</string>
 <string name="title_offers_takeback">Take back request</string>
@@ -193,8 +193,8 @@
 
 <string name="msg_illegal_move">Illegal move</string>
 <string name="msg_state_format">%1$s</string>
-<string name="msg_thinking">Thinking...</string>
-<string name="msg_wait">Please wait...</string>
+<string name="msg_thinking">Thinking&#8230;</string>
+<string name="msg_wait">Please wait&#8230;</string>
 <string name="msg_calc_format">Move %1$s\tEvaluations %2$s</string>
 <string name="msg_calc_summary_format">Engine summary: %1$s</string>
 <string name="msg_setup_turn">Turn</string>
@@ -204,7 +204,7 @@
 <string name="msg_setup_castle_white">White</string>
 <string name="msg_setup_castle_black">Black</string>
 <string name="msg_setup_extra">Press menu for setup options</string>
-<string name="msg_qr_code_on_clipboard">Link to QR code is on your clipboard...</string>
+<string name="msg_qr_code_on_clipboard">Link to QR code is on your clipboard&#8230;</string>
 <string name="chess960_position_nr">"Chess 960 position nr %d"</string>
 <string name="msg_ics_enter_handle">Please enter your handle</string>
 <string name="msg_ics_enter_password">Please enter your password</string>
@@ -273,7 +273,7 @@ E-mail could not be created.
 <string name="ics_menu_stop_puzzle">Stop puzzle</string>
 
 <string name="ics_progress_title_login">Log in</string>
-<string name="ics_progress_msg_login">Logging you in...</string>
+<string name="ics_progress_msg_login">Logging you in&#8230;</string>
 <string name="ics_offers_abort">Your opponent would like to abort the game.\nDo you wish to accept?</string>
 <string name="ics_offers_draw">Your opponent offers you a draw.\nDo you wish to accept?</string>
 <string name="ics_offers_adjourn">Your opponent would like to adjourn the game.\nDo you wish to accept?</string>

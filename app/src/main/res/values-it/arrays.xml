@@ -11,16 +11,16 @@
 		<item>@string/start_exit</item>
 	</string-array>
     <string-array name="levels_ply">
-        <item>1 ply</item>
-        <item>2 ply</item>
-        <item>3 ply</item>
-        <item>4 ply</item>
-        <item>5 ply</item>
-        <item>6 ply</item>
-        <item>7 ply</item>
-        <item>8 ply</item>
-        <item>9 ply</item>
-        <item>10 ply</item>
+        <item>1 mossa</item>
+        <item>2 mosse</item>
+        <item>3 mosse</item>
+        <item>4 mosse</item>
+        <item>5 mosse</item>
+        <item>6 mosse</item>
+        <item>7 mosse</item>
+        <item>8 mosse</item>
+        <item>9 mosse</item>
+        <item>10 mosse</item>
     </string-array>
     <string-array name="levels_time">
         <item>@string/choice_level_1</item>
@@ -70,8 +70,8 @@
     </integer-array>
      -->
     <string-array name="options_wakelock">
-    	<item>Usa sospensione</item>
-    	<item>Non usare sospensione</item>
+    	<item>Usa blocco sospensione</item>
+    	<item>Non usare blocco sospensione</item>
     </string-array>
      <string-array name="match_time_minutes">
         <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
