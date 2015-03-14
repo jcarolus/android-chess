@@ -100,7 +100,7 @@
 <string name="title_pick_colorscheme">Scegli colore</string>
 <string name="title_pick_playmode">Scegli modalità di gioco</string>
 <string name="title_create_new_line">Crea nuova linea?</string>
-<string name="title_chess960_manual_random">Scacchi 960 :: scelta del numero manuale o casuale?</string>
+<string name="title_chess960_manual_random">Scacchi 960 :: numero di posizione scelto manualmente o casuale?</string>
 <string name="title_edit_or_delete">Modifica o cancella?</string>
 <string name="title_edit_command">Modifica comando</string>
 <string name="title_ics_mode_idle">In attesa</string>
@@ -115,7 +115,7 @@
 <string name="menu_new">Nuova partita</string>
 <string name="menu_clear">Libera</string>
 <string name="menu_options">Opzioni</string>
-<string name="menu_email_game">Gioca via e-mail</string>
+<string name="menu_email_game">Invia partita via email</string>
 <string name="menu_clip_pgn">Copia partita negli appunti</string>
 <string name="menu_fromclip">Richiama partita dagli appunti</string>
 <string name="menu_save_game">Salva partita</string>
@@ -147,7 +147,7 @@
 <string name="menu_subview_guess">Indovina la mossa</string>
 <string name="menu_subview_blindfold">Modalità alla cieca</string>
 
-<string name="options_play_android">Giocatore vs Android</string>
+<string name="options_play_android">Gioca vs Android</string>
 <string name="options_960">Scacchi 960 - Fischer Random</string>
 <string name="options_load_database">Carica database aperture</string>
 <string name="options_auto_flip">Auto-inversione scacchiera</string>
@@ -179,7 +179,7 @@
 <string name="choice_level_8">1 minuto</string>
 <string name="choice_level_9">5 minuti</string>
 <string name="choice_level_10">15 minuti</string>
-<string name="choice_queen">Regina</string>
+<string name="choice_queen">Donna</string>
 <string name="choice_rook">Torre</string>
 <string name="choice_bishop">Alfiere</string>
 <string name="choice_knight">Cavallo</string>
@@ -205,7 +205,7 @@
 <string name="msg_setup_castle_black">Nero</string>
 <string name="msg_setup_extra">Premi menu per le opzioni di setup</string>
 <string name="msg_qr_code_on_clipboard">Link al QR Code copiato negli appunti&#8230;</string>
-<string name="chess960_position_nr">"Scacchi 960 positione n. %d"</string>
+<string name="chess960_position_nr">"Scacchi 960 posizione n. %d"</string>
 <string name="msg_ics_enter_handle">Inserisci il tuo nome</string>
 <string name="msg_ics_enter_password">Inserisci la password</string>
 <string name="msg_progress">Progresso:</string>
@@ -218,7 +218,7 @@
 La scheda SD deve essere montata per elaborare la tua richiesta.
 </string>
 <string name="err_send_email">
-L\'e-mail potrebbe non essere stata creata.
+L\'email potrebbe non essere stata creata.
 </string>
 <string name="err_load_fen">La posizione FEN potrebbe non essere stata caricata</string>
 <string name="err_load_pgn">La storia PGN potrebbe non essere stata caricata</string>
@@ -229,19 +229,19 @@ L\'e-mail potrebbe non essere stata creata.
 
 <string name="pgntool_export_explanation">Esporta il database di gioco nella scheda SD</string>
 <string name="pgntool_import_explanation">Importa le partite nel database di gioco</string>
-<string name="pgntool_delete_explanation">Cancella tutte le partite nel database di gioco</string>
+<string name="pgntool_delete_explanation">Cancella tutte le partite dal database di gioco</string>
 <string name="pgntool_add_db_explanation">Aggiungi partite al database delle aperture</string>
 <string name="pgntool_create_db_explanation">Crea database delle aperture</string>
 <string name="pgntool_point_db_explanation">Imposta database delle aperture</string>
 <string name="pgntool_point_uci_engine">Installa motore UCI</string>
 <string name="pgntool_unset_uci_engine">Disinstalla motore UCI</string>
 <string name="pgntool_help">Aiuto</string>
-<string name="pgntool_numexport">Esportata partita %1$d in chess.pgn</string>
+<string name="pgntool_numexport">Partita %1$d esportata in chess.pgn</string>
 <string name="pgntool_confirm_delete">Sei sicuro?</string>
 <string name="pgntool_deleted">Tutte le partite sono state cancellate</string>
 <string name="pgntool_create_practice_explanation">Crea set di pratica</string>
 <string name="pgntool_import_practice">Importa set di pratica</string>
-<string name="pgntool_reset_practice">Azzera pratica - ricomincia</string>
+<string name="pgntool_reset_practice">Azzera set di pratica</string>
 <string name="pgntool_confirm_practice_reset">Sei sicuro di voler azzerare?</string>
 <string name="pgntool_import_puzzle">Importa problemi</string>
 <string name="pgntool_import_opening">Usato dallo sviluppatore</string>

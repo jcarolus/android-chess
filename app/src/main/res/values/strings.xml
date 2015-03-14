@@ -241,7 +241,7 @@ E-mail could not be created.
 <string name="pgntool_deleted">All games deleted</string>
 <string name="pgntool_create_practice_explanation">Create practice set</string>
 <string name="pgntool_import_practice">Import practice set</string>
-<string name="pgntool_reset_practice">Reset practice - start over </string>
+<string name="pgntool_reset_practice">Reset practice - start over</string>
 <string name="pgntool_confirm_practice_reset">Are you sure you want to reset?</string>
 <string name="pgntool_import_puzzle">Import puzzles</string>
 <string name="pgntool_import_opening">Used by developer</string>
