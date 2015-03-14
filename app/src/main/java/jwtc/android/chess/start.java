@@ -78,7 +78,7 @@ public class start extends Activity/*ListActivity*/  {
 					} 
 					
 				} catch(Exception ex){
-					Toast t = Toast.makeText(start.this, "Could not start the activity", Toast.LENGTH_LONG);
+					Toast t = Toast.makeText(start.this, R.string.toast_could_not_start_activity, Toast.LENGTH_LONG);
 					t.setGravity(Gravity.BOTTOM, 0, 0);
 					t.show();
 				}

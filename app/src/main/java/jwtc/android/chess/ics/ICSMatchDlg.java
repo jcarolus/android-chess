@@ -84,7 +84,7 @@ public class ICSMatchDlg extends Dialog {
 				}
 				Log.i("ICSMatchDlg", s);
 				_parent.sendString(s);
-				Toast.makeText(_parent, "Challenge posted", Toast.LENGTH_SHORT).show();
+				Toast.makeText(_parent, R.string.toast_challenge_posted, Toast.LENGTH_SHORT).show();
 			}
         });
 	    _butCancel = (Button)findViewById(R.id.ButtonMatchCancel);
