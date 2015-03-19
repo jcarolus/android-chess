@@ -45,15 +45,15 @@ public class ConvergenceActivity extends Activity  {
         	
         });
         
-        Button butTestConvergence = (Button)findViewById(R.id.ButtonTestConvergence);
-        butTestConvergence.setOnClickListener(new OnClickListener(){
+        Button butTestUPnP = (Button)findViewById(R.id.ButtonTestDLNA);
+        butTestUPnP.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				Connection con = new Connection();
-				con.searchDevice(Connection.TYPE_CONVERGENCE);
-			}
-        	
+            @Override
+            public void onClick(View v) {
+                Connection con = new Connection();
+                con.searchDevice(Connection.TYPE_DLNA);
+            }
+
         });
         
         Button butTestDial = (Button)findViewById(R.id.ButtonTestDial);

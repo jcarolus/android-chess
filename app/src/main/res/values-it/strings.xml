@@ -135,7 +135,7 @@
 <string name="menu_set_clock">Imposta orologio</string>
 <string name="menu_start">Avvia</string>
 <string name="menu_stop">Ferma</string>
-<string name="menu_test_convergence">Testa convergenza</string>
+<string name="menu_test_DLNA">Testa DLNA</string>
 <string name="menu_test_DIAL">Testa DIAL</string>
 
 <string name="menu_subview_title">Scegli sottocontrolli</string>

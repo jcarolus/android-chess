@@ -135,7 +135,7 @@
 <string name="menu_set_clock">Set clock</string>
 <string name="menu_start">Start</string>
 <string name="menu_stop">Stop</string>
-<string name="menu_test_convergence">Test convergence</string>
+<string name="menu_test_DLNA">Test DLNA</string>
 <string name="menu_test_DIAL">Test DIAL</string>
 
 <string name="menu_subview_title">Choose sub controls</string>

@@ -39,7 +39,7 @@
 		        android:layout_height="wrap_content" android:layout_weight="2"/>
 	    </TableRow>
 	    <TableRow>
-		    <Button android:id="@+id/ButtonTestConvergence" android:text="@string/menu_test_convergence"
+		    <Button android:id="@+id/ButtonTestDLNA" android:text="@string/menu_test_DLNA"
 		        android:layout_margin="10dip" android:padding="10dip"
 			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
 		    />
