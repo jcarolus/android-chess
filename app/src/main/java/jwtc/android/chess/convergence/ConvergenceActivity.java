@@ -1,9 +1,7 @@
 package jwtc.android.chess.convergence;
 
-import jwtc.android.chess.convergence.RestServer;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -17,8 +15,8 @@ import jwtc.android.chess.*;
 public class ConvergenceActivity extends Activity  {
 	
 	//private ListView _lvStart;
-	private RestServer _restServer;
-	public static final String TAG = "start";
+	private JSONPServer _JSONPServer;
+	public static final String TAG = "convergence.Activity";
 	protected TextView _tvIpPort;
 	protected Button _butStartStop;
 	/** Called when the activity is first created. */
@@ -31,7 +29,7 @@ public class ConvergenceActivity extends Activity  {
         setContentView(R.layout.convergence); 
 
         Log.i(TAG, "onCreate");
-        _restServer = null;
+        _JSONPServer = null;
         
         _tvIpPort = (TextView)findViewById(R.id.TextViewServerIpPort);
        
@@ -120,15 +118,15 @@ public class ConvergenceActivity extends Activity  {
 			Log.i(TAG, "toggleServer");
 			//SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
 			if(isAlive()){
-				_restServer.stop();
-				_restServer = null;
+				_JSONPServer.stop();
+				_JSONPServer = null;
 				_tvIpPort.setText(getString(R.string.msg_server_stopped));
 			} else {
 				//String sPort = prefs.getString("restServerPort", "8092");
-				//_restServer = new RestServer(Integer.parseInt(sPort));
-				_restServer = new RestServer(8092);
-				if(_restServer.start()){
-					String sAddr = RestServer.getIpAddress();
+				//_JSONPServer = new JSONPServer(Integer.parseInt(sPort));
+				_JSONPServer = new JSONPServer(8092);
+				if(_JSONPServer.start()){
+					String sAddr = JSONPServer.getIpAddress();
 					String sCode = "";
 					if(sAddr == null){
 						
@@ -151,11 +149,11 @@ public class ConvergenceActivity extends Activity  {
 						_tvIpPort.setText(getString(R.string.msg_your_code) + sCode + "\nIP: " + sAddr);
 					} else {
 						_tvIpPort.setText(getString(R.string.msg_not_valid_ip) + sAddr);
-						_restServer.stop();
-						_restServer = null;
+						_JSONPServer.stop();
+						_JSONPServer = null;
 					}
 				} else {
-					_restServer = null;
+					_JSONPServer = null;
 					_tvIpPort.setText(getString(R.string.msg_server));
 				}
 			}
@@ -166,12 +164,12 @@ public class ConvergenceActivity extends Activity  {
     }
     
     protected boolean isAlive(){
-    	if(_restServer == null){
+    	if(_JSONPServer == null){
     		Log.i(TAG, "isAlive -> restServer = null");
     		_butStartStop.setText(getString(R.string.menu_start));
     		return false;
     	}
-    	if(_restServer.isAlive()){
+    	if(_JSONPServer.isAlive()){
     		Log.i(TAG, "isAlive -> restServer.isAlive = true");
     		_butStartStop.setText(getString(R.string.menu_stop));
     		return true;

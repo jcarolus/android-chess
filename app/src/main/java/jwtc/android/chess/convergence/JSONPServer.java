@@ -14,15 +14,15 @@ import jwtc.chess.JNI;
 
 import android.util.Log;
 
-public class RestServer {
+public class JSONPServer {
 	private Thread m_thread;
-	public static final String TAG = "RestServer";
+	public static final String TAG = "JSONPServer";
 	protected JNI _jni;
 	protected int _portNumber;
 	protected ServerSocket _serverSocket;
 	protected boolean _run;
 	
-	public RestServer(int portNumber){
+	public JSONPServer(int portNumber){
 		//_jni = jni;
 		_portNumber 	= portNumber;
 		_run 			= true;
@@ -72,7 +72,7 @@ public class RestServer {
 		 			    }
 		 			    String outputLine;
 		 			    if(bValid){
-		 			    	outputLine = "HTTP/1.0 200 OK\r\n\r\nChessCallBack({\"FEN\":\"" + _jni.toFEN() + "\"});\r\n\r\n";
+		 			    	outputLine = "HTTP/1.0 200 OK\r\nContent-Type:application/javascript\r\n\r\nChessCallBack({\"FEN\":\"" + _jni.toFEN() + "\"});\r\n\r\n";
 		 			    	i++;
 		 			    } else {
 		 			    	outputLine = "HTTP/1.0 200 OK\r\n\r\n-\r\n\r\n";
@@ -133,7 +133,7 @@ public class RestServer {
                 }
             }
         } catch (Exception ex) {
-            Log.e("Socket exception in GetIP Address of Utilities", ex.toString());
+            Log.e(TAG, "Socket exception in GetIP Address of Utilities " + ex.toString());
         }
         return null; 
 	}
