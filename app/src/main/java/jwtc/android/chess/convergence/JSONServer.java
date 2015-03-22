@@ -14,15 +14,20 @@ import jwtc.chess.JNI;
 
 import android.util.Log;
 
-public class JSONPServer {
+public class JSONServer {
 	private Thread m_thread;
-	public static final String TAG = "JSONPServer";
+	public static final String TAG = "JSONServer";
+    public static final int REQ_INVALID = 0;
+    public static final int REQ_JSON = 1;
+    public static final int REQ_HEAD = 2;
+    public static final int REQ_REDIRECT = 3;
+
 	protected JNI _jni;
 	protected int _portNumber;
 	protected ServerSocket _serverSocket;
 	protected boolean _run;
 	
-	public JSONPServer(int portNumber){
+	public JSONServer(int portNumber){
 		//_jni = jni;
 		_portNumber 	= portNumber;
 		_run 			= true;
@@ -45,12 +50,13 @@ public class JSONPServer {
 		m_thread = new Thread(new Runnable(){
 
  			public void run() {
- 				int i = 0;
+ 				int req;
  				try {
  					Log.i(TAG, "Trying to open socket");
-	 				
-	 				
+
 	 				while(_run){
+                        req = REQ_INVALID;
+
 		 				Log.i(TAG, "Waiting for client socket");
 		 			    Socket clientSocket = _serverSocket.accept();
 		 			    Log.i(TAG, "Accepted");
@@ -58,29 +64,39 @@ public class JSONPServer {
 		 			    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		 			    Log.i(TAG, "Start read from client");
 		 			    
-		 			    boolean bValid = false;
 		 			    String inputLine;
 		 			    while ((inputLine = in.readLine()) != null) {
 		 				   Log.i(TAG, "Got [" + inputLine + "]");
 		 				   if(inputLine.indexOf("GET / ") == 0){
-		 					   Log.i(TAG, "Valid request");
-		 					  bValid = true;
+                               req = REQ_JSON;
 		 				   }
+                            if(inputLine.indexOf("HEAD / ") == 0){
+                                req = REQ_HEAD;
+                            }
 		 				   if(inputLine.length() == 0){
 		 					   break;
 		 				   }
 		 			    }
-		 			    String outputLine;
-		 			    if(bValid){
-		 			    	outputLine = "HTTP/1.0 200 OK\r\nContent-Type:application/javascript\r\n\r\nChessCallBack({\"FEN\":\"" + _jni.toFEN() + "\"});\r\n\r\n";
-		 			    	i++;
-		 			    } else {
-		 			    	outputLine = "HTTP/1.0 200 OK\r\n\r\n-\r\n\r\n";
-		 			    }
-		 			    Log.i(TAG, "Writing response " + i);
+		 			    String outputLine = "HTTP/1.0 400 Bad request\r\n\r\n-\r\n\r\n";
+
+                        switch(req){
+                            case REQ_JSON:
+                                outputLine = "HTTP/1.0 200 OK\r\n" +
+                                        "Access-Control-Allow-Origin: *\r\n" +
+                                        "Content-Type:application/json\r\n\r\n{\"FEN\":\"" + _jni.toFEN() + "\"}\r\n\r\n";
+                                break;
+                            case REQ_HEAD:
+                                outputLine = "HTTP/1.0 200 OK\r\n" +
+                                        "Access-Control-Allow-Origin: *:*\r\n\r\n";
+                                break;
+                            case REQ_REDIRECT:
+                                outputLine = "HTTP/1.0 302\r\nLocation:http://www.jwtc.nl/tv/\r\n\r\n";
+                                break;
+                        }
+
+		 			    Log.i(TAG, outputLine);
 		 			    out.println(outputLine);
 		 			    clientSocket.close();
-		 			    Log.i(TAG, "Closed client socket");
 	 				}
 	 				_serverSocket.close();
  				} catch(Exception ex){

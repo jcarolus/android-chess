@@ -15,7 +15,7 @@ import jwtc.android.chess.*;
 public class ConvergenceActivity extends Activity  {
 	
 	//private ListView _lvStart;
-	private JSONPServer _JSONPServer;
+	private JSONServer _JSONServer;
 	public static final String TAG = "convergence.Activity";
 	protected TextView _tvIpPort;
 	protected Button _butStartStop;
@@ -29,7 +29,7 @@ public class ConvergenceActivity extends Activity  {
         setContentView(R.layout.convergence); 
 
         Log.i(TAG, "onCreate");
-        _JSONPServer = null;
+        _JSONServer = null;
         
         _tvIpPort = (TextView)findViewById(R.id.TextViewServerIpPort);
        
@@ -43,24 +43,14 @@ public class ConvergenceActivity extends Activity  {
         	
         });
         
-        Button butTestUPnP = (Button)findViewById(R.id.ButtonTestDLNA);
-        butTestUPnP.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                Connection con = new Connection();
-                con.searchDevice(Connection.TYPE_DLNA);
-            }
-
-        });
-        
         Button butTestDial = (Button)findViewById(R.id.ButtonTestDial);
         butTestDial.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				Connection con = new Connection();
-				con.searchDevice(Connection.TYPE_DIAL);
+				con.searchDevice();
 			}
         	
         });
@@ -118,42 +108,30 @@ public class ConvergenceActivity extends Activity  {
 			Log.i(TAG, "toggleServer");
 			//SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
 			if(isAlive()){
-				_JSONPServer.stop();
-				_JSONPServer = null;
+				_JSONServer.stop();
+				_JSONServer = null;
 				_tvIpPort.setText(getString(R.string.msg_server_stopped));
 			} else {
 				//String sPort = prefs.getString("restServerPort", "8092");
-				//_JSONPServer = new JSONPServer(Integer.parseInt(sPort));
-				_JSONPServer = new JSONPServer(8092);
-				if(_JSONPServer.start()){
-					String sAddr = JSONPServer.getIpAddress();
+				//_JSONServer = new JSONServer(Integer.parseInt(sPort));
+				_JSONServer = new JSONServer(8092);
+				if(_JSONServer.start()){
+					String sAddr = JSONServer.getIpAddress();
 					String sCode = "";
 					if(sAddr == null){
 						
 					} else {
-						if(sAddr.startsWith("192.168.1.")){
-							sCode += "9" + sAddr.substring(10);
-						} else if(sAddr.startsWith("192.168.")){
-							sCode += "9" + ipPart(sAddr.substring(8));
-						} else if(sAddr.startsWith("10.0.1.")){
-							sCode += "1" + sAddr.substring(7);
-						} else if(sAddr.startsWith("10.0.")){
-							sCode += "2" + ipPart(sAddr.substring(5));
-						} else if(sAddr.startsWith("172.16.1.")){
-							sCode += "7" + sAddr.substring(9);
-						} else if(sAddr.startsWith("172.16.")){
-							sCode += "8" + ipPart(sAddr.substring(7));
-						}
+                        sCode = ipPart(sAddr);
 					}
 					if(sCode.length() > 0){
 						_tvIpPort.setText(getString(R.string.msg_your_code) + sCode + "\nIP: " + sAddr);
 					} else {
 						_tvIpPort.setText(getString(R.string.msg_not_valid_ip) + sAddr);
-						_JSONPServer.stop();
-						_JSONPServer = null;
+						_JSONServer.stop();
+						_JSONServer = null;
 					}
 				} else {
-					_JSONPServer = null;
+					_JSONServer = null;
 					_tvIpPort.setText(getString(R.string.msg_server));
 				}
 			}
@@ -164,12 +142,12 @@ public class ConvergenceActivity extends Activity  {
     }
     
     protected boolean isAlive(){
-    	if(_JSONPServer == null){
+    	if(_JSONServer == null){
     		Log.i(TAG, "isAlive -> restServer = null");
     		_butStartStop.setText(getString(R.string.menu_start));
     		return false;
     	}
-    	if(_JSONPServer.isAlive()){
+    	if(_JSONServer.isAlive()){
     		Log.i(TAG, "isAlive -> restServer.isAlive = true");
     		_butStartStop.setText(getString(R.string.menu_stop));
     		return true;

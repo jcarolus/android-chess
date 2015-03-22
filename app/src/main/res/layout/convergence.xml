@@ -39,10 +39,6 @@
 		        android:layout_height="wrap_content" android:layout_weight="2"/>
 	    </TableRow>
 	    <TableRow>
-		    <Button android:id="@+id/ButtonTestDLNA" android:text="@string/menu_test_DLNA"
-		        android:layout_margin="10dip" android:padding="10dip"
-			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
-		    />
 		    <Button android:id="@+id/ButtonTestDial" android:text="@string/menu_test_DIAL"
 		        android:layout_margin="10dip" android:padding="10dip"
 			    android:layout_width="0dip" android:layout_height="wrap_content" android:layout_weight="1"    
