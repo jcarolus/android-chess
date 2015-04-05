@@ -1,287 +1,303 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:background="@color/bgColor" android:gravity="center" android:id="@+id/LayoutMain"
-	>
-	
-	<RelativeLayout android:id="@+id/LayoutBoard"
-		android:layout_width="@dimen/boardSize" android:layout_height="fill_parent"
-		android:background="@color/bgColorText" android:gravity="center"
-	>
-		<include
-	        layout="@layout/board"
-	        android:layout_width="wrap_content" android:layout_height="wrap_content"
-	        android:id="@+id/includeboard" />
-	     
-	      <!--        
-		<TextView android:layout_width="@dimen/boardSize" android:layout_height="@dimen/boardSize"
-	        android:id="@+id/includeboard" 
-        />
-         -->
-    
+                android:layout_width="fill_parent" android:layout_height="fill_parent"
+                android:background="@color/bgColor" android:gravity="center" android:id="@+id/LayoutMain"
+    >
+
+    <RelativeLayout android:id="@+id/LayoutBoard"
+                    android:layout_width="@dimen/boardSize" android:layout_height="fill_parent"
+                    android:background="@color/bgColorText" android:gravity="center"
+        >
+        <include
+            layout="@layout/board"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/includeboard" />
+
+        <!--
+      <TextView android:layout_width="@dimen/boardSize" android:layout_height="@dimen/boardSize"
+          android:id="@+id/includeboard"
+      />
+       -->
+
     </RelativeLayout>
-	
-	<TableLayout android:id="@+id/LayoutTopClock"
-			android:layout_width="@dimen/boardSize" android:layout_height="20dp" android:background="@color/bgColorText"
-			android:layout_alignParentTop="true" android:layout_toRightOf="@id/LayoutBoard"
-			android:layout_marginLeft="2dp" android:layout_marginBottom="2dp"
-		>
-		<TableRow>
-			<ViewSwitcher android:id="@+id/ImageTurnOpp"
-				android:layout_height="20dp" android:layout_width="20dp"
-				android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
-			> 
-				<ImageView  
-					android:src="@drawable/turnblack"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-				/>
-				<ImageView  
-					android:src="@drawable/turnwhite"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-				/>
-			</ViewSwitcher>
-			<TextView android:id="@+id/TextViewClockTimeOpp"
-				android:layout_height="20dp" android:layout_width="50dp"
-				android:text="00:00" android:gravity="center_vertical"
-				style="@style/MySmallTextStyle"
-			/>
-			<TextView android:id="@+id/TextViewTopTitle" 
-				android:layout_width="fill_parent" android:layout_height="20dp"
-				style="@style/MySmallTextStyle"
-				android:text="Title..."  android:gravity="center_vertical"
-			/>
-		</TableRow>
-	</TableLayout>
-	
-	<TableLayout android:id="@+id/LayoutBottomClock" 
-		android:layout_width="@dimen/boardSize" android:layout_height="20dp" android:background="@color/bgColorText"
-		android:layout_toRightOf="@id/LayoutBoard" android:layout_alignParentBottom="true"
-		android:layout_marginLeft="2dp" android:layout_marginTop="2dp"
-		>
-		<TableRow android:gravity="center_vertical">
-			<ViewSwitcher android:id="@+id/ImageTurnMe"
-				android:layout_height="20dp" android:layout_width="20dp"
-				android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
-			> 
-				<ImageView  
-					android:src="@drawable/turnblack"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-				/>
-				<ImageView  
-					android:src="@drawable/turnwhite"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-				/>
-			</ViewSwitcher>
-			<TextView android:id="@+id/TextViewClockTimeMe"
-					android:layout_height="20dp" android:layout_width="50dp"
-					android:text="00:00"  android:gravity="center_vertical"
-					style="@style/MySmallTextStyle"
-				/>
-			<TextView android:id="@+id/TextViewTitle" 
-				android:layout_width="fill_parent" android:layout_height="20dp"
-				style="@style/MySmallTextStyle"
-				android:text="Title..."  android:gravity="center_vertical"
-			/>
-		</TableRow>
-	</TableLayout>
-	
-	<TableLayout android:id="@+id/LayoutPlayButtons"
-		android:layout_width="wrap_content" android:layout_height="fill_parent"
-		android:layout_below="@id/LayoutTopClock" android:layout_toRightOf="@id/LayoutBoard" android:layout_above="@id/LayoutBottomClock"
-		android:background="@color/bgColorText"
-		android:gravity="center_vertical" android:layout_marginLeft="2dip"
-		>
-		<TableRow>
-			<Button android:text="@string/button_new" android:id="@+id/ButtonNewGame" android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
-			    android:layout_marginLeft="2dip" android:layout_marginRight="2dip" 
-			/>
-		</TableRow>
-		<TableRow>
-		   <ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"
-				android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
-				android:layout_marginLeft="2dip" android:layout_marginRight="2dip"
-			/>
-		</TableRow>
-		<TableRow>
-			<ImageButton android:id="@+id/ButtonSave" android:src="@drawable/content_save"
-				android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
-				android:layout_marginLeft="2dip" android:layout_marginRight="2dip"
-			/>
-		</TableRow>
-		<TableRow>
-			<ImageButton android:id="@+id/ButtonPrevious" android:src="@drawable/navigation_previous_item" 
-				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-				android:layout_marginLeft="2dip" android:layout_marginRight="2dip"
-			/>
-		</TableRow>
-		<TableRow>
-			<ImageButton android:id="@+id/ButtonNext" android:src="@drawable/navigation_next_item" 
-				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-				android:layout_marginLeft="2dip" android:layout_marginRight="2dip"
-			/>
-		</TableRow>
-		<TableRow>
-			<ImageButton android:id="@+id/ButtonPlay" android:src="@drawable/av_play"  
-				android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
-				android:layout_marginLeft="2dip" android:layout_marginRight="2dip"
-			/>
-			<ProgressBar android:id="@+id/ProgressBarPlay" android:layout_height="40dp" android:layout_width="40dp"
-				style="?android:attr/progressBarStyleLarge"  android:visibility="gone"
-				android:layout_marginLeft="2dip" android:layout_marginRight="2dip"
-			/>
-		</TableRow>
-	</TableLayout>
-	
-	<RelativeLayout android:id="@+id/LayoutRight"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_marginLeft="2dp" 
-		android:layout_below="@id/LayoutTopClock" android:layout_toRightOf="@id/LayoutPlayButtons" android:layout_above="@id/LayoutBottomClock"
-	>
-	 
-		<LinearLayout 
-			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			android:orientation="vertical"
-		>
-			<TableLayout android:id="@+id/LayoutCaptured"  
-				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:paddingTop="4dp" android:paddingLeft="2dp"
-				android:background="@color/bgColorText"
-				>
-				<TableRow>	
-					<ImageView android:id="@+id/ImageCapturedBlackPawn" android:src="@drawable/small_bpb"
-						style="@style/CaptureImageStyle"
-					 />
-					<ImageView android:id="@+id/ImageCapturedBlackKnight" android:src="@drawable/small_bnb" 
-						style="@style/CaptureImageStyle"
-					 />
-					<ImageView android:id="@+id/ImageCapturedBlackBishop" android:src="@drawable/small_bbb" 
-						style="@style/CaptureImageStyle"
-					 />
-					 <ImageView android:id="@+id/ImageCapturedBlackRook" android:src="@drawable/small_brb" 
-						style="@style/CaptureImageStyle"
-					 />			 
-					 <ImageView android:id="@+id/ImageCapturedBlackQueen" android:src="@drawable/small_bqb" 
-						style="@style/CaptureImageStyle"
-					 />	
-				 </TableRow>
-				 <TableRow>
-					 <TextView android:id="@+id/TextViewCapturedBlackPawn"
-					 	style="@style/CaptureTextStyle"
-					 />
-					 <TextView android:id="@+id/TextViewCapturedBlackKnight"
-					 	style="@style/CaptureTextStyle"
-					 />
-					 <TextView android:id="@+id/TextViewCapturedBlackBishop"
-					 	style="@style/CaptureTextStyle"
-					 />
-					 <TextView android:id="@+id/TextViewCapturedBlackRook"
-					 	style="@style/CaptureTextStyle"
-					 />
-					 <TextView android:id="@+id/TextViewCapturedBlackQueen"
-					 	style="@style/CaptureTextStyle"
-					 />
-				 </TableRow>
-				 
-				 <TableRow>
-					 <ImageView android:id="@+id/ImageCapturedWhitePawn" android:src="@drawable/small_wpb"  
-						style="@style/CaptureImageStyle"
-						 />
-					<ImageView android:id="@+id/ImageCapturedWhiteKnight" android:src="@drawable/small_wnb" 
-						style="@style/CaptureImageStyle"
-					 />
-					<ImageView android:id="@+id/ImageCapturedWhiteBishop" android:src="@drawable/small_wbb" 
-						style="@style/CaptureImageStyle"
-					 />
-					 <ImageView android:id="@+id/ImageCapturedWhiteRook" android:src="@drawable/small_wrb" 
-						style="@style/CaptureImageStyle"
-					 />			 
-					 <ImageView android:id="@+id/ImageCapturedWhiteQueen" android:src="@drawable/small_wqb" 
-						style="@style/CaptureImageStyle"
-					 />	
-				 </TableRow>
-				 <TableRow>			 
-					 <TextView android:id="@+id/TextViewCapturedWhitePawn"
-					 	style="@style/CaptureTextStyle"
-					 />
-					 <TextView android:id="@+id/TextViewCapturedWhiteKnight"
-					 	style="@style/CaptureTextStyle"
-					 />
-					 <TextView android:id="@+id/TextViewCapturedWhiteBishop"
-					 	style="@style/CaptureTextStyle"
-					 />
-					 <TextView android:id="@+id/TextViewCapturedWhiteRook"
-					 	style="@style/CaptureTextStyle"
-					 />
-					 <TextView android:id="@+id/TextViewCapturedWhiteQueen"
-					 	style="@style/CaptureTextStyle"
-					 />
-				 </TableRow>
-			</TableLayout>
-			
-			<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:layout_marginTop="2dp" android:background="@color/bgColorText"
-			>
-				<SeekBar android:id="@+id/SeekBarMain"
-					android:layout_width="fill_parent" android:layout_height="32dp"
-					android:layout_centerVertical="true"
-					android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
-				/>
-			</RelativeLayout>
-			
-			<ScrollView
-			    android:layout_width="fill_parent"
-			    android:layout_height="40dp"
-			    android:layout_marginTop="2dp"
-			    android:background="@color/bgColorText"
-			    android:fadingEdge="none"
-			    android:padding="2dp" >
 
-				<TextView
-				    android:id="@+id/TextViewAnnotate"
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:background="@android:drawable/editbox_background_normal"
-				    android:minHeight="40dp"
-				    android:padding="8dp"
-				    android:textColor="#000000" />
+    <TableLayout android:id="@+id/LayoutTopClock"
+                 android:layout_width="123dp" android:layout_height="20dp" android:background="@color/bgColorText"
+                 android:layout_alignParentTop="true" android:layout_toRightOf="@id/LayoutBoard"
+                 android:layout_marginLeft="2dp" android:layout_marginBottom="2dp"
+        >
+        <TableRow>
+            <ViewSwitcher android:id="@+id/ImageTurnOpp"
+                          android:layout_height="20dp" android:layout_width="20dp"
+                          android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
+                >
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_height="wrap_content" android:layout_width="wrap_content"
+                    />
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="wrap_content" android:layout_width="wrap_content"
+                    />
+            </ViewSwitcher>
+            <TextView android:id="@+id/TextViewClockTimeOpp"
+                      android:layout_height="20dp" android:layout_width="50dp"
+                      android:text="00:00" android:gravity="center_vertical"
+                      style="@style/MyNormalTextStyle"
+                />
+            <TextView android:id="@+id/TextViewTopTitle"
+                      android:layout_width="fill_parent" android:layout_height="20dp"
+                      style="@style/MySmallTextStyle"
+                      android:text="Title..."  android:gravity="center_vertical"
+                />
+        </TableRow>
 
-			</ScrollView>
-		
-			<RelativeLayout
-			    android:id="@+id/LayoutTextViewEngine"
-			    android:layout_width="fill_parent"
-			    android:layout_height="48dp"
-			    android:layout_marginTop="2dp"
-			    android:background="@color/bgColorText" >
+    </TableLayout>
 
-				<TextView android:id="@+id/TextViewEngine" style="@style/MyNormalTextStyle"
-					android:layout_width="fill_parent" android:layout_height="20dp"
-					android:layout_margin="4dp"
-				/>
-				<TextView android:id="@+id/TextViewEngineValue" style="@style/MyNormalTextStyle"
-					android:layout_width="fill_parent" android:layout_height="20dp"
-					android:layout_below="@id/TextViewEngine"
-					android:layout_margin="4dp"
-				/>
-			</RelativeLayout>
-			<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-			    android:layout_below="@id/LayoutTextViewEngine"
-			    android:layout_marginTop="2dp"
-				android:layout_marginLeft="2dp"
-			>
-				<ScrollView android:id="@+id/VScrollViewHistory"
-			    	android:layout_width="fill_parent" android:layout_height="fill_parent"
-			    	
-					android:textColor="@color/textColor" android:background="@color/bgColor"
-					android:paddingRight="2dp"
-					>
-					<RelativeLayout android:id="@+id/LayoutHistory"
-					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"
-				    />
-				</ScrollView>
-			</RelativeLayout>
-		</LinearLayout>
-	</RelativeLayout>	
+    <TableLayout android:id="@+id/LayoutBottomClock"
+                 android:layout_width="123dp" android:layout_height="20dp" android:background="@color/bgColorText"
+                 android:layout_toRightOf="@id/LayoutBoard" android:layout_alignParentBottom="true"
+                 android:layout_marginLeft="2dp" android:layout_marginTop="2dp"
+        >
+        <TableRow android:gravity="center_vertical">
+            <ViewSwitcher android:id="@+id/ImageTurnMe"
+                          android:layout_height="20dp" android:layout_width="20dp"
+                          android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
+                >
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_height="wrap_content" android:layout_width="wrap_content"
+                    />
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="wrap_content" android:layout_width="wrap_content"
+                    />
+            </ViewSwitcher>
+            <TextView android:id="@+id/TextViewClockTimeMe"
+                      android:layout_height="20dp" android:layout_width="50dp"
+                      android:text="00:00"  android:gravity="center_vertical"
+                      style="@style/MyNormalTextStyle"
+                />
+            <TextView android:id="@+id/TextViewTitle"
+                      android:layout_width="fill_parent" android:layout_height="20dp"
+                      style="@style/MySmallTextStyle"
+                      android:text="Title..."  android:gravity="center_vertical"
+                />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout android:id="@+id/LayoutPlayButtons"
+                 android:layout_width="wrap_content" android:layout_height="fill_parent"
+                 android:layout_toRightOf="@id/LayoutBoard"
+                 android:background="@color/bgColorText"
+                 android:gravity="center_vertical" android:layout_marginLeft="2dip"
+                 android:layout_below="@+id/LayoutTopClock"
+                 android:layout_above="@+id/LayoutBottomClock"
+                 android:layout_alignRight="@+id/LayoutBottomClock">
+        <TableRow>
+
+            <Button android:text="@string/button_new" android:id="@+id/ButtonNewGame" android:layout_width="50dip" android:layout_height="50dip"
+                    android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp" android:gravity="center"
+                    android:layout_column="1" android:layout_span="2"/>
+        </TableRow>
+        <TableRow>
+
+            <ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"
+                         android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
+                         android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
+                         android:layout_column="1"/>
+
+            <ImageButton android:id="@+id/ButtonSave" android:src="@drawable/content_save"
+                         android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
+                         android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
+                         android:layout_column="2"/>
+        </TableRow>
+        <TableRow>
+
+        </TableRow>
+        <TableRow>
+
+            <ProgressBar android:id="@+id/ProgressBarPlay" android:layout_height="40dp" android:layout_width="40dp"
+                         style="?android:attr/progressBarStyleLarge"  android:visibility="gone"
+                         android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
+                         android:layout_column="2"/>
+
+            <ImageButton android:id="@+id/ButtonPlay" android:src="@drawable/av_play"
+                         android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
+                         android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
+                         android:layout_column="2"/>
+        </TableRow>
+        <TableRow>
+
+        </TableRow>
+        <TableRow>
+
+            <ImageButton android:id="@+id/ButtonPrevious" android:src="@drawable/navigation_previous_item"
+                         android:layout_height="50dip" android:layout_width="50dip" android:scaleType="fitXY"
+                         android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
+                         android:layout_column="1"/>
+
+            <ImageButton android:id="@+id/ButtonNext" android:src="@drawable/navigation_next_item"
+                         android:layout_height="50dip" android:layout_width="50dip" android:scaleType="fitXY"
+                         android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="20dp"
+                         android:layout_column="2"/>
+        </TableRow>
+
+    </TableLayout>
+
+    <RelativeLayout android:id="@+id/LayoutRight"
+                    android:layout_width="fill_parent" android:layout_height="fill_parent"
+                    android:layout_marginRight="2dp"
+                    android:layout_below="@id/LayoutTopClock" android:layout_toLeftOf="@id/LayoutBoard" android:layout_above="@id/LayoutBottomClock"
+        >
+
+        <LinearLayout
+            android:layout_width="fill_parent" android:layout_height="fill_parent"
+            android:orientation="vertical"
+            >
+            <TableLayout android:id="@+id/LayoutCaptured"
+                         android:layout_width="fill_parent" android:layout_height="wrap_content"
+                         android:paddingTop="4dp" android:paddingRight="2dp"
+                         android:background="@color/bgColorText"
+                >
+                <TableRow>
+                    <ImageView android:id="@+id/ImageCapturedBlackPawn" android:src="@drawable/small_bpb"
+                               style="@style/CaptureImageStyle"
+                        />
+                    <ImageView android:id="@+id/ImageCapturedBlackKnight" android:src="@drawable/small_bnb"
+                               style="@style/CaptureImageStyle"
+                        />
+                    <ImageView android:id="@+id/ImageCapturedBlackBishop" android:src="@drawable/small_bbb"
+                               style="@style/CaptureImageStyle"
+                        />
+                    <ImageView android:id="@+id/ImageCapturedBlackRook" android:src="@drawable/small_brb"
+                               style="@style/CaptureImageStyle"
+                        />
+                    <ImageView android:id="@+id/ImageCapturedBlackQueen" android:src="@drawable/small_bqb"
+                               style="@style/CaptureImageStyle"
+                        />
+                </TableRow>
+                <TableRow>
+                    <TextView android:id="@+id/TextViewCapturedBlackPawn"
+                              style="@style/CaptureTextStyle"
+                        />
+                    <TextView android:id="@+id/TextViewCapturedBlackKnight"
+                              style="@style/CaptureTextStyle"
+                        />
+                    <TextView android:id="@+id/TextViewCapturedBlackBishop"
+                              style="@style/CaptureTextStyle"
+                        />
+                    <TextView android:id="@+id/TextViewCapturedBlackRook"
+                              style="@style/CaptureTextStyle"
+                        />
+                    <TextView android:id="@+id/TextViewCapturedBlackQueen"
+                              style="@style/CaptureTextStyle"
+                        />
+                </TableRow>
+
+                <TableRow>
+                    <ImageView android:id="@+id/ImageCapturedWhitePawn" android:src="@drawable/small_wpb"
+                               style="@style/CaptureImageStyle"
+                        />
+                    <ImageView android:id="@+id/ImageCapturedWhiteKnight" android:src="@drawable/small_wnb"
+                               style="@style/CaptureImageStyle"
+                        />
+                    <ImageView android:id="@+id/ImageCapturedWhiteBishop" android:src="@drawable/small_wbb"
+                               style="@style/CaptureImageStyle"
+                        />
+                    <ImageView android:id="@+id/ImageCapturedWhiteRook" android:src="@drawable/small_wrb"
+                               style="@style/CaptureImageStyle"
+                        />
+                    <ImageView android:id="@+id/ImageCapturedWhiteQueen" android:src="@drawable/small_wqb"
+                               style="@style/CaptureImageStyle"
+                        />
+                </TableRow>
+                <TableRow>
+                    <TextView android:id="@+id/TextViewCapturedWhitePawn"
+                              style="@style/CaptureTextStyle"
+                        />
+                    <TextView android:id="@+id/TextViewCapturedWhiteKnight"
+                              style="@style/CaptureTextStyle"
+                        />
+                    <TextView android:id="@+id/TextViewCapturedWhiteBishop"
+                              style="@style/CaptureTextStyle"
+                        />
+                    <TextView android:id="@+id/TextViewCapturedWhiteRook"
+                              style="@style/CaptureTextStyle"
+                        />
+                    <TextView android:id="@+id/TextViewCapturedWhiteQueen"
+                              style="@style/CaptureTextStyle"
+                        />
+                </TableRow>
+            </TableLayout>
+
+            <ScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="2dp"
+                android:background="@color/bgColorText"
+                android:fadingEdge="none"
+                android:padding="2dp" >
+
+                <TextView
+                    android:id="@+id/TextViewAnnotate"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:drawable/editbox_background_normal"
+                    android:minHeight="40dp"
+                    android:padding="8dp"
+                    android:textColor="#000000" />
+
+            </ScrollView>
+
+            <RelativeLayout
+                android:id="@+id/LayoutTextViewEngine"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="2dp"
+                android:background="@color/bgColorText" >
+
+                <TextView android:id="@+id/TextViewEngine" style="@style/MyNormalTextStyle"
+                          android:layout_width="fill_parent" android:layout_height="20dp"
+                          android:layout_margin="4dp"
+                    />
+                <TextView android:id="@+id/TextViewEngineValue" style="@style/MyNormalTextStyle"
+                          android:layout_width="fill_parent" android:layout_height="20dp"
+                          android:layout_below="@id/TextViewEngine"
+                          android:layout_margin="4dp"
+                    />
+            </RelativeLayout>
+            <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+                            android:layout_below="@id/LayoutTextViewEngine"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginLeft="2dp"
+                >
+                <ScrollView android:id="@+id/VScrollViewHistory"
+                            android:layout_width="fill_parent" android:layout_height="fill_parent"
+
+                            android:textColor="@color/textColor" android:background="#50505050"
+                            android:paddingRight="2dp"
+                    >
+                    <RelativeLayout android:id="@+id/LayoutHistory"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                        />
+                </ScrollView>
+
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:paddingTop="3dp" android:paddingLeft="30dp" android:text="Captured Pieces"
+        android:layout_alignLeft="@+id/LayoutRight"/>
+
+    <SeekBar android:id="@+id/SeekBarMain"
+             android:layout_width="fill_parent" android:layout_height="32dp"
+             android:layout_alignBottom="@+id/LayoutBottomClock"
+             android:layout_alignRight="@+id/LayoutRight"
+             android:layout_alignLeft="@+id/LayoutRight"/>
+
 </RelativeLayout>
