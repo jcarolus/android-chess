@@ -15,6 +15,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.entity.StringEntity;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,13 +25,12 @@ import android.util.Log;
 public class Connection {
 
     public static final String TAG = "convergence.Connection";
-    public static final int MSG_ERROR = -1;
-    public static final int MSG_FOUND_DEVICE = 1;
-    public static final int MSG_SERVER_RESPONSE = 2;
+    public static final int MSG_FIND_DEVICE = 1;
+    public static final int MSG_DIAL_DESCRIPTION = 2;
+    public static final int MSG_DIAL_APP = 3;
 
     private String _serverIp, _ssdpLocation;
     private int _serverPort = 80;
-
 
     /**
      * provide an inner thread handler to any results can be safely used by
@@ -47,23 +47,39 @@ public class Connection {
         public void handleMessage(Message msg) {
             Connection connection = _connection.get();
             if (connection != null) {
+                Bundle bun = msg.getData();
                 switch (msg.what) {
-                    case MSG_FOUND_DEVICE:
-                        Log.i(TAG, "ThreadHandler found device, trying to dial");
-                        try {
-                            connection.dial();
-                        } catch (Exception ex) {
-                            Log.e(TAG, "Could not dial: " + ex.toString());
+                    case MSG_FIND_DEVICE:
+                        if(bun.getBoolean("status")) {
+                            Log.i(TAG, "ThreadHandler found device, trying to dial");
+                            try {
+                                connection.dialDescription();
+                            } catch (Exception ex) {
+                                Log.e(TAG, "Could get dial description: " + ex.toString());
+                            }
+                        } else {
+                            Log.e(TAG, bun.getString("buffer"));
                         }
                         break;
-                    case MSG_SERVER_RESPONSE:
-                        String sBuf = msg.getData().getString("buffer");
-                        Log.i(TAG, "ThreadHandler got: " + sBuf);
-                        Log.i(TAG, "Status " + msg.getData().getInt("status"));
-
+                    case MSG_DIAL_DESCRIPTION:
+                        if(bun.getBoolean("status")) {
+                            try {
+                                // test with youtube
+                                connection.dialApp(bun.getString("dialUrl") + "YouTube", "v=xOAG7Ab_Oz0");
+                            }catch (Exception ex){
+                                Log.e(TAG, "Could get dial application: " + ex.toString());
+                            }
+                        } else {
+                            Log.e(TAG, bun.getString("buffer"));
+                        }
                         break;
-                    case MSG_ERROR:
-                        Log.e(TAG, "ThreadHandler got error: " + msg.getData().getString("buffer"));
+                    case MSG_DIAL_APP:
+                        if(bun.getBoolean("status")) {
+
+                        } else {
+                            Log.e(TAG, bun.getString("buffer"));
+                        }
+                        break;
                 }
 
                 super.handleMessage(msg);
@@ -88,6 +104,7 @@ public class Connection {
             public void run() {
                 Log.i(TAG, "Start run");
                 Message msg = new Message();
+                msg.what = MSG_FIND_DEVICE;
                 Bundle bun = new Bundle();
 
                 try {
@@ -134,16 +151,17 @@ public class Connection {
                     int iPos = sTmp.indexOf("/");
                     if (iPos >= 0) {
                         _serverIp = sTmp.substring(iPos + 1);
+                        bun.putBoolean("status", true);
                         bun.putString("buffer", _serverIp);
-                        msg.what = MSG_FOUND_DEVICE;
+
                     } else {
-                        msg.what = MSG_ERROR;
+                        bun.putBoolean("status", false);
                         bun.putString("buffer", "");
                     }
 
                 } catch (Exception ex) {
                     Log.e("Connection", ex.toString());
-                    msg.what = MSG_ERROR;
+                    bun.putBoolean("status", false);
                     bun.putString("buffer", ex.toString());
                 }
 
@@ -165,24 +183,31 @@ public class Connection {
     }
 
     /**
-     * make a DIAL request to the device that was found
+     * make a DIAL description request to the device that was found
      * @throws Exception
      */
-    public void dial() throws Exception {
-
+    public void dialDescription() throws Exception {
         HttpGet request = new HttpGet();
-        // test with an app that is already registered
-        request.setURI(getURI("app/YouTube"));
-        doRequest(request);
+        request.setURI(new URI(_ssdpLocation));
+        doRequest(request, MSG_DIAL_DESCRIPTION);
     }
 
+    public void dialApp(String urlDial, String postBody) throws Exception {
+        HttpPost request = new HttpPost();
+        request.setURI(new URI(urlDial));
+
+        request.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.setEntity(new StringEntity(postBody));
+
+        doRequest(request, MSG_DIAL_APP);
+    }
 
     /**
      * do a HttpGet or HttpPost request
      * send the result to the _threadHandler
      * @param request
      */
-    public void doRequest(final Object request) {
+    public void doRequest(final Object request, final int msgType) {
 
         if (request instanceof HttpGet) {
             Log.i(TAG, "doRequest GET " + ((HttpGet) request).getURI());
@@ -194,6 +219,7 @@ public class Connection {
             public void run() {
                 // prepare data for threadhandler
                 Message msg = new Message();
+                msg.what = msgType;
                 Bundle bun = new Bundle();
 
                 BufferedReader in = null;
@@ -215,6 +241,9 @@ public class Connection {
                             Log.i(TAG, "Response status " + responseHeaders[i].getValue());
                             bun.putInt("status", Integer.parseInt(responseHeaders[i].getValue()));
                         }
+                        if(msgType == MSG_DIAL_DESCRIPTION && responseHeaders[i].getName().toLowerCase().equals("application-url")){
+                            bun.putString("dialUrl", responseHeaders[i].getValue());
+                        }
                     }
 
                     in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
@@ -226,11 +255,11 @@ public class Connection {
                     }
                     in.close();
 
-                    msg.what = MSG_SERVER_RESPONSE;
                     bun.putString("buffer", sb.toString());
+                    bun.putBoolean("status", true);
 
                 } catch (Exception ex) {
-                    msg.what = MSG_ERROR;
+                    bun.putBoolean("status", false);
                     bun.putString("buffer", ex.toString());
                     //Log.e(TAG, ex.toString());
                 } finally {

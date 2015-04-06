@@ -114,14 +114,16 @@ public class ConvergenceActivity extends Activity  {
 			} else {
 				//String sPort = prefs.getString("restServerPort", "8092");
 				//_JSONServer = new JSONServer(Integer.parseInt(sPort));
-				_JSONServer = new JSONServer(8092);
+                int port = 8092;
+				_JSONServer = new JSONServer(port);
 				if(_JSONServer.start()){
 					String sAddr = JSONServer.getIpAddress();
 					String sCode = "";
 					if(sAddr == null){
 						
 					} else {
-                        sCode = ipPart(sAddr);
+                        port -= 8000; // port numbers starting from 8000, so short for 8092 -> 92
+                        sCode = ipPart(sAddr) + port;
 					}
 					if(sCode.length() > 0){
 						_tvIpPort.setText(getString(R.string.msg_your_code) + sCode + "\nIP: " + sAddr);
