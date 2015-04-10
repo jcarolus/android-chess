@@ -23,10 +23,15 @@
     </RelativeLayout>
 
     <TableLayout android:id="@+id/LayoutTopClock"
-                 android:layout_width="123dp" android:layout_height="20dp" android:background="@color/bgColorText"
+                 android:layout_width="110dp" android:layout_height="wrap_content" android:background="@color/bgColorText"
                  android:layout_alignParentTop="true" android:layout_toRightOf="@id/LayoutBoard"
                  android:layout_marginLeft="2dp" android:layout_marginBottom="2dp"
         >
+        <TextView android:id="@+id/TextViewTopTitle"
+                  android:layout_width="fill_parent" android:layout_height="20dp"
+                  style="@style/MySmallTextStyle"
+                  android:text="Title..."  android:gravity="center_vertical"
+            />
         <TableRow>
             <ViewSwitcher android:id="@+id/ImageTurnOpp"
                           android:layout_height="20dp" android:layout_width="20dp"
@@ -46,20 +51,18 @@
                       android:text="00:00" android:gravity="center_vertical"
                       style="@style/MyNormalTextStyle"
                 />
-            <TextView android:id="@+id/TextViewTopTitle"
-                      android:layout_width="fill_parent" android:layout_height="20dp"
-                      style="@style/MySmallTextStyle"
-                      android:text="Title..."  android:gravity="center_vertical"
-                />
+
         </TableRow>
+
 
     </TableLayout>
 
     <TableLayout android:id="@+id/LayoutBottomClock"
-                 android:layout_width="123dp" android:layout_height="20dp" android:background="@color/bgColorText"
+                 android:layout_width="110dp" android:layout_height="wrap_content" android:background="@color/bgColorText"
                  android:layout_toRightOf="@id/LayoutBoard" android:layout_alignParentBottom="true"
                  android:layout_marginLeft="2dp" android:layout_marginTop="2dp"
         >
+
         <TableRow android:gravity="center_vertical">
             <ViewSwitcher android:id="@+id/ImageTurnMe"
                           android:layout_height="20dp" android:layout_width="20dp"
@@ -79,12 +82,13 @@
                       android:text="00:00"  android:gravity="center_vertical"
                       style="@style/MyNormalTextStyle"
                 />
-            <TextView android:id="@+id/TextViewTitle"
-                      android:layout_width="fill_parent" android:layout_height="20dp"
-                      style="@style/MySmallTextStyle"
-                      android:text="Title..."  android:gravity="center_vertical"
-                />
+
         </TableRow>
+        <TextView android:id="@+id/TextViewTitle"
+                  android:layout_width="fill_parent" android:layout_height="20dp"
+                  style="@style/MySmallTextStyle"
+                  android:text="Title..."  android:gravity="center_vertical"
+            />
     </TableLayout>
 
     <TableLayout android:id="@+id/LayoutPlayButtons"
@@ -99,7 +103,7 @@
 
             <Button android:text="@string/button_new" android:id="@+id/ButtonNewGame" android:layout_width="50dip" android:layout_height="50dip"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp" android:gravity="center"
-                    android:layout_column="1" android:layout_span="2"/>
+                    android:layout_column="1" android:layout_span="3"/>
         </TableRow>
         <TableRow>
 
@@ -111,22 +115,22 @@
             <ImageButton android:id="@+id/ButtonSave" android:src="@drawable/content_save"
                          android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
                          android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
-                         android:layout_column="2"/>
+                         android:layout_column="3"/>
         </TableRow>
         <TableRow>
 
         </TableRow>
         <TableRow>
 
-            <ProgressBar android:id="@+id/ProgressBarPlay" android:layout_height="40dp" android:layout_width="40dp"
+            <ProgressBar android:id="@+id/ProgressBarPlay" android:layout_height="50dp" android:layout_width="50dp"
                          style="?android:attr/progressBarStyleLarge"  android:visibility="gone"
                          android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
-                         android:layout_column="2"/>
+                         android:layout_column="3"/>
 
             <ImageButton android:id="@+id/ButtonPlay" android:src="@drawable/av_play"
                          android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
                          android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
-                         android:layout_column="2"/>
+                         android:layout_column="4"/>
         </TableRow>
         <TableRow>
 
@@ -141,7 +145,7 @@
             <ImageButton android:id="@+id/ButtonNext" android:src="@drawable/navigation_next_item"
                          android:layout_height="50dip" android:layout_width="50dip" android:scaleType="fitXY"
                          android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="20dp"
-                         android:layout_column="2"/>
+                         android:layout_column="3"/>
         </TableRow>
 
     </TableLayout>
@@ -291,7 +295,7 @@
 
     <TextView
         android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:paddingTop="3dp" android:paddingLeft="30dp" android:text="Captured Pieces"
+        android:paddingTop="18dp" android:paddingLeft="30dp" android:text="Captured Pieces"
         android:layout_alignLeft="@+id/LayoutRight"/>
 
     <SeekBar android:id="@+id/SeekBarMain"
