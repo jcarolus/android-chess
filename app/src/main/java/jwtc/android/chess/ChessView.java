@@ -44,7 +44,7 @@ public class ChessView extends UI{
 	private ImageButton _butPlay;
 	private ViewAnimator _viewAnimator;
 	private ProgressBar _progressPlay;
-	private TextView _tvClockMe, _tvClockOpp, _tvTitleMe, _tvTitleOpp, _tvAnnotate, _tvEngine, _tvAnnotateGuess;
+	private TextView _tvClockMe, _tvClockOpp, _tvTitleMe, _tvTitleOpp, _tvAnnotate, _tvEngine, _tvEngineValue, _tvAnnotateGuess;
 	private int _dpadPos;
 	private int _playMode;
 	private String _sPrevECO;
@@ -371,6 +371,18 @@ public class ChessView extends UI{
 	        	}
 			});
 		}
+
+        ImageButton butFlipBoard = (ImageButton)_parent.findViewById(R.id.ButtonFlipBoard);
+        if(butFlipBoard != null){
+            butFlipBoard.setOnClickListener((new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    flipBoard();
+                    updateState();
+                }
+            }));
+
+        }
 		
 		//
 		/*
@@ -451,7 +463,7 @@ public class ChessView extends UI{
 		_tvTitleMe = (TextView)_parent.findViewById(R.id.TextViewTitle);
 		_tvTitleOpp = (TextView)_parent.findViewById(R.id.TextViewTopTitle);
 		_tvEngine = (TextView)_parent.findViewById(R.id.TextViewEngine);
-		//_tvEngineValue = (TextView)_parent.findViewById(R.id.TextViewEngineValue);
+		_tvEngineValue = (TextView)_parent.findViewById(R.id.TextViewEngineValue);
 		
 		_imgStatusGuess = (ImageView)_parent.findViewById(R.id.ImageStatusGuess);
 		
