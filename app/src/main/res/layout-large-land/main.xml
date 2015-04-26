@@ -304,4 +304,6 @@
              android:layout_alignRight="@+id/LayoutRight"
              android:layout_alignLeft="@+id/LayoutRight"/>
 
+
 </RelativeLayout>
+
