@@ -229,30 +229,36 @@ public class ChessViewBase{
 		ChessImageView._matrix = null;
 
 		//Log.i("ChessViewBase", "layout width " + _mainLayout.getHeight());
-		
+
 		Display display = ((WindowManager) _activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		DisplayMetrics metrics = new DisplayMetrics();
 		display.getMetrics(metrics);
 		
 		// get smallest length of screen
-		int length = display.getWidth();
-		
+		int length;
+
+        // @TODO - res/values-sw600dp and res/values-xlarge - or values-large
+        if(_activity.getResources().getBoolean(R.bool.portraitOnly)){
+            Log.i("ChessViewBase", "portrait Only");
+        }
+
 		if(_activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
 		//if(length > display.getHeight()){
-			length /= 8;
+			length  = display.getWidth() / 8;
 			Log.i("ChessViewBase", "Portrait " + length);
 		} else {
 			//DENSITY_LOW, DENSITY_MEDIUM, or DENSITY_HIGH.
 			//metrics.density + ", " + metrics.widthPixels + "px @ " + metrics.densityDpi
 			//Log.i("ChessViewBase", "::" + length + "::" + metrics.widthPixels  + " density:" + metrics.density + " @ " + metrics.densityDpi);
-			//length = display.getHeight() / 9;
-			return;
+			length = display.getHeight() / 8;
+			//return;
 		}
 		
 		LayoutParams params = new LayoutParams(length, length);
 		for(int i = 0; i < 64; i++){
 			_arrImages[i].setLayoutParams(params);
-		} 
+		}
+
 	}
 	
 	public void setBlindfoldMode(int mode){

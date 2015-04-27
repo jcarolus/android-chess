@@ -2,6 +2,7 @@ package jwtc.android.chess.puzzle;
 
 import jwtc.android.chess.*;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -26,6 +27,9 @@ public class puzzle extends Activity {
         	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
         }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if(getResources().getBoolean(R.bool.portraitOnly)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);  
         _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
