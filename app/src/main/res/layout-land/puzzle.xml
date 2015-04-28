@@ -13,49 +13,55 @@
 	<!--  
 	<TextView android:id="@+id/includeboard" android:layout_width="280dip" android:layout_height="280dip" />
  	-->
-	<TableLayout android:id="@+id/LayoutTurn"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_marginTop="2dip"
-		android:layout_below="@id/includeboard"
-	>
-		<TableRow android:gravity="center_vertical">
-			<ImageView android:id="@+id/ImageTurn" android:src="@drawable/turnwhite"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-					android:layout_marginLeft="8dip" android:layout_marginRight="4dip"
-				/>
-			<TextView android:id="@+id/TextViewPuzzleText"
-				android:text=" to move, mate in "
-				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				style="@style/MyTextStyle"
-			/>
-		</TableRow>
-	</TableLayout>
+
 	
-	<RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-	    android:layout_alignParentTop="true"
+	<TableLayout android:id="@+id/LayoutButtons" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
 		android:layout_toRightOf="@id/includeboard"
 		android:layout_marginLeft="8dip" 
 	>
-		
-		<ImageButton android:id="@+id/ButtonPuzzleHelp" android:src="@drawable/action_about" 
-			android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-		/>
-		<ImageButton android:id="@+id/ButtonPuzzlePrevious" android:src="@drawable/navigation_previous_item" 
-			android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-			android:layout_below="@id/ButtonPuzzleHelp"
-		/>
-		<ImageButton android:id="@+id/ButtonPuzzleNext" android:src="@drawable/navigation_next_item" 
-			android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-			android:layout_below="@id/ButtonPuzzlePrevious"
-		/>
-		<Button android:id="@+id/ButtonPuzzle" android:layout_width="wrap_content" android:layout_height="40dip"
-			android:text="@string/button_show" android:paddingLeft="8dip" android:paddingRight="8dip"
-			android:layout_below="@id/ButtonPuzzleNext"
-		/>
-		<ImageView android:id="@+id/ImageStatus" android:src="@drawable/indicator_none"
-			android:layout_height="wrap_content" android:layout_width="wrap_content" 
-			android:layout_below="@id/ButtonPuzzle"
-			android:layout_marginTop="8dip"
-		/>
-	</RelativeLayout>
+        <TableRow>
+            <ImageButton android:id="@+id/ButtonPuzzleHelp" android:src="@drawable/action_about"
+                android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+            />
+        </TableRow>
+        <TableRow>
+            <ImageButton android:id="@+id/ButtonPuzzlePrevious" android:src="@drawable/navigation_previous_item"
+                android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+            />
+        </TableRow>
+        <TableRow>
+            <ImageButton android:id="@+id/ButtonPuzzleNext" android:src="@drawable/navigation_next_item"
+                android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+            />
+        </TableRow>
+        <TableRow>
+            <Button android:id="@+id/ButtonPuzzle" android:layout_width="wrap_content" android:layout_height="40dip"
+                android:text="@string/button_show" android:paddingLeft="8dip" android:paddingRight="8dip"
+            />
+        </TableRow>
+        <TableRow>
+            <ImageView android:id="@+id/ImageStatus" android:src="@drawable/indicator_none"
+                android:layout_height="wrap_content" android:layout_width="wrap_content"
+                android:layout_marginTop="8dip"
+            />
+        </TableRow>
+    </TableLayout>
+
+
+    <TextView android:id="@+id/TextViewPuzzleText"
+        android:text="..."
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        style="@style/MyTextStyle"
+        android:layout_below="@id/LayoutButtons"
+        android:layout_toRightOf="@id/includeboard"
+        android:layout_marginLeft="8dip"
+        />
+    <ImageView android:id="@+id/ImageTurn" android:src="@drawable/turnwhite"
+        android:layout_height="wrap_content" android:layout_width="wrap_content"
+        android:layout_below="@id/TextViewPuzzleText"
+        android:layout_toRightOf="@id/includeboard"
+        android:layout_marginLeft="8dip"
+        />
+
 </RelativeLayout>

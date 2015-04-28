@@ -26,17 +26,11 @@
         android:id="@+id/includeboard" 
         android:layout_marginRight="2dip"
     />
-    
-    <TextView android:id="@+id/TextViewSetupMsg" 
-    	android:layout_width="fill_parent" android:layout_height="wrap_content"
-    	style="@style/MySmallTextStyle" android:layout_below="@id/includeboard"
-    	android:text="@string/msg_setup_extra"
-    />
-	             
+
 	<TableLayout android:id="@+id/SelectPiecesLayout"
 		android:layout_width="wrap_content" android:layout_height="fill_parent"
 		android:background="@color/bgColorText"
-		android:layout_below="@id/LayoutSetupTitle" android:layout_above="@id/TextViewSetupMsg"
+		android:layout_below="@id/LayoutSetupTitle"
 		android:layout_toRightOf="@id/includeboard" android:padding="2dip"
 		android:layout_marginRight="2dip" 
 		android:gravity="center">
@@ -57,18 +51,18 @@
 		</TableRow>
 		<TableRow>
 			<jwtc.android.chess.ChessImageView  android:id="@+id/selKnight" 
-				android:layout_width="40dip" android:layout_height="40dip"  
+				android:layout_width="40dip" android:layout_height="40dip"
 				android:layout_margin="2dip"/>
 		</TableRow>
 		<TableRow>
 			<jwtc.android.chess.ChessImageView  android:id="@+id/selPawn" 
-				android:layout_width="40dip" android:layout_height="40dip" 
+				android:layout_width="40dip" android:layout_height="40dip"
 				android:layout_margin="2dip"/>
 		</TableRow>
 			
 	</TableLayout>
 	<RelativeLayout android:layout_width="wrap_content" android:layout_height="fill_parent"
-    	android:layout_below="@id/LayoutSetupTitle" android:layout_toRightOf="@id/SelectPiecesLayout"  android:layout_above="@id/TextViewSetupMsg"
+    	android:layout_below="@id/LayoutSetupTitle" android:layout_toRightOf="@id/SelectPiecesLayout"
     	android:background="@color/bgColorText" android:gravity="center" android:padding="2dip"
     >
 	    <ImageButton android:id="@+id/delPiece" 

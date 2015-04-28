@@ -14,54 +14,55 @@
 	<!-- 
 	<TextView android:id="@+id/includeboard" android:layout_width="280dp" android:layout_height="280dp" />
  	 -->
-	<TableLayout android:id="@+id/LayoutTurn"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_marginTop="2dp"
-		android:layout_below="@id/includeboard"
-	>
-		<TableRow android:gravity="center">
-			<ViewSwitcher android:id="@+id/ImageTurn"
-				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
-			> 
-				<ImageView  
-					android:src="@drawable/turnblack"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-				/>
-				<ImageView  
-					android:src="@drawable/turnwhite"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-				/>
-			</ViewSwitcher>
-			<TextView android:id="@+id/TextViewPracticeTime"
-				android:layout_height="wrap_content" android:layout_width="50dp"
-				android:text="00:00" 
-				style="@style/MyNormalTextStyle"
-			/>
-			
-			<TextView android:id="@+id/TextViewPracticeMove"
-				android:text=" to move, mate in "
-				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				style="@style/MyHeaderTextStyle"
-			/>	
-		</TableRow>
+
 		
-	</TableLayout>		
-		
-	<RelativeLayout android:layout_width="wrap_content" android:layout_height="280dp"
-	    android:layout_alignParentTop="true"
+	<RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+	    android:layout_centerInParent="true"
 		android:layout_toRightOf="@id/includeboard"
 		android:layout_marginLeft="8dp" 
 	>
-	
+        <TableLayout android:id="@+id/LayoutTurn"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            >
+            <TableRow android:gravity="center">
+                <ViewSwitcher android:id="@+id/ImageTurn"
+                    android:layout_height="wrap_content" android:layout_width="wrap_content"
+                    android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
+                    >
+                    <ImageView
+                        android:src="@drawable/turnblack"
+                        android:layout_height="wrap_content" android:layout_width="wrap_content"
+                        />
+                    <ImageView
+                        android:src="@drawable/turnwhite"
+                        android:layout_height="wrap_content" android:layout_width="wrap_content"
+                        />
+                </ViewSwitcher>
+                <TextView android:id="@+id/TextViewPracticeTime"
+                    android:layout_height="wrap_content" android:layout_width="50dp"
+                    android:text="00:00"
+                    style="@style/MyNormalTextStyle"
+                    />
+
+
+            </TableRow>
+
+        </TableLayout>
 		<TextView android:id="@+id/TextViewPracticeAvgTime"
+            android:layout_below="@id/LayoutTurn"
 			android:layout_height="wrap_content" android:layout_width="wrap_content"
 			style="@style/MyNormalTextStyle" android:paddingLeft="8dip" android:paddingRight="8dip"
 		/>
+        <TextView android:id="@+id/TextViewPracticeMove"
+            android:text=" to move, mate in "
+            android:layout_width="fill_parent" android:layout_height="wrap_content"
+            style="@style/MyHeaderTextStyle"
+            android:layout_below="@id/TextViewPracticeAvgTime"
+            />
 		<ImageView android:id="@+id/ImageStatus" android:src="@drawable/indicator_none"
 			android:layout_height="wrap_content" android:layout_width="wrap_content"
 			android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
-			android:layout_below="@id/TextViewPracticeAvgTime"
+			android:layout_below="@id/TextViewPracticeMove"
 		/>
 		<ImageButton android:id="@+id/ButtonPracticePause"
 			android:src="@drawable/av_pause"
