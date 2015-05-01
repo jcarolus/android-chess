@@ -420,27 +420,7 @@ public class setup extends MyBaseActivity {
         super.onResume();
 
         _view.OnResume();
-/////////////////////////////////////////////////////////////////////////////
 
-        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		DisplayMetrics metrics = new DisplayMetrics();
-		display.getMetrics(metrics);
-		
-		// get smallest length of screen
-		int length = display.getWidth();
-		if(length > display.getHeight()){
-			length = display.getHeight();
-		}
-
-		length /= 8;
-
-		LayoutParams params = new LayoutParams(length, length);
-		for(int i = 0; i < _arrSelImages.length; i++){
-			_arrSelImages[i].setLayoutParams(params);
-		}
-
-        /////////////////////////////////////////////////////////////////////////////
-        
         String sFEN = null;
         if(_uri != null){
         

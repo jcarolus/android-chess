@@ -16,10 +16,12 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.*;
 import android.widget.RelativeLayout;
@@ -230,6 +232,42 @@ public class ChessViewBase{
 
 		//Log.i("ChessViewBase", "layout width " + _mainLayout.getHeight());
 
+        Window window = _activity.getWindow();
+        final View v = window.getDecorView();
+        v.post(new Runnable() {
+            @Override
+            public void run() {
+                Rect rectangle= new Rect();
+                v.getWindowVisibleDisplayFrame(rectangle);
+                int availableHeight = rectangle.bottom - rectangle.top;
+                int availableWidth = rectangle.right - rectangle.left;
+                int length;
+
+                if(availableHeight > availableWidth){
+                    length = availableWidth / 8;
+                } else {
+                    length = availableHeight / 8;
+                }
+                //int contentViewTop = window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+                //int titleBarHeight= contentViewTop - statusBarHeight;
+
+                Log.i("ChessViewBase", "availableHeight 2 " + availableHeight);
+
+                LayoutParams params = new LayoutParams(length, length);
+                for(int i = 0; i < 64; i++){
+                    _arrImages[i].setLayoutParams(params);
+                }
+            }
+        });
+/*
+        Rect rectangle= new Rect();
+        v.getWindowVisibleDisplayFrame(rectangle);
+        int availableHeight = rectangle.bottom - rectangle.top;
+        //int contentViewTop = window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+        //int titleBarHeight= contentViewTop - statusBarHeight;
+
+        Log.i("ChessViewBase", "availableHeight " + availableHeight);
+
 		Display display = ((WindowManager) _activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		DisplayMetrics metrics = new DisplayMetrics();
 		display.getMetrics(metrics);
@@ -244,20 +282,21 @@ public class ChessViewBase{
 
 		if(_activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
 		//if(length > display.getHeight()){
-			length  = display.getWidth() / 8;
+			//length  = display.getWidth() / 8;
+            length = availableHeight / 8;
+            //length = _activity.getWindow().getDecorView().getWidth() / 8;
 			Log.i("ChessViewBase", "Portrait " + length);
 		} else {
 			//DENSITY_LOW, DENSITY_MEDIUM, or DENSITY_HIGH.
 			//metrics.density + ", " + metrics.widthPixels + "px @ " + metrics.densityDpi
 			//Log.i("ChessViewBase", "::" + length + "::" + metrics.widthPixels  + " density:" + metrics.density + " @ " + metrics.densityDpi);
-			length = display.getHeight() / 8;
+			//length = display.getHeight() / 8;
+            length = availableHeight / 8;
+            //length = _activity.getWindow().getDecorView().getHeight() / 8;
 			//return;
 		}
 		
-		LayoutParams params = new LayoutParams(length, length);
-		for(int i = 0; i < 64; i++){
-			_arrImages[i].setLayoutParams(params);
-		}
+		*/
 
 	}
 	
