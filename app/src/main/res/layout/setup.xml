@@ -30,36 +30,35 @@
 	/>
      -->
         
-	<TableLayout android:id="@+id/SelectPiecesLayout"
+	<LinearLayout android:id="@+id/SelectPiecesLayout"
+        android:orientation="horizontal"
 		android:layout_marginTop="2dip"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:background="@color/bgColorText"
-		android:layout_below="@id/includeboard" android:padding="2dip" 
-		android:gravity="center">
-		<TableRow>
+		android:background="@color/bgColorText" android:gravity="center"
+		android:layout_below="@id/includeboard" android:padding="4dip"
+		>
 			<jwtc.android.chess.ChessImageView  android:id="@+id/selQueen" 
 				android:layout_width="40dip" android:layout_height="40dip"
-				android:layout_margin="2dip"/>
+				android:layout_marginRight="2dip"/>
 			<jwtc.android.chess.ChessImageView  android:id="@+id/selRook" 
 				android:layout_width="40dip" android:layout_height="40dip"
-				android:layout_margin="2dip"/>
+				android:layout_marginRight="2dip"/>
 			<jwtc.android.chess.ChessImageView  android:id="@+id/selBishop" 
 				android:layout_width="40dip" android:layout_height="40dip"
-				android:layout_margin="2dip"/>
+				android:layout_marginRight="2dip"/>
 			<jwtc.android.chess.ChessImageView  android:id="@+id/selKnight" 
 				android:layout_width="40dip" android:layout_height="40dip"  
-				android:layout_margin="2dip"/>
+				android:layout_marginRight="2dip"/>
 			<jwtc.android.chess.ChessImageView  android:id="@+id/selPawn" 
 				android:layout_width="40dip" android:layout_height="40dip" 
-				android:layout_margin="2dip"/>
+				android:layout_marginRight="2dip"/>
 			<ImageButton android:id="@+id/delPiece" 
 				android:layout_width="40dip" android:layout_height="40dip"  
-				android:src="@drawable/content_discard" android:layout_margin="2dip"/>
+				android:src="@drawable/content_discard" android:layout_marginRight="2dip"/>
 			<ImageButton android:id="@+id/selColor" android:src="@drawable/av_shuffle"
 				android:layout_width="40dip" android:layout_height="40dip" 
-				android:layout_margin="2dip" />
-		</TableRow>	
-	</TableLayout>
+			/>
+	</LinearLayout>
     <TableLayout
     	android:id="@+id/TableSetupButtons" 
     	android:layout_width="fill_parent" android:layout_height="wrap_content"

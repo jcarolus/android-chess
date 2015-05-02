@@ -2,6 +2,7 @@
 <resources>
     <color name="bgColor">#000000</color><!--  -->
     <color name="bgColorText">#484848</color><!-- , 404040, 333355, 555555 -->
+    <color name="bgColorLight">#585858</color>
     <color name="textColor">#ffffff</color>
     
      <style name="button" parent="@android:style/Widget.Button">

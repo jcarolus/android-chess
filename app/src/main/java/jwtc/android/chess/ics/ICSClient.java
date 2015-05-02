@@ -1,6 +1,7 @@
 package jwtc.android.chess.ics;
 
 import android.app.AlertDialog;
+import android.content.pm.ActivityInfo;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -176,6 +177,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
         }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if(getResources().getBoolean(R.bool.portraitOnly)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
    
         setContentView(R.layout.icsclient);
    
@@ -1333,7 +1337,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     	_view.OnResume();
     	
         // lock screen orientation?
-        setRequestedOrientation(this.getResources().getConfiguration().orientation);
+        //setRequestedOrientation(this.getResources().getConfiguration().orientation);
     	
         SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
         
@@ -1405,7 +1409,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         	_wakeLock.release();
         }
         // lock screen orientation?
-        setRequestedOrientation(this.getResources().getConfiguration().orientation);
+        //setRequestedOrientation(this.getResources().getConfiguration().orientation);
 
         ////////////////////////////////////////////////////////////
 

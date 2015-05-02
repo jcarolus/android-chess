@@ -18,8 +18,10 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import 	android.content.pm.ActivityInfo;
 import android.content.Intent;
 import android.database.Cursor;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -66,6 +68,9 @@ public class main extends MyBaseActivity  implements OnInitListener{
         	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
         }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if(getResources().getBoolean(R.bool.portraitOnly)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);  
         _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
