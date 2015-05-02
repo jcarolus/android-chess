@@ -262,7 +262,7 @@
 			</LinearLayout>
 			<ScrollView android:id="@+id/VScrollViewHistory"
 		    	android:layout_width="wrap_content" android:layout_height="fill_parent"
-				android:textColor="@color/textColor" android:background="@color/bgColor"
+				android:textColor="@color/textColor" android:background="@color/bgColorLight"
 				android:paddingRight="2dp"
 				android:layout_marginTop="2dp"
 				android:layout_marginLeft="2dp"
