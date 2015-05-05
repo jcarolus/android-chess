@@ -378,7 +378,6 @@ public class ChessView extends UI{
                 @Override
                 public void onClick(View view) {
                     flipBoard();
-                    updateState();
                 }
             }));
 
