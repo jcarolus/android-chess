@@ -133,7 +133,7 @@
                          android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
                          android:layout_column="1"/>
 
-            <ImageButton android:id="@+id/ButtonFlipBoard" android:src="@drawable/action_flipboard2"
+            <ImageButton android:id="@+id/ButtonFlipBoard" android:src="@drawable/action_flipboard"
                          android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
                          android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
                          android:layout_column="2"/>
