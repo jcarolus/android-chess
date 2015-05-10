@@ -371,6 +371,16 @@ public class ChessView extends UI{
 	        	}
 			});
 		}
+
+		ImageButton butFlipBoard = (ImageButton)_parent.findViewById(R.id.ButtonFlipBoard);
+		if(butFlipBoard != null){
+			butFlipBoard.setOnClickListener((new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					flipBoard();
+				}
+			}));
+		}
 		
 		//
 		/*
