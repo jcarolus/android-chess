@@ -696,7 +696,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 				doToast("Speech does not support US locale");
 				_speech = null;
 			} else {
-				_speech.setSpeechRate(0.80F);
+				_speech.setSpeechRate(0.90F);
 				_speech.setPitch(0.85F);
 			}
 		} else {
