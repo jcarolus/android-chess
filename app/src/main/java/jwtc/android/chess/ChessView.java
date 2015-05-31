@@ -1028,13 +1028,18 @@ public class ChessView extends UI{
 		
 		String sEngine = prefs.getString("UCIEngine", null);
 		if(sEngine != null){
+			Log.i("ChessView", "UCIEngine " + sEngine);
 			String sEnginePath = "/data/data/jwtc.android.chess/" + sEngine;
 			File f = new File(sEnginePath);
 			if(f.exists()){
 				_uci.init(sEnginePath);
-				if(_tvEngine != null){
+				if(_tvEngine != null) {
 					_tvEngine.setText("UCI engine " + sEngine);
+				} else {
+					Log.w("ChessView", "Could not init engine");
 				}
+			} else {
+				Log.e("ChessView", "UCI engine path does not exists: " + sEnginePath);
 			}
 		}
 		_view.setFlippedBoard(prefs.getBoolean("flippedBoard", false));
