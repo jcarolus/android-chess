@@ -2,11 +2,15 @@ package jwtc.android.chess.tools;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
+import enginesupport.ChessEngine;
+import enginesupport.ChessEngineResolver;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.algorithm.UCIWrapper;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -107,7 +111,7 @@ public class pgntool extends ListActivity {
 		    		 i.putExtra(HtmlActivity.HELP_MODE, "help_pgntool");
 		    		 startActivity(i); 
 				} else if(arrString[arg2].equals(getString(R.string.pgntool_point_uci_engine))){
-					
+
 					Intent i = new Intent();
 					i.setClass(pgntool.this, FileListView.class);
 					i.putExtra(EXTRA_MODE, MODE_UCI_INSTALL);
@@ -118,7 +122,11 @@ public class pgntool extends ListActivity {
 					String sEngine = prefs.getString("UCIEngine", null);
 					if(sEngine != null){
 						File f = new File("/data/data/jwtc.android.chess/" + sEngine);
-						f.delete();
+						if(f.delete()) {
+							Log.i("engines", sEngine + " deleted");
+						} else {
+							Log.w("engines", sEngine + " NOT deleted");
+						}
 						SharedPreferences.Editor editor = prefs.edit();
 						editor.putString("UCIEngine", null);
 						editor.commit();
@@ -180,7 +188,38 @@ public class pgntool extends ListActivity {
 				// 
         	}
 		});
-    }
+
+
+		// testing the open chess engine interface
+		// @see https://code.google.com/p/chessenginesupport-androidlib/
+		try {
+			ChessEngineResolver resolver = new ChessEngineResolver(getApplicationContext());
+			List<ChessEngine> engines = resolver.resolveEngines();
+			if (engines.size() > 0) {
+
+				ChessEngine firstEngine = engines.get(0);
+				String sEngine = "files/" + firstEngine.getFileName();
+				Log.i("engines", sEngine);
+
+				File copiedEngine = firstEngine.copyToFiles(this.getContentResolver(), this.getFilesDir());
+
+				UCIWrapper.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/" + sEngine);
+
+				SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+				editor.putString("UCIEngine", sEngine);
+				editor.commit();
+
+				// /data/data/jwtc.android.chess/
+				// e,g, /data/data/jwtc.android.chess/files/libkomodo8.so
+				Log.i("engines", copiedEngine.toString());
+			} else {
+				Log.i("engines", "No engines found");
+			}
+		} catch(Exception ex){
+			Log.e("engines", ex.toString());
+		}
+
+	}
     
     public void doExport(){
     	try {
