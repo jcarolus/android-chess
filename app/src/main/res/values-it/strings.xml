@@ -233,7 +233,11 @@ L\'email potrebbe non essere stata creata.
 <string name="pgntool_add_db_explanation">Aggiungi partite al database delle aperture</string>
 <string name="pgntool_create_db_explanation">Crea database delle aperture</string>
 <string name="pgntool_point_db_explanation">Imposta database delle aperture</string>
-<string name="pgntool_point_uci_engine">Installa motore UCI</string>
+<string name="pgntool_install_uci_engine">Installa motore UCI</string>
+<string name="pgntool_uci_engines_not_found">No UCI engines found</string><!-- @TODO -->
+<string name="pgntool_uci_engine_success">UCI engine %s installed</string><!-- @TODO -->
+<string name="pgntool_uci_engine_error">An error occured, could not install UCI engine</string><!-- @TODO -->
+<string name="pgntool_point_uci_engine">Installa motore UCI</string><!-- @TODO -->
 <string name="pgntool_unset_uci_engine">Disinstalla motore UCI</string>
 <string name="pgntool_help">Aiuto</string>
 <string name="pgntool_numexport">Partita %1$d esportata in chess.pgn</string>

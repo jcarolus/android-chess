@@ -2,6 +2,7 @@ package jwtc.android.chess.tools;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import enginesupport.ChessEngine;
@@ -79,24 +80,83 @@ public class pgntool extends ListActivity {
 					i.setClass(pgntool.this, FileListView.class);
 					i.putExtra(EXTRA_MODE, MODE_DB_POINT);
 					pgntool.this.startActivity(i);
-				} /*else if(arrString[arg2].equals(getString(R.string.pgntool_engine_test))){
-					
-					Intent i = new Intent();
-					i.setClass(pgntool.this, EngineTester.class);
-					pgntool.this.startActivity(i);
-					
-				}*/ else if(arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))){
+				} else if(arrString[arg2].equals(getString(R.string.pgntool_install_uci_engine))){
+
+					// install engine via open chess engine interface
+					// @see https://code.google.com/p/chessenginesupport-androidlib/
+					try {
+						ChessEngineResolver resolver = new ChessEngineResolver(getApplicationContext());
+						final List<ChessEngine> engines = resolver.resolveEngines();
+						if (engines.size() > 0) {
+
+                            ArrayList<String> arrList = new ArrayList<String>();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
+
+                            for(int i = 0; i < engines.size(); i++) {
+                                arrList.add(engines.get(i).getName());
+                            }
+                            final String[] arrItems = (String[]) arrList.toArray(new String[arrList.size()]);
+                            builder.setItems(arrItems, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int item) {
+                                    dialog.dismiss();
+
+                                    ChessEngine selectedEngine = engines.get(item);
+                                    String sEngine = "files/" + selectedEngine.getFileName();
+                                    Log.i("engines", sEngine);
+
+                                    try {
+                                        selectedEngine.copyToFiles(pgntool.this.getContentResolver(), pgntool.this.getFilesDir());
+                                        UCIWrapper.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/" + sEngine);
+
+                                        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+                                        editor.putString("UCIEngine", sEngine);
+                                        editor.commit();
+
+                                        doToast(String.format(getString(R.string.pgntool_uci_engine_success ), sEngine));
+
+                                    } catch(Exception ex){
+                                        doToast(getString(R.string.pgntool_uci_engine_error));
+                                    }
+                                }
+                            });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+
+                        } else {
+
+                            Log.i("engines", "No engines found");
+                            AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
+                            builder.setTitle(getString(R.string.pgntool_uci_engines_not_found));
+
+                            builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    pgntool.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
+                                    doToast(getString(R.string.pgntool_deleted));
+                                }
+                            });
+
+                            AlertDialog alert = builder.create();
+                            alert.show();
+						}
+					} catch(Exception ex){
+						Log.e("engines", ex.toString());
+					}
+
+
+
+				} else if(arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))){
 					AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
 					builder.setTitle(getString(R.string.pgntool_confirm_delete));
 					
-					builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener(){
+					builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
 							pgntool.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
 							doToast(getString(R.string.pgntool_deleted));
 						}
 					});
-					builder.setNegativeButton(getString(R.string.button_cancel), new DialogInterface.OnClickListener(){
+					builder.setNegativeButton(getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							dialog.dismiss();
 						}
@@ -190,34 +250,6 @@ public class pgntool extends ListActivity {
 		});
 
 
-		// testing the open chess engine interface
-		// @see https://code.google.com/p/chessenginesupport-androidlib/
-		try {
-			ChessEngineResolver resolver = new ChessEngineResolver(getApplicationContext());
-			List<ChessEngine> engines = resolver.resolveEngines();
-			if (engines.size() > 0) {
-
-				ChessEngine firstEngine = engines.get(0);
-				String sEngine = "files/" + firstEngine.getFileName();
-				Log.i("engines", sEngine);
-
-				File copiedEngine = firstEngine.copyToFiles(this.getContentResolver(), this.getFilesDir());
-
-				UCIWrapper.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/" + sEngine);
-
-				SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
-				editor.putString("UCIEngine", sEngine);
-				editor.commit();
-
-				// /data/data/jwtc.android.chess/
-				// e,g, /data/data/jwtc.android.chess/files/libkomodo8.so
-				Log.i("engines", copiedEngine.toString());
-			} else {
-				Log.i("engines", "No engines found");
-			}
-		} catch(Exception ex){
-			Log.e("engines", ex.toString());
-		}
 
 	}
     

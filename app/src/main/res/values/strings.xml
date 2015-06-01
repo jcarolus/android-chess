@@ -233,7 +233,11 @@ E-mail could not be created.
 <string name="pgntool_add_db_explanation">Add games to openingdatabase</string>
 <string name="pgntool_create_db_explanation">Create openingdatabase</string>
 <string name="pgntool_point_db_explanation">Set openingdatabase</string>
-<string name="pgntool_point_uci_engine">Install UCI engine</string>
+<string name="pgntool_install_uci_engine">Install UCI engine</string>
+<string name="pgntool_point_uci_engine">Manually install UCI engine</string>
+<string name="pgntool_uci_engines_not_found">No UCI engines found</string>
+<string name="pgntool_uci_engine_success">UCI engine %s installed</string>
+<string name="pgntool_uci_engine_error">An error occured, could not install UCI engine</string>
 <string name="pgntool_unset_uci_engine">Uninstall UCI engine</string>
 <string name="pgntool_help">Help</string>
 <string name="pgntool_numexport">Exported %1$d games to chess.pgn</string>

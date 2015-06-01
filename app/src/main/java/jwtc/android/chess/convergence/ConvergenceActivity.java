@@ -315,63 +315,100 @@ public class ConvergenceActivity extends Activity implements AdapterView.OnItemC
 
         _handlerTimer.postDelayed(_runnableTimer, 1000);
 
-
+/*
         Log.i(TAG, "Device.search");
         Device.search(new DeviceAsyncResult<List<Device>>() {
             public void onResult(final List<Device> devices) {
                 Log.i(TAG, "Device.onResult " + devices.size());
-                if(devices.size() > 0) {
+                if (devices.size() > 0) {
                     final Device device = devices.get(0);
-                    device.getApplication("nl.jwtc.chess", new DeviceAsyncResult<Application>() {
-                        @Override
-                        public void onResult(Application app) {
-                            Log.i(TAG, "getApplication.onResult");
-                            Map<String, String> parameters = new HashMap<String, String>();
-                            parameters.put("launcher", "android");
-                            app.launch(parameters, new ApplicationAsyncResult<Boolean>() {
-                                @Override
-                                public void onResult(final Boolean result) {
-                                    Log.i(TAG, "app.launch " + result);
-                                    if(result){
-                                        Map<String, String> clientAttributes = new HashMap<String, String>();
-                                        clientAttributes.put("name", "testname");
-
-                                        device.connectToChannel("nl.jwtc.chess.channel", clientAttributes, new DeviceAsyncResult<Channel>() {
-                                            @Override
-                                            public void onResult(final Channel channel) {
-
-                                            }
-
-                                            @Override
-                                            public void onError(final DeviceError error) {
-
-                                            }
-                                        });
-                                    }
-
-                                }
-                                @Override
-                                public void onError(ApplicationError e) {
-
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onError(DeviceError e) {
-
-                        }
-                    });
+                    onDeviceFound(device);
                 }
             }
 
             public void onError(final DeviceError error) {
+                Log.e(TAG, "Device search error " + error);
+            }
+        });
+*/
+/*
+        String sCode = "566689";
+        Log.i(TAG, "Device.search " + sCode);
+        Device.getByCode(sCode, new DeviceAsyncResult<Device>() {
+            @Override
+            public void onResult(final Device device) {
+                Log.d(TAG, "findDeviceByPinCode() onResult() device:\n" + device);
+                onDeviceFound(device);
+            }
+            @Override
+            public void onError(DeviceError error) {
+                Log.d(TAG, "findDeviceByPinCode onError() error: " + error);
+            }
+        });
+*/
+        super.onResume();
+    }
 
+
+    private void onDeviceFound(final Device device){
+        Log.i(TAG, "get application");
+        device.getApplication("nl.jwtc.chess", new DeviceAsyncResult<Application>() {
+            @Override
+            public void onResult(Application app) {
+                Log.i(TAG, "getApplication.onResult");
+
+                String state;
+                switch (app.getLastKnownStatus()) {
+                    case INSTALLABLE:
+                        state = "INSTALLABLE";
+                        break;
+                    case RUNNING:
+                        state = "RUNNING";
+                        break;
+                    case STOPPED:
+                    default:
+                        state = "STOPPED";
+                }
+                Log.i(TAG, "Application state " + state);
+
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("launcher", "android");
+                app.launch(parameters, new ApplicationAsyncResult<Boolean>() {
+                    @Override
+                    public void onResult(final Boolean result) {
+                        Log.i(TAG, "app.launch " + result);
+                        if(result){
+                            Map<String, String> clientAttributes = new HashMap<String, String>();
+                            clientAttributes.put("name", "testname");
+
+                            device.connectToChannel("nl.jwtc.chess.channel", clientAttributes, new DeviceAsyncResult<Channel>() {
+                                @Override
+                                public void onResult(final Channel channel) {
+                                    Log.i(TAG, "sendToHost");
+                                    channel.sendToHost("Hello TV");
+                                }
+
+                                @Override
+                                public void onError(final DeviceError error) {
+                                    Log.e(TAG, "connectToChannel error " + error);
+                                }
+                            });
+                        }
+
+                    }
+                    @Override
+                    public void onError(ApplicationError e) {
+                        Log.e(TAG, e.toString());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(DeviceError e) {
+                Log.e(TAG, e.toString());
             }
         });
 
-
-        super.onResume();
     }
 
     @Override
