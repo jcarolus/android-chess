@@ -673,7 +673,10 @@ public class ChessView extends UI{
 	@Override 
 	public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll){
 		super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
-		
+		Log.i("ChessView", "sMove =  " + sMove);
+		//_parent.soundNotification(sMove);
+		playNotification(sMove);
+
 		while(ply >= 0 && _arrPGNView.size() >= ply)
 			_arrPGNView.remove(_arrPGN.size()-1);
 		
@@ -1357,22 +1360,70 @@ public class ChessView extends UI{
 			
 		}
 	}
-	
-	@Override
-	public void playNotification(){
-		int move = _jni.getMyMove();
-		
-		int from = Move.getFrom(move);
-		int to = Move.getTo(move);
-		int piece = Move.getPromotionPiece(move);
-		
-		String sMove = 	Pos.colToString(from).toUpperCase() + 
-						". " + Pos.rowToString(from) + 
-						". " + Pos.colToString(to).toUpperCase() + 
-						". " + Pos.rowToString(to);
-		if(piece != 0){
-			sMove += " promote to ";
+
+
+	public void playNotification(String sMove){
+		char cFirst, cSecond, cThird;
+        String sTMP;
+		cFirst = sMove.charAt(0);   // check piece or pawn
+        cSecond = sMove.charAt(1);  // check if takes
+        //cThird = sMove.charAt(2);   // check which knight or which Rook takes TODO: sometimes sMove is only 2 chars
+
+		switch(cSecond)
+		{
+			case 'x':
+                sTMP = removeChars(2, sMove);
+                Log.i("ChessView", "sTMP = " + sTMP);
+                if (Character.getType(cFirst) == Character.LOWERCASE_LETTER)  // does pawn take
+                    sMove = cFirst + " takes " + sTMP;
+                else
+                    sMove = "  takes " + sTMP;                                // else piece takes
+				break;
 		}
+
+		switch(cFirst)
+		{
+			case 'N': sTMP = removeChars(1, sMove);
+                sMove = "Knight " + sTMP;
+                break;
+
+            case 'B': sTMP = removeChars(1, sMove);
+                sMove = "Bishop " + sTMP;
+                break;
+
+            case 'R': sTMP = removeChars(1, sMove);
+                sMove = "Rook " + sTMP;
+                break;
+
+            case 'Q': sTMP = removeChars(1, sMove);
+                sMove = "Queen " + sTMP;
+                break;
+
+            case 'K': sTMP = removeChars(1, sMove);
+                sMove = "King " + sTMP;
+                break;
+
+            case 'O':if (sMove.length() == 3)
+                sMove = "castle King side";
+                else sMove = "castle Queen Side";
+                break;
+
+		}
+
+        if ( sMove.charAt(sMove.length() - 1) == '+')
+            sMove += " check";
+
+        if ( sMove.charAt(sMove.length() - 1) == '#')
+            sMove += " check mate";
+
+
+		Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
 	}
+    public String removeChars(int index, String s)
+    {
+        String s1;
+        s1 = s.substring(index ,s.length());
+        return s1;
+    }
 }
