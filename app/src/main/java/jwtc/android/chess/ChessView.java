@@ -371,6 +371,16 @@ public class ChessView extends UI{
 	        	}
 			});
 		}
+
+		ImageButton butFlipBoard = (ImageButton)_parent.findViewById(R.id.ButtonFlipBoard);
+		if(butFlipBoard != null){
+			butFlipBoard.setOnClickListener((new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					flipBoard();
+				}
+			}));
+		}
 		
 		//
 		/*
@@ -663,7 +673,10 @@ public class ChessView extends UI{
 	@Override 
 	public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll){
 		super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
-		
+		Log.i("ChessView", "sMove =  " + sMove);
+		//_parent.soundNotification(sMove);
+		playNotification(sMove);
+
 		while(ply >= 0 && _arrPGNView.size() >= ply)
 			_arrPGNView.remove(_arrPGN.size()-1);
 		
@@ -1174,7 +1187,7 @@ public class ChessView extends UI{
 		if(_seekBar != null)
 		{
 			_seekBar.setMax(_arrPGN.size());
-			_seekBar.setProgress(_jni.getNumBoard()-1);
+			_seekBar.setProgress(_jni.getNumBoard() - 1);
 		}
 		
 		//_imgTurnOpp.setImageResource(R.drawable.emo_im_surprised);
@@ -1347,22 +1360,119 @@ public class ChessView extends UI{
 			
 		}
 	}
-	
-	@Override
-	public void playNotification(){
-		int move = _jni.getMyMove();
-		
-		int from = Move.getFrom(move);
-		int to = Move.getTo(move);
-		int piece = Move.getPromotionPiece(move);
-		
-		String sMove = 	Pos.colToString(from).toUpperCase() + 
-						". " + Pos.rowToString(from) + 
-						". " + Pos.colToString(to).toUpperCase() + 
-						". " + Pos.rowToString(to);
-		if(piece != 0){
-			sMove += " promote to ";
+
+
+	public void playNotification(String sMove){
+		char cFirst, cSecond, cThird;
+        String sTMP;
+		cFirst = sMove.charAt(0);   // check piece or pawn
+        cSecond = sMove.charAt(1);  // check if takes
+
+        if (sMove.length() > 2)
+        {
+            cThird = sMove.charAt(2);   // check which knight or which Rook takes
+            if (cThird == 'x')
+            {
+                    sTMP = takeChars(sMove, 3, sMove.length());
+                    String whichRook = takeChars(sMove, 1, 2);
+                    sMove = "  " + whichRook + " takes" + sTMP;
+            }
+        }
+
+		switch(cSecond)
+		{
+			case 'x':
+                sTMP = takeChars(sMove, 2, sMove.length());                 // removes first 2 chars
+                Log.i("ChessView", "sTMP = " + sTMP);
+                if (Character.getType(cFirst) == Character.LOWERCASE_LETTER)  // does pawn take?
+                    sMove = cFirst + " takes " + sTMP;
+                else
+                    sMove = "  takes " + sTMP;                                // else piece takes
+				break;
 		}
+
+
+
+		switch(cFirst)
+		{
+			case 'N': sTMP = takeChars(sMove, 1, sMove.length());  // removes 'N' from sMove
+                sMove = "Knight " + sTMP;
+                break;
+
+            case 'B': sTMP = takeChars(sMove, 1, sMove.length());
+                sMove = "Bishop " + sTMP;
+                break;
+
+            case 'R': sTMP = takeChars(sMove, 1, sMove.length());
+                sMove = "Rook " + sTMP;
+                break;
+
+            case 'Q': sTMP = takeChars(sMove, 1, sMove.length());
+                sMove = "Queen " + sTMP;
+                break;
+
+            case 'K': sTMP = takeChars(sMove, 1, sMove.length());
+                sMove = "King " + sTMP;
+                break;
+
+            case 'O':if (sMove.length() == 3)
+                sMove = "castle King side";
+                else sMove = "castle Queen Side";
+                break;
+
+		}
+        /*  TODO: Promotes to
+        for(int i=0; i == sMove.length()+1; i++)
+        {
+            if (sMove.charAt(i) == '=') {
+
+            }
+        }
+        */
+        
+        if ( sMove.charAt(sMove.length() - 1) == '+')         // check
+		{
+			sMove = takeChars(sMove, 0, sMove.length() - 1);  // remove the '+'
+			sMove += " check";
+		}
+
+        if ( sMove.charAt(sMove.length() - 1) == '#')         // checkmate
+		{
+			sMove = takeChars(sMove, 0, sMove.length() - 1);  // remove the '#'
+			sMove += " check mate";
+		}
+
+        if (sMove.length() > 2)
+            if (sMove.charAt(sMove.length()-4) == ' ')    // assures space from last two chars
+            {
+                sMove = sMove.substring(0,sMove.length()-2) + " " + sMove.substring(sMove.length()-2, sMove.length());
+            }
+
+		Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
 	}
+    public String takeChars(String s, int indexBeg, int indexEnd)
+    {
+        String s1;
+        s1 = s.substring(indexBeg , indexEnd);
+        return s1;
+    }
+
+    @Override
+    public void playNotification(){        //  TODO coordinate Speech
+        int move = _jni.getMyMove();
+
+        int from = Move.getFrom(move);
+        int to = Move.getTo(move);
+        int piece = Move.getPromotionPiece(move);
+
+        String sMove = 	Pos.colToString(from).toUpperCase() +
+                ". " + Pos.rowToString(from) +
+                ". " + Pos.colToString(to).toUpperCase() +
+                ". " + Pos.rowToString(to);
+        if(piece != 0){
+            sMove += " promote to ";
+        }
+        _parent.soundNotification(sMove);
+    }
 }
