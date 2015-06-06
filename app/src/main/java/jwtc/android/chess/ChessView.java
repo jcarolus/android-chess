@@ -1363,84 +1363,22 @@ public class ChessView extends UI{
 
 
 	public void playNotification(String sMove){
-		char cFirst, cSecond, cThird;
-        String sTMP;
-		cFirst = sMove.charAt(0);   // check piece or pawn
-        cSecond = sMove.charAt(1);  // check if takes
 
-        if (sMove.length() > 2)
-        {
-            cThird = sMove.charAt(2);   // check which knight or which Rook takes
-            if (cThird == 'x')
-            {
-                    sTMP = takeChars(sMove, 3, sMove.length());
-                    String whichRook = takeChars(sMove, 1, 2);
-                    sMove = "  " + whichRook + " takes" + sTMP;
-            }
-        }
+		sMove = sMove.replace("x", " takes ");
 
-		switch(cSecond)
-		{
-			case 'x':
-                sTMP = takeChars(sMove, 2, sMove.length());                 // removes first 2 chars
-                Log.i("ChessView", "sTMP = " + sTMP);
-                if (Character.getType(cFirst) == Character.LOWERCASE_LETTER)  // does pawn take?
-                    sMove = cFirst + " takes " + sTMP;
-                else
-                    sMove = "  takes " + sTMP;                                // else piece takes
-				break;
-		}
+		sMove = sMove.replace("=", " promotes to ");
 
+        sMove = sMove.replace("N", "night ");   // The 'K' will trigger the King
+        sMove = sMove.replace("B", "Bishop ");
+        sMove = sMove.replace("R", "Rook ");
+        sMove = sMove.replace("Q", "Queen ");
+		sMove = sMove.replace("K", "King ");
 
+		sMove = sMove.replace("O-O-O", "Castle Queen Side");
+		sMove = sMove.replace("O-O", "Castle King Side");
 
-		switch(cFirst)
-		{
-			case 'N': sTMP = takeChars(sMove, 1, sMove.length());  // removes 'N' from sMove
-                sMove = "Knight " + sTMP;
-                break;
-
-            case 'B': sTMP = takeChars(sMove, 1, sMove.length());
-                sMove = "Bishop " + sTMP;
-                break;
-
-            case 'R': sTMP = takeChars(sMove, 1, sMove.length());
-                sMove = "Rook " + sTMP;
-                break;
-
-            case 'Q': sTMP = takeChars(sMove, 1, sMove.length());
-                sMove = "Queen " + sTMP;
-                break;
-
-            case 'K': sTMP = takeChars(sMove, 1, sMove.length());
-                sMove = "King " + sTMP;
-                break;
-
-            case 'O':if (sMove.length() == 3)
-                sMove = "castle King side";
-                else sMove = "castle Queen Side";
-                break;
-
-		}
-        /*  TODO: Promotes to
-        for(int i=0; i == sMove.length()+1; i++)
-        {
-            if (sMove.charAt(i) == '=') {
-
-            }
-        }
-        */
-        
-        if ( sMove.charAt(sMove.length() - 1) == '+')         // check
-		{
-			sMove = takeChars(sMove, 0, sMove.length() - 1);  // remove the '+'
-			sMove += " check";
-		}
-
-        if ( sMove.charAt(sMove.length() - 1) == '#')         // checkmate
-		{
-			sMove = takeChars(sMove, 0, sMove.length() - 1);  // remove the '#'
-			sMove += " check mate";
-		}
+		sMove = sMove.replace("+", " check");
+		sMove = sMove.replace("#", " check mate");
 
         if (sMove.length() > 2)
             if (sMove.charAt(sMove.length()-4) == ' ')    // assures space from last two chars
@@ -1451,13 +1389,7 @@ public class ChessView extends UI{
 		Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
 	}
-    public String takeChars(String s, int indexBeg, int indexEnd)
-    {
-        String s1;
-        s1 = s.substring(indexBeg , indexEnd);
-        return s1;
-    }
-
+	
     @Override
     public void playNotification(){        //  TODO coordinate Speech
         int move = _jni.getMyMove();
