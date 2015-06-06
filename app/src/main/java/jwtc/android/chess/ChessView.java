@@ -1368,10 +1368,10 @@ public class ChessView extends UI{
 
 		sMove = sMove.replace("=", " promotes to ");
 
-        sMove = sMove.replace("N", "night ");   // The 'K' will trigger the King
-        sMove = sMove.replace("B", "Bishop ");
-        sMove = sMove.replace("R", "Rook ");
-        sMove = sMove.replace("Q", "Queen ");
+                sMove = sMove.replace("N", "night ");   // The 'K' will trigger the King
+                sMove = sMove.replace("B", "Bishop ");
+                sMove = sMove.replace("R", "Rook ");
+                sMove = sMove.replace("Q", "Queen ");
 		sMove = sMove.replace("K", "King ");
 
 		sMove = sMove.replace("O-O-O", "Castle Queen Side");
