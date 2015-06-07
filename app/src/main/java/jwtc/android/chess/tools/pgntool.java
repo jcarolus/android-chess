@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import enginesupport.ChessEngine;
-import enginesupport.ChessEngineResolver;
+import com.kalab.chess.enginesupport.ChessEngine;
+import com.kalab.chess.enginesupport.ChessEngineResolver;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.MyPGNProvider;
 import jwtc.android.chess.R;
