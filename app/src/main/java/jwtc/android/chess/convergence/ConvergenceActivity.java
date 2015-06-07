@@ -20,9 +20,17 @@ import android.net.NetworkInfo;
 import android.widget.ViewSwitcher;
 
 import java.lang.ref.WeakReference;
+import java.lang.Boolean;
 import android.net.wifi.WifiManager;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.samsung.multiscreen.device.*;
+import com.samsung.multiscreen.application.*;
+import com.samsung.multiscreen.channel.*;
+
 
 import jwtc.android.chess.*;
 
@@ -202,6 +210,14 @@ public class ConvergenceActivity extends Activity implements AdapterView.OnItemC
         return super.onKeyDown(keyCode, event);
     }
 
+    /*
+    RFC1918 name	IP address range	number of addresses	largest CIDR block (subnet mask)	host id size	mask bits	classful description[Note 1]
+24-bit block	10.0.0.0 - 10.255.255.255	16,777,216	10.0.0.0/8 (255.0.0.0)	24 bits	8 bits	single class A network
+20-bit block	172.16.0.0 - 172.31.255.255	1,048,576	172.16.0.0/12 (255.240.0.0)	20 bits	12 bits	16 contiguous class B networks
+16-bit block	192.168.0.0 - 192.168.255.255	65,536	192.168.0.0/16 (255.255.0.0)	16 bits	16 bits	256 contiguous class C networks
+
+@TODO create shorter ip code based on above 3 types
+     */
     protected String ipPart(String ip) {
 
         String[] arrTmp = ip.split("\\.");
@@ -299,7 +315,100 @@ public class ConvergenceActivity extends Activity implements AdapterView.OnItemC
 
         _handlerTimer.postDelayed(_runnableTimer, 1000);
 
+/*
+        Log.i(TAG, "Device.search");
+        Device.search(new DeviceAsyncResult<List<Device>>() {
+            public void onResult(final List<Device> devices) {
+                Log.i(TAG, "Device.onResult " + devices.size());
+                if (devices.size() > 0) {
+                    final Device device = devices.get(0);
+                    onDeviceFound(device);
+                }
+            }
+
+            public void onError(final DeviceError error) {
+                Log.e(TAG, "Device search error " + error);
+            }
+        });
+*/
+/*
+        String sCode = "566689";
+        Log.i(TAG, "Device.search " + sCode);
+        Device.getByCode(sCode, new DeviceAsyncResult<Device>() {
+            @Override
+            public void onResult(final Device device) {
+                Log.d(TAG, "findDeviceByPinCode() onResult() device:\n" + device);
+                onDeviceFound(device);
+            }
+            @Override
+            public void onError(DeviceError error) {
+                Log.d(TAG, "findDeviceByPinCode onError() error: " + error);
+            }
+        });
+*/
         super.onResume();
+    }
+
+
+    private void onDeviceFound(final Device device){
+        Log.i(TAG, "get application");
+        device.getApplication("nl.jwtc.chess", new DeviceAsyncResult<Application>() {
+            @Override
+            public void onResult(Application app) {
+                Log.i(TAG, "getApplication.onResult");
+
+                String state;
+                switch (app.getLastKnownStatus()) {
+                    case INSTALLABLE:
+                        state = "INSTALLABLE";
+                        break;
+                    case RUNNING:
+                        state = "RUNNING";
+                        break;
+                    case STOPPED:
+                    default:
+                        state = "STOPPED";
+                }
+                Log.i(TAG, "Application state " + state);
+
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("launcher", "android");
+                app.launch(parameters, new ApplicationAsyncResult<Boolean>() {
+                    @Override
+                    public void onResult(final Boolean result) {
+                        Log.i(TAG, "app.launch " + result);
+                        if(result){
+                            Map<String, String> clientAttributes = new HashMap<String, String>();
+                            clientAttributes.put("name", "testname");
+
+                            device.connectToChannel("nl.jwtc.chess.channel", clientAttributes, new DeviceAsyncResult<Channel>() {
+                                @Override
+                                public void onResult(final Channel channel) {
+                                    Log.i(TAG, "sendToHost");
+                                    channel.sendToHost("Hello TV");
+                                }
+
+                                @Override
+                                public void onError(final DeviceError error) {
+                                    Log.e(TAG, "connectToChannel error " + error);
+                                }
+                            });
+                        }
+
+                    }
+                    @Override
+                    public void onError(ApplicationError e) {
+                        Log.e(TAG, e.toString());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(DeviceError e) {
+                Log.e(TAG, e.toString());
+            }
+        });
+
     }
 
     @Override

@@ -109,6 +109,7 @@
     	<!-- <item>@string/pgntool_add_db_explanation</item> -->
     	<item>@string/pgntool_create_db_explanation</item>
     	<item>@string/pgntool_point_db_explanation</item>
+        <item>@string/pgntool_install_uci_engine</item>
     	<item>@string/pgntool_point_uci_engine</item>
     	<item>@string/pgntool_unset_uci_engine</item>
     	<item>@string/pgntool_create_practice_explanation</item>

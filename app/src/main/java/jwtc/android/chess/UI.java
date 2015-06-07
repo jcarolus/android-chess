@@ -36,12 +36,12 @@ public class UI extends GameControl
 	       			 move(move, "", true);
 	       		 
 	       		 updateState();
-	       		 playNotification();
+	       		 //playNotification();
 	       	 }
 	       	 else if(msg.what == MSG_UCI_MOVE){
 	       		enableControl();
 	       		doUCIMove(msg.getData().getInt("from"), msg.getData().getInt("to"), msg.getData().getInt("promo"));
-	       		playNotification();
+	       		//playNotification();
 	       	 }
 	       	 else if(msg.what == MSG_TEXT){
 	       		 setEngineMessage(msg.getData().getString("text"));
