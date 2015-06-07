@@ -673,7 +673,10 @@ public class ChessView extends UI{
 	@Override 
 	public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll){
 		super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
-		
+		Log.i("ChessView", "sMove =  " + sMove);
+		//_parent.soundNotification(sMove);
+		playNotification(sMove);
+
 		while(ply >= 0 && _arrPGNView.size() >= ply)
 			_arrPGNView.remove(_arrPGN.size()-1);
 		
@@ -1189,7 +1192,7 @@ public class ChessView extends UI{
 		if(_seekBar != null)
 		{
 			_seekBar.setMax(_arrPGN.size());
-			_seekBar.setProgress(_jni.getNumBoard()-1);
+			_seekBar.setProgress(_jni.getNumBoard() - 1);
 		}
 		
 		//_imgTurnOpp.setImageResource(R.drawable.emo_im_surprised);
@@ -1362,22 +1365,50 @@ public class ChessView extends UI{
 			
 		}
 	}
-	
-	@Override
-	public void playNotification(){
-		int move = _jni.getMyMove();
-		
-		int from = Move.getFrom(move);
-		int to = Move.getTo(move);
-		int piece = Move.getPromotionPiece(move);
-		
-		String sMove = 	Pos.colToString(from).toUpperCase() + 
-						". " + Pos.rowToString(from) + 
-						". " + Pos.colToString(to).toUpperCase() + 
-						". " + Pos.rowToString(to);
-		if(piece != 0){
-			sMove += " promote to ";
-		}
+
+
+	public void playNotification(String sMove){
+
+		sMove = sMove.replace("x", " takes ");
+
+		sMove = sMove.replace("=", " promotes to ");
+        sMove = sMove.replace("N", "night ");   // The 'K' will trigger the King
+        sMove = sMove.replace("B", "Bishop ");
+        sMove = sMove.replace("R", "Rook ");
+        sMove = sMove.replace("Q", "Queen ");
+		sMove = sMove.replace("K", "King ");
+
+		sMove = sMove.replace("O-O-O", "Castle Queen Side");
+		sMove = sMove.replace("O-O", "Castle King Side");
+
+		sMove = sMove.replace("+", " check");
+		sMove = sMove.replace("#", " check mate");
+
+        if (sMove.length() > 2)
+            if (sMove.charAt(sMove.length()-4) == ' ')    // assures space from last two chars
+            {
+                sMove = sMove.substring(0,sMove.length()-2) + " " + sMove.substring(sMove.length()-2, sMove.length());
+            }
+
+		Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
 	}
+	
+    @Override
+    public void playNotification(){        //  TODO coordinate Speech
+        int move = _jni.getMyMove();
+
+        int from = Move.getFrom(move);
+        int to = Move.getTo(move);
+        int piece = Move.getPromotionPiece(move);
+
+        String sMove = 	Pos.colToString(from).toUpperCase() +
+                ". " + Pos.rowToString(from) +
+                ". " + Pos.colToString(to).toUpperCase() +
+                ". " + Pos.rowToString(to);
+        if(piece != 0){
+            sMove += " promote to ";
+        }
+        _parent.soundNotification(sMove);
+    }
 }
