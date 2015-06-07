@@ -1384,16 +1384,20 @@ public class ChessView extends UI{
 		sMove = sMove.replace("+", " check");
 		sMove = sMove.replace("#", " check mate");
 
-        if (sMove.length() > 2)
-            if (sMove.charAt(sMove.length()-4) == ' ')    // assures space from last two chars
-            {
-                sMove = sMove.substring(0,sMove.length()-2) + " " + sMove.substring(sMove.length()-2, sMove.length());
-            }
+        if (sMove.length() > 2) {
+			if (sMove.charAt(sMove.length() - 4) == ' ')    // assures space from last two chars
+			{
+				sMove = sMove.substring(0, sMove.length() - 2) + " " + sMove.substring(sMove.length() - 2, sMove.length());
+			}
+		}
+
+		// the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
+		sMove = sMove.replace("a ", "ay ");
 
 		Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
 	}
-	
+
     @Override
     public void playNotification(){        //  TODO coordinate Speech
         int move = _jni.getMyMove();
