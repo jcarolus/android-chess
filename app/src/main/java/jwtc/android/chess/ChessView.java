@@ -221,6 +221,9 @@ public class ChessView extends UI{
 		OnClickListener oclFf = new OnClickListener() {
         	public void onClick(View arg0) {
         		if(m_bActive){
+					// TODO: raise custom event on view arg0
+					//		 need handler for custom event on ChessView
+					//		 ChessView has access to _speech and move members
         			jumptoMove(_jni.getNumBoard());
         			updateState();
         		}
@@ -599,7 +602,7 @@ public class ChessView extends UI{
 	}
 	
 	private String formatTime(long msec){
-		final String sTmp = String.format("%02d:%02d", (int)(Math.floor(msec/60000)), ((int)(msec / 1000) % 60)); 
+		final String sTmp = String.format("%02d:%02d", (int)(Math.floor(msec / 60000)), ((int)(msec / 1000) % 60));
     	return sTmp;
     }
 		
@@ -678,8 +681,8 @@ public class ChessView extends UI{
 		playNotification(sMove);
 
 		while(ply >= 0 && _arrPGNView.size() >= ply)
-			_arrPGNView.remove(_arrPGN.size()-1);
-		
+			_arrPGNView.remove(_arrPGN.size() - 1);
+
 		View v = _inflater.inflate(R.layout.pgn_item, null, false);
 		v.setId(ply);
 		_arrPGNView.add(new PGNView(this, v, ply, sMove, sAnnotation.length() > 0));
@@ -1093,7 +1096,7 @@ public class ChessView extends UI{
 				Log.i("ChessView", "ECO jArray - size " + _jArrayECO.length() + " load " + (System.currentTimeMillis() - start));
 				
 			} catch (Exception e) {
-				
+
 			}
 		}
 		
