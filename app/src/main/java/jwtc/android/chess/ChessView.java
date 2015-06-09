@@ -194,6 +194,7 @@ public class ChessView extends UI{
         	public void onClick(View arg0) {
         		if(m_bActive){
         			undo();
+					playNotification(_jni.getMyMoveToString());
         		} else {
         			stopThreadAndUndo();
         		}
@@ -221,10 +222,8 @@ public class ChessView extends UI{
 		OnClickListener oclFf = new OnClickListener() {
         	public void onClick(View arg0) {
         		if(m_bActive){
-					// TODO: raise custom event on view arg0
-					//		 need handler for custom event on ChessView
-					//		 ChessView has access to _speech and move members
         			jumptoMove(_jni.getNumBoard());
+					playNotification(_jni.getMyMoveToString());
         			updateState();
         		}
         			
@@ -1371,6 +1370,7 @@ public class ChessView extends UI{
 
 
 	public void playNotification(String sMove){
+
 
 		sMove = sMove.replace("x", " takes ");
 
