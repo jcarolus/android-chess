@@ -1373,20 +1373,27 @@ public class ChessView extends UI{
 
 		Log.i("ChessView", "sMove =  " + sMove);
 
+		if (sMove.length() > 3)
+		{
+			// assures space to separate which Rook and which Knight to move
+			sMove = sMove.substring(0,2) + " " + sMove.substring(2, sMove.length());
+		}
+
 		sMove = sMove.replace("x", " takes ");
 
 		sMove = sMove.replace("=", " promotes to ");
-        sMove = sMove.replace("N", "night ");   // The 'K' will trigger the King
-        sMove = sMove.replace("B", "Bishop ");
-        sMove = sMove.replace("R", "Rook ");
-        sMove = sMove.replace("Q", "Queen ");
+
 		sMove = sMove.replace("K", "King ");
+		sMove = sMove.replace("Q", "Queen ");
+		sMove = sMove.replace("R", "Rook ");
+		sMove = sMove.replace("B", "Bishop ");
+        sMove = sMove.replace("N", "Knight ");
 
 		sMove = sMove.replace("O-O-O", "Castle Queen Side");
 		sMove = sMove.replace("O-O", "Castle King Side");
 
 		sMove = sMove.replace("+", " check");
-		sMove = sMove.replace("#", " check mate");
+		sMove = sMove.replace("#", " checkmate");
 
         if (sMove.length() > 2) {
 			if (sMove.charAt(sMove.length() - 4) == ' ')    // assures space from last two chars
