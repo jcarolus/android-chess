@@ -675,7 +675,7 @@ public class ChessView extends UI{
 	@Override 
 	public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll){
 		super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
-		Log.i("ChessView", "sMove =  " + sMove);
+
 		//_parent.soundNotification(sMove);
 		playNotification(sMove);
 
@@ -1371,6 +1371,7 @@ public class ChessView extends UI{
 
 	public void playNotification(String sMove){
 
+		Log.i("ChessView", "sMove =  " + sMove);
 
 		sMove = sMove.replace("x", " takes ");
 
@@ -1396,6 +1397,7 @@ public class ChessView extends UI{
 
 		// the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
 		sMove = sMove.replace("a ", "ay ");
+		sMove = sMove.replace("b", "bee ");
 
 		Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
