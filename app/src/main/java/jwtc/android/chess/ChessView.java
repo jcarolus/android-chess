@@ -1371,7 +1371,7 @@ public class ChessView extends UI{
 
 	public void playNotification(String sMove){
 
-		Log.i("ChessView", "sMove =  " + sMove);
+		//Log.i("ChessView", "sMove =  " + sMove);
 
 		if (sMove.length() > 3)
 		{
@@ -1406,7 +1406,7 @@ public class ChessView extends UI{
 		sMove = sMove.replace("a ", "ay ");
 		sMove = sMove.replace("b", "bee ");
 
-		Log.i("ChessView", " 2nd sMove = " + sMove);
+		//Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
 	}
 
