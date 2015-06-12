@@ -155,7 +155,7 @@
 				android:background="@color/bgColorText" 
 			>
 				<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
-					android:background="@color/bgColor"
+
 				>
 					<ImageView android:id="@+id/ImageCapturedBlackPawn" android:src="@drawable/small_bpb"
 						style="@style/CaptureImageStyle"  
@@ -234,7 +234,7 @@
 		
 			<HorizontalScrollView android:id="@+id/HScrollViewHistory"
 		    	android:layout_width="fill_parent" android:layout_height="40dip"
-				android:background="@color/bgColor" android:textColor="@color/textColor" 
+				android:background="@color/bgColorLight" android:textColor="@color/textColor"
 				android:padding="2dip"
 			>
 				<RelativeLayout android:id="@+id/LayoutHistory"

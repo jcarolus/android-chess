@@ -235,15 +235,16 @@ public class importactivity extends Activity {
 				try {
 					FileInputStream fis = new FileInputStream(sPath);
 					UCIWrapper.install(fis, sEngine);
-					
-					doToast("UCI " + sEngine + " installed");
+
 					SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
 					editor.putString("UCIEngine", sEngine);
 					editor.commit();
-					
+
+					doToast(String.format(getString(R.string.pgntool_uci_engine_success), sEngine));
+
 				} catch (IOException e) {
-					
-					doToast("An error occured, could not install UCI engine");
+
+					doToast(getString(R.string.pgntool_uci_engine_error));
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

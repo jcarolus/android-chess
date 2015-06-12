@@ -16,6 +16,7 @@
 # Generated files
 bin/
 gen/
+native/project/obj/
 
 # Gradle files
 .gradle/

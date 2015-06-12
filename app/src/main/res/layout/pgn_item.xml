@@ -5,7 +5,7 @@
 		android:layout_marginRight="2px"
 	>
 		<TextView android:id="@+id/TextViewNumMove" 
-			android:background="@color/bgColor"
+			android:background="@color/bgColorText"
 			android:textColor="@color/textColor"
 			android:padding="8px"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"/>

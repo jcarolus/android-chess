@@ -7,6 +7,8 @@ import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.pm.ActivityInfo;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -56,7 +58,10 @@ public class setup extends MyBaseActivity {
         if(prefs.getBoolean("fullScreen", true)){
         	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
         } 
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if(getResources().getBoolean(R.bool.portraitOnly)){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
         setContentView(R.layout.setup);
         _view = new ChessViewBase(this); 
@@ -416,34 +421,39 @@ public class setup extends MyBaseActivity {
         super.onResume();
 
         _view.OnResume();
-/////////////////////////////////////////////////////////////////////////////        
-        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		DisplayMetrics metrics = new DisplayMetrics();
-		display.getMetrics(metrics);
-		
-		// get smallest length of screen
-		int length = display.getWidth();
-		boolean bLandScape = false;
-		if(length > display.getHeight()){
-			length = display.getHeight();
-			bLandScape = true;
-		}
-		//DENSITY_LOW, DENSITY_MEDIUM, or DENSITY_HIGH.
-		Log.i("Setup", "::" + length + "::" + metrics.widthPixels );
-		
-		if(bLandScape){
-			int square = length / 8;
-			length = (square * 7) / 8;
-		}
-		else {
-			length /= 8;
-		}
-		LayoutParams params = new LayoutParams(length, length);
-		for(int i = 0; i < _arrSelImages.length; i++){
-			_arrSelImages[i].setLayoutParams(params);
-		} 		
+/////////////////////////////////////////////////////////////////////////////
+
+        Window window = getWindow();
+        final View v = window.getDecorView();
+        v.post(new Runnable() {
+            @Override
+            public void run() {
+                Rect rectangle= new Rect();
+                v.getWindowVisibleDisplayFrame(rectangle);
+                int availableHeight = rectangle.bottom - rectangle.top;
+                int availableWidth = rectangle.right - rectangle.left;
+                int length;
+
+                if(availableHeight > availableWidth){
+                    length = availableWidth / 8;
+                } else {
+                    length = availableHeight / 8;
+                }
+                //int contentViewTop = window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+                //int titleBarHeight= contentViewTop - statusBarHeight;
+
+                Log.i("ChessViewBase", "availableHeight 2 " + availableHeight);
+
+                LayoutParams params = new LayoutParams(length, length);
+                for(int i = 0; i < _arrSelImages.length; i++){
+                    _arrSelImages[i].setLayoutParams(params);
+                }
+            }
+        });
+
+
         /////////////////////////////////////////////////////////////////////////////
-        
+
         String sFEN = null;
         if(_uri != null){
         
