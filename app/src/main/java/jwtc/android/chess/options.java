@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -28,7 +29,7 @@ public class options extends Activity {
 	private CheckBox _checkPlay, _checkAutoFlip, _checkMoves, _check960;
 	private Spinner _spinLevel, _spinLevelPly;
 	private Button _butCancel, _butOk;
-	private RadioButton _radioTime, _radioPly;
+	private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack;
 	private TableRow _tableRowOption960;
 	
 	@Override
@@ -40,10 +41,14 @@ public class options extends Activity {
         setTitle(R.string.title_options);
 
 		_checkPlay = (CheckBox)findViewById(R.id.CheckBoxOptionsPlayAndroid);
-		_checkPlay.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+		_checkPlay.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				_checkAutoFlip.setEnabled(false == isChecked);
-			}		
+				_checkAutoFlip.setChecked(true);
+				_radioWhite.setEnabled(true == isChecked);
+				_radioWhite.setChecked(true);
+				_radioBlack.setEnabled(true == isChecked);
+			}
 		});
 
 		_checkAutoFlip = (CheckBox)findViewById(R.id.CheckBoxOptionsAutoFlip);
@@ -66,16 +71,31 @@ public class options extends Activity {
 	    _spinLevelPly.setAdapter(adapterPly);
 	    
 	    _radioTime = (RadioButton)findViewById(R.id.RadioOptionsTime);
-	    _radioTime.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+	    _radioTime.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				_radioPly.setChecked(_radioTime.isChecked() ? false : true);
-			}		
+			}
 		});
 	    _radioPly = (RadioButton)findViewById(R.id.RadioOptionsPly);
 	    _radioPly.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				_radioTime.setChecked(_radioPly.isChecked() ? false : true);
 			}		
+		});
+
+		_radioWhite = (RadioButton)findViewById(R.id.rbWhite);
+		_radioWhite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				_radioBlack.setChecked(_radioWhite.isChecked() ? false : true);
+			}
+		});
+		_radioBlack = (RadioButton)findViewById(R.id.rbBlack);
+		_radioBlack.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_radioWhite.setChecked(_radioBlack.isChecked() ? false: true);
+			}
 		});
 	    
 	    _butCancel = (Button)findViewById(R.id.ButtonOptionsCancel);
@@ -98,7 +118,9 @@ public class options extends Activity {
         		editor.putInt("playMode", _checkPlay.isChecked() ? GameControl.HUMAN_PC : GameControl.HUMAN_HUMAN);
         		editor.putBoolean("autoflipBoard", _checkAutoFlip.isChecked());
         		editor.putBoolean("showMoves", _checkMoves.isChecked());
-        		
+				editor.putBoolean("Black", _radioBlack.isChecked());
+				Log.i("options.java", "_bBlack _radioBlack.isChecked() is " + _radioBlack.isChecked());
+
         		editor.commit();
         		
         		if(_tableRowOption960.getVisibility() == View.VISIBLE && _check960.isChecked()){

@@ -53,7 +53,7 @@ public class ChessView extends UI{
 	private RelativeLayout _layoutHistory;
 	private ArrayList<PGNView> _arrPGNView;
 	private LayoutInflater _inflater;
-	private boolean _bAutoFlip, _bShowMoves, _bShowLastMove;
+	private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bBlack;
 	private Timer _timer;
 	private ViewSwitcher _switchTurnMe, _switchTurnOpp;
 	private SeekBar _seekBar; 
@@ -127,6 +127,7 @@ public class ChessView extends UI{
 		
 		_playMode = HUMAN_PC;
 		_bAutoFlip = false;
+		//_bBlack = false;
 		_bShowMoves = false;
 		_bShowLastMove = true;
 		_dpadPos = -1;
@@ -662,6 +663,11 @@ public class ChessView extends UI{
 	@Override public void newGame(){
 		super.newGame();
 		clearPGNView();
+		Log.i("ChessView", "665 newGame _bBlack is " + _bBlack);
+		if (_bBlack)
+			playBlack();
+		else playWhite();
+
 	}
 	@Override public int newGameRandomFischer(int seed){
 		
@@ -739,14 +745,14 @@ public class ChessView extends UI{
 			arrSelPositions[1] = _dpadPos;
 		}
 		int turn = _jni.getTurn();
-		// 
+		//
 		if(_playMode == HUMAN_HUMAN &&
 				_bAutoFlip && 
 				(turn == BoardConstants.WHITE && _view.getFlippedBoard() ||
 				turn == BoardConstants.BLACK && false == _view.getFlippedBoard()))
 				_view.flipBoard();
-		
-		
+
+
 		ArrayList<Integer> arrPos = new ArrayList<Integer>();
 		// collect legal moves if pref is set
 		if(_bShowMoves && m_iFrom != -1){
@@ -787,7 +793,22 @@ public class ChessView extends UI{
 		_view.flipBoard();
 		updateState();
 	}
-	
+
+	public void playBlack() {
+
+        Log.i("ChessView", "801 _view.getFlippedBoard() is" + _view.getFlippedBoard());
+		if (!_view.getFlippedBoard())
+			flipBoard();
+
+		play();
+
+	}
+
+	public void playWhite() {
+		if (_view.getFlippedBoard())
+			flipBoard();
+	}
+
 	public void setFlippedBoard(boolean b){
 		_view.setFlippedBoard(b);
 	}
@@ -1013,6 +1034,7 @@ public class ChessView extends UI{
 		editor.putInt("playMode", _playMode);
 		editor.putBoolean("autoflipBoard", _bAutoFlip);
 		editor.putBoolean("showMoves", _bShowMoves);
+		editor.putBoolean("Black", _bBlack);
 		editor.putInt("boardNum", _jni.getNumBoard());
 		if(_viewAnimator != null){
 			editor.putInt("animatorViewNumber", _viewAnimator.getDisplayedChild());
@@ -1049,6 +1071,8 @@ public class ChessView extends UI{
 		_bAutoFlip = prefs.getBoolean("autoflipBoard", false);
 		_bShowMoves = prefs.getBoolean("showMoves", true);
 		_bShowLastMove = prefs.getBoolean("showLastMove", true);
+		_bBlack = prefs.getBoolean("Black", false);
+		Log.i("ChessView", "1075 _bBlack is " + _bBlack);
 		setLevelMode(prefs.getInt("levelMode", LEVEL_TIME));
 		_selectedLevel = prefs.getInt("level", 2);
 		_selectedLevelPly = prefs.getInt("levelPly", 2);
