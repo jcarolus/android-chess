@@ -202,6 +202,7 @@ public class options extends Activity {
  		_checkAutoFlip.setChecked(prefs.getBoolean("autoflipBoard", false));
  		_checkAutoFlip.setEnabled(false == _checkPlay.isChecked());
  		_checkMoves.setChecked(prefs.getBoolean("showMoves", true));
+		_radioBlack.setChecked(prefs.getBoolean("Black", false));
  		
  		_radioTime.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_TIME);
  	    _radioPly.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_PLY);

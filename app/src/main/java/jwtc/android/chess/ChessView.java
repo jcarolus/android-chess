@@ -663,6 +663,8 @@ public class ChessView extends UI{
 	@Override public void newGame(){
 		super.newGame();
 		clearPGNView();
+
+		//_bBlack = prefs.getBoolean("Black", false);
 		Log.i("ChessView", "665 newGame _bBlack is " + _bBlack);
 		if (_bBlack)
 			playBlack();
@@ -796,10 +798,9 @@ public class ChessView extends UI{
 
 	public void playBlack() {
 
-        Log.i("ChessView", "801 _view.getFlippedBoard() is" + _view.getFlippedBoard());
 		if (!_view.getFlippedBoard())
 			flipBoard();
-
+		Log.i("ChessView", "801 _view.getFlippedBoard() is" + _view.getFlippedBoard());
 		play();
 
 	}

@@ -8,8 +8,7 @@
 	<TableLayout android:id="@+id/TableOptions"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		>
-		<TableRow style="@style/MyRowStyle"
-				  android:layout_marginRight="@dimen/normalPaddingX">"
+		<TableRow style="@style/MyRowStyle">
 			<CheckBox android:id="@+id/CheckBoxOptionsPlayAndroid"
 				android:text="@string/options_play_android"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -21,7 +20,6 @@
 				android:layout_height="wrap_content"
 				android:text="@string/options_play_white"
 				android:id="@+id/rbWhite"
-				android:layout_column="1"
 				/>
 
 			<RadioButton
@@ -29,7 +27,7 @@
 				android:layout_height="wrap_content"
 				android:text="@string/options_play_black"
 				android:id="@+id/rbBlack"
-				android:layout_column="2"/>
+				/>
 			</RadioGroup>
 		</TableRow>
 		<TableRow style="@style/MyRowStyle" android:id="@+id/TableRowOptions960" android:visibility="gone">
