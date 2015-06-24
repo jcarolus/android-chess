@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -28,7 +29,7 @@ public class options extends Activity {
 	private CheckBox _checkPlay, _checkAutoFlip, _checkMoves, _check960;
 	private Spinner _spinLevel, _spinLevelPly;
 	private Button _butCancel, _butOk;
-	private RadioButton _radioTime, _radioPly;
+	private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack;
 	private TableRow _tableRowOption960;
 	
 	@Override
@@ -40,10 +41,16 @@ public class options extends Activity {
         setTitle(R.string.title_options);
 
 		_checkPlay = (CheckBox)findViewById(R.id.CheckBoxOptionsPlayAndroid);
-		_checkPlay.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+		_checkPlay.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				_checkAutoFlip.setEnabled(false == isChecked);
-			}		
+				_checkPlay.setText(_checkPlay.isChecked() ? R.string.options_play_android: R.string.options_play_human);
+				_checkAutoFlip.setEnabled(!isChecked);
+				_checkAutoFlip.setChecked(true);
+
+				_radioWhite.setEnabled(isChecked);
+				_radioWhite.setChecked(true);
+				_radioBlack.setEnabled(isChecked);
+			}
 		});
 
 		_checkAutoFlip = (CheckBox)findViewById(R.id.CheckBoxOptionsAutoFlip);
@@ -51,7 +58,7 @@ public class options extends Activity {
 		
 		_tableRowOption960 = (TableRow)findViewById(R.id.TableRowOptions960);
 		_check960 = (CheckBox)findViewById(R.id.CheckBoxOptions960);
-		
+
 	    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.levels_time, android.R.layout.simple_spinner_item);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -66,16 +73,31 @@ public class options extends Activity {
 	    _spinLevelPly.setAdapter(adapterPly);
 	    
 	    _radioTime = (RadioButton)findViewById(R.id.RadioOptionsTime);
-	    _radioTime.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+	    _radioTime.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				_radioPly.setChecked(_radioTime.isChecked() ? false : true);
-			}		
+			}
 		});
 	    _radioPly = (RadioButton)findViewById(R.id.RadioOptionsPly);
 	    _radioPly.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				_radioTime.setChecked(_radioPly.isChecked() ? false : true);
 			}		
+		});
+
+		_radioWhite = (RadioButton)findViewById(R.id.rbWhite);
+		_radioWhite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				_radioBlack.setChecked(_radioWhite.isChecked() ? false : true);
+			}
+		});
+		_radioBlack = (RadioButton)findViewById(R.id.rbBlack);
+		_radioBlack.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				_radioWhite.setChecked(_radioBlack.isChecked() ? false: true);
+			}
 		});
 	    
 	    _butCancel = (Button)findViewById(R.id.ButtonOptionsCancel);
@@ -94,16 +116,15 @@ public class options extends Activity {
         		
         		editor.putInt("levelMode", _radioTime.isChecked() ? GameControl.LEVEL_TIME : GameControl.LEVEL_PLY);
         		editor.putInt("level", _spinLevel.getSelectedItemPosition()+1);
-        		editor.putInt("levelPly", _spinLevelPly.getSelectedItemPosition()+1);
+        		editor.putInt("levelPly", _spinLevelPly.getSelectedItemPosition() + 1);
         		editor.putInt("playMode", _checkPlay.isChecked() ? GameControl.HUMAN_PC : GameControl.HUMAN_HUMAN);
         		editor.putBoolean("autoflipBoard", _checkAutoFlip.isChecked());
         		editor.putBoolean("showMoves", _checkMoves.isChecked());
-        		
+				editor.putBoolean("Black", _radioBlack.isChecked());
+
         		editor.commit();
-        		
+
         		if(_tableRowOption960.getVisibility() == View.VISIBLE && _check960.isChecked()){
-        			
-        			
         			AlertDialog.Builder builder = new AlertDialog.Builder(options.this);
         	    	builder.setTitle(getString(R.string.title_chess960_manual_random));
         	    	final EditText input = new EditText(options.this);
@@ -180,6 +201,7 @@ public class options extends Activity {
  		_checkAutoFlip.setChecked(prefs.getBoolean("autoflipBoard", false));
  		_checkAutoFlip.setEnabled(false == _checkPlay.isChecked());
  		_checkMoves.setChecked(prefs.getBoolean("showMoves", true));
+		_radioBlack.setChecked(prefs.getBoolean("Black", false));
  		
  		_radioTime.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_TIME);
  	    _radioPly.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_PLY);
