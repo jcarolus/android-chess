@@ -53,7 +53,7 @@ public class ChessView extends UI{
 	private RelativeLayout _layoutHistory;
 	private ArrayList<PGNView> _arrPGNView;
 	private LayoutInflater _inflater;
-	private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bBlack;
+	private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bBlack, _bFirstTurn;
 	private Timer _timer;
 	private ViewSwitcher _switchTurnMe, _switchTurnOpp;
 	private SeekBar _seekBar; 
@@ -74,7 +74,7 @@ public class ChessView extends UI{
 	public static int SUBVIEW_GUESS 	= 5;
 	public static int SUBVIEW_BLINDFOLD	= 6;
 	public static int SUBVIEW_ECO		= 7;
-	
+
 	static class InnerHandler extends Handler{
 		WeakReference<ChessView> _chessView;
 		
@@ -127,7 +127,7 @@ public class ChessView extends UI{
 		
 		_playMode = HUMAN_PC;
 		_bAutoFlip = false;
-		//_bBlack = false;
+		_bBlack = false;
 		_bShowMoves = false;
 		_bShowLastMove = true;
 		_dpadPos = -1;
@@ -225,7 +225,6 @@ public class ChessView extends UI{
         			jumptoMove(_jni.getNumBoard());
         			updateState();
         		}
-        			
         	}
     	};
 		ImageButton butNext = (ImageButton)_parent.findViewById(R.id.ButtonNext);
@@ -345,7 +344,8 @@ public class ChessView extends UI{
 	        		Intent intent = new Intent();
 	        	    intent.setClass(_parent, options.class);
 	        	    intent.putExtra("requestCode", main.REQUEST_NEWGAME);
-	        		_parent.startActivityForResult(intent, main.REQUEST_NEWGAME);    		
+	        		_parent.startActivityForResult(intent, main.REQUEST_NEWGAME);
+					_bFirstTurn = true;    // FlipBoard once if needed
 	        	}
 			});
 		}
@@ -355,7 +355,6 @@ public class ChessView extends UI{
 			//butSaveGame.setFocusable(false);
 			butSaveGame.setOnClickListener(new OnClickListener() {
 	        	public void onClick(View arg0) {
-	        		
 	        		_parent.saveGame(); 
 	        	}
 			});
@@ -403,6 +402,7 @@ public class ChessView extends UI{
 			});
 		}
 		*/
+
 		ImageButton butBlindFoldShow = (ImageButton)_parent.findViewById(R.id.ButtonBlindfoldShow);
 		if(butBlindFoldShow != null){
 			//butBlindFoldShow.setFocusable(false);
@@ -414,6 +414,7 @@ public class ChessView extends UI{
 	        	}
 			});
 		}
+
 		ImageButton butBlindFoldHide = (ImageButton)_parent.findViewById(R.id.ButtonBlindfoldHide);
 		if(butBlindFoldHide != null){
 			//butBlindFoldHide.setFocusable(false);
@@ -425,6 +426,7 @@ public class ChessView extends UI{
 	        	}
 			});
 		}
+
 		ImageButton butBlindFoldLocations = (ImageButton)_parent.findViewById(R.id.ButtonBlindfoldLocations);
 		if(butBlindFoldLocations != null){
 			//butBlindFoldLocations.setFocusable(false);
@@ -436,8 +438,7 @@ public class ChessView extends UI{
 	        	}
 			});
 		}
-		
-		
+
 		Button bHintGuess = (Button)_parent.findViewById(R.id.ButtonHintGuess);
 		if(bHintGuess != null){
 			//bHintGuess.setFocusable(false);
@@ -453,7 +454,6 @@ public class ChessView extends UI{
 						paintBoard();
 					}
 				}
-				
 			});
 		}
 		
@@ -487,7 +487,6 @@ public class ChessView extends UI{
 		if(_tvAnnotate != null){
 			_tvAnnotate.setOnClickListener(new OnClickListener() {
 	        	public void onClick(View arg0) {
-	        		
         			final int i = _jni.getNumBoard() - 2;
         			if(i > 0){
 	        			final FrameLayout fl = new FrameLayout(_parent);
@@ -510,7 +509,6 @@ public class ChessView extends UI{
 	        					
 	        					dialog.dismiss();
 	        				}
-	        				
 	        			});
 	        			AlertDialog alert = builder.create();
 	        			alert.show();
@@ -664,13 +662,8 @@ public class ChessView extends UI{
 		super.newGame();
 		clearPGNView();
 
-		//_bBlack = prefs.getBoolean("Black", false);
-		Log.i("ChessView", "665 newGame _bBlack is " + _bBlack);
-		if (_bBlack)
-			playBlack();
-		else playWhite();
-
 	}
+
 	@Override public int newGameRandomFischer(int seed){
 		
 		int ret = super.newGameRandomFischer(seed);
@@ -678,6 +671,7 @@ public class ChessView extends UI{
 		
 		return ret;
 	}
+
 	@Override 
 	public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll){
 		super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
@@ -721,6 +715,7 @@ public class ChessView extends UI{
 			scrollToEnd();
 		}
 	}
+
 	@Override public void setAnnotation(int i, String sAnno){
 		super.setAnnotation(i, sAnno);
 
@@ -747,13 +742,15 @@ public class ChessView extends UI{
 			arrSelPositions[1] = _dpadPos;
 		}
 		int turn = _jni.getTurn();
-		//
+
+		if (_playMode == HUMAN_HUMAN)
+			_butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
+
 		if(_playMode == HUMAN_HUMAN &&
 				_bAutoFlip && 
 				(turn == BoardConstants.WHITE && _view.getFlippedBoard() ||
 				turn == BoardConstants.BLACK && false == _view.getFlippedBoard()))
-				_view.flipBoard();
-
+			_view.flipBoard();
 
 		ArrayList<Integer> arrPos = new ArrayList<Integer>();
 		// collect legal moves if pref is set
@@ -787,6 +784,7 @@ public class ChessView extends UI{
 			}
 		}
 	}
+
 	public int getPlayMode(){
     	return _playMode;
     }
@@ -797,12 +795,10 @@ public class ChessView extends UI{
 	}
 
 	public void playBlack() {
-
 		if (!_view.getFlippedBoard())
 			flipBoard();
-		Log.i("ChessView", "801 _view.getFlippedBoard() is" + _view.getFlippedBoard());
-		play();
 
+		play();
 	}
 
 	public void playWhite() {
@@ -826,7 +822,6 @@ public class ChessView extends UI{
 				_progressPlay.setVisibility(View.VISIBLE);
 				_butPlay.setVisibility(View.GONE);
 			}
-			
 		}
 		super.play();
 	}
@@ -875,7 +870,6 @@ public class ChessView extends UI{
 				}
 			}
 			// ==============================================
-			
 			// ###########################################################################
 			// DOES NOT WORK WHEN PROMOTION UNDO AND REDO WITH ANOTHER PIECE IS WANTED!!!
 			/*
@@ -1013,8 +1007,6 @@ public class ChessView extends UI{
 			v = (View)_parent.findViewById(R.id.LayoutTopClock);
 			v.setMinimumWidth(w);
 		}
-		
-		//
 	}
 	*/
 	
@@ -1045,11 +1037,12 @@ public class ChessView extends UI{
 		editor.putLong("clockWhiteMillies", _lClockWhite);
 		editor.putLong("clockBlackMillies", _lClockBlack);
 	}
+
 	public void OnResume(SharedPreferences prefs){
 		super.OnResume();
 		
-		_view.OnResume();		
-		
+		_view.OnResume();
+
 		_view._showCoords = prefs.getBoolean("showCoords", false);
 		
 		String sEngine = prefs.getString("UCIEngine", null);
@@ -1073,7 +1066,12 @@ public class ChessView extends UI{
 		_bShowMoves = prefs.getBoolean("showMoves", true);
 		_bShowLastMove = prefs.getBoolean("showLastMove", true);
 		_bBlack = prefs.getBoolean("Black", false);
-		Log.i("ChessView", "1075 _bBlack is " + _bBlack);
+		if (_bBlack && _bFirstTurn)    // First move player at bottom
+			playBlack();
+		else if (_bFirstTurn)
+			playWhite();
+		_bFirstTurn = false;
+
 		setLevelMode(prefs.getInt("levelMode", LEVEL_TIME));
 		_selectedLevel = prefs.getInt("level", 2);
 		_selectedLevelPly = prefs.getInt("levelPly", 2);
@@ -1094,9 +1092,7 @@ public class ChessView extends UI{
 		if(_viewAnimator != null){
 			_viewAnimator.setDisplayedChild(prefs.getInt("animatorViewNumber", 0) % _viewAnimator.getChildCount());
 		}
-		
-		
-		
+
 		///////////////////////////////////////////////////////////////////
 		
 		if(prefs.getBoolean("showECO", true) && _jArrayECO == null){
@@ -1390,7 +1386,6 @@ public class ChessView extends UI{
 			
 		}
 	}
-
 
 	public void playNotification(String sMove){
 
