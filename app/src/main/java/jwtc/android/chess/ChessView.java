@@ -1373,6 +1373,8 @@ public class ChessView extends UI{
 
 		//Log.i("ChessView", "sMove =  " + sMove);
 
+		int move = _jni.getMyMove();
+
 		if (sMove.length() > 3)
 		{
 			// assures space to separate which Rook and which Knight to move
@@ -1405,6 +1407,9 @@ public class ChessView extends UI{
 		// the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
 		sMove = sMove.replace("a ", "ay ");
 		sMove = sMove.replace("b", "bee ");
+
+        if (Move.isEP(move))
+			sMove = sMove + " On Pesaunt";  // En Passant
 
 		//Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
