@@ -189,17 +189,17 @@ public class ChessView extends UI{
         		}
         	}
     	});
-		
+
 		OnClickListener oclUndo =new OnClickListener() {
         	public void onClick(View arg0) {
         		if(m_bActive){
-        			undo();
-					playNotification(_jni.getMyMoveToString());
+					previous();
+
         		} else {
         			stopThreadAndUndo();
         		}
         	}
-    	}; 
+    	};
 		/*
 		ImageButton butUndo = (ImageButton)_parent.findViewById(R.id.ButtonUndo);
 		if(butUndo != null){
@@ -222,9 +222,8 @@ public class ChessView extends UI{
 		OnClickListener oclFf = new OnClickListener() {
         	public void onClick(View arg0) {
         		if(m_bActive){
-        			jumptoMove(_jni.getNumBoard());
-					playNotification(_jni.getMyMoveToString());
-        			updateState();
+					next();
+
         		}
         			
         	}
@@ -599,7 +598,18 @@ public class ChessView extends UI{
         _sPrevECO = null;
 
 	}
-	
+
+	protected void next() {
+		jumptoMove(_jni.getNumBoard());
+		playNotification(_jni.getMyMoveToString());
+		updateState();
+	}
+
+	protected void previous() {
+		undo();
+		playNotification(_jni.getMyMoveToString());
+	}
+
 	private String formatTime(long msec){
 		final String sTmp = String.format("%02d:%02d", (int)(Math.floor(msec / 60000)), ((int)(msec / 1000) % 60));
     	return sTmp;
