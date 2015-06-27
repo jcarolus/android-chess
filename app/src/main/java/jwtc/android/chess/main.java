@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.view.GestureDetectorCompat;
 import android.text.ClipboardManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -18,7 +19,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import 	android.content.pm.ActivityInfo;
+import android.content.pm.ActivityInfo;
 import android.content.Intent;
 import android.database.Cursor;
 
@@ -33,10 +34,11 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import java.util.Locale;
 
-public class main extends MyBaseActivity  implements OnInitListener{ 
-	
+public class main extends MyBaseActivity  implements OnInitListener, GestureDetector.OnGestureListener {
+
     /** instances for the view and game of chess **/
 	private ChessView _chessView;
+	private GestureDetectorCompat GestureDetect;
 	private SaveGameDlg _dlgSave;
 	//private ImageButton _butMenu;
 	private String[] _itemsMenu; // convenience member for 'dynamic final variable' purpose
@@ -97,7 +99,9 @@ public class main extends MyBaseActivity  implements OnInitListener{
         
         _dlgSave = null;
         
-        
+        GestureDetect = new GestureDetectorCompat(this,this);
+		//GestureOverlayView gOverlay = (GestureOverlayView) findViewById(R.id.gOverlay);
+		//gOverlay.addOnGesturePerformedListener(this);
     }
     
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -706,5 +710,61 @@ public class main extends MyBaseActivity  implements OnInitListener{
 		
 	}
 
-	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		GestureDetect.onTouchEvent(event);
+		return super.onTouchEvent(event);
+	}
+
+	@Override
+	public boolean onDown(MotionEvent motionEvent) {
+		return false;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent motionEvent) {
+
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent motionEvent) {
+		return false;
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent motionEvent) {
+	}
+
+	@Override
+	public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+		//Log.i("main", "onFling " + motionEvent.getX() + " " + motionEvent1.getX());
+
+		int Xdiff = (int) motionEvent.getX() - (int) motionEvent1.getX();
+		int Ydiff = (int) motionEvent.getY() - (int) motionEvent1.getY();
+
+		if (Xdiff<-150)
+		{
+			//Log.i("main", "ButNext");
+			_chessView.next();
+		}
+
+		if (Xdiff>150)
+		{
+			//Log.i("main", "ButPrevious");
+			_chessView.previous();
+		}
+
+		if (Ydiff > 150 || Ydiff < -150)
+		{
+			//Log.i("main", "flipBoard");
+			_chessView.flipBoard();
+		}
+		return true;
+	}
+
 }

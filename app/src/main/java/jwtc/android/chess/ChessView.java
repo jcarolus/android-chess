@@ -189,16 +189,25 @@ public class ChessView extends UI{
         		}
         	}
     	});
-		
+
 		OnClickListener oclUndo =new OnClickListener() {
         	public void onClick(View arg0) {
         		if(m_bActive){
-        			undo();
+					previous();
+
         		} else {
         			stopThreadAndUndo();
         		}
         	}
-    	}; 
+    	};
+		OnLongClickListener olclUndo = new OnLongClickListener() {    // Long press takes you back to
+			@Override                                                 // beginning of game
+			public boolean onLongClick(View view) {
+				jumptoMove(1);
+				updateState();
+				return true;
+			}
+		};
 		/*
 		ImageButton butUndo = (ImageButton)_parent.findViewById(R.id.ButtonUndo);
 		if(butUndo != null){
@@ -210,6 +219,7 @@ public class ChessView extends UI{
 		if(butPrevious != null){
 			//butPrevious.setFocusable(false);
 			butPrevious.setOnClickListener(oclUndo);
+			butPrevious.setOnLongClickListener(olclUndo);
 		}
 		/*
 		ImageButton butPreviousGuess = (ImageButton)_parent.findViewById(R.id.ButtonPreviousGuess);
@@ -221,16 +231,25 @@ public class ChessView extends UI{
 		OnClickListener oclFf = new OnClickListener() {
         	public void onClick(View arg0) {
         		if(m_bActive){
-        			jumptoMove(_jni.getNumBoard());
-        			updateState();
+					next();
+
         		}
         			
         	}
     	};
+		OnLongClickListener olclFf = new OnLongClickListener() {    // Long press takes you to
+			@Override                                               // end of game
+			public boolean onLongClick(View view) {
+				jumptoMove(_layoutHistory.getChildCount());
+				updateState();
+				return true;
+			}
+		};
 		ImageButton butNext = (ImageButton)_parent.findViewById(R.id.ButtonNext);
 		if(butNext != null){
 			//butNext.setFocusable(false);
 			butNext.setOnClickListener(oclFf);
+			butNext.setOnLongClickListener(olclFf);
 		}
 		/*
 		ImageButton butNextGuess = (ImageButton)_parent.findViewById(R.id.ButtonNextGuess);
@@ -597,9 +616,20 @@ public class ChessView extends UI{
         _sPrevECO = null;
 
 	}
-	
+
+	protected void next() {
+		jumptoMove(_jni.getNumBoard());
+		playNotification(_jni.getMyMoveToString());
+		updateState();
+	}
+
+	protected void previous() {
+		undo();
+		playNotification(_jni.getMyMoveToString());
+	}
+
 	private String formatTime(long msec){
-		final String sTmp = String.format("%02d:%02d", (int)(Math.floor(msec/60000)), ((int)(msec / 1000) % 60)); 
+		final String sTmp = String.format("%02d:%02d", (int)(Math.floor(msec / 60000)), ((int)(msec / 1000) % 60));
     	return sTmp;
     }
 		
@@ -673,13 +703,13 @@ public class ChessView extends UI{
 	@Override 
 	public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll){
 		super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
-		Log.i("ChessView", "sMove =  " + sMove);
+
 		//_parent.soundNotification(sMove);
 		playNotification(sMove);
 
 		while(ply >= 0 && _arrPGNView.size() >= ply)
-			_arrPGNView.remove(_arrPGN.size()-1);
-		
+			_arrPGNView.remove(_arrPGN.size() - 1);
+
 		View v = _inflater.inflate(R.layout.pgn_item, null, false);
 		v.setId(ply);
 		_arrPGNView.add(new PGNView(this, v, ply, sMove, sAnnotation.length() > 0));
@@ -1093,7 +1123,7 @@ public class ChessView extends UI{
 				Log.i("ChessView", "ECO jArray - size " + _jArrayECO.length() + " load " + (System.currentTimeMillis() - start));
 				
 			} catch (Exception e) {
-				
+
 			}
 		}
 		
@@ -1369,20 +1399,31 @@ public class ChessView extends UI{
 
 	public void playNotification(String sMove){
 
+		//Log.i("ChessView", "sMove =  " + sMove);
+
+		int move = _jni.getMyMove();
+
+		if (sMove.length() > 3)
+		{
+			// assures space to separate which Rook and which Knight to move
+			sMove = sMove.substring(0,2) + " " + sMove.substring(2, sMove.length());
+		}
+
 		sMove = sMove.replace("x", " takes ");
 
 		sMove = sMove.replace("=", " promotes to ");
-        sMove = sMove.replace("N", "night ");   // The 'K' will trigger the King
-        sMove = sMove.replace("B", "Bishop ");
-        sMove = sMove.replace("R", "Rook ");
-        sMove = sMove.replace("Q", "Queen ");
+
 		sMove = sMove.replace("K", "King ");
+		sMove = sMove.replace("Q", "Queen ");
+		sMove = sMove.replace("R", "Rook ");
+		sMove = sMove.replace("B", "Bishop ");
+        sMove = sMove.replace("N", "Knight ");
 
 		sMove = sMove.replace("O-O-O", "Castle Queen Side");
 		sMove = sMove.replace("O-O", "Castle King Side");
 
 		sMove = sMove.replace("+", " check");
-		sMove = sMove.replace("#", " check mate");
+		sMove = sMove.replace("#", " checkmate");
 
         if (sMove.length() > 2) {
 			if (sMove.charAt(sMove.length() - 4) == ' ')    // assures space from last two chars
@@ -1393,8 +1434,12 @@ public class ChessView extends UI{
 
 		// the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
 		sMove = sMove.replace("a ", "ay ");
+		sMove = sMove.replace("b", "bee ");
 
-		Log.i("ChessView", " 2nd sMove = " + sMove);
+        if (Move.isEP(move))
+			sMove = sMove + " On Pesaunt";  // En Passant
+
+		//Log.i("ChessView", " 2nd sMove = " + sMove);
 		_parent.soundNotification(sMove);
 	}
 
