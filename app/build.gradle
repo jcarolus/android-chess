@@ -6,12 +6,12 @@ android {
             storeFile file('/Users/jcarolus/Projecten/Chess/android-keystore')
         }
     }
-    compileSdkVersion 8
+    compileSdkVersion 11
     buildToolsVersion "21.1.2"
     defaultConfig {
         applicationId "jwtc.android.chess"
-        minSdkVersion 4
-        targetSdkVersion 8
+        minSdkVersion 11
+        targetSdkVersion 11
     }
     buildTypes {
         release {
@@ -23,5 +23,4 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
-    compile files('libs/multiscreen-android-1.1.17.jar')
 }

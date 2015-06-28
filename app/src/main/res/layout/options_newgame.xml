@@ -2,9 +2,7 @@
 <ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" 
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	
-<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-	style="@style/MyDialogStyle"
->
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
 	<TableLayout android:id="@+id/TableOptions"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		>

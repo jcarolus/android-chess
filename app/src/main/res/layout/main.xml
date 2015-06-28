@@ -7,7 +7,6 @@
 	
 	 <TableLayout android:id="@+id/LayoutTopTitle" 
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_marginBottom="2dip"
 		android:background="@color/bgColorText"
 		>
 		<TableRow android:gravity="center_vertical">
@@ -54,7 +53,6 @@
         
      <TableLayout android:id="@+id/LayoutBottomTitle" 
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_marginTop="2dip"
 		android:layout_below="@id/includeboard"
 		android:background="@color/bgColorText"
 		>
@@ -91,9 +89,8 @@
 	
 		<TableLayout android:id="@+id/LayoutPlayButtons" 
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:background="@color/bgColorText" android:layout_marginTop="2dip"
-		>	
-
+			android:background="@color/bgColorText"
+		>
 			<TableRow
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
@@ -136,7 +133,7 @@
 		 <ViewAnimator android:id="@+id/ViewAnimatorMain"
 			android:layout_below="@id/LayoutPlayButtons"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			android:layout_marginTop="2dip" android:layout_marginBottom="2dip" 
+             android:layout_marginTop="1dip" android:layout_marginBottom="1dip"
 			android:background="@color/bgColorText"
 		>
 			<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -227,7 +224,7 @@
 			<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:background="@color/bgColorText" 
 			>	
-				<SeekBar android:id="@+id/SeekBarMain" android:paddingLeft="8dip" android:paddingRight="8dip"
+				<SeekBar android:id="@+id/SeekBarMain" android:layout_marginLeft="16dip" android:layout_marginRight="16dip"
 					android:layout_width="fill_parent" android:layout_height="40dip"
 				/>
 			</RelativeLayout>
