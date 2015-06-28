@@ -232,14 +232,16 @@ public class ChessViewBase{
 
 		//Log.i("ChessViewBase", "layout width " + _mainLayout.getHeight());
 
-        Window window = _activity.getWindow();
+        final Window window = _activity.getWindow();
         final View v = window.getDecorView();
         v.post(new Runnable() {
             @Override
             public void run() {
                 Rect rectangle= new Rect();
                 v.getWindowVisibleDisplayFrame(rectangle);
-                int availableHeight = rectangle.bottom - rectangle.top;
+				int contentViewTop = window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
+				//int titleBarHeight= contentViewTop - statusBarHeight;
+                int availableHeight = (rectangle.bottom - rectangle.top) - contentViewTop;
                 int availableWidth = rectangle.right - rectangle.left;
                 int length;
 
@@ -248,8 +250,7 @@ public class ChessViewBase{
                 } else {
                     length = availableHeight / 8;
                 }
-                //int contentViewTop = window.findViewById(Window.ID_ANDROID_CONTENT).getTop();
-                //int titleBarHeight= contentViewTop - statusBarHeight;
+
 
                 Log.i("ChessViewBase", "availableHeight 2 " + availableHeight);
 

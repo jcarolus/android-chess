@@ -83,29 +83,20 @@ public class main extends MyBaseActivity  implements OnInitListener{
         setContentView(R.layout.main);
 
         makeActionOverflowMenuShown();
-		//ActionBar actionBar = getActionBar();
-		//actionBar.setDisplayHomeAsUpEnabled(true);
 
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(prefs.getBoolean("speechNotification", false)){
         	_speech = new TextToSpeech(this, this);
         }
        
-        /*
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        Log.i("onCreate", "metrics " + metrics.density + ", " + metrics.widthPixels + "px @ " + metrics.densityDpi);
-     	*/
         _chessView = new ChessView(this);
         _keyboardBuffer = "";
                 
         _lGameID = 0;
         _fGameRating = 2.5F;
-        //getContentResolver().delete(PGNColumns.CONTENT_URI, "1=1", null);
-        
         _dlgSave = null;
-        
-        
+
     }
 
     // @see http://stackoverflow.com/questions/9739498/android-action-bar-not-showing-overflow
@@ -146,6 +137,10 @@ public class main extends MyBaseActivity  implements OnInitListener{
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
+            case android.R.id.home:
+                // API 5+ solution
+                onBackPressed();
+                return true;
             case R.id.action_new_game:
                 intent = new Intent();
                 intent.setClass(main.this, options.class);

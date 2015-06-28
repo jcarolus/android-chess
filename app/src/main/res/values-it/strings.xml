@@ -2,12 +2,12 @@
 <resources>
 
 <string name="app_name">Scacchi</string>
-<string name="app_name_play">Scacchi - gioca</string>
-<string name="app_name_playonline">Scacchi - gioca online</string>
-<string name="app_name_setup">Scacchi - impostazioni</string>
-<string name="app_name_help">Scacchi - aiuto</string>
-<string name="app_name_import">Scacchi - importa</string>
-<string name="app_name_pgntools">Scacchi - avanzate</string>
+<string name="app_name_play">Gioca</string>
+<string name="app_name_playonline">Gioca online</string>
+<string name="app_name_setup">Impostazioni</string>
+<string name="app_name_help">Aiuto</string>
+<string name="app_name_import">Importa</string>
+<string name="app_name_pgntools">Avanzate</string>
 <string name="app_name_save_games">Partite salvate</string>
 
 <string name="language">it</string>
