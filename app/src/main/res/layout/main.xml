@@ -154,6 +154,8 @@
 				<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
 
 				>
+                    <jwtc.android.chess.CapturedImageView android:id="@+id/testBlackPawn" style="@style/CaptureImageStyle"/>
+
 					<ImageView android:id="@+id/ImageCapturedBlackPawn" android:src="@drawable/small_bpb"
 						style="@style/CaptureImageStyle"  
 					 />

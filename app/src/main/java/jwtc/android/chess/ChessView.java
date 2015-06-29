@@ -554,7 +554,12 @@ public class ChessView extends UI{
 			});
 			_seekBar.setMax(1);
 		}
-		
+
+
+		CapturedImageView civ = (CapturedImageView)_parent.findViewById(R.id.testBlackPawn);
+        civ.initBitmap("pb.png");
+        
+
 		_arrImageCaptured = new ImageView[2][5];
 		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.PAWN] = (ImageView)_parent.findViewById(R.id.ImageCapturedBlackPawn);
 		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.KNIGHT] = (ImageView)_parent.findViewById(R.id.ImageCapturedBlackKnight);
