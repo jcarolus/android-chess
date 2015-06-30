@@ -68,9 +68,10 @@ public class main extends MyBaseActivity  implements OnInitListener{
         //NOTE: Should be called before Activity.setContentView() or it will throw!
         SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
         if(prefs.getBoolean("fullScreen", true)){
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
         }
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         if(getResources().getBoolean(R.bool.portraitOnly)){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
@@ -84,8 +85,10 @@ public class main extends MyBaseActivity  implements OnInitListener{
 
         makeActionOverflowMenuShown();
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
+        if(false == prefs.getBoolean("fullScreen", true)) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        
         if(prefs.getBoolean("speechNotification", false)){
         	_speech = new TextToSpeech(this, this);
         }
