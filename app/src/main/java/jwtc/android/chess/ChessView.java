@@ -62,7 +62,7 @@ public class ChessView extends UI{
 	private JSONArray _jArrayECO;
 
 	// keep track of captured pieces
-	private ImageView[][] _arrImageCaptured;
+	private CapturedImageView[][] _arrImageCaptured;
 	private TextView[][] _arrTextCaptured;
 	///////////////////////////////
 	
@@ -555,22 +555,27 @@ public class ChessView extends UI{
 			_seekBar.setMax(1);
 		}
 
-
-		CapturedImageView civ = (CapturedImageView)_parent.findViewById(R.id.testBlackPawn);
-        civ.initBitmap("pb.png");
-        
-
-		_arrImageCaptured = new ImageView[2][5];
-		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.PAWN] = (ImageView)_parent.findViewById(R.id.ImageCapturedBlackPawn);
-		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.KNIGHT] = (ImageView)_parent.findViewById(R.id.ImageCapturedBlackKnight);
-		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.BISHOP] = (ImageView)_parent.findViewById(R.id.ImageCapturedBlackBishop);
-		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.ROOK] = (ImageView)_parent.findViewById(R.id.ImageCapturedBlackRook);
-		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.QUEEN] = (ImageView)_parent.findViewById(R.id.ImageCapturedBlackQueen);
-		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.PAWN] = (ImageView)_parent.findViewById(R.id.ImageCapturedWhitePawn);
-		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.KNIGHT] = (ImageView)_parent.findViewById(R.id.ImageCapturedWhiteKnight);
-		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.BISHOP] = (ImageView)_parent.findViewById(R.id.ImageCapturedWhiteBishop);
-		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.ROOK] = (ImageView)_parent.findViewById(R.id.ImageCapturedWhiteRook);
-		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.QUEEN] = (ImageView)_parent.findViewById(R.id.ImageCapturedWhiteQueen);
+		_arrImageCaptured = new CapturedImageView[2][5];
+		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.PAWN] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedBlackPawn);
+        _arrImageCaptured[BoardConstants.BLACK][BoardConstants.PAWN].initBitmap("pb.png");
+		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.KNIGHT] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedBlackKnight);
+        _arrImageCaptured[BoardConstants.BLACK][BoardConstants.KNIGHT].initBitmap("nb.png");
+		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.BISHOP] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedBlackBishop);
+        _arrImageCaptured[BoardConstants.BLACK][BoardConstants.BISHOP].initBitmap("bb.png");
+		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.ROOK] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedBlackRook);
+        _arrImageCaptured[BoardConstants.BLACK][BoardConstants.ROOK].initBitmap("rb.png");
+		_arrImageCaptured[BoardConstants.BLACK][BoardConstants.QUEEN] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedBlackQueen);
+        _arrImageCaptured[BoardConstants.BLACK][BoardConstants.QUEEN].initBitmap("qb.png");
+		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.PAWN] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedWhitePawn);
+        _arrImageCaptured[BoardConstants.WHITE][BoardConstants.PAWN].initBitmap("pw.png");
+		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.KNIGHT] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedWhiteKnight);
+        _arrImageCaptured[BoardConstants.WHITE][BoardConstants.KNIGHT].initBitmap("nw.png");
+		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.BISHOP] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedWhiteBishop);
+        _arrImageCaptured[BoardConstants.WHITE][BoardConstants.BISHOP].initBitmap("bw.png");
+		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.ROOK] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedWhiteRook);
+        _arrImageCaptured[BoardConstants.WHITE][BoardConstants.ROOK].initBitmap("rw.png");
+		_arrImageCaptured[BoardConstants.WHITE][BoardConstants.QUEEN] = (CapturedImageView)_parent.findViewById(R.id.ImageCapturedWhiteQueen);
+        _arrImageCaptured[BoardConstants.WHITE][BoardConstants.QUEEN].initBitmap("qw.png");
 			
 		_arrTextCaptured = new TextView[2][5];
 		_arrTextCaptured[BoardConstants.BLACK][BoardConstants.PAWN] = (TextView)_parent.findViewById(R.id.TextViewCapturedBlackPawn);
