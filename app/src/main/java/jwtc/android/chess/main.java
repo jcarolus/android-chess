@@ -4,6 +4,7 @@ import jwtc.chess.*;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -69,12 +70,16 @@ public class main extends MyBaseActivity  implements OnInitListener{
         SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
         if(prefs.getBoolean("fullScreen", true)){
         	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
         }
+
+		int configOrientation = getResources().getConfiguration().orientation;
 
         if(getResources().getBoolean(R.bool.portraitOnly)){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+		if(configOrientation == Configuration.ORIENTATION_LANDSCAPE){
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+		}
         
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);  
         _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
@@ -85,10 +90,10 @@ public class main extends MyBaseActivity  implements OnInitListener{
 
         makeActionOverflowMenuShown();
 
-        if(false == prefs.getBoolean("fullScreen", true)) {
+		if(configOrientation == Configuration.ORIENTATION_PORTRAIT){
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        
+
         if(prefs.getBoolean("speechNotification", false)){
         	_speech = new TextToSpeech(this, this);
         }

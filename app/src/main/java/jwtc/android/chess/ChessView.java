@@ -348,6 +348,16 @@ public class ChessView extends UI{
 	        	}
 			});
 		}
+
+        ImageButton butShowMenu = (ImageButton)_parent.findViewById(R.id.ButtonShowMenu);
+        if(butShowMenu != null) {
+            butShowMenu.setOnClickListener(new OnClickListener() {
+                public void onClick(View arg0) {
+
+                    _parent.openOptionsMenu();
+                }
+            });
+        }
 		
 		ImageButton butSaveGame = (ImageButton)_parent.findViewById(R.id.ButtonSave);
 		if(butSaveGame != null){

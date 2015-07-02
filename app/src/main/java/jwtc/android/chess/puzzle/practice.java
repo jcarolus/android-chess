@@ -5,6 +5,7 @@ import java.io.InputStream;
 import jwtc.android.chess.*;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -27,9 +28,15 @@ public class practice extends Activity {
       //NOTE: Should be called before Activity.setContentView() or it will throw!
         SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
         if(prefs.getBoolean("fullScreen", true)){
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         }
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        int configOrientation = getResources().getConfiguration().orientation;
+        if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+        }
+
         if(getResources().getBoolean(R.bool.portraitOnly)){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
@@ -38,7 +45,11 @@ public class practice extends Activity {
         _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
         
         setContentView(R.layout.practice);
-        
+
+        if(configOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         _chessView = new ChessViewPractice(this);
 
     }

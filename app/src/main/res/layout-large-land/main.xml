@@ -192,43 +192,44 @@
             android:layout_above="@+id/SeekBarMain"
             android:layout_marginBottom="40dp">
             <TableRow>
-
+                <ImageButton android:id="@+id/ButtonShowMenu" android:src="@drawable/collections_view_as_list"
+                    android:layout_width="50dip" android:layout_height="50dip"
+                    android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
+                />
                 <Button android:text="@string/button_new" android:id="@+id/ButtonNewGame" android:layout_width="50dip" android:layout_height="50dip"
-                    android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp" android:gravity="center"
-                    android:layout_column="1" android:layout_span="2"
-                    />
+                    android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
+                />
             </TableRow>
             <TableRow>
 
                 <ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"
-                    android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
+                    android:layout_width="50dip" android:layout_height="50dip"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
-                    android:layout_column="1"/>
+                />
 
                 <ImageButton android:id="@+id/ButtonSave" android:src="@drawable/content_save"
-                    android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
+                    android:layout_width="50dip" android:layout_height="50dip"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
-                    android:layout_column="2"/>
+                />
             </TableRow>
             <TableRow>
 
             </TableRow>
             <TableRow>
-
                 <ProgressBar android:id="@+id/ProgressBarPlay" android:layout_height="50dp" android:layout_width="50dp"
                     style="?android:attr/progressBarStyleLarge"  android:visibility="gone"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
-                    android:layout_column="1"/>
+                />
 
                 <ImageButton android:id="@+id/ButtonPlay" android:src="@drawable/av_play"
                     android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
-                    android:layout_column="1"/>
+                />
 
                 <ImageButton android:id="@+id/ButtonFlipBoard" android:src="@drawable/action_flipboard"
                     android:layout_width="50dip" android:layout_height="50dip" android:scaleType="fitXY"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
-                    android:layout_column="2"/>
+                />
             </TableRow>
             <TableRow>
 
@@ -238,12 +239,12 @@
                 <ImageButton android:id="@+id/ButtonPrevious" android:src="@drawable/navigation_previous_item"
                     android:layout_height="50dip" android:layout_width="50dip" android:scaleType="fitXY"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
-                    android:layout_column="1"/>
+                />
 
                 <ImageButton android:id="@+id/ButtonNext" android:src="@drawable/navigation_next_item"
                     android:layout_height="50dip" android:layout_width="50dip" android:scaleType="fitXY"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="20dp"
-                    android:layout_column="2"/>
+                />
             </TableRow>
 
         </TableLayout>
