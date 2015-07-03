@@ -23,6 +23,12 @@
 		android:gravity="center_vertical" android:layout_marginLeft="2dip"
 		>
 		<TableRow>
+			<ImageButton android:id="@+id/ButtonShowMenu" android:src="@android:drawable/ic_menu_more"
+				android:layout_width="40dip" android:layout_height="40dip"
+				android:layout_marginLeft="2dip" android:layout_marginRight="2dip"
+				/>
+		</TableRow>
+		<TableRow>
 		    <ImageButton android:id="@+id/ButtonSwitch" android:src="@drawable/navigation_expand"
 				android:layout_width="40dp" android:layout_height="40dp" android:scaleType="fitXY"
 				android:layout_marginLeft="2dip" android:layout_marginRight="2dip"

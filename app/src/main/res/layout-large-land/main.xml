@@ -192,7 +192,7 @@
             android:layout_above="@+id/SeekBarMain"
             android:layout_marginBottom="40dp">
             <TableRow>
-                <ImageButton android:id="@+id/ButtonShowMenu" android:src="@drawable/collections_view_as_list"
+                <ImageButton android:id="@+id/ButtonShowMenu" android:src="@android:drawable/ic_menu_more"
                     android:layout_width="50dip" android:layout_height="50dip"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
                 />

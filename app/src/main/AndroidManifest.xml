@@ -46,11 +46,17 @@
             </intent-filter>
   		</activity>
   		<activity android:name=".options" android:label="@string/app_name">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".main" />
 			<intent-filter>
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
   		</activity>
 		<activity android:name=".setup" android:label="@string/app_name_setup">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".main" />
 			<intent-filter>
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
@@ -66,11 +72,17 @@
   			</intent-filter>
   		</activity>
 		<activity android:name="jwtc.android.chess.puzzle.puzzle" android:label="@string/app_name">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".start" />
 			<intent-filter>
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
   		</activity>
   		<activity android:name="jwtc.android.chess.puzzle.practice" android:label="@string/app_name">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".start" />
 			<intent-filter>
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>

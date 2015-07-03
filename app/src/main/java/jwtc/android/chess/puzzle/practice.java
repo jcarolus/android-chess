@@ -4,8 +4,6 @@ import java.io.InputStream;
 
 import jwtc.android.chess.*;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -25,35 +23,45 @@ public class practice extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-      //NOTE: Should be called before Activity.setContentView() or it will throw!
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-        if(prefs.getBoolean("fullScreen", true)){
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        ActivityHelper.prepareWindowSettings(this);
 
-        }
-
-        int configOrientation = getResources().getConfiguration().orientation;
-        if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-        }
-
-        if(getResources().getBoolean(R.bool.portraitOnly)){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-        
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);  
-        _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
+        _wakeLock = ActivityHelper.getWakeLock(this);
         
         setContentView(R.layout.practice);
 
-        if(configOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        ActivityHelper.makeActionOverflowMenuShown(this);
 
         _chessView = new ChessViewPractice(this);
 
     }
-  
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.practice_topmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // API 5+ solution
+                onBackPressed();
+                return true;
+            case R.id.action_help:
+                Intent i = new Intent();
+                i.setClass(practice.this, HtmlActivity.class);
+                i.putExtra(HtmlActivity.HELP_MODE, "help_practice");
+                startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 	/**
 	 * 
 	 */

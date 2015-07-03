@@ -65,34 +65,18 @@ public class main extends MyBaseActivity  implements OnInitListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        //NOTE: Should be called before Activity.setContentView() or it will throw!
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-        if(prefs.getBoolean("fullScreen", true)){
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
 
-		int configOrientation = getResources().getConfiguration().orientation;
+		ActivityHelper.prepareWindowSettings(this);
 
-        if(getResources().getBoolean(R.bool.portraitOnly)){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-		if(configOrientation == Configuration.ORIENTATION_LANDSCAPE){
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-		}
-        
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);  
-        _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
+        _wakeLock = ActivityHelper.getWakeLock(this);
         _uriNotification = null;
         _ringNotification = null;
         
         setContentView(R.layout.main);
 
-        makeActionOverflowMenuShown();
+		ActivityHelper.makeActionOverflowMenuShown(this);
 
-		if(configOrientation == Configuration.ORIENTATION_PORTRAIT){
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+		SharedPreferences prefs = ActivityHelper.getPrefs(this);
 
         if(prefs.getBoolean("speechNotification", false)){
         	_speech = new TextToSpeech(this, this);
@@ -107,21 +91,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 
     }
 
-    // @see http://stackoverflow.com/questions/9739498/android-action-bar-not-showing-overflow
-    private void makeActionOverflowMenuShown() {
-        //devices with hardware menu button (e.g. Samsung Note) don't show action overflow menu
-        try {
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception e) {
-            Log.d("main", e.getLocalizedMessage());
-        }
-    }
-    
+
     public void onWindowFocusChanged(boolean hasFocus) {
 
         super.onWindowFocusChanged(hasFocus);
