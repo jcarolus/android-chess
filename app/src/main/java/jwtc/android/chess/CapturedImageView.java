@@ -32,7 +32,7 @@ public class CapturedImageView extends View {
         String sFolder = "highres/";
         try {
             _bitMap = BitmapFactory.decodeStream(am.open(sFolder + sPiece));
-            Log.i("CapturedImageView", "initBitmap " + sFolder + sPiece);
+            //Log.i("CapturedImageView", "initBitmap " + sFolder + sPiece);
         } catch (Exception ex){
 
         }

@@ -172,19 +172,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-        if(prefs.getBoolean("fullScreen", true)){
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
-        }
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if(getResources().getBoolean(R.bool.portraitOnly)){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+		ActivityHelper.prepareWindowSettings(this);
+
+		_wakeLock = ActivityHelper.getWakeLock(this);
    
         setContentView(R.layout.icsclient);
-   
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);  
-        _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
+
+		ActivityHelper.makeActionOverflowMenuShown(this);
         
         // needs to be called first because of chess statics init
        _view = new ICSChessView(this);
@@ -263,7 +257,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 	 		butQuick.setOnClickListener(new OnClickListener() {
 	        	public void onClick(View arg0) {
 	        		//showMenu();
-	        		showMainMenu();
+					openOptionsMenu();
 				}
 			});
  		} 		
@@ -273,7 +267,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 	 		butQuick2.setOnClickListener(new OnClickListener() {
 	        	public void onClick(View arg0) {
 	        		//showMenu();
-	        		showMainMenu();
+					openOptionsMenu();
 				}
 			});
  		} 		
@@ -346,8 +340,191 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         
         Log.i("ICSClient", "onCreate");
     }
-   
-    
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		menu.add(Menu.NONE, R.string.ics_menu_takeback, Menu.NONE, R.string.ics_menu_takeback);
+		menu.add(Menu.NONE, R.string.ics_menu_adjourn, Menu.NONE, R.string.ics_menu_adjourn);
+		menu.add(Menu.NONE, R.string.ics_menu_draw, Menu.NONE, R.string.ics_menu_draw);
+		menu.add(Menu.NONE, R.string.ics_menu_resign, Menu.NONE, R.string.ics_menu_resign);
+		menu.add(Menu.NONE, R.string.ics_menu_abort, Menu.NONE, R.string.ics_menu_abort);
+		menu.add(Menu.NONE, R.string.ics_menu_flag, Menu.NONE, R.string.ics_menu_flag);
+		menu.add(Menu.NONE, R.string.ics_menu_refresh, Menu.NONE, R.string.ics_menu_refresh);
+		menu.add(Menu.NONE, R.string.ics_menu_challenges, Menu.NONE, R.string.ics_menu_challenges);
+		menu.add(Menu.NONE, R.string.ics_menu_games, Menu.NONE, R.string.ics_menu_games);
+		menu.add(Menu.NONE, R.string.ics_menu_stored, Menu.NONE, R.string.ics_menu_stored);
+		menu.add(Menu.NONE, R.string.ics_menu_seek, Menu.NONE, R.string.ics_menu_seek);
+		menu.add(Menu.NONE, R.string.ics_menu_players, Menu.NONE, R.string.ics_menu_players);
+		menu.add(Menu.NONE, R.string.ics_menu_stop_puzzle, Menu.NONE, R.string.ics_menu_stop_puzzle);
+
+		menu.add(Menu.NONE, R.string.ics_menu_console, Menu.NONE, R.string.ics_menu_console);
+
+		menu.add("tell puzzlebot hint");
+		menu.add("forward");
+		menu.add("backward");
+		menu.add("unexamine");
+		menu.add("tell endgamebot hint");
+		menu.add("tell endgamebot move");
+		menu.add("tell endgamebot stop");
+
+		menu.add(Menu.NONE, R.string.ics_menu_unobserve, Menu.NONE, R.string.ics_menu_unobserve);
+		menu.add(Menu.NONE, R.string.menu_help, Menu.NONE, R.string.menu_help);
+
+		try {
+			SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+			JSONArray jArray = new JSONArray(prefs.getString("ics_custom_commands", CustomCommands.DEFAULT_COMMANDS));
+
+			for(int i = 0; i < jArray.length(); i++){
+
+				try {
+					menu.add(jArray.getString(i));
+				} catch (JSONException e) {
+				}
+			}
+		} catch (JSONException e) {				}
+
+
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu){
+
+		boolean isConnected = isConnected();
+		boolean isUserPlaying = get_view().isUserPlaying();
+		boolean isNotGuest = isConnected && (false == _handle.equals("guest"));
+		int viewMode = this.get_view()._viewMode;
+
+		menu.findItem(R.string.ics_menu_takeback).setVisible(isConnected && isUserPlaying);
+
+		menu.findItem(R.string.ics_menu_adjourn).setVisible(isConnected && isUserPlaying && isNotGuest);
+		menu.findItem(R.string.ics_menu_draw).setVisible(isConnected && isUserPlaying);
+		menu.findItem(R.string.ics_menu_resign).setVisible(isConnected && isUserPlaying);
+		menu.findItem(R.string.ics_menu_abort).setVisible(isConnected && isUserPlaying);
+		menu.findItem(R.string.ics_menu_flag).setVisible(isConnected && isUserPlaying);
+		menu.findItem(R.string.ics_menu_refresh).setVisible(isConnected && isUserPlaying);
+
+		menu.findItem(R.string.ics_menu_challenges).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
+		menu.findItem(R.string.ics_menu_games).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
+		menu.findItem(R.string.ics_menu_stored).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE && isNotGuest);
+		menu.findItem(R.string.ics_menu_seek).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
+		menu.findItem(R.string.ics_menu_players).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
+
+		menu.findItem(R.string.ics_menu_stop_puzzle).setVisible(isConnected && viewMode == ICSChessView.VIEW_PUZZLE);
+
+		menu.findItem(R.string.ics_menu_unobserve).setVisible(isConnected && viewMode == ICSChessView.VIEW_WATCH);
+
+		menu.findItem(R.string.ics_menu_console).setVisible(isConnected);
+
+		for(int i = 0; i < menu.size(); i++){
+			MenuItem item = menu.getItem(i);
+			String title = item.getTitle().toString();
+			if(title.equals("tell puzzlebot hint")) {
+				item.setVisible(isConnected && viewMode == ICSChessView.VIEW_PUZZLE);
+			} else if(title.equals("forward")) {
+				item.setVisible(isConnected && viewMode == ICSChessView.VIEW_EXAMINE);
+			} else if(title.equals("backward")) {
+				item.setVisible(isConnected && viewMode == ICSChessView.VIEW_EXAMINE);
+			} else if(title.equals("unexamine")) {
+				item.setVisible(isConnected && viewMode == ICSChessView.VIEW_EXAMINE);
+			} else if(title.equals("tell endgamebot hint")) {
+				item.setVisible(isConnected && viewMode == ICSChessView.VIEW_ENDGAME);
+			} else if(title.equals("tell endgamebot move")) {
+				item.setVisible(isConnected && viewMode == ICSChessView.VIEW_ENDGAME);
+			} else if(title.equals("tell endgamebot stop")) {
+				item.setVisible(isConnected && viewMode == ICSChessView.VIEW_ENDGAME);
+			}
+		}
+
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch(item.getItemId()){
+
+
+			case R.string.ics_menu_refresh:
+				sendString("refresh");
+				return true;
+			case R.string.ics_menu_takeback:
+				sendString("takeback 2");
+				return true;
+			case R.string.ics_menu_resume:
+				sendString("resume");
+				return true;
+			case R.string.ics_menu_abort:
+				sendString("abort");
+				get_view().stopGame();
+				return true;
+			case R.string.ics_menu_adjourn:
+				sendString("adjourn");
+				return true;
+			case R.string.ics_menu_draw:
+				sendString("draw");
+				return true;
+			case R.string.ics_menu_flag:
+				sendString("flag");
+			case R.string.ics_menu_resign:
+				sendString("resign");
+				return true;
+			case R.string.menu_flip:
+				_view.forceFlipBoard();
+				sendString("refresh");
+				return true;
+			case R.string.ics_menu_games:
+				// switchToLoadingView();
+				switchToGamesView();
+				sendString("games");
+				return true;
+			case R.string.ics_menu_stored:
+				switchToStoredView();
+				sendString("stored");
+				return true;
+			case R.string.ics_menu_challenges:
+				switchToChallengeView();
+				return true;
+			case R.string.ics_menu_seek:
+				_dlgMatch.setPlayer("*");
+				_dlgMatch.show();
+				return true;
+			case R.string.menu_help:
+				Intent i = new Intent();
+				i.setClass(ICSClient.this, HtmlActivity.class);
+				i.putExtra(HtmlActivity.HELP_MODE, "help_online");
+				startActivity(i);
+				return true;
+			case R.string.ics_menu_console:
+				switchToConsoleView();
+				return true;
+			case R.string.ics_menu_players:
+				sendString("who a");
+				switchToLoadingView();
+				return true;
+			case R.string.ics_menu_quit:
+				finish();
+				return true;
+			case R.string.ics_menu_stop_puzzle:
+				sendString("tell puzzlebot stop");
+				get_view().stopGame();
+				return true;
+			case R.string.ics_menu_unobserve:
+				sendString("unobserve");
+				get_view().stopGame();
+				return true;
+			case android.R.id.home:
+				// API 5+ solution
+				onBackPressed();
+				return true;
+		}
+
+		sendString(item.getTitle().toString());
+		return true;
+
+	}
+
     public void showMainMenu(){
     	String s = "";
     	int viewMode = this.get_view()._viewMode;
