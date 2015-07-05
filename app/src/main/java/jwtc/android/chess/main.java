@@ -1,7 +1,10 @@
 package jwtc.android.chess;
 
 import jwtc.chess.*;
+
+import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -25,7 +28,8 @@ import android.database.Cursor;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream; 
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -61,45 +65,33 @@ public class main extends MyBaseActivity  implements OnInitListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        //NOTE: Should be called before Activity.setContentView() or it will throw!
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-        if(prefs.getBoolean("fullScreen", true)){
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
-        }
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if(getResources().getBoolean(R.bool.portraitOnly)){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-        
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);  
-        _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
+
+		ActivityHelper.prepareWindowSettings(this);
+
+        _wakeLock = ActivityHelper.getWakeLock(this);
         _uriNotification = null;
         _ringNotification = null;
         
         setContentView(R.layout.main);
-        
+
+		ActivityHelper.makeActionOverflowMenuShown(this);
+
+		SharedPreferences prefs = ActivityHelper.getPrefs(this);
+
         if(prefs.getBoolean("speechNotification", false)){
         	_speech = new TextToSpeech(this, this);
         }
        
-        /*
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        Log.i("onCreate", "metrics " + metrics.density + ", " + metrics.widthPixels + "px @ " + metrics.densityDpi);
-     	*/
         _chessView = new ChessView(this);
         _keyboardBuffer = "";
                 
         _lGameID = 0;
         _fGameRating = 2.5F;
-        //getContentResolver().delete(PGNColumns.CONTENT_URI, "1=1", null);
-        
         _dlgSave = null;
-        
-        
+
     }
-    
+
+
     public void onWindowFocusChanged(boolean hasFocus) {
 
         super.onWindowFocusChanged(hasFocus);
@@ -110,6 +102,57 @@ public class main extends MyBaseActivity  implements OnInitListener{
 		}
 		*/
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_topmenu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // API 5+ solution
+                onBackPressed();
+                return true;
+            case R.id.action_new_game:
+                intent = new Intent();
+                intent.setClass(main.this, options.class);
+                intent.putExtra("requestCode", REQUEST_NEWGAME);
+                startActivityForResult(intent, REQUEST_NEWGAME);
+                return true;
+            case R.id.action_flip:
+                _chessView.flipBoard();
+                return true;
+            case R.id.action_options:
+                intent = new Intent();
+                intent.setClass(main.this, options.class);
+                intent.putExtra("requestCode", REQUEST_OPTIONS);
+                startActivityForResult(intent, REQUEST_OPTIONS);
+                return true;
+            case R.id.action_setup:
+                intent = new Intent();
+                intent.setClass(main.this, setup.class);
+                startActivityForResult(intent, main.REQUEST_SETUP);
+                return true;
+            case R.id.action_email:
+                emailPGN();
+                return true;
+            case R.id.action_help:
+                Intent i = new Intent();
+                i.setClass(main.this, HtmlActivity.class);
+                i.putExtra(HtmlActivity.HELP_MODE, "help_play");
+                startActivity(i);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     
     public void showMenu(){
     	
@@ -136,10 +179,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 		    public void onClick(DialogInterface dialog, int item) {
 		        dialog.dismiss();
 		        if(_itemsMenu[item].equals(getString(R.string.menu_new))){
-		        	Intent intent = new Intent();
-	        	    intent.setClass(main.this, options.class);
-	        	    intent.putExtra("requestCode", REQUEST_NEWGAME);
-	        		startActivityForResult(intent, REQUEST_NEWGAME); 
+
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_load_game))){
 		        	Intent intent = new Intent();
 	       	     	intent.setClass(main.this, GamesListView.class);
@@ -147,21 +187,13 @@ public class main extends MyBaseActivity  implements OnInitListener{
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_save_game))){
 		        	saveGame();
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_options))){
-		        	Intent intent = new Intent();
-				    intent.setClass(main.this, options.class);
-				    intent.putExtra("requestCode", REQUEST_OPTIONS);
-		     		startActivityForResult(intent, REQUEST_OPTIONS);
+
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_setup))){
-		        	Intent intent = new Intent();
-			        intent.setClass(main.this, setup.class);
-	        		startActivityForResult(intent, main.REQUEST_SETUP);
+
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_help))){
-		        	Intent i = new Intent();
-		        	i.setClass(main.this, HtmlActivity.class);
-					i.putExtra(HtmlActivity.HELP_MODE, "help_play");
-					startActivity(i);
+
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_flip))){
-		        	_chessView.flipBoard();
+
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_set_clock))){
 		        	AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
 	    			builder.setTitle(getString(R.string.title_menu));
@@ -188,7 +220,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 	    			AlertDialog alert = builder.create();
 	    			alert.show();
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_email_game))){
-		        	emailPGN();
+
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_clip_pgn))){
 		        	copyToClipBoard(_chessView.exportFullPGN());
 		        } else if(_itemsMenu[item].equals(getString(R.string.menu_fromclip))){
@@ -205,7 +237,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 			        	//com.google.zxing.client.android.SCAN.
 			            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 			            startActivityForResult(intent, REQUEST_FROM_QR_CODE);
-		        	}catch(Exception ex){
+                    }catch(Exception ex){
 		        		doToast(getString(R.string.err_install_barcode_scanner));
 		        	}
 		        }else if(_itemsMenu[item].equals(getString(R.string.menu_to_qrcode))){
@@ -219,7 +251,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 		    }
 		});
 		AlertDialog alert = builder.create();
-		alert.show();
+        alert.show();
     }
 
     public void showSubViewMenu(){
@@ -247,18 +279,19 @@ public class main extends MyBaseActivity  implements OnInitListener{
 		alert.show();
     }
 
-            
+    /*
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     	
     	//View v = getWindow().getCurrentFocus();
     	//Log.i("main", "current focus " + (v == null ? "NULL" : v.toString()));
     	int c = (event.getUnicodeChar());
     	Log.i("main", "onKeyDown " + keyCode + " = " + (char)c);
+
     	if(keyCode == KeyEvent.KEYCODE_MENU){
     		showMenu();
     		return true;
     	}
-    	
+
     	if(c > 48 && c < 57 || c > 96 && c < 105){
     		_keyboardBuffer += ("" + (char)c);
     	}
@@ -267,28 +300,10 @@ public class main extends MyBaseActivity  implements OnInitListener{
     		_chessView.handleClickFromPositionString(_keyboardBuffer);
     		_keyboardBuffer = "";
     	}
-    	/*
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_DPAD_CENTER:
-            	_chessView.dpadSelect();
-                return true;
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-            	_chessView.dpadDown();
-                   return true;
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-            	_chessView.dpadLeft();
-                   return true;
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
-            	_chessView.dpadRight();
-                   return true;
-            case KeyEvent.KEYCODE_DPAD_UP:
-            	_chessView.dpadUp();
-                   return true;
-        }
-        */
+
         return super.onKeyDown(keyCode, event);
     } 
-    
+    */
 
     
 	/**
@@ -406,8 +421,8 @@ public class main extends MyBaseActivity  implements OnInitListener{
 	        values.put(PGNColumns.PGN, _chessView.exportFullPGN());
 	        values.put(PGNColumns.RATING, _fGameRating);
 	        values.put(PGNColumns.EVENT, _chessView.getPGNHeadProperty("Event"));
-	        
-	        saveGame(values, false);
+
+            saveGame(values, false);
         }
         SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
         editor.putLong("game_id", _lGameID);

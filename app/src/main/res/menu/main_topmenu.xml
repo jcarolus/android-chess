@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_new_game"
+          android:icon="@drawable/content_new"
+          android:title="@string/menu_new"
+          android:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_options"
+        android:title="@string/menu_options"
+        android:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_setup"
+        android:title="@string/menu_setup"
+        android:showAsAction="never"/>
+    <item android:id="@+id/action_flip"
+        android:title="@string/menu_flip"
+        android:showAsAction="never"/>
+    <item android:id="@+id/action_email"
+        android:title="@string/menu_email_game"
+        android:showAsAction="never"/>
+
+
+    <item android:id="@+id/action_help"
+          android:title="@string/menu_help"
+        android:showAsAction="never"/>
+</menu>
+
+<!--
+getString(R.string.menu_options),
+    			getString(R.string.menu_setup),
+    			getString(R.string.menu_help),
+    			getString(R.string.menu_flip),
+    			getString(R.string.menu_set_clock),
+    			getString(R.string.menu_email_game),
+    			getString(R.string.menu_clip_pgn),
+    			getString(R.string.menu_fromclip),
+    			getString(R.string.menu_from_qrcode),
+    			getString(R.string.menu_to_qrcode)
+-->

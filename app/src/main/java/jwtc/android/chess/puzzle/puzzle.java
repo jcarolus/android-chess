@@ -2,6 +2,7 @@ package jwtc.android.chess.puzzle;
 
 import jwtc.android.chess.*;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -21,26 +22,32 @@ public class puzzle extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //NOTE: Should be called before Activity.setContentView() or it will throw!
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-        if(prefs.getBoolean("fullScreen", true)){
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
-        }
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if(getResources().getBoolean(R.bool.portraitOnly)){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-        
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);  
-        _wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
+        ActivityHelper.prepareWindowSettings(this);
+
+        _wakeLock = ActivityHelper.getWakeLock(this);
         
         setContentView(R.layout.puzzle);
-        
+
+        ActivityHelper.makeActionOverflowMenuShown(this);
+
         _chessView = new ChessViewPuzzle(this);
 
     }
-    
-   
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // API 5+ solution
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 	/**
 	 * 
 	 */

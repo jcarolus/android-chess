@@ -7,7 +7,6 @@
 	
 	 <TableLayout android:id="@+id/LayoutTopTitle" 
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_marginBottom="2dip"
 		android:background="@color/bgColorText"
 		>
 		<TableRow android:gravity="center_vertical">
@@ -54,7 +53,6 @@
         
      <TableLayout android:id="@+id/LayoutBottomTitle" 
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_marginTop="2dip"
 		android:layout_below="@id/includeboard"
 		android:background="@color/bgColorText"
 		>
@@ -91,9 +89,8 @@
 	
 		<TableLayout android:id="@+id/LayoutPlayButtons" 
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:background="@color/bgColorText" android:layout_marginTop="2dip"
-		>	
-
+			android:background="@color/bgColorText"
+		>
 			<TableRow
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
@@ -136,7 +133,7 @@
 		 <ViewAnimator android:id="@+id/ViewAnimatorMain"
 			android:layout_below="@id/LayoutPlayButtons"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			android:layout_marginTop="2dip" android:layout_marginBottom="2dip" 
+             android:layout_marginTop="1dip" android:layout_marginBottom="1dip"
 			android:background="@color/bgColorText"
 		>
 			<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -154,40 +151,19 @@
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:background="@color/bgColorText" 
 			>
-				<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
+				<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content">
 
-				>
-					<ImageView android:id="@+id/ImageCapturedBlackPawn" android:src="@drawable/small_bpb"
-						style="@style/CaptureImageStyle"  
-					 />
-					<ImageView android:id="@+id/ImageCapturedBlackKnight" android:src="@drawable/small_bnb" 
-						style="@style/CaptureImageStyle"
-					 />
-					<ImageView android:id="@+id/ImageCapturedBlackBishop" android:src="@drawable/small_bbb" 
-						style="@style/CaptureImageStyle"
-					 />
-					 <ImageView android:id="@+id/ImageCapturedBlackRook" android:src="@drawable/small_brb" 
-						style="@style/CaptureImageStyle"
-					 />			 
-					 <ImageView android:id="@+id/ImageCapturedBlackQueen" android:src="@drawable/small_bqb" 
-						style="@style/CaptureImageStyle"
-					 />	
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedBlackPawn" style="@style/CaptureImageStyle"  />
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedBlackKnight" style="@style/CaptureImageStyle" />
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedBlackBishop" style="@style/CaptureImageStyle" />
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedBlackRook" style="@style/CaptureImageStyle" />
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedBlackQueen" style="@style/CaptureImageStyle" />
 					 
-					 <ImageView android:id="@+id/ImageCapturedWhitePawn" android:src="@drawable/small_wpb"  
-						style="@style/CaptureImageStyle"
-						 />
-					<ImageView android:id="@+id/ImageCapturedWhiteKnight" android:src="@drawable/small_wnb" 
-						style="@style/CaptureImageStyle"
-					 />
-					<ImageView android:id="@+id/ImageCapturedWhiteBishop" android:src="@drawable/small_wbb" 
-						style="@style/CaptureImageStyle"
-					 />
-					 <ImageView android:id="@+id/ImageCapturedWhiteRook" android:src="@drawable/small_wrb" 
-						style="@style/CaptureImageStyle"
-					 />			 
-					 <ImageView android:id="@+id/ImageCapturedWhiteQueen" android:src="@drawable/small_wqb" 
-						style="@style/CaptureImageStyle"
-					 />		 
+                    <jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedWhitePawn" style="@style/CaptureImageStyle" />
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedWhiteKnight" style="@style/CaptureImageStyle" />
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedWhiteBishop" style="@style/CaptureImageStyle" />
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedWhiteRook" style="@style/CaptureImageStyle" />
+					<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedWhiteQueen" style="@style/CaptureImageStyle" />
 				</TableRow>
 				<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content">
 						 <TextView android:id="@+id/TextViewCapturedBlackPawn"
@@ -227,7 +203,7 @@
 			<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:background="@color/bgColorText" 
 			>	
-				<SeekBar android:id="@+id/SeekBarMain" android:paddingLeft="8dip" android:paddingRight="8dip"
+				<SeekBar android:id="@+id/SeekBarMain" android:layout_marginLeft="16dip" android:layout_marginRight="16dip"
 					android:layout_width="fill_parent" android:layout_height="40dip"
 				/>
 			</RelativeLayout>

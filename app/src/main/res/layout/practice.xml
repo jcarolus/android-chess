@@ -20,8 +20,7 @@
 	<TableLayout android:id="@+id/LayoutTurn"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:layout_below="@id/includeboard"
-		android:layout_marginTop="2dip" 
-		android:background="@color/bgColorText" 
+		android:background="@color/bgColorText"
 	>
 		<TableRow>
 			<ViewSwitcher android:id="@+id/ImageTurn"
@@ -70,10 +69,6 @@
 			/>
 			<ImageButton android:id="@+id/ButtonPracticePause"
 				android:src="@drawable/av_pause"
-				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-			/>
-			<ImageButton android:id="@+id/ButtonPracticeHelp"
-				android:src="@drawable/action_about"
 				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
 			/>
 			<Button android:id="@+id/ButtonPracticeShow"

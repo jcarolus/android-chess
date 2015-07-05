@@ -2,12 +2,12 @@
 <resources>
 
 <string name="app_name">Chess</string>
-<string name="app_name_play">Chess - play</string>
-<string name="app_name_playonline">Chess - play online</string>
-<string name="app_name_setup">Chess - Setup</string>
-<string name="app_name_help">Chess - help</string>
-<string name="app_name_import">Chess - import</string>
-<string name="app_name_pgntools">Chess - advanced</string>
+<string name="app_name_play">Play</string>
+<string name="app_name_playonline">Play online</string>
+<string name="app_name_setup">Setup</string>
+<string name="app_name_help">Help</string>
+<string name="app_name_import">Import</string>
+<string name="app_name_pgntools">Advanced</string>
 <string name="app_name_save_games">Saved games</string>
 
 <string name="language">en</string>

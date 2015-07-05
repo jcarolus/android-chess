@@ -34,7 +34,7 @@ public class ChessViewPractice extends UI{
 	private ChessViewBase _view;
 	private TextView _tvPracticeMove, _tvPracticeTime, _tvPracticeAvgTime;
 	private Button _butShow;
-	private ImageButton _butHelp, _butPause, _butNext;
+	private ImageButton _butPause, _butNext;
 	private practice _parent;
 	private int _numTotal, _iPos;
 	private Cursor _cursor;
@@ -149,15 +149,7 @@ public class ChessViewPractice extends UI{
 	    	   }
 	       }
 		});
-		_butHelp = (ImageButton)_parent.findViewById(R.id.ButtonPracticeHelp);
-		_butHelp.setOnClickListener(new OnClickListener() {
-	       public void onClick(View arg0) {
-	    	   Intent i = new Intent();
-	    		 i.setClass(_parent, HtmlActivity.class);
-	    		 i.putExtra(HtmlActivity.HELP_MODE, "help_practice");
-	    		 _parent.startActivity(i); 
-	       }
-		});
+
     }
 
 	public void init(){

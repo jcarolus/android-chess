@@ -39,17 +39,17 @@
 		    	</TableRow>
 		    
 		    </TableLayout>
-	     
+
 			<include
 		        layout="@layout/board"
 		        android:layout_width="wrap_content" android:layout_height="wrap_content"
 		        android:id="@+id/includeboard" 
 		        android:layout_below="@id/TablePlayerTop"/>
-		 	<!--         
+		 <!--
 		    <TextView android:layout_width="wrap_content" android:layout_height="320dip"
 		        android:id="@+id/includeboard" 
 		        android:layout_below="@id/TablePlayerTop"/>
-		     -->    
+		     -->
 		    <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 		    	android:id="@+id/TablePlayerBottom" android:layout_below="@id/includeboard"
 		    	android:layout_marginTop="2dip"
