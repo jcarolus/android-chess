@@ -21,7 +21,7 @@ import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TableRow;
 
-public class options extends Activity {
+public class options extends MyBaseActivity {
 
 	public static final int RESULT_960 = 1;
 	
@@ -90,7 +90,7 @@ public class options extends Activity {
 		_butOk.setOnClickListener(new View.OnClickListener() {
         	public void onClick(View arg0) {
         		
-        		SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+        		SharedPreferences.Editor editor = options.this.getPrefs().edit();
         		
         		editor.putInt("levelMode", _radioTime.isChecked() ? GameControl.LEVEL_TIME : GameControl.LEVEL_PLY);
         		editor.putInt("level", _spinLevel.getSelectedItemPosition()+1);
@@ -116,7 +116,7 @@ public class options extends Activity {
         		    	    	
         		    	    	if(seed >= 0 && seed <= 960){
 	        		    	    	//_chessView.newGameRandomFischer(seed);
-	        		    	    	SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+	        		    	    	SharedPreferences.Editor editor = options.this.getPrefs().edit();
 	        		    	        editor.putString("FEN", null);
 	        		    	        editor.putInt("boardNum", 0);
 	        		    	        editor.putInt("randomFischerSeed", seed % 960);
@@ -137,7 +137,7 @@ public class options extends Activity {
         	            	int seed = -1;
         	            	//seed = _chessView.newGameRandomFischer(seed);
         	            	
-        	            	SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+        	            	SharedPreferences.Editor editor = options.this.getPrefs().edit();
         	                editor.putString("FEN", null);
         	                editor.putInt("boardNum", -1);
         	                editor.putInt("randomFischerSeed", seed);
@@ -174,7 +174,7 @@ public class options extends Activity {
 			 _tableRowOption960.setVisibility(View.GONE);
 		 }
 		 
-		 SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+		 SharedPreferences prefs = this.getPrefs();
 		 
 		_checkPlay.setChecked(prefs.getInt("playMode", GameControl.HUMAN_PC) == GameControl.HUMAN_PC);
  		_checkAutoFlip.setChecked(prefs.getBoolean("autoflipBoard", false));

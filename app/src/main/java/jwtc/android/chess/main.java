@@ -37,7 +37,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import java.util.Locale;
 
-public class main extends MyBaseActivity  implements OnInitListener{ 
+public class main extends MyBaseActivity implements OnInitListener{
 	
     /** instances for the view and game of chess **/
 	private ChessView _chessView;
@@ -48,7 +48,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 	//private String _action;
 	private long _lGameID;
 	private float _fGameRating;
-	private PowerManager.WakeLock _wakeLock;
+
 	private Uri _uriNotification;
 	private Ringtone _ringNotification;
 	private String _keyboardBuffer;
@@ -66,17 +66,14 @@ public class main extends MyBaseActivity  implements OnInitListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		ActivityHelper.prepareWindowSettings(this);
-
-        _wakeLock = ActivityHelper.getWakeLock(this);
         _uriNotification = null;
         _ringNotification = null;
         
         setContentView(R.layout.main);
 
-		ActivityHelper.makeActionOverflowMenuShown(this);
+		this.makeActionOverflowMenuShown();
 
-		SharedPreferences prefs = ActivityHelper.getPrefs(this);
+		SharedPreferences prefs = this.getPrefs();
 
         if(prefs.getBoolean("speechNotification", false)){
         	_speech = new TextToSpeech(this, this);
@@ -114,6 +111,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         Intent intent;
+		String s;
         switch (item.getItemId()) {
             case android.R.id.home:
                 // API 5+ solution
@@ -142,118 +140,71 @@ public class main extends MyBaseActivity  implements OnInitListener{
             case R.id.action_email:
                 emailPGN();
                 return true;
+			case R.id.action_clock:
+				AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
+				builder.setTitle(getString(R.string.title_menu));
+				String sTime = getString(R.string.choice_clock_num_minutes);
+				final String[] itemsMenu = new String[]{"no clock", String.format(sTime, 2), String.format(sTime, 5), String.format(sTime, 10), String.format(sTime, 30), String.format(sTime, 60)};
+				builder.setItems(itemsMenu, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						dialog.dismiss();
+						if(item == 0)
+							_chessView._lClockTotal = 0;
+						else if(item == 1)
+							_chessView._lClockTotal = 120000;
+						else if(item == 2)
+							_chessView._lClockTotal = 300000;
+						else if(item == 3)
+							_chessView._lClockTotal = 600000;
+						else if(item == 4)
+							_chessView._lClockTotal = 1800000;
+						else if(item == 5)
+							_chessView._lClockTotal = 3600000;
+						_chessView.resetTimer();
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
+				return true;
+			case R.id.action_clip_pgn:
+				copyToClipBoard(_chessView.exportFullPGN());
+				return true;
+			case R.id.action_fromclip:
+				s = fromClipBoard();
+				if(s != null){
+					if(s.indexOf("1.") >= 0)
+						loadPGN(s);
+					else
+						loadFEN(s);
+				}
+				return true;
             case R.id.action_help:
                 Intent i = new Intent();
                 i.setClass(main.this, HtmlActivity.class);
                 i.putExtra(HtmlActivity.HELP_MODE, "help_play");
                 startActivity(i);
                 return true;
-
+			case R.id.action_from_qrcode:
+				try{
+					intent = new Intent("com.google.zxing.client.android.SCAN");
+					//com.google.zxing.client.android.SCAN.
+					intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+					startActivityForResult(intent, REQUEST_FROM_QR_CODE);
+				}catch(Exception ex){
+					doToast(getString(R.string.err_install_barcode_scanner));
+				}
+				return true;
+			case R.id.action_to_qrcode:
+				s = "http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl=";
+				s += java.net.URLEncoder.encode(_chessView.getJNI().toFEN());
+				copyToClipBoard(s);
+				doToast(getString(R.string.msg_qr_code_on_clipboard));
+				return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
     
-    public void showMenu(){
-    	
-    	_itemsMenu = new String[]{
-    			//getString(R.string.menu_new),
-    			//getString(R.string.menu_load_game),
-    			//getString(R.string.menu_save_game),
-    			getString(R.string.menu_options),
-    			getString(R.string.menu_setup),
-    			getString(R.string.menu_help),
-    			getString(R.string.menu_flip),
-    			getString(R.string.menu_set_clock),
-    			getString(R.string.menu_email_game),
-    			getString(R.string.menu_clip_pgn),
-    			getString(R.string.menu_fromclip),
-    			getString(R.string.menu_from_qrcode),
-    			getString(R.string.menu_to_qrcode)
-            };
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
-		builder.setTitle(getString(R.string.title_menu));
-		
-		builder.setItems(_itemsMenu, new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int item) {
-		        dialog.dismiss();
-		        if(_itemsMenu[item].equals(getString(R.string.menu_new))){
-
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_load_game))){
-		        	Intent intent = new Intent();
-	       	     	intent.setClass(main.this, GamesListView.class);
-	       	     	startActivityForResult(intent, main.REQUEST_OPEN);
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_save_game))){
-		        	saveGame();
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_options))){
-
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_setup))){
-
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_help))){
-
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_flip))){
-
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_set_clock))){
-		        	AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
-	    			builder.setTitle(getString(R.string.title_menu));
-	    			String sTime = getString(R.string.choice_clock_num_minutes); 
-	    			final String[] itemsMenu = new String[]{"no clock", String.format(sTime, 2), String.format(sTime, 5), String.format(sTime, 10), String.format(sTime, 30), String.format(sTime, 60)};
-	    			builder.setItems(itemsMenu, new DialogInterface.OnClickListener() {
-	    			    public void onClick(DialogInterface dialog, int item) {
-	    			        dialog.dismiss();
-	    			        if(item == 0)
-	    			        	_chessView._lClockTotal = 0;
-	    			        else if(item == 1)
-	    			        	_chessView._lClockTotal = 120000;
-	    			        else if(item == 2)
-	    			        	_chessView._lClockTotal = 300000;
-	    			        else if(item == 3)
-	    			        	_chessView._lClockTotal = 600000;
-	    			        else if(item == 4)
-	    			        	_chessView._lClockTotal = 1800000;
-	    			        else if(item == 5)
-	    			        	_chessView._lClockTotal = 3600000;
-	    			        _chessView.resetTimer();
-	    			    }
-	    			});
-	    			AlertDialog alert = builder.create();
-	    			alert.show();
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_email_game))){
-
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_clip_pgn))){
-		        	copyToClipBoard(_chessView.exportFullPGN());
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_fromclip))){
-		        	String s =fromClipBoard();
-		        	if(s != null){
-			        	if(s.indexOf("1.") >= 0)
-			        		loadPGN(s);
-			        	else
-			        		loadFEN(s);
-		        	}
-		        } else if(_itemsMenu[item].equals(getString(R.string.menu_from_qrcode))){
-		        	try{
-			        	Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-			        	//com.google.zxing.client.android.SCAN.
-			            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-			            startActivityForResult(intent, REQUEST_FROM_QR_CODE);
-                    }catch(Exception ex){
-		        		doToast(getString(R.string.err_install_barcode_scanner));
-		        	}
-		        }else if(_itemsMenu[item].equals(getString(R.string.menu_to_qrcode))){
-		        
-		        	String s = "http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl="; 
-		        	s += java.net.URLEncoder.encode(_chessView.getJNI().toFEN());
-		        	copyToClipBoard(s);
-		        	doToast(getString(R.string.msg_qr_code_on_clipboard));
-		        }
-		       
-		    }
-		});
-		AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     public void showSubViewMenu(){
     	
     	_itemsMenu = new String[]{
@@ -279,51 +230,18 @@ public class main extends MyBaseActivity  implements OnInitListener{
 		alert.show();
     }
 
-    /*
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	
-    	//View v = getWindow().getCurrentFocus();
-    	//Log.i("main", "current focus " + (v == null ? "NULL" : v.toString()));
-    	int c = (event.getUnicodeChar());
-    	Log.i("main", "onKeyDown " + keyCode + " = " + (char)c);
-
-    	if(keyCode == KeyEvent.KEYCODE_MENU){
-    		showMenu();
-    		return true;
-    	}
-
-    	if(c > 48 && c < 57 || c > 96 && c < 105){
-    		_keyboardBuffer += ("" + (char)c);
-    	}
-    	if(_keyboardBuffer.length() >= 2){
-    		Log.i("main", "handleClickFromPositionString " + _keyboardBuffer); 
-    		_chessView.handleClickFromPositionString(_keyboardBuffer);
-    		_keyboardBuffer = "";
-    	}
-
-        return super.onKeyDown(keyCode, event);
-    } 
-    */
-
-    
 	/**
 	 * 
 	 */
     @Override
     protected void onResume() {
-       
-        
+
         Log.i("main", "onResume");
         
  //Debug.startMethodTracing("chessplayertrace");
         
-		SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-		
-		if(prefs.getBoolean("wakeLock", true))
-		{
-			_wakeLock.acquire();	
-		}
-		
+		SharedPreferences prefs = this.getPrefs();
+
 		String sOpeningDb = prefs.getString("OpeningDb", null);
 		if(sOpeningDb == null){
 	      	try {
@@ -406,10 +324,6 @@ public class main extends MyBaseActivity  implements OnInitListener{
 
     @Override
     protected void onPause() {
-        if(_wakeLock.isHeld())
-        {
-        	_wakeLock.release();
-        }
  //Debug.stopMethodTracing();
         
         if(_lGameID > 0){
@@ -424,7 +338,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 
             saveGame(values, false);
         }
-        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.putLong("game_id", _lGameID);
         editor.putString("game_pgn", _chessView.exportFullPGN());
         editor.putString("FEN", null); // 
@@ -466,7 +380,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
                 } catch(Exception ex){
                 	_lGameID = 0;
                 }
-                SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+                SharedPreferences.Editor editor = this.getPrefs().edit();
                 editor.putLong("game_id", _lGameID);
                 editor.putInt("boardNum", 0);
                 editor.putString("FEN", null);
@@ -477,7 +391,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 	        	String contents = data.getStringExtra("SCAN_RESULT");
 	            //String format = data.getStringExtra("SCAN_RESULT_FORMAT");
 	            
-	            SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+	            SharedPreferences.Editor editor = this.getPrefs().edit();
                 editor.putLong("game_id", 0);
                 editor.putInt("boardNum", 0);
                 editor.putString("FEN", contents);
@@ -566,7 +480,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
     private void newGame(){
     	_lGameID = 0;
     	_chessView.newGame();
-		SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+		SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.putString("FEN", null);
         editor.putInt("boardNum", 0);
         editor.putString("game_pgn", null);
@@ -577,11 +491,11 @@ public class main extends MyBaseActivity  implements OnInitListener{
     private void newGameRandomFischer(){
     	_lGameID = 0;  
     	
-    	int seed = getSharedPreferences("ChessPlayer", MODE_PRIVATE).getInt("randomFischerSeed", -1);
+    	int seed = this.getPrefs().getInt("randomFischerSeed", -1);
     	seed = _chessView.newGameRandomFischer(seed);
     	doToast(String.format(getString(R.string.chess960_position_nr), seed));
     	
-    	SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+    	SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.putString("FEN", _chessView.getJNI().toFEN());
         editor.putInt("boardNum", 0);
         editor.putString("game_pgn", null);
@@ -643,7 +557,7 @@ public class main extends MyBaseActivity  implements OnInitListener{
 
     public void saveGame(ContentValues values, boolean bCopy){
     	
-    	SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+    	SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.putString("FEN", null);
         editor.commit();
     	

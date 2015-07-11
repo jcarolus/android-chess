@@ -12,27 +12,21 @@ import android.widget.*;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-public class practice extends Activity {
+public class practice extends MyBaseActivity {
 	
     /** instances for the view and game of chess **/
 	private ChessViewPractice _chessView;
-	private PowerManager.WakeLock _wakeLock;
-	
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityHelper.prepareWindowSettings(this);
-
-        _wakeLock = ActivityHelper.getWakeLock(this);
-        
         setContentView(R.layout.practice);
 
-        ActivityHelper.makeActionOverflowMenuShown(this);
+        this.makeActionOverflowMenuShown();
 
         _chessView = new ChessViewPractice(this);
-
     }
 
 
@@ -68,11 +62,8 @@ public class practice extends Activity {
     @Override
     protected void onResume() {
         
-		SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-		if(prefs.getBoolean("wakeLock", true))
-		{
-			_wakeLock.acquire();	
-		}
+		SharedPreferences prefs = this.getPrefs();
+
 		 final Intent intent = getIntent();
 	     Uri uri = intent.getData();
 	     InputStream is = null;
@@ -91,12 +82,7 @@ public class practice extends Activity {
     @Override
     protected void onPause() {
         
-    	if(_wakeLock.isHeld())
-        {
-        	_wakeLock.release();
-        }
-        
-        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = this.getPrefs().edit();
         _chessView.OnPause(editor);
 
         editor.commit();

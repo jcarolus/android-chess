@@ -54,7 +54,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private ICSMatchDlg _dlgMatch;
     private ICSConfirmDlg _dlgConfirm;
     private ICSChatDlg _dlgChat;
-    private PowerManager.WakeLock _wakeLock;
     private ViewAnimator _viewAnimatorMain, _viewAnimatorLobby;
     private ScrollView _scrollConsole;
 
@@ -183,13 +182,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityHelper.prepareWindowSettings(this);
-
-        _wakeLock = ActivityHelper.getWakeLock(this);
-
         setContentView(R.layout.icsclient);
 
-        ActivityHelper.makeActionOverflowMenuShown(this);
+        this.makeActionOverflowMenuShown();
 
         // needs to be called first because of chess statics init
         _view = new ICSChessView(this);
@@ -383,7 +378,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         menu.add(Menu.NONE, R.string.menu_help, Menu.NONE, R.string.menu_help);
 
         try {
-            SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+            SharedPreferences prefs = this.getPrefs();
             JSONArray jArray = new JSONArray(prefs.getString("ics_custom_commands", CustomCommands.DEFAULT_COMMANDS));
 
             for (int i = 0; i < jArray.length(); i++) {
@@ -1288,11 +1283,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         // lock screen orientation?
         //setRequestedOrientation(this.getResources().getConfiguration().orientation);
 
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-
-        if (prefs.getBoolean("wakeLock", true)) {
-            _wakeLock.acquire();
-        }
+        SharedPreferences prefs = this.getPrefs();
 
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
 
@@ -1352,15 +1343,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     protected void onPause() {
 
-        if (_wakeLock.isHeld()) {
-            _wakeLock.release();
-        }
         // lock screen orientation?
         //setRequestedOrientation(this.getResources().getConfiguration().orientation);
 
         ////////////////////////////////////////////////////////////
 
-        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = this.getPrefs().edit();
 
         if (_bIsGuest) {
             _handle = "guest";

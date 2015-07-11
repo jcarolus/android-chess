@@ -100,6 +100,8 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.customcommands);
+
+		this.makeActionOverflowMenuShown();
 		
 		_listCommands = (ListView) findViewById(R.id.ListCustomCommands);
 		
@@ -111,9 +113,8 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 	protected void onResume() {
 		
 		super.onResume();
-	
-		
-		SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+
+		SharedPreferences prefs = this.getPrefs();
 		
 		_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		
@@ -126,17 +127,15 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//commands = prefs.getS
-		
+
 		_listCommands.setAdapter(_adapter);
-		
 	}
 	
 
 	@Override
 	protected void onPause() {
 
-		SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+		SharedPreferences.Editor editor = this.getPrefs().edit();
 		
 		JSONArray jArray = new JSONArray();
 		for(int i = 0; i < _adapter.getCount(); i++){

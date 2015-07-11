@@ -53,19 +53,11 @@ public class setup extends MyBaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //NOTE: Should be called before Activity.setContentView() or it will throw!
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-        if(prefs.getBoolean("fullScreen", true)){
-        	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); 
-        } 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if(getResources().getBoolean(R.bool.portraitOnly)){
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
         setContentView(R.layout.setup);
-        _view = new ChessViewBase(this); 
-        
+
+		this.makeActionOverflowMenuShown();
+
+        _view = new ChessViewBase(this);
         _jni = new JNI();
 
         final Intent intent = getIntent();
@@ -97,7 +89,7 @@ public class setup extends MyBaseActivity {
 		_butCancel.setOnClickListener(new OnClickListener() {
         	public void onClick(View arg0) {
 
-        		SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+        		SharedPreferences.Editor editor = setup.this.getPrefs().edit();
         	    editor.putString("FEN", null);
         	    editor.commit();
         		
@@ -248,6 +240,7 @@ public class setup extends MyBaseActivity {
     }
     
     public boolean onOptionsItemSelected(MenuItem  item){
+
     	 if(item.getTitle().equals(getString(R.string.menu_options))) {
     		_dlg.show();
     		 return true;
@@ -261,7 +254,14 @@ public class setup extends MyBaseActivity {
     		 resetBoard();
 				paintBoard();
     		 return true;
-    	 }	 
+    	 }
+
+		if(item.getItemId() == android.R.id.home) {
+			// API 5+ solution
+			onBackPressed();
+			return true;
+		}
+
     	return false;
     }
     
@@ -408,7 +408,7 @@ public class setup extends MyBaseActivity {
     
     protected void commitFEN()
     {
-    	SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+    	SharedPreferences.Editor editor = this.getPrefs().edit();
 	    editor.putString("FEN", _jni.toFEN());
 	    editor.putString("game_pgn", "");
 	    editor.putInt("boardNum", 0);
@@ -478,7 +478,7 @@ public class setup extends MyBaseActivity {
 			}
         }
         
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+        SharedPreferences prefs = this.getPrefs();
         
         if(sFEN == null || sFEN.length() == 0)
         {
