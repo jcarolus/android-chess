@@ -12,6 +12,21 @@
                     android:text="@string/options_play_android"
                     android:layout_width="fill_parent" android:layout_height="wrap_content"
                 />
+                <RadioGroup>
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/options_play_white"
+                        android:id="@+id/rbWhite"
+                        />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/options_play_black"
+                        android:id="@+id/rbBlack"
+                        />
+                </RadioGroup>
             </TableRow>
             <TableRow style="@style/MyRowStyle" android:id="@+id/TableRowOptions960" android:visibility="gone">
                 <CheckBox android:id="@+id/CheckBoxOptions960"

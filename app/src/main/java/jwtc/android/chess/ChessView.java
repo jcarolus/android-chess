@@ -54,7 +54,7 @@ public class ChessView extends UI {
     private RelativeLayout _layoutHistory;
     private ArrayList<PGNView> _arrPGNView;
     private LayoutInflater _inflater;
-    private boolean _bAutoFlip, _bShowMoves, _bShowLastMove;
+    private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bPlayAsBlack, _bFirstTurn;
     private Timer _timer;
     private ViewSwitcher _switchTurnMe, _switchTurnOpp;
     private SeekBar _seekBar;
@@ -128,6 +128,7 @@ public class ChessView extends UI {
 
         _playMode = HUMAN_PC;
         _bAutoFlip = false;
+        _bPlayAsBlack = false;
         _bShowMoves = false;
         _bShowLastMove = true;
         _dpadPos = -1;
@@ -206,7 +207,7 @@ public class ChessView extends UI {
             }
         };
         /*
-		ImageButton butUndo = (ImageButton)_parent.findViewById(R.id.ButtonUndo);
+        ImageButton butUndo = (ImageButton)_parent.findViewById(R.id.ButtonUndo);
 		if(butUndo != null){
 			//butUndo.setFocusable(false);
 			butUndo.setOnClickListener(oclUndo);
@@ -847,6 +848,19 @@ public class ChessView extends UI {
         updateState();
     }
 
+    public void playBlack() {
+        if (!_view.getFlippedBoard()) {
+            flipBoard();
+        }
+        play();
+    }
+
+    public void playWhite() {
+        if (_view.getFlippedBoard()) {
+            flipBoard();
+        }
+    }
+
     public void setFlippedBoard(boolean b) {
         _view.setFlippedBoard(b);
     }
@@ -1106,6 +1120,9 @@ public class ChessView extends UI {
         _bAutoFlip = prefs.getBoolean("autoflipBoard", false);
         _bShowMoves = prefs.getBoolean("showMoves", true);
         _bShowLastMove = prefs.getBoolean("showLastMove", true);
+
+        _bPlayAsBlack = prefs.getBoolean("playAsBlack", false);
+
         setLevelMode(prefs.getInt("levelMode", LEVEL_TIME));
         _selectedLevel = prefs.getInt("level", 2);
         _selectedLevelPly = prefs.getInt("levelPly", 2);
@@ -1127,7 +1144,12 @@ public class ChessView extends UI {
             _viewAnimator.setDisplayedChild(prefs.getInt("animatorViewNumber", 0) % _viewAnimator.getChildCount());
         }
 
-
+        if (_bPlayAsBlack && _bFirstTurn) {   // First move player at bottom
+            playBlack();
+        } else if (_bFirstTurn) {
+            playWhite();
+        }
+        _bFirstTurn = false;
         ///////////////////////////////////////////////////////////////////
         /* disabled for now - is slowing down onResume too much
         if (prefs.getBoolean("showECO", true) && _jArrayECO == null) {

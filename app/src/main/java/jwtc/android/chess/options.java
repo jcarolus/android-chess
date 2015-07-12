@@ -30,7 +30,7 @@ public class options extends MyBaseActivity {
     private CheckBox _checkPlay, _checkAutoFlip, _checkMoves, _check960;
     private Spinner _spinLevel, _spinLevelPly;
     private Button _butCancel, _butOk;
-    private RadioButton _radioTime, _radioPly;
+    private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack;
     private TableRow _tableRowOption960;
 
     @Override
@@ -47,6 +47,9 @@ public class options extends MyBaseActivity {
         _checkPlay.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 _checkAutoFlip.setEnabled(false == isChecked);
+                _radioWhite.setEnabled(isChecked);
+                _radioWhite.setChecked(true);
+                _radioBlack.setEnabled(isChecked);
             }
         });
 
@@ -82,6 +85,21 @@ public class options extends MyBaseActivity {
             }
         });
 
+        _radioWhite = (RadioButton) findViewById(R.id.rbWhite);
+        _radioWhite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                _radioBlack.setChecked(_radioWhite.isChecked() ? false : true);
+            }
+        });
+        _radioBlack = (RadioButton) findViewById(R.id.rbBlack);
+        _radioBlack.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                _radioWhite.setChecked(_radioBlack.isChecked() ? false : true);
+            }
+        });
+
         _butCancel = (Button) findViewById(R.id.ButtonOptionsCancel);
         _butCancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
@@ -102,6 +120,7 @@ public class options extends MyBaseActivity {
                 editor.putInt("playMode", _checkPlay.isChecked() ? GameControl.HUMAN_PC : GameControl.HUMAN_HUMAN);
                 editor.putBoolean("autoflipBoard", _checkAutoFlip.isChecked());
                 editor.putBoolean("showMoves", _checkMoves.isChecked());
+                editor.putBoolean("playAsBlack", _radioBlack.isChecked());
 
                 editor.commit();
 

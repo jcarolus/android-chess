@@ -146,7 +146,12 @@
 <string name="menu_subview_guess">Indovina la mossa</string>
 <string name="menu_subview_blindfold">Modalità alla cieca</string>
 
-<string name="options_play_android">Gioca vs Android</string>
+    <!-- @TODO -->
+<string name="options_play_human">Human vs Human</string>
+<string name="options_play_android">Human vs Android</string>
+<string name="options_play_white">White</string>
+<string name="options_play_black">Black</string>
+
 <string name="options_960">Scacchi 960 - Fischer Random</string>
 <string name="options_load_database">Carica database aperture</string>
 <string name="options_auto_flip">Auto-inversione scacchiera</string>
