@@ -278,6 +278,15 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             });
         }
 
+        ImageButton butCloseConsole = (ImageButton) findViewById(R.id.ICSCloseConsole);
+        if (butCloseConsole != null) {
+            butCloseConsole.setOnClickListener(new OnClickListener() {
+                public void onClick(View arg0) {
+                    switchToBoardView();
+                }
+            });
+        }
+        //
 
         ImageButton butChat = (ImageButton) findViewById(R.id.ButtonICSChat);
         if (butChat != null) {

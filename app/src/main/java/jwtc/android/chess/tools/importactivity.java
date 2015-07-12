@@ -69,7 +69,7 @@ public class importactivity extends MyBaseActivity {
         setContentView(R.layout.doimport);
 
 		this.makeActionOverflowMenuShown();
-		
+
         _processing = false;
         _gameControl = new GameControl();
         

@@ -228,10 +228,13 @@
 					   			android:layout_width="fill_parent" android:layout_height="wrap_content"
 					   			android:text=""
 					   		/>
-							
 							<ImageButton android:id="@+id/ButtonICSConsoleQuickCmd" android:src="@drawable/collections_view_as_list"
 								android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 							/>
+							<ImageButton android:id="@+id/ICSCloseConsole"
+								android:src="@drawable/navigation_cancel"
+								android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+								/>
 						</TableRow>
 					</TableLayout>
 				    
