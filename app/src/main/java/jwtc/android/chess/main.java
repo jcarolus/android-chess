@@ -26,8 +26,10 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import android.view.GestureDetector.OnGestureListener;
+import	android.view.GestureDetector;
 
-public class main extends MyBaseActivity implements OnInitListener{
+public class main extends MyBaseActivity implements OnInitListener, GestureDetector.OnGestureListener{
 	
     /** instances for the view and game of chess **/
 	private ChessView _chessView;
@@ -49,7 +51,8 @@ public class main extends MyBaseActivity implements OnInitListener{
 	public static final int REQUEST_OPTIONS = 3;
 	public static final int REQUEST_NEWGAME = 4;
 	public static final int REQUEST_FROM_QR_CODE = 5;	
-	
+
+	private GestureDetector _gestureDetector;
 	
     /** Called when the activity is first created. */
     @Override
@@ -76,6 +79,7 @@ public class main extends MyBaseActivity implements OnInitListener{
         _fGameRating = 2.5F;
         _dlgSave = null;
 
+		_gestureDetector = new GestureDetector(this, this);
     }
 
 
@@ -353,8 +357,8 @@ public class main extends MyBaseActivity implements OnInitListener{
     }    
     
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	
-    	Log.i("main", "onActivityResult");
+
+		Log.i("main", "onActivityResult");
     	
         if (requestCode == REQUEST_SETUP) {
             if (resultCode == RESULT_OK) {
@@ -440,8 +444,8 @@ public class main extends MyBaseActivity implements OnInitListener{
     	ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
     	if(cm.hasText()){
     		return cm.getText().toString();
-    	}
-    	doToast(getString(R.string.err_no_clip_text));
+		}
+		doToast(getString(R.string.err_no_clip_text));
     	return null;
     }
     private void loadFEN(String sFEN){
@@ -470,7 +474,7 @@ public class main extends MyBaseActivity implements OnInitListener{
         editor.putString("FEN", null);
         editor.putInt("boardNum", 0);
         editor.putString("game_pgn", null);
-        editor.putLong("game_id", _lGameID);
+		editor.putLong("game_id", _lGameID);
         editor.commit();
     }
     
@@ -550,7 +554,7 @@ public class main extends MyBaseActivity implements OnInitListener{
     	 _chessView.setPGNHeadProperty("Event", (String)values.get(PGNColumns.EVENT));
     	 _chessView.setPGNHeadProperty("White", (String)values.get(PGNColumns.WHITE));
     	 _chessView.setPGNHeadProperty("Black", (String)values.get(PGNColumns.BLACK));
-    	 _chessView.setDateLong((Long)values.get(PGNColumns.DATE));
+    	 _chessView.setDateLong((Long) values.get(PGNColumns.DATE));
     	 
     	 _fGameRating = (Float)values.get(PGNColumns.RATING);
     	 //
@@ -576,11 +580,11 @@ public class main extends MyBaseActivity implements OnInitListener{
     public void setLevel(int iLevel){
     	_chessView.setLevel(iLevel);
     }
-    public void setLevelPly(int iLevelPly){
-    	_chessView.setLevelPly(iLevelPly);
+    public void setLevelPly(int iLevelPly) {
+		_chessView.setLevelPly(iLevelPly);
     }
-    public void setPlayMode(int mode){
-    	_chessView.setPlayMode(mode);
+    public void setPlayMode(int mode) {
+		_chessView.setPlayMode(mode);
     }
     public void setAutoFlip(boolean b){
     	_chessView.setAutoFlip(b);
@@ -621,5 +625,61 @@ public class main extends MyBaseActivity implements OnInitListener{
 		
 	}
 
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		_gestureDetector.onTouchEvent(event);
+		return super.onTouchEvent(event);
+	}
+
+	@Override
+	public boolean onDown(MotionEvent motionEvent) {
+		return false;
+	}
+
+	@Override
+	public void onShowPress(MotionEvent motionEvent) {
+
+	}
+
+	@Override
+	public boolean onSingleTapUp(MotionEvent motionEvent) {
+		return false;
+	}
+
+	@Override
+	public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+		return false;
+	}
+
+	@Override
+	public void onLongPress(MotionEvent motionEvent) {
+	}
+
+	@Override
+	public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+		//Log.i("main", "onFling " + motionEvent.getX() + " " + motionEvent1.getX());
+
+		int Xdiff = (int) motionEvent.getX() - (int) motionEvent1.getX();
+		int Ydiff = (int) motionEvent.getY() - (int) motionEvent1.getY();
+
+		if (Xdiff<-150)
+		{
+			//Log.i("main", "ButNext");
+			_chessView.next();
+		}
+
+		if (Xdiff>150)
+		{
+			//Log.i("main", "ButPrevious");
+			_chessView.previous();
+		}
+
+		if (Ydiff > 150 || Ydiff < -150)
+		{
+			//Log.i("main", "flipBoard");
+			_chessView.flipBoard();
+		}
+		return true;
+	}
 	
 }

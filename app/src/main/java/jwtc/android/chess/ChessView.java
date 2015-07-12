@@ -196,6 +196,15 @@ public class ChessView extends UI {
                 }
             }
         };
+
+        OnLongClickListener olclUndo = new OnLongClickListener() {    // Long press takes you back to
+            @Override                                                 // beginning of game
+            public boolean onLongClick(View view) {
+                jumptoMove(1);
+                updateState();
+                return true;
+            }
+        };
         /*
 		ImageButton butUndo = (ImageButton)_parent.findViewById(R.id.ButtonUndo);
 		if(butUndo != null){
@@ -207,6 +216,7 @@ public class ChessView extends UI {
         if (butPrevious != null) {
             //butPrevious.setFocusable(false);
             butPrevious.setOnClickListener(oclUndo);
+            butPrevious.setOnLongClickListener(olclUndo);
         }
 		/*
 		ImageButton butPreviousGuess = (ImageButton)_parent.findViewById(R.id.ButtonPreviousGuess);
@@ -218,16 +228,25 @@ public class ChessView extends UI {
         OnClickListener oclFf = new OnClickListener() {
             public void onClick(View arg0) {
                 if (m_bActive) {
-                    jumptoMove(_jni.getNumBoard());
-                    updateState();
+                    next();
                 }
 
             }
         };
+        OnLongClickListener olclFf = new OnLongClickListener() {    // Long press takes you to
+            @Override                                               // end of game
+            public boolean onLongClick(View view) {
+                jumptoMove(_layoutHistory.getChildCount());
+                updateState();
+                return true;
+            }
+        };
+
         ImageButton butNext = (ImageButton) _parent.findViewById(R.id.ButtonNext);
         if (butNext != null) {
             //butNext.setFocusable(false);
             butNext.setOnClickListener(oclFf);
+            butNext.setOnLongClickListener(olclFf);
         }
 		/*
 		ImageButton butNextGuess = (ImageButton)_parent.findViewById(R.id.ButtonNextGuess);
@@ -615,6 +634,17 @@ public class ChessView extends UI {
 
         _sPrevECO = null;
 
+    }
+
+    protected void next() {
+        jumptoMove(_jni.getNumBoard());
+        playNotification(_jni.getMyMoveToString());
+        updateState();
+    }
+
+    protected void previous() {
+        undo();
+        playNotification(_jni.getMyMoveToString());
     }
 
     private String formatTime(long msec) {
@@ -1414,7 +1444,7 @@ public class ChessView extends UI {
         sMove = sMove.replace("O-O", "Castle King Side");
 
         sMove = sMove.replace("+", " check");
-        sMove = sMove.replace("#", " check mate");
+        sMove = sMove.replace("#", " checkmate");
 
         if (sMove.length() > 2) {
             if (sMove.charAt(sMove.length() - 4) == ' ')    // assures space from last two chars
