@@ -2,39 +2,29 @@ package jwtc.android.chess;
 
 import jwtc.chess.*;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.text.ClipboardManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.*;
-import android.widget.*;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import 	android.content.pm.ActivityInfo;
 import android.content.Intent;
 import android.database.Cursor;
-
+import android.speech.tts.TextToSpeech;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnInitListener;
 import java.util.Locale;
 
 public class main extends MyBaseActivity implements OnInitListener{
@@ -91,7 +81,7 @@ public class main extends MyBaseActivity implements OnInitListener{
 
     public void onWindowFocusChanged(boolean hasFocus) {
 
-        super.onWindowFocusChanged(hasFocus);
+		super.onWindowFocusChanged(hasFocus);
 
         /*
 		if(hasFocus){
@@ -219,11 +209,11 @@ public class main extends MyBaseActivity implements OnInitListener{
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
 		builder.setTitle(getString(R.string.menu_subview_title));
-		
+
 		builder.setItems(_itemsMenu, new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int item) {
-		        dialog.dismiss();
-		        _chessView.toggleControl(item);
+			public void onClick(DialogInterface dialog, int item) {
+				dialog.dismiss();
+				_chessView.toggleControl(item);
 		    }
 		});
 		AlertDialog alert = builder.create();
@@ -259,8 +249,8 @@ public class main extends MyBaseActivity implements OnInitListener{
 		
         String sPGN = "";
         String sFEN = prefs.getString("FEN", null);
-        
-        String sTmp = prefs.getString("NotificationUri", null);
+
+		String sTmp = prefs.getString("NotificationUri", null);
         if(sTmp == null){
         	_uriNotification = null;
         	_ringNotification = null;
@@ -312,11 +302,11 @@ public class main extends MyBaseActivity implements OnInitListener{
 	        	Log.i("onResume", "pgn: " + sPGN);
 	        	loadPGN(sPGN);
 	        }
-        }
-        
-        _chessView.OnResume(prefs);
-        
-        _chessView.updateState();
+		}
+
+		_chessView.OnResume(prefs);
+
+		_chessView.updateState();
         //
         super.onResume();
     }
@@ -440,11 +430,7 @@ public class main extends MyBaseActivity implements OnInitListener{
 		} 
     }
     
-    public void doToast(final String text){
-		Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
-		t.setGravity(Gravity.BOTTOM, 0, 0);
-		t.show();
-    }
+
     
     private void copyToClipBoard(String s){
     	ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);

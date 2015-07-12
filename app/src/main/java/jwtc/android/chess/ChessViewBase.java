@@ -243,15 +243,22 @@ public class ChessViewBase{
 				//int titleBarHeight= contentViewTop - statusBarHeight;
                 int availableHeight = (rectangle.bottom - rectangle.top) - contentViewTop;
                 int availableWidth = rectangle.right - rectangle.left;
-                int length;
+                int length, margin = 0;
 
+				// portrait
                 if(availableHeight > availableWidth){
                     length = availableWidth / 8;
+					margin = (availableWidth - 8 * length) / 2;
                 } else {
                     length = availableHeight / 8;
                 }
 
-
+				if(margin > 0){
+					View viewBoard = (View)_activity.findViewById(R.id.includeboard);
+					RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)viewBoard.getLayoutParams();
+					params.setMargins(margin, 0, 0, 0); //substitute parameters for left, top, right, bottom
+					viewBoard.setLayoutParams(params);
+				}
                 Log.i("ChessViewBase", "availableHeight 2 " + availableHeight);
 
                 LayoutParams params = new LayoutParams(length, length);

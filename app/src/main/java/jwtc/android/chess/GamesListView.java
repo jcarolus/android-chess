@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -41,9 +42,12 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-	
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		MyBaseActivity.prepareWindowSettings(this);
+
 		setContentView(R.layout.gameslist);
+
+		MyBaseActivity.makeActionOverflowMenuShown(this);
 		
 		_sortBy = PGNColumns.DATE;
 		_sortOrder = "ASC";
@@ -196,7 +200,21 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
 		_listGames.setOnItemClickListener(this);
 		_listGames.setOnItemLongClickListener(this);
 	}
-	
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		Intent intent;
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				// API 5+ solution
+				onBackPressed();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 	private void doFilterSort(){
 		//_adapter.getFilter().filter(_editFilter.getText().toString());
 		//_listGames.invalidate();

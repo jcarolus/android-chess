@@ -9,8 +9,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.preference.PreferenceActivity;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.LayoutInflater.Factory;
@@ -18,6 +20,7 @@ import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Field;
 
@@ -54,11 +57,10 @@ public class MyBaseActivity extends android.app.Activity{
 		super.onPause();
 	}
 
-	// @see http://stackoverflow.com/questions/9739498/android-action-bar-not-showing-overflow
-	public void makeActionOverflowMenuShown() {
+	public static void makeActionOverflowMenuShown(Activity activity){
 		//devices with hardware menu button (e.g. Samsung Note) don't show action overflow menu
 		try {
-			ViewConfiguration config = ViewConfiguration.get(this);
+			ViewConfiguration config = ViewConfiguration.get(activity);
 			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
 			if (menuKeyField != null) {
 				menuKeyField.setAccessible(true);
@@ -68,35 +70,54 @@ public class MyBaseActivity extends android.app.Activity{
 			Log.d("main", e.getLocalizedMessage());
 		}
 	}
-
-	public SharedPreferences getPrefs(){
-		return this.getSharedPreferences("ChessPlayer", Activity.MODE_PRIVATE);
+	// @see http://stackoverflow.com/questions/9739498/android-action-bar-not-showing-overflow
+	public void makeActionOverflowMenuShown() {
+		makeActionOverflowMenuShown(this);
 	}
 
-	public void prepareWindowSettings(){
+	public static SharedPreferences getPrefs(Activity activity){
+		return activity.getSharedPreferences("ChessPlayer", Activity.MODE_PRIVATE);
+	}
 
-		SharedPreferences prefs = getPrefs();
+	public SharedPreferences getPrefs(){
+		return getPrefs(this);
+	}
+
+	public static void prepareWindowSettings(Activity activity) {
+		SharedPreferences prefs = getPrefs(activity);
 		if(prefs.getBoolean("fullScreen", true)){
-			this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+			activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
 
-		if(this.getResources().getBoolean(R.bool.portraitOnly)){
-			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		if(activity.getResources().getBoolean(R.bool.portraitOnly)){
+			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 
-		int configOrientation = this.getResources().getConfiguration().orientation;
+		int configOrientation = activity.getResources().getConfiguration().orientation;
 		if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-			this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			if(false == activity instanceof PreferenceActivity) {
+				activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			}
 		} else {
-			this.getActionBar().setDisplayHomeAsUpEnabled(true);
+			try {
+				activity.getActionBar().setDisplayHomeAsUpEnabled(true);
+			} catch(Exception ex){
+
+			}
 		}
+	}
+	public void prepareWindowSettings(){
+		prepareWindowSettings(this);
 	}
 
 	public PowerManager.WakeLock getWakeLock(){
 		PowerManager pm = (PowerManager) this.getSystemService(Activity.POWER_SERVICE);
 		return pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "DoNotDimScreen");
-
 	}
 
+	public void doToast(final String text){
+		Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
+		t.setGravity(Gravity.BOTTOM, 0, 0);
+		t.show();
+	}
 }

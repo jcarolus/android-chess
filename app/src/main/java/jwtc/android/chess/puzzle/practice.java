@@ -94,12 +94,7 @@ public class practice extends MyBaseActivity {
     	_chessView.OnDestroy();
     	super.onDestroy();
     }
-        
-    public void doToast(final String text){
-		Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
-		t.setGravity(Gravity.CENTER, 0, 0);
-		t.show();
-    }
+
 
     public void flipBoard(){
     	_chessView.flipBoard();
