@@ -362,7 +362,6 @@ public class ChessView extends UI {
                     intent.setClass(_parent, options.class);
                     intent.putExtra("requestCode", main.REQUEST_NEWGAME);
                     _parent.startActivityForResult(intent, main.REQUEST_NEWGAME);
-                    _bFirstTurn = true;    // FlipBoard once if needed
                 }
             });
         }
@@ -718,6 +717,7 @@ public class ChessView extends UI {
     public void newGame() {
         super.newGame();
         clearPGNView();
+        _bFirstTurn = true;    // FlipBoard once if needed
     }
 
     @Override
