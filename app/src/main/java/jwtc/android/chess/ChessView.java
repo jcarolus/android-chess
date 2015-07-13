@@ -362,6 +362,7 @@ public class ChessView extends UI {
                     intent.setClass(_parent, options.class);
                     intent.putExtra("requestCode", main.REQUEST_NEWGAME);
                     _parent.startActivityForResult(intent, main.REQUEST_NEWGAME);
+                    _bFirstTurn = true;    // FlipBoard once if needed
                 }
             });
         }
@@ -798,12 +799,19 @@ public class ChessView extends UI {
             arrSelPositions[1] = _dpadPos;
         }
         int turn = _jni.getTurn();
-        //
-        if (_playMode == HUMAN_HUMAN &&
-                _bAutoFlip &&
+
+
+        if (_playMode == HUMAN_HUMAN)
+        {
+            _butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
+        }
+
+        if (_playMode == HUMAN_HUMAN && _bAutoFlip &&
                 (turn == BoardConstants.WHITE && _view.getFlippedBoard() ||
                         turn == BoardConstants.BLACK && false == _view.getFlippedBoard()))
+        {
             _view.flipBoard();
+        }
 
 
         ArrayList<Integer> arrPos = new ArrayList<Integer>();
@@ -1083,6 +1091,7 @@ public class ChessView extends UI {
         editor.putInt("playMode", _playMode);
         editor.putBoolean("autoflipBoard", _bAutoFlip);
         editor.putBoolean("showMoves", _bShowMoves);
+        editor.putBoolean("playAsBlack", _bPlayAsBlack);
         editor.putInt("boardNum", _jni.getNumBoard());
         if (_viewAnimator != null) {
             editor.putInt("animatorViewNumber", _viewAnimator.getDisplayedChild());
