@@ -54,7 +54,7 @@ public class ChessView extends UI {
     private RelativeLayout _layoutHistory;
     private ArrayList<PGNView> _arrPGNView;
     private LayoutInflater _inflater;
-    private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bPlayAsBlack, _bFirstTurn;
+    private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bPlayAsBlack, _bDidResume;
     private Timer _timer;
     private ViewSwitcher _switchTurnMe, _switchTurnOpp;
     private SeekBar _seekBar;
@@ -131,6 +131,7 @@ public class ChessView extends UI {
         _bPlayAsBlack = false;
         _bShowMoves = false;
         _bShowLastMove = true;
+        _bDidResume = false;
         _dpadPos = -1;
 
         _arrPGNView = new ArrayList<PGNView>();
@@ -191,7 +192,7 @@ public class ChessView extends UI {
         OnClickListener oclUndo = new OnClickListener() {
             public void onClick(View arg0) {
                 if (m_bActive) {
-                    undo();
+                    previous();
                 } else {
                     stopThreadAndUndo();
                 }
@@ -220,7 +221,7 @@ public class ChessView extends UI {
             butPrevious.setOnLongClickListener(olclUndo);
         }
         /*
-		ImageButton butPreviousGuess = (ImageButton)_parent.findViewById(R.id.ButtonPreviousGuess);
+        ImageButton butPreviousGuess = (ImageButton)_parent.findViewById(R.id.ButtonPreviousGuess);
 		if(butPreviousGuess != null){
 			//butPreviousGuess.setFocusable(false);
 			butPreviousGuess.setOnClickListener(oclUndo);
@@ -717,7 +718,6 @@ public class ChessView extends UI {
     public void newGame() {
         super.newGame();
         clearPGNView();
-        _bFirstTurn = true;    // FlipBoard once if needed
     }
 
     @Override
@@ -733,8 +733,10 @@ public class ChessView extends UI {
     public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll) {
         super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
         Log.i("ChessView", "sMove =  " + sMove);
-        //_parent.soundNotification(sMove);
-        playNotification();
+
+        if (_bDidResume) {
+            playNotification();
+        }
 
         while (ply >= 0 && _arrPGNView.size() >= ply)
             _arrPGNView.remove(_arrPGN.size() - 1);
@@ -854,18 +856,6 @@ public class ChessView extends UI {
         updateState();
     }
 
-    public void playBlack() {
-        if (!_view.getFlippedBoard()) {
-            flipBoard();
-        }
-        play();
-    }
-
-    public void playWhite() {
-        if (_view.getFlippedBoard()) {
-            flipBoard();
-        }
-    }
 
     public void setFlippedBoard(boolean b) {
         _view.setFlippedBoard(b);
@@ -1098,6 +1088,8 @@ public class ChessView extends UI {
         editor.putLong("clockTotalMillies", _lClockTotal);
         editor.putLong("clockWhiteMillies", _lClockWhite);
         editor.putLong("clockBlackMillies", _lClockBlack);
+
+        _bDidResume = false;
     }
 
     public void OnResume(SharedPreferences prefs) {
@@ -1151,12 +1143,26 @@ public class ChessView extends UI {
             _viewAnimator.setDisplayedChild(prefs.getInt("animatorViewNumber", 0) % _viewAnimator.getChildCount());
         }
 
-        if (_bPlayAsBlack && _bFirstTurn) {   // First move player at bottom
-            playBlack();
-        } else if (_bFirstTurn) {
-            playWhite();
+        if (_bPlayAsBlack) {
+            // playing as black
+
+            if (false == _view.getFlippedBoard()) {
+                flipBoard();
+            }
+            if(_jni.getTurn() == ChessBoard.WHITE) {
+                play();
+            }
+
+        } else {
+            // playing as white
+            if (_view.getFlippedBoard()) {
+                flipBoard();
+            }
+            if(_jni.getTurn() == ChessBoard.BLACK) {
+                play();
+            }
         }
-        _bFirstTurn = false;
+
         ///////////////////////////////////////////////////////////////////
         /* disabled for now - is slowing down onResume too much
         if (prefs.getBoolean("showECO", true) && _jArrayECO == null) {
@@ -1183,7 +1189,7 @@ public class ChessView extends UI {
         }
         */
         /////////////////////////////////////////////////////////////////
-
+        _bDidResume = true;
     }
 
     @Override
