@@ -219,7 +219,7 @@ public class ChessView extends UI {
             butPrevious.setOnClickListener(oclUndo);
             butPrevious.setOnLongClickListener(olclUndo);
         }
-		/*
+        /*
 		ImageButton butPreviousGuess = (ImageButton)_parent.findViewById(R.id.ButtonPreviousGuess);
 		if(butPreviousGuess != null){
 			//butPreviousGuess.setFocusable(false);
@@ -639,13 +639,13 @@ public class ChessView extends UI {
 
     protected void next() {
         jumptoMove(_jni.getNumBoard());
-        playNotification(_jni.getMyMoveToString());
+        playNotification();
         updateState();
     }
 
     protected void previous() {
         undo();
-        playNotification(_jni.getMyMoveToString());
+        playNotification();
     }
 
     private String formatTime(long msec) {
@@ -734,7 +734,7 @@ public class ChessView extends UI {
         super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
         Log.i("ChessView", "sMove =  " + sMove);
         //_parent.soundNotification(sMove);
-        playNotification(sMove);
+        playNotification();
 
         while (ply >= 0 && _arrPGNView.size() >= ply)
             _arrPGNView.remove(_arrPGN.size() - 1);
@@ -801,15 +801,13 @@ public class ChessView extends UI {
         int turn = _jni.getTurn();
 
 
-        if (_playMode == HUMAN_HUMAN)
-        {
+        if (_playMode == HUMAN_HUMAN) {
             _butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
         }
 
         if (_playMode == HUMAN_HUMAN && _bAutoFlip &&
                 (turn == BoardConstants.WHITE && _view.getFlippedBoard() ||
-                        turn == BoardConstants.BLACK && false == _view.getFlippedBoard()))
-        {
+                        turn == BoardConstants.BLACK && false == _view.getFlippedBoard())) {
             _view.flipBoard();
         }
 
@@ -1460,16 +1458,25 @@ public class ChessView extends UI {
     }
 
 
-    public void playNotification(String sMove) {
+    public void playNotification() {
+
+        int move = _jni.getMyMove();
+        String sMove = _jni.getMyMoveToString();
+
+        if (sMove.length() > 3) {
+            // assures space to separate which Rook and which Knight to move
+            sMove = sMove.substring(0, 2) + " " + sMove.substring(2, sMove.length());
+        }
 
         sMove = sMove.replace("x", " takes ");
 
         sMove = sMove.replace("=", " promotes to ");
-        sMove = sMove.replace("N", "night ");   // The 'K' will trigger the King
-        sMove = sMove.replace("B", "Bishop ");
-        sMove = sMove.replace("R", "Rook ");
-        sMove = sMove.replace("Q", "Queen ");
+
         sMove = sMove.replace("K", "King ");
+        sMove = sMove.replace("Q", "Queen ");
+        sMove = sMove.replace("R", "Rook ");
+        sMove = sMove.replace("B", "Bishop ");
+        sMove = sMove.replace("N", "Knight ");
 
         sMove = sMove.replace("O-O-O", "Castle Queen Side");
         sMove = sMove.replace("O-O", "Castle King Side");
@@ -1486,26 +1493,13 @@ public class ChessView extends UI {
 
         // the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
         sMove = sMove.replace("a ", "ay ");
+        sMove = sMove.replace("b", "bee ");
 
-        Log.i("ChessView", " 2nd sMove = " + sMove);
-        _parent.soundNotification(sMove);
-    }
-
-    @Override
-    public void playNotification() {        //  TODO coordinate Speech
-        int move = _jni.getMyMove();
-
-        int from = Move.getFrom(move);
-        int to = Move.getTo(move);
-        int piece = Move.getPromotionPiece(move);
-
-        String sMove = Pos.colToString(from).toUpperCase() +
-                ". " + Pos.rowToString(from) +
-                ". " + Pos.colToString(to).toUpperCase() +
-                ". " + Pos.rowToString(to);
-        if (piece != 0) {
-            sMove += " promote to ";
+        if (Move.isEP(move)) {
+            sMove = sMove + " On Pesawnt";  // En Passant
         }
+        //Log.i("ChessView", " 2nd sMove = " + sMove);
         _parent.soundNotification(sMove);
     }
+
 }
