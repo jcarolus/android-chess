@@ -1158,9 +1158,6 @@ public class ChessView extends UI {
             if (_view.getFlippedBoard()) {
                 flipBoard();
             }
-            if(_jni.getTurn() == ChessBoard.BLACK) {
-                play();
-            }
         }
 
         ///////////////////////////////////////////////////////////////////
