@@ -7,10 +7,10 @@
         <TableLayout android:id="@+id/TableOptions"
             android:layout_width="fill_parent" android:layout_height="wrap_content"
             >
-            <TableRow style="@style/MyRowStyle">"
+            <TableRow style="@style/MyRowStyle">
                 <CheckBox android:id="@+id/CheckBoxOptionsPlayAndroid"
                     android:text="@string/options_play_android"
-                    android:layout_width="fill_parent" android:layout_height="wrap_content"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
                 />
                 <RadioGroup>
                     <RadioButton

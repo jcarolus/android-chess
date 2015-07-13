@@ -46,7 +46,10 @@ public class options extends MyBaseActivity {
         _checkPlay = (CheckBox) findViewById(R.id.CheckBoxOptionsPlayAndroid);
         _checkPlay.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                _checkPlay.setText(_checkPlay.isChecked() ? R.string.options_play_android : R.string.options_play_human);
                 _checkAutoFlip.setEnabled(false == isChecked);
+                _checkAutoFlip.setChecked(true);
+
                 _radioWhite.setEnabled(isChecked);
                 _radioWhite.setChecked(true);
                 _radioBlack.setEnabled(isChecked);
@@ -200,9 +203,11 @@ public class options extends MyBaseActivity {
         SharedPreferences prefs = this.getPrefs();
 
         _checkPlay.setChecked(prefs.getInt("playMode", GameControl.HUMAN_PC) == GameControl.HUMAN_PC);
+        _checkPlay.setText(_checkPlay.isChecked() ? R.string.options_play_android : R.string.options_play_human);
         _checkAutoFlip.setChecked(prefs.getBoolean("autoflipBoard", false));
         _checkAutoFlip.setEnabled(false == _checkPlay.isChecked());
         _checkMoves.setChecked(prefs.getBoolean("showMoves", true));
+        _radioBlack.setChecked(prefs.getBoolean("playAsBlack", false));
 
         _radioTime.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_TIME);
         _radioPly.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_PLY);
