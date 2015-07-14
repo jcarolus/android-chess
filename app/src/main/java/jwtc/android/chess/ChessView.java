@@ -803,9 +803,6 @@ public class ChessView extends UI {
         int turn = _jni.getTurn();
 
 
-        if (_playMode == HUMAN_HUMAN) {
-            _butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
-        }
 
         if (_playMode == HUMAN_HUMAN && _bAutoFlip &&
                 (turn == BoardConstants.WHITE && _view.getFlippedBoard() ||
@@ -1164,7 +1161,11 @@ public class ChessView extends UI {
             }
         }
 
-        // _butPlay.setVisibility(View.GONE);
+        if (_playMode == HUMAN_HUMAN) {
+            _butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
+        } else {
+            _butPlay.setVisibility(View.VISIBLE);
+        }
 
         ///////////////////////////////////////////////////////////////////
         /* disabled for now - is slowing down onResume too much

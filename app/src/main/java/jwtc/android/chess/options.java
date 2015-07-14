@@ -27,10 +27,10 @@ public class options extends MyBaseActivity {
 
     public static final int RESULT_960 = 1;
 
-    private CheckBox _checkPlay, _checkAutoFlip, _checkMoves, _check960;
+    private CheckBox _checkAutoFlip, _checkMoves, _check960;
     private Spinner _spinLevel, _spinLevelPly;
     private Button _butCancel, _butOk;
-    private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack;
+    private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack, _radioAndroid, _radioHuman;
     private TableRow _tableRowOption960;
 
     @Override
@@ -43,16 +43,18 @@ public class options extends MyBaseActivity {
 
         setTitle(R.string.title_options);
 
-        _checkPlay = (CheckBox) findViewById(R.id.CheckBoxOptionsPlayAndroid);
-        _checkPlay.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        _radioAndroid = (RadioButton) findViewById(R.id.rbAndroid);
+        _radioAndroid.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                _checkPlay.setText(_checkPlay.isChecked() ? R.string.options_play_android : R.string.options_play_human);
-                _checkAutoFlip.setEnabled(false == isChecked);
-                _checkAutoFlip.setChecked(true);
-
-                _radioWhite.setEnabled(isChecked);
-                _radioWhite.setChecked(true);
-                _radioBlack.setEnabled(isChecked);
+                _radioHuman.setChecked(isChecked ? false : true);
+                _checkAutoFlip.setEnabled(false);
+            }
+        });
+        _radioHuman = (RadioButton) findViewById(R.id.rbHuman);
+        _radioHuman.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                _radioAndroid.setChecked(_radioHuman.isChecked() ? false : true);
+                _checkAutoFlip.setEnabled(true);
             }
         });
 
@@ -120,7 +122,7 @@ public class options extends MyBaseActivity {
                 editor.putInt("levelMode", _radioTime.isChecked() ? GameControl.LEVEL_TIME : GameControl.LEVEL_PLY);
                 editor.putInt("level", _spinLevel.getSelectedItemPosition() + 1);
                 editor.putInt("levelPly", _spinLevelPly.getSelectedItemPosition() + 1);
-                editor.putInt("playMode", _checkPlay.isChecked() ? GameControl.HUMAN_PC : GameControl.HUMAN_HUMAN);
+                editor.putInt("playMode", _radioAndroid.isChecked() ? GameControl.HUMAN_PC : GameControl.HUMAN_HUMAN);
                 editor.putBoolean("autoflipBoard", _checkAutoFlip.isChecked());
                 editor.putBoolean("showMoves", _checkMoves.isChecked());
                 editor.putBoolean("playAsBlack", _radioBlack.isChecked());
@@ -202,12 +204,15 @@ public class options extends MyBaseActivity {
 
         SharedPreferences prefs = this.getPrefs();
 
-        _checkPlay.setChecked(prefs.getInt("playMode", GameControl.HUMAN_PC) == GameControl.HUMAN_PC);
-        _checkPlay.setText(_checkPlay.isChecked() ? R.string.options_play_android : R.string.options_play_human);
+        _radioAndroid.setChecked(prefs.getInt("playMode", GameControl.HUMAN_PC) == GameControl.HUMAN_PC);
+        _radioHuman.setChecked(_radioAndroid.isChecked() ? false : true);
+
         _checkAutoFlip.setChecked(prefs.getBoolean("autoflipBoard", false));
-        _checkAutoFlip.setEnabled(false == _checkPlay.isChecked());
+        _checkAutoFlip.setEnabled(_radioHuman.isChecked());
         _checkMoves.setChecked(prefs.getBoolean("showMoves", true));
+
         _radioBlack.setChecked(prefs.getBoolean("playAsBlack", false));
+        _radioWhite.setChecked(_radioBlack.isChecked() ? false : true);
 
         _radioTime.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_TIME);
         _radioPly.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_PLY);
