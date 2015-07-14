@@ -299,7 +299,7 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
 		AlertDialog alert = builder.create();
 		alert.show();
 		
-		return false;
+		return true;
 	}
 
 	private class AlternatingSimpleCursorAdapter extends SimpleCursorAdapter{
