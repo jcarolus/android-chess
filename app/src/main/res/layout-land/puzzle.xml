@@ -5,7 +5,7 @@
 	android:background="@color/bgColorText" android:gravity="center" android:id="@+id/LayoutMain"
 	>
 
-    <RelativeLayout android:layout_width="wrap_content" android:layout_height="fill_parent"
+    <RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         >
         <include android:id="@+id/includeboard"

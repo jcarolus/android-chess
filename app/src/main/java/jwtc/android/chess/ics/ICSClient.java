@@ -342,10 +342,15 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         if (butReg != null) {
             butReg.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View arg0) {
-                    Intent i = new Intent();
-                    i.setAction(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse("http://www.freechess.org/Register/index.html"));
-                    startActivity(i);
+                    try {
+                        Intent i = new Intent();
+                        i.setAction(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse("http://www.freechess.org/Register/index.html"));
+                        startActivity(i);
+                    } catch(Exception ex){
+
+                        doToast("Could not go to registration page");
+                    }
                 }
             });
         }

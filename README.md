@@ -1,14 +1,14 @@
 android-chess
 =============
 
-Chess game for Android.
+Chess game for Android
+- Published in the Google Play store
+- Contributions are welcome
 
-
-- improve FICS client
-- TV screen using DIAL; see https://github.com/jcarolus/chess-tv-screen
+Roadmap
+- take items from the feature-request list (GitHub issue list)
 - new high-res piece-sets
-- layout improvements for tablets in landscape mode
-- take items from the feature-request list
 - translation to other languages (starting with Italian)
 - add an "ECO" button to explore and choose an opening from the ECO opening database
 - tournament / competition
+- screen cast
