@@ -250,7 +250,7 @@ public class ChessView extends UI {
             butNext.setOnClickListener(oclFf);
             butNext.setOnLongClickListener(olclFf);
         }
-		/*
+        /*
 		ImageButton butNextGuess = (ImageButton)_parent.findViewById(R.id.ButtonNextGuess);
 		if(butNextGuess != null){
 			//butNextGuess.setFocusable(false);
@@ -1149,7 +1149,8 @@ public class ChessView extends UI {
             if (false == _view.getFlippedBoard()) {
                 flipBoard();
             }
-            if(_jni.getTurn() == ChessBoard.WHITE) {
+
+            if (_playMode == HUMAN_PC && _jni.getTurn() == ChessBoard.WHITE) {
                 play();
             }
 
@@ -1158,10 +1159,12 @@ public class ChessView extends UI {
             if (_view.getFlippedBoard()) {
                 flipBoard();
             }
-            if(_jni.getTurn() == ChessBoard.BLACK) {
+            if (_playMode == HUMAN_PC && _jni.getTurn() == ChessBoard.BLACK) {
                 play();
             }
         }
+
+        // _butPlay.setVisibility(View.GONE);
 
         ///////////////////////////////////////////////////////////////////
         /* disabled for now - is slowing down onResume too much
