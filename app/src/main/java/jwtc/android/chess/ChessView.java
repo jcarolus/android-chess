@@ -1168,30 +1168,36 @@ public class ChessView extends UI {
         }
 
         ///////////////////////////////////////////////////////////////////
-        /* disabled for now - is slowing down onResume too much
+
         if (prefs.getBoolean("showECO", true) && _jArrayECO == null) {
-            try {
-                long start = System.currentTimeMillis();
-                InputStream in = _parent.getAssets().open("ECO.json");
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            (new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        long start = System.currentTimeMillis();
+                        InputStream in = _parent.getAssets().open("ECO.json");
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-                StringBuffer sb = new StringBuffer("");
-                String line = "";
+                        StringBuffer sb = new StringBuffer("");
+                        String line = "";
 
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+
+                        in.close();
+
+                        _jArrayECO = new JSONArray(sb.toString());
+                        Log.i("ChessView", "ECO jArray - size " + _jArrayECO.length() + " load " + (System.currentTimeMillis() - start));
+
+                    } catch (Exception e) {
+
+                    }
                 }
+            })).start();
 
-                in.close();
 
-                _jArrayECO = new JSONArray(sb.toString());
-                Log.i("ChessView", "ECO jArray - size " + _jArrayECO.length() + " load " + (System.currentTimeMillis() - start));
-
-            } catch (Exception e) {
-
-            }
         }
-        */
+
         /////////////////////////////////////////////////////////////////
         _bDidResume = true;
     }
@@ -1293,16 +1299,16 @@ public class ChessView extends UI {
         //if(_tvEngineValue != null)
         //	_tvEngineValue.setText("BoardValue " + _jni.getBoardValue());
 
-        /* disabled, is taking too much CPU on main thread
-        String sECO = getECOInfo(0, _jArrayECO);
-        Log.i("ChessView-ECO", sECO == null ? "No ECO" : sECO);
-        if (sECO != null && (_sPrevECO != null && _sPrevECO.equals(sECO) == false) || _sPrevECO == null) {
-            if (sECO != null && sECO.trim().length() > 0) {
-                _parent.doToast(sECO);
+        if(_jArrayECO != null) {
+            String sECO = getECOInfo(0, _jArrayECO);
+            Log.i("ChessView-ECO", sECO == null ? "No ECO" : sECO);
+            if (sECO != null && (_sPrevECO != null && _sPrevECO.equals(sECO) == false) || _sPrevECO == null) {
+                if (sECO != null && sECO.trim().length() > 0) {
+                    _parent.doToast(sECO);
+                }
             }
+            _sPrevECO = sECO;
         }
-        _sPrevECO = sECO;
-        */
     }
 
 
