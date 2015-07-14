@@ -1292,8 +1292,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     protected void onResume() {
 
-        _view.OnResume();
-
         // lock screen orientation?
         //setRequestedOrientation(this.getResources().getConfiguration().orientation);
 

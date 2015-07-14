@@ -437,8 +437,6 @@ public class ChessViewPuzzle extends UI {
             }
         }
 
-        _view.OnResume();
-
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
 
         _view.setFlippedBoard(prefs.getBoolean("flippedBoard", false));

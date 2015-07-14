@@ -87,18 +87,6 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
         _gestureDetector = new GestureDetector(this, this);
     }
 
-
-    public void onWindowFocusChanged(boolean hasFocus) {
-
-        super.onWindowFocusChanged(hasFocus);
-
-        /*
-        if(hasFocus){
-			_chessView.adjustWidth();
-		}
-		*/
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

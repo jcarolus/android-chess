@@ -350,8 +350,6 @@ public class ChessViewPractice extends UI{
 	public void OnResume(final SharedPreferences prefs, final InputStream isExtra){
 		super.OnResume();
 		
-		_view.OnResume();
-		
 		ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
 		
 		_view.setFlippedBoard(prefs.getBoolean("flippedBoard", false));

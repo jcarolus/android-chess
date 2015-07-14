@@ -32,6 +32,7 @@ import android.view.View.*;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.view.ViewTreeObserver;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -636,6 +637,7 @@ public class ChessView extends UI {
 
         _sPrevECO = null;
 
+
     }
 
     protected void next() {
@@ -732,7 +734,7 @@ public class ChessView extends UI {
     @Override
     public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll) {
         super.addPGNEntry(ply, sMove, sAnnotation, move, bScroll);
-        Log.i("ChessView", "sMove =  " + sMove);
+        //Log.i("ChessView", "sMove =  " + sMove);
 
         if (_bDidResume) {
             playNotification();
@@ -1092,7 +1094,7 @@ public class ChessView extends UI {
     public void OnResume(SharedPreferences prefs) {
         super.OnResume();
 
-        _view.OnResume();
+        _bDidResume = false;
 
         _view._showCoords = prefs.getBoolean("showCoords", false);
 
@@ -1173,6 +1175,8 @@ public class ChessView extends UI {
             (new Thread(new Runnable() {
                 public void run() {
                     try {
+                        Thread.sleep(5000);
+
                         long start = System.currentTimeMillis();
                         InputStream in = _parent.getAssets().open("ECO.json");
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -1201,6 +1205,7 @@ public class ChessView extends UI {
         /////////////////////////////////////////////////////////////////
         _bDidResume = true;
     }
+
 
     @Override
     public void updateState() {
