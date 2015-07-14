@@ -396,6 +396,11 @@ public class ChessView extends UI {
                     Intent intent = new Intent();
                     intent.setClass(_parent, GamesListView.class);
                     _parent.startActivityForResult(intent, main.REQUEST_OPEN);
+
+                    setPlayMode(HUMAN_HUMAN);          // Setup mode for loaded game.
+                    _bPlayAsBlack = false;             // White player at bottom.
+                    _bAutoFlip = false;                // No AutoFlip.
+                    _butPlay.setVisibility(View.GONE); // Make play button gone or it will truncate game. :)
                 }
             });
         }
@@ -1157,9 +1162,6 @@ public class ChessView extends UI {
             // playing as white
             if (_view.getFlippedBoard()) {
                 flipBoard();
-            }
-            if(_jni.getTurn() == ChessBoard.BLACK) {
-                play();
             }
         }
 
