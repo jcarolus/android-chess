@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:background="@color/bgColor"
+	android:background="@color/bgColorText"
 	android:gravity="center" android:id="@+id/LayoutMain"
 >
     
@@ -22,20 +22,16 @@
 		android:layout_below="@id/includeboard"
 		android:background="@color/bgColorText"
 	>
-		<TableRow>
+		<TableRow >
 			<ViewSwitcher android:id="@+id/ImageTurn"
 				android:layout_height="wrap_content" android:layout_width="wrap_content"
 				android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
-			> 
-
-				<ImageView
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:paddingTop="4dp"
-				    android:src="@drawable/turnblack" />
-
-				<ImageView  
-					android:src="@drawable/turnwhite"
+				android:layout_gravity="center_vertical"
+			>
+				<ImageView android:src="@drawable/turnblack"
+				    android:layout_width="wrap_content" android:layout_height="wrap_content"
+				/>
+				<ImageView android:src="@drawable/turnwhite"
 					android:layout_height="wrap_content" android:layout_width="wrap_content"
 				/>
 			</ViewSwitcher>

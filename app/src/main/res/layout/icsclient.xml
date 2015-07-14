@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:background="@color/bgColor" android:id="@+id/LayoutMain"
+    android:background="@color/bgColorText" android:id="@+id/LayoutMain"
     >
     
     <ViewAnimator android:id="@+id/ViewAnimatorMain"
@@ -128,11 +128,12 @@
 	    <RelativeLayout android:id="@+id/ICSLobby"
 	     	android:layout_width="fill_parent" android:layout_height="fill_parent" 
 	 	>
-			<TextView android:text="@string/title_loading" android:id="@+id/TextViewHeader" 
-	     		android:layout_width="fill_parent" android:layout_height="wrap_content" 
-	     		android:background="@color/bgColorText"
-	      		style="@style/MyHeaderTextStyle" 
-	     	/>
+			<TextView android:text="@string/title_loading" android:id="@+id/TextViewHeader"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:background="@color/bgColorText"
+				style="@style/MyHeaderTextStyle"
+				/>
+
 	     	 <ViewAnimator android:id="@+id/ViewAnimatorLobby"
 	     	 	android:layout_below="@id/TextViewHeader"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
@@ -230,10 +231,13 @@
 					   			android:layout_width="fill_parent" android:layout_height="wrap_content"
 					   			android:text=""
 					   		/>
-							
 							<ImageButton android:id="@+id/ButtonICSConsoleQuickCmd" android:src="@drawable/collections_view_as_list"
 								android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 							/>
+							<ImageButton android:id="@+id/ICSCloseConsole"
+								android:src="@drawable/navigation_cancel"
+								android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+								/>
 						</TableRow>
 					</TableLayout>
 				    

@@ -201,10 +201,7 @@ public class UI extends GameControl
 	{
 		return HUMAN_PC; //m_choiceMode.getSelectedIndex();
 	}
-	
-	public void playNotification(){
-		
-	}
+
 	@Override
 	public void setMessage(String sMsg)
 	{

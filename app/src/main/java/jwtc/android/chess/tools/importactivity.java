@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import jwtc.android.chess.MyBaseActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.puzzle.practice;
@@ -38,12 +39,13 @@ import android.os.Message;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class importactivity extends Activity {
+public class importactivity extends MyBaseActivity {
 	
 	private int _cnt, _untilPly, _cntFail;
 	private GameControl _gameControl;
@@ -65,7 +67,9 @@ public class importactivity extends Activity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.doimport);
-        
+
+		this.makeActionOverflowMenuShown();
+
         _processing = false;
         _gameControl = new GameControl();
         
@@ -81,7 +85,21 @@ public class importactivity extends Activity {
         
         _progress.setVisibility(View.INVISIBLE);
     }
-    
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		Intent intent;
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				// API 5+ solution
+				onBackPressed();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
     @Override
     protected void onPause() {
         super.onPause();

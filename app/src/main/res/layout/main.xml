@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:background="@color/bgColor" android:id="@+id/LayoutMain" 
+	android:background="@color/bgColorText" android:id="@+id/LayoutMain"
 	>
 	
 	 <TableLayout android:id="@+id/LayoutTopTitle" 
@@ -29,7 +29,7 @@
 				style="@style/MyNormalTextStyle"
 			/>
 			<TextView android:id="@+id/TextViewTopTitle" 
-				android:layout_width="200dip" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				style="@style/MyNormalTextStyle"
 				android:text="Title..."
 			/>
@@ -37,12 +37,11 @@
 			
 	</TableLayout>
 	
-	
 	<include
         layout="@layout/board"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_below="@id/LayoutTopTitle" 
-        android:id="@+id/includeboard" 
+        android:id="@+id/includeboard"
      />
 	
 	<!-- 
@@ -76,7 +75,7 @@
 					style="@style/MyNormalTextStyle" 
 				/>
 			<TextView android:id="@+id/TextViewTitle" 
-				android:layout_width="200dip" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				style="@style/MyNormalTextStyle"
 				android:text="Title..."
 			/>
@@ -100,7 +99,8 @@
 					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 					android:layout_margin="2dip" 
 				/>
-				<Button android:text="@string/button_new" android:id="@+id/ButtonNewGame" android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
+				<Button android:text="@string/button_new" android:id="@+id/ButtonNewGame"
+					android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
 				    android:layout_margin="2dip" 
 				/>
 				<ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"

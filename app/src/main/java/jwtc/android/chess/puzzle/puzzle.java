@@ -11,27 +11,21 @@ import android.view.*;
 import android.widget.*;
 import android.content.SharedPreferences;
 
-public class puzzle extends Activity {
+public class puzzle extends MyBaseActivity {
 	
     /** instances for the view and game of chess **/
 	private ChessViewPuzzle _chessView;
-	private PowerManager.WakeLock _wakeLock;
-	
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityHelper.prepareWindowSettings(this);
-
-        _wakeLock = ActivityHelper.getWakeLock(this);
-        
         setContentView(R.layout.puzzle);
 
-        ActivityHelper.makeActionOverflowMenuShown(this);
+        this.makeActionOverflowMenuShown();
 
         _chessView = new ChessViewPuzzle(this);
-
     }
 
 
@@ -56,12 +50,8 @@ public class puzzle extends Activity {
         
     	Log.i("puzzle", "onResume");
     	
-		SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-		if(prefs.getBoolean("wakeLock", true))
-		{
-			_wakeLock.acquire();	
-		}
-        
+		SharedPreferences prefs = this.getPrefs();
+
         _chessView.OnResume(prefs);
         _chessView.updateState();
 	
@@ -73,12 +63,7 @@ public class puzzle extends Activity {
     @Override
     protected void onPause() {
         
-    	if(_wakeLock.isHeld())
-        {
-        	_wakeLock.release();
-        }
-        
-        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = this.getPrefs().edit();
         _chessView.OnPause(editor);
 
         editor.commit();
@@ -89,12 +74,6 @@ public class puzzle extends Activity {
     protected void onDestroy(){
     	_chessView.OnDestroy();
     	super.onDestroy();
-    }
-    
-    public void doToast(final String text){
-		Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
-		t.setGravity(Gravity.CENTER, 0, 0);
-		t.show();
     }
 
     public void flipBoard(){

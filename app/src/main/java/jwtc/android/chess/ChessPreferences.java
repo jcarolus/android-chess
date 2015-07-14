@@ -12,6 +12,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
+import android.view.MenuItem;
+
 import jwtc.android.chess.ics.CustomCommands;
 
 
@@ -24,7 +26,9 @@ public class ChessPreferences extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
+		MyBaseActivity.prepareWindowSettings(this);
+
         PreferenceManager pm = getPreferenceManager();
         pm.setSharedPreferencesName("ChessPlayer");
         
@@ -33,6 +37,8 @@ public class ChessPreferences extends PreferenceActivity {
         _colorScheme = prefs.getInt("ColorScheme", 0); 
         
         addPreferencesFromResource(R.xml.globalprefs);
+
+		MyBaseActivity.makeActionOverflowMenuShown(this);
         
         Preference prefColor = (Preference) findPreference("colorSchemeHandle");
         prefColor.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -89,7 +95,19 @@ public class ChessPreferences extends PreferenceActivity {
         });
         //
     }
-    
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				// API 5+ solution
+				onBackPressed();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if(requestCode == REQUEST_SOUND){
         	if (resultCode == RESULT_OK) {

@@ -65,12 +65,14 @@
 		    android:summary="@string/pref_speech_desc"
 		    android:key="speechNotification"
 		    />
+		<!--
 		<CheckBoxPreference 
 		    android:title="@string/pref_eco"
 		    android:defaultValue="true"
 		    android:summary="@string/pref_eco_desc"
 		    android:key="showECO"
 		    />
+		-->
 		<!-- 
 		<ListPreference
 			android:title="@string/pref_uci"

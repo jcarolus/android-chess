@@ -5,10 +5,11 @@ import java.util.Locale;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.WebView;
 
-public class HtmlActivity extends Activity {
+public class HtmlActivity extends MyBaseActivity {
 
 	public static String HELP_MODE = "HELP_MODE";
 
@@ -20,10 +21,9 @@ public class HtmlActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
 		setContentView(R.layout.help);
 
+		this.makeActionOverflowMenuShown();
 		// html assets localization
 		if (Locale.getDefault().getLanguage().equals("it")) {
 			_lang = "it";
@@ -32,6 +32,18 @@ public class HtmlActivity extends Activity {
 		}
 		_webview = (WebView) findViewById(R.id.WebViewHelp);
 
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				// API 5+ solution
+				onBackPressed();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

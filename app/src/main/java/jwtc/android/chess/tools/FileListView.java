@@ -11,10 +11,12 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import jwtc.android.chess.MyBaseActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.iconifiedlist.*;
 
@@ -29,7 +31,10 @@ public class FileListView extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
+		MyBaseActivity.prepareWindowSettings(this);
+
+		MyBaseActivity.makeActionOverflowMenuShown(this);
      }
     
     private void browseToRoot() {
@@ -54,31 +59,19 @@ public class FileListView extends ListActivity {
         	finish();
         }
 		browseToRoot();
-		/*
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Choose action");
-		
-		builder.setPositiveButton("Import", new DialogInterface.OnClickListener(){
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-				_mode = MODE_IMPORT;
-				browseToRoot();
-			}
-			
-		});
-		
-		builder.setNegativeButton("Export", new DialogInterface.OnClickListener(){
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-				_mode = MODE_EXPORT;
-				browseToRoot();
-			}
-		});
-		
-		AlertDialog alert = builder.create();
-		alert.show();
-		*/		        
     }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				// API 5+ solution
+				onBackPressed();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
     
     private void upOneLevel(){
 		if(this.currentDirectory.getParent() != null)

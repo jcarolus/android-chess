@@ -1,27 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:layout_gravity="center"
+    android:background="@color/bgColorText"
     >
-    <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+    <RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/bgColor">
         <TableLayout android:id="@+id/TableOptions"
             android:layout_width="fill_parent" android:layout_height="wrap_content"
             >
-            <TableRow style="@style/MyRowStyle">"
-                <CheckBox android:id="@+id/CheckBoxOptionsPlayAndroid"
-                    android:text="@string/options_play_android"
-                    android:layout_width="fill_parent" android:layout_height="wrap_content"
-                />
-            </TableRow>
-            <TableRow style="@style/MyRowStyle" android:id="@+id/TableRowOptions960" android:visibility="gone">
-                <CheckBox android:id="@+id/CheckBoxOptions960"
-                    android:text="@string/options_960"
-                    android:layout_width="fill_parent" android:layout_height="wrap_content"
-                />
+            <TableRow style="@style/MyRowStyle">
+                <RadioGroup>
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/options_play_android"
+                        android:id="@+id/rbAndroid"
+                        />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/options_play_human"
+                        android:id="@+id/rbHuman"
+                        />
+                </RadioGroup>
             </TableRow>
             <TableRow style="@style/MyRowStyle">
                 <CheckBox android:id="@+id/CheckBoxOptionsAutoFlip"
                     android:text="@string/options_auto_flip"
+                    android:layout_width="fill_parent" android:layout_height="wrap_content"
+                    />
+            </TableRow>
+            <TableRow style="@style/MyRowStyle">
+                <RadioGroup>
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/options_play_white"
+                        android:id="@+id/rbWhite"
+                        />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/options_play_black"
+                        android:id="@+id/rbBlack"
+                        />
+                </RadioGroup>
+            </TableRow>
+            <TableRow style="@style/MyRowStyle" android:id="@+id/TableRowOptions960" android:visibility="gone">
+                <CheckBox android:id="@+id/CheckBoxOptions960"
+                    android:text="@string/options_960"
                     android:layout_width="fill_parent" android:layout_height="wrap_content"
                 />
             </TableRow>
@@ -31,7 +60,6 @@
                     android:layout_width="fill_parent" android:layout_height="wrap_content"
                 />
             </TableRow>
-
         </TableLayout>
 
         <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -46,7 +74,7 @@
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                 />
             </TableRow>
-            <TableRow style="@style/MyRowStyle">
+            <TableRow style="@style/MyRowStyle" android:layout_marginBottom="0dip">
                 <Spinner android:id="@+id/SpinnerOptionsLevel"
                     android:layout_width="fill_parent" android:layout_height="wrap_content"
                 />
@@ -54,14 +82,19 @@
                     android:layout_width="fill_parent" android:layout_height="wrap_content"
                 />
             </TableRow>
-
-            <TableRow style="@style/MyRowStyle">
+            <TableRow style="@style/MyRowStyle" android:layout_marginBottom="0dip">
                 <Button android:id="@+id/ButtonOptionsCancel"
                     android:text="@string/button_cancel"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dip" android:layout_marginBottom="0dip"
+                    android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
+                    />
                 <Button android:id="@+id/ButtonOptionsOk"
                     android:text="@string/button_ok"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginTop="4dip" android:layout_marginBottom="0dip"
+                    android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
+                    />
             </TableRow>
 
         </TableLayout>

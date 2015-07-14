@@ -2,6 +2,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="ChessTheme">
+        <item name="android:windowAnimationStyle">@null</item>
         <item name="android:buttonStyle">@style/button</item>
         <item name="android:imageButtonStyle">@style/imageButton</item>
         <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
