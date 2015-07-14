@@ -70,6 +70,8 @@
 <string name="button_save_copy">Salva una copia</string>
 <string name="button_new">Nuova</string>
 <string name="button_show">Mostra</string>
+<!-- @TODO -->
+<string name="button_jump">Salta a #</string>
 
 <string name="alert_yes">Sì</string>
 <string name="alert_no">No</string>
@@ -109,6 +111,8 @@
 <string name="title_ics_mode_puzzle">Problema</string>
 <string name="title_ics_mode_endgame">Finale di partita</string>
 <string name="title_installing">Installazione</string>
+    <!-- @TODO -->
+<string name="title_puzzle_jump">Vai a puzzle numero</string>
 
 <string name="menu_help">Aiuto</string>
 <string name="menu_new">Nuova partita</string>
@@ -230,6 +234,8 @@ L\'email potrebbe non essere stata creata.
 <string name="err_install_barcode_scanner">Per favore installa uno scanner di codici a barre (ZXing)</string>
 <string name="err_chess960_position_range">Posizione non valida, inserisci un numero tra 0 e 960</string>
 <string name="err_chess960_postion_format">Posizione non valida, inserisci un numero</string>
+    <!-- @TODO -->
+<string name="err_puzzle_jump">Puzzle di numero non valido</string>
 
 <string name="pgntool_export_explanation">Esporta il database di gioco nella scheda SD</string>
 <string name="pgntool_import_explanation">Importa le partite nel database di gioco</string>

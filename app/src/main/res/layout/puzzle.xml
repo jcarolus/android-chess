@@ -35,24 +35,35 @@
 		android:layout_below="@id/LayoutTitle"
 		android:background="@color/bgColorText"
 		android:paddingTop="4dip" android:paddingBottom="4dip"
+		android:stretchColumns="1"
 	>
-		<TableRow android:gravity="center">
-		    <ImageView android:id="@+id/ImageStatus" android:src="@drawable/indicator_none"
-				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				android:layout_marginRight="8dip"
-			/>
-			<ImageButton android:id="@+id/ButtonPuzzleHelp" android:src="@drawable/action_about" 
+		<TableRow>
+			<ImageButton android:id="@+id/ButtonPuzzlePrevious" android:src="@drawable/navigation_previous_item"
 				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-			/>
-			<ImageButton android:id="@+id/ButtonPuzzlePrevious" android:src="@drawable/navigation_previous_item" 
-				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-			/>
-			<Button android:id="@+id/ButtonPuzzle"
-				android:text="@string/button_show" android:paddingLeft="8dip" android:paddingRight="8dip"
-				android:layout_height="40dip" android:layout_width="wrap_content"
-			/>
+				android:layout_marginLeft="8dip"
+				/>
+			<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center">
+				<ImageView android:id="@+id/ImageStatus" android:src="@drawable/indicator_none"
+					android:layout_height="wrap_content" android:layout_width="wrap_content"
+				/>
+				<ImageButton android:id="@+id/ButtonPuzzleHelp" android:src="@drawable/action_about"
+					android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+					android:layout_marginLeft="8dip"
+				/>
+				<Button android:id="@+id/ButtonPuzzle"
+					android:text="@string/button_show" android:paddingLeft="8dip" android:paddingRight="8dip"
+					android:layout_height="40dip" android:layout_width="wrap_content"
+					android:layout_marginLeft="8dip"
+				/>
+				<Button android:id="@+id/ButtonPuzzleJump"
+					android:text="@string/button_jump" android:paddingLeft="8dip" android:paddingRight="8dip"
+					android:layout_height="40dip" android:layout_width="wrap_content"
+					android:layout_marginLeft="8dip"
+					/>
+			</LinearLayout>
 			<ImageButton android:id="@+id/ButtonPuzzleNext" android:src="@drawable/navigation_next_item" 
 				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+				android:layout_marginRight="8dip"
 			/>
 		</TableRow>
 	</TableLayout>

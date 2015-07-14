@@ -2,7 +2,7 @@ android-chess
 =============
 
 Chess game for Android
-- Published in the Google Play store
+- Published in the Google Play store https://play.google.com/store/apps/details?id=jwtc.android.chess
 - Contributions are welcome
 
 Roadmap

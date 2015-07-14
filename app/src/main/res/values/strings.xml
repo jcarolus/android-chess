@@ -71,6 +71,7 @@
 <string name="button_save_copy">Save copy</string>
 <string name="button_new">New</string>
 <string name="button_show">Show</string>
+<string name="button_jump">Jump to #</string>
 
 <string name="alert_yes">Yes</string>
 <string name="alert_no">No</string>
@@ -110,6 +111,7 @@
 <string name="title_ics_mode_puzzle">Puzzle</string>
 <string name="title_ics_mode_endgame">Endgame</string>
 <string name="title_installing">Installing</string>
+<string name="title_puzzle_jump">Jump to puzzle number</string>
 
 <string name="menu_help">Help</string>
 <string name="menu_new">New Game</string>
@@ -229,6 +231,7 @@ E-mail could not be created.
 <string name="err_install_barcode_scanner">Please install Barcode scanner (ZXing)</string>
 <string name="err_chess960_position_range">Invalid position, enter a number between 0 and 960</string>
 <string name="err_chess960_postion_format">Invalid position, enter a number</string>
+<string name="err_puzzle_jump">Invalid puzzle number</string>
 
 <string name="pgntool_export_explanation">Export game database to sd-card</string>
 <string name="pgntool_import_explanation">Import games into the game database</string>
