@@ -68,6 +68,7 @@
 <string name="button_close">Chiudi</string>
 <string name="button_save">Salva</string>
 <string name="button_save_copy">Salva una copia</string>
+<string name="button_clipboard">Copy to Clipboard</string>
 <string name="button_new">Nuova</string>
 <string name="button_show">Mostra</string>
 <!-- @TODO -->
