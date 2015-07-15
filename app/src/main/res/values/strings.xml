@@ -68,6 +68,7 @@
 <string name="button_close">Close</string>
 <string name="button_save">Save</string>
 <string name="button_save_copy">Save copy</string>
+<string name="button_clipboard">Copy to Clipboard</string>
 <string name="button_new">New</string>
 <string name="button_show">Show</string>
 <string name="button_jump">Jump to #</string>

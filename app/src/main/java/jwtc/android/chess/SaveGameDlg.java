@@ -3,7 +3,10 @@ package jwtc.android.chess;
 import java.util.Calendar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -18,7 +21,7 @@ public class SaveGameDlg extends Dialog {
 	private EditText _editWhite, _editBlack, _editEvent;
 	
 	private RatingBar _rateRating;
-	private Button _butSave, _butCancel, _butSaveCopy, _butDate;
+	private Button _butSave, _butCancel, _butSaveCopy, _butDate, _butCopyToClipboard;
 	private main _parent;
 	private String _sPGN;
 	private int _year, _month, _day;
@@ -67,6 +70,17 @@ public class SaveGameDlg extends Dialog {
         		dismiss();
         	}
         });
+
+		_butCopyToClipboard = (Button)findViewById(R.id.ButtonCopyToClipboard);
+		_butCopyToClipboard.setOnClickListener(new View.OnClickListener(){
+			public void onClick(View arg0) {
+				dismiss();
+				ClipboardManager clipboard = (ClipboardManager)
+						_parent.getSystemService(Context.CLIPBOARD_SERVICE);
+				ClipData clip = ClipData.newPlainText("PGN text", _sPGN);
+				clipboard.setPrimaryClip(clip);
+			}
+		});
 	}
 	
 	public void save(boolean bCopy){

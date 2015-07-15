@@ -73,6 +73,12 @@
 					android:layout_margin="0px"
 				/>
 			</TableRow>
+
+			    <Button android:id="@+id/ButtonCopyToClipboard" android:text="@string/button_clipboard"
+				    android:layout_width="fill_parent" android:layout_height="wrap_content"
+				    android:layout_margin="0px"
+					/>
+
 		</TableLayout>
 		
 	</RelativeLayout>
