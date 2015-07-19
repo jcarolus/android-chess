@@ -34,10 +34,7 @@ public class puzzle extends MyBaseActivity {
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
-            case android.R.id.home:
-                // API 5+ solution
-                onBackPressed();
-                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

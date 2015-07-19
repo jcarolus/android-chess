@@ -259,13 +259,7 @@ public class setup extends MyBaseActivity {
             return true;
         }
 
-        if (item.getItemId() == android.R.id.home) {
-            // API 5+ solution
-            onBackPressed();
-            return true;
-        }
-
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
 

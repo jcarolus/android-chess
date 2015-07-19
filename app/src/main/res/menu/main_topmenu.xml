@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_new_game"
-          android:icon="@drawable/content_new"
-          android:title="@string/menu_new"
-          android:showAsAction="ifRoom"/>
     <item android:id="@+id/action_options"
         android:title="@string/menu_options"
         android:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_prefs"
+        android:title="@string/menu_prefs"
+        android:showAsAction="never"/>
     <item android:id="@+id/action_setup"
         android:title="@string/menu_setup"
         android:showAsAction="never"/>

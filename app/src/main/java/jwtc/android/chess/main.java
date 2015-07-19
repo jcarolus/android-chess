@@ -100,15 +100,10 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
         Intent intent;
         String s;
         switch (item.getItemId()) {
-            case android.R.id.home:
-                // API 5+ solution
-                onBackPressed();
-                return true;
-            case R.id.action_new_game:
+            case R.id.action_prefs:
                 intent = new Intent();
-                intent.setClass(main.this, options.class);
-                intent.putExtra("requestCode", REQUEST_NEWGAME);
-                startActivityForResult(intent, REQUEST_NEWGAME);
+                intent.setClass(main.this, mainPrefs.class);
+                startActivity(intent);
                 return true;
             case R.id.action_flip:
                 _chessView.flipBoard();

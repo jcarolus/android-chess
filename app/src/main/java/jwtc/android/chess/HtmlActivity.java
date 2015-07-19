@@ -35,18 +35,6 @@ public class HtmlActivity extends MyBaseActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				// API 5+ solution
-				onBackPressed();
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
 	protected void onResume() {
 		super.onResume();
 

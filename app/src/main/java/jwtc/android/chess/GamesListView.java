@@ -201,19 +201,6 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
 		_listGames.setOnItemLongClickListener(this);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		Intent intent;
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				// API 5+ solution
-				onBackPressed();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
 
 	private void doFilterSort(){
 		//_adapter.getFilter().filter(_editFilter.getText().toString());

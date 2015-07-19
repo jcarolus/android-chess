@@ -364,6 +364,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        menu.add(Menu.NONE, R.string.menu_prefs, Menu.NONE, R.string.menu_prefs);
         menu.add(Menu.NONE, R.string.ics_menu_takeback, Menu.NONE, R.string.ics_menu_takeback);
         menu.add(Menu.NONE, R.string.ics_menu_adjourn, Menu.NONE, R.string.ics_menu_adjourn);
         menu.add(Menu.NONE, R.string.ics_menu_draw, Menu.NONE, R.string.ics_menu_draw);
@@ -464,8 +465,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        Intent i;
         switch (item.getItemId()) {
-
+            case R.string.menu_prefs:
+                i = new Intent();
+                i.setClass(ICSClient.this, ICSPrefs.class);
+                startActivity(i);
+                return true;
             case R.string.ics_menu_refresh:
                 sendString("refresh");
                 return true;
@@ -511,7 +517,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 _dlgMatch.show();
                 return true;
             case R.string.menu_help:
-                Intent i = new Intent();
+                i = new Intent();
                 i.setClass(ICSClient.this, HtmlActivity.class);
                 i.putExtra(HtmlActivity.HELP_MODE, "help_online");
                 startActivity(i);

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Play settings">
+        <CheckBoxPreference
+            android:title="@string/pref_onLoadJumpToLastMove"
+            android:defaultValue="false"
+            android:summary="@string/pref_onLoadJumpToLastMove_desc"
+            android:key="onLoadJumpToLastMove" />
+        <CheckBoxPreference
+            android:title="@string/pref_speech"
+            android:defaultValue="false"
+            android:summary="@string/pref_speech_desc"
+            android:key="speechNotification"
+            />
+        <!--
+        <CheckBoxPreference
+            android:title="@string/pref_eco"
+            android:defaultValue="true"
+            android:summary="@string/pref_eco_desc"
+            android:key="showECO"
+            />
+        -->
+        <!--
+        <ListPreference
+            android:title="@string/pref_uci"
+            android:summary="@string/pref_uci_desc"
+            android:key="UCIEngine"
+            android:defaultValue="default"
+            android:entries="@array/UCIArray"
+            android:entryValues="@array/UCIArray" />
+         -->
+    </PreferenceCategory>
+
+</PreferenceScreen>
