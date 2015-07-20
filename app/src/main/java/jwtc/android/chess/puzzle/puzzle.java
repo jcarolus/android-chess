@@ -28,13 +28,29 @@ public class puzzle extends MyBaseActivity {
         _chessView = new ChessViewPuzzle(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.puzzle_topmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
-
+            case R.id.action_help:
+                intent = new Intent();
+                intent.setClass(puzzle.this, HtmlActivity.class);
+                intent.putExtra(HtmlActivity.HELP_MODE, "help_puzzle");
+                startActivity(intent);
+                return true;
+            case R.id.action_prefs:
+                intent = new Intent();
+                intent.setClass(puzzle.this, puzzlePrefs.class);
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
