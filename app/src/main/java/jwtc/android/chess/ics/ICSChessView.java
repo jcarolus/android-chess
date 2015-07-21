@@ -9,6 +9,7 @@ import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;
 
 import jwtc.android.chess.*;
+import jwtc.chess.board.ChessBoard;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -37,7 +38,7 @@ public class ICSChessView extends ChessViewBase {
     private String _opponent, _whitePlayer, _blackPlayer;
     private int m_iFrom, _iWhiteRemaining, _iBlackRemaining, _iGameNum, _iTurn, m_iTo;
     private ICSClient _parent;
-    private boolean _bHandleClick, _bOngoingGame, _bForceFlipBoard, _bConfirmMove;
+    private boolean _bHandleClick, _bOngoingGame, _bForceFlipBoard, _bConfirmMove, _bPreMove, _bCanPreMove;
     private Timer _timer;
     private static final int MSG_TOP_TIME = 1, MSG_BOTTOM_TIME = 2;
     public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_WATCH = 2, VIEW_EXAMINE = 3, VIEW_PUZZLE = 4, VIEW_ENDGAME = 5;
@@ -72,6 +73,8 @@ public class ICSChessView extends ChessViewBase {
         _viewMode = VIEW_NONE;
         _bOngoingGame = false;
         _bForceFlipBoard = false;
+        _bPreMove = true;
+        _bCanPreMove = false;
         _opponent = "";
         _iTurn = BoardConstants.WHITE;
         _iWhiteRemaining = _iBlackRemaining = 0;
@@ -255,6 +258,8 @@ public class ICSChessView extends ChessViewBase {
 
     public void setConfirmMove(boolean b) {
         _bConfirmMove = b;
+        // @TODO when there is a seperate setting for this, remove
+        _bPreMove = _bConfirmMove ? false : true;
     }
 
     public void stopGame() {
@@ -388,7 +393,7 @@ public class ICSChessView extends ChessViewBase {
             int iTmp = Integer.parseInt(st.nextToken());
             _iGameNum = iTmp;
             _tvBoardNum.setText("" + _iGameNum);
-    		/*
+            /*
     		if(_iGameNum != iTmp){
     			Log.i("parseGame", "Gamenum " + _iGameNum + " <> " + iTmp);
     			return false;
@@ -411,11 +416,23 @@ public class ICSChessView extends ChessViewBase {
             //Log.i("parseGame", "setting handleclick " + iMe + ":" + _whitePlayer + ":" + _blackPlayer);
 
             //_bInTheGame = iMe == 1 || iMe == -1;
+            _bCanPreMove = false;
             if (_viewMode == VIEW_PLAY) {
                 _opponent = _blackPlayer.equals(sMe) ? _whitePlayer : _blackPlayer;
                 if (iMe == 1) {
-                    Log.i("ICSChessView", "Sound notification!");
-                    _parent.soundNotification();
+
+                    if(m_iFrom != -1 && m_iTo != -1){
+                        _tvLastMove.setText("...");
+                        String sMove = Pos.toString(m_iFrom) + "-" + Pos.toString(m_iTo);
+                        _parent.sendString(sMove);
+                        m_iFrom = -1;
+
+                    } else {
+                        Log.i("ICSChessView", "Sound notification!");
+                        _parent.soundNotification();
+                    }
+                } else if (_bPreMove) {
+                    _bCanPreMove = true;
                 }
             }
             _bOngoingGame = true;
@@ -496,44 +513,42 @@ public class ICSChessView extends ChessViewBase {
         return String.format("%d:%02d", (int) (Math.floor(sec / 60)), sec % 60);
     }
 
-    /*
-    private void putPiece(int pos, String s, int t){
-    	int p = -1;
-    	if(s.equals("K"))
-			p = BoardConstants.KING;
-		else if(s.equals("Q"))
-			p = BoardConstants.QUEEN;
-		else if(s.equals("R"))
-			p = BoardConstants.ROOK;
-		else if(s.equals("B"))
-			p = BoardConstants.BISHOP;
-		else if(s.equals("N"))
-			p = BoardConstants.KNIGHT;
-		else if(s.equals("P"))
-			p = BoardConstants.PAWN;
-		if(p != -1)
-			_jni.putPiece(pos, p, t);
-    }*/
     private void paint() {
         paintBoard(_jni, new int[]{m_iFrom, m_iTo}, null);
-
-
     }
-
 
     private void handleClick(int index) {
         // _board != null
-        //Log.i("handleClick", "Clicked " + index + " handling " + _bHandleClick);
+        Log.i("handleClick", "Clicked " + index + " handling " + _bHandleClick);
 
         if (_bHandleClick) {
             m_iTo = -1;
+
             if (m_iFrom == -1) {
-                if (_jni.pieceAt(_jni.getTurn(), index) == BoardConstants.FIELD) {
-                    return;
+                if (false == _bPreMove) {
+                    if (_jni.pieceAt(_jni.getTurn(), index) == BoardConstants.FIELD) {
+                        return;
+                    }
+                } else if (_bCanPreMove) {
+                    if (_jni.pieceAt(_jni.getTurn() == ChessBoard.WHITE ? ChessBoard.BLACK : ChessBoard.WHITE, index) == BoardConstants.FIELD) {
+                        return;
+                    }
                 }
                 m_iFrom = index;
                 paint();
             } else {
+
+                if(_bCanPreMove) {
+                    if (_jni.pieceAt(_jni.getTurn() == ChessBoard.WHITE ? ChessBoard.BLACK : ChessBoard.WHITE, index) == BoardConstants.FIELD) {
+                        m_iTo = index;
+                    } else {
+                        m_iFrom = -1;
+                    }
+                    Log.i("ICSChessView", "pre move:" + m_iFrom + "-" + m_iTo);
+                    paint();
+                    return;
+                }
+
                 boolean isCastle = false;
 
                 if (_jni.isAmbiguousCastle(m_iFrom, index) != 0) { // in case of Fischer
