@@ -234,7 +234,6 @@ public class ChessViewPractice extends UI {
     public void play() {
         m_iFrom = -1;
 
-
         String sPGN;
 
         _isPlaying = true;
@@ -262,9 +261,9 @@ public class ChessViewPractice extends UI {
 
         int turn = _jni.getTurn();
         if (turn == BoardConstants.BLACK && false == _view.getFlippedBoard() ||
-                turn == BoardConstants.WHITE && _view.getFlippedBoard())
+                turn == BoardConstants.WHITE && _view.getFlippedBoard()) {
             _view.flipBoard();
-
+        }
         _tvPracticeMove.setText("# " + _iPos);
 
         if (turn == BoardConstants.BLACK) {
@@ -306,8 +305,9 @@ public class ChessViewPractice extends UI {
                         _jni.setPromo(4 - item);
                         boolean bValid = requestMove(m_iFrom, iTo);
                         m_iFrom = -1;
-                        if (false == bValid)
-                            paintBoard();
+                        //if (false == bValid) {
+                        paintBoard();
+                        //}
                     }
                 });
                 AlertDialog alert = builder.create();
