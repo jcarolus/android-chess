@@ -7,6 +7,8 @@
             android:defaultValue="true"
             android:summary="@string/pref_icsconfirmmove_desc"
             android:key="ICSConfirmMove" />
+
+
         <Preference
             android:title="@string/pref_icscustomcommand"
             android:summary="@string/pref_icscustomcommand_desc"
