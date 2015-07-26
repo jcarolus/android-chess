@@ -21,12 +21,14 @@ public class CapturedImageView extends View {
 
     public CapturedImageView(Context context) {
         super(context);
+        _bitMap = null;
         _bHighlighted = false;
         setFocusable(false);
     }
 
     public CapturedImageView(Context context, AttributeSet atts) {
         super(context, atts);
+        _bitMap = null;
         _bHighlighted = false;
         setFocusable(false);
     }
@@ -48,6 +50,10 @@ public class CapturedImageView extends View {
     }
 
     public void onDraw(Canvas canvas) {
+
+        if(_bitMap == null){
+            return;
+        }
 
         float scale = (float) getWidth() / _bitMap.getWidth();
         Matrix m = new Matrix();

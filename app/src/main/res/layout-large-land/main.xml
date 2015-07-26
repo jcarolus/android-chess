@@ -7,8 +7,6 @@
 
     <RelativeLayout android:id="@+id/LayoutBoard"
         android:layout_width="wrap_content" android:layout_height="fill_parent"
-
-        android:layout_marginLeft="2dip"
         android:background="@color/bgColorText" android:gravity="center"
         android:layout_alignParentTop="false"
         android:layout_centerHorizontal="true">
@@ -58,7 +56,6 @@
                     style="@style/CaptureTextStyle"
                     />
             </TableRow>
-
             <TableRow>
                 <jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedWhitePawn" style="@style/CaptureImageStyle" />
                 <jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedWhiteKnight" style="@style/CaptureImageStyle" />
@@ -147,7 +144,7 @@
     <RelativeLayout android:id="@+id/LayoutRight"
 
         android:layout_width="wrap_content" android:layout_height="fill_parent"
-        android:layout_marginLeft="2dip" android:padding="4dip"
+        android:padding="4dip"
         android:background="@color/bgColorText" android:gravity="center"
         android:layout_toRightOf="@+id/LayoutBoard">
 

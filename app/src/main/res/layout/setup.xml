@@ -81,5 +81,4 @@
     	android:layout_below="@id/TableSetupButtons"
     />
 	
-	
 </RelativeLayout>

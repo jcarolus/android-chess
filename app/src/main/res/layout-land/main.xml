@@ -9,7 +9,6 @@
 		android:layout_width="wrap_content" android:layout_height="fill_parent"
 		android:background="@color/bgColorText" android:gravity="center"
 	>
-
 		<include
 	        layout="@layout/board"
 	        android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -20,7 +19,7 @@
 	<TableLayout android:id="@+id/LayoutPlayButtons"
 		android:layout_width="wrap_content" android:layout_height="fill_parent"
 		android:layout_toRightOf="@id/LayoutBoard" android:background="@color/bgColorText"
-		android:gravity="center_vertical" android:layout_marginLeft="2dip"
+		android:gravity="center_vertical"
 		>
 		<TableRow>
 			<ImageButton android:id="@+id/ButtonShowMenu" android:src="@android:drawable/ic_menu_more"
@@ -77,7 +76,6 @@
 
 	<RelativeLayout android:id="@+id/LayoutRight"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_marginLeft="2dp"
 		android:layout_toRightOf="@id/LayoutPlayButtons"
 		android:layout_alignParentTop="true"
         android:background="@color/bgColorText"
@@ -243,7 +241,6 @@
 						android:layout_margin="4dp"
 					/>
 				</RelativeLayout>
-
 			</LinearLayout>
 			<ScrollView android:id="@+id/VScrollViewHistory"
 		    	android:layout_width="wrap_content" android:layout_height="fill_parent"
@@ -257,10 +254,6 @@
 				    android:layout_height="wrap_content"
 			    />
 			</ScrollView>
-
 		</ViewAnimator>
-
 	</RelativeLayout>
-
-
 </RelativeLayout>
