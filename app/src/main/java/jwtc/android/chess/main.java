@@ -252,9 +252,16 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
         }
 
         final Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
         Uri uri = intent.getData();
 
-        if (uri != null) {
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
+            sPGN = sPGN.trim();
+            loadPGN(sPGN);
+        } else if (uri != null) {
             _lGameID = 0;
             sPGN = "";
             Log.i("onResume", "opening " + uri.toString());
