@@ -258,9 +258,21 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
         Uri uri = intent.getData();
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
-            sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
-            sPGN = sPGN.trim();
-            loadPGN(sPGN);
+            _lGameID = 0;
+            Log.i("onResume", "action send with type " + type);
+            if ("application/x-chess-pgn".equals(type)) {
+                sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if(sPGN != null) {
+                    sPGN = sPGN.trim();
+                    loadPGN(sPGN);
+                }
+            } else {
+                sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if(sFEN != null) {
+                    sFEN = sFEN.trim();
+                    loadFEN(sFEN);
+                }
+            }
         } else if (uri != null) {
             _lGameID = 0;
             sPGN = "";
