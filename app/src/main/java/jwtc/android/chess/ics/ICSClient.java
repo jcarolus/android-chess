@@ -292,7 +292,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         if (butCloseConsole != null) {
             butCloseConsole.setOnClickListener(new OnClickListener() {
                 public void onClick(View arg0) {
-                    switchToBoardView();
+                    if (isConnected()) {
+                        switchToBoardView();
+                    } else {
+                        finish();
+                    }
                 }
             });
         }

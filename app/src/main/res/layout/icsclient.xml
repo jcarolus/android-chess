@@ -125,13 +125,24 @@
 	    <RelativeLayout android:id="@+id/ICSLobby"
 	     	android:layout_width="fill_parent" android:layout_height="fill_parent" 
 	 	>
-			<TextView android:text="@string/title_loading" android:id="@+id/TextViewHeader"
-				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				style="@style/MyHeaderTextStyle"
-				/>
-
+			<TableLayout android:id="@+id/TableHeader"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical"
+				android:stretchColumns="0">
+				<TableRow>
+					<TextView android:text="@string/title_loading" android:id="@+id/TextViewHeader"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						style="@style/MyHeaderTextStyle"
+						/>
+					<ImageButton android:id="@+id/ICSCloseConsole"
+						android:src="@drawable/navigation_cancel"
+						android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+						/>
+				</TableRow>
+			</TableLayout>
 	     	 <ViewAnimator android:id="@+id/ViewAnimatorLobby"
-	     	 	android:layout_below="@id/TextViewHeader"
+	     	 	android:layout_below="@id/TableHeader"
 				android:layout_width="fill_parent" android:layout_height="fill_parent"
 				android:layout_marginTop="2dip"
 			>
@@ -228,10 +239,6 @@
 							<ImageButton android:id="@+id/ButtonICSConsoleQuickCmd" android:src="@drawable/collections_view_as_list"
 								android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 							/>
-							<ImageButton android:id="@+id/ICSCloseConsole"
-								android:src="@drawable/navigation_cancel"
-								android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
-								/>
 						</TableRow>
 					</TableLayout>
 				    
