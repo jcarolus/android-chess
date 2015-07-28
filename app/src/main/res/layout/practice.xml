@@ -20,7 +20,6 @@
 	<TableLayout android:id="@+id/LayoutTurn"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:layout_below="@id/includeboard"
-		android:background="@color/bgColorText"
 	>
 		<TableRow >
 			<ViewSwitcher android:id="@+id/ImageTurn"

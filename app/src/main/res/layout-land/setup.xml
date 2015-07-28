@@ -48,7 +48,7 @@
 		</TableLayout>
 		<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
 			android:layout_toRightOf="@id/SelectPiecesLayout" android:orientation="vertical"
-			android:background="@color/bgColorText" android:padding="2dip"
+			android:padding="2dip"
 		>
 			<ImageButton android:id="@+id/ButtonShowMenuSetup" android:src="@android:drawable/ic_menu_more"
 				android:layout_width="40dip" android:layout_height="40dip"

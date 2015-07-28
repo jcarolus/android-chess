@@ -2,11 +2,10 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:id="@+id/LayoutMain"
+	android:id="@+id/LayoutMain" android:background="@color/bgColorText"
 >
 	<RelativeLayout android:id="@+id/LayoutSetupTitle" 
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:background="@color/bgColorText" 
 		>
 		<TextView android:id="@+id/TextViewTitle" 
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -14,7 +13,6 @@
 			style="@style/MyHeaderTextStyle"
 			android:text="@string/app_name_setup"
 		/>
-			
 	</RelativeLayout>
 	 
 	<include
@@ -32,7 +30,7 @@
 	<LinearLayout android:id="@+id/SelectPiecesLayout"
         android:orientation="horizontal"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:background="@color/bgColorText" android:gravity="center"
+		android:gravity="center"
 		android:layout_below="@id/includeboard" android:padding="4dip"
 		>
 			<jwtc.android.chess.CapturedImageView  android:id="@+id/selQueen"
@@ -60,7 +58,7 @@
     <TableLayout
     	android:id="@+id/TableSetupButtons" 
     	android:layout_width="fill_parent" android:layout_height="wrap_content"
-    	android:layout_below="@id/SelectPiecesLayout" android:background="@color/bgColorText"
+    	android:layout_below="@id/SelectPiecesLayout"
 		android:paddingLeft="16dip" android:paddingRight="16dip"
     	android:stretchColumns="*"
     >

@@ -15,7 +15,6 @@
 	     >
 	     	 <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 		    	android:id="@+id/TablePlayerTop" 
-		    	android:background="@color/bgColorText"
 		    	android:stretchColumns="1"
 		    	android:layout_marginBottom="2dip"
 		    >
@@ -54,7 +53,6 @@
 		    	android:id="@+id/TablePlayerBottom" android:layout_below="@id/includeboard"
 		    	android:layout_marginTop="2dip"
 		    	android:stretchColumns="1"
-		    	android:background="@color/bgColorText"
 		    >
 		    	<TableRow>
 			    	<TextView android:id="@+id/TextViewClockBottom"
@@ -79,7 +77,6 @@
 		    <RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 		    	android:id="@+id/LayoutPlayerControl" 
 		    	android:layout_below="@id/TablePlayerBottom"
-		    	android:background="@color/bgColorText"
 		    	android:layout_marginTop="2dip"
 		    >
 		    	<TableLayout android:id="@+id/TableICSPlayButtons" 
@@ -130,7 +127,6 @@
 	 	>
 			<TextView android:text="@string/title_loading" android:id="@+id/TextViewHeader"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:background="@color/bgColorText"
 				style="@style/MyHeaderTextStyle"
 				/>
 
@@ -175,11 +171,9 @@
 		     	</RelativeLayout>
 		     	<!--  0.5  -->
 		     	<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-		     	    android:background="@color/bgColorText"
 		     		android:gravity="center">
 		     		<TableLayout android:id="@+id/TableICSLogin" 
 						android:layout_width="wrap_content" android:layout_height="wrap_content"
-						android:background="@color/bgColor"
 						android:stretchColumns="*"
 						android:gravity="center" 
 					>
