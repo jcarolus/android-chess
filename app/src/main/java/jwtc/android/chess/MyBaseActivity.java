@@ -101,10 +101,6 @@ public class MyBaseActivity extends android.app.Activity{
 			activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
 
-		if(activity.getResources().getBoolean(R.bool.portraitOnly)){
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		}
-
 		int configOrientation = activity.getResources().getConfiguration().orientation;
 		if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
 			if(false == activity instanceof PreferenceActivity) {

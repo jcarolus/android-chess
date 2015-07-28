@@ -254,7 +254,6 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
         final Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-
         Uri uri = intent.getData();
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
@@ -293,7 +292,6 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
                 loadPGN(sPGN);
 
             } catch (Exception e) {
-                sPGN = prefs.getString("game_pgn", "");
                 Log.e("onResume", "Failed " + e.toString());
             }
         } else if (sFEN != null) {

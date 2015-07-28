@@ -1,6 +1,8 @@
 package jwtc.android.chess.ics;
 
 import android.app.AlertDialog;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -181,6 +184,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        int configOrientation = this.getResources().getConfiguration().orientation;
+        if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
         setContentView(R.layout.icsclient);
 
@@ -553,6 +563,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void confirmAbort() {
 
+        Log.i("ICSClient", "confirmAbort");
         if (isConnected()) {
             if (_viewAnimatorMain.getDisplayedChild() == VIEW_MAIN_BOARD && get_view().isUserPlaying()) {
                 new AlertDialog.Builder(ICSClient.this)
@@ -1297,9 +1308,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     @Override
     protected void onResume() {
-
-        // lock screen orientation?
-        //setRequestedOrientation(this.getResources().getConfiguration().orientation);
 
         SharedPreferences prefs = this.getPrefs();
 
