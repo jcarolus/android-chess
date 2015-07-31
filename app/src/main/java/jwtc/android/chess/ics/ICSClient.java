@@ -725,7 +725,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         if (data.indexOf("\":") > 0 &&
                                 (data.indexOf("Press return to enter the server as") > 0 ||
                                         data.indexOf("Logging you in as") > 0) ||
-                                data.indexOf("password: ") > 0
+                                data.indexOf("password: ") > 0 || data.indexOf("login:") > 0
                                 )
                             break;
                         Log.i("startSession debug", "wait: " + data);
@@ -785,7 +785,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     } else {
 
                         bun = new Bundle();
-                        bun.putString("buffer", "Unexpected response from server after setting login handle...");
+                        bun.putString("buffer", data);
                         msgStop.setData(bun);
                         m_threadHandler.sendMessage(msgStop);
 
