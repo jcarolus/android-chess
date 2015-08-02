@@ -725,7 +725,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         if (data.indexOf("\":") > 0 &&
                                 (data.indexOf("Press return to enter the server as") > 0 ||
                                         data.indexOf("Logging you in as") > 0) ||
-                                data.indexOf("password: ") > 0
+                                data.indexOf("password: ") > 0 || data.indexOf("login:") > 0
                                 )
                             break;
                         Log.i("startSession debug", "wait: " + data);
@@ -741,7 +741,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         return;
                     }
                     // just remove all newlines from the string for better regex matching
-                    data = data.replaceAll("[\r\n]", "");
+                    data = data.replaceAll("[\r\n\0]", "");
                     Log.i("startSession 2", "After handle: " + data);
                     iPos = data.indexOf("Press return to enter the server as \"");
                     iPos2 = data.indexOf("Logging you in as \"");
@@ -785,7 +785,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     } else {
 
                         bun = new Bundle();
-                        bun.putString("buffer", "Unexpected response from server after setting login handle...");
+                        bun.putString("buffer", "username error:  " + data);
                         msgStop.setData(bun);
                         m_threadHandler.sendMessage(msgStop);
 
@@ -814,7 +814,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     if (data.indexOf("**** Starting ") == -1 && data.indexOf("****************") == -1) {
 
                         bun = new Bundle();
-                        bun.putString("buffer", "Could not log you in...");
+                        bun.putString("buffer", "password error:  " + data);
                         msgStop.setData(bun);
                         m_threadHandler.sendMessage(msgStop);
 
