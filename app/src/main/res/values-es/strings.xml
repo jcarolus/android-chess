@@ -16,7 +16,7 @@
 <string name="start_lessons">Lecciones</string>
 <string name="start_practice">Práctica</string>
 <string name="start_puzzles">Rompecabezas</string>
-<string name="start_about">Acerca de</string>
+<string name="start_about">Sobre</string>
 <string name="start_pgn">Avanzado</string>
 <string name="start_ics">Juega en línea</string>
 <string name="start_globalpreferences">Ajustes globales</string>
@@ -150,7 +150,7 @@
 <string name="menu_subview_blindfold">El modo con los ojos vendados</string>
 
 <string name="options_play_human">Humano vs Humano</string>
-<string name="options_play_android">Humano vs Androide</string>
+<string name="options_play_android">Humano vs Android</string>
 <string name="options_play_white">Blanco</string>
 <string name="options_play_black">Negro</string>
 <string name="options_960">Ajedrez 960 - Aleatorio Fischer</string>

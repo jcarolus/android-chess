@@ -11,15 +11,15 @@
 	</string-array>
     <string-array name="levels_ply">
         <item>1 capa</item>
-        <item>2 capa</item>
-        <item>3 capa</item>
-        <item>4 capa</item>
-        <item>5 capa</item>
-        <item>6 capa</item>
-        <item>7 capa</item>
-        <item>8 capa</item>
-        <item>9 capa</item>
-        <item>10 capa</item>
+        <item>2 capas</item>
+        <item>3 capas</item>
+        <item>4 capas</item>
+        <item>5 capas</item>
+        <item>6 capas</item>
+        <item>7 capas</item>
+        <item>8 capas</item>
+        <item>9 capas</item>
+        <item>10 capas</item>
     </string-array>
     <string-array name="levels_time">
         <item>@string/choice_level_1</item>
