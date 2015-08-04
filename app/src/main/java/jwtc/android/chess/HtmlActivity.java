@@ -27,6 +27,8 @@ public class HtmlActivity extends MyBaseActivity {
 		// html assets localization
 		if (Locale.getDefault().getLanguage().equals("it")) {
 			_lang = "it";
+		} else if (Locale.getDefault().getLanguage().equals("es")) {
+			_lang = "es";
 		} else {
 			_lang = "en";
 		}
