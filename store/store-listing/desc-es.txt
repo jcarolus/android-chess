@@ -1,0 +1,5 @@
+Ajedrez
+
+Juega al ajedrez, ajedrez 960, posiciones compañero de práctica, resolver puzzles, jugar en línea (FICS).
+Uno de los más versátiles aplicaciones de ajedrez gratis sin anuncios.
+Abrir origen.
