@@ -1053,16 +1053,22 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     // game over
                     else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && (line.indexOf("} 1-0") > 0 || line.indexOf("} 0-1") > 0)) {
                         String text = "";
-                        if (line.indexOf(" resigns} ") > 0) { // todo add opponent in match
-                            text = String.format(getString(R.string.ics_game_over_format), getString(R.string.state_resigned));
+
+                        text = line.substring(line.indexOf(")")+1, line.indexOf("}"));  // gets name and state of name
+
+                        if (line.indexOf(" resigns} ") > 0) {
+                            text = text.replace("resigns", getString(R.string.state_resigned));
+
                         } else if (line.indexOf("checkmated") > 0) {
-                            text = String.format(getString(R.string.ics_game_over_format), getString(R.string.state_mate));
+                            text = text.replace("checkmated", getString(R.string.state_mate));
+
                         } else if (line.indexOf("forfeits on time") > 0) {
-                            text = String.format(getString(R.string.ics_game_over_format), getString(R.string.state_time));
+                            text = text.replace("forgeits on time", getString(R.string.state_time));
+
                         } else {
                             text = getString(R.string.ics_game_over);
                         }
-                        gameToast(text, true);
+                        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
