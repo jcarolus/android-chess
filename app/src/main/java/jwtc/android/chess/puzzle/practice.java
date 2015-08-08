@@ -42,10 +42,6 @@ public class practice extends MyBaseActivity {
         // Handle presses on the action bar items
         Intent intent;
         switch (item.getItemId()) {
-            case android.R.id.home:
-                // API 5+ solution
-                onBackPressed();
-                return true;
             case R.id.action_help:
                 Intent i = new Intent();
                 i.setClass(practice.this, HtmlActivity.class);

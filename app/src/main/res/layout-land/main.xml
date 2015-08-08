@@ -2,14 +2,13 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:background="@color/bgColor" android:gravity="center" android:id="@+id/LayoutMain"
+	android:background="@color/bgColorText" android:gravity="center" android:id="@+id/LayoutMain"
 	>
 
 	<RelativeLayout android:id="@+id/LayoutBoard"
 		android:layout_width="wrap_content" android:layout_height="fill_parent"
-		android:background="@color/bgColorText" android:gravity="center"
+		android:gravity="center"
 	>
-
 		<include
 	        layout="@layout/board"
 	        android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -19,8 +18,8 @@
 
 	<TableLayout android:id="@+id/LayoutPlayButtons"
 		android:layout_width="wrap_content" android:layout_height="fill_parent"
-		android:layout_toRightOf="@id/LayoutBoard" android:background="@color/bgColorText"
-		android:gravity="center_vertical" android:layout_marginLeft="2dip"
+		android:layout_toRightOf="@id/LayoutBoard"
+		android:gravity="center_vertical"
 		>
 		<TableRow>
 			<ImageButton android:id="@+id/ButtonShowMenu" android:src="@android:drawable/ic_menu_more"
@@ -77,10 +76,8 @@
 
 	<RelativeLayout android:id="@+id/LayoutRight"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_marginLeft="2dp"
 		android:layout_toRightOf="@id/LayoutPlayButtons"
 		android:layout_alignParentTop="true"
-        android:background="@color/bgColorText"
 	>
         <TableLayout android:id="@+id/LayoutTopClock"
             android:layout_width="fill_parent" android:layout_height="20dp"
@@ -115,7 +112,6 @@
         <TableLayout android:id="@+id/LayoutBottomClock"
             android:layout_width="fill_parent" android:layout_height="20dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/bgColorText"
             >
             <TableRow android:gravity="center_vertical">
                 <ViewSwitcher android:id="@+id/ImageTurnMe"
@@ -156,7 +152,6 @@
 				<TableLayout android:id="@+id/LayoutCaptured"
 					android:layout_width="fill_parent" android:layout_height="wrap_content"
 					android:paddingTop="4dp" android:paddingLeft="2dp"
-					android:background="@color/bgColorText"
 					>
 					<TableRow>
 						<jwtc.android.chess.CapturedImageView android:id="@+id/ImageCapturedBlackPawn" style="@style/CaptureImageStyle"  />
@@ -209,7 +204,7 @@
 				</TableLayout>
 
 				<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
-					android:layout_marginTop="2dp" android:background="@color/bgColorText"
+					android:layout_marginTop="2dp"
 				>
 					<SeekBar android:id="@+id/SeekBarMain"
 						android:layout_width="fill_parent" android:layout_height="32dp"
@@ -219,7 +214,7 @@
 				</RelativeLayout>
 
 				<ScrollView android:layout_width="fill_parent" android:layout_height="60dp"
-					android:fadingEdge="none" android:padding="2dp" android:background="@color/bgColorText"
+					android:fadingEdge="none" android:padding="2dp"
 					android:layout_marginTop="2dp"
 				>
 					<TextView android:id="@+id/TextViewAnnotate"
@@ -231,7 +226,7 @@
 				</ScrollView>
 
 				<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
-				    android:background="@color/bgColorText" android:layout_marginTop="2dp"
+				    android:layout_marginTop="2dp"
 				>
 					<TextView android:id="@+id/TextViewEngine" style="@style/MyNormalTextStyle"
 						android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -243,11 +238,10 @@
 						android:layout_margin="4dp"
 					/>
 				</RelativeLayout>
-
 			</LinearLayout>
 			<ScrollView android:id="@+id/VScrollViewHistory"
 		    	android:layout_width="wrap_content" android:layout_height="fill_parent"
-				android:textColor="@color/textColor" android:background="@color/bgColorLight"
+				android:textColor="@color/textColor"
 				android:paddingRight="2dp"
 				android:layout_marginTop="2dp"
 				android:layout_marginLeft="2dp"
@@ -257,10 +251,6 @@
 				    android:layout_height="wrap_content"
 			    />
 			</ScrollView>
-
 		</ViewAnimator>
-
 	</RelativeLayout>
-
-
 </RelativeLayout>

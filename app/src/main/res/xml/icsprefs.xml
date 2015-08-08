@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Play online settings">
+        <CheckBoxPreference
+            android:title="@string/pref_icsconfirmmove"
+            android:defaultValue="true"
+            android:summary="@string/pref_icsconfirmmove_desc"
+            android:key="ICSConfirmMove" />
+
+
+        <Preference
+            android:title="@string/pref_icscustomcommand"
+            android:summary="@string/pref_icscustomcommand_desc"
+            android:key="icscustomcommandHandle" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_icsautosought"
+            android:defaultValue="true"
+            android:summary="@string/pref_icsautosought_desc"
+            android:key="ICSAutoSought" />
+
+    </PreferenceCategory>
+
+§</PreferenceScreen>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="jwtc.android.chess"
-      android:versionCode="119"
-      android:versionName="8.6.0"
+      android:versionCode="120"
+      android:versionName="8.6.1"
       android:installLocation="auto"
       >
     <application android:icon="@drawable/icon" android:label="@string/app_name" 
@@ -47,6 +47,16 @@
             	<category android:name="android.intent.category.DEFAULT" />
             	<data android:mimeType="application/x-chess-pgn" />
             </intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.SEND" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="application/x-chess-pgn" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.SEND" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="application/x-chess-fen" />
+			</intent-filter>
   		</activity>
   		<activity android:name=".options" android:label="@string/app_name">
 			<meta-data
@@ -56,6 +66,14 @@
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
   		</activity>
+		<activity android:name=".mainPrefs" android:label="@string/preferences">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".main" />
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+			</intent-filter>
+		</activity>
 		<activity android:name=".setup" android:label="@string/app_name_setup">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -85,6 +103,14 @@
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
   		</activity>
+		<activity android:name=".puzzle.puzzlePrefs" android:label="@string/preferences">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".puzzle.puzzle" />
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+			</intent-filter>
+		</activity>
   		<activity android:name="jwtc.android.chess.puzzle.practice" android:label="@string/app_name">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -102,7 +128,18 @@
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
   		</activity>
-  		<activity android:name="jwtc.android.chess.ics.CustomCommands" android:label="@string/globalpreferences">
+		<activity android:name="jwtc.android.chess.ics.ICSPrefs" android:label="@string/preferences">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".ics.ICSClient" />
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+			</intent-filter>
+		</activity>
+  		<activity android:name="jwtc.android.chess.ics.CustomCommands" android:label="@string/preferences">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".ics.ICSPrefs" />
 			<intent-filter>
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
@@ -137,7 +174,7 @@
     <supports-screens 
     	android:largeScreens="true"
         android:normalScreens="true"
-        android:smallScreens="true"
+        android:smallScreens="false"
         android:anyDensity="true" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
     <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="11"/>

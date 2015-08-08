@@ -13,7 +13,6 @@
 	<TableLayout android:id="@+id/LayoutTitle" 
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:layout_marginBottom="2dip" android:layout_marginTop="2dip"
-		android:background="@color/bgColorText"
 		android:layout_below="@id/includeboard"
 		>
 		<TableRow android:gravity="center_vertical">
@@ -33,7 +32,6 @@
 	<TableLayout android:id="@+id/LayoutButtons"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:layout_below="@id/LayoutTitle"
-		android:background="@color/bgColorText"
 		android:paddingTop="4dip" android:paddingBottom="4dip"
 		android:stretchColumns="1"
 	>

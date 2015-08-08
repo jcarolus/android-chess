@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Puzzle settings">
+        <CheckBoxPreference
+            android:title="@string/pref_puzzle_show_seekbar"
+            android:defaultValue="true"
+            android:summary="@string/pref_puzzle_show_seekbar_desc"
+            android:key="PuzzleShowSeekBar" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

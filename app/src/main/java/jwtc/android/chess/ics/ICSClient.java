@@ -1,6 +1,8 @@
 package jwtc.android.chess.ics;
 
 import android.app.AlertDialog;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -182,6 +185,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        int configOrientation = this.getResources().getConfiguration().orientation;
+        if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
         setContentView(R.layout.icsclient);
 
         this.makeActionOverflowMenuShown();
@@ -282,7 +292,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         if (butCloseConsole != null) {
             butCloseConsole.setOnClickListener(new OnClickListener() {
                 public void onClick(View arg0) {
-                    switchToBoardView();
+                    if (isConnected()) {
+                        switchToBoardView();
+                    } else {
+                        finish();
+                    }
                 }
             });
         }
@@ -364,6 +378,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        menu.add(Menu.NONE, R.string.menu_prefs, Menu.NONE, R.string.menu_prefs);
         menu.add(Menu.NONE, R.string.ics_menu_takeback, Menu.NONE, R.string.ics_menu_takeback);
         menu.add(Menu.NONE, R.string.ics_menu_adjourn, Menu.NONE, R.string.ics_menu_adjourn);
         menu.add(Menu.NONE, R.string.ics_menu_draw, Menu.NONE, R.string.ics_menu_draw);
@@ -464,8 +479,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        Intent i;
         switch (item.getItemId()) {
-
+            case R.string.menu_prefs:
+                i = new Intent();
+                i.setClass(ICSClient.this, ICSPrefs.class);
+                startActivity(i);
+                return true;
             case R.string.ics_menu_refresh:
                 sendString("refresh");
                 return true;
@@ -511,7 +531,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 _dlgMatch.show();
                 return true;
             case R.string.menu_help:
-                Intent i = new Intent();
+                i = new Intent();
                 i.setClass(ICSClient.this, HtmlActivity.class);
                 i.putExtra(HtmlActivity.HELP_MODE, "help_online");
                 startActivity(i);
@@ -547,6 +567,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void confirmAbort() {
 
+        Log.i("ICSClient", "confirmAbort");
         if (isConnected()) {
             if (_viewAnimatorMain.getDisplayedChild() == VIEW_MAIN_BOARD && get_view().isUserPlaying()) {
                 new AlertDialog.Builder(ICSClient.this)
@@ -704,7 +725,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         if (data.indexOf("\":") > 0 &&
                                 (data.indexOf("Press return to enter the server as") > 0 ||
                                         data.indexOf("Logging you in as") > 0) ||
-                                data.indexOf("password: ") > 0
+                                data.indexOf("password: ") > 0 || data.indexOf("login:") > 0
                                 )
                             break;
                         Log.i("startSession debug", "wait: " + data);
@@ -720,7 +741,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         return;
                     }
                     // just remove all newlines from the string for better regex matching
-                    data = data.replaceAll("[\r\n]", "");
+                    data = data.replaceAll("[\r\n\0]", "");
                     Log.i("startSession 2", "After handle: " + data);
                     iPos = data.indexOf("Press return to enter the server as \"");
                     iPos2 = data.indexOf("Logging you in as \"");
@@ -764,7 +785,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     } else {
 
                         bun = new Bundle();
-                        bun.putString("buffer", "Unexpected response from server after setting login handle...");
+                        bun.putString("buffer", "username error:  " + data);
                         msgStop.setData(bun);
                         m_threadHandler.sendMessage(msgStop);
 
@@ -793,7 +814,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     if (data.indexOf("**** Starting ") == -1 && data.indexOf("****************") == -1) {
 
                         bun = new Bundle();
-                        bun.putString("buffer", "Could not log you in...");
+                        bun.putString("buffer", "password error:  " + data);
                         msgStop.setData(bun);
                         m_threadHandler.sendMessage(msgStop);
 
@@ -1291,9 +1312,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     @Override
     protected void onResume() {
-
-        // lock screen orientation?
-        //setRequestedOrientation(this.getResources().getConfiguration().orientation);
 
         SharedPreferences prefs = this.getPrefs();
 

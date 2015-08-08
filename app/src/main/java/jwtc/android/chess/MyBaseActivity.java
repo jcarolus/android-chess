@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.LayoutInflater.Factory;
 import android.view.ViewConfiguration;
@@ -57,6 +58,17 @@ public class MyBaseActivity extends android.app.Activity{
 		super.onPause();
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				// API 5+ solution
+				onBackPressed();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	public static void makeActionOverflowMenuShown(Activity activity){
 		//devices with hardware menu button (e.g. Samsung Note) don't show action overflow menu
 		try {
@@ -87,10 +99,6 @@ public class MyBaseActivity extends android.app.Activity{
 		SharedPreferences prefs = getPrefs(activity);
 		if(prefs.getBoolean("fullScreen", true)){
 			activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
-
-		if(activity.getResources().getBoolean(R.bool.portraitOnly)){
-			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 
 		int configOrientation = activity.getResources().getConfiguration().orientation;

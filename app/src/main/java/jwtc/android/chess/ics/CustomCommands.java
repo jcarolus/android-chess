@@ -187,7 +187,7 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 			return true;
 		}
 
-		return false;
+		return super.onOptionsItemSelected(item);
 	}
 
 }

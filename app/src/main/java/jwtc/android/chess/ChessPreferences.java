@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import jwtc.android.chess.ics.CustomCommands;
 
 
-public class ChessPreferences extends PreferenceActivity {
+public class ChessPreferences extends MyPreferenceActivity {
 	
 	private static int REQUEST_SOUND = 1;
 	private Uri _uriNotification;
@@ -26,8 +26,6 @@ public class ChessPreferences extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-		MyBaseActivity.prepareWindowSettings(this);
 
         PreferenceManager pm = getPreferenceManager();
         pm.setSharedPreferencesName("ChessPlayer");
@@ -38,8 +36,6 @@ public class ChessPreferences extends PreferenceActivity {
         
         addPreferencesFromResource(R.xml.globalprefs);
 
-		MyBaseActivity.makeActionOverflowMenuShown(this);
-        
         Preference prefColor = (Preference) findPreference("colorSchemeHandle");
         prefColor.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         	public boolean onPreferenceClick(Preference preference) {
@@ -83,7 +79,7 @@ public class ChessPreferences extends PreferenceActivity {
         		return true;
         	}
         });
-        
+        /*
         Preference prefCustomCommand = (Preference) findPreference("icscustomcommandHandle");
         prefCustomCommand.setOnPreferenceClickListener(new OnPreferenceClickListener() {
         	public boolean onPreferenceClick(Preference preference) {
@@ -93,20 +89,9 @@ public class ChessPreferences extends PreferenceActivity {
         		return true;
         	}
         });
+        */
         //
     }
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				// API 5+ solution
-				onBackPressed();
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	if(requestCode == REQUEST_SOUND){

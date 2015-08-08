@@ -27,23 +27,13 @@ public class HtmlActivity extends MyBaseActivity {
 		// html assets localization
 		if (Locale.getDefault().getLanguage().equals("it")) {
 			_lang = "it";
+		} else if (Locale.getDefault().getLanguage().equals("es")) {
+			_lang = "es";
 		} else {
 			_lang = "en";
 		}
 		_webview = (WebView) findViewById(R.id.WebViewHelp);
 
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle presses on the action bar items
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				// API 5+ solution
-				onBackPressed();
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

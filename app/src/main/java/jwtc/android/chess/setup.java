@@ -30,7 +30,7 @@ public class setup extends MyBaseActivity {
     private int _selectedPiece;
     private int _selectedPosition;
 
-    private ChessImageView[] _arrSelImages;
+    private CapturedImageView[] _arrSelImages;
     //private static Bitmap[] _arrBmp;
     private ImageButton _butDel;
     private ImageButton _butColor;
@@ -88,6 +88,15 @@ public class setup extends MyBaseActivity {
 
         //_tvMsg = (TextView)findViewById(R.id.TextViewSetupMsg);
 
+        ImageButton butShowMenu = (ImageButton) findViewById(R.id.ButtonShowMenuSetup);
+        if (butShowMenu != null) {
+            butShowMenu.setOnClickListener(new OnClickListener() {
+                public void onClick(View arg0) {
+                    openOptionsMenu();
+                }
+            });
+        }
+
         _butCancel = (Button) findViewById(R.id.ButtonSetupCancel);
         _butCancel.setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {
@@ -109,60 +118,22 @@ public class setup extends MyBaseActivity {
             }
         });
 
-        _arrSelImages = new ChessImageView[SELBUTTONS_COUNT];
+        _arrSelImages = new CapturedImageView[SELBUTTONS_COUNT];
         // boardconstants range from 0-5, king is not included
-        //_arrSelImages[BoardConstants.KING] = null;//new ChessImageView(this);
-        _arrSelImages[BoardConstants.QUEEN] = (ChessImageView) findViewById(R.id.selQueen);
-        _arrSelImages[BoardConstants.ROOK] = (ChessImageView) findViewById(R.id.selRook);
-        _arrSelImages[BoardConstants.BISHOP] = (ChessImageView) findViewById(R.id.selBishop);
-        _arrSelImages[BoardConstants.KNIGHT] = (ChessImageView) findViewById(R.id.selKnight);
-        _arrSelImages[BoardConstants.PAWN] = (ChessImageView) findViewById(R.id.selPawn);
+
+        _arrSelImages[BoardConstants.QUEEN] = (CapturedImageView) findViewById(R.id.selQueen);
+        _arrSelImages[BoardConstants.QUEEN].initBitmap("qw.png");
+        _arrSelImages[BoardConstants.ROOK] = (CapturedImageView) findViewById(R.id.selRook);
+        _arrSelImages[BoardConstants.ROOK].initBitmap("rw.png");
+        _arrSelImages[BoardConstants.BISHOP] = (CapturedImageView) findViewById(R.id.selBishop);
+        _arrSelImages[BoardConstants.BISHOP].initBitmap("bw.png");
+        _arrSelImages[BoardConstants.KNIGHT] = (CapturedImageView) findViewById(R.id.selKnight);
+        _arrSelImages[BoardConstants.KNIGHT].initBitmap("nw.png");
+        _arrSelImages[BoardConstants.PAWN] = (CapturedImageView) findViewById(R.id.selPawn);
+        _arrSelImages[BoardConstants.PAWN].initBitmap("pw.png");
+        _arrSelImages[BoardConstants.PAWN].setHighlighted(true);
+
         _butColor = (ImageButton) findViewById(R.id.selColor);
-
-        ImageCacheObject tmpCache = new ImageCacheObject();
-        tmpCache._color = ChessBoard.WHITE;
-        tmpCache._piece = ChessBoard.QUEEN;
-        tmpCache._fieldColor = ChessBoard.BLACK;
-        tmpCache._bPiece = true;
-        tmpCache._selected = false;
-        tmpCache._selectedPos = false;
-        _arrSelImages[BoardConstants.QUEEN].setICO(tmpCache);
-
-        tmpCache = new ImageCacheObject();
-        tmpCache._color = ChessBoard.WHITE;
-        tmpCache._piece = ChessBoard.ROOK;
-        tmpCache._fieldColor = ChessBoard.BLACK;
-        tmpCache._bPiece = true;
-        tmpCache._selected = false;
-        tmpCache._selectedPos = false;
-        _arrSelImages[BoardConstants.ROOK].setICO(tmpCache);
-
-        tmpCache = new ImageCacheObject();
-        tmpCache._color = ChessBoard.WHITE;
-        tmpCache._piece = ChessBoard.BISHOP;
-        tmpCache._fieldColor = ChessBoard.BLACK;
-        tmpCache._bPiece = true;
-        tmpCache._selected = false;
-        tmpCache._selectedPos = false;
-        _arrSelImages[BoardConstants.BISHOP].setICO(tmpCache);
-
-        tmpCache = new ImageCacheObject();
-        tmpCache._color = ChessBoard.WHITE;
-        tmpCache._piece = ChessBoard.KNIGHT;
-        tmpCache._fieldColor = ChessBoard.BLACK;
-        tmpCache._bPiece = true;
-        tmpCache._selected = false;
-        tmpCache._selectedPos = false;
-        _arrSelImages[BoardConstants.KNIGHT].setICO(tmpCache);
-
-        tmpCache = new ImageCacheObject();
-        tmpCache._color = ChessBoard.WHITE;
-        tmpCache._piece = ChessBoard.PAWN;
-        tmpCache._fieldColor = ChessBoard.BLACK;
-        tmpCache._bPiece = true;
-        tmpCache._selected = true; // pawn is selected by default
-        tmpCache._selectedPos = false;
-        _arrSelImages[BoardConstants.PAWN].setICO(tmpCache);
 
         _butDel = (ImageButton) findViewById(R.id.delPiece);
         _butDel.setOnClickListener(new OnClickListener() {
@@ -189,17 +160,22 @@ public class setup extends MyBaseActivity {
             @Override
             public void onClick(View v) {
                 /*
-				_butColor._fieldColor = _selectedColor;
+                _butColor._fieldColor = _selectedColor;
 				_butColor.invalidate();
 	    		*/
                 _selectedColor = _selectedColor == ChessBoard.WHITE ? ChessBoard.BLACK : ChessBoard.WHITE;
+                String sColor = _selectedColor == ChessBoard.WHITE ? "w" : "b";
 
-                ImageCacheObject tmpCache;
+                _arrSelImages[BoardConstants.QUEEN].initBitmap("q" + sColor + ".png");
+                _arrSelImages[BoardConstants.ROOK].initBitmap("r" + sColor + ".png");
+                _arrSelImages[BoardConstants.BISHOP].initBitmap("b" + sColor + ".png");
+                _arrSelImages[BoardConstants.KNIGHT].initBitmap("n" + sColor + ".png");
+                _arrSelImages[BoardConstants.PAWN].initBitmap("p" + sColor + ".png");
+
                 for (int i = 0; i < 5; i++) {
-                    tmpCache = _arrSelImages[i].getICO();
-                    tmpCache._color = _selectedColor;
                     _arrSelImages[i].invalidate();
                 }
+
             }
 
         });
@@ -208,7 +184,7 @@ public class setup extends MyBaseActivity {
         ocl = new OnClickListener() {
             public void onClick(View arg0) {
                 for (int i = 0; i < SELBUTTONS_COUNT; i++) {
-                    if (_arrSelImages[i] == (ChessImageView) arg0)
+                    if (_arrSelImages[i] == (CapturedImageView) arg0)
                         handleSelectClick(i);
                 }
 
@@ -259,13 +235,7 @@ public class setup extends MyBaseActivity {
             return true;
         }
 
-        if (item.getItemId() == android.R.id.home) {
-            // API 5+ solution
-            onBackPressed();
-            return true;
-        }
-
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -323,16 +293,12 @@ public class setup extends MyBaseActivity {
 
     public void handleSelectClick(int index) {
 
-        ImageCacheObject tmpCache;
-
         _selectedPiece = index;
 
         for (int i = 0; i < 5; i++) {
-            tmpCache = _arrSelImages[i].getICO();
-            tmpCache._selected = false;
+            _arrSelImages[i].setHighlighted(false);
         }
-        tmpCache = _arrSelImages[_selectedPiece].getICO();
-        tmpCache._selected = true;
+        _arrSelImages[_selectedPiece].setHighlighted(true);
 
         for (int i = 0; i < 5; i++) {
             _arrSelImages[i].invalidate();

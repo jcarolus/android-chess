@@ -100,15 +100,10 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
         Intent intent;
         String s;
         switch (item.getItemId()) {
-            case android.R.id.home:
-                // API 5+ solution
-                onBackPressed();
-                return true;
-            case R.id.action_new_game:
+            case R.id.action_prefs:
                 intent = new Intent();
-                intent.setClass(main.this, options.class);
-                intent.putExtra("requestCode", REQUEST_NEWGAME);
-                startActivityForResult(intent, REQUEST_NEWGAME);
+                intent.setClass(main.this, mainPrefs.class);
+                startActivity(intent);
                 return true;
             case R.id.action_flip:
                 _chessView.flipBoard();
@@ -257,9 +252,27 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
         }
 
         final Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
         Uri uri = intent.getData();
 
-        if (uri != null) {
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            _lGameID = 0;
+            Log.i("onResume", "action send with type " + type);
+            if ("application/x-chess-pgn".equals(type)) {
+                sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if(sPGN != null) {
+                    sPGN = sPGN.trim();
+                    loadPGN(sPGN);
+                }
+            } else {
+                sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if(sFEN != null) {
+                    sFEN = sFEN.trim();
+                    loadFEN(sFEN);
+                }
+            }
+        } else if (uri != null) {
             _lGameID = 0;
             sPGN = "";
             Log.i("onResume", "opening " + uri.toString());
@@ -279,7 +292,6 @@ public class main extends MyBaseActivity implements OnInitListener, GestureDetec
                 loadPGN(sPGN);
 
             } catch (Exception e) {
-                sPGN = prefs.getString("game_pgn", "");
                 Log.e("onResume", "Failed " + e.toString());
             }
         } else if (sFEN != null) {
