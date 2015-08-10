@@ -28,6 +28,8 @@ import android.widget.*;
  */
 public class ICSChessView extends ChessViewBase {
 
+    public static final String TAG = "ICSChessView";
+
     private JNI _jni;
     //private Button _butAction;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove;
@@ -54,6 +56,14 @@ public class ICSChessView extends ChessViewBase {
                 _tvClockTop.setText(parseTime(msg.getData().getInt("ticks")));
             } else {
                 _tvClockBottom.setText(parseTime(msg.getData().getInt("ticks")));
+
+                if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= 10) && (msg.getData().getInt("ticks") > 0)){
+                    try {
+                        _parent.soundTickTock();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Died", e);
+                    }
+                }
             }
         }
     };

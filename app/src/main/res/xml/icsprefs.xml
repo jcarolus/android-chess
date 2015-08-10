@@ -20,6 +20,12 @@
             android:summary="@string/pref_icsautosought_desc"
             android:key="ICSAutoSought" />
 
+        <CheckBoxPreference
+            android:title="@string/pref_icstimewarning"
+            android:defaultValue="true"
+            android:summary="@string/pref_icstimewarning_desc"
+            android:key="ICSTimeWarning"/>
+
     </PreferenceCategory>
 
 §</PreferenceScreen>
