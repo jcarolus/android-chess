@@ -168,7 +168,7 @@
 <string name="state_draw_50">draw (50 move rule)</string>
 <string name="state_draw_stalemate">draw (stalemate)</string>
 <string name="state_draw_repeat">draw (3-fold repetition)</string>
-<string name="state_mate">mate</string>
+<string name="state_mate">checkmated</string>
 <string name="state_check">check</string>
 <string name="state_time">time</string>
 <string name="state_resigned">resigned</string>
