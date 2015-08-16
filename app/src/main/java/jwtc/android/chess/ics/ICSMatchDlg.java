@@ -51,7 +51,7 @@ public class ICSMatchDlg extends Dialog {
 	    _adapterVariant = ArrayAdapter.createFromResource(context, R.array.match_variant, android.R.layout.simple_spinner_item);
 	    _adapterVariant.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    _spinVariant.setAdapter(_adapterVariant);
-	    
+
 	    _checkRated = (CheckBox)findViewById(R.id.CheckBoxSeekRated);
    /*
 	    _spinRated = (Spinner) findViewById(R.id.SpinnerMatchRate);
@@ -77,7 +77,7 @@ public class ICSMatchDlg extends Dialog {
 					(String)_spinIncrement.getSelectedItem();
 				}
 				// wild fr
-				if(((String)_spinVariant.getSelectedItem()).equals("Standard")){
+				if(((String)_spinVariant.getSelectedItem()) == (String)_spinVariant.getItemAtPosition(0)){
 					
 				} else {
 					s += " wild fr";
