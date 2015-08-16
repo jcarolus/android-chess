@@ -56,6 +56,8 @@
 <string name="pref_icscustomcommand_desc">Crea tus propios comandos personalizados</string>
 <string name="pref_icsautosought">Buscado auto</string>
 <string name="pref_icsautosought_desc">Refresque la pantalla desafíos automáticamente</string>
+<string name="pref_icstimewarning">Advertencia de tiempo de baja</string>
+<string name="pref_icstimewarning_desc">Un ruido que hace tictac le avisa si su tiempo es de 10 segundos o menos</string>
 <string name="pref_puzzle_show_seekbar">Mostrar barra de búsqueda</string>
 <string name="pref_puzzle_show_seekbar_desc">Navegar rápidamente a través de rompecabezas con la barra de búsqueda</string>
 

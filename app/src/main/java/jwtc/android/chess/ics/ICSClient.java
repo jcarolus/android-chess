@@ -3,6 +3,7 @@ package jwtc.android.chess.ics;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -44,8 +45,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd;
-    private int _port, _serverType;
-    private boolean _bIsGuest, _bInICS, _bAutoSought;
+    private int _port, _serverType, _TimeWarning;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -117,6 +118,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     protected static final int VIEW_SUB_LOGIN = 5;
     protected static final int VIEW_SUB_CONSOLE = 6;
     protected static final int VIEW_SUB_STORED = 7;
+
+    MediaPlayer mySound;
 
     static class InnerThreadHandler extends Handler {
         WeakReference<ICSClient> _client;
@@ -217,6 +220,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _serverType = SERVER_FICS;
         _bInICS = false;
         _bAutoSought = true;
+        _bTimeWarning = true;
 
         _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
                 new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
@@ -256,6 +260,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _viewAnimatorLobby.setInAnimation(this, R.anim.slide_right);
 
         _scrollConsole = (ScrollView) findViewById(R.id.ScrollICSConsole);
+
+        mySound = MediaPlayer.create(this, R.raw.ticktock);
 
         /*
         ImageButton butClose = (ImageButton)findViewById(R.id.ButtonBoardClose);
@@ -1053,16 +1059,22 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     // game over
                     else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && (line.indexOf("} 1-0") > 0 || line.indexOf("} 0-1") > 0)) {
                         String text = "";
-                        if (line.indexOf(" resigns} ") > 0) { // todo add opponent in match
-                            text = String.format(getString(R.string.ics_game_over_format), getString(R.string.state_resigned));
+
+                        text = line.substring(line.indexOf(")")+1, line.indexOf("}"));  // gets name and state of name
+
+                        if (line.indexOf(" resigns} ") > 0) {
+                            text = text.replace("resigns", getString(R.string.state_resigned));
+
                         } else if (line.indexOf("checkmated") > 0) {
-                            text = String.format(getString(R.string.ics_game_over_format), getString(R.string.state_mate));
+                            text = text.replace("checkmated", getString(R.string.state_mate));
+
                         } else if (line.indexOf("forfeits on time") > 0) {
-                            text = String.format(getString(R.string.ics_game_over_format), getString(R.string.state_time));
+                            text = text.replace("forgeits on time", getString(R.string.state_time));
+
                         } else {
                             text = getString(R.string.ics_game_over);
                         }
-                        gameToast(text, true);
+                        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
@@ -1323,6 +1335,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _ficsPwd = prefs.getString("ics_password", null);
 
         _bAutoSought = prefs.getBoolean("ICSAutoSought", true);
+
+        _bTimeWarning = prefs.getBoolean("ICSTimeWarning", true);
+        _TimeWarning = Integer.parseInt(prefs.getString("ICSTimeWarningsecs", "10"));
         /////////////////////////////////////////////////////////////////
 
         if (_ficsHandle == null) {
@@ -1361,6 +1376,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         //rescheduleTimer();
 
         super.onResume();
+    }
+
+    public boolean is_bTimeWarning() {
+        return _bTimeWarning;
+    }
+
+    public int get_TimeWarning() {
+        return _TimeWarning;
     }
 
     public boolean isConnected() {
@@ -1409,6 +1432,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _workerTelnet = null;
         disconnect();
+
+        mySound.release();  // clear MediaPlayer resources
 
         super.onDestroy();
     }
@@ -1607,6 +1632,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         if (_ringNotification != null) {
             _ringNotification.play();
         }
+    }
+
+    public void soundTickTock(){
+        mySound.start();
     }
 
     public class ComparatorHashName implements java.util.Comparator<HashMap<String, String>> {
