@@ -57,7 +57,9 @@
 <string name="pref_icsautosought">Auto sought</string>
 <string name="pref_icsautosought_desc">Refresh the challenges screen automatically</string>
 <string name="pref_icstimewarning">Time Low Warning</string>
-<string name="pref_icstimewarning_desc">A ticking noise warns you if your time is 10 seconds or less</string>
+<string name="pref_icstimewarning_desc">A ticking noise warns you if your time at Time Warning Amount or less</string>
+<string name="pref_icstimewarningsecs">Time Warning Amount (secs)</string>
+<string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
 <string name="pref_puzzle_show_seekbar">Show seek bar</string>
 <string name="pref_puzzle_show_seekbar_desc">Quickly navigate through puzzles with seek bar</string>
 

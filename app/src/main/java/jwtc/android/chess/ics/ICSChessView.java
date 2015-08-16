@@ -57,7 +57,7 @@ public class ICSChessView extends ChessViewBase {
             } else {
                 _tvClockBottom.setText(parseTime(msg.getData().getInt("ticks")));
 
-                if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= 10) && (msg.getData().getInt("ticks") > 0)){
+                if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)){
                     try {
                         _parent.soundTickTock();
                     } catch (Exception e) {

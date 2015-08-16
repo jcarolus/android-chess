@@ -45,7 +45,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd;
-    private int _port, _serverType;
+    private int _port, _serverType, _TimeWarning;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
@@ -1337,6 +1337,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bAutoSought = prefs.getBoolean("ICSAutoSought", true);
 
         _bTimeWarning = prefs.getBoolean("ICSTimeWarning", true);
+        _TimeWarning = Integer.parseInt(prefs.getString("ICSTimeWarningsecs", "10"));
         /////////////////////////////////////////////////////////////////
 
         if (_ficsHandle == null) {
@@ -1379,6 +1380,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public boolean is_bTimeWarning() {
         return _bTimeWarning;
+    }
+
+    public int get_TimeWarning() {
+        return _TimeWarning;
     }
 
     public boolean isConnected() {

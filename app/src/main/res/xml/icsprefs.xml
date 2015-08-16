@@ -26,6 +26,15 @@
             android:summary="@string/pref_icstimewarning_desc"
             android:key="ICSTimeWarning"/>
 
+        <ListPreference
+            android:title="@string/pref_icstimewarningsecs"
+            android:key="ICSTimeWarningsecs"
+            android:summary="@string/pref_icstimewarningsecs_desc"
+            android:entries="@array/time_warning"
+            android:entryValues="@array/time_warning_values"
+            android:defaultValue="10"
+            />
+
     </PreferenceCategory>
 
 §</PreferenceScreen>
