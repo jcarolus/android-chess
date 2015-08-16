@@ -58,6 +58,8 @@
 <string name="pref_icsautosought_desc">Aggiorna automaticamente la finestra delle sfide</string>
 <string name="pref_icstimewarning">Basso ora Avvertenza</string>
 <string name="pref_icstimewarning_desc">Un ticchettio avvisa se ​​il vostro tempo è di 10 secondi o meno</string>
+<string name="pref_icstimewarningsecs">Tempo Importo Warning (sec)</string>
+<string name="pref_icstimewarningsecs_desc">Quanti secondi fino all'inizio di avvertimento tempo?</string>
 <string name="pref_puzzle_show_seekbar">Mostra barra di ricerca</string>
 <string name="pref_puzzle_show_seekbar_desc">Sfoglia rapidamente i problemi con la barra di ricerca</string>
 
