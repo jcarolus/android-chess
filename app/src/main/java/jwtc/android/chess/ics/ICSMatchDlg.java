@@ -77,7 +77,7 @@ public class ICSMatchDlg extends Dialog {
 					(String)_spinIncrement.getSelectedItem();
 				}
 				// wild fr
-				if(((String)_spinVariant.getSelectedItem()).equals("Standard")){
+				if(((String)_spinVariant.getSelectedItem()) == (String)_spinVariant.getItemAtPosition(0)){
 					
 				} else {
 					s += " wild fr";
