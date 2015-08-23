@@ -62,6 +62,8 @@
 <string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
 <string name="pref_puzzle_show_seekbar">Show seek bar</string>
 <string name="pref_puzzle_show_seekbar_desc">Quickly navigate through puzzles with seek bar</string>
+<string name="pref_localelanguage">Set The Language</string>
+<string name="pref_localelanguage_desc">Choose the language you would like to use then close and restart</string>
 
 <string name="button_play">Play</string>
 <string name="button_undo">Undo</string>

@@ -5,7 +5,10 @@ import jwtc.android.chess.puzzle.puzzle;
 import jwtc.android.chess.tools.pgntool;
 import jwtc.android.chess.ics.*;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,6 +17,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 public class start extends ListActivity {
 
@@ -26,6 +31,22 @@ public class start extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
+		String myLanguage  	= getData.getString("localelanguage", "");
+
+		Locale current = getResources().getConfiguration().locale;
+		String language = current.getLanguage();
+		if(myLanguage.equals("")){    // localelanguage not used yet? then use device default locale
+			myLanguage = language;
+		}
+
+		Locale locale = new Locale(myLanguage);    // myLanguage is current language
+		Locale.setDefault(locale);
+		Configuration config = new Configuration();
+		config.locale = locale;
+		getBaseContext().getResources().updateConfiguration(config,
+				getBaseContext().getResources().getDisplayMetrics());
 
 		setContentView(R.layout.start);
 	}

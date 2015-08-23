@@ -142,6 +142,16 @@
     	<item>clouds</item>
     	<item>circuit</item>
     </string-array>
+    <string-array name="localearray">
+        <item>English</item>
+        <item>Italian</item>
+        <item>Spanish</item>
+    </string-array>
+    <string-array name="localeKeyarray">
+        <item>en</item>
+        <item>it</item>
+        <item>es</item>
+    </string-array>
     <string-array name="UCIArray">
     	<item>default</item>
     	<item>robollito</item>
