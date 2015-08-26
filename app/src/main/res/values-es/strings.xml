@@ -63,7 +63,7 @@
 <string name="pref_puzzle_show_seekbar">Mostrar barra de búsqueda</string>
 <string name="pref_puzzle_show_seekbar_desc">Navegar rápidamente a través de rompecabezas con la barra de búsqueda</string>
 <string name="pref_localelanguage">Ajuste el idioma</string>
-<string name="pref_localelanguage_desc">Elija el idioma que desea utilizar a continuación, cierre y reinicie</string>
+<string name="pref_localelanguage_desc">Elija el idioma que desea utilizar</string>
 
 <string name="button_play">Jugar</string>
 <string name="button_undo">Deshacer</string>
