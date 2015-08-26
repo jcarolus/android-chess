@@ -52,6 +52,15 @@ public class start extends ListActivity {
 	}
 
 	@Override
+	protected void onRestart() {
+		super.onRestart();
+		Intent intent = getIntent();
+		finish();
+		startActivity(intent);
+		Log.d(TAG, "onRestart");
+	}
+
+	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id){
 		String s = getListView().getItemAtPosition(position).toString();
 		try {
