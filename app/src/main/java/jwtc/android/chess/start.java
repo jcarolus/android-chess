@@ -49,6 +49,12 @@ public class start extends ListActivity {
 				getBaseContext().getResources().getDisplayMetrics());
 
 		setContentView(R.layout.start);
+
+		if (getIntent().getBooleanExtra("RESTART", false)) {
+			finish();
+			Intent intent = new Intent(this, start.class);
+			startActivity(intent);
+		}
 	}
 
 	@Override
@@ -82,7 +88,7 @@ public class start extends ListActivity {
 				startActivity(i);
 			} else if (s.equals(getString(R.string.start_globalpreferences))) {
 				i.setClass(start.this, ChessPreferences.class);
-				startActivity(i);
+				startActivityForResult(i, 0);
 			} else if (s.equals(getString(R.string.menu_help))) {
 				i.setClass(start.this, HtmlActivity.class);
 				i.putExtra(HtmlActivity.HELP_MODE, "help");
@@ -96,5 +102,17 @@ public class start extends ListActivity {
 		}
 	}
 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(resultCode == 1){
+			Log.i(TAG, "finish and restart");
+
+			Intent intent = new Intent(this, start.class);
+			//intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.putExtra("RESTART", true);
+			startActivity(intent);
+
+		}
+	}
    
 }
