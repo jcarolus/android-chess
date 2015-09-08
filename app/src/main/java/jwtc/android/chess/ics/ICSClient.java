@@ -351,6 +351,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _editConsole = (EditText) findViewById(R.id.EditICSConsole);
         if (_editConsole != null) {
+            _editConsole.setTextColor(getResources().getColor(android.R.color.black));
             _editConsole.setOnKeyListener(okl);
         }
         EditText editBoard = (EditText) findViewById(R.id.EditICSBoard);
@@ -385,6 +386,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         menu.add(Menu.NONE, R.string.menu_prefs, Menu.NONE, R.string.menu_prefs);
+        menu.add(Menu.NONE, R.string.menu_flip, Menu.NONE, R.string.menu_flip);
         menu.add(Menu.NONE, R.string.ics_menu_takeback, Menu.NONE, R.string.ics_menu_takeback);
         menu.add(Menu.NONE, R.string.ics_menu_adjourn, Menu.NONE, R.string.ics_menu_adjourn);
         menu.add(Menu.NONE, R.string.ics_menu_draw, Menu.NONE, R.string.ics_menu_draw);
@@ -438,6 +440,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         boolean isNotGuest = isConnected && (false == _handle.equals("guest"));
         int viewMode = this.get_view()._viewMode;
 
+        menu.findItem(R.string.menu_flip).setVisible(isConnected && viewMode != ICSChessView.VIEW_NONE);
         menu.findItem(R.string.ics_menu_takeback).setVisible(isConnected && isUserPlaying);
 
         menu.findItem(R.string.ics_menu_adjourn).setVisible(isConnected && isUserPlaying && isNotGuest);
@@ -492,6 +495,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 i.setClass(ICSClient.this, ICSPrefs.class);
                 startActivity(i);
                 return true;
+            case R.string.menu_flip:
+                _view.flipBoard();
+                _view.paint();
+                return true;
             case R.string.ics_menu_refresh:
                 sendString("refresh");
                 return true;
@@ -515,10 +522,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 sendString("flag");
             case R.string.ics_menu_resign:
                 sendString("resign");
-                return true;
-            case R.string.menu_flip:
-                _view.forceFlipBoard();
-                sendString("refresh");
                 return true;
             case R.string.ics_menu_games:
                 // switchToLoadingView();

@@ -40,7 +40,7 @@ public class ICSChessView extends ChessViewBase {
     private String _opponent, _whitePlayer, _blackPlayer;
     private int m_iFrom, _iWhiteRemaining, _iBlackRemaining, _iGameNum, _iTurn, m_iTo;
     private ICSClient _parent;
-    private boolean _bHandleClick, _bOngoingGame, _bForceFlipBoard, _bConfirmMove, _bCanPreMove;
+    private boolean _bHandleClick, _bOngoingGame, _bConfirmMove, _bCanPreMove, _bfirst;
     private Timer _timer;
     private static final int MSG_TOP_TIME = 1, MSG_BOTTOM_TIME = 2;
     public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_WATCH = 2, VIEW_EXAMINE = 3, VIEW_PUZZLE = 4, VIEW_ENDGAME = 5;
@@ -82,7 +82,6 @@ public class ICSChessView extends ChessViewBase {
         _bHandleClick = false;
         _viewMode = VIEW_NONE;
         _bOngoingGame = false;
-        _bForceFlipBoard = false;
         _bCanPreMove = false;
         _opponent = "";
         _iTurn = BoardConstants.WHITE;
@@ -220,6 +219,7 @@ public class ICSChessView extends ChessViewBase {
 
     public void setViewMode(final int iMode) {
         _viewMode = iMode;
+        _bfirst = true;    // reset first flipboard state
         updateViewMode();
     }
 
@@ -282,12 +282,6 @@ public class ICSChessView extends ChessViewBase {
 
         //resetImageCache();
         //paint();
-    }
-
-    public void forceFlipBoard() {
-        _bForceFlipBoard = _bForceFlipBoard ? false : true;
-        _flippedBoard = _bForceFlipBoard;
-        paint();
     }
 
     public synchronized boolean preParseGame(final String fLine) {
@@ -408,15 +402,14 @@ public class ICSChessView extends ChessViewBase {
     		*/
             _whitePlayer = st.nextToken();
             _blackPlayer = st.nextToken();
-
-            if (_blackPlayer.equalsIgnoreCase(sMe)) {
-                _flippedBoard = true;
-            } else if (_whitePlayer.equalsIgnoreCase(sMe)) {
-                _flippedBoard = false;
-            } else {
-                _flippedBoard = _bForceFlipBoard;
+            if(_bfirst) {
+                if (_blackPlayer.equalsIgnoreCase(sMe)) {
+                    _flippedBoard = true;
+                } else if (_whitePlayer.equalsIgnoreCase(sMe)) {
+                    _flippedBoard = false;
+                }
+                _bfirst = false;
             }
-
             int iMe = Integer.parseInt(st.nextToken());
             //_bHandleClick = (iMe == 1);
             _bHandleClick = true;
@@ -520,7 +513,7 @@ public class ICSChessView extends ChessViewBase {
         return String.format("%d:%02d", (int) (Math.floor(sec / 60)), sec % 60);
     }
 
-    private void paint() {
+    public void paint() {
         paintBoard(_jni, new int[]{m_iFrom, m_iTo}, null);
     }
 
