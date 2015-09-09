@@ -498,6 +498,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             case R.string.menu_flip:
                 _view.flipBoard();
                 _view.paint();
+                sendString("refresh");
                 return true;
             case R.string.ics_menu_refresh:
                 sendString("refresh");
