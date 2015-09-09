@@ -37,7 +37,7 @@ public class ICSChessView extends ChessViewBase {
     //private EditText _editChat;
     private Button _butConfirmMove, _butCancelMove;
     private ViewSwitcher _viewSwitchConfirm;
-    private String _opponent, _whitePlayer, _blackPlayer;
+    private String _opponent, _whitePlayer, _blackPlayer, _playerMe;
     private int m_iFrom, _iWhiteRemaining, _iBlackRemaining, _iGameNum, _iTurn, m_iTo;
     private ICSClient _parent;
     private boolean _bHandleClick, _bOngoingGame, _bConfirmMove, _bCanPreMove, _bfirst;
@@ -57,11 +57,14 @@ public class ICSChessView extends ChessViewBase {
             } else {
                 _tvClockBottom.setText(parseTime(msg.getData().getInt("ticks")));
 
-                if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)){
+            }
+            if((msg.what == MSG_TOP_TIME && (_tvPlayerTop.getText()).equals(_playerMe))
+                || (msg.what == MSG_BOTTOM_TIME && (_tvPlayerBottom.getText()).equals(_playerMe))){
+                if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)) {
                     try {
                         _parent.soundTickTock();
                     } catch (Exception e) {
-                        Log.e(TAG, "Died", e);
+                        Log.e(TAG, "sound process died", e);
                     }
                 }
             }
@@ -405,8 +408,10 @@ public class ICSChessView extends ChessViewBase {
             if(_bfirst) {
                 if (_blackPlayer.equalsIgnoreCase(sMe)) {
                     _flippedBoard = true;
+                    _playerMe = _blackPlayer;
                 } else if (_whitePlayer.equalsIgnoreCase(sMe)) {
                     _flippedBoard = false;
+                    _playerMe = _whitePlayer;
                 }
                 _bfirst = false;
             }
