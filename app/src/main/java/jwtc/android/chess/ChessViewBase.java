@@ -33,6 +33,9 @@ import android.widget.TableRow.LayoutParams;
  *
  */
 public class ChessViewBase{
+
+	public static final String TAG = "ChessViewBase";
+
 	private RelativeLayout _mainLayout;
 	private ChessImageView[] _arrImages = new ChessImageView[64];
 	//public static final int SELECTED = 2;
@@ -461,6 +464,7 @@ public class ChessViewBase{
 
 		resetImageCache();
 		_flippedBoard = _flippedBoard ? false : true;
+		setFlippedBoard(_flippedBoard);
 	}
 	public int getFieldIndex(int i){
 		if(_flippedBoard){
