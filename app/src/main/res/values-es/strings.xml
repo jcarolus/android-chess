@@ -172,7 +172,7 @@
 <string name="state_draw_50">dibujar (50 regla de traslado)</string>
 <string name="state_draw_stalemate">dibujar (estancamiento)</string>
 <string name="state_draw_repeat">dibujar (3-plegar la repetición)</string>
-<string name="state_mate">compañero</string>
+<string name="state_mate">jaque mate</string>
 <string name="state_check">comprobar</string>
 <string name="state_time">tiempo</string>
 <string name="state_resigned">resignado</string>
@@ -191,9 +191,9 @@
 <string name="choice_level_9">5 minutos</string>
 <string name="choice_level_10">15 minutos</string>
 <string name="choice_queen">Reina</string>
-<string name="choice_rook">Grajo</string>
-<string name="choice_bishop">Obispo</string>
-<string name="choice_knight">Caballero</string>
+<string name="choice_rook">Torre</string>
+<string name="choice_bishop">Alfíl</string>
+<string name="choice_knight">Caballo</string>
 <string name="choice_match_rated">Nominal</string>
 <string name="choice_match_unrated">No Calificación</string>
 <string name="choice_clock_num_minutes">%d minutos</string>
@@ -238,6 +238,8 @@ El correo electrónico no se pudo crear.
 <string name="err_chess960_position_range">Posición no válida, introduzca un número entre 0 y 960</string>
 <string name="err_chess960_postion_format">Posición no válida, introduzca un número</string>
 <string name="err_puzzle_jump">Número de rompecabezas válida</string>
+<string name="err_saving_game">Error al guardar juego para chessgamesonline.pgn</string>
+<string name="err_copy_clipboard">Error durante la copia al portapapeles</string>
 
 <string name="pgntool_export_explanation">Base de datos de juego Exportar a tarjeta SD</string>
 <string name="pgntool_import_explanation">Juegos de importación en la base de datos de juegos</string>
@@ -298,6 +300,15 @@ El correo electrónico no se pudo crear.
 <string name="ics_game_over">Juego parado</string>
 <string name="ics_game_over_format">Fin del juego: %1$s</string>
 <string name="ics_tells_you">%1$s te dijo: %2$s</string>
+
+<string name="ics_save_game">Con éxito guardado en chessgamesonline.pgn</string>
+<string name="ics_copy_clipboard">Juego copiado al portapapeles con éxito</string>
+<string name="ics_messages">Enviar mensajes a oponente</string>
+<string name="ics_good_game">Buen juego</string>
+<string name="ics_offer_rematch">Oferta REVANCHA</string>
+<string name="ics_game">Juego</string>
+<string name="ics_send_app">Enviar a APLICACION</string>
+<string name="ics_copy_clipboard_text">Copiar al portapapeles</string>
 
 <string name="ics_error_connection">No se pudo conectar al servidor. Asegúrese de que ha activado la conexión a Internet</string>
 

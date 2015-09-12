@@ -243,6 +243,8 @@ L\'email potrebbe non essere stata creata.
 <string name="err_chess960_postion_format">Posizione non valida, inserisci un numero</string>
     <!-- @TODO -->
 <string name="err_puzzle_jump">Puzzle di numero non valido</string>
+<string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>
+<string name="err_copy_clipboard">Error during copy to ClipBoard</string>
 
 <string name="pgntool_export_explanation">Esporta il database di gioco nella scheda SD</string>
 <string name="pgntool_import_explanation">Importa le partite nel database di gioco</string>
@@ -304,6 +306,15 @@ L\'email potrebbe non essere stata creata.
 <string name="ics_game_over_format">Fine partita: %1$s</string>
 <string name="ics_tells_you">%1$s ti dice: %2$s</string>
 
+<string name="ics_save_game">Successfully saved to chessgamesonline.pgn</string>
+<string name="ics_copy_clipboard">Game copied to clipboard successfully</string>
+<string name="ics_messages">Send Messages to opponent</string>
+<string name="ics_good_game">Good Game</string>
+<string name="ics_offer_rematch">Offer REMATCH</string>
+<string name="ics_game">Game</string>
+<string name="ics_send_app">Send to APPLICATION</string>
+<string name="ics_copy_clipboard_text">Copy to CLIPBOARD</string>
+
 <string name="ics_error_connection">Impossibile connettersi al server. Assicurati di avere una connessione internet attiva</string>
 
 <string name="ics_welcome_format">Benvenuto <b>%1$s</b></string>
@@ -312,5 +323,6 @@ L\'email potrebbe non essere stata creata.
 <!-- Toast strings -->
 <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>
 <string name="toast_challenge_posted">Sfida lanciata</string>
+
 
 </resources>

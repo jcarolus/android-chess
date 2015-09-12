@@ -238,6 +238,8 @@ E-mail could not be created.
 <string name="err_chess960_position_range">Invalid position, enter a number between 0 and 960</string>
 <string name="err_chess960_postion_format">Invalid position, enter a number</string>
 <string name="err_puzzle_jump">Invalid puzzle number</string>
+<string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>
+<string name="err_copy_clipboard">Error during copy to ClipBoard</string>
 
 <string name="pgntool_export_explanation">Export game database to sd-card</string>
 <string name="pgntool_import_explanation">Import games into the game database</string>
@@ -249,7 +251,7 @@ E-mail could not be created.
 <string name="pgntool_point_uci_engine">Manually install UCI engine</string>
 <string name="pgntool_uci_engines_not_found">No UCI engines found</string>
 <string name="pgntool_uci_engine_success">UCI engine %s installed</string>
-<string name="pgntool_uci_engine_error">An error occured, could not install UCI engine</string>
+<string name="pgntool_uci_engine_error">An error occurred, could not install UCI engine</string>
 <string name="pgntool_unset_uci_engine">Uninstall UCI engine</string>
 <string name="pgntool_help">Help</string>
 <string name="pgntool_numexport">Exported %1$d games to chess.pgn</string>
@@ -298,6 +300,15 @@ E-mail could not be created.
 <string name="ics_game_over">Game stopped</string>
 <string name="ics_game_over_format">Game over: %1$s</string>
 <string name="ics_tells_you">%1$s tells you: %2$s</string>
+
+<string name="ics_save_game">Successfully saved to chessgamesonline.pgn</string>
+<string name="ics_copy_clipboard">Game copied to clipboard successfully</string>
+<string name="ics_messages">Send Messages to opponent</string>
+<string name="ics_good_game">Good Game</string>
+<string name="ics_offer_rematch">Offer REMATCH</string>
+<string name="ics_game">Game</string>
+<string name="ics_send_app">Send to APPLICATION</string>
+<string name="ics_copy_clipboard_text">Copy to CLIPBOARD</string>
 
 <string name="ics_error_connection">Could not connect to server. Make sure you have your internet connection enabled</string>
 
