@@ -42,7 +42,8 @@ public class ICSGameOverDlg extends Dialog {
         _butGoodGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                _parent.sendString("tell " + _parent.get_view().getOpponent() + " Good Game");
+                _parent.sendString("tell " + _parent.get_view().getOpponent() + " Good Game!");
+                _parent.gameToast("You told " + _parent.get_view().getOpponent() + ", \"Good Game!\"", false);
             }
         });
 

@@ -65,6 +65,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private ICSConfirmDlg _dlgConfirm;
     private ICSChatDlg _dlgChat;
     private ICSGameOverDlg _dlgOver;
+    private StringBuilder PGN;
     private ViewAnimator _viewAnimatorMain, _viewAnimatorLobby;
     private ScrollView _scrollConsole;
 
@@ -127,7 +128,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     protected static final int VIEW_SUB_STORED = 7;
 
     MediaPlayer mySound;
-    StringBuilder PGN;
 
     static class InnerThreadHandler extends Handler {
         WeakReference<ICSClient> _client;
@@ -214,6 +214,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _dlgMatch = new ICSMatchDlg(this);
         _dlgConfirm = new ICSConfirmDlg(this);
         _dlgChat = new ICSChatDlg(this);
+        _dlgOver = new ICSGameOverDlg(this);
 
         _handle = null;
         _pwd = null;
@@ -1073,8 +1074,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     //////////////////////////////////////////////////////////////
                     // game over
                     else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && (line.indexOf("} 1-0") > 0 || line.indexOf("} 0-1") > 0)) {
-                        String text = "";
 
+                        String text = "";
                         text = line.substring(line.indexOf(")")+2, line.indexOf("}"));  // gets name and state of name
 
                         if (line.indexOf(" resigns} ") > 0) {
@@ -1091,15 +1092,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         }
                         gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
 
-                        gameToast(get_view().getOpponent(),true);
-
-                        if(get_view().isUserPlaying()){
+                        if(line.contains(_handle)){
                             sendString("oldmoves " + _handle);
                         } else{
                             sendString("oldmoves " + text.substring(0,text.indexOf(" ")));
                         }
 
-                        //sendString("oldmoves " + _handle);
                         _bEndBuf = true;
 
 
@@ -1109,6 +1107,17 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && line.indexOf("} 1/2-1/2") > 0) {
 
                         gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
+
+                        String text = "";
+                        text = line.substring(line.indexOf(")")+2, line.indexOf("}"));  // gets name and state of name
+
+                        if(line.contains(_handle)){
+                            sendString("oldmoves " + _handle);
+                        } else{
+                            sendString("oldmoves " + text.substring(0,text.indexOf(" ")));
+                        }
+
+                        _bEndBuf = true;
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
 
@@ -1286,8 +1295,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     else if (line.indexOf("Seek ads filtered by") >= 0) {
 
                     }
-                    // skip
-                    // Game 1540: etturN moves: Kxg1
+                    // any game brings up ICSGameOverDlg
                     else if (line.indexOf("} 0-1")>0 || line.indexOf("} 1-0")> 0 ||
                             line.indexOf("} 1/2-1/2")>0 || line.indexOf("} *")>0) {
                         sRaw += "\n" + line;
@@ -1442,7 +1450,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _dlgConfirm.show();
     }
 
-    private void gameToast(final String text, final boolean stop) {
+    public void gameToast(final String text, final boolean stop) {
         if (stop) {
             get_view().stopGame();
         }
