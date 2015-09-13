@@ -8,10 +8,12 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.preference.PreferenceActivity;
+import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -24,9 +26,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.AdapterView.OnItemClickListener;
 
+import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -44,9 +50,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     private TelnetSocket _socket;
     private Thread _workerTelnet;
-    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd;
+    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile;
     private int _port, _serverType, _TimeWarning;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -58,6 +64,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private ICSMatchDlg _dlgMatch;
     private ICSConfirmDlg _dlgConfirm;
     private ICSChatDlg _dlgChat;
+    private ICSGameOverDlg _dlgOver;
+    private StringBuilder PGN;
     private ViewAnimator _viewAnimatorMain, _viewAnimatorLobby;
     private ScrollView _scrollConsole;
 
@@ -206,6 +214,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _dlgMatch = new ICSMatchDlg(this);
         _dlgConfirm = new ICSConfirmDlg(this);
         _dlgChat = new ICSChatDlg(this);
+        _dlgOver = new ICSGameOverDlg(this);
 
         _handle = null;
         _pwd = null;
@@ -320,7 +329,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         _editHandle = (EditText) findViewById(R.id.EditICSHandle);
+        _editHandle.setSingleLine(true);
+
         _editPwd = (EditText) findViewById(R.id.EditICSPwd);
+        _editPwd.setSingleLine(true);
 
         _butLogin = (Button) findViewById(R.id.ButICSLogin);
         if (_butLogin != null) {
@@ -893,7 +905,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         try {
 
             //Log.i("parseBuffer", "[" + buffer + "]");
-            String sRaw = "";
+            String sRaw = "", sEnd = "", sBeg = "";
             Matcher match;
 
             //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1062,9 +1074,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     //////////////////////////////////////////////////////////////
                     // game over
                     else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && (line.indexOf("} 1-0") > 0 || line.indexOf("} 0-1") > 0)) {
-                        String text = "";
 
-                        text = line.substring(line.indexOf(")")+1, line.indexOf("}"));  // gets name and state of name
+                        String text = "";
+                        text = line.substring(line.indexOf(")")+2, line.indexOf("}"));  // gets name and state of name
 
                         if (line.indexOf(" resigns} ") > 0) {
                             text = text.replace("resigns", getString(R.string.state_resigned));
@@ -1080,12 +1092,32 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         }
                         gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
 
+                        if(line.contains(_handle)){
+                            sendString("oldmoves " + _handle);
+                        } else{
+                            sendString("oldmoves " + text.substring(0,text.indexOf(" ")));
+                        }
+
+                        _bEndBuf = true;
+
+
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
                     // draw
                     else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && line.indexOf("} 1/2-1/2") > 0) {
 
                         gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
+
+                        String text = "";
+                        text = line.substring(line.indexOf(")")+2, line.indexOf("}"));  // gets name and state of name
+
+                        if(line.contains(_handle)){
+                            sendString("oldmoves " + _handle);
+                        } else{
+                            sendString("oldmoves " + text.substring(0,text.indexOf(" ")));
+                        }
+
+                        _bEndBuf = true;
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
 
@@ -1095,6 +1127,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && line.indexOf("} *") > 0) {
                         String text = getString(R.string.ics_game_over);
                         gameToast(text, true);
+
+                        sendString("oldmoves " + _handle);
+                        _bEndBuf = true;
+
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
                     //////////////////////////////////////////////////////////////
@@ -1259,9 +1295,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     else if (line.indexOf("Seek ads filtered by") >= 0) {
 
                     }
-                    // skip
-                    // Game 1540: etturN moves: Kxg1
-                    else if (line.indexOf("Game") >= 0 && line.indexOf("moves:") > 0) {
+                    // any game brings up ICSGameOverDlg
+                    else if (line.indexOf("} 0-1")>0 || line.indexOf("} 1-0")> 0 ||
+                            line.indexOf("} 1/2-1/2")>0 || line.indexOf("} *")>0) {
+                        sRaw += "\n" + line;
+                        _bEndBuf = true;
 
                     }
                     //////////////////////////////////////////////////////////////
@@ -1282,14 +1320,116 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     if (sRaw.length() > 0) {
                         addConsoleText(sRaw);
                     }
+
+                    if(_bEndBuf){
+                        sEnd += sRaw;
+                        if(sRaw.indexOf("}") > 0){
+                            _bEndBuf = false;
+
+                            sEnd = sEnd.trim().replaceAll(" +", " ");
+                            sEnd = sEnd.replaceAll("\\{.*\\}", "");
+
+                            String event = sEnd.substring(sEnd.indexOf("\n"), sEnd.indexOf(", initial"));
+                            event = event.replace("\n", "");
+                            String site = "FICS";
+
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+                            Date date1 = new Date();
+                            String date = dateFormat.format(date1);
+
+                            String white = sEnd.substring(0, sEnd.indexOf("(") - 1);
+                            String black = sEnd.substring(sEnd.indexOf("vs") + 4, sEnd.indexOf("(", sEnd.indexOf("vs.")) - 1);
+                            String result = sEnd.substring(sEnd.lastIndexOf(" ") + 1, sEnd.length());
+                            String whiteElo = sEnd.substring(sEnd.indexOf("(")+1, sEnd.indexOf(")"));
+                            String blackElo = sEnd.substring(sEnd.indexOf("(", sEnd.indexOf("vs."))+1 , sEnd.indexOf(")", sEnd.indexOf("vs.")));
+                            String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
+
+                            sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
+                            sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
+
+                            PGN = new StringBuilder("");
+                            PGN.append("[Event \"" + event + "\"]\n");
+                            PGN.append("[Site \"" + site + "\"]\n");
+                            PGN.append("[Date \"" + date + "\"]\n");
+                            PGN.append("[White \"" + white + "\"]\n");
+                            PGN.append("[Black \"" + black + "\"]\n");
+                            PGN.append("[Result \"" + result + "\"]\n");
+                            PGN.append("[WhiteElo \"" + whiteElo + "\"]\n");
+                            PGN.append("[BlackElo \"" + blackElo + "\"]\n");
+                            PGN.append("[TimeControl \"" + timeControl + "\"]\n");
+                            PGN.append(sBeg + "\n\n");
+
+                            saveGameSDCard();
+
+
+                            _dlgOver.show();
+                            //_dlgOver.prepare();
+
+                        }
+                    }
                 }
-            } // sinle line stuff
+            } // single line stuff
 
         } catch (Exception ex) {
 
             Log.e("WorkerTelnet", ex.toString());
 
         }
+    }
+
+
+    public void copyToClipBoard() {
+        try {
+            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            cm.setText(PGN.toString());
+            doToast(getString(R.string.ics_copy_clipboard));
+        } catch (Exception e) {
+            doToast(getString(R.string.err_copy_clipboard));
+            Log.e("ex", e.toString());
+        }
+    }
+
+    public void saveGameSDCard(){
+        try{
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+
+                _sFile = Environment.getExternalStorageDirectory() + "/chessgamesonline.pgn";
+
+                FileOutputStream fos;
+
+                fos = new FileOutputStream(_sFile, true);
+                fos.write(PGN.toString().getBytes());
+                fos.flush();
+                fos.close();
+
+                doToast(getString(R.string.ics_save_game));
+
+            } else {
+                doToast(getString(R.string.err_sd_not_mounted));
+            }
+        } catch (Exception e) {
+
+            doToast(getString(R.string.err_saving_game));
+            Log.e("ex", e.toString());
+        }
+
+    }
+
+    public void SendToApp(){
+
+         try {
+                 Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                 sendIntent.putExtra(Intent.EXTRA_SUBJECT, "chess pgn");
+                 sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + _sFile));
+                 sendIntent.setType("application/x-chess-pgn");
+
+                 startActivity(sendIntent);
+
+         } catch (Exception e) {
+
+             doToast(getString(R.string.err_send_email));
+             Log.e("ex", e.toString());
+         }
     }
 
     public void addConsoleText(final String s) {
@@ -1310,7 +1450,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _dlgConfirm.show();
     }
 
-    private void gameToast(final String text, final boolean stop) {
+    public void gameToast(final String text, final boolean stop) {
         if (stop) {
             get_view().stopGame();
         }
