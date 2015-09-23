@@ -50,7 +50,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     private TelnetSocket _socket;
     private Thread _workerTelnet;
-    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile;
+    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile, _FEN = "";
     private int _port, _serverType, _TimeWarning;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf;
     private Button _butLogin;
@@ -332,7 +332,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _editHandle.setSingleLine(true);
 
         _editPwd = (EditText) findViewById(R.id.EditICSPwd);
-        _editPwd.setSingleLine(true);
 
         _butLogin = (Button) findViewById(R.id.ButICSLogin);
         if (_butLogin != null) {
@@ -977,6 +976,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         // this can be multiple lines!
                         String[] gameLines = line.split("<12> ");
 
+                        if(_FEN.isEmpty()) {       // get first gameLine - contains FEN setup
+                            _FEN = gameLines[1];
+                        }
+
                         for (int j = 0; j < gameLines.length; j++) {
                             // at least 65 chars
                             if (gameLines[j].length() > 65) {
@@ -1099,7 +1102,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         }
 
                         _bEndBuf = true;
-
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
@@ -1343,6 +1345,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             String whiteElo = sEnd.substring(sEnd.indexOf("(")+1, sEnd.indexOf(")"));
                             String blackElo = sEnd.substring(sEnd.indexOf("(", sEnd.indexOf("vs."))+1 , sEnd.indexOf(")", sEnd.indexOf("vs.")));
                             String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
+                            String _FEN1, _FEN2;
 
                             sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
                             sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
@@ -1357,10 +1360,16 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             PGN.append("[WhiteElo \"" + whiteElo + "\"]\n");
                             PGN.append("[BlackElo \"" + blackElo + "\"]\n");
                             PGN.append("[TimeControl \"" + timeControl + "\"]\n");
+
+                            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
+                            _FEN2 = _FEN.substring(_FEN.indexOf("P")+9, _FEN.indexOf("W")-1);
+                            if(!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
+                                PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
+                            }
+
                             PGN.append(sBeg + "\n\n");
 
                             saveGameSDCard();
-
 
                             _dlgOver.show();
                             //_dlgOver.prepare();
