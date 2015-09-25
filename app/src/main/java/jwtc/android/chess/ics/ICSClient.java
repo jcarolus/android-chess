@@ -976,8 +976,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         // this can be multiple lines!
                         String[] gameLines = line.split("<12> ");
 
-                        if(_FEN.isEmpty()) {       // get first gameLine - contains FEN setup
-                            _FEN = gameLines[1];
+                        if(_FEN.isEmpty() && gameLines[1].contains("none (0:00) none")) {
+                            _FEN = gameLines[1];   // get first gameLine - contains FEN setup
                         }
 
                         for (int j = 0; j < gameLines.length; j++) {
@@ -1088,7 +1088,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             text = text.replace("checkmated", getString(R.string.state_mate));
 
                         } else if (line.indexOf("forfeits on time") > 0) {
-                            text = text.replace("forgeits on time", getString(R.string.state_time));
+                            text = text.replace("forfeits on time", getString(R.string.state_time));
 
                         } else {
                             text = getString(R.string.ics_game_over);
@@ -1165,6 +1165,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     }
                     // observe status
                     else if (line.indexOf("You are now observing game") >= 0) {
+                        _FEN = "";  // reset in case last watched game wasn't finished
                         get_view().setViewMode(ICSChessView.VIEW_WATCH);
                         //gameToast("Observing a game", false);
                     }
@@ -1361,10 +1362,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             PGN.append("[BlackElo \"" + blackElo + "\"]\n");
                             PGN.append("[TimeControl \"" + timeControl + "\"]\n");
 
-                            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
-                            _FEN2 = _FEN.substring(_FEN.indexOf("P")+9, _FEN.indexOf("W")-1);
-                            if(!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
-                                PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
+                            if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN
+                                _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
+                                _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
+                                if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
+                                    PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
+                                }
+                                _FEN = "";  // reset to capture starting FEN for next game
                             }
 
                             PGN.append(sBeg + "\n\n");
