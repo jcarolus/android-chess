@@ -61,7 +61,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     //private EditText _editPrompt;
     private ListView _listChallenges, _listPlayers, _listGames, _listStored;
     private ICSChessView _view;
-    private ICSMatchDlg _dlgMatch;
+    protected ICSMatchDlg _dlgMatch;
     private ICSConfirmDlg _dlgConfirm;
     private ICSChatDlg _dlgChat;
     private ICSGameOverDlg _dlgOver;
@@ -548,8 +548,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 switchToChallengeView();
                 return true;
             case R.string.ics_menu_seek:
-                _dlgMatch.setPlayer("*");
-                _dlgMatch.show();
+                _dlgMatch._rbSeek.performClick();
                 return true;
             case R.string.menu_help:
                 i = new Intent();
@@ -1362,7 +1361,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             PGN.append("[BlackElo \"" + blackElo + "\"]\n");
                             PGN.append("[TimeControl \"" + timeControl + "\"]\n");
 
-                            if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN
+                            if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
                                 _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
                                 _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
                                 if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {

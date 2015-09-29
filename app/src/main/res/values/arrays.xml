@@ -72,6 +72,10 @@
     	<item>Use wake lock</item>
     	<item>Do not use wake lock</item>
     </string-array>
+    <string-array name="match_subject">
+        <item>Seek</item>
+        <item>Challenge</item>
+    </string-array>
      <string-array name="match_time_minutes">
         <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
         <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
@@ -89,6 +93,11 @@
     <string-array name="match_variant">
     	<item>Standard</item>
     	<item>Chess 960 (experimental)</item>
+    </string-array>
+    <string-array name="match_color">
+        <item>Random</item>
+        <item>White</item>
+        <item>Black</item>
     </string-array>
     <string-array name="time_warning">
         <item>5 seconds</item><item>10 seconds</item><item>25 seconds</item>
