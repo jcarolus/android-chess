@@ -52,7 +52,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile, _FEN = "";
     private int _port, _serverType, _TimeWarning;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -230,6 +230,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bInICS = false;
         _bAutoSought = true;
         _bTimeWarning = true;
+        _bEndGameDialog = true;
 
         _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
                 new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
@@ -329,7 +330,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         _editHandle = (EditText) findViewById(R.id.EditICSHandle);
-        _editHandle.setSingleLine(true);
 
         _editPwd = (EditText) findViewById(R.id.EditICSPwd);
 
@@ -1323,7 +1323,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         addConsoleText(sRaw);
                     }
 
-                    if(_bEndBuf){
+                    if(_bEndBuf && _bEndGameDialog){
                         sEnd += sRaw;
                         if(sRaw.indexOf("}") > 0){
                             _bEndBuf = false;
@@ -1494,6 +1494,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _bTimeWarning = prefs.getBoolean("ICSTimeWarning", true);
         _TimeWarning = Integer.parseInt(prefs.getString("ICSTimeWarningsecs", "10"));
+
+        _bEndGameDialog = prefs.getBoolean("ICSEndGameDialog", true);
         /////////////////////////////////////////////////////////////////
 
         if (_ficsHandle == null) {

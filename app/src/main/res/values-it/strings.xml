@@ -60,6 +60,8 @@
 <string name="pref_icstimewarning_desc">Un ticchettio avvisa se ​​il vostro tempo al tempo di preavviso Importo o meno</string>
 <string name="pref_icstimewarningsecs">Tempo Importo Warning (sec)</string>
 <string name="pref_icstimewarningsecs_desc">Quanti secondi fino all\'inizio di avvertimento tempo?</string>
+<string name="prefs_icsendgamedialog">EndGame Dialog</string>
+<string name="prefs_icsendgamesummary">Alla fine di una partita, vuoi una finestra di dialogo Salva per PopUp?</string>
 <string name="pref_puzzle_show_seekbar">Mostra barra di ricerca</string>
 <string name="pref_puzzle_show_seekbar_desc">Sfoglia rapidamente i problemi con la barra di ricerca</string>
 <string name="pref_localelanguage">Impostare la lingua</string>
@@ -295,6 +297,8 @@ L\'email potrebbe non essere stata creata.
 <string name="ics_menu_unobserve">Ferma osservazione</string>
 <string name="ics_menu_stop_puzzle">Ferma problema</string>
 
+<string name="ics_playertwo">giocatore 2</string>
+<string name="ics_playerone">giocatore 1</string>
 <string name="ics_progress_title_login">Accedi</string>
 <string name="ics_progress_msg_login">Stai accedendo&#8230;</string>
 <string name="ics_offers_abort">Il tuo avversario vorrebbe interrompere la partita.\nVuoi accettare?</string>
@@ -320,9 +324,20 @@ L\'email potrebbe non essere stata creata.
 <string name="ics_welcome_format">Benvenuto <b>%1$s</b></string>
 <string name="ics_start_text">(password vuota per accedere come ospite)</string>
 
+<string name="ics_seekseek">cercare</string>
+<string name="ics_seekchallenge">sfida</string>
+<string name="ics_seekplayer">giocatore</string>
+<string name="ics_seektime">Tempo (min)</string>
+<string name="ics_seektimeinc">Incremento di tempo (sec)</string>
+<string name="ics_seekvariant">variante</string>
+<string name="ics_seekcolor">colore</string>
+<string name="ics_seekrangemin">Valutazione MIN</string>
+<string name="ics_seekrangemax">Valutazione MAX</string>
+<string name="ics_seekrated">gioco nominale</string>
+<string name="ics_seekmanual">manualmente</string>
+
 <!-- Toast strings -->
 <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>
 <string name="toast_challenge_posted">Sfida lanciata</string>
-
 
 </resources>

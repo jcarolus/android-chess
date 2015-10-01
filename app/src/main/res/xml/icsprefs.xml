@@ -35,6 +35,13 @@
             android:defaultValue="10"
             />
 
+        <CheckBoxPreference
+            android:title="@string/prefs_icsendgamedialog"
+            android:defaultValue="true"
+            android:summary="@string/prefs_icsendgamesummary"
+            android:key="ICSEndGameDialog"
+            />
+
     </PreferenceCategory>
 
 §</PreferenceScreen>

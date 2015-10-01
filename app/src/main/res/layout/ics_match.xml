@@ -8,19 +8,19 @@
 		<RadioGroup
 			android:orientation="horizontal"
 			android:gravity="center">
-			<RadioButton android:text="Seek"
+			<RadioButton android:text="@string/ics_seekseek"
 				style="@style/MyHeaderTextStyle"
 						 android:id="@+id/RadioButtonSeek"
 						 android:paddingRight="30dp"
 						 />
-			<RadioButton android:text="Challenge"
+			<RadioButton android:text="@string/ics_seekchallenge"
 				style="@style/MyHeaderTextStyle"
 						 android:id="@+id/RadioButtonChallenge"
 				/>
 		</RadioGroup>
 
 		<TableRow>
-			<TextView android:text="Player" android:gravity="fill"
+			<TextView android:text="@string/ics_seekplayer" android:gravity="fill"
 				style="@style/MyHeaderTextStyle"
 				android:id="@+id/tvMatchPlayerName"
 			/>
@@ -28,7 +28,7 @@
 					  android:layout_weight="1"/>
 		</TableRow>
 		<TableRow>
-			<TextView android:text="Time (min)" android:gravity="fill"
+			<TextView android:text="@string/ics_seektime" android:gravity="fill"
 				style="@style/MyHeaderTextStyle"
 			/>
 			<Spinner android:id="@+id/SpinnerMatchTime"
@@ -36,7 +36,7 @@
 					 android:layout_weight="1"/>
 		</TableRow>		
 		<TableRow>
-			<TextView android:text="Time increment (sec)" android:gravity="fill"
+			<TextView android:text="@string/ics_seektimeinc" android:gravity="fill"
 				style="@style/MyHeaderTextStyle"
 			/>
 			<Spinner android:id="@+id/SpinnerMatchTimeIncrement"
@@ -44,7 +44,7 @@
 					 android:layout_weight="1"/>
 		</TableRow>
 		<TableRow>
-			<TextView android:text="Variant" android:gravity="fill"
+			<TextView android:text="@string/ics_seekvariant" android:gravity="fill"
 				style="@style/MyHeaderTextStyle"
 			/>
 			<Spinner android:id="@+id/SpinnerMatchVariant"
@@ -52,7 +52,7 @@
 					 android:layout_weight="1"/>
 		</TableRow>
 		<TableRow>
-			<TextView android:text="Color" android:layout_gravity="fill"
+			<TextView android:text="@string/ics_seekcolor" android:layout_gravity="fill"
 				style="@style/MyHeaderTextStyle"
 				/>
 			    <Spinner android:id="@+id/SpinnerMatchColor"
@@ -60,7 +60,7 @@
 						 android:layout_weight="1"/>
 		</TableRow>
 		<TableRow>
-			<TextView android:text="Rating-Range MIN" android:layout_gravity="fill"
+			<TextView android:text="@string/ics_seekrangemin" android:layout_gravity="fill"
 					  style="@style/MyHeaderTextStyle"
 					  android:id="@+id/tvMatchRatingMIN"
 					  />
@@ -68,10 +68,10 @@
 					  android:hint="0"
 					  android:layout_weight="1"
 				      android:maxLength="4"
-				      android:imeOptions="actionDone"/>
+				      android:imeOptions="actionNext"/>
 		</TableRow>
 		<TableRow>
-			<TextView android:text="Rating-Range MAX" android:layout_gravity="fill"
+			<TextView android:text="@string/ics_seekrangemax" android:layout_gravity="fill"
 					  style="@style/MyHeaderTextStyle"
 					  android:id="@+id/tvMatchRatingMAX"
 					  />
@@ -82,7 +82,7 @@
 				      android:imeOptions="actionDone"/>
 		</TableRow>
 		<TableRow>
-			<TextView android:text="Rated game"
+			<TextView android:text="@string/ics_seekrated"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				style="@style/MyHeaderTextStyle"
 				/>
@@ -91,7 +91,7 @@
 		     	/>
 		</TableRow>
 		<TableRow>
-			<TextView android:text="Manually Accept"
+			<TextView android:text="@string/ics_seekmanual"
 					  android:layout_width="wrap_content" android:layout_height="wrap_content"
 					  style="@style/MyHeaderTextStyle"
 					  android:id="@+id/tvMatchManual"
