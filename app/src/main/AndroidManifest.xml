@@ -58,6 +58,17 @@
 				<data android:mimeType="application/x-chess-fen" />
 			</intent-filter>
   		</activity>
+		<activity android:name=".PlayHubActivity" android:screenOrientation="portrait" android:label="@string/app_name_play">
+			<intent-filter>
+				<action android:name="playhub.game" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="playhub.intent.play" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+			<meta-data android:name="com.playhub.maxPlayers" android:value="2" />
+		</activity>
   		<activity android:name=".options" android:label="@string/app_name">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
