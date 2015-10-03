@@ -62,6 +62,8 @@
 <string name="pref_icstimewarningsecs_desc">Quanti secondi fino all\'inizio di avvertimento tempo?</string>
 <string name="prefs_icsendgamedialog">EndGame Dialog</string>
 <string name="prefs_icsendgamesummary">Alla fine di una partita, vuoi una finestra di dialogo Salva per PopUp?</string>
+<string name="pref_icsgamestartsound">Gioco Suono Inizio</string>
+<string name="pref_icsgamestartsound_desc">Riproduci suono quando gioco inizia o la perdita di collegamento</string>
 <string name="pref_puzzle_show_seekbar">Mostra barra di ricerca</string>
 <string name="pref_puzzle_show_seekbar_desc">Sfoglia rapidamente i problemi con la barra di ricerca</string>
 <string name="pref_localelanguage">Impostare la lingua</string>

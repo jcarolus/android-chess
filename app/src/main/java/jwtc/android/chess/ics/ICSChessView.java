@@ -46,7 +46,7 @@ public class ICSChessView extends ChessViewBase {
     public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_WATCH = 2, VIEW_EXAMINE = 3, VIEW_PUZZLE = 4, VIEW_ENDGAME = 5;
     protected int _viewMode;
 
-//	private Vibrator _vibrator;
+    protected static final int INCREASE = 1;
 
     protected Handler m_timerHandler = new Handler() {
         /** Gets called on every message that is received */
@@ -229,25 +229,36 @@ public class ICSChessView extends ChessViewBase {
     public void updateViewMode() {
         switch (_viewMode) {
             case VIEW_NONE:
-                Log.i("ICSChessView", "Idle");
+                Log.i(TAG, "Idle");
                 break;
             case VIEW_PLAY:
-                Log.i("ICSChessView", "Play");
+                switch(_parent.get_gameStartSound()){
+                    case 0: break;
+                    case 1: _parent.soundChessPiecesFall();
+                            _parent.vibration(INCREASE);
+                            break;
+                    case 2: _parent.soundChessPiecesFall();
+                            break;
+                    case 3: _parent.vibration(INCREASE);
+                            break;
+                    default: Log.e(TAG, "get_gameStartSound error");
+                }
+                Log.i(TAG, "Play");
                 break;
             case VIEW_WATCH:
-                Log.i("ICSChessView", "Watch");
+                Log.i(TAG, "Watch");
                 break;
             case VIEW_EXAMINE:
-                Log.i("ICSChessView", "Examine");
+                Log.i(TAG, "Examine");
                 break;
             case VIEW_PUZZLE:
-                Log.i("ICSChessView", "Puzzle");
+                Log.i(TAG, "Puzzle");
                 break;
             case VIEW_ENDGAME:
-                Log.i("ICSChessView", "Endgame");
+                Log.i(TAG, "Endgame");
                 break;
             default:
-                Log.i("ICSChessView", "X");
+                Log.i(TAG, "X");
         }
     }
 

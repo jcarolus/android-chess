@@ -45,7 +45,7 @@
                             style="@style/MyNormalTextStyle"
                             android:layout_marginLeft="8dip"
                             />
-                        <TextView android:text="Player 2" android:id="@+id/TextViewTop"
+                        <TextView android:text="@string/ics_playertwo" android:id="@+id/TextViewTop"
                             android:layout_height="20dip" android:layout_width="fill_parent"
                             style="@style/MyHeaderTextStyle" android:gravity="center_vertical"
                             />
@@ -70,7 +70,7 @@
                             style="@style/MyNormalTextStyle"
                             android:layout_marginLeft="8dip"
                             />
-                        <TextView android:text="Player 1" android:id="@+id/TextViewBottom"
+                        <TextView android:text="@string/ics_playerone" android:id="@+id/TextViewBottom"
                             android:layout_height="20dip" android:layout_width="fill_parent"
                             style="@style/MyHeaderTextStyle" android:gravity="center_vertical"
                             />

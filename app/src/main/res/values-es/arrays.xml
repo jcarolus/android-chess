@@ -103,6 +103,15 @@
         <item>5</item><item>10</item><item>25</item>
         <item>45</item><item>60</item>
     </string-array>
+    <string-array name="gamestartsound">
+        <item>Ninguno</item>
+        <item>sonido y la vibración</item>
+        <item>sonará solamente</item>
+        <item>Sólo vibración</item>
+    </string-array>
+    <string-array name="gamestartsound_values">
+        <item>0</item><item>1</item><item>2</item><item>3</item>
+    </string-array>
     <string-array name="field_files">
     	<item>none</item>
     	<item>a</item>

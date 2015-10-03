@@ -62,6 +62,8 @@
 <string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
 <string name="prefs_icsendgamedialog">EndGame Dialog</string>
 <string name="prefs_icsendgamesummary">At the end of a game, do you want a save dialog to popup?</string>
+<string name="pref_icsgamestartsound">Game Start Sound</string>
+<string name="pref_icsgamestartsound_desc">Play sound when game starts or loss of connection</string>
 <string name="pref_puzzle_show_seekbar">Show seek bar</string>
 <string name="pref_puzzle_show_seekbar_desc">Quickly navigate through puzzles with seek bar</string>
 <string name="pref_localelanguage">Set The Language</string>

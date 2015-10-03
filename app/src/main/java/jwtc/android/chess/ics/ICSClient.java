@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.preference.PreferenceActivity;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -51,7 +52,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile, _FEN = "";
-    private int _port, _serverType, _TimeWarning;
+    private int _port, _serverType, _TimeWarning, _gameStartSound;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
@@ -127,7 +128,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     protected static final int VIEW_SUB_CONSOLE = 6;
     protected static final int VIEW_SUB_STORED = 7;
 
-    MediaPlayer mySound;
+    protected static final int DECREASE = 0;
+
+    MediaPlayer tickTock, chessPiecesFall;
 
     static class InnerThreadHandler extends Handler {
         WeakReference<ICSClient> _client;
@@ -271,7 +274,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _scrollConsole = (ScrollView) findViewById(R.id.ScrollICSConsole);
 
-        mySound = MediaPlayer.create(this, R.raw.ticktock);
+        tickTock = MediaPlayer.create(this, R.raw.ticktock);
+        chessPiecesFall = MediaPlayer.create(this, R.raw.chesspiecesfall);
 
         /*
         ImageButton butClose = (ImageButton)findViewById(R.id.ButtonBoardClose);
@@ -1496,6 +1500,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _TimeWarning = Integer.parseInt(prefs.getString("ICSTimeWarningsecs", "10"));
 
         _bEndGameDialog = prefs.getBoolean("ICSEndGameDialog", true);
+
+        _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
         /////////////////////////////////////////////////////////////////
 
         if (_ficsHandle == null) {
@@ -1542,6 +1548,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public int get_TimeWarning() {
         return _TimeWarning;
+    }
+
+    public int get_gameStartSound(){
+        return _gameStartSound;
     }
 
     public boolean isConnected() {
@@ -1591,7 +1601,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _workerTelnet = null;
         disconnect();
 
-        mySound.release();  // clear MediaPlayer resources
+        tickTock.release();  // clear MediaPlayer resources
+        chessPiecesFall.release();
 
         super.onDestroy();
     }
@@ -1625,6 +1636,17 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void sendString(String s) {
         if (_socket == null || _socket.sendString(s + "\n") == false) {
+            switch(get_gameStartSound()){
+                case 0: break;
+                case 1: soundChessPiecesFall();
+                        vibration(DECREASE);
+                        break;
+                case 2: soundChessPiecesFall();
+                        break;
+                case 3: vibration(DECREASE);
+                        break;
+                default: Log.e(TAG, "get_gameStartSound error");
+            }
             new AlertDialog.Builder(ICSClient.this)
                     .setTitle(R.string.title_error)
                     .setMessage("Connection to server is broken.")
@@ -1793,7 +1815,30 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public void soundTickTock(){
-        mySound.start();
+        tickTock.start();
+    }
+
+    public void soundChessPiecesFall(){
+        chessPiecesFall.start();
+    }
+
+    public void vibration(int seq){
+        try {
+            int v1, v2;
+            if(seq == 1){
+                v1 = 200;    // increase
+                v2 = 500;
+            }else {
+                v1 = 500;    // decrease
+                v2 = 200;
+            }
+            long[] pattern = {500, v1, 100, v2};
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(pattern, -1);
+        } catch (Exception e) {
+            Log.e(TAG, "vibrator process error", e);
+        }
+
     }
 
     public class ComparatorHashName implements java.util.Comparator<HashMap<String, String>> {
