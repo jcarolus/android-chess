@@ -90,6 +90,11 @@
     	<item>Estándar</item>
     	<item>Ajedrez 960 (experimental)</item>
     </string-array>
+    <string-array name="match_color">
+        <item>Random</item>
+        <item>blanco</item>
+        <item>negro</item>
+    </string-array>
     <string-array name="time_warning">
         <item>5 segundos</item><item>10 segundos</item><item>25 segundos</item>
         <item>45 segundos</item><item>1 minuto</item>
@@ -97,6 +102,15 @@
     <string-array name="time_warning_values">
         <item>5</item><item>10</item><item>25</item>
         <item>45</item><item>60</item>
+    </string-array>
+    <string-array name="gamestartsound">
+        <item>Ninguno</item>
+        <item>sonido y la vibración</item>
+        <item>sonará solamente</item>
+        <item>Sólo vibración</item>
+    </string-array>
+    <string-array name="gamestartsound_values">
+        <item>0</item><item>1</item><item>2</item><item>3</item>
     </string-array>
     <string-array name="field_files">
     	<item>none</item>

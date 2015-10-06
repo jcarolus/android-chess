@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.preference.PreferenceActivity;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -50,9 +51,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     private TelnetSocket _socket;
     private Thread _workerTelnet;
-    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile;
-    private int _port, _serverType, _TimeWarning;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf;
+    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile, _FEN = "";
+    private int _port, _serverType, _TimeWarning, _gameStartSound;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -61,7 +62,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     //private EditText _editPrompt;
     private ListView _listChallenges, _listPlayers, _listGames, _listStored;
     private ICSChessView _view;
-    private ICSMatchDlg _dlgMatch;
+    protected ICSMatchDlg _dlgMatch;
     private ICSConfirmDlg _dlgConfirm;
     private ICSChatDlg _dlgChat;
     private ICSGameOverDlg _dlgOver;
@@ -127,7 +128,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     protected static final int VIEW_SUB_CONSOLE = 6;
     protected static final int VIEW_SUB_STORED = 7;
 
-    MediaPlayer mySound;
+    protected static final int DECREASE = 0;
+
+    MediaPlayer tickTock, chessPiecesFall;
 
     static class InnerThreadHandler extends Handler {
         WeakReference<ICSClient> _client;
@@ -230,6 +233,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bInICS = false;
         _bAutoSought = true;
         _bTimeWarning = true;
+        _bEndGameDialog = true;
 
         _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
                 new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
@@ -270,7 +274,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _scrollConsole = (ScrollView) findViewById(R.id.ScrollICSConsole);
 
-        mySound = MediaPlayer.create(this, R.raw.ticktock);
+        tickTock = MediaPlayer.create(this, R.raw.ticktock);
+        chessPiecesFall = MediaPlayer.create(this, R.raw.chesspiecesfall);
 
         /*
         ImageButton butClose = (ImageButton)findViewById(R.id.ButtonBoardClose);
@@ -329,10 +334,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         _editHandle = (EditText) findViewById(R.id.EditICSHandle);
-        _editHandle.setSingleLine(true);
 
         _editPwd = (EditText) findViewById(R.id.EditICSPwd);
-        _editPwd.setSingleLine(true);
 
         _butLogin = (Button) findViewById(R.id.ButICSLogin);
         if (_butLogin != null) {
@@ -549,8 +552,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 switchToChallengeView();
                 return true;
             case R.string.ics_menu_seek:
-                _dlgMatch.setPlayer("*");
-                _dlgMatch.show();
+                _dlgMatch._rbSeek.performClick();
                 return true;
             case R.string.menu_help:
                 i = new Intent();
@@ -977,6 +979,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         // this can be multiple lines!
                         String[] gameLines = line.split("<12> ");
 
+                        if(_FEN.isEmpty() && gameLines[1].contains("none (0:00) none")) {
+                            _FEN = gameLines[1];   // get first gameLine - contains FEN setup
+                        }
+
                         for (int j = 0; j < gameLines.length; j++) {
                             // at least 65 chars
                             if (gameLines[j].length() > 65) {
@@ -1085,7 +1091,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             text = text.replace("checkmated", getString(R.string.state_mate));
 
                         } else if (line.indexOf("forfeits on time") > 0) {
-                            text = text.replace("forgeits on time", getString(R.string.state_time));
+                            text = text.replace("forfeits on time", getString(R.string.state_time));
 
                         } else {
                             text = getString(R.string.ics_game_over);
@@ -1099,7 +1105,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         }
 
                         _bEndBuf = true;
-
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
@@ -1163,6 +1168,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     }
                     // observe status
                     else if (line.indexOf("You are now observing game") >= 0) {
+                        _FEN = "";  // reset in case last watched game wasn't finished
                         get_view().setViewMode(ICSChessView.VIEW_WATCH);
                         //gameToast("Observing a game", false);
                     }
@@ -1321,7 +1327,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         addConsoleText(sRaw);
                     }
 
-                    if(_bEndBuf){
+                    if(_bEndBuf && _bEndGameDialog){
                         sEnd += sRaw;
                         if(sRaw.indexOf("}") > 0){
                             _bEndBuf = false;
@@ -1343,6 +1349,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             String whiteElo = sEnd.substring(sEnd.indexOf("(")+1, sEnd.indexOf(")"));
                             String blackElo = sEnd.substring(sEnd.indexOf("(", sEnd.indexOf("vs."))+1 , sEnd.indexOf(")", sEnd.indexOf("vs.")));
                             String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
+                            String _FEN1, _FEN2;
 
                             sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
                             sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
@@ -1357,10 +1364,19 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             PGN.append("[WhiteElo \"" + whiteElo + "\"]\n");
                             PGN.append("[BlackElo \"" + blackElo + "\"]\n");
                             PGN.append("[TimeControl \"" + timeControl + "\"]\n");
+
+                            if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
+                                _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
+                                _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
+                                if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
+                                    PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
+                                }
+                                _FEN = "";  // reset to capture starting FEN for next game
+                            }
+
                             PGN.append(sBeg + "\n\n");
 
                             saveGameSDCard();
-
 
                             _dlgOver.show();
                             //_dlgOver.prepare();
@@ -1482,6 +1498,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _bTimeWarning = prefs.getBoolean("ICSTimeWarning", true);
         _TimeWarning = Integer.parseInt(prefs.getString("ICSTimeWarningsecs", "10"));
+
+        _bEndGameDialog = prefs.getBoolean("ICSEndGameDialog", true);
+
+        _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
         /////////////////////////////////////////////////////////////////
 
         if (_ficsHandle == null) {
@@ -1528,6 +1548,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public int get_TimeWarning() {
         return _TimeWarning;
+    }
+
+    public int get_gameStartSound(){
+        return _gameStartSound;
     }
 
     public boolean isConnected() {
@@ -1577,7 +1601,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _workerTelnet = null;
         disconnect();
 
-        mySound.release();  // clear MediaPlayer resources
+        tickTock.release();  // clear MediaPlayer resources
+        chessPiecesFall.release();
 
         super.onDestroy();
     }
@@ -1606,6 +1631,26 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             } catch (Exception ex) {
             }
             _socket = null;
+
+            switch (get_gameStartSound()) {
+                case 0:
+                    break;
+                case 1:
+                    soundChessPiecesFall();
+                    vibration(DECREASE);
+                    break;
+                case 2:
+                    soundChessPiecesFall();
+                    break;
+                case 3:
+                    vibration(DECREASE);
+                    break;
+                default:
+                    Log.e(TAG, "get_gameStartSound error");
+            }
+            gameToast(getString(R.string.ics_disconnected), false);
+
+            Log.d(TAG, "disconnect method");
         }
     }
 
@@ -1779,7 +1824,30 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public void soundTickTock(){
-        mySound.start();
+        tickTock.start();
+    }
+
+    public void soundChessPiecesFall(){
+        chessPiecesFall.start();
+    }
+
+    public void vibration(int seq){
+        try {
+            int v1, v2;
+            if(seq == 1){
+                v1 = 200;    // increase
+                v2 = 500;
+            }else {
+                v1 = 500;    // decrease
+                v2 = 200;
+            }
+            long[] pattern = {500, v1, 100, v2};
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(pattern, -1);
+        } catch (Exception e) {
+            Log.e(TAG, "vibrator process error", e);
+        }
+
     }
 
     public class ComparatorHashName implements java.util.Comparator<HashMap<String, String>> {

@@ -162,7 +162,8 @@ public class ChessViewBase{
 
 			if(sPat.length() > 0){
 				ChessImageView._bmpTile = BitmapFactory.decodeStream(am.open("tiles/" + sPat + ".png"));
-
+			} else {
+				ChessImageView._bmpTile = null;
 			}
 			// pawn
 			ChessImageView._arrPieceBitmaps[ChessBoard.BLACK][BoardConstants.PAWN] = BitmapFactory.decodeStream(am.open(sFolder + "pb.png"));
