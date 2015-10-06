@@ -1631,22 +1631,31 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             } catch (Exception ex) {
             }
             _socket = null;
+
+            switch (get_gameStartSound()) {
+                case 0:
+                    break;
+                case 1:
+                    soundChessPiecesFall();
+                    vibration(DECREASE);
+                    break;
+                case 2:
+                    soundChessPiecesFall();
+                    break;
+                case 3:
+                    vibration(DECREASE);
+                    break;
+                default:
+                    Log.e(TAG, "get_gameStartSound error");
+            }
+            gameToast(getString(R.string.ics_disconnected), false);
+
+            Log.d(TAG, "disconnect method");
         }
     }
 
     public void sendString(String s) {
         if (_socket == null || _socket.sendString(s + "\n") == false) {
-            switch(get_gameStartSound()){
-                case 0: break;
-                case 1: soundChessPiecesFall();
-                        vibration(DECREASE);
-                        break;
-                case 2: soundChessPiecesFall();
-                        break;
-                case 3: vibration(DECREASE);
-                        break;
-                default: Log.e(TAG, "get_gameStartSound error");
-            }
             new AlertDialog.Builder(ICSClient.this)
                     .setTitle(R.string.title_error)
                     .setMessage("Connection to server is broken.")

@@ -67,7 +67,7 @@
 <string name="pref_puzzle_show_seekbar">Mostra barra di ricerca</string>
 <string name="pref_puzzle_show_seekbar_desc">Sfoglia rapidamente i problemi con la barra di ricerca</string>
 <string name="pref_localelanguage">Impostare la lingua</string>
-<string name="pref_localelanguage_desc">Scegli la lingua che si desidera utilizzare quindi chiudere e riavviare</string>
+<string name="pref_localelanguage_desc">Scegli la lingua che si desidera utilizzare</string>
 
 <string name="button_play">Gioca</string>
 <string name="button_undo">Annulla</string>
@@ -325,6 +325,7 @@ L\'email potrebbe non essere stata creata.
 
 <string name="ics_welcome_format">Benvenuto <b>%1$s</b></string>
 <string name="ics_start_text">(password vuota per accedere come ospite)</string>
+<string name="ics_disconnected">Scollegato dalla FICS</string>
 
 <string name="ics_seekseek">cercare</string>
 <string name="ics_seekchallenge">sfida</string>

@@ -67,7 +67,7 @@
 <string name="pref_puzzle_show_seekbar">Mostrar barra de búsqueda</string>
 <string name="pref_puzzle_show_seekbar_desc">Navegar rápidamente a través de rompecabezas con la barra de búsqueda</string>
 <string name="pref_localelanguage">Ajuste el idioma</string>
-<string name="pref_localelanguage_desc">Elija el idioma que desea utilizar a continuación, cierre y reinicie</string>
+<string name="pref_localelanguage_desc">Elija el idioma que desea utilizar</string>
 
 <string name="button_play">Jugar</string>
 <string name="button_undo">Deshacer</string>
@@ -320,6 +320,7 @@ El correo electrónico no se pudo crear.
 
 <string name="ics_welcome_format">Bienvenida <b>%1$s</b></string>
 <string name="ics_start_text">(contraseña vacía para iniciar sesión como invitado)</string>
+<string name="ics_disconnected">Desconectado de FICS</string>
 
 <string name="ics_seekseek">Busque</string>
 <string name="ics_seekchallenge">Desafío</string>
