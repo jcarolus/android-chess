@@ -333,6 +333,7 @@ E-mail could not be created.
 <string name="ics_seekrangemax">Rating-Range MAX</string>
 <string name="ics_seekrated">Rated game</string>
 <string name="ics_seekmanual">Manually Accept</string>
+<string name="ics_seekformula">Formula</string>
 
 <!-- Toast strings -->
 <string name="toast_could_not_start_activity">Could not start the activity</string>

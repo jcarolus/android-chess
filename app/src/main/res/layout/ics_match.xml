@@ -101,6 +101,16 @@
 					  />
 		</TableRow>
 		<TableRow>
+			<TextView android:text="@string/ics_seekformula"
+					  android:layout_width="wrap_content" android:layout_height="wrap_content"
+					  style="@style/MyHeaderTextStyle"
+					  android:id="@+id/tvMatchFormula"
+				/>
+			<CheckBox android:id="@+id/CheckBoxSeekFormula"
+					  android:layout_width="wrap_content" android:layout_height="wrap_content"
+				/>
+		</TableRow>
+		<TableRow>
 			<Button android:text="@string/button_cancel" android:id="@+id/ButtonMatchCancel"/>
 			<Button android:text="@string/button_ok" android:id="@+id/ButtonMatchOk"
 					android:layout_weight="1"/>

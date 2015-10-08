@@ -1632,6 +1632,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             }
             _socket = null;
 
+            Log.d(TAG, "disconnect method");
+        }
+    }
+
+    public void sendString(String s) {
+        if (_socket == null || _socket.sendString(s + "\n") == false) {
             switch (get_gameStartSound()) {
                 case 0:
                     break;
@@ -1650,12 +1656,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             }
             gameToast(getString(R.string.ics_disconnected), false);
 
-            Log.d(TAG, "disconnect method");
-        }
-    }
-
-    public void sendString(String s) {
-        if (_socket == null || _socket.sendString(s + "\n") == false) {
             new AlertDialog.Builder(ICSClient.this)
                     .setTitle(R.string.title_error)
                     .setMessage("Connection to server is broken.")

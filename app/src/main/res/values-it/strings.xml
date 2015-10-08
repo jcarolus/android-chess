@@ -338,6 +338,7 @@ L\'email potrebbe non essere stata creata.
 <string name="ics_seekrangemax">Valutazione MAX</string>
 <string name="ics_seekrated">gioco nominale</string>
 <string name="ics_seekmanual">manualmente</string>
+<string name="ics_seekformula">Formula</string>
 
 <!-- Toast strings -->
 <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>
