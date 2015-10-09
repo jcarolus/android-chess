@@ -192,6 +192,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private Timer _timer = null;
     protected InnerTimerHandler m_timerHandler = new InnerTimerHandler(this);
 
+    private Timer _timerDate = null;
+
     /**
      * Called when the activity is first created.
      */
@@ -1050,12 +1052,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         Pattern p = Pattern.compile("\\{Game (\\d+) .*");
                         Matcher m = p.matcher(line);
                         if (m.matches()) {
+                            cancelDateTimer();
                             get_view().setGameNum(Integer.parseInt(m.group(1)));
                             get_view().setViewMode(ICSChessView.VIEW_PLAY);
                             switchToBoardView();
                         }
                     } else if (line.indexOf("Creating: ") >= 0 && line.indexOf("(adjourned)") >= 0) {
                         //Creating: jcarolus (----) jwtc (----) unrated blitz 5 0 (adjourned)
+                        cancelDateTimer();
                         get_view().setViewMode(ICSChessView.VIEW_PLAY);
                         switchToBoardView();
                         gameToast("Resuming adjourned game", false);
@@ -1624,12 +1628,37 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
+    public void dateTimer(){
+        _timerDate = new Timer(true);
+        _timerDate.schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+                dateHandler.sendEmptyMessage(0);  // sends date string to prevent disconnection from no activity for seek
+            }
+        }, 60000, 60000);
+    }
+
+    public void cancelDateTimer(){
+        if(_timerDate != null) {
+            _timerDate.cancel();
+        }
+    }
+
+    Handler dateHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            sendString("date");
+        }
+    };
+
     public void disconnect() {
         if (_socket != null) {
             try {
                 _socket.close();
             } catch (Exception ex) {
             }
+            cancelDateTimer();
             _socket = null;
 
             Log.d(TAG, "disconnect method");
