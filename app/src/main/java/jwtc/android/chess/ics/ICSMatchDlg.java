@@ -22,13 +22,13 @@ public class ICSMatchDlg extends Dialog {
 
 	public static final String TAG = "ICSMatchDlg";
 
-	private TextView _tvPlayerName, _tvRatingRangeMIN, _tvRatingRangeMAX, _tvManual;
+	private TextView _tvPlayerName, _tvRatingRangeMIN, _tvRatingRangeMAX, _tvManual, _tvFormula;
 	protected RadioButton _rbSeek, _rbChallenge;
 	private Spinner _spinTime, _spinIncrement, _spinVariant, _spinColor;
 	private EditText _editPlayer, _editRatingRangeMIN, _editRatingRangeMAX;
 	private ArrayAdapter<CharSequence> _adapterTime, _adapterIncrement, _adapterVariant, _adapterColor;
 	private Button _butOk, _butCancel;
-	private CheckBox _checkRated, _checkManual;
+	private CheckBox _checkRated, _checkManual, _checkFormula;
 	private ICSClient _parent;
 	
 	public ICSMatchDlg(Context context) {
@@ -53,6 +53,8 @@ public class ICSMatchDlg extends Dialog {
 				_tvRatingRangeMAX.setVisibility(View.VISIBLE);
 				_checkManual.setVisibility(View.VISIBLE);
 				_tvManual.setVisibility(View.VISIBLE);
+				_checkFormula.setVisibility(View.GONE);  // if formula is valuable enough then
+				_tvFormula.setVisibility(View.GONE);     // change these to VISIBLE
 				_parent._dlgMatch.show();
 			}
 		});
@@ -69,6 +71,8 @@ public class ICSMatchDlg extends Dialog {
 				_tvRatingRangeMAX.setVisibility(View.GONE);
 				_checkManual.setVisibility(View.GONE);
 				_tvManual.setVisibility(View.GONE);
+				_checkFormula.setVisibility(View.GONE);
+				_tvFormula.setVisibility(View.GONE);
 				_parent._dlgMatch.show();
 			}
 		});
@@ -110,6 +114,9 @@ public class ICSMatchDlg extends Dialog {
 		_checkManual = (CheckBox) findViewById(R.id.CheckBoxSeekManual);
 		_tvManual = (TextView) findViewById(R.id.tvMatchManual);
 
+		_checkFormula = (CheckBox) findViewById(R.id.CheckBoxSeekFormula);
+		_tvFormula = (TextView) findViewById(R.id.tvMatchFormula);
+
 	    _butOk = (Button)findViewById(R.id.ButtonMatchOk);
 	    _butOk.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -127,8 +134,9 @@ public class ICSMatchDlg extends Dialog {
 				}
 
 				if(_rbSeek.isChecked()){
-					s = "seek " + (_checkManual.isChecked() ? "m ": "a ") + rMIN
+					s = "seek " + (_checkManual.isChecked() ? "m ": "a ") + (_checkFormula.isChecked() ? "f ": "") + rMIN
 							+ "-" + rMAX + " ";
+					_parent.dateTimer();  // sendstring date thread to let you know of disconnection
 					
 				} else {
 					s = "match " + sP + " ";

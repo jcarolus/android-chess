@@ -540,6 +540,9 @@ public class ICSChessView extends ChessViewBase {
         if (_bHandleClick) {
             m_iTo = -1;
 
+            if(_jni.pieceAt(_jni.getTurn(), index) != BoardConstants.FIELD){
+                m_iFrom = -1;}  // This allows user to switch to another piece easily
+
             if (m_iFrom == -1) {
                 // when a pre move is possible, check if the selected position is a field
                 if (_bCanPreMove) {
