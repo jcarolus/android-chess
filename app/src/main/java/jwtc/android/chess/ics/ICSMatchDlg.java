@@ -53,6 +53,8 @@ public class ICSMatchDlg extends Dialog {
 				_tvRatingRangeMAX.setVisibility(View.VISIBLE);
 				_checkManual.setVisibility(View.VISIBLE);
 				_tvManual.setVisibility(View.VISIBLE);
+				_checkFormula.setVisibility(View.GONE);  // if formula is valuable enough then
+				_tvFormula.setVisibility(View.GONE);     // change these to VISIBLE
 				_parent._dlgMatch.show();
 			}
 		});
@@ -69,6 +71,8 @@ public class ICSMatchDlg extends Dialog {
 				_tvRatingRangeMAX.setVisibility(View.GONE);
 				_checkManual.setVisibility(View.GONE);
 				_tvManual.setVisibility(View.GONE);
+				_checkFormula.setVisibility(View.GONE);
+				_tvFormula.setVisibility(View.GONE);
 				_parent._dlgMatch.show();
 			}
 		});
@@ -111,9 +115,7 @@ public class ICSMatchDlg extends Dialog {
 		_tvManual = (TextView) findViewById(R.id.tvMatchManual);
 
 		_checkFormula = (CheckBox) findViewById(R.id.CheckBoxSeekFormula);
-		_checkFormula.setVisibility(View.GONE);  // is formula necessary?
 		_tvFormula = (TextView) findViewById(R.id.tvMatchFormula);
-		_tvFormula.setVisibility(View.GONE);     // delete these visiblities if necessary
 
 	    _butOk = (Button)findViewById(R.id.ButtonMatchOk);
 	    _butOk.setOnClickListener(new View.OnClickListener() {
