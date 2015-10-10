@@ -74,4 +74,11 @@ public class ICSGameOverDlg extends Dialog {
 
 
     }
+
+    public void setWasPlaying(boolean bWasPlaying){
+
+        _butGoodGame.setEnabled(bWasPlaying);
+        _butRematch.setEnabled(bWasPlaying);
+
+    }
 }

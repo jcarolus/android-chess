@@ -911,6 +911,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             //Log.i("parseBuffer", "[" + buffer + "]");
             String sRaw = "", sEnd = "", sBeg = "";
             Matcher match;
+            _bEndBuf = false;
 
             //////////////////////////////////////////////////////////////////////////////////////////////
             String[] lines;
@@ -1109,6 +1110,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         }
 
                         _bEndBuf = true;
+
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
@@ -1382,6 +1384,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
                             saveGameSDCard();
 
+                            _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
                             _dlgOver.show();
                             //_dlgOver.prepare();
 
@@ -1443,7 +1446,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                  sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + _sFile));
                  sendIntent.setType("application/x-chess-pgn");
 
-                 startActivity(sendIntent);
+             startActivity(sendIntent);
 
          } catch (Exception e) {
 
