@@ -17,9 +17,10 @@ import android.view.MenuItem;
 import jwtc.android.chess.ics.CustomCommands;
 
 
-public class ChessPreferences extends MyPreferenceActivity {
+public class ChessPreferences extends MyPreferenceActivity  implements SharedPreferences.OnSharedPreferenceChangeListener {
 	
 	private static int REQUEST_SOUND = 1;
+	private static String TAG = "ChessPreferences";
 	private Uri _uriNotification;
 	private int _colorScheme;
 	
@@ -35,6 +36,8 @@ public class ChessPreferences extends MyPreferenceActivity {
         _colorScheme = prefs.getInt("ColorScheme", 0); 
         
         addPreferencesFromResource(R.xml.globalprefs);
+
+		prefs.registerOnSharedPreferenceChangeListener(this);
 
         Preference prefColor = (Preference) findPreference("colorSchemeHandle");
         prefColor.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -79,18 +82,8 @@ public class ChessPreferences extends MyPreferenceActivity {
         		return true;
         	}
         });
-        /*
-        Preference prefCustomCommand = (Preference) findPreference("icscustomcommandHandle");
-        prefCustomCommand.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-        	public boolean onPreferenceClick(Preference preference) {
-        		Intent intent = new Intent(ChessPreferences.this, CustomCommands.class);
-	        	
-	        	startActivity( intent);
-        		return true;
-        	}
-        });
-        */
-        //
+
+		setResult(0);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -106,9 +99,18 @@ public class ChessPreferences extends MyPreferenceActivity {
 	        		editor.putString("NotificationUri", _uriNotification.toString());
 	        	}
 	        	editor.commit();
-	        	Log.i("onActivityResult", "Sound " + _uriNotification);
+	        	Log.i(TAG, "Sound " + _uriNotification);
         	}
         }
     }
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+
+		if(s.equals("localelanguage")) {
+			Log.i(TAG, s);
+			setResult(1);
+		}
+	}
 }
 

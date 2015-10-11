@@ -8,7 +8,6 @@
             android:summary="@string/pref_icsconfirmmove_desc"
             android:key="ICSConfirmMove" />
 
-
         <Preference
             android:title="@string/pref_icscustomcommand"
             android:summary="@string/pref_icscustomcommand_desc"
@@ -19,6 +18,37 @@
             android:defaultValue="true"
             android:summary="@string/pref_icsautosought_desc"
             android:key="ICSAutoSought" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_icstimewarning"
+            android:defaultValue="true"
+            android:summary="@string/pref_icstimewarning_desc"
+            android:key="ICSTimeWarning"/>
+
+        <ListPreference
+            android:title="@string/pref_icstimewarningsecs"
+            android:key="ICSTimeWarningsecs"
+            android:summary="@string/pref_icstimewarningsecs_desc"
+            android:entries="@array/time_warning"
+            android:entryValues="@array/time_warning_values"
+            android:defaultValue="10"
+            />
+
+        <CheckBoxPreference
+            android:title="@string/prefs_icsendgamedialog"
+            android:defaultValue="true"
+            android:summary="@string/prefs_icsendgamesummary"
+            android:key="ICSEndGameDialog"
+            />
+
+        <ListPreference
+            android:title="@string/pref_icsgamestartsound"
+            android:key="ICSGameStartSound"
+            android:summary="@string/pref_icsgamestartsound_desc"
+            android:entries="@array/gamestartsound"
+            android:entryValues="@array/gamestartsound_values"
+            android:defaultValue="1"
+            />
 
     </PreferenceCategory>
 

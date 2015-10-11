@@ -33,6 +33,9 @@ import android.widget.TableRow.LayoutParams;
  *
  */
 public class ChessViewBase{
+
+	public static final String TAG = "ChessViewBase";
+
 	private RelativeLayout _mainLayout;
 	private ChessImageView[] _arrImages = new ChessImageView[64];
 	//public static final int SELECTED = 2;
@@ -159,7 +162,8 @@ public class ChessViewBase{
 
 			if(sPat.length() > 0){
 				ChessImageView._bmpTile = BitmapFactory.decodeStream(am.open("tiles/" + sPat + ".png"));
-
+			} else {
+				ChessImageView._bmpTile = null;
 			}
 			// pawn
 			ChessImageView._arrPieceBitmaps[ChessBoard.BLACK][BoardConstants.PAWN] = BitmapFactory.decodeStream(am.open(sFolder + "pb.png"));
@@ -461,6 +465,7 @@ public class ChessViewBase{
 
 		resetImageCache();
 		_flippedBoard = _flippedBoard ? false : true;
+		setFlippedBoard(_flippedBoard);
 	}
 	public int getFieldIndex(int i){
 		if(_flippedBoard){

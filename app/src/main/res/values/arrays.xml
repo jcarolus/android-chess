@@ -72,13 +72,17 @@
     	<item>Use wake lock</item>
     	<item>Do not use wake lock</item>
     </string-array>
+    <string-array name="match_subject">
+        <item>Seek</item>
+        <item>Challenge</item>
+    </string-array>
      <string-array name="match_time_minutes">
         <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
         <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
         <item>20</item><item>30</item><item>40</item><item>60</item>
     </string-array>
     <string-array name="match_time_increments">
-        <item>0</item><item>2</item><item>3</item><item>4</item>
+        <item>0</item><item>2</item><item>3</item><item>4</item><item>5</item>
         <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
         <item>20</item><item>30</item><item>40</item><item>60</item>
     </string-array>
@@ -89,6 +93,28 @@
     <string-array name="match_variant">
     	<item>Standard</item>
     	<item>Chess 960 (experimental)</item>
+    </string-array>
+    <string-array name="match_color">
+        <item>Random</item>
+        <item>White</item>
+        <item>Black</item>
+    </string-array>
+    <string-array name="time_warning">
+        <item>5 seconds</item><item>10 seconds</item><item>25 seconds</item>
+        <item>45 seconds</item><item>1 minute</item>
+    </string-array>
+    <string-array name="time_warning_values">
+        <item>5</item><item>10</item><item>25</item>
+        <item>45</item><item>60</item>
+    </string-array>
+    <string-array name="gamestartsound">
+        <item>None</item>
+        <item>sound and vibration</item>
+        <item>sound only</item>
+        <item>vibration only</item>
+    </string-array>
+    <string-array name="gamestartsound_values">
+        <item>0</item><item>1</item><item>2</item><item>3</item>
     </string-array>
     <string-array name="field_files">
     	<item>none</item>
@@ -133,6 +159,16 @@
     	<item>stripes</item>
     	<item>clouds</item>
     	<item>circuit</item>
+    </string-array>
+    <string-array name="localearray">
+        <item>English</item>
+        <item>Italian</item>
+        <item>Spanish</item>
+    </string-array>
+    <string-array name="localeKeyarray">
+        <item>en</item>
+        <item>it</item>
+        <item>es</item>
     </string-array>
     <string-array name="UCIArray">
     	<item>default</item>

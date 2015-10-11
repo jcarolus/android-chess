@@ -28,6 +28,8 @@ import android.widget.*;
  */
 public class ICSChessView extends ChessViewBase {
 
+    public static final String TAG = "ICSChessView";
+
     private JNI _jni;
     //private Button _butAction;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove;
@@ -35,16 +37,16 @@ public class ICSChessView extends ChessViewBase {
     //private EditText _editChat;
     private Button _butConfirmMove, _butCancelMove;
     private ViewSwitcher _viewSwitchConfirm;
-    private String _opponent, _whitePlayer, _blackPlayer;
+    private String _opponent, _whitePlayer, _blackPlayer, _playerMe;
     private int m_iFrom, _iWhiteRemaining, _iBlackRemaining, _iGameNum, _iTurn, m_iTo;
     private ICSClient _parent;
-    private boolean _bHandleClick, _bOngoingGame, _bForceFlipBoard, _bConfirmMove, _bCanPreMove;
+    private boolean _bHandleClick, _bOngoingGame, _bConfirmMove, _bCanPreMove, _bfirst;
     private Timer _timer;
     private static final int MSG_TOP_TIME = 1, MSG_BOTTOM_TIME = 2;
     public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_WATCH = 2, VIEW_EXAMINE = 3, VIEW_PUZZLE = 4, VIEW_ENDGAME = 5;
     protected int _viewMode;
 
-//	private Vibrator _vibrator;
+    protected static final int INCREASE = 1;
 
     protected Handler m_timerHandler = new Handler() {
         /** Gets called on every message that is received */
@@ -54,6 +56,17 @@ public class ICSChessView extends ChessViewBase {
                 _tvClockTop.setText(parseTime(msg.getData().getInt("ticks")));
             } else {
                 _tvClockBottom.setText(parseTime(msg.getData().getInt("ticks")));
+
+            }
+            if((msg.what == MSG_TOP_TIME && (_tvPlayerTop.getText()).equals(_playerMe))
+                || (msg.what == MSG_BOTTOM_TIME && (_tvPlayerBottom.getText()).equals(_playerMe))){
+                if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)) {
+                    try {
+                        _parent.soundTickTock();
+                    } catch (Exception e) {
+                        Log.e(TAG, "sound process died", e);
+                    }
+                }
             }
         }
     };
@@ -72,7 +85,6 @@ public class ICSChessView extends ChessViewBase {
         _bHandleClick = false;
         _viewMode = VIEW_NONE;
         _bOngoingGame = false;
-        _bForceFlipBoard = false;
         _bCanPreMove = false;
         _opponent = "";
         _iTurn = BoardConstants.WHITE;
@@ -210,31 +222,43 @@ public class ICSChessView extends ChessViewBase {
 
     public void setViewMode(final int iMode) {
         _viewMode = iMode;
+        _bfirst = true;    // reset first flipboard state
         updateViewMode();
     }
 
     public void updateViewMode() {
         switch (_viewMode) {
             case VIEW_NONE:
-                Log.i("ICSChessView", "Idle");
+                Log.i(TAG, "Idle");
                 break;
             case VIEW_PLAY:
-                Log.i("ICSChessView", "Play");
+                switch(_parent.get_gameStartSound()){
+                    case 0: break;
+                    case 1: _parent.soundChessPiecesFall();
+                            _parent.vibration(INCREASE);
+                            break;
+                    case 2: _parent.soundChessPiecesFall();
+                            break;
+                    case 3: _parent.vibration(INCREASE);
+                            break;
+                    default: Log.e(TAG, "get_gameStartSound error");
+                }
+                Log.i(TAG, "Play");
                 break;
             case VIEW_WATCH:
-                Log.i("ICSChessView", "Watch");
+                Log.i(TAG, "Watch");
                 break;
             case VIEW_EXAMINE:
-                Log.i("ICSChessView", "Examine");
+                Log.i(TAG, "Examine");
                 break;
             case VIEW_PUZZLE:
-                Log.i("ICSChessView", "Puzzle");
+                Log.i(TAG, "Puzzle");
                 break;
             case VIEW_ENDGAME:
-                Log.i("ICSChessView", "Endgame");
+                Log.i(TAG, "Endgame");
                 break;
             default:
-                Log.i("ICSChessView", "X");
+                Log.i(TAG, "X");
         }
     }
 
@@ -272,12 +296,6 @@ public class ICSChessView extends ChessViewBase {
 
         //resetImageCache();
         //paint();
-    }
-
-    public void forceFlipBoard() {
-        _bForceFlipBoard = _bForceFlipBoard ? false : true;
-        _flippedBoard = _bForceFlipBoard;
-        paint();
     }
 
     public synchronized boolean preParseGame(final String fLine) {
@@ -398,15 +416,16 @@ public class ICSChessView extends ChessViewBase {
     		*/
             _whitePlayer = st.nextToken();
             _blackPlayer = st.nextToken();
-
-            if (_blackPlayer.equalsIgnoreCase(sMe)) {
-                _flippedBoard = true;
-            } else if (_whitePlayer.equalsIgnoreCase(sMe)) {
-                _flippedBoard = false;
-            } else {
-                _flippedBoard = _bForceFlipBoard;
+            if(_bfirst) {
+                if (_blackPlayer.equalsIgnoreCase(sMe)) {
+                    _flippedBoard = true;
+                    _playerMe = _blackPlayer;
+                } else if (_whitePlayer.equalsIgnoreCase(sMe)) {
+                    _flippedBoard = false;
+                    _playerMe = _whitePlayer;
+                }
+                _bfirst = false;
             }
-
             int iMe = Integer.parseInt(st.nextToken());
             //_bHandleClick = (iMe == 1);
             _bHandleClick = true;
@@ -510,7 +529,7 @@ public class ICSChessView extends ChessViewBase {
         return String.format("%d:%02d", (int) (Math.floor(sec / 60)), sec % 60);
     }
 
-    private void paint() {
+    public void paint() {
         paintBoard(_jni, new int[]{m_iFrom, m_iTo}, null);
     }
 
@@ -520,6 +539,9 @@ public class ICSChessView extends ChessViewBase {
 
         if (_bHandleClick) {
             m_iTo = -1;
+
+            if(_jni.pieceAt(_jni.getTurn(), index) != BoardConstants.FIELD){
+                m_iFrom = -1;}  // This allows user to switch to another piece easily
 
             if (m_iFrom == -1) {
                 // when a pre move is possible, check if the selected position is a field

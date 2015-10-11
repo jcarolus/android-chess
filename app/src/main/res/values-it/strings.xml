@@ -56,8 +56,18 @@
 <string name="pref_icscustomcommand_desc">Crea i tuoi comandi personalizzati</string>
 <string name="pref_icsautosought">Ricerca automatica</string>
 <string name="pref_icsautosought_desc">Aggiorna automaticamente la finestra delle sfide</string>
+<string name="pref_icstimewarning">Basso ora Avvertenza</string>
+<string name="pref_icstimewarning_desc">Un ticchettio avvisa se ​​il vostro tempo al tempo di preavviso Importo o meno</string>
+<string name="pref_icstimewarningsecs">Tempo Importo Warning (sec)</string>
+<string name="pref_icstimewarningsecs_desc">Quanti secondi fino all\'inizio di avvertimento tempo?</string>
+<string name="prefs_icsendgamedialog">EndGame Dialog</string>
+<string name="prefs_icsendgamesummary">Alla fine di una partita, vuoi una finestra di dialogo Salva per PopUp?</string>
+<string name="pref_icsgamestartsound">Gioco Suono Inizio</string>
+<string name="pref_icsgamestartsound_desc">Riproduci suono quando gioco inizia o la perdita di collegamento</string>
 <string name="pref_puzzle_show_seekbar">Mostra barra di ricerca</string>
 <string name="pref_puzzle_show_seekbar_desc">Sfoglia rapidamente i problemi con la barra di ricerca</string>
+<string name="pref_localelanguage">Impostare la lingua</string>
+<string name="pref_localelanguage_desc">Scegli la lingua che si desidera utilizzare</string>
 
 <string name="button_play">Gioca</string>
 <string name="button_undo">Annulla</string>
@@ -237,6 +247,8 @@ L\'email potrebbe non essere stata creata.
 <string name="err_chess960_postion_format">Posizione non valida, inserisci un numero</string>
     <!-- @TODO -->
 <string name="err_puzzle_jump">Puzzle di numero non valido</string>
+<string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>
+<string name="err_copy_clipboard">Error during copy to ClipBoard</string>
 
 <string name="pgntool_export_explanation">Esporta il database di gioco nella scheda SD</string>
 <string name="pgntool_import_explanation">Importa le partite nel database di gioco</string>
@@ -287,6 +299,8 @@ L\'email potrebbe non essere stata creata.
 <string name="ics_menu_unobserve">Ferma osservazione</string>
 <string name="ics_menu_stop_puzzle">Ferma problema</string>
 
+<string name="ics_playertwo">giocatore 2</string>
+<string name="ics_playerone">giocatore 1</string>
 <string name="ics_progress_title_login">Accedi</string>
 <string name="ics_progress_msg_login">Stai accedendo&#8230;</string>
 <string name="ics_offers_abort">Il tuo avversario vorrebbe interrompere la partita.\nVuoi accettare?</string>
@@ -298,10 +312,33 @@ L\'email potrebbe non essere stata creata.
 <string name="ics_game_over_format">Fine partita: %1$s</string>
 <string name="ics_tells_you">%1$s ti dice: %2$s</string>
 
+<string name="ics_save_game">Successfully saved to chessgamesonline.pgn</string>
+<string name="ics_copy_clipboard">Game copied to clipboard successfully</string>
+<string name="ics_messages">Send Messages to opponent</string>
+<string name="ics_good_game">Good Game</string>
+<string name="ics_offer_rematch">Offer REMATCH</string>
+<string name="ics_game">Game</string>
+<string name="ics_send_app">Send to APPLICATION</string>
+<string name="ics_copy_clipboard_text">Copy to CLIPBOARD</string>
+
 <string name="ics_error_connection">Impossibile connettersi al server. Assicurati di avere una connessione internet attiva</string>
 
 <string name="ics_welcome_format">Benvenuto <b>%1$s</b></string>
 <string name="ics_start_text">(password vuota per accedere come ospite)</string>
+<string name="ics_disconnected">Scollegato dalla FICS</string>
+
+<string name="ics_seekseek">cercare</string>
+<string name="ics_seekchallenge">sfida</string>
+<string name="ics_seekplayer">giocatore</string>
+<string name="ics_seektime">Tempo (min)</string>
+<string name="ics_seektimeinc">Incremento di tempo (sec)</string>
+<string name="ics_seekvariant">variante</string>
+<string name="ics_seekcolor">colore</string>
+<string name="ics_seekrangemin">Valutazione MIN</string>
+<string name="ics_seekrangemax">Valutazione MAX</string>
+<string name="ics_seekrated">gioco nominale</string>
+<string name="ics_seekmanual">manualmente</string>
+<string name="ics_seekformula">Formula</string>
 
 <!-- Toast strings -->
 <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>

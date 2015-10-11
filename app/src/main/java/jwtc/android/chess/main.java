@@ -32,6 +32,8 @@ import android.view.GestureDetector;
 
 public class main extends MyBaseActivity implements OnInitListener, GestureDetector.OnGestureListener {
 
+    public static final String TAG = "MyBaseActivity";
+
     /**
      * instances for the view and game of chess *
      */

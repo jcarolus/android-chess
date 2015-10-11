@@ -56,8 +56,18 @@
 <string name="pref_icscustomcommand_desc">Crea tus propios comandos personalizados</string>
 <string name="pref_icsautosought">Buscado auto</string>
 <string name="pref_icsautosought_desc">Refresque la pantalla desafíos automáticamente</string>
+<string name="pref_icstimewarning">Advertencia de tiempo de baja</string>
+<string name="pref_icstimewarning_desc">Un ruido que hace tictac le avisa si su tiempo en Tiempo Advertencia Importe o menos</string>
+<string name="pref_icstimewarningsecs">Tiempo Monto Advertencia (segundos)</string>
+<string name="pref_icstimewarningsecs_desc">¿Cuántos segundos hasta que se inicie de advertencia tiempo?</string>
+<string name="prefs_icsendgamedialog">Fin del juego</string>
+<string name="prefs_icsendgamesummary">Al final de un juego, ¿quieres un ahorro de diálogo en Emergente?</string>
+<string name="pref_icsgamestartsound">Juego Sonido inicial</string>
+<string name="pref_icsgamestartsound_desc">Reproducir sonido cuando el juego comienza, o pérdida de la conexión</string>
 <string name="pref_puzzle_show_seekbar">Mostrar barra de búsqueda</string>
 <string name="pref_puzzle_show_seekbar_desc">Navegar rápidamente a través de rompecabezas con la barra de búsqueda</string>
+<string name="pref_localelanguage">Ajuste el idioma</string>
+<string name="pref_localelanguage_desc">Elija el idioma que desea utilizar</string>
 
 <string name="button_play">Jugar</string>
 <string name="button_undo">Deshacer</string>
@@ -166,7 +176,7 @@
 <string name="state_draw_50">dibujar (50 regla de traslado)</string>
 <string name="state_draw_stalemate">dibujar (estancamiento)</string>
 <string name="state_draw_repeat">dibujar (3-plegar la repetición)</string>
-<string name="state_mate">compañero</string>
+<string name="state_mate">jaque mate</string>
 <string name="state_check">comprobar</string>
 <string name="state_time">tiempo</string>
 <string name="state_resigned">resignado</string>
@@ -185,9 +195,9 @@
 <string name="choice_level_9">5 minutos</string>
 <string name="choice_level_10">15 minutos</string>
 <string name="choice_queen">Reina</string>
-<string name="choice_rook">Grajo</string>
-<string name="choice_bishop">Obispo</string>
-<string name="choice_knight">Caballero</string>
+<string name="choice_rook">Torre</string>
+<string name="choice_bishop">Alfíl</string>
+<string name="choice_knight">Caballo</string>
 <string name="choice_match_rated">Nominal</string>
 <string name="choice_match_unrated">No Calificación</string>
 <string name="choice_clock_num_minutes">%d minutos</string>
@@ -232,6 +242,8 @@ El correo electrónico no se pudo crear.
 <string name="err_chess960_position_range">Posición no válida, introduzca un número entre 0 y 960</string>
 <string name="err_chess960_postion_format">Posición no válida, introduzca un número</string>
 <string name="err_puzzle_jump">Número de rompecabezas válida</string>
+<string name="err_saving_game">Error al guardar juego para chessgamesonline.pgn</string>
+<string name="err_copy_clipboard">Error durante la copia al portapapeles</string>
 
 <string name="pgntool_export_explanation">Base de datos de juego Exportar a tarjeta SD</string>
 <string name="pgntool_import_explanation">Juegos de importación en la base de datos de juegos</string>
@@ -282,6 +294,8 @@ El correo electrónico no se pudo crear.
 <string name="ics_menu_unobserve">Deje de observación</string>
 <string name="ics_menu_stop_puzzle">Detener rompecabezas</string>
 
+<string name="ics_playertwo">jugador 2</string>
+<string name="ics_playerone">jugador 1</string>
 <string name="ics_progress_title_login">Iniciar sesión</string>
 <string name="ics_progress_msg_login">Tu sesión&#8230;</string>
 <string name="ics_offers_abort">Su oponente le gustaría cancelar el juego.\n¿Quiere aceptar?</string>
@@ -293,10 +307,33 @@ El correo electrónico no se pudo crear.
 <string name="ics_game_over_format">Fin del juego: %1$s</string>
 <string name="ics_tells_you">%1$s te dijo: %2$s</string>
 
+<string name="ics_save_game">Con éxito guardado en chessgamesonline.pgn</string>
+<string name="ics_copy_clipboard">Juego copiado al portapapeles con éxito</string>
+<string name="ics_messages">Enviar mensajes a oponente</string>
+<string name="ics_good_game">Buen juego</string>
+<string name="ics_offer_rematch">Oferta REVANCHA</string>
+<string name="ics_game">Juego</string>
+<string name="ics_send_app">Enviar a APLICACION</string>
+<string name="ics_copy_clipboard_text">Copiar al portapapeles</string>
+
 <string name="ics_error_connection">No se pudo conectar al servidor. Asegúrese de que ha activado la conexión a Internet</string>
 
 <string name="ics_welcome_format">Bienvenida <b>%1$s</b></string>
 <string name="ics_start_text">(contraseña vacía para iniciar sesión como invitado)</string>
+<string name="ics_disconnected">Desconectado de FICS</string>
+
+<string name="ics_seekseek">Busque</string>
+<string name="ics_seekchallenge">Desafío</string>
+<string name="ics_seekplayer">Jugador</string>
+<string name="ics_seektime">Tiempo (mins)</string>
+<string name="ics_seektimeinc">Incremento de tiempo (segs)</string>
+<string name="ics_seekvariant">Variant</string>
+<string name="ics_seekcolor">Color</string>
+<string name="ics_seekrangemin">Rating MIN</string>
+<string name="ics_seekrangemax">Rating MAX</string>
+<string name="ics_seekrated">juego Rated</string>
+<string name="ics_seekmanual">Manualmente</string>
+<string name="ics_seekformula">Fórmula</string>
 
 <!-- Toast strings -->
 <string name="toast_could_not_start_activity">No se pudo iniciar la actividad</string>

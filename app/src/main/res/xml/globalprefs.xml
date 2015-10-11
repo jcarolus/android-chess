@@ -50,6 +50,14 @@
 			android:defaultValue="false"
 			android:summary="@string/pref_extrahighlight_desc"
 			android:key="extrahighlight" />
+
+		 <ListPreference
+			 android:title="@string/pref_localelanguage"
+			 android:summary="@string/pref_localelanguage_desc"
+			 android:key="localelanguage"
+			 android:entries="@array/localearray"
+			 android:entryValues="@array/localeKeyarray"
+			 />
 		
 	</PreferenceCategory>
 

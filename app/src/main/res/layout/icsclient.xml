@@ -25,7 +25,7 @@
 						style="@style/MyNormalTextStyle"
 						android:layout_marginLeft="8dip"
 					/>
-				    <TextView android:text="Player 2" android:id="@+id/TextViewTop" 
+				    <TextView android:text="@string/ics_playertwo" android:id="@+id/TextViewTop"
 				    	android:layout_height="wrap_content"
 				    	android:layout_width="fill_parent"   
 				    	style="@style/MyHeaderTextStyle"
@@ -61,7 +61,7 @@
 						style="@style/MyNormalTextStyle"
 						android:layout_marginLeft="8dip"
 					/>
-				    <TextView android:text="Player 1" android:id="@+id/TextViewBottom" 
+				    <TextView android:text="@string/ics_playerone" android:id="@+id/TextViewBottom"
 				    	android:layout_height="wrap_content" 
 				    	android:layout_width="fill_parent"  
 				    	style="@style/MyHeaderTextStyle"
@@ -199,7 +199,7 @@
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 							<EditText android:text="guest" android:id="@+id/EditICSHandle" 
 								android:layout_width="wrap_content" android:layout_height="wrap_content"
-								android:minWidth="100dip"
+								android:minWidth="100dip" android:singleLine="true"
 							/>
 						</TableRow>
 						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
@@ -207,7 +207,7 @@
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 							<EditText android:id="@+id/EditICSPwd" 
 								android:layout_width="wrap_content" android:layout_height="wrap_content" android:password="true"
-								android:minWidth="100dip"
+								android:minWidth="100dip" android:singleLine="true" android:imeOptions="actionDone"
 							/>
 						</TableRow>
 						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
