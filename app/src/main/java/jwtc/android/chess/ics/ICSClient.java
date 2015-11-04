@@ -1549,6 +1549,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         super.onResume();
     }
 
+    public String get_ficsHandle(){
+        return _ficsHandle;
+    }
+
     public boolean is_bTimeWarning() {
         return _bTimeWarning;
     }
