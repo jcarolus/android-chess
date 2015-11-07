@@ -42,7 +42,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 public class ChessView extends UI {
     private ChessViewBase _view;
 
-    private main _parent;
+    private ChessActivity _parent;
     private ImageButton _butPlay;
     private ViewAnimator _viewAnimator;
     private ProgressBar _progressPlay;
@@ -124,7 +124,7 @@ public class ChessView extends UI {
 
     public ChessView(Activity activity) {
         super();
-        _parent = (main) activity;
+        _parent = (ChessActivity) activity;
         _view = new ChessViewBase(activity);
 
         _playMode = HUMAN_PC;

@@ -30,7 +30,7 @@ import java.util.Locale;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
 
-public class main extends MyBaseActivity implements OnInitListener, GestureDetector.OnGestureListener {
+public class main extends ChessActivity implements OnInitListener, GestureDetector.OnGestureListener {
 
     public static final String TAG = "MyBaseActivity";
 
