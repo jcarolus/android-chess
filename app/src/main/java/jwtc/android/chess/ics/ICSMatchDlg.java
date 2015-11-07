@@ -3,6 +3,7 @@ package jwtc.android.chess.ics;
 import jwtc.android.chess.*;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,26 @@ public class ICSMatchDlg extends Dialog {
 				_tvManual.setVisibility(View.VISIBLE);
 				_checkFormula.setVisibility(View.GONE);  // if formula is valuable enough then
 				_tvFormula.setVisibility(View.GONE);     // change these to VISIBLE
+
+				SharedPreferences myPrefs = getContext().getSharedPreferences(_parent.get_ficsHandle().toLowerCase(), getContext().MODE_PRIVATE);
+				String spinTime = myPrefs.getString("spinTime", "5");
+				String spinIncrement = myPrefs.getString("spinIncrement", "4");
+				String spinVariant = myPrefs.getString("spinVariant", "0");
+				String spinColor = myPrefs.getString("spinColor", "0");
+				String editRatingRangeMIN = myPrefs.getString("editRatingRangeMIN", "0");
+				String editRatingRangeMAX = myPrefs.getString("editRatingRangeMAX", "9999");
+				Boolean checkRated = myPrefs.getBoolean("checkRated", false);
+				Boolean checkManual = myPrefs.getBoolean("checkManual", false);
+
+				_spinTime.setSelection(Integer.parseInt(spinTime));
+				_spinIncrement.setSelection(Integer.parseInt(spinIncrement));
+				_spinVariant.setSelection(Integer.parseInt(spinVariant));
+				_spinColor.setSelection(Integer.parseInt(spinColor));
+				_editRatingRangeMIN.setText(editRatingRangeMIN);
+				_editRatingRangeMAX.setText(editRatingRangeMAX);
+				_checkRated.setChecked(checkRated);
+				_checkManual.setChecked(checkManual);
+
 				_parent._dlgMatch.show();
 			}
 		});
@@ -84,7 +105,6 @@ public class ICSMatchDlg extends Dialog {
 	    _adapterTime = ArrayAdapter.createFromResource(context, R.array.match_time_minutes, android.R.layout.simple_spinner_item);
 	    _adapterTime.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    _spinTime.setAdapter(_adapterTime);
-	    _spinTime.setSelection(5);
 	    
 	    _spinIncrement = (Spinner) findViewById(R.id.SpinnerMatchTimeIncrement);
 	    _adapterIncrement = ArrayAdapter.createFromResource(context, R.array.match_time_increments, android.R.layout.simple_spinner_item);
@@ -121,21 +141,11 @@ public class ICSMatchDlg extends Dialog {
 	    _butOk.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				ICSMatchDlg.this.dismiss();
-				String s = "", sP = _editPlayer.getText().toString(), rMIN, rMAX;
-
-				rMIN = "0";
-				rMAX = "9999";
-
-				if (!_editRatingRangeMIN.getText().toString().equals("")){
-					rMIN = _editRatingRangeMIN.getText().toString();
-				}
-				if (!_editRatingRangeMAX.getText().toString().equals("")){
-					rMAX = _editRatingRangeMAX.getText().toString();
-				}
+				String s = "", sP = _editPlayer.getText().toString();
 
 				if(_rbSeek.isChecked()){
-					s = "seek " + (_checkManual.isChecked() ? "m ": "a ") + (_checkFormula.isChecked() ? "f ": "") + rMIN
-							+ "-" + rMAX + " ";
+					s = "seek " + (_checkManual.isChecked() ? "m ": "a ") + (_checkFormula.isChecked() ? "f ": "") + _editRatingRangeMIN.getText().toString()
+							+ "-" + _editRatingRangeMAX.getText().toString() + " ";
 					_parent.dateTimer();  // sendstring date thread to let you know of disconnection
 					
 				} else {
@@ -158,6 +168,19 @@ public class ICSMatchDlg extends Dialog {
 					s += "wild fr ";
 				}
 
+
+				SharedPreferences mPrefs = getContext().getSharedPreferences(_parent.get_ficsHandle().toLowerCase(), Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = mPrefs.edit();
+				editor.putString("spinTime", String.valueOf(_spinTime.getSelectedItemPosition()));
+				editor.putString("spinIncrement", String.valueOf(_spinIncrement.getSelectedItemPosition()));
+				editor.putString("spinVariant", String.valueOf(_spinVariant.getSelectedItemPosition()));
+				editor.putString("spinColor", String.valueOf(_spinColor.getSelectedItemPosition()));
+				editor.putString("editRatingRangeMIN", _editRatingRangeMIN.getText().toString());
+				editor.putString("editRatingRangeMAX", _editRatingRangeMAX.getText().toString());
+				editor.putBoolean("checkRated", _checkRated.isChecked());
+				editor.putBoolean("checkManual", _checkManual.isChecked());
+				editor.apply();
+
 				Log.i("ICSMatchDlg", s);
 				_parent.sendString(s);
 				Toast.makeText(_parent, R.string.toast_challenge_posted, Toast.LENGTH_SHORT).show();
@@ -174,5 +197,5 @@ public class ICSMatchDlg extends Dialog {
 	public void setPlayer(String s){
 		_editPlayer.setText(s);
 	}
-	
+
 }
