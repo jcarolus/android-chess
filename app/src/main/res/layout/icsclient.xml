@@ -102,10 +102,14 @@
 					android:layout_width="fill_parent" android:layout_height="fill_parent"
 					android:layout_below="@id/TableICSPlayButtons"
 				>
-		    		<TextView android:text="Welcome to ICS, press menu to continue" android:id="@+id/TextViewICSPlayConsole"
-				     	android:layout_width="fill_parent" android:layout_height="wrap_content"
-				    	style="@style/MyTextStyle" 
-		    		/>
+					<ScrollView android:id="@+id/ScrollPlayConsole"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent">
+						<TextView android:text="Welcome to ICS, press menu to continue" android:id="@+id/TextViewICSPlayConsole"
+							android:layout_width="fill_parent" android:layout_height="wrap_content"
+							style="@style/MyTextStyle" />
+					</ScrollView>
+
 		    		<TableLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
 		    		    android:layout_marginTop="16dip"
 						android:stretchColumns="*">
@@ -223,8 +227,7 @@
 				<!-- 0.6 -->
 				<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
 			        android:id="@+id/LayoutICSBoardConsole"
-			        android:padding="2dip"
-			        android:background="#ffffffff">
+			        android:padding="2dip">
 			       
 				    <TableLayout android:id="@+id/TableConsoleEditAndButton" 
 						android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -250,8 +253,7 @@
 				        <TextView android:text="..." android:id="@+id/TextViewICSBoardConsole" 
 				        	android:layout_width="fill_parent" android:layout_height="wrap_content"
 				        	android:padding="2dip"
-				        	android:textColor="#ff000000" 
-				        	android:textSize="9sp"
+				        	android:textSize="11sp"
 				        />
 			        </ScrollView>
 			   		

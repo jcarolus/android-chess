@@ -1,74 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:orientation="vertical">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center">
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
+    <LinearLayout android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ButtonGameExit"
-        android:background="@android:drawable/ic_menu_close_clear_cancel"
-        android:layout_gravity="right"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvGameResult"/>
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ButtonGameExit"
+            android:background="@android:drawable/ic_menu_close_clear_cancel"
+            android:layout_gravity="right"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/ics_messages"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvGameResult"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ics_good_game"
-        android:id="@+id/ButtonGameGoodGame"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/ics_messages"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ics_good_game"
+            android:id="@+id/ButtonGameGoodGame"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"/>
 
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ics_offer_rematch"
-        android:id="@+id/ButtonGameRematch"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ics_offer_rematch"
+            android:id="@+id/ButtonGameRematch"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/ics_game"
-        android:id="@+id/textView2"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/ics_game"
+            android:id="@+id/textView2"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ics_copy_clipboard_text"
-        android:id="@+id/ButtonGameClipBoard"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/textView2"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ics_copy_clipboard_text"
+            android:id="@+id/ButtonGameClipBoard"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ics_send_app"
-        android:id="@+id/ButtonGameSend"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ics_send_app"
+            android:id="@+id/ButtonGameSend"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
+

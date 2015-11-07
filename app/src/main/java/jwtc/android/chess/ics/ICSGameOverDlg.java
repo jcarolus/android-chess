@@ -71,14 +71,11 @@ public class ICSGameOverDlg extends Dialog {
                 _parent.SendToApp();
             }
         });
-
-
     }
 
     public void setWasPlaying(boolean bWasPlaying){
 
-        _butGoodGame.setEnabled(bWasPlaying);
-        _butRematch.setEnabled(bWasPlaying);
-
+        _butGoodGame.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
+        _butRematch.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
     }
 }

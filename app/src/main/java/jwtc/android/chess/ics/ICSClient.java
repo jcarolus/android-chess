@@ -68,7 +68,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private ICSGameOverDlg _dlgOver;
     private StringBuilder PGN;
     private ViewAnimator _viewAnimatorMain, _viewAnimatorLobby;
-    private ScrollView _scrollConsole;
+    private ScrollView _scrollConsole, _scrollPlayConsole;
 
     private Ringtone _ringNotification;
 
@@ -275,6 +275,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _viewAnimatorLobby.setInAnimation(this, R.anim.slide_right);
 
         _scrollConsole = (ScrollView) findViewById(R.id.ScrollICSConsole);
+        _scrollPlayConsole = (ScrollView) findViewById(R.id.ScrollPlayConsole);
 
         tickTock = MediaPlayer.create(this, R.raw.ticktock);
         chessPiecesFall = MediaPlayer.create(this, R.raw.chesspiecesfall);
@@ -1458,13 +1459,23 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     public void addConsoleText(final String s) {
 
         final String s2 = _tvConsole.getText() + "\n\n" + s;
-        if (s2.length() > 2048) {
-            _tvConsole.append(s2.substring(s2.length() - 1024));
+        if (s2.length() > 8192) {
+            _tvConsole.setText(s2.substring(s2.length() - 4096));
         } else {
-            _tvConsole.append(s);
+            _tvConsole.append("\n\n" + s);
         }
-        _tvPlayConsole.setText(s);
 
+        final String s3 = _tvPlayConsole.getText() + "\n\n" + s;
+        if(s3.length() > 1024){
+            _tvPlayConsole.setText(s3.substring(s3.length() - 512));
+        } else {
+            _tvPlayConsole.append("\n\n" + s);
+        }
+        _scrollPlayConsole.post(new Runnable() {
+            public void run() {
+                _scrollPlayConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
+            }
+        });
     }
 
     private void confirmShow(String title, String text, String sendstring) {
