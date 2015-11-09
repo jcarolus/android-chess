@@ -1,5 +1,6 @@
 package jwtc.android.chess;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -48,6 +49,8 @@ public class PlayHubActivity extends ChessActivity {
             finish();
             return;
         }
+
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         setContentView(R.layout.playhub);
 
