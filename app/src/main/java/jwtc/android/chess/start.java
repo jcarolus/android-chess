@@ -6,6 +6,8 @@ import jwtc.android.chess.tools.pgntool;
 import jwtc.android.chess.ics.*;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +30,8 @@ public class start extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.start);
+
+
 	}
 
 	@Override
@@ -66,6 +70,19 @@ public class start extends ListActivity {
 				i.setClass(start.this, HtmlActivity.class);
 				i.putExtra(HtmlActivity.HELP_MODE, "help");
 				startActivity(i);
+			} else if (s.equals(getString(R.string.start_playhub))) {
+				String playHubPackageName = "com.playhub";
+				if (isAppInstalled(playHubPackageName)) {
+					i = getPackageManager().getLaunchIntentForPackage(playHubPackageName);
+					i.putExtra("gameEngine", getPackageName());
+					startActivity(i);
+				} else {
+					try {
+						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + playHubPackageName)));
+					} catch (android.content.ActivityNotFoundException activityNotFoundException) {
+						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + playHubPackageName)));
+					}
+				}
 			}
 
 		} catch (Exception ex) {
@@ -75,5 +92,16 @@ public class start extends ListActivity {
 		}
 	}
 
-   
+	private boolean isAppInstalled(String uri) {
+		PackageManager pm = getPackageManager();
+		boolean app_installed;
+		try {
+			pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+			app_installed = true;
+		}
+		catch (PackageManager.NameNotFoundException e) {
+			app_installed = false;
+		}
+		return app_installed;
+	}
 }

@@ -58,7 +58,7 @@
 				<data android:mimeType="application/x-chess-fen" />
 			</intent-filter>
   		</activity>
-		<activity android:name=".PlayHubActivity" android:screenOrientation="portrait" android:label="@string/app_name_play">
+		<activity android:name=".PlayHubActivity" android:label="@string/app_name_play">
 			<intent-filter>
 				<action android:name="playhub.game" />
 			</intent-filter>

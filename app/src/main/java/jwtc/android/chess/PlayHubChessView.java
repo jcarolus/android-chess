@@ -8,6 +8,8 @@ import com.playhub.GameInfoToReturnToPlayHub;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+
+import android.view.View;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -36,12 +38,12 @@ public class PlayHubChessView extends ChessView {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     if (fromUser) {
-                        int originalProcgress = progress;
+                        int originalProgress = progress;
                         if (_jni.getNumBoard() - 1 > progress)
                             progress++;
 
                         PlayHubChessView.this.jumptoMove(progress);
-                        if (_arrPGN.size() > originalProcgress) {
+                        if (_arrPGN.size() > originalProgress) {
                             disableControl();
                         } else {
                             if (canViewerPlay) {
@@ -64,6 +66,53 @@ public class PlayHubChessView extends ChessView {
             });
             _seekBar.setMax(1);
         }
+
+        ImageButton butNext = (ImageButton) playHubActivity.findViewById(R.id.ButtonNext);
+        if (butNext != null) {
+            //butNext.setFocusable(false);
+            butNext.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View arg0) {
+                    next();
+                    updateEnablity();
+                }
+            });
+            final RelativeLayout _layoutHistory = (RelativeLayout) playHubActivity.findViewById(R.id.LayoutHistory);
+
+            butNext.setOnLongClickListener(new View.OnLongClickListener() {    // Long press takes you to
+                @Override                                               // end of game
+                public boolean onLongClick(View view) {
+                    jumptoMove(_layoutHistory.getChildCount());
+                    updateEnablity();
+                    return true;
+                }
+            });
+
+            ImageButton butPrevious = (ImageButton) playHubActivity.findViewById(R.id.ButtonPrevious);
+            if (butPrevious != null) {
+                //butPrevious.setFocusable(false);
+                butPrevious.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View arg0) {
+                        previous();
+                        updateEnablity();
+                    }
+                });
+                butPrevious.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        jumptoMove(1);
+                        updateEnablity();
+                        return true;
+                    }
+                });
+            }
+        }
+
+        TextView _tvClockMe = (TextView) playHubActivity.findViewById(R.id.TextViewClockTimeMe);
+        TextView _tvClockOpp = (TextView) playHubActivity.findViewById(R.id.TextViewClockTimeOpp);
+
+        // no clocks in online play
+        _tvClockMe.setVisibility(View.GONE);
+        _tvClockOpp.setVisibility(View.GONE);
     }
 
     protected boolean requestMove(int from, int to)
@@ -147,5 +196,16 @@ public class PlayHubChessView extends ChessView {
         if (!canViewerPlay) {
             disableControl();
         }
+    }
+
+    public void updateEnablity() {
+        if (_arrPGN.size() > _jni.getNumBoard() - 1) {
+            disableControl();
+        } else {
+            if (canViewerPlay) {
+                enableControl();
+            }
+        }
+        PlayHubChessView.this.updateState();
     }
 }

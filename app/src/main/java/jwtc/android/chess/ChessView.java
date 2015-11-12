@@ -162,33 +162,35 @@ public class ChessView extends UI {
 
         _butPlay = (ImageButton) _parent.findViewById(R.id.ButtonPlay);
         //_butPlay.setFocusable(false);
-        _butPlay.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
-                if (m_bActive) {
-                    //Log.i("butPlay", _jni.getNumBoard() + "::" + _arrPGN.size());
+        if (_butPlay != null) {
+            _butPlay.setOnClickListener(new OnClickListener() {
+                public void onClick(View arg0) {
+                    if (m_bActive) {
+                        //Log.i("butPlay", _jni.getNumBoard() + "::" + _arrPGN.size());
 
-                    if (_jni.getNumBoard() < _arrPGN.size()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(_parent)
-                                .setTitle(_parent.getString(R.string.title_create_new_line))
-                                .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                play();
-                            }
-                        });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                    } else {
-                        play();
+                        if (_jni.getNumBoard() < _arrPGN.size()) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(_parent)
+                                    .setTitle(_parent.getString(R.string.title_create_new_line))
+                                    .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    play();
+                                }
+                            });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        } else {
+                            play();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         OnClickListener oclUndo = new OnClickListener() {
             public void onClick(View arg0) {
@@ -1163,10 +1165,12 @@ public class ChessView extends UI {
             }
         }
 
-        if (_playMode == HUMAN_HUMAN) {
-            _butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
-        } else {
-            _butPlay.setVisibility(View.VISIBLE);
+        if (_butPlay != null) {
+            if (_playMode == HUMAN_HUMAN) {
+                _butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
+            } else {
+                _butPlay.setVisibility(View.VISIBLE);
+            }
         }
 
         ///////////////////////////////////////////////////////////////////
@@ -1211,15 +1215,17 @@ public class ChessView extends UI {
     public void updateState() {
         super.updateState();
 
-        if (_progressPlay.getVisibility() == View.VISIBLE) {
-            if (m_bActive) {
-                _progressPlay.setVisibility(View.GONE);
-                _butPlay.setVisibility(View.VISIBLE);
-            }
-        } else {
-            if (false == m_bActive) {
-                _progressPlay.setVisibility(View.VISIBLE);
-                _butPlay.setVisibility(View.GONE);
+        if (_progressPlay != null) {
+            if (_progressPlay.getVisibility() == View.VISIBLE) {
+                if (m_bActive) {
+                    _progressPlay.setVisibility(View.GONE);
+                    _butPlay.setVisibility(View.VISIBLE);
+                }
+            } else {
+                if (false == m_bActive) {
+                    _progressPlay.setVisibility(View.VISIBLE);
+                    _butPlay.setVisibility(View.GONE);
+                }
             }
         }
 
