@@ -97,6 +97,22 @@ public class PlayHubActivity extends ChessActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("numBoard", _chessView.getJNI().getNumBoard());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        int numBoard = savedInstanceState.getInt("numBoard", -1);
+        if (numBoard != -1) {
+            _chessView.jumptoMove(numBoard);
+            _chessView.updateEnablity();
+        }
+    }
+
     private void loadPGN(String sPGN) {
         if (sPGN != null) {
             if (!_chessView.loadPGN(sPGN)) {
