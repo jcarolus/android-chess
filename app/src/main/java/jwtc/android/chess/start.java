@@ -99,7 +99,7 @@ public class start extends ListActivity {
 				String playHubPackageName = "com.playhub";
 				if (isAppInstalled(playHubPackageName)) {
 					i = getPackageManager().getLaunchIntentForPackage(playHubPackageName);
-					i.putExtra("gameEngine", getPackageName());
+					//i.putExtra("gameEngine", getPackageName());
 					startActivity(i);
 				} else {
 					try {

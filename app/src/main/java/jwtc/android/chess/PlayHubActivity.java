@@ -50,8 +50,6 @@ public class PlayHubActivity extends ChessActivity {
             return;
         }
 
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
         setContentView(R.layout.playhub);
 
         this.makeActionOverflowMenuShown();
