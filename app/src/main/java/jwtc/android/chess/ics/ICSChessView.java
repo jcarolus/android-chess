@@ -243,6 +243,7 @@ public class ICSChessView extends ChessViewBase {
                             break;
                     default: Log.e(TAG, "get_gameStartSound error");
                 }
+                _parent.bringAPPtoFront();
                 Log.i(TAG, "Play");
                 break;
             case VIEW_WATCH:

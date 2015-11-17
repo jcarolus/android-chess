@@ -1,5 +1,6 @@
 package jwtc.android.chess.ics;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -53,7 +54,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile, _FEN = "";
     private int _port, _serverType, _TimeWarning, _gameStartSound;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog, _gameStartFront;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -284,7 +285,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         ImageButton butClose = (ImageButton)findViewById(R.id.ButtonBoardClose);
         butClose.setOnClickListener(new OnClickListener() {
         	public void onClick(View arg0) {
-        		// TODO
         		unsetBoard();
         		switchToWelcomeView();
         	}
@@ -1520,6 +1520,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bEndGameDialog = prefs.getBoolean("ICSEndGameDialog", true);
 
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
+
+        _gameStartFront = prefs.getBoolean("ICSGameStartBringToFront", true);
         /////////////////////////////////////////////////////////////////
 
         if (_ficsHandle == null) {
@@ -1581,6 +1583,25 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             return false;
         }
         return true;
+    }
+
+    public void bringAPPtoFront(){
+
+        if (_gameStartFront) {
+
+            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasklist = am.getRunningTasks(10); // Number of tasks you want to get
+
+            if (!tasklist.isEmpty()) {
+                int nSize = tasklist.size();
+                for (int i = 0; i < nSize; i++) {
+                    ActivityManager.RunningTaskInfo taskinfo = tasklist.get(i);
+                    if (taskinfo.topActivity.getPackageName().equals("jwtc.android.chess")) {
+                        am.moveTaskToFront(taskinfo.id, 0);
+                    }
+                }
+            }
+        }
     }
 
     @Override

@@ -65,6 +65,8 @@
 <string name="prefs_icsendgamesummary">Al final de un juego, ¿quieres un ahorro de diálogo en Emergente?</string>
 <string name="pref_icsgamestartsound">Juego Sonido inicial</string>
 <string name="pref_icsgamestartsound_desc">Reproducir sonido cuando el juego comienza, o pérdida de la conexión</string>
+<string name="pref_icsgamestartfront">Inicia Juego Traer al frente</string>
+<string name="prefs_icsgamestartfrontsummary">intentar traer aplicación de ajedrez al frente cuando se inicia el juego</string>
 <string name="pref_puzzle_show_seekbar">Mostrar barra de búsqueda</string>
 <string name="pref_puzzle_show_seekbar_desc">Navegar rápidamente a través de rompecabezas con la barra de búsqueda</string>
 <string name="pref_localelanguage">Ajuste el idioma</string>
