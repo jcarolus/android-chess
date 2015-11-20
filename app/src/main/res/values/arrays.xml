@@ -3,7 +3,6 @@
 	<string-array name="start_menu">
 		<item>@string/start_play</item>
         <item>@string/start_ics</item>
-        <item>@string/start_playhub</item>
 		<item>@string/start_practice</item>
 		<item>@string/start_puzzles</item>
 		<item>@string/start_globalpreferences</item>
