@@ -64,6 +64,8 @@
 <string name="prefs_icsendgamesummary">At the end of a game, do you want a save dialog to popup?</string>
 <string name="pref_icsgamestartsound">Game Start Sound</string>
 <string name="pref_icsgamestartsound_desc">Play sound when game starts or loss of connection</string>
+<string name="pref_icsgamestartfront">Game Starts Bring to Front</string>
+<string name="prefs_icsgamestartfrontsummary">attempt to bring chess app to the front when the game starts</string>
 <string name="pref_puzzle_show_seekbar">Show seek bar</string>
 <string name="pref_puzzle_show_seekbar_desc">Quickly navigate through puzzles with seek bar</string>
 <string name="pref_localelanguage">Set The Language</string>

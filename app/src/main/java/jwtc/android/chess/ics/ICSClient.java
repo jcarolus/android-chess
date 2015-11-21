@@ -1,5 +1,6 @@
 package jwtc.android.chess.ics;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -51,9 +52,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     private TelnetSocket _socket;
     private Thread _workerTelnet;
-    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile, _FEN = "";
+    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
+            _sFile, _FEN = "", _whiteRating, _blackRating;
     private int _port, _serverType, _TimeWarning, _gameStartSound;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog, _gameStartFront;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -91,8 +93,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     // Suffocate (++++) seeking 30 30 unrated standard [black] m ("play 29" to respond)
     //Pattern _pattSeeking = Pattern.compile("(\\w+) \\((.+)\\) seeking (\\d+) (\\d+) (rated |unrated ?)(standard |blitz |lightning )(\\[white\\] |\\[black\\] )?(f |m )?\\(\"play (\\d+)\" to respond\\)");
 
-    private Pattern _pattSought;
-    private Pattern _pattGameRow;
+    private Pattern _pattSought, _pattGameRow;
     private Pattern _pattChat = Pattern.compile("(\\w+)(\\(\\w+\\))? tells you\\: (.+)");
 
     //1269.allko                    ++++.kaspalesweb(U)
@@ -284,7 +285,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         ImageButton butClose = (ImageButton)findViewById(R.id.ButtonBoardClose);
         butClose.setOnClickListener(new OnClickListener() {
         	public void onClick(View arg0) {
-        		// TODO
         		unsetBoard();
         		switchToWelcomeView();
         	}
@@ -1050,6 +1050,25 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
                     /////////////////////////////////////////////////////////////////
                     // game created
+                    else if (line.contains("Creating:")){
+                        //               1         2       3         4      5      6   7 8
+                        //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
+                        Pattern _pattCreateGame = Pattern.compile("Creating: (\\w+) (\\(.{3,4}\\)) (\\w+) (\\(.{3,4}\\)) (\\w+) (\\w+) (\\d+) (\\d+)");
+                        Matcher mat = _pattCreateGame.matcher(line);
+
+                        if (mat.matches()){
+                            _whiteRating = mat.group(2);
+                            _whiteRating = _whiteRating.replaceAll("[()]", "");
+                            if (_whiteRating.equals("++++")){
+                                _whiteRating = "UNR";
+                            }
+                            _blackRating = mat.group(4);
+                            _blackRating = _blackRating.replaceAll("[()]", "");
+                            if (_blackRating.equals("++++")){
+                                _blackRating = "UNR";
+                            }
+                        }
+                    }
                     else if (line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
                         Pattern p = Pattern.compile("\\{Game (\\d+) .*");
                         Matcher m = p.matcher(line);
@@ -1520,6 +1539,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bEndGameDialog = prefs.getBoolean("ICSEndGameDialog", true);
 
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
+
+        _gameStartFront = prefs.getBoolean("ICSGameStartBringToFront", true);
         /////////////////////////////////////////////////////////////////
 
         if (_ficsHandle == null) {
@@ -1576,11 +1597,38 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         return _gameStartSound;
     }
 
+    public String get_whiteRating(){
+        return _whiteRating;
+    }
+
+    public String get_blackRating(){
+        return _blackRating;
+    }
+
     public boolean isConnected() {
         if (_socket == null || _workerTelnet == null || (false == _workerTelnet.isAlive()) || (false == _bInICS) || (false == _socket.isConnected())) {
             return false;
         }
         return true;
+    }
+
+    public void bringAPPtoFront(){
+
+        if (_gameStartFront) {
+
+            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasklist = am.getRunningTasks(10); // Number of tasks you want to get
+
+            if (!tasklist.isEmpty()) {
+                int nSize = tasklist.size();
+                for (int i = 0; i < nSize; i++) {
+                    ActivityManager.RunningTaskInfo taskinfo = tasklist.get(i);
+                    if (taskinfo.topActivity.getPackageName().equals("jwtc.android.chess")) {
+                        am.moveTaskToFront(taskinfo.id, 0);
+                    }
+                }
+            }
+        }
     }
 
     @Override
