@@ -483,22 +483,22 @@ public class ICSChessView extends ChessViewBase {
 
 
             st.nextToken();
-            String sMove = st.nextToken();  // algebraic last move
-            st.nextToken();  // machine last move
+            String sMove = st.nextToken();  // machine notation move
             st.nextToken();  // time per move
+            String sLastMoveDisplay = st.nextToken();  // algebraic notation move
 
 
             //int iFrom = -1;
             if (false == sMove.equals("none") && sMove.length() > 2) {
 
-                _tvLastMove.setText(_iTurn==1 ? ".." + sMove: sMove);  // display last move
+                _tvLastMove.setText(_iTurn==1 ? ".." + sLastMoveDisplay: sLastMoveDisplay);  // display last move
 
-                if (sMove.equals("O-O")) {
+                if (sMove.equals("o-o")) {
                     if (_iTurn == BoardConstants.WHITE)
                         m_iTo = Pos.fromString("g8");
                     else
                         m_iTo = Pos.fromString("g1");
-                } else if (sMove.equals("O-O-O")) {
+                } else if (sMove.equals("o-o-o")) {
                     if (_iTurn == BoardConstants.WHITE)
                         m_iTo = Pos.fromString("c8");
                     else
