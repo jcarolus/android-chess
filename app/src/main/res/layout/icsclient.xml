@@ -15,7 +15,7 @@
 	     >
 	     	 <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 		    	android:id="@+id/TablePlayerTop" 
-		    	android:stretchColumns="1"
+		    	android:stretchColumns="2"
 		    	android:layout_marginBottom="2dip"
 		    >
 		    	<TableRow>
@@ -27,9 +27,15 @@
 					/>
 				    <TextView android:text="@string/ics_playertwo" android:id="@+id/TextViewTop"
 				    	android:layout_height="wrap_content"
-				    	android:layout_width="fill_parent"   
+				    	android:layout_width="wrap_content"
 				    	style="@style/MyHeaderTextStyle"
-				    />	
+				    />
+					<TextView android:text="----" android:id="@+id/TextViewICSTwoRating"
+						android:layout_height="wrap_content"
+						android:layout_width="fill_parent"
+						style="@style/MyHeaderTextStyle"
+						android:layout_marginLeft="3dip"
+					/>
 				     <TextView android:id="@+id/TextViewICSBoardNum"
 						android:text="# 0"
 						style="@style/MyHeaderTextStyle"
@@ -52,7 +58,7 @@
 		    <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 		    	android:id="@+id/TablePlayerBottom" android:layout_below="@id/includeboard"
 		    	android:layout_marginTop="2dip"
-		    	android:stretchColumns="1"
+		    	android:stretchColumns="2"
 		    >
 		    	<TableRow>
 			    	<TextView android:id="@+id/TextViewClockBottom"
@@ -63,11 +69,17 @@
 					/>
 				    <TextView android:text="@string/ics_playerone" android:id="@+id/TextViewBottom"
 				    	android:layout_height="wrap_content" 
-				    	android:layout_width="fill_parent"  
+				    	android:layout_width="wrap_content"
 				    	style="@style/MyHeaderTextStyle"
 				    />
+					<TextView android:text="----" android:id="@+id/TextViewICSOneRating"
+							  android:layout_height="wrap_content"
+							  android:layout_width="fill_parent"
+							  style="@style/MyHeaderTextStyle"
+							  android:layout_marginLeft="3dip"
+					/>
 				    <TextView android:id="@+id/TextViewICSBoardLastMove"
-						android:text="./.-."
+						android:text="---"
 						style="@style/MyNormalTextStyle"
 						android:layout_width="70dip" android:layout_height="wrap_content"
 					/>

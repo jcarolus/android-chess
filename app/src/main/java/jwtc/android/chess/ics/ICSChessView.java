@@ -32,7 +32,8 @@ public class ICSChessView extends ChessViewBase {
 
     private JNI _jni;
     //private Button _butAction;
-    private TextView _tvPlayerTop, _tvPlayerBottom, _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove;
+    private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
+            _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove;
 
     //private EditText _editChat;
     private Button _butConfirmMove, _butCancelMove;
@@ -93,6 +94,9 @@ public class ICSChessView extends ChessViewBase {
 
         _tvPlayerTop = (TextView) _activity.findViewById(R.id.TextViewTop);
         _tvPlayerBottom = (TextView) _activity.findViewById(R.id.TextViewBottom);
+
+        _tvPlayerTopRating = (TextView) _activity.findViewById(R.id.TextViewICSTwoRating);
+        _tvPlayerBottomRating = (TextView) _activity.findViewById(R.id.TextViewICSOneRating);
 
         _tvClockTop = (TextView) _activity.findViewById(R.id.TextViewClockTop);
         _tvClockBottom = (TextView) _activity.findViewById(R.id.TextViewClockBottom);
@@ -463,31 +467,37 @@ public class ICSChessView extends ChessViewBase {
 
             if (_flippedBoard) {
                 _tvPlayerTop.setText(_whitePlayer);
+                _tvPlayerTopRating.setText(_parent.get_whiteRating());
                 _tvPlayerBottom.setText(_blackPlayer);
+                _tvPlayerBottomRating.setText(_parent.get_blackRating());
                 _tvClockTop.setText(parseTime(_iWhiteRemaining));
                 _tvClockBottom.setText(parseTime(_iBlackRemaining));
             } else {
                 _tvPlayerTop.setText(_blackPlayer);
+                _tvPlayerTopRating.setText(_parent.get_blackRating());
                 _tvPlayerBottom.setText(_whitePlayer);
+                _tvPlayerBottomRating.setText(_parent.get_whiteRating());
                 _tvClockTop.setText(parseTime(_iBlackRemaining));
                 _tvClockBottom.setText(parseTime(_iWhiteRemaining));
             }
 
-            // the last move
+
             st.nextToken();
-            String sMove = st.nextToken();
+            st.nextToken();  // machine last move
+            st.nextToken();  // time per move
+            String sMove = st.nextToken();  // algebraic last move
 
             //int iFrom = -1;
-            if (false == sMove.equals("none") && sMove.length() > 2) {
+            if (false == sMove.equals("none") && sMove.length() > 1) {
 
-                _tvLastMove.setText(sMove);
+                _tvLastMove.setText(_iTurn==1 ? ".." + sMove: sMove);  // display last move
 
-                if (sMove.equals("o-o")) {
+                if (sMove.equals("O-O")) {
                     if (_iTurn == BoardConstants.WHITE)
                         m_iTo = Pos.fromString("g8");
                     else
                         m_iTo = Pos.fromString("g1");
-                } else if (sMove.equals("o-o-o")) {
+                } else if (sMove.equals("O-O-O")) {
                     if (_iTurn == BoardConstants.WHITE)
                         m_iTo = Pos.fromString("c8");
                     else
