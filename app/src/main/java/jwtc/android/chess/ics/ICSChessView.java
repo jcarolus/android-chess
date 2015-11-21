@@ -483,12 +483,13 @@ public class ICSChessView extends ChessViewBase {
 
 
             st.nextToken();
+            String sMove = st.nextToken();  // algebraic last move
             st.nextToken();  // machine last move
             st.nextToken();  // time per move
-            String sMove = st.nextToken();  // algebraic last move
+
 
             //int iFrom = -1;
-            if (false == sMove.equals("none") && sMove.length() > 1) {
+            if (false == sMove.equals("none") && sMove.length() > 2) {
 
                 _tvLastMove.setText(_iTurn==1 ? ".." + sMove: sMove);  // display last move
 
