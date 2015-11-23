@@ -51,7 +51,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     private TelnetSocket _socket;
     private Thread _workerTelnet;
-    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd, _sFile, _FEN = "";
+    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
+            _sFile, _FEN = "", _whiteRating, _blackRating;
     private int _port, _serverType, _TimeWarning, _gameStartSound;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog, _gameStartFront;
     private Button _butLogin;
@@ -96,8 +97,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     // Suffocate (++++) seeking 30 30 unrated standard [black] m ("play 29" to respond)
     //Pattern _pattSeeking = Pattern.compile("(\\w+) \\((.+)\\) seeking (\\d+) (\\d+) (rated |unrated ?)(standard |blitz |lightning )(\\[white\\] |\\[black\\] )?(f |m )?\\(\"play (\\d+)\" to respond\\)");
 
-    private Pattern _pattSought;
-    private Pattern _pattGameRow;
+    private Pattern _pattSought, _pattGameRow;
     private Pattern _pattChat = Pattern.compile("(\\w+)(\\(\\w+\\))? tells you\\: (.+)");
 
     //1269.allko                    ++++.kaspalesweb(U)
@@ -1115,6 +1115,25 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
                     /////////////////////////////////////////////////////////////////
                     // game created
+                    else if (line.contains("Creating:")){
+                        //               1         2       3         4      5      6   7 8
+                        //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
+                        Pattern _pattCreateGame = Pattern.compile("Creating: (\\w+) (\\(.{3,4}\\)) (\\w+) (\\(.{3,4}\\)) (\\w+) (\\w+) (\\d+) (\\d+)");
+                        Matcher mat = _pattCreateGame.matcher(line);
+
+                        if (mat.matches()){
+                            _whiteRating = mat.group(2);
+                            _whiteRating = _whiteRating.replaceAll("[()]", "");
+                            if (_whiteRating.equals("++++")){
+                                _whiteRating = "UNR";
+                            }
+                            _blackRating = mat.group(4);
+                            _blackRating = _blackRating.replaceAll("[()]", "");
+                            if (_blackRating.equals("++++")){
+                                _blackRating = "UNR";
+                            }
+                        }
+                    }
                     else if (line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
                         Pattern p = Pattern.compile("\\{Game (\\d+) .*");
                         Matcher m = p.matcher(line);
@@ -1687,6 +1706,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public int get_gameStartSound(){
         return _gameStartSound;
+    }
+
+    public String get_whiteRating(){
+        return _whiteRating;
+    }
+
+    public String get_blackRating(){
+        return _blackRating;
     }
 
     public boolean isConnected() {
