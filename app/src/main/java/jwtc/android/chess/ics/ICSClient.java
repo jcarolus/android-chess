@@ -47,7 +47,6 @@ import org.json.JSONException;
 
 import jwtc.android.chess.*;
 
-
 public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     private TelnetSocket _socket;
@@ -60,6 +59,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 //	public ICSChatDlg _dlgChat;
 
     private EditText _editHandle, _editPwd, _editConsole;
+
+    private Spinner _spinnerHandles;
+    private ArrayAdapter<String> _adapterHandles;
+    private ArrayList<String> _arrayPasswords;
+
     //private EditText _editPrompt;
     private ListView _listChallenges, _listPlayers, _listGames, _listStored;
     private ICSChessView _view;
@@ -339,6 +343,59 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _editHandle = (EditText) findViewById(R.id.EditICSHandle);
 
         _editPwd = (EditText) findViewById(R.id.EditICSPwd);
+
+        _spinnerHandles = (Spinner) findViewById(R.id.SpinnerLoginPresets);
+
+        _spinnerHandles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                _editHandle.setText(_spinnerHandles.getSelectedItem().toString());
+                _editPwd.setText(_arrayPasswords.get(position));
+                if (_arrayPasswords.get(position).length() < 2){
+                    _editPwd.setText("");
+                }
+                Log.d(TAG, _spinnerHandles.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+
+        _spinnerHandles.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+
+                new AlertDialog.Builder(ICSClient.this)
+                        .setTitle("Delete entry")
+                        .setMessage("Are you sure you want to delete this entry?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                String newData = _spinnerHandles.getSelectedItem().toString();
+                                _adapterHandles.remove(newData);
+                                _adapterHandles.notifyDataSetChanged();
+                                _arrayPasswords.remove(_spinnerHandles.getSelectedItemPosition());
+                                _editHandle.setText("");
+                                _editPwd.setText("");
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+
+
+
+                return true;
+            }
+        });
 
         _butLogin = (Button) findViewById(R.id.ButICSLogin);
         if (_butLogin != null) {
@@ -667,6 +724,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             globalToast(getString(R.string.msg_ics_enter_password));
             return;
         }
+
+        // @TODO
+        // Look up the handle in the _adapterHandles
+        // if it is already there:
+        //   replace the password in _adapterPasswords at the index that was found
+        // otherwise
+        //   add new entry in both adapters
+
 
         // FICS
         //209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
@@ -1522,6 +1587,49 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
 
         _gameStartFront = prefs.getBoolean("ICSGameStartBringToFront", true);
+
+        /////////////////////////////////////////////
+        _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        _arrayPasswords = new ArrayList<String>();
+
+        _adapterHandles.add(_ficsHandle);
+        _arrayPasswords.add(_ficsPwd);
+        try {
+            JSONArray jArray = new JSONArray(prefs.getString("ics_handle_array", "guest"));
+            JSONArray jArrayPasswords = new JSONArray(prefs.getString("ics_password_array", ""));
+            for(int i = 0; i < jArray.length(); i++){
+                _adapterHandles.add(jArray.getString(i));
+                _arrayPasswords.add(jArrayPasswords.getString(i));
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        int t=0;
+        boolean g=false;
+        for(int i = 0; i < _adapterHandles.getCount(); i++) {
+                String x = _adapterHandles.getItem(i).toString();
+                if (x.equals(_ficsHandle)) {
+                    t++;
+                }
+                if (x.equals("guest")){
+                    g = true;
+                }
+        }
+        while (t > 1) {
+            _adapterHandles.remove(_ficsHandle);
+            _arrayPasswords.remove(_ficsPwd);
+            t--;
+        }
+        if (g==false){
+            _adapterHandles.add("guest");
+            _arrayPasswords.add(" ");
+        }
+
+        _spinnerHandles.setAdapter(_adapterHandles);
+
+
         /////////////////////////////////////////////////////////////////
 
         if (_ficsHandle == null) {
@@ -1547,6 +1655,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
             _editHandle.setText(_ficsHandle);
             _editPwd.setText(_ficsPwd);
+            if (_ficsPwd.length() < 2){
+                _editPwd.setText("");
+            }
 
             /////////////////////////////////////////////////////
             // DEBUG
@@ -1619,6 +1730,17 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
         editor.putString("ics_handle", _ficsHandle);
         editor.putString("ics_password", _ficsPwd);
+
+
+
+        JSONArray jArray = new JSONArray();
+        JSONArray jArrayPasswords = new JSONArray();
+        for(int i = 0; i < _adapterHandles.getCount(); i++){
+            jArray.put(_adapterHandles.getItem(i));
+            jArrayPasswords.put(_arrayPasswords.get(i));
+        }
+        editor.putString("ics_handle_array", jArray.toString());
+        editor.putString("ics_password_array", jArrayPasswords.toString());
 
         editor.commit();
 
