@@ -272,6 +272,8 @@ El correo electrónico no se pudo crear.
 
 <string name="ics_client_handle">Nombre de usuario</string>
 <string name="ics_client_password">Contraseña</string>
+<string name="ics_client_presets">Presets</string>
+<string name="ics_client_server">Servidor</string>
 
 <string name="ics_menu_players">Jugadores</string>
 <string name="ics_menu_games">Juegos</string>

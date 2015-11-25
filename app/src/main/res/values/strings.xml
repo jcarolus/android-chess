@@ -272,6 +272,8 @@ E-mail could not be created.
 
 <string name="ics_client_handle">Handle</string>
 <string name="ics_client_password">Password</string>
+<string name="ics_client_presets">Presets</string>
+<string name="ics_client_server">Server</string>
 
 <string name="ics_menu_players">Players</string>
 <string name="ics_menu_games">Games</string>

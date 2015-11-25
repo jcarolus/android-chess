@@ -352,7 +352,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 _editHandle.setText(_spinnerHandles.getSelectedItem().toString());
                 _editPwd.setText(_arrayPasswords.get(position));
-                if (_arrayPasswords.get(position).length() < 2){
+                if (_arrayPasswords.get(position).length() < 2) {
                     _editPwd.setText("");
                 }
                 Log.d(TAG, _spinnerHandles.getSelectedItem().toString());
@@ -360,18 +360,18 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
+                Log.d(TAG, "nothing selected in spinner");
             }
         });
 
-        _spinnerHandles.setOnLongClickListener(new View.OnLongClickListener() {
+        /////////////////////////
+        final Handler actionHandler = new Handler();
+        final Runnable runnable = new Runnable() {
             @Override
-            public boolean onLongClick(View view) {
-
-
+            public void run() {
                 new AlertDialog.Builder(ICSClient.this)
                         .setTitle("Delete entry")
-                        .setMessage("Are you sure you want to delete this entry?")
+                        .setMessage("Are you sure you want to delete " + _spinnerHandles.getSelectedItem().toString() + "?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 String newData = _spinnerHandles.getSelectedItem().toString();
@@ -389,13 +389,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         })
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
+            }
+        };
 
-
-
-
-                return true;
+        _spinnerHandles.setOnTouchListener(new View.OnTouchListener() { // simulate long press on spinner
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    actionHandler.postDelayed(runnable, 650);
+                } else if(event.getAction() == MotionEvent.ACTION_UP){
+                    actionHandler.removeCallbacks(runnable);
+                }
+                return false;
             }
         });
+        /////////////////////
 
         _butLogin = (Button) findViewById(R.id.ButICSLogin);
         if (_butLogin != null) {
@@ -1611,8 +1619,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         _arrayPasswords = new ArrayList<String>();
 
-        _adapterHandles.add(_ficsHandle);
-        _arrayPasswords.add(_ficsPwd);
+        if(_ficsHandle != null) {
+            _adapterHandles.add(_ficsHandle);
+            _arrayPasswords.add(_ficsPwd);
+        }
+
         try {
             JSONArray jArray = new JSONArray(prefs.getString("ics_handle_array", "guest"));
             JSONArray jArrayPasswords = new JSONArray(prefs.getString("ics_password_array", ""));
@@ -1625,28 +1636,35 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             e.printStackTrace();
         }
 
-        int t=0;
-        boolean g=false;
-        for(int i = 0; i < _adapterHandles.getCount(); i++) {
+        int t= 0;
+        boolean g = false;
+        for (int i = 0; i < _adapterHandles.getCount(); i++) {
                 String x = _adapterHandles.getItem(i).toString();
                 if (x.equals(_ficsHandle)) {
                     t++;
                 }
                 if (x.equals("guest")){
-                    g = true;
+                    g = true;  // flag to check if guest is in the spinner
                 }
         }
-        while (t > 1) {
-            _adapterHandles.remove(_ficsHandle);
-            _arrayPasswords.remove(_ficsPwd);
-            t--;
+        if (t > 1) {  // work around for remove - delete every occurrence and add latest - this will add latest password
+            while (t > 0) {
+                _adapterHandles.remove(_ficsHandle);
+                _arrayPasswords.remove(_adapterHandles.getPosition(_ficsHandle)+1);
+                t--;
+            }
+            _adapterHandles.add(_ficsHandle);
+            _arrayPasswords.add(_ficsPwd);
         }
+
         if (g==false){
-            _adapterHandles.add("guest");
+            _adapterHandles.add("guest"); // if no guest then add guest
             _arrayPasswords.add(" ");
         }
 
         _spinnerHandles.setAdapter(_adapterHandles);
+
+        _spinnerHandles.setSelection(_adapterHandles.getPosition(_ficsHandle));
 
 
         /////////////////////////////////////////////////////////////////
