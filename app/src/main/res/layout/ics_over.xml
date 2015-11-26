@@ -17,9 +17,12 @@
             android:layout_gravity="right"/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tvGameResult"/>
+            android:id="@+id/tvGameResult"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
+            android:textSize="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,7 +31,7 @@
             android:text="@string/ics_messages"
             android:id="@+id/textView"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
 
         <Button
             android:layout_width="wrap_content"

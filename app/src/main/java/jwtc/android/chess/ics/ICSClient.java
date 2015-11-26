@@ -1194,6 +1194,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         } else {
                             text = getString(R.string.ics_game_over);
                         }
+                        _dlgOver.updateGRtext(text);
                         gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
 
                         if(line.contains(_handle)){

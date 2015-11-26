@@ -34,9 +34,9 @@ public class ICSGameOverDlg extends Dialog {
             }
         });
 
-        /*_tvGameResult = (TextView)findViewById(R.id.tvGameResult);
+        _tvGameResult = (TextView)findViewById(R.id.tvGameResult);
         _tvGameResult.setGravity(Gravity.CENTER);
-        _tvGameResult.setText("Game Result Status");*/
+
 
         _butGoodGame = (Button)findViewById(R.id.ButtonGameGoodGame);
         _butGoodGame.setOnClickListener(new View.OnClickListener() {
@@ -77,5 +77,9 @@ public class ICSGameOverDlg extends Dialog {
 
         _butGoodGame.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
         _butRematch.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
+    }
+
+    public void updateGRtext(String GRText){
+        _tvGameResult.setText(GRText);
     }
 }
