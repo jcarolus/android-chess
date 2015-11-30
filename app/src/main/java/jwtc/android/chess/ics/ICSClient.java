@@ -1891,17 +1891,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             }
             gameToast(getString(R.string.ics_disconnected), false);
 
-            new AlertDialog.Builder(ICSClient.this)
-                    .setTitle(R.string.title_error)
-                    .setMessage("Connection to server is broken.")
-                    .setPositiveButton(getString(R.string.alert_ok),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                    finish();
-                                }
-                            })
-                    .show();
+            try {
+                new AlertDialog.Builder(ICSClient.this)
+                        .setTitle(R.string.title_error)
+                        .setMessage("Connection to server is broken.")
+                        .setPositiveButton(getString(R.string.alert_ok),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        dialog.dismiss();
+                                        finish();
+                                    }
+                                })
+                        .show();
+            } catch(Exception ex){
+                Log.e(TAG, ex.toString());
+            }
         }
 
     }
@@ -2063,7 +2067,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public void soundChessPiecesFall(){
-        chessPiecesFall.start();
+        try {
+            chessPiecesFall.start();
+        } catch(Exception ex){
+            Log.e(TAG, ex.toString());
+        }
     }
 
     public void vibration(int seq){

@@ -353,8 +353,9 @@ public class ICSChessView extends ChessViewBase {
             int p = 0, t = 0, index = -1; // !!
 
             for (int i = 0; i < 64; i++) {
-                if (i % 8 == 0)
+                if (i % 8 == 0) {
                     index++;
+                }
                 char c = line.charAt(index++);
                 if (c != '-') {
                     if (c == 'k' || c == 'K') {
