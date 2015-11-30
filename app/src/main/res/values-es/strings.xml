@@ -180,7 +180,7 @@
 <string name="state_draw_repeat">dibujar (3-plegar la repetición)</string>
 <string name="state_mate">jaque mate</string>
 <string name="state_check">comprobar</string>
-<string name="state_time">tiempo</string>
+<string name="state_time">prendas a tiempo</string>
 <string name="state_resigned">resignado</string>
 <string name="state_aborted">abortado</string>
 <string name="state_adjourned">suspendido</string>
