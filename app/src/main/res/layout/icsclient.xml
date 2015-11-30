@@ -205,17 +205,24 @@
 						android:gravity="center" 
 					>
 						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
-							<TextView android:text="Server" style="@style/MyLabelTextStyle"
+							<TextView android:text="@string/ics_client_server" style="@style/MyLabelTextStyle"
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 							<TextView android:text="FICS" style="@style/MyLabelTextStyle"
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+						</TableRow>
+						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
+							<TextView android:text="@string/ics_client_presets" style="@style/MyLabelTextStyle"/>
+							<Spinner android:id="@+id/SpinnerLoginPresets"
+								android:layout_width="wrap_content" android:layout_height="wrap_content"
+								android:layout_marginBottom="10dip">
+							</Spinner>
 						</TableRow>
 						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
 							<TextView android:text="@string/ics_client_handle" style="@style/MyLabelTextStyle"
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 							<EditText android:text="guest" android:id="@+id/EditICSHandle" 
 								android:layout_width="wrap_content" android:layout_height="wrap_content"
-								android:minWidth="100dip" android:singleLine="true"
+								android:minWidth="100dip" android:singleLine="true" android:imeOptions="actionNext"
 							/>
 						</TableRow>
 						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">
@@ -223,7 +230,8 @@
 								android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 							<EditText android:id="@+id/EditICSPwd" 
 								android:layout_width="wrap_content" android:layout_height="wrap_content" android:password="true"
-								android:minWidth="100dip" android:singleLine="true" android:imeOptions="actionDone"
+								android:minWidth="100dip" android:singleLine="true"
+								android:layout_marginBottom="10dip" android:imeOptions="actionDone"
 							/>
 						</TableRow>
 						<TableRow style="@style/MyRowStyle" android:minHeight="50dip">

@@ -277,6 +277,8 @@ L\'email potrebbe non essere stata creata.
 
 <string name="ics_client_handle">Nome utente</string>
 <string name="ics_client_password">Password</string>
+<string name="ics_client_presets">Presets</string>
+<string name="ics_client_server">Server</string>
 
 <string name="ics_menu_players">Giocatori</string>
 <string name="ics_menu_games">Partite</string>
