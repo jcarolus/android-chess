@@ -459,6 +459,8 @@ public class ICSChessView extends ChessViewBase {
             }
             _bOngoingGame = true;
 
+            Log.i(TAG, "still going strong 1");
+
             int iTime = Integer.parseInt(st.nextToken());
             int iIncrement = Integer.parseInt(st.nextToken());
             st.nextToken();
@@ -466,28 +468,38 @@ public class ICSChessView extends ChessViewBase {
             _iWhiteRemaining = Integer.parseInt(st.nextToken());
             _iBlackRemaining = Integer.parseInt(st.nextToken());
 
+            Log.i(TAG, "still going strong 2");
+
             if (_flippedBoard) {
                 _tvPlayerTop.setText(_whitePlayer);
-                _tvPlayerTopRating.setText(_parent.get_whiteRating());
+                if(_tvPlayerTopRating != null) {
+                    _tvPlayerTopRating.setText(_parent.get_whiteRating());
+                }
                 _tvPlayerBottom.setText(_blackPlayer);
-                _tvPlayerBottomRating.setText(_parent.get_blackRating());
+                if(_tvPlayerBottomRating != null) {
+                    _tvPlayerBottomRating.setText(_parent.get_blackRating());
+                }
                 _tvClockTop.setText(parseTime(_iWhiteRemaining));
                 _tvClockBottom.setText(parseTime(_iBlackRemaining));
             } else {
                 _tvPlayerTop.setText(_blackPlayer);
-                _tvPlayerTopRating.setText(_parent.get_blackRating());
+                if(_tvPlayerTopRating != null) {
+                    _tvPlayerTopRating.setText(_parent.get_blackRating());
+                }
                 _tvPlayerBottom.setText(_whitePlayer);
-                _tvPlayerBottomRating.setText(_parent.get_whiteRating());
+                if(_tvPlayerBottomRating != null) {
+                    _tvPlayerBottomRating.setText(_parent.get_whiteRating());
+                }
                 _tvClockTop.setText(parseTime(_iBlackRemaining));
                 _tvClockBottom.setText(parseTime(_iWhiteRemaining));
             }
 
+            Log.i(TAG, "still going strong 3");
 
             st.nextToken();
             String sMove = st.nextToken();  // machine notation move
             st.nextToken();  // time per move
             String sLastMoveDisplay = st.nextToken();  // algebraic notation move
-
 
             //int iFrom = -1;
             if (false == sMove.equals("none") && sMove.length() > 2) {

@@ -1727,11 +1727,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public String get_whiteRating(){
-        return _whiteRating;
+        return _whiteRating == null ? "" : _whiteRating;
     }
 
     public String get_blackRating(){
-        return _blackRating;
+        return _blackRating == null ? "" : _blackRating;
     }
 
     public boolean isConnected() {
