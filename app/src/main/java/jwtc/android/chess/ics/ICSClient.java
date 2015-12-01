@@ -733,14 +733,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             return;
         }
 
-        // @TODO
-        // Look up the handle in the _adapterHandles
-        // if it is already there:
-        //   replace the password in _adapterPasswords at the index that was found
-        // otherwise
-        //   add new entry in both adapters
-
-
         // FICS
         //209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
         //101 ++++ GuestYYLN          16   0 unrated standard               0-9999 mf
@@ -1055,31 +1047,23 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         //               1         2       3         4      5      6   7 8
                         //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
                         Pattern _pattGameInfo1 = Pattern.compile("\\{?\\w+\\s?\\d+?: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
-                        //Pattern _pattGameInfo2 = Pattern.compile("\\w+: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
+                        Pattern _pattGameInfo2 = Pattern.compile("\\w+: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
 
                         Matcher mat = _pattGameInfo1.matcher(line);
-                        //Matcher mat2 = _pattGameInfo2.matcher(line);
+                        Matcher mat2 = _pattGameInfo2.matcher(line);
 
-                        Log.d(TAG, "mat is ----->" + mat);
-
-                        if (mat.matches()){
-                            Log.d(TAG, "_mat matches");
-                            _whiteHandle = mat.group(1);
-                            _whiteRating = mat.group(2);
+                        if (mat.matches() || mat2.matches()){
+                            _whiteHandle = mat.matches() ? mat.group(1) : mat2.group(1);
+                            _whiteRating = mat.matches() ? mat.group(2) : mat2.group(2);
                             if (_whiteRating.equals("++++")){
                                 _whiteRating = "UNR";
                             }
-                            _blackHandle = mat.group(3);
-                            _blackRating = mat.group(4);
+                            _blackHandle = mat.matches() ? mat.group(3) : mat2.group(3);
+                            _blackRating = mat.matches() ? mat.group(4) : mat2.group(4);
                             if (_blackRating.equals("++++")){
                                 _blackRating = "UNR";
                             }
                         }
-                        Log.d(TAG, "1074 line is "+ line);
-                        Log.d(TAG, "_whiteHandle is " + _whiteHandle);
-                        Log.d(TAG, "_whiteRating is " + _whiteRating);
-                        Log.d(TAG, "_blackHandle is " + _blackHandle);
-                        Log.d(TAG, "_blackRating is " + _blackRating);
                     }
                     // board representation
                     if (line.indexOf("<12> ") >= 0) {
