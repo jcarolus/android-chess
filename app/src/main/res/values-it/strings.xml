@@ -184,7 +184,7 @@
 <string name="state_draw_repeat">patta (3 ripetizioni)</string>
 <string name="state_mate">matto</string>
 <string name="state_check">scacco</string>
-<string name="state_time">tempo</string>
+<string name="state_time">pegni sul tempo</string>
 <string name="state_resigned">abbandonata</string>
 <string name="state_aborted">interrotta</string>
 <string name="state_adjourned">aggiornata</string>

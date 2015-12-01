@@ -52,7 +52,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
-            _sFile, _FEN = "", _whiteRating, _blackRating;
+            _sFile, _FEN = "", _whiteRating, _blackRating, _whiteWatchName, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog, _gameStartFront;
     private Button _butLogin;
@@ -733,14 +733,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             return;
         }
 
-        // @TODO
-        // Look up the handle in the _adapterHandles
-        // if it is already there:
-        //   replace the password in _adapterPasswords at the index that was found
-        // otherwise
-        //   add new entry in both adapters
-
-
         // FICS
         //209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
         //101 ++++ GuestYYLN          16   0 unrated standard               0-9999 mf
@@ -1051,6 +1043,28 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     // lines can still contain prompt!
                     //   _prompt
                     //////////////////////////////////////////////////////////////
+                    if (line.contains("Game") || line.contains("Creating:") || line.contains("Issuing:") || line.contains("Challenge:")){
+                        //               1         2       3         4      5      6   7 8
+                        //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
+                        Pattern _pattGameInfo1 = Pattern.compile("\\{?\\w+\\s?\\d+?: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
+                        Pattern _pattGameInfo2 = Pattern.compile("\\w+: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
+
+                        Matcher mat = _pattGameInfo1.matcher(line);
+                        Matcher mat2 = _pattGameInfo2.matcher(line);
+
+                        if (mat.matches() || mat2.matches()){
+                            _whiteHandle = mat.matches() ? mat.group(1) : mat2.group(1);
+                            _whiteRating = mat.matches() ? mat.group(2) : mat2.group(2);
+                            if (_whiteRating.equals("++++")){
+                                _whiteRating = "UNR";
+                            }
+                            _blackHandle = mat.matches() ? mat.group(3) : mat2.group(3);
+                            _blackRating = mat.matches() ? mat.group(4) : mat2.group(4);
+                            if (_blackRating.equals("++++")){
+                                _blackRating = "UNR";
+                            }
+                        }
+                    }
                     // board representation
                     if (line.indexOf("<12> ") >= 0) {
                         // this can be multiple lines!
@@ -1123,25 +1137,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
                     /////////////////////////////////////////////////////////////////
                     // game created
-                    else if (line.contains("Creating:")){
-                        //               1         2       3         4      5      6   7 8
-                        //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
-                        Pattern _pattCreateGame = Pattern.compile("Creating: (\\w+) (\\(.{3,4}\\)) (\\w+) (\\(.{3,4}\\)) (\\w+) (\\w+) (\\d+) (\\d+)");
-                        Matcher mat = _pattCreateGame.matcher(line);
-
-                        if (mat.matches()){
-                            _whiteRating = mat.group(2);
-                            _whiteRating = _whiteRating.replaceAll("[()]", "");
-                            if (_whiteRating.equals("++++")){
-                                _whiteRating = "UNR";
-                            }
-                            _blackRating = mat.group(4);
-                            _blackRating = _blackRating.replaceAll("[()]", "");
-                            if (_blackRating.equals("++++")){
-                                _blackRating = "UNR";
-                            }
-                        }
-                    }
                     else if (line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
                         Pattern p = Pattern.compile("\\{Game (\\d+) .*");
                         Matcher m = p.matcher(line);
@@ -1176,67 +1171,52 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         confirmShow(getString(R.string.title_offers_takeback), getString(R.string.ics_offers_takeback), "accept");
                     }
                     //////////////////////////////////////////////////////////////
-                    // game over
-                    else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && (line.indexOf("} 1-0") > 0 || line.indexOf("} 0-1") > 0)) {
-
-                        String text = "";
-                        text = line.substring(line.indexOf(")")+2, line.indexOf("}"));  // gets name and state of name
-
-                        if (line.indexOf(" resigns} ") > 0) {
-                            text = text.replace("resigns", getString(R.string.state_resigned));
-
-                        } else if (line.indexOf("checkmated") > 0) {
-                            text = text.replace("checkmated", getString(R.string.state_mate));
-
-                        } else if (line.indexOf("forfeits on time") > 0) {
-                            text = text.replace("forfeits on time", getString(R.string.state_time));
-
-                        } else {
-                            text = getString(R.string.ics_game_over);
-                        }
-                        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
-
-                        if(line.contains(_handle)){
-                            sendString("oldmoves " + _handle);
-                        } else{
-                            sendString("oldmoves " + text.substring(0,text.indexOf(" ")));
-                        }
-
-                        _bEndBuf = true;
-
-
-                        get_view().setViewMode(ICSChessView.VIEW_NONE);
-                    }
-                    // draw
-                    else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && line.indexOf("} 1/2-1/2") > 0) {
-
-                        gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
-
-                        String text = "";
-                        text = line.substring(line.indexOf(")")+2, line.indexOf("}"));  // gets name and state of name
-
-                        if(line.contains(_handle)){
-                            sendString("oldmoves " + _handle);
-                        } else{
-                            sendString("oldmoves " + text.substring(0,text.indexOf(" ")));
-                        }
-
-                        _bEndBuf = true;
-
-                        get_view().setViewMode(ICSChessView.VIEW_NONE);
-
-                    }
-                    //////////////////////////////////////////////////////////////
                     // aborted/adjouned
                     else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && line.indexOf("} *") > 0) {
                         String text = getString(R.string.ics_game_over);
                         gameToast(text, true);
 
-                        sendString("oldmoves " + _handle);
+                        get_view().setViewMode(ICSChessView.VIEW_NONE);
+                    }
+                    //////////////////////////////////////////////////////////////
+                    // game over
+                    else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0) {
+
+                        String text = "";
+                        text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
+
+                        if (line.contains("} 1-0") || line.contains("} 0-1")) {
+
+
+
+                            if (line.indexOf(" resigns} ") > 0) {  // make translation friendly
+                                text = text.replace("resigns", getString(R.string.state_resigned));
+
+                            } else if (line.indexOf("checkmated") > 0) {
+                                text = text.replace("checkmated", getString(R.string.state_mate));
+
+                            } else if (line.indexOf("forfeits on time") > 0) {
+                                text = text.replace("forfeits on time", getString(R.string.state_time));
+
+                            } else {
+                                text = getString(R.string.ics_game_over);
+                            }
+                        }
+                        else if (line.contains("} 1/2-1/2")){  // draw
+                            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
+                        }
+                        _dlgOver.updateGRtext(text);
+                        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
+
+                        sendString("oldmoves " + _whiteHandle);
+                        Log.d(TAG, "oldmoves " + _whiteHandle);
+
                         _bEndBuf = true;
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
+
+
                     //////////////////////////////////////////////////////////////
                     // draw / abort / todo:adjourn request sent
                     else if (line.equals("Draw request sent.") || line.equals("Abort request sent.") || line.equals("Takeback request sent.")) {
@@ -1400,9 +1380,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     else if (line.indexOf("Seek ads filtered by") >= 0) {
 
                     }
-                    // any game brings up ICSGameOverDlg
+                    // any game brings up ICSGameOverDlg -- should never get to here?
                     else if (line.indexOf("} 0-1")>0 || line.indexOf("} 1-0")> 0 ||
-                            line.indexOf("} 1/2-1/2")>0 || line.indexOf("} *")>0) {
+                            line.indexOf("} 1/2-1/2")>0) {
                         sRaw += "\n" + line;
                         _bEndBuf = true;
 
@@ -1428,7 +1408,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
                     if(_bEndBuf && _bEndGameDialog){
                         sEnd += sRaw;
-                        if(sRaw.indexOf("}") > 0){
+                        Log.d(TAG, "sEnd = " + sEnd);
+                        if(sRaw.contains("----  ----------------   ----------------")){
+                            Log.d(TAG, "we are in with (sRaw) " + sRaw);
                             _bEndBuf = false;
 
                             sEnd = sEnd.trim().replaceAll(" +", " ");
@@ -1445,6 +1427,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             String white = sEnd.substring(0, sEnd.indexOf("(") - 1);
                             String black = sEnd.substring(sEnd.indexOf("vs") + 4, sEnd.indexOf("(", sEnd.indexOf("vs.")) - 1);
                             String result = sEnd.substring(sEnd.lastIndexOf(" ") + 1, sEnd.length());
+                            if (result.contains(":")){
+                                result = "draw";
+                            }
                             String whiteElo = sEnd.substring(sEnd.indexOf("(")+1, sEnd.indexOf(")"));
                             String blackElo = sEnd.substring(sEnd.indexOf("(", sEnd.indexOf("vs."))+1 , sEnd.indexOf(")", sEnd.indexOf("vs.")));
                             String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
