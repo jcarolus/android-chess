@@ -64,9 +64,9 @@ public class Donate extends MyBaseActivity {
         butDonate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 int index = spinAmount.getSelectedItemPosition();
-                String sku = "donate1dollar";
+                String[] arrSKU = new String[]{"donate1euro", "donate2euro", "donate5euro", "donate10euro", "donate20euro"};
                 try {
-                    Bundle buyIntentBundle = mService.getBuyIntent(3, getPackageName(), sku, "inapp", _payLoad);
+                    Bundle buyIntentBundle = mService.getBuyIntent(3, getPackageName(), arrSKU[index], "inapp", _payLoad);
                     PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
 
                     startIntentSenderForResult(pendingIntent.getIntentSender(),
@@ -88,7 +88,6 @@ public class Donate extends MyBaseActivity {
             builder.setPositiveButton(R.string.alert_ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
                     dialog.dismiss();
-                    finish();
                 }});
 
             int responseCode = data.getIntExtra("RESPONSE_CODE", 0);

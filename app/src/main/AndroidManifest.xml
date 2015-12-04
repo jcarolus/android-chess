@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="jwtc.android.chess"
-      android:versionCode="125"
+      android:versionCode="127"
       android:versionName="8.6.5"
       android:installLocation="auto"
       >
