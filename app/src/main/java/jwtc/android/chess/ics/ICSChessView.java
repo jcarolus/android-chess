@@ -32,7 +32,8 @@ public class ICSChessView extends ChessViewBase {
 
     private JNI _jni;
     //private Button _butAction;
-    private TextView _tvPlayerTop, _tvPlayerBottom, _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove;
+    private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
+            _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove;
 
     //private EditText _editChat;
     private Button _butConfirmMove, _butCancelMove;
@@ -93,6 +94,9 @@ public class ICSChessView extends ChessViewBase {
 
         _tvPlayerTop = (TextView) _activity.findViewById(R.id.TextViewTop);
         _tvPlayerBottom = (TextView) _activity.findViewById(R.id.TextViewBottom);
+
+        _tvPlayerTopRating = (TextView) _activity.findViewById(R.id.TextViewICSTwoRating);
+        _tvPlayerBottomRating = (TextView) _activity.findViewById(R.id.TextViewICSOneRating);
 
         _tvClockTop = (TextView) _activity.findViewById(R.id.TextViewClockTop);
         _tvClockBottom = (TextView) _activity.findViewById(R.id.TextViewClockBottom);
@@ -243,6 +247,7 @@ public class ICSChessView extends ChessViewBase {
                             break;
                     default: Log.e(TAG, "get_gameStartSound error");
                 }
+                _parent.bringAPPtoFront();
                 Log.i(TAG, "Play");
                 break;
             case VIEW_WATCH:
@@ -348,8 +353,9 @@ public class ICSChessView extends ChessViewBase {
             int p = 0, t = 0, index = -1; // !!
 
             for (int i = 0; i < 64; i++) {
-                if (i % 8 == 0)
+                if (i % 8 == 0) {
                     index++;
+                }
                 char c = line.charAt(index++);
                 if (c != '-') {
                     if (c == 'k' || c == 'K') {
@@ -462,24 +468,37 @@ public class ICSChessView extends ChessViewBase {
 
             if (_flippedBoard) {
                 _tvPlayerTop.setText(_whitePlayer);
+                if(_tvPlayerTopRating != null) {
+                    _tvPlayerTopRating.setText(_parent.get_whiteRating());
+                }
                 _tvPlayerBottom.setText(_blackPlayer);
+                if(_tvPlayerBottomRating != null) {
+                    _tvPlayerBottomRating.setText(_parent.get_blackRating());
+                }
                 _tvClockTop.setText(parseTime(_iWhiteRemaining));
                 _tvClockBottom.setText(parseTime(_iBlackRemaining));
             } else {
                 _tvPlayerTop.setText(_blackPlayer);
+                if(_tvPlayerTopRating != null) {
+                    _tvPlayerTopRating.setText(_parent.get_blackRating());
+                }
                 _tvPlayerBottom.setText(_whitePlayer);
+                if(_tvPlayerBottomRating != null) {
+                    _tvPlayerBottomRating.setText(_parent.get_whiteRating());
+                }
                 _tvClockTop.setText(parseTime(_iBlackRemaining));
                 _tvClockBottom.setText(parseTime(_iWhiteRemaining));
             }
-
-            // the last move
+            
             st.nextToken();
-            String sMove = st.nextToken();
+            String sMove = st.nextToken();  // machine notation move
+            st.nextToken();  // time per move
+            String sLastMoveDisplay = st.nextToken();  // algebraic notation move
 
             //int iFrom = -1;
             if (false == sMove.equals("none") && sMove.length() > 2) {
 
-                _tvLastMove.setText(sMove);
+                _tvLastMove.setText(_iTurn==1 ? ".." + sLastMoveDisplay: sLastMoveDisplay);  // display last move
 
                 if (sMove.equals("o-o")) {
                     if (_iTurn == BoardConstants.WHITE)
