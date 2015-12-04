@@ -84,6 +84,10 @@ public class start extends ListActivity {
 				i.setClass(start.this, pgntool.class);
 				i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				startActivity(i);
+			} else if (s.equals(getString(R.string.start_donate))) {
+				i.setClass(start.this, Donate.class);
+				i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				startActivity(i);
 			} else if (s.equals(getString(R.string.start_globalpreferences))) {
 				i.setClass(start.this, ChessPreferences.class);
 				startActivityForResult(i, 0);
