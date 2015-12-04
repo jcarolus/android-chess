@@ -6,6 +6,7 @@
         <item>@string/start_practice</item>
         <item>@string/start_puzzles</item>
         <item>@string/start_globalpreferences</item>
+        <item>@string/start_donate</item>
         <item>@string/start_about</item>
         <item>@string/start_pgn</item>
 	</string-array>
@@ -174,5 +175,12 @@
     	<item>default</item>
     	<item>robollito</item>
     	<item>bik</item>
+    </string-array>
+    <string-array name="donate_amount">
+        <item>1 euro</item>
+        <item>2 euro</item>
+        <item>5 euro</item>
+        <item>10 euro</item>
+        <item>20 euro</item>
     </string-array>
 </resources>

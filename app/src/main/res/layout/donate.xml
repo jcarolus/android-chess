@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="40dip"
+        style="@style/MyNormalTextStyle"
+        android:text="@string/donate_desc"/>
+
+    <Spinner android:id="@+id/SpinnerDonate"
+        android:entries="@array/donate_amount"
+        android:layout_marginLeft="40dip"
+        android:layout_marginRight="40dip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    </Spinner>
+
+    <Button android:id="@+id/ButtonDonate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dip"
+        android:layout_marginLeft="40dip"
+        android:text="@string/donate_button"/>
+
+</LinearLayout>

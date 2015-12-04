@@ -459,16 +459,12 @@ public class ICSChessView extends ChessViewBase {
             }
             _bOngoingGame = true;
 
-            Log.i(TAG, "still going strong 1");
-
             int iTime = Integer.parseInt(st.nextToken());
             int iIncrement = Integer.parseInt(st.nextToken());
             st.nextToken();
             st.nextToken();
             _iWhiteRemaining = Integer.parseInt(st.nextToken());
             _iBlackRemaining = Integer.parseInt(st.nextToken());
-
-            Log.i(TAG, "still going strong 2");
 
             if (_flippedBoard) {
                 _tvPlayerTop.setText(_whitePlayer);
@@ -493,9 +489,7 @@ public class ICSChessView extends ChessViewBase {
                 _tvClockTop.setText(parseTime(_iBlackRemaining));
                 _tvClockBottom.setText(parseTime(_iWhiteRemaining));
             }
-
-            Log.i(TAG, "still going strong 3");
-
+            
             st.nextToken();
             String sMove = st.nextToken();  // machine notation move
             st.nextToken();  // time per move
