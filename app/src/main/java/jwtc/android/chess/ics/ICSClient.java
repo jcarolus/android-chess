@@ -52,7 +52,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
-            _sFile, _FEN = "", _whiteRating, _blackRating, _whiteWatchName, _whiteHandle, _blackHandle;
+            _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle, _resultMessage, _resultNumerical;
     private int _port, _serverType, _TimeWarning, _gameStartSound;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog, _gameStartFront;
     private Button _butLogin;
@@ -977,7 +977,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             //Log.i("parseBuffer", "[" + buffer + "]");
             String sRaw = "", sEnd = "", sBeg = "";
             Matcher match;
-            _bEndBuf = false;
 
             //////////////////////////////////////////////////////////////////////////////////////////////
             String[] lines;
@@ -1048,11 +1047,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
                         Pattern _pattGameInfo1 = Pattern.compile("\\{?\\w+\\s?\\d+?: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
                         Pattern _pattGameInfo2 = Pattern.compile("\\w+: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
+                        Pattern _pattGameInfo3 = Pattern.compile("\\{\\w+\\s(\\d+) \\((\\w+) vs. (\\w+)\\) (.*)\\} (.*)");
 
                         Matcher mat = _pattGameInfo1.matcher(line);
                         Matcher mat2 = _pattGameInfo2.matcher(line);
+                        Matcher mat3 = _pattGameInfo3.matcher(line);
 
-                        if (mat.matches() || mat2.matches()){
+                        if (mat.matches() || mat2.matches()){  //mat and mat2 are the beginning game info
                             _whiteHandle = mat.matches() ? mat.group(1) : mat2.group(1);
                             _whiteRating = mat.matches() ? mat.group(2) : mat2.group(2);
                             if (_whiteRating.equals("++++")){
@@ -1063,6 +1064,15 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             if (_blackRating.equals("++++")){
                                 _blackRating = "UNR";
                             }
+                        }
+                        if (mat3.matches()){  // mat3 is the endgame result
+                            _resultMessage = mat3.group(4);
+                            _resultNumerical = mat3.group(5);
+
+                            _bEndBuf = true;
+
+                            sendString("oldmoves " + _whiteHandle);
+                            Log.d(TAG, "oldmoves " + _whiteHandle);
                         }
                     }
                     // board representation
@@ -1180,13 +1190,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     }
                     //////////////////////////////////////////////////////////////
                     // game over
-                    else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0) {
+                    else if (line.contains("{Game ") && (line.contains("} 1-0") || line.contains("} 0-1")  || line.contains("} 1/2-1/2"))) {
 
                         String text = "";
                         text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
 
                         if (line.contains("} 1-0") || line.contains("} 0-1")) {
-
 
 
                             if (line.indexOf(" resigns} ") > 0) {  // make translation friendly
@@ -1205,13 +1214,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         else if (line.contains("} 1/2-1/2")){  // draw
                             gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
                         }
-                        _dlgOver.updateGRtext(text);
+                        _dlgOver.updateGRtext(_resultMessage);
                         gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
-
-                        sendString("oldmoves " + _whiteHandle);
-                        Log.d(TAG, "oldmoves " + _whiteHandle);
-
-                        _bEndBuf = true;
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
@@ -1376,17 +1380,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             _adapterStored.notifyDataSetChanged();
                         }
                     }
-                    // skip
-                    else if (line.indexOf("Seek ads filtered by") >= 0) {
 
-                    }
-                    // any game brings up ICSGameOverDlg -- should never get to here?
-                    else if (line.indexOf("} 0-1")>0 || line.indexOf("} 1-0")> 0 ||
-                            line.indexOf("} 1/2-1/2")>0) {
-                        sRaw += "\n" + line;
-                        _bEndBuf = true;
-
-                    }
                     //////////////////////////////////////////////////////////////
                     // shouts, tshouts etc...
                     // any other data we haven't matched, put it on prompt
@@ -1410,7 +1404,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         sEnd += sRaw;
                         Log.d(TAG, "sEnd = " + sEnd);
                         if(sRaw.contains("----  ----------------   ----------------")){
-                            Log.d(TAG, "we are in with (sRaw) " + sRaw);
+
                             _bEndBuf = false;
 
                             sEnd = sEnd.trim().replaceAll(" +", " ");
@@ -1424,14 +1418,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             Date date1 = new Date();
                             String date = dateFormat.format(date1);
 
-                            String white = sEnd.substring(0, sEnd.indexOf("(") - 1);
-                            String black = sEnd.substring(sEnd.indexOf("vs") + 4, sEnd.indexOf("(", sEnd.indexOf("vs.")) - 1);
-                            String result = sEnd.substring(sEnd.lastIndexOf(" ") + 1, sEnd.length());
-                            if (result.contains(":")){
-                                result = "draw";
-                            }
-                            String whiteElo = sEnd.substring(sEnd.indexOf("(")+1, sEnd.indexOf(")"));
-                            String blackElo = sEnd.substring(sEnd.indexOf("(", sEnd.indexOf("vs."))+1 , sEnd.indexOf(")", sEnd.indexOf("vs.")));
+                            // Pattern variables
+                            //White is _whitehandle - Black is _blackhandle
+                            //Result is _resultMessage and _resultNumerical
+                            //WhiteElo is _whiteRating - BlackElo is _blackRating
+
                             String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
                             String _FEN1, _FEN2;
 
@@ -1442,11 +1433,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             PGN.append("[Event \"" + event + "\"]\n");
                             PGN.append("[Site \"" + site + "\"]\n");
                             PGN.append("[Date \"" + date + "\"]\n");
-                            PGN.append("[White \"" + white + "\"]\n");
-                            PGN.append("[Black \"" + black + "\"]\n");
-                            PGN.append("[Result \"" + result + "\"]\n");
-                            PGN.append("[WhiteElo \"" + whiteElo + "\"]\n");
-                            PGN.append("[BlackElo \"" + blackElo + "\"]\n");
+                            PGN.append("[White \"" + _whiteHandle + "\"]\n");
+                            PGN.append("[Black \"" + _blackHandle + "\"]\n");
+                            PGN.append("[Result \"" + _resultNumerical + "\"]\n");
+                            PGN.append("[WhiteElo \"" + _whiteRating + "\"]\n");
+                            PGN.append("[BlackElo \"" + _blackRating + "\"]\n");
                             PGN.append("[TimeControl \"" + timeControl + "\"]\n");
 
                             if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
