@@ -1840,11 +1840,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 _socket.close();
             } catch (Exception ex) {
             }
-            cancelDateTimer();
             _socket = null;
-
             Log.d(TAG, "disconnect method");
         }
+        cancelDateTimer();
     }
 
     public void sendString(String s) {
