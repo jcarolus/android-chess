@@ -157,6 +157,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         client.stopSession(msg.getData().getString("buffer"));
                         break;
                     case MSG_START_SESSION:
+                        client.dateTimer();
                         client.switchToBoardView();
                         break;
                 }
@@ -225,6 +226,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _dlgConfirm = new ICSConfirmDlg(this);
         _dlgChat = new ICSChatDlg(this);
         _dlgOver = new ICSGameOverDlg(this);
+        _resultMessage = "";
+        _resultNumerical = "";
 
         _handle = null;
         _pwd = null;
@@ -1151,14 +1154,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         Pattern p = Pattern.compile("\\{Game (\\d+) .*");
                         Matcher m = p.matcher(line);
                         if (m.matches()) {
-                            cancelDateTimer();
                             get_view().setGameNum(Integer.parseInt(m.group(1)));
                             get_view().setViewMode(ICSChessView.VIEW_PLAY);
                             switchToBoardView();
                         }
                     } else if (line.indexOf("Creating: ") >= 0 && line.indexOf("(adjourned)") >= 0) {
                         //Creating: jcarolus (----) jwtc (----) unrated blitz 5 0 (adjourned)
-                        cancelDateTimer();
                         get_view().setViewMode(ICSChessView.VIEW_PLAY);
                         switchToBoardView();
                         gameToast("Resuming adjourned game", false);
@@ -1752,8 +1753,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         editor.putString("ics_handle", _ficsHandle);
         editor.putString("ics_password", _ficsPwd);
 
-
-
         JSONArray jArray = new JSONArray();
         JSONArray jArrayPasswords = new JSONArray();
         for(int i = 0; i < _adapterHandles.getCount(); i++){
@@ -1811,19 +1810,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public void dateTimer(){
-        _timerDate = new Timer(true);
-        _timerDate.schedule(new TimerTask() {
-            @Override
-            public void run() {
-
-                dateHandler.sendEmptyMessage(0);  // sends date string to prevent disconnection from no activity for seek
-            }
-        }, 60000, 60000);
+        if(_timerDate == null) {
+            _timerDate = new Timer(true);
+            _timerDate.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    dateHandler.sendEmptyMessage(0);  // sends date string to prevent disconnection
+                }
+            }, 60000, 60000);
+        }
     }
 
     public void cancelDateTimer(){
         if(_timerDate != null) {
             _timerDate.cancel();
+            _timerDate = null;
         }
     }
 
