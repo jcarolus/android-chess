@@ -4,6 +4,8 @@ import jwtc.android.chess.puzzle.practice;
 import jwtc.android.chess.puzzle.puzzle;
 import jwtc.android.chess.tools.pgntool;
 import jwtc.android.chess.ics.*;
+import jwtc.chess.JNI;
+
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +27,9 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
@@ -60,6 +65,9 @@ public class start extends AppCompatActivity {
 	private String mSessionId;
 
 	private ListView _list;
+
+	private JNI _jni;
+	private Timer _timer;
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -90,6 +98,16 @@ public class start extends AppCompatActivity {
 			Intent intent = new Intent(this, start.class);
 			startActivity(intent);
 		}
+
+		_jni = new JNI();
+
+		_timer = new Timer(true);
+		_timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				sendMessage(_jni.toFEN());
+			}
+		}, 1000, 1000);
 
 		_list = (ListView)findViewById(R.id.ListStart);
 		_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -204,6 +222,7 @@ public class start extends AppCompatActivity {
 	private void sendMessage(String message) {
 		if (mApiClient != null && mHelloWorldChannel != null) {
 			try {
+				//Log.i(TAG, "Try to send " + message);
 				Cast.CastApi.sendMessage(mApiClient,
 						mHelloWorldChannel.getNamespace(), message).setResultCallback(
 						new ResultCallback<Status>() {
@@ -217,8 +236,6 @@ public class start extends AppCompatActivity {
 			} catch (Exception e) {
 				Log.e(TAG, "Exception while sending message", e);
 			}
-		} else {
-			Toast.makeText(start.this, message, Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -319,9 +336,6 @@ public class start extends AppCompatActivity {
 															e);
 												}
 
-												// set the initial instructions
-												// on the receiver
-												sendMessage("Hello world");
 											} else {
 												Log.e(TAG, "application could not launch");
 												teardown(true);
@@ -403,7 +417,7 @@ public class start extends AppCompatActivity {
 		@Override
 		public void onMessageReceived(CastDevice castDevice, String namespace,
 									  String message) {
-			Log.d(TAG, "onMessageReceived: " + message);
+			//Log.d(TAG, "onMessageReceived: " + message);
 		}
 
 	}
