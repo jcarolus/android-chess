@@ -214,6 +214,47 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         alert.show();
     }
 
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        //View v = getWindow().getCurrentFocus();
+        //Log.i("main", "current focus " + (v == null ? "NULL" : v.toString()));
+        int c = (event.getUnicodeChar());
+        Log.i("main", "onKeyDown " + keyCode + " = " + (char)c);
+        if(keyCode == KeyEvent.KEYCODE_MENU){
+            //showMenu();
+            return true;
+        }
+
+        if(c > 48 && c < 57 || c > 96 && c < 105){
+            _keyboardBuffer += ("" + (char)c);
+        }
+        if(_keyboardBuffer.length() >= 2){
+            Log.i("main", "handleClickFromPositionString " + _keyboardBuffer);
+            _chessView.handleClickFromPositionString(_keyboardBuffer);
+            _keyboardBuffer = "";
+        }
+    	/*
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+            	_chessView.dpadSelect();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            	_chessView.dpadDown();
+                   return true;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            	_chessView.dpadLeft();
+                   return true;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            	_chessView.dpadRight();
+                   return true;
+            case KeyEvent.KEYCODE_DPAD_UP:
+            	_chessView.dpadUp();
+                   return true;
+        }
+        */
+        return super.onKeyDown(keyCode, event);
+    }
+
     /**
      *
      */

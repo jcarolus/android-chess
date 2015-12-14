@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -77,6 +78,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private ScrollView _scrollConsole, _scrollPlayConsole;
 
     private Ringtone _ringNotification;
+
+    private TimeZone tz = TimeZone.getDefault();
 
     // FICS
     // Challenge: withca (----) GuestFHYH (----) unrated blitz 10 0
@@ -920,6 +923,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     sendString("-channel 4"); // guest
                     sendString("-channel 53"); // guest chat
                     sendString("set kibitz 1"); // for puzzlebot
+                    sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
 
                     // sendMessage("set interface "+ getPreferences().getString(APP_NAME));
                     Log.i("ICSClient", " == HANDLE " + _handle);
@@ -1865,9 +1869,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 default:
                     Log.e(TAG, "get_gameStartSound error");
             }
-            gameToast(getString(R.string.ics_disconnected), false);
+            //gameToast(getString(R.string.ics_disconnected), false);
 
             try {
+                bringAPPtoFront();
+                cancelDateTimer();
                 new AlertDialog.Builder(ICSClient.this)
                         .setTitle(R.string.title_error)
                         .setMessage("Connection to server is broken.")
