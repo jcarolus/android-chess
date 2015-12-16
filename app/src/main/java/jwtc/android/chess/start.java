@@ -6,15 +6,12 @@ import jwtc.android.chess.tools.pgntool;
 import jwtc.android.chess.ics.*;
 import jwtc.chess.JNI;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -42,7 +39,6 @@ import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
@@ -59,7 +55,7 @@ public class start extends AppCompatActivity {
 	private Cast.Listener mCastListener;
 	private ConnectionCallbacks mConnectionCallbacks;
 	private ConnectionFailedListener mConnectionFailedListener;
-	private HelloWorldChannel mHelloWorldChannel;
+	private ChessChannel mChessChannel;
 	private boolean mApplicationStarted;
 	private boolean mWaitingForReconnect;
 	private String mSessionId;
@@ -68,6 +64,7 @@ public class start extends AppCompatActivity {
 
 	private JNI _jni;
 	private Timer _timer;
+	private String _lastMessage;
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -101,13 +98,15 @@ public class start extends AppCompatActivity {
 
 		_jni = new JNI();
 
+		_lastMessage = "";
+
 		_timer = new Timer(true);
 		_timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				sendMessage(_jni.toFEN());
 			}
-		}, 1000, 1000);
+		}, 1000, 500);
 
 		_list = (ListView)findViewById(R.id.ListStart);
 		_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -219,20 +218,24 @@ public class start extends AppCompatActivity {
 	/**
 	 * Send a text message to the receiver
 	 */
-	private void sendMessage(String message) {
-		if (mApiClient != null && mHelloWorldChannel != null) {
+	private void sendMessage(final String message) {
+		if (mApiClient != null && mChessChannel != null && message != null) {
 			try {
-				//Log.i(TAG, "Try to send " + message);
-				Cast.CastApi.sendMessage(mApiClient,
-						mHelloWorldChannel.getNamespace(), message).setResultCallback(
-						new ResultCallback<Status>() {
-							@Override
-							public void onResult(Status result) {
-								if (!result.isSuccess()) {
-									Log.e(TAG, "Sending message failed");
+				if(!_lastMessage.equals(message)) {
+					//Log.i(TAG, "Try to send " + message);
+					Cast.CastApi.sendMessage(mApiClient,
+							mChessChannel.getNamespace(), message).setResultCallback(
+							new ResultCallback<Status>() {
+								@Override
+								public void onResult(Status result) {
+									if (result.isSuccess()) {
+										_lastMessage = message;
+									} else {
+										Log.e(TAG, "Sending message failed");
+									}
 								}
-							}
-						});
+							});
+				}
 			} catch (Exception e) {
 				Log.e(TAG, "Exception while sending message", e);
 			}
@@ -291,8 +294,8 @@ public class start extends AppCompatActivity {
 						try {
 							Cast.CastApi.setMessageReceivedCallbacks(
 									mApiClient,
-									mHelloWorldChannel.getNamespace(),
-									mHelloWorldChannel);
+									mChessChannel.getNamespace(),
+									mChessChannel);
 						} catch (IOException e) {
 							Log.e(TAG, "Exception while creating channel", e);
 						}
@@ -325,12 +328,12 @@ public class start extends AppCompatActivity {
 
 												// Create the custom message
 												// channel
-												mHelloWorldChannel = new HelloWorldChannel();
+												mChessChannel = new ChessChannel();
 												try {
 													Cast.CastApi.setMessageReceivedCallbacks(
 															mApiClient,
-															mHelloWorldChannel.getNamespace(),
-															mHelloWorldChannel);
+															mChessChannel.getNamespace(),
+															mChessChannel);
 												} catch (IOException e) {
 													Log.e(TAG, "Exception while creating channel",
 															e);
@@ -402,7 +405,7 @@ public class start extends AppCompatActivity {
 	/**
 	 * Custom message channel
 	 */
-	class HelloWorldChannel implements Cast.MessageReceivedCallback {
+	class ChessChannel implements Cast.MessageReceivedCallback {
 
 		/**
 		 * @return custom namespace
@@ -432,11 +435,11 @@ public class start extends AppCompatActivity {
 				if (mApiClient.isConnected() || mApiClient.isConnecting()) {
 					try {
 						Cast.CastApi.stopApplication(mApiClient, mSessionId);
-						if (mHelloWorldChannel != null) {
+						if (mChessChannel != null) {
 							Cast.CastApi.removeMessageReceivedCallbacks(
 									mApiClient,
-									mHelloWorldChannel.getNamespace());
-							mHelloWorldChannel = null;
+									mChessChannel.getNamespace());
+							mChessChannel = null;
 						}
 					} catch (IOException e) {
 						Log.e(TAG, "Exception while removing channel", e);
