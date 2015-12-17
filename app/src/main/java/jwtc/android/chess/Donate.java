@@ -13,6 +13,8 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.android.vending.billing.IInAppBillingService;
@@ -58,14 +60,36 @@ public class Donate extends MyBaseActivity {
         serviceIntent.setPackage("com.android.vending");
         bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 
-        final Spinner spinAmount = (Spinner)findViewById(R.id.SpinnerDonate);
+        final RadioGroup group = (RadioGroup)findViewById(R.id.RadioGroupDonate);
+        RadioButton button;
+
+        final String[] arrDonate = getResources().getStringArray(R.array.donate_amount);
+
+        for(int i = 0; i < arrDonate.length; i++) {
+            button = new RadioButton(this);
+            button.setText(arrDonate[i]);
+            group.addView(button);
+            if(i == 2){
+                button.setChecked(true);
+            }
+        }
 
         Button butDonate = (Button)findViewById(R.id.ButtonDonate);
         butDonate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                int index = spinAmount.getSelectedItemPosition();
+
+                int index = 0;
+                for(int i = 0; i < arrDonate.length; i++) {
+                    if(((RadioButton)group.getChildAt(i)).isChecked()){
+                        index = i;
+                    }
+                }
+
                 String[] arrSKU = new String[]{"donate1euro", "donate2euro", "donate5euro", "donate10euro", "donate20euro"};
                 try {
+
+                    Log.i(TAG, "Start buy intent with SKU " + arrSKU[index]);
+
                     Bundle buyIntentBundle = mService.getBuyIntent(3, getPackageName(), arrSKU[index], "inapp", _payLoad);
                     PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
 
@@ -74,6 +98,7 @@ public class Donate extends MyBaseActivity {
                             Integer.valueOf(0));
 
                 } catch (Exception e) {
+                    doToast(getString(R.string.donate_intent));
                     e.printStackTrace();
                 }
             }

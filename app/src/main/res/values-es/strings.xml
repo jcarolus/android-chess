@@ -19,7 +19,7 @@
     <string name="start_about">Sobre</string>
     <string name="start_pgn">Avanzado</string>
     <string name="start_ics">Juega en línea</string>
-    <string name="start_donate">Donate</string>
+    <string name="start_donate">Donar</string>
     <string name="start_globalpreferences">Ajustes globales</string>
     <string name="start_convergence">Pantalla de televisión</string>
 
@@ -348,4 +348,5 @@
     <string name="donate_button">Donate</string>
     <string name="donate_success">Thank you for your donation!</string>
     <string name="donate_error">The donation was cancelled.</string>
+    <string name="donate_intent">Could not start in-app payment.</string>
 </resources>
