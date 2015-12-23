@@ -65,11 +65,35 @@ public class start extends AppCompatActivity {
 	private JNI _jni;
 	private Timer _timer;
 	private String _lastMessage;
-	/**
-	 * Called when the activity is first created.
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+
+		String[] title = {
+				"Play",
+				"Play online",
+				"Practice",
+				"Puzzles",
+				"Global settings",
+				"Donate",
+				"About",
+				"Advanced"
+		} ;
+		Integer[] imageId = {
+				R.drawable.blank,
+				R.drawable.blank,
+				R.drawable.blank,
+				R.drawable.blank,
+				R.drawable.blank,
+				R.drawable.heart_48,
+				R.drawable.blank,
+				R.drawable.blank
+
+		};
+
+
+		/**
+		 * Called when the activity is first created.
+		 */
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
@@ -109,6 +133,8 @@ public class start extends AppCompatActivity {
 		}, 1000, 500);
 
 		_list = (ListView)findViewById(R.id.ListStart);
+		start_CustomList adapter = new start_CustomList(this,  title, imageId);
+		_list.setAdapter(adapter);
 		_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
