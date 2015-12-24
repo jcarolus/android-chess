@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -66,16 +68,6 @@ public class start extends AppCompatActivity {
 	private Timer _timer;
 	private String _lastMessage;
 
-		String[] title = {
-				"Play",
-				"Play online",
-				"Practice",
-				"Puzzles",
-				"Global settings",
-				"Donate",
-				"About",
-				"Advanced"
-		} ;
 		Integer[] imageId = {
 				R.drawable.blank,
 				R.drawable.blank,
@@ -132,8 +124,25 @@ public class start extends AppCompatActivity {
 			}
 		}, 1000, 500);
 
+		String[] title = getResources().getStringArray(R.array.start_menu);
+			//TypedArray imageId3 = getResources().obtainTypedArray(R.array.imageID1);
+
+		int[] imageId3 = getResources().getIntArray(R.array.imageID1);
+
+			int[] imageId = {
+					R.drawable.blank,
+					R.drawable.blank,
+					R.drawable.blank,
+					R.drawable.blank,
+					R.drawable.blank,
+					R.drawable.heart_48,
+					R.drawable.blank,
+					R.drawable.blank
+
+			};
+
 		_list = (ListView)findViewById(R.id.ListStart);
-		start_CustomList adapter = new start_CustomList(this,  title, imageId);
+		start_CustomList adapter = new start_CustomList(this,  title, imageId3);
 		_list.setAdapter(adapter);
 		_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override

@@ -16,9 +16,9 @@ public class start_CustomList extends ArrayAdapter<String>{
 
     private final Activity context;
     private final String[] title;
-    private final Integer[] imageId;
+    private final int[] imageId;
     public start_CustomList(Activity context,
-                      String[] title, Integer[] imageId) {
+                      String[] title, int[] imageId) {
         super(context, R.layout.start_list_single, title);
         this.context = context;
         this.title = title;
