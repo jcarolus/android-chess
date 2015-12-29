@@ -4,6 +4,7 @@ package jwtc.android.chess;
  * Created by Tim on 12/19/2015.
  */
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +17,18 @@ public class start_CustomList extends ArrayAdapter<String>{
 
     private final Activity context;
     private final String[] title;
-    private final int[] imageId;
+
+    SharedPreferences myPrefs = getContext().getSharedPreferences("ChessPlayer", getContext().MODE_PRIVATE);
+    boolean _bHeart     = myPrefs.getBoolean("bHeart", true);
+
     public start_CustomList(Activity context,
-                      String[] title, int[] imageId) {
-        super(context, R.layout.start_list_single, title);
-        this.context = context;
-        this.title = title;
-        this.imageId = imageId;
+                  String[] title) {
+    super(context, R.layout.start_list_single, title);
+    this.context = context;
+    this.title = title;
 
     }
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
@@ -35,8 +39,8 @@ public class start_CustomList extends ArrayAdapter<String>{
 
         txtTitle.setText(title[position]);
 
-        imageView.setImageResource(imageId[position]);
-        if(imageView != null) {
+        if(imageView != null && position == 5 && _bHeart) {
+            imageView.setImageResource(R.drawable.heart);
             imageView.startAnimation(AnimationUtils.loadAnimation(this.context, R.anim.pulse));
         }
         return rowView;

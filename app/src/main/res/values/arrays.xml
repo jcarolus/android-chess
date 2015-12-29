@@ -10,16 +10,6 @@
 		<item>@string/start_about</item>
 		<item>@string/start_pgn</item>
 	</string-array>
-    <string-array name="imageID1">
-        <item>@drawable/blank</item>
-        <item>@drawable/blank</item>
-        <item>@drawable/blank</item>
-        <item>@drawable/blank</item>
-        <item>@drawable/blank</item>
-        <item>@drawable/heart_48</item>
-        <item>@drawable/blank</item>
-        <item>@drawable/blank</item>
-    </string-array>
     <string-array name="levels_ply">
         <item>1 ply</item>
         <item>2 ply</item>
