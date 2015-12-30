@@ -14,7 +14,7 @@ public class ICSGameOverDlg extends Dialog {
 
     private ICSClient _parent;
     private Button _butGoodGame, _butRematch, _butClipBoard, _butSend, _butExit;
-    private TextView _tvGameResult;
+    private TextView _tvGameResult, _tvSendMessagesTitle;
 
 
     public ICSGameOverDlg(Context context) {
@@ -37,6 +37,7 @@ public class ICSGameOverDlg extends Dialog {
         _tvGameResult = (TextView)findViewById(R.id.tvGameResult);
         _tvGameResult.setGravity(Gravity.CENTER);
 
+        _tvSendMessagesTitle= (TextView)findViewById(R.id.textView);
 
         _butGoodGame = (Button)findViewById(R.id.ButtonGameGoodGame);
         _butGoodGame.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +75,7 @@ public class ICSGameOverDlg extends Dialog {
     }
 
     public void setWasPlaying(boolean bWasPlaying){
-
+        _tvSendMessagesTitle.setVisibility((bWasPlaying ? View.VISIBLE : View.GONE));
         _butGoodGame.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
         _butRematch.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
     }

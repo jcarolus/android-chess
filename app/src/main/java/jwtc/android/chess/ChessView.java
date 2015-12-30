@@ -40,6 +40,9 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
  *
  */
 public class ChessView extends UI {
+
+    public static final String TAG = "ChessView";
+
     private ChessViewBase _view;
 
     private ChessActivity _parent;
@@ -1490,7 +1493,7 @@ public class ChessView extends UI {
         int move = _jni.getMyMove();
         String sMove = _jni.getMyMoveToString();
 
-        if (sMove.length() > 3) {
+        if (sMove.length() > 3 && !sMove.equals("O-O-O")) {
             // assures space to separate which Rook and which Knight to move
             sMove = sMove.substring(0, 2) + " " + sMove.substring(2, sMove.length());
         }

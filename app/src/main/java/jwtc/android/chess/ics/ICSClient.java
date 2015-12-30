@@ -440,11 +440,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _editConsole = (EditText) findViewById(R.id.EditICSConsole);
         if (_editConsole != null) {
-            _editConsole.setTextColor(getResources().getColor(android.R.color.black));
+            _editConsole.setTextColor(getResources().getColor(android.R.color.white));
+            _editConsole.setSingleLine(true);
             _editConsole.setOnKeyListener(okl);
         }
         EditText editBoard = (EditText) findViewById(R.id.EditICSBoard);
         if (editBoard != null) {
+            editBoard.setSingleLine(true);
             editBoard.setOnKeyListener(okl);
         }
 

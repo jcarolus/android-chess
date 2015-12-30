@@ -65,11 +65,12 @@ public class start extends AppCompatActivity {
 	private JNI _jni;
 	private Timer _timer;
 	private String _lastMessage;
-	/**
-	 * Called when the activity is first created.
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+
+	    /**
+		 * Called when the activity is first created.
+		 */
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
@@ -108,7 +109,11 @@ public class start extends AppCompatActivity {
 			}
 		}, 1000, 500);
 
+		String[] title = getResources().getStringArray(R.array.start_menu);
+
 		_list = (ListView)findViewById(R.id.ListStart);
+		start_CustomList adapter = new start_CustomList(this,  title);
+		_list.setAdapter(adapter);
 		_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -177,6 +182,25 @@ public class start extends AppCompatActivity {
 			intent.putExtra("RESTART", true);
 			startActivity(intent);
 
+		}
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+
+		SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
+		if (getData.getBoolean("RESTART", false)) {
+			finish();
+			Intent intent = new Intent(this, start.class);
+			//intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+			SharedPreferences.Editor editor = getData.edit();
+			editor.putBoolean("RESTART", false);
+			editor.apply();
+
+			startActivity(intent);
 		}
 	}
 
