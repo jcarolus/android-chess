@@ -77,6 +77,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
 
         if (prefs.getBoolean("speechNotification", false)) {
             _speech = new TextToSpeech(this, this);
+        } else {
+            _speech = null;
         }
 
         _chessView = new ChessView(this);
@@ -266,6 +268,13 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         //Debug.startMethodTracing("chessplayertrace");
 
         SharedPreferences prefs = this.getPrefs();
+
+        if (prefs.getBoolean("speechNotification", false)) {
+            if(_speech == null)
+            {_speech = new TextToSpeech(this, this);}
+        } else {
+            _speech = null;
+        }
 
         String sOpeningDb = prefs.getString("OpeningDb", null);
         if (sOpeningDb == null) {
@@ -656,7 +665,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         if (_speech != null) {
             _speech.speak(sSpeech, TextToSpeech.QUEUE_FLUSH, null);
         }
-        if (_ringNotification != null) {
+        if (_ringNotification != null && _speech == null) {
             _ringNotification.play();
         }
     }
