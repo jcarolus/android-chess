@@ -146,8 +146,7 @@ public class ICSMatchDlg extends Dialog {
 				if(_rbSeek.isChecked()){
 					s = "seek " + (_checkManual.isChecked() ? "m ": "a ") + (_checkFormula.isChecked() ? "f ": "") + _editRatingRangeMIN.getText().toString()
 							+ "-" + _editRatingRangeMAX.getText().toString() + " ";
-					_parent.dateTimer();  // sendstring date thread to let you know of disconnection
-					
+
 				} else {
 					s = "match " + sP + " ";
 				}
