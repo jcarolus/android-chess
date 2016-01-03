@@ -59,6 +59,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
 
     private GestureDetector _gestureDetector;
 
+    private boolean _skipReturn;
+
     /**
      * Called when the activity is first created.
      */
@@ -76,7 +78,11 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         SharedPreferences prefs = this.getPrefs();
 
         if (prefs.getBoolean("speechNotification", false)) {
-            _speech = new TextToSpeech(this, this);
+            try {
+                _speech = new TextToSpeech(this, this);
+            } catch (Exception ex){
+                _speech = null;
+            }
         } else {
             _speech = null;
         }
@@ -227,6 +233,11 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
             return true;
         }
 
+        // preference is to skip a carriage return
+        if(_skipReturn && (char)c == '\r'){
+            return true;
+        }
+
         if(c > 48 && c < 57 || c > 96 && c < 105){
             _keyboardBuffer += ("" + (char)c);
         }
@@ -275,6 +286,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         } else {
             _speech = null;
         }
+
+        _skipReturn = prefs.getBoolean("skipReturn", false);
 
         String sOpeningDb = prefs.getString("OpeningDb", null);
         if (sOpeningDb == null) {
