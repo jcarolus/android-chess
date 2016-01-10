@@ -25,6 +25,8 @@ import android.widget.TableRow;
 
 public class options extends MyBaseActivity {
 
+    public static final String TAG = "options";
+
     public static final int RESULT_960 = 1;
 
     private CheckBox _checkAutoFlip, _checkMoves, _check960;

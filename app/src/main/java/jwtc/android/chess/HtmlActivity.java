@@ -11,6 +11,7 @@ import android.webkit.WebView;
 
 public class HtmlActivity extends MyBaseActivity {
 
+	public static final String TAG = "HtmlActivity";
 	public static String HELP_MODE = "HELP_MODE";
 
 	private WebView _webview;

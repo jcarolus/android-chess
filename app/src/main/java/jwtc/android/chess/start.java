@@ -32,6 +32,8 @@ import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
 import android.support.v7.media.MediaRouter.RouteInfo;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
@@ -59,6 +61,7 @@ public class start extends AppCompatActivity {
 	private boolean mApplicationStarted;
 	private boolean mWaitingForReconnect;
 	private String mSessionId;
+	protected Tracker _tracker;
 
 	private ListView _list;
 
@@ -165,11 +168,16 @@ public class start extends AppCompatActivity {
 			}
 		});
 
-		// Configure Cast device discovery
+		MyApplication application = (MyApplication) getApplication();
+		_tracker = application .getDefaultTracker();
+
+			// Configure Cast device discovery
 		mMediaRouter = MediaRouter.getInstance(getApplicationContext());
 		mMediaRouteSelector = new MediaRouteSelector.Builder()
 				.addControlCategory(CastMediaControlIntent.categoryForCast("05EB93C6")).build();
 		mMediaRouterCallback = new MyMediaRouterCallback();
+
+
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -350,6 +358,10 @@ public class start extends AppCompatActivity {
 														+ ", wasLaunched: " + wasLaunched);
 												mApplicationStarted = true;
 
+												_tracker.send(new HitBuilders.EventBuilder()
+														.setCategory("Cast")
+														.setAction("started")
+														.build());
 												// Create the custom message
 												// channel
 												mChessChannel = new ChessChannel();

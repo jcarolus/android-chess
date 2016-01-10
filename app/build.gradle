@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     signingConfigs {
@@ -19,6 +20,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+    lintOptions {
+        disable 'MissingTranslation'
+    }
 }
 
 dependencies {
@@ -26,5 +30,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:mediarouter-v7:22.2.1'
     compile 'com.google.android.gms:play-services-cast:8.3.0'
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
     compile files('libs/play-hub-support.jar')
 }

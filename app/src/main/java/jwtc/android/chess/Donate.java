@@ -19,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONObject;
 
