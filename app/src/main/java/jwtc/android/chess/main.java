@@ -32,7 +32,7 @@ import android.view.GestureDetector;
 
 public class main extends ChessActivity implements OnInitListener, GestureDetector.OnGestureListener {
 
-    public static final String TAG = "MyBaseActivity";
+    public static final String TAG = "main";
 
     /**
      * instances for the view and game of chess *
@@ -220,6 +220,23 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override  // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+        int action = event.getAction();
+        boolean isDown = action == 0;
+
+        if(_skipReturn && keyCode == KeyEvent.KEYCODE_ENTER){  // skip enter key
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
