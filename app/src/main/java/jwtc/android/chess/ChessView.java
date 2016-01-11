@@ -1508,8 +1508,6 @@ public class ChessView extends UI {
         // Pronunciation - the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
         sMove = sMove.replace("a", "ay ");
 
-        sMove = sMove.replace("e", "eae ");
-
         sMove = sMove.replace("b", "bee ");
         ///////////////////////////////////
 
