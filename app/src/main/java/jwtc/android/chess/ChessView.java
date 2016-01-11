@@ -1498,6 +1498,19 @@ public class ChessView extends UI {
             sMove = sMove.substring(0, 2) + " " + sMove.substring(2, sMove.length());
         }
 
+        if (sMove.length() > 3) {
+            if (sMove.charAt(sMove.length() - 4) == ' ')    // assures space from last two chars
+            {
+                sMove = sMove.substring(0, sMove.length() - 2) + " " + sMove.substring(sMove.length() - 2, sMove.length());
+            }
+        }
+
+        // Pronunciation - the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
+        sMove = sMove.replace("a", "ay ");
+
+        sMove = sMove.replace("b", "bee ");
+        ///////////////////////////////////
+
         sMove = sMove.replace("x", " takes ");
 
         sMove = sMove.replace("=", " promotes to ");
@@ -1513,17 +1526,6 @@ public class ChessView extends UI {
 
         sMove = sMove.replace("+", " check");
         sMove = sMove.replace("#", " checkmate");
-
-        if (sMove.length() > 2) {
-            if (sMove.charAt(sMove.length() - 4) == ' ')    // assures space from last two chars
-            {
-                sMove = sMove.substring(0, sMove.length() - 2) + " " + sMove.substring(sMove.length() - 2, sMove.length());
-            }
-        }
-
-        // the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
-        sMove = sMove.replace("a ", "ay ");
-        sMove = sMove.replace("b", "bee ");
 
         if (Move.isEP(move)) {
             sMove = sMove + " On Pesawnt";  // En Passant
