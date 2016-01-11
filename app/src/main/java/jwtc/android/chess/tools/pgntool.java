@@ -32,6 +32,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class pgntool extends ListActivity {
 
+    public static final String TAG = "pgntool";
+
     protected static final String MODE_IMPORT = "import";
     protected static final String MODE_DB_IMPORT = "db_import";
     protected static final String MODE_DB_POINT = "db_point";

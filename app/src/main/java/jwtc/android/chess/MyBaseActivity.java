@@ -1,33 +1,29 @@
 package jwtc.android.chess;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceActivity;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.LayoutInflater.Factory;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.lang.reflect.Field;
 
 public class MyBaseActivity extends android.app.Activity{
 
 	protected PowerManager.WakeLock _wakeLock;
+	protected Tracker _tracker;
+	public static final String TAG = "MyBaseActivity";
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +32,11 @@ public class MyBaseActivity extends android.app.Activity{
 		this.prepareWindowSettings();
 
 		_wakeLock = this.getWakeLock();
+
+		MyApplication application = (MyApplication) getApplication();
+		_tracker = application .getDefaultTracker();
+//		_tracker.setScreenName(TAG);
+//		_tracker.send(new HitBuilders.ScreenViewBuilder().build());
 	}
 
 	@Override
@@ -127,5 +128,20 @@ public class MyBaseActivity extends android.app.Activity{
 		Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
 		t.setGravity(Gravity.BOTTOM, 0, 0);
 		t.show();
+	}
+
+	public void trackEvent(String category, String action){
+		_tracker.send(new HitBuilders.EventBuilder()
+				.setCategory(category)
+				.setAction(action)
+				.build());
+	}
+
+	public void trackEvent(String category, String action, String label){
+		_tracker.send(new HitBuilders.EventBuilder()
+				.setCategory(category)
+				.setAction(action)
+				.setLabel(label)
+				.build());
 	}
 }

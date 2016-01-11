@@ -28,6 +28,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
@@ -158,10 +160,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         break;
                     case MSG_STOP_SESSION:
                         client.stopSession(msg.getData().getString("buffer"));
+                        client.trackEvent(TAG, "stopsession");
                         break;
                     case MSG_START_SESSION:
                         client.dateTimer();
                         client.switchToBoardView();
+                        client.trackEvent(TAG, "startsession");
                         break;
                 }
 

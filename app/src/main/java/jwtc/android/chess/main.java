@@ -30,6 +30,8 @@ import java.util.Locale;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 public class main extends ChessActivity implements OnInitListener, GestureDetector.OnGestureListener {
 
     public static final String TAG = "main";
@@ -396,7 +398,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         _chessView.OnResume(prefs);
 
         _chessView.updateState();
-        //
+
         super.onResume();
     }
 
@@ -566,6 +568,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         editor.putString("game_pgn", null);
         editor.putLong("game_id", _lGameID);
         editor.commit();
+
+        trackEvent(TAG, "newGame", "default");
     }
 
     private void newGameRandomFischer() {
@@ -581,6 +585,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         editor.putString("game_pgn", null);
         editor.putLong("game_id", _lGameID);
         editor.commit();
+
+        trackEvent(TAG, "newGame", "960");
     }
 
     private void loadGame() {
@@ -601,6 +607,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
                 _chessView.setDateLong(c.getLong(c.getColumnIndex(PGNColumns.DATE)));
 
                 _fGameRating = c.getFloat(c.getColumnIndex(PGNColumns.RATING));
+
+                trackEvent(TAG, "loadGame");
             } else {
                 _lGameID = 0; // probably deleted
             }
