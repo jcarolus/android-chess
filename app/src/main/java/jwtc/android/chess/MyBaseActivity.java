@@ -24,6 +24,7 @@ public class MyBaseActivity extends android.app.Activity{
 	protected PowerManager.WakeLock _wakeLock;
 	protected Tracker _tracker;
 	public static final String TAG = "MyBaseActivity";
+	private long _onResumeTimeMillies = 0;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class MyBaseActivity extends android.app.Activity{
 			_wakeLock.acquire();
 		}
 
+		_onResumeTimeMillies = System.currentTimeMillis();
+
 		super.onResume();
 	}
 
@@ -56,6 +59,12 @@ public class MyBaseActivity extends android.app.Activity{
 		if (_wakeLock.isHeld()) {
 			_wakeLock.release();
 		}
+
+		_tracker.send(new HitBuilders.TimingBuilder()
+				.setCategory(TAG)
+				.setLabel("ResumeToPause")
+				.setValue(System.currentTimeMillis() - _onResumeTimeMillies).build());
+
 		super.onPause();
 	}
 
