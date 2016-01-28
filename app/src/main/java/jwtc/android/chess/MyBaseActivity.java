@@ -59,12 +59,7 @@ public class MyBaseActivity extends android.app.Activity{
 		if (_wakeLock.isHeld()) {
 			_wakeLock.release();
 		}
-
-		_tracker.send(new HitBuilders.TimingBuilder()
-				.setCategory(TAG)
-				.setLabel("ResumeToPause")
-				.setValue(System.currentTimeMillis() - _onResumeTimeMillies).build());
-
+		
 		super.onPause();
 	}
 
