@@ -1858,6 +1858,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public void sendString(String s) {
+
+        addConsoleText(s);
+
         if (_socket == null || _socket.sendString(s + "\n") == false) {
             switch (get_gameStartSound()) {
                 case 0:
