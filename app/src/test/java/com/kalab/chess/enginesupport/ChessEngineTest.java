@@ -16,25 +16,24 @@ public class ChessEngineTest extends TestCase {
     private ChessEngine testEngine;
     private int versionCode = 2;
     private String packageName = "PackageName";
+    private String fileName = "FileName";
 
     @Before
     public void setUp() throws Exception {
-        testEngine = new ChessEngine("ChessEngine","FileName","Authority","PackageName",versionCode,"LicenseCheckActivity");
+        testEngine = new ChessEngine("ChessEngine", "FileName", "Authority", "PackageName", versionCode, "LicenseCheckActivity");
     }
 
     @After
     public void tearDown() throws Exception {
-
-
+        testEngine = null;
     }
 
     @Test
     public void testGetVersionCode() throws Exception {
-        try{
-            assertEquals(versionCode,testEngine.getVersionCode());
+        try {
+            assertEquals(versionCode, testEngine.getVersionCode());
             System.out.println("Test Passed!");
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             System.out.println("Test Failed!");
             System.out.println("Exception Information:");
             System.out.println(ex.toString());
@@ -43,8 +42,40 @@ public class ChessEngineTest extends TestCase {
 
     @Test
     public void testGetPackageName() throws Exception {
-        try{
+        try {
             assertEquals(packageName, testEngine.getPackageName());     //Should Fail
+            System.out.println("Test Passed!");
+        } catch (Exception e) {
+            System.out.println("Test Failed!");
+            System.out.println("Exception Information:");
+            System.out.println(e.toString());
+        }
+    }
+
+    /*Duplicate Test, Commenting this one out temporarily.
+    @Test
+    public void testGetFileName() throws Exception {
+        assertEquals("FileName", this.testEngine.getFileName());
+        System.out.println("@Test - testGetFileName()");
+    }*/
+
+    @Test
+    public void testGetFileName() throws Exception {
+        try {
+            assertEquals(fileName, testEngine.getFileName());
+            System.out.println("Test Passed!");
+        }
+        catch (Exception e){
+            System.out.println("Test Failed!");
+            System.out.println("Exception Information:");
+            System.out.println(e.toString());
+        }
+    }
+
+    @Test
+    public void testGetAuthority() throws Exception {
+        try {
+            assertEquals("Authority", testEngine.getAuthority());
             System.out.println("Test Passed!");
         }
         catch (Exception e){
