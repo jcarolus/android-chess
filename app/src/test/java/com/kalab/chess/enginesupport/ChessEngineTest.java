@@ -15,7 +15,7 @@ public class ChessEngineTest extends TestCase {
 
     private ChessEngine testEngine;
     private int versionCode = 2;
-    private String packageName = "Package";
+    private String packageName = "PackageName";
 
     @Before
     public void setUp() throws Exception {
@@ -24,6 +24,7 @@ public class ChessEngineTest extends TestCase {
 
     @After
     public void tearDown() throws Exception {
+
 
     }
 
@@ -47,6 +48,18 @@ public class ChessEngineTest extends TestCase {
             System.out.println("Test Passed!");
         }
         catch (Exception e){
+            System.out.println("Test Failed!");
+            System.out.println("Exception Information:");
+            System.out.println(e.toString());
+        }
+    }
+
+    @Test
+    public void testGetURI() throws Exception {
+        try {
+            assertEquals("content://" + testEngine.getAuthority() + "/" + testEngine.getFileName(), testEngine.getUri());
+            System.out.println("Test Passed!");
+        } catch (Exception e) {
             System.out.println("Test Failed!");
             System.out.println("Exception Information:");
             System.out.println(e.toString());
