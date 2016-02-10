@@ -17,10 +17,11 @@ public class ChessEngineTest extends TestCase {
     private int versionCode = 2;
     private String packageName = "PackageName";
     private String fileName = "FileName";
+    private String name = "ChessEngine";
 
     @Before
     public void setUp() throws Exception {
-        testEngine = new ChessEngine("ChessEngine", "FileName", "Authority", "PackageName", versionCode, "LicenseCheckActivity");
+        testEngine = new ChessEngine(name, "FileName", "Authority", "PackageName", versionCode, "LicenseCheckActivity");
     }
 
     @After
@@ -96,4 +97,19 @@ public class ChessEngineTest extends TestCase {
             System.out.println(e.toString());
         }
     }
+
+    //Zach's Test
+    @Test
+    public void testGetName() throws Exception{
+        try{
+            assertEquals(name, testEngine.getName());
+            System.out.println("Test Passed!");
+        }
+        catch (Exception e){
+            System.out.println("Test Failed!");
+            System.out.println("Exception Information:");
+            System.out.println(e.toString());
+        }
+    }
+
 }
