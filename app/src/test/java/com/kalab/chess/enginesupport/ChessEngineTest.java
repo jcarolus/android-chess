@@ -33,9 +33,9 @@ public class ChessEngineTest extends TestCase {
     public void testGetVersionCode() throws Exception {
         try {
             assertEquals(versionCode, testEngine.getVersionCode());
-            System.out.println("Test Passed!");
+            System.out.println("getVersionCode() Test Passed!");
         } catch (Exception ex) {
-            System.out.println("Test Failed!");
+            System.out.println("getVersionCode() Test Failed!");
             System.out.println("Exception Information:");
             System.out.println(ex.toString());
         }
@@ -45,29 +45,22 @@ public class ChessEngineTest extends TestCase {
     public void testGetPackageName() throws Exception {
         try {
             assertEquals(packageName, testEngine.getPackageName());     //Should Fail
-            System.out.println("Test Passed!");
+            System.out.println("getPackageName() Test Passed!");
         } catch (Exception e) {
-            System.out.println("Test Failed!");
+            System.out.println("getPackageName() Test Failed!");
             System.out.println("Exception Information:");
             System.out.println(e.toString());
         }
     }
 
-    /*Duplicate Test, Commenting this one out temporarily.
-    @Test
-    public void testGetFileName() throws Exception {
-        assertEquals("FileName", this.testEngine.getFileName());
-        System.out.println("@Test - testGetFileName()");
-    }*/
-
     @Test
     public void testGetFileName() throws Exception {
         try {
             assertEquals(fileName, testEngine.getFileName());
-            System.out.println("Test Passed!");
+            System.out.println("getFileName() Test Passed!");
         }
         catch (Exception e){
-            System.out.println("Test Failed!");
+            System.out.println("getFileName() Test Failed!");
             System.out.println("Exception Information:");
             System.out.println(e.toString());
         }
@@ -77,10 +70,10 @@ public class ChessEngineTest extends TestCase {
     public void testGetAuthority() throws Exception {
         try {
             assertEquals("Authority", testEngine.getAuthority());
-            System.out.println("Test Passed!");
+            System.out.println("getAuthority() Test Passed!");
         }
         catch (Exception e){
-            System.out.println("Test Failed!");
+            System.out.println("getAuthority() Test Failed!");
             System.out.println("Exception Information:");
             System.out.println(e.toString());
         }
@@ -90,9 +83,9 @@ public class ChessEngineTest extends TestCase {
     public void testGetURI() throws Exception {
         try {
             assertEquals("content://" + testEngine.getAuthority() + "/" + testEngine.getFileName(), testEngine.getUri());
-            System.out.println("Test Passed!");
+            System.out.println("testGetURI() Test Passed!");
         } catch (Exception e) {
-            System.out.println("Test Failed!");
+            System.out.println("testGetURI() Test Failed!");
             System.out.println("Exception Information:");
             System.out.println(e.toString());
         }
@@ -103,10 +96,10 @@ public class ChessEngineTest extends TestCase {
     public void testGetName() throws Exception{
         try{
             assertEquals(name, testEngine.getName());
-            System.out.println("Test Passed!");
+            System.out.println("getName() Test Passed!");
         }
         catch (Exception e){
-            System.out.println("Test Failed!");
+            System.out.println("getName() Test Failed!");
             System.out.println("Exception Information:");
             System.out.println(e.toString());
         }
