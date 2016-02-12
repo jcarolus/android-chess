@@ -306,7 +306,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
             _speech = null;
         }
 
-        _skipReturn = prefs.getBoolean("skipReturn", false);
+        _skipReturn = prefs.getBoolean("skipReturn", true);
 
         String sOpeningDb = prefs.getString("OpeningDb", null);
         if (sOpeningDb == null) {
