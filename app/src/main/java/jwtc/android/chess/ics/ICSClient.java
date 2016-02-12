@@ -1586,7 +1586,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
 
-        _view.setConfirmMove(prefs.getBoolean("ICSConfirmMove", true));
+        _view.setConfirmMove(prefs.getBoolean("ICSConfirmMove", false));
 
         _ficsHandle = prefs.getString("ics_handle", null);
         _ficsPwd = prefs.getString("ics_password", null);
