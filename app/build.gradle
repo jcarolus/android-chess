@@ -28,4 +28,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-cast:8.3.0'
     compile files('libs/play-hub-support.jar')
     testCompile 'junit:junit:4.12'
+    androidTestCompile 'junit:junit:4.12'
 }
