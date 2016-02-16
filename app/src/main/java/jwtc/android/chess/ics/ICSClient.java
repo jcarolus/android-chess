@@ -1740,7 +1740,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 for (int i = 0; i < nSize; i++) {
                     ActivityManager.RunningTaskInfo taskinfo = tasklist.get(i);
                     if (taskinfo.topActivity.getPackageName().equals("jwtc.android.chess")) {
-                        am.moveTaskToFront(taskinfo.id, 0);
+                        am.moveTaskToFront(taskinfo.id, 2);
                     }
                 }
             }
