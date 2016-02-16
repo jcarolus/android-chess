@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -1537,6 +1538,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void addConsoleText(final String s) {
 
+        _tvConsole.setTypeface(Typeface.MONOSPACE);  // Monospace gives each character the same width
+        _tvPlayConsole.setTypeface(Typeface.MONOSPACE);
+
         final String s2 = _tvConsole.getText() + "\n\n" + s;
         if (s2.length() > 8192) {
             _tvConsole.setText(s2.substring(s2.length() - 4096));
@@ -1859,7 +1863,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void sendString(String s) {
 
-        addConsoleText(s);
+        if (!s.equals(_pwd)){        // don't send password to console for security reasons
+            addConsoleText(s);
+        }
 
         if (_socket == null || _socket.sendString(s + "\n") == false) {
             switch (get_gameStartSound()) {
