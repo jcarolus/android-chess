@@ -201,6 +201,12 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
 		_listGames.setOnItemLongClickListener(this);
 	}
 
+    //Fix for Back button in the title bar not working.
+	public boolean onOptionsItemSelected(MenuItem item) {
+        setResult(RESULT_CANCELED);
+        finish();
+        return true;
+    }
 
 	private void doFilterSort(){
 		//_adapter.getFilter().filter(_editFilter.getText().toString());

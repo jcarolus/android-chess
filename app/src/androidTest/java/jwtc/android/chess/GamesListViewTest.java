@@ -28,7 +28,7 @@ public class GamesListViewTest extends TestCase {
     public void testOnOptionsItemSelected() throws Exception {
         //onOptionsItemSelected will return false if it is not handled.
         //We are expecting true, and if the back button menu item worked we would see true
-        //Since we see false, this assert fails proving our bug exists
+        //Since we now see true (given that we implemented the fix) it works.
         assertEquals(true,glv.onOptionsItemSelected(null));
     }
 }
