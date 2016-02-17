@@ -347,8 +347,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 public void onClick(View arg0) {
                     //ICSChatDlg
                     _dlgChat.show();
-                    _dlgChat.prepare();
                     _bConsoleText = true;
+                    _dlgChat.prepare();
                 }
             });
         }
@@ -437,10 +437,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     // Perform action on key press
                     EditText et = (EditText) v;
                     String s = et.getText().toString();
-                    sendString(s + "\n");
-                    et.setText("");
 
                     _bConsoleText = true;  // show text when user types to ICS
+                    sendString(s + "\n");
+                    et.setText("");
 
                     return true;
                 }
