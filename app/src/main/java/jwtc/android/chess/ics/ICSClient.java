@@ -58,7 +58,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle, _resultMessage, _resultNumerical;
     private int _port, _serverType, _TimeWarning, _gameStartSound;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog, _gameStartFront;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog,
+                    _gameStartFront, _bConsoleText;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -347,6 +348,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     //ICSChatDlg
                     _dlgChat.show();
                     _dlgChat.prepare();
+                    _bConsoleText = true;
                 }
             });
         }
@@ -437,6 +439,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     String s = et.getText().toString();
                     sendString(s + "\n");
                     et.setText("");
+
+                    _bConsoleText = true;  // show text when user types to ICS
+
                     return true;
                 }
                 return false;
@@ -1863,8 +1868,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void sendString(String s) {
 
-        if (!s.equals(_pwd)){        // don't send password to console for security reasons
+        if (_bConsoleText){        // allows user ICS console text only
             addConsoleText(s);
+            _bConsoleText = false;
         }
 
         if (_socket == null || _socket.sendString(s + "\n") == false) {
