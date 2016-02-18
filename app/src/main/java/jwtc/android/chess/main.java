@@ -62,6 +62,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
     private GestureDetector _gestureDetector;
 
     public int engineInfoCount = 0;
+    public AlertDialog engineInfoAlertDialog;
 
     /**
      * Called when the activity is first created.
@@ -211,11 +212,24 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         builder.setItems(_itemsMenu, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
-                _chessView.toggleControl(item);
+                // If 'Engine info' menu item (item 0) is selected, display message that this
+                // feature is not implemented. Added JMH
+                if (item == 0){
+                    Context context = getApplicationContext();
+                    CharSequence text = "Engine info not implemented!";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                    engineInfoCount++;
+                }
+                else{
+                    _chessView.toggleControl(item);  // last original line of method
+                }
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
+        engineInfoAlertDialog = alert;
     }
 
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
