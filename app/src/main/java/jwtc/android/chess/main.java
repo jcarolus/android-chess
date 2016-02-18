@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import android.content.Context;
+import android.widget.Toast;
 
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
@@ -58,6 +60,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
     public static final int REQUEST_FROM_QR_CODE = 5;
 
     private GestureDetector _gestureDetector;
+
+    public int engineInfoCount = 0;
 
     /**
      * Called when the activity is first created.
