@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import android.content.Context;
+import android.widget.Toast;
 
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
@@ -58,6 +60,9 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
     public static final int REQUEST_FROM_QR_CODE = 5;
 
     private GestureDetector _gestureDetector;
+
+    public int engineInfoCount = 0;
+    public AlertDialog engineInfoAlertDialog;
 
     /**
      * Called when the activity is first created.
@@ -207,11 +212,24 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         builder.setItems(_itemsMenu, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
-                _chessView.toggleControl(item);
+                // If 'Engine info' menu item (item 0) is selected, display message that this
+                // feature is not implemented. Added JMH
+                if (item == 0){
+                    Context context = getApplicationContext();
+                    CharSequence text = "Engine info not implemented!";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                    engineInfoCount++;
+                }
+                else{
+                    _chessView.toggleControl(item);  // last original line of method
+                }
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
+        engineInfoAlertDialog = alert;
     }
 
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {

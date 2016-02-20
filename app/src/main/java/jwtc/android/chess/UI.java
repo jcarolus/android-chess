@@ -24,7 +24,7 @@ public class UI extends GameControl
         // @Override
         public void handleMessage(Message msg) {
              
-       	 	Log.i("searchThreadUpdateHandler", "handle " + msg.what);
+       	 	Log.i("searchThreadUpdateHandl", "handle " + msg.what);
        	 	// do move
 	       	 if(msg.what == MSG_MOVE){
 	       		 
