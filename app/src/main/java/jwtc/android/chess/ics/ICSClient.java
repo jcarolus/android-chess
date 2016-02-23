@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -57,7 +58,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle, _resultMessage, _resultNumerical;
     private int _port, _serverType, _TimeWarning, _gameStartSound;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog, _gameStartFront;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog,
+                    _gameStartFront, _bConsoleText;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -345,6 +347,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 public void onClick(View arg0) {
                     //ICSChatDlg
                     _dlgChat.show();
+                    _bConsoleText = true;
                     _dlgChat.prepare();
                 }
             });
@@ -434,8 +437,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     // Perform action on key press
                     EditText et = (EditText) v;
                     String s = et.getText().toString();
+
+                    _bConsoleText = true;  // show text when user types to ICS
                     sendString(s + "\n");
                     et.setText("");
+
                     return true;
                 }
                 return false;
@@ -1537,6 +1543,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void addConsoleText(final String s) {
 
+        _tvConsole.setTypeface(Typeface.MONOSPACE);  // Monospace gives each character the same width
+        _tvPlayConsole.setTypeface(Typeface.MONOSPACE);
+
         final String s2 = _tvConsole.getText() + "\n\n" + s;
         if (s2.length() > 8192) {
             _tvConsole.setText(s2.substring(s2.length() - 4096));
@@ -1740,7 +1749,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 for (int i = 0; i < nSize; i++) {
                     ActivityManager.RunningTaskInfo taskinfo = tasklist.get(i);
                     if (taskinfo.topActivity.getPackageName().equals("jwtc.android.chess")) {
-                        am.moveTaskToFront(taskinfo.id, 0);
+                        am.moveTaskToFront(taskinfo.id, 2);
                     }
                 }
             }
@@ -1859,7 +1868,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void sendString(String s) {
 
-        addConsoleText(s);
+        if (_bConsoleText){        // allows user ICS console text only
+            addConsoleText(s);
+            _bConsoleText = false;
+        }
 
         if (_socket == null || _socket.sendString(s + "\n") == false) {
             switch (get_gameStartSound()) {
