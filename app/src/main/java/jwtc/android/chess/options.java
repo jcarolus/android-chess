@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,8 @@ public class options extends MyBaseActivity {
     private Button _butCancel, _butOk;
     private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack, _radioAndroid, _radioHuman;
     private TableRow _tableRowOption960;
+
+    private static boolean _bFlipBlack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -228,6 +231,15 @@ public class options extends MyBaseActivity {
     @Override
     protected void onPause() {
 
+        if(_radioHuman.isChecked() && !_checkAutoFlip.isChecked()){
+            _bFlipBlack = true;
+        }else {
+            _bFlipBlack = false;
+        }
         super.onPause();
+    }
+
+    public static boolean is_bFlipBlack(){
+        return _bFlipBlack;
     }
 }
