@@ -39,6 +39,7 @@ public class ChessImageView extends View {
 	
 	private ImageCacheObject _ico;
 
+	private start _start;
 	private options _options;
 	
 	public ChessImageView(Context context) {
@@ -122,17 +123,17 @@ public class ChessImageView extends View {
         		canvas.drawBitmap(_bmpSelectLight, _matrix, _paint);
         	//}
        	}
-        
+
         if(ico._bPiece){
 
 	        bmp = _arrPieceBitmaps[ico._color][ico._piece];
 
-			if (_options.is_bFlipBlack() && ico._color == 0) {   // flips black for human vs human without autoflip
-				canvas.rotate(180, getWidth()/2, getHeight()/2);
+			if (_start.sActivity.equals("Play") && _options.is_bFlipBlack() && ico._color == 0) {   // flips black for human vs human without
+				canvas.rotate(180, getWidth()/2, getHeight()/2);                                    // autoflip on while in Play mode
 			}
 
 	        canvas.drawBitmap(bmp, _matrix, _paint);
-	        
+
 	        //Picture picture = _svgTest.getPicture();
 	        //canvas.drawPicture(picture);
 	        

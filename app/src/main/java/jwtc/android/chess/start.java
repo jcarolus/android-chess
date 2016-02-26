@@ -68,6 +68,7 @@ public class start extends AppCompatActivity {
 	private JNI _jni;
 	private Timer _timer;
 	private String _lastMessage;
+	public static String sActivity;  // sActivity is a global variable that gives you the current activity
 
 	    /**
 		 * Called when the activity is first created.
@@ -120,41 +121,41 @@ public class start extends AppCompatActivity {
 		_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				String s = parent.getItemAtPosition(position).toString();
+				sActivity = parent.getItemAtPosition(position).toString();
 				try {
 					Intent i = new Intent();
-					Log.i("start", s);
-					if (s.equals(getString(R.string.start_play))) {
+					Log.i("start", sActivity);
+					if (sActivity.equals(getString(R.string.start_play))) {
 						i.setClass(start.this, main.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_practice))) {
+					} else if (sActivity.equals(getString(R.string.start_practice))) {
 						i.setClass(start.this, practice.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_puzzles))) {
+					} else if (sActivity.equals(getString(R.string.start_puzzles))) {
 						i.setClass(start.this, puzzle.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_about))) {
+					} else if (sActivity.equals(getString(R.string.start_about))) {
 						i.setClass(start.this, HtmlActivity.class);
 						i.putExtra(HtmlActivity.HELP_MODE, "about");
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_ics))) {
+					} else if (sActivity.equals(getString(R.string.start_ics))) {
 						i.setClass(start.this, ICSClient.class);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_pgn))) {
+					} else if (sActivity.equals(getString(R.string.start_pgn))) {
 						i.setClass(start.this, pgntool.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_donate))) {
+					} else if (sActivity.equals(getString(R.string.start_donate))) {
 						i.setClass(start.this, Donate.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_globalpreferences))) {
+					} else if (sActivity.equals(getString(R.string.start_globalpreferences))) {
 						i.setClass(start.this, ChessPreferences.class);
 						startActivityForResult(i, 0);
-					} else if (s.equals(getString(R.string.menu_help))) {
+					} else if (sActivity.equals(getString(R.string.menu_help))) {
 						i.setClass(start.this, HtmlActivity.class);
 						i.putExtra(HtmlActivity.HELP_MODE, "help");
 						startActivity(i);
