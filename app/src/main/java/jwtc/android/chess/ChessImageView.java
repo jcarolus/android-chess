@@ -128,7 +128,8 @@ public class ChessImageView extends View {
 
 	        bmp = _arrPieceBitmaps[ico._color][ico._piece];
 
-			if (_start.sActivity.equals("Play") && _options.is_bFlipBlack() && ico._color == 0) {   // flips black for human vs human without
+			if (_start.sActivity.equals("Play") && _options.is_bFlipBlack() &&
+					(_options._radioBlack.isChecked() ? ico._color == 1 : ico._color == 0)) {   // flips black for human vs human without
 				canvas.rotate(180, getWidth()/2, getHeight()/2);                                    // autoflip on while in Play mode
 			}
 
