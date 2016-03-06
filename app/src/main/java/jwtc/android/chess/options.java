@@ -33,7 +33,8 @@ public class options extends MyBaseActivity {
     private CheckBox _checkAutoFlip, _checkMoves, _check960;
     private Spinner _spinLevel, _spinLevelPly;
     private Button _butCancel, _butOk;
-    private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack, _radioAndroid, _radioHuman;
+    private RadioButton _radioTime, _radioPly, _radioWhite, _radioAndroid, _radioHuman;
+    public static RadioButton _radioBlack; // used to allow other classes to know if black is on bottom
     private TableRow _tableRowOption960;
 
     private static boolean _bFlipBlack;
