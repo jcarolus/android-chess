@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,13 +26,18 @@ import android.widget.TableRow;
 
 public class options extends MyBaseActivity {
 
+    public static final String TAG = "options";
+
     public static final int RESULT_960 = 1;
 
     private CheckBox _checkAutoFlip, _checkMoves, _check960;
     private Spinner _spinLevel, _spinLevelPly;
     private Button _butCancel, _butOk;
-    private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack, _radioAndroid, _radioHuman;
+    private RadioButton _radioTime, _radioPly, _radioWhite, _radioAndroid, _radioHuman;
+    public static RadioButton _radioBlack; // used to allow other classes to know if black is on bottom
     private TableRow _tableRowOption960;
+
+    private static boolean _bFlipBlack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -226,6 +232,15 @@ public class options extends MyBaseActivity {
     @Override
     protected void onPause() {
 
+        if(_radioHuman.isChecked() && !_checkAutoFlip.isChecked()){
+            _bFlipBlack = true;
+        }else {
+            _bFlipBlack = false;
+        }
         super.onPause();
+    }
+
+    public static boolean is_bFlipBlack(){
+        return _bFlipBlack;
     }
 }

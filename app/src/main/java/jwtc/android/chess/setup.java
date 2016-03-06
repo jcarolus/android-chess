@@ -24,6 +24,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 public class setup extends MyBaseActivity {
+
+    public static final String TAG = "setup";
+
     private ChessViewBase _view;
     private JNI _jni;
     private int _selectedColor;

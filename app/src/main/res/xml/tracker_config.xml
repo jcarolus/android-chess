@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <string name="ga_trackingId">UA-4706047-13</string>
+    <integer name="ga_sessionTimeout">1800</integer>
+    <bool name="ga_autoActivityTracking">true</bool>
+    <bool name="ga_anonymizeIp">false</bool>
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+
+    <!--
+    <screenName name="jwtc.android.chess.start">Start Screen</screenName>
+    <screenName name="jwtc.android.chess.main">Play</screenName>
+    <screenName name="jwtc.android.chess.ics.ICSClient">Play Online</screenName>
+    -->
+</resources>

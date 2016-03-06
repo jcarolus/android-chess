@@ -11,10 +11,13 @@ import android.view.*;
 import android.widget.*;
 import android.content.SharedPreferences;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 public class puzzle extends MyBaseActivity {
 	
     /** instances for the view and game of chess **/
 	private ChessViewPuzzle _chessView;
+    public static final String TAG = "puzzle";
 
     /** Called when the activity is first created. */
     @Override

@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.playhub.Consts;
 import com.playhub.GameInfoFromPlayHub;
 import java.io.UnsupportedEncodingException;

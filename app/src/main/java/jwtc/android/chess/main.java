@@ -30,9 +30,11 @@ import java.util.Locale;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 public class main extends ChessActivity implements OnInitListener, GestureDetector.OnGestureListener {
 
-    public static final String TAG = "MyBaseActivity";
+    public static final String TAG = "main";
 
     /**
      * instances for the view and game of chess *
@@ -59,6 +61,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
 
     private GestureDetector _gestureDetector;
 
+    private boolean _skipReturn;
+
     /**
      * Called when the activity is first created.
      */
@@ -76,7 +80,13 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         SharedPreferences prefs = this.getPrefs();
 
         if (prefs.getBoolean("speechNotification", false)) {
-            _speech = new TextToSpeech(this, this);
+            try {
+                _speech = new TextToSpeech(this, this);
+            } catch (Exception ex){
+                _speech = null;
+            }
+        } else {
+            _speech = null;
         }
 
         _chessView = new ChessView(this);
@@ -214,6 +224,23 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         alert.show();
     }
 
+    @Override  // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+        int action = event.getAction();
+        boolean isDown = action == 0;
+
+        if(_skipReturn && keyCode == KeyEvent.KEYCODE_ENTER){  // skip enter key
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
     @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         //View v = getWindow().getCurrentFocus();
@@ -222,6 +249,11 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         Log.i("main", "onKeyDown " + keyCode + " = " + (char)c);
         if(keyCode == KeyEvent.KEYCODE_MENU){
             //showMenu();
+            return true;
+        }
+
+        // preference is to skip a carriage return
+        if(_skipReturn && (char)c == '\r'){
             return true;
         }
 
@@ -266,6 +298,15 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         //Debug.startMethodTracing("chessplayertrace");
 
         SharedPreferences prefs = this.getPrefs();
+
+        if (prefs.getBoolean("speechNotification", false)) {
+            if(_speech == null)
+            {_speech = new TextToSpeech(this, this);}
+        } else {
+            _speech = null;
+        }
+
+        _skipReturn = prefs.getBoolean("skipReturn", true);
 
         String sOpeningDb = prefs.getString("OpeningDb", null);
         if (sOpeningDb == null) {
@@ -357,7 +398,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         _chessView.OnResume(prefs);
 
         _chessView.updateState();
-        //
+
         super.onResume();
     }
 
@@ -527,6 +568,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         editor.putString("game_pgn", null);
         editor.putLong("game_id", _lGameID);
         editor.commit();
+
+        trackEvent(TAG, "newGame", "default");
     }
 
     private void newGameRandomFischer() {
@@ -542,6 +585,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         editor.putString("game_pgn", null);
         editor.putLong("game_id", _lGameID);
         editor.commit();
+
+        trackEvent(TAG, "newGame", "960");
     }
 
     private void loadGame() {
@@ -562,6 +607,8 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
                 _chessView.setDateLong(c.getLong(c.getColumnIndex(PGNColumns.DATE)));
 
                 _fGameRating = c.getFloat(c.getColumnIndex(PGNColumns.RATING));
+
+                trackEvent(TAG, "loadGame");
             } else {
                 _lGameID = 0; // probably deleted
             }
@@ -656,7 +703,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         if (_speech != null) {
             _speech.speak(sSpeech, TextToSpeech.QUEUE_FLUSH, null);
         }
-        if (_ringNotification != null) {
+        if (_ringNotification != null && _speech == null) {
             _ringNotification.play();
         }
     }

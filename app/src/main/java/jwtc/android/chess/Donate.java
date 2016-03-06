@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONObject;
 
@@ -124,6 +126,12 @@ public class Donate extends MyBaseActivity {
             if (resultCode == RESULT_OK) {
                 builder.setTitle(getString(R.string.donate_success));
 
+                SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = mPrefs.edit();
+                editor.putBoolean("bHeart", false);  // turn heart animation off
+                editor.putBoolean("RESTART", true);  // restart start menu
+                editor.apply();
+
                 try {
                     JSONObject jo = new JSONObject(purchaseData);
                     String token = jo.getString("purchaseToken");
@@ -143,6 +151,9 @@ public class Donate extends MyBaseActivity {
                 }
             } else {
                 builder.setTitle(getString(R.string.donate_error));
+                SharedPreferences mPrefs = getApplicationContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = mPrefs.edit();
+                editor.putBoolean("bHeart", false);
             }
             AlertDialog alert = builder.create();
             alert.show();

@@ -5,16 +5,21 @@ import java.util.Locale;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 public class HtmlActivity extends MyBaseActivity {
 
+	public static final String TAG = "HtmlActivity";
 	public static String HELP_MODE = "HELP_MODE";
 
 	private WebView _webview;
 	private String _lang;
+	private TextView _TVversionName;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -34,6 +39,9 @@ public class HtmlActivity extends MyBaseActivity {
 		}
 		_webview = (WebView) findViewById(R.id.WebViewHelp);
 
+		_TVversionName = (TextView) findViewById(R.id.textVersionName);
+		_TVversionName.setText("Version:  " + BuildConfig.VERSION_NAME);
+
 	}
 
 	@Override
@@ -46,6 +54,8 @@ public class HtmlActivity extends MyBaseActivity {
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			String s = extras.getString(HELP_MODE);
+
+			_TVversionName.setVisibility(s.equals("about") ? View.VISIBLE : View.GONE);
 
 			_webview.loadUrl("file:///android_asset/" + s + "-" + _lang
 					+ ".html");

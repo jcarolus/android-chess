@@ -17,6 +17,8 @@ import android.view.View;
 
 public class ChessImageView extends View {
 
+	public static final String TAG = "ChessImageView";
+
 	public static Bitmap[][] _arrPieceBitmaps = new Bitmap[2][6];
 	public static Bitmap _bmpBorder, _bmpSelect, _bmpSelectLight;
 	public static Bitmap _bmpTile;
@@ -36,6 +38,9 @@ public class ChessImageView extends View {
 	}
 	
 	private ImageCacheObject _ico;
+
+	private start _start;
+	private options _options;
 	
 	public ChessImageView(Context context) {
 		super(context);
@@ -73,7 +78,7 @@ public class ChessImageView extends View {
 			Log.i("paintBoard", "init " + scale + " : " + bmp.getWidth() + ", " + getWidth());
 			
 			ChessImageView._matrix.setScale(scale, scale);
-			
+
 			if(ChessImageView._bmpTile != null){
 				ChessImageView._matrixTile = new Matrix();
 				bmp = ChessImageView._bmpTile;
@@ -118,13 +123,18 @@ public class ChessImageView extends View {
         		canvas.drawBitmap(_bmpSelectLight, _matrix, _paint);
         	//}
        	}
-        
+
         if(ico._bPiece){
 
 	        bmp = _arrPieceBitmaps[ico._color][ico._piece];
-	        
+
+			if (_start.sActivity.equals("Play") && _options.is_bFlipBlack() &&
+					(_options._radioBlack.isChecked() ? ico._color == 1 : ico._color == 0)) {   // flips black for human vs human without
+				canvas.rotate(180, getWidth()/2, getHeight()/2);                                    // autoflip on while in Play mode
+			}
+
 	        canvas.drawBitmap(bmp, _matrix, _paint);
-	        
+
 	        //Picture picture = _svgTest.getPicture();
 	        //canvas.drawPicture(picture);
 	        

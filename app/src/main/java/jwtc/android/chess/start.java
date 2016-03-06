@@ -32,6 +32,8 @@ import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
 import android.support.v7.media.MediaRouter.RouteInfo;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
@@ -59,17 +61,20 @@ public class start extends AppCompatActivity {
 	private boolean mApplicationStarted;
 	private boolean mWaitingForReconnect;
 	private String mSessionId;
+	protected Tracker _tracker;
 
 	private ListView _list;
 
 	private JNI _jni;
 	private Timer _timer;
 	private String _lastMessage;
-	/**
-	 * Called when the activity is first created.
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public static String sActivity;  // sActivity is a global variable that gives you the current activity
+
+	    /**
+		 * Called when the activity is first created.
+		 */
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
@@ -108,45 +113,49 @@ public class start extends AppCompatActivity {
 			}
 		}, 1000, 500);
 
+		String[] title = getResources().getStringArray(R.array.start_menu);
+
 		_list = (ListView)findViewById(R.id.ListStart);
+		start_CustomList adapter = new start_CustomList(this,  title);
+		_list.setAdapter(adapter);
 		_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				String s = parent.getItemAtPosition(position).toString();
+				sActivity = parent.getItemAtPosition(position).toString();
 				try {
 					Intent i = new Intent();
-					Log.i("start", s);
-					if (s.equals(getString(R.string.start_play))) {
+					Log.i("start", sActivity);
+					if (sActivity.equals(getString(R.string.start_play))) {
 						i.setClass(start.this, main.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_practice))) {
+					} else if (sActivity.equals(getString(R.string.start_practice))) {
 						i.setClass(start.this, practice.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_puzzles))) {
+					} else if (sActivity.equals(getString(R.string.start_puzzles))) {
 						i.setClass(start.this, puzzle.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_about))) {
+					} else if (sActivity.equals(getString(R.string.start_about))) {
 						i.setClass(start.this, HtmlActivity.class);
 						i.putExtra(HtmlActivity.HELP_MODE, "about");
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_ics))) {
+					} else if (sActivity.equals(getString(R.string.start_ics))) {
 						i.setClass(start.this, ICSClient.class);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_pgn))) {
+					} else if (sActivity.equals(getString(R.string.start_pgn))) {
 						i.setClass(start.this, pgntool.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_donate))) {
+					} else if (sActivity.equals(getString(R.string.start_donate))) {
 						i.setClass(start.this, Donate.class);
 						i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						startActivity(i);
-					} else if (s.equals(getString(R.string.start_globalpreferences))) {
+					} else if (sActivity.equals(getString(R.string.start_globalpreferences))) {
 						i.setClass(start.this, ChessPreferences.class);
 						startActivityForResult(i, 0);
-					} else if (s.equals(getString(R.string.menu_help))) {
+					} else if (sActivity.equals(getString(R.string.menu_help))) {
 						i.setClass(start.this, HtmlActivity.class);
 						i.putExtra(HtmlActivity.HELP_MODE, "help");
 						startActivity(i);
@@ -160,11 +169,16 @@ public class start extends AppCompatActivity {
 			}
 		});
 
-		// Configure Cast device discovery
+		MyApplication application = (MyApplication) getApplication();
+		_tracker = application .getDefaultTracker();
+
+			// Configure Cast device discovery
 		mMediaRouter = MediaRouter.getInstance(getApplicationContext());
 		mMediaRouteSelector = new MediaRouteSelector.Builder()
 				.addControlCategory(CastMediaControlIntent.categoryForCast("05EB93C6")).build();
 		mMediaRouterCallback = new MyMediaRouterCallback();
+
+
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -177,6 +191,25 @@ public class start extends AppCompatActivity {
 			intent.putExtra("RESTART", true);
 			startActivity(intent);
 
+		}
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+
+		SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
+		if (getData.getBoolean("RESTART", false)) {
+			finish();
+			Intent intent = new Intent(this, start.class);
+			//intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+			SharedPreferences.Editor editor = getData.edit();
+			editor.putBoolean("RESTART", false);
+			editor.apply();
+
+			startActivity(intent);
 		}
 	}
 
@@ -326,6 +359,10 @@ public class start extends AppCompatActivity {
 														+ ", wasLaunched: " + wasLaunched);
 												mApplicationStarted = true;
 
+												_tracker.send(new HitBuilders.EventBuilder()
+														.setCategory("Cast")
+														.setAction("started")
+														.build());
 												// Create the custom message
 												// channel
 												mChessChannel = new ChessChannel();

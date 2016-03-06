@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -27,6 +28,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.AdapterView.OnItemClickListener;
+
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
@@ -55,7 +58,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle, _resultMessage, _resultNumerical;
     private int _port, _serverType, _TimeWarning, _gameStartSound;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog, _gameStartFront;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog,
+                    _gameStartFront, _bConsoleText;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -158,10 +162,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         break;
                     case MSG_STOP_SESSION:
                         client.stopSession(msg.getData().getString("buffer"));
+                        client.trackEvent(TAG, "stopsession");
                         break;
                     case MSG_START_SESSION:
                         client.dateTimer();
                         client.switchToBoardView();
+                        client.trackEvent(TAG, "startsession");
                         break;
                 }
 
@@ -341,6 +347,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 public void onClick(View arg0) {
                     //ICSChatDlg
                     _dlgChat.show();
+                    _bConsoleText = true;
                     _dlgChat.prepare();
                 }
             });
@@ -430,8 +437,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     // Perform action on key press
                     EditText et = (EditText) v;
                     String s = et.getText().toString();
+
+                    _bConsoleText = true;  // show text when user types to ICS
                     sendString(s + "\n");
                     et.setText("");
+
                     return true;
                 }
                 return false;
@@ -440,11 +450,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _editConsole = (EditText) findViewById(R.id.EditICSConsole);
         if (_editConsole != null) {
-            _editConsole.setTextColor(getResources().getColor(android.R.color.black));
+            _editConsole.setTextColor(getResources().getColor(android.R.color.white));
+            _editConsole.setSingleLine(true);
             _editConsole.setOnKeyListener(okl);
         }
         EditText editBoard = (EditText) findViewById(R.id.EditICSBoard);
         if (editBoard != null) {
+            editBoard.setSingleLine(true);
             editBoard.setOnKeyListener(okl);
         }
 
@@ -1531,6 +1543,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void addConsoleText(final String s) {
 
+        _tvConsole.setTypeface(Typeface.MONOSPACE);  // Monospace gives each character the same width
+        _tvPlayConsole.setTypeface(Typeface.MONOSPACE);
+
         final String s2 = _tvConsole.getText() + "\n\n" + s;
         if (s2.length() > 8192) {
             _tvConsole.setText(s2.substring(s2.length() - 4096));
@@ -1580,7 +1595,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
 
-        _view.setConfirmMove(prefs.getBoolean("ICSConfirmMove", true));
+        _view.setConfirmMove(prefs.getBoolean("ICSConfirmMove", false));
 
         _ficsHandle = prefs.getString("ics_handle", null);
         _ficsPwd = prefs.getString("ics_password", null);
@@ -1734,7 +1749,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 for (int i = 0; i < nSize; i++) {
                     ActivityManager.RunningTaskInfo taskinfo = tasklist.get(i);
                     if (taskinfo.topActivity.getPackageName().equals("jwtc.android.chess")) {
-                        am.moveTaskToFront(taskinfo.id, 0);
+                        am.moveTaskToFront(taskinfo.id, 2);
                     }
                 }
             }
@@ -1852,6 +1867,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public void sendString(String s) {
+
+        if (_bConsoleText){        // allows user ICS console text only
+            addConsoleText(s);
+            _bConsoleText = false;
+        }
+
         if (_socket == null || _socket.sendString(s + "\n") == false) {
             switch (get_gameStartSound()) {
                 case 0:

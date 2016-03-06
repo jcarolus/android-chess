@@ -4,7 +4,7 @@
     <PreferenceCategory android:title="Play online settings">
         <CheckBoxPreference
             android:title="@string/pref_icsconfirmmove"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:summary="@string/pref_icsconfirmmove_desc"
             android:key="ICSConfirmMove" />
 
