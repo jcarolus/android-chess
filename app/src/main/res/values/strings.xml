@@ -55,6 +55,8 @@
     <string name="pref_icsconfirmmove_desc">Manually confirm a move</string>
     <string name="pref_icscustomcommand">Custom commands</string>
     <string name="pref_icscustomcommand_desc">Create your own custom commands</string>
+    <string name="pref_icsconsolecharactersize">CONSOLE character size</string>
+    <string name="pref_icsconsolecharactersize_desc">Adjust the size of characters in CONSOLE</string>
     <string name="pref_icsautosought">Auto sought</string>
     <string name="pref_icsautosought_desc">Refresh the challenges screen automatically</string>
     <string name="pref_icstimewarning">Time Low Warning</string>

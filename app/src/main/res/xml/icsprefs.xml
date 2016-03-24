@@ -13,6 +13,15 @@
             android:summary="@string/pref_icscustomcommand_desc"
             android:key="icscustomcommandHandle" />
 
+        <ListPreference
+            android:title="@string/pref_icsconsolecharactersize"
+            android:key="ICSConsoleCharacterSize"
+            android:summary="@string/pref_icsconsolecharactersize_desc"
+            android:entries="@array/console_character_size"
+            android:entryValues="@array/console_character_size_values"
+            android:defaultValue="10"
+            />
+
         <CheckBoxPreference
             android:title="@string/pref_icsautosought"
             android:defaultValue="true"

@@ -57,7 +57,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle, _resultMessage, _resultNumerical;
-    private int _port, _serverType, _TimeWarning, _gameStartSound;
+    private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog,
                     _gameStartFront, _bConsoleText;
     private Button _butLogin;
@@ -250,6 +250,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bIsGuest = true;
         _serverType = SERVER_FICS;
         _bInICS = false;
+        _iConsoleCharacterSize = 10;
         _bAutoSought = true;
         _bTimeWarning = true;
         _bEndGameDialog = true;
@@ -1546,6 +1547,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _tvConsole.setTypeface(Typeface.MONOSPACE);  // Monospace gives each character the same width
         _tvPlayConsole.setTypeface(Typeface.MONOSPACE);
 
+        _tvConsole.setTextSize(_iConsoleCharacterSize); // sets console text size
+        _tvPlayConsole.setTextSize(_iConsoleCharacterSize);
+
+
         final String s2 = _tvConsole.getText() + "\n\n" + s;
         if (s2.length() > 8192) {
             _tvConsole.setText(s2.substring(s2.length() - 4096));
@@ -1599,6 +1604,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _ficsHandle = prefs.getString("ics_handle", null);
         _ficsPwd = prefs.getString("ics_password", null);
+
+        _iConsoleCharacterSize = Integer.parseInt(prefs.getString("ICSConsoleCharacterSize", "10"));
 
         _bAutoSought = prefs.getBoolean("ICSAutoSought", true);
 
