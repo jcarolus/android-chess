@@ -614,7 +614,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 return true;
             case R.string.ics_menu_abort:
                 sendString("abort");
-                get_view().stopGame();
+                // game will stop by way of toast
                 return true;
             case R.string.ics_menu_adjourn:
                 sendString("adjourn");
