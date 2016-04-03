@@ -109,7 +109,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     //1269.allko                    ++++.kaspalesweb(U)
     private Pattern _pattPlayerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
-    private Pattern _pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+[ ,  ]\\d{1,2}, )\\w.*(\\d{4})\\s(\\w.+)\\," +
+    private Pattern _pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s(\\w.+)\\," +
                                                    " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)");
     private Matcher _matgame;
 
