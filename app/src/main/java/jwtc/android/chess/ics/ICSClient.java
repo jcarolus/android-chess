@@ -1866,10 +1866,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void sendString(String s) {
 
-        if (_bConsoleText){        // allows user ICS console text only
-            addConsoleText(s);
-            _bConsoleText = false;
-        }
 
         if (_socket == null || _socket.sendString(s + "\n") == false) {
             switch (get_gameStartSound()) {
@@ -1906,6 +1902,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         .show();
             } catch(Exception ex){
                 Log.e(TAG, ex.toString());
+            }
+            
+
+            if (_bConsoleText){        // allows user ICS console text only
+                addConsoleText(s);
+                _bConsoleText = false;
             }
         }
 
