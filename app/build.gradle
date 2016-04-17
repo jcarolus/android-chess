@@ -8,7 +8,7 @@ android {
         }
     }
     compileSdkVersion 23
-    buildToolsVersion "23.0.0"
+    buildToolsVersion "23.0.1"
     defaultConfig {
         applicationId "jwtc.android.chess"
         minSdkVersion 11
@@ -28,7 +28,7 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:mediarouter-v7:22.2.1'
+    compile 'com.android.support:mediarouter-v7:23.1.1'
     compile 'com.google.android.gms:play-services-cast:8.3.0'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
     compile files('libs/play-hub-support.jar')
