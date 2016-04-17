@@ -1,8 +1,10 @@
 package jwtc.android.chess.ics;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -16,6 +18,8 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.preference.PreferenceActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
@@ -471,13 +475,30 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         i.setAction(Intent.ACTION_VIEW);
                         i.setData(Uri.parse("http://www.freechess.org/Register/index.html"));
                         startActivity(i);
-                    } catch(Exception ex){
+                    } catch (Exception ex) {
 
                         doToast("Could not go to registration page");
                     }
                 }
             });
         }
+
+        final int REQUEST_CODE_ASK_PERMISSIONS = 123;  // Ask permission to write to external storage for android 6 and above
+        int hasWritePermission =
+                ContextCompat.checkSelfPermission(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(hasWritePermission != PackageManager.PERMISSION_GRANTED){
+
+            if(!ActivityCompat.shouldShowRequestPermissionRationale(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                ActivityCompat.requestPermissions(ICSClient.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_CODE_ASK_PERMISSIONS);
+            } else {
+                globalToast("NEED PERMISSION TO WRITE GAMES TO SD CARD"); // Show toast if user denied permission
+                ActivityCompat.requestPermissions(ICSClient.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_CODE_ASK_PERMISSIONS);
+            }
+        }
+
+
         _ringNotification = null;
 
         switchToLoginView();
