@@ -55,6 +55,8 @@
     <string name="pref_icsconfirmmove_desc">Confirmar manualmente un movimiento</string>
     <string name="pref_icscustomcommand">Los comandos personalizados</string>
     <string name="pref_icscustomcommand_desc">Crea tus propios comandos personalizados</string>
+    <string name="pref_icsconsolecharactersize">CONSOLA tamaño de la fuente</string>
+    <string name="pref_icsconsolecharactersize_desc">Regolare la dimensione dei caratteri in consolle</string>
     <string name="pref_icsautosought">Buscado auto</string>
     <string name="pref_icsautosought_desc">Refresque la pantalla desafíos automáticamente</string>
     <string name="pref_icstimewarning">Advertencia de tiempo de baja</string>

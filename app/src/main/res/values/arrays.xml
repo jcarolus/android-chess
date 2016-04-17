@@ -100,6 +100,14 @@
         <item>White</item>
         <item>Black</item>
     </string-array>
+    <string-array name="console_character_size">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
+    <string-array name="console_character_size_values">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
     <string-array name="time_warning">
         <item>5 seconds</item><item>10 seconds</item><item>25 seconds</item>
         <item>45 seconds</item><item>1 minute</item>

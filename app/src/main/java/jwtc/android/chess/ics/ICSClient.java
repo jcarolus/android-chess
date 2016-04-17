@@ -1,8 +1,10 @@
 package jwtc.android.chess.ics;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -16,6 +18,8 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.preference.PreferenceActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
@@ -56,9 +60,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
-            _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle, _resultMessage, _resultNumerical;
-    private int _port, _serverType, _TimeWarning, _gameStartSound;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndBuf, _bEndGameDialog,
+            _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
+    private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog,
                     _gameStartFront, _bConsoleText;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
@@ -109,6 +113,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     //1269.allko                    ++++.kaspalesweb(U)
     private Pattern _pattPlayerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
+    private Pattern _pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s(\\w.+)\\," +
+                                                   " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)");
+    private Matcher _matgame;
 
     private ArrayList<HashMap<String, String>> _mapChallenges = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> _mapPlayers = new ArrayList<HashMap<String, String>>();
@@ -235,8 +242,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _dlgConfirm = new ICSConfirmDlg(this);
         _dlgChat = new ICSChatDlg(this);
         _dlgOver = new ICSGameOverDlg(this);
-        _resultMessage = "";
-        _resultNumerical = "";
 
         _handle = null;
         _pwd = null;
@@ -250,6 +255,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bIsGuest = true;
         _serverType = SERVER_FICS;
         _bInICS = false;
+        _iConsoleCharacterSize = 10;
         _bAutoSought = true;
         _bTimeWarning = true;
         _bEndGameDialog = true;
@@ -469,13 +475,30 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         i.setAction(Intent.ACTION_VIEW);
                         i.setData(Uri.parse("http://www.freechess.org/Register/index.html"));
                         startActivity(i);
-                    } catch(Exception ex){
+                    } catch (Exception ex) {
 
                         doToast("Could not go to registration page");
                     }
                 }
             });
         }
+
+        final int REQUEST_CODE_ASK_PERMISSIONS = 123;  // Ask permission to write to external storage for android 6 and above
+        int hasWritePermission =
+                ContextCompat.checkSelfPermission(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(hasWritePermission != PackageManager.PERMISSION_GRANTED){
+
+            if(!ActivityCompat.shouldShowRequestPermissionRationale(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                ActivityCompat.requestPermissions(ICSClient.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_CODE_ASK_PERMISSIONS);
+            } else {
+                globalToast("NEED PERMISSION TO WRITE GAMES TO SD CARD"); // Show toast if user denied permission
+                ActivityCompat.requestPermissions(ICSClient.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_CODE_ASK_PERMISSIONS);
+            }
+        }
+
+
         _ringNotification = null;
 
         switchToLoginView();
@@ -612,7 +635,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 return true;
             case R.string.ics_menu_abort:
                 sendString("abort");
-                get_view().stopGame();
+                // game will stop by way of toast
                 return true;
             case R.string.ics_menu_adjourn:
                 sendString("adjourn");
@@ -1085,12 +1108,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             }
                         }
                         if (mat3.matches()){  // mat3 is the endgame result
-                            _resultMessage = mat3.group(4);
-                            _resultNumerical = mat3.group(5);
 
-                            _bEndBuf = true;
-
-                            sendString("oldmoves " + _whiteHandle);
+                            sendString("oldmoves " + _whiteHandle);  // send moves at end of game
                             Log.d(TAG, "oldmoves " + _whiteHandle);
                         }
                     }
@@ -1231,7 +1250,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         else if (line.contains("} 1/2-1/2")){  // draw
                             gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
                         }
-                        _dlgOver.updateGRtext(_resultMessage);
+
                         gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
@@ -1417,12 +1436,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         addConsoleText(sRaw);
                     }
 
-                    if(_bEndBuf && _bEndGameDialog){
+                    if (_bEndGameDialog){
                         sEnd += sRaw;
-                        Log.d(TAG, "sEnd = " + sEnd);
-                        if(sRaw.contains("----  ----------------   ----------------")){
+                        //Log.d(TAG, "sEnd ->" + sEnd);
 
-                            _bEndBuf = false;
+                        _matgame = _pattEndGame.matcher(sEnd);
+
+                        if(_matgame.matches()){
 
                             sEnd = sEnd.trim().replaceAll(" +", " ");
                             sEnd = sEnd.replaceAll("\\{.*\\}", "");
@@ -1430,15 +1450,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             String event = sEnd.substring(sEnd.indexOf("\n"), sEnd.indexOf(", initial"));
                             event = event.replace("\n", "");
                             String site = "FICS";
-
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
-                            Date date1 = new Date();
-                            String date = dateFormat.format(date1);
-
-                            // Pattern variables
-                            //White is _whitehandle - Black is _blackhandle
-                            //Result is _resultMessage and _resultNumerical
-                            //WhiteElo is _whiteRating - BlackElo is _blackRating
 
                             String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
                             String _FEN1, _FEN2;
@@ -1449,12 +1460,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             PGN = new StringBuilder("");
                             PGN.append("[Event \"" + event + "\"]\n");
                             PGN.append("[Site \"" + site + "\"]\n");
-                            PGN.append("[Date \"" + date + "\"]\n");
-                            PGN.append("[White \"" + _whiteHandle + "\"]\n");
-                            PGN.append("[Black \"" + _blackHandle + "\"]\n");
-                            PGN.append("[Result \"" + _resultNumerical + "\"]\n");
-                            PGN.append("[WhiteElo \"" + _whiteRating + "\"]\n");
-                            PGN.append("[BlackElo \"" + _blackRating + "\"]\n");
+                            PGN.append("[Date \"" + _matgame.group(5) + _matgame.group(6) + "\"]\n");
+                            PGN.append("[White \"" + _matgame.group(1) + "\"]\n");
+                            PGN.append("[Black \"" + _matgame.group(3) + "\"]\n");
+                            PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
+                            PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
+                            PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
                             PGN.append("[TimeControl \"" + timeControl + "\"]\n");
 
                             if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
@@ -1469,6 +1480,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             PGN.append(sBeg + "\n\n");
 
                             saveGameSDCard();
+
+                            _dlgOver.updateGRtext(_matgame.group(11)); // game result message sent to dialog
 
                             _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
                             _dlgOver.show();
@@ -1546,6 +1559,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _tvConsole.setTypeface(Typeface.MONOSPACE);  // Monospace gives each character the same width
         _tvPlayConsole.setTypeface(Typeface.MONOSPACE);
 
+        _tvConsole.setTextSize(_iConsoleCharacterSize); // sets console text size
+        _tvPlayConsole.setTextSize(_iConsoleCharacterSize);
+
+
         final String s2 = _tvConsole.getText() + "\n\n" + s;
         if (s2.length() > 8192) {
             _tvConsole.setText(s2.substring(s2.length() - 4096));
@@ -1599,6 +1616,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _ficsHandle = prefs.getString("ics_handle", null);
         _ficsPwd = prefs.getString("ics_password", null);
+
+        _iConsoleCharacterSize = Integer.parseInt(prefs.getString("ICSConsoleCharacterSize", "10"));
 
         _bAutoSought = prefs.getBoolean("ICSAutoSought", true);
 
