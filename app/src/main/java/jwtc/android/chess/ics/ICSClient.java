@@ -114,7 +114,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     //1269.allko                    ++++.kaspalesweb(U)
     private Pattern _pattPlayerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
     private Pattern _pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s(\\w.+)\\," +
-                                                   " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)");
+                                                   " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)"); //beginning of game
     private Matcher _matgame;
 
     private ArrayList<HashMap<String, String>> _mapChallenges = new ArrayList<HashMap<String, String>>();
@@ -1109,6 +1109,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         }
                         if (mat3.matches()){  // mat3 is the endgame result
 
+                            gameOverToast(line);  //send game over toast
                             sendString("oldmoves " + _whiteHandle);  // send moves at end of game
                             Log.d(TAG, "oldmoves " + _whiteHandle);
                         }
@@ -1224,39 +1225,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
-                    //////////////////////////////////////////////////////////////
-                    // game over
-                    else if (line.contains("{Game ") && (line.contains("} 1-0") || line.contains("} 0-1")  || line.contains("} 1/2-1/2"))) {
-
-                        String text = "";
-                        text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
-
-                        if (line.contains("} 1-0") || line.contains("} 0-1")) {
-
-
-                            if (line.indexOf(" resigns} ") > 0) {  // make translation friendly
-                                text = text.replace("resigns", getString(R.string.state_resigned));
-
-                            } else if (line.indexOf("checkmated") > 0) {
-                                text = text.replace("checkmated", getString(R.string.state_mate));
-
-                            } else if (line.indexOf("forfeits on time") > 0) {
-                                text = text.replace("forfeits on time", getString(R.string.state_time));
-
-                            } else {
-                                text = getString(R.string.ics_game_over);
-                            }
-                        }
-                        else if (line.contains("} 1/2-1/2")){  // draw
-                            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
-                        }
-
-                        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
-
-                        get_view().setViewMode(ICSChessView.VIEW_NONE);
-                    }
-
-
                     //////////////////////////////////////////////////////////////
                     // draw / abort / todo:adjourn request sent
                     else if (line.equals("Draw request sent.") || line.equals("Abort request sent.") || line.equals("Takeback request sent.")) {
@@ -1426,8 +1394,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         sRaw += "\n" + line;
                     }
 
-                } // for line
+                } // end of for line
                 //////////////////////////////////////////////////////////////
+
+
 
                 if (sRaw.length() > 0) {
                     sRaw = sRaw.replace(new Character((char) 7).toString(), "").replace("\\", "").replace("\t", "").replace(_prompt, "\n").trim();
@@ -1498,6 +1468,40 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         }
     }
+
+
+    private void gameOverToast(String line){  // send toast result of the game
+
+        String text = "";
+        text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
+
+        if (line.contains("} 1-0") || line.contains("} 0-1")) {
+
+
+            if (line.indexOf(" resigns} ") > 0) {  // make translation friendly
+                text = text.replace("resigns", getString(R.string.state_resigned));
+
+            } else if (line.indexOf("checkmated") > 0) {
+                text = text.replace("checkmated", getString(R.string.state_mate));
+
+            } else if (line.indexOf("forfeits on time") > 0) {
+                text = text.replace("forfeits on time", getString(R.string.state_time));
+
+            } else {
+                text = getString(R.string.ics_game_over);
+            }
+        }
+        else if (line.contains("} 1/2-1/2")){  // draw
+            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
+            get_view().setViewMode(ICSChessView.VIEW_NONE);
+            return;
+        }
+
+        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
+
+        get_view().setViewMode(ICSChessView.VIEW_NONE);
+    }
+
 
 
     public void copyToClipBoard() {
