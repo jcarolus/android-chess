@@ -1512,6 +1512,40 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
 
 
+    private void gameOverToast(String line){  // send toast result of the game
+
+        String text = "";
+        text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
+
+        if (line.contains("} 1-0") || line.contains("} 0-1")) {
+
+
+            if (line.indexOf(" resigns} ") > 0) {  // make translation friendly
+                text = text.replace("resigns", getString(R.string.state_resigned));
+
+            } else if (line.indexOf("checkmated") > 0) {
+                text = text.replace("checkmated", getString(R.string.state_mate));
+
+            } else if (line.indexOf("forfeits on time") > 0) {
+                text = text.replace("forfeits on time", getString(R.string.state_time));
+
+            } else {
+                text = getString(R.string.ics_game_over);
+            }
+        }
+        else if (line.contains("} 1/2-1/2")){  // draw
+            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
+            get_view().setViewMode(ICSChessView.VIEW_NONE);
+            return;
+        }
+
+        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
+
+        get_view().setViewMode(ICSChessView.VIEW_NONE);
+    }
+
+
+
     public void copyToClipBoard() {
         try {
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
