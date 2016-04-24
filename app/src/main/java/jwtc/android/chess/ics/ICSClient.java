@@ -1017,7 +1017,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         try {
 
             //Log.i("parseBuffer", "[" + buffer + "]");
-            String sRaw = "", sEnd = "", sBeg = "";
+            String sRaw = "", sEnd = "";
             Matcher match;
 
             //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1414,48 +1414,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
                         if(_matgame.matches()){
 
-                            sEnd = sEnd.trim().replaceAll(" +", " ");
-                            sEnd = sEnd.replaceAll("\\{.*\\}", "");
-
-                            String event = sEnd.substring(sEnd.indexOf("\n"), sEnd.indexOf(", initial"));
-                            event = event.replace("\n", "");
-                            String site = "FICS";
-
-                            String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
-                            String _FEN1, _FEN2;
-
-                            sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
-                            sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
-
-                            PGN = new StringBuilder("");
-                            PGN.append("[Event \"" + event + "\"]\n");
-                            PGN.append("[Site \"" + site + "\"]\n");
-                            PGN.append("[Date \"" + _matgame.group(5) + _matgame.group(6) + "\"]\n");
-                            PGN.append("[White \"" + _matgame.group(1) + "\"]\n");
-                            PGN.append("[Black \"" + _matgame.group(3) + "\"]\n");
-                            PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
-                            PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
-                            PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
-                            PGN.append("[TimeControl \"" + timeControl + "\"]\n");
-
-                            if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
-                                _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
-                                _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
-                                if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
-                                    PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
-                                }
-                                _FEN = "";  // reset to capture starting FEN for next game
-                            }
-
-                            PGN.append(sBeg + "\n\n");
-
-                            saveGameSDCard();
-
-                            _dlgOver.updateGRtext(_matgame.group(11)); // game result message sent to dialog
-
-                            _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
-                            _dlgOver.show();
-                            //_dlgOver.prepare();
+                            makeGamePGN(sEnd);
 
                         }
                     }
@@ -1469,8 +1428,57 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
+    protected void makeGamePGN(String sEnd){
 
-    private void gameOverToast(String line){  // send toast result of the game
+        String sBeg;
+
+        sEnd = sEnd.trim().replaceAll(" +", " ");
+        sEnd = sEnd.replaceAll("\\{.*\\}", "");
+
+        String event = sEnd.substring(sEnd.indexOf("\n"), sEnd.indexOf(", initial"));
+        event = event.replace("\n", "");
+        String site = "FICS";
+
+        String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
+        String _FEN1, _FEN2;
+
+        sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
+        sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
+
+        PGN = new StringBuilder("");
+        PGN.append("[Event \"" + event + "\"]\n");
+        PGN.append("[Site \"" + site + "\"]\n");
+        PGN.append("[Date \"" + _matgame.group(5) + _matgame.group(6) + "\"]\n");
+        PGN.append("[White \"" + _matgame.group(1) + "\"]\n");
+        PGN.append("[Black \"" + _matgame.group(3) + "\"]\n");
+        PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
+        PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
+        PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
+        PGN.append("[TimeControl \"" + timeControl + "\"]\n");
+
+        if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
+            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
+            _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
+            if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
+                PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
+            }
+            _FEN = "";  // reset to capture starting FEN for next game
+        }
+
+        PGN.append(sBeg + "\n\n");
+
+        saveGameSDCard();
+
+        _dlgOver.updateGRtext(_matgame.group(11)); // game result message sent to dialog
+
+        _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
+        _dlgOver.show();
+        //_dlgOver.prepare();
+
+    }
+
+
+    protected void gameOverToast(String line){  // send toast result of the game
 
         String text = "";
         text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
