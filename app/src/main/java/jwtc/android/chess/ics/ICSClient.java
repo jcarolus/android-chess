@@ -445,7 +445,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     String s = et.getText().toString();
 
                     _bConsoleText = true;  // show text when user types to ICS
-                    sendString(s + "\n");
+                    sendString(s);
                     et.setText("");
 
                     return true;
@@ -1410,7 +1410,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         sEnd += sRaw;
                         //Log.d(TAG, "sEnd ->" + sEnd);
 
-                        _matgame = _pattEndGame.matcher(sEnd);
+                        _matgame = _pattEndGame.matcher(sEnd); // _pattEndGame matches beginning info of game summary
 
                         if(_matgame.matches()){
 
@@ -1579,6 +1579,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _tvConsole.append("\n\n" + s);
         }
 
+        _scrollConsole.post(new Runnable() {//
+            public void run() {
+                _scrollConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
+            }
+        });
+
+
         final String s3 = _tvPlayConsole.getText() + "\n\n" + s;
         if(s3.length() > 1024){
             _tvPlayConsole.setText(s3.substring(s3.length() - 512));
@@ -1608,7 +1615,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
 
-    private void globalToast(final String text) {
+    public void globalToast(final String text) {
         Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
         t.setGravity(Gravity.BOTTOM, 0, 0);
         t.show();
@@ -1864,7 +1871,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 public void run() {
                     dateHandler.sendEmptyMessage(0);  // sends date string to prevent disconnection
                 }
-            }, 60000, 60000);
+            }, 300000, 300000);  // send every 5 minutes (1 minute = 60000)
         }
     }
 
