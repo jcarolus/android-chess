@@ -1113,10 +1113,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             }
                         }
                         if (mat3.matches()){  // mat3 is the endgame result
-
-                            gameOverToast(line);  //send game over toast
-                            sendString("oldmoves " + _whiteHandle);  // send moves at end of game
-                            Log.d(TAG, "oldmoves " + _whiteHandle);
+                            if (_whiteHandle != null) {
+                                gameOverToast(line);  //send game over toast
+                                sendString("oldmoves " + _whiteHandle);  // send moves at end of game
+                                Log.d(TAG, "oldmoves " + _whiteHandle);
+                            }
                         }
                     }
                     // board representation
