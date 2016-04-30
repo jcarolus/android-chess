@@ -65,6 +65,8 @@
     <string name="pref_icstimewarningsecs_desc">Quanti secondi fino all\'inizio di avvertimento tempo?</string>
     <string name="prefs_icsendgamedialog">EndGame Dialog</string>
     <string name="prefs_icsendgamesummary">Alla fine di una partita, vuoi una finestra di dialogo Salva per PopUp?</string>
+    <string name="prefs_icsshowclock">Mostra orologio volte in PGN</string>
+    <string name="prefs_icsshowclocksummary">Nel PGN , mostrare i tempi di clock su ogni mossa</string>
     <string name="pref_icsgamestartsound">Gioco Suono Inizio</string>
     <string name="pref_icsgamestartsound_desc">Riproduci suono quando gioco inizia o la perdita di collegamento</string>
     <string name="pref_icsgamestartfront">Inizia Gioco Porta in primo piano</string>

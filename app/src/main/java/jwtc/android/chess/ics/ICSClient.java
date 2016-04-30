@@ -62,7 +62,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog,
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
                     _gameStartFront, _bConsoleText;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
@@ -148,6 +148,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     protected static final int VIEW_SUB_STORED = 7;
 
     protected static final int DECREASE = 0;
+
+    protected static int[] whiteClk = new int[200]; // PGN time clock
+    protected static int[] blackClk = new int[200];
+
 
     MediaPlayer tickTock, chessPiecesFall;
 
@@ -259,6 +263,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bAutoSought = true;
         _bTimeWarning = true;
         _bEndGameDialog = true;
+        _bShowClockPGN = true;
 
         _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
                 new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
@@ -1435,18 +1440,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         sEnd = sEnd.trim().replaceAll(" +", " ");
         sEnd = sEnd.replaceAll("\\{.*\\}", "");
 
-        String event = sEnd.substring(sEnd.indexOf("\n"), sEnd.indexOf(", initial"));
-        event = event.replace("\n", "");
         String site = "FICS";
-
-        String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
         String _FEN1, _FEN2;
 
         sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
-        sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
+
+        if (_bShowClockPGN){
+            sBeg = convertTimeUsedToClock(sBeg);
+        } else {
+            sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
+        }
+
+        Log.d(TAG, "\n" + sBeg);
 
         PGN = new StringBuilder("");
-        PGN.append("[Event \"" + event + "\"]\n");
+        PGN.append("[Event \"" + _matgame.group(7) + "\"]\n");
         PGN.append("[Site \"" + site + "\"]\n");
         PGN.append("[Date \"" + _matgame.group(5) + _matgame.group(6) + "\"]\n");
         PGN.append("[White \"" + _matgame.group(1) + "\"]\n");
@@ -1454,7 +1462,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
         PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
         PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
-        PGN.append("[TimeControl \"" + timeControl + "\"]\n");
+        PGN.append("[TimeControl \"" + _matgame.group(8) +  " minutes, increment: " +
+                _matgame.group(9) + " seconds\"]\n");
 
         if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
             _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
@@ -1475,6 +1484,82 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _dlgOver.show();
         //_dlgOver.prepare();
 
+    }
+
+    private String convertTimeUsedToClock(String sBeg){
+
+        int time = Integer.parseInt(_matgame.group(8)), incTime = Integer.parseInt(_matgame.group(9));;
+
+        int incTurn = 1;
+        boolean turn = true;
+
+        time = time * 60; // convert minutes to seconds
+
+        whiteClk[0] = time;  // initial start time
+        blackClk[0] = time;
+
+        Pattern p = Pattern.compile("\\((\\d+):(\\d+)\\)");
+        Matcher m = p.matcher(sBeg);
+
+        while (m.find()){
+
+            int min = 0, sec = 0, time1 = 0;
+
+            min = min + Integer.parseInt(m.group(1)) * 60;
+            sec = Integer.parseInt(m.group(2));
+            time1 = min + sec;
+
+            if (turn)
+            {
+                time1 = whiteClock(time1, incTurn, incTime);
+                turn = false;
+            } else {
+                time1 = blackClock(time1, incTurn, incTime);
+                turn = true;
+                incTurn++;
+            }
+
+            String clock1 = convertSecondsToClock(time1);
+
+            sBeg = sBeg.replaceFirst("\\((\\d+):(\\d+)\\)", clock1);  // replace time used with clock
+
+        }
+
+        return sBeg;
+    }
+
+    private int whiteClock(int time1, int incTurn, int incTime){
+
+        whiteClk[incTurn] = whiteClk[incTurn-1] - time1;
+        if (incTurn > 1){
+            whiteClk[incTurn] = whiteClk[incTurn] + incTime;
+        }
+
+        return whiteClk[incTurn];
+    }
+
+    private int blackClock(int time1, int incTurn, int incTime){
+
+        blackClk[incTurn] = blackClk[incTurn-1] - time1;
+        if (incTurn > 1){
+            blackClk[incTurn] = blackClk[incTurn] + incTime;
+        }
+
+        return blackClk[incTurn];
+    }
+
+    private String convertSecondsToClock(int time1){
+        String clock, timeString;
+        int hours, minutes, seconds;
+        hours = time1 / 3600;
+        minutes = (time1 % 3600) / 60;
+        seconds = time1 % 60;
+
+        timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        clock = "{[%clk " + timeString + "]}";
+
+        return clock;
     }
 
     protected void gameOverToast(String line){  // send toast result of the game
@@ -1641,6 +1726,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _TimeWarning = Integer.parseInt(prefs.getString("ICSTimeWarningsecs", "10"));
 
         _bEndGameDialog = prefs.getBoolean("ICSEndGameDialog", true);
+
+        _bShowClockPGN = prefs.getBoolean("ICSClockPGN", true);
 
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
 

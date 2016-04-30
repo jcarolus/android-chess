@@ -65,6 +65,8 @@
     <string name="pref_icstimewarningsecs_desc">¿Cuántos segundos hasta que se inicie de advertencia tiempo?</string>
     <string name="prefs_icsendgamedialog">Fin del juego</string>
     <string name="prefs_icsendgamesummary">Al final de un juego, ¿quieres un ahorro de diálogo en Emergente?</string>
+    <string name="prefs_icsshowclock">Mostrar reloj Times en el PGN</string>
+    <string name="prefs_icsshowclocksummary">En el PGN , mostrar la hora del reloj en cada jugada</string>
     <string name="pref_icsgamestartsound">Juego Sonido inicial</string>
     <string name="pref_icsgamestartsound_desc">Reproducir sonido cuando el juego comienza, o pérdida de la conexión</string>
     <string name="pref_icsgamestartfront">Inicia Juego Traer al frente</string>
