@@ -309,6 +309,7 @@
     <string name="ics_playerone">Player 1</string>
     <string name="ics_progress_title_login">Log in</string>
     <string name="ics_progress_msg_login">Logging you in&#8230;</string>
+    <string name="ics_available_players">available (IDLE) players</string>
     <string name="ics_offers_abort">Your opponent would like to abort the game.\nDo you wish to accept?</string>
     <string name="ics_offers_draw">Your opponent offers you a draw.\nDo you wish to accept?</string>
     <string name="ics_offers_adjourn">Your opponent would like to adjourn the game.\nDo you wish to accept?</string>

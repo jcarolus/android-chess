@@ -309,6 +309,7 @@
     <string name="ics_playerone">jugador 1</string>
     <string name="ics_progress_title_login">Iniciar sesión</string>
     <string name="ics_progress_msg_login">Tu sesión&#8230;</string>
+    <string name="ics_available_players">disponible (ociosa) jugadores</string>
     <string name="ics_offers_abort">Su oponente le gustaría cancelar el juego.\n¿Quiere aceptar?</string>
     <string name="ics_offers_draw">Tu oponente te ofrece un empate.\n¿Quiere aceptar?</string>
     <string name="ics_offers_adjourn">Su oponente le gustaría aplazar el juego.\n¿Quiere aceptar?</string>

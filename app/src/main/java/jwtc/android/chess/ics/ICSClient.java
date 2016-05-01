@@ -253,6 +253,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _socket = null;
 
         _tvHeader = (TextView) findViewById(R.id.TextViewHeader);
+        _tvHeader.setGravity(Gravity.CENTER);
 
         //_dlgChat = new ICSChatDlg(this);
 
@@ -2106,7 +2107,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         cancelTimer();
 
-        _tvHeader.setText(R.string.ics_menu_players);
+        _tvHeader.setText(Integer.toString(_adapterPlayers.getCount()) + " " + getString(R.string.ics_available_players));
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
         _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_PLAYERS);

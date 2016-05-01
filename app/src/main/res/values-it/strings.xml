@@ -314,6 +314,7 @@
     <string name="ics_playerone">giocatore 1</string>
     <string name="ics_progress_title_login">Accedi</string>
     <string name="ics_progress_msg_login">Stai accedendo&#8230;</string>
+    <string name="ics_available_players">disponibili (IDLE) giocatori</string>
     <string name="ics_offers_abort">Il tuo avversario vorrebbe interrompere la partita.\nVuoi accettare?</string>
     <string name="ics_offers_draw">Il tuo avversario offre una patta.\nVuoi accettare?</string>
     <string name="ics_offers_adjourn">Il tuo avversario vorrebbe aggiornare la partita.\nVuoi accettare?</string>
