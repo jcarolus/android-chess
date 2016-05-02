@@ -667,6 +667,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 switchToChallengeView();
                 return true;
             case R.string.ics_menu_seek:
+                _dlgMatch._rbSeek.setChecked(true);
                 _dlgMatch._rbSeek.performClick();
                 return true;
             case R.string.menu_help:
@@ -2048,7 +2049,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             if (_mapPlayers.size() > arg2) {
                 HashMap<String, String> m = _mapPlayers.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name"));
-                _dlgMatch.setPlayer(m.get("text_name").toString());
+                _dlgMatch._rbChallenge.setChecked(true);
+                _dlgMatch._rbChallenge.performClick();
+                _dlgMatch.setPlayer(m.get("text_name").toString());  // todo click on history, follow, match, etc
                 _dlgMatch.show();
             }
         } else if (arg0 == _listGames) {
