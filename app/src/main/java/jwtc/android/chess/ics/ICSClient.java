@@ -366,6 +366,16 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         _editHandle = (EditText) findViewById(R.id.EditICSHandle);
+        _editHandle.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    _editPwd.setText(""); // clear password box for new handle
+                    return false;  // this allows focus to the password box
+                }
+                return false;
+            }
+        });
 
         _editPwd = (EditText) findViewById(R.id.EditICSPwd);
 
