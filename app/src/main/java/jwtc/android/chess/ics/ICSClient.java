@@ -62,7 +62,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog,
+    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
                     _gameStartFront, _bConsoleText;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
@@ -114,7 +114,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     //1269.allko                    ++++.kaspalesweb(U)
     private Pattern _pattPlayerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
     private Pattern _pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s(\\w.+)\\," +
-                                                   " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)");
+                                                   " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)"); //beginning of game
     private Matcher _matgame;
 
     private ArrayList<HashMap<String, String>> _mapChallenges = new ArrayList<HashMap<String, String>>();
@@ -148,6 +148,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     protected static final int VIEW_SUB_STORED = 7;
 
     protected static final int DECREASE = 0;
+
+    protected static int[] whiteClk = new int[200]; // PGN time clock
+    protected static int[] blackClk = new int[200];
+
 
     MediaPlayer tickTock, chessPiecesFall;
 
@@ -249,6 +253,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _socket = null;
 
         _tvHeader = (TextView) findViewById(R.id.TextViewHeader);
+        _tvHeader.setGravity(Gravity.CENTER);
 
         //_dlgChat = new ICSChatDlg(this);
 
@@ -259,6 +264,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bAutoSought = true;
         _bTimeWarning = true;
         _bEndGameDialog = true;
+        _bShowClockPGN = true;
 
         _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
                 new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
@@ -360,6 +366,16 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         _editHandle = (EditText) findViewById(R.id.EditICSHandle);
+        _editHandle.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    _editPwd.setText(""); // clear password box for new handle
+                    return false;  // this allows focus to the password box
+                }
+                return false;
+            }
+        });
 
         _editPwd = (EditText) findViewById(R.id.EditICSPwd);
 
@@ -445,7 +461,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     String s = et.getText().toString();
 
                     _bConsoleText = true;  // show text when user types to ICS
-                    sendString(s + "\n");
+                    sendString(s);
                     et.setText("");
 
                     return true;
@@ -661,6 +677,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 switchToChallengeView();
                 return true;
             case R.string.ics_menu_seek:
+                _dlgMatch._rbSeek.setChecked(true);
                 _dlgMatch._rbSeek.performClick();
                 return true;
             case R.string.menu_help:
@@ -1017,7 +1034,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         try {
 
             //Log.i("parseBuffer", "[" + buffer + "]");
-            String sRaw = "", sEnd = "", sBeg = "";
+            String sRaw = "", sEnd = "";
             Matcher match;
 
             //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1108,9 +1125,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             }
                         }
                         if (mat3.matches()){  // mat3 is the endgame result
-
-                            sendString("oldmoves " + _whiteHandle);  // send moves at end of game
-                            Log.d(TAG, "oldmoves " + _whiteHandle);
+                            if (_whiteHandle != null) {
+                                gameOverToast(line);  //send game over toast
+                                sendString("oldmoves " + _whiteHandle);  // send moves at end of game
+                                Log.d(TAG, "oldmoves " + _whiteHandle);
+                            }
                         }
                     }
                     // board representation
@@ -1224,39 +1243,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
                         get_view().setViewMode(ICSChessView.VIEW_NONE);
                     }
-                    //////////////////////////////////////////////////////////////
-                    // game over
-                    else if (line.contains("{Game ") && (line.contains("} 1-0") || line.contains("} 0-1")  || line.contains("} 1/2-1/2"))) {
-
-                        String text = "";
-                        text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
-
-                        if (line.contains("} 1-0") || line.contains("} 0-1")) {
-
-
-                            if (line.indexOf(" resigns} ") > 0) {  // make translation friendly
-                                text = text.replace("resigns", getString(R.string.state_resigned));
-
-                            } else if (line.indexOf("checkmated") > 0) {
-                                text = text.replace("checkmated", getString(R.string.state_mate));
-
-                            } else if (line.indexOf("forfeits on time") > 0) {
-                                text = text.replace("forfeits on time", getString(R.string.state_time));
-
-                            } else {
-                                text = getString(R.string.ics_game_over);
-                            }
-                        }
-                        else if (line.contains("} 1/2-1/2")){  // draw
-                            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
-                        }
-
-                        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
-
-                        get_view().setViewMode(ICSChessView.VIEW_NONE);
-                    }
-
-
                     //////////////////////////////////////////////////////////////
                     // draw / abort / todo:adjourn request sent
                     else if (line.equals("Draw request sent.") || line.equals("Abort request sent.") || line.equals("Takeback request sent.")) {
@@ -1426,8 +1412,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         sRaw += "\n" + line;
                     }
 
-                } // for line
+                } // end of for line
                 //////////////////////////////////////////////////////////////
+
+
 
                 if (sRaw.length() > 0) {
                     sRaw = sRaw.replace(new Character((char) 7).toString(), "").replace("\\", "").replace("\t", "").replace(_prompt, "\n").trim();
@@ -1440,52 +1428,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         sEnd += sRaw;
                         //Log.d(TAG, "sEnd ->" + sEnd);
 
-                        _matgame = _pattEndGame.matcher(sEnd);
+                        _matgame = _pattEndGame.matcher(sEnd); // _pattEndGame matches beginning info of game summary
 
                         if(_matgame.matches()){
 
-                            sEnd = sEnd.trim().replaceAll(" +", " ");
-                            sEnd = sEnd.replaceAll("\\{.*\\}", "");
-
-                            String event = sEnd.substring(sEnd.indexOf("\n"), sEnd.indexOf(", initial"));
-                            event = event.replace("\n", "");
-                            String site = "FICS";
-
-                            String timeControl = sEnd.substring(sEnd.indexOf("time:")+6, sEnd.indexOf(".", sEnd.indexOf("time:")));
-                            String _FEN1, _FEN2;
-
-                            sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
-                            sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
-
-                            PGN = new StringBuilder("");
-                            PGN.append("[Event \"" + event + "\"]\n");
-                            PGN.append("[Site \"" + site + "\"]\n");
-                            PGN.append("[Date \"" + _matgame.group(5) + _matgame.group(6) + "\"]\n");
-                            PGN.append("[White \"" + _matgame.group(1) + "\"]\n");
-                            PGN.append("[Black \"" + _matgame.group(3) + "\"]\n");
-                            PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
-                            PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
-                            PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
-                            PGN.append("[TimeControl \"" + timeControl + "\"]\n");
-
-                            if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
-                                _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
-                                _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
-                                if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
-                                    PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
-                                }
-                                _FEN = "";  // reset to capture starting FEN for next game
-                            }
-
-                            PGN.append(sBeg + "\n\n");
-
-                            saveGameSDCard();
-
-                            _dlgOver.updateGRtext(_matgame.group(11)); // game result message sent to dialog
-
-                            _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
-                            _dlgOver.show();
-                            //_dlgOver.prepare();
+                            makeGamePGN(sEnd);
 
                         }
                     }
@@ -1499,6 +1446,166 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
+    protected void makeGamePGN(String sEnd){
+
+        String sBeg;
+
+        sEnd = sEnd.trim().replaceAll(" +", " ");
+        sEnd = sEnd.replaceAll("\\{.*\\}", "");
+
+        String site = "FICS";
+        String _FEN1, _FEN2;
+
+        sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
+
+        if (_bShowClockPGN){
+            sBeg = convertTimeUsedToClock(sBeg);
+        } else {
+            sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
+        }
+
+        Log.d(TAG, "\n" + sBeg);
+
+        PGN = new StringBuilder("");
+        PGN.append("[Event \"" + _matgame.group(7) + "\"]\n");
+        PGN.append("[Site \"" + site + "\"]\n");
+        PGN.append("[Date \"" + _matgame.group(5) + _matgame.group(6) + "\"]\n");
+        PGN.append("[White \"" + _matgame.group(1) + "\"]\n");
+        PGN.append("[Black \"" + _matgame.group(3) + "\"]\n");
+        PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
+        PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
+        PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
+        PGN.append("[TimeControl \"" + _matgame.group(8) +  " minutes, increment: " +
+                _matgame.group(9) + " seconds\"]\n");
+
+        if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
+            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
+            _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
+            if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
+                PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
+            }
+            _FEN = "";  // reset to capture starting FEN for next game
+        }
+
+        PGN.append(sBeg + "\n\n");
+
+        saveGameSDCard();
+
+        _dlgOver.updateGRtext(_matgame.group(11)); // game result message sent to dialog
+
+        _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
+        _dlgOver.show();
+        //_dlgOver.prepare();
+
+    }
+
+    private String convertTimeUsedToClock(String sBeg){
+
+        int time = Integer.parseInt(_matgame.group(8)), incTime = Integer.parseInt(_matgame.group(9));;
+
+        int incTurn = 1;
+        boolean turn = true;
+
+        time = time * 60; // convert minutes to seconds
+
+        whiteClk[0] = time;  // initial start time
+        blackClk[0] = time;
+
+        Pattern p = Pattern.compile("\\((\\d+):(\\d+)\\)");
+        Matcher m = p.matcher(sBeg);
+
+        while (m.find()){
+
+            int min = 0, sec = 0, time1 = 0;
+
+            min = min + Integer.parseInt(m.group(1)) * 60;
+            sec = Integer.parseInt(m.group(2));
+            time1 = min + sec;
+
+            if (turn)
+            {
+                time1 = whiteClock(time1, incTurn, incTime);
+                turn = false;
+            } else {
+                time1 = blackClock(time1, incTurn, incTime);
+                turn = true;
+                incTurn++;
+            }
+
+            String clock1 = convertSecondsToClock(time1);
+
+            sBeg = sBeg.replaceFirst("\\((\\d+):(\\d+)\\)", clock1);  // replace time used with clock
+
+        }
+
+        return sBeg;
+    }
+
+    private int whiteClock(int time1, int incTurn, int incTime){
+
+        whiteClk[incTurn] = whiteClk[incTurn-1] - time1;
+        if (incTurn > 1){
+            whiteClk[incTurn] = whiteClk[incTurn] + incTime;
+        }
+
+        return whiteClk[incTurn];
+    }
+
+    private int blackClock(int time1, int incTurn, int incTime){
+
+        blackClk[incTurn] = blackClk[incTurn-1] - time1;
+        if (incTurn > 1){
+            blackClk[incTurn] = blackClk[incTurn] + incTime;
+        }
+
+        return blackClk[incTurn];
+    }
+
+    private String convertSecondsToClock(int time1){
+        String clock, timeString;
+        int hours, minutes, seconds;
+        hours = time1 / 3600;
+        minutes = (time1 % 3600) / 60;
+        seconds = time1 % 60;
+
+        timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        clock = "{[%clk " + timeString + "]}";
+
+        return clock;
+    }
+
+    protected void gameOverToast(String line){  // send toast result of the game
+
+        String text = "";
+        text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
+
+        if (line.contains("} 1-0") || line.contains("} 0-1")) {
+
+
+            if (line.indexOf(" resigns} ") > 0) {  // make translation friendly
+                text = text.replace("resigns", getString(R.string.state_resigned));
+
+            } else if (line.indexOf("checkmated") > 0) {
+                text = text.replace("checkmated", getString(R.string.state_mate));
+
+            } else if (line.indexOf("forfeits on time") > 0) {
+                text = text.replace("forfeits on time", getString(R.string.state_time));
+
+            } else {
+                text = getString(R.string.ics_game_over);
+            }
+        }
+        else if (line.contains("} 1/2-1/2")){  // draw
+            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
+            get_view().setViewMode(ICSChessView.VIEW_NONE);
+            return;
+        }
+
+        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
+
+        get_view().setViewMode(ICSChessView.VIEW_NONE);
+    }
 
     public void copyToClipBoard() {
         try {
@@ -1570,6 +1677,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _tvConsole.append("\n\n" + s);
         }
 
+        _scrollConsole.post(new Runnable() {//
+            public void run() {
+                _scrollConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
+            }
+        });
+
+
         final String s3 = _tvPlayConsole.getText() + "\n\n" + s;
         if(s3.length() > 1024){
             _tvPlayConsole.setText(s3.substring(s3.length() - 512));
@@ -1599,7 +1713,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
 
-    private void globalToast(final String text) {
+    public void globalToast(final String text) {
         Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
         t.setGravity(Gravity.BOTTOM, 0, 0);
         t.show();
@@ -1625,6 +1739,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _TimeWarning = Integer.parseInt(prefs.getString("ICSTimeWarningsecs", "10"));
 
         _bEndGameDialog = prefs.getBoolean("ICSEndGameDialog", true);
+
+        _bShowClockPGN = prefs.getBoolean("ICSClockPGN", true);
 
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
 
@@ -1855,7 +1971,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 public void run() {
                     dateHandler.sendEmptyMessage(0);  // sends date string to prevent disconnection
                 }
-            }, 60000, 60000);
+            }, 300000, 300000);  // send every 5 minutes (1 minute = 60000)
         }
     }
 
@@ -1943,7 +2059,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             if (_mapPlayers.size() > arg2) {
                 HashMap<String, String> m = _mapPlayers.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name"));
-                _dlgMatch.setPlayer(m.get("text_name").toString());
+                _dlgMatch._rbChallenge.setChecked(true);
+                _dlgMatch._rbChallenge.performClick();
+                _dlgMatch.setPlayer(m.get("text_name").toString());  // todo click on history, follow, match, etc
                 _dlgMatch.show();
             }
         } else if (arg0 == _listGames) {
@@ -2002,7 +2120,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         cancelTimer();
 
-        _tvHeader.setText(R.string.ics_menu_players);
+        _tvHeader.setText(Integer.toString(_adapterPlayers.getCount()) + " " + getString(R.string.ics_available_players));
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
         _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_PLAYERS);
