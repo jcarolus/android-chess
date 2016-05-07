@@ -42,7 +42,6 @@ public class ICSMatchDlg extends Dialog {
 		setTitle("Seek or Challenge");
 
 		_rbSeek = (RadioButton) findViewById(R.id.RadioButtonSeek);
-		_rbSeek.setChecked(true);
 		_rbSeek.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {

@@ -33,7 +33,8 @@ public class ChessPreferences extends MyPreferenceActivity  implements SharedPre
         
         final SharedPreferences prefs = pm.getSharedPreferences();
         final SharedPreferences.Editor editor = prefs.edit();
-        _colorScheme = prefs.getInt("ColorScheme", 0); 
+        _colorScheme = prefs.getInt("ColorScheme", 0);
+		_uriNotification = Uri.parse(prefs.getString("NotificationUri", ""));
         
         addPreferencesFromResource(R.xml.globalprefs);
 
