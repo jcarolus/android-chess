@@ -65,6 +65,8 @@
     <string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
     <string name="prefs_icsendgamedialog">EndGame Dialog</string>
     <string name="prefs_icsendgamesummary">At the end of a game, do you want a save dialog to popup?</string>
+    <string name="prefs_icsshowclock">Show Clock Times in PGN</string>
+    <string name="prefs_icsshowclocksummary">In the PGN, show the clock times on each move</string>
     <string name="pref_icsgamestartsound">Game Start Sound</string>
     <string name="pref_icsgamestartsound_desc">Play sound when game starts or loss of connection</string>
     <string name="pref_icsgamestartfront">Game Starts Bring to Front</string>
@@ -307,6 +309,7 @@
     <string name="ics_playerone">Player 1</string>
     <string name="ics_progress_title_login">Log in</string>
     <string name="ics_progress_msg_login">Logging you in&#8230;</string>
+    <string name="ics_available_players">available (IDLE) players</string>
     <string name="ics_offers_abort">Your opponent would like to abort the game.\nDo you wish to accept?</string>
     <string name="ics_offers_draw">Your opponent offers you a draw.\nDo you wish to accept?</string>
     <string name="ics_offers_adjourn">Your opponent would like to adjourn the game.\nDo you wish to accept?</string>

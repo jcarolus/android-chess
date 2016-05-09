@@ -50,6 +50,13 @@
             android:key="ICSEndGameDialog"
             />
 
+        <CheckBoxPreference
+            android:title="@string/prefs_icsshowclock"
+            android:defaultValue="true"
+            android:summary="@string/prefs_icsshowclocksummary"
+            android:key="ICSClockPGN"
+            />
+
         <ListPreference
             android:title="@string/pref_icsgamestartsound"
             android:key="ICSGameStartSound"
