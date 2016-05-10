@@ -282,7 +282,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
 
         _adapterGames = new AlternatingRowColorAdapter(ICSClient.this, _mapGames, R.layout.ics_game_row,
-                new String[]{"text_name1", "text_name2", "text_rating1", "text_rating2"}, new int[]{R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2});
+                new String[]{"nr", "text_type", "text_name1", "text_name2", "text_rating1", "text_rating2", "text_time1", "text_time2"},
+                new int[]{R.id.nr, R.id.text_type, R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2, R.id.text_time1, R.id.text_time2});
 
         _listGames = (ListView) findViewById(R.id.ICSGames);
         _listGames.setAdapter(_adapterGames);
