@@ -1477,7 +1477,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
         PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
         PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
-        PGN.append("[TimeControl \"" + _matgame.group(8) +  "+" +
+        String _minutestoseconds = Integer.toString(Integer.parseInt(_matgame.group(8)) * 60);
+        PGN.append("[TimeControl \"" + _minutestoseconds +  "+" +
                 _matgame.group(9) + "\"]\n");
 
         if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
