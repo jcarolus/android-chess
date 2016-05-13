@@ -1068,7 +1068,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                                 _mapPlayers.add(item);
                             } else {
 
-                                if (code == "(U)" || code == "(FM)" || code == "(GM)" || code == "(IM)" || code == "(WIM)" || code == "(WGM)") {
+                                if (code.equals("(C)") || code.equals("(U)") || code.equals("(FM)") || code.equals("(GM)") ||
+                                        code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
                                     name += code;
                                     HashMap<String, String> item = new HashMap<String, String>();
                                     item.put("text_name", name);
