@@ -282,7 +282,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
 
         _adapterGames = new AlternatingRowColorAdapter(ICSClient.this, _mapGames, R.layout.ics_game_row,
-                new String[]{"text_name1", "text_name2", "text_rating1", "text_rating2"}, new int[]{R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2});
+                new String[]{"nr", "text_type", "text_name1", "text_name2", "text_rating1", "text_rating2", "text_time1", "text_time2"},
+                new int[]{R.id.nr, R.id.text_type, R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2, R.id.text_time1, R.id.text_time2});
 
         _listGames = (ListView) findViewById(R.id.ICSGames);
         _listGames.setAdapter(_adapterGames);
@@ -1067,7 +1068,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                                 _mapPlayers.add(item);
                             } else {
 
-                                if (code == "(U)" || code == "(FM)" || code == "(GM)" || code == "(IM)" || code == "(WIM)" || code == "(WGM)") {
+                                if (code.equals("(U)") || code.equals("(FM)") || code.equals("(GM)") ||
+                                        code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
                                     name += code;
                                     HashMap<String, String> item = new HashMap<String, String>();
                                     item.put("text_name", name);
@@ -1475,8 +1477,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
         PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
         PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
-        PGN.append("[TimeControl \"" + _matgame.group(8) +  " minutes, increment: " +
-                _matgame.group(9) + " seconds\"]\n");
+        String _minutestoseconds = Integer.toString(Integer.parseInt(_matgame.group(8)) * 60);
+        PGN.append("[TimeControl \"" + _minutestoseconds +  "+" +
+                _matgame.group(9) + "\"]\n");
 
         if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
             _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
