@@ -657,6 +657,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 return true;
             case R.string.ics_menu_flag:
                 sendString("flag");
+                return true;
             case R.string.ics_menu_resign:
                 sendString("resign");
                 return true;
