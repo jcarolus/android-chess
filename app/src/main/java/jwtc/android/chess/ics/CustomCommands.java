@@ -159,17 +159,23 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getTitle() == null){
+			finish();
+			return true;
+		}
 		if (item.getTitle().equals(getString(R.string.menu_new_command))) {
 
 			final FrameLayout fl = new FrameLayout(this);
 			final EditText input = new EditText(this);
 			input.setGravity(Gravity.CENTER);
-			
+			input.setSingleLine();
+
 			fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(this)
 				.setView(fl)
-				.setTitle("New command")
+				.setTitle(R.string.menu_new_command)
+				.setMessage(R.string.menu_new_command_message)
 				.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					String s = input.getText().toString();

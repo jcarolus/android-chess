@@ -153,6 +153,7 @@
     <string name="menu_from_qrcode">De QR-código</string>
     <string name="menu_to_qrcode">Al QR-código</string>
     <string name="menu_new_command">Nuevo comando</string>
+    <string name="menu_new_command_message">Tipo de \u003cNR\u003e al final del comando de no retorno\nejemplo:  tell ChessMaster \u003cNR\u003e\n</string>
     <string name="menu_set_clock">Para ajustar el reloj</string>
     <string name="menu_start">Empezar</string>
     <string name="menu_stop">Deténgase</string>

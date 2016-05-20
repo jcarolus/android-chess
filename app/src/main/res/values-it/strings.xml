@@ -155,6 +155,7 @@
     <string name="menu_from_qrcode">Da QR Code</string>
     <string name="menu_to_qrcode">A QR Code</string>
     <string name="menu_new_command">Nuovo comando</string>
+    <string name="menu_new_command_message">tipo \u003cNR\u003e alla fine del comando per non ritorno\nesempio:  tell ChessMaster \u003cNR\u003e\n</string>
     <string name="menu_set_clock">Imposta orologio</string>
     <string name="menu_start">Avvia</string>
     <string name="menu_stop">Ferma</string>
