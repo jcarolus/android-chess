@@ -15,9 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
 import android.os.Vibrator;
-import android.preference.PreferenceActivity;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.ClipboardManager;
@@ -33,15 +31,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.google.android.gms.analytics.HitBuilders;
-
 import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -68,7 +61,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
 
-    private EditText _editHandle, _editPwd, _editConsole;
+    private EditText _editHandle, _editPwd, _editConsole, _editBoard;
 
     private Spinner _spinnerHandles;
     private ArrayAdapter<String> _adapterHandles;
@@ -477,10 +470,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _editConsole.setSingleLine(true);
             _editConsole.setOnKeyListener(okl);
         }
-        EditText editBoard = (EditText) findViewById(R.id.EditICSBoard);
-        if (editBoard != null) {
-            editBoard.setSingleLine(true);
-            editBoard.setOnKeyListener(okl);
+        _editBoard = (EditText) findViewById(R.id.EditICSBoard);
+        if (_editBoard != null) {
+            _editBoard.setSingleLine(true);
+            _editBoard.setOnKeyListener(okl);
         }
 
         Button butReg = (Button) findViewById(R.id.ButICSRegister);
@@ -623,6 +616,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             }
         }
 
+        invalidateOptionsMenu();  // update menu
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -710,7 +705,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 return true;
         }
 
-        sendString(item.getTitle().toString());
+            // check menu for ending tag of <NR>, then delete tag and allow a command with no return
+        String itemTitle = item.getTitle().toString();
+        if(itemTitle.substring(itemTitle.length()-4).equals("<NR>")){
+            if(_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_CONSOLE){
+                _editConsole.setText(itemTitle.substring(0, itemTitle.length()-4));
+                _editConsole.requestFocus();
+                _editConsole.setSelection(_editConsole.getText().length());
+            } else {
+                _editBoard.setText(itemTitle.substring(0, itemTitle.length() - 4));
+                _editBoard.requestFocus();
+                _editBoard.setSelection(_editBoard.getText().length());
+            }
+        } else {
+            sendString(item.getTitle().toString());
+        }
         return true;
 
     }
@@ -2091,8 +2100,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         cancelTimer();
 
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_BOARD)
+        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_BOARD) {
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_BOARD);
+        }
+        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_WELCOME);  // used for lobby default
     }
 
     /*

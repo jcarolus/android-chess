@@ -152,7 +152,8 @@
     <string name="menu_setup">Setup board</string>
     <string name="menu_from_qrcode">From QR-code</string>
     <string name="menu_to_qrcode">To QR-code</string>
-    <string name="menu_new_command">New command</string>
+    <string name="menu_new_command">New Command</string>
+    <string name="menu_new_command_message">type \u003cNR\u003e at end of command for no return\nexample:  tell ChessMaster \u003cNR\u003e\n</string>
     <string name="menu_set_clock">Set clock</string>
     <string name="menu_start">Start</string>
     <string name="menu_stop">Stop</string>
