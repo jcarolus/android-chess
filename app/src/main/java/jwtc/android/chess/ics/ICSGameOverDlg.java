@@ -4,6 +4,7 @@ import jwtc.android.chess.*;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -12,8 +13,10 @@ import android.widget.TextView;
 
 public class ICSGameOverDlg extends Dialog {
 
+    public static final String TAG = "ICSGameOverDlg";
+
     private ICSClient _parent;
-    private Button _butGoodGame, _butRematch, _butClipBoard, _butSend, _butExit;
+    private Button _butGoodGame, _butRematch, _butExamine, _butClipBoard, _butSend, _butExit;
     private TextView _tvGameResult, _tvSendMessagesTitle;
 
 
@@ -57,6 +60,20 @@ public class ICSGameOverDlg extends Dialog {
             }
         });
 
+        _butExamine = (Button)findViewById(R.id.ButtonGameExamine);
+        _butExamine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    _parent.sendString("examine " + _parent.get_whiteHandle() + " -1");
+                } catch (Exception e){
+                    _parent.doToast(e.toString());
+                    Log.e(TAG, "Exception error ->" + e.toString());
+                }
+
+            }
+        });
+
         _butClipBoard = (Button)findViewById(R.id.ButtonGameClipBoard);
         _butClipBoard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +97,7 @@ public class ICSGameOverDlg extends Dialog {
         _butRematch.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
     }
 
-    public void updateGRtext(String GRText){
+    public void updateGameResultText(String GRText){
         _tvGameResult.setText(GRText);
     }
 }

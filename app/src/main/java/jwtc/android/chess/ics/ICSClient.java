@@ -538,8 +538,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         menu.add(Menu.NONE, R.string.ics_menu_console, Menu.NONE, R.string.ics_menu_console);
 
         menu.add("tell puzzlebot hint");
-        menu.add("forward");
-        menu.add("backward");
         menu.add("unexamine");
         menu.add("tell endgamebot hint");
         menu.add("tell endgamebot move");
@@ -601,10 +599,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             String title = item.getTitle().toString();
             if (title.equals("tell puzzlebot hint")) {
                 item.setVisible(isConnected && viewMode == ICSChessView.VIEW_PUZZLE);
-            } else if (title.equals("forward")) {
-                item.setVisible(isConnected && viewMode == ICSChessView.VIEW_EXAMINE);
-            } else if (title.equals("backward")) {
-                item.setVisible(isConnected && viewMode == ICSChessView.VIEW_EXAMINE);
             } else if (title.equals("unexamine")) {
                 item.setVisible(isConnected && viewMode == ICSChessView.VIEW_EXAMINE);
             } else if (title.equals("tell endgamebot hint")) {
@@ -706,9 +700,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 return true;
         }
 
-            // check menu for ending tag of <NR>, then delete tag and allow a command with no return
+        // check menu for ending tag of <NR>, then delete tag and allow a command with no return
         String itemTitle = item.getTitle().toString();
-        if(itemTitle.substring(itemTitle.length()-4).equals("<NR>")){
+        if(itemTitle.length() > 4 && itemTitle.substring(itemTitle.length()-4).equals("<NR>")){
             if(_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_CONSOLE){
                 _editConsole.setText(itemTitle.substring(0, itemTitle.length()-4));
                 _editConsole.requestFocus();
@@ -986,6 +980,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     sendString("-channel 4"); // guest
                     sendString("-channel 53"); // guest chat
                     sendString("set kibitz 1"); // for puzzlebot
+                    sendString("set gin 0"); // current server game results - turn off - some clients turn it on
                     sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
 
                     // sendMessage("set interface "+ getPreferences().getString(APP_NAME));
@@ -1419,8 +1414,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     // shouts, tshouts etc...
                     // any other data we haven't matched, put it on prompt
                     else if (line.length() > 0) {
-                        Log.i("ICSClient", "lines[" + i + "] " + line);
-                        //Log.i("ICSClient", "lines[" + i + "][last] " + (int)(line.charAt(line.length()-1)));
+                        Log.i(TAG, "lines[" + i + "] " + line);
+                        //Log.i(TAG, "lines[" + i + "][last] " + (int)(line.charAt(line.length()-1)));
                         sRaw += "\n" + line;
                     }
 
@@ -1504,7 +1499,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         saveGameSDCard();
 
-        _dlgOver.updateGRtext(_matgame.group(11)); // game result message sent to dialog
+        _dlgOver.updateGameResultText(_matgame.group(11)); // game result message sent to dialog
 
         _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
         _dlgOver.show();
@@ -1868,6 +1863,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public int get_gameStartSound(){
         return _gameStartSound;
+    }
+
+    public String get_whiteHandle(){
+        Log.d(TAG,"get_whiteHandle ->" + _matgame.group(1));
+        return _matgame.group(1);
     }
 
     public String get_whiteRating(){

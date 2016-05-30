@@ -33,13 +33,14 @@ public class ICSChessView extends ChessViewBase {
     private JNI _jni;
     //private Button _butAction;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
-            _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove;
+            _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber;
 
     //private EditText _editChat;
+    protected ImageButton _butImageBackward, _butImageForward, _butImageRevert;
     private Button _butConfirmMove, _butCancelMove;
     private ViewSwitcher _viewSwitchConfirm;
     private String _opponent, _whitePlayer, _blackPlayer, _playerMe;
-    private int m_iFrom, _iWhiteRemaining, _iBlackRemaining, _iGameNum, _iTurn, m_iTo;
+    private int m_iFrom, _iWhiteRemaining, _iBlackRemaining, _iGameNum, _iMe, _iTurn, m_iTo;
     private ICSClient _parent;
     private boolean _bHandleClick, _bOngoingGame, _bConfirmMove, _bCanPreMove, _bfirst;
     private Timer _timer;
@@ -53,13 +54,16 @@ public class ICSChessView extends ChessViewBase {
         /** Gets called on every message that is received */
         // @Override
         public void handleMessage(Message msg) {
+            if(_viewMode == VIEW_EXAMINE){  // No ticks during EXAMINE mode
+                return;
+            }
             if (msg.what == MSG_TOP_TIME) {
                 _tvClockTop.setText(parseTime(msg.getData().getInt("ticks")));
             } else {
                 _tvClockBottom.setText(parseTime(msg.getData().getInt("ticks")));
 
             }
-            if((msg.what == MSG_TOP_TIME && (_tvPlayerTop.getText()).equals(_playerMe))
+            if((msg.what == MSG_TOP_TIME && (_tvPlayerTop.getText()).equals(_playerMe))  // Time Low Warning
                 || (msg.what == MSG_BOTTOM_TIME && (_tvPlayerBottom.getText()).equals(_playerMe))){
                 if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)) {
                     try {
@@ -104,6 +108,8 @@ public class ICSChessView extends ChessViewBase {
         _tvBoardNum = (TextView) _activity.findViewById(R.id.TextViewICSBoardNum);
         //_tvViewMode = (TextView)_activity.findViewById(R.id.TextViewICSBoardViewMode);
         _tvLastMove = (TextView) _activity.findViewById(R.id.TextViewICSBoardLastMove);
+        _tvTimePerMove = (TextView) _activity.findViewById(R.id.TextViewICSTimePerMove);
+        _tvMoveNumber = (TextView) _activity.findViewById(R.id.TextViewMoveNumber);
 
         _butCancelMove = (Button) _activity.findViewById(R.id.ButtonCancelMove);
         _butCancelMove.setOnClickListener(new OnClickListener() {
@@ -132,21 +138,28 @@ public class ICSChessView extends ChessViewBase {
 
         _viewSwitchConfirm = (ViewSwitcher) _activity.findViewById(R.id.ViewSitcherConfirmAndText);
          
-         /*
-         ImageButton butPrev = (ImageButton)_activity.findViewById((R.id.ButtonICSExamineRew));
- 		butPrev.setOnClickListener(new OnClickListener() {
+        _butImageBackward = (ImageButton)_activity.findViewById(R.id.ButtonICSExamineBackward);
+        _butImageBackward.setOnClickListener(new OnClickListener() {
         	public void onClick(View arg0) {
         		_parent.sendString("backward");
 			}
 		});
  		
- 		ImageButton butNext = (ImageButton)_activity.findViewById((R.id.ButtonICSExamineFf));
- 		butNext.setOnClickListener(new OnClickListener() {
+ 		_butImageForward = (ImageButton)_activity.findViewById(R.id.ButtonICSExamineForward);
+        _butImageForward.setOnClickListener(new OnClickListener() {
         	public void onClick(View arg0) {
         		_parent.sendString("forward");
 			}
 		});
-		*/
+
+        _butImageRevert = (ImageButton)_activity.findViewById(R.id.ButtonICSRevert);
+        _butImageRevert.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                _parent.sendString("revert");
+            }
+        });
+
 
         _timer = new Timer(true);
         _timer.schedule(new TimerTask() {
@@ -233,6 +246,7 @@ public class ICSChessView extends ChessViewBase {
     public void updateViewMode() {
         switch (_viewMode) {
             case VIEW_NONE:
+                setButtonExamineVisibility(false);
                 Log.i(TAG, "Idle");
                 break;
             case VIEW_PLAY:
@@ -254,6 +268,7 @@ public class ICSChessView extends ChessViewBase {
                 Log.i(TAG, "Watch");
                 break;
             case VIEW_EXAMINE:
+                setButtonExamineVisibility(true);
                 Log.i(TAG, "Examine");
                 break;
             case VIEW_PUZZLE:
@@ -303,6 +318,16 @@ public class ICSChessView extends ChessViewBase {
         //paint();
     }
 
+    public void setButtonExamineVisibility(boolean status){
+        _butImageBackward.setVisibility(status ? View.VISIBLE : View.GONE);
+        _butImageForward.setVisibility(status ? View.VISIBLE : View.GONE);
+        _butImageRevert.setVisibility(status ? View.VISIBLE : View.GONE);
+        _tvTimePerMove.setVisibility(status ? View.VISIBLE : View.GONE);
+
+        _tvPlayerTopRating.setVisibility(status ? View.GONE : View.VISIBLE);  // EXAMINE pattern doesn't have ratings plus
+        _tvPlayerBottomRating.setVisibility(status ? View.GONE : View.VISIBLE); //it allows enough room for examine buttons in landscape mode
+    }
+
     public synchronized boolean preParseGame(final String fLine) {
         try {
             // 64 fields + 8 spaces = 72
@@ -340,7 +365,9 @@ public class ICSChessView extends ChessViewBase {
     }
 
     public synchronized boolean parseGame(String line, String sMe) {
-        //Log.i("parseGame", line);
+        //Log.i(TAG, "parseGame" + line);
+
+        String _sNumberOfMove;
 
         try {
             //<12> rnbqkb-r pppppppp -----n-- -------- ----P--- -------- PPPPKPPP RNBQ-BNR B -1 0 0 1 1 0 7 Newton Einstein 1 2 12 39 39 119 122 2 K/e1-e2 (0:06) Ke2 0
@@ -387,8 +414,9 @@ public class ICSChessView extends ChessViewBase {
             //_flippedBoard = false;
             //B 0 0 1 1 0 7 Newton Einstein 1 2 12 39 39 119 122 2 K/e1-e2 (0:06) Ke2 0
             StringTokenizer st = new StringTokenizer(line);
-            _iTurn = BoardConstants.WHITE;
-            if (st.nextToken().equals("B")) {
+            String _sTurn = st.nextToken();  // _sTurn is "W" or "B"
+            _iTurn = BoardConstants.WHITE;  //  _iTurn is  1  or  0
+            if (_sTurn.equals("B")) {
                 _jni.setTurn(BoardConstants.BLACK);
                 _iTurn = BoardConstants.BLACK;
             }
@@ -432,16 +460,29 @@ public class ICSChessView extends ChessViewBase {
                 }
                 _bfirst = false;
             }
-            int iMe = Integer.parseInt(st.nextToken());
+            _iMe = Integer.parseInt(st.nextToken()); // my relation number to this game
+            /*
+            -3 isolated position, such as for "ref 3" or the "sposition" command
+            -2 I am observing game being examined
+             2 I am the examiner of this game
+            -1 I am playing, it is my opponent's move
+             1 I am playing and it is my move
+             0 I am observing a game being played
+             */
+            if (_iMe == 2 && _viewMode != VIEW_EXAMINE){  //  I am the examiner of this game
+                //initiate textviews in examine mode
+                _tvMoveNumber.setText("1");
+                this.setViewMode(VIEW_EXAMINE);
+            }
             //_bHandleClick = (iMe == 1);
             _bHandleClick = true;
-            //Log.i("parseGame", "setting handleclick " + iMe + ":" + _whitePlayer + ":" + _blackPlayer);
+            //Log.i(TAG, "parseGame setting handleclick " + iMe + ":" + _whitePlayer + ":" + _blackPlayer);
 
             //_bInTheGame = iMe == 1 || iMe == -1;
             _bCanPreMove = false;
             if (_viewMode == VIEW_PLAY) {
                 _opponent = _blackPlayer.equals(sMe) ? _whitePlayer : _blackPlayer;
-                if (iMe == 1) {
+                if (_iMe == 1) {
 
                     if (m_iFrom != -1 && m_iTo != -1) {
                         _tvLastMove.setText("...");
@@ -461,10 +502,15 @@ public class ICSChessView extends ChessViewBase {
 
             int iTime = Integer.parseInt(st.nextToken());
             int iIncrement = Integer.parseInt(st.nextToken());
-            st.nextToken();
-            st.nextToken();
+            int iWhiteMaterialStrength = Integer.parseInt(st.nextToken());
+            int iBlackMaterialStrength = Integer.parseInt(st.nextToken());
             _iWhiteRemaining = Integer.parseInt(st.nextToken());
             _iBlackRemaining = Integer.parseInt(st.nextToken());
+            _sNumberOfMove = st.nextToken(); // the number of the move about to be made
+            String sMove = st.nextToken();  // machine notation move
+            String _sTimePerMove = st.nextToken();  // time it took to make a move
+            String sLastMoveDisplay = st.nextToken();  // algebraic notation move
+            int iFlipBoardOrientation = Integer.parseInt(st.nextToken()); //0 = White on Bottom / 1 = Black on bottom
 
             if (_flippedBoard) {
                 _tvPlayerTop.setText(_whitePlayer);
@@ -489,16 +535,14 @@ public class ICSChessView extends ChessViewBase {
                 _tvClockTop.setText(parseTime(_iBlackRemaining));
                 _tvClockBottom.setText(parseTime(_iWhiteRemaining));
             }
-            
-            st.nextToken();
-            String sMove = st.nextToken();  // machine notation move
-            st.nextToken();  // time per move
-            String sLastMoveDisplay = st.nextToken();  // algebraic notation move
 
             //int iFrom = -1;
             if (false == sMove.equals("none") && sMove.length() > 2) {
 
-                _tvLastMove.setText(_iTurn==1 ? ".." + sLastMoveDisplay: sLastMoveDisplay);  // display last move
+                _tvLastMove.setText(_iTurn==1 ? "." + sLastMoveDisplay: sLastMoveDisplay);  // display last move
+                _tvTimePerMove.setText(_sTimePerMove);
+                // The about to be move is converted to the current move
+                _tvMoveNumber.setText(_iTurn==0 ? _sNumberOfMove : Integer.toString(Integer.parseInt(_sNumberOfMove)-1));
 
                 if (sMove.equals("o-o")) {
                     if (_iTurn == BoardConstants.WHITE)
@@ -580,7 +624,7 @@ public class ICSChessView extends ChessViewBase {
 
                 if (_bCanPreMove) {
                     m_iTo = index;
-                    Log.i("ICSChessView", "pre move:" + m_iFrom + "-" + m_iTo);
+                    Log.i(TAG, "pre move:" + m_iFrom + "-" + m_iTo);
                     paint();
                     return;
                 }
