@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class ICSGameOverDlg extends Dialog {
 
@@ -18,6 +21,9 @@ public class ICSGameOverDlg extends Dialog {
     private ICSClient _parent;
     private Button _butGoodGame, _butRematch, _butExamine, _butClipBoard, _butSend, _butExit;
     private TextView _tvGameResult, _tvSendMessagesTitle;
+
+    private Pattern _pattSmoves = Pattern.compile("[s|S]moves (\\w+) (\\d+)");
+    private Matcher match;
 
 
     public ICSGameOverDlg(Context context) {
@@ -64,13 +70,27 @@ public class ICSGameOverDlg extends Dialog {
         _butExamine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(_parent._sConsoleEditText != null) {  // _parent._sConsoleEditText is last text typed in console
+                    match = _pattSmoves.matcher(_parent._sConsoleEditText);
+                    if (match.matches()) {  // match: smoves (player) (number)
+                        _parent.sendString("examine " + match.group(1) + " " + match.group(2));
+                        _parent._sConsoleEditText = "";
+                        return;
+                    }
+                }
+
                 try {
-                    _parent.sendString("examine " + _parent.get_whiteHandle() + " -1");
+                    if(!_parent.get_whiteRating().equals("UNR")){  // can't examine unrated players
+                        _parent.sendString("examine " + _parent.get_whiteHandle() + " -1"); // examine last game
+                    }else if (!_parent.get_blackRating().equals("UNR")){
+                        _parent.sendString("examine " + _parent.get_blackHandle() + " -1");
+                    }
                 } catch (Exception e){
                     _parent.doToast(e.toString());
                     Log.e(TAG, "Exception error ->" + e.toString());
                 }
-
+                ICSGameOverDlg.this.dismiss(); // close dialog
             }
         });
 

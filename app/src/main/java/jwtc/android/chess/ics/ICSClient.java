@@ -52,6 +52,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     private TelnetSocket _socket;
     private Thread _workerTelnet;
+    protected String _sConsoleEditText;
     private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
@@ -452,10 +453,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         ) {
                     // Perform action on key press
                     EditText et = (EditText) v;
-                    String s = et.getText().toString();
+                    _sConsoleEditText = et.getText().toString();
 
                     _bConsoleText = true;  // show text when user types to ICS
-                    sendString(s);
+                    sendString(_sConsoleEditText);
                     et.setText("");
 
                     return true;
@@ -1866,16 +1867,27 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public String get_whiteHandle(){
-        Log.d(TAG,"get_whiteHandle ->" + _matgame.group(1));
-        return _matgame.group(1);
+        if(_whiteHandle != null){return _whiteHandle;}  // _whiteHandle is mat1 and mat2 match
+        try {return _matgame.group(1);} catch(Exception e){ // return _matgame match
+            return "";}
     }
 
     public String get_whiteRating(){
-        return _whiteRating == null ? "" : _whiteRating;
+        if(_whiteRating != null){return _whiteRating;}
+        try {return _matgame.group(2);} catch(Exception e){
+            return "";}
+    }
+
+    public String get_blackHandle(){
+        if(_blackHandle != null){return _blackHandle;}
+        try {return _matgame.group(3);} catch(Exception e){
+            return "";}
     }
 
     public String get_blackRating(){
-        return _blackRating == null ? "" : _blackRating;
+        if(_blackRating != null){return _blackRating;}
+        try {return _matgame.group(4);} catch(Exception e){
+        return "";}
     }
 
     public boolean isConnected() {
