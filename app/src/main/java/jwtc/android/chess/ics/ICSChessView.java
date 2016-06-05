@@ -469,7 +469,7 @@ public class ICSChessView extends ChessViewBase {
              1 I am playing and it is my move
              0 I am observing a game being played
              */
-            if (_iMe == 2 && _viewMode != VIEW_EXAMINE){  //  I am the examiner of this game
+            if ((_iMe == 2 || _iMe == -2) && _viewMode != VIEW_EXAMINE){  //  I am the examiner or observer of this game
                 //initiate textviews in examine mode
                 _tvMoveNumber.setText("1");
                 this.setViewMode(VIEW_EXAMINE);
