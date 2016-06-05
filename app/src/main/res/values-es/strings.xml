@@ -326,6 +326,7 @@
     <string name="ics_good_game">Buen juego</string>
     <string name="ics_offer_rematch">Oferta REVANCHA</string>
     <string name="ics_game">Juego</string>
+    <string name="ics_examine">Examinar</string>
     <string name="ics_send_app">Enviar a APLICACION</string>
     <string name="ics_copy_clipboard_text">Copiar al portapapeles</string>
 
