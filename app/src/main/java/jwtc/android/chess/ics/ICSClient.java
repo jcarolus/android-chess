@@ -72,6 +72,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     private ListView _listChallenges, _listPlayers, _listGames, _listStored;
     private ICSChessView _view;
     protected ICSMatchDlg _dlgMatch;
+    private ICSPlayerDlg _dlgPlayer;
     private ICSConfirmDlg _dlgConfirm;
     private ICSChatDlg _dlgChat;
     private ICSGameOverDlg _dlgOver;
@@ -237,6 +238,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _view.init();
 
         _dlgMatch = new ICSMatchDlg(this);
+        _dlgPlayer = new ICSPlayerDlg(this);
         _dlgConfirm = new ICSConfirmDlg(this);
         _dlgChat = new ICSChatDlg(this);
         _dlgOver = new ICSGameOverDlg(this);
@@ -1136,7 +1138,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                             if (_whiteHandle != null) {
                                 gameOverToast(line);  //send game over toast
                                 sendString("oldmoves " + _whiteHandle);  // send moves at end of game
-                                Log.d(TAG, "oldmoves " + _whiteHandle);
+                                //Log.d(TAG, "oldmoves " + _whiteHandle);
                             }
                         }
                     }
@@ -1472,7 +1474,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
         }
 
-        Log.d(TAG, "\n" + sBeg);
+        //Log.d(TAG, "\n" + sBeg);
 
         PGN = new StringBuilder("");
         PGN.append("[Event \"" + _matgame.group(7) + "\"]\n");
@@ -1674,9 +1676,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _tvConsole.setTypeface(Typeface.MONOSPACE);  // Monospace gives each character the same width
         _tvPlayConsole.setTypeface(Typeface.MONOSPACE);
+        _dlgPlayer._tvPlayerListConsole.setTypeface(Typeface.MONOSPACE);
 
         _tvConsole.setTextSize(_iConsoleCharacterSize); // sets console text size
         _tvPlayConsole.setTextSize(_iConsoleCharacterSize);
+        _dlgPlayer._tvPlayerListConsole.setTextSize(_iConsoleCharacterSize);
+
+        if(_dlgPlayer.isShowing()){
+            _dlgPlayer._tvPlayerListConsole.append(s);
+            _dlgPlayer._scrollPlayerListConsole.post(new Runnable() {
+                public void run() {
+                    _dlgPlayer._scrollPlayerListConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
+                }
+            });
+            return;
+        }
 
 
         final String s2 = _tvConsole.getText() + "\n\n" + s;
@@ -2084,10 +2098,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             if (_mapPlayers.size() > arg2) {
                 HashMap<String, String> m = _mapPlayers.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name"));
-                _dlgMatch._rbChallenge.setChecked(true);
-                _dlgMatch._rbChallenge.performClick();
-                _dlgMatch.setPlayer(m.get("text_name").toString());  // todo click on history, follow, match, etc
-                _dlgMatch.show();
+                _dlgPlayer.opponentName(m.get("text_name"));
+                _dlgPlayer._tvPlayerListConsole.setText("");  // clear TextView
+                _dlgPlayer.show();
+
             }
         } else if (arg0 == _listGames) {
             if (_mapGames.size() > arg2) {

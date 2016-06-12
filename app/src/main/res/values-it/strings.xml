@@ -354,6 +354,11 @@
     <string name="ics_seekmanual">manualmente</string>
     <string name="ics_seekformula">Formula</string>
 
+    <string name="ics_playerchat">Digita qui per chattare con</string>
+    <string name="ics_you">Tu</string>
+    <string name="ics_historygamenumber">Storia Numero Gioco</string>
+    <string name="ics_typegamenumber">Numero di gioco</string>
+
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>
     <string name="toast_challenge_posted">Sfida lanciata</string>

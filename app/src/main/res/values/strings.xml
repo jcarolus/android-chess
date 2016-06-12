@@ -349,6 +349,11 @@
     <string name="ics_seekmanual">Manually Accept</string>
     <string name="ics_seekformula">Formula</string>
 
+    <string name="ics_playerchat">Type here to chat with</string>
+    <string name="ics_you">You</string>
+    <string name="ics_historygamenumber">History Game Number</string>
+    <string name="ics_typegamenumber">Enter game number of</string>
+
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Could not start the activity</string>
     <string name="toast_challenge_posted">Challenge posted</string>
