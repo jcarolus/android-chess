@@ -39,7 +39,7 @@ public class ChessViewBase{
 	private RelativeLayout _mainLayout;
 	private ChessImageView[] _arrImages = new ChessImageView[64];
 	//public static final int SELECTED = 2;
-	protected boolean _flippedBoard;
+	public static boolean _flippedBoard = false;
 	protected Activity _activity;
 	protected ImageCacheObject[] _arrImgCache;
 
@@ -458,15 +458,17 @@ public class ChessViewBase{
 		resetImageCache();
 		_flippedBoard = flipped;
 	}
+
 	public boolean getFlippedBoard(){
 		return _flippedBoard;
 	}
-	public void flipBoard(){
 
+	public void flipBoard(){
 		resetImageCache();
 		_flippedBoard = _flippedBoard ? false : true;
 		setFlippedBoard(_flippedBoard);
 	}
+
 	public int getFieldIndex(int i){
 		if(_flippedBoard){
 			return 63 - i;

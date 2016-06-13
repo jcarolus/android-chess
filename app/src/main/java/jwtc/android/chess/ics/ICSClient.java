@@ -71,6 +71,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     //private EditText _editPrompt;
     private ListView _listChallenges, _listPlayers, _listGames, _listStored;
     private ICSChessView _view;
+    private ChessViewBase _viewbase;
     protected ICSMatchDlg _dlgMatch;
     private ICSPlayerDlg _dlgPlayer;
     private ICSConfirmDlg _dlgConfirm;
@@ -1747,6 +1748,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         SharedPreferences prefs = this.getPrefs();
 
+        _viewbase._showCoords = prefs.getBoolean("showCoords", false);
+        _viewbase._flippedBoard = prefs.getBoolean("flippedBoard", false);
+
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
 
         _view.setConfirmMove(prefs.getBoolean("ICSConfirmMove", false));
@@ -1860,7 +1864,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         //rescheduleTimer();
-
+        _view.paint();  // update board
         super.onResume();
     }
 
@@ -1939,6 +1943,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         ////////////////////////////////////////////////////////////
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
+
+        editor.putBoolean("showCoords" , _viewbase._showCoords);
+        editor.putBoolean("flippedBoard", _viewbase._flippedBoard);
 
         if (_bIsGuest) {
             _handle = "guest";

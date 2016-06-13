@@ -54,7 +54,7 @@ public class ICSChessView extends ChessViewBase {
         /** Gets called on every message that is received */
         // @Override
         public void handleMessage(Message msg) {
-            if(_viewMode == VIEW_EXAMINE){  // No ticks during EXAMINE mode
+            if(_viewMode == VIEW_EXAMINE || _viewMode == VIEW_NONE){  // No ticks during EXAMINE mode or IDLE Mode
                 return;
             }
             if (msg.what == MSG_TOP_TIME) {

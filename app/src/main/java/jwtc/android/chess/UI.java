@@ -8,8 +8,10 @@ import jwtc.chess.*;
 import jwtc.chess.board.*;
 
 
-public class UI extends GameControl
-{
+public class UI extends GameControl {
+
+	public static final String TAG = "UI";
+
 	// last mouse click position
 	protected int m_iFrom;
 	
@@ -24,7 +26,7 @@ public class UI extends GameControl
         // @Override
         public void handleMessage(Message msg) {
              
-       	 	Log.i("searchThreadUpdateHandler", "handle " + msg.what);
+       	 	Log.i(TAG, "searchThreadUpdateHandler ->" + msg.what);
        	 	// do move
 	       	 if(msg.what == MSG_MOVE){
 	       		 
