@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButHistory"
-                android:text="History"
+                android:text="@string/ics_history"
                 />
 
             <Button
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButFinger"
-                android:text="Finger"
+                android:text="@string/ics_finger"
                 />
 
             <Button
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButFollow"
-                android:text="Follow"
+                android:text="@string/ics_follow"
                 />
 
         </TableRow>
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButUnFollow"
-                android:text="UnFollow"
+                android:text="@string/ics_unfollow"
                 />
 
             <Button
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButMatch"
-                android:text="Match"
+                android:text="@string/ics_match"
                 />
 
             <Button
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButSmoves"
-                android:text="Game #"
+                android:text="@string/ics_gamenumber"
                 />
         </TableRow>
 

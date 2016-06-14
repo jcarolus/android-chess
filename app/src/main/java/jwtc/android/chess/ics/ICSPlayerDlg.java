@@ -54,7 +54,6 @@ public class ICSPlayerDlg extends Dialog {
             }
         });
 
-
         _butHistory = (Button)findViewById(R.id.ButHistory);
         _butHistory.setOnClickListener(new View.OnClickListener() {
             @Override

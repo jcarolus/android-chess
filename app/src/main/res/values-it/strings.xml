@@ -358,6 +358,12 @@
     <string name="ics_you">Tu</string>
     <string name="ics_historygamenumber">Storia Numero Gioco</string>
     <string name="ics_typegamenumber">Numero di gioco</string>
+    <string name="ics_history">Storia</string>
+    <string name="ics_finger">Sommario</string>
+    <string name="ics_follow">Seguire</string>
+    <string name="ics_unfollow">Smetti</string>
+    <string name="ics_match">Incontro</string>
+    <string name="ics_gamenumber">Gioco #</string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>

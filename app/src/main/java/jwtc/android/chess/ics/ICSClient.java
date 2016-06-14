@@ -1864,7 +1864,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         //rescheduleTimer();
-        _view.paint();  // update board
+
         super.onResume();
     }
 
