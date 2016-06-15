@@ -1749,7 +1749,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         SharedPreferences prefs = this.getPrefs();
 
         _viewbase._showCoords = prefs.getBoolean("showCoords", false);
-        _viewbase._flippedBoard = prefs.getBoolean("flippedBoard", false);
 
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
 
@@ -1943,9 +1942,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         ////////////////////////////////////////////////////////////
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
-
-        editor.putBoolean("showCoords" , _viewbase._showCoords);
-        editor.putBoolean("flippedBoard", _viewbase._flippedBoard);
 
         if (_bIsGuest) {
             _handle = "guest";
