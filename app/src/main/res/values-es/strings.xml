@@ -250,7 +250,7 @@
     <string name="err_no_clip_text">No hay texto en el portapapeles</string>
     <string name="err_install_barcode_scanner">Por favor, instale el escáner de código de barras (ZXing)</string>
     <string name="err_chess960_position_range">Posición no válida, introduzca un número entre 0 y 960</string>
-    <string name="err_chess960_postion_format">Posición no válida, introduzca un número</string>
+    <string name="err_chess960_position_format">Posición no válida, introduzca un número</string>
     <string name="err_puzzle_jump">Número de rompecabezas válida</string>
     <string name="err_saving_game">Error al guardar juego para chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Error durante la copia al portapapeles</string>

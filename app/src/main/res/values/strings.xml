@@ -32,7 +32,7 @@
     <string name="pref_showCoords">Coordinates</string>
     <string name="pref_showCoords_desc">Show board coordinates</string>
     <string name="pref_showLastMove">Show last move</string>
-    <string name="pref_showLastMove_desc">Shows the last move with higlighted squares</string>
+    <string name="pref_showLastMove_desc">Shows the last move with highlighted squares</string>
     <string name="pref_sound">Sound</string>
     <string name="pref_sound_desc">Played when your opponent moves</string>
     <string name="pref_speech">Speech</string>
@@ -250,7 +250,7 @@
     <string name="err_no_clip_text">There is no text on the clip board</string>
     <string name="err_install_barcode_scanner">Please install Barcode scanner (ZXing)</string>
     <string name="err_chess960_position_range">Invalid position, enter a number between 0 and 960</string>
-    <string name="err_chess960_postion_format">Invalid position, enter a number</string>
+    <string name="err_chess960_position_format">Invalid position, enter a number</string>
     <string name="err_puzzle_jump">Invalid puzzle number</string>
     <string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Error during copy to ClipBoard</string>

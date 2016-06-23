@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string-array name="start_menu">
-        <item>@string/start_play</item>
+		<item>@string/start_play</item>
         <item>@string/start_ics</item>
-        <item>@string/start_practice</item>
-        <item>@string/start_puzzles</item>
-        <item>@string/start_globalpreferences</item>
+		<item>@string/start_practice</item>
+		<item>@string/start_puzzles</item>
+		<item>@string/start_globalpreferences</item>
         <item>@string/start_donate</item>
-        <item>@string/start_about</item>
-        <item>@string/start_pgn</item>
+		<item>@string/start_about</item>
+		<item>@string/start_pgn</item>
 	</string-array>
     <string-array name="levels_ply">
-        <item>1 capa</item>
-        <item>2 capas</item>
-        <item>3 capas</item>
-        <item>4 capas</item>
-        <item>5 capas</item>
-        <item>6 capas</item>
-        <item>7 capas</item>
-        <item>8 capas</item>
-        <item>9 capas</item>
-        <item>10 capas</item>
+        <item>1 полуход</item>
+        <item>2 полухода</item>
+        <item>3 полухода</item>
+        <item>4 полухода</item>
+        <item>5 полуходов</item>
+        <item>6 полуходов</item>
+        <item>7 полуходов</item>
+        <item>8 полуходов</item>
+        <item>9 полуходов</item>
+        <item>10 полуходов</item>
     </string-array>
     <string-array name="levels_time">
         <item>@string/choice_level_1</item>
@@ -41,24 +41,24 @@
         <item>@string/choice_knight</item>
     </string-array>
     <string-array name="playmodes">
-        <item>Usted vs Android</item>
-        <item>Android vs Usted</item>
-        <item>Tablero de juego</item>
+        <item>Вы против Android</item>
+        <item>Android против вас</item>
+        <item>Игровая доска</item>
     </string-array>
     <string-array name="clockchoices">
-    	<item>Hay reloj</item>
-    	<item>2 minutos</item>
-    	<item>5 minutos</item>
-    	<item>10 minutos</item>
-    	<item>30 minutos</item>
+    	<item>без времени</item>
+    	<item>2 минуты</item>
+    	<item>5 минут</item>
+    	<item>10 минут</item>
+    	<item>30 минут</item>
     </string-array>
     <string-array name="colorschemes">
-        <item>Amarillo</item>
-        <item>azul</item>
-        <item>Verde</item>
-        <item>Gris</item>
-        <item>Marrón</item>
-        <item>Rojo</item>
+        <item>Жёлтый</item>
+        <item>Синий</item>
+        <item>Зелёный</item>
+        <item>Серый</item>
+        <item>Коричневый</item>
+        <item>Красный</item>
     </string-array>
     <!-- 
     <integer-array name="colorscheme_indexes">
@@ -70,12 +70,12 @@
     </integer-array>
      -->
     <string-array name="options_wakelock">
-    	<item>Utilice el bloqueo de estela</item>
-    	<item>No utilice el bloqueo estela</item>
+    	<item>Использовать удержание в режиме бодрствования</item>
+    	<item>Не использовать удержание в режиме бодрствования</item>
     </string-array>
     <string-array name="match_subject">
-        <item>Seek</item>
-        <item>Challenge</item>
+        <item>Искать</item>
+        <item>Вызов</item>
     </string-array>
      <string-array name="match_time_minutes">
         <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
@@ -92,27 +92,35 @@
     	<item>@string/choice_match_rated</item>
     </string-array>
     <string-array name="match_variant">
-    	<item>Estándar</item>
-    	<item>Ajedrez 960 (experimental)</item>
+    	<item>Стандартные</item>
+    	<item>Шахматы-960 (экспериментальные)</item>
     </string-array>
     <string-array name="match_color">
-        <item>Random</item>
-        <item>blanco</item>
-        <item>negro</item>
+        <item>Произвольно</item>
+        <item>Белые</item>
+        <item>Чёрные</item>
+    </string-array>
+    <string-array name="console_character_size">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
+    <string-array name="console_character_size_values">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
     </string-array>
     <string-array name="time_warning">
-        <item>5 segundos</item><item>10 segundos</item><item>25 segundos</item>
-        <item>45 segundos</item><item>1 minuto</item>
+        <item>5 секунд</item><item>10 секунд</item><item>25 секунд</item>
+        <item>45 секунд</item><item>1 минута</item>
     </string-array>
     <string-array name="time_warning_values">
         <item>5</item><item>10</item><item>25</item>
         <item>45</item><item>60</item>
     </string-array>
     <string-array name="gamestartsound">
-        <item>Ninguno</item>
-        <item>sonido y la vibración</item>
-        <item>sonará solamente</item>
-        <item>Sólo vibración</item>
+        <item>Нет</item>
+        <item>Звук и вибрация</item>
+        <item>Только звук</item>
+        <item>Только вибрация</item>
     </string-array>
     <string-array name="gamestartsound_values">
         <item>0</item><item>1</item><item>2</item><item>3</item>
@@ -154,18 +162,18 @@
     	<item>circuit</item>
     </string-array>
     <string-array name="tileArray">
-    	<item>Ninguno</item>
-    	<item>double shade</item>
-    	<item>single shade</item>
-    	<item>stripes</item>
-    	<item>clouds</item>
-    	<item>circuit</item>
+    	<item>нет</item>
+    	<item>двойной оттенок</item>
+    	<item>один оттенок</item>
+    	<item>полоски</item>
+    	<item>облака</item>
+    	<item>цепь</item>
     </string-array>
     <string-array name="localearray">
-        <item>Inglés</item>
-        <item>italiano</item>
-        <item>Español</item>
-        <item>ruso</item>
+        <item>Английский</item>
+        <item>Итальянский</item>
+        <item>Испанский</item>
+        <item>русский</item>
     </string-array>
     <string-array name="localeKeyarray">
         <item>en</item>
@@ -179,10 +187,10 @@
     	<item>bik</item>
     </string-array>
     <string-array name="donate_amount">
-        <item>1 euro</item>
-        <item>2 euro</item>
-        <item>5 euro</item>
-        <item>10 euro</item>
-        <item>20 euro</item>
+        <item>1 евро</item>
+        <item>2 евро</item>
+        <item>5 евро</item>
+        <item>10 евро</item>
+        <item>20 евро</item>
     </string-array>
 </resources>

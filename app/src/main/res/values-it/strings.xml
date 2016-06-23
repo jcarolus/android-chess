@@ -254,7 +254,7 @@
     <string name="err_no_clip_text">Appunti vuoti</string>
     <string name="err_install_barcode_scanner">Per favore installa uno scanner di codici a barre (ZXing)</string>
     <string name="err_chess960_position_range">Posizione non valida, inserisci un numero tra 0 e 960</string>
-    <string name="err_chess960_postion_format">Posizione non valida, inserisci un numero</string>
+    <string name="err_chess960_position_format">Posizione non valida, inserisci un numero</string>
         <!-- @TODO -->
     <string name="err_puzzle_jump">Puzzle di numero non valido</string>
     <string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>

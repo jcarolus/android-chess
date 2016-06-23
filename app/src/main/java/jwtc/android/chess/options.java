@@ -2,16 +2,12 @@ package jwtc.android.chess;
 
 import jwtc.chess.GameControl;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,7 +16,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
-import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TableRow;
 
@@ -161,7 +156,7 @@ public class options extends MyBaseActivity {
                                     doToast(getString(R.string.err_chess960_position_range));
                                 }
                             } catch (Exception ex) {
-                                doToast(getString(R.string.err_chess960_postion_format));
+                                doToast(getString(R.string.err_chess960_position_format));
                             }
                         }
                     });
