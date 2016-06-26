@@ -250,7 +250,7 @@
     <string name="err_no_clip_text">No hay texto en el portapapeles</string>
     <string name="err_install_barcode_scanner">Por favor, instale el escáner de código de barras (ZXing)</string>
     <string name="err_chess960_position_range">Posición no válida, introduzca un número entre 0 y 960</string>
-    <string name="err_chess960_postion_format">Posición no válida, introduzca un número</string>
+    <string name="err_chess960_position_format">Posición no válida, introduzca un número</string>
     <string name="err_puzzle_jump">Número de rompecabezas válida</string>
     <string name="err_saving_game">Error al guardar juego para chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Error durante la copia al portapapeles</string>
@@ -326,6 +326,7 @@
     <string name="ics_good_game">Buen juego</string>
     <string name="ics_offer_rematch">Oferta REVANCHA</string>
     <string name="ics_game">Juego</string>
+    <string name="ics_examine">Examinar</string>
     <string name="ics_send_app">Enviar a APLICACION</string>
     <string name="ics_copy_clipboard_text">Copiar al portapapeles</string>
 
@@ -347,6 +348,17 @@
     <string name="ics_seekrated">juego Rated</string>
     <string name="ics_seekmanual">Manualmente</string>
     <string name="ics_seekformula">Fórmula</string>
+
+    <string name="ics_playerchat">Escribe aquí para charlar con</string>
+    <string name="ics_you">Tú</string>
+    <string name="ics_historygamenumber">Historia Número de juegos</string>
+    <string name="ics_typegamenumber">Número de partida de</string>
+    <string name="ics_history">Historia</string>
+    <string name="ics_finger">Resumen</string>
+    <string name="ics_follow">Seguir</string>
+    <string name="ics_unfollow">No Seguir</string>
+    <string name="ics_match">Partido</string>
+    <string name="ics_gamenumber">Juego #</string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">No se pudo iniciar la actividad</string>

@@ -15,7 +15,7 @@
 	     >
 	     	 <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 		    	android:id="@+id/TablePlayerTop" 
-		    	android:stretchColumns="2"
+		    	android:shrinkColumns="0,1,2" android:stretchColumns="3"
 		    	android:layout_marginBottom="2dip"
 		    >
 		    	<TableRow>
@@ -31,15 +31,14 @@
 				    	style="@style/MyHeaderTextStyle"
 				    />
 					<TextView android:text="----" android:id="@+id/TextViewICSTwoRating"
-						android:layout_height="wrap_content"
-						android:layout_width="fill_parent"
+						android:layout_height="wrap_content" android:layout_width="wrap_content"
 						style="@style/MyHeaderTextStyle"
 						android:layout_marginLeft="3dip"
 					/>
 				     <TextView android:id="@+id/TextViewICSBoardNum"
-						android:text="# 0"
-						style="@style/MyHeaderTextStyle"
-						android:layout_width="48dip" android:layout_height="wrap_content"
+						android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:text="# 0" android:layout_marginRight="5dp"
+						style="@style/MyHeaderTextStyle" android:gravity="right|center_vertical"
 					/>
 		    	</TableRow>
 		    
@@ -55,10 +54,11 @@
 		        android:id="@+id/includeboard" 
 		        android:layout_below="@id/TablePlayerTop"/>
 		     -->
-		    <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
-		    	android:id="@+id/TablePlayerBottom" android:layout_below="@id/includeboard"
+		    <TableLayout android:id="@+id/TablePlayerBottom"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+		    	android:layout_below="@id/includeboard"
 		    	android:layout_marginTop="2dip"
-		    	android:stretchColumns="2"
+				android:shrinkColumns="0,1,2" android:stretchColumns="3"
 		    >
 		    	<TableRow>
 			    	<TextView android:id="@+id/TextViewClockBottom"
@@ -68,20 +68,27 @@
 						android:layout_marginLeft="8dip"
 					/>
 				    <TextView android:text="@string/ics_playerone" android:id="@+id/TextViewBottom"
-				    	android:layout_height="wrap_content" 
-				    	android:layout_width="wrap_content"
+				    	android:layout_height="wrap_content" android:layout_width="wrap_content"
 				    	style="@style/MyHeaderTextStyle"
 				    />
 					<TextView android:text="----" android:id="@+id/TextViewICSOneRating"
-							  android:layout_height="wrap_content"
-							  android:layout_width="fill_parent"
-							  style="@style/MyHeaderTextStyle"
-							  android:layout_marginLeft="3dip"
+							  android:layout_height="wrap_content" android:layout_width="wrap_content"
+							  style="@style/MyHeaderTextStyle" android:layout_marginLeft="3dip"
 					/>
+					<TextView android:id="@+id/TextViewMoveNumber"
+						android:text="-" style="@style/MyNormalTextStyle" android:gravity="right|center_vertical"
+						android:layout_width="wrap_content" android:layout_height="20dp"
+						android:layout_marginRight="5dp" android:visibility="visible"
+						/>
+					<TextView android:id="@+id/TextViewICSTimePerMove"
+						android:text="(0:00)" style="@style/MyNormalTextStyle" android:gravity="center_vertical"
+						android:layout_width="wrap_content" android:layout_height="20dp"
+						android:layout_marginRight="5dp" android:visibility="gone"
+						/>
 				    <TextView android:id="@+id/TextViewICSBoardLastMove"
 						android:text="---"
-						style="@style/MyNormalTextStyle"
-						android:layout_width="70dip" android:layout_height="wrap_content"
+						style="@style/MyNormalTextStyle" android:gravity="center_vertical"
+						android:layout_width="50dp" android:layout_height="20dp"
 					/>
 		    	</TableRow>
 		    </TableLayout>
@@ -109,10 +116,32 @@
 						/>
 					</TableRow>
 				</TableLayout>
+				<TextView android:id="@+id/dummy"
+					android:layout_width="0dp" android:layout_height="0dp"
+					android:layout_below="@+id/TableICSPlayButtons"
+					android:layout_centerHorizontal="true" android:visibility="invisible"/>
+
+				<ImageButton android:id="@+id/ButtonICSExamineBackward" android:src="@drawable/navigation_previous_item"
+					android:layout_width="40dp" android:layout_height="40dp"
+					android:layout_below="@+id/TableICSPlayButtons" android:layout_toLeftOf="@+id/dummy"
+					android:layout_margin="5dp" android:visibility="gone"
+					/>
+				<ImageButton android:id="@+id/ButtonICSExamineForward" android:src="@drawable/navigation_next_item"
+					android:layout_width="40dp" android:layout_height="40dp"
+					android:layout_below="@+id/TableICSPlayButtons" android:layout_toRightOf="@+id/dummy"
+					android:layout_margin="5dp" android:visibility="gone"
+					/>
+				<ImageButton android:id="@+id/ButtonICSRevert" android:src="@drawable/navigation_revert"
+					android:layout_width="40dp"	android:layout_height="40dp"
+					android:layout_below="@+id/TableICSPlayButtons" android:layout_toLeftOf="@+id/ButtonICSExamineBackward"
+					android:layout_marginTop="5dp" android:layout_marginBottom="5dp" android:scaleType="fitXY"
+					android:layout_marginRight="30dp" android:visibility="gone"
+					/>
+
 				<!-- ############### -->
 				<ViewSwitcher android:id="@+id/ViewSitcherConfirmAndText" 
 					android:layout_width="fill_parent" android:layout_height="fill_parent"
-					android:layout_below="@id/TableICSPlayButtons"
+					android:layout_below="@id/ButtonICSExamineBackward"
 				>
 					<ScrollView android:id="@+id/ScrollPlayConsole"
 						android:layout_width="fill_parent"

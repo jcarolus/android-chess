@@ -160,7 +160,15 @@ public class ChessImageView extends View {
         	//if(ImageCacheObject._flippedBoard){
         	//	canvas.drawText(ico._coord, getWidth() - 12, getHeight() - 2, _paint);
         	//} else {
-        		canvas.drawText(ico._coord, 2, getHeight() - 2, _paint);
+
+			canvas.drawText(ico._coord, 2, getHeight() - 2, _paint);
+
+			if(ico._coord.equals("A") && !ImageCacheObject._flippedBoard){  // bottom-left corner coordinates
+				canvas.drawText("1", 2 , getHeight() - 30, _paint);
+			}
+			else if(ico._coord.equals("H") && ImageCacheObject._flippedBoard){
+				canvas.drawText("8", 2 , getHeight() - 30, _paint);
+			}
         	//}
         }
         //////////////////////////////////////

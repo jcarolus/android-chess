@@ -62,11 +62,18 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/ics_examine"
+            android:id="@+id/ButtonGameExamine"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/ics_copy_clipboard_text"
             android:id="@+id/ButtonGameClipBoard"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/textView2"
-            android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"/>
 
         <Button

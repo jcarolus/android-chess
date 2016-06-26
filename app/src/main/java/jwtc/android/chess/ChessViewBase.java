@@ -39,7 +39,7 @@ public class ChessViewBase{
 	private RelativeLayout _mainLayout;
 	private ChessImageView[] _arrImages = new ChessImageView[64];
 	//public static final int SELECTED = 2;
-	protected boolean _flippedBoard;
+	public static boolean _flippedBoard = false;
 	protected Activity _activity;
 	protected ImageCacheObject[] _arrImgCache;
 
@@ -199,7 +199,7 @@ public class ChessViewBase{
 		ChessImageView._arrColorScheme[0][2] = 0xccf3ed4b;
 
 		// blue
-		ChessImageView._arrColorScheme[1][0] = 0xff28628b;
+		ChessImageView._arrColorScheme[1][0] = 0xff398bc6;
 		ChessImageView._arrColorScheme[1][1] = 0xff7dbdea;
 		ChessImageView._arrColorScheme[1][2] = 0xcc9fdef3;
 
@@ -214,7 +214,7 @@ public class ChessViewBase{
 		ChessImageView._arrColorScheme[3][2] = 0xccf3ed4b;
 
 		// brown
-		ChessImageView._arrColorScheme[4][0] = 0xff65390d; //4c2b0a
+		ChessImageView._arrColorScheme[4][0] = 0xffb56617;
 		ChessImageView._arrColorScheme[4][1] = 0xffb98b4f;
 		ChessImageView._arrColorScheme[4][2] = 0xccf3ed4b;
 		// 347733
@@ -458,15 +458,17 @@ public class ChessViewBase{
 		resetImageCache();
 		_flippedBoard = flipped;
 	}
+
 	public boolean getFlippedBoard(){
 		return _flippedBoard;
 	}
-	public void flipBoard(){
 
+	public void flipBoard(){
 		resetImageCache();
 		_flippedBoard = _flippedBoard ? false : true;
 		setFlippedBoard(_flippedBoard);
 	}
+
 	public int getFieldIndex(int i){
 		if(_flippedBoard){
 			return 63 - i;

@@ -34,6 +34,8 @@ public class HtmlActivity extends MyBaseActivity {
 			_lang = "it";
 		} else if (Locale.getDefault().getLanguage().equals("es")) {
 			_lang = "es";
+		} else if (Locale.getDefault().getLanguage().equals("ru")) {
+			_lang = "ru";
 		} else {
 			_lang = "en";
 		}
