@@ -327,11 +327,11 @@
 		<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 	   		android:gravity="center"
 	   	>
-	   		<TextView android:text="Not connected" android:id="@+id/TextViewNotConnected" 
+	   		<TextView android:text="@string/ics_not_connected" android:id="@+id/TextViewNotConnected"
 	   			android:layout_width="fill_parent" android:layout_height="wrap_content"
 	   			style="@style/MyTextStyle"
 	   		/>
-	   		<Button android:id="@+id/ButtonLogin" android:text="Connect"
+	   		<Button android:id="@+id/ButtonLogin" android:text="@string/ics_connect"
 	   			android:layout_below="@id/TextViewNotConnected"
 	   			android:layout_width="wrap_content" android:layout_height="wrap_content"
 	   		/>

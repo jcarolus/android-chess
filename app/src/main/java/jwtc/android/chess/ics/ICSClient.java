@@ -2074,7 +2074,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 cancelDateTimer();
                 new AlertDialog.Builder(ICSClient.this)
                         .setTitle(R.string.title_error)
-                        .setMessage("Connection to server is broken.")
+                        .setMessage(getString(R.string.ics_lost_connection))
                         .setPositiveButton(getString(R.string.alert_ok),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {

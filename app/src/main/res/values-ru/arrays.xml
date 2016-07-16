@@ -126,7 +126,7 @@
         <item>0</item><item>1</item><item>2</item><item>3</item>
     </string-array>
     <string-array name="field_files">
-    	<item>none</item>
+    	<item>нет</item>
     	<item>a</item>
     	<item>b</item>
     	<item>c</item>
@@ -163,17 +163,17 @@
     </string-array>
     <string-array name="tileArray">
     	<item>нет</item>
-    	<item>двойной оттенок</item>
-    	<item>один оттенок</item>
+    	<item>двойная тень</item>
+    	<item>одиночная тень</item>
     	<item>полоски</item>
     	<item>облака</item>
-    	<item>цепь</item>
+    	<item>схема</item>
     </string-array>
     <string-array name="localearray">
         <item>Английский</item>
         <item>Итальянский</item>
         <item>Испанский</item>
-        <item>русский</item>
+        <item>Русский</item>
     </string-array>
     <string-array name="localeKeyarray">
         <item>en</item>

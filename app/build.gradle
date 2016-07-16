@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     signingConfigs {
@@ -7,12 +6,12 @@ android {
             storeFile file('/Users/jcarolus/Projecten/Chess/android-keystore')
         }
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
     defaultConfig {
         applicationId "jwtc.android.chess"
         minSdkVersion 11
-        targetSdkVersion 23
+        targetSdkVersion 24
     }
     buildTypes {
         release {
@@ -26,10 +25,12 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:mediarouter-v7:23.3.0'
+    compile 'com.android.support:support-v4:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:mediarouter-v7:24.0.0'
     compile 'com.google.android.gms:play-services-cast:8.3.0'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
     compile files('libs/play-hub-support.jar')
 }
+
+apply plugin: 'com.google.gms.google-services'

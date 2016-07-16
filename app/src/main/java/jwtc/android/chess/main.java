@@ -622,13 +622,13 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
     public void saveGame() {
         String sEvent = _chessView.getPGNHeadProperty("Event");
         if (sEvent == null)
-            sEvent = "event ?";
+            sEvent = getString(R.string.savegame_event_question);
         String sWhite = _chessView.getWhite();
         if (sWhite == null)
-            sWhite = "white ?";
+            sWhite = getString(R.string.savegame_white_question);
         String sBlack = _chessView.getBlack();
         if (sBlack == null)
-            sBlack = "black ?";
+            sBlack = getString(R.string.savegame_black_question);
 
         Date dd = _chessView.getDate();
         if (dd == null)

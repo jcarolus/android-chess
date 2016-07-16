@@ -179,6 +179,8 @@
     <string name="options_flip">Flip board</string>
     <string name="options_setup">Setup board</string>
     <string name="options_show_moves">Show moves</string>
+    <string name="options_level_time">Level (time)</string>
+    <string name="options_level_ply">Level (ply)</string>
 
     <string name="state_play">in play</string>
     <string name="state_draw">draw</string>
@@ -216,6 +218,22 @@
     <string name="choice_edit">Edit</string>
     <string name="choice_delete">Delete</string>
 
+    <string name="savegame_event">Event</string>
+    <string name="savegame_event_question">Event?</string>
+    <string name="savegame_white">White</string>
+    <string name="savegame_white_question">White?</string>
+    <string name="savegame_black">Black</string>
+    <string name="savegame_black_question">Black?</string>
+    <string name="savegame_date">Date</string>
+    <string name="savegame_date_question">Date?</string>
+
+    <string name="gameslist_stars">Stars</string>
+    <string name="gameslist_date">Date</string>
+    <string name="gameslist_event">Event</string>
+    <string name="gameslist_id">ID</string>
+    <string name="games_list_white_pieces">White pieces</string>
+    <string name="gameslist_black_pieces">Black pieces</string>
+
     <string name="msg_illegal_move">Illegal move</string>
     <string name="msg_state_format">%1$s</string>
     <string name="msg_thinking">Thinking&#8230;</string>
@@ -239,12 +257,8 @@
     <string name="msg_not_valid_ip">"You are not on a valid LAN IP address\nIP: "</string>
     <string name="msg_server">Could not start server</string>
 
-    <string name="err_sd_not_mounted">
-    In order to process your request, your SD-card needs to be mounted.
-    </string>
-    <string name="err_send_email">
-    E-mail could not be created.
-    </string>
+    <string name="err_sd_not_mounted">In order to process your request, your SD-card needs to be mounted.</string>
+    <string name="err_send_email">E-mail could not be created.</string>
     <string name="err_load_fen">FEN chess position could not be loaded</string>
     <string name="err_load_pgn">PGN chess history could not be loaded</string>
     <string name="err_no_clip_text">There is no text on the clip board</string>
@@ -277,6 +291,8 @@
     <string name="pgntool_confirm_practice_reset">Are you sure you want to reset?</string>
     <string name="pgntool_import_puzzle">Import puzzles</string>
     <string name="pgntool_import_opening">Used by developer</string>
+
+    <string name="practice_set_reset">Practice set has been reset</string>
 
     <string name="ics_client_handle">Handle</string>
     <string name="ics_client_password">Password</string>
@@ -331,10 +347,13 @@
     <string name="ics_copy_clipboard_text">Copy to CLIPBOARD</string>
 
     <string name="ics_error_connection">Could not connect to server. Make sure you have your internet connection enabled</string>
+    <string name="ics_lost_connection">Connection to server is broken.</string>
 
     <string name="ics_welcome_format">Welcome <b>%1$s</b></string>
     <string name="ics_start_text">(password empty to login as guest)</string>
     <string name="ics_disconnected">DISCONNECTED from FICS</string>
+    <string name="ics_not_connected">Not connected</string>
+    <string name="ics_connect">Connect</string>
 
     <string name="ics_seekseek">Seek</string>
     <string name="ics_seekchallenge">Challenge</string>
