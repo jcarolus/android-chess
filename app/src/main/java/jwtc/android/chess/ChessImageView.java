@@ -128,11 +128,12 @@ public class ChessImageView extends View {
 
 	        bmp = _arrPieceBitmaps[ico._color][ico._piece];
 
-//			quick fix to not access other activities
-//			if (_start.sActivity.equals("Play") && _options.is_bFlipBlack() &&
-//					(_options._radioBlack.isChecked() ? ico._color == 1 : ico._color == 0)) {   // flips black for human vs human without
-//				canvas.rotate(180, getWidth()/2, getHeight()/2);                                    // autoflip on while in Play mode
-//			}
+			if(_options._radioBlack != null) {
+				if (_start.sActivity.equals(getContext().getString(R.string.start_play)) && _options.is_bFlipBlack() &&
+						(_options._radioBlack.isChecked() ? ico._color == 1 : ico._color == 0)) {   // flips black for human vs human without
+					canvas.rotate(180, getWidth() / 2, getHeight() / 2);                                    // autoflip on while in Play mode
+				}
+			}
 
 	        canvas.drawBitmap(bmp, _matrix, _paint);
 
