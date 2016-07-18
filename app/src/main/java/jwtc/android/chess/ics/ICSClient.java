@@ -1919,14 +1919,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         if (_gameStartFront) {
 
             ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasklist = am.getRunningTasks(10); // Number of tasks you want to get
+            List<ActivityManager.RunningTaskInfo> tasklist = am.getRunningTasks(Integer.MAX_VALUE);
 
             if (!tasklist.isEmpty()) {
                 int nSize = tasklist.size();
                 for (int i = 0; i < nSize; i++) {
                     ActivityManager.RunningTaskInfo taskinfo = tasklist.get(i);
                     if (taskinfo.topActivity.getPackageName().equals("jwtc.android.chess")) {
-                        am.moveTaskToFront(taskinfo.id, 2);
+                        am.moveTaskToFront(taskinfo.id, ActivityManager.MOVE_TASK_NO_USER_ACTION);
                     }
                 }
             }
