@@ -321,6 +321,8 @@
     <string name="ics_menu_console">Console</string>
     <string name="ics_menu_unobserve">Stop observing</string>
     <string name="ics_menu_stop_puzzle">Stop puzzle</string>
+    <string name="ics_menu_top_blitz">Top Blitz</string>
+    <string name="ics_menu_top_standard">Top Standard</string>
 
     <string name="ics_playertwo">Player 2</string>
     <string name="ics_playerone">Player 1</string>

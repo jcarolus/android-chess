@@ -537,6 +537,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         menu.add(Menu.NONE, R.string.ics_menu_stored, Menu.NONE, R.string.ics_menu_stored);
         menu.add(Menu.NONE, R.string.ics_menu_seek, Menu.NONE, R.string.ics_menu_seek);
         menu.add(Menu.NONE, R.string.ics_menu_players, Menu.NONE, R.string.ics_menu_players);
+        menu.add(Menu.NONE, R.string.ics_menu_top_blitz, Menu.NONE, R.string.ics_menu_top_blitz);
+        menu.add(Menu.NONE, R.string.ics_menu_top_standard, Menu.NONE, R.string.ics_menu_top_standard);
         menu.add(Menu.NONE, R.string.ics_menu_stop_puzzle, Menu.NONE, R.string.ics_menu_stop_puzzle);
 
         menu.add(Menu.NONE, R.string.ics_menu_console, Menu.NONE, R.string.ics_menu_console);
@@ -614,8 +616,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             }
         }
 
-        invalidateOptionsMenu();  // update menu
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -687,6 +687,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             case R.string.ics_menu_players:
                 sendString("who a");
                 switchToLoadingView();
+                return true;
+            case R.string.ics_menu_top_blitz:
+                sendString("obs /b");
+                return true;
+            case R.string.ics_menu_top_standard:
+                sendString("obs /s");
                 return true;
             case R.string.ics_menu_quit:
                 finish();
@@ -1745,6 +1751,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     @Override
     protected void onResume() {
+
+        invalidateOptionsMenu(); // update OptionsMenu
 
         SharedPreferences prefs = this.getPrefs();
 

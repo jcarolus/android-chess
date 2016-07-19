@@ -23,8 +23,6 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 
 	public static final String TAG = "CustomCommands";
 	public static final String DEFAULT_COMMANDS = "[" +
-			"\"obs /b\"," +
-			"\"obs /s\"," +
 			"\"tell relay listgames\"," + 
 			"\"tell puzzlebot getmate\"," +
 			"\"tell puzzlebot gettactics\"," +

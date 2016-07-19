@@ -321,6 +321,8 @@
     <string name="ics_menu_console">Консоль</string>
     <string name="ics_menu_unobserve">Остановить наблюдение</string>
     <string name="ics_menu_stop_puzzle">Остановить головоломку</string>
+    <string name="ics_menu_top_blitz">Топ Блиц</string>
+    <string name="ics_menu_top_standard">Топ Стандарт</string>
 
     <string name="ics_playertwo">Игрок 2</string>
     <string name="ics_playerone">Игрок 1</string>

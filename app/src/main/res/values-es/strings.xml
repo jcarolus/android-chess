@@ -321,6 +321,8 @@
     <string name="ics_menu_console">Consola</string>
     <string name="ics_menu_unobserve">Deje de observación</string>
     <string name="ics_menu_stop_puzzle">Detener rompecabezas</string>
+    <string name="ics_menu_top_blitz">Top Blitz</string>
+    <string name="ics_menu_top_standard">Top Standard</string>
 
     <string name="ics_playertwo">jugador 2</string>
     <string name="ics_playerone">jugador 1</string>
