@@ -52,7 +52,7 @@
     <string name="pref_tileset">Узор квадрата</string>
     <string name="pref_tileset_desc">Узор, используемый для квадратов доски</string>
     <string name="pref_icsconfirmmove">Подтверждать ход</string>
-    <string name="pref_icsconfirmmove_desc">Ручное подтверждение хода</string>
+    <string name="pref_icsconfirmmove_desc">Вручную подтвердить ход. Если не отмечено, то долгое нажатие на квадрате назначения покажет диалог подтверждения.</string>
     <string name="pref_icscustomcommand">Пользовательские команды</string>
     <string name="pref_icscustomcommand_desc">Создайте собственные пользовательские команды</string>
     <string name="pref_icsconsolecharactersize">Размер символов КОНСОЛИ</string>

@@ -52,7 +52,7 @@
     <string name="pref_tileset">Square pattern</string>
     <string name="pref_tileset_desc">Pattern used on a board square</string>
     <string name="pref_icsconfirmmove">Confirm move</string>
-    <string name="pref_icsconfirmmove_desc">Manually confirm a move</string>
+    <string name="pref_icsconfirmmove_desc">Manually confirm a move. If unchecked, a long press on the destination square will show the confirm dialog.</string>
     <string name="pref_icscustomcommand">Custom commands</string>
     <string name="pref_icscustomcommand_desc">Create your own custom commands</string>
     <string name="pref_icsconsolecharactersize">CONSOLE character size</string>

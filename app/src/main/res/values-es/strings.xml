@@ -52,7 +52,7 @@
     <string name="pref_tileset">Modelo cuadrado</string>
     <string name="pref_tileset_desc">Patrón utilizado en una plaza a bordo</string>
     <string name="pref_icsconfirmmove">Confirmar movimiento</string>
-    <string name="pref_icsconfirmmove_desc">Confirmar manualmente un movimiento</string>
+    <string name="pref_icsconfirmmove_desc">confirmar manualmente un movimiento. Si no se controla, una pulsación larga en la casilla de destino se mostrará el cuadro de diálogo de confirmación.</string>
     <string name="pref_icscustomcommand">Los comandos personalizados</string>
     <string name="pref_icscustomcommand_desc">Crea tus propios comandos personalizados</string>
     <string name="pref_icsconsolecharactersize">CONSOLA tamaño de la fuente</string>

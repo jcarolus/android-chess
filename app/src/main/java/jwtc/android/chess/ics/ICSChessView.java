@@ -42,7 +42,7 @@ public class ICSChessView extends ChessViewBase {
     private String _opponent, _whitePlayer, _blackPlayer, _playerMe;
     private int m_iFrom, _iWhiteRemaining, _iBlackRemaining, _iGameNum, _iMe, _iTurn, m_iTo;
     private ICSClient _parent;
-    private boolean _bHandleClick, _bOngoingGame, _bConfirmMove, _bCanPreMove, _bfirst;
+    private boolean _bHandleClick, _bOngoingGame, _bConfirmMove, _bConfirmMoveLongClick, _bCanPreMove, _bfirst;
     private Timer _timer;
     private static final int MSG_TOP_TIME = 1, MSG_BOTTOM_TIME = 2;
     public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_WATCH = 2, VIEW_EXAMINE = 3, VIEW_PUZZLE = 4, VIEW_ENDGAME = 5;
@@ -95,6 +95,7 @@ public class ICSChessView extends ChessViewBase {
         _iTurn = BoardConstants.WHITE;
         _iWhiteRemaining = _iBlackRemaining = 0;
         _bConfirmMove = false;
+        _bConfirmMoveLongClick = false;
 
         _tvPlayerTop = (TextView) _activity.findViewById(R.id.TextViewTop);
         _tvPlayerBottom = (TextView) _activity.findViewById(R.id.TextViewBottom);
@@ -121,6 +122,7 @@ public class ICSChessView extends ChessViewBase {
                 paint();
                 // switch back
                 _viewSwitchConfirm.setDisplayedChild(0);
+                if (_bConfirmMoveLongClick){_bConfirmMoveLongClick = false;}
             }
         });
         _butConfirmMove = (Button) _activity.findViewById(R.id.ButtonConfirmMove);
@@ -219,7 +221,19 @@ public class ICSChessView extends ChessViewBase {
             }
         };
 
-        init(ocl);
+        OnLongClickListener olcl = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                //Log.d(TAG, "OnLongClickListener m_iFrom ->" + m_iFrom + "   m_iTo ->" + m_iTo);
+                if (m_iFrom == -1){return false;} // return false will let OnClickListener take care of it
+                setConfirmMoveLongClick(true);
+                handleClick(getFieldIndex(getIndexOfButton(view)));
+                return true;
+            }
+        };
+
+        init(ocl, olcl);
     }
 
     public void init() {
@@ -301,6 +315,10 @@ public class ICSChessView extends ChessViewBase {
 
     public void setConfirmMove(boolean b) {
         _bConfirmMove = b;
+    }
+
+    public void setConfirmMoveLongClick(boolean b){
+        _bConfirmMoveLongClick = b;
     }
 
     public void stopGame() {
@@ -494,7 +512,7 @@ public class ICSChessView extends ChessViewBase {
                         Log.i("ICSChessView", "Sound notification!");
                         _parent.soundNotification();
                     }
-                } else if (false == _bConfirmMove) {
+                } else if (!_bConfirmMove || !_bConfirmMoveLongClick) {
                     _bCanPreMove = true;
                 }
             }
@@ -600,12 +618,15 @@ public class ICSChessView extends ChessViewBase {
         // _board != null
         Log.i("handleClick", "Clicked " + index + " handling " + _bHandleClick);
 
+        // _bHandleClick helps to determine if the click should be handled (will not if screen loading, etc.)
         if (_bHandleClick) {
             m_iTo = -1;
 
             if(_jni.pieceAt(_jni.getTurn(), index) != BoardConstants.FIELD){
-                m_iFrom = -1;}  // This allows user to switch to another piece easily
+                m_iFrom = -1; // If another piece is selected reset origin.
+            }
 
+            // if a piece is not selected, determine if it should be and select it for movement
             if (m_iFrom == -1) {
                 // when a pre move is possible, check if the selected position is a field
                 if (_bCanPreMove) {
@@ -617,6 +638,8 @@ public class ICSChessView extends ChessViewBase {
                 else if (_jni.pieceAt(_jni.getTurn(), index) == BoardConstants.FIELD) {
                     return;
                 }
+
+                if (_bConfirmMoveLongClick){setConfirmMoveLongClick(false);}
 
                 m_iFrom = index;
                 paint();
@@ -769,7 +792,7 @@ public class ICSChessView extends ChessViewBase {
 
             _bHandleClick = false;
             // if confirm and is playing, first let user confirm
-            if (_bConfirmMove && isUserPlaying()) {
+            if (_bConfirmMove || _bConfirmMoveLongClick && isUserPlaying()) {
 
                 _tvLastMove.setText("");
                 //
@@ -778,6 +801,7 @@ public class ICSChessView extends ChessViewBase {
 
                 _jni.move(move);
                 paint();
+                if(_bConfirmMoveLongClick){setConfirmMoveLongClick(false);}
 
             } else {
                 _tvLastMove.setText("...");
@@ -797,9 +821,10 @@ public class ICSChessView extends ChessViewBase {
                 m_iFrom = -1;
             }
         } else {
-            m_iFrom = -1;
-            // show that move is invalid
+            // invalid move
+            m_iTo = -1;  // the destination is reset
             _tvLastMove.setText("invalid");
+            if(_bConfirmMoveLongClick){setConfirmMoveLongClick(false);}
         }
     }
 }

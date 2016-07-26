@@ -52,7 +52,7 @@
     <string name="pref_tileset">Decorazione delle caselle</string>
     <string name="pref_tileset_desc">Decorazione usata sulle caselle della scacchiera</string>
     <string name="pref_icsconfirmmove">Conferma mossa</string>
-    <string name="pref_icsconfirmmove_desc">Conferma manuale della mossa</string>
+    <string name="pref_icsconfirmmove_desc">confermare manualmente una mossa. Se non controllata, una pressione prolungata sulla piazza di destinazione apparirà la finestra di dialogo di conferma.</string>
     <string name="pref_icscustomcommand">Comandi personalizzati</string>
     <string name="pref_icscustomcommand_desc">Crea i tuoi comandi personalizzati</string>
     <string name="pref_icsconsolecharactersize">dimensione del carattere CONSOLE</string>

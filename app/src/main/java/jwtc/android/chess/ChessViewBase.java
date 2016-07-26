@@ -58,7 +58,7 @@ public class ChessViewBase{
 
 	}
 
-	public void init(OnClickListener ocl){
+	public void init(OnClickListener ocl, OnLongClickListener olcl){
 		Log.i("ChessViewBase", "init() called");
 		_flippedBoard = false;
 
@@ -226,6 +226,7 @@ public class ChessViewBase{
 		for(int i = 0; i < 64; i++){
 			_arrImages[i].setOnClickListener(ocl);
 			//_arrImages[i].setFocusable(false);
+			_arrImages[i].setOnLongClickListener(olcl);
 
 			_arrImgCache[i] = new ImageCacheObject();
 		}

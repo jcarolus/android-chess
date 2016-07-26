@@ -148,11 +148,21 @@ public class ChessView extends UI {
             }
         };
 
+        OnLongClickListener olcl = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                handleClick(_view.getIndexOfButton(view));
+                // Long press is ready for the future.
+                // For example:  confirm move or to move pieces around and then go back to original position
+                return true;
+            }
+        };
+
         _vScrollHistory = null;
         _hScrollHistory = null;
         _layoutHistory = null;
 
-        _view.init(ocl);
+        _view.init(ocl, olcl);
 
         //_vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
         _vibrator = null;
