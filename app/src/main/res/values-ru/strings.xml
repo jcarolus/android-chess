@@ -96,6 +96,7 @@
     <string name="alert_no">Нет</string>
     <string name="alert_cancel">Закрыть</string>
     <string name="alert_ok">OK</string>
+    <string name="alert_confirm">подтвердить</string>
 
     <string name="title_challenge">Вызов</string>
     <string name="title_loading">Загрузка&#8230;</string>
@@ -217,6 +218,10 @@
     <string name="choice_random">Произвольно</string>
     <string name="choice_edit">Редактировать</string>
     <string name="choice_delete">Удалить</string>
+
+    <string name="color_picker_light">светлый</string>
+    <string name="color_picker_dark">темный</string>
+    <string name="color_picker_selected">выбранный</string>
 
     <string name="savegame_event">Событие</string>
     <string name="savegame_event_question">Событие?</string>

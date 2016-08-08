@@ -46,7 +46,7 @@ public class ChessView extends UI {
     private ChessViewBase _view;
 
     private ChessActivity _parent;
-    private ImageButton _butPlay;
+    private ImageButton _butPlay, butQuickSoundOn, butQuickSoundOff;
     private ViewAnimator _viewAnimator;
     private ProgressBar _progressPlay;
     private TextView _tvClockMe, _tvClockOpp, _tvTitleMe, _tvTitleOpp, _tvAnnotate, _tvEngine, _tvAnnotateGuess;
@@ -58,7 +58,7 @@ public class ChessView extends UI {
     private RelativeLayout _layoutHistory;
     private ArrayList<PGNView> _arrPGNView;
     private LayoutInflater _inflater;
-    private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bPlayAsBlack, _bDidResume;
+    private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bPlayAsBlack, _bDidResume, _bPlayVolume;
     private Timer _timer;
     private ViewSwitcher _switchTurnMe, _switchTurnOpp;
     private SeekBar _seekBar;
@@ -100,9 +100,9 @@ public class ChessView extends UI {
                 }
                 if (lTmp < 0) {
                     lTmp = -lTmp;
-                    chessView._tvClockMe.setTextColor(0xffff0000);
+                    chessView._tvClockMe.setTextColor(0xffff0000); // red
                 } else {
-                    chessView._tvClockMe.setTextColor(0xffffffff);
+                    chessView._tvClockMe.setTextColor(0xffffffff); // white
                 }
                 chessView._tvClockMe.setText(chessView.formatTime(lTmp));
 
@@ -157,6 +157,30 @@ public class ChessView extends UI {
                 return true;
             }
         };
+
+        butQuickSoundOn = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOn);
+        butQuickSoundOff = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOff);
+        if (butQuickSoundOn != null && butQuickSoundOff != null) {
+            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    _bPlayVolume = false;
+                    _parent.set_fVolume(0.0f);
+                    butQuickSoundOn.setVisibility(View.GONE);
+                    butQuickSoundOff.setVisibility(View.VISIBLE);
+                }
+            });
+
+            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    _bPlayVolume = true;
+                    _parent.set_fVolume(1.0f);
+                    butQuickSoundOff.setVisibility(View.GONE);
+                    butQuickSoundOn.setVisibility(View.VISIBLE);
+                }
+            });
+        }
 
         _vScrollHistory = null;
         _hScrollHistory = null;
@@ -1094,6 +1118,7 @@ public class ChessView extends UI {
         editor.putBoolean("autoflipBoard", _bAutoFlip);
         editor.putBoolean("showMoves", _bShowMoves);
         editor.putBoolean("playAsBlack", _bPlayAsBlack);
+        editor.putBoolean("PlayVolume" , _bPlayVolume);
         editor.putInt("boardNum", _jni.getNumBoard());
         if (_viewAnimator != null) {
             editor.putInt("animatorViewNumber", _viewAnimator.getDisplayedChild());
@@ -1155,6 +1180,17 @@ public class ChessView extends UI {
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
         if (_viewAnimator != null) {
             _viewAnimator.setDisplayedChild(prefs.getInt("animatorViewNumber", 0) % _viewAnimator.getChildCount());
+        }
+
+        _bPlayVolume = prefs.getBoolean("PlayVolume", true);
+        if (_bPlayVolume){
+            butQuickSoundOff.setVisibility(View.GONE);
+            butQuickSoundOn.setVisibility(View.VISIBLE);
+            _parent.set_fVolume(1.0f);
+        } else {
+            butQuickSoundOn.setVisibility(View.GONE);
+            butQuickSoundOff.setVisibility(View.VISIBLE);
+            _parent.set_fVolume(0.0f);
         }
 
         if (_bPlayAsBlack) {
@@ -1502,6 +1538,12 @@ public class ChessView extends UI {
 
         int move = _jni.getMyMove();
         String sMove = _jni.getMyMoveToString();
+
+        if (sMove.contains("x")){
+            _parent.soundCapture();
+        } else {
+            _parent.soundMove();
+        }
 
         if (sMove.length() > 3 && !sMove.equals("O-O-O")) {
             // assures space to separate which Rook and which Knight to move

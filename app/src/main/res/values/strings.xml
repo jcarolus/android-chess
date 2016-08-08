@@ -96,6 +96,7 @@
     <string name="alert_no">No</string>
     <string name="alert_cancel">Cancel</string>
     <string name="alert_ok">OK</string>
+    <string name="alert_confirm">Confirm</string>
 
     <string name="title_challenge">Challenge</string>
     <string name="title_loading">Loading&#8230;</string>
@@ -217,6 +218,11 @@
     <string name="choice_random">Random</string>
     <string name="choice_edit">Edit</string>
     <string name="choice_delete">Delete</string>
+
+    <string name="color_picker_brightness">Brightness</string>
+    <string name="color_picker_light">Light</string>
+    <string name="color_picker_dark">Dark</string>
+    <string name="color_picker_selected">Selected</string>
 
     <string name="savegame_event">Event</string>
     <string name="savegame_event_question">Event?</string>

@@ -4,6 +4,7 @@ package jwtc.android.chess;
 
 import jwtc.chess.board.ChessBoard;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -93,18 +94,28 @@ public class ChessImageView extends View {
         // first draw field background
         if(ico == null)
         	Log.e("err", "err");
-        
+
+		SharedPreferences pref = getContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
         //_paint.setColor(Color.TRANSPARENT);
         if(hasFocus()){
         	_paint.setColor(0xffff9900);
         	canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
         } else {
-        	_paint.setColor(ico._fieldColor == 0 ? _arrColorScheme[_colorScheme][0] : _arrColorScheme[_colorScheme][1]);
-        	canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-        	if(ico._selected){
-        		_paint.setColor(_arrColorScheme[_colorScheme][2]);
-        		canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-        	}
+			if (_colorScheme == 6){ // 6 is color picker
+				_paint.setColor(ico._fieldColor == 0 ? pref.getInt("color2", 0xffdddddd) : pref.getInt("color1", 0xffff0066));
+				canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+				if (ico._selected){
+					_paint.setColor(pref.getInt("color3", 0xcc00dddd) & 0xccffffff);
+					canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+				}
+			} else {
+				_paint.setColor(ico._fieldColor == 0 ? _arrColorScheme[_colorScheme][0] : _arrColorScheme[_colorScheme][1]);
+				canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+				if (ico._selected) {
+					_paint.setColor(_arrColorScheme[_colorScheme][2]);
+					canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+				}
+			}
         }
         
         if(ChessImageView._bmpTile != null){
@@ -129,7 +140,8 @@ public class ChessImageView extends View {
 	        bmp = _arrPieceBitmaps[ico._color][ico._piece];
 
 			if(_options._radioBlack != null) {
-				// using if statements to pinpoint if there is another null object. todo if it's fine then will put back && statements
+				// using if statements to pinpoint if there is another null object.
+				// todo if it's fine then will put back && statements
 				if (_start.sActivity.equals(getContext().getString(R.string.start_play))){
 					if(_options.is_bFlipBlack()){
 						if((_options._radioBlack.isChecked() ? ico._color == 1 : ico._color == 0)) {   // flips black for human vs human without

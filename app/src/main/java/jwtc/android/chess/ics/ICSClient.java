@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
-import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -57,7 +56,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-                    _gameStartFront, _bConsoleText;
+                    _gameStartFront, _bConsoleText, _bICSVolume;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -148,8 +147,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     protected static int[] whiteClk = new int[200]; // PGN time clock
     protected static int[] blackClk = new int[200];
 
-
-    MediaPlayer tickTock, chessPiecesFall;
+    private ImageButton butQuickSoundOn, butQuickSoundOff;
 
     static class InnerThreadHandler extends Handler {
         WeakReference<ICSClient> _client;
@@ -304,9 +302,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _scrollConsole = (ScrollView) findViewById(R.id.ScrollICSConsole);
         _scrollPlayConsole = (ScrollView) findViewById(R.id.ScrollPlayConsole);
 
-        tickTock = MediaPlayer.create(this, R.raw.ticktock);
-        chessPiecesFall = MediaPlayer.create(this, R.raw.chesspiecesfall);
-
         /*
         ImageButton butClose = (ImageButton)findViewById(R.id.ButtonBoardClose);
         butClose.setOnClickListener(new OnClickListener() {
@@ -333,6 +328,29 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 public void onClick(View arg0) {
                     //showMenu();
                     openOptionsMenu();
+                }
+            });
+        }
+
+        butQuickSoundOn = (ImageButton) findViewById(R.id.ButtonICSSoundOn);
+        butQuickSoundOff = (ImageButton) findViewById(R.id.ButtonICSSoundOff);
+        if (butQuickSoundOn != null && butQuickSoundOff != null) {
+            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    _bICSVolume = false;
+                    set_fVolume(0.0f);
+                    butQuickSoundOn.setVisibility(View.GONE);
+                    butQuickSoundOff.setVisibility(View.VISIBLE);
+                }
+            });
+            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    _bICSVolume = true;
+                    set_fVolume(1.0f);
+                    butQuickSoundOff.setVisibility(View.GONE);
+                    butQuickSoundOn.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -1621,6 +1639,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
+        soundHorseSnort();
 
         get_view().setViewMode(ICSChessView.VIEW_NONE);
     }
@@ -1775,6 +1794,17 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bEndGameDialog = prefs.getBoolean("ICSEndGameDialog", true);
 
         _bShowClockPGN = prefs.getBoolean("ICSClockPGN", true);
+
+        _bICSVolume = prefs.getBoolean("ICSVolume", true);
+        if (_bICSVolume){
+            butQuickSoundOff.setVisibility(View.GONE);
+            butQuickSoundOn.setVisibility(View.VISIBLE);
+            set_fVolume(1.0f);
+        } else {
+            butQuickSoundOn.setVisibility(View.GONE);
+            butQuickSoundOff.setVisibility(View.VISIBLE);
+            set_fVolume(0.0f);
+        }
 
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
 
@@ -1966,6 +1996,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         editor.putString("ics_handle_array", jArray.toString());
         editor.putString("ics_password_array", jArrayPasswords.toString());
 
+        editor.putBoolean("ICSVolume" , _bICSVolume);
+
         editor.commit();
 
         super.onPause();
@@ -1989,9 +2021,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _workerTelnet = null;
         disconnect();
-
-        tickTock.release();  // clear MediaPlayer resources
-        chessPiecesFall.release();
 
         super.onDestroy();
     }
@@ -2032,7 +2061,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
-    Handler dateHandler = new Handler(){
+    Handler dateHandler = new Handler(){ // todo static or leaks may occur? use WeakReference as in 153
         @Override
         public void handleMessage(Message msg) {
             sendString("date");
@@ -2063,11 +2092,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 case 0:
                     break;
                 case 1:
-                    soundChessPiecesFall();
+                    soundHorseRunAway();
                     vibration(DECREASE);
                     break;
                 case 2:
-                    soundChessPiecesFall();
+                    soundHorseRunAway();
                     break;
                 case 3:
                     vibration(DECREASE);
@@ -2251,18 +2280,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     public void soundNotification() {
         if (_ringNotification != null) {
             _ringNotification.play();
-        }
-    }
-
-    public void soundTickTock(){
-        tickTock.start();
-    }
-
-    public void soundChessPiecesFall(){
-        try {
-            chessPiecesFall.start();
-        } catch(Exception ex){
-            Log.e(TAG, ex.toString());
         }
     }
 

@@ -96,6 +96,7 @@
     <string name="alert_no">No</string>
     <string name="alert_cancel">Cancelar</string>
     <string name="alert_ok">OK</string>
+    <string name="alert_confirm">Confirmar</string>
 
     <string name="title_challenge">Desafío</string>
     <string name="title_loading">Cargando&#8230;</string>
@@ -217,6 +218,10 @@
     <string name="choice_random">Aleatorio</string>
     <string name="choice_edit">Editar</string>
     <string name="choice_delete">Borrar</string>
+
+    <string name="color_picker_light">claro</string>
+    <string name="color_picker_dark">oscuro</string>
+    <string name="color_picker_selected">Seleccionado</string>
 
     <string name="savegame_event">Evento</string>
     <string name="savegame_event_question">¿Evento?</string>

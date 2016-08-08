@@ -14,6 +14,7 @@ import jwtc.chess.board.ChessBoard;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -61,6 +62,7 @@ public class ICSChessView extends ChessViewBase {
                 _tvClockTop.setText(parseTime(msg.getData().getInt("ticks")));
             } else {
                 _tvClockBottom.setText(parseTime(msg.getData().getInt("ticks")));
+                _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
 
             }
             if((msg.what == MSG_TOP_TIME && (_tvPlayerTop.getText()).equals(_playerMe))  // Time Low Warning
@@ -68,6 +70,7 @@ public class ICSChessView extends ChessViewBase {
                 if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)) {
                     try {
                         _parent.soundTickTock();
+                        _tvClockBottom.setBackgroundColor(Color.RED);
                     } catch (Exception e) {
                         Log.e(TAG, "sound process died", e);
                     }
@@ -266,10 +269,10 @@ public class ICSChessView extends ChessViewBase {
             case VIEW_PLAY:
                 switch(_parent.get_gameStartSound()){
                     case 0: break;
-                    case 1: _parent.soundChessPiecesFall();
+                    case 1: _parent.soundHorseNeigh();
                             _parent.vibration(INCREASE);
                             break;
-                    case 2: _parent.soundChessPiecesFall();
+                    case 2: _parent.soundHorseNeigh();
                             break;
                     case 3: _parent.vibration(INCREASE);
                             break;
@@ -528,6 +531,13 @@ public class ICSChessView extends ChessViewBase {
             String sMove = st.nextToken();  // machine notation move
             String _sTimePerMove = st.nextToken();  // time it took to make a move
             String sLastMoveDisplay = st.nextToken();  // algebraic notation move
+            if(sLastMoveDisplay.contains("+")){
+                _parent.soundSmallNeigh();
+            } else if(sLastMoveDisplay.contains("x")){
+                _parent.soundCapture();
+            } else {
+                _parent.soundMove();
+            }
             int iFlipBoardOrientation = Integer.parseInt(st.nextToken()); //0 = White on Bottom / 1 = Black on bottom
 
             if (_flippedBoard) {

@@ -59,6 +59,7 @@
         <item>Grey</item>
         <item>Brown</item>
         <item>Red</item>
+        <item>Choose your colors</item>
     </string-array>
     <!-- 
     <integer-array name="colorscheme_indexes">

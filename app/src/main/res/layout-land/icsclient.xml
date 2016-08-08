@@ -118,6 +118,15 @@
 						/>
 						<ImageButton android:id="@+id/ButtonICSChat" android:src="@drawable/social_chat"
 							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+						    android:visibility="visible"
+						/>
+						<ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/sound_on"
+							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+							android:visibility="visible"
+						/>
+						<ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/sound_off"
+							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+							android:visibility="gone"
 						/>
 					</TableRow>
 				</TableLayout>
@@ -167,7 +176,7 @@
 							<Button android:id="@+id/ButtonCancelMove" 
 								android:text="@string/alert_cancel" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 							<Button android:id="@+id/ButtonConfirmMove"
-								android:text="Confirm" android:layout_width="fill_parent" android:layout_height="wrap_content"/>	
+								android:text="@string/alert_confirm" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 		    			</TableRow>
 		    		</TableLayout>
 		    		
