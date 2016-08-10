@@ -12,15 +12,15 @@
     </string-array>
     <string-array name="levels_ply">
         <item>1 ply</item>
-        <item>2 plies</item>
-        <item>3 plies</item>
-        <item>4 plies</item>
-        <item>5 plies</item>
-        <item>6 plies</item>
-        <item>7 plies</item>
-        <item>8 plies</item>
-        <item>9 plies</item>
-        <item>10 plies</item>
+        <item>2 ply</item>
+        <item>3 ply</item>
+        <item>4 ply</item>
+        <item>5 ply</item>
+        <item>6 ply</item>
+        <item>7 ply</item>
+        <item>8 ply</item>
+        <item>9 ply</item>
+        <item>10 ply</item>
     </string-array>
     <string-array name="levels_time">
         <item>@string/choice_level_1</item>
@@ -41,27 +41,27 @@
         <item>@string/choice_knight</item>
     </string-array>
     <string-array name="playmodes">
-        <item>Tu contra Android</item>
-        <item>Android contra de ti</item>
-        <item>Tablero de juego</item>
+        <item>Você vs Android</item>
+        <item>Android vs você</item>
+        <item>Tabuleiro de jogo</item>
     </string-array>
     <string-array name="clockchoices">
-        <item>no reloj</item>
+        <item>não relógio</item>
         <item>2 minutos</item>
         <item>5 minutos</item>
         <item>10 minutos</item>
         <item>30 minutos</item>
     </string-array>
     <string-array name="colorschemes">
-        <item>Amarillo</item>
+        <item>Amarelo</item>
         <item>Azul</item>
-        <item>verde</item>
-        <item>Gris</item>
-        <item>Marron</item>
-        <item>Rojo</item>
-        <item>Elija los colores</item>
+        <item>Verde</item>
+        <item>Cinza</item>
+        <item>Marrom</item>
+        <item>Vermelho</item>
+        <item>Escolha suas cores</item>
     </string-array>
-    <!-- 
+    <!--
     <integer-array name="colorscheme_indexes">
         <item>0</item>
         <item>2</item>
@@ -71,11 +71,11 @@
     </integer-array>
      -->
     <string-array name="options_wakelock">
-        <item>Bloqueo de modo reposo</item>
-        <item>No utilice bloqueo de modo reposo</item>
+        <item>Use wake lock</item>
+        <item>Não use wake lock</item>
     </string-array>
     <string-array name="match_subject">
-        <item>Busca</item>
+        <item>Procure</item>
         <item>Desafio</item>
     </string-array>
     <string-array name="match_time_minutes">
@@ -93,13 +93,13 @@
         <item>@string/choice_match_rated</item>
     </string-array>
     <string-array name="match_variant">
-        <item>Estándar</item>
-        <item>Ajedrez 960 (experimental)</item>
+        <item>Aleatorio</item>
+        <item>Xadrez 960 (experimental)</item>
     </string-array>
     <string-array name="match_color">
         <item>Aleatorio</item>
-        <item>Blanco</item>
-        <item>Negro</item>
+        <item>Branco</item>
+        <item>Preto</item>
     </string-array>
     <string-array name="console_character_size">
         <item>6</item><item>8</item><item>10</item><item>12</item>
@@ -118,16 +118,16 @@
         <item>45</item><item>60</item>
     </string-array>
     <string-array name="gamestartsound">
-        <item>ninguno</item>
-        <item>sonido y vibración</item>
-        <item>solo sonido</item>
-        <item>solo vibración</item>
+        <item>Ninguém</item>
+        <item>som e vibração</item>
+        <item>só som</item>
+        <item>só vibração</item>
     </string-array>
     <string-array name="gamestartsound_values">
         <item>0</item><item>1</item><item>2</item><item>3</item>
     </string-array>
     <string-array name="field_files">
-        <item>ningúno</item>
+        <item>ninguém</item>
         <item>a</item>
         <item>b</item>
         <item>c</item>
@@ -157,23 +157,23 @@
     <string-array name="tileKeyArray">
         <item></item>
         <item>sombra</item>
-        <item>sombra_fondo</item>
-        <item>rayas</item>
-        <item>nubes</item>
-        <item>circuito</item>
+        <item>sombra_fundo</item>
+        <item>listras</item>
+        <item>nuvens</item>
+        <item>circuit</item>
     </string-array>
     <string-array name="tileArray">
-        <item>ninguno</item>
-        <item>sombra doble</item>
-        <item>sombra individual</item>
-        <item>rayas</item>
-        <item>nubes</item>
+        <item>none</item>
+        <item>double shade</item>
+        <item>single shade</item>
+        <item>stripes</item>
+        <item>clouds</item>
         <item>circuito</item>
     </string-array>
     <string-array name="localearray">
-        <item>Ingles</item>
+        <item>Inglês</item>
         <item>Italiano</item>
-        <item>Español</item>
+        <item>Espanhol</item>
         <item>Ruso</item>
     </string-array>
     <string-array name="localeKeyarray">

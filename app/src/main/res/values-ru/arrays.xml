@@ -59,6 +59,7 @@
         <item>Серый</item>
         <item>Коричневый</item>
         <item>Красный</item>
+        <item>Выберите цвет</item>
     </string-array>
     <!-- 
     <integer-array name="colorscheme_indexes">

@@ -11,16 +11,16 @@
         <item>@string/start_pgn</item>
     </string-array>
     <string-array name="levels_ply">
-        <item>1 ply</item>
-        <item>2 plies</item>
-        <item>3 plies</item>
-        <item>4 plies</item>
-        <item>5 plies</item>
-        <item>6 plies</item>
-        <item>7 plies</item>
-        <item>8 plies</item>
-        <item>9 plies</item>
-        <item>10 plies</item>
+        <item>1 级</item>
+        <item>2 级</item>
+        <item>3 级</item>
+        <item>4 级</item>
+        <item>5 级</item>
+        <item>6 级</item>
+        <item>7 级</item>
+        <item>8 级</item>
+        <item>9 级</item>
+        <item>10 级</item>
     </string-array>
     <string-array name="levels_time">
         <item>@string/choice_level_1</item>
@@ -41,27 +41,27 @@
         <item>@string/choice_knight</item>
     </string-array>
     <string-array name="playmodes">
-        <item>Tu contra Android</item>
-        <item>Android contra de ti</item>
-        <item>Tablero de juego</item>
+        <item>你 vs 安卓机器人</item>
+        <item>安卓机器人 vs 你</item>
+        <item>未结棋局</item>
     </string-array>
     <string-array name="clockchoices">
-        <item>no reloj</item>
-        <item>2 minutos</item>
-        <item>5 minutos</item>
-        <item>10 minutos</item>
-        <item>30 minutos</item>
+        <item>不用计时</item>
+        <item>2分钟</item>
+        <item>5分钟</item>
+        <item>10分钟</item>
+        <item>30分钟</item>
     </string-array>
     <string-array name="colorschemes">
-        <item>Amarillo</item>
-        <item>Azul</item>
-        <item>verde</item>
-        <item>Gris</item>
-        <item>Marron</item>
-        <item>Rojo</item>
-        <item>Elija los colores</item>
+        <item>黄色</item>
+        <item>蓝色</item>
+        <item>绿色</item>
+        <item>灰色</item>
+        <item>棕色</item>
+        <item>红色</item>
+        <item>选择你的颜色</item>
     </string-array>
-    <!-- 
+    <!--
     <integer-array name="colorscheme_indexes">
         <item>0</item>
         <item>2</item>
@@ -71,12 +71,12 @@
     </integer-array>
      -->
     <string-array name="options_wakelock">
-        <item>Bloqueo de modo reposo</item>
-        <item>No utilice bloqueo de modo reposo</item>
+        <item>禁止休眠</item>
+        <item>使用休眠设置</item>
     </string-array>
     <string-array name="match_subject">
-        <item>Busca</item>
-        <item>Desafio</item>
+        <item>寻找对战</item>
+        <item>挑战</item>
     </string-array>
     <string-array name="match_time_minutes">
         <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
@@ -93,13 +93,13 @@
         <item>@string/choice_match_rated</item>
     </string-array>
     <string-array name="match_variant">
-        <item>Estándar</item>
-        <item>Ajedrez 960 (experimental)</item>
+        <item>标准</item>
+        <item>国际象棋Chess 960 (专家级)</item>
     </string-array>
     <string-array name="match_color">
-        <item>Aleatorio</item>
-        <item>Blanco</item>
-        <item>Negro</item>
+        <item>随机</item>
+        <item>白色</item>
+        <item>黑色</item>
     </string-array>
     <string-array name="console_character_size">
         <item>6</item><item>8</item><item>10</item><item>12</item>
@@ -110,24 +110,24 @@
         <item>14</item><item>16</item><item>18</item>
     </string-array>
     <string-array name="time_warning">
-        <item>5 segundos</item><item>10 segundos</item><item>25 segundos</item>
-        <item>45 segundos</item><item>1 minuto</item>
+        <item>5 秒</item><item>10 秒</item><item>25 秒</item>
+        <item>45 秒</item><item>1 分钟</item>
     </string-array>
     <string-array name="time_warning_values">
         <item>5</item><item>10</item><item>25</item>
         <item>45</item><item>60</item>
     </string-array>
     <string-array name="gamestartsound">
-        <item>ninguno</item>
-        <item>sonido y vibración</item>
-        <item>solo sonido</item>
-        <item>solo vibración</item>
+        <item>无声音</item>
+        <item>响声加振动</item>
+        <item>只有声音</item>
+        <item>只有振动</item>
     </string-array>
     <string-array name="gamestartsound_values">
         <item>0</item><item>1</item><item>2</item><item>3</item>
     </string-array>
     <string-array name="field_files">
-        <item>ningúno</item>
+        <item>none</item>
         <item>a</item>
         <item>b</item>
         <item>c</item>
@@ -156,25 +156,25 @@
     </string-array>
     <string-array name="tileKeyArray">
         <item></item>
-        <item>sombra</item>
-        <item>sombra_fondo</item>
-        <item>rayas</item>
-        <item>nubes</item>
-        <item>circuito</item>
+        <item>shade</item>
+        <item>shade_bottom</item>
+        <item>stripes</item>
+        <item>clouds</item>
+        <item>circuit</item>
     </string-array>
     <string-array name="tileArray">
-        <item>ninguno</item>
-        <item>sombra doble</item>
-        <item>sombra individual</item>
-        <item>rayas</item>
-        <item>nubes</item>
-        <item>circuito</item>
+        <item>无</item>
+        <item>双重阴影</item>
+        <item>单阴影</item>
+        <item>条纹</item>
+        <item>云图</item>
+        <item>回形</item>
     </string-array>
     <string-array name="localearray">
-        <item>Ingles</item>
-        <item>Italiano</item>
-        <item>Español</item>
-        <item>Ruso</item>
+        <item>英语</item>
+        <item>意大利语</item>
+        <item>西班牙语</item>
+        <item>俄语</item>
     </string-array>
     <string-array name="localeKeyarray">
         <item>en</item>
@@ -188,10 +188,10 @@
         <item>bik</item>
     </string-array>
     <string-array name="donate_amount">
-        <item>1 euro</item>
-        <item>2 euro</item>
-        <item>5 euro</item>
-        <item>10 euro</item>
-        <item>20 euro</item>
+        <item>1 欧元</item>
+        <item>2 欧元</item>
+        <item>5 欧元</item>
+        <item>10 欧元</item>
+        <item>20 欧元</item>
     </string-array>
 </resources>

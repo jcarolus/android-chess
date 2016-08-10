@@ -9,6 +9,7 @@
     <string name="app_name_import">Import</string>
     <string name="app_name_pgntools">Advanced</string>
     <string name="app_name_save_games">Saved games</string>
+    <string name="version_number">Version: %1$s</string>
 
     <string name="language">en</string>
 

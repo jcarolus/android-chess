@@ -30,19 +30,23 @@ public class HtmlActivity extends MyBaseActivity {
 
 		this.makeActionOverflowMenuShown();
 		// html assets localization
-		if (Locale.getDefault().getLanguage().equals("it")) {
-			_lang = "it";
-		} else if (Locale.getDefault().getLanguage().equals("es")) {
+		if (Locale.getDefault().getLanguage().equals("es")) {
 			_lang = "es";
+		} else if (Locale.getDefault().getLanguage().equals("it")) {
+			_lang = "it";
+		} else if (Locale.getDefault().getLanguage().equals("pt")) {
+			_lang = "pt";
 		} else if (Locale.getDefault().getLanguage().equals("ru")) {
 			_lang = "ru";
+		} else if (Locale.getDefault().getLanguage().equals("zh")) {
+			_lang = "zh";
 		} else {
 			_lang = "en";
 		}
 		_webview = (WebView) findViewById(R.id.WebViewHelp);
 
 		_TVversionName = (TextView) findViewById(R.id.textVersionName);
-		_TVversionName.setText("Version:  " + BuildConfig.VERSION_NAME);
+		_TVversionName.setText(getString(R.string.version_number, BuildConfig.VERSION_NAME)); // "Version:  " + BuildConfig.VERSION_NAME
 
 	}
 

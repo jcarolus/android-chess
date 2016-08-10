@@ -9,6 +9,7 @@
     <string name="app_name_import">Importa</string>
     <string name="app_name_pgntools">Avanzate</string>
     <string name="app_name_save_games">Partite salvate</string>
+    <string name="version_number">Versione: %1$s</string>
 
     <string name="language">it</string>
 
@@ -219,6 +220,7 @@
     <string name="choice_edit">Modifica</string>
     <string name="choice_delete">Cancella</string>
 
+    <string name="color_picker_brightness">Luminosità</string>
     <string name="color_picker_light">chiaro</string>
     <string name="color_picker_dark">scuro</string>
     <string name="color_picker_selected">selezionato</string>
@@ -395,4 +397,5 @@
     <string name="donate_success">Thank you for your donation!</string>
     <string name="donate_error">The donation was cancelled.</string>
     <string name="donate_intent">Could not start in-app payment.</string>
+
 </resources>

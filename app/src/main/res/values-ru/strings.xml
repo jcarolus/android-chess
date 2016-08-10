@@ -9,6 +9,7 @@
     <string name="app_name_import">Импорт</string>
     <string name="app_name_pgntools">Расширенные</string>
     <string name="app_name_save_games">Сохранённые игры</string>
+    <string name="version_number">Версия: %1$s</string>
 
     <string name="language">ru</string>
 
@@ -219,6 +220,7 @@
     <string name="choice_edit">Редактировать</string>
     <string name="choice_delete">Удалить</string>
 
+    <string name="color_picker_brightness">яркость</string>
     <string name="color_picker_light">светлый</string>
     <string name="color_picker_dark">темный</string>
     <string name="color_picker_selected">выбранный</string>
