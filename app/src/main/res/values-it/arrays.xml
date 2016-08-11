@@ -163,14 +163,18 @@
     	<item>circuit</item>
     </string-array>
     <string-array name="localearray">
-        <item>Inglese</item>
+        <item>中文</item>
+        <item>English</item>
         <item>italiano</item>
-        <item>spagnolo</item>
-        <item>russo</item>
+        <item>português</item>
+        <item>Español</item>
+        <item>русский</item>
     </string-array>
     <string-array name="localeKeyarray">
+        <item>zh</item>
         <item>en</item>
         <item>it</item>
+        <item>pt</item>
         <item>es</item>
         <item>ru</item>
     </string-array>
