@@ -466,7 +466,7 @@ public class ChessViewBase{
 
 	public void flipBoard(){
 		resetImageCache();
-		_flippedBoard = _flippedBoard ? false : true;
+		_flippedBoard = !_flippedBoard;
 		setFlippedBoard(_flippedBoard);
 	}
 

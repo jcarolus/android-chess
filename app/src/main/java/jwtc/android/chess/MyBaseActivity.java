@@ -172,8 +172,8 @@ public class MyBaseActivity extends android.app.Activity{
 		return _fVolume;
 	}
 
-	public void soundTickTock(){ // used for end of game coming
-		spSound.play(_itickTock, 1.0f, 1.0f, 1, 0, 1);
+	public void soundTickTock(){
+		spSound.play(_itickTock, _fVolume, _fVolume, 1, 0, 1);
 	}
 
 	public void soundHorseNeigh(){

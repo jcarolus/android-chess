@@ -68,7 +68,7 @@ public class start extends AppCompatActivity {
 	private JNI _jni;
 	private Timer _timer;
 	private String _lastMessage;
-	public static String sActivity;  // sActivity is a global variable that gives you the current activity
+	public static String sActivity = "";
 
 	    /**
 		 * Called when the activity is first created.
@@ -493,5 +493,9 @@ public class start extends AppCompatActivity {
 		mSelectedDevice = null;
 		mWaitingForReconnect = false;
 		mSessionId = null;
+	}
+
+	public static String getActivity(){  // used to get activity globally
+		return sActivity;
 	}
 }

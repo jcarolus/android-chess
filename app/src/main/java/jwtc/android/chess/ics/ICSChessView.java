@@ -58,19 +58,22 @@ public class ICSChessView extends ChessViewBase {
             if(_viewMode == VIEW_EXAMINE || _viewMode == VIEW_NONE){  // No ticks during EXAMINE mode or IDLE Mode
                 return;
             }
+            int countDown = msg.getData().getInt("ticks");
+
             if (msg.what == MSG_TOP_TIME) {
-                _tvClockTop.setText(parseTime(msg.getData().getInt("ticks")));
+                _tvClockTop.setText(parseTime(countDown));
             } else {
-                _tvClockBottom.setText(parseTime(msg.getData().getInt("ticks")));
+                _tvClockBottom.setText(parseTime(countDown));
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
 
             }
             if((msg.what == MSG_TOP_TIME && (_tvPlayerTop.getText()).equals(_playerMe))  // Time Low Warning
                 || (msg.what == MSG_BOTTOM_TIME && (_tvPlayerBottom.getText()).equals(_playerMe))){
-                if (_parent.is_bTimeWarning() && (msg.getData().getInt("ticks") <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)) {
+                if (_parent.is_bTimeWarning() && (countDown <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)) {
                     try {
                         _parent.soundTickTock();
-                        _tvClockBottom.setBackgroundColor(Color.RED);
+                        if (countDown%2 == 0){ _tvClockBottom.setBackgroundColor(Color.RED);
+                        } else {_tvClockBottom.setBackgroundColor(Color.BLACK);}
                     } catch (Exception e) {
                         Log.e(TAG, "sound process died", e);
                     }
