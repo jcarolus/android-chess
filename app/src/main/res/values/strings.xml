@@ -341,8 +341,8 @@
     <string name="ics_offers_adjourn">Your opponent would like to adjourn the game.\nDo you wish to accept?</string>
     <string name="ics_offers_takeback">Your opponent would like to take back a move.\nDo you wish to accept?</string>
     <string name="ics_request_sent">Request sent</string>
-    <string name="ics_game_over">Game stopped</string>
-    <string name="ics_game_over_format">Game over: %1$s</string>
+    <string name="ics_game_over">Game Over</string>
+    <string name="ics_game_over_format">Game Over: %1$s</string>
     <string name="ics_tells_you">%1$s tells you: %2$s</string>
 
     <string name="ics_save_game">Successfully saved to chessgamesonline.pgn</string>

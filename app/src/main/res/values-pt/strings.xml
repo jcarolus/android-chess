@@ -341,7 +341,7 @@
     <string name="ics_offers_adjourn">O seu oponente gostaría de renunciar.\n Você deseja aceitar?</string>
     <string name="ics_offers_takeback">O seu oponente gostaría de retomar a jogada.\n Você deseja aceitar?</string>
     <string name="ics_request_sent">Pedido envíado</string>
-    <string name="ics_game_over">Jogo parado</string>
+    <string name="ics_game_over">Fim do jogo</string>
     <string name="ics_game_over_format">Fim do jogo: %1$s</string>
     <string name="ics_tells_you">%1$s lhe diz: %2$s</string>
 

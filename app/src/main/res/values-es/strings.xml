@@ -341,7 +341,7 @@
     <string name="ics_offers_adjourn">Su oponenente desea aplazar.\nDesea aceptar?</string>
     <string name="ics_offers_takeback">US oponente desea retirar el movimiento.\nDesea aceptar?</string>
     <string name="ics_request_sent">Solicitud enviada</string>
-    <string name="ics_game_over">Juego parado</string>
+    <string name="ics_game_over">Juego acabado</string>
     <string name="ics_game_over_format">Juego acabado: %1$s</string>
     <string name="ics_tells_you">%1$s le dice: %2$s</string>
 

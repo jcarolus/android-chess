@@ -62,8 +62,6 @@ public class ChessImageView extends View {
 	public ImageCacheObject getICO(){
 		return _ico;
 	}
-
-	options radiobutton = new options();
 	
     public void onDraw(Canvas canvas) {
         

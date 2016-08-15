@@ -341,7 +341,7 @@
     <string name="ics_offers_adjourn">Ваш противник хочет отложить игру.\nВы согласны?</string>
     <string name="ics_offers_takeback">Ваш противник хочет отменить свой ход.\nВы согласны?</string>
     <string name="ics_request_sent">Запрос отправлен</string>
-    <string name="ics_game_over">Игра остановлена</string>
+    <string name="ics_game_over">Игра закончена</string>
     <string name="ics_game_over_format">Игра закончена: %1$s</string>
     <string name="ics_tells_you">%1$s говорит вам: %2$s</string>
 

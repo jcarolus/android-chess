@@ -341,7 +341,7 @@
     <string name="ics_offers_adjourn">对方想推迟对局.\n你同意么?</string>
     <string name="ics_offers_takeback">对方想撤消上一步棋.\n你同意么?</string>
     <string name="ics_request_sent">请求已发送</string>
-    <string name="ics_game_over">游戏停止</string>
+    <string name="ics_game_over">游戏结束</string>
     <string name="ics_game_over_format">游戏结束: %1$s</string>
     <string name="ics_tells_you">%1$s 告诉你: %2$s</string>
 
