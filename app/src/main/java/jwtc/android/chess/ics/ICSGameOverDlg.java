@@ -33,7 +33,7 @@ public class ICSGameOverDlg extends Dialog {
 
         setContentView(R.layout.ics_over);
 
-        setTitle("Game Over");
+        setTitle(R.string.ics_game_over);
 
         _butExit = (Button)findViewById(R.id.ButtonGameExit);
         _butExit.setOnClickListener(new View.OnClickListener() {

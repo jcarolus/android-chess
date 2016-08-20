@@ -110,7 +110,16 @@ public class ChessViewPractice extends UI {
                 handleClick(_view.getIndexOfButton(arg0));
             }
         };
-        _view.init(ocl);
+
+        OnLongClickListener olcl = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                handleClick(_view.getIndexOfButton(view));
+                return true;
+            }
+        };
+
+        _view.init(ocl, olcl);
         init();
 
         _butShow = (Button) _parent.findViewById(R.id.ButtonPracticeShow);

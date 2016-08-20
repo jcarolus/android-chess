@@ -124,6 +124,14 @@
 					style="?android:attr/progressBarStyleLarge" android:visibility="gone"
 					android:layout_margin="2dip" 
 				/>
+				<ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/sound_on"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:visibility="visible"
+					/>
+				<ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/sound_off"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:visibility="gone"
+				/>
 			</TableRow>
 		</TableLayout>
 		 

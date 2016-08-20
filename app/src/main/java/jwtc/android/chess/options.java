@@ -28,11 +28,10 @@ public class options extends MyBaseActivity {
     private CheckBox _checkAutoFlip, _checkMoves, _check960;
     private Spinner _spinLevel, _spinLevelPly;
     private Button _butCancel, _butOk;
-    private RadioButton _radioTime, _radioPly, _radioWhite, _radioAndroid, _radioHuman;
-    public static RadioButton _radioBlack; // used to allow other classes to know if black is on bottom
+    private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack, _radioAndroid, _radioHuman;
     private TableRow _tableRowOption960;
 
-    private static boolean _bFlipBlack;
+    private static boolean _bFlipTopPieces, _bPlayAsBlack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,14 +46,14 @@ public class options extends MyBaseActivity {
         _radioAndroid = (RadioButton) findViewById(R.id.rbAndroid);
         _radioAndroid.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                _radioHuman.setChecked(isChecked ? false : true);
+                _radioHuman.setChecked(!isChecked);
                 _checkAutoFlip.setEnabled(false);
             }
         });
         _radioHuman = (RadioButton) findViewById(R.id.rbHuman);
         _radioHuman.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                _radioAndroid.setChecked(_radioHuman.isChecked() ? false : true);
+                _radioAndroid.setChecked(!_radioHuman.isChecked());
                 _checkAutoFlip.setEnabled(true);
             }
         });
@@ -81,13 +80,13 @@ public class options extends MyBaseActivity {
         _radioTime = (RadioButton) findViewById(R.id.RadioOptionsTime);
         _radioTime.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                _radioPly.setChecked(_radioTime.isChecked() ? false : true);
+                _radioPly.setChecked(!_radioTime.isChecked());
             }
         });
         _radioPly = (RadioButton) findViewById(R.id.RadioOptionsPly);
         _radioPly.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                _radioTime.setChecked(_radioPly.isChecked() ? false : true);
+                _radioTime.setChecked(!_radioPly.isChecked());
             }
         });
 
@@ -95,14 +94,14 @@ public class options extends MyBaseActivity {
         _radioWhite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                _radioBlack.setChecked(_radioWhite.isChecked() ? false : true);
+                _radioBlack.setChecked(!_radioWhite.isChecked());
             }
         });
         _radioBlack = (RadioButton) findViewById(R.id.rbBlack);
         _radioBlack.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                _radioWhite.setChecked(_radioBlack.isChecked() ? false : true);
+                _radioWhite.setChecked(!_radioBlack.isChecked());
             }
         });
 
@@ -128,7 +127,7 @@ public class options extends MyBaseActivity {
                 editor.putBoolean("showMoves", _checkMoves.isChecked());
                 editor.putBoolean("playAsBlack", _radioBlack.isChecked());
 
-                editor.commit();
+                editor.apply();
 
                 if (_tableRowOption960.getVisibility() == View.VISIBLE && _check960.isChecked()) {
 
@@ -149,7 +148,7 @@ public class options extends MyBaseActivity {
                                     editor.putString("FEN", null);
                                     editor.putInt("boardNum", 0);
                                     editor.putInt("randomFischerSeed", seed % 960);
-                                    editor.commit();
+                                    editor.apply();
 
                                     finish();
                                 } else {
@@ -170,7 +169,7 @@ public class options extends MyBaseActivity {
                             editor.putString("FEN", null);
                             editor.putInt("boardNum", -1);
                             editor.putInt("randomFischerSeed", seed);
-                            editor.commit();
+                            editor.apply();
 
                             finish();
                         }
@@ -206,14 +205,14 @@ public class options extends MyBaseActivity {
         SharedPreferences prefs = this.getPrefs();
 
         _radioAndroid.setChecked(prefs.getInt("playMode", GameControl.HUMAN_PC) == GameControl.HUMAN_PC);
-        _radioHuman.setChecked(_radioAndroid.isChecked() ? false : true);
+        _radioHuman.setChecked(!_radioAndroid.isChecked());
 
         _checkAutoFlip.setChecked(prefs.getBoolean("autoflipBoard", false));
         _checkAutoFlip.setEnabled(_radioHuman.isChecked());
         _checkMoves.setChecked(prefs.getBoolean("showMoves", true));
 
         _radioBlack.setChecked(prefs.getBoolean("playAsBlack", false));
-        _radioWhite.setChecked(_radioBlack.isChecked() ? false : true);
+        _radioWhite.setChecked(!_radioBlack.isChecked());
 
         _radioTime.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_TIME);
         _radioPly.setChecked(prefs.getInt("levelMode", GameControl.LEVEL_TIME) == GameControl.LEVEL_PLY);
@@ -227,15 +226,18 @@ public class options extends MyBaseActivity {
     @Override
     protected void onPause() {
 
-        if(_radioHuman.isChecked() && !_checkAutoFlip.isChecked()){
-            _bFlipBlack = true;
-        }else {
-            _bFlipBlack = false;
-        }
+        _bFlipTopPieces = (_radioHuman.isChecked() && !_checkAutoFlip.isChecked());
+        _bPlayAsBlack = _radioBlack.isChecked();
+
         super.onPause();
     }
 
-    public static boolean is_bFlipBlack(){
-        return _bFlipBlack;
+    public static boolean is_bFlipTopPieces(){
+        return _bFlipTopPieces;
     }
+
+    public static boolean is_bPlayAsBlack(){
+        return _bPlayAsBlack;
+    }
+
 }

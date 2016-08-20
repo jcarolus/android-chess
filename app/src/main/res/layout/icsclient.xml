@@ -114,6 +114,14 @@
 						<ImageButton android:id="@+id/ButtonICSChat" android:src="@drawable/social_chat"
 							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 						/>
+						<ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/sound_on"
+							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+						    android:visibility="visible"
+						/>
+						<ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/sound_off"
+							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+							android:visibility="gone"
+						/>
 					</TableRow>
 				</TableLayout>
 				<TextView android:id="@+id/dummy"
@@ -158,7 +166,7 @@
 							<Button android:id="@+id/ButtonCancelMove" 
 								android:text="@string/alert_cancel" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 							<Button android:id="@+id/ButtonConfirmMove"
-								android:text="Confirm" android:layout_width="fill_parent" android:layout_height="wrap_content"/>	
+								android:text="@string/alert_confirm" android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 		    			</TableRow>
 		    		</TableLayout>
 		    		
@@ -319,11 +327,11 @@
 		<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 	   		android:gravity="center"
 	   	>
-	   		<TextView android:text="Not connected" android:id="@+id/TextViewNotConnected" 
+	   		<TextView android:text="@string/ics_not_connected" android:id="@+id/TextViewNotConnected"
 	   			android:layout_width="fill_parent" android:layout_height="wrap_content"
 	   			style="@style/MyTextStyle"
 	   		/>
-	   		<Button android:id="@+id/ButtonLogin" android:text="Connect"
+	   		<Button android:id="@+id/ButtonLogin" android:text="@string/ics_connect"
 	   			android:layout_below="@id/TextViewNotConnected"
 	   			android:layout_width="wrap_content" android:layout_height="wrap_content"
 	   		/>

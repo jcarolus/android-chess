@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/ButtonGameExit"
             android:background="@android:drawable/ic_menu_close_clear_cancel"
-            android:layout_gravity="right"/>
+            android:layout_gravity="end"/>
 
         <TextView
             android:layout_width="fill_parent"
@@ -22,7 +22,7 @@
             android:id="@+id/tvGameResult"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="15dp"
-            android:textSize="15dp" />
+            android:textSize="15sp" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -66,10 +66,10 @@
             android:layout_alignParentBottom="true" android:stretchColumns="*"
         >
             <TableRow style="@style/MyRowStyle">
-                <RadioButton android:id="@+id/RadioOptionsTime" android:text="Level (time)"
+                <RadioButton android:id="@+id/RadioOptionsTime" android:text="@string/options_level_time"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                 />
-                <RadioButton android:id="@+id/RadioOptionsPly" android:text="Level (ply)"
+                <RadioButton android:id="@+id/RadioOptionsPly" android:text="@string/options_level_ply"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                 />
             </TableRow>

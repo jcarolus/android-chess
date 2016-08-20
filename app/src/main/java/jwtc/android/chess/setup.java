@@ -87,7 +87,15 @@ public class setup extends MyBaseActivity {
                 handleClick(_view.getIndexOfButton(arg0));
             }
         };
-        _view.init(ocl);
+        View.OnLongClickListener olcl = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                handleClick(_view.getIndexOfButton(view));
+                return true;
+            }
+        };
+
+        _view.init(ocl, olcl);
 
         //_tvMsg = (TextView)findViewById(R.id.TextViewSetupMsg);
 

@@ -9,6 +9,7 @@
     <string name="app_name_import">Импорт</string>
     <string name="app_name_pgntools">Расширенные</string>
     <string name="app_name_save_games">Сохранённые игры</string>
+    <string name="version_number">Версия: %1$s</string>
 
     <string name="language">ru</string>
 
@@ -49,10 +50,10 @@
     <string name="pref_uci_desc">Выбрать шахматный движок для использования</string>
     <string name="pref_pieceset">Набор фигур</string>
     <string name="pref_pieceset_desc">Тип отображаемого набора фигур</string>
-    <string name="pref_tileset">Шаблон квадрата</string>
-    <string name="pref_tileset_desc">Шаблон, используемый для квадрата доски</string>
+    <string name="pref_tileset">Узор квадрата</string>
+    <string name="pref_tileset_desc">Узор, используемый для квадратов доски</string>
     <string name="pref_icsconfirmmove">Подтверждать ход</string>
-    <string name="pref_icsconfirmmove_desc">Ручное подтверждение хода</string>
+    <string name="pref_icsconfirmmove_desc">Вручную подтвердить ход. Если не отмечено, то долгое нажатие на квадрате назначения покажет диалог подтверждения.</string>
     <string name="pref_icscustomcommand">Пользовательские команды</string>
     <string name="pref_icscustomcommand_desc">Создайте собственные пользовательские команды</string>
     <string name="pref_icsconsolecharactersize">Размер символов КОНСОЛИ</string>
@@ -96,6 +97,7 @@
     <string name="alert_no">Нет</string>
     <string name="alert_cancel">Закрыть</string>
     <string name="alert_ok">OK</string>
+    <string name="alert_confirm">подтвердить</string>
 
     <string name="title_challenge">Вызов</string>
     <string name="title_loading">Загрузка&#8230;</string>
@@ -179,6 +181,8 @@
     <string name="options_flip">Перевернуть доску</string>
     <string name="options_setup">Расстановка доски</string>
     <string name="options_show_moves">Показывать ходы</string>
+    <string name="options_level_time">Уровень (время)</string>
+    <string name="options_level_ply">Уровень (полуход)</string>
 
     <string name="state_play">в игре</string>
     <string name="state_draw">ничья</string>
@@ -216,6 +220,27 @@
     <string name="choice_edit">Редактировать</string>
     <string name="choice_delete">Удалить</string>
 
+    <string name="color_picker_brightness">яркость</string>
+    <string name="color_picker_light">светлый</string>
+    <string name="color_picker_dark">темный</string>
+    <string name="color_picker_selected">выбранный</string>
+
+    <string name="savegame_event">Событие</string>
+    <string name="savegame_event_question">Событие?</string>
+    <string name="savegame_white">Белые</string>
+    <string name="savegame_white_question">Белые?</string>
+    <string name="savegame_black">Чёрные</string>
+    <string name="savegame_black_question">Чёрные?</string>
+    <string name="savegame_date">Дата</string>
+    <string name="savegame_date_question">Дата?</string>
+
+    <string name="gameslist_stars">Звёзды</string>
+    <string name="gameslist_date">Дата</string>
+    <string name="gameslist_event">Событие</string>
+    <string name="gameslist_id">Номер</string>
+    <string name="games_list_white_pieces">Белые фигуры</string>
+    <string name="gameslist_black_pieces">Чёрные фигуры</string>
+
     <string name="msg_illegal_move">Невозможный ход</string>
     <string name="msg_state_format">%1$s</string>
     <string name="msg_thinking">Обдумывание&#8230;</string>
@@ -239,12 +264,8 @@
     <string name="msg_not_valid_ip">"У вас недействительный LAN IP адрес\nIP: "</string>
     <string name="msg_server">Не удаётся запустить сервер</string>
 
-    <string name="err_sd_not_mounted">
-    Для обработки вашего запроса должна быть установлена SD-карта.
-    </string>
-    <string name="err_send_email">
-    E-mail не может быть создан.
-    </string>
+    <string name="err_sd_not_mounted">Для обработки вашего запроса должна быть установлена SD-карта.</string>
+    <string name="err_send_email">E-mail не может быть создан.</string>
     <string name="err_load_fen">Шахматная FEN-позиция не может быть загружена</string>
     <string name="err_load_pgn">Шахматная PGN-история не может быть загружена</string>
     <string name="err_no_clip_text">Нет текста в буфере обмена</string>
@@ -278,6 +299,8 @@
     <string name="pgntool_import_puzzle">Импортировать головоломки</string>
     <string name="pgntool_import_opening">Используется разработчиком</string>
 
+    <string name="practice_set_reset">Тренировочный набор сброшен</string>
+
     <string name="ics_client_handle">Ник</string>
     <string name="ics_client_password">Пароль</string>
     <string name="ics_client_presets">Предустановки</string>
@@ -305,18 +328,20 @@
     <string name="ics_menu_console">Консоль</string>
     <string name="ics_menu_unobserve">Остановить наблюдение</string>
     <string name="ics_menu_stop_puzzle">Остановить головоломку</string>
+    <string name="ics_menu_top_blitz">Топ Блиц</string>
+    <string name="ics_menu_top_standard">Топ Стандарт</string>
 
     <string name="ics_playertwo">Игрок 2</string>
     <string name="ics_playerone">Игрок 1</string>
     <string name="ics_progress_title_login">Войти</string>
     <string name="ics_progress_msg_login">Осуществляется вход&#8230;</string>
-    <string name="ics_available_players">доступные (незанятые) игроки</string>
+    <string name="ics_available_players">доступных (незанятых) игроков</string>
     <string name="ics_offers_abort">Ваш противник хочет прервать игру.\nВы согласны?</string>
     <string name="ics_offers_draw">Ваш противник предлагает ничью.\nВы согласны?</string>
     <string name="ics_offers_adjourn">Ваш противник хочет отложить игру.\nВы согласны?</string>
     <string name="ics_offers_takeback">Ваш противник хочет отменить свой ход.\nВы согласны?</string>
     <string name="ics_request_sent">Запрос отправлен</string>
-    <string name="ics_game_over">Игра остановлена</string>
+    <string name="ics_game_over">Игра закончена</string>
     <string name="ics_game_over_format">Игра закончена: %1$s</string>
     <string name="ics_tells_you">%1$s говорит вам: %2$s</string>
 
@@ -331,10 +356,13 @@
     <string name="ics_copy_clipboard_text">Скопировать в БУФЕР ОБМЕНА</string>
 
     <string name="ics_error_connection">Не удаётся подключиться к серверу. Убедитесь, что ваше интернет-подключение активно.</string>
+    <string name="ics_lost_connection">Подключение к серверу оборвано.</string>
 
     <string name="ics_welcome_format">Добро пожаловать <b>%1$s</b></string>
     <string name="ics_start_text">(пустой пароль для входа как Гость)</string>
     <string name="ics_disconnected">ОТСОЕДИНЕНО от FICS</string>
+    <string name="ics_not_connected">Не подключено</string>
+    <string name="ics_connect">Соединиться</string>
 
     <string name="ics_seekseek">Искать</string>
     <string name="ics_seekchallenge">Вызов</string>

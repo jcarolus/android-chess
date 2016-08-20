@@ -16,7 +16,7 @@
 			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
 			>
 				<TextView android:layout_width="100dip" android:layout_height="wrap_content" 
-					android:text="Event" style="@style/MyLabelTextStyle"
+					android:text="@string/savegame_event" style="@style/MyLabelTextStyle"
 				/>
 				<EditText android:id="@+id/EditTextSaveEvent"
 					android:layout_width="200dip" android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
 			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
 			>
 				<TextView android:layout_width="100dip" android:layout_height="wrap_content" 
-					android:text="White" style="@style/MyLabelTextStyle"
+					android:text="@string/savegame_white" style="@style/MyLabelTextStyle"
 				/>
 				<EditText android:id="@+id/EditTextSaveWhite"
 					android:layout_width="200dip" android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
 			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
 			>
 				<TextView android:layout_width="100dip" android:layout_height="wrap_content" 
-					android:text="Black" style="@style/MyLabelTextStyle"
+					android:text="@string/savegame_black" style="@style/MyLabelTextStyle"
 				/>
 				<EditText android:id="@+id/EditTextSaveBlack"
 					android:layout_width="200dip" android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
 			<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
 			>
 				<TextView android:layout_width="100dip" android:layout_height="wrap_content"
-					android:text="Date" style="@style/MyLabelTextStyle"
+					android:text="@string/savegame_date" style="@style/MyLabelTextStyle"
 				/>
 				<Button android:id="@+id/ButtonSaveDate" android:text="YYYY.MM.DD"
 					android:layout_width="200dip" android:layout_height="wrap_content"
