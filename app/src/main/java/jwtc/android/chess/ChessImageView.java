@@ -23,6 +23,8 @@ public class ChessImageView extends View {
 	public static Bitmap[][] _arrPieceBitmaps = new Bitmap[2][6];
 	public static Bitmap _bmpBorder, _bmpSelect, _bmpSelectLight;
 	public static Bitmap _bmpTile;
+
+	private static String _sActivity;
 	
 	//public static SVG _svgTest = null;
 	
@@ -39,9 +41,6 @@ public class ChessImageView extends View {
 	}
 	
 	private ImageCacheObject _ico;
-
-	private start _start;
-	private options _options;
 	
 	public ChessImageView(Context context) {
 		super(context);
@@ -139,10 +138,12 @@ public class ChessImageView extends View {
 
 	        bmp = _arrPieceBitmaps[ico._color][ico._piece];
 
+			_sActivity = (start.sActivity == null) ?  "" : start.sActivity;
+
 			// todo if it's fine then will put back && statements
-			if (_start.sActivity.equals(getContext().getString(R.string.start_play))){
-				if(_options.is_bFlipTopPieces()){
-					if((_options.is_bPlayAsBlack() ? ico._color == 1 : ico._color == 0)) {   // flips top pieces for human vs human without
+			if (_sActivity.equals(getContext().getString(R.string.start_play))){
+				if(options.is_bFlipTopPieces()){
+					if((options.is_bPlayAsBlack() ? ico._color == 1 : ico._color == 0)) {   // flips top pieces for human vs human without
 						canvas.rotate(180, getWidth() / 2, getHeight() / 2);                 // autoflip on in Play mode
 					}
 				}

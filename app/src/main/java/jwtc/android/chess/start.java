@@ -495,7 +495,4 @@ public class start extends AppCompatActivity {
 		mSessionId = null;
 	}
 
-	public static String getActivity(){  // used to get activity globally
-		return sActivity;
-	}
 }
