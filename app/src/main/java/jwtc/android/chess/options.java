@@ -31,7 +31,7 @@ public class options extends MyBaseActivity {
     private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack, _radioAndroid, _radioHuman;
     private TableRow _tableRowOption960;
 
-    private static boolean _bFlipTopPieces, _bPlayAsBlack;
+    private static boolean _sbFlipTopPieces, _sbPlayAsBlack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -226,18 +226,18 @@ public class options extends MyBaseActivity {
     @Override
     protected void onPause() {
 
-        _bFlipTopPieces = (_radioHuman.isChecked() && !_checkAutoFlip.isChecked());
-        _bPlayAsBlack = _radioBlack.isChecked();
+        _sbFlipTopPieces = (_radioHuman.isChecked() && !_checkAutoFlip.isChecked());
+        _sbPlayAsBlack = _radioBlack.isChecked();
 
         super.onPause();
     }
 
-    public static boolean is_bFlipTopPieces(){
-        return _bFlipTopPieces;
+    public static boolean is_sbFlipTopPieces(){
+        return _sbFlipTopPieces;
     }
 
-    public static boolean is_bPlayAsBlack(){
-        return _bPlayAsBlack;
+    public static boolean is_sbPlayAsBlack(){
+        return _sbPlayAsBlack;
     }
 
 }

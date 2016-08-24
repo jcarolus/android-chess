@@ -138,12 +138,12 @@ public class ChessImageView extends View {
 
 	        bmp = _arrPieceBitmaps[ico._color][ico._piece];
 
-			_sActivity = (start.sActivity == null) ?  "" : start.sActivity;
+			_sActivity = (start.get_ssActivity() == null) ?  "" : start.get_ssActivity();
 
 			// todo if it's fine then will put back && statements
 			if (_sActivity.equals(getContext().getString(R.string.start_play))){
-				if(options.is_bFlipTopPieces()){
-					if((options.is_bPlayAsBlack() ? ico._color == 1 : ico._color == 0)) {   // flips top pieces for human vs human without
+				if(options.is_sbFlipTopPieces()){
+					if((options.is_sbPlayAsBlack() ? ico._color == 1 : ico._color == 0)) {   // flips top pieces for human vs human without
 						canvas.rotate(180, getWidth() / 2, getHeight() / 2);                 // autoflip on in Play mode
 					}
 				}
