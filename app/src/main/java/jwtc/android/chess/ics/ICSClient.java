@@ -1646,6 +1646,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void copyToClipBoard() {
         try {
+            @SuppressWarnings("deprecation")
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             cm.setText(PGN.toString());
             doToast(getString(R.string.ics_copy_clipboard));

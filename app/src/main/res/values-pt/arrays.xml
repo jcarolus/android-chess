@@ -173,10 +173,10 @@
     <string-array name="localearray">
         <item>中文</item>
         <item>English</item>
-        <item>italiano</item>
+        <item>Italiano</item>
         <item>português</item>
         <item>Español</item>
-        <item>русский</item>
+        <item>Pусский</item>
     </string-array>
     <string-array name="localeKeyarray">
         <item>zh</item>
