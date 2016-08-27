@@ -92,6 +92,14 @@
 			    android:layout_height="wrap_content"
 			    android:gravity="center_horizontal" >
 
+				<ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/sound_on"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:visibility="visible"
+					/>
+				<ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/sound_off"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:visibility="gone"
+					/>
 				<ImageButton android:id="@+id/ButtonSwitch" android:src="@drawable/navigation_expand"
 					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 					android:layout_margin="2dip" 
@@ -123,14 +131,6 @@
 				<ProgressBar android:id="@+id/ProgressBarPlay" android:layout_width="40dip" android:layout_height="40dip"
 					style="?android:attr/progressBarStyleLarge" android:visibility="gone"
 					android:layout_margin="2dip" 
-				/>
-				<ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/sound_on"
-					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
-					android:visibility="visible"
-					/>
-				<ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/sound_off"
-					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
-					android:visibility="gone"
 				/>
 			</TableRow>
 		</TableLayout>

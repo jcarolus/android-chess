@@ -183,6 +183,18 @@
             android:layout_above="@+id/SeekBarMain"
             android:layout_marginBottom="40dp">
             <TableRow>
+                <ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/sound_on"
+                    android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+                    android:visibility="visible"
+                    android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
+                    />
+                <ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/sound_off"
+                    android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+                    android:visibility="gone"
+                    android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
+                    />
+            </TableRow>
+            <TableRow>
                 <ImageButton android:id="@+id/ButtonShowMenu" android:src="@android:drawable/ic_menu_more"
                     android:layout_width="50dip" android:layout_height="50dip"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"

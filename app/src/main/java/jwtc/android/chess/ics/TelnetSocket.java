@@ -8,6 +8,8 @@ import android.util.Log;
 //public class TelnetSocket extends Socket    
 public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket
 {
+	private static final String TAG = "TelnetSocket";
+
 	protected static byte[] _inBytes;
 	protected static byte[] _outBytes;
 
@@ -35,7 +37,7 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket
 				}
 			}
 		} catch (Exception e)	{
-			Log.e("TelnetSocket", "readString " + e.toString());
+			Log.e(TAG, "readString " + e.toString());
 			return null;
 		}
 		return data;
@@ -46,6 +48,7 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket
 		for (int i = 0; i < data.length(); i++)
 		{
 			_outBytes[i] = (byte)data.charAt(i);
+			//Log.d(TAG, "_outBytes ->" + data.charAt(i) + "    i->" + i);
 		}
 		try	
 		{
