@@ -116,8 +116,6 @@ public class start extends AppCompatActivity {
 		String[] title = getResources().getStringArray(R.array.start_menu);
 
 		_list = (ListView)findViewById(R.id.ListStart);
-		start_CustomList adapter = new start_CustomList(this,  title);
-		_list.setAdapter(adapter);
 		_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
