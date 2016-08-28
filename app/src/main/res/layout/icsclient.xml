@@ -114,11 +114,11 @@
 						<ImageButton android:id="@+id/ButtonICSChat" android:src="@drawable/social_chat"
 							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 						/>
-						<ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/sound_on"
+						<ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/ic_volume_up_white_24dp"
 							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 						    android:visibility="visible"
 						/>
-						<ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/sound_off"
+						<ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/ic_volume_off_white_24dp"
 							android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 							android:visibility="gone"
 						/>
