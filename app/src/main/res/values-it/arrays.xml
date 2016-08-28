@@ -101,6 +101,14 @@
         <item>bianco</item>
         <item>nero</item>
     </string-array>
+    <string-array name="console_character_size">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
+    <string-array name="console_character_size_values">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
     <string-array name="time_warning">
         <item>5 secondi</item><item>10 secondi</item><item>25 secondi</item>
         <item>45 secondi</item><item>1 minuto</item>
@@ -165,10 +173,10 @@
     <string-array name="localearray">
         <item>中文</item>
         <item>English</item>
-        <item>italiano</item>
+        <item>Italiano</item>
         <item>português</item>
         <item>Español</item>
-        <item>русский</item>
+        <item>Pусский</item>
     </string-array>
     <string-array name="localeKeyarray">
         <item>zh</item>
