@@ -3,6 +3,7 @@ package jwtc.android.chess.ics;
 import java.net.*;
 import java.io.*;
 
+import android.os.StrictMode;
 import android.util.Log;
 
 //public class TelnetSocket extends Socket    
@@ -44,6 +45,10 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket
 	}
 	
 	public boolean sendString (String data){
+
+		// todo Temporary fix for internet traffic should not be on main thread - use async task
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 
 		for (int i = 0; i < data.length(); i++)
 		{
