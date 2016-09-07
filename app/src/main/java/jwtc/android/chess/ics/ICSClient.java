@@ -59,7 +59,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-            _notifyON, _bConsoleText, _bICSVolume;
+            _notifyON, _bConsoleText, _bICSVolume, _ICSNotifyLifeCycle;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -223,6 +223,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
 
         int configOrientation = this.getResources().getConfiguration().orientation;
         if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -1774,6 +1775,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     @Override
     protected void onResume() {
+        Log.i(TAG, "onResume");
 
         invalidateOptionsMenu(); // update OptionsMenu
 
@@ -1809,6 +1811,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             butQuickSoundOff.setVisibility(View.VISIBLE);
             set_fVolume(0.0f);
         }
+
+        // get rid of notification for tap to play
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(0); // 0 is notification id
+        _ICSNotifyLifeCycle = false;
 
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
 
@@ -1958,7 +1965,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void notificationAPP(){
 
-        if (_notifyON) {
+        if (_notifyON && _ICSNotifyLifeCycle) {
 
             Intent intent = new Intent(this, ICSClient.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -1971,7 +1978,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     .setWhen(System.currentTimeMillis())
                     .setAutoCancel(true)
                     .setLights(Color.CYAN, 100, 100)
-                    .setContentTitle("Chess");
+                    .setContentTitle("Chess by Jeroen")
+                    .setContentText("Tap to play");
 
             Notification notification = builder.getNotification();
 
@@ -1982,6 +1990,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     @Override
     protected void onPause() {
+        Log.i(TAG, "onPause");
 
         // lock screen orientation?
         //setRequestedOrientation(this.getResources().getConfiguration().orientation);
@@ -2009,24 +2018,32 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         editor.commit();
 
+        _ICSNotifyLifeCycle = true;
+
         super.onPause();
     }
 
     @Override
+    protected void onRestart(){
+        Log.i(TAG, "onRestart");
+        super.onRestart();
+    }
+
+    @Override
     protected void onStart() {
-        Log.i("ICSClient", "onStart");
+        Log.i(TAG, "onStart");
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        Log.i("ICSClient", "onStop");
+        Log.i(TAG, "onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.i("ICSClient", "onDestroy");
+        Log.i(TAG, "onDestroy");
 
         _workerTelnet = null;
         disconnect();
@@ -2096,6 +2113,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _bConsoleText = false;
         }
 
+        // ----------- Loss connection -------------- //
         if (_socket == null || _socket.sendString(s + "\n") == false) {
             switch (get_gameStartSound()) {
                 case 0:
@@ -2113,8 +2131,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 default:
                     Log.e(TAG, "get_gameStartSound error");
             }
-            //gameToast(getString(R.string.ics_disconnected), false);
-
             try {
                 notificationAPP();
                 cancelDateTimer();
