@@ -70,8 +70,8 @@
     <string name="prefs_icsshowclocksummary">In the PGN, show the clock times on each move</string>
     <string name="pref_icsgamestartsound">Game Start Sound</string>
     <string name="pref_icsgamestartsound_desc">Play sound when game starts or loss of connection</string>
-    <string name="pref_icsgamestartfront">Game Starts Bring to Front</string>
-    <string name="prefs_icsgamestartfrontsummary">attempt to bring chess app to the front when the game starts</string>
+    <string name="pref_icsnotification">Notification of New Game</string>
+    <string name="prefs_icsnotificationsummary">Lets you know the start of a game with an icon</string>
     <string name="pref_puzzle_show_seekbar">Show seek bar</string>
     <string name="pref_puzzle_show_seekbar_desc">Quickly navigate through puzzles with seek bar</string>
     <string name="pref_localelanguage">Set The Language</string>

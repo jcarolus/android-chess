@@ -1,11 +1,14 @@
 package jwtc.android.chess.ics;
 
 import android.Manifest;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -56,7 +59,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-                    _gameStartFront, _bConsoleText, _bICSVolume;
+            _notifyON, _bConsoleText, _bICSVolume;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -1809,7 +1812,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
 
-        _gameStartFront = prefs.getBoolean("ICSGameStartBringToFront", true);
+        _notifyON = prefs.getBoolean("ICSGameStartBringToFront", true);
 
         /////////////////////////////////////////////
         _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
@@ -1953,22 +1956,27 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         return true;
     }
 
-    public void bringAPPtoFront(){
+    public void notificationAPP(){
 
-        if (_gameStartFront) {
+        if (_notifyON) {
 
-            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasklist = am.getRunningTasks(Integer.MAX_VALUE);
+            Intent intent = new Intent(this, ICSClient.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-            if (!tasklist.isEmpty()) {
-                int nSize = tasklist.size();
-                for (int i = 0; i < nSize; i++) {
-                    ActivityManager.RunningTaskInfo taskinfo = tasklist.get(i);
-                    if (taskinfo.topActivity.getPackageName().equals("jwtc.android.chess")) {
-                        am.moveTaskToFront(taskinfo.id, ActivityManager.MOVE_TASK_NO_USER_ACTION);
-                    }
-                }
-            }
+            NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            Notification.Builder builder = new Notification.Builder(this);
+            builder.setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.chess)
+                    .setWhen(System.currentTimeMillis())
+                    .setAutoCancel(true)
+                    .setLights(Color.CYAN, 100, 100)
+                    .setContentTitle("Chess");
+
+            Notification notification = builder.getNotification();
+
+            notificationManager.notify(0, notification);
+
         }
     }
 
@@ -2108,7 +2116,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             //gameToast(getString(R.string.ics_disconnected), false);
 
             try {
-                bringAPPtoFront();
+                notificationAPP();
                 cancelDateTimer();
                 new AlertDialog.Builder(ICSClient.this)
                         .setTitle(R.string.title_error)

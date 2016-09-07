@@ -70,8 +70,8 @@
     <string name="prefs_icsshowclocksummary">在PGN文件内,显示每一步的时钟</string>
     <string name="pref_icsgamestartsound">对局开始提示音</string>
     <string name="pref_icsgamestartsound_desc">在对局开始或断开连接时播放提示音</string>
-    <string name="pref_icsgamestartfront">对局开始后应用自动跳到窗口前面</string>
-    <string name="prefs_icsgamestartfrontsummary">当对局开始后, 国际象棋的应用将自动显示到最前面</string>
+    <string name="pref_icsnotification">新游戏的通知</string>
+    <string name="prefs_icsnotificationsummary">让你知道一个游戏的开始带有一个图标</string>
     <string name="pref_puzzle_show_seekbar">显示寻找进度条</string>
     <string name="pref_puzzle_show_seekbar_desc">能用进度条和快进快退按钮快速游览题局库</string>
     <string name="pref_localelanguage">语言设置</string>
