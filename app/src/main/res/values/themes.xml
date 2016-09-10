@@ -7,6 +7,7 @@
         <item name="android:imageButtonStyle">@style/imageButton</item>
         <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
         <item name="android:textAppearance">@style/ChessTextAppearance</item>
+        <item name="android:textColor">#ffffffff</item>
     </style>
 
 </resources>
