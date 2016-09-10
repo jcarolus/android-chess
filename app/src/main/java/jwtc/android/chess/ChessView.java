@@ -910,8 +910,8 @@ public class ChessView extends UI {
                 _progressPlay.setVisibility(View.GONE);
                 _butPlay.setVisibility(View.VISIBLE);
             } else {
-                _progressPlay.setVisibility(View.VISIBLE);
                 _butPlay.setVisibility(View.GONE);
+                _progressPlay.setVisibility(View.VISIBLE);
             }
 
         }
@@ -1193,19 +1193,25 @@ public class ChessView extends UI {
             _parent.set_fVolume(0.0f);
         }
 
-        if (_bPlayAsBlack) {
-            // playing as black
+        if (_butPlay != null) {
+            if (_playMode == HUMAN_HUMAN) {
+                _butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
+            } else {
+                _butPlay.setVisibility(View.VISIBLE);
+            }
+        }
 
+        if (_bPlayAsBlack) {
+            // player as black
             if (false == _view.getFlippedBoard()) {
                 flipBoard();
             }
-
             if (_playMode == HUMAN_PC && _jni.getTurn() == ChessBoard.WHITE) {
                 play();
             }
 
         } else {
-            // playing as white
+            // player as white
             if (_view.getFlippedBoard()) {
                 flipBoard();
             }
@@ -1214,13 +1220,6 @@ public class ChessView extends UI {
             }
         }
 
-        if (_butPlay != null) {
-            if (_playMode == HUMAN_HUMAN) {
-                _butPlay.setVisibility(View.GONE);    // turn off play button when human vs human
-            } else {
-                _butPlay.setVisibility(View.VISIBLE);
-            }
-        }
 
         ///////////////////////////////////////////////////////////////////
 

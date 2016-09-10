@@ -70,8 +70,8 @@
     <string name="prefs_icsshowclocksummary">Em PGN, mostra o tempo do relógio em cada jogada</string>
     <string name="pref_icsgamestartsound">Som de inicio de jogo</string>
     <string name="pref_icsgamestartsound_desc">Tocar um som quando o jogo começa ou perda de conexão</string>
-    <string name="pref_icsgamestartfront">Início do jogo traz para a frente</string>
-    <string name="prefs_icsgamestartfrontsummary">tenta trazer app xadrez para a frente quando o jogo começa</string>
+    <string name="pref_icsnotification">Notificação de Novo Jogo</string>
+    <string name="prefs_icsnotificationsummary">Permite que você saiba o início de um jogo com um ícone</string>
     <string name="pref_puzzle_show_seekbar">Mostra barra de busca</string>
     <string name="pref_puzzle_show_seekbar_desc">Navega rapidamente através de puzzles com seekbar</string>
     <string name="pref_localelanguage">Configura língua</string>

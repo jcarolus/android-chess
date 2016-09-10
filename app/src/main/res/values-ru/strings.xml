@@ -70,8 +70,8 @@
     <string name="prefs_icsshowclocksummary">В PGN показывать время на часах для каждого хода</string>
     <string name="pref_icsgamestartsound">Звук при включении</string>
     <string name="pref_icsgamestartsound_desc">Включать звук в начале игры или при потере соединения</string>
-    <string name="pref_icsgamestartfront">Переносить игру на передний план</string>
-    <string name="prefs_icsgamestartfrontsummary">Пытаться перенести приложение Шахматы на передний план при начале игры</string>
+    <string name="pref_icsnotification">Уведомление новой игры</string>
+    <string name="prefs_icsnotificationsummary">Позволяет знать начало игры с иконой</string>
     <string name="pref_puzzle_show_seekbar">Показывать ползунок поиска</string>
     <string name="pref_puzzle_show_seekbar_desc">Быстрое перемещение между головоломками с помощью ползунка</string>
     <string name="pref_localelanguage">Установить язык</string>

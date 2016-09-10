@@ -70,8 +70,8 @@
     <string name="prefs_icsshowclocksummary">En el PGN, muestra el tiempo del reloj en PGN</string>
     <string name="pref_icsgamestartsound">Sonido de comienzo de juego</string>
     <string name="pref_icsgamestartsound_desc">Reproducir sonido al comienzo del juego o pérdida de la conexión</string>
-    <string name="pref_icsgamestartfront">Empiezo del juego lleva al principio</string>
-    <string name="prefs_icsgamestartfrontsummary">Intento de llevar la aplicación de ajedrez al principio cuando se inicia el juego</string>
+    <string name="pref_icsnotification">Notificación de nuevo juego</string>
+    <string name="prefs_icsnotificationsummary">Le permite saber el comienzo de un juego con un icono</string>
     <string name="pref_puzzle_show_seekbar">Mostrar barra de búsqueda</string>
     <string name="pref_puzzle_show_seekbar_desc">Navegar rápidamente a través de rompecabezas con barra de búsqueda</string>
     <string name="pref_localelanguage">Configuración de idioma</string>

@@ -67,9 +67,9 @@
             />
 
         <CheckBoxPreference
-            android:title="@string/pref_icsgamestartfront"
+            android:title="@string/pref_icsnotification"
             android:defaultValue="true"
-            android:summary="@string/prefs_icsgamestartfrontsummary"
+            android:summary="@string/prefs_icsnotificationsummary"
             android:key="ICSGameStartBringToFront"
             />
 
