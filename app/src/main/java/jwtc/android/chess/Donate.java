@@ -69,6 +69,7 @@ public class Donate extends MyBaseActivity {
 
         for(int i = 0; i < arrDonate.length; i++) {
             button = new RadioButton(this);
+            button.setTextColor(0xffffffff);
             button.setText(arrDonate[i]);
             group.addView(button);
             if(i == 2){

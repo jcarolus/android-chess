@@ -358,6 +358,8 @@
     <string name="ics_error_connection">Não podia conectar ao servidor. Assegura que tem conexão internet ativada</string>
     <string name="ics_lost_connection">Conexão para servidor quebrada</string>
 
+    <string name="ics_notification_title">Xadrez por Jeroen</string>
+    <string name="ics_notification_text">Toque para jogar</string>
     <string name="ics_welcome_format">Bem-vindo <b>%1$s</b></string>
     <string name="ics_start_text">(senha vazia para entrar como visitante)</string>
     <string name="ics_disconnected">DESCONECTADO de FICS</string>

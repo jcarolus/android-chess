@@ -358,6 +358,8 @@
     <string name="ics_error_connection">No se pudo conectar al server. Asegure que tiene connexion internet activada</string>
     <string name="ics_lost_connection">La coneccion se ha perdido</string>
 
+    <string name="ics_notification_title">Ajedrez por Jeroen</string>
+    <string name="ics_notification_text">Toque para jugar</string>
     <string name="ics_welcome_format">Bienevenido <b>%1$s</b></string>
     <string name="ics_start_text">(contraseña vacia para conectar como cliente)</string>
     <string name="ics_disconnected">DESCONECTADO de FICS</string>

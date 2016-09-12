@@ -358,6 +358,8 @@
     <string name="ics_error_connection">Не удаётся подключиться к серверу. Убедитесь, что ваше интернет-подключение активно.</string>
     <string name="ics_lost_connection">Подключение к серверу оборвано.</string>
 
+    <string name="ics_notification_title">Шахматы Йероен</string>
+    <string name="ics_notification_text">Нажмите, чтобы играть</string>
     <string name="ics_welcome_format">Добро пожаловать <b>%1$s</b></string>
     <string name="ics_start_text">(пустой пароль для входа как Гость)</string>
     <string name="ics_disconnected">ОТСОЕДИНЕНО от FICS</string>
