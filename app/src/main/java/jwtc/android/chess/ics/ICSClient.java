@@ -1978,8 +1978,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     .setWhen(System.currentTimeMillis())
                     .setAutoCancel(true)
                     .setLights(Color.CYAN, 100, 100)
-                    .setContentTitle("Chess by Jeroen")
-                    .setContentText("Tap to play");
+                    .setContentTitle(getString(R.string.ics_notification_title))
+                    .setContentText(getString(R.string.ics_notification_text));
 
             Notification notification = builder.getNotification();
 

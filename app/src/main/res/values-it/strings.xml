@@ -358,6 +358,8 @@
     <string name="ics_error_connection">Impossibile connettersi al server. Assicurati di avere una connessione internet attiva</string>
     <string name="ics_lost_connection">La connessione al server è rotto.</string>
 
+    <string name="ics_notification_title">Scacchi da Jeroen</string>
+    <string name="ics_notification_text">Tocca per giocare</string>
     <string name="ics_welcome_format">Benvenuto <b>%1$s</b></string>
     <string name="ics_start_text">(password vuota per accedere come ospite)</string>
     <string name="ics_disconnected">Scollegato dalla FICS</string>

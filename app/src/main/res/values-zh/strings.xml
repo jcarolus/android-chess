@@ -358,6 +358,8 @@
     <string name="ics_error_connection">无法连接服务器. 请检查你有可用的网络连接</string>
     <string name="ics_lost_connection">连接服务器存在问题.</string>
 
+    <string name="ics_notification_title">国际象棋由吉荣</string>
+    <string name="ics_notification_text">轻按即可播放</string>
     <string name="ics_welcome_format">欢迎 <b>%1$s</b></string>
     <string name="ics_start_text">(空置密码以游客身份登陆)</string>
     <string name="ics_disconnected">从 FICS服务器断开</string>
