@@ -3,6 +3,7 @@
     <color name="bgColorText">#ff484848</color><!-- 404040, 333355, 555555 -->
     <color name="bgColorLight">#ff585858</color>
     <color name="textColor">#ffffffff</color>
+    <color name="textColorDimBlendWhite">#ccffffff</color>
     
      <style name="button" parent="@android:style/Widget.Button">
         <item name="android:typeface">sans</item>

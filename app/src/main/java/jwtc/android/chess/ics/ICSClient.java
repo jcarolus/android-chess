@@ -2113,8 +2113,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _bConsoleText = false;
         }
 
-        // ----------- Loss connection -------------- //
         if (_socket == null || _socket.sendString(s + "\n") == false) {
+            // ----------- Loss connection -------------- //
             switch (get_gameStartSound()) {
                 case 0:
                     break;

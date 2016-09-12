@@ -7,6 +7,13 @@
         <item name="android:imageButtonStyle">@style/imageButton</item>
         <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
         <item name="android:textAppearance">@style/ChessTextAppearance</item>
+        <item name="android:background">@color/bgColorText</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textColorAlertDialogListItem">@color/textColorDimBlendWhite</item>
+        <item name="android:textColorSecondary">@color/textColorDimBlendWhite</item>
+        <item name="android:textColorHint">@color/textColorDimBlendWhite</item>
+        <item name="android:editTextColor">@color/textColorDimBlendWhite</item>
+
     </style>
 
 </resources>
