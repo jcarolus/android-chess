@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="jwtc.android.chess"
-      android:versionCode="145"
-      android:versionName="8.8.0"
+      android:versionCode="148"
+      android:versionName="8.8.3"
       android:installLocation="auto"
       >
     <application android:name=".MyApplication" android:icon="@drawable/icon" android:label="@string/app_name"
@@ -165,15 +165,7 @@
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
   		</activity>
-		<activity android:name="jwtc.android.chess.Donate" android:label="@string/start_donate">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".start" />
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-			</intent-filter>
-		</activity>
-  		<activity android:name="jwtc.android.chess.tools.FileListView" android:label="@string/app_name">
+		<activity android:name="jwtc.android.chess.tools.FileListView" android:label="@string/app_name">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value=".tools.pgntool" />
@@ -216,5 +208,4 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.VIBRATE" />
-	<uses-permission android:name="com.android.vending.BILLING" />
 </manifest>

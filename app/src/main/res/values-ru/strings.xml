@@ -20,7 +20,6 @@
     <string name="start_about">О приложении</string>
     <string name="start_pgn">Расширенные</string>
     <string name="start_ics">Игра онлайн</string>
-    <string name="start_donate">Поддержать</string>
     <string name="start_globalpreferences">Глобальные настройки</string>
     <string name="start_convergence">Экран ТВ</string>
 
@@ -393,11 +392,5 @@
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Не удалось начать действие</string>
     <string name="toast_challenge_posted">Вызов опубликован</string>
-
-    <string name="donate_desc">Если вы цените Шахматы, у вас есть возможность показать это!</string>
-    <string name="donate_button">Поддержать</string>
-    <string name="donate_success">Спасибо за ваше пожертвование!</string>
-    <string name="donate_error">Пожертвование было отменено.</string>
-    <string name="donate_intent">Не удалось запустить внутриигровой платёж</string>
 
 </resources>

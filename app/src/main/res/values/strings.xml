@@ -20,7 +20,6 @@
     <string name="start_about">About</string>
     <string name="start_pgn">Advanced</string>
     <string name="start_ics">Play online</string>
-    <string name="start_donate">Donate</string>
     <string name="start_globalpreferences">Global settings</string>
     <string name="start_convergence">TV Screen</string>
 
@@ -393,11 +392,5 @@
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Could not start the activity</string>
     <string name="toast_challenge_posted">Challenge posted</string>
-
-    <string name="donate_desc">If you appreciate Chess, here is your chance to show it!</string>
-    <string name="donate_button">Donate</string>
-    <string name="donate_success">Thank you for your donation!</string>
-    <string name="donate_error">The donation was cancelled.</string>
-    <string name="donate_intent">Could not start in-app payment.</string>
 
 </resources>

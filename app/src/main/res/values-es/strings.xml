@@ -20,7 +20,6 @@
     <string name="start_about">Acerca de nosotros</string>
     <string name="start_pgn">Avanzado</string>
     <string name="start_ics">Juega en línea</string>
-    <string name="start_donate">Contribuye</string>
     <string name="start_globalpreferences">Configuración global</string>
     <string name="start_convergence">Pantalla TV</string>
 
@@ -393,11 +392,5 @@
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">No pudo empezar la actividad</string>
     <string name="toast_challenge_posted">Desafio publicado</string>
-
-    <string name="donate_desc">Si le gusta Ajedrez lo puede enseñar aqui!</string>
-    <string name="donate_button">Contribuye</string>
-    <string name="donate_success">Gracias por tu contribuición!</string>
-    <string name="donate_error">La contribuición se canceló.</string>
-    <string name="donate_intent">no se pudo iniciar el pago in-app.</string>
 
 </resources>
