@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.content.res.Resources;
 import android.util.Log;
 import jwtc.chess.algorithm.*;
 import jwtc.chess.board.BoardConstants;
@@ -238,8 +239,8 @@ try{
 		_mapPGNHead.put("Event", "?");
 		_mapPGNHead.put("Site", "?");
 		_mapPGNHead.put("Round", "?");
-		_mapPGNHead.put("White", "white ?");
-		_mapPGNHead.put("Black", "black ?");
+		_mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+		_mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
 		_mapPGNHead.put("Date", formatter.format(d));
 		
 		_arrPGN.clear();
@@ -256,8 +257,8 @@ try{
 				_mapPGNHead.put("Event", "?");
 				_mapPGNHead.put("Site", "?");
 				_mapPGNHead.put("Round", "?");
-				_mapPGNHead.put("White", "white ?");
-				_mapPGNHead.put("Black", "black ?");
+				_mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+				_mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
 			}
 			_mapPGNHead.put("Setup", "1");
 			_mapPGNHead.put("FEN", sFEN);
@@ -279,8 +280,8 @@ try{
 		_mapPGNHead.put("Event", "?");
 		_mapPGNHead.put("Site", "?");
 		_mapPGNHead.put("Round", "?");
-		_mapPGNHead.put("White", "white ?");
-		_mapPGNHead.put("Black", "black ?");		
+		_mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+		_mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
 		
 		_mapPGNHead.put("Variant", "Fischerandom");
 		_mapPGNHead.put("Setup", "1");

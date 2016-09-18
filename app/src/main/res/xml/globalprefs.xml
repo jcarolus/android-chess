@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
      
-     <PreferenceCategory android:title="Global settings">   
-		<CheckBoxPreference
+     <PreferenceCategory android:title="Global settings">
+		 <ListPreference
+			 android:title="@string/pref_localelanguage"
+			 android:summary="@string/pref_localelanguage_desc"
+			 android:key="localelanguage"
+			 android:entries="@array/localearray"
+			 android:entryValues="@array/localeKeyarray" />
+
+		 <CheckBoxPreference
 			android:title="@string/pref_wakelock"
 			android:defaultValue="false"
 			android:summary="@string/pref_wakelock_desc"
@@ -44,21 +51,11 @@
 			android:summary="@string/pref_sound_desc"
 			android:key="soundHandle" />
 		
-		
 		<CheckBoxPreference
 			android:title="@string/pref_extrahighlight"
 			android:defaultValue="false"
 			android:summary="@string/pref_extrahighlight_desc"
 			android:key="extrahighlight" />
-
-		 <ListPreference
-			 android:title="@string/pref_localelanguage"
-			 android:summary="@string/pref_localelanguage_desc"
-			 android:key="localelanguage"
-			 android:entries="@array/localearray"
-			 android:entryValues="@array/localeKeyarray"
-			 />
-		
 	</PreferenceCategory>
 
 </PreferenceScreen>

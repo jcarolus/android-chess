@@ -9,6 +9,7 @@
     <string name="app_name_import">Importa</string>
     <string name="app_name_pgntools">Avanzate</string>
     <string name="app_name_save_games">Partite salvate</string>
+    <string name="version_number">Versione: %1$s</string>
 
     <string name="language">it</string>
 
@@ -19,7 +20,6 @@
     <string name="start_about">Informazioni</string>
     <string name="start_pgn">Avanzate</string>
     <string name="start_ics">Gioca online</string>
-    <string name="start_donate">Donare</string>
     <string name="start_globalpreferences">Preferenze globali</string>
     <string name="start_convergence">Schermo TV</string>
 
@@ -52,7 +52,7 @@
     <string name="pref_tileset">Decorazione delle caselle</string>
     <string name="pref_tileset_desc">Decorazione usata sulle caselle della scacchiera</string>
     <string name="pref_icsconfirmmove">Conferma mossa</string>
-    <string name="pref_icsconfirmmove_desc">Conferma manuale della mossa</string>
+    <string name="pref_icsconfirmmove_desc">confermare manualmente una mossa. Se non controllata, una pressione prolungata sulla piazza di destinazione apparirà la finestra di dialogo di conferma.</string>
     <string name="pref_icscustomcommand">Comandi personalizzati</string>
     <string name="pref_icscustomcommand_desc">Crea i tuoi comandi personalizzati</string>
     <string name="pref_icsconsolecharactersize">dimensione del carattere CONSOLE</string>
@@ -66,11 +66,11 @@
     <string name="prefs_icsendgamedialog">EndGame Dialog</string>
     <string name="prefs_icsendgamesummary">Alla fine di una partita, vuoi una finestra di dialogo Salva per PopUp?</string>
     <string name="prefs_icsshowclock">Mostra orologio volte in PGN</string>
-    <string name="prefs_icsshowclocksummary">Nel PGN , mostrare i tempi di clock su ogni mossa</string>
+    <string name="prefs_icsshowclocksummary">Nel PGN, mostrare i tempi di clock su ogni mossa</string>
     <string name="pref_icsgamestartsound">Gioco Suono Inizio</string>
     <string name="pref_icsgamestartsound_desc">Riproduci suono quando gioco inizia o la perdita di collegamento</string>
-    <string name="pref_icsgamestartfront">Inizia Gioco Porta in primo piano</string>
-    <string name="prefs_icsgamestartfrontsummary">cercare di portare gli scacchi app in primo piano quando il gioco inizia</string>
+    <string name="pref_icsnotification">Notifica di New Game</string>
+    <string name="prefs_icsnotificationsummary">Ti permette di conoscere l\'inizio di un gioco con una icona</string>
     <string name="pref_puzzle_show_seekbar">Mostra barra di ricerca</string>
     <string name="pref_puzzle_show_seekbar_desc">Sfoglia rapidamente i problemi con la barra di ricerca</string>
     <string name="pref_localelanguage">Impostare la lingua</string>
@@ -90,13 +90,13 @@
     <string name="button_save_copy">Salva una copia</string>
     <string name="button_new">Nuova</string>
     <string name="button_show">Mostra</string>
-    <!-- @TODO -->
     <string name="button_jump">Salta a #</string>
 
     <string name="alert_yes">Sì</string>
     <string name="alert_no">No</string>
     <string name="alert_cancel">Annulla</string>
     <string name="alert_ok">OK</string>
+    <string name="alert_confirm">Confermare</string>
 
     <string name="title_challenge">Sfida</string>
     <string name="title_loading">Caricamento&#8230;</string>
@@ -131,7 +131,6 @@
     <string name="title_ics_mode_puzzle">Problema</string>
     <string name="title_ics_mode_endgame">Finale di partita</string>
     <string name="title_installing">Installazione</string>
-        <!-- @TODO -->
     <string name="title_puzzle_jump">Vai a puzzle numero</string>
 
     <string name="menu_help">Aiuto</string>
@@ -171,18 +170,18 @@
     <string name="menu_subview_guess">Indovina la mossa</string>
     <string name="menu_subview_blindfold">Modalità alla cieca</string>
 
-        <!-- @TODO -->
-    <string name="options_play_human">Human vs Human</string>
-    <string name="options_play_android">Human vs Android</string>
-    <string name="options_play_white">White</string>
-    <string name="options_play_black">Black</string>
-
+    <string name="options_play_human">Umano contro Umano</string>
+    <string name="options_play_android">Umano contro Android</string>
+    <string name="options_play_white">bianca</string>
+    <string name="options_play_black">Nero</string>
     <string name="options_960">Scacchi 960 - Fischer Random</string>
     <string name="options_load_database">Carica database aperture</string>
     <string name="options_auto_flip">Auto-inversione scacchiera</string>
     <string name="options_flip">Inverti la scacchiera</string>
     <string name="options_setup">Disponi la scacchiera</string>
     <string name="options_show_moves">Mostra le mosse</string>
+    <string name="options_level_time">Livello (tempo)</string>
+    <string name="options_level_ply">Livello (strati)</string>
 
     <string name="state_play">in gioco</string>
     <string name="state_draw">patta</string>
@@ -220,6 +219,27 @@
     <string name="choice_edit">Modifica</string>
     <string name="choice_delete">Cancella</string>
 
+    <string name="color_picker_brightness">Luminosità</string>
+    <string name="color_picker_light">chiaro</string>
+    <string name="color_picker_dark">scuro</string>
+    <string name="color_picker_selected">selezionato</string>
+
+    <string name="savegame_event">Evento</string>
+    <string name="savegame_event_question">Evento?</string>
+    <string name="savegame_white">bianca</string>
+    <string name="savegame_white_question">bianca?</string>
+    <string name="savegame_black">Nero</string>
+    <string name="savegame_black_question">Nero?</string>
+    <string name="savegame_date">Data</string>
+    <string name="savegame_date_question">Data?</string>
+
+    <string name="gameslist_stars">Stelle</string>
+    <string name="gameslist_date">Data</string>
+    <string name="gameslist_event">Evento</string>
+    <string name="gameslist_id">ID</string>
+    <string name="games_list_white_pieces">pezzi bianchi</string>
+    <string name="gameslist_black_pieces">pezzi nero</string>
+
     <string name="msg_illegal_move">Mossa illegale</string>
     <string name="msg_state_format">%1$s</string>
     <string name="msg_thinking">Sto riflettendo&#8230;</string>
@@ -243,19 +263,14 @@
     <string name="msg_not_valid_ip">"Indirizzo LAN IP non valido\nIP: "</string>
     <string name="msg_server">Impossibile avviare il server</string>
 
-    <string name="err_sd_not_mounted">
-    La scheda SD deve essere montata per elaborare la tua richiesta.
-    </string>
-    <string name="err_send_email">
-    L\'email potrebbe non essere stata creata.
-    </string>
+    <string name="err_sd_not_mounted">La scheda SD deve essere montata per elaborare la tua richiesta.</string>
+    <string name="err_send_email">L\'email potrebbe non essere stata creata.</string>
     <string name="err_load_fen">La posizione FEN potrebbe non essere stata caricata</string>
     <string name="err_load_pgn">La storia PGN potrebbe non essere stata caricata</string>
     <string name="err_no_clip_text">Appunti vuoti</string>
     <string name="err_install_barcode_scanner">Per favore installa uno scanner di codici a barre (ZXing)</string>
     <string name="err_chess960_position_range">Posizione non valida, inserisci un numero tra 0 e 960</string>
     <string name="err_chess960_position_format">Posizione non valida, inserisci un numero</string>
-        <!-- @TODO -->
     <string name="err_puzzle_jump">Puzzle di numero non valido</string>
     <string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Error during copy to ClipBoard</string>
@@ -282,6 +297,8 @@
     <string name="pgntool_confirm_practice_reset">Sei sicuro di voler azzerare?</string>
     <string name="pgntool_import_puzzle">Importa problemi</string>
     <string name="pgntool_import_opening">Usato dallo sviluppatore</string>
+
+    <string name="practice_set_reset">set La pratica è stata reimpostata</string>
 
     <string name="ics_client_handle">Nome utente</string>
     <string name="ics_client_password">Password</string>
@@ -310,6 +327,8 @@
     <string name="ics_menu_console">Console</string>
     <string name="ics_menu_unobserve">Ferma osservazione</string>
     <string name="ics_menu_stop_puzzle">Ferma problema</string>
+    <string name="ics_menu_top_blitz">Top Blitz</string>
+    <string name="ics_menu_top_standard">Top standard</string>
 
     <string name="ics_playertwo">giocatore 2</string>
     <string name="ics_playerone">giocatore 1</string>
@@ -321,7 +340,7 @@
     <string name="ics_offers_adjourn">Il tuo avversario vorrebbe aggiornare la partita.\nVuoi accettare?</string>
     <string name="ics_offers_takeback">Il tuo avversario vorrebbe ritirare la mossa.\nVuoi accettare?</string>
     <string name="ics_request_sent">Richiesta inviata</string>
-    <string name="ics_game_over">Partita fermata</string>
+    <string name="ics_game_over">Fine partita</string>
     <string name="ics_game_over_format">Fine partita: %1$s</string>
     <string name="ics_tells_you">%1$s ti dice: %2$s</string>
 
@@ -336,10 +355,15 @@
     <string name="ics_copy_clipboard_text">Copy to CLIPBOARD</string>
 
     <string name="ics_error_connection">Impossibile connettersi al server. Assicurati di avere una connessione internet attiva</string>
+    <string name="ics_lost_connection">La connessione al server è rotto.</string>
 
+    <string name="ics_notification_title">Scacchi da Jeroen</string>
+    <string name="ics_notification_text">Tocca per giocare</string>
     <string name="ics_welcome_format">Benvenuto <b>%1$s</b></string>
     <string name="ics_start_text">(password vuota per accedere come ospite)</string>
     <string name="ics_disconnected">Scollegato dalla FICS</string>
+    <string name="ics_not_connected">Non collegata</string>
+    <string name="ics_connect">Collegare</string>
 
     <string name="ics_seekseek">cercare</string>
     <string name="ics_seekchallenge">sfida</string>
@@ -369,9 +393,4 @@
     <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>
     <string name="toast_challenge_posted">Sfida lanciata</string>
 
-    <string name="donate_desc">If you appreciate Chess, here is your chance to show it!</string>
-    <string name="donate_button">Donate</string>
-    <string name="donate_success">Thank you for your donation!</string>
-    <string name="donate_error">The donation was cancelled.</string>
-    <string name="donate_intent">Could not start in-app payment.</string>
 </resources>

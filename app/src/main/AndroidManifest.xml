@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="jwtc.android.chess"
-      android:versionCode="141"
-      android:versionName="8.7.1"
+      android:versionCode="148"
+      android:versionName="8.8.3"
       android:installLocation="auto"
       >
     <application android:name=".MyApplication" android:icon="@drawable/icon" android:label="@string/app_name"
@@ -31,6 +31,7 @@
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value=".start" />
 		</activity>
+        <activity android:name=".ColorPickerActivity"/>
 		<activity
 	        android:name=".HtmlActivity"
 	        android:label="@string/app_name_help">
@@ -130,12 +131,14 @@
   			</intent-filter>
   		</activity>
   		<!-- <service android:name="jwtc.android.chess.ics.ICSService"/> -->
-  		<activity android:name="jwtc.android.chess.ics.ICSClient" android:label="@string/app_name_playonline">
+  		<activity android:name="jwtc.android.chess.ics.ICSClient"
+			android:label="@string/app_name_playonline"	android:launchMode="singleTop"
+			android:windowSoftInputMode="stateHidden">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value=".start" />
 			<intent-filter>
-  				<action android:name="android.intent.action.VIEW" /> 
+  				<action android:name="android.intent.action.VIEW" />
   			</intent-filter>
   		</activity>
 		<activity android:name="jwtc.android.chess.ics.ICSPrefs" android:label="@string/preferences">
@@ -162,15 +165,7 @@
   				<action android:name="android.intent.action.VIEW" /> 
   			</intent-filter>
   		</activity>
-		<activity android:name="jwtc.android.chess.Donate" android:label="@string/start_donate">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".start" />
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-			</intent-filter>
-		</activity>
-  		<activity android:name="jwtc.android.chess.tools.FileListView" android:label="@string/app_name">
+		<activity android:name="jwtc.android.chess.tools.FileListView" android:label="@string/app_name">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value=".tools.pgntool" />
@@ -213,7 +208,4 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.VIBRATE" />
-	<uses-permission android:name="android.permission.GET_TASKS" />
-	<uses-permission android:name="android.permission.REORDER_TASKS" />
-	<uses-permission android:name="com.android.vending.BILLING" />
 </manifest>

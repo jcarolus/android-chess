@@ -6,7 +6,6 @@
 		<item>@string/start_practice</item>
 		<item>@string/start_puzzles</item>
 		<item>@string/start_globalpreferences</item>
-        <item>@string/start_donate</item>
 		<item>@string/start_about</item>
 		<item>@string/start_pgn</item>
 	</string-array>
@@ -59,6 +58,7 @@
         <item>Grey</item>
         <item>Brown</item>
         <item>Red</item>
+        <item>Choose your colors</item>
     </string-array>
     <!-- 
     <integer-array name="colorscheme_indexes">
@@ -170,14 +170,18 @@
     	<item>circuit</item>
     </string-array>
     <string-array name="localearray">
+        <item>中文</item>
         <item>English</item>
-        <item>Italian</item>
-        <item>Spanish</item>
-        <item>Russian</item>
+        <item>Italiano</item>
+        <item>português</item>
+        <item>Español</item>
+        <item>Pусский</item>
     </string-array>
     <string-array name="localeKeyarray">
+        <item>zh</item>
         <item>en</item>
         <item>it</item>
+        <item>pt</item>
         <item>es</item>
         <item>ru</item>
     </string-array>
@@ -185,12 +189,5 @@
     	<item>default</item>
     	<item>robollito</item>
     	<item>bik</item>
-    </string-array>
-    <string-array name="donate_amount">
-        <item>1 euro</item>
-        <item>2 euro</item>
-        <item>5 euro</item>
-        <item>10 euro</item>
-        <item>20 euro</item>
     </string-array>
 </resources>

@@ -9,6 +9,7 @@
     <string name="app_name_import">Import</string>
     <string name="app_name_pgntools">Advanced</string>
     <string name="app_name_save_games">Saved games</string>
+    <string name="version_number">Version: %1$s</string>
 
     <string name="language">en</string>
 
@@ -19,7 +20,6 @@
     <string name="start_about">About</string>
     <string name="start_pgn">Advanced</string>
     <string name="start_ics">Play online</string>
-    <string name="start_donate">Donate</string>
     <string name="start_globalpreferences">Global settings</string>
     <string name="start_convergence">TV Screen</string>
 
@@ -52,7 +52,7 @@
     <string name="pref_tileset">Square pattern</string>
     <string name="pref_tileset_desc">Pattern used on a board square</string>
     <string name="pref_icsconfirmmove">Confirm move</string>
-    <string name="pref_icsconfirmmove_desc">Manually confirm a move</string>
+    <string name="pref_icsconfirmmove_desc">Manually confirm a move. If unchecked, a long press on the destination square will show the confirm dialog.</string>
     <string name="pref_icscustomcommand">Custom commands</string>
     <string name="pref_icscustomcommand_desc">Create your own custom commands</string>
     <string name="pref_icsconsolecharactersize">CONSOLE character size</string>
@@ -69,8 +69,8 @@
     <string name="prefs_icsshowclocksummary">In the PGN, show the clock times on each move</string>
     <string name="pref_icsgamestartsound">Game Start Sound</string>
     <string name="pref_icsgamestartsound_desc">Play sound when game starts or loss of connection</string>
-    <string name="pref_icsgamestartfront">Game Starts Bring to Front</string>
-    <string name="prefs_icsgamestartfrontsummary">attempt to bring chess app to the front when the game starts</string>
+    <string name="pref_icsnotification">Notification of New Game</string>
+    <string name="prefs_icsnotificationsummary">Lets you know the start of a game with an icon</string>
     <string name="pref_puzzle_show_seekbar">Show seek bar</string>
     <string name="pref_puzzle_show_seekbar_desc">Quickly navigate through puzzles with seek bar</string>
     <string name="pref_localelanguage">Set The Language</string>
@@ -96,6 +96,7 @@
     <string name="alert_no">No</string>
     <string name="alert_cancel">Cancel</string>
     <string name="alert_ok">OK</string>
+    <string name="alert_confirm">Confirm</string>
 
     <string name="title_challenge">Challenge</string>
     <string name="title_loading">Loading&#8230;</string>
@@ -179,6 +180,8 @@
     <string name="options_flip">Flip board</string>
     <string name="options_setup">Setup board</string>
     <string name="options_show_moves">Show moves</string>
+    <string name="options_level_time">Level (time)</string>
+    <string name="options_level_ply">Level (ply)</string>
 
     <string name="state_play">in play</string>
     <string name="state_draw">draw</string>
@@ -216,6 +219,27 @@
     <string name="choice_edit">Edit</string>
     <string name="choice_delete">Delete</string>
 
+    <string name="color_picker_brightness">Brightness</string>
+    <string name="color_picker_light">Light</string>
+    <string name="color_picker_dark">Dark</string>
+    <string name="color_picker_selected">Selected</string>
+
+    <string name="savegame_event">Event</string>
+    <string name="savegame_event_question">Event?</string>
+    <string name="savegame_white">White</string>
+    <string name="savegame_white_question">White?</string>
+    <string name="savegame_black">Black</string>
+    <string name="savegame_black_question">Black?</string>
+    <string name="savegame_date">Date</string>
+    <string name="savegame_date_question">Date?</string>
+
+    <string name="gameslist_stars">Stars</string>
+    <string name="gameslist_date">Date</string>
+    <string name="gameslist_event">Event</string>
+    <string name="gameslist_id">ID</string>
+    <string name="games_list_white_pieces">White pieces</string>
+    <string name="gameslist_black_pieces">Black pieces</string>
+
     <string name="msg_illegal_move">Illegal move</string>
     <string name="msg_state_format">%1$s</string>
     <string name="msg_thinking">Thinking&#8230;</string>
@@ -239,12 +263,8 @@
     <string name="msg_not_valid_ip">"You are not on a valid LAN IP address\nIP: "</string>
     <string name="msg_server">Could not start server</string>
 
-    <string name="err_sd_not_mounted">
-    In order to process your request, your SD-card needs to be mounted.
-    </string>
-    <string name="err_send_email">
-    E-mail could not be created.
-    </string>
+    <string name="err_sd_not_mounted">In order to process your request, your SD-card needs to be mounted.</string>
+    <string name="err_send_email">E-mail could not be created.</string>
     <string name="err_load_fen">FEN chess position could not be loaded</string>
     <string name="err_load_pgn">PGN chess history could not be loaded</string>
     <string name="err_no_clip_text">There is no text on the clip board</string>
@@ -278,6 +298,8 @@
     <string name="pgntool_import_puzzle">Import puzzles</string>
     <string name="pgntool_import_opening">Used by developer</string>
 
+    <string name="practice_set_reset">Practice set has been reset</string>
+
     <string name="ics_client_handle">Handle</string>
     <string name="ics_client_password">Password</string>
     <string name="ics_client_presets">Presets</string>
@@ -305,6 +327,8 @@
     <string name="ics_menu_console">Console</string>
     <string name="ics_menu_unobserve">Stop observing</string>
     <string name="ics_menu_stop_puzzle">Stop puzzle</string>
+    <string name="ics_menu_top_blitz">Top Blitz</string>
+    <string name="ics_menu_top_standard">Top Standard</string>
 
     <string name="ics_playertwo">Player 2</string>
     <string name="ics_playerone">Player 1</string>
@@ -316,8 +340,8 @@
     <string name="ics_offers_adjourn">Your opponent would like to adjourn the game.\nDo you wish to accept?</string>
     <string name="ics_offers_takeback">Your opponent would like to take back a move.\nDo you wish to accept?</string>
     <string name="ics_request_sent">Request sent</string>
-    <string name="ics_game_over">Game stopped</string>
-    <string name="ics_game_over_format">Game over: %1$s</string>
+    <string name="ics_game_over">Game Over</string>
+    <string name="ics_game_over_format">Game Over: %1$s</string>
     <string name="ics_tells_you">%1$s tells you: %2$s</string>
 
     <string name="ics_save_game">Successfully saved to chessgamesonline.pgn</string>
@@ -331,10 +355,15 @@
     <string name="ics_copy_clipboard_text">Copy to CLIPBOARD</string>
 
     <string name="ics_error_connection">Could not connect to server. Make sure you have your internet connection enabled</string>
+    <string name="ics_lost_connection">Connection to server is broken.</string>
 
+    <string name="ics_notification_title">Chess by Jeroen</string>
+    <string name="ics_notification_text">Tap to play</string>
     <string name="ics_welcome_format">Welcome <b>%1$s</b></string>
     <string name="ics_start_text">(password empty to login as guest)</string>
     <string name="ics_disconnected">DISCONNECTED from FICS</string>
+    <string name="ics_not_connected">Not connected</string>
+    <string name="ics_connect">Connect</string>
 
     <string name="ics_seekseek">Seek</string>
     <string name="ics_seekchallenge">Challenge</string>
@@ -363,11 +392,5 @@
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Could not start the activity</string>
     <string name="toast_challenge_posted">Challenge posted</string>
-
-    <string name="donate_desc">If you appreciate Chess, here is your chance to show it!</string>
-    <string name="donate_button">Donate</string>
-    <string name="donate_success">Thank you for your donation!</string>
-    <string name="donate_error">The donation was cancelled.</string>
-    <string name="donate_intent">Could not start in-app payment.</string>
 
 </resources>

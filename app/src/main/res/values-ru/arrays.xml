@@ -6,7 +6,6 @@
 		<item>@string/start_practice</item>
 		<item>@string/start_puzzles</item>
 		<item>@string/start_globalpreferences</item>
-        <item>@string/start_donate</item>
 		<item>@string/start_about</item>
 		<item>@string/start_pgn</item>
 	</string-array>
@@ -59,6 +58,7 @@
         <item>Серый</item>
         <item>Коричневый</item>
         <item>Красный</item>
+        <item>Выберите цвет</item>
     </string-array>
     <!-- 
     <integer-array name="colorscheme_indexes">
@@ -126,7 +126,7 @@
         <item>0</item><item>1</item><item>2</item><item>3</item>
     </string-array>
     <string-array name="field_files">
-    	<item>none</item>
+    	<item>нет</item>
     	<item>a</item>
     	<item>b</item>
     	<item>c</item>
@@ -163,21 +163,25 @@
     </string-array>
     <string-array name="tileArray">
     	<item>нет</item>
-    	<item>двойной оттенок</item>
-    	<item>один оттенок</item>
+    	<item>двойная тень</item>
+    	<item>одиночная тень</item>
     	<item>полоски</item>
     	<item>облака</item>
-    	<item>цепь</item>
+    	<item>схема</item>
     </string-array>
     <string-array name="localearray">
-        <item>Английский</item>
-        <item>Итальянский</item>
-        <item>Испанский</item>
-        <item>русский</item>
+        <item>中文</item>
+        <item>English</item>
+        <item>Italiano</item>
+        <item>português</item>
+        <item>Español</item>
+        <item>Pусский</item>
     </string-array>
     <string-array name="localeKeyarray">
+        <item>zh</item>
         <item>en</item>
         <item>it</item>
+        <item>pt</item>
         <item>es</item>
         <item>ru</item>
     </string-array>
@@ -185,12 +189,5 @@
     	<item>default</item>
     	<item>robollito</item>
     	<item>bik</item>
-    </string-array>
-    <string-array name="donate_amount">
-        <item>1 евро</item>
-        <item>2 евро</item>
-        <item>5 евро</item>
-        <item>10 евро</item>
-        <item>20 евро</item>
     </string-array>
 </resources>

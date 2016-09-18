@@ -2,12 +2,16 @@ package jwtc.android.chess.ics;
 
 import java.net.*;
 import java.io.*;
+import java.util.concurrent.ExecutionException;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 //public class TelnetSocket extends Socket    
 public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket
 {
+	private static final String TAG = "TelnetSocket";
+
 	protected static byte[] _inBytes;
 	protected static byte[] _outBytes;
 
@@ -35,7 +39,7 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket
 				}
 			}
 		} catch (Exception e)	{
-			Log.e("TelnetSocket", "readString " + e.toString());
+			Log.e(TAG, "readString " + e.toString());
 			return null;
 		}
 		return data;
@@ -46,19 +50,46 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket
 		for (int i = 0; i < data.length(); i++)
 		{
 			_outBytes[i] = (byte)data.charAt(i);
+			//Log.d(TAG, "_outBytes ->" + data.charAt(i) + "    i->" + i);
 		}
-		try	
-		{
-			getOutputStream().write(_outBytes, 0, data.length());
-			getOutputStream().flush();
-			//Log.i("TelnetSocket", "sendString: " + data);
-			return true;
+
+		boolean result = false;
+		ATsendString asObj = new ATsendString();
+		try {
+			 result = asObj.execute(data).get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
-		catch (Exception e) 
-		{
-			Log.e("TelnetSocket", "sendString: " + e.toString());
-			return false;
-		}
+		return result;
 	}
 
+
+	private class ATsendString extends AsyncTask<String, Void, Boolean>
+	{
+
+		@Override
+		protected Boolean doInBackground(String... strings) {
+
+			try
+			{
+				getOutputStream().write(_outBytes, 0, strings[0].length());
+				getOutputStream().flush();
+				//Log.i("TelnetSocket", "sendString: " + data);
+				return true;
+			}
+			catch (Exception e)
+			{
+				Log.e("TelnetSocket", "sendString: " + e.toString());
+				return false;
+			}
+
+		}
+
+		@Override
+		protected void onPostExecute(Boolean aBoolean) {
+			super.onPostExecute(aBoolean);
+		}
+	}
 }

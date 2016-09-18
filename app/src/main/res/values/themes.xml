@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="ChessTheme">
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:buttonStyle">@style/button</item>
         <item name="android:imageButtonStyle">@style/imageButton</item>
         <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
         <item name="android:textAppearance">@style/ChessTextAppearance</item>
+        <item name="android:colorPrimary" tools:targetApi="lollipop">@color/textColorPrimary</item>
+
+        <!--   <item name="android:background">@color/textColor</item>
+        <item name="android:textColor">@color/textColor</item>
+           <item name="android:textColorAlertDialogListItem">@color/textColorDimBlendWhite</item>
+           <item name="android:textColorSecondary">@color/textColorDimBlendWhite</item>
+           <item name="android:textColorHint">@color/textColorDimBlendWhite</item>
+           <item name="android:editTextColor">@color/textColorDimBlendWhite</item>-->
+
     </style>
 
 </resources>

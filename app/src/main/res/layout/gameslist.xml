@@ -24,15 +24,15 @@
 	     android:layout_height="wrap_content">
 		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:layout_marginTop="5dip">
-		     <TextView android:id="@+id/sort_rating"  android:text="Stars"
+		     <TextView android:id="@+id/sort_rating"  android:text="@string/gameslist_stars"
 		     	style="@style/MyNormalTextStyle"
 		     	android:layout_weight="1" android:layout_height="30dip"
 	     	/>
-		     <TextView android:id="@+id/sort_text_date" android:text="Date"
+		     <TextView android:id="@+id/sort_text_date" android:text="@string/gameslist_date"
 		     	style="@style/MyNormalTextStyle"
 		     	android:layout_weight="1" android:layout_height="30dip"
 		     />
-		     <TextView android:id="@+id/sort_text_event" android:text="Event"
+		     <TextView android:id="@+id/sort_text_event" android:text="@string/gameslist_event"
 		     	style="@style/MyNormalTextStyle"
 		        android:layout_weight="1" android:layout_height="30dip"
 		     />
@@ -43,14 +43,14 @@
 	     android:layout_height="wrap_content">
 		<TableRow android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:layout_marginTop="5dip">
-			<TextView android:id="@+id/sort_text_id" android:text="Id"
+			<TextView android:id="@+id/sort_text_id" android:text="@string/gameslist_id"
 	     		style="@style/MyNormalTextStyle"
 		        android:layout_weight="1" android:layout_height="30dip"
 		     />
-		    <TextView android:id="@+id/sort_text_name1" android:text="White pieces"
+		    <TextView android:id="@+id/sort_text_name1" android:text="@string/games_list_white_pieces"
 		     	style="@style/MyNormalTextStyle"
 		        android:layout_weight="3" android:layout_height="30dip"/>
-	     	<TextView android:id="@+id/sort_text_name2" android:text="Black pieces"
+	     	<TextView android:id="@+id/sort_text_name2" android:text="@string/gameslist_black_pieces"
 	     		style="@style/MyNormalTextStyle"
 		        android:layout_weight="3" android:layout_height="30dip"/>
 	     </TableRow>

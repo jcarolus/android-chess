@@ -219,7 +219,7 @@ public class pgntool extends ListActivity {
                             editor.putInt("practiceTicks", 0);
                             editor.commit();
 
-                            doToast("Practice set has been reset");
+                            doToast(getString(R.string.practice_set_reset));
 
                         }
                     });

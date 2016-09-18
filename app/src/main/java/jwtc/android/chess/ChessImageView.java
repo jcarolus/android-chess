@@ -4,6 +4,7 @@ package jwtc.android.chess;
 
 import jwtc.chess.board.ChessBoard;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,6 +23,8 @@ public class ChessImageView extends View {
 	public static Bitmap[][] _arrPieceBitmaps = new Bitmap[2][6];
 	public static Bitmap _bmpBorder, _bmpSelect, _bmpSelectLight;
 	public static Bitmap _bmpTile;
+
+	private static String _sActivity;
 	
 	//public static SVG _svgTest = null;
 	
@@ -38,9 +41,6 @@ public class ChessImageView extends View {
 	}
 	
 	private ImageCacheObject _ico;
-
-	private start _start;
-	private options _options;
 	
 	public ChessImageView(Context context) {
 		super(context);
@@ -93,18 +93,28 @@ public class ChessImageView extends View {
         // first draw field background
         if(ico == null)
         	Log.e("err", "err");
-        
+
+		SharedPreferences pref = getContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
         //_paint.setColor(Color.TRANSPARENT);
         if(hasFocus()){
         	_paint.setColor(0xffff9900);
         	canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
         } else {
-        	_paint.setColor(ico._fieldColor == 0 ? _arrColorScheme[_colorScheme][0] : _arrColorScheme[_colorScheme][1]);
-        	canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-        	if(ico._selected){
-        		_paint.setColor(_arrColorScheme[_colorScheme][2]);
-        		canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-        	}
+			if (_colorScheme == 6){ // 6 is color picker
+				_paint.setColor(ico._fieldColor == 0 ? pref.getInt("color2", 0xffdddddd) : pref.getInt("color1", 0xffff0066));
+				canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+				if (ico._selected){
+					_paint.setColor(pref.getInt("color3", 0xcc00dddd) & 0xccffffff);
+					canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+				}
+			} else {
+				_paint.setColor(ico._fieldColor == 0 ? _arrColorScheme[_colorScheme][0] : _arrColorScheme[_colorScheme][1]);
+				canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+				if (ico._selected) {
+					_paint.setColor(_arrColorScheme[_colorScheme][2]);
+					canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+				}
+			}
         }
         
         if(ChessImageView._bmpTile != null){
@@ -128,11 +138,16 @@ public class ChessImageView extends View {
 
 	        bmp = _arrPieceBitmaps[ico._color][ico._piece];
 
-//			quick fix to not access other activities
-//			if (_start.sActivity.equals("Play") && _options.is_bFlipBlack() &&
-//					(_options._radioBlack.isChecked() ? ico._color == 1 : ico._color == 0)) {   // flips black for human vs human without
-//				canvas.rotate(180, getWidth()/2, getHeight()/2);                                    // autoflip on while in Play mode
-//			}
+			_sActivity = (start.get_ssActivity() == null) ?  "" : start.get_ssActivity();
+
+			// todo if it's fine then will put back && statements
+			if (_sActivity.equals(getContext().getString(R.string.start_play))){
+				if(options.is_sbFlipTopPieces()){
+					if((options.is_sbPlayAsBlack() ? ico._color == 1 : ico._color == 0)) {   // flips top pieces for human vs human without
+						canvas.rotate(180, getWidth() / 2, getHeight() / 2);                 // autoflip on in Play mode
+					}
+				}
+			}
 
 	        canvas.drawBitmap(bmp, _matrix, _paint);
 

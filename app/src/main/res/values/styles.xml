@@ -3,6 +3,12 @@
     <color name="bgColorText">#ff484848</color><!-- 404040, 333355, 555555 -->
     <color name="bgColorLight">#ff585858</color>
     <color name="textColor">#ffffffff</color>
+    <color name="textColorDimBlendWhite">#ccffffff</color>
+    <color name="textColorPrimary">#ff282828</color>
+
+    <style name="Theme.AppBaseTheme" parent="@android:style/Theme.Light">
+        <item name="android:colorBackground">#ff484848</item>
+    </style>
     
      <style name="button" parent="@android:style/Widget.Button">
         <item name="android:typeface">sans</item>

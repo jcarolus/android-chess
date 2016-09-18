@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="start_menu">
+        <item>@string/start_play</item>
+        <item>@string/start_ics</item>
+        <item>@string/start_practice</item>
+        <item>@string/start_puzzles</item>
+        <item>@string/start_globalpreferences</item>
+        <item>@string/start_about</item>
+        <item>@string/start_pgn</item>
+    </string-array>
+    <string-array name="levels_ply">
+        <item>1 ply</item>
+        <item>2 ply</item>
+        <item>3 ply</item>
+        <item>4 ply</item>
+        <item>5 ply</item>
+        <item>6 ply</item>
+        <item>7 ply</item>
+        <item>8 ply</item>
+        <item>9 ply</item>
+        <item>10 ply</item>
+    </string-array>
+    <string-array name="levels_time">
+        <item>@string/choice_level_1</item>
+        <item>@string/choice_level_2</item>
+        <item>@string/choice_level_3</item>
+        <item>@string/choice_level_4</item>
+        <item>@string/choice_level_5</item>
+        <item>@string/choice_level_6</item>
+        <item>@string/choice_level_7</item>
+        <item>@string/choice_level_8</item>
+        <item>@string/choice_level_9</item>
+        <item>@string/choice_level_10</item>
+    </string-array>
+    <string-array name="promotionpieces">
+        <item>@string/choice_queen</item>
+        <item>@string/choice_rook</item>
+        <item>@string/choice_bishop</item>
+        <item>@string/choice_knight</item>
+    </string-array>
+    <string-array name="playmodes">
+        <item>Você vs Android</item>
+        <item>Android vs você</item>
+        <item>Tabuleiro de jogo</item>
+    </string-array>
+    <string-array name="clockchoices">
+        <item>não relógio</item>
+        <item>2 minutos</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>30 minutos</item>
+    </string-array>
+    <string-array name="colorschemes">
+        <item>Amarelo</item>
+        <item>Azul</item>
+        <item>Verde</item>
+        <item>Cinza</item>
+        <item>Marrom</item>
+        <item>Vermelho</item>
+        <item>Escolha suas cores</item>
+    </string-array>
+    <!--
+    <integer-array name="colorscheme_indexes">
+        <item>0</item>
+        <item>2</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </integer-array>
+     -->
+    <string-array name="options_wakelock">
+        <item>Use wake lock</item>
+        <item>Não use wake lock</item>
+    </string-array>
+    <string-array name="match_subject">
+        <item>Procure</item>
+        <item>Desafio</item>
+    </string-array>
+    <string-array name="match_time_minutes">
+        <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
+        <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
+        <item>20</item><item>30</item><item>40</item><item>60</item>
+    </string-array>
+    <string-array name="match_time_increments">
+        <item>0</item><item>2</item><item>3</item><item>4</item><item>5</item>
+        <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
+        <item>20</item><item>30</item><item>40</item><item>60</item>
+    </string-array>
+    <string-array name="match_rated">
+        <item>@string/choice_match_unrated</item>
+        <item>@string/choice_match_rated</item>
+    </string-array>
+    <string-array name="match_variant">
+        <item>Aleatorio</item>
+        <item>Xadrez 960 (experimental)</item>
+    </string-array>
+    <string-array name="match_color">
+        <item>Aleatorio</item>
+        <item>Branco</item>
+        <item>Preto</item>
+    </string-array>
+    <string-array name="console_character_size">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
+    <string-array name="console_character_size_values">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
+    <string-array name="time_warning">
+        <item>5 segundos</item><item>10 segundos</item><item>25 segundos</item>
+        <item>45 segundos</item><item>1 minuto</item>
+    </string-array>
+    <string-array name="time_warning_values">
+        <item>5</item><item>10</item><item>25</item>
+        <item>45</item><item>60</item>
+    </string-array>
+    <string-array name="gamestartsound">
+        <item>Ninguém</item>
+        <item>som e vibração</item>
+        <item>só som</item>
+        <item>só vibração</item>
+    </string-array>
+    <string-array name="gamestartsound_values">
+        <item>0</item><item>1</item><item>2</item><item>3</item>
+    </string-array>
+    <string-array name="field_files">
+        <item>ninguém</item>
+        <item>a</item>
+        <item>b</item>
+        <item>c</item>
+        <item>d</item>
+        <item>e</item>
+        <item>f</item>
+        <item>g</item>
+        <item>h</item>
+    </string-array>
+    <string-array name="pgn_tool_menu">
+        <item>@string/pgntool_export_explanation</item>
+        <item>@string/pgntool_import_explanation</item>
+        <item>@string/pgntool_delete_explanation</item>
+        <!-- <item>@string/pgntool_add_db_explanation</item> -->
+        <item>@string/pgntool_create_db_explanation</item>
+        <item>@string/pgntool_point_db_explanation</item>
+        <item>@string/pgntool_install_uci_engine</item>
+        <item>@string/pgntool_point_uci_engine</item>
+        <item>@string/pgntool_unset_uci_engine</item>
+        <item>@string/pgntool_create_practice_explanation</item>
+        <!-- <item>@string/pgntool_import_practice</item> -->
+        <item>@string/pgntool_reset_practice</item>
+        <item>@string/pgntool_import_puzzle</item>
+        <item>@string/pgntool_import_opening</item>
+        <item>@string/pgntool_help</item>
+    </string-array>
+    <string-array name="tileKeyArray">
+        <item></item>
+        <item>sombra</item>
+        <item>sombra_fundo</item>
+        <item>listras</item>
+        <item>nuvens</item>
+        <item>circuit</item>
+    </string-array>
+    <string-array name="tileArray">
+        <item>none</item>
+        <item>double shade</item>
+        <item>single shade</item>
+        <item>stripes</item>
+        <item>clouds</item>
+        <item>circuito</item>
+    </string-array>
+    <string-array name="localearray">
+        <item>中文</item>
+        <item>English</item>
+        <item>Italiano</item>
+        <item>português</item>
+        <item>Español</item>
+        <item>Pусский</item>
+    </string-array>
+    <string-array name="localeKeyarray">
+        <item>zh</item>
+        <item>en</item>
+        <item>it</item>
+        <item>pt</item>
+        <item>es</item>
+        <item>ru</item>
+    </string-array>
+    <string-array name="UCIArray">
+        <item>default</item>
+        <item>robollito</item>
+        <item>bik</item>
+    </string-array>
+</resources>

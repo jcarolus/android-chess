@@ -6,7 +6,6 @@
         <item>@string/start_practice</item>
         <item>@string/start_puzzles</item>
         <item>@string/start_globalpreferences</item>
-        <item>@string/start_donate</item>
         <item>@string/start_about</item>
         <item>@string/start_pgn</item>
 	</string-array>
@@ -59,6 +58,7 @@
         <item>Grigio</item>
         <item>Marrone</item>
         <item>Rosso</item>
+        <item>Scegli i tuoi colori</item>
     </string-array>
     <!-- 
     <integer-array name="colorscheme_indexes">
@@ -99,6 +99,14 @@
         <item>casuale</item>
         <item>bianco</item>
         <item>nero</item>
+    </string-array>
+    <string-array name="console_character_size">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
+    <string-array name="console_character_size_values">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
     </string-array>
     <string-array name="time_warning">
         <item>5 secondi</item><item>10 secondi</item><item>25 secondi</item>
@@ -162,14 +170,18 @@
     	<item>circuit</item>
     </string-array>
     <string-array name="localearray">
-        <item>Inglese</item>
-        <item>italiano</item>
-        <item>spagnolo</item>
-        <item>russo</item>
+        <item>中文</item>
+        <item>English</item>
+        <item>Italiano</item>
+        <item>português</item>
+        <item>Español</item>
+        <item>Pусский</item>
     </string-array>
     <string-array name="localeKeyarray">
+        <item>zh</item>
         <item>en</item>
         <item>it</item>
+        <item>pt</item>
         <item>es</item>
         <item>ru</item>
     </string-array>
@@ -177,12 +189,5 @@
     	<item>default</item>
     	<item>robollito</item>
     	<item>bik</item>
-    </string-array>
-    <string-array name="donate_amount">
-        <item>1 euro</item>
-        <item>2 euro</item>
-        <item>5 euro</item>
-        <item>10 euro</item>
-        <item>20 euro</item>
     </string-array>
 </resources>

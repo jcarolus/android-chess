@@ -1,13 +1,15 @@
 package jwtc.android.chess.ics;
 
 import android.Manifest;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Typeface;
-import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -57,7 +59,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-                    _gameStartFront, _bConsoleText;
+            _notifyON, _bConsoleText, _bICSVolume, _ICSNotifyLifeCycle;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -148,8 +150,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     protected static int[] whiteClk = new int[200]; // PGN time clock
     protected static int[] blackClk = new int[200];
 
-
-    MediaPlayer tickTock, chessPiecesFall;
+    private ImageButton butQuickSoundOn, butQuickSoundOff;
 
     static class InnerThreadHandler extends Handler {
         WeakReference<ICSClient> _client;
@@ -222,6 +223,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
 
         int configOrientation = this.getResources().getConfiguration().orientation;
         if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -304,9 +306,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _scrollConsole = (ScrollView) findViewById(R.id.ScrollICSConsole);
         _scrollPlayConsole = (ScrollView) findViewById(R.id.ScrollPlayConsole);
 
-        tickTock = MediaPlayer.create(this, R.raw.ticktock);
-        chessPiecesFall = MediaPlayer.create(this, R.raw.chesspiecesfall);
-
         /*
         ImageButton butClose = (ImageButton)findViewById(R.id.ButtonBoardClose);
         butClose.setOnClickListener(new OnClickListener() {
@@ -333,6 +332,29 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 public void onClick(View arg0) {
                     //showMenu();
                     openOptionsMenu();
+                }
+            });
+        }
+
+        butQuickSoundOn = (ImageButton) findViewById(R.id.ButtonICSSoundOn);
+        butQuickSoundOff = (ImageButton) findViewById(R.id.ButtonICSSoundOff);
+        if (butQuickSoundOn != null && butQuickSoundOff != null) {
+            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    _bICSVolume = false;
+                    set_fVolume(0.0f);
+                    butQuickSoundOn.setVisibility(View.GONE);
+                    butQuickSoundOff.setVisibility(View.VISIBLE);
+                }
+            });
+            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    _bICSVolume = true;
+                    set_fVolume(1.0f);
+                    butQuickSoundOff.setVisibility(View.GONE);
+                    butQuickSoundOn.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -537,6 +559,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         menu.add(Menu.NONE, R.string.ics_menu_stored, Menu.NONE, R.string.ics_menu_stored);
         menu.add(Menu.NONE, R.string.ics_menu_seek, Menu.NONE, R.string.ics_menu_seek);
         menu.add(Menu.NONE, R.string.ics_menu_players, Menu.NONE, R.string.ics_menu_players);
+        menu.add(Menu.NONE, R.string.ics_menu_top_blitz, Menu.NONE, R.string.ics_menu_top_blitz);
+        menu.add(Menu.NONE, R.string.ics_menu_top_standard, Menu.NONE, R.string.ics_menu_top_standard);
         menu.add(Menu.NONE, R.string.ics_menu_stop_puzzle, Menu.NONE, R.string.ics_menu_stop_puzzle);
 
         menu.add(Menu.NONE, R.string.ics_menu_console, Menu.NONE, R.string.ics_menu_console);
@@ -614,8 +638,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             }
         }
 
-        invalidateOptionsMenu();  // update menu
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -687,6 +709,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             case R.string.ics_menu_players:
                 sendString("who a");
                 switchToLoadingView();
+                return true;
+            case R.string.ics_menu_top_blitz:
+                sendString("obs /b");
+                return true;
+            case R.string.ics_menu_top_standard:
+                sendString("obs /s");
                 return true;
             case R.string.ics_menu_quit:
                 finish();
@@ -1615,12 +1643,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
+        soundHorseSnort();
 
         get_view().setViewMode(ICSChessView.VIEW_NONE);
     }
 
     public void copyToClipBoard() {
         try {
+            @SuppressWarnings("deprecation")
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             cm.setText(PGN.toString());
             doToast(getString(R.string.ics_copy_clipboard));
@@ -1745,6 +1775,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     @Override
     protected void onResume() {
+        Log.i(TAG, "onResume");
+
+        invalidateOptionsMenu(); // update OptionsMenu
 
         SharedPreferences prefs = this.getPrefs();
 
@@ -1768,9 +1801,25 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         _bShowClockPGN = prefs.getBoolean("ICSClockPGN", true);
 
+        _bICSVolume = prefs.getBoolean("ICSVolume", true);
+        if (_bICSVolume){
+            butQuickSoundOff.setVisibility(View.GONE);
+            butQuickSoundOn.setVisibility(View.VISIBLE);
+            set_fVolume(1.0f);
+        } else {
+            butQuickSoundOn.setVisibility(View.GONE);
+            butQuickSoundOff.setVisibility(View.VISIBLE);
+            set_fVolume(0.0f);
+        }
+
+        // get rid of notification for tap to play
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(0); // 0 is notification id
+        _ICSNotifyLifeCycle = false;
+
         _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
 
-        _gameStartFront = prefs.getBoolean("ICSGameStartBringToFront", true);
+        _notifyON = prefs.getBoolean("ICSGameStartBringToFront", true);
 
         /////////////////////////////////////////////
         _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
@@ -1914,27 +1963,34 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         return true;
     }
 
-    public void bringAPPtoFront(){
+    public void notificationAPP(){
 
-        if (_gameStartFront) {
+        if (_notifyON && _ICSNotifyLifeCycle) {
 
-            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasklist = am.getRunningTasks(10); // Number of tasks you want to get
+            Intent intent = new Intent(this, ICSClient.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-            if (!tasklist.isEmpty()) {
-                int nSize = tasklist.size();
-                for (int i = 0; i < nSize; i++) {
-                    ActivityManager.RunningTaskInfo taskinfo = tasklist.get(i);
-                    if (taskinfo.topActivity.getPackageName().equals("jwtc.android.chess")) {
-                        am.moveTaskToFront(taskinfo.id, 2);
-                    }
-                }
-            }
+            NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            Notification.Builder builder = new Notification.Builder(this);
+            builder.setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.chess)
+                    .setWhen(System.currentTimeMillis())
+                    .setAutoCancel(true)
+                    .setLights(Color.CYAN, 100, 100)
+                    .setContentTitle(getString(R.string.ics_notification_title))
+                    .setContentText(getString(R.string.ics_notification_text));
+
+            Notification notification = builder.getNotification();
+
+            notificationManager.notify(0, notification);
+
         }
     }
 
     @Override
     protected void onPause() {
+        Log.i(TAG, "onPause");
 
         // lock screen orientation?
         //setRequestedOrientation(this.getResources().getConfiguration().orientation);
@@ -1958,32 +2014,39 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         editor.putString("ics_handle_array", jArray.toString());
         editor.putString("ics_password_array", jArrayPasswords.toString());
 
+        editor.putBoolean("ICSVolume" , _bICSVolume);
+
         editor.commit();
+
+        _ICSNotifyLifeCycle = true;
 
         super.onPause();
     }
 
     @Override
+    protected void onRestart(){
+        Log.i(TAG, "onRestart");
+        super.onRestart();
+    }
+
+    @Override
     protected void onStart() {
-        Log.i("ICSClient", "onStart");
+        Log.i(TAG, "onStart");
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        Log.i("ICSClient", "onStop");
+        Log.i(TAG, "onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.i("ICSClient", "onDestroy");
+        Log.i(TAG, "onDestroy");
 
         _workerTelnet = null;
         disconnect();
-
-        tickTock.release();  // clear MediaPlayer resources
-        chessPiecesFall.release();
 
         super.onDestroy();
     }
@@ -2024,7 +2087,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
-    Handler dateHandler = new Handler(){
+    Handler dateHandler = new Handler(){ // todo static or leaks may occur? use WeakReference as in 153
         @Override
         public void handleMessage(Message msg) {
             sendString("date");
@@ -2051,15 +2114,16 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         if (_socket == null || _socket.sendString(s + "\n") == false) {
+            // ----------- Loss connection -------------- //
             switch (get_gameStartSound()) {
                 case 0:
                     break;
                 case 1:
-                    soundChessPiecesFall();
+                    soundHorseRunAway();
                     vibration(DECREASE);
                     break;
                 case 2:
-                    soundChessPiecesFall();
+                    soundHorseRunAway();
                     break;
                 case 3:
                     vibration(DECREASE);
@@ -2067,14 +2131,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 default:
                     Log.e(TAG, "get_gameStartSound error");
             }
-            //gameToast(getString(R.string.ics_disconnected), false);
-
             try {
-                bringAPPtoFront();
+                notificationAPP();
                 cancelDateTimer();
                 new AlertDialog.Builder(ICSClient.this)
                         .setTitle(R.string.title_error)
-                        .setMessage("Connection to server is broken.")
+                        .setMessage(getString(R.string.ics_lost_connection))
                         .setPositiveButton(getString(R.string.alert_ok),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -2243,18 +2305,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     public void soundNotification() {
         if (_ringNotification != null) {
             _ringNotification.play();
-        }
-    }
-
-    public void soundTickTock(){
-        tickTock.start();
-    }
-
-    public void soundChessPiecesFall(){
-        try {
-            chessPiecesFall.start();
-        } catch(Exception ex){
-            Log.e(TAG, ex.toString());
         }
     }
 

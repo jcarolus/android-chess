@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="start_menu">
+        <item>@string/start_play</item>
+        <item>@string/start_ics</item>
+        <item>@string/start_practice</item>
+        <item>@string/start_puzzles</item>
+        <item>@string/start_globalpreferences</item>
+        <item>@string/start_about</item>
+        <item>@string/start_pgn</item>
+    </string-array>
+    <string-array name="levels_ply">
+        <item>1 级</item>
+        <item>2 级</item>
+        <item>3 级</item>
+        <item>4 级</item>
+        <item>5 级</item>
+        <item>6 级</item>
+        <item>7 级</item>
+        <item>8 级</item>
+        <item>9 级</item>
+        <item>10 级</item>
+    </string-array>
+    <string-array name="levels_time">
+        <item>@string/choice_level_1</item>
+        <item>@string/choice_level_2</item>
+        <item>@string/choice_level_3</item>
+        <item>@string/choice_level_4</item>
+        <item>@string/choice_level_5</item>
+        <item>@string/choice_level_6</item>
+        <item>@string/choice_level_7</item>
+        <item>@string/choice_level_8</item>
+        <item>@string/choice_level_9</item>
+        <item>@string/choice_level_10</item>
+    </string-array>
+    <string-array name="promotionpieces">
+        <item>@string/choice_queen</item>
+        <item>@string/choice_rook</item>
+        <item>@string/choice_bishop</item>
+        <item>@string/choice_knight</item>
+    </string-array>
+    <string-array name="playmodes">
+        <item>你 vs 安卓机器人</item>
+        <item>安卓机器人 vs 你</item>
+        <item>未结棋局</item>
+    </string-array>
+    <string-array name="clockchoices">
+        <item>不用计时</item>
+        <item>2分钟</item>
+        <item>5分钟</item>
+        <item>10分钟</item>
+        <item>30分钟</item>
+    </string-array>
+    <string-array name="colorschemes">
+        <item>黄色</item>
+        <item>蓝色</item>
+        <item>绿色</item>
+        <item>灰色</item>
+        <item>棕色</item>
+        <item>红色</item>
+        <item>选择你的颜色</item>
+    </string-array>
+    <!--
+    <integer-array name="colorscheme_indexes">
+        <item>0</item>
+        <item>2</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </integer-array>
+     -->
+    <string-array name="options_wakelock">
+        <item>禁止休眠</item>
+        <item>使用休眠设置</item>
+    </string-array>
+    <string-array name="match_subject">
+        <item>寻找对战</item>
+        <item>挑战</item>
+    </string-array>
+    <string-array name="match_time_minutes">
+        <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
+        <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
+        <item>20</item><item>30</item><item>40</item><item>60</item>
+    </string-array>
+    <string-array name="match_time_increments">
+        <item>0</item><item>2</item><item>3</item><item>4</item><item>5</item>
+        <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
+        <item>20</item><item>30</item><item>40</item><item>60</item>
+    </string-array>
+    <string-array name="match_rated">
+        <item>@string/choice_match_unrated</item>
+        <item>@string/choice_match_rated</item>
+    </string-array>
+    <string-array name="match_variant">
+        <item>标准</item>
+        <item>国际象棋Chess 960 (专家级)</item>
+    </string-array>
+    <string-array name="match_color">
+        <item>随机</item>
+        <item>白色</item>
+        <item>黑色</item>
+    </string-array>
+    <string-array name="console_character_size">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
+    <string-array name="console_character_size_values">
+        <item>6</item><item>8</item><item>10</item><item>12</item>
+        <item>14</item><item>16</item><item>18</item>
+    </string-array>
+    <string-array name="time_warning">
+        <item>5 秒</item><item>10 秒</item><item>25 秒</item>
+        <item>45 秒</item><item>1 分钟</item>
+    </string-array>
+    <string-array name="time_warning_values">
+        <item>5</item><item>10</item><item>25</item>
+        <item>45</item><item>60</item>
+    </string-array>
+    <string-array name="gamestartsound">
+        <item>无声音</item>
+        <item>响声加振动</item>
+        <item>只有声音</item>
+        <item>只有振动</item>
+    </string-array>
+    <string-array name="gamestartsound_values">
+        <item>0</item><item>1</item><item>2</item><item>3</item>
+    </string-array>
+    <string-array name="field_files">
+        <item>none</item>
+        <item>a</item>
+        <item>b</item>
+        <item>c</item>
+        <item>d</item>
+        <item>e</item>
+        <item>f</item>
+        <item>g</item>
+        <item>h</item>
+    </string-array>
+    <string-array name="pgn_tool_menu">
+        <item>@string/pgntool_export_explanation</item>
+        <item>@string/pgntool_import_explanation</item>
+        <item>@string/pgntool_delete_explanation</item>
+        <!-- <item>@string/pgntool_add_db_explanation</item> -->
+        <item>@string/pgntool_create_db_explanation</item>
+        <item>@string/pgntool_point_db_explanation</item>
+        <item>@string/pgntool_install_uci_engine</item>
+        <item>@string/pgntool_point_uci_engine</item>
+        <item>@string/pgntool_unset_uci_engine</item>
+        <item>@string/pgntool_create_practice_explanation</item>
+        <!-- <item>@string/pgntool_import_practice</item> -->
+        <item>@string/pgntool_reset_practice</item>
+        <item>@string/pgntool_import_puzzle</item>
+        <item>@string/pgntool_import_opening</item>
+        <item>@string/pgntool_help</item>
+    </string-array>
+    <string-array name="tileKeyArray">
+        <item></item>
+        <item>shade</item>
+        <item>shade_bottom</item>
+        <item>stripes</item>
+        <item>clouds</item>
+        <item>circuit</item>
+    </string-array>
+    <string-array name="tileArray">
+        <item>无</item>
+        <item>双重阴影</item>
+        <item>单阴影</item>
+        <item>条纹</item>
+        <item>云图</item>
+        <item>回形</item>
+    </string-array>
+    <string-array name="localearray">
+        <item>中文</item>
+        <item>English</item>
+        <item>Italiano</item>
+        <item>português</item>
+        <item>Español</item>
+        <item>Pусский</item>
+    </string-array>
+    <string-array name="localeKeyarray">
+        <item>zh</item>
+        <item>en</item>
+        <item>it</item>
+        <item>pt</item>
+        <item>es</item>
+        <item>ru</item>
+    </string-array>
+    <string-array name="UCIArray">
+        <item>default</item>
+        <item>robollito</item>
+        <item>bik</item>
+    </string-array>
+</resources>

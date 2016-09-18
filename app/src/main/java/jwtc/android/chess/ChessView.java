@@ -46,7 +46,7 @@ public class ChessView extends UI {
     private ChessViewBase _view;
 
     private ChessActivity _parent;
-    private ImageButton _butPlay;
+    private ImageButton _butPlay, butQuickSoundOn, butQuickSoundOff;
     private ViewAnimator _viewAnimator;
     private ProgressBar _progressPlay;
     private TextView _tvClockMe, _tvClockOpp, _tvTitleMe, _tvTitleOpp, _tvAnnotate, _tvEngine, _tvAnnotateGuess;
@@ -58,7 +58,7 @@ public class ChessView extends UI {
     private RelativeLayout _layoutHistory;
     private ArrayList<PGNView> _arrPGNView;
     private LayoutInflater _inflater;
-    private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bPlayAsBlack, _bDidResume;
+    private boolean _bAutoFlip, _bShowMoves, _bShowLastMove, _bPlayAsBlack, _bDidResume, _bPlayVolume;
     private Timer _timer;
     private ViewSwitcher _switchTurnMe, _switchTurnOpp;
     private SeekBar _seekBar;
@@ -100,9 +100,9 @@ public class ChessView extends UI {
                 }
                 if (lTmp < 0) {
                     lTmp = -lTmp;
-                    chessView._tvClockMe.setTextColor(0xffff0000);
+                    chessView._tvClockMe.setTextColor(0xffff0000); // red
                 } else {
-                    chessView._tvClockMe.setTextColor(0xffffffff);
+                    chessView._tvClockMe.setTextColor(0xffffffff); // white
                 }
                 chessView._tvClockMe.setText(chessView.formatTime(lTmp));
 
@@ -148,11 +148,45 @@ public class ChessView extends UI {
             }
         };
 
+        OnLongClickListener olcl = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                handleClick(_view.getIndexOfButton(view));
+                // Long press is ready for the future.
+                // For example:  confirm move or to move pieces around and then go back to original position
+                return true;
+            }
+        };
+
+        butQuickSoundOn = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOn);
+        butQuickSoundOff = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOff);
+        if (butQuickSoundOn != null && butQuickSoundOff != null) {
+            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    _bPlayVolume = false;
+                    _parent.set_fVolume(0.0f);
+                    butQuickSoundOn.setVisibility(View.GONE);
+                    butQuickSoundOff.setVisibility(View.VISIBLE);
+                }
+            });
+
+            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    _bPlayVolume = true;
+                    _parent.set_fVolume(1.0f);
+                    butQuickSoundOff.setVisibility(View.GONE);
+                    butQuickSoundOn.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+
         _vScrollHistory = null;
         _hScrollHistory = null;
         _layoutHistory = null;
 
-        _view.init(ocl);
+        _view.init(ocl, olcl);
 
         //_vibrator = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
         _vibrator = null;
@@ -876,8 +910,8 @@ public class ChessView extends UI {
                 _progressPlay.setVisibility(View.GONE);
                 _butPlay.setVisibility(View.VISIBLE);
             } else {
-                _progressPlay.setVisibility(View.VISIBLE);
                 _butPlay.setVisibility(View.GONE);
+                _progressPlay.setVisibility(View.VISIBLE);
             }
 
         }
@@ -1084,6 +1118,7 @@ public class ChessView extends UI {
         editor.putBoolean("autoflipBoard", _bAutoFlip);
         editor.putBoolean("showMoves", _bShowMoves);
         editor.putBoolean("playAsBlack", _bPlayAsBlack);
+        editor.putBoolean("PlayVolume" , _bPlayVolume);
         editor.putInt("boardNum", _jni.getNumBoard());
         if (_viewAnimator != null) {
             editor.putInt("animatorViewNumber", _viewAnimator.getDisplayedChild());
@@ -1147,25 +1182,15 @@ public class ChessView extends UI {
             _viewAnimator.setDisplayedChild(prefs.getInt("animatorViewNumber", 0) % _viewAnimator.getChildCount());
         }
 
-        if (_bPlayAsBlack) {
-            // playing as black
-
-            if (false == _view.getFlippedBoard()) {
-                flipBoard();
-            }
-
-            if (_playMode == HUMAN_PC && _jni.getTurn() == ChessBoard.WHITE) {
-                play();
-            }
-
+        _bPlayVolume = prefs.getBoolean("PlayVolume", true);
+        if (_bPlayVolume){
+            butQuickSoundOff.setVisibility(View.GONE);
+            butQuickSoundOn.setVisibility(View.VISIBLE);
+            _parent.set_fVolume(1.0f);
         } else {
-            // playing as white
-            if (_view.getFlippedBoard()) {
-                flipBoard();
-            }
-            if (_playMode == HUMAN_PC && _jni.getTurn() == ChessBoard.BLACK) {
-                play();
-            }
+            butQuickSoundOn.setVisibility(View.GONE);
+            butQuickSoundOff.setVisibility(View.VISIBLE);
+            _parent.set_fVolume(0.0f);
         }
 
         if (_butPlay != null) {
@@ -1175,6 +1200,26 @@ public class ChessView extends UI {
                 _butPlay.setVisibility(View.VISIBLE);
             }
         }
+
+        if (_bPlayAsBlack) {
+            // player as black
+            if (false == _view.getFlippedBoard()) {
+                flipBoard();
+            }
+            if (_playMode == HUMAN_PC && _jni.getTurn() == ChessBoard.WHITE) {
+                play();
+            }
+
+        } else {
+            // player as white
+            if (_view.getFlippedBoard()) {
+                flipBoard();
+            }
+            if (_playMode == HUMAN_PC && _jni.getTurn() == ChessBoard.BLACK) {
+                play();
+            }
+        }
+
 
         ///////////////////////////////////////////////////////////////////
 
@@ -1492,6 +1537,12 @@ public class ChessView extends UI {
 
         int move = _jni.getMyMove();
         String sMove = _jni.getMyMoveToString();
+
+        if (sMove.contains("x")){
+            _parent.soundCapture();
+        } else {
+            _parent.soundMove();
+        }
 
         if (sMove.length() > 3 && !sMove.equals("O-O-O")) {
             // assures space to separate which Rook and which Knight to move

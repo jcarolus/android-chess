@@ -3,6 +3,7 @@ package jwtc.android.chess;
 import jwtc.chess.*;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -29,6 +30,7 @@ import java.util.Locale;
 
 import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
+import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -213,11 +215,17 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
 
         AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
         builder.setTitle(getString(R.string.menu_subview_title));
+        final TextView tv_engine = (TextView) findViewById(R.id.TextViewEngine);
 
         builder.setItems(_itemsMenu, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
                 _chessView.toggleControl(item);
+
+                // show engine name
+                SharedPreferences pref = getBaseContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
+                String engName = pref.getString("UCIEngine", "Jeroen");
+                tv_engine.setText(_itemsMenu[0] + ": " + engName);
             }
         });
         AlertDialog alert = builder.create();
@@ -622,13 +630,13 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
     public void saveGame() {
         String sEvent = _chessView.getPGNHeadProperty("Event");
         if (sEvent == null)
-            sEvent = "event ?";
+            sEvent = getString(R.string.savegame_event_question);
         String sWhite = _chessView.getWhite();
         if (sWhite == null)
-            sWhite = "white ?";
+            sWhite = getString(R.string.savegame_white_question);
         String sBlack = _chessView.getBlack();
         if (sBlack == null)
-            sBlack = "black ?";
+            sBlack = getString(R.string.savegame_black_question);
 
         Date dd = _chessView.getDate();
         if (dd == null)

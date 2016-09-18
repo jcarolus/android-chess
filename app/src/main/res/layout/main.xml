@@ -92,6 +92,14 @@
 			    android:layout_height="wrap_content"
 			    android:gravity="center_horizontal" >
 
+				<ImageButton android:id="@+id/ButtonICSSoundOn" android:src="@drawable/ic_volume_up_white_24dp"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:visibility="visible" android:layout_margin="2dip"
+					/>
+				<ImageButton android:id="@+id/ButtonICSSoundOff" android:src="@drawable/ic_volume_off_white_24dp"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:visibility="gone" android:layout_margin="2dip"
+					/>
 				<ImageButton android:id="@+id/ButtonSwitch" android:src="@drawable/navigation_expand"
 					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 					android:layout_margin="2dip" 
