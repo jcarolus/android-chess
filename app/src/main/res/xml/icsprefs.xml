@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Play online settings">
+    <PreferenceCategory android:title="@string/playonlinepreferences">
         <CheckBoxPreference
             android:title="@string/pref_icsconfirmmove"
             android:defaultValue="false"

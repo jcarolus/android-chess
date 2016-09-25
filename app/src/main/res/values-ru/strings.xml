@@ -24,6 +24,9 @@
     <string name="start_convergence">Экран ТВ</string>
 
     <string name="globalpreferences">Глобальные настройки</string>
+    <string name="puzzlepreferences">Настройки головоломок</string>
+    <string name="playpreferences">Настройки игры</string>
+    <string name="playonlinepreferences">Настройки онлайн-игры</string>
     <string name="preferences">Настройки</string>
     <string name="pref_wakelock">Использовать удержание в режиме бодрствования</string>
     <string name="pref_wakelock_desc">Не давать телефону перейти в спящий режим</string>
@@ -69,8 +72,8 @@
     <string name="prefs_icsshowclocksummary">В PGN показывать время на часах для каждого хода</string>
     <string name="pref_icsgamestartsound">Звук при включении</string>
     <string name="pref_icsgamestartsound_desc">Включать звук в начале игры или при потере соединения</string>
-    <string name="pref_icsnotification">Уведомление новой игры</string>
-    <string name="prefs_icsnotificationsummary">Позволяет знать начало игры с иконой</string>
+    <string name="pref_icsnotification">Уведомление о новой игре</string>
+    <string name="prefs_icsnotificationsummary">Позволяет узнать о начале игры с помощью иконки</string>
     <string name="pref_puzzle_show_seekbar">Показывать ползунок поиска</string>
     <string name="pref_puzzle_show_seekbar_desc">Быстрое перемещение между головоломками с помощью ползунка</string>
     <string name="pref_localelanguage">Установить язык</string>
@@ -218,6 +221,13 @@
     <string name="choice_random">Произвольно</string>
     <string name="choice_edit">Редактировать</string>
     <string name="choice_delete">Удалить</string>
+
+    <string name="puzzle_error_install">Произошла ошибка во время установки</string>
+    <string name="puzzle_already_solved">(Позиция уже решена)</string>
+    <string name="puzzle_not_correct_move"> не предполагается</string>
+    <string name="puzzle_invalid_move"> является недопустимым шагом</string>
+    <string name="puzzle_all_completed">Вы выполнили все головоломки!!!</string>
+    <string name="puzzle_pick_promotion">Pick продвижение кусок</string>
 
     <string name="color_picker_brightness">яркость</string>
     <string name="color_picker_light">светлый</string>

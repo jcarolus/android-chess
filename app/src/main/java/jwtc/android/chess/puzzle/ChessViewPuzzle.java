@@ -11,6 +11,7 @@ import jwtc.chess.board.BoardMembers;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
 import android.text.InputType;
@@ -65,7 +66,7 @@ public class ChessViewPuzzle extends UI {
                 _progressDlg.setMessage(_parent.getString(R.string.msg_progress) + String.format(" %d", (_cnt * 100) / _num) + " %");
             } else if (msg.what == 3) {
                 _progressDlg.hide();
-                _tvPuzzleText.setText("An error occured during install");
+                _tvPuzzleText.setText(_parent.getString(R.string.puzzle_error_install));
             }
         }
 
@@ -282,7 +283,7 @@ public class ChessViewPuzzle extends UI {
     @Override
     protected boolean requestMove(int from, int to) {
         if (_arrPGN.size() <= _jni.getNumBoard() - 1) {
-            setMessage("(position allready solved)");
+            setMessage(_parent.getString(R.string.puzzle_already_solved));
             return super.requestMove(from, to);
         }
         int move = _arrPGN.get(_jni.getNumBoard() - 1)._move;
@@ -307,7 +308,7 @@ public class ChessViewPuzzle extends UI {
             return true;
         } else {
             // check for illegal move
-            setMessage("Move " + Move.toDbgString(theMove) + (checkIsLegalMove(from, to) ? " is not the expected move" : " is an invalid move"));
+            setMessage(Move.toDbgString(theMove) + (checkIsLegalMove(from, to) ? _parent.getString(R.string.puzzle_not_correct_move) : _parent.getString(R.string.puzzle_invalid_move)));
             _imgStatus.setImageResource(R.drawable.indicator_error);
             m_iFrom = -1;
 
@@ -331,7 +332,7 @@ public class ChessViewPuzzle extends UI {
         if (_iPos < 1)
             _iPos = 1;
         if (_iPos > _num) {
-            setMessage("You completed all puzzles!!!");
+            setMessage(_parent.getString(R.string.puzzle_all_completed));
             return;
         }
 
@@ -398,7 +399,7 @@ public class ChessViewPuzzle extends UI {
                 final String[] items = _parent.getResources().getStringArray(R.array.promotionpieces);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(_parent);
-                builder.setTitle("Pick promotion piece");
+                builder.setTitle(_parent.getString(R.string.puzzle_pick_promotion));
                 builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         dialog.dismiss();
