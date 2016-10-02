@@ -24,6 +24,9 @@
     <string name="start_convergence">Pantalla TV</string>
 
     <string name="globalpreferences">Configuración global</string>
+    <string name="puzzlepreferences">Configuración rompecabezas</string>
+    <string name="playpreferences">Configuración jugar</string>
+    <string name="playonlinepreferences">Configuración línea jugar</string>
     <string name="preferences">Configuración</string>
     <string name="pref_wakelock">Utilice bloqueo modo reposo</string>
     <string name="pref_wakelock_desc">Esto evitará que el teléfono se ponga en modo reposo</string>
@@ -218,6 +221,13 @@
     <string name="choice_random">Random</string>
     <string name="choice_edit">Editare</string>
     <string name="choice_delete">Eliminar</string>
+
+    <string name="puzzle_error_install">Se produjo un error durante la instalación</string>
+    <string name="puzzle_already_solved">(Posición ya resuelto)</string>
+    <string name="puzzle_not_correct_move"> no es el movimiento esperado</string>
+    <string name="puzzle_invalid_move"> es un movimiento no válido</string>
+    <string name="puzzle_all_completed">Has completado todos los puzzles!!!</string>
+    <string name="puzzle_pick_promotion">Escoja piece la promoción</string>
 
     <string name="color_picker_brightness">Brillo</string>
     <string name="color_picker_light">claro</string>

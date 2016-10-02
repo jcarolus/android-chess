@@ -24,6 +24,9 @@
     <string name="start_convergence">TV Screen</string>
 
     <string name="globalpreferences">Global settings</string>
+    <string name="puzzlepreferences">Puzzle settings</string>
+    <string name="playpreferences">Play settings</string>
+    <string name="playonlinepreferences">Play online settings</string>
     <string name="preferences">Settings</string>
     <string name="pref_wakelock">Use wake lock</string>
     <string name="pref_wakelock_desc">This will prevent your phone going to sleep</string>
@@ -218,6 +221,13 @@
     <string name="choice_random">Random</string>
     <string name="choice_edit">Edit</string>
     <string name="choice_delete">Delete</string>
+
+    <string name="puzzle_error_install">An error occurred during install</string>
+    <string name="puzzle_already_solved">(position already solved)</string>
+    <string name="puzzle_not_correct_move"> is not the expected move</string>
+    <string name="puzzle_invalid_move"> is an invalid move</string>
+    <string name="puzzle_all_completed">You completed all puzzles!!!</string>
+    <string name="puzzle_pick_promotion">Pick promotion piece</string>
 
     <string name="color_picker_brightness">Brightness</string>
     <string name="color_picker_light">Light</string>

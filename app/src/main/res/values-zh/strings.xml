@@ -24,6 +24,9 @@
     <string name="start_convergence">电视屏幕</string>
 
     <string name="globalpreferences">通用设置</string>
+    <string name="puzzlepreferences">配置拼图</string>
+    <string name="playpreferences">游戏配置</string>
+    <string name="playonlinepreferences">在线游戏配置</string>
     <string name="preferences">设置</string>
     <string name="pref_wakelock">禁止休眠</string>
     <string name="pref_wakelock_desc">此设置可以防止手机在对局时进入休眠</string>
@@ -218,6 +221,13 @@
     <string name="choice_random">随机</string>
     <string name="choice_edit">编辑</string>
     <string name="choice_delete">删除</string>
+
+    <string name="puzzle_error_install">错误发生在安装过程中</string>
+    <string name="puzzle_already_solved">（位置已经解决）</string>
+    <string name="puzzle_not_correct_move"> 不是预期的动</string>
+    <string name="puzzle_invalid_move"> 是一个无效的举动</string>
+    <string name="puzzle_all_completed">你完成了所有的谜题！</string>
+    <string name="puzzle_pick_promotion">挑选一件促销</string>
 
     <string name="color_picker_brightness">亮度</string>
     <string name="color_picker_light">浅</string>
