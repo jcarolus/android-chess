@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:background="@color/bgColorText" android:gravity="center" android:id="@+id/LayoutMain"
+    android:gravity="center" android:id="@+id/LayoutMain"
     >
 
     <RelativeLayout android:id="@+id/LayoutBoard"
@@ -14,7 +14,6 @@
             layout="@layout/board"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:id="@+id/includeboard" />
-
         <!--
       <TextView android:layout_width="@dimen/boardSize" android:layout_height="@dimen/boardSize"
           android:id="@+id/includeboard"
@@ -94,8 +93,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/editbox_background_normal"
                 android:minHeight="40dp"
-                android:padding="8dp"
-                android:textColor="#000000" />
+                android:padding="8dp" />
 
         </ScrollView>
 
@@ -134,8 +132,6 @@
         </RelativeLayout>
 
     </LinearLayout>
-
-
 
     <RelativeLayout android:id="@+id/LayoutRight"
         android:layout_width="wrap_content" android:layout_height="fill_parent"

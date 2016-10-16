@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:background="@color/bgColorText" android:gravity="center" android:id="@+id/LayoutMain"
+	android:gravity="center" android:id="@+id/LayoutMain"
 	>
 
 	<RelativeLayout android:id="@+id/LayoutBoard"
@@ -222,7 +222,7 @@
 					android:layout_marginTop="2dp"
 				>
 					<TextView android:id="@+id/TextViewAnnotate"
-						android:background="@android:drawable/editbox_background_normal" android:textColor="#000000"
+						android:background="@android:drawable/editbox_background_normal"
 						android:padding="8dp"
 						android:layout_width="fill_parent" android:layout_height="wrap_content"
 						android:minHeight="80dp"
