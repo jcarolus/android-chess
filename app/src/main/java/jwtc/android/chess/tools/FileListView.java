@@ -9,7 +9,9 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +40,11 @@ public class FileListView extends ListActivity {
      }
     
     private void browseToRoot() {
-		browseTo(new File("/"));
+		String sRoot = "";
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			sRoot = Environment.getExternalStorageDirectory().toString();
+		}
+		browseTo(new File(sRoot));
     }
     
     @Override
@@ -165,19 +171,20 @@ public class FileListView extends ListActivity {
 					getResources().getDrawable(R.drawable.navigation_previous_item)));
 		}
 		Drawable currentIcon = null;
-		for (File currentFile : files){
-			if (currentFile.canRead() /*&& (_mode == MODE_IMPORT  || _mode == MODE_EXPORT && currentFile.canWrite())*/){
-				if (currentFile.isDirectory()) {
-					currentIcon = getResources().getDrawable(R.drawable.collections_collection);
-					this.directoryEntries.add(new IconifiedText(currentFile.getPath(), currentIcon));
-				}else { 
-					String fileName = currentFile.getName();
-		
-					if(fileNameFilterByMode(fileName))
-					{
-						currentIcon = getResources().getDrawable(R.drawable.navigation_next_item);
+		if(files != null) {
+			for (File currentFile : files) {
+				if (currentFile.canRead() /*&& (_mode == MODE_IMPORT  || _mode == MODE_EXPORT && currentFile.canWrite())*/) {
+					if (currentFile.isDirectory()) {
+						currentIcon = getResources().getDrawable(R.drawable.collections_collection);
 						this.directoryEntries.add(new IconifiedText(currentFile.getPath(), currentIcon));
-					}				
+					} else {
+						String fileName = currentFile.getName();
+
+						if (fileNameFilterByMode(fileName)) {
+							currentIcon = getResources().getDrawable(R.drawable.navigation_next_item);
+							this.directoryEntries.add(new IconifiedText(currentFile.getPath(), currentIcon));
+						}
+					}
 				}
 			}
 		}

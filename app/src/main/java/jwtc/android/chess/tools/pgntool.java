@@ -15,14 +15,19 @@ import jwtc.android.chess.R;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.algorithm.UCIWrapper;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
@@ -42,6 +47,7 @@ public class pgntool extends ListActivity {
     protected static final String MODE_IMPORT_PRACTICE = "import_practice";
     protected static final String MODE_IMPORT_PUZZLE = "import_puzzle";
     protected static final String MODE_IMPORT_OPENINGDATABASE = "import_openingdatabase";
+    protected static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     protected static final String EXTRA_MODE = "jwtc.android.chess.tools.Mode";
 
@@ -70,6 +76,11 @@ public class pgntool extends ListActivity {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
+                if(false == pgntool.this.hasPermission()) {
+                    return;
+                }
+
                 if (arrString[arg2].equals(getString(R.string.pgntool_export_explanation))) {
                     doExport();
 
@@ -269,6 +280,19 @@ public class pgntool extends ListActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean hasPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
     public void doExport() {
