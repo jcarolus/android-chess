@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bgColorText">#ff484848</color><!-- 404040, 333355, 555555 -->
-    <color name="bgColorLight">#ff585858</color>
+    <color name="bgColorLight">#ffcccccc</color>
+    <color name="bgColorMiddle">#ff585858</color>
     <color name="textColor">#ffffffff</color>
+    <color name="textColorInverse">#ff000000</color>
     <color name="textColorDimBlendWhite">#ccffffff</color>
     <color name="textColorPrimary">#ff282828</color>
 
@@ -93,7 +95,7 @@
     	<item name="android:typeface">sans</item>
     	<item name="android:paddingLeft">2dp</item>
     	<item name="android:paddingRight">2dp</item>
-    	<item name="android:textColor">#ffffff</item>
+    	<!--<item name="android:textColor">#ffffff</item>-->
         <item name="android:textSize">14sp</item>
     </style>
     <style name="MyRowTextStyle" parent="@style/MyTextStyle">

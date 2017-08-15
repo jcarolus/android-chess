@@ -8,14 +8,15 @@
         <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
         <item name="android:textAppearance">@style/ChessTextAppearance</item>
         <item name="android:colorPrimary" tools:targetApi="lollipop">@color/textColorPrimary</item>
-
-        <!--   <item name="android:background">@color/textColor</item>
+        <item name="android:windowBackground">@color/bgColorText</item>
+        <item name="android:colorBackground">@color/bgColorText</item>
+        <item name="android:background">@color/bgColorText</item>
         <item name="android:textColor">@color/textColor</item>
-           <item name="android:textColorAlertDialogListItem">@color/textColorDimBlendWhite</item>
-           <item name="android:textColorSecondary">@color/textColorDimBlendWhite</item>
-           <item name="android:textColorHint">@color/textColorDimBlendWhite</item>
-           <item name="android:editTextColor">@color/textColorDimBlendWhite</item>-->
-
+        <item name="android:textColorPrimaryInverse">@color/textColorInverse</item>
+        <item name="android:textColorAlertDialogListItem">@color/textColorDimBlendWhite</item>
+        <item name="android:textColorSecondary">@color/textColorDimBlendWhite</item>
+        <item name="android:textColorHint">@color/textColorDimBlendWhite</item>
+        <item name="android:editTextColor">@color/textColorDimBlendWhite</item>
     </style>
 
 </resources>

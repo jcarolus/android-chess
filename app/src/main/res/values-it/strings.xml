@@ -24,6 +24,9 @@
     <string name="start_convergence">Schermo TV</string>
 
     <string name="globalpreferences">Preferenze globali</string>
+    <string name="puzzlepreferences">Preferenze Puzzle</string>
+    <string name="playpreferences">Preferenze giocare</string>
+    <string name="playonlinepreferences">Configurazione gioco online</string>
     <string name="preferences">Preferenze</string>
     <string name="pref_wakelock">Usa blocco sospensione</string>
     <string name="pref_wakelock_desc">Impedisce al telefono di andare in sospensione</string>
@@ -218,6 +221,13 @@
     <string name="choice_random">Casuale</string>
     <string name="choice_edit">Modifica</string>
     <string name="choice_delete">Cancella</string>
+
+    <string name="puzzle_error_install">Verificato un errore durante l\'installazione</string>
+    <string name="puzzle_already_solved">(Posizione già risolto)</string>
+    <string name="puzzle_not_correct_move"> non è prevista la mossa</string>
+    <string name="puzzle_invalid_move"> è una mossa non valida</string>
+    <string name="puzzle_all_completed">Hai completato tutti i puzzle!!!</string>
+    <string name="puzzle_pick_promotion">Scegli piece Promozione</string>
 
     <string name="color_picker_brightness">Luminosità</string>
     <string name="color_picker_light">chiaro</string>
