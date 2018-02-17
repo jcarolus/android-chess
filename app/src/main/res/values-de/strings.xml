@@ -86,7 +86,7 @@
     <string name="button_ok">OK</string>
     <string name="button_menu">Menü</string>
     <string name="button_cancel">Abbrechen</string>
-    <string name="button_login">Login</string>
+    <string name="button_login">Anmelden</string>
     <string name="button_register">Registrieren</string>
     <string name="button_close">Schließen</string>
     <string name="button_save">Speichern</string>
@@ -113,7 +113,6 @@
     <string name="title_info">Info</string>
     <string name="title_menu">Menü</string>
     <string name="title_welcome">Willkommen</string>
-    <string name="title_annotate">Annotate</string>
     <string name="title_save_game">Spiel speichern</string>
     <string name="title_options">Optionen</string>
     <string name="title_delete_game">Spiel löschen</string>
@@ -130,7 +129,7 @@
     <string name="title_ics_mode_idle">Ruhend</string>
     <string name="title_ics_mode_play">Spielen</string>
     <string name="title_ics_mode_watch">Zuschauen</string>
-    <string name="title_ics_mode_examine">Examine</string>
+    <string name="title_ics_mode_examine">Analysieren</string>
     <string name="title_ics_mode_puzzle">Puzzle</string>
     <string name="title_ics_mode_endgame">Endspiel</string>
     <string name="title_installing">wird installiert</string>
@@ -263,7 +262,7 @@
     <string name="msg_setup_castle_white">Weiß</string>
     <string name="msg_setup_castle_black">Schwarz</string>
     <string name="msg_setup_extra">Wähle Menü für Einstellungen</string>
-    <string name="msg_qr_code_on_clipboard">Link zum QR code ist im Zwischenspeicher&#8230;</string>
+    <string name="msg_qr_code_on_clipboard">Link zum QR Code ist im Zwischenspeicher&#8230;</string>
     <string name="chess960_position_nr">Schach 960 Position Nr. %d</string>
     <string name="msg_ics_enter_handle">Bitte gib deinen Namen ein</string>
     <string name="msg_ics_enter_password">Bitte gib dein Passwort ein</string>
@@ -327,7 +326,7 @@
     <string name="ics_menu_abort">Abbrechen</string>
     <string name="ics_menu_adjourn">Verschieben</string>
     <string name="ics_menu_draw">Unentschieden</string>
-    <string name="ics_menu_flag">Flag</string>
+    <string name="ics_menu_flag">Flagge</string>
     <string name="ics_menu_resign">Aufgeben</string>
     <string name="ics_menu_refresh">Aktualisieren</string>
     <string name="ics_menu_welcome">Willkommen</string>
@@ -342,7 +341,7 @@
 
     <string name="ics_playertwo">Spieler 2</string>
     <string name="ics_playerone">Spieler 1</string>
-    <string name="ics_progress_title_login">anmelden</string>
+    <string name="ics_progress_title_login">Anmeldung</string>
     <string name="ics_progress_msg_login">Anmeldung wird ausgeführt&#8230;</string>
     <string name="ics_available_players">Verfügbare Spieler</string>
     <string name="ics_offers_abort">Dein Gegner möchte die Partie abbrechen. Möchtest du akzeptieren?</string>
