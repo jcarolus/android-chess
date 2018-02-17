@@ -69,7 +69,6 @@
     <string name="prefs_icsendgamedialog">EndGame Dialog</string>
     <string name="prefs_icsendgamesummary">At the end of a game, do you want a save dialog to popup?</string>
     <string name="prefs_icsshowclock">Show Clock Times in PGN</string>
-    <string name="prefs_icsshowclocksummary">In the PGN, show the clock times on each move</string>
     <string name="pref_icsgamestartsound">Game Start Sound</string>
     <string name="pref_icsgamestartsound_desc">Play sound when game starts or loss of connection</string>
     <string name="pref_icsnotification">Notification of New Game</string>
@@ -402,5 +401,6 @@
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Could not start the activity</string>
     <string name="toast_challenge_posted">Challenge posted</string>
+    <string name="prefs_icsshowclocksummary">In the PGN, show the clock times on each move</string>
 
 </resources>
