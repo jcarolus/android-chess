@@ -36,7 +36,7 @@
     <string name="pref_showCoords_desc">Zeige Brett Koordinaten</string>
     <string name="pref_showLastMove">Zeige letzten Zug</string>
     <string name="pref_showLastMove_desc">Zeige letzten Zug mit hervorgehobenen Farben</string>
-    <string name="pref_sound">Sound</string>
+    <string name="pref_sound">Ton</string>
     <string name="pref_sound_desc">Wird abgespielt, wenn der Gegner zieht</string>
     <string name="pref_speech">Sprache</string>
     <string name="pref_speech_desc">Zeigt den gespielten Zug</string>
@@ -47,7 +47,7 @@
     <string name="pref_fullscreen">Aktiviere Vollbildmodus</string>
     <string name="pref_fullscreen_desc">Empfohlen für kleine Bildschirme und Vertikalansicht; Andernfalls könnten manche Elemente nicht angezeigt werden</string>
     <string name="pref_onLoadJumpToLastMove">Springe zum letzten Zug</string>
-    <string name="pref_onLoadJumpToLastMove_desc"></string>
+    <string name="pref_onLoadJumpToLastMove_desc">Springe zum letzten Zug, wenn die App wiederaufgenommen wird</string>
     <string name="pref_uci">UCI Engine</string>
     <string name="pref_uci_desc">Wähle die Schach Engine</string>
     <string name="pref_pieceset">Figurenset</string>
@@ -68,18 +68,18 @@
     <string name="pref_icstimewarningsecs_desc">Wie viele Sekunden bis die Zeitwarnung beginnt?</string>
     <string name="prefs_icsendgamedialog">Spiel Ende Nachricht</string>
     <string name="prefs_icsendgamesummary">Soll am Ende des Spiels ein Speichern Dialog erscheinen?</string>
-    <string name="prefs_icsshowclock"></string>
+    <string name="prefs_icsshowclock">Speichere verbleibende Spielzeit in PGN</string>
     <string name="prefs_icsshowclocksummary">Schreibe Zeit der Uhr zu jedem Zug in der PGN</string>
     <string name="pref_icsgamestartsound">Sound bei Spielbeginn</string>
     <string name="pref_icsgamestartsound_desc">Spiele einen Sound, wenn das Spiel beginnt oder die Verbindung unterbricht</string>
     <string name="pref_icsnotification">Benachrichtigung bei neuem Spiel</string>
-    <string name="prefs_icsnotificationsummary"></string>
+    <string name="prefs_icsnotificationsummary">Wenn ein Spiel beginnt wirst du durch ein Icon informiert</string>
     <string name="pref_puzzle_show_seekbar">Zeige Suchleiste</string>
-    <string name="pref_puzzle_show_seekbar_desc"></string>
+    <string name="pref_puzzle_show_seekbar_desc">Navigiere schnell durch die Puzzles mit der Suchleiste</string>
     <string name="pref_localelanguage">Sprache wählen</string>
     <string name="pref_localelanguage_desc">Wähle die Sprache, die du nutzen möchstet</string>
-    <string name="pref_skipreturn"></string>
-    <string name="pref_skipreturn_desc"></string>
+    <string name="pref_skipreturn">Skip carriage return</string>
+    <string name="pref_skipreturn_desc">For USB board, a carriage return will be skipped so it does not close the app</string>
 
     <string name="button_play">Spiele</string>
     <string name="button_undo">Rückgängig</string>
@@ -92,7 +92,7 @@
     <string name="button_save">Speichern</string>
     <string name="button_save_copy">Speichere Kopie</string>
     <string name="button_new">Neu</string>
-    <string name="button_show">Zeige</string>
+    <string name="button_show">Zeige Lösung</string>
     <string name="button_jump">Springe zu #</string>
 
     <string name="alert_yes">Ja</string>
@@ -156,19 +156,18 @@
     <string name="menu_from_qrcode">Von QR-code</string>
     <string name="menu_to_qrcode">Als QR-Code</string>
     <string name="menu_new_command">Neuer Befehl</string>
-    <string name="menu_new_command_message"></string>
     <string name="menu_set_clock">Setze Uhr</string>
     <string name="menu_start">Start</string>
     <string name="menu_stop">Stop</string>
     <string name="menu_prefs">Einstellungen</string>
     <string name="menu_global_prefs">Globale Einstellungen</string>
 
-    <string name="menu_subview_title"></string>
+    <string name="menu_subview_title">Wähle Unterkontrollen</string>
     <string name="menu_subview_cpu">Engine Info</string>
     <string name="menu_subview_moves">Zugverlauf</string>
     <string name="menu_subview_seek">Bewege Suchfeld</string>
     <string name="menu_subview_captured">Geschlagenene Figuren</string>
-    <string name="menu_subview_annotate"></string>
+    <string name="menu_subview_annotate">Kommentiere Zug</string>
     <string name="menu_subview_guess">Rate den Zug</string>
     <string name="menu_subview_blindfold">Blindschach Modus</string>
 
@@ -178,9 +177,9 @@
     <string name="options_play_black">Schwarz</string>
     <string name="options_960">Schach 960 - Fischer Random</string>
     <string name="options_load_database">Lade Eröffnungsdatenbank</string>
-    <string name="options_auto_flip">Automatsch Brett drehen</string>
+    <string name="options_auto_flip">Brett automatisch drehen</string>
     <string name="options_flip">Brett drehen</string>
-    <string name="options_setup">Bretteinstellungen</string>
+    <string name="options_setup">Brett Einstellungen</string>
     <string name="options_show_moves">Zeige Spielzüge</string>
     <string name="options_level_time">Level (Zeit)</string>
     <string name="options_level_ply">Level (ply)</string>
@@ -299,19 +298,17 @@
     <string name="pgntool_numexport">%1$d Spiele nach chess.pgn exportiert</string>
     <string name="pgntool_confirm_delete">Bist du sicher?</string>
     <string name="pgntool_deleted">Alle Spiele gelöscht</string>
-    <string name="pgntool_create_practice_explanation"></string>
+    <string name="pgntool_create_practice_explanation">Erstelle Übungsposition</string>
     <string name="pgntool_create_db_explanation">Erstelle Eröffnungsdatenbank</string>
-    <string name="pgntool_import_practice"></string>
+    <string name="pgntool_import_practice">Importiere Übungsposition</string>
     <string name="pgntool_reset_practice">Übungen zurücksetzen - Beginne neu</string>
     <string name="pgntool_confirm_practice_reset">Bist du sicher, dass du zurücksetzten möchtest?</string>
     <string name="pgntool_import_puzzle">Importiere Puzzles</string>
     <string name="pgntool_import_opening">Benutzt durch Entwickler</string>
 
-    <string name="practice_set_reset"></string>
-
     <string name="ics_client_handle">Name</string>
     <string name="ics_client_password">Passwort</string>
-    <string name="ics_client_presets"></string>
+    <string name="ics_client_presets">Voreinstellungen</string>
     <string name="ics_client_server">Server</string>
 
     <string name="ics_menu_players">Spieler</string>
@@ -389,10 +386,10 @@
 
     <string name="ics_playerchat">Tippe hier zum chatten mit</string>
     <string name="ics_you">Du</string>
-    <string name="ics_historygamenumber"></string>
+    <string name="ics_historygamenumber">Verlauf Spielnummer</string>
     <string name="ics_typegamenumber">Gib Spielnummer ein von</string>
-    <string name="ics_history">Historie</string>
-    <string name="ics_finger"></string>
+    <string name="ics_history">Verlauf</string>
+    <string name="ics_finger">Zusammenfassung</string>
     <string name="ics_follow">Folgen</string>
     <string name="ics_unfollow">Nicht mehr Folgen</string>
     <string name="ics_match">Partie</string>
@@ -401,5 +398,8 @@
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Aktivität konnte nicht gestartet werden</string>
     <string name="toast_challenge_posted">Herausforderung abgeschickt</string>
+    <string name="title_annotate">Kommentiere</string>
+    <string name="practice_set_reset">Übungspositionen wurden zurückgesetzt</string>
+    <string name="menu_new_command_message">Schreibe \u003cNR\u003e ans Ende eines Befehls für keine Rückgabe Beispiel: tell ChessMaster \u003cNR\u003e</string>
 
 </resources>

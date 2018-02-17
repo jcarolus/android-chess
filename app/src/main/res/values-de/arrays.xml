@@ -10,16 +10,16 @@
 		<item>@string/start_pgn</item>
 	</string-array>
     <string-array name="levels_ply">
-        <item>1 ply</item>
-        <item>2 ply</item>
-        <item>3 ply</item>
-        <item>4 ply</item>
-        <item>5 ply</item>
-        <item>6 ply</item>
-        <item>7 ply</item>
-        <item>8 ply</item>
-        <item>9 ply</item>
-        <item>10 ply</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
     </string-array>
     <string-array name="levels_time">
         <item>@string/choice_level_1</item>
