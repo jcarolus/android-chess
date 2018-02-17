@@ -176,6 +176,7 @@
         <item>português</item>
         <item>Español</item>
         <item>Pусский</item>
+        <item>Deutsch</item>
     </string-array>
     <string-array name="localeKeyarray">
         <item>zh</item>
@@ -184,6 +185,7 @@
         <item>pt</item>
         <item>es</item>
         <item>ru</item>
+        <item>de</item>
     </string-array>
     <string-array name="UCIArray">
     	<item>default</item>
