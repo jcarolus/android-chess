@@ -42,9 +42,10 @@
 				android:layout_width="40dp" android:layout_height="40dp" android:scaleType="fitXY"
 				android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
 			/>
-			<Button android:text="@string/button_new" android:id="@+id/ButtonNewGame" android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
+			<ImageButton android:id="@+id/ButtonNewGame" android:src="@drawable/content_new"
+				android:layout_width="40dp" android:layout_height="40dp" android:scaleType="fitXY"
 				android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
-			/>
+				/>
 		</TableRow>
 		<TableRow>
 		   <ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"
@@ -245,7 +246,6 @@
 			</LinearLayout>
 			<ScrollView android:id="@+id/VScrollViewHistory"
 		    	android:layout_width="wrap_content" android:layout_height="fill_parent"
-				android:textColor="@color/textColor"
 				android:paddingRight="2dp"
 				android:layout_marginTop="2dp"
 				android:layout_marginLeft="2dp"

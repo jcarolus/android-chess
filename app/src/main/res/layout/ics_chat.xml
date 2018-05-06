@@ -3,14 +3,11 @@
 <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent" 
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:gravity="center_vertical"
-	android:windowIsTranslucent="true"
 	android:windowFrame="@null" android:windowContentOverlay="@null" android:windowIsFloating="true"
 	android:windowNoTitle="true" 
-	android:background="@android:color/transparent"
 	>
 	<TextView android:id="@+id/TextViewChat" 
 		android:text="..."
-		style="@style/MyTransparentTextStyle"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 	/>
 

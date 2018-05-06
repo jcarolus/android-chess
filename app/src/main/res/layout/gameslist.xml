@@ -3,7 +3,6 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
-	android:background="@color/bgColorText"
     >
 	<TableLayout android:layout_width="fill_parent" 
 	    android:layout_height="wrap_content" android:stretchColumns="1">

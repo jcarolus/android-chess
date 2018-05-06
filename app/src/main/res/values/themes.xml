@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="ChessTheme">
+    <style name="ChessTheme" parent="Theme.AppCompat">
         <item name="android:windowAnimationStyle">@null</item>
-        <item name="android:buttonStyle">@style/button</item>
-        <item name="android:imageButtonStyle">@style/imageButton</item>
-        <item name="android:textViewStyle">@style/ChessTextViewStyle</item>
-        <item name="android:textAppearance">@style/ChessTextAppearance</item>
-        <item name="android:colorPrimary" tools:targetApi="lollipop">@color/textColorPrimary</item>
-        <item name="android:windowBackground">@color/bgColorText</item>
-        <item name="android:colorBackground">@color/bgColorText</item>
-        <item name="android:background">@color/bgColorText</item>
-        <item name="android:textColor">@color/textColor</item>
-        <item name="android:textColorPrimaryInverse">@color/textColorInverse</item>
-        <item name="android:textColorAlertDialogListItem">@color/textColorDimBlendWhite</item>
-        <item name="android:textColorSecondary">@color/textColorDimBlendWhite</item>
-        <item name="android:textColorHint">@color/textColorDimBlendWhite</item>
-        <item name="android:editTextColor">@color/textColorDimBlendWhite</item>
+        <item name="android:panelBackground">@android:color/background_dark</item>
+
     </style>
 
 </resources>

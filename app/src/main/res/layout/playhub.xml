@@ -2,8 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:background="@color/bgColorText" android:id="@+id/LayoutMain"
-	>
+	android:id="@+id/LayoutMain">
 	
 	 <TableLayout android:id="@+id/LayoutTopTitle" 
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -187,7 +186,6 @@
 			</LinearLayout>
 			<ScrollView android:id="@+id/VScrollViewHistory"
 				android:layout_width="wrap_content" android:layout_height="fill_parent"
-				android:textColor="@color/textColor"
 				android:paddingRight="2dp"
 				android:layout_marginTop="2dp"
 				android:layout_marginLeft="2dp"
@@ -212,9 +210,9 @@
 					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 					android:layout_margin="2dip"
 				/>
-				<Button android:text="@string/button_new" android:id="@+id/ButtonNewGame"
-					android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
-				    android:layout_margin="2dip"
+				<ImageButton android:id="@+id/ButtonNewGame" android:src="@drawable/content_new"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
+					android:layout_margin="2dip"
 				/>
 				<ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"
 					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"

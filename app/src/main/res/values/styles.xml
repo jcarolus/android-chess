@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bgColorText">#ff484848</color><!-- 404040, 333355, 555555 -->
-    <color name="bgColorLight">#ffcccccc</color>
-    <color name="bgColorMiddle">#ff585858</color>
-    <color name="textColor">#ffffffff</color>
-    <color name="textColorInverse">#ff000000</color>
-    <color name="textColorDimBlendWhite">#ccffffff</color>
-    <color name="textColorPrimary">#ff282828</color>
-
-    <style name="Theme.AppBaseTheme" parent="@android:style/Theme.Light">
-        <item name="android:colorBackground">#ff484848</item>
-    </style>
-    
      <style name="button" parent="@android:style/Widget.Button">
         <item name="android:typeface">sans</item>
         <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:textColor">@color/text_color</item>
-        <item name="android:shadowColor">#ff333333</item>
-        <item name="android:shadowDx">2</item>
-        <item name="android:shadowDy">2</item>
-        <item name="android:shadowRadius">2</item>
+        <!--<item name="android:textColor">@color/text_color</item>-->
+        <!--<item name="android:shadowColor">#ff333333</item>-->
+        <!--<item name="android:shadowDx">2</item>-->
+        <!--<item name="android:shadowDy">2</item>-->
+        <!--<item name="android:shadowRadius">2</item>-->
         <item name="android:textSize">14sp</item>
         <!-- <item name="android:textStyle">bold</item> -->
         <item name="android:background">@drawable/button</item>
@@ -43,25 +31,18 @@
         <item name="android:clickable">true</item>
         <item name="android:layout_margin">2dip</item>
     </style>
-     
-     <style name="textViewPlain" parent="@android:style/Widget.TextView">
-         <item name="android:gravity">center_vertical|center_horizontal</item>
-         <item name="android:background">@drawable/textview</item>
-         <item name="android:textColor">#000000</item>
-         <item name="android:layout_margin">0dip</item>
-     </style>
-    
+
     <style name="MyTextStyle" parent="ChessTextAppearance">
     	<item name="android:paddingTop">@dimen/normalPaddingY</item>
     	<item name="android:paddingBottom">@dimen/normalPaddingY</item>
     	<item name="android:paddingLeft">@dimen/normalPaddingX</item>
     	<item name="android:paddingRight">@dimen/normalPaddingX</item>
         <item name="android:textSize">@dimen/normalTextSize</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:shadowColor">#ff333333</item>
-        <item name="android:shadowDx">2</item>
-        <item name="android:shadowDy">2</item>
-        <item name="android:shadowRadius">2</item>
+        <!--<item name="android:textColor">#ffffff</item>-->
+        <!--<item name="android:shadowColor">#ff333333</item>-->
+        <!--<item name="android:shadowDx">2</item>-->
+        <!--<item name="android:shadowDy">2</item>-->
+        <!--<item name="android:shadowRadius">2</item>-->
     </style>
      <style name="MyHeaderTextStyle" parent="@style/MyTextStyle">
         <item name="android:textSize">@dimen/headerTextSize</item>
@@ -72,14 +53,11 @@
     </style>
     <style name="MyTitleTextStyle" parent="@style/MyTextStyle">
         <item name="android:textSize">@dimen/titleTextSize</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:shadowColor">#ff333333</item>
-        <item name="android:shadowDx">2</item>
-        <item name="android:shadowDy">2</item>
-        <item name="android:shadowRadius">2</item>
-    </style>
-    <style name="MyTransparentTextStyle" parent="@style/MyTextStyle">
-        <item name="android:background">@android:color/transparent</item>
+        <!--<item name="android:textColor">#ffffff</item>-->
+        <!--<item name="android:shadowColor">#ff333333</item>-->
+        <!--<item name="android:shadowDx">2</item>-->
+        <!--<item name="android:shadowDy">2</item>-->
+        <!--<item name="android:shadowRadius">2</item>-->
     </style>
     <style name="MyLabelTextStyle">
     	<item name="android:typeface">sans</item>
@@ -87,7 +65,7 @@
     	<item name="android:paddingBottom">1dp</item>
     	<item name="android:paddingLeft">8dp</item>
     	<item name="android:paddingRight">4dp</item>
-    	<item name="android:textColor">#ffffff</item>
+    	<!--<item name="android:textColor">#ffffff</item>-->
         <item name="android:textSize">14sp</item>
     </style>
     <style name="MyNormalTextStyle">
@@ -102,7 +80,7 @@
     	<item name="android:gravity">center_vertical</item>
     	<item name="android:paddingLeft">2dp</item>
     	<item name="android:paddingRight">2dp</item>
-    	<item name="android:textColor">#ffffff</item>
+    	<!--<item name="android:textColor">#ffffff</item>-->
         <item name="android:textSize">14sp</item>
     </style>
     <style name="MySmallTextStyle">
@@ -110,7 +88,7 @@
     	<item name="android:paddingBottom">1dp</item>
     	<item name="android:paddingLeft">2dp</item>
     	<item name="android:paddingRight">2dp</item>
-    	<item name="android:textColor">#ffffff</item>
+    	<!--<item name="android:textColor">#ffffff</item>-->
         <item name="android:textSize">12sp</item>
     </style>
     <style name="CaptureImageStyle">
@@ -122,20 +100,20 @@
     	<item name="android:layout_marginLeft">2dp</item>
 		<item name="android:layout_height">wrap_content</item><!-- 14dip --> 
 		<item name="android:layout_width">30dp</item>
-		<item name="android:textColor">#ffffffff</item>
+		<!--<item name="android:textColor">#ffffffff</item>-->
 		<item name="android:textSize">10sp</item> 
 		<!-- <item name="android:textStyle">bold</item> -->
-		<item name="android:shadowColor">#ff000000</item> 
-		<item name="android:shadowDx">1.0</item>
-		<item name="android:shadowDy">1.0</item> 
-		<item name="android:shadowRadius">2.0</item>
+		<!--<item name="android:shadowColor">#ff000000</item> -->
+		<!--<item name="android:shadowDx">1.0</item>-->
+		<!--<item name="android:shadowDy">1.0</item> -->
+		<!--<item name="android:shadowRadius">2.0</item>-->
     </style>
     <style name="CaptureTextStyleSmall" parent="@style/CaptureTextStyle">
 		<item name="android:layout_width">16dp</item>
 		<item name="android:layout_marginLeft">0dp</item>
     </style>
     <style name="MyRowStyle">
-     	<item name="android:background">@color/bgColorText</item>
+     	<!--<item name="android:background">@color/bgColorText</item>-->
      	<item name="android:layout_marginBottom">1dp</item>
      	<item name="android:gravity">center_vertical</item>
     </style>

@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:background="@color/bgColorText" android:gravity="center" android:id="@+id/LayoutMain"
+    android:gravity="center" android:id="@+id/LayoutMain"
     >
 
     <RelativeLayout android:id="@+id/LayoutBoard"
@@ -122,7 +122,6 @@
             >
             <ScrollView android:id="@+id/VScrollViewHistory"
                 android:layout_width="fill_parent" android:layout_height="fill_parent"
-                android:textColor="@color/textColor"
                 android:paddingRight="2dp"
                 >
                 <RelativeLayout android:id="@+id/LayoutHistory"
@@ -151,8 +150,7 @@
             <TextView android:id="@+id/TextViewTopTitle"
                 android:layout_width="fill_parent" android:layout_height="20dp"
                 style="@style/MySmallTextStyle"
-                android:text="Title..."  android:gravity="center_vertical"
-                android:background="@color/bgColorLight"/>
+                android:text="Title..."  android:gravity="center_vertical"/>
             <TableRow>
                 <ViewSwitcher android:id="@+id/ImageTurnOpp"
                     android:layout_height="20dp" android:layout_width="20dp"
@@ -233,8 +231,7 @@
             <TextView android:id="@+id/TextViewTitle"
                 android:layout_width="fill_parent" android:layout_height="20dp"
                 style="@style/MySmallTextStyle"
-                android:text="Title..."  android:gravity="center_vertical"
-                android:background="@color/bgColorLight"/>
+                android:text="Title..."  android:gravity="center_vertical"/>
         </TableLayout>
 
     </RelativeLayout>

@@ -120,7 +120,6 @@
             >
             <ScrollView android:id="@+id/VScrollViewHistory"
                 android:layout_width="fill_parent" android:layout_height="fill_parent"
-                android:textColor="@color/textColor"
                 android:paddingRight="2dp"
                 >
                 <RelativeLayout android:id="@+id/LayoutHistory"
@@ -147,8 +146,7 @@
             <TextView android:id="@+id/TextViewTopTitle"
                 android:layout_width="fill_parent" android:layout_height="20dp"
                 style="@style/MySmallTextStyle"
-                android:text="Title..."  android:gravity="center_vertical"
-                android:background="@color/bgColorLight"/>
+                android:text="Title..."  android:gravity="center_vertical"/>
             <TableRow>
                 <ViewSwitcher android:id="@+id/ImageTurnOpp"
                     android:layout_height="20dp" android:layout_width="20dp"
@@ -195,9 +193,10 @@
                     android:layout_width="50dip" android:layout_height="50dip"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
                 />
-                <Button android:text="@string/button_new" android:id="@+id/ButtonNewGame" android:layout_width="50dip" android:layout_height="50dip"
+                <ImageButton android:id="@+id/ButtonNewGame" android:src="@drawable/content_new"
+                    android:layout_width="50dip" android:layout_height="50dip"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="10dp"
-                />
+                    />
             </TableRow>
             <TableRow>
                 <ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"
@@ -282,8 +281,7 @@
             <TextView android:id="@+id/TextViewTitle"
                 android:layout_width="fill_parent" android:layout_height="20dp"
                 style="@style/MySmallTextStyle"
-                android:text="Title..."  android:gravity="center_vertical"
-                android:background="@color/bgColorLight"/>
+                android:text="Title..."  android:gravity="center_vertical"/>
         </TableLayout>
 
     </RelativeLayout>

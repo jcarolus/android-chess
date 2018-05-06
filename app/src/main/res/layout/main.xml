@@ -102,8 +102,8 @@
 					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 					android:layout_margin="2dip" 
 				/>
-				<Button android:text="@string/button_new" android:id="@+id/ButtonNewGame"
-					android:layout_width="wrap_content" android:layout_height="40dip" android:gravity="center"
+				<ImageButton android:id="@+id/ButtonNewGame" android:src="@drawable/content_new"
+					android:layout_width="40dip" android:layout_height="40dip" android:scaleType="fitXY"
 				    android:layout_margin="2dip" 
 				/>
 				<ImageButton android:id="@+id/ButtonOpen" android:src="@drawable/collections_collection"
@@ -207,7 +207,6 @@
 		
 			<HorizontalScrollView android:id="@+id/HScrollViewHistory"
 		    	android:layout_width="fill_parent" android:layout_height="40dip"
-				android:background="@color/bgColorMiddle" android:textColor="@color/textColor"
 				android:padding="2dip"
 			>
 				<RelativeLayout android:id="@+id/LayoutHistory"
@@ -220,7 +219,6 @@
 				android:fadingEdge="none" android:padding="2dip"
 			>
 				<TextView android:id="@+id/TextViewAnnotate"
-					android:background="@color/bgColorLight" android:textColor="@color/textColorInverse"
 					android:padding="8dip"
 					android:layout_width="fill_parent" android:layout_height="wrap_content" 
 					android:minHeight="50dip"/>
@@ -238,7 +236,6 @@
 					<TextView android:id="@+id/TextViewGuess"
 						android:text="" android:singleLine="false" android:layout_margin="0dip"
 						android:layout_width="72dip" android:layout_height="40dip"
-						style="@style/textViewPlain"
 					/>
 				</TableRow>
 			</TableLayout>

@@ -394,7 +394,7 @@ public class ChessView extends UI {
 		}
 		*/
 
-        Button butNewGame = (Button) _parent.findViewById(R.id.ButtonNewGame);
+        ImageButton butNewGame = (ImageButton) _parent.findViewById(R.id.ButtonNewGame);
         if (butNewGame != null) {
             //butNewGame.setFocusable(false);
             butNewGame.setOnClickListener(new OnClickListener() {
