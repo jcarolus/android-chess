@@ -56,15 +56,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.7671875"
-     inkscape:cx="1.0615471"
+     inkscape:cx="-63.625071"
      inkscape:cy="54.285714"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1397"
-     inkscape:window-height="791"
-     inkscape:window-x="158"
-     inkscape:window-y="17"
+     inkscape:window-width="1826"
+     inkscape:window-height="1213"
+     inkscape:window-x="116"
+     inkscape:window-y="51"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true" />
@@ -86,32 +86,14 @@
      id="layer1"
      transform="translate(0,-924.36218)">
     <rect
-       style="color:#000000;fill:#000000;fill-opacity:1;stroke:none;stroke-width:7.77486038;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3783);enable-background:accumulate"
-       id="rect3755-1"
-       width="113.22514"
-       height="113.22514"
-       x="5.6525383"
-       y="929.67596"
-       ry="6.799016"
-       rx="6.449821" />
-    <rect
-       style="color:#000000;fill:url(#linearGradient3034);fill-opacity:1;stroke:none;stroke-width:7.77486038;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:#6e98da;fill-opacity:1;stroke:none;stroke-width:7.77486038;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect3755-7"
-       width="113.22514"
-       height="113.22514"
-       x="6.2160573"
-       y="928.19427"
-       ry="6.799016"
-       rx="6.449821" />
-    <rect
-       style="color:#000000;fill:none;stroke:#ffffff;stroke-width:7.77486038;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect3755"
-       width="113.22514"
-       height="113.22514"
-       x="4.3874302"
-       y="929.03485"
-       ry="6.799016"
-       rx="6.449821" />
+       width="120"
+       height="120"
+       x="4"
+       y="928.36218"
+       ry="7.2058368"
+       rx="6.8357477" />
     <g
        id="g3518"
        transform="matrix(0.8974166,0,0,0.8974166,12.8958,109.30776)">

@@ -1585,4 +1585,9 @@ public class ChessView extends UI {
         _parent.soundNotification(sMove);
     }
 
+    @Override
+    public String getUCIDatabase() {
+        SharedPreferences prefs = _parent.getSharedPreferences("ChessPlayer", Activity.MODE_PRIVATE);
+        return prefs.getString("UCIDatabase", null);
+    }
 }

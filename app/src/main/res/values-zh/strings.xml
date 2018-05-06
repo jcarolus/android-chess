@@ -297,6 +297,10 @@
     <string name="pgntool_uci_engine_success">UCI 引擎 %s 安装完毕</string>
     <string name="pgntool_uci_engine_error">一个错误导致无法安装UCI引擎</string>
     <string name="pgntool_unset_uci_engine">卸载UCI引擎</string>
+    <string name="pgntool_install_uci_database">安装UCI数据库</string>
+    <string name="pgntool_uci_database_success">UCI数据库X已安装</string>
+    <string name="pgntool_uci_database_error">一个错误阻止了安装UCI数据库</string>
+    <string name="pgntool_unset_uci_database">卸载UCI数据库</string>
     <string name="pgntool_help">帮助</string>
     <string name="pgntool_numexport">导出 %1$d 给到国际象棋chess.pgn</string>
     <string name="pgntool_confirm_delete">你确定么?</string>

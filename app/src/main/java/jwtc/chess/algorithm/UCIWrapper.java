@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import jwtc.chess.GameControl;
@@ -141,8 +142,11 @@ public class UCIWrapper {
     }
 
     public void play(int msecs, int ply) {
+        String sDatabase = m_control.getUCIDatabase();
+        if (sDatabase != null) {
+            sendCommand("setoption name Book File value /data/data/jwtc.android.chess/" + sDatabase);
+        }
         sendCommand("ucinewgame");
-
         sendCommand("position fen " + m_control.getJNI().toFEN());
 
         if (msecs > 0) {
@@ -190,6 +194,34 @@ public class UCIWrapper {
 
                     runConsole("/system/bin/ls /data/data/jwtc.android.chess/");
                     runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/" + sEngine);
+
+                    Log.i(TAG, "install completed");
+                } catch (Exception ex) {
+
+                    Log.e(TAG, "install error: " + ex.toString());
+                }
+            }
+        }).start();
+    }
+
+    public static void installDb(final InputStream in, final String sDatabase) {
+        new Thread(new Runnable() {
+            public void run() {
+                // TODO
+
+                try {
+                    OutputStream out = new FileOutputStream("/data/data/jwtc.android.chess/" + sDatabase);
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+
+                    out.close();
+                    in.close();
+
+                    runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/" + sDatabase);
+                    runConsole("/system/bin/ls /data/data/jwtc.android.chess/");
 
                     Log.i(TAG, "install completed");
                 } catch (Exception ex) {

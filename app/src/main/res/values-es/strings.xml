@@ -297,6 +297,10 @@
     <string name="pgntool_uci_engine_success">motores UCI %s instalados</string>
     <string name="pgntool_uci_engine_error">Ocurrió un error, no se pudo instalar el motor UCI</string>
     <string name="pgntool_unset_uci_engine">Desinstalar motor UCI</string>
+    <string name="pgntool_install_uci_database">Instalar base de datos UCI</string>
+    <string name="pgntool_uci_database_success">base de datos UCI %s instalados</string>
+    <string name="pgntool_uci_databse_error">Ocurrió un error, no se pudo instalar el base de datos UCI</string>
+    <string name="pgntool_unset_uci_databse">Desinstalar base de datos UCI</string>
     <string name="pgntool_help">Ayuda</string>
     <string name="pgntool_numexport">Exportar %1$d juegos a ajedrez.pgn</string>
     <string name="pgntool_confirm_delete">estás seguro?</string>

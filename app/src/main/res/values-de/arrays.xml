@@ -146,6 +146,8 @@
         <item>@string/pgntool_install_uci_engine</item>
     	<item>@string/pgntool_point_uci_engine</item>
     	<item>@string/pgntool_unset_uci_engine</item>
+        <item>@string/pgntool_install_uci_database</item>
+        <item>@string/pgntool_unset_uci_database</item>
     	<item>@string/pgntool_create_practice_explanation</item>
     	<!-- <item>@string/pgntool_import_practice</item> -->
     	<item>@string/pgntool_reset_practice</item>

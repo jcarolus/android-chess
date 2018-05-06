@@ -857,6 +857,9 @@ try{
 	public void setLevelPly(int iLevelPly){
 		_selectedLevelPly = iLevelPly;
 	}
+	public String getUCIDatabase() {
+		return null;
+	}
 	// superclass method, implemented by sub-classes
 	public int getPlayMode()
 	{

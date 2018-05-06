@@ -119,6 +119,7 @@ public class ChessEngineResolver {
                         int resId = resources.getIdentifier("enginelist",
                                 "xml", packageName);
                         XmlResourceParser parser = resources.getXml(resId);
+
                         parseEngineListXml(parser, authority, result,
                                 packageName);
                     } catch (NameNotFoundException e) {

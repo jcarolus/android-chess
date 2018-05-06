@@ -271,6 +271,34 @@ public class importactivity extends MyBaseActivity {
 	        	finish();
 	        	return;
 	        }
+	        else if (_mode.equals(pgntool.MODE_UCI_DB_INSTALL)) {
+
+				String sPath = uri.getPath();
+				String sDatabase = uri.getLastPathSegment(); //"goi.bin"
+
+				Log.i(TAG, "Install UCI database " + sPath + " as " + sDatabase);
+
+				try {
+					FileInputStream fis = new FileInputStream(sPath);
+					UCIWrapper.installDb(fis, sDatabase);
+
+					SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
+					editor.putString("UCIDatabase", sDatabase);
+					editor.commit();
+
+					doToast(String.format(getString(R.string.pgntool_uci_engine_success), sDatabase));
+
+				} catch (IOException e) {
+
+					doToast(getString(R.string.pgntool_uci_engine_error));
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+
+				finish();
+				return;
+			}
 	        else if(_mode.equals(pgntool.MODE_IMPORT_PRACTICE)){
 	        	
 	        	String sPath = uri.getPath();

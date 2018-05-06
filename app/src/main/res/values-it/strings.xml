@@ -297,6 +297,10 @@
     <string name="pgntool_uci_engine_error">Si è verificato un errore, non è stato possibile installare il motore UCI</string>
     <string name="pgntool_point_uci_engine">Installa motore UCI</string>
     <string name="pgntool_unset_uci_engine">Disinstalla motore UCI</string>
+    <string name="pgntool_install_uci_database">Installa database UCI</string>
+    <string name="pgntool_uci_database_success">Database UCI %s installato</string>
+    <string name="pgntool_uci_database_error">Si è verificato un errore, non è stato possibile installare il database UCI</string>
+    <string name="pgntool_unset_database_engine">Disinstalla database UCI</string>
     <string name="pgntool_help">Aiuto</string>
     <string name="pgntool_numexport">Partita %1$d esportata in chess.pgn</string>
     <string name="pgntool_confirm_delete">Sei sicuro?</string>

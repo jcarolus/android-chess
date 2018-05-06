@@ -43,6 +43,7 @@ public class pgntool extends ListActivity {
     protected static final String MODE_DB_IMPORT = "db_import";
     protected static final String MODE_DB_POINT = "db_point";
     protected static final String MODE_UCI_INSTALL = "uci_install";
+    protected static final String MODE_UCI_DB_INSTALL = "uci_db_install";
     protected static final String MODE_CREATE_PRACTICE = "create_practice";
     protected static final String MODE_IMPORT_PRACTICE = "import_practice";
     protected static final String MODE_IMPORT_PUZZLE = "import_puzzle";
@@ -128,7 +129,7 @@ public class pgntool extends ListActivity {
 
                                     try {
                                         selectedEngine.copyToFiles(pgntool.this.getContentResolver(), pgntool.this.getFilesDir());
-                                        UCIWrapper.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/" + sEngine);
+                                        UCIWrapper.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/*");
 
                                         SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
                                         editor.putString("UCIEngine", sEngine);
@@ -215,7 +216,29 @@ public class pgntool extends ListActivity {
                     } else {
                         doToast("No engine installed");
                     }
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
+                }  else if (arrString[arg2].equals(getString(R.string.pgntool_install_uci_database))) {
+                    Intent i = new Intent();
+                    i.setClass(pgntool.this, FileListView.class);
+                    i.putExtra(EXTRA_MODE, MODE_UCI_DB_INSTALL);
+                    pgntool.this.startActivity(i);
+                } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_database))) {
+                    SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+                    String sDatabase = prefs.getString("UCIDatabase", null);
+                    if (sDatabase != null) {
+                        File f = new File("/data/data/jwtc.android.chess/" + sDatabase);
+                        if (f.delete()) {
+                            Log.i("database", sDatabase + " deleted");
+                        } else {
+                            Log.w("database", sDatabase + " NOT deleted");
+                        }
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString("UCIDatabase", null);
+                        editor.commit();
+                        doToast("Database " + sDatabase + " uninstalled");
+                    } else {
+                        doToast("No database installed");
+                    }
+                } else  if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
                     builder.setTitle(getString(R.string.pgntool_confirm_practice_reset));

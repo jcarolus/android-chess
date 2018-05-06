@@ -296,6 +296,10 @@
     <string name="pgntool_uci_engine_success">UCI engine %s installed</string>
     <string name="pgntool_uci_engine_error">An error occurred, could not install UCI engine</string>
     <string name="pgntool_unset_uci_engine">Uninstall UCI engine</string>
+    <string name="pgntool_install_uci_database">Install UCI database</string>
+    <string name="pgntool_uci_database_success">UCI database %s installed</string>
+    <string name="pgntool_uci_database_error">An error occurred, could not install UCI database</string>
+    <string name="pgntool_unset_uci_database">Uninstall UCI database</string>
     <string name="pgntool_help">Help</string>
     <string name="pgntool_numexport">Exported %1$d games to chess.pgn</string>
     <string name="pgntool_confirm_delete">Are you sure?</string>

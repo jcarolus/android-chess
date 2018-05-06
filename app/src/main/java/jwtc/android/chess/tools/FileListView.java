@@ -101,7 +101,7 @@ public class FileListView extends ListActivity {
 		if(_mode.equals(pgntool.MODE_IMPORT) || _mode.equals(pgntool.MODE_CREATE_PRACTICE) || _mode.equals(pgntool.MODE_IMPORT_PUZZLE) || _mode.equals(pgntool.MODE_IMPORT_OPENINGDATABASE)){
 			return "*.pgn;*.zip";
 		}
-		else if(_mode.equals(pgntool.MODE_DB_IMPORT)){
+		else if(_mode.equals(pgntool.MODE_DB_IMPORT) || _mode.equals(pgntool.MODE_UCI_DB_INSTALL)){
 			return "*.bin";
 		}
 		else if(_mode.equals(pgntool.MODE_UCI_INSTALL)){
@@ -118,7 +118,7 @@ public class FileListView extends ListActivity {
 			if(sName.toLowerCase().endsWith(".pgn") || sName.endsWith(".zip")){
 				return true;
 			}
-		} else if(_mode.equals(pgntool.MODE_DB_POINT)){
+		} else if(_mode.equals(pgntool.MODE_DB_POINT) || _mode.equals(pgntool.MODE_UCI_DB_INSTALL)){
 			if(sName.toLowerCase().endsWith(".bin")){
 				return true;
 			}

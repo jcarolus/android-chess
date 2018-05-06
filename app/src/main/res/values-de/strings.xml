@@ -294,6 +294,10 @@
     <string name="pgntool_uci_engine_success">UCI Engine %s installiert</string>
     <string name="pgntool_uci_engine_error">Beim installieren der UCI Engine ist ein Fehler aufgetreten</string>
     <string name="pgntool_unset_uci_engine">UCI Engine deinstallieren</string>
+    <string name="pgntool_install_uci_database">UCI Datenbank installieren</string>
+    <string name="pgntool_uci_database_success">UCI Datenbank %s installiert</string>
+    <string name="pgntool_uci_datanase_error">Beim installieren der UCI Datenbank ist ein Fehler aufgetreten</string>
+    <string name="pgntool_unset_uci_database">UCI Datenbank deinstallieren</string>
     <string name="pgntool_help">Hilfe</string>
     <string name="pgntool_numexport">%1$d Spiele nach chess.pgn exportiert</string>
     <string name="pgntool_confirm_delete">Bist du sicher?</string>

@@ -297,6 +297,10 @@
     <string name="pgntool_uci_engine_success">Движок UCI %s установлен</string>
     <string name="pgntool_uci_engine_error">Произошла ошибка, невозможно установить движок UCI</string>
     <string name="pgntool_unset_uci_engine">Удалить движок UCI</string>
+    <string name="pgntool_install_uci_database">Установка базы данных UCI вручную</string>
+    <string name="pgntool_uci_database_success">База данных UCI x установлена</string>
+    <string name="pgntool_uci_database_error">Произошла ошибка, вы не можете установить базу данных UCI</string>
+    <string name="pgntool_unset_uci_database">Удалить базу данных UCI</string>
     <string name="pgntool_help">Помощь</string>
     <string name="pgntool_numexport">Экспортировано %1$d игр в chess.pgn</string>
     <string name="pgntool_confirm_delete">Вы уверены?</string>
