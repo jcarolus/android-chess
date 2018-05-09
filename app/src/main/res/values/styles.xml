@@ -117,4 +117,19 @@
      	<item name="android:layout_marginBottom">1dp</item>
      	<item name="android:gravity">center_vertical</item>
     </style>
+
+    <style name="ChessTheme">
+        <item name="android:windowAnimationStyle">@null</item>
+        <!--<item name="android:colorPrimary"></item>-->
+        <!--<item name="android:windowBackground">@android:color/background_dark</item>-->
+        <!--<item name="android:colorBackground">@color/bgColorText</item>-->
+        <!--<item name="android:background">@color/bgColorText</item>-->
+        <!--<item name="android:textColor">@color/textColor</item>-->
+        <!--<item name="android:textColorPrimaryInverse">@color/textColorInverse</item>-->
+        <!--<item name="android:textColorAlertDialogListItem">@color/textColorDimBlendWhite</item>-->
+        <!--<item name="android:textColorSecondary">@color/textColorDimBlendWhite</item>-->
+        <!--<item name="android:textColorHint">@color/textColorDimBlendWhite</item>-->
+        <!--<item name="android:editTextColor">@color/textColorDimBlendWhite</item>-->
+        <!--<item name="android:panelBackground">@android:color/background_dark</item>-->
+    </style>
 </resources>

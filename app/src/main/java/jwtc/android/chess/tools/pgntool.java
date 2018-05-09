@@ -154,8 +154,6 @@ public class pgntool extends ListActivity {
                             builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    pgntool.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
-                                    doToast(getString(R.string.pgntool_deleted));
                                 }
                             });
 

@@ -28,7 +28,7 @@ public class PGNView {
 				if(i < 10)
 					s += "  ";
 			}
-			tvItemNum.setText(s + i/* + ". "*/);
+			tvItemNum.setText(s + i + ". ");
 			//tvItemNum.setVisibility(View.VISIBLE);
 			
 		} else {
@@ -57,14 +57,15 @@ public class PGNView {
 		_bAnnotated = b;
 	}
 	public void setSelected(boolean b){
+		int color = this._parent.fetchAttrColor(R.attr.colorAccent);
 		if(b){
-			_tvItem.setBackgroundColor(0xff884444);
+			_tvItem.setBackgroundColor(color);
 		}
-		else{
-			if(_bAnnotated)
-				_tvItem.setBackgroundColor(0xff648fd5);
-			else
-				_tvItem.setBackgroundColor(0xff404040);
-		}
+//		else{
+//			if(_bAnnotated)
+//				_tvItem.setBackgroundColor(0xff648fd5);
+//			else
+//				_tvItem.setBackgroundColor(0xff404040);
+//		}
 	}
 }

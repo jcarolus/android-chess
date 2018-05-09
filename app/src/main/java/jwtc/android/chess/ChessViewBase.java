@@ -15,10 +15,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -487,5 +489,4 @@ public class ChessViewBase{
 			_arrImgCache[i]._piece = -1;
 		}
 	}
-
 }

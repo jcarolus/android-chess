@@ -20,11 +20,13 @@ import jwtc.chess.board.ChessBoard;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
 
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,12 +100,12 @@ public class ChessView extends UI {
                 } else {
                     lTmp = chessView.getWhiteRemainClock();
                 }
-                if (lTmp < 0) {
-                    lTmp = -lTmp;
-                    chessView._tvClockMe.setTextColor(0xffff0000); // red
-                } else {
-                    chessView._tvClockMe.setTextColor(0xffffffff); // white
-                }
+//                if (lTmp < 0) {
+//                    lTmp = -lTmp;
+//                    chessView._tvClockMe.setTextColor(0xffff0000); // red
+//                } else {
+//                    chessView._tvClockMe.setTextColor(0xffffffff); // white
+//                }
                 chessView._tvClockMe.setText(chessView.formatTime(lTmp));
 
                 if (chessView._view._flippedBoard) {
@@ -111,12 +113,12 @@ public class ChessView extends UI {
                 } else {
                     lTmp = chessView.getBlackRemainClock();
                 }
-                if (lTmp < 0) {
-                    lTmp = -lTmp;
-                    chessView._tvClockOpp.setTextColor(0xffff0000);
-                } else {
-                    chessView._tvClockOpp.setTextColor(0xffffffff);
-                }
+//                if (lTmp < 0) {
+//                    lTmp = -lTmp;
+//                    chessView._tvClockOpp.setTextColor(0xffff0000);
+//                } else {
+//                    chessView._tvClockOpp.setTextColor(0xffffffff);
+//                }
                 chessView._tvClockOpp.setText(chessView.formatTime(lTmp));
             }
         }
@@ -1589,5 +1591,14 @@ public class ChessView extends UI {
     public String getUCIDatabase() {
         SharedPreferences prefs = _parent.getSharedPreferences("ChessPlayer", Activity.MODE_PRIVATE);
         return prefs.getString("UCIDatabase", null);
+    }
+
+    // e.g. R.attr.colorAccent
+    public int fetchAttrColor(int iAttrKey) {
+        TypedValue typedValue = new TypedValue();
+        TypedArray a = _parent.obtainStyledAttributes(typedValue.data, new int[] { iAttrKey });
+        int color = a.getColor(0, 0);
+        a.recycle();
+        return color;
     }
 }
