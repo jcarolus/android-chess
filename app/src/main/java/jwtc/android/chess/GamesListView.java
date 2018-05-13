@@ -59,8 +59,6 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
         		if(_sortBy.equals(PGNColumns.RATING))
         			flipSortOrder();
         		
-        		resetSortBackgrounds();
-        		setSortBackground(_viewSortRating);
         		_sortBy = PGNColumns.RATING;
         		doFilterSort();
         	}
@@ -71,8 +69,6 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
         		if(_sortBy.equals(PGNColumns.WHITE))
         			flipSortOrder();
         		
-        		resetSortBackgrounds();
-        		setSortBackground(_viewSortWhite);
         		_sortBy = PGNColumns.WHITE;
         		doFilterSort();
         	}
@@ -83,8 +79,6 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
         		if(_sortBy.equals(PGNColumns.BLACK))
         			flipSortOrder();
         		
-        		resetSortBackgrounds();
-        		setSortBackground(_viewSortBlack);
         		_sortBy = PGNColumns.BLACK;
         		doFilterSort();
         	}
@@ -95,8 +89,6 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
         		if(_sortBy.equals(PGNColumns._ID))
         			flipSortOrder();
         		
-        		resetSortBackgrounds();
-        		setSortBackground(_viewSortId);
         		_sortBy = PGNColumns._ID;
         		doFilterSort();
         	}
@@ -107,8 +99,6 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
         		if(_sortBy.equals(PGNColumns.EVENT))
         			flipSortOrder();
         		
-        		resetSortBackgrounds();
-        		setSortBackground(_viewSortEvent);
         		_sortBy = PGNColumns.EVENT;
         		doFilterSort();
         	}
@@ -119,14 +109,11 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
         		if(_sortBy.equals(PGNColumns.DATE))
         			flipSortOrder();
         		
-        		resetSortBackgrounds();
-        		setSortBackground(_viewSortDate);
         		_sortBy = PGNColumns.DATE;
         		doFilterSort();
         	}
         });
-		setSortBackground(_viewSortDate);
-		
+
 		_editFilter = (EditText)findViewById(R.id.EditTextGamesList);
 		_editFilter.addTextChangedListener(new TextWatcher() {
 
@@ -157,7 +144,7 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
 			 @Override
 				public View getView(int position, View convertView, ViewGroup parent) {
 				  View view = super.getView(position, convertView, parent);
-				  view.setBackgroundColor(position % 2 == 0 ? 0x55888888 : 0x55666666);
+				  //view.setBackgroundColor(position % 2 == 0 ? 0x55888888 : 0x55666666);
 				  return view;
 				}
 		 };
@@ -214,21 +201,6 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
 	
 	}
 	 
-	private void resetSortBackgrounds(){
-		_viewSortId.setBackgroundColor(Color.BLACK);
-		_viewSortWhite.setBackgroundColor(Color.BLACK);
-		_viewSortBlack.setBackgroundColor(Color.BLACK);
-		_viewSortEvent.setBackgroundColor(Color.BLACK);
-		_viewSortRating.setBackgroundColor(Color.BLACK);
-		_viewSortDate.setBackgroundColor(Color.BLACK);
-	}
-	private void setSortBackground(View v){
-		if(_sortOrder.equals("DESC"))
-			v.setBackgroundResource(R.drawable.arrow_down);
-		else
-			v.setBackgroundResource(R.drawable.arrow_up);
-	}
-
 	private void flipSortOrder(){
 		_sortOrder = _sortOrder.equals("DESC") ? "ASC" : "DESC";
 	}
@@ -296,14 +268,14 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
 			super(context, layout, c, from, to);
 			// TODO Auto-generated constructor stub
 		}
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-		  View view = super.getView(position, convertView, parent);
-		  
-		  view.setBackgroundColor(position % 2 == 0 ? 0xFF333333 : 0xFF222222);
-
-		  return view;
-		}
+//		@Override
+//		public View getView(int position, View convertView, ViewGroup parent) {
+//		  View view = super.getView(position, convertView, parent);
+//
+//		  view.setBackgroundColor(position % 2 == 0 ? 0xFF333333 : 0xFF222222);
+//
+//		  return view;
+//		}
 	}
 
 }

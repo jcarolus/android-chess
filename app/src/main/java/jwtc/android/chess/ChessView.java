@@ -100,12 +100,9 @@ public class ChessView extends UI {
                 } else {
                     lTmp = chessView.getWhiteRemainClock();
                 }
-//                if (lTmp < 0) {
-//                    lTmp = -lTmp;
-//                    chessView._tvClockMe.setTextColor(0xffff0000); // red
-//                } else {
-//                    chessView._tvClockMe.setTextColor(0xffffffff); // white
-//                }
+                if (lTmp < 0) {
+                    lTmp = -lTmp;
+                }
                 chessView._tvClockMe.setText(chessView.formatTime(lTmp));
 
                 if (chessView._view._flippedBoard) {
@@ -113,12 +110,9 @@ public class ChessView extends UI {
                 } else {
                     lTmp = chessView.getBlackRemainClock();
                 }
-//                if (lTmp < 0) {
-//                    lTmp = -lTmp;
-//                    chessView._tvClockOpp.setTextColor(0xffff0000);
-//                } else {
-//                    chessView._tvClockOpp.setTextColor(0xffffffff);
-//                }
+                if (lTmp < 0) {
+                    lTmp = -lTmp;
+                }
                 chessView._tvClockOpp.setText(chessView.formatTime(lTmp));
             }
         }
