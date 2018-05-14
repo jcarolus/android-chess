@@ -224,7 +224,13 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
 
                 // show engine name
                 SharedPreferences pref = getBaseContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
-                String engName = pref.getString("UCIEngine", "Jeroen");
+                String engName = pref.getString("UCIEngine", null);
+                String dbName = pref.getString("UCIDatabase", null);
+                if (engName == null) {
+                    engName = "Native engine";
+                } else if(dbName != null) {
+                    engName += " +db";
+                }
                 tv_engine.setText(_itemsMenu[0] + ": " + engName);
             }
         });

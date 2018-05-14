@@ -35,7 +35,7 @@
 	>
 		<TableRow>
 			<ImageButton android:id="@+id/ButtonPuzzlePrevious" android:src="@drawable/navigation_previous_item"
-				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+				android:layout_height="40dip" android:layout_width="40dip"  style="@style/ChessImageButton"
 				android:layout_marginLeft="8dip"
 				/>
 			<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center">
@@ -43,7 +43,7 @@
 					android:layout_height="wrap_content" android:layout_width="wrap_content"
 				/>
 				<ImageButton android:id="@+id/ButtonPuzzleHelp" android:src="@drawable/action_about"
-					android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+					android:layout_height="40dip" android:layout_width="40dip"  style="@style/ChessImageButton"
 					android:layout_marginLeft="8dip"
 				/>
 				<Button android:id="@+id/ButtonPuzzle"
@@ -58,7 +58,7 @@
 					/>
 			</LinearLayout>
 			<ImageButton android:id="@+id/ButtonPuzzleNext" android:src="@drawable/navigation_next_item" 
-				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+				android:layout_height="40dip" android:layout_width="40dip"  style="@style/ChessImageButton"
 				android:layout_marginRight="8dip"
 			/>
 		</TableRow>

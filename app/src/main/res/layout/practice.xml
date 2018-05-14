@@ -62,14 +62,14 @@
 			/>
 			<ImageButton android:id="@+id/ButtonPracticePause"
 				android:src="@drawable/av_pause"
-				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+				android:layout_height="40dip" android:layout_width="40dip" style="@style/ChessImageButton"
 			/>
 			<Button android:id="@+id/ButtonPracticeShow"
 				android:text="@string/button_show" android:paddingLeft="8dip" android:paddingRight="8dip"
 				android:layout_height="40dip" android:layout_width="wrap_content"
 			/>
-			<ImageButton android:id="@+id/ButtonPracticeNext" android:src="@drawable/navigation_next_item" 
-				android:layout_height="40dip" android:layout_width="40dip" android:scaleType="fitXY"
+			<ImageButton android:id="@+id/ButtonPracticeNext" android:src="@drawable/navigation_next_item"
+				android:layout_height="40dip" android:layout_width="40dip" style="@style/ChessImageButton"
 			/>
 		</TableRow>
 	</TableLayout>

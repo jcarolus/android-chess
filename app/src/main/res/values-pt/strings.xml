@@ -297,7 +297,7 @@
     <string name="pgntool_uci_engine_success">motores UCI %s instalados</string>
     <string name="pgntool_uci_engine_error">Aconteceu um erro, não podia instalar motor UCI</string>
     <string name="pgntool_unset_uci_engine">Deinstalar motor UCI</string>
-    <string name="pgntool_install_database_engine">Instalar banco de dados UCI</string>
+    <string name="pgntool_install_uci_database">Instalar banco de dados UCI</string>
     <string name="pgntool_uci_database_success">banco de dados UCI %s instalados</string>
     <string name="pgntool_uci_database_error">Aconteceu um erro, não podia instalar banco de dados UCI</string>
     <string name="pgntool_unset_uci_database">Deinstalar banco de dados UCI</string>

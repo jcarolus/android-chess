@@ -1,5 +1,7 @@
 package jwtc.android.chess;
 
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -57,15 +59,18 @@ public class PGNView {
 		_bAnnotated = b;
 	}
 	public void setSelected(boolean b){
-		int color = this._parent.fetchAttrColor(R.attr.colorAccent);
+
 		if(b){
-			_tvItem.setBackgroundColor(color);
+			_tvItem.setPaintFlags(_tvItem.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 		}
-//		else{
-//			if(_bAnnotated)
-//				_tvItem.setBackgroundColor(0xff648fd5);
-//			else
-//				_tvItem.setBackgroundColor(0xff404040);
-//		}
+		else{
+			_tvItem.setPaintFlags(_tvItem.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
+		}
+		if(_bAnnotated) {
+			_tvItem.setTypeface(null, Typeface.BOLD);
+		}
+		else {
+			_tvItem.setTypeface(null, Typeface.NORMAL);
+		}
 	}
 }
