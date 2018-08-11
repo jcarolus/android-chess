@@ -8,6 +8,7 @@
         <item>@string/start_globalpreferences</item>
         <item>@string/start_about</item>
         <item>@string/start_pgn</item>
+        <item>RESOLF</item>
     </string-array>
     <string-array name="levels_ply">
         <item>1 ply</item>

@@ -214,7 +214,7 @@
             </TableRow>
             <TableRow>
                 <ProgressBar android:id="@+id/ProgressBarPlay" android:layout_height="50dp" android:layout_width="50dp"
-                    style="?android:attr/progressBarStyleLarge"  android:visibility="gone"
+                    style="?android:attr/progressBarStyleLarge" android:visibility="gone"
                     android:layout_marginLeft="2dip" android:layout_marginRight="2dip" android:layout_marginBottom="30dp"
                 />
 

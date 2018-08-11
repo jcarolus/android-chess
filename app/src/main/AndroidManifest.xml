@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="jwtc.android.chess"
-      android:versionCode="152"
+      android:versionCode="153"
       android:versionName="8.9.2"
       android:installLocation="auto"
       >
@@ -10,9 +10,11 @@
 		>
     	<provider android:name="MyPGNProvider"
             android:authorities="jwtc.android.chess.MyPGNProvider"
+			android:exported="false"
         />
         <provider android:name=".puzzle.MyPuzzleProvider"
             android:authorities="jwtc.android.chess.puzzle.MyPuzzleProvider"
+			android:exported="false"
         />
     	<activity android:name=".start" android:label="@string/app_name" android:theme="@style/Theme.AppCompat"
     	>
