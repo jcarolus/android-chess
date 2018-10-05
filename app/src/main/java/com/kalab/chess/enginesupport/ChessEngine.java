@@ -27,7 +27,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
-public class ChessEngine {
+public class ChessEngine
+{
 
     private static final String TAG = ChessEngine.class.getSimpleName();
 

@@ -7,7 +7,7 @@ android {
         }
     }
     compileSdkVersion 24
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "jwtc.android.chess"
         minSdkVersion 11
