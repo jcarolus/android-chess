@@ -35,6 +35,7 @@ static void *search_thread(void* arg){
     if (jvm->DetachCurrentThread() != JNI_OK) {
         DEBUG_PRINT("Could not deattach from current thread\n", 0);
     }
+    return NULL;
 }
 
 
