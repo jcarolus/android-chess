@@ -144,7 +144,7 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setCastlingsEPAnd50( JNIEnv* env, job
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumBoard( JNIEnv* env, jobject thiz)
 {
-	stGame->getBoard()->getNumBoard();
+	return stGame->getBoard()->getNumBoard();
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard( JNIEnv* env, jobject thiz)
 {
