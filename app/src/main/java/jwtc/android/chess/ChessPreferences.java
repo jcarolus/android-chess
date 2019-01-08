@@ -54,12 +54,6 @@ public class ChessPreferences extends MyPreferenceActivity  implements SharedPre
 				    	_colorScheme = item;
 			        	editor.putInt("ColorScheme", _colorScheme);
 
-						if (_colorScheme == 6){ // Color Picker
-							Intent i = new Intent();
-							i.setClass(getApplicationContext(), ColorPickerActivity.class);
-							startActivity(i);
-						}
-
 						editor.commit();
 				    	
 				    	dialog.dismiss();
