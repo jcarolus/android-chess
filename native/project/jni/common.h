@@ -31,7 +31,7 @@
 #ifdef _MSC_VER
 	#define longlong __int64
 #else
-	#define longlong signed long long
+	#define longlong unsigned long long
 #endif
 typedef longlong BITBOARD;
 
