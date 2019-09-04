@@ -16,15 +16,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
 import java.lang.reflect.Field;
 
 public class MyBaseActivity extends android.app.Activity{
 
 	protected PowerManager.WakeLock _wakeLock;
-	protected Tracker _tracker;
 	public static final String TAG = "MyBaseActivity";
 	private long _onResumeTimeMillies = 0;
 	public SoundPool spSound;
@@ -40,10 +36,6 @@ public class MyBaseActivity extends android.app.Activity{
 
 		_wakeLock = this.getWakeLock();
 
-		MyApplication application = (MyApplication) getApplication();
-		_tracker = application .getDefaultTracker();
-//		_tracker.setScreenName(TAG);
-//		_tracker.send(new HitBuilders.ScreenViewBuilder().build());
 		spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
 		_itickTock = spSound.load(this, R.raw.ticktock, 1);
 		_ihorseNeigh = spSound.load(this, R.raw.horseneigh, 1);
@@ -147,21 +139,6 @@ public class MyBaseActivity extends android.app.Activity{
 		Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
 		t.setGravity(Gravity.BOTTOM, 0, 0);
 		t.show();
-	}
-
-	public void trackEvent(String category, String action){
-		_tracker.send(new HitBuilders.EventBuilder()
-				.setCategory(category)
-				.setAction(action)
-				.build());
-	}
-
-	public void trackEvent(String category, String action, String label){
-		_tracker.send(new HitBuilders.EventBuilder()
-				.setCategory(category)
-				.setAction(action)
-				.setLabel(label)
-				.build());
 	}
 
 	public void set_fVolume(float vol){

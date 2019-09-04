@@ -12,8 +12,6 @@ import android.widget.*;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.google.android.gms.analytics.HitBuilders;
-
 public class practice extends MyBaseActivity {
 	
     /** instances for the view and game of chess **/

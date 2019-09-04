@@ -11,8 +11,6 @@ import android.view.*;
 import android.widget.*;
 import android.content.SharedPreferences;
 
-import com.google.android.gms.analytics.HitBuilders;
-
 public class puzzle extends MyBaseActivity {
 	
     /** instances for the view and game of chess **/

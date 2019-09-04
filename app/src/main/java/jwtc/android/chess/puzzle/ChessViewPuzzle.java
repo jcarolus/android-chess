@@ -303,7 +303,6 @@ public class ChessViewPuzzle extends UI {
 				jumptoMove(m_game.getBoard().getNumBoard());
 				updateState();
 			}*/
-            _parent.trackEvent(_parent.TAG, "solved");
 
             return true;
         } else {
@@ -376,8 +375,6 @@ public class ChessViewPuzzle extends UI {
             _imgTurn.setImageResource((turn == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack));
 
             updateState();
-
-            _parent.trackEvent(_parent.TAG, "play");
         }
     }
 
