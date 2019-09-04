@@ -151,15 +151,7 @@ public class start extends AppCompatActivity {
 						i.setClass(start.this, HtmlActivity.class);
 						i.putExtra(HtmlActivity.HELP_MODE, "help");
 						startActivity(i);
-					} else if (_ssActivity.equals("RESOLF")) {
-						final String appPackageName = "com.resolf.edu";
-						try {
-							startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-						} catch (android.content.ActivityNotFoundException anfe) {
-							startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-						}
 					}
-
 				} catch (Exception ex) {
 					Toast t = Toast.makeText(start.this, R.string.toast_could_not_start_activity, Toast.LENGTH_LONG);
 					t.setGravity(Gravity.BOTTOM, 0, 0);
