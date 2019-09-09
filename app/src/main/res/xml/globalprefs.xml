@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-     
-     <PreferenceCategory android:title="@string/globalpreferences">
-		 <ListPreference
-			 android:title="@string/pref_localelanguage"
-			 android:summary="@string/pref_localelanguage_desc"
-			 android:key="localelanguage"
-			 android:entries="@array/localearray"
-			 android:entryValues="@array/localeKeyarray" />
 
-		 <CheckBoxPreference
-			android:title="@string/pref_wakelock"
-			android:defaultValue="false"
-			android:summary="@string/pref_wakelock_desc"
-			android:key="wakeLock" />
+    <PreferenceCategory android:title="@string/globalpreferences">
+        <ListPreference
+            android:title="@string/pref_localelanguage"
+            android:summary="@string/pref_localelanguage_desc"
+            android:key="localelanguage"
+            android:entries="@array/localearray"
+            android:entryValues="@array/localeKeyarray" />
 
-		<CheckBoxPreference
-			android:title="@string/pref_fullscreen"
-			android:defaultValue="true"
-			android:summary="@string/pref_fullscreen_desc"
-			android:key="fullScreen" />
+        <CheckBoxPreference
+            android:title="@string/pref_wakelock"
+            android:defaultValue="false"
+            android:summary="@string/pref_wakelock_desc"
+            android:key="wakeLock" />
 
-		<Preference
-			android:title="@string/pref_colorscheme"
-			android:summary="@string/pref_colorscheme_desc"
-			android:key="colorSchemeHandle" />
+        <CheckBoxPreference
+            android:title="@string/pref_fullscreen"
+            android:defaultValue="true"
+            android:summary="@string/pref_fullscreen_desc"
+            android:key="fullScreen" />
 
-		<ListPreference
-			android:title="@string/pref_tileset"
-			android:summary="@string/pref_tileset_desc"
-			android:key="tileSet"
-			android:defaultValue=""
-			android:entries="@array/tileArray"
-			android:entryValues="@array/tileKeyArray" />
+        <Preference
+            android:title="@string/pref_colorscheme"
+            android:summary="@string/pref_colorscheme_desc"
+            android:key="colorSchemeHandle" />
 
-		<CheckBoxPreference
-			android:title="@string/pref_showLastMove"
-			android:defaultValue="true"
-			android:summary="@string/pref_showLastMove_desc"
-			android:key="showLastMove" />
-		
-		<CheckBoxPreference
-			android:title="@string/pref_showCoords"
-			android:defaultValue="false"
-			android:summary="@string/pref_showCoords_desc"
-			android:key="showCoords" />
-		
-		<Preference
-			android:title="@string/pref_sound"
-			android:summary="@string/pref_sound_desc"
-			android:key="soundHandle" />
-		
-		<CheckBoxPreference
-			android:title="@string/pref_extrahighlight"
-			android:defaultValue="false"
-			android:summary="@string/pref_extrahighlight_desc"
-			android:key="extrahighlight" />
-	</PreferenceCategory>
+        <ListPreference
+            android:title="@string/pref_tileset"
+            android:summary="@string/pref_tileset_desc"
+            android:key="tileSet"
+            android:defaultValue=""
+            android:entries="@array/tileArray"
+            android:entryValues="@array/tileKeyArray" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_showLastMove"
+            android:defaultValue="true"
+            android:summary="@string/pref_showLastMove_desc"
+            android:key="showLastMove" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_showCoords"
+            android:defaultValue="false"
+            android:summary="@string/pref_showCoords_desc"
+            android:key="showCoords" />
+
+        <Preference
+            android:title="@string/pref_sound"
+            android:summary="@string/pref_sound_desc"
+            android:key="soundHandle" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_extrahighlight"
+            android:defaultValue="false"
+            android:summary="@string/pref_extrahighlight_desc"
+            android:key="extrahighlight" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

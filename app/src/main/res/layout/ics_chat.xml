@@ -1,33 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent" 
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:gravity="center_vertical"
-	android:windowFrame="@null" android:windowContentOverlay="@null" android:windowIsFloating="true"
-	android:windowNoTitle="true" 
-	>
-	<TextView android:id="@+id/TextViewChat" 
-		android:text="..."
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-	/>
+<RelativeLayout android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_vertical"
+    android:windowFrame="@null"
+    android:windowContentOverlay="@null"
+    android:windowIsFloating="true"
+    android:windowNoTitle="true">
 
-	<EditText android:id="@+id/EditChat"
-		android:layout_below="@id/TextViewChat"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-	/>
-	<TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
-    	android:layout_below="@id/EditChat" android:stretchColumns="*"
-    >
-    	<TableRow style="@style/MyRowStyle">
-    		<Button android:id="@+id/ButtonChatCancel"
-    			android:text="@string/button_cancel" 
-    			android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-    		<Button android:id="@+id/ButtonChatOk"
-    			android:text="@string/button_ok" 
-    			android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-    	</TableRow>
-    
+    <TextView
+        android:id="@+id/TextViewChat"
+        android:text="..."
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/EditChat"
+        android:layout_below="@id/TextViewChat"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/EditChat"
+        android:stretchColumns="*">
+
+        <TableRow style="@style/MyRowStyle">
+
+            <Button
+                android:id="@+id/ButtonChatCancel"
+                android:text="@string/button_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/ButtonChatOk"
+                android:text="@string/button_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
     </TableLayout>
-	
+
 </RelativeLayout>
 

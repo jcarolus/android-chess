@@ -1,6 +1,7 @@
 package jwtc.android.chess.puzzle;
 
 import jwtc.android.chess.*;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -12,12 +13,16 @@ import android.widget.*;
 import android.content.SharedPreferences;
 
 public class puzzle extends MyBaseActivity {
-	
-    /** instances for the view and game of chess **/
-	private ChessViewPuzzle _chessView;
+
+    /**
+     * instances for the view and game of chess
+     **/
+    private ChessViewPuzzle _chessView;
     public static final String TAG = "puzzle";
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,19 +61,20 @@ public class puzzle extends MyBaseActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-	/**
-	 * 
-	 */
+
+    /**
+     *
+     */
     @Override
     protected void onResume() {
-        
-    	Log.i("puzzle", "onResume");
-    	
-		SharedPreferences prefs = this.getPrefs();
+
+        Log.i("puzzle", "onResume");
+
+        SharedPreferences prefs = this.getPrefs();
 
         _chessView.OnResume(prefs);
         _chessView.updateState();
-	
+
         super.onResume();
         //
     }
@@ -76,21 +82,22 @@ public class puzzle extends MyBaseActivity {
 
     @Override
     protected void onPause() {
-        
+
         SharedPreferences.Editor editor = this.getPrefs().edit();
         _chessView.OnPause(editor);
 
         editor.commit();
-        
+
         super.onPause();
     }
+
     @Override
-    protected void onDestroy(){
-    	_chessView.OnDestroy();
-    	super.onDestroy();
+    protected void onDestroy() {
+        _chessView.OnDestroy();
+        super.onDestroy();
     }
 
-    public void flipBoard(){
-    	_chessView.flipBoard();
+    public void flipBoard() {
+        _chessView.flipBoard();
     }
 }

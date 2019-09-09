@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="@string/color_picker_brightness"/>
+        android:text="@string/color_picker_brightness" />
 
     <com.larswerkman.holocolorpicker.SVBar
         android:id="@+id/svbar"
@@ -28,8 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_gravity="center_horizontal"
-        >
+        android:layout_gravity="center_horizontal">
 
         <TableRow
             android:layout_width="wrap_content"
@@ -37,14 +36,15 @@
 
             <TextView
                 android:gravity="center_horizontal"
-                android:text="@string/color_picker_light"
-                />
+                android:text="@string/color_picker_light" />
+
             <TextView
                 android:gravity="center_horizontal"
-                android:text="@string/color_picker_dark"/>
+                android:text="@string/color_picker_dark" />
+
             <TextView
                 android:gravity="center_horizontal"
-                android:text="@string/color_picker_selected"/>
+                android:text="@string/color_picker_selected" />
         </TableRow>
 
         <TableRow

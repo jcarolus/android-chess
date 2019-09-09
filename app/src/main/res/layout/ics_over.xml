@@ -4,7 +4,8 @@
     android:layout_height="fill_parent"
     android:layout_gravity="center">
 
-    <LinearLayout android:orientation="vertical"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -14,7 +15,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/ButtonGameExit"
             android:background="@android:drawable/ic_menu_close_clear_cancel"
-            android:layout_gravity="end"/>
+            android:layout_gravity="end" />
 
         <TextView
             android:layout_width="fill_parent"
@@ -39,7 +40,7 @@
             android:text="@string/ics_good_game"
             android:id="@+id/ButtonGameGoodGame"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
 
 
         <Button
@@ -48,7 +49,7 @@
             android:text="@string/ics_offer_rematch"
             android:id="@+id/ButtonGameRematch"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -57,7 +58,7 @@
             android:text="@string/ics_game"
             android:id="@+id/textView2"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"/>
+            android:layout_marginTop="30dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -65,8 +66,7 @@
             android:text="@string/ics_examine"
             android:id="@+id/ButtonGameExamine"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            />
+            android:layout_marginTop="10dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -74,7 +74,7 @@
             android:text="@string/ics_copy_clipboard_text"
             android:id="@+id/ButtonGameClipBoard"
             android:layout_marginTop="10dp"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal" />
 
         <Button
             android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
             android:id="@+id/ButtonGameSend"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="20dp" />
 
     </LinearLayout>
 </ScrollView>

@@ -11,14 +11,12 @@
             android:title="@string/pref_speech"
             android:defaultValue="false"
             android:summary="@string/pref_speech_desc"
-            android:key="speechNotification"
-            />
+            android:key="speechNotification" />
         <CheckBoxPreference
             android:title="@string/pref_skipreturn"
             android:defaultValue="true"
             android:summary="@string/pref_skipreturn_desc"
-            android:key="skipReturn"
-            />
+            android:key="skipReturn" />
         <!--
         <CheckBoxPreference
             android:title="@string/pref_eco"

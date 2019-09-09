@@ -90,7 +90,7 @@ public class ChessEngine {
 
     private void setExecutablePermission(String engineFileName)
             throws IOException {
-        String cmd[] = { "chmod", "744", engineFileName };
+        String cmd[] = {"chmod", "744", engineFileName};
         Process process = Runtime.getRuntime().exec(cmd);
         try {
             process.waitFor();
@@ -114,12 +114,10 @@ public class ChessEngine {
     /**
      * Check the license of the engine.
      *
-     * @param caller
-     *            the activity which makes the license check
-     * @param requestCode
-     *            if >= 0, this code will be returned in onActivityResult() when the license check exits
+     * @param caller      the activity which makes the license check
+     * @param requestCode if >= 0, this code will be returned in onActivityResult() when the license check exits
      * @return true if a license check is performed, false if there is no need for a license check.
-     *            If a license check is performed the caller must check the result in onActivityResult()
+     * If a license check is performed the caller must check the result in onActivityResult()
      */
     public boolean checkLicense(Activity caller, int requestCode) {
         return checkLicense(caller, requestCode, null);

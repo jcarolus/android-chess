@@ -3,6 +3,7 @@ package jwtc.android.chess.puzzle;
 import java.io.InputStream;
 
 import jwtc.android.chess.*;
+
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,12 +14,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 public class practice extends MyBaseActivity {
-	
-    /** instances for the view and game of chess **/
-	private ChessViewPractice _chessView;
+
+    /**
+     * instances for the view and game of chess
+     **/
+    private ChessViewPractice _chessView;
     public static final String TAG = "practice";
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,47 +58,50 @@ public class practice extends MyBaseActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-	/**
-	 * 
-	 */
+
+    /**
+     *
+     */
     @Override
     protected void onResume() {
-        
-		SharedPreferences prefs = this.getPrefs();
 
-		 final Intent intent = getIntent();
-	     Uri uri = intent.getData();
-	     InputStream is = null;
-	     if(uri != null){
-			try {
-				is = getContentResolver().openInputStream(uri);
-			} catch(Exception ex){}
-	     }
+        SharedPreferences prefs = this.getPrefs();
+
+        final Intent intent = getIntent();
+        Uri uri = intent.getData();
+        InputStream is = null;
+        if (uri != null) {
+            try {
+                is = getContentResolver().openInputStream(uri);
+            } catch (Exception ex) {
+            }
+        }
         _chessView.OnResume(prefs, is);
         _chessView.updateState();
-		
+
         super.onResume();
     }
 
 
     @Override
     protected void onPause() {
-        
+
         SharedPreferences.Editor editor = this.getPrefs().edit();
         _chessView.OnPause(editor);
 
         editor.commit();
-        
+
         super.onPause();
     }
+
     @Override
-    protected void onDestroy(){
-    	_chessView.OnDestroy();
-    	super.onDestroy();
+    protected void onDestroy() {
+        _chessView.OnDestroy();
+        super.onDestroy();
     }
 
 
-    public void flipBoard(){
-    	_chessView.flipBoard();
+    public void flipBoard() {
+        _chessView.flipBoard();
     }
 }

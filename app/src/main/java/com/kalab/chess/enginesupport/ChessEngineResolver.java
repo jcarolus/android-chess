@@ -41,12 +41,16 @@ import android.util.Log;
 public class ChessEngineResolver {
 
     private static final String ENGINE_PROVIDER_MARKER = "intent.chess.provider.ENGINE";
-    /** marker used to mark engines which need license checking */
+    /**
+     * marker used to mark engines which need license checking
+     */
     private static final String ENGINE_PROVIDER_LICENSE_MARKER = "intent.chess.provider.ACTIVATION";
     private static final String TAG = ChessEngineResolver.class.getSimpleName();
     private Context context;
     private String target;
-    /** map of package -> activity for license checks */
+    /**
+     * map of package -> activity for license checks
+     */
     Map<String, String> licenseCheckActivities = new HashMap<String, String>();
 
     public ChessEngineResolver(Context context) {
@@ -179,16 +183,12 @@ public class ChessEngineResolver {
      * Ensure that the engine is current. It re-copies the engine if it was not
      * current.
      *
-     * @param fileName
-     *            the file name of the engine
-     * @param packageName
-     *            the package name of the engine
-     * @param versionCode
-     *            the (installed) version code of the engine
-     * @param destination
-     *            the destination folder to copy a new engine to
+     * @param fileName    the file name of the engine
+     * @param packageName the package name of the engine
+     * @param versionCode the (installed) version code of the engine
+     * @param destination the destination folder to copy a new engine to
      * @return the new version of the engine, -1 in case of an error (IOError or
-     *         if no engine was found)
+     * if no engine was found)
      */
     public int ensureEngineVersion(String fileName, String packageName,
                                    int versionCode, File destination) {
@@ -232,16 +232,12 @@ public class ChessEngineResolver {
     /**
      * Check the license of an engine.
      *
-     * @param caller
-     *            the activity which makes the license check
-     * @param requestCode
-     *            if >= 0, this code will be returned in onActivityResult() when the license check exits
-     * @param fileName
-     *            the file name of the engine
-     * @param packageName
-     *            the package name of the engine
+     * @param caller      the activity which makes the license check
+     * @param requestCode if >= 0, this code will be returned in onActivityResult() when the license check exits
+     * @param fileName    the file name of the engine
+     * @param packageName the package name of the engine
      * @return true if a license check is performed, false if there is no need for a license check.
-     *            If a license check is performed the caller must check the result in onActivityResult()
+     * If a license check is performed the caller must check the result in onActivityResult()
      */
     public boolean checkLicense(Activity caller, int requestCode,
                                 String fileName, String packageName) {
@@ -260,8 +256,7 @@ public class ChessEngineResolver {
      * Don't use this in production - this method is only for testing. Set the
      * cpu target.
      *
-     * @param target
-     *            the cpu target to set
+     * @param target the cpu target to set
      */
     public void setTarget(String target) {
         this.target = target;

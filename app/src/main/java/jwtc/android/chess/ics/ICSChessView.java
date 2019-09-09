@@ -55,7 +55,7 @@ public class ICSChessView extends ChessViewBase {
         /** Gets called on every message that is received */
         // @Override
         public void handleMessage(Message msg) {
-            if(_viewMode == VIEW_EXAMINE || _viewMode == VIEW_NONE){  // No ticks during EXAMINE mode or IDLE Mode
+            if (_viewMode == VIEW_EXAMINE || _viewMode == VIEW_NONE) {  // No ticks during EXAMINE mode or IDLE Mode
                 return;
             }
             int countDown = msg.getData().getInt("ticks");
@@ -67,13 +67,16 @@ public class ICSChessView extends ChessViewBase {
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
 
             }
-            if((msg.what == MSG_TOP_TIME && (_tvPlayerTop.getText()).equals(_playerMe))  // Time Low Warning
-                || (msg.what == MSG_BOTTOM_TIME && (_tvPlayerBottom.getText()).equals(_playerMe))){
+            if ((msg.what == MSG_TOP_TIME && (_tvPlayerTop.getText()).equals(_playerMe))  // Time Low Warning
+                    || (msg.what == MSG_BOTTOM_TIME && (_tvPlayerBottom.getText()).equals(_playerMe))) {
                 if (_parent.is_bTimeWarning() && (countDown <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)) {
                     try {
                         _parent.soundTickTock();
-                        if (countDown%2 == 0){ _tvClockBottom.setBackgroundColor(Color.RED);
-                        } else {_tvClockBottom.setBackgroundColor(Color.BLACK);}
+                        if (countDown % 2 == 0) {
+                            _tvClockBottom.setBackgroundColor(Color.RED);
+                        } else {
+                            _tvClockBottom.setBackgroundColor(Color.BLACK);
+                        }
                     } catch (Exception e) {
                         Log.e(TAG, "sound process died", e);
                     }
@@ -128,7 +131,9 @@ public class ICSChessView extends ChessViewBase {
                 paint();
                 // switch back
                 _viewSwitchConfirm.setDisplayedChild(0);
-                if (_bConfirmMoveLongClick){_bConfirmMoveLongClick = false;}
+                if (_bConfirmMoveLongClick) {
+                    _bConfirmMoveLongClick = false;
+                }
             }
         });
         _butConfirmMove = (Button) _activity.findViewById(R.id.ButtonConfirmMove);
@@ -145,22 +150,22 @@ public class ICSChessView extends ChessViewBase {
         });
 
         _viewSwitchConfirm = (ViewSwitcher) _activity.findViewById(R.id.ViewSitcherConfirmAndText);
-         
-        _butImageBackward = (ImageButton)_activity.findViewById(R.id.ButtonICSExamineBackward);
-        _butImageBackward.setOnClickListener(new OnClickListener() {
-        	public void onClick(View arg0) {
-        		_parent.sendString("backward");
-			}
-		});
- 		
- 		_butImageForward = (ImageButton)_activity.findViewById(R.id.ButtonICSExamineForward);
-        _butImageForward.setOnClickListener(new OnClickListener() {
-        	public void onClick(View arg0) {
-        		_parent.sendString("forward");
-			}
-		});
 
-        _butImageRevert = (ImageButton)_activity.findViewById(R.id.ButtonICSRevert);
+        _butImageBackward = (ImageButton) _activity.findViewById(R.id.ButtonICSExamineBackward);
+        _butImageBackward.setOnClickListener(new OnClickListener() {
+            public void onClick(View arg0) {
+                _parent.sendString("backward");
+            }
+        });
+
+        _butImageForward = (ImageButton) _activity.findViewById(R.id.ButtonICSExamineForward);
+        _butImageForward.setOnClickListener(new OnClickListener() {
+            public void onClick(View arg0) {
+                _parent.sendString("forward");
+            }
+        });
+
+        _butImageRevert = (ImageButton) _activity.findViewById(R.id.ButtonICSRevert);
         _butImageRevert.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -232,7 +237,9 @@ public class ICSChessView extends ChessViewBase {
             public boolean onLongClick(View view) {
 
                 //Log.d(TAG, "OnLongClickListener m_iFrom ->" + m_iFrom + "   m_iTo ->" + m_iTo);
-                if (m_iFrom == -1){return false;} // return false will let OnClickListener take care of it
+                if (m_iFrom == -1) {
+                    return false;
+                } // return false will let OnClickListener take care of it
                 setConfirmMoveLongClick(true);
                 handleClick(getFieldIndex(getIndexOfButton(view)));
                 return true;
@@ -270,16 +277,21 @@ public class ICSChessView extends ChessViewBase {
                 Log.i(TAG, "Idle");
                 break;
             case VIEW_PLAY:
-                switch(_parent.get_gameStartSound()){
-                    case 0: break;
-                    case 1: _parent.soundHorseNeigh();
-                            _parent.vibration(INCREASE);
-                            break;
-                    case 2: _parent.soundHorseNeigh();
-                            break;
-                    case 3: _parent.vibration(INCREASE);
-                            break;
-                    default: Log.e(TAG, "get_gameStartSound error");
+                switch (_parent.get_gameStartSound()) {
+                    case 0:
+                        break;
+                    case 1:
+                        _parent.soundHorseNeigh();
+                        _parent.vibration(INCREASE);
+                        break;
+                    case 2:
+                        _parent.soundHorseNeigh();
+                        break;
+                    case 3:
+                        _parent.vibration(INCREASE);
+                        break;
+                    default:
+                        Log.e(TAG, "get_gameStartSound error");
                 }
                 _parent.notificationAPP();
                 Log.i(TAG, "Play");
@@ -323,7 +335,7 @@ public class ICSChessView extends ChessViewBase {
         _bConfirmMove = b;
     }
 
-    public void setConfirmMoveLongClick(boolean b){
+    public void setConfirmMoveLongClick(boolean b) {
         _bConfirmMoveLongClick = b;
     }
 
@@ -342,7 +354,7 @@ public class ICSChessView extends ChessViewBase {
         //paint();
     }
 
-    public void setButtonExamineVisibility(boolean status){
+    public void setButtonExamineVisibility(boolean status) {
         _butImageBackward.setVisibility(status ? View.VISIBLE : View.GONE);
         _butImageForward.setVisibility(status ? View.VISIBLE : View.GONE);
         _butImageRevert.setVisibility(status ? View.VISIBLE : View.GONE);
@@ -474,7 +486,7 @@ public class ICSChessView extends ChessViewBase {
     		*/
             _whitePlayer = st.nextToken();
             _blackPlayer = st.nextToken();
-            if(_bfirst) {
+            if (_bfirst) {
                 if (_blackPlayer.equalsIgnoreCase(sMe)) {
                     _flippedBoard = true;
                     _playerMe = _blackPlayer;
@@ -493,7 +505,7 @@ public class ICSChessView extends ChessViewBase {
              1 I am playing and it is my move
              0 I am observing a game being played
              */
-            if ((_iMe == 2 || _iMe == -2) && _viewMode != VIEW_EXAMINE){  //  I am the examiner or observer of this game
+            if ((_iMe == 2 || _iMe == -2) && _viewMode != VIEW_EXAMINE) {  //  I am the examiner or observer of this game
                 //initiate textviews in examine mode
                 _tvMoveNumber.setText("1");
                 this.setViewMode(VIEW_EXAMINE);
@@ -534,9 +546,9 @@ public class ICSChessView extends ChessViewBase {
             String sMove = st.nextToken();  // machine notation move
             String _sTimePerMove = st.nextToken();  // time it took to make a move
             String sLastMoveDisplay = st.nextToken();  // algebraic notation move
-            if(sLastMoveDisplay.contains("+")){
+            if (sLastMoveDisplay.contains("+")) {
                 _parent.soundSmallNeigh();
-            } else if(sLastMoveDisplay.contains("x")){
+            } else if (sLastMoveDisplay.contains("x")) {
                 _parent.soundCapture();
             } else {
                 _parent.soundMove();
@@ -545,22 +557,22 @@ public class ICSChessView extends ChessViewBase {
 
             if (_flippedBoard) {
                 _tvPlayerTop.setText(_whitePlayer);
-                if(_tvPlayerTopRating != null) {
+                if (_tvPlayerTopRating != null) {
                     _tvPlayerTopRating.setText(_parent.get_whiteRating());
                 }
                 _tvPlayerBottom.setText(_blackPlayer);
-                if(_tvPlayerBottomRating != null) {
+                if (_tvPlayerBottomRating != null) {
                     _tvPlayerBottomRating.setText(_parent.get_blackRating());
                 }
                 _tvClockTop.setText(parseTime(_iWhiteRemaining));
                 _tvClockBottom.setText(parseTime(_iBlackRemaining));
             } else {
                 _tvPlayerTop.setText(_blackPlayer);
-                if(_tvPlayerTopRating != null) {
+                if (_tvPlayerTopRating != null) {
                     _tvPlayerTopRating.setText(_parent.get_blackRating());
                 }
                 _tvPlayerBottom.setText(_whitePlayer);
-                if(_tvPlayerBottomRating != null) {
+                if (_tvPlayerBottomRating != null) {
                     _tvPlayerBottomRating.setText(_parent.get_whiteRating());
                 }
                 _tvClockTop.setText(parseTime(_iBlackRemaining));
@@ -570,10 +582,10 @@ public class ICSChessView extends ChessViewBase {
             //int iFrom = -1;
             if (false == sMove.equals("none") && sMove.length() > 2) {
 
-                _tvLastMove.setText(_iTurn==1 ? "." + sLastMoveDisplay: sLastMoveDisplay);  // display last move
+                _tvLastMove.setText(_iTurn == 1 ? "." + sLastMoveDisplay : sLastMoveDisplay);  // display last move
                 _tvTimePerMove.setText(_sTimePerMove);
                 // The about to be move is converted to the current move
-                _tvMoveNumber.setText(_iTurn==0 ? _sNumberOfMove : Integer.toString(Integer.parseInt(_sNumberOfMove)-1));
+                _tvMoveNumber.setText(_iTurn == 0 ? _sNumberOfMove : Integer.toString(Integer.parseInt(_sNumberOfMove) - 1));
 
                 if (sMove.equals("o-o")) {
                     if (_iTurn == BoardConstants.WHITE)
@@ -635,7 +647,7 @@ public class ICSChessView extends ChessViewBase {
         if (_bHandleClick) {
             m_iTo = -1;
 
-            if(_jni.pieceAt(_jni.getTurn(), index) != BoardConstants.FIELD){
+            if (_jni.pieceAt(_jni.getTurn(), index) != BoardConstants.FIELD) {
                 m_iFrom = -1; // If another piece is selected reset origin.
             }
 
@@ -652,7 +664,9 @@ public class ICSChessView extends ChessViewBase {
                     return;
                 }
 
-                if (_bConfirmMoveLongClick){setConfirmMoveLongClick(false);}
+                if (_bConfirmMoveLongClick) {
+                    setConfirmMoveLongClick(false);
+                }
 
                 m_iFrom = index;
                 paint();
@@ -814,7 +828,9 @@ public class ICSChessView extends ChessViewBase {
 
                 _jni.move(move);
                 paint();
-                if(_bConfirmMoveLongClick){setConfirmMoveLongClick(false);}
+                if (_bConfirmMoveLongClick) {
+                    setConfirmMoveLongClick(false);
+                }
 
             } else {
                 _tvLastMove.setText("...");
@@ -837,7 +853,9 @@ public class ICSChessView extends ChessViewBase {
             // invalid move
             m_iTo = -1;  // the destination is reset
             _tvLastMove.setText("invalid");
-            if(_bConfirmMoveLongClick){setConfirmMoveLongClick(false);}
+            if (_bConfirmMoveLongClick) {
+                setConfirmMoveLongClick(false);
+            }
         }
     }
 }

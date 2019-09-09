@@ -82,7 +82,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         if (prefs.getBoolean("speechNotification", false)) {
             try {
                 _speech = new TextToSpeech(this, this);
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 _speech = null;
             }
         } else {
@@ -226,7 +226,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
                 String dbName = pref.getString("UCIDatabase", null);
                 if (engName == null) {
                     engName = "Native engine";
-                } else if(dbName != null) {
+                } else if (dbName != null) {
                     engName += " +db";
                 }
                 tv_engine.setText(_itemsMenu[0] + ": " + engName);
@@ -236,13 +236,14 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         alert.show();
     }
 
-    @Override  // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
+    @Override
+    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
     public boolean dispatchKeyEvent(KeyEvent event) {
         int keyCode = event.getKeyCode();
         int action = event.getAction();
         boolean isDown = action == 0;
 
-        if(_skipReturn && keyCode == KeyEvent.KEYCODE_ENTER){  // skip enter key
+        if (_skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
             return true;
         }
 
@@ -253,26 +254,27 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         return super.dispatchKeyEvent(event);
     }
 
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         //View v = getWindow().getCurrentFocus();
         //Log.i("main", "current focus " + (v == null ? "NULL" : v.toString()));
         int c = (event.getUnicodeChar());
-        Log.i("main", "onKeyDown " + keyCode + " = " + (char)c);
-        if(keyCode == KeyEvent.KEYCODE_MENU){
+        Log.i("main", "onKeyDown " + keyCode + " = " + (char) c);
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
             //showMenu();
             return true;
         }
 
         // preference is to skip a carriage return
-        if(_skipReturn && (char)c == '\r'){
+        if (_skipReturn && (char) c == '\r') {
             return true;
         }
 
-        if(c > 48 && c < 57 || c > 96 && c < 105){
-            _keyboardBuffer += ("" + (char)c);
+        if (c > 48 && c < 57 || c > 96 && c < 105) {
+            _keyboardBuffer += ("" + (char) c);
         }
-        if(_keyboardBuffer.length() >= 2){
+        if (_keyboardBuffer.length() >= 2) {
             Log.i("main", "handleClickFromPositionString " + _keyboardBuffer);
             _chessView.handleClickFromPositionString(_keyboardBuffer);
             _keyboardBuffer = "";
@@ -312,8 +314,9 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         SharedPreferences prefs = this.getPrefs();
 
         if (prefs.getBoolean("speechNotification", false)) {
-            if(_speech == null)
-            {_speech = new TextToSpeech(this, this);}
+            if (_speech == null) {
+                _speech = new TextToSpeech(this, this);
+            }
         } else {
             _speech = null;
         }
@@ -357,13 +360,13 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
             Log.i("onResume", "action send with type " + type);
             if ("application/x-chess-pgn".equals(type)) {
                 sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if(sPGN != null) {
+                if (sPGN != null) {
                     sPGN = sPGN.trim();
                     loadPGN(sPGN);
                 }
             } else {
                 sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if(sFEN != null) {
+                if (sFEN != null) {
                     sFEN = sFEN.trim();
                     loadFEN(sFEN);
                 }

@@ -27,7 +27,7 @@ public class ICSPlayerDlg extends Dialog {
 
     private String _opponentName;
     private ICSClient _parent;
-    private Button _butHistory, _butFinger, _butMatch, _butFollow, _butUnfollow, _butFriendsList,  _butSmoves, _butExit;
+    private Button _butHistory, _butFinger, _butMatch, _butFollow, _butUnfollow, _butFriendsList, _butSmoves, _butExit;
     private TextView _tvOpponentName;
     protected TextView _tvPlayerListConsole;
     protected ScrollView _scrollPlayerListConsole;
@@ -40,13 +40,13 @@ public class ICSPlayerDlg extends Dialog {
 
         setContentView(R.layout.ics_player);
 
-        _tvOpponentName = (TextView)findViewById(R.id.tvopponentname);
+        _tvOpponentName = (TextView) findViewById(R.id.tvopponentname);
 
-        _tvPlayerListConsole = (TextView)findViewById(R.id.TextViewICSPlayerList);
-        _scrollPlayerListConsole = (ScrollView)findViewById(R.id.ScrollICSPlayerList);
+        _tvPlayerListConsole = (TextView) findViewById(R.id.TextViewICSPlayerList);
+        _scrollPlayerListConsole = (ScrollView) findViewById(R.id.ScrollICSPlayerList);
 
 
-        _butExit = (Button)findViewById(R.id.ButtonGameExit);
+        _butExit = (Button) findViewById(R.id.ButtonGameExit);
         _butExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +54,7 @@ public class ICSPlayerDlg extends Dialog {
             }
         });
 
-        _butHistory = (Button)findViewById(R.id.ButHistory);
+        _butHistory = (Button) findViewById(R.id.ButHistory);
         _butHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +63,7 @@ public class ICSPlayerDlg extends Dialog {
             }
         });
 
-        _butFinger = (Button)findViewById(R.id.ButFinger);
+        _butFinger = (Button) findViewById(R.id.ButFinger);
         _butFinger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +72,7 @@ public class ICSPlayerDlg extends Dialog {
             }
         });
 
-        _butFollow = (Button)findViewById(R.id.ButFollow);
+        _butFollow = (Button) findViewById(R.id.ButFollow);
         _butFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +81,7 @@ public class ICSPlayerDlg extends Dialog {
             }
         });
 
-        _butUnfollow = (Button)findViewById(R.id.ButUnFollow);
+        _butUnfollow = (Button) findViewById(R.id.ButUnFollow);
         _butUnfollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +90,7 @@ public class ICSPlayerDlg extends Dialog {
             }
         });
 
-        _butMatch = (Button)findViewById(R.id.ButMatch);
+        _butMatch = (Button) findViewById(R.id.ButMatch);
         _butMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,7 +106,7 @@ public class ICSPlayerDlg extends Dialog {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) ||
                         event.getAction() == EditorInfo.IME_ACTION_DONE
-                        ) {
+                ) {
                     // Perform action on key press
                     EditText et = (EditText) v;
                     String _sConsoleEditText = et.getText().toString();
@@ -121,7 +121,7 @@ public class ICSPlayerDlg extends Dialog {
             }
         };
 
-        _butSmoves = (Button)findViewById(R.id.ButSmoves);
+        _butSmoves = (Button) findViewById(R.id.ButSmoves);
         _butSmoves.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,18 +138,18 @@ public class ICSPlayerDlg extends Dialog {
 
                 alertDialog.setView(input);
                 alertDialog.setOnKeyListener(new OnKeyListener() {
-                         @Override
-                         public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                             if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                                 // set _sConsoleEditText for a match pattern
-                                 _parent._sConsoleEditText = "smoves " + _opponentName + " " + input.getText();
-                                 _parent.sendString("smoves " + _opponentName + " " + input.getText());
-                                 alertDialog.dismiss();
-                                 return true;
-                             }
-                             return false;
-                         }
-                     }
+                                                 @Override
+                                                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                                                     if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                                                         // set _sConsoleEditText for a match pattern
+                                                         _parent._sConsoleEditText = "smoves " + _opponentName + " " + input.getText();
+                                                         _parent.sendString("smoves " + _opponentName + " " + input.getText());
+                                                         alertDialog.dismiss();
+                                                         return true;
+                                                     }
+                                                     return false;
+                                                 }
+                                             }
                 );
 
                 alertDialog.show();
@@ -158,12 +158,12 @@ public class ICSPlayerDlg extends Dialog {
             }
         });
 
-        _editPlayerChat = (EditText)findViewById(R.id.EditPlayerChat);
+        _editPlayerChat = (EditText) findViewById(R.id.EditPlayerChat);
         _editPlayerChat.setOnKeyListener(onKeyListen);
     }
 
-    public void opponentName(String op){
-        _opponentName = op.replaceAll("\\(\\w+\\)","");  // remove (FM), (GM), etc. (if applicable)
+    public void opponentName(String op) {
+        _opponentName = op.replaceAll("\\(\\w+\\)", "");  // remove (FM), (GM), etc. (if applicable)
         _tvOpponentName.setText(_opponentName);
 
         _editPlayerChat.setHint(getContext().getResources().getString(R.string.ics_playerchat) + " " + _opponentName);

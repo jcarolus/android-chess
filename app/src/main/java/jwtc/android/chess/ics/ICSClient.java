@@ -18,8 +18,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
@@ -112,7 +114,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     //1269.allko                    ++++.kaspalesweb(U)
     private Pattern _pattPlayerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
     private Pattern _pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s(\\w.+)\\," +
-                                                   " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)"); //beginning of game
+            " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)"); //beginning of game
     private Matcher _matgame;
 
     private ArrayList<HashMap<String, String>> _mapChallenges = new ArrayList<HashMap<String, String>>();
@@ -224,7 +226,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         Log.i(TAG, "onCreate");
 
         int configOrientation = this.getResources().getConfiguration().orientation;
-        if(configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -450,7 +452,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     actionHandler.postDelayed(runnable, 650);
-                } else if(event.getAction() == MotionEvent.ACTION_UP){
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     actionHandler.removeCallbacks(runnable);
                 }
                 return false;
@@ -473,7 +475,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) ||
                         event.getAction() == EditorInfo.IME_ACTION_DONE
-                        ) {
+                ) {
                     // Perform action on key press
                     EditText et = (EditText) v;
                     _sConsoleEditText = et.getText().toString();
@@ -520,10 +522,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         final int REQUEST_CODE_ASK_PERMISSIONS = 123;  // Ask permission to write to external storage for android 6 and above
         int hasWritePermission =
                 ContextCompat.checkSelfPermission(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if(hasWritePermission != PackageManager.PERMISSION_GRANTED){
+        if (hasWritePermission != PackageManager.PERMISSION_GRANTED) {
 
-            if(!ActivityCompat.shouldShowRequestPermissionRationale(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-                ActivityCompat.requestPermissions(ICSClient.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                ActivityCompat.requestPermissions(ICSClient.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_CODE_ASK_PERMISSIONS);
             } else {
                 globalToast("NEED PERMISSION TO WRITE GAMES TO SD CARD"); // Show toast if user denied permission
@@ -732,9 +734,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         // check menu for ending tag of <NR>, then delete tag and allow a command with no return
         String itemTitle = item.getTitle().toString();
-        if(itemTitle.length() > 4 && itemTitle.substring(itemTitle.length()-4).equals("<NR>")){
-            if(_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_CONSOLE){
-                _editConsole.setText(itemTitle.substring(0, itemTitle.length()-4));
+        if (itemTitle.length() > 4 && itemTitle.substring(itemTitle.length() - 4).equals("<NR>")) {
+            if (_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_CONSOLE) {
+                _editConsole.setText(itemTitle.substring(0, itemTitle.length() - 4));
                 _editConsole.requestFocus();
                 _editConsole.setSelection(_editConsole.getText().length());
             } else {
@@ -911,7 +913,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                                 (data.indexOf("Press return to enter the server as") > 0 ||
                                         data.indexOf("Logging you in as") > 0) ||
                                 data.indexOf("password: ") > 0 || data.indexOf("login:") > 0
-                                )
+                        )
                             break;
                         Log.i("startSession debug", "wait: " + data);
                         buf = _socket.readString();
@@ -1138,7 +1140,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                     // lines can still contain prompt!
                     //   _prompt
                     //////////////////////////////////////////////////////////////
-                    if (line.contains("Game") || line.contains("Creating:") || line.contains("Issuing:") || line.contains("Challenge:")){
+                    if (line.contains("Game") || line.contains("Creating:") || line.contains("Issuing:") || line.contains("Challenge:")) {
                         //               1         2       3         4      5      6   7 8
                         //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
                         Pattern _pattGameInfo1 = Pattern.compile("\\{?\\w+\\s?\\d+?: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
@@ -1149,19 +1151,19 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         Matcher mat2 = _pattGameInfo2.matcher(line);
                         Matcher mat3 = _pattGameInfo3.matcher(line);
 
-                        if (mat.matches() || mat2.matches()){  //mat and mat2 are the beginning game info
+                        if (mat.matches() || mat2.matches()) {  //mat and mat2 are the beginning game info
                             _whiteHandle = mat.matches() ? mat.group(1) : mat2.group(1);
                             _whiteRating = mat.matches() ? mat.group(2) : mat2.group(2);
-                            if (_whiteRating.equals("++++")){
+                            if (_whiteRating.equals("++++")) {
                                 _whiteRating = "UNR";
                             }
                             _blackHandle = mat.matches() ? mat.group(3) : mat2.group(3);
                             _blackRating = mat.matches() ? mat.group(4) : mat2.group(4);
-                            if (_blackRating.equals("++++")){
+                            if (_blackRating.equals("++++")) {
                                 _blackRating = "UNR";
                             }
                         }
-                        if (mat3.matches()){  // mat3 is the endgame result
+                        if (mat3.matches()) {  // mat3 is the endgame result
                             if (_whiteHandle != null) {
                                 gameOverToast(line);  //send game over toast
                                 sendString("oldmoves " + _whiteHandle);  // send moves at end of game
@@ -1174,7 +1176,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         // this can be multiple lines!
                         String[] gameLines = line.split("<12> ");
 
-                        if(_FEN.isEmpty() && gameLines[1].contains("none (0:00) none")) {
+                        if (_FEN.isEmpty() && gameLines[1].contains("none (0:00) none")) {
                             _FEN = gameLines[1];   // get first gameLine - contains FEN setup
                         }
 
@@ -1453,7 +1455,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 //////////////////////////////////////////////////////////////
 
 
-
                 if (sRaw.length() > 0) {
                     sRaw = sRaw.replace(new Character((char) 7).toString(), "").replace("\\", "").replace("\t", "").replace(_prompt, "\n").trim();
                     sRaw = sRaw.replaceAll("[\n]{2,}", "\n");
@@ -1461,13 +1462,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                         addConsoleText(sRaw);
                     }
 
-                    if (_bEndGameDialog){
+                    if (_bEndGameDialog) {
                         sEnd += sRaw;
                         //Log.d(TAG, "sEnd ->" + sEnd);
 
                         _matgame = _pattEndGame.matcher(sEnd); // _pattEndGame matches beginning info of game summary
 
-                        if(_matgame.matches()){
+                        if (_matgame.matches()) {
 
                             makeGamePGN(sEnd);
 
@@ -1483,7 +1484,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
-    protected void makeGamePGN(String sEnd){
+    protected void makeGamePGN(String sEnd) {
 
         String sBeg;
 
@@ -1495,7 +1496,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
 
-        if (_bShowClockPGN){
+        if (_bShowClockPGN) {
             sBeg = convertTimeUsedToClock(sBeg);
         } else {
             sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
@@ -1513,10 +1514,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
         PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
         String _minutestoseconds = Integer.toString(Integer.parseInt(_matgame.group(8)) * 60);
-        PGN.append("[TimeControl \"" + _minutestoseconds +  "+" +
+        PGN.append("[TimeControl \"" + _minutestoseconds + "+" +
                 _matgame.group(9) + "\"]\n");
 
-        if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
+        if (!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
             _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
             _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
             if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
@@ -1537,9 +1538,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     }
 
-    private String convertTimeUsedToClock(String sBeg){
+    private String convertTimeUsedToClock(String sBeg) {
 
-        int time = Integer.parseInt(_matgame.group(8)), incTime = Integer.parseInt(_matgame.group(9));;
+        int time = Integer.parseInt(_matgame.group(8)), incTime = Integer.parseInt(_matgame.group(9));
+        ;
 
         int incTurn = 1;
         boolean turn = true;
@@ -1552,7 +1554,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         Pattern p = Pattern.compile("\\((\\d+):(\\d+)\\)");
         Matcher m = p.matcher(sBeg);
 
-        while (m.find()){
+        while (m.find()) {
 
             int min = 0, sec = 0, time1 = 0;
 
@@ -1560,8 +1562,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             sec = Integer.parseInt(m.group(2));
             time1 = min + sec;
 
-            if (turn)
-            {
+            if (turn) {
                 time1 = whiteClock(time1, incTurn, incTime);
                 turn = false;
             } else {
@@ -1579,27 +1580,27 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         return sBeg;
     }
 
-    private int whiteClock(int time1, int incTurn, int incTime){
+    private int whiteClock(int time1, int incTurn, int incTime) {
 
-        whiteClk[incTurn] = whiteClk[incTurn-1] - time1;
-        if (incTurn > 1){
+        whiteClk[incTurn] = whiteClk[incTurn - 1] - time1;
+        if (incTurn > 1) {
             whiteClk[incTurn] = whiteClk[incTurn] + incTime;
         }
 
         return whiteClk[incTurn];
     }
 
-    private int blackClock(int time1, int incTurn, int incTime){
+    private int blackClock(int time1, int incTurn, int incTime) {
 
-        blackClk[incTurn] = blackClk[incTurn-1] - time1;
-        if (incTurn > 1){
+        blackClk[incTurn] = blackClk[incTurn - 1] - time1;
+        if (incTurn > 1) {
             blackClk[incTurn] = blackClk[incTurn] + incTime;
         }
 
         return blackClk[incTurn];
     }
 
-    private String convertSecondsToClock(int time1){
+    private String convertSecondsToClock(int time1) {
         String clock, timeString;
         int hours, minutes, seconds;
         hours = time1 / 3600;
@@ -1613,7 +1614,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         return clock;
     }
 
-    protected void gameOverToast(String line){  // send toast result of the game
+    protected void gameOverToast(String line) {  // send toast result of the game
 
         String text = "";
         text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
@@ -1633,8 +1634,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             } else {
                 text = getString(R.string.ics_game_over);
             }
-        }
-        else if (line.contains("} 1/2-1/2")){  // draw
+        } else if (line.contains("} 1/2-1/2")) {  // draw
             gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
             get_view().setViewMode(ICSChessView.VIEW_NONE);
             return;
@@ -1658,8 +1658,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
-    public void saveGameSDCard(){
-        try{
+    public void saveGameSDCard() {
+        try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 
                 _sFile = Environment.getExternalStorageDirectory() + "/chessgamesonline.pgn";
@@ -1684,21 +1684,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     }
 
-    public void SendToApp(){
+    public void SendToApp() {
 
-         try {
-                 Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                 sendIntent.putExtra(Intent.EXTRA_SUBJECT, "chess pgn");
-                 sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + _sFile));
-                 sendIntent.setType("application/x-chess-pgn");
+        try {
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_SUBJECT, "chess pgn");
+            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + _sFile));
+            sendIntent.setType("application/x-chess-pgn");
 
-             startActivity(sendIntent);
+            startActivity(sendIntent);
 
-         } catch (Exception e) {
+        } catch (Exception e) {
 
-             doToast(getString(R.string.err_send_email));
-             Log.e("ex", e.toString());
-         }
+            doToast(getString(R.string.err_send_email));
+            Log.e("ex", e.toString());
+        }
     }
 
     public void addConsoleText(final String s) {
@@ -1711,7 +1711,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _tvPlayConsole.setTextSize(_iConsoleCharacterSize);
         _dlgPlayer._tvPlayerListConsole.setTextSize(_iConsoleCharacterSize);
 
-        if(_dlgPlayer.isShowing()){
+        if (_dlgPlayer.isShowing()) {
             _dlgPlayer._tvPlayerListConsole.append(s);
             _dlgPlayer._scrollPlayerListConsole.post(new Runnable() {
                 public void run() {
@@ -1737,7 +1737,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
 
         final String s3 = _tvPlayConsole.getText() + "\n\n" + s;
-        if(s3.length() > 1024){
+        if (s3.length() > 1024) {
             _tvPlayConsole.setText(s3.substring(s3.length() - 512));
         } else {
             _tvPlayConsole.append("\n\n" + s);
@@ -1800,7 +1800,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _bShowClockPGN = prefs.getBoolean("ICSClockPGN", true);
 
         _bICSVolume = prefs.getBoolean("ICSVolume", true);
-        if (_bICSVolume){
+        if (_bICSVolume) {
             butQuickSoundOff.setVisibility(View.GONE);
             butQuickSoundOn.setVisibility(View.VISIBLE);
             set_fVolume(1.0f);
@@ -1811,7 +1811,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
 
         // get rid of notification for tap to play
-        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(0); // 0 is notification id
         _ICSNotifyLifeCycle = false;
 
@@ -1823,7 +1823,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         _arrayPasswords = new ArrayList<String>();
 
-        if(_ficsHandle != null) {
+        if (_ficsHandle != null) {
             _adapterHandles.add(_ficsHandle);
             _arrayPasswords.add(_ficsPwd);
         }
@@ -1831,7 +1831,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         try {
             JSONArray jArray = new JSONArray(prefs.getString("ics_handle_array", "guest"));
             JSONArray jArrayPasswords = new JSONArray(prefs.getString("ics_password_array", ""));
-            for(int i = 0; i < jArray.length(); i++){
+            for (int i = 0; i < jArray.length(); i++) {
                 _adapterHandles.add(jArray.getString(i));
                 _arrayPasswords.add(jArrayPasswords.getString(i));
             }
@@ -1840,28 +1840,28 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             e.printStackTrace();
         }
 
-        int t= 0;
+        int t = 0;
         boolean g = false;
         for (int i = 0; i < _adapterHandles.getCount(); i++) {
-                String x = _adapterHandles.getItem(i).toString();
-                if (x.equals(_ficsHandle)) {
-                    t++;
-                }
-                if (x.equals("guest")){
-                    g = true;  // flag to check if guest is in the spinner
-                }
+            String x = _adapterHandles.getItem(i).toString();
+            if (x.equals(_ficsHandle)) {
+                t++;
+            }
+            if (x.equals("guest")) {
+                g = true;  // flag to check if guest is in the spinner
+            }
         }
         if (t > 1) {  // work around for remove - delete every occurrence and add latest - this will add latest password
             while (t > 0) {
                 _adapterHandles.remove(_ficsHandle);
-                _arrayPasswords.remove(_adapterHandles.getPosition(_ficsHandle)+1);
+                _arrayPasswords.remove(_adapterHandles.getPosition(_ficsHandle) + 1);
                 t--;
             }
             _adapterHandles.add(_ficsHandle);
             _arrayPasswords.add(_ficsPwd);
         }
 
-        if (g==false){
+        if (g == false) {
             _adapterHandles.add("guest"); // if no guest then add guest
             _arrayPasswords.add(" ");
         }
@@ -1896,7 +1896,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
             _editHandle.setText(_ficsHandle);
             _editPwd.setText(_ficsPwd);
-            if (_ficsPwd.length() < 2){
+            if (_ficsPwd.length() < 2) {
                 _editPwd.setText("");
             }
 
@@ -1914,7 +1914,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         super.onResume();
     }
 
-    public String get_ficsHandle(){
+    public String get_ficsHandle() {
         return _ficsHandle;
     }
 
@@ -1926,32 +1926,52 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         return _TimeWarning;
     }
 
-    public int get_gameStartSound(){
+    public int get_gameStartSound() {
         return _gameStartSound;
     }
 
-    public String get_whiteHandle(){
-        if(_whiteHandle != null){return _whiteHandle;}  // _whiteHandle is mat1 and mat2 match
-        try {return _matgame.group(1);} catch(Exception e){ // return _matgame match
-            return "";}
+    public String get_whiteHandle() {
+        if (_whiteHandle != null) {
+            return _whiteHandle;
+        }  // _whiteHandle is mat1 and mat2 match
+        try {
+            return _matgame.group(1);
+        } catch (Exception e) { // return _matgame match
+            return "";
+        }
     }
 
-    public String get_whiteRating(){
-        if(_whiteRating != null){return _whiteRating;}
-        try {return _matgame.group(2);} catch(Exception e){
-            return "";}
+    public String get_whiteRating() {
+        if (_whiteRating != null) {
+            return _whiteRating;
+        }
+        try {
+            return _matgame.group(2);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
-    public String get_blackHandle(){
-        if(_blackHandle != null){return _blackHandle;}
-        try {return _matgame.group(3);} catch(Exception e){
-            return "";}
+    public String get_blackHandle() {
+        if (_blackHandle != null) {
+            return _blackHandle;
+        }
+        try {
+            return _matgame.group(3);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
-    public String get_blackRating(){
-        if(_blackRating != null){return _blackRating;}
-        try {return _matgame.group(4);} catch(Exception e){
-        return "";}
+    public String get_blackRating() {
+        if (_blackRating != null) {
+            return _blackRating;
+        }
+        try {
+            return _matgame.group(4);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public boolean isConnected() {
@@ -1961,7 +1981,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         return true;
     }
 
-    public void notificationAPP(){
+    public void notificationAPP() {
 
         if (_notifyON && _ICSNotifyLifeCycle) {
 
@@ -2005,14 +2025,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
         JSONArray jArray = new JSONArray();
         JSONArray jArrayPasswords = new JSONArray();
-        for(int i = 0; i < _adapterHandles.getCount(); i++){
+        for (int i = 0; i < _adapterHandles.getCount(); i++) {
             jArray.put(_adapterHandles.getItem(i));
             jArrayPasswords.put(_arrayPasswords.get(i));
         }
         editor.putString("ics_handle_array", jArray.toString());
         editor.putString("ics_password_array", jArrayPasswords.toString());
 
-        editor.putBoolean("ICSVolume" , _bICSVolume);
+        editor.putBoolean("ICSVolume", _bICSVolume);
 
         editor.commit();
 
@@ -2022,7 +2042,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     @Override
-    protected void onRestart(){
+    protected void onRestart() {
         Log.i(TAG, "onRestart");
         super.onRestart();
     }
@@ -2066,8 +2086,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
-    public void dateTimer(){
-        if(_timerDate == null) {
+    public void dateTimer() {
+        if (_timerDate == null) {
             _timerDate = new Timer(true);
             _timerDate.schedule(new TimerTask() {
                 @Override
@@ -2078,14 +2098,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
-    public void cancelDateTimer(){
-        if(_timerDate != null) {
+    public void cancelDateTimer() {
+        if (_timerDate != null) {
             _timerDate.cancel();
             _timerDate = null;
         }
     }
 
-    Handler dateHandler = new Handler(){ // todo static or leaks may occur? use WeakReference as in 153
+    Handler dateHandler = new Handler() { // todo static or leaks may occur? use WeakReference as in 153
         @Override
         public void handleMessage(Message msg) {
             sendString("date");
@@ -2106,7 +2126,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public void sendString(String s) {
 
-        if (_bConsoleText){        // allows user ICS console text only
+        if (_bConsoleText) {        // allows user ICS console text only
             addConsoleText(s);
             _bConsoleText = false;
         }
@@ -2143,7 +2163,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                                     }
                                 })
                         .show();
-            } catch(Exception ex){
+            } catch (Exception ex) {
                 Log.e(TAG, ex.toString());
             }
         }
@@ -2306,13 +2326,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         }
     }
 
-    public void vibration(int seq){
+    public void vibration(int seq) {
         try {
             int v1, v2;
-            if(seq == 1){
+            if (seq == 1) {
                 v1 = 200;    // increase
                 v2 = 500;
-            }else {
+            } else {
                 v1 = 500;    // decrease
                 v2 = 200;
             }

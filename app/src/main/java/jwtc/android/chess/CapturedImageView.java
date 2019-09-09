@@ -51,7 +51,7 @@ public class CapturedImageView extends View {
 
     public void onDraw(Canvas canvas) {
 
-        if(_bitMap == null){
+        if (_bitMap == null) {
             return;
         }
 
@@ -63,7 +63,7 @@ public class CapturedImageView extends View {
         p.setFilterBitmap(true);
         p.setColor(Color.BLACK);
 
-        if(hasFocus()){
+        if (hasFocus()) {
             p.setColor(0xffff9900);
             canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), p);
         } else if (_bHighlighted) {

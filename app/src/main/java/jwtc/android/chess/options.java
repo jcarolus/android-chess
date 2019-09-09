@@ -232,11 +232,11 @@ public class options extends MyBaseActivity {
         super.onPause();
     }
 
-    public static boolean is_sbFlipTopPieces(){
+    public static boolean is_sbFlipTopPieces() {
         return _sbFlipTopPieces;
     }
 
-    public static boolean is_sbPlayAsBlack(){
+    public static boolean is_sbPlayAsBlack() {
         return _sbPlayAsBlack;
     }
 

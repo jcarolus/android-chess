@@ -840,7 +840,6 @@ public class ChessView extends UI {
         int turn = _jni.getTurn();
 
 
-
         if (_playMode == HUMAN_HUMAN && _bAutoFlip &&
                 (turn == BoardConstants.WHITE && _view.getFlippedBoard() ||
                         turn == BoardConstants.BLACK && false == _view.getFlippedBoard())) {
@@ -1114,7 +1113,7 @@ public class ChessView extends UI {
         editor.putBoolean("autoflipBoard", _bAutoFlip);
         editor.putBoolean("showMoves", _bShowMoves);
         editor.putBoolean("playAsBlack", _bPlayAsBlack);
-        editor.putBoolean("PlayVolume" , _bPlayVolume);
+        editor.putBoolean("PlayVolume", _bPlayVolume);
         editor.putInt("boardNum", _jni.getNumBoard());
         if (_viewAnimator != null) {
             editor.putInt("animatorViewNumber", _viewAnimator.getDisplayedChild());
@@ -1179,7 +1178,7 @@ public class ChessView extends UI {
         }
 
         _bPlayVolume = prefs.getBoolean("PlayVolume", true);
-        if (_bPlayVolume){
+        if (_bPlayVolume) {
             butQuickSoundOff.setVisibility(View.GONE);
             butQuickSoundOn.setVisibility(View.VISIBLE);
             _parent.set_fVolume(1.0f);
@@ -1354,7 +1353,7 @@ public class ChessView extends UI {
         //if(_tvEngineValue != null)
         //	_tvEngineValue.setText("BoardValue " + _jni.getBoardValue());
 
-        if(_jArrayECO != null) {
+        if (_jArrayECO != null) {
             String sECO = getECOInfo(0, _jArrayECO);
             Log.i("ChessView-ECO", sECO == null ? "No ECO" : sECO);
             if (sECO != null && (_sPrevECO != null && _sPrevECO.equals(sECO) == false) || _sPrevECO == null) {
@@ -1534,7 +1533,7 @@ public class ChessView extends UI {
         int move = _jni.getMyMove();
         String sMove = _jni.getMyMoveToString();
 
-        if (sMove.contains("x")){
+        if (sMove.contains("x")) {
             _parent.soundCapture();
         } else {
             _parent.soundMove();
@@ -1590,7 +1589,7 @@ public class ChessView extends UI {
     // e.g. R.attr.colorAccent
     public int fetchAttrColor(int iAttrKey) {
         TypedValue typedValue = new TypedValue();
-        TypedArray a = _parent.obtainStyledAttributes(typedValue.data, new int[] { iAttrKey });
+        TypedArray a = _parent.obtainStyledAttributes(typedValue.data, new int[]{iAttrKey});
         int color = a.getColor(0, 0);
         a.recycle();
         return color;

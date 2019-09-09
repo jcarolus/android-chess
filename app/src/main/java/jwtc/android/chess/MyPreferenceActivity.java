@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 public class MyPreferenceActivity extends PreferenceActivity {
 
-   //protected
+    //protected
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
