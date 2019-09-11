@@ -52,8 +52,9 @@ import org.json.JSONException;
 
 import jwtc.android.chess.*;
 
-public class ICSClient extends MyBaseActivity implements OnItemClickListener {
+public class ICSClient extends MyBaseActivity implements OnItemClickListener, ICSListener {
 
+    private ICSServer server = new ICSServer(this);
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     protected String _sConsoleEditText;
@@ -126,13 +127,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     public static final String TAG = "ICSClient";
 
-    protected static final int MSG_PARSE = 1;
-    protected static final int MSG_STOP_SESSION = 2;
-    protected static final int MSG_START_SESSION = 3;
-    protected static final int MSG_ERROR = 4;
-
     protected static final int SERVER_FICS = 1;
-
 
     protected static final int VIEW_MAIN_BOARD = 0;
     protected static final int VIEW_MAIN_LOBBY = 1;
@@ -154,38 +149,180 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
 
     private ImageButton butQuickSoundOn, butQuickSoundOff;
 
-    static class InnerThreadHandler extends Handler {
-        WeakReference<ICSClient> _client;
+    @Override
+    public void OnLoginSuccess() {
 
-        InnerThreadHandler(ICSClient client) {
-            this._client = new WeakReference<ICSClient>(client);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            ICSClient client = _client.get();
-            if (client != null) {
-                switch (msg.what) {
-                    case MSG_PARSE:
-                        //parseBuffer(msg.getData().getString("buffer"));
-                        client.parseBuffer();
-                        break;
-                    case MSG_STOP_SESSION:
-                        client.stopSession(msg.getData().getString("buffer"));
-                        break;
-                    case MSG_START_SESSION:
-                        client.dateTimer();
-                        client.switchToBoardView();
-                        break;
-                }
-
-                super.handleMessage(msg);
-            }
-        }
     }
 
-    // passes the incoming data from the socket worker thread for parsing
-    protected InnerThreadHandler m_threadHandler = new InnerThreadHandler(this);
+    @Override
+    public void OnLoginFailed() {
+        doToast("Could not log you in");
+    }
+
+    @Override
+    public void OnLoggingIn() {
+        doToast("Logging you in");
+    }
+
+    @Override
+    public void OnSessionStarted() {
+        switchToBoardView();
+    }
+
+    @Override
+    public void OnError() {
+
+    }
+
+    @Override
+    public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
+
+    }
+
+    @Override
+    public void OnBoardUpdated(String gameLine, String handle) {
+
+    }
+
+    @Override
+    public void OnChallenged(String opponent, String rating, String message) {
+
+    }
+
+    @Override
+    public void OnIllegalMove() {
+
+    }
+
+    @Override
+    public void OnSeekNotAvailable() {
+
+    }
+
+    @Override
+    public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
+
+    }
+
+    @Override
+    public void OnGameNumberUpdated(int number) {
+
+    }
+
+    @Override
+    public void OnOpponentRequestsAbort() {
+
+    }
+
+    @Override
+    public void OnOpponentRequestsAdjourn() {
+
+    }
+
+    @Override
+    public void OnOpponentOffersDraw() {
+
+    }
+
+    @Override
+    public void OnOpponentRequestsTakeBack() {
+
+    }
+
+    @Override
+    public void OnAbortConfirmed() {
+
+    }
+
+    @Override
+    public void OnPlayGameResult(String message) {
+
+    }
+
+    @Override
+    public void OnPlayGameStopped() {
+
+    }
+
+    @Override
+    public void OnYourRequestSended() {
+
+    }
+
+    @Override
+    public void OnChatReceived() {
+
+    }
+
+    @Override
+    public void OnResumingAdjournedGame() {
+
+    }
+
+    @Override
+    public void OnAbortedOrAdjourned() {
+
+    }
+
+    @Override
+    public void OnObservingGameStarted() {
+
+    }
+
+    @Override
+    public void OnObservingGameStoppedd() {
+
+    }
+
+    @Override
+    public void OnPuzzleStarted() {
+
+    }
+
+    @Override
+    public void OnPuzzleStopped() {
+
+    }
+
+    @Override
+    public void OnExaminingGameStarted() {
+
+    }
+
+    @Override
+    public void OnExaminingGameStopped() {
+
+    }
+
+    @Override
+    public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
+
+    }
+
+    @Override
+    public void OnChallengedResult(ArrayList<HashMap<String, String>> challenges) {
+
+    }
+
+    @Override
+    public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
+
+    }
+
+    @Override
+    public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
+
+    }
+
+    @Override
+    public void OnEndGameResult() {
+
+    }
+
+    @Override
+    public void OnConsoleOutput(String buffer) {
+        addConsoleText(buffer);
+    }
 
     static class InnerTimerHandler extends Handler {
         WeakReference<ICSClient> _client;
@@ -278,7 +415,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
         _listPlayers = (ListView) findViewById(R.id.ICSPlayers);
         _listPlayers.setAdapter(_adapterPlayers);
         _listPlayers.setOnItemClickListener(this);
-
 
         _adapterGames = new AlternatingRowColorAdapter(ICSClient.this, _mapGames, R.layout.ics_game_row,
                 new String[]{"nr", "text_type", "text_name1", "text_name2", "text_rating1", "text_rating2", "text_time1", "text_time2"},
@@ -748,7 +884,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             sendString(item.getTitle().toString());
         }
         return true;
-
     }
 
 
@@ -807,681 +942,16 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
     }
 
     public void startSession(final String h, final String p) {
-
         if (h == "") {
             globalToast(getString(R.string.msg_ics_enter_handle));
             return;
         }
-
-        Log.i("ICSClient", "Setting servertype to FICS");
-        _serverType = SERVER_FICS;
-        _server = "freechess.org";
-        _port = 23;
-
-        _prompt = "fics% ";
-        _ficsHandle = h;
-        _ficsPwd = p;
-        _handle = _ficsHandle;
-        _pwd = _ficsPwd;
-        if (_handle != "guest" && _pwd == "") {
+        if (h != "guest" && p == "") {
             globalToast(getString(R.string.msg_ics_enter_password));
             return;
         }
 
-        // FICS
-        //209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
-        //101 ++++ GuestYYLN          16   0 unrated standard               0-9999 mf
-        //   6 ++++ sdhisfh             2   0 unrated crazyhouse             0-9999
-        //  11 ++++ GuestFGMX          20  10 unrated standard               0-9999 f
-        //   7 ++++ Amhztb             10  90 unrated standard               0-9999 m
-        //  26 ++++ GuestFFHQ           7   0 unrated wild/3     [white]     0-9999
-        _pattSought = Pattern.compile("[\\s]*(\\d+)[\\s]+(\\d+|\\++|-+)[\\s]+([\\w\\(\\)]+)[\\s]+(\\d+)[\\s]+(\\d+)[\\s]+(rated|unrated?)[\\s]+([\\w/\\d]+?)[\\s]*(\\[white\\]|\\[black\\])?[\\s]*(\\d+)\\-(\\d+)[\\s]*([fm]+)?");
-        // 							  "        09          09 | +++            handle()              09          09                              wild/3
-        // FICS
-        //  93 2036 WFMKierzek  2229 FMKarl     [ su120   0]  26:13 -  3:49 (22-22) W: 28
-        //  1  2    3           4    5            678     9
-        _pattGameRow = Pattern.compile("[\\s]*(\\d+) (\\d+) (\\w+)[\\s]+(\\d+) (\\w+)[\\s]+\\[ (s|b|l)(r|u)[\\s]*(\\d+)[\\s]*(\\d+)\\][\\s]*(\\d+):(\\d+)[\\s]*-[\\s]*(\\d+):(\\d+).+");
-
-        _butLogin.setEnabled(false);
-        switchToLoadingView();
-
-        _workerTelnet = new Thread(new Runnable() {
-
-            public void run() {
-                Message msg, msgStop;
-                Bundle bun;
-
-                msgStop = new Message();
-                msgStop.what = MSG_STOP_SESSION;
-
-                _bIsGuest = _handle.equals("guest");
-
-                try {
-                    _socket = new TelnetSocket(_server, _port);
-                } catch (Exception ex) {
-                    _socket = null;
-
-                    bun = new Bundle();
-                    bun.putString("buffer", getString(R.string.ics_error_connection));
-                    msgStop.setData(bun);
-                    m_threadHandler.sendMessage(msgStop);
-
-                    return;
-                }
-
-                try {
-
-                    // do login
-                    String data = "";
-                    String buf = _socket.readString();
-                    while (buf != null && !isFinishing()) {
-                        data += buf;
-                        if (data.indexOf("login: ") > 0)
-                            break;
-                        //Log.i("startSession 0", "Fetching until 'login:'");
-                        buf = _socket.readString();
-                    }
-                    if (data.length() == 0) {
-
-                        bun = new Bundle();
-                        bun.putString("buffer", "No response from server after connection...");
-                        msgStop.setData(bun);
-                        m_threadHandler.sendMessage(msgStop);
-                        return;
-                    }
-                    //Log.i("startSession 1", "First response: " + data);
-                    if (data.indexOf("login: ") == -1) {
-
-                        bun = new Bundle();
-                        bun.putString("buffer", "Unexpected response from server after connection...");
-                        msgStop.setData(bun);
-                        m_threadHandler.sendMessage(msgStop);
-
-                        return;
-                    }
-
-                    Log.i("startSession 1", "Logging in with " + _handle);
-                    sendString(_handle);
-
-                    int iPos, iPos2;
-
-                    data = "";
-                    buf = _socket.readString();
-                    while (buf != null) {
-                        data += buf;
-                        if (data.indexOf("\":") > 0 &&
-                                (data.indexOf("Press return to enter the server as") > 0 ||
-                                        data.indexOf("Logging you in as") > 0) ||
-                                data.indexOf("password: ") > 0 || data.indexOf("login:") > 0
-                        )
-                            break;
-                        Log.i("startSession debug", "wait: " + data);
-                        buf = _socket.readString();
-                    }
-                    if (data.length() == 0) {
-
-                        bun = new Bundle();
-                        bun.putString("buffer", "No response from server after setting login handle...");
-                        msgStop.setData(bun);
-                        m_threadHandler.sendMessage(msgStop);
-
-                        return;
-                    }
-                    // just remove all newlines from the string for better regex matching
-                    data = data.replaceAll("[\r\n\0]", "");
-                    Log.i("startSession 2", "After handle: " + data);
-                    iPos = data.indexOf("Press return to enter the server as \"");
-                    iPos2 = data.indexOf("Logging you in as \"");
-                    //iPos3 = data.indexOf("If it is yours, type the password");
-
-                    if (iPos >= 0) {
-                        data = data.trim();
-                        Log.i("startSession 2.1", "Guest log in v1");
-                        // 							    Press return to enter the server as
-                        Pattern patt = Pattern.compile("Press return to enter the server as \"(\\w+)\":");
-                        Matcher match = patt.matcher(data);
-                        if (match.find()) {
-                            _handle = match.group(1);
-                            sendString("");
-                        } else {
-
-                            bun = new Bundle();
-                            bun.putString("buffer", "Could not process response after setting login handle...(1)");
-                            msgStop.setData(bun);
-                            m_threadHandler.sendMessage(msgStop);
-
-                            return;
-                        }
-                    } else if (iPos2 >= 0) {
-                        Log.i("startSession 2.1", "Guest log in v2");
-                        Pattern patt = Pattern.compile("Logging you in as \"(\\w+)\"");
-                        Matcher match = patt.matcher(data);
-                        if (match.find()) {
-                            _handle = match.group(1);
-                        } else {
-
-                            bun = new Bundle();
-                            bun.putString("buffer", "Could not process response after setting login handle...(2)");
-                            msgStop.setData(bun);
-                            m_threadHandler.sendMessage(msgStop);
-
-                            return;
-                        }
-                    } else if (data.indexOf("password: ") > 0) {
-                        sendString(_pwd);
-                    } else {
-
-                        bun = new Bundle();
-                        bun.putString("buffer", "username error:  " + data);
-                        msgStop.setData(bun);
-                        m_threadHandler.sendMessage(msgStop);
-
-                        return;
-                    }
-                    data = "";
-
-                    buf = _socket.readString();
-                    while (buf != null) {
-                        data += buf;
-                        if (data.length() > 20)
-                            break;
-                        buf = _socket.readString();
-                    }
-
-                    Log.i("startSession 3", "Response after password: " + data);
-                    if (data == null || data.length() == 0) {
-
-                        bun = new Bundle();
-                        bun.putString("buffer", "No response from server while logging in...");
-                        msgStop.setData(bun);
-                        m_threadHandler.sendMessage(msgStop);
-
-                        return;
-                    }
-                    if (data.indexOf("**** Starting ") == -1 && data.indexOf("****************") == -1) {
-
-                        bun = new Bundle();
-                        bun.putString("buffer", "password error:  " + data);
-                        msgStop.setData(bun);
-                        m_threadHandler.sendMessage(msgStop);
-
-                        return;
-                    }
-                    _bInICS = true;
-                    sendString("style 12");
-                    sendString("-channel 4"); // guest
-                    sendString("-channel 53"); // guest chat
-                    sendString("set kibitz 1"); // for puzzlebot
-                    sendString("set gin 0"); // current server game results - turn off - some clients turn it on
-                    sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
-
-                    // sendMessage("set interface "+ getPreferences().getString(APP_NAME));
-                    Log.i("ICSClient", " == HANDLE " + _handle);
-                    // _handle
-
-                    msg = new Message();
-                    msg.what = MSG_START_SESSION;
-                    m_threadHandler.sendMessage(msg);
-                    //
-
-                    String buffer = "";
-                    _waitFor = _prompt;
-                    buffer = "";
-
-                    while (_socket != null && _socket.isConnected()) {
-                        data = _socket.readString();
-                        if (data != null && data.length() > 0) {
-                            //Log.i("WorkerTelnet = ", data);
-                            buffer += data;
-
-                            if (buffer.endsWith(_waitFor)) {
-
-                                _buffer = buffer;
-
-                                msg = new Message();
-                                msg.what = MSG_PARSE;
-                                bun = new Bundle();
-                                //bun.putString("buffer", buffer);
-                                //msg.setData(bun);
-                                m_threadHandler.sendMessage(msg);
-
-                                buffer = "";
-                            }
-                        }
-                    }
-                } catch (Exception ex) {
-
-                    bun = new Bundle();
-                    bun.putString("buffer", getString(R.string.ics_error_connection));
-                    msgStop.setData(bun);
-                    m_threadHandler.sendMessage(msgStop);
-
-                    Log.e("WorkerTelnet", ex.toString());
-                }
-                _bInICS = false;
-                Log.i("WorkerTelnet", "stopped");
-                finish();
-            }
-
-        });
-        _workerTelnet.start();
-
-    }
-
-    private void parseBuffer() {
-        try {
-
-            //Log.i("parseBuffer", "[" + buffer + "]");
-            String sRaw = "", sEnd = "";
-            Matcher match;
-
-            //////////////////////////////////////////////////////////////////////////////////////////////
-            String[] lines;
-            if (_serverType == SERVER_FICS) {
-                lines = _buffer.split("\n\r");
-            } else {
-                lines = _buffer.split("\r\n");
-            }
-
-            //Log.i("WorkerTelnet", "looking within STATUS_ONLINE");
-
-            // 680 players displayed (of 680). (*) indicates system administrator.
-            // result for who
-
-            if (lines.length > 3 && _buffer.indexOf("players displayed (of ") > 0 && _buffer.indexOf("indicates system administrator.") > 0) {
-                _mapPlayers.clear();
-                for (int i = 0; i < lines.length - 2; i++) {
-                    match = _pattPlayerRow.matcher(lines[i]);
-                    while (match.find()) {
-                        String name = match.group(4);
-                        if (name != null && match.group(2) != null) {
-
-                            String code = match.group(5);
-
-                            if (code == null) {
-                                HashMap<String, String> item = new HashMap<String, String>();
-                                item.put("text_name", name);
-                                item.put("text_rating", match.group(2));
-                                _mapPlayers.add(item);
-                            } else {
-
-                                if (code.equals("(U)") || code.equals("(FM)") || code.equals("(GM)") ||
-                                        code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
-                                    name += code;
-                                    HashMap<String, String> item = new HashMap<String, String>();
-                                    item.put("text_name", name);
-                                    item.put("text_rating", match.group(2));
-                                    _mapPlayers.add(item);
-                                }
-                            }
-
-                        }
-                    }
-                }
-                switchToPlayersView();
-
-                Collections.sort(_mapPlayers, new ComparatorHashRating());
-
-                _adapterPlayers.notifyDataSetChanged();
-            }
-
-            //////////////////////////////////////////////////////////////////////////////////////////////
-            // result for stored
- 			/*
- 			else if(lines.length > 3 && _buffer.indexOf("Stored games for " + _handle + ":") > 0){
- 				//_pattStoredRow
- 			}*/
-            //////////////////////////////////////////////////////////////////////////////////////////////
-            // single line stuff
-            else {
-                String line;
-                for (int i = 0; i < lines.length; i++) {
-                    line = lines[i].replace(_prompt, "");
-                    // lines can still contain prompt!
-                    //   _prompt
-                    //////////////////////////////////////////////////////////////
-                    if (line.contains("Game") || line.contains("Creating:") || line.contains("Issuing:") || line.contains("Challenge:")) {
-                        //               1         2       3         4      5      6   7 8
-                        //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
-                        Pattern _pattGameInfo1 = Pattern.compile("\\{?\\w+\\s?\\d+?: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
-                        Pattern _pattGameInfo2 = Pattern.compile("\\w+: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
-                        Pattern _pattGameInfo3 = Pattern.compile("\\{\\w+\\s(\\d+) \\((\\w+) vs. (\\w+)\\) (.*)\\} (.*)");
-
-                        Matcher mat = _pattGameInfo1.matcher(line);
-                        Matcher mat2 = _pattGameInfo2.matcher(line);
-                        Matcher mat3 = _pattGameInfo3.matcher(line);
-
-                        if (mat.matches() || mat2.matches()) {  //mat and mat2 are the beginning game info
-                            _whiteHandle = mat.matches() ? mat.group(1) : mat2.group(1);
-                            _whiteRating = mat.matches() ? mat.group(2) : mat2.group(2);
-                            if (_whiteRating.equals("++++")) {
-                                _whiteRating = "UNR";
-                            }
-                            _blackHandle = mat.matches() ? mat.group(3) : mat2.group(3);
-                            _blackRating = mat.matches() ? mat.group(4) : mat2.group(4);
-                            if (_blackRating.equals("++++")) {
-                                _blackRating = "UNR";
-                            }
-                        }
-                        if (mat3.matches()) {  // mat3 is the endgame result
-                            if (_whiteHandle != null) {
-                                gameOverToast(line);  //send game over toast
-                                sendString("oldmoves " + _whiteHandle);  // send moves at end of game
-                                //Log.d(TAG, "oldmoves " + _whiteHandle);
-                            }
-                        }
-                    }
-                    // board representation
-                    if (line.indexOf("<12> ") >= 0) {
-                        // this can be multiple lines!
-                        String[] gameLines = line.split("<12> ");
-
-                        if (_FEN.isEmpty() && gameLines[1].contains("none (0:00) none")) {
-                            _FEN = gameLines[1];   // get first gameLine - contains FEN setup
-                        }
-
-                        for (int j = 0; j < gameLines.length; j++) {
-                            // at least 65 chars
-                            if (gameLines[j].length() > 65) {
-                                //if(get_view().preParseGame(gameLines[j])){
-                                if (get_view().parseGame(gameLines[j], _handle)) {
-                                    switchToBoardView();
-                                } else {
-                                    //gameToast("There was a problem parsing the response of the server.", false);
-                                    Log.w("parseBuffer", "Could not parse game response");
-                                    addConsoleText("Could not parse game response");
-                                }
-                                //}
-                            }
-                        }
-                    }
-
-                    ///////////////////////////////////////////////////////////////
-                    // Challenge: jwtc (++++) jewithca (++++) unrated blitz 5 0.
-                    else if (line.indexOf("Challenge:") >= 0) {
-                        Log.i("parseBuffer", "parsing challenge " + line);
-                        match = _pattChallenge.matcher(line);
-                        if (match.matches()) {
-
-                            String opponent, rating;
-                            if (match.group(1).equals(_handle)) {
-                                opponent = match.group(3);
-                                rating = match.group(4);
-                            } else {
-                                opponent = match.group(1);
-                                rating = match.group(2);
-                            }
-
-                            //Log.i("parseBuffer", "matched challenge");
-                            // ("adjourned", match.group(9) != null);
-
-                            new AlertDialog.Builder(ICSClient.this)
-                                    .setTitle(ICSClient.this.getString(R.string.title_challenge))
-                                    .setMessage(opponent +
-                                            " [" + rating +
-                                            "]\nchallenges you for a " + match.group(7) + " min.+" + match.group(8) + "s " + match.group(5) + " " + match.group(6) + ".\nDo you wish to accept?")
-                                    .setPositiveButton(getString(R.string.alert_yes),
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                    sendString("accept");
-                                                    dialog.dismiss();
-                                                }
-                                            })
-                                    .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .show();
-                        }
-                    }
-                    //////////////////////////////////////////////////////////////
-                    // seek no longer available
-                    else if (line.equals("That seek is not available.")) {
-                        gameToast("That seek is not available", false);
-                    }
-
-                    /////////////////////////////////////////////////////////////////
-                    // game created
-                    else if (line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
-                        Pattern p = Pattern.compile("\\{Game (\\d+) .*");
-                        Matcher m = p.matcher(line);
-                        if (m.matches()) {
-                            get_view().setGameNum(Integer.parseInt(m.group(1)));
-                            get_view().setViewMode(ICSChessView.VIEW_PLAY);
-                            switchToBoardView();
-                        }
-                    } else if (line.indexOf("Creating: ") >= 0 && line.indexOf("(adjourned)") >= 0) {
-                        //Creating: jcarolus (----) jwtc (----) unrated blitz 5 0 (adjourned)
-                        get_view().setViewMode(ICSChessView.VIEW_PLAY);
-                        switchToBoardView();
-                        gameToast("Resuming adjourned game", false);
-                    }
-                    //////////////////////////////////////////////////////////////
-                    else if (line.indexOf("Illegal move (") == 0) {
-                        gameToast("Illegal move", false);
-                    }
-                    //////////////////////////////////////////////////////////////
-                    // abort
-                    else if (get_view().isUserPlaying() && line.indexOf(get_view().getOpponent() + " would like to abort the game") != -1) { // todo add opponent in match
-                        confirmShow(getString(R.string.title_offers_abort), getString(R.string.ics_offers_abort), "abort");
-                    } else if (get_view().isUserPlaying() && line.indexOf("Game aborted by mutual agreement}") >= 0) {
-                        gameToast("Game aborted by mutual agreement", true);
-                        get_view().setViewMode(ICSChessView.VIEW_NONE);
-                    }
-                    //////////////////////////////////////////////////////////////
-                    // take back
-                    else if (get_view().isUserPlaying() && line.indexOf(get_view().getOpponent() + " would like to take back ") != -1) { //
-                        confirmShow(getString(R.string.title_offers_takeback), getString(R.string.ics_offers_takeback), "accept");
-                    }
-                    //////////////////////////////////////////////////////////////
-                    // aborted/adjouned
-                    else if (line.indexOf("{Game " /*+ get_view().getGameNum()*/) >= 0 && line.indexOf("} *") > 0) {
-                        String text = getString(R.string.ics_game_over);
-                        gameToast(text, true);
-
-                        get_view().setViewMode(ICSChessView.VIEW_NONE);
-                    }
-                    //////////////////////////////////////////////////////////////
-                    // draw / abort / todo:adjourn request sent
-                    else if (line.equals("Draw request sent.") || line.equals("Abort request sent.") || line.equals("Takeback request sent.")) {
-
-                        gameToast(getString(R.string.ics_request_sent), false);
-
-                    } else if (get_view().isUserPlaying() && line.indexOf(get_view().getOpponent() + " offers you a draw.") >= 0) {
-
-                        confirmShow(getString(R.string.title_offers_draw), getString(R.string.ics_offers_draw), "draw");
-                    } else if (get_view().isUserPlaying() && line.indexOf(get_view().getOpponent() + " would like to adjourn the game; type \"adjourn\" to accept.") >= 0) {
-
-                        confirmShow(getString(R.string.title_offers_adjourn), getString(R.string.ics_offers_adjourn), "adjourn");
-                    }
-                    /////////////////////////////////////////////////////////////
-                    // chat
-                    else if (line.indexOf(" tells you: ") > 0) {
-                        match = _pattChat.matcher(line);
-                        if (match.matches()) {
-                            //globalToast(String.format(getString(R.string.ics_tells_you), match.group(1), match.group(3)));
-                            String s = String.format(getString(R.string.ics_tells_you), match.group(1), match.group(3));
-                            while (i + 2 < lines.length && lines[i + 1].startsWith("\\")) {
-                                i++;
-                                s += line.replace("\\", "");
-                            }
-                            addConsoleText(s);
-                        }
-
-                    }
-                    // observe status
-                    else if (line.indexOf("You are now observing game") >= 0) {
-                        _FEN = "";  // reset in case last watched game wasn't finished
-                        get_view().setViewMode(ICSChessView.VIEW_WATCH);
-                        //gameToast("Observing a game", false);
-                    }
-                    // stop observing
-                    else if (line.indexOf("Removing game") >= 0 && line.indexOf("from observation list") > 0 || line.indexOf("You are no longer examining game") >= 0) {
-                        //gameToast("No longer observing the game", true);
-                        get_view().setViewMode(ICSChessView.VIEW_NONE);
-                    }
-                    // examine
-                    else if (line.indexOf("puzzlebot has made you an examiner of game") >= 0) {
-                        get_view().setViewMode(ICSChessView.VIEW_PUZZLE);
-                        gameToast("Puzzle started", false);
-                    }
-                    // stop problem
-                    else if (line.indexOf("Your current problem has been stopped") >= 0) {
-                        get_view().setViewMode(ICSChessView.VIEW_NONE);
-                        gameToast("Puzzle stopped", true);
-                    }
-                    /////////////////////////////////////////////////////////////
-                    // game talk
-                    else if (line.indexOf("[" + get_view().getGameNum() + "] says: ") > 0) {
-                        String s = line;
-                        while (i + 2 < lines.length && lines[i + 1].startsWith("\\")) {
-                            i++;
-                            s += line.replace("\\", "");
-                        }
-                        addConsoleText(s);
-                    }
-
-                    //////////////////////////////////////////////////////////////
-                    // TODO what is this
-                    else if (line.indexOf("-->") == 0) {
-                        // globalToast(line);
-                    } else if (line.indexOf("kibitzes:") > 0) {
-                        String s = line.replace("kibitzes:", "");
-                        while (i + 2 < lines.length && lines[i + 1].startsWith("\\")) {
-                            i++;
-                            s += line.replace("\\", "");
-                        }
-                        addConsoleText(s);
-                    }
-                    /////////////////////////////////////////////////////////////////
-                    // result of sought
-                    else if ((false == get_view().isUserPlaying()) && _pattSought.matcher(line).matches()) {
-                        match = _pattSought.matcher(line);
-                        if (match.matches()) {
-
-                            //Log.i("PATSOUGHT", "groupCount " + match.groupCount());
-                            if (match.groupCount() > 7) {
-
-                                String s, type, rated;
-                                if (_serverType == SERVER_FICS) {
-                                    // 1   2    3                  4   5  6       7          8
-                                    // 209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
-                                    s = String.format("%2dm+%2ds", Integer.parseInt(match.group(4)), Integer.parseInt(match.group(5)));
-                                    type = match.group(7);
-                                    rated = match.group(6);
-                                } else {
-                                    //  1 2    3                   4         5   6    7      8
-                                    //  5 1111 SlowFlo(C)          standard  30  30   rated  white        0-1700 mf
-                                    s = String.format("%2dm+%2ds", Integer.parseInt(match.group(5)), Integer.parseInt(match.group(6)));
-                                    type = match.group(4);
-                                    rated = match.group(7);
-                                }
-                                //_adapter.insert(s + " " + b.getString("type") + " " + b.getString("opponent") + "[" + b.getString("rating") + "]", 0);
-                                HashMap<String, String> item = new HashMap<String, String>();
-
-                                if (type.indexOf("blitz") >= 0 || type.indexOf("standard") >= 0) {
-
-                                    if (type.indexOf("standard") >= 0)
-                                        type = "";
-                                    item.put("text_game", s + " " + rated + " " + type);
-                                    item.put("play", match.group(1));
-                                    item.put("text_name", match.group(3));
-                                    item.put("text_rating", match.group(2));
-                                    _mapChallenges.add(0, item);
-
-                                    _adapterChallenges.notifyDataSetChanged();
-                                }
-                                //switchToChallengeView();
-                            } else {
-                                Log.w("ICSClient", "pattSought match, but groupcount = " + match.groupCount());
-                            }
-                        }
-                    }
-                    // skip stuff
-                    else if (line.indexOf("seeking") > 0 && line.indexOf("to respond") > 0) {
-                        // skip seeking stuff, is handled via 'sought' command
-                        //Log.i("ICSClient", "Skip seeking");
-                    } else if (line.indexOf("ads displayed.") > 0) {
-                        //Log.i("ICSClient", "Skip ads displayed");
-                    }
-                    //////////////////////////////////////////////////////////////////////////////////////////////
-                    // result for games
-                    else if ((false == get_view().isUserPlaying()) && _pattGameRow.matcher(line).matches()) {
-                        //Log.i("ICSClient", "GAMEROW match");
-                        match = _pattGameRow.matcher(line);
-                        if (match.matches()) {
-                            HashMap<String, String> item = new HashMap<String, String>();
-                            //  93 2036 WFMKierzek  2229 FMKarl     [ su120   0]  26:13 -  3:49 (22-22) W: 28
-                            item.put("nr", match.group(1));
-                            item.put("text_rating1", match.group(2));
-                            item.put("text_name1", match.group(3));
-                            item.put("text_rating2", match.group(4));
-                            item.put("text_name2", match.group(5));
-                            item.put("text_type", match.group(6).toUpperCase() + match.group(7).toUpperCase());
-                            item.put("text_time1", match.group(10) + ":" + match.group(11));
-                            item.put("text_time2", match.group(12) + ":" + match.group(13));
-
-                            _mapGames.add(0, item);
-                            _adapterGames.notifyDataSetChanged();
-                        }
-                    }
-                    //////////////////////////////////////////////////////////////////////////////////////////////
-                    // result for stored games
-                    else if ((false == get_view().isUserPlaying()) && _pattStoredRow.matcher(line).matches()) {
-                        //Log.i(TAG, "stored row match");
-                        match = _pattStoredRow.matcher(line);
-                        if (match.matches()) {
-                            HashMap<String, String> item = new HashMap<String, String>();
-                            item.put("nr_stored", match.group(1));
-                            item.put("color_stored", match.group(2));
-                            item.put("text_name_stored", match.group(3));
-                            item.put("available_stored", match.group(4).equals("Y") ? "*" : "");
-                            _mapStored.add(item);
-                            _adapterStored.notifyDataSetChanged();
-                        }
-                    }
-
-                    //////////////////////////////////////////////////////////////
-                    // shouts, tshouts etc...
-                    // any other data we haven't matched, put it on prompt
-                    else if (line.length() > 0) {
-                        Log.i(TAG, "lines[" + i + "] " + line);
-                        //Log.i(TAG, "lines[" + i + "][last] " + (int)(line.charAt(line.length()-1)));
-                        sRaw += "\n" + line;
-                    }
-
-                } // end of for line
-                //////////////////////////////////////////////////////////////
-
-
-                if (sRaw.length() > 0) {
-                    sRaw = sRaw.replace(new Character((char) 7).toString(), "").replace("\\", "").replace("\t", "").replace(_prompt, "\n").trim();
-                    sRaw = sRaw.replaceAll("[\n]{2,}", "\n");
-                    if (sRaw.length() > 0) {
-                        addConsoleText(sRaw);
-                    }
-
-                    if (_bEndGameDialog) {
-                        sEnd += sRaw;
-                        //Log.d(TAG, "sEnd ->" + sEnd);
-
-                        _matgame = _pattEndGame.matcher(sEnd); // _pattEndGame matches beginning info of game summary
-
-                        if (_matgame.matches()) {
-
-                            makeGamePGN(sEnd);
-
-                        }
-                    }
-                }
-            } // single line stuff
-
-        } catch (Exception ex) {
-
-            Log.e("WorkerTelnet", ex.toString());
-
-        }
+        server.startSession("freechess.org", 23, h, p, "fics% ");
     }
 
     protected void makeGamePGN(String sEnd) {
@@ -2131,7 +1601,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
             _bConsoleText = false;
         }
 
-        if (_socket == null || _socket.sendString(s + "\n") == false) {
+        if (!server.sendString(s)) {
             // ----------- Loss connection -------------- //
             switch (get_gameStartSound()) {
                 case 0:
@@ -2167,7 +1637,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener {
                 Log.e(TAG, ex.toString());
             }
         }
-
     }
 
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
