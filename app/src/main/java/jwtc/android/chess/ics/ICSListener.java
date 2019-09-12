@@ -28,7 +28,7 @@ public interface ICSListener {
     void OnResumingAdjournedGame();
     void OnAbortedOrAdjourned();
     void OnObservingGameStarted();
-    void OnObservingGameStoppedd();
+    void OnObservingGameStopped();
     void OnPuzzleStarted();
     void OnPuzzleStopped();
     void OnExaminingGameStarted();

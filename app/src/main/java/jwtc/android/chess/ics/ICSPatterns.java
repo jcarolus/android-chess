@@ -46,8 +46,8 @@ public class ICSPatterns {
     //  1  2    3           4    5            678     9
     protected static final Pattern gameRow = Pattern.compile("[\\s]*(\\d+) (\\d+) (\\w+)[\\s]+(\\d+) (\\w+)[\\s]+\\[ (s|b|l)(r|u)[\\s]*(\\d+)[\\s]*(\\d+)\\][\\s]*(\\d+):(\\d+)[\\s]*-[\\s]*(\\d+):(\\d+).+");
 
-    protected static final Pattern enterTheServerAs = Pattern.compile("Press return to enter the server as \"(\\w+)\":");
     protected static final Pattern loggingYouInAs = Pattern.compile("Logging you in as \"(\\w+)\"");
+    protected static final Pattern returnToLoginAs = Pattern.compile("Press return to enter the server as \"(\\w+)\":");
 
     //               1         2       3         4      5      6   7 8
     //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
@@ -71,7 +71,7 @@ public class ICSPatterns {
     }
 
     public boolean isInvalidPassword(String buffer) {
-        return buffer.contains("**** Invalid password! ****");
+        return buffer.contains("**** Invalid");
     }
 
     public boolean isSessionStarting(String buffer) {
@@ -79,8 +79,8 @@ public class ICSPatterns {
     }
 
     public String parseGuestHandle(String buffer) {
-        Matcher match = loggingYouInAs.matcher(buffer);
-        if (match.matches()) {
+        Matcher match = returnToLoginAs.matcher(buffer);
+        if (match.find()) {
             return match.group(1);
         }
         return null;

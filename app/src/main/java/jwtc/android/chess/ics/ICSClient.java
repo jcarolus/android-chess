@@ -151,7 +151,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnLoginSuccess() {
+        sendString("style 12");
+        sendString("-channel 4"); // guest
+        sendString("-channel 53"); // guest chat
+        sendString("set kibitz 1"); // for puzzlebot
+        sendString("set gin 0"); // current server game results - turn off - some clients turn it on
+        sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
 
+        switchToConsoleView();
     }
 
     @Override
@@ -171,17 +178,28 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnError() {
-
+        Log.i(TAG, "OnError");
     }
 
     @Override
     public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
+        _mapPlayers.clear();
+        for (int i = 0; i < playerList.size(); i++) {
+            _mapPlayers.add(playerList.get(i));
+        }
+        Collections.sort(_mapPlayers, new ComparatorHashRating());
+        _adapterPlayers.notifyDataSetChanged();
 
+        switchToPlayersView();
     }
 
     @Override
     public void OnBoardUpdated(String gameLine, String handle) {
-
+        if (get_view().parseGame(gameLine, handle)) {
+            switchToBoardView();
+        } else {
+            Log.i(TAG, "Could not parse game line " + gameLine);
+        }
     }
 
     @Override
@@ -206,7 +224,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnGameNumberUpdated(int number) {
-
+        if (number > 0) {
+            get_view().setGameNum(number);
+            get_view().setViewMode(ICSChessView.VIEW_PLAY);
+        }
     }
 
     @Override
@@ -270,7 +291,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     @Override
-    public void OnObservingGameStoppedd() {
+    public void OnObservingGameStopped() {
 
     }
 
@@ -952,6 +973,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         }
 
         server.startSession("freechess.org", 23, h, p, "fics% ");
+        switchToLoadingView();
     }
 
     protected void makeGamePGN(String sEnd) {

@@ -65,6 +65,9 @@ public class ICSServer {
                 try {
                     while (_socket != null && _socket.isConnected()) {
                         String buffer = _socket.readString();
+
+                        // Log.i(TAG, "Buffer " + buffer == null ? "NULL" : buffer);
+
                         if (buffer != null && buffer.length() > 0) {
                             Message message = new Message();
                             message.what = ICSThreadMessageHandler.MSG_PARSE;
@@ -74,6 +77,7 @@ public class ICSServer {
                             threadHandler.sendMessage(message);
                         }
                     }
+                    Log.i(TAG, "End of workerTelnet");
                 } catch (Exception ex) {
                     Message message = new Message();
                     message.what = ICSThreadMessageHandler.MSG_ERROR;
@@ -100,10 +104,15 @@ public class ICSServer {
                 handleBufferMessage(buffer);
                 break;
             case ICSThreadMessageHandler.MSG_CONNECTION_ERROR:
+                Log.i(TAG, "MSG_CONNECTION_ERROR");
                 listener.OnError();
                 break;
             case ICSThreadMessageHandler.MSG_ERROR:
+                Log.i(TAG, "MSG_ERROR");
                 listener.OnError();
+                break;
+            default:
+                Log.e(TAG, "Unecpected msg.what");
                 break;
         }
     }
@@ -112,23 +121,34 @@ public class ICSServer {
 //        Log.i(TAG, "handleBufferMessage: " + buffer);
         currentBuffer += buffer;
         String waitingFor = prompt;
+        String contains = "**** ";
+
         switch (expectingState) {
             case EXPECT_LOGIN_PROMPT:
                 waitingFor = "login: ";
                 break;
             case EXPECT_LOGIN_RESPONSE:
-                waitingFor = ": ";
+                if (handle.equals("guest")) {
+                    waitingFor = "\":";
+                } else {
+                    waitingFor = ": ";
+                }
+                break;
+            case EXPECT_PASSWORD_RESPONSE:
+                waitingFor = null;
                 break;
         }
-
-        if (currentBuffer.endsWith(waitingFor)) {
+        if (
+            waitingFor != null && currentBuffer.endsWith(waitingFor) ||
+            waitingFor == null && currentBuffer.contains(contains) && buffer.length() > 20
+        ) {
             this.parse(currentBuffer);
             currentBuffer = "";
         }
     }
 
     private void parse(String buffer) {
-        Log.i(TAG, expectingState + "; parse: " + buffer);
+        //Log.i(TAG, expectingState + "; parse: " + buffer);
         String[] lines = buffer.split("\n\r");
         int lineCount = lines.length;
 
@@ -150,13 +170,20 @@ public class ICSServer {
         }
 
         if (expectingState == EXPECT_LOGIN_RESPONSE) {
-            if (handle == "guest") {
+            if (handle.equals("guest")) {
                 if (buffer.contains("Press return to enter the server as")) {
-                    if (sendString("")) {
-                        expectingState = EXPECT_PASSWORD_RESPONSE;
-                        return;
+                    String guestHandle = icsPatterns.parseGuestHandle(buffer);
+                    if (guestHandle != null) {
+                        if (sendString("")) {
+                            handle = guestHandle;
+                            expectingState = EXPECT_PASSWORD_RESPONSE;
+                            return;
+                        } else {
+                            Log.i(TAG, "Could net send handle");
+                            return;
+                        }
                     } else {
-                        Log.i(TAG, "Could net send handle");
+                        Log.i(TAG, "Could not get guest handle from response");
                         return;
                     }
                 }
@@ -177,17 +204,13 @@ public class ICSServer {
         }
 
         if (expectingState == EXPECT_PASSWORD_RESPONSE) {
-            if (handle == "guest") {
+            if (handle.startsWith("Guest")) {
                 if (icsPatterns.isSessionStarting(buffer)) {
-                    String guestHandle = icsPatterns.parseGuestHandle(buffer);
-                    if (guestHandle != null) {
-                        handle = guestHandle;
-                        expectingState = EXPECT_PROMPT;
-                        listener.OnLoginSuccess();
-                        return;
-                    }
+                    expectingState = EXPECT_PROMPT;
+                    listener.OnLoginSuccess();
+                    return;
                 }
-                Log.i(TAG, "Unexpected buffer on guest password response");
+                Log.i(TAG, "Unexpected buffer on guest password response: " + buffer);
                 return;
             }
             if (icsPatterns.isInvalidPassword(buffer)) {
@@ -199,7 +222,7 @@ public class ICSServer {
                 listener.OnLoginSuccess();
                 return;
             }
-            Log.i(TAG, "Unexpected buffer on password response");
+            Log.i(TAG, "Unexpected buffer on password response: " + buffer);
             return;
         }
 
@@ -335,7 +358,7 @@ public class ICSServer {
             }
 
             if (icsPatterns.isStopObservingGame(line)) {
-                listener.OnObservingGameStoppedd();
+                listener.OnObservingGameStopped();
                 continue;
             }
 
