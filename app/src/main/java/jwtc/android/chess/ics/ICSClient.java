@@ -5,9 +5,9 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.pm.ActivityInfo;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.Ringtone;
@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
 
@@ -54,14 +55,11 @@ import jwtc.android.chess.*;
 
 public class ICSClient extends MyBaseActivity implements OnItemClickListener, ICSListener {
 
-    private ICSServer server = new ICSServer(this);
-    private TelnetSocket _socket;
-    private Thread _workerTelnet;
+    private ICSServer icsServer;
     protected String _sConsoleEditText;
-    private String _server, _handle, _pwd, _prompt, _waitFor, _buffer, _ficsHandle, _ficsPwd,
-            _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
+    private String _server, _handle, _pwd, _ficsHandle, _ficsPwd, _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
-    private boolean _bIsGuest, _bInICS, _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
+    private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
             _notifyON, _bConsoleText, _bICSVolume, _ICSNotifyLifeCycle;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
@@ -90,32 +88,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     private TimeZone tz = TimeZone.getDefault();
 
-    // FICS
-    // Challenge: withca (----) GuestFHYH (----) unrated blitz 10 0
-    private Pattern _pattChallenge = Pattern.compile("Challenge\\: (\\w+) \\((.+)\\) (\\w+) \\((.+)\\) (rated |unrated )(standard |blitz |wild )(\\d+) (\\d+)( \\(adjourned\\))?.*");
-
-    // @TODO ===========================================================================================
-    //    C Opponent       On Type          Str  M    ECO Date
-    // 1: W jwtc            N [ sr 20   0] 39-39 W3   C44 Thu Nov  5, 12:41 PST 2009
-    // 1: B jwtc            Y [ sr  7  12] 39-39 B3   B07 Sun Jun  2, 02:59 PDT 2013
-    private Pattern _pattStoredRow = Pattern.compile("[\\s]*(\\d+)\\: (W|B) (\\w+)[\\s]*(Y|N).+");
-    // =================================================================================================
-
-    // relay
-    // :262 GMTopalov         GMCaruana         *       C78
-
-    // GuestNJVN (++++) seeking 5 0 unrated blitz ("play 104" to respond)
-    // GuestFXXP (++++) seeking 7 0 unrated blitz f ("play 27" to respond)
-    // Suffocate (++++) seeking 30 30 unrated standard [black] m ("play 29" to respond)
-    //Pattern _pattSeeking = Pattern.compile("(\\w+) \\((.+)\\) seeking (\\d+) (\\d+) (rated |unrated ?)(standard |blitz |lightning )(\\[white\\] |\\[black\\] )?(f |m )?\\(\"play (\\d+)\" to respond\\)");
-
-    private Pattern _pattSought, _pattGameRow;
-    private Pattern _pattChat = Pattern.compile("(\\w+)(\\(\\w+\\))? tells you\\: (.+)");
-
-    //1269.allko                    ++++.kaspalesweb(U)
-    private Pattern _pattPlayerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
-    private Pattern _pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s(\\w.+)\\," +
-            " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)"); //beginning of game
     private Matcher _matgame;
 
     private ArrayList<HashMap<String, String>> _mapChallenges = new ArrayList<HashMap<String, String>>();
@@ -149,226 +121,29 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     private ImageButton butQuickSoundOn, butQuickSoundOff;
 
-    @Override
-    public void OnLoginSuccess() {
-        sendString("style 12");
-        sendString("-channel 4"); // guest
-        sendString("-channel 53"); // guest chat
-        sendString("set kibitz 1"); // for puzzlebot
-        sendString("set gin 0"); // current server game results - turn off - some clients turn it on
-        sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
-
-        switchToConsoleView();
-    }
-
-    @Override
-    public void OnLoginFailed() {
-        doToast("Could not log you in");
-    }
-
-    @Override
-    public void OnLoggingIn() {
-        doToast("Logging you in");
-    }
-
-    @Override
-    public void OnSessionStarted() {
-        switchToBoardView();
-    }
-
-    @Override
-    public void OnError() {
-        Log.i(TAG, "OnError");
-    }
-
-    @Override
-    public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
-        _mapPlayers.clear();
-        for (int i = 0; i < playerList.size(); i++) {
-            _mapPlayers.add(playerList.get(i));
-        }
-        Collections.sort(_mapPlayers, new ComparatorHashRating());
-        _adapterPlayers.notifyDataSetChanged();
-
-        switchToPlayersView();
-    }
-
-    @Override
-    public void OnBoardUpdated(String gameLine, String handle) {
-        if (get_view().parseGame(gameLine, handle)) {
-            switchToBoardView();
-        } else {
-            Log.i(TAG, "Could not parse game line " + gameLine);
-        }
-    }
-
-    @Override
-    public void OnChallenged(String opponent, String rating, String message) {
-
-    }
-
-    @Override
-    public void OnIllegalMove() {
-
-    }
-
-    @Override
-    public void OnSeekNotAvailable() {
-
-    }
-
-    @Override
-    public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
-
-    }
-
-    @Override
-    public void OnGameNumberUpdated(int number) {
-        if (number > 0) {
-            get_view().setGameNum(number);
-            get_view().setViewMode(ICSChessView.VIEW_PLAY);
-        }
-    }
-
-    @Override
-    public void OnOpponentRequestsAbort() {
-
-    }
-
-    @Override
-    public void OnOpponentRequestsAdjourn() {
-
-    }
-
-    @Override
-    public void OnOpponentOffersDraw() {
-
-    }
-
-    @Override
-    public void OnOpponentRequestsTakeBack() {
-
-    }
-
-    @Override
-    public void OnAbortConfirmed() {
-
-    }
-
-    @Override
-    public void OnPlayGameResult(String message) {
-
-    }
-
-    @Override
-    public void OnPlayGameStopped() {
-
-    }
-
-    @Override
-    public void OnYourRequestSended() {
-
-    }
-
-    @Override
-    public void OnChatReceived() {
-
-    }
-
-    @Override
-    public void OnResumingAdjournedGame() {
-
-    }
-
-    @Override
-    public void OnAbortedOrAdjourned() {
-
-    }
-
-    @Override
-    public void OnObservingGameStarted() {
-
-    }
-
-    @Override
-    public void OnObservingGameStopped() {
-
-    }
-
-    @Override
-    public void OnPuzzleStarted() {
-
-    }
-
-    @Override
-    public void OnPuzzleStopped() {
-
-    }
-
-    @Override
-    public void OnExaminingGameStarted() {
-
-    }
-
-    @Override
-    public void OnExaminingGameStopped() {
-
-    }
-
-    @Override
-    public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
-
-    }
-
-    @Override
-    public void OnChallengedResult(ArrayList<HashMap<String, String>> challenges) {
-
-    }
-
-    @Override
-    public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
-
-    }
-
-    @Override
-    public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
-
-    }
-
-    @Override
-    public void OnEndGameResult() {
-
-    }
-
-    @Override
-    public void OnConsoleOutput(String buffer) {
-        addConsoleText(buffer);
-    }
-
-    static class InnerTimerHandler extends Handler {
-        WeakReference<ICSClient> _client;
-
-        InnerTimerHandler(ICSClient client) {
-            this._client = new WeakReference<ICSClient>(client);
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // This is called when the connection with the service has been
+            // established, giving us the service object we can use to
+            // interact with the service.  Because we have bound to a explicit
+            // service that we know is running in our own process, we can
+            // cast its IBinder to a concrete class and directly access it.
+            Log.i(TAG, "onServiceConnected");
+            icsServer = ((ICSServer.LocalBinder)service).getService();
+            icsServer.addListener(ICSClient.this);
+            icsServer.startSession("freechess.org", 23, _handle, _pwd, "fics% ");
         }
 
-        @Override
-        public void handleMessage(Message msg) {
-            ICSClient client = _client.get();
-            if (client != null) {
-                if (client._bAutoSought) {
-                    if (client._socket != null && client._workerTelnet != null && client._workerTelnet.isAlive() && client._socket.isConnected() &&
-                            client._bInICS && client.get_view().isUserPlaying() == false) {
-                        while (client._mapChallenges.size() > 0) {
-                            client._mapChallenges.remove(0);
-                        }
-                        client._adapterChallenges.notifyDataSetChanged();
-                        client.sendString("sought");
-                    }
-                }
-            }
+        public void onServiceDisconnected(ComponentName className) {
+            // This is called when the connection with the service has been
+            // unexpectedly disconnected -- that is, its process crashed.
+            // Because it is running in our same process, we should never
+            // see this happen.
+            OnSessionEnded();
+            icsServer = null;
+            Log.i(TAG, "onServiceDisconnected");
         }
-    }
+    };
 
     private Timer _timer = null;
     protected InnerTimerHandler m_timerHandler = new InnerTimerHandler(this);
@@ -382,13 +157,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
-
-        int configOrientation = this.getResources().getConfiguration().orientation;
-        if (configOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
 
         setContentView(R.layout.icsclient);
 
@@ -404,19 +172,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         _dlgChat = new ICSChatDlg(this);
         _dlgOver = new ICSGameOverDlg(this);
 
-        _handle = null;
-        _pwd = null;
-        _workerTelnet = null;
-        _socket = null;
-
         _tvHeader = (TextView) findViewById(R.id.TextViewHeader);
         _tvHeader.setGravity(Gravity.CENTER);
 
         //_dlgChat = new ICSChatDlg(this);
 
-        _bIsGuest = true;
         _serverType = SERVER_FICS;
-        _bInICS = false;
         _iConsoleCharacterSize = 10;
         _bAutoSought = true;
         _bTimeWarning = true;
@@ -754,7 +515,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
         boolean isConnected = isConnected();
         boolean isUserPlaying = get_view().isUserPlaying();
-        boolean isNotGuest = isConnected && (false == _handle.equals("guest"));
+        boolean isNotGuest = isConnected && icsServer.isGuest();
         int viewMode = this.get_view()._viewMode;
 
         menu.findItem(R.string.menu_flip).setVisible(isConnected && viewMode != ICSChessView.VIEW_NONE);
@@ -909,7 +670,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
 
     public void confirmAbort() {
-
         Log.i("ICSClient", "confirmAbort");
         if (isConnected()) {
             if (_viewAnimatorMain.getDisplayedChild() == VIEW_MAIN_BOARD && get_view().isUserPlaying()) {
@@ -944,23 +704,23 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         return super.onKeyDown(keyCode, event);
     }
 
-    public void stopSession(String sReason) {
-        Log.e("stopSession", sReason);
-        if (isFinishing()) {
-            return;
-        }
-        new AlertDialog.Builder(ICSClient.this)
-                .setTitle(R.string.title_error)
-                .setMessage(sReason)
-                .setPositiveButton(R.string.alert_ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                                finish();
-                            }
-                        })
-                .show();
-    }
+//    public void stopSession(String sReason) {
+//        Log.e("stopSession", sReason);
+//        if (isFinishing()) {
+//            return;
+//        }
+//        new AlertDialog.Builder(ICSClient.this)
+//                .setTitle(R.string.title_error)
+//                .setMessage(sReason)
+//                .setPositiveButton(R.string.alert_ok,
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int whichButton) {
+//                                dialog.dismiss();
+//                                finish();
+//                            }
+//                        })
+//                .show();
+//    }
 
     public void startSession(final String h, final String p) {
         if (h == "") {
@@ -972,8 +732,17 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
             return;
         }
 
-        server.startSession("freechess.org", 23, h, p, "fics% ");
-        switchToLoadingView();
+        if (bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE)) {
+            Log.i(TAG, "Bind to ICSServer");
+
+            _handle = h;
+            _pwd = p;
+            switchToLoadingView();
+
+        } else {
+            globalToast("Could not init remote chess process");
+            Log.e(TAG, "Error: The requested service doesn't exist, or this client isn't allowed access to it.");
+        }
     }
 
     protected void makeGamePGN(String sEnd) {
@@ -1267,6 +1036,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     protected void onResume() {
         Log.i(TAG, "onResume");
 
+        if (icsServer != null) {
+            icsServer.addListener(this);
+        }
+
         invalidateOptionsMenu(); // update OptionsMenu
 
         SharedPreferences prefs = this.getPrefs();
@@ -1384,7 +1157,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         if (isConnected()) {
             switchToBoardView();
         } else {
-            Log.i("onResume", "socket " + (_socket == null) + " worker " + (_workerTelnet == null));
 
             _editHandle.setText(_ficsHandle);
             _editPwd.setText(_ficsPwd);
@@ -1467,10 +1239,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public boolean isConnected() {
-        if (_socket == null || _workerTelnet == null || (false == _workerTelnet.isAlive()) || (false == _bInICS) || (false == _socket.isConnected())) {
-            return false;
+        if (this.icsServer != null) {
+            return this.icsServer.isConnected();
         }
-        return true;
+        return false;
     }
 
     public void notificationAPP() {
@@ -1502,16 +1274,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     protected void onPause() {
         Log.i(TAG, "onPause");
 
-        // lock screen orientation?
-        //setRequestedOrientation(this.getResources().getConfiguration().orientation);
-
-        ////////////////////////////////////////////////////////////
+        if (icsServer != null) {
+            icsServer.removeListener(this);
+        }
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        if (_bIsGuest) {
-            _handle = "guest";
-        }
         editor.putString("ics_handle", _ficsHandle);
         editor.putString("ics_password", _ficsPwd);
 
@@ -1555,7 +1323,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
 
-        _workerTelnet = null;
+        icsServer.removeListener(this);
+        unbindService(mConnection);
         disconnect();
 
         super.onDestroy();
@@ -1605,14 +1374,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     };
 
     public void disconnect() {
-        if (_socket != null) {
-            try {
-                _socket.close();
-            } catch (Exception ex) {
-            }
-            _socket = null;
-            Log.d(TAG, "disconnect method");
-        }
         cancelDateTimer();
     }
 
@@ -1623,7 +1384,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
             _bConsoleText = false;
         }
 
-        if (!server.sendString(s)) {
+        if (!icsServer.sendString(s)) {
             // ----------- Loss connection -------------- //
             switch (get_gameStartSound()) {
                 case 0:
@@ -1845,6 +1606,230 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     public class ComparatorHashRating implements java.util.Comparator<HashMap<String, String>> {
         public int compare(HashMap<String, String> a, HashMap<String, String> b) {
             return -1 * ((String) ((HashMap<String, String>) a).get("text_rating")).compareToIgnoreCase(((String) ((HashMap<String, String>) b).get("text_rating")));
+        }
+    }
+
+    @Override
+    public void OnLoginSuccess() {
+        sendString("style 12");
+        sendString("-channel 4"); // guest
+        sendString("-channel 53"); // guest chat
+        sendString("set kibitz 1"); // for puzzlebot
+        sendString("set gin 0"); // current server game results - turn off - some clients turn it on
+        sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
+
+        switchToConsoleView();
+    }
+
+    @Override
+    public void OnLoginFailed() {
+        doToast("Could not log you in");
+    }
+
+    @Override
+    public void OnLoggingIn() {
+        doToast("Logging you in");
+    }
+
+    @Override
+    public void OnSessionStarted() {
+        switchToBoardView();
+    }
+
+    @Override
+    public void OnSessionEnded() { switchToLoginView(); }
+
+    @Override
+    public void OnError() {
+        Log.i(TAG, "OnError");
+    }
+
+    @Override
+    public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
+        _mapPlayers.clear();
+        for (int i = 0; i < playerList.size(); i++) {
+            _mapPlayers.add(playerList.get(i));
+        }
+        Collections.sort(_mapPlayers, new ComparatorHashRating());
+        _adapterPlayers.notifyDataSetChanged();
+
+        switchToPlayersView();
+    }
+
+    @Override
+    public void OnBoardUpdated(String gameLine, String handle) {
+        if (get_view().parseGame(gameLine, handle)) {
+            switchToBoardView();
+        } else {
+            Log.i(TAG, "Could not parse game line " + gameLine);
+        }
+    }
+
+    @Override
+    public void OnChallenged(String opponent, String rating, String message) {
+
+    }
+
+    @Override
+    public void OnIllegalMove() {
+
+    }
+
+    @Override
+    public void OnSeekNotAvailable() {
+
+    }
+
+    @Override
+    public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
+
+    }
+
+    @Override
+    public void OnGameNumberUpdated(int number) {
+        if (number > 0) {
+            get_view().setGameNum(number);
+            get_view().setViewMode(ICSChessView.VIEW_PLAY);
+        }
+    }
+
+    @Override
+    public void OnOpponentRequestsAbort() {
+
+    }
+
+    @Override
+    public void OnOpponentRequestsAdjourn() {
+
+    }
+
+    @Override
+    public void OnOpponentOffersDraw() {
+
+    }
+
+    @Override
+    public void OnOpponentRequestsTakeBack() {
+
+    }
+
+    @Override
+    public void OnAbortConfirmed() {
+
+    }
+
+    @Override
+    public void OnPlayGameResult(String message) {
+
+    }
+
+    @Override
+    public void OnPlayGameStopped() {
+
+    }
+
+    @Override
+    public void OnYourRequestSended() {
+
+    }
+
+    @Override
+    public void OnChatReceived() {
+
+    }
+
+    @Override
+    public void OnResumingAdjournedGame() {
+
+    }
+
+    @Override
+    public void OnAbortedOrAdjourned() {
+
+    }
+
+    @Override
+    public void OnObservingGameStarted() {
+
+    }
+
+    @Override
+    public void OnObservingGameStopped() {
+
+    }
+
+    @Override
+    public void OnPuzzleStarted() {
+
+    }
+
+    @Override
+    public void OnPuzzleStopped() {
+
+    }
+
+    @Override
+    public void OnExaminingGameStarted() {
+
+    }
+
+    @Override
+    public void OnExaminingGameStopped() {
+
+    }
+
+    @Override
+    public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
+
+    }
+
+    @Override
+    public void OnChallengedResult(ArrayList<HashMap<String, String>> challenges) {
+
+    }
+
+    @Override
+    public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
+
+    }
+
+    @Override
+    public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
+
+    }
+
+    @Override
+    public void OnEndGameResult() {
+
+    }
+
+    @Override
+    public void OnConsoleOutput(String buffer) {
+        addConsoleText(buffer);
+    }
+
+    static class InnerTimerHandler extends Handler {
+        WeakReference<ICSClient> _client;
+
+        InnerTimerHandler(ICSClient client) {
+            this._client = new WeakReference<ICSClient>(client);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            ICSClient client = _client.get();
+            if (client != null) {
+                if (client._bAutoSought) {
+//                    if (client._socket != null && client._workerTelnet != null && client._workerTelnet.isAlive() && client._socket.isConnected() &&
+//                            client._bInICS && client.get_view().isUserPlaying() == false) {
+//                        while (client._mapChallenges.size() > 0) {
+//                            client._mapChallenges.remove(0);
+//                        }
+//                        client._adapterChallenges.notifyDataSetChanged();
+//                        client.sendString("sought");
+//                    }
+                }
+            }
         }
     }
 

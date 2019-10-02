@@ -8,6 +8,7 @@ public interface ICSListener {
     void OnLoginFailed();
     void OnLoggingIn();
     void OnSessionStarted();
+    void OnSessionEnded();
     void OnError();
     void OnPlayerList(ArrayList<HashMap<String,String>> playerList);
     void OnBoardUpdated(String gameLine, String handle);

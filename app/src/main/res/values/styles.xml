@@ -91,10 +91,9 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="ChessTheme" parent="@android:style/Theme.Holo">
+    <style name="ChessTheme" parent="@android:style/Theme.Holo.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowBackground">@color/holo_primary_dark</item>
-        <item name="android:actionBarStyle">@android:style/Widget.Holo.ActionBar.Solid</item>
     </style>
 
 </resources>

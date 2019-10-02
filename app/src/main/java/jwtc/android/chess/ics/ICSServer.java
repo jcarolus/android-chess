@@ -1,22 +1,29 @@
 package jwtc.android.chess.ics;
 
+import android.app.Service;
+import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ICSServer {
+import androidx.annotation.Nullable;
+
+public class ICSServer extends Service {
     protected static final String TAG = "ICSServer";
     protected static final int EXPECT_LOGIN_PROMPT = 1;
     protected static final int EXPECT_LOGIN_RESPONSE = 2;
     protected static final int EXPECT_PASSWORD_RESPONSE = 3;
     protected static final int EXPECT_PROMPT = 4;
 
+    private final IBinder mBinder = new LocalBinder();
     private TelnetSocket _socket;
     private Thread _workerTelnet;
-    private ICSListener listener;
+    private ArrayList<ICSListener> listeners = new ArrayList<>();
     protected ICSThreadMessageHandler threadHandler = new ICSThreadMessageHandler(this);
     protected int expectingState;
     protected String currentBuffer;
@@ -26,12 +33,21 @@ public class ICSServer {
     protected String opponent;
     protected ICSPatterns icsPatterns = new ICSPatterns();
 
-    ICSServer(ICSListener listener) {
-        this.listener = listener;
+    public void addListener(ICSListener listener) {
+        this.listeners.add(listener);
+    }
+    public void removeListener(ICSListener listener) {this.listeners.remove(listener);}
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "Received start id " + startId + ": " + intent);
+        return START_STICKY;
     }
 
-    public void initialize() {
-
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "onDestroy");
+        tearDown();
     }
 
     public void tearDown() {
@@ -78,6 +94,7 @@ public class ICSServer {
                         }
                     }
                     Log.i(TAG, "End of workerTelnet");
+                    stopSelf();
                 } catch (Exception ex) {
                     Message message = new Message();
                     message.what = ICSThreadMessageHandler.MSG_ERROR;
@@ -97,6 +114,17 @@ public class ICSServer {
         return false;
     }
 
+    public boolean isConnected() {
+        if (_socket != null && _socket.isConnected()) {
+            return expectingState != EXPECT_LOGIN_PROMPT;
+        }
+        return false;
+    }
+
+    public boolean isGuest() {
+        return handle != null && handle.startsWith("Guest");
+    }
+
     public void handleThreadMessage(Message msg) {
         switch (msg.what) {
             case ICSThreadMessageHandler.MSG_PARSE:
@@ -105,11 +133,11 @@ public class ICSServer {
                 break;
             case ICSThreadMessageHandler.MSG_CONNECTION_ERROR:
                 Log.i(TAG, "MSG_CONNECTION_ERROR");
-                listener.OnError();
+                for (ICSListener listener: listeners) {listener.OnError();}
                 break;
             case ICSThreadMessageHandler.MSG_ERROR:
                 Log.i(TAG, "MSG_ERROR");
-                listener.OnError();
+                for (ICSListener listener: listeners) {listener.OnError();}
                 break;
             default:
                 Log.e(TAG, "Unecpected msg.what");
@@ -152,13 +180,13 @@ public class ICSServer {
         String[] lines = buffer.split("\n\r");
         int lineCount = lines.length;
 
-        listener.OnConsoleOutput(buffer);
+        for (ICSListener listener: listeners) {listener.OnConsoleOutput(buffer);}
 
         if (expectingState == EXPECT_LOGIN_PROMPT) {
             if (buffer.endsWith("login: ")) {
                 if (sendString(handle)) {
                     expectingState = EXPECT_LOGIN_RESPONSE;
-                    listener.OnLoggingIn();
+                    for (ICSListener listener: listeners) {listener.OnLoggingIn();}
                     return;
                 } else {
                     Log.i(TAG, "Could net send handle");
@@ -207,19 +235,19 @@ public class ICSServer {
             if (handle.startsWith("Guest")) {
                 if (icsPatterns.isSessionStarting(buffer)) {
                     expectingState = EXPECT_PROMPT;
-                    listener.OnLoginSuccess();
+                    for (ICSListener listener: listeners) {listener.OnLoginSuccess();}
                     return;
                 }
                 Log.i(TAG, "Unexpected buffer on guest password response: " + buffer);
                 return;
             }
             if (icsPatterns.isInvalidPassword(buffer)) {
-                listener.OnLoginFailed();
+                for (ICSListener listener: listeners) {listener.OnLoginFailed();}
                 return;
             }
             if (icsPatterns.isSessionStarting(buffer)) {
                 expectingState = EXPECT_PROMPT;
-                listener.OnLoginSuccess();
+                for (ICSListener listener: listeners) {listener.OnLoginSuccess();}
                 return;
             }
             Log.i(TAG, "Unexpected buffer on password response: " + buffer);
@@ -241,7 +269,7 @@ public class ICSServer {
                 }
             }
             if (games.size() > 0) {
-                this.listener.OnGameListResult(games);
+                for (ICSListener listener: listeners) {listener.OnGameListResult(games);}
             }
             return;
         }
@@ -255,7 +283,7 @@ public class ICSServer {
                 }
             }
             if (soughtList.size() > 0) {
-                listener.OnSoughtResult(soughtList);
+                for (ICSListener listener: listeners) {listener.OnSoughtResult(soughtList);}
             }
             return;
         }
@@ -269,7 +297,7 @@ public class ICSServer {
                 }
             }
             if (playerList.size() > 0) {
-                listener.OnPlayerList(playerList);
+                for (ICSListener listener: listeners) {listener.OnPlayerList(playerList);}
             }
             return;
         }
@@ -280,103 +308,116 @@ public class ICSServer {
 
             HashMap<String, String> gameInfo = icsPatterns.parseGameInfo(line);
             if (gameInfo != null) {
-                listener.OnPlayGameStarted(gameInfo.get("whiteHandle"), gameInfo.get("blackHandle"), gameInfo.get("whiteRating"), gameInfo.get("blackRating"));
+                for (ICSListener listener: listeners) {listener.OnPlayGameStarted(gameInfo.get("whiteHandle"), gameInfo.get("blackHandle"), gameInfo.get("whiteRating"), gameInfo.get("blackRating"));}
                 continue;
             }
 
             HashMap<String, String> board = icsPatterns.parseBoard(line);
             if (board != null) {
-                listener.OnBoardUpdated(board.get("board"), handle);
+                for (ICSListener listener: listeners) {listener.OnBoardUpdated(board.get("board"), handle);}
                 continue;
             }
 
             HashMap<String, String> challenge = icsPatterns.parseChallenge(line, handle);
             if (challenge != null) {
-                listener.OnChallenged(challenge.get("opponent"), challenge.get("rating"), "@TODO");
+                for (ICSListener listener: listeners) {listener.OnChallenged(challenge.get("opponent"), challenge.get("rating"), "@TODO");}
                 continue;
             }
 
             if (icsPatterns.isSeekNotAvailable(line)) {
-                listener.OnSeekNotAvailable();
+                for (ICSListener listener: listeners) {listener.OnSeekNotAvailable();}
                 continue;
             }
 
             int gameNum = icsPatterns.getCreatingOrContinuingGameNumber(line);
             if (gameNum > 0) {
-                listener.OnGameNumberUpdated(gameNum);
+                for (ICSListener listener: listeners) {listener.OnGameNumberUpdated(gameNum);}
                 continue;
             }
 
             if (icsPatterns.isResumingAdjournedGame(line)) {
-                listener.OnResumingAdjournedGame();
+                for (ICSListener listener: listeners) {listener.OnResumingAdjournedGame();}
                 continue;
             }
 
             if (icsPatterns.isIllegalMove(line)) {
-                listener.OnIllegalMove();
+                for (ICSListener listener: listeners) {listener.OnIllegalMove();}
                 continue;
             }
 
             if (icsPatterns.isAbortRequest(line, opponent)) {
-                listener.OnOpponentRequestsAbort();
+                for (ICSListener listener: listeners) {listener.OnOpponentRequestsAbort();}
                 continue;
             }
 
             if (icsPatterns.isAbortedConfirmed(line)) {
-                listener.OnAbortConfirmed();
+                for (ICSListener listener: listeners) {listener.OnAbortConfirmed();}
                 continue;
             }
 
             if (icsPatterns.isTakeBackRequest(line, opponent)) {
-                listener.OnOpponentRequestsTakeBack();
+                for (ICSListener listener: listeners) {listener.OnOpponentRequestsTakeBack();}
                 continue;
             }
 
             if (icsPatterns.isAdjournRequest(line, opponent)) {
-                listener.OnOpponentRequestsAdjourn();
+                for (ICSListener listener: listeners) {listener.OnOpponentRequestsAdjourn();}
                 continue;
             }
 
             if (icsPatterns.isAbortedOrAdourned(line)) {
-                listener.OnAbortedOrAdjourned();
+                for (ICSListener listener: listeners) {listener.OnAbortedOrAdjourned();}
                 continue;
             }
 
             if (icsPatterns.isAbortOrDrawOrAdjourneRequestSent(line)) {
-                listener.OnYourRequestSended();
+                for (ICSListener listener: listeners) {listener.OnYourRequestSended();}
                 continue;
             }
 
             if (icsPatterns.isDrawRequest(line, opponent)) {
-                listener.OnOpponentOffersDraw();
+                for (ICSListener listener: listeners) {listener.OnOpponentOffersDraw();}
                 continue;
             }
 
             if (icsPatterns.isNowOservingGame(line)) {
-                listener.OnObservingGameStarted();
+                for (ICSListener listener: listeners) {listener.OnObservingGameStarted();}
                 continue;
             }
 
             if (icsPatterns.isStopObservingGame(line)) {
-                listener.OnObservingGameStopped();
+                for (ICSListener listener: listeners) {listener.OnObservingGameStopped();}
                 continue;
             }
 
             if (icsPatterns.isStopExaminingGame(line)) {
-                listener.OnExaminingGameStopped();
+                for (ICSListener listener: listeners) {listener.OnExaminingGameStopped();}
                 continue;
             }
 
             if (icsPatterns.isPuzzleStarted(line)) {
-                listener.OnPuzzleStarted();
+                for (ICSListener listener: listeners) {listener.OnPuzzleStarted();}
                 continue;
             }
 
             if (icsPatterns.isPuzzleStopped(line)) {
-                listener.OnPuzzleStopped();
+                for (ICSListener listener: listeners) {listener.OnPuzzleStopped();}
                 continue;
             }
         }
 
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+
+    public class LocalBinder extends Binder {
+        ICSServer getService() {
+            return ICSServer.this;
+        }
     }
 }
