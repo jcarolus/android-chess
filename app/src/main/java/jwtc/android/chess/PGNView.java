@@ -24,12 +24,6 @@ public class PGNView {
         if (num % 2 == 1) {
             int i = ((int) num / 2 + 1);
             String s = "";
-            if (parent.hasVerticalScroll()) {
-                if (i < 100)
-                    s += "  ";
-                if (i < 10)
-                    s += "  ";
-            }
             tvItemNum.setText(s + i + ". ");
             //tvItemNum.setVisibility(View.VISIBLE);
 

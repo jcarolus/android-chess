@@ -99,15 +99,6 @@ public class setup extends MyBaseActivity {
 
         //_tvMsg = (TextView)findViewById(R.id.TextViewSetupMsg);
 
-        ImageButton butShowMenu = (ImageButton) findViewById(R.id.ButtonShowMenuSetup);
-        if (butShowMenu != null) {
-            butShowMenu.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    openOptionsMenu();
-                }
-            });
-        }
-
         _butCancel = (Button) findViewById(R.id.ButtonSetupCancel);
         _butCancel.setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {

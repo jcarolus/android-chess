@@ -56,7 +56,6 @@ public class ChessView extends UI {
     private int _playMode;
     private String _sPrevECO;
     private HorizontalScrollView _hScrollHistory;
-    private ScrollView _vScrollHistory;
     private RelativeLayout _layoutHistory;
     private ArrayList<PGNView> _arrPGNView;
     private LayoutInflater _inflater;
@@ -178,7 +177,6 @@ public class ChessView extends UI {
             });
         }
 
-        _vScrollHistory = null;
         _hScrollHistory = null;
         _layoutHistory = null;
 
@@ -191,7 +189,6 @@ public class ChessView extends UI {
         // below was previously in init() method
         _hScrollHistory = (HorizontalScrollView) _parent.findViewById(R.id.HScrollViewHistory);
         _layoutHistory = (RelativeLayout) _parent.findViewById(R.id.LayoutHistory);
-        _vScrollHistory = (ScrollView) _parent.findViewById(R.id.VScrollViewHistory);
 
         _butPlay = (ImageButton) _parent.findViewById(R.id.ButtonPlay);
         //_butPlay.setFocusable(false);
@@ -402,17 +399,7 @@ public class ChessView extends UI {
                 }
             });
         }
-
-        ImageButton butShowMenu = (ImageButton) _parent.findViewById(R.id.ButtonShowMenu);
-        if (butShowMenu != null) {
-            butShowMenu.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-
-                    _parent.openOptionsMenu();
-                }
-            });
-        }
-
+        
         ImageButton butSaveGame = (ImageButton) _parent.findViewById(R.id.ButtonSave);
         if (butSaveGame != null) {
             //butSaveGame.setFocusable(false);
@@ -434,16 +421,6 @@ public class ChessView extends UI {
                     _parent.startActivityForResult(intent, main.REQUEST_OPEN);
                 }
             });
-        }
-
-        ImageButton butFlipBoard = (ImageButton) _parent.findViewById(R.id.ButtonFlipBoard);
-        if (butFlipBoard != null) {
-            butFlipBoard.setOnClickListener((new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    flipBoard();
-                }
-            }));
         }
 
         //
@@ -789,17 +766,7 @@ public class ChessView extends UI {
 
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             if (_layoutHistory.getChildCount() > 0) {
-                if (_vScrollHistory != null) {
-                    if (_layoutHistory.getChildCount() % 2 == 0) {
-                        lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                        lp.addRule(RelativeLayout.BELOW, _layoutHistory.getChildAt(_layoutHistory.getChildCount() - 1).getId());
-                    } else {
-                        lp.addRule(RelativeLayout.RIGHT_OF, _layoutHistory.getChildAt(_layoutHistory.getChildCount() - 1).getId());
-                        if (_layoutHistory.getChildCount() > 2) {
-                            lp.addRule(RelativeLayout.BELOW, _layoutHistory.getChildAt(_layoutHistory.getChildCount() - 2).getId());
-                        }
-                    }
-                } else if (_hScrollHistory != null) {
+                if (_hScrollHistory != null) {
                     lp.addRule(RelativeLayout.RIGHT_OF, _layoutHistory.getChildAt(_layoutHistory.getChildCount() - 1).getId());
                 }
             }
@@ -1413,13 +1380,6 @@ public class ChessView extends UI {
                 }
 
             });
-        } else if (_vScrollHistory != null) {
-            _vScrollHistory.post(new Runnable() {
-                public void run() {
-                    _vScrollHistory.fullScroll(ScrollView.FOCUS_DOWN);
-                }
-
-            });
         }
     }
 
@@ -1431,18 +1391,7 @@ public class ChessView extends UI {
                 }
 
             });
-        } else if (_vScrollHistory != null) {
-            _vScrollHistory.post(new Runnable() {
-                public void run() {
-                    _vScrollHistory.fullScroll(ScrollView.FOCUS_UP);
-                }
-
-            });
         }
-    }
-
-    public boolean hasVerticalScroll() {
-        return (_vScrollHistory != null);
     }
 
     protected void dpadFirst() {
