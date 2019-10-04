@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ICSLobby"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <TableLayout
+        android:id="@+id/TableHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:stretchColumns="0">
+
+        <TableRow>
+            <TextView
+                android:text="@string/title_loading"
+                android:id="@+id/TextViewHeader"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/MyHeaderTextStyle" />
+
+            <ImageButton
+                android:id="@+id/ICSCloseConsole"
+                android:src="@drawable/navigation_cancel"
+                android:layout_height="40dip"
+                android:layout_width="40dip"
+                style="@style/ChessImageButton" />
+        </TableRow>
+    </TableLayout>
+
+    <ViewAnimator
+        android:id="@+id/ViewAnimatorLobby"
+        android:layout_below="@id/TableHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="2dip">
+        <!--  0  -->
+        <ListView
+            android:id="@+id/ICSPlayers"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        <!--  1  -->
+        <ListView
+            android:id="@+id/ICSGames"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        <!--  2  -->
+        <include
+            layout="@layout/ics_welcome"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        <!--  3  -->
+        <include
+            layout="@layout/ics_challenges"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        <!--  4  -->
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center">
+            <ProgressBar
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                style="?android:attr/progressBarStyleLarge" />
+        </RelativeLayout>
+        <!--  5  -->
+        <include
+            layout="@layout/ics_login"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+        <!-- 6 -->
+        <include
+            layout="@layout/ics_console"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <!-- 7  -->
+        <ListView
+            android:id="@+id/ICSStored"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+    </ViewAnimator>
+</RelativeLayout>

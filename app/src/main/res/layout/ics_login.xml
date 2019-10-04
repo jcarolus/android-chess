@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center">
+
+    <TableLayout
+        android:id="@+id/TableICSLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:gravity="center">
+
+        <TableRow
+            style="@style/MyRowStyle"
+            android:minHeight="50dip">
+
+            <TextView
+                android:text="@string/ics_client_server"
+                style="@style/MyLabelTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="FICS"
+                style="@style/MyLabelTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            style="@style/MyRowStyle"
+            android:minHeight="50dip">
+
+            <TextView
+                android:text="@string/ics_client_presets"
+                style="@style/MyLabelTextStyle" />
+
+            <Spinner
+                android:id="@+id/SpinnerLoginPresets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"></Spinner>
+        </TableRow>
+
+        <TableRow
+            style="@style/MyRowStyle"
+            android:minHeight="50dip">
+
+            <TextView
+                android:text="@string/ics_client_handle"
+                style="@style/MyLabelTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:text="guest"
+                android:id="@+id/EditICSHandle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100dip"
+                android:singleLine="true"
+                android:inputType="text"
+                android:imeOptions="actionNext" />
+        </TableRow>
+
+        <TableRow
+            style="@style/MyRowStyle"
+            android:minHeight="50dip">
+
+            <TextView
+                android:text="@string/ics_client_password"
+                style="@style/MyLabelTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/EditICSPwd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:password="true"
+                android:minWidth="100dip"
+                android:singleLine="true"
+                android:inputType="text"
+                android:layout_marginBottom="10dip"
+                android:imeOptions="actionDone" />
+        </TableRow>
+
+        <TableRow
+            style="@style/MyRowStyle"
+            android:minHeight="50dip">
+
+            <Button
+                android:text="@string/button_register"
+                android:id="@+id/ButICSRegister"
+                android:layout_alignParentLeft="true"
+                android:layout_width="40dip"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="@string/button_login"
+                android:id="@+id/ButICSLogin"
+                android:layout_alignParentRight="true"
+                android:layout_width="40dip"
+                android:layout_height="wrap_content" />
+        </TableRow>
+    </TableLayout>
+</RelativeLayout>

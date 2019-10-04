@@ -369,6 +369,7 @@
 
     <string name="ics_error_connection">Could not connect to server. Make sure you have your internet connection enabled</string>
     <string name="ics_lost_connection">Connection to server is broken.</string>
+    <string name="ics_error">An error occurred. Please try again later.</string>
 
     <string name="ics_notification_title">Chess by Jeroen</string>
     <string name="ics_notification_text">Tap to play</string>

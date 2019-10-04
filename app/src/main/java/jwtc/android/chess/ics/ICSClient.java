@@ -145,11 +145,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         }
     };
 
-    private Timer _timer = null;
-    protected InnerTimerHandler m_timerHandler = new InnerTimerHandler(this);
-
-    private Timer _timerDate = null;
-
     /**
      * Called when the activity is first created.
      */
@@ -1172,9 +1167,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
             // real
             switchToLoginView();
         }
-
-        //rescheduleTimer();
-
         super.onResume();
     }
 
@@ -1325,56 +1317,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
         icsServer.removeListener(this);
         unbindService(mConnection);
-        disconnect();
 
         super.onDestroy();
-    }
-
-    public void rescheduleTimer() {
-        _timer = new Timer(true);
-        _timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-
-                m_timerHandler.sendMessage(new Message());
-            }
-        }, 200, 5000);
-    }
-
-    public void cancelTimer() {
-        if (_timer != null) {
-            _timer.cancel();
-        }
-    }
-
-    public void dateTimer() {
-        if (_timerDate == null) {
-            _timerDate = new Timer(true);
-            _timerDate.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    dateHandler.sendEmptyMessage(0);  // sends date string to prevent disconnection
-                }
-            }, 300000, 300000);  // send every 5 minutes (1 minute = 60000)
-        }
-    }
-
-    public void cancelDateTimer() {
-        if (_timerDate != null) {
-            _timerDate.cancel();
-            _timerDate = null;
-        }
-    }
-
-    Handler dateHandler = new Handler() { // todo static or leaks may occur? use WeakReference as in 153
-        @Override
-        public void handleMessage(Message msg) {
-            sendString("date");
-        }
-    };
-
-    public void disconnect() {
-        cancelDateTimer();
     }
 
     public void sendString(String s) {
@@ -1385,26 +1329,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         }
 
         if (!icsServer.sendString(s)) {
-            // ----------- Loss connection -------------- //
-            switch (get_gameStartSound()) {
-                case 0:
-                    break;
-                case 1:
-                    soundHorseRunAway();
-                    vibration(DECREASE);
-                    break;
-                case 2:
-                    soundHorseRunAway();
-                    break;
-                case 3:
-                    vibration(DECREASE);
-                    break;
-                default:
-                    Log.e(TAG, "get_gameStartSound error");
-            }
             try {
-                notificationAPP();
-                cancelDateTimer();
                 new AlertDialog.Builder(ICSClient.this)
                         .setTitle(R.string.title_error)
                         .setMessage(getString(R.string.ics_lost_connection))
@@ -1459,9 +1384,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToBoardView() {
-
-        cancelTimer();
-
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_BOARD) {
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_BOARD);
         }
@@ -1483,9 +1405,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
     */
     public void switchToChallengeView() {
-
-        rescheduleTimer();
-
         _tvHeader.setText(R.string.ics_menu_challenges);
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
@@ -1493,9 +1412,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToPlayersView() {
-
-        cancelTimer();
-
         _tvHeader.setText(Integer.toString(_adapterPlayers.getCount()) + " " + getString(R.string.ics_available_players));
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
@@ -1503,9 +1419,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToGamesView() {
-
-        cancelTimer();
-
         _mapGames.clear();
         _adapterGames.notifyDataSetChanged();
 
@@ -1516,9 +1429,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToStoredView() {
-
-        cancelTimer();
-
         _mapStored.clear();
         _adapterStored.notifyDataSetChanged();
 
@@ -1529,9 +1439,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToLoadingView() {
-
-        cancelTimer();
-
         _tvHeader.setText(R.string.title_loading);
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY) {
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
@@ -1540,9 +1447,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToLoginView() {
-
-        cancelTimer();
-
         _butLogin.setEnabled(true);
         _tvHeader.setText("Login");
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY) {
@@ -1552,9 +1456,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToConsoleView() {
-
-        cancelTimer();
-
         _tvHeader.setText("Console");
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY) {
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
@@ -1599,13 +1500,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     public class ComparatorHashName implements java.util.Comparator<HashMap<String, String>> {
         public int compare(HashMap<String, String> a, HashMap<String, String> b) {
-            return ((String) ((HashMap<String, String>) a).get("text_name")).compareToIgnoreCase(((String) ((HashMap<String, String>) b).get("text_name")));
+            String sA = a.get("text_name"), sB = b.get("text_name");
+            if (sA != null && sB != null) {
+                return sA.compareToIgnoreCase(sB);
+            }
+            return 0;
         }
     }
 
     public class ComparatorHashRating implements java.util.Comparator<HashMap<String, String>> {
         public int compare(HashMap<String, String> a, HashMap<String, String> b) {
-            return -1 * ((String) ((HashMap<String, String>) a).get("text_rating")).compareToIgnoreCase(((String) ((HashMap<String, String>) b).get("text_rating")));
+            String sA = a.get("text_rating"), sB = b.get("text_rating");
+            if (sA != null && sB != null) {
+                return -1 * sA.compareToIgnoreCase(sB);
+            }
+            return 0;
         }
     }
 
@@ -1642,6 +1551,16 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     @Override
     public void OnError() {
         Log.i(TAG, "OnError");
+        new AlertDialog.Builder(ICSClient.this)
+                .setTitle(ICSClient.this.getString(R.string.ics_error))
+                .setPositiveButton(getString(R.string.alert_ok),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                finish();
+                            }
+                        })
+                .show();
     }
 
     @Override

@@ -58,6 +58,9 @@ public class ICSPatterns {
     protected static final Pattern gameNumber = Pattern.compile("\\{Game (\\d+) .*");
     protected static final Pattern clock = Pattern.compile("\\((\\d+):(\\d+)\\)");
 
+    public static final String EMPTY = "";
+    protected static final String loginChars = "\uefbf\ubdef\ubfbd\uefbf\ubdef\ubfbd\ud89e\u0001\ufffd\ufffd";
+
     public boolean containsGamesDisplayed(String buffer, int lineCount) {
         return lineCount > 3 && buffer.indexOf("\\") == -1 && buffer.indexOf("games displayed") >= 0;
     }
@@ -110,21 +113,20 @@ public class ICSPatterns {
         if (match.find()) {
             String name = match.group(4);
             if (name != null && match.group(2) != null) {
-
                 String code = match.group(5);
-                HashMap<String, String> item = new HashMap<String, String>();
-
                 if (code == null) {
+                    HashMap<String, String> item = new HashMap<String, String>();
                     item.put("text_name", name);
                     item.put("text_rating", match.group(2));
+                    return item;
                 } else if (code.equals("(U)") || code.equals("(FM)") || code.equals("(GM)") ||
                             code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
+                    HashMap<String, String> item = new HashMap<String, String>();
                     name += code;
-
                     item.put("text_name", name);
                     item.put("text_rating", match.group(2));
+                    return item;
                 }
-                return item;
             }
         }
         return null;
@@ -339,5 +341,38 @@ public class ICSPatterns {
             return item;
         }
         return null;
+    }
+
+    public static String replaceChars(final String str, final String searchChars, String replaceChars) {
+        if (isEmpty(str) || isEmpty(searchChars)) {
+            return str;
+        }
+        if (replaceChars == null) {
+            replaceChars = EMPTY;
+        }
+        boolean modified = false;
+        final int replaceCharsLength = replaceChars.length();
+        final int strLength = str.length();
+        final StringBuilder buf = new StringBuilder(strLength);
+        for (int i = 0; i < strLength; i++) {
+            final char ch = str.charAt(i);
+            final int index = searchChars.indexOf(ch);
+            if (index >= 0) {
+                modified = true;
+                if (index < replaceCharsLength) {
+                    buf.append(replaceChars.charAt(index));
+                }
+            } else {
+                buf.append(ch);
+            }
+        }
+        if (modified) {
+            return buf.toString();
+        }
+        return str;
+    }
+
+    public static boolean isEmpty(final CharSequence cs) {
+        return cs == null || cs.length() == 0;
     }
 }

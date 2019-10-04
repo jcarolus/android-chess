@@ -4,12 +4,15 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
 
@@ -23,6 +26,7 @@ public class ICSServer extends Service {
     private final IBinder mBinder = new LocalBinder();
     private TelnetSocket _socket;
     private Thread _workerTelnet;
+    private Timer keepAlivetimer = null;
     private ArrayList<ICSListener> listeners = new ArrayList<>();
     protected ICSThreadMessageHandler threadHandler = new ICSThreadMessageHandler(this);
     protected int expectingState;
@@ -69,37 +73,38 @@ public class ICSServer extends Service {
 
         _workerTelnet = new Thread(new Runnable() {
             public void run() {
-                try {
-                    _socket = new TelnetSocket(server, port);
-                } catch (Exception ex) {
-                    Message message = new Message();
-                    message.what = ICSThreadMessageHandler.MSG_CONNECTION_ERROR;
-                    threadHandler.sendMessage(message);
-                    return;
-                }
+            try {
+                _socket = new TelnetSocket(server, port);
+            } catch (Exception ex) {
+                Message message = new Message();
+                message.what = ICSThreadMessageHandler.MSG_CONNECTION_ERROR;
+                threadHandler.sendMessage(message);
+                return;
+            }
 
-                try {
-                    while (_socket != null && _socket.isConnected()) {
-                        String buffer = _socket.readString();
+            try {
+                while (_socket != null && _socket.isConnected()) {
+                    String buffer = _socket.readString();
 
-                        // Log.i(TAG, "Buffer " + buffer == null ? "NULL" : buffer);
+                    // Log.i(TAG, "Buffer " + buffer == null ? "NULL" : buffer);
 
-                        if (buffer != null && buffer.length() > 0) {
-                            Message message = new Message();
-                            message.what = ICSThreadMessageHandler.MSG_PARSE;
-                            Bundle bundle = new Bundle();
-                            bundle.putString("buffer", buffer);
-                            message.setData(bundle);
-                            threadHandler.sendMessage(message);
-                        }
+                    if (buffer != null && buffer.length() > 0) {
+                        Message message = new Message();
+                        message.what = ICSThreadMessageHandler.MSG_PARSE;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("buffer", buffer);
+                        message.setData(bundle);
+                        threadHandler.sendMessage(message);
                     }
-                    Log.i(TAG, "End of workerTelnet");
-                    stopSelf();
-                } catch (Exception ex) {
-                    Message message = new Message();
-                    message.what = ICSThreadMessageHandler.MSG_ERROR;
-                    threadHandler.sendMessage(message);
                 }
+                Log.i(TAG, "End of workerTelnet");
+                cancelKeepAliveTimer();
+                stopSelf();
+            } catch (Exception ex) {
+                Message message = new Message();
+                message.what = ICSThreadMessageHandler.MSG_ERROR;
+                threadHandler.sendMessage(message);
+            }
             }
         });
         _workerTelnet.start();
@@ -198,6 +203,7 @@ public class ICSServer extends Service {
         }
 
         if (expectingState == EXPECT_LOGIN_RESPONSE) {
+            buffer = ICSPatterns.replaceChars(buffer, ICSPatterns.loginChars, "");
             if (handle.equals("guest")) {
                 if (buffer.contains("Press return to enter the server as")) {
                     String guestHandle = icsPatterns.parseGuestHandle(buffer);
@@ -232,6 +238,7 @@ public class ICSServer extends Service {
         }
 
         if (expectingState == EXPECT_PASSWORD_RESPONSE) {
+            buffer = ICSPatterns.replaceChars(buffer, ICSPatterns.loginChars, "");
             if (handle.startsWith("Guest")) {
                 if (icsPatterns.isSessionStarting(buffer)) {
                     expectingState = EXPECT_PROMPT;
@@ -258,6 +265,8 @@ public class ICSServer extends Service {
             Log.i(TAG, "Unvalid expect state");
             return;
         }
+
+        startKeepAliveTimer();
 
         // check multiline responses
         if (icsPatterns.containsGamesDisplayed(buffer, lineCount)) {
@@ -407,6 +416,32 @@ public class ICSServer extends Service {
         }
 
     }
+
+    public void startKeepAliveTimer() {
+        if (keepAlivetimer == null) {
+            keepAlivetimer = new Timer(true);
+            keepAlivetimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    keepAliveTimerHandler.sendEmptyMessage(0);  // sends date string to prevent disconnection
+                }
+            }, 300000, 300000);  // send every 5 minutes (1 minute = 60000)
+        }
+    }
+
+    public void cancelKeepAliveTimer() {
+        if (keepAlivetimer != null) {
+            keepAlivetimer.cancel();
+            keepAlivetimer = null;
+        }
+    }
+
+    Handler keepAliveTimerHandler = new Handler() { // todo static or leaks may occur? use WeakReference as in 153
+        @Override
+        public void handleMessage(Message msg) {
+            sendString("date");
+        }
+    };
 
     @Nullable
     @Override
