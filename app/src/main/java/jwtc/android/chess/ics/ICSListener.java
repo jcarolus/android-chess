@@ -7,7 +7,6 @@ public interface ICSListener {
     void OnLoginSuccess();
     void OnLoginFailed();
     void OnLoggingIn();
-    void OnSessionStarted();
     void OnSessionEnded();
     void OnError();
     void OnPlayerList(ArrayList<HashMap<String,String>> playerList);
@@ -35,7 +34,6 @@ public interface ICSListener {
     void OnExaminingGameStarted();
     void OnExaminingGameStopped();
     void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList);
-    void OnChallengedResult(ArrayList<HashMap<String, String>> challenges);
     void OnGameListResult(ArrayList<HashMap<String, String>> games);
     void OnStoredListResult(ArrayList<HashMap<String, String>> games);
     void OnEndGameResult();

@@ -4,33 +4,36 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <TableLayout
-        android:id="@+id/TableHeader"
+    <TextView
+        android:text="@string/title_loading"
+        android:id="@+id/TextViewHeader"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        style="@style/MyHeaderTextStyle" />
+
+    <TableLayout
+        android:id="@+id/LobbyBottomRow"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:gravity="center_vertical"
         android:stretchColumns="0">
-
         <TableRow>
-            <TextView
-                android:text="@string/title_loading"
-                android:id="@+id/TextViewHeader"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                style="@style/MyHeaderTextStyle" />
 
-            <ImageButton
-                android:id="@+id/ICSCloseConsole"
-                android:src="@drawable/navigation_cancel"
-                android:layout_height="40dip"
-                android:layout_width="40dip"
-                style="@style/ChessImageButton" />
+            <TextView
+                android:text="Some text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            </TextView>
+
         </TableRow>
     </TableLayout>
 
     <ViewAnimator
         android:id="@+id/ViewAnimatorLobby"
-        android:layout_below="@id/TableHeader"
+        android:layout_below="@id/TextViewHeader"
+        android:layout_above="@id/LobbyBottomRow"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginTop="2dip">
@@ -66,15 +69,10 @@
         </RelativeLayout>
         <!--  5  -->
         <include
-            layout="@layout/ics_login"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-        <!-- 6 -->
-        <include
             layout="@layout/ics_console"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <!-- 7  -->
+        <!--  6  -->
         <ListView
             android:id="@+id/ICSStored"
             android:layout_width="fill_parent"

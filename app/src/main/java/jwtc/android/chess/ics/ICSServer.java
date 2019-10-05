@@ -439,7 +439,7 @@ public class ICSServer extends Service {
     Handler keepAliveTimerHandler = new Handler() { // todo static or leaks may occur? use WeakReference as in 153
         @Override
         public void handleMessage(Message msg) {
-            sendString("date");
+            sendString("sought");
         }
     };
 

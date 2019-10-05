@@ -270,6 +270,10 @@ public class ICSChessView extends ChessViewBase {
         updateViewMode();
     }
 
+    public int getViewMode() {
+        return _viewMode;
+    }
+
     public void updateViewMode() {
         switch (_viewMode) {
             case VIEW_NONE:

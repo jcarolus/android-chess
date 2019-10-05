@@ -75,8 +75,6 @@ public class ICSMatchDlg extends Dialog {
                 _editRatingRangeMAX.setText(editRatingRangeMAX);
                 _checkRated.setChecked(checkRated);
                 _checkManual.setChecked(checkManual);
-
-                _parent._dlgMatch.show();
             }
         });
         _rbChallenge = (RadioButton) findViewById(R.id.RadioButtonChallenge);
@@ -94,7 +92,6 @@ public class ICSMatchDlg extends Dialog {
                 _tvManual.setVisibility(View.GONE);
                 _checkFormula.setVisibility(View.GONE);
                 _tvFormula.setVisibility(View.GONE);
-                _parent._dlgMatch.show();
             }
         });
 

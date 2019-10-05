@@ -43,8 +43,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,6 +54,7 @@ import jwtc.android.chess.*;
 public class ICSClient extends MyBaseActivity implements OnItemClickListener, ICSListener {
 
     private ICSServer icsServer;
+    private boolean mShouldUnbind = false;
     protected String _sConsoleEditText;
     private String _server, _handle, _pwd, _ficsHandle, _ficsPwd, _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
@@ -72,7 +71,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     private ArrayList<String> _arrayPasswords;
 
     //private EditText _editPrompt;
-    private ListView _listChallenges, _listPlayers, _listGames, _listStored;
+    private ListView _listChallenges, _listPlayers, _listGames, _listStored, _listWelcome;
     private ICSChessView _view;
     private ChessViewBase _viewbase;
     protected ICSMatchDlg _dlgMatch;
@@ -97,6 +96,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     private AlternatingRowColorAdapter _adapterGames, _adapterPlayers, _adapterChallenges, _adapterStored;
 
+    ArrayAdapter<String> _adapterWelcome;
+
     public static final String TAG = "ICSClient";
 
     protected static final int SERVER_FICS = 1;
@@ -104,15 +105,15 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     protected static final int VIEW_MAIN_BOARD = 0;
     protected static final int VIEW_MAIN_LOBBY = 1;
     protected static final int VIEW_MAIN_NOT_CONNECTED = 2;
+    protected static final int VIEW_MAIN_LOGIN = 3;
 
     protected static final int VIEW_SUB_PLAYERS = 0;
     protected static final int VIEW_SUB_GAMES = 1;
     protected static final int VIEW_SUB_WELCOME = 2;
     protected static final int VIEW_SUB_CHALLENGES = 3;
     protected static final int VIEW_SUB_PROGRESS = 4;
-    protected static final int VIEW_SUB_LOGIN = 5;
-    protected static final int VIEW_SUB_CONSOLE = 6;
-    protected static final int VIEW_SUB_STORED = 7;
+    protected static final int VIEW_SUB_CONSOLE = 5;
+    protected static final int VIEW_SUB_STORED = 6;
 
     protected static final int DECREASE = 0;
 
@@ -193,6 +194,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         _listPlayers.setAdapter(_adapterPlayers);
         _listPlayers.setOnItemClickListener(this);
 
+        _adapterWelcome  = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        _listWelcome = findViewById(R.id.WelcomeList);
+        _listWelcome.setAdapter(_adapterWelcome);
+        _listWelcome.setOnItemClickListener(this);
+
         _adapterGames = new AlternatingRowColorAdapter(ICSClient.this, _mapGames, R.layout.ics_game_row,
                 new String[]{"nr", "text_type", "text_name1", "text_name2", "text_rating1", "text_rating2", "text_time1", "text_time2"},
                 new int[]{R.id.nr, R.id.text_type, R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2, R.id.text_time1, R.id.text_time2});
@@ -271,20 +277,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
                 }
             });
         }
-
-        ImageButton butCloseConsole = (ImageButton) findViewById(R.id.ICSCloseConsole);
-        if (butCloseConsole != null) {
-            butCloseConsole.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    if (isConnected()) {
-                        switchToBoardView();
-                    } else {
-                        finish();
-                    }
-                }
-            });
-        }
-        //
 
         ImageButton butChat = (ImageButton) findViewById(R.id.ButtonICSChat);
         if (butChat != null) {
@@ -458,8 +450,8 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        menu.add(Menu.NONE, R.string.menu_prefs, Menu.NONE, R.string.menu_prefs);
-        menu.add(Menu.NONE, R.string.menu_flip, Menu.NONE, R.string.menu_flip);
+//        menu.add(Menu.NONE, R.string.menu_prefs, Menu.NONE, R.string.menu_prefs);
+//        menu.add(Menu.NONE, R.string.menu_flip, Menu.NONE, R.string.menu_flip);
         menu.add(Menu.NONE, R.string.ics_menu_takeback, Menu.NONE, R.string.ics_menu_takeback);
         menu.add(Menu.NONE, R.string.ics_menu_adjourn, Menu.NONE, R.string.ics_menu_adjourn);
         menu.add(Menu.NONE, R.string.ics_menu_draw, Menu.NONE, R.string.ics_menu_draw);
@@ -467,25 +459,25 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         menu.add(Menu.NONE, R.string.ics_menu_abort, Menu.NONE, R.string.ics_menu_abort);
         menu.add(Menu.NONE, R.string.ics_menu_flag, Menu.NONE, R.string.ics_menu_flag);
         menu.add(Menu.NONE, R.string.ics_menu_refresh, Menu.NONE, R.string.ics_menu_refresh);
-        menu.add(Menu.NONE, R.string.ics_menu_challenges, Menu.NONE, R.string.ics_menu_challenges);
-        menu.add(Menu.NONE, R.string.ics_menu_games, Menu.NONE, R.string.ics_menu_games);
-        menu.add(Menu.NONE, R.string.ics_menu_stored, Menu.NONE, R.string.ics_menu_stored);
-        menu.add(Menu.NONE, R.string.ics_menu_seek, Menu.NONE, R.string.ics_menu_seek);
-        menu.add(Menu.NONE, R.string.ics_menu_players, Menu.NONE, R.string.ics_menu_players);
-        menu.add(Menu.NONE, R.string.ics_menu_top_blitz, Menu.NONE, R.string.ics_menu_top_blitz);
-        menu.add(Menu.NONE, R.string.ics_menu_top_standard, Menu.NONE, R.string.ics_menu_top_standard);
-        menu.add(Menu.NONE, R.string.ics_menu_stop_puzzle, Menu.NONE, R.string.ics_menu_stop_puzzle);
+//        menu.add(Menu.NONE, R.string.ics_menu_challenges, Menu.NONE, R.string.ics_menu_challenges);
+//        menu.add(Menu.NONE, R.string.ics_menu_games, Menu.NONE, R.string.ics_menu_games);
+//        menu.add(Menu.NONE, R.string.ics_menu_stored, Menu.NONE, R.string.ics_menu_stored);
+//        menu.add(Menu.NONE, R.string.ics_menu_seek, Menu.NONE, R.string.ics_menu_seek);
+//        menu.add(Menu.NONE, R.string.ics_menu_players, Menu.NONE, R.string.ics_menu_players);
+//        menu.add(Menu.NONE, R.string.ics_menu_top_blitz, Menu.NONE, R.string.ics_menu_top_blitz);
+//        menu.add(Menu.NONE, R.string.ics_menu_top_standard, Menu.NONE, R.string.ics_menu_top_standard);
+//        menu.add(Menu.NONE, R.string.ics_menu_stop_puzzle, Menu.NONE, R.string.ics_menu_stop_puzzle);
 
-        menu.add(Menu.NONE, R.string.ics_menu_console, Menu.NONE, R.string.ics_menu_console);
+//        menu.add(Menu.NONE, R.string.ics_menu_console, Menu.NONE, R.string.ics_menu_console);
 
         menu.add("tell puzzlebot hint");
-        menu.add("unexamine");
+//        menu.add("unexamine");
         menu.add("tell endgamebot hint");
         menu.add("tell endgamebot move");
-        menu.add("tell endgamebot stop");
+//        menu.add("tell endgamebot stop");
 
-        menu.add(Menu.NONE, R.string.ics_menu_unobserve, Menu.NONE, R.string.ics_menu_unobserve);
-        menu.add(Menu.NONE, R.string.menu_help, Menu.NONE, R.string.menu_help);
+//        menu.add(Menu.NONE, R.string.ics_menu_unobserve, Menu.NONE, R.string.ics_menu_unobserve);
+//        menu.add(Menu.NONE, R.string.menu_help, Menu.NONE, R.string.menu_help);
 
         try {
             SharedPreferences prefs = this.getPrefs();
@@ -513,7 +505,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         boolean isNotGuest = isConnected && icsServer.isGuest();
         int viewMode = this.get_view()._viewMode;
 
-        menu.findItem(R.string.menu_flip).setVisible(isConnected && viewMode != ICSChessView.VIEW_NONE);
+//        menu.findItem(R.string.menu_flip).setVisible(isConnected && viewMode != ICSChessView.VIEW_NONE);
         menu.findItem(R.string.ics_menu_takeback).setVisible(isConnected && isUserPlaying);
 
         menu.findItem(R.string.ics_menu_adjourn).setVisible(isConnected && isUserPlaying && isNotGuest);
@@ -523,25 +515,23 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         menu.findItem(R.string.ics_menu_flag).setVisible(isConnected && isUserPlaying);
         menu.findItem(R.string.ics_menu_refresh).setVisible(isConnected && isUserPlaying);
 
-        menu.findItem(R.string.ics_menu_challenges).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
-        menu.findItem(R.string.ics_menu_games).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
-        menu.findItem(R.string.ics_menu_stored).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE && isNotGuest);
-        menu.findItem(R.string.ics_menu_seek).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
-        menu.findItem(R.string.ics_menu_players).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
+//        menu.findItem(R.string.ics_menu_challenges).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
+//        menu.findItem(R.string.ics_menu_games).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
+//        menu.findItem(R.string.ics_menu_stored).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE && isNotGuest);
+//        menu.findItem(R.string.ics_menu_seek).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
+//        menu.findItem(R.string.ics_menu_players).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
 
-        menu.findItem(R.string.ics_menu_stop_puzzle).setVisible(isConnected && viewMode == ICSChessView.VIEW_PUZZLE);
+//        menu.findItem(R.string.ics_menu_stop_puzzle).setVisible(isConnected && viewMode == ICSChessView.VIEW_PUZZLE);
 
-        menu.findItem(R.string.ics_menu_unobserve).setVisible(isConnected && viewMode == ICSChessView.VIEW_WATCH);
+//        menu.findItem(R.string.ics_menu_unobserve).setVisible(isConnected && viewMode == ICSChessView.VIEW_WATCH);
 
-        menu.findItem(R.string.ics_menu_console).setVisible(isConnected);
+//        menu.findItem(R.string.ics_menu_console).setVisible(isConnected);
 
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
             String title = item.getTitle().toString();
             if (title.equals("tell puzzlebot hint")) {
                 item.setVisible(isConnected && viewMode == ICSChessView.VIEW_PUZZLE);
-            } else if (title.equals("unexamine")) {
-                item.setVisible(isConnected && viewMode == ICSChessView.VIEW_EXAMINE);
             } else if (title.equals("tell endgamebot hint")) {
                 item.setVisible(isConnected && viewMode == ICSChessView.VIEW_ENDGAME);
             } else if (title.equals("tell endgamebot move")) {
@@ -597,7 +587,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
             case R.string.ics_menu_games:
                 // switchToLoadingView();
                 switchToGamesView();
-                sendString("games");
+
                 return true;
             case R.string.ics_menu_stored:
                 switchToStoredView();
@@ -605,43 +595,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
                 return true;
             case R.string.ics_menu_challenges:
                 switchToChallengeView();
-                return true;
-            case R.string.ics_menu_seek:
-                _dlgMatch._rbSeek.setChecked(true);
-                _dlgMatch._rbSeek.performClick();
-                return true;
-            case R.string.menu_help:
-                i = new Intent();
-                i.setClass(ICSClient.this, HtmlActivity.class);
-                i.putExtra(HtmlActivity.HELP_MODE, "help_online");
-                startActivity(i);
-                return true;
-            case R.string.ics_menu_console:
-                switchToConsoleView();
-                return true;
-            case R.string.ics_menu_players:
-                sendString("who a");
-                switchToLoadingView();
-                return true;
-            case R.string.ics_menu_top_blitz:
-                sendString("obs /b");
-                return true;
-            case R.string.ics_menu_top_standard:
-                sendString("obs /s");
-                return true;
-            case R.string.ics_menu_quit:
-                finish();
-                return true;
-            case R.string.ics_menu_stop_puzzle:
-                sendString("tell puzzlebot stop");
-                get_view().stopGame();
-                return true;
-            case R.string.ics_menu_unobserve:
-                sendString("unobserve");
-                get_view().stopGame();
-                return true;
-            case android.R.id.home:
-                confirmAbort();
                 return true;
         }
 
@@ -664,36 +617,67 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
 
-    public void confirmAbort() {
-        Log.i("ICSClient", "confirmAbort");
-        if (isConnected()) {
-            if (_viewAnimatorMain.getDisplayedChild() == VIEW_MAIN_BOARD && get_view().isUserPlaying()) {
-                new AlertDialog.Builder(ICSClient.this)
-                        .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
-                        .setPositiveButton(getString(R.string.alert_yes),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                        sendString("abort");
-                                        sendString("quit");
-                                        finish();
-                                    }
-                                })
-                        .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-                return;
-            }
-        }
-        finish();
-    }
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            confirmAbort();
+            if (_viewAnimatorMain.getDisplayedChild() == VIEW_MAIN_LOBBY) {
+                if (_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_WELCOME) {
+                    finish();
+                } else {
+                    switchToWelcomeView();
+                }
+            } else if (_viewAnimatorMain.getDisplayedChild() == VIEW_MAIN_BOARD) {
+                // @TODO
+                switch(get_view().getViewMode()) {
+                    case ICSChessView.VIEW_PLAY:
+                        new AlertDialog.Builder(ICSClient.this)
+                                .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
+                                .setPositiveButton(getString(R.string.alert_yes),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int whichButton) {
+                                                dialog.dismiss();
+                                                sendString("abort");
+                                                get_view().stopGame();
+                                                switchToWelcomeView();
+
+                                            }
+                                        })
+                                .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+                        break;
+                    case ICSChessView.VIEW_WATCH:
+                        sendString("unobserve");
+                        get_view().stopGame();
+                        switchToWelcomeView();
+                        break;
+                    case ICSChessView.VIEW_PUZZLE:
+                        sendString("tell puzzlebot stop");
+                        get_view().stopGame();
+                        switchToWelcomeView();
+                        break;
+                    case ICSChessView.VIEW_ENDGAME:
+                        sendString("tell endgamebot stop");
+                        get_view().stopGame();
+                        switchToWelcomeView();
+                        break;
+                    case ICSChessView.VIEW_EXAMINE:
+                        sendString("unexamine");
+                        get_view().stopGame();
+                        switchToWelcomeView();
+                        break;
+                    case ICSChessView.VIEW_NONE:
+                        get_view().stopGame();
+                        switchToWelcomeView();
+                        break;
+                }
+
+
+            } else {
+                finish();
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -728,6 +712,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         }
 
         if (bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE)) {
+            mShouldUnbind = true;
             Log.i(TAG, "Bind to ICSServer");
 
             _handle = h;
@@ -1147,12 +1132,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
             _ringNotification = RingtoneManager.getRingtone(this, tmpUri);
         }
 
-        //if(true)return;
-
         if (isConnected()) {
-            switchToBoardView();
+            Log.i(TAG, "resume, connected mode" + get_view().getViewMode());
+            if (get_view().getViewMode() != ICSChessView.VIEW_NONE) {
+                switchToBoardView();
+            } else {
+                switchToWelcomeView();
+            }
         } else {
-
             _editHandle.setText(_ficsHandle);
             _editPwd.setText(_ficsPwd);
             if (_ficsPwd.length() < 2) {
@@ -1315,9 +1302,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
 
-        icsServer.removeListener(this);
-        unbindService(mConnection);
-
+        if (icsServer != null) {
+            icsServer.removeListener(this);
+        }
+        if (mShouldUnbind) {
+            unbindService(mConnection);
+        }
         super.onDestroy();
     }
 
@@ -1380,6 +1370,42 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
                 sendString("match " + m.get("text_name_stored"));
                 switchToBoardView();
             }
+        } else if (arg0 == _listWelcome) {
+            String selected = _adapterWelcome.getItem(arg2);
+            if (selected.equals(getString(R.string.ics_menu_games))) {
+                switchToGamesView();
+            } else if (selected.equals(getString(R.string.ics_menu_players))) {
+                switchToPlayersView();
+            } else if (selected.equals(getString(R.string.ics_menu_challenges))) {
+                switchToChallengeView();
+            }  else if (selected.equals(getString(R.string.ics_menu_seek))) {
+                 _dlgMatch._rbSeek.setChecked(true);
+                 _dlgMatch._rbSeek.performClick();
+                 _dlgMatch.show();
+            } else if (selected.equals(getString(R.string.ics_menu_top_blitz))) {
+                sendString("obs /b");
+                get_view().setViewMode(ICSChessView.VIEW_WATCH);
+            } else if (selected.equals(getString(R.string.ics_menu_top_standard))) {
+                sendString("obs /s");
+                get_view().setViewMode(ICSChessView.VIEW_WATCH);
+            } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_mate))) {
+                sendString("tell puzzlebot getmate");
+            } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_tactics))) {
+                sendString("tell puzzlebot gettactics");
+            } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_study))) {
+                sendString("tell puzzlebot getstudy");
+            } else if (selected.equals(getString(R.string.ics_menu_console))) {
+                switchToConsoleView();
+            } else if (selected.equals(getString(R.string.menu_prefs))) {
+                Intent i = new Intent();
+                i.setClass(ICSClient.this, ICSPrefs.class);
+                startActivity(i);
+            } else if (selected.equals(getString(R.string.menu_help))) {
+                Intent i = new Intent();
+                i.setClass(ICSClient.this, HtmlActivity.class);
+                i.putExtra(HtmlActivity.HELP_MODE, "help_online");
+                startActivity(i);
+            }
         }
     }
 
@@ -1390,21 +1416,19 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_WELCOME);  // used for lobby default
     }
 
-    /*
-
-    public void switchToLobbyView(){
-        if(_viewAnimatorMain.getDisplayedChild() != 0)
-            _viewAnimatorMain.setDisplayedChild(0);
-    }
+//    public void switchToLobbyView(){
+//        if(_viewAnimatorMain.getDisplayedChild() != 0)
+//            _viewAnimatorMain.setDisplayedChild(0);
+//    }
     public void switchToWelcomeView(){
-
         _tvHeader.setText(String.format(getString(R.string.ics_welcome_format), _handle));
-        if(_viewAnimatorMain.getDisplayedChild() != 0)
-            _viewAnimatorMain.setDisplayedChild(0);
-        _viewAnimatorLobby.setDisplayedChild(2);
+        if(_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
+            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
+        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_WELCOME);
     }
-    */
+
     public void switchToChallengeView() {
+        sendString("sought");
         _tvHeader.setText(R.string.ics_menu_challenges);
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
@@ -1412,6 +1436,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToPlayersView() {
+        sendString("who a");
         _tvHeader.setText(Integer.toString(_adapterPlayers.getCount()) + " " + getString(R.string.ics_available_players));
         if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
             _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
@@ -1419,6 +1444,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void switchToGamesView() {
+        sendString("games");
         _mapGames.clear();
         _adapterGames.notifyDataSetChanged();
 
@@ -1449,10 +1475,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     public void switchToLoginView() {
         _butLogin.setEnabled(true);
         _tvHeader.setText("Login");
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY) {
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
+        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOGIN) {
+            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOGIN);
         }
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_LOGIN);
     }
 
     public void switchToConsoleView() {
@@ -1527,7 +1552,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         sendString("set gin 0"); // current server game results - turn off - some clients turn it on
         sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
 
-        switchToConsoleView();
+        _adapterWelcome.add(getString(R.string.ics_menu_games));
+        _adapterWelcome.add(getString(R.string.ics_menu_players));
+        _adapterWelcome.add(getString(R.string.ics_menu_challenges));
+        _adapterWelcome.add(getString(R.string.ics_menu_seek));
+        _adapterWelcome.add(getString(R.string.ics_menu_top_blitz));
+        _adapterWelcome.add(getString(R.string.ics_menu_top_standard));
+        _adapterWelcome.add(getString(R.string.ics_menu_puzzlebot_mate));
+        _adapterWelcome.add(getString(R.string.ics_menu_puzzlebot_tactics));
+        _adapterWelcome.add(getString(R.string.ics_menu_puzzlebot_study));
+        _adapterWelcome.add(getString(R.string.ics_menu_console));
+        _adapterWelcome.add(getString(R.string.menu_prefs));
+        _adapterWelcome.add(getString(R.string.menu_help));
+
+        _adapterWelcome.notifyDataSetChanged();
+        switchToWelcomeView();
     }
 
     @Override
@@ -1538,11 +1577,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     @Override
     public void OnLoggingIn() {
         doToast("Logging you in");
-    }
-
-    @Override
-    public void OnSessionStarted() {
-        switchToBoardView();
     }
 
     @Override
@@ -1571,8 +1605,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         }
         Collections.sort(_mapPlayers, new ComparatorHashRating());
         _adapterPlayers.notifyDataSetChanged();
-
-        switchToPlayersView();
     }
 
     @Override
@@ -1699,16 +1731,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
-
-    }
-
-    @Override
-    public void OnChallengedResult(ArrayList<HashMap<String, String>> challenges) {
-
+        _mapChallenges.clear();
+        for (int i = 0; i < soughtList.size(); i++) {
+            _mapChallenges.add(soughtList.get(i));
+        }
+        _adapterChallenges.notifyDataSetChanged();
     }
 
     @Override
     public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
+        _mapGames.clear();
+        for (int i = 0; i < games.size(); i++) {
+            _mapGames.add(games.get(i));
+        }
+
+        _adapterGames.notifyDataSetChanged();
 
     }
 
@@ -1725,31 +1762,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     @Override
     public void OnConsoleOutput(String buffer) {
         addConsoleText(buffer);
-    }
-
-    static class InnerTimerHandler extends Handler {
-        WeakReference<ICSClient> _client;
-
-        InnerTimerHandler(ICSClient client) {
-            this._client = new WeakReference<ICSClient>(client);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            ICSClient client = _client.get();
-            if (client != null) {
-                if (client._bAutoSought) {
-//                    if (client._socket != null && client._workerTelnet != null && client._workerTelnet.isAlive() && client._socket.isConnected() &&
-//                            client._bInICS && client.get_view().isUserPlaying() == false) {
-//                        while (client._mapChallenges.size() > 0) {
-//                            client._mapChallenges.remove(0);
-//                        }
-//                        client._adapterChallenges.notifyDataSetChanged();
-//                        client.sendString("sought");
-//                    }
-                }
-            }
-        }
     }
 
     private class AlternatingRowColorAdapter extends SimpleAdapter {

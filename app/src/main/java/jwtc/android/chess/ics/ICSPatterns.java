@@ -59,7 +59,7 @@ public class ICSPatterns {
     protected static final Pattern clock = Pattern.compile("\\((\\d+):(\\d+)\\)");
 
     public static final String EMPTY = "";
-    protected static final String loginChars = "\uefbf\ubdef\ubfbd\uefbf\ubdef\ubfbd\ud89e\u0001\ufffd\ufffd";
+    protected static final String loginChars = "\r\n\uefbf\ubdef\ubfbd\uefbf\ubdef\ubfbd\ud89e\u0001\ufffd\ufffd";
 
     public boolean containsGamesDisplayed(String buffer, int lineCount) {
         return lineCount > 3 && buffer.indexOf("\\") == -1 && buffer.indexOf("games displayed") >= 0;
