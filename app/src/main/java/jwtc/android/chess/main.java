@@ -112,6 +112,20 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         Intent intent;
         String s;
         switch (item.getItemId()) {
+            case R.id.action_new:
+                intent = new Intent();
+                intent.setClass(main.this, options.class);
+                intent.putExtra("requestCode", main.REQUEST_NEWGAME);
+                startActivityForResult(intent, main.REQUEST_NEWGAME);
+                return true;
+            case R.id.action_save:
+                saveGame();
+                return true;
+            case R.id.action_open:
+                intent = new Intent();
+                intent.setClass(main.this, GamesListView.class);
+                startActivityForResult(intent, main.REQUEST_OPEN);
+                return true;
             case R.id.action_prefs:
                 intent = new Intent();
                 intent.setClass(main.this, mainPrefs.class);
@@ -203,9 +217,9 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
 
         _itemsMenu = new String[]{
                 getString(R.string.menu_subview_cpu),
-                getString(R.string.menu_subview_captured),
+//                getString(R.string.menu_subview_captured),
                 getString(R.string.menu_subview_seek),
-                getString(R.string.menu_subview_moves),
+//                getString(R.string.menu_subview_moves),
                 getString(R.string.menu_subview_annotate),
                 getString(R.string.menu_subview_guess),
                 getString(R.string.menu_subview_blindfold)

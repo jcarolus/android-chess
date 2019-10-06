@@ -5,205 +5,156 @@
     android:layout_height="fill_parent"
     android:id="@+id/LayoutMain">
 
-    <TableLayout
-        android:id="@+id/LayoutTopTitle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <TableRow android:gravity="center_vertical">
-
-            <ViewSwitcher
-                android:id="@+id/ImageTurnOpp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip">
-
-                <ImageView
-                    android:src="@drawable/turnblack"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-
-                <ImageView
-                    android:src="@drawable/turnwhite"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-            </ViewSwitcher>
-
-            <TextView
-                android:id="@+id/TextViewClockTimeOpp"
-                android:layout_height="wrap_content"
-                android:layout_width="50dip"
-                android:text="00:00"
-                style="@style/MyNormalTextStyle" />
-
-            <TextView
-                android:id="@+id/TextViewTopTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/MyNormalTextStyle"
-                android:text="Title..." />
-        </TableRow>
-    </TableLayout>
-
     <include
         layout="@layout/board"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/LayoutTopTitle"
         android:id="@+id/includeboard" />
 
     <!--
     <TextView android:layout_width="wrap_content" android:layout_height="320dip"
-                android:id="@+id/includeboard"
-                android:layout_below="@id/LayoutTopTitle"/>
+                android:id="@+id/includeboard"/>
      -->
-
-    <TableLayout
-        android:id="@+id/LayoutBottomTitle"
+    <RelativeLayout
+        android:id="@+id/LayoutBelowBoard"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/includeboard">
 
-        <TableRow android:gravity="center_vertical">
+        <ImageButton
+            android:id="@+id/ButtonMenu"
+            android:src="@drawable/collections_view_as_list"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:layout_alignParentRight="true"
+            style="@style/ChessImageButton" />
 
-            <ViewSwitcher
-                android:id="@+id/ImageTurnMe"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip">
+        <ImageButton
+            android:id="@+id/ButtonSwitch"
+            android:src="@drawable/navigation_expand"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:layout_toLeftOf="@id/ButtonMenu"
+            style="@style/ChessImageButton" />
 
-                <ImageView
-                    android:src="@drawable/turnblack"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
+        <RelativeLayout
+            android:id="@+id/LayoutPlayButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/ButtonSwitch">
+            <ImageButton
+                android:id="@+id/ButtonPlay"
+                android:src="@drawable/av_play"
+                android:layout_height="40dip"
+                android:layout_width="40dip"
+                style="@style/ChessImageButton" />
 
-                <ImageView
-                    android:src="@drawable/turnwhite"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-            </ViewSwitcher>
+            <ProgressBar
+                android:id="@+id/ProgressBarPlay"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                style="?android:attr/progressBarStyleLarge"
+                android:visibility="gone" />
+        </RelativeLayout>
 
-            <TextView
-                android:id="@+id/TextViewClockTimeMe"
-                android:layout_height="wrap_content"
-                android:layout_width="50dip"
-                android:text="00:00"
-                style="@style/MyNormalTextStyle" />
+        <TableLayout
+            android:id="@+id/LayoutBottomTitle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/LayoutPlayButton"
+            android:layout_alignParentLeft="true"
+            >
 
-            <TextView
-                android:id="@+id/TextViewTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/MyNormalTextStyle"
-                android:text="Title..." />
-        </TableRow>
-    </TableLayout>
+            <TableRow android:gravity="center_vertical">
+
+                <ViewSwitcher
+                    android:id="@+id/ImageTurnMe"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="8dip">
+
+                    <ImageView
+                        android:src="@drawable/turnblack"
+                        android:layout_height="12dip"
+                        android:layout_width="12dip" />
+
+                    <ImageView
+                        android:src="@drawable/turnwhite"
+                        android:layout_height="12dip"
+                        android:layout_width="12dip" />
+                </ViewSwitcher>
+
+                <TextView
+                    android:id="@+id/TextViewClockTimeMe"
+                    android:layout_height="wrap_content"
+                    android:layout_width="50dip"
+                    android:text="00:00"
+                    style="@style/MyNormalTextStyle" />
+
+                <TextView
+                    android:id="@+id/TextViewTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    style="@style/MyNormalTextStyle"
+                    android:text="Title..." />
+            </TableRow>
+            <TableRow android:gravity="center_vertical">
+
+                <ViewSwitcher
+                    android:id="@+id/ImageTurnOpp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="8dip">
+
+                    <ImageView
+                        android:src="@drawable/turnblack"
+                        android:layout_height="12dip"
+                        android:layout_width="12dip" />
+
+                    <ImageView
+                        android:src="@drawable/turnwhite"
+                        android:layout_height="12dip"
+                        android:layout_width="12dip" />
+                </ViewSwitcher>
+
+                <TextView
+                    android:id="@+id/TextViewClockTimeOpp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="50dip"
+                    android:text="00:00"
+                    style="@style/MyNormalTextStyle" />
+
+                <TextView
+                    android:id="@+id/TextViewTopTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    style="@style/MyNormalTextStyle"
+                    android:text="Title..." />
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/LayoutBottomTitle"
+        android:layout_below="@id/LayoutBelowBoard"
         android:gravity="center_vertical">
-
-        <TableLayout
-            android:id="@+id/LayoutPlayButtons"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="*">
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal">
-
-                <ImageButton
-                    android:id="@+id/ButtonICSSoundOn"
-                    android:src="@drawable/ic_volume_up_white_24dp"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    android:visibility="visible"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
-                    android:id="@+id/ButtonICSSoundOff"
-                    android:src="@drawable/ic_volume_off_white_24dp"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    android:visibility="gone"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
-                    android:id="@+id/ButtonSwitch"
-                    android:src="@drawable/navigation_expand"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
-                    android:id="@+id/ButtonNewGame"
-                    android:src="@drawable/content_new"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
-                    android:id="@+id/ButtonOpen"
-                    android:src="@drawable/collections_collection"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
-                    android:id="@+id/ButtonSave"
-                    android:src="@drawable/content_save"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
-                    android:id="@+id/ButtonPrevious"
-                    android:src="@drawable/navigation_previous_item"
-                    android:layout_height="40dip"
-                    android:layout_width="40dip"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
-                    android:id="@+id/ButtonNext"
-                    android:src="@drawable/navigation_next_item"
-                    android:layout_height="40dip"
-                    android:layout_width="40dip"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
-                    android:id="@+id/ButtonPlay"
-                    android:src="@drawable/av_play"
-                    android:layout_height="40dip"
-                    android:layout_width="40dip"
-                    style="@style/ChessImageButton" />
-
-                <ProgressBar
-                    android:id="@+id/ProgressBarPlay"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="?android:attr/progressBarStyleLarge"
-                    android:visibility="gone" />
-            </TableRow>
-        </TableLayout>
 
         <ViewAnimator
             android:id="@+id/ViewAnimatorMain"
-            android:layout_below="@id/LayoutPlayButtons"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginTop="1dip"
             android:layout_marginBottom="1dip">
-
+            <!-- 0 -->
             <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                >
                 <TextView
                     android:id="@+id/TextViewEngine"
                     style="@style/MyNormalTextStyle"
@@ -219,126 +170,155 @@
                     android:padding="4dip"
                     android:layout_below="@id/TextViewEngine" />
             </RelativeLayout>
-
-            <TableLayout
+            <!-- 1 -->
+            <ScrollView
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedBlackPawn"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedBlackKnight"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedBlackBishop"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedBlackRook"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedBlackQueen"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedWhitePawn"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedWhiteKnight"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedWhiteBishop"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedWhiteRook"
-                        style="@style/CaptureImageStyle" />
-
-                    <jwtc.android.chess.CapturedImageView
-                        android:id="@+id/ImageCapturedWhiteQueen"
-                        style="@style/CaptureImageStyle" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedBlackPawn"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedBlackKnight"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedBlackBishop"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedBlackRook"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedBlackQueen"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedWhitePawn"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedWhiteKnight"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedWhiteBishop"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedWhiteRook"
-                        style="@style/CaptureTextStyle" />
-
-                    <TextView
-                        android:id="@+id/TextViewCapturedWhiteQueen"
-                        style="@style/CaptureTextStyle" />
-                </TableRow>
-            </TableLayout>
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <SeekBar
-                    android:id="@+id/SeekBarMain"
-                    android:layout_marginLeft="16dip"
-                    android:layout_marginRight="16dip"
-                    android:layout_width="fill_parent"
-                    android:layout_height="40dip" />
-            </RelativeLayout>
-
-            <HorizontalScrollView
-                android:id="@+id/HScrollViewHistory"
-                android:layout_width="fill_parent"
-                android:layout_height="40dip"
-                android:padding="2dip">
+                android:layout_height="fill_parent">
 
                 <RelativeLayout
-                    android:id="@+id/LayoutHistory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </HorizontalScrollView>
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
 
+                    <TableLayout
+                        android:id="@+id/HistoryControls"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="1">
+                        <TableRow
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content">
+                            <ImageButton
+                                android:id="@+id/ButtonPrevious"
+                                android:src="@drawable/navigation_previous_item"
+                                android:layout_height="40dip"
+                                android:layout_width="40dip"
+                                style="@style/ChessImageButton" />
+                            <SeekBar
+                                android:id="@+id/SeekBarMain"
+                                android:layout_marginLeft="8dip"
+                                android:layout_marginRight="8dip"
+                                android:layout_width="fill_parent"
+                                android:layout_height="40dip" />
+                            <ImageButton
+                                android:id="@+id/ButtonNext"
+                                android:src="@drawable/navigation_next_item"
+                                android:layout_height="40dip"
+                                android:layout_width="40dip"
+                                style="@style/ChessImageButton" />
+                        </TableRow>
+                    </TableLayout>
+                    <HorizontalScrollView
+                        android:id="@+id/HScrollViewHistory"
+                        android:layout_width="fill_parent"
+                        android:layout_height="40dip"
+                        android:layout_below="@id/HistoryControls"
+                        android:padding="2dip">
+
+                        <RelativeLayout
+                            android:id="@+id/LayoutHistory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </HorizontalScrollView>
+
+                    <TableLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/HScrollViewHistory">
+
+                        <TableRow
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content">
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedBlackPawn"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedBlackKnight"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedBlackBishop"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedBlackRook"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedBlackQueen"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedWhitePawn"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedWhiteKnight"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedWhiteBishop"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedWhiteRook"
+                                style="@style/CaptureImageStyle" />
+
+                            <jwtc.android.chess.CapturedImageView
+                                android:id="@+id/ImageCapturedWhiteQueen"
+                                style="@style/CaptureImageStyle" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedBlackPawn"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedBlackKnight"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedBlackBishop"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedBlackRook"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedBlackQueen"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedWhitePawn"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedWhiteKnight"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedWhiteBishop"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedWhiteRook"
+                                style="@style/CaptureTextStyle" />
+
+                            <TextView
+                                android:id="@+id/TextViewCapturedWhiteQueen"
+                                style="@style/CaptureTextStyle" />
+                        </TableRow>
+                    </TableLayout>
+                </RelativeLayout>
+
+            </ScrollView>
+            <!-- 2 -->
             <ScrollView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -352,7 +332,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="50dip" />
             </ScrollView>
-
+            <!-- 3 -->
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -383,7 +363,7 @@
                         android:layout_height="40dip" />
                 </TableRow>
             </TableLayout>
-
+            <!-- 4 -->
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

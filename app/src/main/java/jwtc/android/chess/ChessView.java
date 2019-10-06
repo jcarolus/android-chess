@@ -72,14 +72,7 @@ public class ChessView extends UI {
     private TextView[][] _arrTextCaptured;
     ///////////////////////////////
 
-    public static int SUBVIEW_CPU = 0;
-    public static int SUBVIEW_CAPTURED = 1;
-    public static int SUBVIEW_SEEK = 2;
-    public static int SUBVIEW_HISTORY = 3;
-    public static int SUBVIEW_ANNOTATE = 4;
-    public static int SUBVIEW_GUESS = 5;
-    public static int SUBVIEW_BLINDFOLD = 6;
-    public static int SUBVIEW_ECO = 7;
+    public static int SUBVIEW_GUESS = 3;
 
     static class InnerHandler extends Handler {
         WeakReference<ChessView> _chessView;
@@ -153,29 +146,29 @@ public class ChessView extends UI {
             }
         };
 
-        butQuickSoundOn = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOn);
-        butQuickSoundOff = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOff);
-        if (butQuickSoundOn != null && butQuickSoundOff != null) {
-            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    _bPlayVolume = false;
-                    _parent.set_fVolume(0.0f);
-                    butQuickSoundOn.setVisibility(View.GONE);
-                    butQuickSoundOff.setVisibility(View.VISIBLE);
-                }
-            });
-
-            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    _bPlayVolume = true;
-                    _parent.set_fVolume(1.0f);
-                    butQuickSoundOff.setVisibility(View.GONE);
-                    butQuickSoundOn.setVisibility(View.VISIBLE);
-                }
-            });
-        }
+//        butQuickSoundOn = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOn);
+//        butQuickSoundOff = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOff);
+//        if (butQuickSoundOn != null && butQuickSoundOff != null) {
+//            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    _bPlayVolume = false;
+//                    _parent.set_fVolume(0.0f);
+//                    butQuickSoundOn.setVisibility(View.GONE);
+//                    butQuickSoundOff.setVisibility(View.VISIBLE);
+//                }
+//            });
+//
+//            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    _bPlayVolume = true;
+//                    _parent.set_fVolume(1.0f);
+//                    butQuickSoundOff.setVisibility(View.GONE);
+//                    butQuickSoundOn.setVisibility(View.VISIBLE);
+//                }
+//            });
+//        }
 
         _hScrollHistory = null;
         _layoutHistory = null;
@@ -387,41 +380,50 @@ public class ChessView extends UI {
 		}
 		*/
 
-        ImageButton butNewGame = (ImageButton) _parent.findViewById(R.id.ButtonNewGame);
-        if (butNewGame != null) {
-            //butNewGame.setFocusable(false);
-            butNewGame.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    Intent intent = new Intent();
-                    intent.setClass(_parent, options.class);
-                    intent.putExtra("requestCode", main.REQUEST_NEWGAME);
-                    _parent.startActivityForResult(intent, main.REQUEST_NEWGAME);
-                }
-            });
-        }
+		ImageButton butMenu = _parent.findViewById(R.id.ButtonMenu);
+		butMenu.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _parent.openOptionsMenu();
+            }
+        });
+		//
+
+//        ImageButton butNewGame = (ImageButton) _parent.findViewById(R.id.ButtonNewGame);
+//        if (butNewGame != null) {
+//            //butNewGame.setFocusable(false);
+//            butNewGame.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//                    Intent intent = new Intent();
+//                    intent.setClass(_parent, options.class);
+//                    intent.putExtra("requestCode", main.REQUEST_NEWGAME);
+//                    _parent.startActivityForResult(intent, main.REQUEST_NEWGAME);
+//                }
+//            });
+//        }
         
-        ImageButton butSaveGame = (ImageButton) _parent.findViewById(R.id.ButtonSave);
-        if (butSaveGame != null) {
-            //butSaveGame.setFocusable(false);
-            butSaveGame.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
+//        ImageButton butSaveGame = (ImageButton) _parent.findViewById(R.id.ButtonSave);
+//        if (butSaveGame != null) {
+//            //butSaveGame.setFocusable(false);
+//            butSaveGame.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//
+//                    _parent.saveGame();
+//                }
+//            });
+//        }
 
-                    _parent.saveGame();
-                }
-            });
-        }
-
-        ImageButton butOpenGame = (ImageButton) _parent.findViewById(R.id.ButtonOpen);
-        if (butOpenGame != null) {
-            //butOpenGame.setFocusable(false);
-            butOpenGame.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    Intent intent = new Intent();
-                    intent.setClass(_parent, GamesListView.class);
-                    _parent.startActivityForResult(intent, main.REQUEST_OPEN);
-                }
-            });
-        }
+//        ImageButton butOpenGame = (ImageButton) _parent.findViewById(R.id.ButtonOpen);
+//        if (butOpenGame != null) {
+//            //butOpenGame.setFocusable(false);
+//            butOpenGame.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//                    Intent intent = new Intent();
+//                    intent.setClass(_parent, GamesListView.class);
+//                    _parent.startActivityForResult(intent, main.REQUEST_OPEN);
+//                }
+//            });
+//        }
 
         //
 		/*
@@ -514,11 +516,7 @@ public class ChessView extends UI {
             //butSwitch.setFocusable(false);
             butSwitch.setOnClickListener(new OnClickListener() {
                 public void onClick(View arg0) {
-                    if (_viewAnimator.getChildCount() >= 6) {
-                        _parent.showSubViewMenu();
-                    } else {
-                        toggleControls();
-                    }
+                    _parent.showSubViewMenu();
                 }
             });
         }
@@ -1144,16 +1142,16 @@ public class ChessView extends UI {
             _viewAnimator.setDisplayedChild(prefs.getInt("animatorViewNumber", 0) % _viewAnimator.getChildCount());
         }
 
-        _bPlayVolume = prefs.getBoolean("PlayVolume", true);
-        if (_bPlayVolume) {
-            butQuickSoundOff.setVisibility(View.GONE);
-            butQuickSoundOn.setVisibility(View.VISIBLE);
-            _parent.set_fVolume(1.0f);
-        } else {
-            butQuickSoundOn.setVisibility(View.GONE);
-            butQuickSoundOff.setVisibility(View.VISIBLE);
-            _parent.set_fVolume(0.0f);
-        }
+//        _bPlayVolume = prefs.getBoolean("PlayVolume", true);
+//        if (_bPlayVolume) {
+//            butQuickSoundOff.setVisibility(View.GONE);
+//            butQuickSoundOn.setVisibility(View.VISIBLE);
+//            _parent.set_fVolume(1.0f);
+//        } else {
+//            butQuickSoundOn.setVisibility(View.GONE);
+//            butQuickSoundOff.setVisibility(View.VISIBLE);
+//            _parent.set_fVolume(0.0f);
+//        }
 
         if (_butPlay != null) {
             if (_playMode == HUMAN_HUMAN) {

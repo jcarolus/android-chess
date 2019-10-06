@@ -4,9 +4,7 @@
     android:id="@+id/BoardLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:background="@android:color/background_dark"
-    android:padding="1dp">
+    android:layout_gravity="center">
 
     <TableRow>
 
