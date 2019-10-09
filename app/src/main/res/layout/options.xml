@@ -66,15 +66,28 @@
 
             <TableRow
                 style="@style/MyRowStyle"
-                android:id="@+id/TableRowOptions960"
+                android:id="@+id/TableRowOptions"
                 android:visibility="gone">
-
-                <CheckBox
-                    android:id="@+id/CheckBoxOptions960"
-                    android:text="@string/options_960"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/MyRowTextStyle" />
+                <RadioGroup>
+                    <RadioButton
+                        android:id="@+id/RadioOptionsDefault"
+                        android:text="@string/options_default"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/MyRowTextStyle" />
+                    <RadioButton
+                        android:id="@+id/RadioOptions960"
+                        android:text="@string/options_960"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/MyRowTextStyle" />
+                    <RadioButton
+                        android:id="@+id/RadioOptionsSetup"
+                        android:text="@string/options_setup"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/MyRowTextStyle" />
+                </RadioGroup>
             </TableRow>
 
             <TableRow style="@style/MyRowStyle">

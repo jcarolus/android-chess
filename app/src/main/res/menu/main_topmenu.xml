@@ -16,9 +16,6 @@
         android:id="@+id/action_prefs"
         android:title="@string/menu_prefs" />
     <item
-        android:id="@+id/action_setup"
-        android:title="@string/menu_setup" />
-    <item
         android:id="@+id/action_flip"
         android:title="@string/menu_flip" />
     <item

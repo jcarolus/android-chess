@@ -5,33 +5,18 @@
     android:layout_height="fill_parent"
     android:id="@+id/LayoutMain">
 
-    <RelativeLayout
-        android:id="@+id/LayoutSetupTitle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/TextViewTitle"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dip"
-            style="@style/MyHeaderTextStyle"
-            android:text="@string/app_name_setup" />
-    </RelativeLayout>
-
     <include
         layout="@layout/board"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/includeboard"
-        android:layout_below="@id/LayoutSetupTitle" />
+        android:id="@+id/includeboard" />
     <!--
     <TextView android:layout_width="wrap_content" android:layout_height="320dip"
         android:id="@+id/includeboard" android:layout_below="@id/LayoutSetupTitle"
     />
      -->
 
-    <LinearLayout
+    <TableLayout
         android:id="@+id/SelectPiecesLayout"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -40,74 +25,88 @@
         android:layout_below="@id/includeboard"
         android:padding="4dip">
 
-        <jwtc.android.chess.CapturedImageView
-            android:id="@+id/selQueen"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_marginRight="2dip" />
+        <TableRow android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selWhiteQueen"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
-        <jwtc.android.chess.CapturedImageView
-            android:id="@+id/selRook"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_marginRight="2dip" />
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selWhiteRook"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
-        <jwtc.android.chess.CapturedImageView
-            android:id="@+id/selBishop"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_marginRight="2dip" />
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selWhiteBishop"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
-        <jwtc.android.chess.CapturedImageView
-            android:id="@+id/selKnight"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_marginRight="2dip" />
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selWhiteKnight"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
-        <jwtc.android.chess.CapturedImageView
-            android:id="@+id/selPawn"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_marginRight="2dip" />
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selWhitePawn"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
-        <ImageButton
-            android:id="@+id/delPiece"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:src="@drawable/content_discard"
-            android:layout_marginRight="2dip" />
+            <ImageButton
+                android:id="@+id/delPiece"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:src="@drawable/content_discard"
+                android:layout_marginRight="2dip" />
 
-        <ImageButton
-            android:id="@+id/selColor"
-            android:src="@drawable/av_shuffle"
-            android:layout_width="40dip"
-            android:layout_height="40dip" />
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/ButtonMenu"
+                android:src="@drawable/collections_view_as_list"
+                android:layout_width="40dip"
+                android:layout_height="40dip" />
+        </TableRow>
+        <TableRow android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selBlackQueen"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
-    <TableLayout
-        android:id="@+id/TableSetupButtons"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/SelectPiecesLayout"
-        android:paddingLeft="16dip"
-        android:paddingRight="16dip"
-        android:stretchColumns="*">
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selBlackRook"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
-        <TableRow>
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selBlackBishop"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
-            <Button
-                android:id="@+id/ButtonSetupCancel"
-                android:text="@string/button_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selBlackKnight"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
+
+            <jwtc.android.chess.CapturedImageView
+                android:id="@+id/selBlackPawn"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_marginRight="2dip" />
 
             <Button
                 android:id="@+id/ButtonSetupOk"
                 android:text="@string/button_ok"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_span="2"/>
         </TableRow>
-
     </TableLayout>
 
     <TextView
@@ -116,6 +115,6 @@
         android:layout_height="wrap_content"
         style="@style/MySmallTextStyle"
         android:text="@string/msg_setup_extra"
-        android:layout_below="@id/TableSetupButtons" />
+        android:layout_below="@id/SelectPiecesLayout" />
 
 </RelativeLayout>

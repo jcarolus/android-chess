@@ -8,17 +8,12 @@ import jwtc.chess.board.ChessBoard;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.pm.ActivityInfo;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
-import android.widget.TableRow.LayoutParams;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,13 +29,8 @@ public class setup extends MyBaseActivity {
     private int _selectedPosition;
 
     private CapturedImageView[] _arrSelImages;
-    //private static Bitmap[] _arrBmp;
     private ImageButton _butDel;
-    private ImageButton _butColor;
-    private Button _butOk, _butCancel;
-    //private TextView _tvMsg;
-    //private ImageView _butOk;
-    //private ImageButton _butMenu;
+    private Button _butOk;
 
     private int _iTurn, _iEPFile;
     private boolean _bWhiteCastleShort, _bWhiteCastleLong, _bBlackCastleShort, _bBlackCastleLong;
@@ -48,9 +38,7 @@ public class setup extends MyBaseActivity {
 
     private Uri _uri;
 
-    private final int SEL_COLOR = 5;
-    //private final int SEL_DEL = 7;
-    private final int SELBUTTONS_COUNT = 5; // 8
+    private final int SELPIECES_COUNT = 5; // 8
 
     /**
      * Called when the activity is first created.
@@ -99,19 +87,6 @@ public class setup extends MyBaseActivity {
 
         //_tvMsg = (TextView)findViewById(R.id.TextViewSetupMsg);
 
-        _butCancel = (Button) findViewById(R.id.ButtonSetupCancel);
-        _butCancel.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
-
-                SharedPreferences.Editor editor = setup.this.getPrefs().edit();
-                editor.putString("FEN", null);
-                editor.commit();
-
-                finish();
-            }
-        });
-
-
         _butOk = (Button) findViewById(R.id.ButtonSetupOk);
         _butOk.setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {
@@ -120,22 +95,40 @@ public class setup extends MyBaseActivity {
             }
         });
 
-        _arrSelImages = new CapturedImageView[SELBUTTONS_COUNT];
+        ImageButton butMenu = findViewById(R.id.ButtonMenu);
+        butMenu.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openOptionsMenu();
+            }
+        });
+
+        _arrSelImages = new CapturedImageView[2 * SELPIECES_COUNT];
         // boardconstants range from 0-5, king is not included
 
-        _arrSelImages[BoardConstants.QUEEN] = (CapturedImageView) findViewById(R.id.selQueen);
+        _arrSelImages[BoardConstants.QUEEN] = (CapturedImageView) findViewById(R.id.selWhiteQueen);
         _arrSelImages[BoardConstants.QUEEN].initBitmap("qw.png");
-        _arrSelImages[BoardConstants.ROOK] = (CapturedImageView) findViewById(R.id.selRook);
+        _arrSelImages[BoardConstants.ROOK] = (CapturedImageView) findViewById(R.id.selWhiteRook);
         _arrSelImages[BoardConstants.ROOK].initBitmap("rw.png");
-        _arrSelImages[BoardConstants.BISHOP] = (CapturedImageView) findViewById(R.id.selBishop);
+        _arrSelImages[BoardConstants.BISHOP] = (CapturedImageView) findViewById(R.id.selWhiteBishop);
         _arrSelImages[BoardConstants.BISHOP].initBitmap("bw.png");
-        _arrSelImages[BoardConstants.KNIGHT] = (CapturedImageView) findViewById(R.id.selKnight);
+        _arrSelImages[BoardConstants.KNIGHT] = (CapturedImageView) findViewById(R.id.selWhiteKnight);
         _arrSelImages[BoardConstants.KNIGHT].initBitmap("nw.png");
-        _arrSelImages[BoardConstants.PAWN] = (CapturedImageView) findViewById(R.id.selPawn);
+        _arrSelImages[BoardConstants.PAWN] = (CapturedImageView) findViewById(R.id.selWhitePawn);
         _arrSelImages[BoardConstants.PAWN].initBitmap("pw.png");
         _arrSelImages[BoardConstants.PAWN].setHighlighted(true);
 
-        _butColor = (ImageButton) findViewById(R.id.selColor);
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.QUEEN] = (CapturedImageView) findViewById(R.id.selBlackQueen);
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.QUEEN].initBitmap("qb.png");
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.ROOK] = (CapturedImageView) findViewById(R.id.selBlackRook);
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.ROOK].initBitmap("rb.png");
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.BISHOP] = (CapturedImageView) findViewById(R.id.selBlackBishop);
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.BISHOP].initBitmap("bb.png");
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.KNIGHT] = (CapturedImageView) findViewById(R.id.selBlackKnight);
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.KNIGHT].initBitmap("nb.png");
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.PAWN] = (CapturedImageView) findViewById(R.id.selBlackPawn);
+        _arrSelImages[SELPIECES_COUNT + BoardConstants.PAWN].initBitmap("pb.png");
+
 
         _butDel = (ImageButton) findViewById(R.id.delPiece);
         _butDel.setOnClickListener(new OnClickListener() {
@@ -157,42 +150,17 @@ public class setup extends MyBaseActivity {
             }
         });
 
-        _butColor.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                /*
-                _butColor._fieldColor = _selectedColor;
-				_butColor.invalidate();
-	    		*/
-                _selectedColor = _selectedColor == ChessBoard.WHITE ? ChessBoard.BLACK : ChessBoard.WHITE;
-                String sColor = _selectedColor == ChessBoard.WHITE ? "w" : "b";
-
-                _arrSelImages[BoardConstants.QUEEN].initBitmap("q" + sColor + ".png");
-                _arrSelImages[BoardConstants.ROOK].initBitmap("r" + sColor + ".png");
-                _arrSelImages[BoardConstants.BISHOP].initBitmap("b" + sColor + ".png");
-                _arrSelImages[BoardConstants.KNIGHT].initBitmap("n" + sColor + ".png");
-                _arrSelImages[BoardConstants.PAWN].initBitmap("p" + sColor + ".png");
-
-                for (int i = 0; i < 5; i++) {
-                    _arrSelImages[i].invalidate();
-                }
-
-            }
-
-        });
-
 
         ocl = new OnClickListener() {
             public void onClick(View arg0) {
-                for (int i = 0; i < SELBUTTONS_COUNT; i++) {
+                for (int i = 0; i < 2 * SELPIECES_COUNT; i++) {
                     if (_arrSelImages[i] == (CapturedImageView) arg0)
                         handleSelectClick(i);
                 }
 
             }
         };
-        for (int i = 0; i < SELBUTTONS_COUNT; i++) {
+        for (int i = 0; i < 2 * SELPIECES_COUNT; i++) {
             _arrSelImages[i].setOnClickListener(ocl);
         }
 
@@ -295,14 +263,15 @@ public class setup extends MyBaseActivity {
 
     public void handleSelectClick(int index) {
 
-        _selectedPiece = index;
+        _selectedPiece = index >= SELPIECES_COUNT ? index - SELPIECES_COUNT : index;
+        _selectedColor = index >= SELPIECES_COUNT ? ChessBoard.BLACK : ChessBoard.WHITE;
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2 * SELPIECES_COUNT; i++) {
             _arrSelImages[i].setHighlighted(false);
         }
-        _arrSelImages[_selectedPiece].setHighlighted(true);
+        _arrSelImages[index].setHighlighted(true);
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2 * SELPIECES_COUNT; i++) {
             _arrSelImages[i].invalidate();
         }
         paintBoard();

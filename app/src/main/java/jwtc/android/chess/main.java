@@ -140,11 +140,6 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
                 intent.putExtra("requestCode", REQUEST_OPTIONS);
                 startActivityForResult(intent, REQUEST_OPTIONS);
                 return true;
-            case R.id.action_setup:
-                intent = new Intent();
-                intent.setClass(main.this, setup.class);
-                startActivityForResult(intent, main.REQUEST_SETUP);
-                return true;
             case R.id.action_email:
                 emailPGN();
                 return true;
@@ -515,8 +510,12 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
 
             if (resultCode == options.RESULT_960) {
                 newGameRandomFischer();
-            } else if (resultCode == RESULT_OK) {
+            } else if (resultCode == options.RESULT_DEFAULT) {
                 newGame();
+            } else if (resultCode == options.RESULT_SETUP) {
+                Intent intent = new Intent();
+                intent.setClass(main.this, setup.class);
+                startActivityForResult(intent, main.REQUEST_SETUP);
             }
         }
     }

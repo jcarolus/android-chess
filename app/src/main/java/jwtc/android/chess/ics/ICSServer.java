@@ -185,8 +185,6 @@ public class ICSServer extends Service {
         String[] lines = buffer.split("\n\r");
         int lineCount = lines.length;
 
-        for (ICSListener listener: listeners) {listener.OnConsoleOutput(buffer);}
-
         if (expectingState == EXPECT_LOGIN_PROMPT) {
             if (buffer.endsWith("login: ")) {
                 if (sendString(handle)) {
@@ -415,6 +413,8 @@ public class ICSServer extends Service {
             }
         }
 
+        // @TODO only when of interest for outside world
+        for (ICSListener listener: listeners) {listener.OnConsoleOutput(buffer);}
     }
 
     public void startKeepAliveTimer() {
@@ -423,9 +423,9 @@ public class ICSServer extends Service {
             keepAlivetimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    keepAliveTimerHandler.sendEmptyMessage(0);  // sends date string to prevent disconnection
+                    keepAliveTimerHandler.sendEmptyMessage(0);
                 }
-            }, 300000, 300000);  // send every 5 minutes (1 minute = 60000)
+            }, 30000, 30000);  // send every 30 seconds
         }
     }
 

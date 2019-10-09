@@ -176,6 +176,7 @@
     <string name="options_play_android">Human vs Android</string>
     <string name="options_play_white">White</string>
     <string name="options_play_black">Black</string>
+    <string name="options_default">Standard Chess</string>
     <string name="options_960">Chess 960 - Fischer Random</string>
     <string name="options_load_database">Load openings database</string>
     <string name="options_auto_flip">Auto flip board</string>
