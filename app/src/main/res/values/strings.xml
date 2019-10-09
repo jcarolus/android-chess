@@ -164,13 +164,13 @@
     <string name="menu_global_prefs">Global Settings</string>
 
     <string name="menu_subview_title">Choose sub controls</string>
-    <string name="menu_subview_cpu">Engine info</string>
-    <string name="menu_subview_moves">Move history</string>
-    <string name="menu_subview_seek">Move seek bar</string>
-    <string name="menu_subview_captured">Captured pieces</string>
-    <string name="menu_subview_annotate">Annotate move</string>
+    <string name="pref_show_engine_info">Engine info</string>
+    <string name="pref_show_moves">Move history</string>
+    <string name="pref_show_seek">Move seek bar</string>
+    <string name="pref_show_captured">Captured pieces</string>
+    <string name="pref_show_annotate">Annotate move</string>
     <string name="menu_subview_guess">Guess the move</string>
-    <string name="menu_subview_blindfold">Blindfold mode</string>
+    <string name="pref_show_blindfold">Blindfold mode</string>
 
     <string name="options_play_human">Human vs Human</string>
     <string name="options_play_android">Human vs Android</string>

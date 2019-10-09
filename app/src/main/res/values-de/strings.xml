@@ -163,13 +163,13 @@
     <string name="menu_global_prefs">Globale Einstellungen</string>
 
     <string name="menu_subview_title">Wähle Unterkontrollen</string>
-    <string name="menu_subview_cpu">Engine Info</string>
-    <string name="menu_subview_moves">Zugverlauf</string>
-    <string name="menu_subview_seek">Bewege Suchfeld</string>
-    <string name="menu_subview_captured">Geschlagenene Figuren</string>
-    <string name="menu_subview_annotate">Kommentiere Zug</string>
+    <string name="pref_show_engine_info">Engine Info</string>
+    <string name="pref_show_moves">Zugverlauf</string>
+    <string name="pref_show_seek">Bewege Suchfeld</string>
+    <string name="pref_show_captured">Geschlagenene Figuren</string>
+    <string name="pref_show_annotate">Kommentiere Zug</string>
     <string name="menu_subview_guess">Rate den Zug</string>
-    <string name="menu_subview_blindfold">Blindschach Modus</string>
+    <string name="pref_show_blindfold">Blindschach Modus</string>
 
     <string name="options_play_human">Spieler gegen Spieler</string>
     <string name="options_play_android">Spieler gegen Android</string>

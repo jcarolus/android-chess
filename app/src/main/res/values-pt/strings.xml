@@ -165,13 +165,13 @@
     <string name="menu_global_prefs">Configurações globáis</string>
 
     <string name="menu_subview_title">Escolher controles de baixo</string>
-    <string name="menu_subview_cpu">Informação de motor</string>
-    <string name="menu_subview_moves">Mover história</string>
-    <string name="menu_subview_seek">Mover barra de busca</string>
-    <string name="menu_subview_captured">Peças capturadas</string>
-    <string name="menu_subview_annotate">Annotar jogada</string>
+    <string name="pref_show_engine_info">Informação de motor</string>
+    <string name="pref_show_moves">Mover história</string>
+    <string name="pref_show_seek">Mover barra de busca</string>
+    <string name="pref_show_captured">Peças capturadas</string>
+    <string name="pref_show_annotate">Annotar jogada</string>
     <string name="menu_subview_guess">Adivinhar jogada</string>
-    <string name="menu_subview_blindfold">Modo venda</string>
+    <string name="pref_show_blindfold">Modo venda</string>
 
     <string name="options_play_human">Humano contra Human</string>
     <string name="options_play_android">Humano contra Android</string>

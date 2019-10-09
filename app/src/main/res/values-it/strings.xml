@@ -165,13 +165,13 @@
     <string name="menu_global_prefs">Preferenze globali</string>
 
     <string name="menu_subview_title">Scegli sottocontrolli</string>
-    <string name="menu_subview_cpu">Informazioni motore</string>
-    <string name="menu_subview_moves">Sposta la storia</string>
-    <string name="menu_subview_seek">Sposta la barra di ricerca</string>
-    <string name="menu_subview_captured">Pezzi catturati</string>
-    <string name="menu_subview_annotate">Annota mossa</string>
+    <string name="pref_show_engine_info">Informazioni motore</string>
+    <string name="pref_show_moves">Sposta la storia</string>
+    <string name="pref_show_seek">Sposta la barra di ricerca</string>
+    <string name="pref_show_captured">Pezzi catturati</string>
+    <string name="pref_show_annotate">Annota mossa</string>
     <string name="menu_subview_guess">Indovina la mossa</string>
-    <string name="menu_subview_blindfold">Modalità alla cieca</string>
+    <string name="pref_show_blindfold">Modalità alla cieca</string>
 
     <string name="options_play_human">Umano contro Umano</string>
     <string name="options_play_android">Umano contro Android</string>

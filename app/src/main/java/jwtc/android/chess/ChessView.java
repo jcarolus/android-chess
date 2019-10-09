@@ -2,7 +2,6 @@ package jwtc.android.chess;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
@@ -32,9 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.*;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.view.ViewTreeObserver;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -49,7 +46,6 @@ public class ChessView extends UI {
 
     private ChessActivity _parent;
     private ImageButton _butPlay, butQuickSoundOn, butQuickSoundOff;
-    private ViewAnimator _viewAnimator;
     private ProgressBar _progressPlay;
     private TextView _tvClockMe, _tvClockOpp, _tvTitleMe, _tvTitleOpp, _tvAnnotate, _tvEngine, _tvAnnotateGuess;
     private int _dpadPos;
@@ -180,7 +176,7 @@ public class ChessView extends UI {
 
         _jArrayECO = null;
         // below was previously in init() method
-        _hScrollHistory = (HorizontalScrollView) _parent.findViewById(R.id.HScrollViewHistory);
+        _hScrollHistory = (HorizontalScrollView) _parent.findViewById(R.id.LayoutScrollViewHistory);
         _layoutHistory = (RelativeLayout) _parent.findViewById(R.id.LayoutHistory);
 
         _butPlay = (ImageButton) _parent.findViewById(R.id.ButtonPlay);
@@ -511,15 +507,6 @@ public class ChessView extends UI {
         _switchTurnMe = (ViewSwitcher) _parent.findViewById(R.id.ImageTurnMe);
         _switchTurnOpp = (ViewSwitcher) _parent.findViewById(R.id.ImageTurnOpp);
 
-        ImageButton butSwitch = (ImageButton) _parent.findViewById(R.id.ButtonSwitch);
-        if (butSwitch != null) {
-            //butSwitch.setFocusable(false);
-            butSwitch.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    _parent.showSubViewMenu();
-                }
-            });
-        }
 
         _tvAnnotate = (TextView) _parent.findViewById(R.id.TextViewAnnotate);
         if (_tvAnnotate != null) {
@@ -558,11 +545,6 @@ public class ChessView extends UI {
         }
         _tvAnnotateGuess = (TextView) _parent.findViewById(R.id.TextViewGuess);
 
-        _viewAnimator = (ViewAnimator) _parent.findViewById(R.id.ViewAnimatorMain);
-        if (_viewAnimator != null) {
-            _viewAnimator.setOutAnimation(_parent, R.anim.slide_left);
-            _viewAnimator.setInAnimation(_parent, R.anim.slide_right);
-        }
         _progressPlay = (ProgressBar) _parent.findViewById(R.id.ProgressBarPlay);
 
         _seekBar = (SeekBar) _parent.findViewById(R.id.SeekBarMain);
@@ -664,19 +646,6 @@ public class ChessView extends UI {
     private String formatTime(long msec) {
         final String sTmp = String.format("%02d:%02d", (int) (Math.floor(msec / 60000)), ((int) (msec / 1000) % 60));
         return sTmp;
-    }
-
-    public void toggleControls() {
-
-        if (_viewAnimator != null) {
-            _viewAnimator.showNext();
-        }
-    }
-
-    public void toggleControl(int i) {
-        if (_viewAnimator != null) {
-            _viewAnimator.setDisplayedChild(i);
-        }
     }
 
     public void setAutoFlip(boolean b) {
@@ -897,28 +866,29 @@ public class ChessView extends UI {
         if (m_iFrom != -1) {
 
             // Guess the move ===============================
-            if (_viewAnimator != null) {
-                if (_viewAnimator.getDisplayedChild() == SUBVIEW_GUESS) {
-                    if (wasMovePlayed(m_iFrom, iTo)) {
-                        if (_imgStatusGuess != null) {
-                            _imgStatusGuess.setImageResource(R.drawable.indicator_ok);
-                        }
-                        jumptoMove(_jni.getNumBoard());
-                        updateState();
-                        m_iFrom = -1;
-                        //Log.i("WAS MOVE PLAYED", "TRUE");
-                        return true;
-                    } else {
-                        if (_imgStatusGuess != null) {
-                            _imgStatusGuess.setImageResource(R.drawable.indicator_error);
-                        }
-                        m_iFrom = -1;
-                        paintBoard();
-                        //Log.i("WAS MOVE PLAYED", "FALSE");
-                        return false;
-                    }
-                }
-            }
+            // @TODO as separate mode
+//            if (_viewAnimator != null) {
+//                if (_viewAnimator.getDisplayedChild() == SUBVIEW_GUESS) {
+//                    if (wasMovePlayed(m_iFrom, iTo)) {
+//                        if (_imgStatusGuess != null) {
+//                            _imgStatusGuess.setImageResource(R.drawable.indicator_ok);
+//                        }
+//                        jumptoMove(_jni.getNumBoard());
+//                        updateState();
+//                        m_iFrom = -1;
+//                        //Log.i("WAS MOVE PLAYED", "TRUE");
+//                        return true;
+//                    } else {
+//                        if (_imgStatusGuess != null) {
+//                            _imgStatusGuess.setImageResource(R.drawable.indicator_error);
+//                        }
+//                        m_iFrom = -1;
+//                        paintBoard();
+//                        //Log.i("WAS MOVE PLAYED", "FALSE");
+//                        return false;
+//                    }
+//                }
+//            }
             // ==============================================
 
             // ###########################################################################
@@ -1080,9 +1050,6 @@ public class ChessView extends UI {
         editor.putBoolean("playAsBlack", _bPlayAsBlack);
         editor.putBoolean("PlayVolume", _bPlayVolume);
         editor.putInt("boardNum", _jni.getNumBoard());
-        if (_viewAnimator != null) {
-            editor.putInt("animatorViewNumber", _viewAnimator.getDisplayedChild());
-        }
         pauzeTimer();
         editor.putLong("clockTotalMillies", _lClockTotal);
         editor.putLong("clockWhiteMillies", _lClockWhite);
@@ -1138,9 +1105,6 @@ public class ChessView extends UI {
         continueTimer();
 
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
-        if (_viewAnimator != null) {
-            _viewAnimator.setDisplayedChild(prefs.getInt("animatorViewNumber", 0) % _viewAnimator.getChildCount());
-        }
 
 //        _bPlayVolume = prefs.getBoolean("PlayVolume", true);
 //        if (_bPlayVolume) {

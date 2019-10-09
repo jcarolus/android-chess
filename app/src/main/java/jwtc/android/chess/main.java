@@ -3,7 +3,6 @@ package jwtc.android.chess;
 import jwtc.chess.*;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -28,9 +27,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
-import android.widget.TextView;
+import android.widget.TableLayout;
 
 public class main extends ChessActivity implements OnInitListener, GestureDetector.OnGestureListener {
 
@@ -208,43 +206,6 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         }
     }
 
-    public void showSubViewMenu() {
-
-        _itemsMenu = new String[]{
-                getString(R.string.menu_subview_cpu),
-//                getString(R.string.menu_subview_captured),
-                getString(R.string.menu_subview_seek),
-//                getString(R.string.menu_subview_moves),
-                getString(R.string.menu_subview_annotate),
-                getString(R.string.menu_subview_guess),
-                getString(R.string.menu_subview_blindfold)
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
-        builder.setTitle(getString(R.string.menu_subview_title));
-        final TextView tv_engine = (TextView) findViewById(R.id.TextViewEngine);
-
-        builder.setItems(_itemsMenu, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                _chessView.toggleControl(item);
-
-                // show engine name
-                SharedPreferences pref = getBaseContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
-                String engName = pref.getString("UCIEngine", null);
-                String dbName = pref.getString("UCIDatabase", null);
-                if (engName == null) {
-                    engName = "Native engine";
-                } else if (dbName != null) {
-                    engName += " +db";
-                }
-                tv_engine.setText(_itemsMenu[0] + ": " + engName);
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     @Override
     // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -418,6 +379,16 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
                 loadPGN(sPGN);
             }
         }
+
+
+        findViewById(R.id.LayoutEngineInfo).setVisibility(prefs.getBoolean("showEngineInfo", true) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.LayoutCapturedPieces).setVisibility(prefs.getBoolean("showCapturedPieces", true) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.LayoutScrollViewHistory).setVisibility(prefs.getBoolean("showMoveHistory", true) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.LayoutHistoryControls).setVisibility(prefs.getBoolean("showSeekBar", true) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.TextViewAnnotate).setVisibility(prefs.getBoolean("showAnnotate", true) ? View.VISIBLE : View.GONE);
+
+        // LayoutGuessTheMove
+        findViewById(R.id.LayoutBlindfold).setVisibility(prefs.getBoolean("showBlindFoldMode", true) ? View.VISIBLE : View.GONE);
 
         _chessView.OnResume(prefs);
 

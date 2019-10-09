@@ -165,13 +165,13 @@
     <string name="menu_global_prefs">Глобальные настройки</string>
 
     <string name="menu_subview_title">Выберите подменю управления</string>
-    <string name="menu_subview_cpu">Информация о движке</string>
-    <string name="menu_subview_moves">Прокручивать историю ходов</string>
-    <string name="menu_subview_seek">Прокручивать ползунок</string>
-    <string name="menu_subview_captured">Захваченные фигуры</string>
-    <string name="menu_subview_annotate">Сдвиг комментариев</string>
+    <string name="pref_show_engine_info">Информация о движке</string>
+    <string name="pref_show_moves">Прокручивать историю ходов</string>
+    <string name="pref_show_seek">Прокручивать ползунок</string>
+    <string name="pref_show_captured">Захваченные фигуры</string>
+    <string name="pref_show_annotate">Сдвиг комментариев</string>
     <string name="menu_subview_guess">Угадать ход</string>
-    <string name="menu_subview_blindfold">Слепой режим</string>
+    <string name="pref_show_blindfold">Слепой режим</string>
 
     <string name="options_play_human">Человек против Человека</string>
     <string name="options_play_android">Человек против Android</string>
