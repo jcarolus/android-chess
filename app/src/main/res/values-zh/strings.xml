@@ -92,8 +92,8 @@
     <string name="button_save">保存</string>
     <string name="button_save_copy">复制并保存</string>
     <string name="button_new">新建</string>
-    <string name="button_show">显示</string>
-    <string name="button_jump">跳到 #</string>
+    <string name="puzzle_show">显示</string>
+    <string name="puzzle_jump_to">跳到 #</string>
 
     <string name="alert_yes">是</string>
     <string name="alert_no">否</string>

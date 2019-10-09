@@ -97,7 +97,7 @@
 
             <Button
                 android:id="@+id/ButtonPracticeShow"
-                android:text="@string/button_show"
+                android:text="@string/puzzle_show"
                 android:paddingLeft="8dip"
                 android:paddingRight="8dip"
                 android:layout_height="40dip"

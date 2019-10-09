@@ -92,8 +92,8 @@
     <string name="button_save">Сохранить</string>
     <string name="button_save_copy">Сохранить копию</string>
     <string name="button_new">Новая</string>
-    <string name="button_show">Показать</string>
-    <string name="button_jump">Перейти к #</string>
+    <string name="puzzle_show">Показать</string>
+    <string name="puzzle_jump_to">Перейти к #</string>
 
     <string name="alert_yes">Да</string>
     <string name="alert_no">Нет</string>

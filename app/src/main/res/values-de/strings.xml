@@ -92,8 +92,8 @@
     <string name="button_save">Speichern</string>
     <string name="button_save_copy">Speichere Kopie</string>
     <string name="button_new">Neu</string>
-    <string name="button_show">Zeige Lösung</string>
-    <string name="button_jump">Springe zu #</string>
+    <string name="puzzle_show">Zeige Lösung</string>
+    <string name="puzzle_jump_to">Springe zu #</string>
 
     <string name="alert_yes">Ja</string>
     <string name="alert_no">Nein</string>

@@ -33,9 +33,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 public class ChessViewPuzzle extends UI {
     private ChessViewBase _view;
     private TextView _tvPuzzleText;
-    private Button _butPuzzle, _butJump;
     private ImageView _imgTurn;
-    private ImageButton _butPrev, _butNext, _butHelp;
+    private ImageButton _butPrev, _butNext;
     private ImageView _imgStatus;
     private puzzle _parent;
     private int _iPos;
@@ -86,6 +85,14 @@ public class ChessViewPuzzle extends UI {
         //Cursor countCursor = _cr.query(MyPuzzleProvider.CONTENT_URI_PUZZLES, new String[] {"count(*) AS count"}, null, null, null);
         //countCursor.moveToFirst();
         //_num = countCursor.getInt(0);
+    }
+
+    public int numPuzzles() {
+        return _num;
+    }
+
+    public void setPos(int iPos) {
+        _iPos = iPos;
     }
 
     public ChessViewPuzzle(final Activity activity) {
@@ -152,50 +159,6 @@ public class ChessViewPuzzle extends UI {
 
         _view.init(ocl, olcl);
 
-        _butPuzzle = (Button) _parent.findViewById(R.id.ButtonPuzzle);
-
-        _butPuzzle.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
-                jumptoMove(_jni.getNumBoard());
-                updateState();
-
-                //if(_arrPGN.size() == m_game.getBoard().getNumBoard()-1)
-                //   _butPuzzle.setText("Next");
-
-            }
-        });
-
-        _butJump = (Button) _parent.findViewById(R.id.ButtonPuzzleJump);
-        _butJump.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(_parent);
-                builder.setTitle(_parent.getString(R.string.title_puzzle_jump));
-                final EditText input = new EditText(_parent);
-                input.setInputType(InputType.TYPE_CLASS_PHONE);
-                builder.setView(input);
-                builder.setPositiveButton(_parent.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        try {
-                            int num = Integer.parseInt(input.getText().toString());
-
-                            if (num > 0 && num <= _num) {
-                                _iPos = num - 1;
-                                play();
-                                return;
-                            }
-                        } catch (Exception ex) {
-
-                        }
-                        _parent.doToast(_parent.getString(R.string.err_puzzle_jump));
-                    }
-                });
-
-
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });
-
         _butPrev = (ImageButton) _parent.findViewById(R.id.ButtonPuzzlePrevious);
         _butPrev.setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {
@@ -212,14 +175,11 @@ public class ChessViewPuzzle extends UI {
             }
         });
 
-        _butHelp = (ImageButton) _parent.findViewById(R.id.ButtonPuzzleHelp);
-        _butHelp.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
-                Intent i = new Intent();
-                i.setClass(_parent, HtmlActivity.class);
-                i.putExtra(HtmlActivity.HELP_MODE, "help_puzzle");
-                _parent.startActivity(i);
-            }
+        _parent.findViewById(R.id.ButtonMenu).setOnClickListener(new OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                _parent.openOptionsMenu();
+             }
         });
 
     }
@@ -247,6 +207,11 @@ public class ChessViewPuzzle extends UI {
     	
     	return String.format("%d:%02d", (int)(Math.floor(sec/60)), sec % 60);
     } */
+
+    public void showSolution() {
+        jumptoMove(_jni.getNumBoard());
+        updateState();
+    }
 
     @Override
     public void paintBoard() {
@@ -438,15 +403,6 @@ public class ChessViewPuzzle extends UI {
 
     public void OnResume(final SharedPreferences prefs) {
         super.OnResume();
-
-        if (_seekBar != null) {
-            if (prefs.getBoolean("PuzzleShowSeekBar", true)) {
-                _seekBar.setVisibility(View.VISIBLE);
-
-            } else {
-                _seekBar.setVisibility(View.GONE);
-            }
-        }
 
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
 

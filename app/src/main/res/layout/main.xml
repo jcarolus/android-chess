@@ -204,11 +204,11 @@
             <TableLayout
                 android:id="@+id/LayoutCapturedPieces"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="44dip">
 
                 <TableRow
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="30dp">
 
                     <jwtc.android.chess.CapturedImageView
                         android:id="@+id/ImageCapturedBlackPawn"
@@ -253,7 +253,7 @@
 
                 <TableRow
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="14dp">
 
                     <TextView
                         android:id="@+id/TextViewCapturedBlackPawn"

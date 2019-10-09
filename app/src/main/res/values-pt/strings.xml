@@ -92,8 +92,8 @@
     <string name="button_save">Salva</string>
     <string name="button_save_copy">Salva copia</string>
     <string name="button_new">Novo</string>
-    <string name="button_show">Mostra</string>
-    <string name="button_jump">Salta a #</string>
+    <string name="puzzle_show">Mostra</string>
+    <string name="puzzle_jump_to">Salta a #</string>
 
     <string name="alert_yes">Sim</string>
     <string name="alert_no">Não</string>

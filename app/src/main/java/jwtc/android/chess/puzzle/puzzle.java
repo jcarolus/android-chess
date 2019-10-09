@@ -3,10 +3,13 @@ package jwtc.android.chess.puzzle;
 import jwtc.android.chess.*;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -52,10 +55,42 @@ public class puzzle extends MyBaseActivity {
                 intent.putExtra(HtmlActivity.HELP_MODE, "help_puzzle");
                 startActivity(intent);
                 return true;
-            case R.id.action_prefs:
-                intent = new Intent();
-                intent.setClass(puzzle.this, puzzlePrefs.class);
-                startActivity(intent);
+//            case R.id.action_prefs:
+//                intent = new Intent();
+//                intent.setClass(puzzle.this, puzzlePrefs.class);
+//                startActivity(intent);
+//                return true;
+            case R.id.action_jump:
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(puzzle.this);
+                builder.setTitle(getString(R.string.title_puzzle_jump));
+                final EditText input = new EditText(puzzle.this);
+                input.setInputType(InputType.TYPE_CLASS_PHONE);
+                builder.setView(input);
+                builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        try {
+                            int num = Integer.parseInt(input.getText().toString());
+
+                            if (num > 0 && num <= _chessView.numPuzzles()) {
+                                _chessView.setPos(num - 1);
+                                _chessView.play();
+                                return;
+                            }
+                        } catch (Exception ex) {
+
+                        }
+                        doToast(getString(R.string.err_puzzle_jump));
+                    }
+                });
+
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
+                return true;
+            case R.id.action_show:
+                _chessView.showSolution();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -39,7 +39,6 @@ public class ChessViewBase {
 
     public static final String TAG = "ChessViewBase";
 
-    private RelativeLayout _mainLayout;
     private ChessImageView[] _arrImages = new ChessImageView[64];
     //public static final int SELECTED = 2;
     public static boolean _flippedBoard = false;
@@ -64,8 +63,6 @@ public class ChessViewBase {
     public void init(OnClickListener ocl, OnLongClickListener olcl) {
         Log.i("ChessViewBase", "init() called");
         _flippedBoard = false;
-
-        _mainLayout = (RelativeLayout) _activity.findViewById(R.id.LayoutMain);
 
         _arrImages[0] = (ChessImageView) _activity.findViewById(R.id.a8);
         _arrImages[1] = (ChessImageView) _activity.findViewById(R.id.b8);
