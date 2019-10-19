@@ -1572,6 +1572,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     @Override
     public void OnLoginFailed() {
         doToast("Could not log you in");
+        switchToLoginView();
     }
 
     @Override
@@ -1619,6 +1620,24 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     @Override
     public void OnChallenged(String opponent, String rating, String message) {
 
+        new AlertDialog.Builder(ICSClient.this)
+            .setTitle(ICSClient.this.getString(R.string.title_challenge))
+            .setMessage(opponent +
+                    " [" + rating +
+                    "]\n " + message)
+            .setPositiveButton(getString(R.string.alert_yes),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            sendString("accept");
+                            dialog.dismiss();
+                        }
+                    })
+            .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.dismiss();
+                }
+            })
+            .show();
     }
 
     @Override
@@ -1628,12 +1647,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnSeekNotAvailable() {
-
+        gameToast("That seek is not available", false);
     }
 
     @Override
     public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
-
+        gameToast("Game initialized", false);
     }
 
     @Override
@@ -1646,32 +1665,32 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnOpponentRequestsAbort() {
-
+        confirmShow(getString(R.string.title_offers_abort), getString(R.string.ics_offers_abort), "abort");
     }
 
     @Override
     public void OnOpponentRequestsAdjourn() {
-
+        confirmShow(getString(R.string.title_offers_adjourn), getString(R.string.ics_offers_adjourn), "adjourn");
     }
 
     @Override
     public void OnOpponentOffersDraw() {
-
+        confirmShow(getString(R.string.title_offers_draw), getString(R.string.ics_offers_draw), "draw");
     }
 
     @Override
     public void OnOpponentRequestsTakeBack() {
-
+        confirmShow(getString(R.string.title_offers_takeback), getString(R.string.ics_offers_takeback), "accept");
     }
 
     @Override
     public void OnAbortConfirmed() {
-
+        gameToast("Game aborted by mutual agreement", true);
     }
 
     @Override
     public void OnPlayGameResult(String message) {
-
+        gameToast(message, true);
     }
 
     @Override
@@ -1681,7 +1700,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnYourRequestSended() {
-
+        gameToast(getString(R.string.ics_request_sent), false);
     }
 
     @Override
@@ -1691,42 +1710,42 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnResumingAdjournedGame() {
-
+        gameToast("Resuming adjourned game", false);
     }
 
     @Override
     public void OnAbortedOrAdjourned() {
-
+        gameToast("Game stopped (aborted or adjourned)", false);
     }
 
     @Override
     public void OnObservingGameStarted() {
-
+        gameToast("Observing a game", false);
     }
 
     @Override
     public void OnObservingGameStopped() {
-
+        gameToast("No longer observing the game", true);
     }
 
     @Override
     public void OnPuzzleStarted() {
-
+        gameToast("Puzzle started", false);
     }
 
     @Override
     public void OnPuzzleStopped() {
-
+        gameToast("Puzzle stopped", true);
     }
 
     @Override
     public void OnExaminingGameStarted() {
-
+        gameToast("Examining a game", false);
     }
 
     @Override
     public void OnExaminingGameStopped() {
-
+        gameToast("No longer examining the game", true);
     }
 
     @Override
@@ -1751,7 +1770,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
-
+        _mapStored.clear();
+        for (int i = 0; i < games.size(); i++) {
+            _mapStored.add(games.get(i));
+        }
+        _adapterStored.notifyDataSetChanged();
     }
 
     @Override

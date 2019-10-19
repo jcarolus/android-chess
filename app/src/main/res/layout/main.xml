@@ -23,7 +23,7 @@
 
         <ImageButton
             android:id="@+id/ButtonMenu"
-            android:src="@drawable/collections_view_as_list"
+            android:src="@drawable/ellipsis"
             android:layout_width="40dip"
             android:layout_height="40dip"
             android:layout_alignParentRight="true"

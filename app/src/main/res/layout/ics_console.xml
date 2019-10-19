@@ -24,7 +24,7 @@
 
             <ImageButton
                 android:id="@+id/ButtonICSConsoleQuickCmd"
-                android:src="@drawable/collections_view_as_list"
+                android:src="@drawable/ellipsis"
                 android:layout_width="40dip"
                 android:layout_height="40dip"
                 style="@style/ChessImageButton" />
