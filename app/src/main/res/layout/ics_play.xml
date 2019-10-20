@@ -5,6 +5,51 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="0,1,2"
+        android:stretchColumns="3"
+        android:layout_marginBottom="2dip">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/TextViewClockTop"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="00:00"
+                android:gravity="center_vertical"
+                style="@style/MyNormalTextStyle"
+                android:layout_marginLeft="8dip" />
+
+            <TextView
+                android:text="@string/ics_playertwo"
+                android:id="@+id/TextViewTop"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyHeaderTextStyle" />
+
+            <TextView
+                android:text="----"
+                android:id="@+id/TextViewICSTwoRating"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyHeaderTextStyle"
+                android:layout_marginLeft="3dip" />
+
+            <TextView
+                android:id="@+id/TextViewICSBoardNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="# 0"
+                android:layout_marginRight="5dp"
+                style="@style/MyHeaderTextStyle"
+                android:gravity="right|center_vertical" />
+        </TableRow>
+
+    </TableLayout>
+
     <include
         layout="@layout/board"
         android:layout_width="wrap_content"
@@ -16,7 +61,6 @@
            android:layout_below="@id/TablePlayerTop"/>
         -->
     <TableLayout
-        android:id="@+id/TablePlayerBottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dip"
@@ -79,52 +123,6 @@
         </TableRow>
     </TableLayout>
 
-    <TableLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/TablePlayerTop"
-        android:shrinkColumns="0,1,2"
-        android:stretchColumns="3"
-        android:layout_marginBottom="2dip">
-
-        <TableRow>
-
-            <TextView
-                android:id="@+id/TextViewClockTop"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="00:00"
-                android:gravity="center_vertical"
-                style="@style/MyNormalTextStyle"
-                android:layout_marginLeft="8dip" />
-
-            <TextView
-                android:text="@string/ics_playertwo"
-                android:id="@+id/TextViewTop"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                style="@style/MyHeaderTextStyle" />
-
-            <TextView
-                android:text="----"
-                android:id="@+id/TextViewICSTwoRating"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                style="@style/MyHeaderTextStyle"
-                android:layout_marginLeft="3dip" />
-
-            <TextView
-                android:id="@+id/TextViewICSBoardNum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="# 0"
-                android:layout_marginRight="5dp"
-                style="@style/MyHeaderTextStyle"
-                android:gravity="right|center_vertical" />
-        </TableRow>
-
-    </TableLayout>
-
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -149,13 +147,6 @@
                     android:imeOptions="actionSend" />
 
                 <ImageButton
-                    android:id="@+id/ButtonICSQuickCmd"
-                    android:src="@drawable/ellipsis"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="@style/ChessImageButton" />
-
-                <ImageButton
                     android:id="@+id/ButtonICSChat"
                     android:src="@drawable/social_chat"
                     android:layout_width="40dip"
@@ -163,20 +154,12 @@
                     style="@style/ChessImageButton" />
 
                 <ImageButton
-                    android:id="@+id/ButtonICSSoundOn"
-                    android:src="@drawable/ic_volume_up_white_24dp"
+                    android:id="@+id/ButtonICSQuickCmd"
+                    android:src="@drawable/ellipsis"
                     android:layout_width="40dip"
                     android:layout_height="40dip"
-                    style="@style/ChessImageButton"
-                    android:visibility="visible" />
+                    style="@style/ChessImageButton" />
 
-                <ImageButton
-                    android:id="@+id/ButtonICSSoundOff"
-                    android:src="@drawable/ic_volume_off_white_24dp"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="@style/ChessImageButton"
-                    android:visibility="gone" />
             </TableRow>
         </TableLayout>
 

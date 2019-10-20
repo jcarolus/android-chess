@@ -1,9 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:id="@+id/LayoutMain">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TableRow android:gravity="center_vertical">
+
+            <ViewSwitcher
+                android:id="@+id/ImageTurnOpp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip">
+
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+            </ViewSwitcher>
+
+            <TextView
+                android:id="@+id/TextViewClockTimeOpp"
+                android:layout_height="wrap_content"
+                android:layout_width="50dip"
+                android:text="00:00"
+                style="@style/MyNormalTextStyle" />
+
+            <TextView
+                android:id="@+id/TextViewTopTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                style="@style/MyNormalTextStyle"
+                android:text="Title..." />
+        </TableRow>
+    </TableLayout>
 
     <include
         layout="@layout/board"
@@ -18,8 +59,7 @@
     <RelativeLayout
         android:id="@+id/LayoutBelowBoard"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/includeboard">
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/ButtonMenu"
@@ -50,7 +90,6 @@
         </RelativeLayout>
 
         <TableLayout
-            android:id="@+id/LayoutBottomTitle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/LayoutPlayButton"
@@ -92,46 +131,11 @@
                     style="@style/MyNormalTextStyle"
                     android:text="Title..." />
             </TableRow>
-            <TableRow android:gravity="center_vertical">
 
-                <ViewSwitcher
-                    android:id="@+id/ImageTurnOpp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_marginLeft="8dip"
-                    android:layout_marginRight="8dip">
-
-                    <ImageView
-                        android:src="@drawable/turnblack"
-                        android:layout_height="12dip"
-                        android:layout_width="12dip" />
-
-                    <ImageView
-                        android:src="@drawable/turnwhite"
-                        android:layout_height="12dip"
-                        android:layout_width="12dip" />
-                </ViewSwitcher>
-
-                <TextView
-                    android:id="@+id/TextViewClockTimeOpp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="50dip"
-                    android:text="00:00"
-                    style="@style/MyNormalTextStyle" />
-
-                <TextView
-                    android:id="@+id/TextViewTopTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    style="@style/MyNormalTextStyle"
-                    android:text="Title..." />
-            </TableRow>
         </TableLayout>
     </RelativeLayout>
 
     <ScrollView
-        android:layout_below="@id/LayoutBelowBoard"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
@@ -159,6 +163,18 @@
                     android:layout_height="wrap_content"
                     android:padding="4dip" />
             </RelativeLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/LayoutScrollViewHistory"
+                android:layout_width="fill_parent"
+                android:layout_height="40dip"
+                android:padding="2dip">
+
+                <RelativeLayout
+                    android:id="@+id/LayoutHistory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </HorizontalScrollView>
 
             <TableLayout
                 android:id="@+id/LayoutHistoryControls"
@@ -188,18 +204,6 @@
                         style="@style/ChessImageButton" />
                 </TableRow>
             </TableLayout>
-
-            <HorizontalScrollView
-                android:id="@+id/LayoutScrollViewHistory"
-                android:layout_width="fill_parent"
-                android:layout_height="40dip"
-                android:padding="2dip">
-
-                <RelativeLayout
-                    android:id="@+id/LayoutHistory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </HorizontalScrollView>
 
             <TableLayout
                 android:id="@+id/LayoutCapturedPieces"
@@ -368,4 +372,4 @@
 
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

@@ -120,8 +120,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     protected static int[] whiteClk = new int[200]; // PGN time clock
     protected static int[] blackClk = new int[200];
 
-    private ImageButton butQuickSoundOn, butQuickSoundOff;
-
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             // This is called when the connection with the service has been
@@ -251,29 +249,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
                 public void onClick(View arg0) {
                     //showMenu();
                     openOptionsMenu();
-                }
-            });
-        }
-
-        butQuickSoundOn = (ImageButton) findViewById(R.id.ButtonICSSoundOn);
-        butQuickSoundOff = (ImageButton) findViewById(R.id.ButtonICSSoundOff);
-        if (butQuickSoundOn != null && butQuickSoundOff != null) {
-            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    _bICSVolume = false;
-                    set_fVolume(0.0f);
-                    butQuickSoundOn.setVisibility(View.GONE);
-                    butQuickSoundOff.setVisibility(View.VISIBLE);
-                }
-            });
-            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    _bICSVolume = true;
-                    set_fVolume(1.0f);
-                    butQuickSoundOff.setVisibility(View.GONE);
-                    butQuickSoundOn.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -882,7 +857,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         }
 
         gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
-        soundHorseSnort();
 
         get_view().setViewMode(ICSChessView.VIEW_NONE);
     }
@@ -1045,15 +1019,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         _bShowClockPGN = prefs.getBoolean("ICSClockPGN", true);
 
         _bICSVolume = prefs.getBoolean("ICSVolume", true);
-        if (_bICSVolume) {
-            butQuickSoundOff.setVisibility(View.GONE);
-            butQuickSoundOn.setVisibility(View.VISIBLE);
-            set_fVolume(1.0f);
-        } else {
-            butQuickSoundOn.setVisibility(View.GONE);
-            butQuickSoundOff.setVisibility(View.VISIBLE);
-            set_fVolume(0.0f);
-        }
+
 
         // get rid of notification for tap to play
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -1647,12 +1613,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnSeekNotAvailable() {
-        gameToast("That seek is not available", false);
+        globalToast("That seek is not available");
     }
 
     @Override
     public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
-        gameToast("Game initialized", false);
+        globalToast("Game initialized");
     }
 
     @Override
@@ -1720,32 +1686,32 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnObservingGameStarted() {
-        gameToast("Observing a game", false);
+        globalToast("Observing a game");
     }
 
     @Override
     public void OnObservingGameStopped() {
-        gameToast("No longer observing the game", true);
+        globalToast("No longer observing the game");
     }
 
     @Override
     public void OnPuzzleStarted() {
-        gameToast("Puzzle started", false);
+        globalToast("Puzzle started");
     }
 
     @Override
     public void OnPuzzleStopped() {
-        gameToast("Puzzle stopped", true);
+        globalToast("Puzzle stopped");
     }
 
     @Override
     public void OnExaminingGameStarted() {
-        gameToast("Examining a game", false);
+        globalToast("Examining a game");
     }
 
     @Override
     public void OnExaminingGameStopped() {
-        gameToast("No longer examining the game", true);
+        globalToast("No longer examining the game");
     }
 
     @Override

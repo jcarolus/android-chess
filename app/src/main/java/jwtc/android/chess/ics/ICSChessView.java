@@ -71,7 +71,6 @@ public class ICSChessView extends ChessViewBase {
                     || (msg.what == MSG_BOTTOM_TIME && (_tvPlayerBottom.getText()).equals(_playerMe))) {
                 if (_parent.is_bTimeWarning() && (countDown <= _parent.get_TimeWarning()) && (msg.getData().getInt("ticks") > 0)) {
                     try {
-                        _parent.soundTickTock();
                         if (countDown % 2 == 0) {
                             _tvClockBottom.setBackgroundColor(Color.RED);
                         } else {
@@ -281,22 +280,6 @@ public class ICSChessView extends ChessViewBase {
                 Log.i(TAG, "Idle");
                 break;
             case VIEW_PLAY:
-                switch (_parent.get_gameStartSound()) {
-                    case 0:
-                        break;
-                    case 1:
-                        _parent.soundHorseNeigh();
-                        _parent.vibration(INCREASE);
-                        break;
-                    case 2:
-                        _parent.soundHorseNeigh();
-                        break;
-                    case 3:
-                        _parent.vibration(INCREASE);
-                        break;
-                    default:
-                        Log.e(TAG, "get_gameStartSound error");
-                }
                 _parent.notificationAPP();
                 Log.i(TAG, "Play");
                 break;
@@ -551,7 +534,7 @@ public class ICSChessView extends ChessViewBase {
             String _sTimePerMove = st.nextToken();  // time it took to make a move
             String sLastMoveDisplay = st.nextToken();  // algebraic notation move
             if (sLastMoveDisplay.contains("+")) {
-                _parent.soundSmallNeigh();
+                _parent.soundCheck();
             } else if (sLastMoveDisplay.contains("x")) {
                 _parent.soundCapture();
             } else {

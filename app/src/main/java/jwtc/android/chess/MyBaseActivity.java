@@ -151,24 +151,9 @@ public class MyBaseActivity extends android.app.Activity {
         return _fVolume;
     }
 
-    public void soundTickTock() {
-        spSound.play(_itickTock, _fVolume, _fVolume, 1, 0, 1);
-    }
 
-    public void soundHorseNeigh() {
-        spSound.play(_ihorseNeigh, _fVolume, _fVolume, 1, 0, 1);
-    }
-
-    public void soundSmallNeigh() {
+    public void soundCheck() {
         spSound.play(_ismallNeigh, _fVolume, _fVolume, 2, 0, 1);
-    }
-
-    public void soundHorseSnort() {
-        spSound.play(_ihorseSnort, _fVolume, _fVolume, 1, 0, 1);
-    }
-
-    public void soundHorseRunAway() {
-        spSound.play(_ihorseRunAway, _fVolume, _fVolume, 1, 0, 1);
     }
 
     public void soundMove() {
