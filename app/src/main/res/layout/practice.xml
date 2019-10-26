@@ -21,7 +21,8 @@
         android:id="@+id/LayoutTurn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/includeboard">
+        android:layout_below="@id/includeboard"
+        android:stretchColumns="2">
 
         <TableRow>
 
@@ -57,6 +58,15 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 style="@style/MyHeaderTextStyle" />
+
+            <ImageView
+                android:id="@+id/ImageStatus"
+                android:src="@drawable/indicator_none"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip" />
+
         </TableRow>
 
     </TableLayout>
@@ -78,14 +88,6 @@
                 style="@style/MyNormalTextStyle"
                 android:paddingLeft="8dip"
                 android:paddingRight="8dip" />
-
-            <ImageView
-                android:id="@+id/ImageStatus"
-                android:src="@drawable/indicator_none"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip" />
 
             <ImageButton
                 android:id="@+id/ButtonPracticePause"

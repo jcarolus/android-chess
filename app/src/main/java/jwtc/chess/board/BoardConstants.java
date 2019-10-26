@@ -15,7 +15,11 @@ public class BoardConstants {
     public static final int MATE = 6;
     public static final int STALEMATE = 7;
     public static final int DRAW_REPEAT = 8; // draw by repetition (3 times same board position)
-    // ///////////////////////////////////////////////////////////////////////////////////////////////
+    public static final int WHITE_FORFEIT_TIME = 9;
+    public static final int BLACK_FORFEIT_TIME = 10;
+    public static final int WHITE_RESIGNED = 11;
+    public static final int BLACK_RESIGNED = 12;
+    public static final int DRAW_AGREEMENT = 13;
 
     // array index of data memebers that hold data for either black or white. these must be 0 and 1 cause arrays are of length 2
     public static final int BLACK = 0;

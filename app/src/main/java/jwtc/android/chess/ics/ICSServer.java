@@ -15,6 +15,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
+import jwtc.chess.board.ChessBoard;
 
 public class ICSServer extends Service {
     protected static final String TAG = "ICSServer";
@@ -379,6 +380,12 @@ public class ICSServer extends Service {
 
             if (icsPatterns.isAbortOrDrawOrAdjourneRequestSent(line)) {
                 for (ICSListener listener: listeners) {listener.OnYourRequestSended();}
+                continue;
+            }
+
+            int result = icsPatterns.gameState(line);
+            if (result != ChessBoard.PLAY) {
+                for (ICSListener listener: listeners) {listener.OnEndGameResult(result);}
                 continue;
             }
 

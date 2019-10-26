@@ -138,7 +138,7 @@ public class UI extends GameControl {
         //co.pl(ChessBoard.bitbToString(m_game.getBoard().bitbAttacked()));
     }
 
-    public int chessStateToR(int s) {
+    public static int chessStateToR(int s) {
         switch (s) {
             case ChessBoard.MATE:
                 return R.string.state_mate;
@@ -152,6 +152,16 @@ public class UI extends GameControl {
                 return R.string.state_draw_50;
             case ChessBoard.DRAW_REPEAT:
                 return R.string.state_draw_repeat;
+            case ChessBoard.BLACK_FORFEIT_TIME:
+                return R.string.state_black_forfeits_time;
+            case ChessBoard.WHITE_FORFEIT_TIME:
+                return R.string.state_white_forfeits_time;
+            case ChessBoard.BLACK_RESIGNED:
+                return R.string.state_black_resigned;
+            case ChessBoard.WHITE_RESIGNED:
+                return R.string.state_white_resigned;
+            case ChessBoard.DRAW_AGREEMENT:
+                return R.string.state_draw_agreement;
             default:
                 return R.string.state_play;
         }

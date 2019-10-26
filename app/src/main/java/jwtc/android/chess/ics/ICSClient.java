@@ -851,7 +851,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
                 text = getString(R.string.ics_game_over);
             }
         } else if (line.contains("} 1/2-1/2")) {  // draw
-            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), true);
+            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), false);
             get_view().setViewMode(ICSChessView.VIEW_NONE);
             return;
         }
@@ -1652,16 +1652,18 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     @Override
     public void OnAbortConfirmed() {
         gameToast("Game aborted by mutual agreement", true);
+        get_view().setStopPlaying();
     }
 
     @Override
     public void OnPlayGameResult(String message) {
         gameToast(message, true);
+        get_view().setStopPlaying();
     }
 
     @Override
     public void OnPlayGameStopped() {
-
+        get_view().setStopPlaying();
     }
 
     @Override
@@ -1744,8 +1746,10 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     @Override
-    public void OnEndGameResult() {
-
+    public void OnEndGameResult(int state) {
+        int res = UI.chessStateToR(state);
+        gameToast(getString(res), true);
+        this.get_view().setStopPlaying();
     }
 
     @Override

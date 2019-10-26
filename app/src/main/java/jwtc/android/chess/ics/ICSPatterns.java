@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jwtc.android.chess.ChessFieldView;
+import jwtc.chess.board.ChessBoard;
+
 public class ICSPatterns {
     // FICS
     // Challenge: withca (----) GuestFHYH (----) unrated blitz 10 0
@@ -243,6 +246,10 @@ public class ICSPatterns {
         return !line.contains("\\") && line.indexOf("Game aborted by mutual agreement}") >= 0;
     }
 
+    public boolean isDrawConfirmed(String line) {
+        return !line.contains("\\") && line.indexOf("Game drawn by mutual agreement}") >= 0;
+    }
+
     public boolean isAdjournRequest(String line, String opponent) {
         return !line.contains("\\") && line.contains(opponent + " would like to adjourn the game; type \"adjourn\" to accept.");
     }
@@ -257,6 +264,28 @@ public class ICSPatterns {
 
     public boolean isAbortedOrAdourned(String line) {
         return line.indexOf("{Game " /*+ getGameNum()*/) >= 0 && line.indexOf("} *") > 0;
+    }
+
+    public int gameState(String line) {
+        if (line.indexOf("{Game " /*+ getGameNum()*/) >= 0) {
+            if (line.contains(" resigns} ")) {
+                return line.contains("} 1-0") ? ChessBoard.BLACK_RESIGNED : ChessBoard.WHITE_RESIGNED;
+            } else if (line.contains("forfeits on time")) {
+                return line.contains("} 1-0") ? ChessBoard.BLACK_FORFEIT_TIME : ChessBoard.WHITE_FORFEIT_TIME;
+            } else if (line.contains("checkmated")) {
+                return ChessBoard.MATE;
+            }
+        } else if (line.contains("} 1/2-1/2")) {
+            if (line.contains("Game drawn by mutual agreement}")) {
+                return ChessBoard.DRAW_AGREEMENT;
+            } else if (line.contains("material}")) {
+                return ChessBoard.DRAW_MATERIAL;
+            } else {
+                return ChessBoard.DRAW_50;
+            }
+        }
+
+        return ChessBoard.PLAY;
     }
 
     public boolean isAbortOrDrawOrAdjourneRequestSent(String line) {

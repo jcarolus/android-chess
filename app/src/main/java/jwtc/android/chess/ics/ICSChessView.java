@@ -305,6 +305,10 @@ public class ICSChessView extends ChessViewBase {
         return _viewMode == VIEW_PLAY;
     }
 
+    public void setStopPlaying() {
+        this._viewMode = VIEW_NONE;
+    }
+
     public String getOpponent() {
         return _opponent;
     }

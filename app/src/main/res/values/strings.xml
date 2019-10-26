@@ -194,6 +194,11 @@
     <string name="state_draw_repeat">draw (3-fold repetition)</string>
     <string name="state_mate">checkmated</string>
     <string name="state_check">check</string>
+    <string name="state_black_forfeits_time">black forfeits on time</string>
+    <string name="state_white_forfeits_time">white forfeits on time</string>
+    <string name="state_black_resigned">black resigned</string>
+    <string name="state_white_resigned">white resigned</string>
+    <string name="state_draw_agreement">draw by agreement</string>
     <string name="state_time">forfeits on time</string>
     <string name="state_resigned">resigned</string>
     <string name="state_aborted">aborted</string>

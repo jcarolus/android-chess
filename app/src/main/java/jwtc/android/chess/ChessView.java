@@ -1228,7 +1228,7 @@ public class ChessView extends UI {
             }
         }
         int state = _jni.getState();
-        int res = chessStateToR(state);
+        int res = UI.chessStateToR(state);
         turn = _jni.getTurn();
 
         if (turn == ChessBoard.WHITE) {

@@ -164,47 +164,6 @@
                     android:padding="4dip" />
             </RelativeLayout>
 
-            <HorizontalScrollView
-                android:id="@+id/LayoutScrollViewHistory"
-                android:layout_width="fill_parent"
-                android:layout_height="40dip"
-                android:padding="2dip">
-
-                <RelativeLayout
-                    android:id="@+id/LayoutHistory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </HorizontalScrollView>
-
-            <TableLayout
-                android:id="@+id/LayoutHistoryControls"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="1">
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-                    <ImageButton
-                        android:id="@+id/ButtonPrevious"
-                        android:src="@drawable/navigation_previous_item"
-                        android:layout_height="40dip"
-                        android:layout_width="40dip"
-                        style="@style/ChessImageButton" />
-                    <SeekBar
-                        android:id="@+id/SeekBarMain"
-                        android:layout_marginLeft="8dip"
-                        android:layout_marginRight="8dip"
-                        android:layout_width="fill_parent"
-                        android:layout_height="40dip" />
-                    <ImageButton
-                        android:id="@+id/ButtonNext"
-                        android:src="@drawable/navigation_next_item"
-                        android:layout_height="40dip"
-                        android:layout_width="40dip"
-                        style="@style/ChessImageButton" />
-                </TableRow>
-            </TableLayout>
-
             <TableLayout
                 android:id="@+id/LayoutCapturedPieces"
                 android:layout_width="fill_parent"
@@ -298,6 +257,47 @@
                     <TextView
                         android:id="@+id/TextViewCapturedWhiteQueen"
                         style="@style/CaptureTextStyle" />
+                </TableRow>
+            </TableLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/LayoutScrollViewHistory"
+                android:layout_width="fill_parent"
+                android:layout_height="40dip"
+                android:padding="2dip">
+
+                <RelativeLayout
+                    android:id="@+id/LayoutHistory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </HorizontalScrollView>
+
+            <TableLayout
+                android:id="@+id/LayoutHistoryControls"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1">
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                    <ImageButton
+                        android:id="@+id/ButtonPrevious"
+                        android:src="@drawable/navigation_previous_item"
+                        android:layout_height="40dip"
+                        android:layout_width="40dip"
+                        style="@style/ChessImageButton" />
+                    <SeekBar
+                        android:id="@+id/SeekBarMain"
+                        android:layout_marginLeft="8dip"
+                        android:layout_marginRight="8dip"
+                        android:layout_width="fill_parent"
+                        android:layout_height="40dip" />
+                    <ImageButton
+                        android:id="@+id/ButtonNext"
+                        android:src="@drawable/navigation_next_item"
+                        android:layout_height="40dip"
+                        android:layout_width="40dip"
+                        style="@style/ChessImageButton" />
                 </TableRow>
             </TableLayout>
 
