@@ -11,7 +11,7 @@ public interface ICSListener {
     void OnError();
     void OnPlayerList(ArrayList<HashMap<String,String>> playerList);
     void OnBoardUpdated(String gameLine, String handle);
-    void OnChallenged(String opponent, String rating, String message);
+    void OnChallenged(HashMap<String, String> challenge);
     void OnIllegalMove();
     void OnSeekNotAvailable();
     void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating);

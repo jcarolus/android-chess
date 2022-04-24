@@ -328,7 +328,7 @@ public class ICSServer extends Service {
 
             HashMap<String, String> challenge = icsPatterns.parseChallenge(line, handle);
             if (challenge != null) {
-                for (ICSListener listener: listeners) {listener.OnChallenged(challenge.get("opponent"), challenge.get("rating"), "@TODO");}
+                for (ICSListener listener: listeners) {listener.OnChallenged(challenge);}
                 continue;
             }
 
@@ -418,10 +418,15 @@ public class ICSServer extends Service {
                 for (ICSListener listener: listeners) {listener.OnPuzzleStopped();}
                 continue;
             }
-        }
 
-        // @TODO only when of interest for outside world
-        for (ICSListener listener: listeners) {listener.OnConsoleOutput(buffer);}
+            if (icsPatterns.filterOutput(line)) {
+                continue;
+            }
+
+            Log.i(TAG, "[" + line + "]");
+
+            for (ICSListener listener: listeners) {listener.OnConsoleOutput(line);}
+        }
     }
 
     public void startKeepAliveTimer() {

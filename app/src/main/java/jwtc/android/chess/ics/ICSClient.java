@@ -1584,13 +1584,17 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     @Override
-    public void OnChallenged(String opponent, String rating, String message) {
-
+    public void OnChallenged(HashMap<String, String> challenge) {
         new AlertDialog.Builder(ICSClient.this)
             .setTitle(ICSClient.this.getString(R.string.title_challenge))
-            .setMessage(opponent +
-                    " [" + rating +
-                    "]\n " + message)
+            .setMessage(challenge.get("opponent") +
+                    " [" + challenge.get("rating") + "]\n " +
+                    " challenges you for a " +
+                    challenge.get("minutes") + " min.+" +
+                    challenge.get("seconds") + " s " +
+                    challenge.get("type") + " " +
+                    challenge.get("num") + ".\n" +
+                    "Do you wish to accept?")
             .setPositiveButton(getString(R.string.alert_yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {

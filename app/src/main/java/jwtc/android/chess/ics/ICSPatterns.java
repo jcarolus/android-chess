@@ -372,6 +372,10 @@ public class ICSPatterns {
         return null;
     }
 
+    public boolean filterOutput(String line) {
+        return line.length() < 3 || line.contains("seeking");
+    }
+
     public static String replaceChars(final String str, final String searchChars, String replaceChars) {
         if (isEmpty(str) || isEmpty(searchChars)) {
             return str;
