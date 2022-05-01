@@ -3,7 +3,6 @@ package jwtc.android.chess;
 import jwtc.chess.*;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -28,9 +27,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import android.view.GestureDetector.OnGestureListener;
 import android.view.GestureDetector;
-import android.widget.TextView;
+import android.widget.TableLayout;
 
 public class main extends ChessActivity implements OnInitListener, GestureDetector.OnGestureListener {
 
@@ -82,7 +80,7 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         if (prefs.getBoolean("speechNotification", false)) {
             try {
                 _speech = new TextToSpeech(this, this);
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 _speech = null;
             }
         } else {
@@ -112,6 +110,20 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         Intent intent;
         String s;
         switch (item.getItemId()) {
+            case R.id.action_new:
+                intent = new Intent();
+                intent.setClass(main.this, options.class);
+                intent.putExtra("requestCode", main.REQUEST_NEWGAME);
+                startActivityForResult(intent, main.REQUEST_NEWGAME);
+                return true;
+            case R.id.action_save:
+                saveGame();
+                return true;
+            case R.id.action_open:
+                intent = new Intent();
+                intent.setClass(main.this, GamesListView.class);
+                startActivityForResult(intent, main.REQUEST_OPEN);
+                return true;
             case R.id.action_prefs:
                 intent = new Intent();
                 intent.setClass(main.this, mainPrefs.class);
@@ -125,11 +137,6 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
                 intent.setClass(main.this, options.class);
                 intent.putExtra("requestCode", REQUEST_OPTIONS);
                 startActivityForResult(intent, REQUEST_OPTIONS);
-                return true;
-            case R.id.action_setup:
-                intent = new Intent();
-                intent.setClass(main.this, setup.class);
-                startActivityForResult(intent, main.REQUEST_SETUP);
                 return true;
             case R.id.action_email:
                 emailPGN();
@@ -199,50 +206,14 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         }
     }
 
-    public void showSubViewMenu() {
-
-        _itemsMenu = new String[]{
-                getString(R.string.menu_subview_cpu),
-                getString(R.string.menu_subview_captured),
-                getString(R.string.menu_subview_seek),
-                getString(R.string.menu_subview_moves),
-                getString(R.string.menu_subview_annotate),
-                getString(R.string.menu_subview_guess),
-                getString(R.string.menu_subview_blindfold)
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(main.this);
-        builder.setTitle(getString(R.string.menu_subview_title));
-        final TextView tv_engine = (TextView) findViewById(R.id.TextViewEngine);
-
-        builder.setItems(_itemsMenu, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                _chessView.toggleControl(item);
-
-                // show engine name
-                SharedPreferences pref = getBaseContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
-                String engName = pref.getString("UCIEngine", null);
-                String dbName = pref.getString("UCIDatabase", null);
-                if (engName == null) {
-                    engName = "Native engine";
-                } else if(dbName != null) {
-                    engName += " +db";
-                }
-                tv_engine.setText(_itemsMenu[0] + ": " + engName);
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    @Override  // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
+    @Override
+    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
     public boolean dispatchKeyEvent(KeyEvent event) {
         int keyCode = event.getKeyCode();
         int action = event.getAction();
         boolean isDown = action == 0;
 
-        if(_skipReturn && keyCode == KeyEvent.KEYCODE_ENTER){  // skip enter key
+        if (_skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
             return true;
         }
 
@@ -253,26 +224,27 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         return super.dispatchKeyEvent(event);
     }
 
-    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         //View v = getWindow().getCurrentFocus();
         //Log.i("main", "current focus " + (v == null ? "NULL" : v.toString()));
         int c = (event.getUnicodeChar());
-        Log.i("main", "onKeyDown " + keyCode + " = " + (char)c);
-        if(keyCode == KeyEvent.KEYCODE_MENU){
+        Log.i("main", "onKeyDown " + keyCode + " = " + (char) c);
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
             //showMenu();
             return true;
         }
 
         // preference is to skip a carriage return
-        if(_skipReturn && (char)c == '\r'){
+        if (_skipReturn && (char) c == '\r') {
             return true;
         }
 
-        if(c > 48 && c < 57 || c > 96 && c < 105){
-            _keyboardBuffer += ("" + (char)c);
+        if (c > 48 && c < 57 || c > 96 && c < 105) {
+            _keyboardBuffer += ("" + (char) c);
         }
-        if(_keyboardBuffer.length() >= 2){
+        if (_keyboardBuffer.length() >= 2) {
             Log.i("main", "handleClickFromPositionString " + _keyboardBuffer);
             _chessView.handleClickFromPositionString(_keyboardBuffer);
             _keyboardBuffer = "";
@@ -312,8 +284,9 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         SharedPreferences prefs = this.getPrefs();
 
         if (prefs.getBoolean("speechNotification", false)) {
-            if(_speech == null)
-            {_speech = new TextToSpeech(this, this);}
+            if (_speech == null) {
+                _speech = new TextToSpeech(this, this);
+            }
         } else {
             _speech = null;
         }
@@ -357,13 +330,13 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
             Log.i("onResume", "action send with type " + type);
             if ("application/x-chess-pgn".equals(type)) {
                 sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if(sPGN != null) {
+                if (sPGN != null) {
                     sPGN = sPGN.trim();
                     loadPGN(sPGN);
                 }
             } else {
                 sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if(sFEN != null) {
+                if (sFEN != null) {
                     sFEN = sFEN.trim();
                     loadFEN(sFEN);
                 }
@@ -406,6 +379,16 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
                 loadPGN(sPGN);
             }
         }
+
+
+        findViewById(R.id.LayoutEngineInfo).setVisibility(prefs.getBoolean("showEngineInfo", true) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.LayoutCapturedPieces).setVisibility(prefs.getBoolean("showCapturedPieces", true) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.LayoutScrollViewHistory).setVisibility(prefs.getBoolean("showMoveHistory", true) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.LayoutHistoryControls).setVisibility(prefs.getBoolean("showSeekBar", true) ? View.VISIBLE : View.GONE);
+        findViewById(R.id.TextViewAnnotate).setVisibility(prefs.getBoolean("showAnnotate", true) ? View.VISIBLE : View.GONE);
+
+        // LayoutGuessTheMove
+        findViewById(R.id.LayoutBlindfold).setVisibility(prefs.getBoolean("showBlindFoldMode", true) ? View.VISIBLE : View.GONE);
 
         _chessView.OnResume(prefs);
 
@@ -498,8 +481,12 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
 
             if (resultCode == options.RESULT_960) {
                 newGameRandomFischer();
-            } else if (resultCode == RESULT_OK) {
+            } else if (resultCode == options.RESULT_DEFAULT) {
                 newGame();
+            } else if (resultCode == options.RESULT_SETUP) {
+                Intent intent = new Intent();
+                intent.setClass(main.this, setup.class);
+                startActivityForResult(intent, main.REQUEST_SETUP);
             }
         }
     }

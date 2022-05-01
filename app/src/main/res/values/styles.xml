@@ -8,82 +8,92 @@
         <!--<item name="android:background">@android:color/background_dark</item>-->
     </style>
 
-     <style name="ChessTextViewStyle" parent="android:Widget.TextView">
-	    <item name="android:typeface">sans</item>
-	</style>
+    <style name="ChessTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:typeface">sans</item>
+    </style>
 
-     <style name="ChessTextAppearance" parent="@android:style/TextAppearance">
-         <item name="android:typeface">sans</item>
-     </style>
+    <style name="ChessTextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:typeface">sans</item>
+    </style>
 
     <style name="MyTextStyle" parent="ChessTextAppearance">
-    	<item name="android:paddingTop">@dimen/normalPaddingY</item>
-    	<item name="android:paddingBottom">@dimen/normalPaddingY</item>
-    	<item name="android:paddingLeft">@dimen/normalPaddingX</item>
-    	<item name="android:paddingRight">@dimen/normalPaddingX</item>
+        <item name="android:paddingTop">@dimen/normalPaddingY</item>
+        <item name="android:paddingBottom">@dimen/normalPaddingY</item>
+        <item name="android:paddingLeft">@dimen/normalPaddingX</item>
+        <item name="android:paddingRight">@dimen/normalPaddingX</item>
         <item name="android:textSize">@dimen/normalTextSize</item>
     </style>
-     <style name="MyHeaderTextStyle" parent="@style/MyTextStyle">
+
+    <style name="MyHeaderTextStyle" parent="@style/MyTextStyle">
         <item name="android:textSize">@dimen/headerTextSize</item>
         <item name="android:paddingTop">@dimen/headerPaddingY</item>
-    	<item name="android:paddingBottom">@dimen/headerPaddingY</item>
-    	<item name="android:paddingLeft">@dimen/headerPaddingX</item>
-    	<item name="android:paddingRight">@dimen/headerPaddingX</item>
+        <item name="android:paddingBottom">@dimen/headerPaddingY</item>
+        <item name="android:paddingLeft">@dimen/headerPaddingX</item>
+        <item name="android:paddingRight">@dimen/headerPaddingX</item>
     </style>
+
     <style name="MyTitleTextStyle" parent="@style/MyTextStyle">
         <item name="android:textSize">@dimen/titleTextSize</item>
     </style>
+
     <style name="MyLabelTextStyle">
-    	<item name="android:typeface">sans</item>
-    	<item name="android:paddingTop">1dp</item>
-    	<item name="android:paddingBottom">1dp</item>
-    	<item name="android:paddingLeft">8dp</item>
-    	<item name="android:paddingRight">4dp</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:paddingTop">1dp</item>
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">4dp</item>
         <item name="android:textSize">14sp</item>
     </style>
+
     <style name="MyNormalTextStyle">
-    	<item name="android:gravity">center_vertical</item>
-    	<item name="android:typeface">sans</item>
-    	<item name="android:paddingLeft">2dp</item>
-    	<item name="android:paddingRight">2dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">2dp</item>
         <item name="android:textSize">14sp</item>
     </style>
+
     <style name="MyRowTextStyle" parent="@style/MyTextStyle">
-    	<item name="android:gravity">center_vertical</item>
-    	<item name="android:paddingLeft">2dp</item>
-    	<item name="android:paddingRight">2dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">2dp</item>
         <item name="android:textSize">14sp</item>
     </style>
+
     <style name="MySmallTextStyle">
-    	<item name="android:paddingTop">1dp</item>
-    	<item name="android:paddingBottom">1dp</item>
-    	<item name="android:paddingLeft">2dp</item>
-    	<item name="android:paddingRight">2dp</item>
+        <item name="android:paddingTop">1dp</item>
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">2dp</item>
         <item name="android:textSize">12sp</item>
     </style>
+
     <style name="CaptureImageStyle">
-    	<item name="android:layout_height">30dp</item>
-    	<item name="android:layout_width">30dp</item>
-    </style>
-    <style name="CaptureTextStyle">
-    	<item name="android:gravity">center</item>
-    	<item name="android:layout_marginLeft">2dp</item>
-		<item name="android:layout_height">wrap_content</item><!-- 14dip --> 
-		<item name="android:layout_width">30dp</item>
-		<item name="android:textSize">10sp</item>
-    </style>
-    <style name="CaptureTextStyleSmall" parent="@style/CaptureTextStyle">
-		<item name="android:layout_width">16dp</item>
-		<item name="android:layout_marginLeft">0dp</item>
-    </style>
-    <style name="MyRowStyle">
-     	<item name="android:layout_marginBottom">1dp</item>
-     	<item name="android:gravity">center_vertical</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">30dp</item>
     </style>
 
-    <style name="ChessTheme" parent="@android:style/Theme.Holo">
+    <style name="CaptureTextStyle">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:layout_height">wrap_content</item><!-- 14dip -->
+        <item name="android:layout_width">30dp</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="CaptureTextStyleSmall" parent="@style/CaptureTextStyle">
+        <item name="android:layout_width">16dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
+    </style>
+
+    <style name="MyRowStyle">
+        <item name="android:layout_marginBottom">1dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="ChessTheme" parent="@android:style/Theme.Holo.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowBackground">@color/holo_primary_dark</item>
-
     </style>
+
 </resources>

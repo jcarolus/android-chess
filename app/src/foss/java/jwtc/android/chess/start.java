@@ -33,11 +33,11 @@ public class start extends Activity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
-        String myLanguage  	= getData.getString("localelanguage", "");
+        String myLanguage = getData.getString("localelanguage", "");
 
         Locale current = getResources().getConfiguration().locale;
         String language = current.getLanguage();
-        if(myLanguage.equals("")){    // localelanguage not used yet? then use device default locale
+        if (myLanguage.equals("")) {    // localelanguage not used yet? then use device default locale
             myLanguage = language;
         }
 
@@ -58,7 +58,7 @@ public class start extends Activity {
 
         String[] title = getResources().getStringArray(R.array.start_menu);
 
-        _list = (ListView)findViewById(R.id.ListStart);
+        _list = (ListView) findViewById(R.id.ListStart);
         _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -107,7 +107,7 @@ public class start extends Activity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == 1){
+        if (resultCode == 1) {
             Log.i(TAG, "finish and restart");
 
             Intent intent = new Intent(this, start.class);
@@ -138,7 +138,7 @@ public class start extends Activity {
         }
     }
 
-    public static String get_ssActivity(){
+    public static String get_ssActivity() {
         return _ssActivity;
     }
 }

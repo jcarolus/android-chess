@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:padding="5dp">
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp">
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -11,10 +13,10 @@
         android:background="@android:drawable/ic_menu_close_clear_cancel"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:onClick="onClick"
-         />
+        android:onClick="onClick" />
 
-    <TextView android:id="@+id/tvopponentname"
+    <TextView
+        android:id="@+id/tvopponentname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
@@ -22,9 +24,10 @@
         android:layout_below="@+id/ButtonGameExit"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp" />
 
-    <TableLayout android:id="@+id/ICSPlayerButtons"
+    <TableLayout
+        android:id="@+id/ICSPlayerButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:stretchColumns="*"
@@ -32,79 +35,83 @@
         android:layout_marginTop="15dp">
 
         <TableRow>
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButHistory"
-                android:text="@string/ics_history"
-                />
+                android:text="@string/ics_history" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButFinger"
-                android:text="@string/ics_finger"
-                />
+                android:text="@string/ics_finger" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButFollow"
-                android:text="@string/ics_follow"
-                />
+                android:text="@string/ics_follow" />
 
         </TableRow>
 
         <TableRow>
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButUnFollow"
-                android:text="@string/ics_unfollow"
-                />
+                android:text="@string/ics_unfollow" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButMatch"
-                android:text="@string/ics_match"
-                />
+                android:text="@string/ics_match" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:width="90dp"
                 android:id="@+id/ButSmoves"
-                android:text="@string/ics_gamenumber"
-                />
+                android:text="@string/ics_gamenumber" />
         </TableRow>
 
     </TableLayout>
 
-    <ScrollView android:id="@+id/ScrollICSPlayerList"
+    <ScrollView
+        android:id="@+id/ScrollICSPlayerList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ICSPlayerButtons"
         android:layout_above="@+id/EditPlayerChat"
         android:layout_marginTop="10dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        >
-        <TextView android:text="Welcome to ICS, press menu to continue"
-                  android:id="@+id/TextViewICSPlayerList"
-                  android:layout_width="match_parent" android:layout_height="match_parent"
-                  style="@style/MyTextStyle" />
+        android:layout_alignParentRight="true">
+
+        <TextView
+            android:text="Welcome to ICS, press menu to continue"
+            android:id="@+id/TextViewICSPlayerList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/MyTextStyle" />
     </ScrollView>
 
-    <EditText android:id="@+id/EditPlayerChat"
-        android:layout_width="match_parent" android:layout_height="50dp"
-        android:minWidth="100dip" android:singleLine="true" android:inputType="text"
-        android:text="" android:imeOptions="actionSend"
+    <EditText
+        android:id="@+id/EditPlayerChat"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:minWidth="100dip"
+        android:singleLine="true"
+        android:inputType="text"
+        android:text=""
+        android:imeOptions="actionSend"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp" />
 

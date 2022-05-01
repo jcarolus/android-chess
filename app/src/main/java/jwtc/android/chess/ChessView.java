@@ -2,7 +2,6 @@ package jwtc.android.chess;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
@@ -32,9 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.*;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.view.ViewTreeObserver;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -49,14 +46,12 @@ public class ChessView extends UI {
 
     private ChessActivity _parent;
     private ImageButton _butPlay, butQuickSoundOn, butQuickSoundOff;
-    private ViewAnimator _viewAnimator;
     private ProgressBar _progressPlay;
     private TextView _tvClockMe, _tvClockOpp, _tvTitleMe, _tvTitleOpp, _tvAnnotate, _tvEngine, _tvAnnotateGuess;
     private int _dpadPos;
     private int _playMode;
     private String _sPrevECO;
     private HorizontalScrollView _hScrollHistory;
-    private ScrollView _vScrollHistory;
     private RelativeLayout _layoutHistory;
     private ArrayList<PGNView> _arrPGNView;
     private LayoutInflater _inflater;
@@ -73,14 +68,7 @@ public class ChessView extends UI {
     private TextView[][] _arrTextCaptured;
     ///////////////////////////////
 
-    public static int SUBVIEW_CPU = 0;
-    public static int SUBVIEW_CAPTURED = 1;
-    public static int SUBVIEW_SEEK = 2;
-    public static int SUBVIEW_HISTORY = 3;
-    public static int SUBVIEW_ANNOTATE = 4;
-    public static int SUBVIEW_GUESS = 5;
-    public static int SUBVIEW_BLINDFOLD = 6;
-    public static int SUBVIEW_ECO = 7;
+    public static int SUBVIEW_GUESS = 3;
 
     static class InnerHandler extends Handler {
         WeakReference<ChessView> _chessView;
@@ -154,31 +142,30 @@ public class ChessView extends UI {
             }
         };
 
-        butQuickSoundOn = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOn);
-        butQuickSoundOff = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOff);
-        if (butQuickSoundOn != null && butQuickSoundOff != null) {
-            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    _bPlayVolume = false;
-                    _parent.set_fVolume(0.0f);
-                    butQuickSoundOn.setVisibility(View.GONE);
-                    butQuickSoundOff.setVisibility(View.VISIBLE);
-                }
-            });
+//        butQuickSoundOn = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOn);
+//        butQuickSoundOff = (ImageButton) activity.findViewById(R.id.ButtonICSSoundOff);
+//        if (butQuickSoundOn != null && butQuickSoundOff != null) {
+//            butQuickSoundOn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    _bPlayVolume = false;
+//                    _parent.set_fVolume(0.0f);
+//                    butQuickSoundOn.setVisibility(View.GONE);
+//                    butQuickSoundOff.setVisibility(View.VISIBLE);
+//                }
+//            });
+//
+//            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    _bPlayVolume = true;
+//                    _parent.set_fVolume(1.0f);
+//                    butQuickSoundOff.setVisibility(View.GONE);
+//                    butQuickSoundOn.setVisibility(View.VISIBLE);
+//                }
+//            });
+//        }
 
-            butQuickSoundOff.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    _bPlayVolume = true;
-                    _parent.set_fVolume(1.0f);
-                    butQuickSoundOff.setVisibility(View.GONE);
-                    butQuickSoundOn.setVisibility(View.VISIBLE);
-                }
-            });
-        }
-
-        _vScrollHistory = null;
         _hScrollHistory = null;
         _layoutHistory = null;
 
@@ -189,9 +176,8 @@ public class ChessView extends UI {
 
         _jArrayECO = null;
         // below was previously in init() method
-        _hScrollHistory = (HorizontalScrollView) _parent.findViewById(R.id.HScrollViewHistory);
+        _hScrollHistory = (HorizontalScrollView) _parent.findViewById(R.id.LayoutScrollViewHistory);
         _layoutHistory = (RelativeLayout) _parent.findViewById(R.id.LayoutHistory);
-        _vScrollHistory = (ScrollView) _parent.findViewById(R.id.VScrollViewHistory);
 
         _butPlay = (ImageButton) _parent.findViewById(R.id.ButtonPlay);
         //_butPlay.setFocusable(false);
@@ -390,61 +376,50 @@ public class ChessView extends UI {
 		}
 		*/
 
-        ImageButton butNewGame = (ImageButton) _parent.findViewById(R.id.ButtonNewGame);
-        if (butNewGame != null) {
-            //butNewGame.setFocusable(false);
-            butNewGame.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    Intent intent = new Intent();
-                    intent.setClass(_parent, options.class);
-                    intent.putExtra("requestCode", main.REQUEST_NEWGAME);
-                    _parent.startActivityForResult(intent, main.REQUEST_NEWGAME);
-                }
-            });
-        }
+		ImageButton butMenu = _parent.findViewById(R.id.ButtonMenu);
+		butMenu.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _parent.openOptionsMenu();
+            }
+        });
+		//
 
-        ImageButton butShowMenu = (ImageButton) _parent.findViewById(R.id.ButtonShowMenu);
-        if (butShowMenu != null) {
-            butShowMenu.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
+//        ImageButton butNewGame = (ImageButton) _parent.findViewById(R.id.ButtonNewGame);
+//        if (butNewGame != null) {
+//            //butNewGame.setFocusable(false);
+//            butNewGame.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//                    Intent intent = new Intent();
+//                    intent.setClass(_parent, options.class);
+//                    intent.putExtra("requestCode", main.REQUEST_NEWGAME);
+//                    _parent.startActivityForResult(intent, main.REQUEST_NEWGAME);
+//                }
+//            });
+//        }
+        
+//        ImageButton butSaveGame = (ImageButton) _parent.findViewById(R.id.ButtonSave);
+//        if (butSaveGame != null) {
+//            //butSaveGame.setFocusable(false);
+//            butSaveGame.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//
+//                    _parent.saveGame();
+//                }
+//            });
+//        }
 
-                    _parent.openOptionsMenu();
-                }
-            });
-        }
-
-        ImageButton butSaveGame = (ImageButton) _parent.findViewById(R.id.ButtonSave);
-        if (butSaveGame != null) {
-            //butSaveGame.setFocusable(false);
-            butSaveGame.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-
-                    _parent.saveGame();
-                }
-            });
-        }
-
-        ImageButton butOpenGame = (ImageButton) _parent.findViewById(R.id.ButtonOpen);
-        if (butOpenGame != null) {
-            //butOpenGame.setFocusable(false);
-            butOpenGame.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    Intent intent = new Intent();
-                    intent.setClass(_parent, GamesListView.class);
-                    _parent.startActivityForResult(intent, main.REQUEST_OPEN);
-                }
-            });
-        }
-
-        ImageButton butFlipBoard = (ImageButton) _parent.findViewById(R.id.ButtonFlipBoard);
-        if (butFlipBoard != null) {
-            butFlipBoard.setOnClickListener((new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    flipBoard();
-                }
-            }));
-        }
+//        ImageButton butOpenGame = (ImageButton) _parent.findViewById(R.id.ButtonOpen);
+//        if (butOpenGame != null) {
+//            //butOpenGame.setFocusable(false);
+//            butOpenGame.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//                    Intent intent = new Intent();
+//                    intent.setClass(_parent, GamesListView.class);
+//                    _parent.startActivityForResult(intent, main.REQUEST_OPEN);
+//                }
+//            });
+//        }
 
         //
 		/*
@@ -532,19 +507,6 @@ public class ChessView extends UI {
         _switchTurnMe = (ViewSwitcher) _parent.findViewById(R.id.ImageTurnMe);
         _switchTurnOpp = (ViewSwitcher) _parent.findViewById(R.id.ImageTurnOpp);
 
-        ImageButton butSwitch = (ImageButton) _parent.findViewById(R.id.ButtonSwitch);
-        if (butSwitch != null) {
-            //butSwitch.setFocusable(false);
-            butSwitch.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    if (_viewAnimator.getChildCount() >= 6) {
-                        _parent.showSubViewMenu();
-                    } else {
-                        toggleControls();
-                    }
-                }
-            });
-        }
 
         _tvAnnotate = (TextView) _parent.findViewById(R.id.TextViewAnnotate);
         if (_tvAnnotate != null) {
@@ -583,11 +545,6 @@ public class ChessView extends UI {
         }
         _tvAnnotateGuess = (TextView) _parent.findViewById(R.id.TextViewGuess);
 
-        _viewAnimator = (ViewAnimator) _parent.findViewById(R.id.ViewAnimatorMain);
-        if (_viewAnimator != null) {
-            _viewAnimator.setOutAnimation(_parent, R.anim.slide_left);
-            _viewAnimator.setInAnimation(_parent, R.anim.slide_right);
-        }
         _progressPlay = (ProgressBar) _parent.findViewById(R.id.ProgressBarPlay);
 
         _seekBar = (SeekBar) _parent.findViewById(R.id.SeekBarMain);
@@ -691,19 +648,6 @@ public class ChessView extends UI {
         return sTmp;
     }
 
-    public void toggleControls() {
-
-        if (_viewAnimator != null) {
-            _viewAnimator.showNext();
-        }
-    }
-
-    public void toggleControl(int i) {
-        if (_viewAnimator != null) {
-            _viewAnimator.setDisplayedChild(i);
-        }
-    }
-
     public void setAutoFlip(boolean b) {
         _bAutoFlip = b;
     }
@@ -789,17 +733,7 @@ public class ChessView extends UI {
 
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             if (_layoutHistory.getChildCount() > 0) {
-                if (_vScrollHistory != null) {
-                    if (_layoutHistory.getChildCount() % 2 == 0) {
-                        lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                        lp.addRule(RelativeLayout.BELOW, _layoutHistory.getChildAt(_layoutHistory.getChildCount() - 1).getId());
-                    } else {
-                        lp.addRule(RelativeLayout.RIGHT_OF, _layoutHistory.getChildAt(_layoutHistory.getChildCount() - 1).getId());
-                        if (_layoutHistory.getChildCount() > 2) {
-                            lp.addRule(RelativeLayout.BELOW, _layoutHistory.getChildAt(_layoutHistory.getChildCount() - 2).getId());
-                        }
-                    }
-                } else if (_hScrollHistory != null) {
+                if (_hScrollHistory != null) {
                     lp.addRule(RelativeLayout.RIGHT_OF, _layoutHistory.getChildAt(_layoutHistory.getChildCount() - 1).getId());
                 }
             }
@@ -838,7 +772,6 @@ public class ChessView extends UI {
             arrSelPositions[1] = _dpadPos;
         }
         int turn = _jni.getTurn();
-
 
 
         if (_playMode == HUMAN_HUMAN && _bAutoFlip &&
@@ -933,28 +866,29 @@ public class ChessView extends UI {
         if (m_iFrom != -1) {
 
             // Guess the move ===============================
-            if (_viewAnimator != null) {
-                if (_viewAnimator.getDisplayedChild() == SUBVIEW_GUESS) {
-                    if (wasMovePlayed(m_iFrom, iTo)) {
-                        if (_imgStatusGuess != null) {
-                            _imgStatusGuess.setImageResource(R.drawable.indicator_ok);
-                        }
-                        jumptoMove(_jni.getNumBoard());
-                        updateState();
-                        m_iFrom = -1;
-                        //Log.i("WAS MOVE PLAYED", "TRUE");
-                        return true;
-                    } else {
-                        if (_imgStatusGuess != null) {
-                            _imgStatusGuess.setImageResource(R.drawable.indicator_error);
-                        }
-                        m_iFrom = -1;
-                        paintBoard();
-                        //Log.i("WAS MOVE PLAYED", "FALSE");
-                        return false;
-                    }
-                }
-            }
+            // @TODO as separate mode
+//            if (_viewAnimator != null) {
+//                if (_viewAnimator.getDisplayedChild() == SUBVIEW_GUESS) {
+//                    if (wasMovePlayed(m_iFrom, iTo)) {
+//                        if (_imgStatusGuess != null) {
+//                            _imgStatusGuess.setImageResource(R.drawable.indicator_ok);
+//                        }
+//                        jumptoMove(_jni.getNumBoard());
+//                        updateState();
+//                        m_iFrom = -1;
+//                        //Log.i("WAS MOVE PLAYED", "TRUE");
+//                        return true;
+//                    } else {
+//                        if (_imgStatusGuess != null) {
+//                            _imgStatusGuess.setImageResource(R.drawable.indicator_error);
+//                        }
+//                        m_iFrom = -1;
+//                        paintBoard();
+//                        //Log.i("WAS MOVE PLAYED", "FALSE");
+//                        return false;
+//                    }
+//                }
+//            }
             // ==============================================
 
             // ###########################################################################
@@ -1114,11 +1048,8 @@ public class ChessView extends UI {
         editor.putBoolean("autoflipBoard", _bAutoFlip);
         editor.putBoolean("showMoves", _bShowMoves);
         editor.putBoolean("playAsBlack", _bPlayAsBlack);
-        editor.putBoolean("PlayVolume" , _bPlayVolume);
+        editor.putBoolean("PlayVolume", _bPlayVolume);
         editor.putInt("boardNum", _jni.getNumBoard());
-        if (_viewAnimator != null) {
-            editor.putInt("animatorViewNumber", _viewAnimator.getDisplayedChild());
-        }
         pauzeTimer();
         editor.putLong("clockTotalMillies", _lClockTotal);
         editor.putLong("clockWhiteMillies", _lClockWhite);
@@ -1174,20 +1105,17 @@ public class ChessView extends UI {
         continueTimer();
 
         ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
-        if (_viewAnimator != null) {
-            _viewAnimator.setDisplayedChild(prefs.getInt("animatorViewNumber", 0) % _viewAnimator.getChildCount());
-        }
 
-        _bPlayVolume = prefs.getBoolean("PlayVolume", true);
-        if (_bPlayVolume){
-            butQuickSoundOff.setVisibility(View.GONE);
-            butQuickSoundOn.setVisibility(View.VISIBLE);
-            _parent.set_fVolume(1.0f);
-        } else {
-            butQuickSoundOn.setVisibility(View.GONE);
-            butQuickSoundOff.setVisibility(View.VISIBLE);
-            _parent.set_fVolume(0.0f);
-        }
+//        _bPlayVolume = prefs.getBoolean("PlayVolume", true);
+//        if (_bPlayVolume) {
+//            butQuickSoundOff.setVisibility(View.GONE);
+//            butQuickSoundOn.setVisibility(View.VISIBLE);
+//            _parent.set_fVolume(1.0f);
+//        } else {
+//            butQuickSoundOn.setVisibility(View.GONE);
+//            butQuickSoundOff.setVisibility(View.VISIBLE);
+//            _parent.set_fVolume(0.0f);
+//        }
 
         if (_butPlay != null) {
             if (_playMode == HUMAN_HUMAN) {
@@ -1300,7 +1228,7 @@ public class ChessView extends UI {
             }
         }
         int state = _jni.getState();
-        int res = chessStateToR(state);
+        int res = UI.chessStateToR(state);
         turn = _jni.getTurn();
 
         if (turn == ChessBoard.WHITE) {
@@ -1354,7 +1282,7 @@ public class ChessView extends UI {
         //if(_tvEngineValue != null)
         //	_tvEngineValue.setText("BoardValue " + _jni.getBoardValue());
 
-        if(_jArrayECO != null) {
+        if (_jArrayECO != null) {
             String sECO = getECOInfo(0, _jArrayECO);
             Log.i("ChessView-ECO", sECO == null ? "No ECO" : sECO);
             if (sECO != null && (_sPrevECO != null && _sPrevECO.equals(sECO) == false) || _sPrevECO == null) {
@@ -1414,13 +1342,6 @@ public class ChessView extends UI {
                 }
 
             });
-        } else if (_vScrollHistory != null) {
-            _vScrollHistory.post(new Runnable() {
-                public void run() {
-                    _vScrollHistory.fullScroll(ScrollView.FOCUS_DOWN);
-                }
-
-            });
         }
     }
 
@@ -1432,18 +1353,7 @@ public class ChessView extends UI {
                 }
 
             });
-        } else if (_vScrollHistory != null) {
-            _vScrollHistory.post(new Runnable() {
-                public void run() {
-                    _vScrollHistory.fullScroll(ScrollView.FOCUS_UP);
-                }
-
-            });
         }
-    }
-
-    public boolean hasVerticalScroll() {
-        return (_vScrollHistory != null);
     }
 
     protected void dpadFirst() {
@@ -1534,7 +1444,7 @@ public class ChessView extends UI {
         int move = _jni.getMyMove();
         String sMove = _jni.getMyMoveToString();
 
-        if (sMove.contains("x")){
+        if (sMove.contains("x")) {
             _parent.soundCapture();
         } else {
             _parent.soundMove();
@@ -1590,7 +1500,7 @@ public class ChessView extends UI {
     // e.g. R.attr.colorAccent
     public int fetchAttrColor(int iAttrKey) {
         TypedValue typedValue = new TypedValue();
-        TypedArray a = _parent.obtainStyledAttributes(typedValue.data, new int[] { iAttrKey });
+        TypedArray a = _parent.obtainStyledAttributes(typedValue.data, new int[]{iAttrKey});
         int color = a.getColor(0, 0);
         a.recycle();
         return color;

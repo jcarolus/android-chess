@@ -1,5 +1,5 @@
 /* $Id: BulletedTextView.java 57 2007-11-21 18:31:52Z steven $
- * 
+ *
  * Copyright 2007 Steven Osborn
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,40 +24,40 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class IconifiedTextView extends LinearLayout {
-	
-	private TextView mText;
-	private ImageView mIcon;
-	
-	public IconifiedTextView(Context context, IconifiedText aIconifiedText) {
-		super(context);
 
-		/* First Icon and the Text to the right (horizontal),
-		 * not above and below (vertical) */
-		this.setOrientation(HORIZONTAL);
+    private TextView mText;
+    private ImageView mIcon;
 
-		mIcon = new ImageView(context);
-		mIcon.setImageDrawable(aIconifiedText.getIcon());
-		// left, top, right, bottom
-		mIcon.setPadding(0, 2, 5, 0); // 5px to the right
-		
-		/* At first, add the Icon to ourself
-		 * (! we are extending LinearLayout) */
-		addView(mIcon,  new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		
-		mText = new TextView(context);
-		mText.setText(aIconifiedText.getText());
-		mText.setGravity(Gravity.CENTER_VERTICAL);
-		/* Now the text (after the icon) */
-		addView(mText, new LinearLayout.LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT));
-	}
+    public IconifiedTextView(Context context, IconifiedText aIconifiedText) {
+        super(context);
 
-	public void setText(String words) {
-		mText.setText(words);
-	}
-	
-	public void setIcon(Drawable bullet) {
-		mIcon.setImageDrawable(bullet);
-	}
+        /* First Icon and the Text to the right (horizontal),
+         * not above and below (vertical) */
+        this.setOrientation(HORIZONTAL);
+
+        mIcon = new ImageView(context);
+        mIcon.setImageDrawable(aIconifiedText.getIcon());
+        // left, top, right, bottom
+        mIcon.setPadding(0, 2, 5, 0); // 5px to the right
+
+        /* At first, add the Icon to ourself
+         * (! we are extending LinearLayout) */
+        addView(mIcon, new LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+        mText = new TextView(context);
+        mText.setText(aIconifiedText.getText());
+        mText.setGravity(Gravity.CENTER_VERTICAL);
+        /* Now the text (after the icon) */
+        addView(mText, new LinearLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT));
+    }
+
+    public void setText(String words) {
+        mText.setText(words);
+    }
+
+    public void setIcon(Drawable bullet) {
+        mIcon.setImageDrawable(bullet);
+    }
 }

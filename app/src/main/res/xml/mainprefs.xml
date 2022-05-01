@@ -7,18 +7,47 @@
             android:defaultValue="false"
             android:summary="@string/pref_onLoadJumpToLastMove_desc"
             android:key="onLoadJumpToLastMove" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_show_engine_info"
+            android:defaultValue="true"
+            android:key="showEngineInfo" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_show_captured"
+            android:defaultValue="true"
+            android:key="showCapturedPieces" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_show_seek"
+            android:defaultValue="true"
+            android:key="showSeekBar" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_show_moves"
+            android:defaultValue="true"
+            android:key="showMoveHistory" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_show_annotate"
+            android:defaultValue="true"
+            android:key="showAnnotate" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_show_blindfold"
+            android:defaultValue="true"
+            android:key="showBlindFoldMode" />
+
         <CheckBoxPreference
             android:title="@string/pref_speech"
             android:defaultValue="false"
             android:summary="@string/pref_speech_desc"
-            android:key="speechNotification"
-            />
+            android:key="speechNotification" />
         <CheckBoxPreference
             android:title="@string/pref_skipreturn"
             android:defaultValue="true"
             android:summary="@string/pref_skipreturn_desc"
-            android:key="skipReturn"
-            />
+            android:key="skipReturn" />
         <!--
         <CheckBoxPreference
             android:title="@string/pref_eco"

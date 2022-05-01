@@ -6,30 +6,33 @@
     android:padding="10px"
 
     >
-    
-    <TextView android:id="@+id/TextViewDoImport"
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:paddingTop="12px" 
-		android:paddingLeft="20px"
-    />
-	<TextView android:id="@+id/TextViewDoImportCnt"
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:paddingTop="12px" 
-		android:paddingLeft="20px"
-    />
-    <TextView android:id="@+id/TextViewDoImportCntFail"
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:paddingTop="12px" 
-		android:paddingLeft="20px"
-    />
-    <ProgressBar android:id="@+id/ProgressDoImport"
-		android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_gravity="center"
-    	/>
-    	
+
+    <TextView
+        android:id="@+id/TextViewDoImport"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="12px"
+        android:paddingLeft="20px" />
+
+    <TextView
+        android:id="@+id/TextViewDoImportCnt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="12px"
+        android:paddingLeft="20px" />
+
+    <TextView
+        android:id="@+id/TextViewDoImportCntFail"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="12px"
+        android:paddingLeft="20px" />
+
+    <ProgressBar
+        android:id="@+id/ProgressDoImport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
 
 </LinearLayout>

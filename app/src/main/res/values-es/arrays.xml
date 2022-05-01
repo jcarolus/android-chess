@@ -77,14 +77,37 @@
         <item>Desafio</item>
     </string-array>
     <string-array name="match_time_minutes">
-        <item>0</item><item>1</item><item>2</item><item>3</item><item>4</item><item>5</item>
-        <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
-        <item>20</item><item>30</item><item>40</item><item>60</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+        <item>12</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>60</item>
     </string-array>
     <string-array name="match_time_increments">
-        <item>0</item><item>2</item><item>3</item><item>4</item><item>5</item>
-        <item>6</item><item>8</item><item>10</item><item>12</item><item>15</item>
-        <item>20</item><item>30</item><item>40</item><item>60</item>
+        <item>0</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+        <item>12</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>60</item>
     </string-array>
     <string-array name="match_rated">
         <item>@string/choice_match_unrated</item>
@@ -100,20 +123,36 @@
         <item>Negro</item>
     </string-array>
     <string-array name="console_character_size">
-        <item>6</item><item>8</item><item>10</item><item>12</item>
-        <item>14</item><item>16</item><item>18</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+        <item>12</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
     </string-array>
     <string-array name="console_character_size_values">
-        <item>6</item><item>8</item><item>10</item><item>12</item>
-        <item>14</item><item>16</item><item>18</item>
+        <item>6</item>
+        <item>8</item>
+        <item>10</item>
+        <item>12</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
     </string-array>
     <string-array name="time_warning">
-        <item>5 segundos</item><item>10 segundos</item><item>25 segundos</item>
-        <item>45 segundos</item><item>1 minuto</item>
+        <item>5 segundos</item>
+        <item>10 segundos</item>
+        <item>25 segundos</item>
+        <item>45 segundos</item>
+        <item>1 minuto</item>
     </string-array>
     <string-array name="time_warning_values">
-        <item>5</item><item>10</item><item>25</item>
-        <item>45</item><item>60</item>
+        <item>5</item>
+        <item>10</item>
+        <item>25</item>
+        <item>45</item>
+        <item>60</item>
     </string-array>
     <string-array name="gamestartsound">
         <item>ninguno</item>
@@ -122,7 +161,10 @@
         <item>solo vibración</item>
     </string-array>
     <string-array name="gamestartsound_values">
-        <item>0</item><item>1</item><item>2</item><item>3</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
     <string-array name="field_files">
         <item>ningúno</item>

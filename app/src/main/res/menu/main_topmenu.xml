@@ -1,36 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_options"
-        android:title="@string/menu_options"
-        android:showAsAction="ifRoom"/>
-    <item android:id="@+id/action_prefs"
-        android:title="@string/menu_prefs"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_setup"
-        android:title="@string/menu_setup"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_flip"
-        android:title="@string/menu_flip"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_clock"
-        android:title="@string/menu_set_clock"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_email"
-        android:title="@string/menu_email_game"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_clip_pgn"
-        android:title="@string/menu_clip_pgn"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_fromclip"
-        android:title="@string/menu_fromclip"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_from_qrcode"
-        android:title="@string/menu_from_qrcode"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_to_qrcode"
-        android:title="@string/menu_to_qrcode"
-        android:showAsAction="never"/>
-    <item android:id="@+id/action_help"
-          android:title="@string/menu_help"
-        android:showAsAction="never"/>
+    <item
+        android:id="@+id/action_options"
+        android:title="@string/menu_options"/>
+    <item
+        android:id="@+id/action_new"
+        android:title="@string/menu_new"/>
+    <item
+        android:id="@+id/action_save"
+        android:title="@string/menu_save_game"/>
+    <item
+        android:id="@+id/action_open"
+        android:title="@string/menu_load_game"/>
+    <item
+        android:id="@+id/action_prefs"
+        android:title="@string/menu_prefs" />
+    <item
+        android:id="@+id/action_flip"
+        android:title="@string/menu_flip" />
+    <item
+        android:id="@+id/action_clock"
+        android:title="@string/menu_set_clock" />
+    <item
+        android:id="@+id/action_email"
+        android:title="@string/menu_email_game" />
+    <item
+        android:id="@+id/action_clip_pgn"
+        android:title="@string/menu_clip_pgn" />
+    <item
+        android:id="@+id/action_fromclip"
+        android:title="@string/menu_fromclip" />
+    <item
+        android:id="@+id/action_from_qrcode"
+        android:title="@string/menu_from_qrcode" />
+    <item
+        android:id="@+id/action_to_qrcode"
+        android:title="@string/menu_to_qrcode" />
+    <item
+        android:id="@+id/action_help"
+        android:title="@string/menu_help" />
 </menu>

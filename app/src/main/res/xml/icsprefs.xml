@@ -19,8 +19,7 @@
             android:summary="@string/pref_icsconsolecharactersize_desc"
             android:entries="@array/console_character_size"
             android:entryValues="@array/console_character_size_values"
-            android:defaultValue="10"
-            />
+            android:defaultValue="10" />
 
         <CheckBoxPreference
             android:title="@string/pref_icsautosought"
@@ -32,7 +31,7 @@
             android:title="@string/pref_icstimewarning"
             android:defaultValue="true"
             android:summary="@string/pref_icstimewarning_desc"
-            android:key="ICSTimeWarning"/>
+            android:key="ICSTimeWarning" />
 
         <ListPreference
             android:title="@string/pref_icstimewarningsecs"
@@ -40,22 +39,19 @@
             android:summary="@string/pref_icstimewarningsecs_desc"
             android:entries="@array/time_warning"
             android:entryValues="@array/time_warning_values"
-            android:defaultValue="10"
-            />
+            android:defaultValue="10" />
 
         <CheckBoxPreference
             android:title="@string/prefs_icsendgamedialog"
             android:defaultValue="true"
             android:summary="@string/prefs_icsendgamesummary"
-            android:key="ICSEndGameDialog"
-            />
+            android:key="ICSEndGameDialog" />
 
         <CheckBoxPreference
             android:title="@string/prefs_icsshowclock"
             android:defaultValue="true"
             android:summary="@string/prefs_icsshowclocksummary"
-            android:key="ICSClockPGN"
-            />
+            android:key="ICSClockPGN" />
 
         <ListPreference
             android:title="@string/pref_icsgamestartsound"
@@ -63,16 +59,15 @@
             android:summary="@string/pref_icsgamestartsound_desc"
             android:entries="@array/gamestartsound"
             android:entryValues="@array/gamestartsound_values"
-            android:defaultValue="1"
-            />
+            android:defaultValue="1" />
 
         <CheckBoxPreference
             android:title="@string/pref_icsnotification"
             android:defaultValue="true"
             android:summary="@string/prefs_icsnotificationsummary"
-            android:key="ICSGameStartBringToFront"
-            />
+            android:key="ICSGameStartBringToFront" />
 
     </PreferenceCategory>
 
-§</PreferenceScreen>
+    §
+</PreferenceScreen>

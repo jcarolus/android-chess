@@ -26,8 +26,10 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
@@ -78,7 +80,7 @@ public class pgntool extends ListActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-                if(false == pgntool.this.hasPermission()) {
+                if (false == pgntool.this.hasPermission()) {
                     return;
                 }
 
@@ -214,7 +216,7 @@ public class pgntool extends ListActivity {
                     } else {
                         doToast("No engine installed");
                     }
-                }  else if (arrString[arg2].equals(getString(R.string.pgntool_install_uci_database))) {
+                } else if (arrString[arg2].equals(getString(R.string.pgntool_install_uci_database))) {
                     Intent i = new Intent();
                     i.setClass(pgntool.this, FileListView.class);
                     i.putExtra(EXTRA_MODE, MODE_UCI_DB_INSTALL);
@@ -236,7 +238,7 @@ public class pgntool extends ListActivity {
                     } else {
                         doToast("No database installed");
                     }
-                } else  if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
+                } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
                     builder.setTitle(getString(R.string.pgntool_confirm_practice_reset));

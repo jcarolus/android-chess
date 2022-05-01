@@ -23,13 +23,14 @@ public class options extends MyBaseActivity {
 
     public static final String TAG = "options";
 
-    public static final int RESULT_960 = 1;
+    public static final int RESULT_960 = 1, RESULT_SETUP = 2, RESULT_DEFAULT = 3;
 
-    private CheckBox _checkAutoFlip, _checkMoves, _check960;
+    private CheckBox _checkAutoFlip, _checkMoves;
     private Spinner _spinLevel, _spinLevelPly;
     private Button _butCancel, _butOk;
-    private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack, _radioAndroid, _radioHuman;
-    private TableRow _tableRowOption960;
+    private RadioButton _radioTime, _radioPly, _radioWhite, _radioBlack, _radioAndroid, _radioHuman,
+            _radio960, _radioDefault, _radioSetup;
+    private TableRow _tableRowOptions;
 
     private static boolean _sbFlipTopPieces, _sbPlayAsBlack;
 
@@ -61,8 +62,10 @@ public class options extends MyBaseActivity {
         _checkAutoFlip = (CheckBox) findViewById(R.id.CheckBoxOptionsAutoFlip);
         _checkMoves = (CheckBox) findViewById(R.id.CheckBoxOptionsShowMoves);
 
-        _tableRowOption960 = (TableRow) findViewById(R.id.TableRowOptions960);
-        _check960 = (CheckBox) findViewById(R.id.CheckBoxOptions960);
+        _tableRowOptions = (TableRow) findViewById(R.id.TableRowOptions);
+        _radioDefault = (RadioButton) findViewById(R.id.RadioOptionsDefault);
+        _radio960 = (RadioButton) findViewById(R.id.RadioOptions960);
+        _radioSetup = (RadioButton) findViewById(R.id.RadioOptionsSetup);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.levels_time, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -129,56 +132,62 @@ public class options extends MyBaseActivity {
 
                 editor.apply();
 
-                if (_tableRowOption960.getVisibility() == View.VISIBLE && _check960.isChecked()) {
+                if (_tableRowOptions.getVisibility() == View.VISIBLE) {
+                    if (_radio960.isChecked()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(options.this);
+                        builder.setTitle(getString(R.string.title_chess960_manual_random));
+                        final EditText input = new EditText(options.this);
+                        input.setInputType(InputType.TYPE_CLASS_PHONE);
+                        builder.setView(input);
+                        builder.setPositiveButton(getString(R.string.choice_manually), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                try {
+                                    int seed = Integer.parseInt(input.getText().toString());
 
+                                    if (seed >= 0 && seed <= 960) {
+                                        //_chessView.newGameRandomFischer(seed);
+                                        SharedPreferences.Editor editor = options.this.getPrefs().edit();
+                                        editor.putString("FEN", null);
+                                        editor.putInt("boardNum", 0);
+                                        editor.putInt("randomFischerSeed", seed % 960);
+                                        editor.apply();
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(options.this);
-                    builder.setTitle(getString(R.string.title_chess960_manual_random));
-                    final EditText input = new EditText(options.this);
-                    input.setInputType(InputType.TYPE_CLASS_PHONE);
-                    builder.setView(input);
-                    builder.setPositiveButton(getString(R.string.choice_manually), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            try {
-                                int seed = Integer.parseInt(input.getText().toString());
-
-                                if (seed >= 0 && seed <= 960) {
-                                    //_chessView.newGameRandomFischer(seed);
-                                    SharedPreferences.Editor editor = options.this.getPrefs().edit();
-                                    editor.putString("FEN", null);
-                                    editor.putInt("boardNum", 0);
-                                    editor.putInt("randomFischerSeed", seed % 960);
-                                    editor.apply();
-
-                                    finish();
-                                } else {
-                                    doToast(getString(R.string.err_chess960_position_range));
+                                        finish();
+                                    } else {
+                                        doToast(getString(R.string.err_chess960_position_range));
+                                    }
+                                } catch (Exception ex) {
+                                    doToast(getString(R.string.err_chess960_position_format));
                                 }
-                            } catch (Exception ex) {
-                                doToast(getString(R.string.err_chess960_position_format));
                             }
-                        }
-                    });
-                    builder.setNegativeButton(getString(R.string.choice_random), new DialogInterface.OnClickListener() {
+                        });
+                        builder.setNegativeButton(getString(R.string.choice_random), new DialogInterface.OnClickListener() {
 
-                        public void onClick(DialogInterface dialog, int which) {
-                            int seed = -1;
-                            //seed = _chessView.newGameRandomFischer(seed);
+                            public void onClick(DialogInterface dialog, int which) {
+                                int seed = -1;
+                                //seed = _chessView.newGameRandomFischer(seed);
 
-                            SharedPreferences.Editor editor = options.this.getPrefs().edit();
-                            editor.putString("FEN", null);
-                            editor.putInt("boardNum", -1);
-                            editor.putInt("randomFischerSeed", seed);
-                            editor.apply();
+                                SharedPreferences.Editor editor = options.this.getPrefs().edit();
+                                editor.putString("FEN", null);
+                                editor.putInt("boardNum", -1);
+                                editor.putInt("randomFischerSeed", seed);
+                                editor.apply();
 
-                            finish();
-                        }
-                    });
+                                finish();
+                            }
+                        });
 
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                        AlertDialog alert = builder.create();
+                        alert.show();
 
-                    setResult(RESULT_960);
+                        setResult(RESULT_960);
+                    } else if (_radioDefault.isChecked()) {
+                        setResult(RESULT_DEFAULT);
+                        finish();
+                    } else if (_radioSetup.isChecked()) {
+                        setResult(RESULT_SETUP);
+                        finish();
+                    }
 
                 } else {
                     setResult(RESULT_OK);
@@ -194,12 +203,15 @@ public class options extends MyBaseActivity {
 
         final Intent intent = getIntent();
 
+        _radioDefault.setChecked(true);
+        _radio960.setChecked(false);
+        _radioSetup.setChecked(false);
+
         if (intent.getExtras().getInt("requestCode") == main.REQUEST_NEWGAME) {
             setTitle(R.string.menu_new);
-            _tableRowOption960.setVisibility(View.VISIBLE);
+            _tableRowOptions.setVisibility(View.VISIBLE);
         } else {
-            _check960.setChecked(false);
-            _tableRowOption960.setVisibility(View.GONE);
+            _tableRowOptions.setVisibility(View.GONE);
         }
 
         SharedPreferences prefs = this.getPrefs();
@@ -232,11 +244,11 @@ public class options extends MyBaseActivity {
         super.onPause();
     }
 
-    public static boolean is_sbFlipTopPieces(){
+    public static boolean is_sbFlipTopPieces() {
         return _sbFlipTopPieces;
     }
 
-    public static boolean is_sbPlayAsBlack(){
+    public static boolean is_sbPlayAsBlack() {
         return _sbPlayAsBlack;
     }
 

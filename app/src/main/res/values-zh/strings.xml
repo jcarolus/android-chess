@@ -92,8 +92,8 @@
     <string name="button_save">保存</string>
     <string name="button_save_copy">复制并保存</string>
     <string name="button_new">新建</string>
-    <string name="button_show">显示</string>
-    <string name="button_jump">跳到 #</string>
+    <string name="puzzle_show">显示</string>
+    <string name="puzzle_jump_to">跳到 #</string>
 
     <string name="alert_yes">是</string>
     <string name="alert_no">否</string>
@@ -165,13 +165,13 @@
     <string name="menu_global_prefs">通用性设置</string>
 
     <string name="menu_subview_title">选择一个下层控制命令</string>
-    <string name="menu_subview_cpu">引擎信息</string>
-    <string name="menu_subview_moves">历史步骤</string>
-    <string name="menu_subview_seek">步骤进度条</string>
-    <string name="menu_subview_captured">吃掉的子</string>
-    <string name="menu_subview_annotate">步骤解说</string>
+    <string name="pref_show_engine_info">引擎信息</string>
+    <string name="pref_show_moves">历史步骤</string>
+    <string name="pref_show_seek">步骤进度条</string>
+    <string name="pref_show_captured">吃掉的子</string>
+    <string name="pref_show_annotate">步骤解说</string>
     <string name="menu_subview_guess">猜测下一步</string>
-    <string name="menu_subview_blindfold">盲人模式</string>
+    <string name="pref_show_blindfold">盲人模式</string>
 
     <string name="options_play_human">人 vs 人</string>
     <string name="options_play_android">人 vs 安卓机器人</string>

@@ -1,77 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:gravity="center" android:id="@+id/LayoutMain">
-    
-	<include android:id="@+id/includeboard"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-        layout="@layout/board" 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/LayoutMain">
+
+    <include
+        android:id="@+id/includeboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/board" />
+
+    <!--
+    <TextView android:layout_width="wrap_content" android:layout_height="320dip"
+        android:id="@+id/includeboard"
     />
-	
-	<!--
-	<TextView android:layout_width="wrap_content" android:layout_height="320dip"
-        android:id="@+id/includeboard" 
-	/>
     -->
 
-	<TableLayout android:id="@+id/LayoutTurn"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_below="@id/includeboard"
-	>
-		<TableRow >
-			<ViewSwitcher android:id="@+id/ImageTurn"
-				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
-				android:layout_gravity="center_vertical"
-			>
-				<ImageView android:src="@drawable/turnblack"
-				    android:layout_width="12dip" android:layout_height="12dip"
-				/>
-				<ImageView android:src="@drawable/turnwhite"
-					android:layout_height="12dip" android:layout_width="12dip"
-				/>
-			</ViewSwitcher>
-			<TextView android:id="@+id/TextViewPracticeTime"
-				android:layout_height="wrap_content" android:layout_width="50dip"
-				android:text="00:00" 
-				style="@style/MyNormalTextStyle"
-			/>
-			<TextView android:id="@+id/TextViewPracticeMove"
-				android:text=" to move, mate in "
-				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				style="@style/MyHeaderTextStyle"
-			/>
-		</TableRow>
-		
-	</TableLayout>
-	
-	<TableLayout
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_below="@id/LayoutTurn" android:layout_marginTop="2dip"
-		android:paddingTop="4dip" android:paddingBottom="4dip"
-	>
-		<TableRow android:gravity="center">
-			<TextView android:id="@+id/TextViewPracticeAvgTime"
-				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				style="@style/MyNormalTextStyle" android:paddingLeft="8dip" android:paddingRight="8dip"
-			/>
-			<ImageView android:id="@+id/ImageStatus" android:src="@drawable/indicator_none"
-				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				android:layout_marginLeft="8dip" android:layout_marginRight="8dip"
-			/>
-			<ImageButton android:id="@+id/ButtonPracticePause"
-				android:src="@drawable/av_pause"
-				android:layout_height="40dip" android:layout_width="40dip" style="@style/ChessImageButton"
-			/>
-			<Button android:id="@+id/ButtonPracticeShow"
-				android:text="@string/button_show" android:paddingLeft="8dip" android:paddingRight="8dip"
-				android:layout_height="40dip" android:layout_width="wrap_content"
-			/>
-			<ImageButton android:id="@+id/ButtonPracticeNext" android:src="@drawable/navigation_next_item"
-				android:layout_height="40dip" android:layout_width="40dip" style="@style/ChessImageButton"
-			/>
-		</TableRow>
-	</TableLayout>
-	
+    <TableLayout
+        android:id="@+id/LayoutTurn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/includeboard"
+        android:stretchColumns="2">
+
+        <TableRow>
+
+            <ViewSwitcher
+                android:id="@+id/ImageTurn"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip"
+                android:layout_gravity="center_vertical">
+
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_width="12dip"
+                    android:layout_height="12dip" />
+
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+            </ViewSwitcher>
+
+            <TextView
+                android:id="@+id/TextViewPracticeTime"
+                android:layout_height="wrap_content"
+                android:layout_width="50dip"
+                android:text="00:00"
+                style="@style/MyNormalTextStyle" />
+
+            <TextView
+                android:id="@+id/TextViewPracticeMove"
+                android:text=" to move, mate in "
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/MyHeaderTextStyle" />
+
+            <ImageView
+                android:id="@+id/ImageStatus"
+                android:src="@drawable/indicator_none"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/LayoutTurn"
+        android:layout_marginTop="2dip"
+        android:paddingTop="4dip"
+        android:paddingBottom="4dip">
+
+        <TableRow android:gravity="center">
+
+            <TextView
+                android:id="@+id/TextViewPracticeAvgTime"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyNormalTextStyle"
+                android:paddingLeft="8dip"
+                android:paddingRight="8dip" />
+
+            <ImageButton
+                android:id="@+id/ButtonPracticePause"
+                android:src="@drawable/av_pause"
+                android:layout_height="40dip"
+                android:layout_width="40dip"
+                style="@style/ChessImageButton" />
+
+            <Button
+                android:id="@+id/ButtonPracticeShow"
+                android:text="@string/puzzle_show"
+                android:paddingLeft="8dip"
+                android:paddingRight="8dip"
+                android:layout_height="40dip"
+                android:layout_width="wrap_content" />
+
+            <ImageButton
+                android:id="@+id/ButtonPracticeNext"
+                android:src="@drawable/navigation_next_item"
+                android:layout_height="40dip"
+                android:layout_width="40dip"
+                style="@style/ChessImageButton" />
+        </TableRow>
+    </TableLayout>
+
 </RelativeLayout>

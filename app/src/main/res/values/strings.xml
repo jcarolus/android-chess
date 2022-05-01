@@ -91,8 +91,8 @@
     <string name="button_save">Save</string>
     <string name="button_save_copy">Save copy</string>
     <string name="button_new">New</string>
-    <string name="button_show">Show</string>
-    <string name="button_jump">Jump to #</string>
+    <string name="puzzle_show">Show</string>
+    <string name="puzzle_jump_to">Jump to #</string>
 
     <string name="alert_yes">Yes</string>
     <string name="alert_no">No</string>
@@ -164,18 +164,19 @@
     <string name="menu_global_prefs">Global Settings</string>
 
     <string name="menu_subview_title">Choose sub controls</string>
-    <string name="menu_subview_cpu">Engine info</string>
-    <string name="menu_subview_moves">Move history</string>
-    <string name="menu_subview_seek">Move seek bar</string>
-    <string name="menu_subview_captured">Captured pieces</string>
-    <string name="menu_subview_annotate">Annotate move</string>
+    <string name="pref_show_engine_info">Engine info</string>
+    <string name="pref_show_moves">Move history</string>
+    <string name="pref_show_seek">Move seek bar</string>
+    <string name="pref_show_captured">Captured pieces</string>
+    <string name="pref_show_annotate">Annotate move</string>
     <string name="menu_subview_guess">Guess the move</string>
-    <string name="menu_subview_blindfold">Blindfold mode</string>
+    <string name="pref_show_blindfold">Blindfold mode</string>
 
     <string name="options_play_human">Human vs Human</string>
     <string name="options_play_android">Human vs Android</string>
     <string name="options_play_white">White</string>
     <string name="options_play_black">Black</string>
+    <string name="options_default">Standard Chess</string>
     <string name="options_960">Chess 960 - Fischer Random</string>
     <string name="options_load_database">Load openings database</string>
     <string name="options_auto_flip">Auto flip board</string>
@@ -193,6 +194,11 @@
     <string name="state_draw_repeat">draw (3-fold repetition)</string>
     <string name="state_mate">checkmated</string>
     <string name="state_check">check</string>
+    <string name="state_black_forfeits_time">black forfeits on time</string>
+    <string name="state_white_forfeits_time">white forfeits on time</string>
+    <string name="state_black_resigned">black resigned</string>
+    <string name="state_white_resigned">white resigned</string>
+    <string name="state_draw_agreement">draw by agreement</string>
     <string name="state_time">forfeits on time</string>
     <string name="state_resigned">resigned</string>
     <string name="state_aborted">aborted</string>
@@ -342,6 +348,9 @@
     <string name="ics_menu_stop_puzzle">Stop puzzle</string>
     <string name="ics_menu_top_blitz">Top Blitz</string>
     <string name="ics_menu_top_standard">Top Standard</string>
+    <string name="ics_menu_puzzlebot_mate">Puzzlebot mate</string>
+    <string name="ics_menu_puzzlebot_tactics">Puzzlebot tactics</string>
+    <string name="ics_menu_puzzlebot_study">Puzzlebot study</string>
 
     <string name="ics_playertwo">Player 2</string>
     <string name="ics_playerone">Player 1</string>
@@ -369,6 +378,7 @@
 
     <string name="ics_error_connection">Could not connect to server. Make sure you have your internet connection enabled</string>
     <string name="ics_lost_connection">Connection to server is broken.</string>
+    <string name="ics_error">An error occurred. Please try again later.</string>
 
     <string name="ics_notification_title">Chess by Jeroen</string>
     <string name="ics_notification_text">Tap to play</string>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ICSPlay"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="0,1,2"
+        android:stretchColumns="3"
+        android:layout_marginBottom="2dip">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/TextViewClockTop"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="00:00"
+                android:gravity="center_vertical"
+                style="@style/MyNormalTextStyle"
+                android:layout_marginLeft="8dip" />
+
+            <TextView
+                android:text="@string/ics_playertwo"
+                android:id="@+id/TextViewTop"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyHeaderTextStyle" />
+
+            <TextView
+                android:text="----"
+                android:id="@+id/TextViewICSTwoRating"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyHeaderTextStyle"
+                android:layout_marginLeft="3dip" />
+
+            <TextView
+                android:id="@+id/TextViewICSBoardNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="# 0"
+                android:layout_marginRight="5dp"
+                style="@style/MyHeaderTextStyle"
+                android:gravity="right|center_vertical" />
+        </TableRow>
+
+    </TableLayout>
+
+    <include
+        layout="@layout/board"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/includeboard" />
+    <!--
+       <TextView android:layout_width="wrap_content" android:layout_height="320dip"
+           android:id="@+id/includeboard"
+           android:layout_below="@id/TablePlayerTop"/>
+        -->
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dip"
+        android:shrinkColumns="0,1,2"
+        android:stretchColumns="3">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/TextViewClockBottom"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="00:00"
+                android:gravity="center_vertical"
+                style="@style/MyNormalTextStyle"
+                android:layout_marginLeft="8dip" />
+
+            <TextView
+                android:text="@string/ics_playerone"
+                android:id="@+id/TextViewBottom"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyHeaderTextStyle" />
+
+            <TextView
+                android:text="----"
+                android:id="@+id/TextViewICSOneRating"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyHeaderTextStyle"
+                android:layout_marginLeft="3dip" />
+
+            <TextView
+                android:id="@+id/TextViewMoveNumber"
+                android:text="-"
+                style="@style/MyNormalTextStyle"
+                android:gravity="right|center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginRight="5dp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/TextViewICSTimePerMove"
+                android:text="(0:00)"
+                style="@style/MyNormalTextStyle"
+                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginRight="5dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/TextViewICSBoardLastMove"
+                android:text="---"
+                style="@style/MyNormalTextStyle"
+                android:gravity="center_vertical"
+                android:layout_width="50dp"
+                android:layout_height="20dp" />
+        </TableRow>
+    </TableLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/LayoutPlayerControl"
+        android:layout_marginTop="2dip">
+
+        <TableLayout
+            android:id="@+id/TableICSPlayButtons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:stretchColumns="0">
+
+            <TableRow>
+
+                <EditText
+                    android:id="@+id/EditICSBoard"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:inputType="text"
+                    android:imeOptions="actionSend" />
+
+                <ImageButton
+                    android:id="@+id/ButtonICSChat"
+                    android:src="@drawable/social_chat"
+                    android:layout_width="40dip"
+                    android:layout_height="40dip"
+                    style="@style/ChessImageButton" />
+
+                <ImageButton
+                    android:id="@+id/ButtonICSQuickCmd"
+                    android:src="@drawable/ellipsis"
+                    android:layout_width="40dip"
+                    android:layout_height="40dip"
+                    style="@style/ChessImageButton" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/dummy"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_below="@+id/TableICSPlayButtons"
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible" />
+
+        <ImageButton
+            android:id="@+id/ButtonICSExamineBackward"
+            android:src="@drawable/navigation_previous_item"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            style="@style/ChessImageButton"
+            android:layout_below="@+id/TableICSPlayButtons"
+            android:layout_toLeftOf="@+id/dummy"
+            android:layout_margin="5dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/ButtonICSExamineForward"
+            android:src="@drawable/navigation_next_item"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            style="@style/ChessImageButton"
+            android:layout_below="@+id/TableICSPlayButtons"
+            android:layout_toRightOf="@+id/dummy"
+            android:layout_margin="5dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/ButtonICSRevert"
+            android:src="@drawable/navigation_revert"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            style="@style/ChessImageButton"
+            android:layout_below="@+id/TableICSPlayButtons"
+            android:layout_toLeftOf="@+id/ButtonICSExamineBackward"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="30dp"
+            android:visibility="gone" />
+
+        <!-- ############### -->
+        <ViewSwitcher
+            android:id="@+id/ViewSitcherConfirmAndText"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/ButtonICSExamineBackward">
+
+            <ScrollView
+                android:id="@+id/ScrollPlayConsole"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:text="Welcome to ICS, press menu to continue"
+                    android:id="@+id/TextViewICSPlayConsole"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/MyTextStyle" />
+            </ScrollView>
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="16dip"
+                android:stretchColumns="*">
+
+                <TableRow>
+
+                    <Button
+                        android:id="@+id/ButtonCancelMove"
+                        android:text="@string/alert_cancel"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:id="@+id/ButtonConfirmMove"
+                        android:text="@string/alert_confirm"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+            </TableLayout>
+
+        </ViewSwitcher>
+    </RelativeLayout>
+</LinearLayout>

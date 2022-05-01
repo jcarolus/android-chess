@@ -92,8 +92,8 @@
     <string name="button_save">Guarda</string>
     <string name="button_save_copy">Guarda copia</string>
     <string name="button_new">Nuevo</string>
-    <string name="button_show">Muestra</string>
-    <string name="button_jump">Salta a #</string>
+    <string name="puzzle_show">Muestra</string>
+    <string name="puzzle_jump_to">Salta a #</string>
 
     <string name="alert_yes">Si</string>
     <string name="alert_no">No</string>
@@ -165,13 +165,13 @@
     <string name="menu_global_prefs">Configuración global</string>
 
     <string name="menu_subview_title">Elige bajo controles</string>
-    <string name="menu_subview_cpu">Información de motor</string>
-    <string name="menu_subview_moves">Mueve historia</string>
-    <string name="menu_subview_seek">Mueve barra de busqueda</string>
-    <string name="menu_subview_captured">Piezas capturadas</string>
-    <string name="menu_subview_annotate">Anota movimiento</string>
+    <string name="pref_show_engine_info">Información de motor</string>
+    <string name="pref_show_moves">Mueve historia</string>
+    <string name="pref_show_seek">Mueve barra de busqueda</string>
+    <string name="pref_show_captured">Piezas capturadas</string>
+    <string name="pref_show_annotate">Anota movimiento</string>
     <string name="menu_subview_guess">Adivina movimiento</string>
-    <string name="menu_subview_blindfold">Modo venda</string>
+    <string name="pref_show_blindfold">Modo venda</string>
 
     <string name="options_play_human">Humano contra Humano</string>
     <string name="options_play_android">Human contra Android</string>

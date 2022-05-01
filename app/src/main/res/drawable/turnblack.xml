@@ -2,7 +2,7 @@
     android:innerRadius="0dp"
     android:shape="ring"
     android:thicknessRatio="2"
-    android:useLevel="false" >
+    android:useLevel="false">
     <solid android:color="#ff000000" />
 
     <stroke
