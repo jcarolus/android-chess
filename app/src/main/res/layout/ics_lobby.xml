@@ -11,29 +11,9 @@
         android:layout_height="wrap_content"
         style="@style/MyHeaderTextStyle" />
 
-    <TableLayout
-        android:id="@+id/LobbyBottomRow"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center_vertical"
-        android:stretchColumns="0">
-        <TableRow>
-
-            <TextView
-                android:text="---"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            </TextView>
-
-        </TableRow>
-    </TableLayout>
-
     <ViewAnimator
         android:id="@+id/ViewAnimatorLobby"
         android:layout_below="@id/TextViewHeader"
-        android:layout_above="@id/LobbyBottomRow"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginTop="2dip">
