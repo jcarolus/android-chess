@@ -18,7 +18,9 @@ import android.widget.Toast;
 
 import java.lang.reflect.Field;
 
-public class MyBaseActivity extends android.app.Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MyBaseActivity extends AppCompatActivity {
 
     protected PowerManager.WakeLock _wakeLock;
     public static final String TAG = "MyBaseActivity";
