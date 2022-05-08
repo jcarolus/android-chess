@@ -63,11 +63,6 @@
                 android:src="@drawable/content_discard"
                 android:layout_marginRight="2dip" />
 
-            <ImageButton
-                android:id="@+id/ButtonMenu"
-                android:src="@drawable/ellipsis"
-                android:layout_width="40dip"
-                android:layout_height="40dip" />
         </TableRow>
         <TableRow android:layout_width="fill_parent" android:layout_height="wrap_content">
             <jwtc.android.chess.CapturedImageView

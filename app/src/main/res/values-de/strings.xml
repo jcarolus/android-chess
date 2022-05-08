@@ -40,6 +40,8 @@
     <string name="pref_sound_desc">Wird abgespielt, wenn der Gegner zieht</string>
     <string name="pref_speech">Sprache</string>
     <string name="pref_speech_desc">Zeigt den gespielten Zug</string>
+    <string name="pref_move_sound_on">Klang bewegen</string>
+    <string name="pref_move_sound_on_desc">Spielt Ton ab, wenn ein Zug gemacht wurde</string>
     <string name="pref_eco">ECO Info</string>
     <string name="pref_eco_desc">Zeige ECO Eröffnungsinfo, falls vorhanden</string>
     <string name="pref_extrahighlight">Extra Hervorhebung</string>

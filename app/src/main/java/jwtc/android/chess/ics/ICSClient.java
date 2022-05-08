@@ -233,15 +233,15 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         });
         */
 
-        ImageButton butQuick = (ImageButton) findViewById(R.id.ButtonICSQuickCmd);
-        if (butQuick != null) {
-            butQuick.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    //showMenu();
-                    openOptionsMenu();
-                }
-            });
-        }
+//        ImageButton butQuick = (ImageButton) findViewById(R.id.ButtonICSQuickCmd);
+//        if (butQuick != null) {
+//            butQuick.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//                    //showMenu();
+//                    openOptionsMenu();
+//                }
+//            });
+//        }
 
         ImageButton butQuick2 = (ImageButton) findViewById(R.id.ButtonICSConsoleQuickCmd);
         if (butQuick2 != null) { // crashes reported on this being null

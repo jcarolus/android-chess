@@ -8,21 +8,22 @@ import java.util.List;
 import com.kalab.chess.enginesupport.ChessEngine;
 import com.kalab.chess.enginesupport.ChessEngineResolver;
 
+import androidx.appcompat.app.AppCompatActivity;
 import jwtc.android.chess.HtmlActivity;
-import jwtc.android.chess.MyBaseActivity;
 import jwtc.android.chess.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.algorithm.UCIWrapper;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,19 +38,19 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class pgntool extends ListActivity {
+public class pgntool extends AppCompatActivity {
 
     public static final String TAG = "pgntool";
 
-    protected static final String MODE_IMPORT = "import";
-    protected static final String MODE_DB_IMPORT = "db_import";
-    protected static final String MODE_DB_POINT = "db_point";
-    protected static final String MODE_UCI_INSTALL = "uci_install";
-    protected static final String MODE_UCI_DB_INSTALL = "uci_db_install";
-    protected static final String MODE_CREATE_PRACTICE = "create_practice";
-    protected static final String MODE_IMPORT_PRACTICE = "import_practice";
-    protected static final String MODE_IMPORT_PUZZLE = "import_puzzle";
-    protected static final String MODE_IMPORT_OPENINGDATABASE = "import_openingdatabase";
+    protected static final int MODE_IMPORT = 1;
+    protected static final int MODE_DB_IMPORT = 2;
+    protected static final int MODE_DB_POINT = 3;
+    protected static final int MODE_UCI_INSTALL = 4;
+    protected static final int MODE_UCI_DB_INSTALL = 5;
+    protected static final int MODE_CREATE_PRACTICE = 6;
+    protected static final int MODE_IMPORT_PRACTICE = 7;
+    protected static final int MODE_IMPORT_PUZZLE = 8;
+    protected static final int MODE_IMPORT_OPENINGDATABASE = 9;
     protected static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     protected static final String EXTRA_MODE = "jwtc.android.chess.tools.Mode";
@@ -63,13 +64,9 @@ public class pgntool extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MyBaseActivity.prepareWindowSettings(this);
-
         setContentView(R.layout.pgntool);
 
-        MyBaseActivity.makeActionOverflowMenuShown(this);
-
-        _lvStart = (ListView) findViewById(android.R.id.list);
+        _lvStart = (ListView) findViewById(R.id.ListPgn);
 
         final CharSequence[] arrString;
 
@@ -86,25 +83,22 @@ public class pgntool extends ListActivity {
 
                 if (arrString[arg2].equals(getString(R.string.pgntool_export_explanation))) {
                     doExport();
-
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_explanation))) {
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_IMPORT);
-                    pgntool.this.startActivity(i);
-
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_IMPORT);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_create_db_explanation))) {
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_DB_IMPORT);
-                    pgntool.this.startActivity(i);
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_DB_IMPORT);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_point_db_explanation))) {
-
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_DB_POINT);
-                    pgntool.this.startActivity(i);
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_DB_POINT);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_install_uci_engine))) {
 
                     // install engine via open chess engine interface
@@ -193,11 +187,10 @@ public class pgntool extends ListActivity {
                     i.putExtra(HtmlActivity.HELP_MODE, "help_pgntool");
                     startActivity(i);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_point_uci_engine))) {
-
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_UCI_INSTALL);
-                    pgntool.this.startActivity(i);
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_UCI_INSTALL);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_engine))) {
                     SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
@@ -217,10 +210,11 @@ public class pgntool extends ListActivity {
                         doToast("No engine installed");
                     }
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_install_uci_database))) {
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_UCI_DB_INSTALL);
-                    pgntool.this.startActivity(i);
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_UCI_DB_INSTALL);
+
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_database))) {
                     SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
                     String sDatabase = prefs.getString("UCIDatabase", null);
@@ -268,25 +262,27 @@ public class pgntool extends ListActivity {
 
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_practice))) {
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_IMPORT_PRACTICE);
-                    pgntool.this.startActivity(i);
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_IMPORT_PRACTICE);
+
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_create_practice_explanation))) {
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_CREATE_PRACTICE);
-                    pgntool.this.startActivity(i);
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_IMPORT_PRACTICE);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_puzzle))) {
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_IMPORT_PUZZLE);
-                    pgntool.this.startActivity(i);
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_IMPORT_PUZZLE);
+
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_opening))) {
-                    Intent i = new Intent();
-                    i.setClass(pgntool.this, FileListView.class);
-                    i.putExtra(EXTRA_MODE, MODE_IMPORT_OPENINGDATABASE);
-                    pgntool.this.startActivity(i);
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, MODE_IMPORT_OPENINGDATABASE);
                 }
                 //
             }
@@ -303,6 +299,28 @@ public class pgntool extends ListActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        Log.d(TAG, "result" + requestCode + "  " + resultCode);
+        if (resultCode == Activity.RESULT_OK) {
+            Uri uri = null;
+            if (resultData != null) {
+                uri = resultData.getData();
+
+                if (uri != null) {
+                    Intent myIntent = new Intent();
+                    myIntent.putExtra(pgntool.EXTRA_MODE, requestCode);
+                    myIntent.setClass(pgntool.this, importactivity.class);
+                    myIntent.setData(uri);
+
+                    startActivity(myIntent);
+                    finish();
+                }
+            }
+            Log.d(TAG, "res url" + uri);
+        }
     }
 
     public boolean hasPermission() {

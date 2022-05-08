@@ -95,13 +95,13 @@ public class setup extends MyBaseActivity {
             }
         });
 
-        ImageButton butMenu = findViewById(R.id.ButtonMenu);
-        butMenu.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openOptionsMenu();
-            }
-        });
+//        ImageButton butMenu = findViewById(R.id.ButtonMenu);
+//        butMenu.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openOptionsMenu();
+//            }
+//        });
 
         _arrSelImages = new CapturedImageView[2 * SELPIECES_COUNT];
         // boardconstants range from 0-5, king is not included

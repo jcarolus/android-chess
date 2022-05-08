@@ -40,6 +40,8 @@
     <string name="pref_sound_desc">Включать при ходе противника</string>
     <string name="pref_speech">Речь</string>
     <string name="pref_speech_desc">Проговаривать сделанный ход</string>
+    <string name="pref_move_sound_on">Переместить звук</string>
+    <string name="pref_move_sound_on_desc">Воспроизводит звук, когда был сделан ход</string>
     <string name="pref_eco">Информация ECO</string>
     <string name="pref_eco_desc">Показывать начальную информацию ECO при наличии</string>
     <string name="pref_extrahighlight">Дополнительное выделение</string>
