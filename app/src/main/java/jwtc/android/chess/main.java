@@ -756,7 +756,6 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
         //Log.i("main", "onFling " + motionEvent.getX() + " " + motionEvent1.getX());
 
         int Xdiff = (int) motionEvent.getX() - (int) motionEvent1.getX();
-        int Ydiff = (int) motionEvent.getY() - (int) motionEvent1.getY();
 
         if (Xdiff < -150) {
             //Log.i("main", "ButNext");
@@ -768,10 +767,6 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
             _chessView.previous();
         }
 
-        if (Ydiff > 150 || Ydiff < -150) {
-            //Log.i("main", "flipBoard");
-            _chessView.flipBoard();
-        }
         return true;
     }
 

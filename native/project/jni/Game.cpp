@@ -968,7 +968,7 @@ long Game::findDBKey(BITBOARD bbKey)
 
 boolean Game::readDBAt(int iPos, BITBOARD& bb){
 
-    if(fseek(DB_FP, iPos * 8, SEEK_SET) == 0){
+    if(iPos < DB_SIZE && fseek(DB_FP, iPos * 8, SEEK_SET) == 0){
         static char buf[8];
         int cnt = fread(buf, 1, 8, DB_FP);
         //DEBUG_PRINT(".");

@@ -10,7 +10,7 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "jwtc.android.chess"
-        minSdkVersion 14
+        minSdkVersion 21
         targetSdkVersion 30
     }
     buildTypes {
