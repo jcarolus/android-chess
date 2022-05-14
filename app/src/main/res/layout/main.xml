@@ -61,19 +61,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/ButtonMenu"
-            android:src="@drawable/ellipsis"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_alignParentRight="true"
-            style="@style/ChessImageButton" />
 
         <RelativeLayout
             android:id="@+id/LayoutPlayButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/ButtonMenu">
+            android:layout_alignParentRight="true"
+            >
             <ImageButton
                 android:id="@+id/ButtonPlay"
                 android:src="@drawable/av_play"

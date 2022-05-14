@@ -40,6 +40,8 @@
     <string name="pref_sound_desc">Eseguito quando l\'avversario muove</string>
     <string name="pref_speech">Parlato</string>
     <string name="pref_speech_desc">Comunica la mossa fatta (in inglese)</string>
+    <string name="pref_move_sound_on">Muovi il suono</string>
+    <string name="pref_move_sound_on_desc">Riproduce il suono quando è stata eseguita una mossa</string>
     <string name="pref_eco">Info ECO</string>
     <string name="pref_eco_desc">Mostra informazioni di apertura ECO quando disponibili</string>
     <string name="pref_extrahighlight">Evidenziazione extra</string>

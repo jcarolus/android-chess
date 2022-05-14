@@ -40,6 +40,8 @@
     <string name="pref_sound_desc">Played when your opponent moves</string>
     <string name="pref_speech">Speech</string>
     <string name="pref_speech_desc">Tells the move that was made</string>
+    <string name="pref_move_sound_on">Move sound</string>
+    <string name="pref_move_sound_on_desc">Plays sound when a move was made</string>
     <string name="pref_eco">ECO info</string>
     <string name="pref_eco_desc">Show ECO opening info when available</string>
     <string name="pref_extrahighlight">Extra highlight</string>

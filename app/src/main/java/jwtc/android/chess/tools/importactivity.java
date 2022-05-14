@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import jwtc.android.chess.MyBaseActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.puzzle.practice;
@@ -25,7 +25,6 @@ import jwtc.chess.PGNEntry;
 import jwtc.chess.algorithm.UCIWrapper;
 import jwtc.chess.board.ChessBoard;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -46,7 +45,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class importactivity extends MyBaseActivity {
+public class importactivity extends AppCompatActivity {
 
     private int _cnt, _untilPly, _cntFail;
     private GameControl _gameControl;
@@ -54,7 +53,7 @@ public class importactivity extends MyBaseActivity {
     private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail;
     private ProgressBar _progress;
     private PGNProcessor _processor;
-    private String _mode = null;
+    private int _mode = 0;
 
     protected TreeSet<Long> _arrKeys;
     protected String _outFile;
@@ -70,8 +69,6 @@ public class importactivity extends MyBaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.doimport);
-
-        this.makeActionOverflowMenuShown();
 
         _processing = false;
         _gameControl = new GameControl();
@@ -119,12 +116,12 @@ public class importactivity extends MyBaseActivity {
 
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                String type = extras.getString(pgntool.EXTRA_MODE);
-                if (type != null) {
+                int type = extras.getInt(pgntool.EXTRA_MODE);
+                if (type != 0) {
                     _mode = type;
                 }
             }
-            if (_mode == null) {
+            if (_mode == 0) {
                 if (uri == null) {
                     finish();
                     return;
@@ -135,7 +132,7 @@ public class importactivity extends MyBaseActivity {
             _cntFail = 0;
 
 
-            if (_mode.equals(pgntool.MODE_IMPORT)) {
+            if (_mode == pgntool.MODE_IMPORT) {
                 _processor = new PGNImportProcessor();
                 _processor.m_threadUpdateHandler = new Handler() {
                     /** Gets called on every message that is received */
@@ -157,7 +154,7 @@ public class importactivity extends MyBaseActivity {
                         }
                     }
                 };
-            } else if (_mode.equals(pgntool.MODE_DB_IMPORT)) {
+            } else if (_mode == pgntool.MODE_DB_IMPORT) {
 
                 _arrKeys.clear();
 
@@ -186,7 +183,7 @@ public class importactivity extends MyBaseActivity {
                     }
                 };
 
-            } else if (_mode.equals(pgntool.MODE_CREATE_PRACTICE)) {
+            } else if (_mode == pgntool.MODE_CREATE_PRACTICE) {
                 _arrKeys.clear();
 
                 Log.i(TAG, "Create practice set");
@@ -219,7 +216,7 @@ public class importactivity extends MyBaseActivity {
                     }
                 };
 
-            } else if (_mode.equals(pgntool.MODE_DB_POINT)) {
+            } else if (_mode == pgntool.MODE_DB_POINT) {
 
 
                 try {
@@ -244,7 +241,7 @@ public class importactivity extends MyBaseActivity {
 
                 finish();
                 return;
-            } else if (_mode.equals(pgntool.MODE_UCI_INSTALL)) {
+            } else if (_mode == pgntool.MODE_UCI_INSTALL) {
 
                 String sPath = uri.getPath();
                 String sEngine = uri.getLastPathSegment(); //"robbolito-android"; //bikjump2.1    stockfish2.0
@@ -271,7 +268,7 @@ public class importactivity extends MyBaseActivity {
 
                 finish();
                 return;
-            } else if (_mode.equals(pgntool.MODE_UCI_DB_INSTALL)) {
+            } else if (_mode == pgntool.MODE_UCI_DB_INSTALL) {
 
                 String sPath = uri.getPath();
                 String sDatabase = uri.getLastPathSegment(); //"goi.bin"
@@ -298,7 +295,7 @@ public class importactivity extends MyBaseActivity {
 
                 finish();
                 return;
-            } else if (_mode.equals(pgntool.MODE_IMPORT_PRACTICE)) {
+            } else if (_mode == pgntool.MODE_IMPORT_PRACTICE) {
 
                 String sPath = uri.getPath();
                 Log.i(TAG, "Import practice " + sPath);
@@ -331,7 +328,7 @@ public class importactivity extends MyBaseActivity {
 
                 finish();
                 return;
-            } else if (_mode.equals(pgntool.MODE_IMPORT_PUZZLE)) {
+            } else if (_mode == pgntool.MODE_IMPORT_PUZZLE) {
 
                 SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
@@ -362,7 +359,7 @@ public class importactivity extends MyBaseActivity {
                         }
                     }
                 };
-            } else if (_mode.equals(pgntool.MODE_IMPORT_OPENINGDATABASE)) {
+            } else if (_mode == pgntool.MODE_IMPORT_OPENINGDATABASE) {
                 _processor = new OpeningImportProcessor();
                 _processor.m_threadUpdateHandler = new Handler() {
                     /** Gets called on every message that is received */

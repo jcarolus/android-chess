@@ -40,6 +40,8 @@
     <string name="pref_sound_desc">对手下棋时播放声音</string>
     <string name="pref_speech">语音</string>
     <string name="pref_speech_desc">语音提示刚刚进行的一步棋</string>
+    <string name="pref_move_sound_on">移动声音</string>
+    <string name="pref_move_sound_on_desc">移动时播放声音</string>
     <string name="pref_eco">ECO 信息</string>
     <string name="pref_eco_desc">空闲时显示ECO 开放信息</string>
     <string name="pref_extrahighlight">特别高亮</string>

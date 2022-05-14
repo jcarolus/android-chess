@@ -24,11 +24,13 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.*;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TableRow.LayoutParams;
 
 
@@ -268,10 +270,13 @@ public class ChessViewBase {
                 }
 
                 if (margin > 0) {
-                    View viewBoard = (View) _activity.findViewById(R.id.includeboard);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) viewBoard.getLayoutParams();
-                    params.setMargins(margin, 0, 0, 0); //substitute parameters for left, top, right, bottom
-                    viewBoard.setLayoutParams(params);
+                    TableLayout tableLayout = (TableLayout)_activity.findViewById(R.id.includeboard);
+                    //View viewBoard = _activity.findViewById(R.id.includeboard);
+                    ViewGroup.LayoutParams params = tableLayout.getLayoutParams();
+                    if (params instanceof RelativeLayout.LayoutParams) {
+                        ((RelativeLayout.LayoutParams)params).setMargins(margin, 0, 0, 0); //substitute parameters for left, top, right, bottom
+                        tableLayout.setLayoutParams(params);
+                    }
                 }
                 Log.i("ChessViewBase", "availableHeight 2 " + availableHeight);
 

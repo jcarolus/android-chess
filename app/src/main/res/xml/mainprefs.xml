@@ -43,6 +43,12 @@
             android:defaultValue="false"
             android:summary="@string/pref_speech_desc"
             android:key="speechNotification" />
+
+        <CheckBoxPreference
+            android:title="@string/pref_move_sound_on"
+            android:defaultValue="true"
+            android:summary="@string/pref_move_sound_on_desc"
+            android:key="moveSoundOn" />
         <CheckBoxPreference
             android:title="@string/pref_skipreturn"
             android:defaultValue="true"

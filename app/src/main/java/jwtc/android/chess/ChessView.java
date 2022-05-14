@@ -376,13 +376,13 @@ public class ChessView extends UI {
 		}
 		*/
 
-		ImageButton butMenu = _parent.findViewById(R.id.ButtonMenu);
-		butMenu.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _parent.openOptionsMenu();
-            }
-        });
+//		ImageButton butMenu = _parent.findViewById(R.id.ButtonMenu);
+//		butMenu.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                _parent.openOptionsMenu();
+//            }
+//        });
 		//
 
 //        ImageButton butNewGame = (ImageButton) _parent.findViewById(R.id.ButtonNewGame);

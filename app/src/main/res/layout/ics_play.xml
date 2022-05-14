@@ -153,13 +153,6 @@
                     android:layout_height="40dip"
                     style="@style/ChessImageButton" />
 
-                <ImageButton
-                    android:id="@+id/ButtonICSQuickCmd"
-                    android:src="@drawable/ellipsis"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="@style/ChessImageButton" />
-
             </TableRow>
         </TableLayout>
 

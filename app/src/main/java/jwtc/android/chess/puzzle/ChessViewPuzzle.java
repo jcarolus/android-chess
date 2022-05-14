@@ -175,12 +175,12 @@ public class ChessViewPuzzle extends UI {
             }
         });
 
-        _parent.findViewById(R.id.ButtonMenu).setOnClickListener(new OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                _parent.openOptionsMenu();
-             }
-        });
+//        _parent.findViewById(R.id.ButtonMenu).setOnClickListener(new OnClickListener() {
+//             @Override
+//             public void onClick(View v) {
+//                _parent.openOptionsMenu();
+//             }
+//        });
 
     }
 

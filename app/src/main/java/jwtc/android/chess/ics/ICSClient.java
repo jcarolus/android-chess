@@ -233,15 +233,15 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         });
         */
 
-        ImageButton butQuick = (ImageButton) findViewById(R.id.ButtonICSQuickCmd);
-        if (butQuick != null) {
-            butQuick.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    //showMenu();
-                    openOptionsMenu();
-                }
-            });
-        }
+//        ImageButton butQuick = (ImageButton) findViewById(R.id.ButtonICSQuickCmd);
+//        if (butQuick != null) {
+//            butQuick.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//                    //showMenu();
+//                    openOptionsMenu();
+//                }
+//            });
+//        }
 
         ImageButton butQuick2 = (ImageButton) findViewById(R.id.ButtonICSConsoleQuickCmd);
         if (butQuick2 != null) { // crashes reported on this being null
@@ -574,19 +574,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         }
 
         // check menu for ending tag of <NR>, then delete tag and allow a command with no return
-        String itemTitle = item.getTitle().toString();
-        if (itemTitle.length() > 4 && itemTitle.substring(itemTitle.length() - 4).equals("<NR>")) {
-            if (_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_CONSOLE) {
-                _editConsole.setText(itemTitle.substring(0, itemTitle.length() - 4));
-                _editConsole.requestFocus();
-                _editConsole.setSelection(_editConsole.getText().length());
+        if (item.getTitle() != null) {
+            String itemTitle = item.getTitle().toString();
+            if (itemTitle.length() > 4 && itemTitle.substring(itemTitle.length() - 4).equals("<NR>")) {
+                if (_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_CONSOLE) {
+                    _editConsole.setText(itemTitle.substring(0, itemTitle.length() - 4));
+                    _editConsole.requestFocus();
+                    _editConsole.setSelection(_editConsole.getText().length());
+                } else {
+                    _editBoard.setText(itemTitle.substring(0, itemTitle.length() - 4));
+                    _editBoard.requestFocus();
+                    _editBoard.setSelection(_editBoard.getText().length());
+                }
             } else {
-                _editBoard.setText(itemTitle.substring(0, itemTitle.length() - 4));
-                _editBoard.requestFocus();
-                _editBoard.setSelection(_editBoard.getText().length());
+                sendString(item.getTitle().toString());
             }
-        } else {
-            sendString(item.getTitle().toString());
         }
         return true;
     }

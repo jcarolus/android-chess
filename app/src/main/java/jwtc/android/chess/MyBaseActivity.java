@@ -58,6 +58,10 @@ public class MyBaseActivity extends AppCompatActivity {
             _wakeLock.acquire();
         }
 
+
+        _fVolume = prefs.getBoolean("moveSoundOn", true) ? 1 : 0;
+        //
+
         _onResumeTimeMillies = System.currentTimeMillis();
 
         super.onResume();

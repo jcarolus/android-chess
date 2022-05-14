@@ -40,6 +40,8 @@
     <string name="pref_sound_desc">Jugado cuando tu oponente hace un movimiento</string>
     <string name="pref_speech">Discurso</string>
     <string name="pref_speech_desc">Dice que movimientos se han hecho</string>
+    <string name="pref_move_sound_on">Mover sonido</string>
+    <string name="pref_move_sound_on_desc">Reproduce sonido cuando se hizo un movimiento</string>
     <string name="pref_eco">información ECO</string>
     <string name="pref_eco_desc">Muestra la apertura ECO cuando disponible</string>
     <string name="pref_extrahighlight">Más destacado</string>
