@@ -87,7 +87,7 @@ public class ICSChessView extends ChessViewBase {
     public ICSChessView(Activity activity) {
         super(activity);
 
-        _jni = new JNI();
+        _jni = JNI.getInstance();
         _jni.reset();
 
         _parent = (ICSClient) activity;

@@ -86,7 +86,7 @@ public class GameControl {
     public GameControl() {
         m_iLevelMode = LEVEL_TIME;
 
-        _jni = new JNI();
+        _jni = JNI.getInstance();
         _jni.newGame();
 
         m_bActive = true;

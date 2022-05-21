@@ -52,7 +52,7 @@ public class setup extends MyBaseActivity {
         this.makeActionOverflowMenuShown();
 
         _view = new ChessViewBase(this);
-        _jni = new JNI();
+        _jni = JNI.getInstance();
 
         final Intent intent = getIntent();
         _uri = intent.getData();

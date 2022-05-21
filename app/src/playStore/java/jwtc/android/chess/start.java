@@ -100,7 +100,7 @@ public class start extends AppCompatActivity {
             startActivity(intent);
         }
 
-        _jni = new JNI();
+        _jni = JNI.getInstance();
 
         _lastMessage = "";
 

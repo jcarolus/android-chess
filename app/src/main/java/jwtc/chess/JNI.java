@@ -7,8 +7,22 @@ import jwtc.chess.board.ChessBoard;
 
 public class JNI {
 
-    public JNI() {
+    private static volatile JNI instance;
 
+    private JNI() {}
+
+    // guarantee singleton instance
+    public static JNI getInstance() {
+        JNI result = instance;
+        if (result != null) {
+            return result;
+        }
+        synchronized(JNI.class) {
+            if (instance == null) {
+                instance = new JNI();
+            }
+            return instance;
+        }
     }
 
     public void newGame() {
