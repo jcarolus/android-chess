@@ -194,36 +194,6 @@ public class ChessViewBase {
 
         }
 
-        // yellow
-        ChessImageView._arrColorScheme[0][0] = 0xffdeac5d;
-        ChessImageView._arrColorScheme[0][1] = 0xfff9e3c0;
-        ChessImageView._arrColorScheme[0][2] = 0xccf3ed4b;
-
-        // blue
-        ChessImageView._arrColorScheme[1][0] = 0xff28628b;
-        ChessImageView._arrColorScheme[1][1] = 0xff7dbdea;
-        ChessImageView._arrColorScheme[1][2] = 0xcc9fdef3;
-
-        // green
-        ChessImageView._arrColorScheme[2][0] = 0xff8eb59b;
-        ChessImageView._arrColorScheme[2][1] = 0xffcae787;
-        ChessImageView._arrColorScheme[2][2] = 0xcc9ff3b4;
-
-        // grey
-        ChessImageView._arrColorScheme[3][0] = 0xffc0c0c0;
-        ChessImageView._arrColorScheme[3][1] = 0xffffffff;
-        ChessImageView._arrColorScheme[3][2] = 0xccf3ed4b;
-
-        // brown
-        ChessImageView._arrColorScheme[4][0] = 0xff65390d; //4c2b0a
-        ChessImageView._arrColorScheme[4][1] = 0xffb98b4f;
-        ChessImageView._arrColorScheme[4][2] = 0xccf3ed4b;
-        // 347733
-        // red
-        ChessImageView._arrColorScheme[5][0] = 0xffff2828;
-        ChessImageView._arrColorScheme[5][1] = 0xffffd1d1;
-        ChessImageView._arrColorScheme[5][2] = 0xccf3ed4b;
-
         for (int i = 0; i < 64; i++) {
             _arrImages[i].setOnClickListener(ocl);
             //_arrImages[i].setFocusable(false);

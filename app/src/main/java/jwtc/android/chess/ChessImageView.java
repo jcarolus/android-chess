@@ -39,6 +39,36 @@ public class ChessImageView extends View {
     static {
         _paint.setFlags(Paint.ANTI_ALIAS_FLAG);
         _paint.setFilterBitmap(true);
+
+        // yellow
+        _arrColorScheme[0][0] = 0xffdeac5d;
+        _arrColorScheme[0][1] = 0xfff9e3c0;
+        _arrColorScheme[0][2] = 0xccf3ed4b;
+
+        // blue
+        _arrColorScheme[1][0] = 0xff28628b;
+        _arrColorScheme[1][1] = 0xff7dbdea;
+        _arrColorScheme[1][2] = 0xcc9fdef3;
+
+        // green
+        _arrColorScheme[2][0] = 0xff8eb59b;
+        _arrColorScheme[2][1] = 0xffcae787;
+        _arrColorScheme[2][2] = 0xcc9ff3b4;
+
+        // grey
+        _arrColorScheme[3][0] = 0xffc0c0c0;
+        _arrColorScheme[3][1] = 0xffffffff;
+        _arrColorScheme[3][2] = 0xccf3ed4b;
+
+        // brown
+        _arrColorScheme[4][0] = 0xff65390d; //4c2b0a
+        _arrColorScheme[4][1] = 0xffb98b4f;
+        _arrColorScheme[4][2] = 0xccf3ed4b;
+        // 347733
+        // red
+        _arrColorScheme[5][0] = 0xffff2828;
+        _arrColorScheme[5][1] = 0xffffd1d1;
+        _arrColorScheme[5][2] = 0xccf3ed4b;
     }
 
     private ImageCacheObject _ico;
@@ -94,31 +124,32 @@ public class ChessImageView extends View {
         ImageCacheObject ico = _ico;
 
         // first draw field background
-        if (ico == null)
-            Log.e("err", "err");
-
+        if (ico == null) {
+            Log.e(TAG, "no ico");
+            return;
+        }
         SharedPreferences pref = getContext().getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
         //_paint.setColor(Color.TRANSPARENT);
-        if (hasFocus()) {
-            _paint.setColor(0xffff9900);
-            canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-        } else {
-            if (_colorScheme == 6) { // 6 is color picker
-                _paint.setColor(ico._fieldColor == 0 ? pref.getInt("color2", 0xffdddddd) : pref.getInt("color1", 0xffff0066));
-                canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-                if (ico._selected) {
-                    _paint.setColor(pref.getInt("color3", 0xcc00dddd) & 0xccffffff);
-                    canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-                }
-            } else {
-                _paint.setColor(ico._fieldColor == 0 ? _arrColorScheme[_colorScheme][0] : _arrColorScheme[_colorScheme][1]);
-                canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-                if (ico._selected) {
-                    _paint.setColor(_arrColorScheme[_colorScheme][2]);
-                    canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
-                }
-            }
-        }
+//        if (hasFocus()) {
+//            _paint.setColor(0xffff9900);
+//            canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+//        } else {
+//            if (_colorScheme == 6) { // 6 is color picker
+//                _paint.setColor(ico._fieldColor == 0 ? pref.getInt("color2", 0xffdddddd) : pref.getInt("color1", 0xffff0066));
+//                canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+//                if (ico._selected) {
+//                    _paint.setColor(pref.getInt("color3", 0xcc00dddd) & 0xccffffff);
+//                    canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+//                }
+//            } else {
+//                _paint.setColor(ico._fieldColor == 0 ? _arrColorScheme[_colorScheme][0] : _arrColorScheme[_colorScheme][1]);
+//                canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+//                if (ico._selected) {
+//                    _paint.setColor(_arrColorScheme[_colorScheme][2]);
+//                    canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), _paint);
+//                }
+//            }
+//        }
 
         if (ChessImageView._bmpTile != null) {
             canvas.drawBitmap(_bmpTile, _matrixTile, _paint);
@@ -153,17 +184,6 @@ public class ChessImageView extends View {
             }
 
             canvas.drawBitmap(bmp, _matrix, _paint);
-
-            //Picture picture = _svgTest.getPicture();
-            //canvas.drawPicture(picture);
-
-            //canvas.save();
-            //picture.draw(canvas);
-            //canvas.restore();
-            //canvas.scale(2.0f, 2.0f);
-            //canvas.save();
-
-
         }
         //////////////////////////////////////
         if (ico._coord != null) {
