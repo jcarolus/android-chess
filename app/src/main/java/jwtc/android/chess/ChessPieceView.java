@@ -6,12 +6,26 @@ import android.view.View;
 
 
 import androidx.appcompat.widget.AppCompatImageView;
+import jwtc.android.chess.constants.PieceSets;
 
 public class ChessPieceView extends AppCompatImageView {
+    private int pos;
 
-    public ChessPieceView(Context context) {
+    public ChessPieceView(Context context, int set, int color, int piece, int pos) {
         super(context);
         setFocusable(true);
+
+        setImageResource(PieceSets.PIECES[set][color][piece]);
+        this.pos = pos;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
+        this.invalidate();
     }
 
     @Override

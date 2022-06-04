@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import jwtc.android.chess.ChessBoardLayout;
 import jwtc.android.chess.ChessImageView;
 import jwtc.android.chess.ChessPieceView;
+import jwtc.android.chess.ChessSquareView;
 import jwtc.android.chess.ImageCacheObject;
 import jwtc.android.chess.MyBaseActivity;
 import jwtc.android.chess.R;
@@ -37,65 +38,94 @@ import jwtc.chess.board.ChessBoard;
 
 abstract public class ChessBoardActivity extends MyBaseActivity {
 
+    protected MyDragListener myDragListener = new MyDragListener();
+    protected MyTouchListener myTouchListener = new MyTouchListener();
+
+    protected ChessBoardLayout chessBoardLayout;
     abstract public void handleClick(int index);
 
     public void afterCreate() {
 
         Log.d("ChessBoardActivity", " afterCreate");
 
-        MyDragListener dl = new MyDragListener();
-        MyTouchListener tl = new MyTouchListener();
+        chessBoardLayout = findViewById(R.id.includeboard);
 
-        ChessBoardLayout l = findViewById(R.id.includeboard);
-        l.setOnDragListener(dl);
-
-        ChessPieceView p = new ChessPieceView(this);
-        
-        p.setOnTouchListener(tl);
-
-        p.setImageResource(PieceSets.PIECES[PieceSets.ALPHA][ChessBoard.BLACK][BoardConstants.PAWN]);
-        l.addView(p);
-
-        p.invalidate();
+        for (int i = 0; i < 64; i++) {
+            ChessSquareView csv = new ChessSquareView(this, i);
+            csv.setOnDragListener(myDragListener);
+            chessBoardLayout.addView(csv);
+        }
 
         Log.d("ChessBoardActivity", " afterCreate done");
 
         // @TODO
         JNI.getInstance().newGame();
+
+        updateBoard();
     }
 
+    public void updateBoard() {
+        ChessPieceView p = new ChessPieceView(this, PieceSets.ALPHA, BoardConstants.BLACK, BoardConstants.KING, BoardConstants.e4);
+
+
+        /*
+        for (i = 0; i < 64; i++) {
+
+        iColor = ChessBoard.BLACK;
+            iPiece = jni.pieceAt(iColor, i);
+
+            if (iPiece == BoardConstants.FIELD) {
+                iColor = ChessBoard.WHITE;
+                iPiece = jni.pieceAt(iColor, i);
+
+                if (iPiece == BoardConstants.FIELD)
+                    bPiece = false;
+            }
+
+            }
+         */
+
+        p.setOnTouchListener(myTouchListener);
+
+        chessBoardLayout.addView(p);
+
+    }
 
     private final class MyDragListener implements View.OnDragListener {
-
 
         @Override
         public boolean onDrag(View v, DragEvent event) {
             int action = event.getAction();
-            Log.i(TAG, "onDrag");
-            switch (event.getAction()) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                    // do nothing
-                    break;
-                case DragEvent.ACTION_DRAG_ENTERED:
+            if (v instanceof ChessSquareView) {
+                Log.i(TAG, "onDrag " + ((ChessSquareView) v).getPos());
+
+                switch (event.getAction()) {
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        // do nothing
+                        break;
+                    case DragEvent.ACTION_DRAG_ENTERED:
 //                    v.setBackgroundDrawable(enterShape);
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
+                        break;
+                    case DragEvent.ACTION_DRAG_EXITED:
 //                    v.setBackgroundDrawable(normalShape);
-                    break;
-                case DragEvent.ACTION_DROP:
-                    // Dropped, reassign View to ViewGroup
-                    View view = (View) event.getLocalState();
-//                    ViewGroup owner = (ViewGroup) view.getParent();
-//                    owner.removeView(view);
-//
-                    view.setVisibility(View.VISIBLE);
-                    break;
-                case DragEvent.ACTION_DRAG_ENDED:
-                    //v.setBackgroundDrawable(normalShape);
-                default:
-                    break;
+                        break;
+                    case DragEvent.ACTION_DROP:
+                        // Dropped, reassign View to ViewGroup
+                        View view = (View) event.getLocalState();
+                        if (view instanceof ChessPieceView) {
+                            ((ChessPieceView) view).setPos(((ChessSquareView) v).getPos());
+                            chessBoardLayout.layoutChild(view);
+                            view.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        //v.setBackgroundDrawable(normalShape);
+                    default:
+                        break;
+                }
+                return true;
             }
-            return true;
+            return false;
         }
     }
 
