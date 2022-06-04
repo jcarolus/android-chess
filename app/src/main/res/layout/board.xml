@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<jwtc.android.chess.ChessBoardLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/BoardLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -158,4 +158,4 @@
         <jwtc.android.chess.ChessImageView android:id="@+id/h1" />
     </TableRow>
 
-</jwtc.android.chess.ChessBoardLayout>
+</TableLayout>

@@ -8,14 +8,16 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.TableLayout;
+import android.view.View;
+import android.view.ViewGroup;
+
 
 import jwtc.chess.board.ChessBoard;
 
 import static jwtc.android.chess.ChessImageView._arrColorScheme;
 
-public class ChessBoardLayout extends TableLayout {
-
+public class ChessBoardLayout extends ViewGroup {
+    public static final String TAG = "ChessBoardLayout";
     public static Paint _paint = new Paint();
 
     static {
@@ -32,6 +34,47 @@ public class ChessBoardLayout extends TableLayout {
         super(context, attributeSet);
 
         setWillNotDraw(false);
+    }
+
+//    @Override
+//    public void addView(View view) {
+//        super.addView(view);
+//    }
+
+    /**
+     * Any layout manager that doesn't scroll will want this.
+     */
+    @Override
+    public boolean shouldDelayChildPressedState() {
+        return false;
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.i(TAG, " onLayout " + changed + " l " + l );
+
+        final int count = getChildCount();
+        final int width = getWidth() / 8;
+
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+
+            Log.i(TAG, "onLayout" + i);
+
+            if (child.getVisibility() != GONE) {
+                child.layout(0, 0, width, width);
+            }
+        }
+
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // take the full width
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        setMeasuredDimension(widthSize, widthSize);
+
+        Log.i(TAG, "onMeasure" + widthSize);
     }
 
     @Override
