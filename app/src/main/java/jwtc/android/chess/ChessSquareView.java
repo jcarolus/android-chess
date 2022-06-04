@@ -33,6 +33,10 @@ public class ChessSquareView extends View {
         this.invalidate();
     }
 
+    public boolean getSelected() {
+        return this.selected;
+    }
+
     public void onDraw(Canvas canvas) {
         if (selected) {
             paint.setColor(0xffff9900);

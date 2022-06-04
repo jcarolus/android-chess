@@ -1,5 +1,6 @@
 package jwtc.android.chess.ui;
 
+import android.animation.LayoutTransition;
 import android.content.ClipData;
 import android.util.Log;
 import android.view.DragEvent;
@@ -42,6 +43,12 @@ abstract public class ChessBoardActivity extends MyBaseActivity {
         jni = JNI.getInstance();
         chessBoardLayout = findViewById(R.id.includeboard);
 
+//        LayoutTransition lt = new LayoutTransition();
+//        lt.disableTransitionType(LayoutTransition.DISAPPEARING);
+//        lt.setDuration(200);
+//        chessBoardLayout.setLayoutTransition(lt);
+
+
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);
             csv.setOnDragListener(myDragListener);
@@ -80,8 +87,41 @@ abstract public class ChessBoardActivity extends MyBaseActivity {
         final boolean isOO = Move.isOO(move);
         final boolean isOOO = Move.isOOO(move);
         final boolean isHit = Move.isHIT(move);
-
+        final boolean isPromo = Move.isPromotionMove(move);
+        final int turnOfMove = jni.getTurn() == ChessBoard.BLACK ? ChessBoard.WHITE : ChessBoard.BLACK;
         final int count = chessBoardLayout.getChildCount();
+
+        ChessPieceView rook = null;
+        if (isOO || isOOO) {
+            // find a rook that is not on it;s place
+            for (int i = 0; i < count; i++) {
+                final View child = chessBoardLayout.getChildAt(i);
+                if (child instanceof ChessPieceView) {
+                    final ChessPieceView chessPieceView = (ChessPieceView) child;
+                    if (chessPieceView.getPiece() == BoardConstants.ROOK && chessPieceView.getColor() == turnOfMove) {
+                        final int pos = ((ChessPieceView) child).getPos();
+                        final int piece = jni.pieceAt(turnOfMove, pos);
+                        if (piece != BoardConstants.ROOK) {
+                            rook = (ChessPieceView)child;
+                        }
+                    }
+                }
+            }
+            if (rook != null) {
+                for (int i = 0; i < 64; i++) {
+                    final int piece = jni.pieceAt(turnOfMove, i);
+                    if (piece == BoardConstants.ROOK) {
+                        final ChessPieceView pieceView = getPieceOnBoard(i, turnOfMove, BoardConstants.ROOK);
+                        if (pieceView == null){
+                            rook.setPos(i);
+                            chessBoardLayout.layoutChild(rook);
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
 
         if (isHit) {
             for (int i = 0; i < count; i++) {
@@ -102,10 +142,57 @@ abstract public class ChessBoardActivity extends MyBaseActivity {
                 final int currentPos = ((ChessPieceView) child).getPos();
                 if (currentPos == from) {
                     ((ChessPieceView) child).setPos(to);
+                    if (isPromo) {
+                        ((ChessPieceView) child).promote(Move.getPromotionPiece(move));
+                    }
                     chessBoardLayout.layoutChild(child);
                 }
             }
         }
+    }
+
+    protected ChessPieceView getPieceOnBoard(int pos, int color, int piece) {
+        final int count = chessBoardLayout.getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = chessBoardLayout.getChildAt(i);
+
+            if (child instanceof ChessPieceView) {
+                final ChessPieceView pieceView = (ChessPieceView)child;
+                if (pieceView.getPiece() == piece && pieceView.getColor() == color && pieceView.getPos() == pos) {
+                    return pieceView;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected void resetSelectedSquares() {
+        final int count = chessBoardLayout.getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = chessBoardLayout.getChildAt(i);
+
+            if (child instanceof ChessSquareView) {
+                final ChessSquareView squareView = (ChessSquareView) child;
+                if (squareView.getSelected()){
+                    squareView.setSelected(false);
+                }
+            }
+        }
+    }
+
+    protected ChessSquareView getSquareAt(int pos) {
+        final int count = chessBoardLayout.getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = chessBoardLayout.getChildAt(i);
+
+            if (child instanceof ChessSquareView) {
+                final ChessSquareView squareView = (ChessSquareView)child;
+                if (squareView.getPos() == pos) {
+                    return squareView;
+                }
+            }
+        }
+        return null;
     }
 
     private final class MyDragListener implements View.OnDragListener {
@@ -139,7 +226,6 @@ abstract public class ChessBoardActivity extends MyBaseActivity {
                                 lastPosition = -1;
                             } else {
                                 if (requestMove(fromPos, toPos)) {
-                                    lastPosition = -1;
                                     ChessBoardActivity.this.updateBoardWithMove(jni.getMyMove());
                                 } else {
                                     view.setSelected(false);
@@ -166,6 +252,7 @@ abstract public class ChessBoardActivity extends MyBaseActivity {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     Log.i(TAG, "onTouch DOWN " + pos);
 
+                    ChessBoardActivity.this.resetSelectedSquares();
                     lastPosition = pos;
 
                     ClipData data = ClipData.newPlainText("", "");

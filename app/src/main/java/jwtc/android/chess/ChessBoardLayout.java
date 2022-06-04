@@ -29,6 +29,7 @@ public class ChessBoardLayout extends ViewGroup {
             }
         }
     }
+
     /**
      * Any layout manager that doesn't scroll will want this.
      */
