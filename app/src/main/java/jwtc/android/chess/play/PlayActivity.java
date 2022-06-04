@@ -3,14 +3,14 @@ package jwtc.android.chess.play;
 import android.os.Bundle;
 
 import jwtc.android.chess.R;
+import jwtc.android.chess.controllers.PlayApi;
 import jwtc.android.chess.ui.ChessBoardActivity;
 
 public class PlayActivity extends ChessBoardActivity {
 
-
     @Override
-    public void handleClick(int index) {
-
+    public boolean requestMove(int from, int to) {
+        return gameApi.requestMove(from, to);
     }
 
     @Override
@@ -18,6 +18,9 @@ public class PlayActivity extends ChessBoardActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.play);
+
+        gameApi = new PlayApi();
+        gameApi.newGame();
 
         afterCreate();
 

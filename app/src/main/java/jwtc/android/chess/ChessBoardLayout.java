@@ -20,6 +20,15 @@ public class ChessBoardLayout extends ViewGroup {
         super(context, attributeSet);
     }
 
+    public void removePieces() {
+        final int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (child instanceof ChessPieceView) {
+                removeView(child);
+            }
+        }
+    }
     /**
      * Any layout manager that doesn't scroll will want this.
      */

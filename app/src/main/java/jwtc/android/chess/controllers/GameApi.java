@@ -25,12 +25,6 @@ public abstract class GameApi {
     private static Pattern _patMove;
     private static Pattern _patCastling;
 
-    public static final int MODE_BLINDFOLD_SHOWPIECES = 0;
-    public static final int MODE_BLINDFOLD_HIDEPIECES = 1;
-    public static final int MODE_BLINDFOLD_SHOWPIECELOCATION = 2;
-    private int modeBlindfold = MODE_BLINDFOLD_SHOWPIECES;
-    private boolean flippedBoard = false;
-
     static {
         try {
             _patNum = Pattern.compile("(\\d+)\\.");
@@ -48,6 +42,8 @@ public abstract class GameApi {
         _mapPGNHead = new HashMap<String, String>();
         _arrPGN = new ArrayList<PGNEntry>();
     }
+
+    abstract public boolean requestMove(int from, int to);
 
     public void addListener(GameListener listener) {
         this.listeners.add(listener);
