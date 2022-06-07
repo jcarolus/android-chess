@@ -3,11 +3,12 @@ package jwtc.android.chess.engine;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.util.ArrayList;
 
 public abstract class EngineApi {
-
+    private static final String TAG = "EngineApi";
     protected static final int MSG_MOVE = 1;
     protected static final int MSG_INFO = 2;
 
@@ -18,12 +19,14 @@ public abstract class EngineApi {
         public void handleMessage(Message msg) {
             if (msg.what == MSG_MOVE) {
                 int move = msg.getData().getInt("move");
+                Log.d(TAG, "handleMessage MOVE " + move);
                 for (EngineListener listener: listeners) {
                     listener.OnMove(move);
                 }
 
             } else if (msg.what == MSG_INFO) {
                 String message = msg.getData().getString("message");
+                Log.d(TAG, "handleMessage INFO " + message);
                 for (EngineListener listener: listeners) {
                     listener.OnInfo(message);
                 }

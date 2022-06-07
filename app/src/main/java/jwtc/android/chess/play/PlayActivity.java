@@ -3,7 +3,6 @@ package jwtc.android.chess.play;
 import android.os.Bundle;
 
 import jwtc.android.chess.R;
-import jwtc.android.chess.controllers.PlayApi;
 import jwtc.android.chess.ui.ChessBoardActivity;
 
 public class PlayActivity extends ChessBoardActivity {

@@ -11,6 +11,7 @@ import jwtc.chess.board.ChessBoard;
 public class ChessSquareView extends View {
     private int pos;
     private boolean selected;
+
     private static Paint paint = new Paint();
 
     public ChessSquareView(Context context, int pos) {

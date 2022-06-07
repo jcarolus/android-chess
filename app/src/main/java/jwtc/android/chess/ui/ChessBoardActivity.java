@@ -13,13 +13,14 @@ import jwtc.android.chess.MyBaseActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.controllers.GameApi;
+import jwtc.android.chess.controllers.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
-abstract public class ChessBoardActivity extends MyBaseActivity {
-
+abstract public class ChessBoardActivity extends MyBaseActivity implements GameListener {
+    private static final String TAG = "ChessBoardActivity";
     protected GameApi gameApi;
     protected MyDragListener myDragListener = new MyDragListener();
     protected MyTouchListener myTouchListener = new MyTouchListener();
@@ -33,12 +34,24 @@ abstract public class ChessBoardActivity extends MyBaseActivity {
     public static final int MODE_BLINDFOLD_SHOWPIECELOCATION = 2;
     protected int modeBlindfold = MODE_BLINDFOLD_SHOWPIECES;
     protected boolean flippedBoard = false;
+    protected int selectedPieceSet = PieceSets.MERIDA;
 
     abstract public boolean requestMove(int from, int to);
 
+    @Override
+    public void OnMove(int move) {
+        Log.d(TAG, "OnMove " + move);
+        updateBoardWithMove(move);
+    }
+
+    @Override
+    public void OnState() {
+        Log.d(TAG, "OnState");
+    }
+
     public void afterCreate() {
 
-        Log.d("ChessBoardActivity", " afterCreate");
+        Log.d(TAG, " afterCreate");
 
         jni = JNI.getInstance();
         chessBoardLayout = findViewById(R.id.includeboard);
@@ -55,7 +68,7 @@ abstract public class ChessBoardActivity extends MyBaseActivity {
             chessBoardLayout.addView(csv);
         }
 
-        Log.d("ChessBoardActivity", " afterCreate done");
+        gameApi.addListener(this);
 
         rebuildBoard();
     }
@@ -73,7 +86,7 @@ abstract public class ChessBoardActivity extends MyBaseActivity {
             }
 
             if (piece != BoardConstants.FIELD){
-                ChessPieceView p = new ChessPieceView(this, PieceSets.ALPHA, color, piece, i);
+                ChessPieceView p = new ChessPieceView(this, selectedPieceSet, color, piece, i);
                 p.setOnTouchListener(myTouchListener);
 
                 chessBoardLayout.addView(p);

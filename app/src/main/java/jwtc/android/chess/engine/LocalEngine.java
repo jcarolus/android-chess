@@ -1,5 +1,7 @@
 package jwtc.android.chess.engine;
 
+import android.util.Log;
+
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
 
@@ -11,12 +13,12 @@ public class LocalEngine extends EngineApi {
 
     @Override
     public void play(int msecs, int ply) {
+        Log.d(TAG, "play " + msecs + ", " + ply);
         this.msecs = msecs;
         this.ply = ply;
 
         engineThread = new Thread(new RunnableImp());
         engineThread.start();
-
     }
 
     @Override
@@ -49,17 +51,17 @@ public class LocalEngine extends EngineApi {
         @Override
         public void run() {
             try {
-                JNI _jni = JNI.getInstance();
-                if (_jni.isEnded() != 0)
+                JNI jni = JNI.getInstance();
+                if (jni.isEnded() != 0)
                     return;
 
 
                 if (ply > 0) {
-                    _jni.searchDepth(ply);
-                    int move = _jni.getMove();
+                    jni.searchDepth(ply);
+                    int move = jni.getMove();
                     sendMoveMessageFromThread(move);
 
-                    int evalCnt = _jni.getEvalCount();
+                    int evalCnt = jni.getEvalCount();
                     String s;
 
                     if (evalCnt == 0) {
@@ -70,19 +72,19 @@ public class LocalEngine extends EngineApi {
                     sendMessageFromThread(s);
 
                 } else {
-                    _jni.searchMove(msecs);
+                    jni.searchMove(msecs / 1000);
 
                     long lMillies = System.currentTimeMillis();
                     int move, tmpMove, value, ply = 1, evalCnt, j, iSleep = 1000, iNps;
                     String s;
                     float fValue;
-                    while (_jni.peekSearchDone() == 0) {
+                    while (jni.peekSearchDone() == 0) {
                         Thread.sleep(iSleep);
 
-                        ply = _jni.peekSearchDepth();
+                        ply = jni.peekSearchDepth();
 
-                        value = _jni.peekSearchBestValue();
-                        evalCnt = _jni.getEvalCount();
+                        value = jni.peekSearchBestValue();
+                        evalCnt = jni.getEvalCount();
                         fValue = (float) value / 100.0F;
 
                         s = "";
@@ -91,7 +93,7 @@ public class LocalEngine extends EngineApi {
                             ply = 5;
                         }
                         for (j = 0; j < ply; j++) {
-                            tmpMove = _jni.peekSearchBestMove(j);
+                            tmpMove = jni.peekSearchBestMove(j);
                             if (tmpMove != 0)
                                 s += Move.toDbgString(tmpMove).replace("[", "").replace("]", "") + " ";
                         }
@@ -104,12 +106,12 @@ public class LocalEngine extends EngineApi {
                         sendMessageFromThread(s);
                     }
 
-                    move = _jni.getMove();
+                    move = jni.getMove();
                     sendMoveMessageFromThread(move);
 
-                    value = _jni.peekSearchBestValue();
+                    value = jni.peekSearchBestValue();
                     fValue = (float) value / 100.0F;
-                    evalCnt = _jni.getEvalCount();
+                    evalCnt = jni.getEvalCount();
 
                     if (evalCnt == 0) {
                         s = "From opening book";

@@ -18,6 +18,7 @@ import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 public abstract class GameApi {
+    private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
     protected JNI jni;
     private static Pattern _patNum;
@@ -55,6 +56,7 @@ public abstract class GameApi {
 
 
     public void move(int move) {
+        Log.d(TAG, "move " + move);
         jni.move(move);
         for (GameListener listener: listeners) {
             listener.OnMove(move);
