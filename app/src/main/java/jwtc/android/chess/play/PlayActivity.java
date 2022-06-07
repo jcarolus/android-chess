@@ -1,9 +1,11 @@
 package jwtc.android.chess.play;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 
 import jwtc.android.chess.R;
-import jwtc.android.chess.ui.ChessBoardActivity;
+import jwtc.android.chess.activities.ChessBoardActivity;
 
 public class PlayActivity extends ChessBoardActivity {
 
@@ -23,5 +25,11 @@ public class PlayActivity extends ChessBoardActivity {
 
         afterCreate();
 
+        ImageButton butPlay = findViewById(R.id.ButtonPlay);
+        butPlay.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                ((PlayApi)gameApi).engine.play();
+            }
+        });
     }
 }

@@ -7,15 +7,17 @@ import jwtc.chess.Move;
 
 public class LocalEngine extends EngineApi {
     private static final String TAG = "LocalEngine";
-    private int msecs = 0;
-    private int ply = 0;
+
     private Thread engineThread = null;
 
+
     @Override
-    public void play(int msecs, int ply) {
+    public void play() {
         Log.d(TAG, "play " + msecs + ", " + ply);
-        this.msecs = msecs;
-        this.ply = ply;
+
+        for (EngineListener listener: listeners) {
+            listener.OnStarted();
+        }
 
         engineThread = new Thread(new RunnableImp());
         engineThread.start();

@@ -1,4 +1,4 @@
-package jwtc.android.chess;
+package jwtc.android.chess.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,16 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import jwtc.android.chess.views.ChessPieceView;
+import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.board.BoardConstants;
 
-public class ChessBoardLayout extends ViewGroup {
-    public static final String TAG = "ChessBoardLayout";
+public class ChessBoardView extends ViewGroup {
+    public static final String TAG = "ChessBoardView";
 
-    public ChessBoardLayout(Context context) {
+    public ChessBoardView(Context context) {
         super(context);
     }
 
-    public ChessBoardLayout(Context context, AttributeSet attributeSet) {
+    public ChessBoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
     }
 

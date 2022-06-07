@@ -27,7 +27,7 @@ public class UCIEngine extends EngineApi {
 
 
     @Override
-    public void play(int msecs, int ply) {
+    public void play() {
         if (databaseName != null) {
             sendCommand("setoption name Book File value /data/data/jwtc.android.chess/" + databaseName);
         }

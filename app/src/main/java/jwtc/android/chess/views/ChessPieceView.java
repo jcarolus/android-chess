@@ -1,4 +1,4 @@
-package jwtc.android.chess;
+package jwtc.android.chess.views;
 
 import android.content.Context;
 import android.util.Log;

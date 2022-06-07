@@ -24,7 +24,6 @@ public class MyBaseActivity extends AppCompatActivity {
 
     protected PowerManager.WakeLock _wakeLock;
     public static final String TAG = "MyBaseActivity";
-    private long _onResumeTimeMillies = 0;
     public SoundPool spSound;
     public int _itickTock, _ihorseNeigh, _ismallNeigh, _ihorseSnort, _ihorseRunAway,
             _imove, _icapture;
@@ -61,8 +60,6 @@ public class MyBaseActivity extends AppCompatActivity {
 
         _fVolume = prefs.getBoolean("moveSoundOn", true) ? 1 : 0;
         //
-
-        _onResumeTimeMillies = System.currentTimeMillis();
 
         super.onResume();
     }

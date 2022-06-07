@@ -11,6 +11,8 @@ public abstract class EngineApi {
     private static final String TAG = "EngineApi";
     protected static final int MSG_MOVE = 1;
     protected static final int MSG_INFO = 2;
+    protected int msecs = 0;
+    protected int ply = 0;
 
     protected ArrayList<EngineListener> listeners = new ArrayList<>();
 
@@ -53,11 +55,20 @@ public abstract class EngineApi {
         updateHandler.sendMessage(m);
     }
 
-    abstract public void play(int msecs, int ply);
+    abstract public void play();
     abstract public boolean isReady();
     abstract public void abort();
     abstract public void destroy();
 
+    public void setMsecs(int msecs) {
+        this.msecs = msecs;
+        this.ply = 0;
+    }
+
+    public void setPly(int ply) {
+        this.ply = ply;
+        this.msecs = 0;
+    }
 
     public void addListener(EngineListener listener) {
         this.listeners.add(listener);

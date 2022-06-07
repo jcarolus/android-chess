@@ -3,17 +3,19 @@ package jwtc.android.chess.play;
 import android.util.Log;
 
 import jwtc.android.chess.controllers.GameApi;
+import jwtc.android.chess.controllers.GameListener;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
 
 public class PlayApi extends GameApi implements EngineListener {
     private static final String TAG = "PlayApi";
-    private LocalEngine engine;
+    public LocalEngine engine;
 
     public PlayApi() {
         super();
 
         engine = new LocalEngine();
+        engine.setPly(3); // @TODO
         engine.addListener(this);
     }
 
@@ -26,12 +28,19 @@ public class PlayApi extends GameApi implements EngineListener {
             return false;
         }
 
-        // onMove =>
-        //addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", jni.getMyMove(), true);
+        final int move = jni.getMyMove();
+        for (GameListener listener: listeners) {
+            listener.OnMove(move);
+        }
 
-        engine.play(1000, 0);
+        engine.play();
 
         return true;
+    }
+
+    @Override
+    public void OnStarted() {
+
     }
 
     @Override

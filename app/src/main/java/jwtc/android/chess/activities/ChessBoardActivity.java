@@ -1,15 +1,15 @@
-package jwtc.android.chess.ui;
+package jwtc.android.chess.activities;
 
-import android.animation.LayoutTransition;
 import android.content.ClipData;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import jwtc.android.chess.ChessBoardLayout;
-import jwtc.android.chess.ChessPieceView;
-import jwtc.android.chess.ChessSquareView;
-import jwtc.android.chess.MyBaseActivity;
+import jwtc.android.chess.views.ChessBoardView;
+import jwtc.android.chess.views.ChessPieceView;
+import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.controllers.GameApi;
@@ -19,19 +19,23 @@ import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
-abstract public class ChessBoardActivity extends MyBaseActivity implements GameListener {
+abstract public class ChessBoardActivity extends BaseActivity implements GameListener {
     private static final String TAG = "ChessBoardActivity";
+
     protected GameApi gameApi;
     protected MyDragListener myDragListener = new MyDragListener();
     protected MyTouchListener myTouchListener = new MyTouchListener();
     protected JNI jni;
-    protected ChessBoardLayout chessBoardLayout;
+    protected ChessBoardView chessBoardView;
+    protected SoundPool spSound;
     protected int lastPosition = -1;
-
 
     public static final int MODE_BLINDFOLD_SHOWPIECES = 0;
     public static final int MODE_BLINDFOLD_HIDEPIECES = 1;
     public static final int MODE_BLINDFOLD_SHOWPIECELOCATION = 2;
+
+    protected int soundTickTock, soundCheck, soundMove, soundCapture;
+
     protected int modeBlindfold = MODE_BLINDFOLD_SHOWPIECES;
     protected boolean flippedBoard = false;
     protected int selectedPieceSet = PieceSets.MERIDA;
@@ -54,28 +58,34 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
         Log.d(TAG, " afterCreate");
 
         jni = JNI.getInstance();
-        chessBoardLayout = findViewById(R.id.includeboard);
+        chessBoardView = findViewById(R.id.includeboard);
 
 //        LayoutTransition lt = new LayoutTransition();
 //        lt.disableTransitionType(LayoutTransition.DISAPPEARING);
 //        lt.setDuration(200);
-//        chessBoardLayout.setLayoutTransition(lt);
+//        chessBoardView.setLayoutTransition(lt);
 
 
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);
             csv.setOnDragListener(myDragListener);
-            chessBoardLayout.addView(csv);
+            chessBoardView.addView(csv);
         }
 
         gameApi.addListener(this);
 
         rebuildBoard();
+
+        spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
+        soundTickTock = spSound.load(this, R.raw.ticktock, 1);
+        soundCheck = spSound.load(this, R.raw.smallneigh, 2);
+        soundMove = spSound.load(this, R.raw.move, 1);
+        soundCapture = spSound.load(this, R.raw.capture, 1);
     }
 
     public void rebuildBoard() {
 
-        chessBoardLayout.removePieces();
+        chessBoardView.removePieces();
 
         for (int i = 0; i < 64; i++) {
             int color = ChessBoard.BLACK;
@@ -89,7 +99,7 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
                 ChessPieceView p = new ChessPieceView(this, selectedPieceSet, color, piece, i);
                 p.setOnTouchListener(myTouchListener);
 
-                chessBoardLayout.addView(p);
+                chessBoardView.addView(p);
             }
         }
     }
@@ -102,13 +112,13 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
         final boolean isHit = Move.isHIT(move);
         final boolean isPromo = Move.isPromotionMove(move);
         final int turnOfMove = jni.getTurn() == ChessBoard.BLACK ? ChessBoard.WHITE : ChessBoard.BLACK;
-        final int count = chessBoardLayout.getChildCount();
+        final int count = chessBoardView.getChildCount();
 
         ChessPieceView rook = null;
         if (isOO || isOOO) {
             // find a rook that is not on it;s place
             for (int i = 0; i < count; i++) {
-                final View child = chessBoardLayout.getChildAt(i);
+                final View child = chessBoardView.getChildAt(i);
                 if (child instanceof ChessPieceView) {
                     final ChessPieceView chessPieceView = (ChessPieceView) child;
                     if (chessPieceView.getPiece() == BoardConstants.ROOK && chessPieceView.getColor() == turnOfMove) {
@@ -127,7 +137,7 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
                         final ChessPieceView pieceView = getPieceOnBoard(i, turnOfMove, BoardConstants.ROOK);
                         if (pieceView == null){
                             rook.setPos(i);
-                            chessBoardLayout.layoutChild(rook);
+                            chessBoardView.layoutChild(rook);
                             break;
                         }
                     }
@@ -138,18 +148,18 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
 
         if (isHit) {
             for (int i = 0; i < count; i++) {
-                final View child = chessBoardLayout.getChildAt(i);
+                final View child = chessBoardView.getChildAt(i);
 
                 if (child instanceof ChessPieceView) {
                     final int currentPos = ((ChessPieceView) child).getPos();
                     if (currentPos == to) {
-                        chessBoardLayout.removeView(child);
+                        chessBoardView.removeView(child);
                     }
                 }
             }
         }
         for (int i = 0; i < count; i++) {
-            final View child = chessBoardLayout.getChildAt(i);
+            final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessPieceView) {
                 final int currentPos = ((ChessPieceView) child).getPos();
@@ -158,16 +168,32 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
                     if (isPromo) {
                         ((ChessPieceView) child).promote(Move.getPromotionPiece(move));
                     }
-                    chessBoardLayout.layoutChild(child);
+                    chessBoardView.layoutChild(child);
                 }
             }
         }
     }
 
+    public void playSoundCheck() {
+        spSound.play(soundCheck, fVolume, fVolume, 2, 0, 1);
+    }
+
+    public void playSoundMove() {
+        spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
+    }
+
+    public void playSoundCapture() {
+        spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);
+    }
+
+    public void playSoundTickTock() {
+        spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
+    }
+
     protected ChessPieceView getPieceOnBoard(int pos, int color, int piece) {
-        final int count = chessBoardLayout.getChildCount();
+        final int count = chessBoardView.getChildCount();
         for (int i = 0; i < count; i++) {
-            final View child = chessBoardLayout.getChildAt(i);
+            final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessPieceView) {
                 final ChessPieceView pieceView = (ChessPieceView)child;
@@ -180,9 +206,9 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
     }
 
     protected void resetSelectedSquares() {
-        final int count = chessBoardLayout.getChildCount();
+        final int count = chessBoardView.getChildCount();
         for (int i = 0; i < count; i++) {
-            final View child = chessBoardLayout.getChildAt(i);
+            final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessSquareView) {
                 final ChessSquareView squareView = (ChessSquareView) child;
@@ -194,9 +220,9 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
     }
 
     protected ChessSquareView getSquareAt(int pos) {
-        final int count = chessBoardLayout.getChildCount();
+        final int count = chessBoardView.getChildCount();
         for (int i = 0; i < count; i++) {
-            final View child = chessBoardLayout.getChildAt(i);
+            final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessSquareView) {
                 final ChessSquareView squareView = (ChessSquareView)child;
@@ -220,12 +246,10 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
                     case DragEvent.ACTION_DRAG_ENTERED:
                         Log.i(TAG, "onDrag ENTERED " + pos);
                         view.setSelected(true);
-//                    v.setBackgroundDrawable(enterShape);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
                         Log.i(TAG, "onDrag EXITED" + pos);
                         view.setSelected(false);
-//                    v.setBackgroundDrawable(normalShape);
                         break;
                     case DragEvent.ACTION_DROP:
                         Log.i(TAG, "onDrag DROP " + pos);
@@ -238,9 +262,7 @@ abstract public class ChessBoardActivity extends MyBaseActivity implements GameL
                             if (lastPosition == toPos) {
                                 lastPosition = -1;
                             } else {
-                                if (requestMove(fromPos, toPos)) {
-                                    ChessBoardActivity.this.updateBoardWithMove(jni.getMyMove());
-                                } else {
+                                if (!requestMove(fromPos, toPos)) {
                                     view.setSelected(false);
                                 }
                             }
