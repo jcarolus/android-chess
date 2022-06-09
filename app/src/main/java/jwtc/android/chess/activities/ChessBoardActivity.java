@@ -1,12 +1,18 @@
 package jwtc.android.chess.activities;
 
 import android.content.ClipData;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+
+import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessSquareView;
@@ -37,8 +43,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected int soundTickTock, soundCheck, soundMove, soundCapture;
 
     protected int modeBlindfold = MODE_BLINDFOLD_SHOWPIECES;
-    protected boolean flippedBoard = false;
-    protected int selectedPieceSet = PieceSets.MERIDA;
+    protected boolean skipReturn = true;
+    private String keyboardBuffer = "";
 
     abstract public boolean requestMove(int from, int to);
 
@@ -51,6 +57,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void OnState() {
         Log.d(TAG, "OnState");
+        rebuildBoard();
     }
 
     public void afterCreate() {
@@ -74,13 +81,35 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         gameApi.addListener(this);
 
-        rebuildBoard();
-
         spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
         soundTickTock = spSound.load(this, R.raw.ticktock, 1);
         soundCheck = spSound.load(this, R.raw.smallneigh, 2);
         soundMove = spSound.load(this, R.raw.move, 1);
         soundCapture = spSound.load(this, R.raw.capture, 1);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = getPrefs();
+        if (prefs.getBoolean("fullScreen", true)) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+
+        skipReturn = prefs.getBoolean("skipReturn", true);
+        keyboardBuffer = "";
+
+        chessBoardView.setRotated(!prefs.getBoolean("turn", true));
+
+        try {
+            PieceSets.selectedSet = Integer.parseInt(prefs.getString("pieceset", "0"));
+            ColorSchemes.selectedColorScheme = Integer.parseInt(prefs.getString("colorscheme", "0"));
+
+        } catch (NumberFormatException ex) {
+            Log.e(TAG, ex.getMessage());
+        }
+        rebuildBoard();
     }
 
     public void rebuildBoard() {
@@ -96,7 +125,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
 
             if (piece != BoardConstants.FIELD){
-                ChessPieceView p = new ChessPieceView(this, selectedPieceSet, color, piece, i);
+                ChessPieceView p = new ChessPieceView(this, color, piece, i);
                 p.setOnTouchListener(myTouchListener);
 
                 chessBoardView.addView(p);
@@ -154,6 +183,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     final int currentPos = ((ChessPieceView) child).getPos();
                     if (currentPos == to) {
                         chessBoardView.removeView(child);
+                        break;
                     }
                 }
             }
@@ -189,6 +219,57 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public void playSoundTickTock() {
         spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
     }
+
+
+
+
+    @Override
+    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+        int action = event.getAction();
+        boolean isDown = action == 0;
+
+        if (skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        //View v = getWindow().getCurrentFocus();
+        //Log.i("main", "current focus " + (v == null ? "NULL" : v.toString()));
+        int c = (event.getUnicodeChar());
+        Log.i(TAG, "onKeyDown " + keyCode + " = " + (char) c);
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            //showMenu();
+            return true;
+        }
+
+        // preference is to skip a carriage return
+        if (skipReturn && (char) c == '\r') {
+            return true;
+        }
+
+        if (c > 48 && c < 57 || c > 96 && c < 105) {
+            keyboardBuffer += ("" + (char) c);
+        }
+        if (keyboardBuffer.length() >= 2) {
+            Log.i(TAG, "handleClickFromPositionString " + keyboardBuffer);
+            // @TODO
+            //_chessView.handleClickFromPositionString(keyboardBuffer);
+            keyboardBuffer = "";
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
     protected ChessPieceView getPieceOnBoard(int pos, int color, int piece) {
         final int count = chessBoardView.getChildCount();

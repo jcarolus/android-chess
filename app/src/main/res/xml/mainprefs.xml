@@ -62,15 +62,6 @@
             android:key="showECO"
             />
         -->
-        <!--
-        <ListPreference
-            android:title="@string/pref_uci"
-            android:summary="@string/pref_uci_desc"
-            android:key="UCIEngine"
-            android:defaultValue="default"
-            android:entries="@array/UCIArray"
-            android:entryValues="@array/UCIArray" />
-         -->
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -9,18 +9,16 @@ import androidx.appcompat.widget.AppCompatImageView;
 import jwtc.android.chess.constants.PieceSets;
 
 public class ChessPieceView extends AppCompatImageView {
-    private int set;
     private int color;
     private int piece;
     private int pos;
 
 
-    public ChessPieceView(Context context, int set, int color, int piece, int pos) {
+    public ChessPieceView(Context context, int color, int piece, int pos) {
         super(context);
         setFocusable(true);
 
-        setImageResource(PieceSets.PIECES[set][color][piece]);
-        this.set = set;
+        setImageResource(PieceSets.PIECES[PieceSets.selectedSet][color][piece]);
         this.pos = pos;
         this.piece = piece;
         this.color = color;
@@ -44,7 +42,7 @@ public class ChessPieceView extends AppCompatImageView {
     }
 
     public void promote(int piece) {
-        setImageResource(PieceSets.PIECES[set][color][piece]);
+        setImageResource(PieceSets.PIECES[PieceSets.selectedSet][color][piece]);
         this.piece = piece;
         invalidate();
     }

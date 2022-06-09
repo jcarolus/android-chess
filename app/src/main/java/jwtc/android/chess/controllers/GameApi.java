@@ -44,8 +44,6 @@ public abstract class GameApi {
         _arrPGN = new ArrayList<PGNEntry>();
     }
 
-    abstract public boolean requestMove(int from, int to);
-
     public void addListener(GameListener listener) {
         this.listeners.add(listener);
     }
@@ -54,23 +52,64 @@ public abstract class GameApi {
         this.listeners.remove(listener);
     }
 
+    public boolean requestMove(int from, int to) {
+        Log.i(TAG, "requestMove");
+        if (jni.isEnded() != 0)
+            return false;
+
+        if (jni.requestMove(from, to) == 0) {
+            return false;
+        }
+
+        final int move = jni.getMyMove();
+
+        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", move);
+
+        dispatchMove(move);
+
+        return true;
+    }
 
     public void move(int move) {
-        Log.d(TAG, "move " + move);
-        jni.move(move);
-        for (GameListener listener: listeners) {
-            listener.OnMove(move);
+        if (move(move, "", true)) {
+            dispatchMove(move);
         }
     }
 
-    public void undo() {
+    public void undoMove() {
+        Log.d(TAG, "undoMove");
 
+        jni.undo();
+        dispatchState();
+    }
+
+    public void nextMove() {
+        jumptoMove(jni.getNumBoard());
     }
 
     public void jumptoMove(int ply) {
+        Log.d(TAG, "jumptoMove " + ply);
 
+        if (ply <= _arrPGN.size() && ply >= 0) {
+            int boardPly = jni.getNumBoard();
+            if (ply >= boardPly) {
+                while (ply >= boardPly) {
+                    jni.move(_arrPGN.get(boardPly - 1)._move);
+                    boardPly++;
+                }
+            } else {
+                while (ply < boardPly) {
+                    jni.undo();
+                    boardPly--;
+                }
+            }
+            dispatchState();
+        }
     }
 
+    public int getPGNSize() {
+        return _arrPGN.size();
+    }
 
     public synchronized boolean isLegalMove(int from, int to) {
         int checkMove = Move.makeMove(from, to);
@@ -152,12 +191,28 @@ public abstract class GameApi {
         return loadPGNMoves(s);
     }
 
+    protected void dispatchMove(final int move) {
+        Log.d(TAG, "dispatchMove " + move);
+
+        for (GameListener listener : listeners) {
+            listener.OnMove(move);
+        }
+    }
+
+    protected void dispatchState() {
+        Log.d(TAG, "dispatchState");
+
+        for (GameListener listener : listeners) {
+            listener.OnState();
+        }
+    }
+
     private boolean move(int move, String sAnnotation, boolean bUpdate) {
-        //Log.i("requestMove debug", m_game.getBoard().getPGNMoves(new ChessBoard()));
+        Log.i(TAG, "move " + move);
         if (jni.move(move) == 0) {
             return false;
         }
-        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), sAnnotation, jni.getMyMove(), bUpdate);
+        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), sAnnotation, jni.getMyMove());
 
         return true;
     }
@@ -510,11 +565,11 @@ public abstract class GameApi {
     }
 
 
-    // superclass method, implemented by sub-classes
-    public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, boolean bScroll) {
-        while (ply >= 0 && _arrPGN.size() >= ply)
+    public void addPGNEntry(int ply, String sMove, String sAnnotation, int move) {
+        Log.d(TAG, "addPGNEntry " + ply + ": " + sMove);
+        while (ply >= 0 && _arrPGN.size() >= ply) {
             _arrPGN.remove(_arrPGN.size() - 1);
-
+        }
         _arrPGN.add(new PGNEntry(sMove, sAnnotation, move));
     }
 

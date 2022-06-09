@@ -59,15 +59,13 @@
         <item>Brown</item>
         <item>Red</item>
     </string-array>
-    <!-- 
-    <integer-array name="colorscheme_indexes">
+    <string-array name="colorscheme_indexes">
         <item>0</item>
         <item>2</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
-    </integer-array>
-     -->
+    </string-array>
     <string-array name="options_wakelock">
         <item>Use wake lock</item>
         <item>Do not use wake lock</item>
@@ -230,9 +228,14 @@
         <item>ru</item>
         <item>de</item>
     </string-array>
-    <string-array name="UCIArray">
-        <item>default</item>
-        <item>robollito</item>
-        <item>bik</item>
+    <string-array name="piecesetarray">
+        <item>Alpha</item>
+        <item>Merida</item>
+        <item>Leipzig</item>
+    </string-array>
+    <string-array name="piecesetKeyarray">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 </resources>

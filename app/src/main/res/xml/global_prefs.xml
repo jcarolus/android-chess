@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/enginepreferences">
+
+        <EditTextPreference
+            android:defaultValue="5"
+            android:dialogTitle="@string/pref_engine_seconds"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:key="pref_engine_seconds"
+            android:summary="@string/pref_engine_seconds_desc"
+            android:title="@string/pref_engine_seconds" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/boardprerences">
+
+    <ListPreference
+        android:title="@string/pref_pieceset"
+        android:summary="@string/pref_pieceset_desc"
+        android:key="pieceset"
+        android:defaultValue="0"
+        android:entries="@array/piecesetarray"
+        android:entryValues="@array/piecesetKeyarray" />
+
+    <ListPreference
+        android:title="@string/pref_colorscheme"
+        android:summary="@string/pref_colorscheme_desc"
+        android:key="colorscheme"
+        android:defaultValue="0"
+        android:entries="@array/colorschemes"
+        android:entryValues="@array/colorscheme_indexes" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

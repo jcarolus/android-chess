@@ -27,6 +27,9 @@
     <string name="puzzlepreferences">Puzzle settings</string>
     <string name="playpreferences">Play settings</string>
     <string name="playonlinepreferences">Play online settings</string>
+    <string name="enginepreferences">Engine settings</string>
+    <string name="boardprerences">Board settings</string>
+    <string name="gamepreferences">Game settings</string>
     <string name="preferences">Settings</string>
     <string name="pref_wakelock">Use wake lock</string>
     <string name="pref_wakelock_desc">This will prevent your phone going to sleep</string>
@@ -81,7 +84,12 @@
     <string name="pref_localelanguage_desc">Choose the language you would like to use</string>
     <string name="pref_skipreturn">Skip carriage return</string>
     <string name="pref_skipreturn_desc">For USB board, a carriage return will be skipped so it does not close the app</string>
-
+    <string name="pref_engine_seconds">Engine time limit</string>
+    <string name="pref_engine_seconds_desc">The number of seconds the engine will take before it has to make a move</string>
+    <string name="pref_vs_cpu">vs CPU</string>
+    <string name="pref_vs_cpu_desc">Play versus the CPU/Engine</string>
+    <string name="pref_turn">Side</string>
+    <string name="pref_turn_desc">Which side of the board you play</string>
     <string name="button_play">Play</string>
     <string name="button_undo">Undo</string>
     <string name="button_ok">OK</string>
@@ -164,6 +172,7 @@
     <string name="menu_stop">Stop</string>
     <string name="menu_prefs">Settings</string>
     <string name="menu_global_prefs">Global Settings</string>
+    <string name="menu_game_settings">Game Settings</string>
 
     <string name="menu_subview_title">Choose sub controls</string>
     <string name="pref_show_engine_info">Engine info</string>

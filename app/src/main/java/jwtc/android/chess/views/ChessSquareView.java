@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
 
+import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.board.ChessBoard;
 
 public class ChessSquareView extends View {
@@ -40,10 +41,10 @@ public class ChessSquareView extends View {
 
     public void onDraw(Canvas canvas) {
         if (selected) {
-            paint.setColor(0xffff9900);
+            paint.setColor(ColorSchemes.getHightlight());
         } else {
             final int fieldColor = (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? ChessBoard.WHITE : ChessBoard.BLACK) : (((pos >> 3) & 1) == 0 ? ChessBoard.BLACK : ChessBoard.WHITE);
-            paint.setColor(fieldColor == ChessBoard.WHITE ? 0xfff9e3c0 : 0xffdeac5d);
+            paint.setColor(fieldColor == ChessBoard.WHITE ? ColorSchemes.getLight() : ColorSchemes.getDark());
         }
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
     }

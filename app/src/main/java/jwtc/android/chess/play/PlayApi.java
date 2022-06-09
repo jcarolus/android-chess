@@ -19,23 +19,15 @@ public class PlayApi extends GameApi implements EngineListener {
         engine.addListener(this);
     }
 
+    @Override
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
-        if (jni.isEnded() != 0)
-            return false;
 
-        if (jni.requestMove(from, to) == 0) {
-            return false;
+        if (super.requestMove(from, to)) {
+            engine.play();
+            return true;
         }
-
-        final int move = jni.getMyMove();
-        for (GameListener listener: listeners) {
-            listener.OnMove(move);
-        }
-
-        engine.play();
-
-        return true;
+        return false;
     }
 
     @Override
