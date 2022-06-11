@@ -173,6 +173,7 @@
     <string name="menu_prefs">Settings</string>
     <string name="menu_global_prefs">Global Settings</string>
     <string name="menu_game_settings">Game Settings</string>
+    <string name="menu_new_960">New random Fischer / 960</string>
 
     <string name="menu_subview_title">Choose sub controls</string>
     <string name="pref_show_engine_info">Engine info</string>

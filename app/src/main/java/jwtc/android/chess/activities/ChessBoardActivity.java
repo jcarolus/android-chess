@@ -2,38 +2,44 @@ package jwtc.android.chess.activities;
 
 import android.content.ClipData;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.speech.tts.TextToSpeech.OnInitListener;
+
+import java.util.Locale;
 
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.PieceSets;
-import jwtc.android.chess.controllers.GameApi;
-import jwtc.android.chess.controllers.GameListener;
+import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
-abstract public class ChessBoardActivity extends BaseActivity implements GameListener {
+abstract public class ChessBoardActivity extends BaseActivity implements GameListener, OnInitListener {
     private static final String TAG = "ChessBoardActivity";
 
     protected GameApi gameApi;
     protected MyDragListener myDragListener = new MyDragListener();
     protected MyTouchListener myTouchListener = new MyTouchListener();
+    protected MyClickListener myClickListener = new MyClickListener();
     protected JNI jni;
     protected ChessBoardView chessBoardView;
-    protected SoundPool spSound;
+    protected SoundPool spSound = null;
+    protected TextToSpeechApi textToSpeech = null;
     protected int lastPosition = -1;
 
     public static final int MODE_BLINDFOLD_SHOWPIECES = 0;
@@ -43,6 +49,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected int soundTickTock, soundCheck, soundMove, soundCapture;
 
     protected int modeBlindfold = MODE_BLINDFOLD_SHOWPIECES;
+    protected boolean allowPremove = true;
     protected boolean skipReturn = true;
     private String keyboardBuffer = "";
 
@@ -52,7 +59,23 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public void OnMove(int move) {
         Log.d(TAG, "OnMove " + move);
         updateBoardWithMove(move);
+
+        if (spSound != null) {
+            if (Move.isCheck(move)) {
+                spSound.play(soundCheck, fVolume, fVolume, 2, 0, 1);
+            } else if (Move.isHIT(move)) {
+                spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);
+            } else {
+                spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
+            }
+        }
+        if (textToSpeech != null) {
+            textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
+        }
     }
+
+
+    // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
 
     @Override
     public void OnState() {
@@ -76,16 +99,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);
             csv.setOnDragListener(myDragListener);
+            csv.setOnClickListener(myClickListener);
             chessBoardView.addView(csv);
         }
 
         gameApi.addListener(this);
-
-        spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
-        soundTickTock = spSound.load(this, R.raw.ticktock, 1);
-        soundCheck = spSound.load(this, R.raw.smallneigh, 2);
-        soundMove = spSound.load(this, R.raw.move, 1);
-        soundCapture = spSound.load(this, R.raw.capture, 1);
     }
 
     @Override
@@ -100,8 +118,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         skipReturn = prefs.getBoolean("skipReturn", true);
         keyboardBuffer = "";
 
-        chessBoardView.setRotated(!prefs.getBoolean("turn", true));
-
         try {
             PieceSets.selectedSet = Integer.parseInt(prefs.getString("pieceset", "0"));
             ColorSchemes.selectedColorScheme = Integer.parseInt(prefs.getString("colorscheme", "0"));
@@ -110,6 +126,23 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             Log.e(TAG, ex.getMessage());
         }
         rebuildBoard();
+
+
+        if (prefs.getBoolean("moveToSpeech", false)) {
+            textToSpeech = new TextToSpeechApi(this, this);
+        } else {
+            textToSpeech = null;
+        }
+
+        if (prefs.getBoolean("moveSounds", false)) {
+            spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
+            soundTickTock = spSound.load(this, R.raw.ticktock, 1);
+            soundCheck = spSound.load(this, R.raw.smallneigh, 2);
+            soundMove = spSound.load(this, R.raw.move, 1);
+            soundCapture = spSound.load(this, R.raw.capture, 1);
+        } else {
+            spSound = null;
+        }
     }
 
     public void rebuildBoard() {
@@ -131,6 +164,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 chessBoardView.addView(p);
             }
         }
+
+        updateSelectedSquares();
     }
 
     public void updateBoardWithMove(int move) {
@@ -204,23 +239,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    public void playSoundCheck() {
-        spSound.play(soundCheck, fVolume, fVolume, 2, 0, 1);
+    public void updateSelectedSquares() {
+        final int count = chessBoardView.getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = chessBoardView.getChildAt(i);
+
+            if (child instanceof ChessSquareView) {
+                //((ChessSquareView) child).setHighlighted(true);
+            }
+        }
     }
-
-    public void playSoundMove() {
-        spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
-    }
-
-    public void playSoundCapture() {
-        spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);
-    }
-
-    public void playSoundTickTock() {
-        spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
-    }
-
-
 
 
     @Override
@@ -270,6 +298,24 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = textToSpeech.setLanguage(Locale.US);
+
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                doToast("Speech does not support US locale");
+                textToSpeech = null;
+            } else {
+                textToSpeech.setDefaults();
+            }
+        } else {
+            doToast("Speech not supported");
+            textToSpeech = null;
+        }
+    }
+
 
     protected ChessPieceView getPieceOnBoard(int pos, int color, int piece) {
         final int count = chessBoardView.getChildCount();
@@ -294,7 +340,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (child instanceof ChessSquareView) {
                 final ChessSquareView squareView = (ChessSquareView) child;
                 if (squareView.getSelected()){
-                    squareView.setSelected(false);
+                    squareView.setSelected(squareView.getPos() == lastPosition);
                 }
             }
         }
@@ -313,6 +359,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
         }
         return null;
+    }
+
+    private final class MyClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            if (view instanceof ChessSquareView) {
+                final int toPos = ((ChessSquareView) view).getPos();
+                if (lastPosition != -1) {
+                    requestMove(lastPosition, toPos);
+                }
+                lastPosition = -1;
+                ChessBoardActivity.this.resetSelectedSquares();
+            }
+        }
     }
 
     private final class MyDragListener implements View.OnDragListener {
@@ -340,13 +401,20 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                             final int toPos = ((ChessSquareView) view).getPos();
                             final int fromPos = ((ChessPieceView) fromView).getPos();
 
-                            if (lastPosition == toPos) {
-                                lastPosition = -1;
-                            } else {
-                                if (!requestMove(fromPos, toPos)) {
-                                    view.setSelected(false);
+                            if (toPos == fromPos) {
+                                // a click
+                                Log.d(TAG, "click " + lastPosition);
+                                if (lastPosition != -1) {
+                                    requestMove(lastPosition, toPos);
+                                    lastPosition = -1;
+                                } else {
+                                    lastPosition = toPos;
                                 }
+                            } else {
+                                requestMove(fromPos, toPos);
+                                lastPosition = -1;
                             }
+                            ChessBoardActivity.this.resetSelectedSquares();
                             fromView.setVisibility(View.VISIBLE);
                         }
 
@@ -367,9 +435,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     Log.i(TAG, "onTouch DOWN " + pos);
-
-                    ChessBoardActivity.this.resetSelectedSquares();
-                    lastPosition = pos;
 
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);

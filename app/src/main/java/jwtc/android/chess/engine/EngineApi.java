@@ -23,7 +23,7 @@ public abstract class EngineApi {
                 int move = msg.getData().getInt("move");
                 Log.d(TAG, "handleMessage MOVE " + move);
                 for (EngineListener listener: listeners) {
-                    listener.OnMove(move);
+                    listener.OnEngineMove(move);
                 }
 
             } else if (msg.what == MSG_INFO) {

@@ -37,8 +37,10 @@ public class ChessPieceView extends AppCompatImageView {
     }
 
     public void setPos(int pos) {
-        this.pos = pos;
-        this.invalidate();
+        if (this.pos != pos) {
+            this.pos = pos;
+            this.invalidate();
+        }
     }
 
     public void promote(int piece) {

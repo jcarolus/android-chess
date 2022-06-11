@@ -2,8 +2,7 @@ package jwtc.android.chess.play;
 
 import android.util.Log;
 
-import jwtc.android.chess.controllers.GameApi;
-import jwtc.android.chess.controllers.GameListener;
+import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
 
@@ -15,7 +14,8 @@ public class PlayApi extends GameApi implements EngineListener {
         super();
 
         engine = new LocalEngine();
-        engine.setPly(3); // @TODO
+        //engine.setPly(3); // @TODO
+        engine.setMsecs(3000);
         engine.addListener(this);
     }
 
@@ -31,12 +31,12 @@ public class PlayApi extends GameApi implements EngineListener {
     }
 
     @Override
-    public void OnStarted() {
+    public void OnEngineStarted() {
 
     }
 
     @Override
-    public void OnMove(int move) {
+    public void OnEngineMove(int move) {
         move(move);
     }
 
@@ -46,12 +46,12 @@ public class PlayApi extends GameApi implements EngineListener {
     }
 
     @Override
-    public void OnAborted() {
+    public void OnEngineAborted() {
 
     }
 
     @Override
-    public void OnError() {
+    public void OnEngineError() {
 
     }
 }

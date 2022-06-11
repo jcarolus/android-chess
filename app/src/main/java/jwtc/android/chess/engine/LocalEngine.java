@@ -16,7 +16,7 @@ public class LocalEngine extends EngineApi {
         Log.d(TAG, "play " + msecs + ", " + ply);
 
         for (EngineListener listener: listeners) {
-            listener.OnStarted();
+            listener.OnEngineStarted();
         }
 
         engineThread = new Thread(new RunnableImp());

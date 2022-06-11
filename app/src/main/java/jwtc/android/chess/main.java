@@ -484,9 +484,9 @@ public class main extends ChessActivity implements OnInitListener, GestureDetect
             } else if (resultCode == options.RESULT_DEFAULT) {
                 newGame();
             } else if (resultCode == options.RESULT_SETUP) {
-                Intent intent = new Intent();
-                intent.setClass(main.this, setup.class);
-                startActivityForResult(intent, main.REQUEST_SETUP);
+//                Intent intent = new Intent();
+//                intent.setClass(main.this, setup.class);
+//                startActivityForResult(intent, main.REQUEST_SETUP);
             }
         }
     }

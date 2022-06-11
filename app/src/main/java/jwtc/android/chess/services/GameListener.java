@@ -1,4 +1,4 @@
-package jwtc.android.chess.controllers;
+package jwtc.android.chess.services;
 
 public interface GameListener {
     void OnMove(int move);

@@ -116,7 +116,7 @@
                 android:value=".main" />
         </activity>
         <activity
-            android:name=".setup"
+            android:name=".setup.SetupActivity"
             android:label="@string/app_name_setup"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
@@ -132,7 +132,7 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main" />
+                android:value=".play.PlayActivity" />
         </activity>
         <activity
             android:name=".GamesListView"

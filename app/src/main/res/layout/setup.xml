@@ -1,115 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:id="@+id/LayoutMain">
 
-    <include
-        layout="@layout/board"
+    <jwtc.android.chess.views.ChessPiecesStackView
         android:layout_width="wrap_content"
+        android:layout_height="48dip"
+        android:id="@+id/blackPieces" />
+
+    <include
+        layout="@layout/chessboard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/includeboard" />
-    <!--
-    <TextView android:layout_width="wrap_content" android:layout_height="320dip"
-        android:id="@+id/includeboard" android:layout_below="@id/LayoutSetupTitle"
-    />
-     -->
 
-    <TableLayout
-        android:id="@+id/SelectPiecesLayout"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_below="@id/includeboard"
-        android:padding="4dip">
+    <jwtc.android.chess.views.ChessPiecesStackView
+        android:layout_width="wrap_content"
+        android:layout_height="48dip"
+        android:id="@+id/whitePieces" />
 
-        <TableRow android:layout_width="fill_parent" android:layout_height="wrap_content">
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selWhiteQueen"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
 
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selWhiteRook"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
+    <ScrollView android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selWhiteBishop"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selWhiteKnight"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
-
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selWhitePawn"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
-
-            <ImageButton
-                android:id="@+id/delPiece"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:src="@drawable/content_discard"
-                android:layout_marginRight="2dip" />
-
-        </TableRow>
-        <TableRow android:layout_width="fill_parent" android:layout_height="wrap_content">
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selBlackQueen"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
-
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selBlackRook"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
-
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selBlackBishop"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
-
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selBlackKnight"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
-
-            <jwtc.android.chess.CapturedImageView
-                android:id="@+id/selBlackPawn"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                android:layout_marginRight="2dip" />
-
-            <Button
-                android:id="@+id/ButtonSetupOk"
-                android:text="@string/button_ok"
+            <TextView
+                android:id="@+id/TextViewSetupTurn"
+                android:text="@string/msg_setup_turn"
+                style="@style/MyLabelTextStyle"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/RadioGroupSetup"
+                android:orientation="horizontal"
+                android:layout_below="@id/TextViewSetupTurn"
+                style="@style/MyRowStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/RadioSetupTurnWhite"
+                    android:text="@string/msg_setup_turn_white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/RadioSetupTurnBlack"
+                    android:text="@string/msg_setup_turn_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RadioGroup>
+
+            <TableLayout
+                android:id="@+id/TableSetupEnPassant"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_span="2"/>
-        </TableRow>
-    </TableLayout>
+                android:layout_below="@id/RadioGroupSetup">
 
-    <TextView
-        android:id="@+id/TextViewSetupMsg"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        style="@style/MySmallTextStyle"
-        android:text="@string/msg_setup_extra"
-        android:layout_below="@id/SelectPiecesLayout" />
+                <TableRow style="@style/MyRowStyle">
 
-</RelativeLayout>
+                    <TextView
+                        android:text="@string/msg_setup_enpassant"
+                        style="@style/MyLabelTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Spinner
+                        android:id="@+id/SpinnerOptionsEnPassant"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+
+            </TableLayout>
+
+            <TableLayout
+                android:id="@+id/TableSetupCastling"
+                android:layout_below="@id/TableSetupEnPassant"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*">
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/MyRowStyle">
+
+                    <TextView
+                        android:text="@string/msg_setup_castle_white"
+                        style="@style/MyLabelTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <CheckBox
+                        android:id="@+id/CheckBoxSetupWhiteCastleShort"
+                        android:text="0-0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <CheckBox
+                        android:id="@+id/CheckBoxSetupWhiteCastleLong"
+                        android:text="0-0-0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/MyRowStyle">
+
+                    <TextView
+                        android:text="@string/msg_setup_castle_black"
+                        style="@style/MyLabelTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <CheckBox
+                        android:id="@+id/CheckBoxSetupBlackCastleShort"
+                        android:text="0-0"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+
+                    <CheckBox
+                        android:id="@+id/CheckBoxSetupBlackCastleLong"
+                        android:text="0-0-0"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/TableSetupCastling"
+                android:stretchColumns="*">
+
+                <TableRow style="@style/MyRowStyle">
+
+                    <Button
+                        android:id="@+id/ButtonSetupOptionsCancel"
+                        android:text="@string/button_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:id="@+id/ButtonSetupOptionsOk"
+                        android:text="@string/button_ok"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+
+            </TableLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</LinearLayout>

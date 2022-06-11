@@ -1,4 +1,4 @@
-package jwtc.android.chess.controllers;
+package jwtc.android.chess.services;
 
 import android.content.res.Resources;
 import android.util.Log;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
 import jwtc.chess.PGNEntry;
@@ -140,6 +141,8 @@ public abstract class GameApi {
         _arrPGN.clear();
 
         jni.newGame();
+
+        dispatchState();
     }
 
 
@@ -160,6 +163,7 @@ public abstract class GameApi {
 
             _arrPGN.clear();
 
+            dispatchState();
             return true;
         }
         return false;
@@ -182,13 +186,18 @@ public abstract class GameApi {
 
         _arrPGN.clear();
 
+        dispatchState();
         return ret;
     }
 
     public boolean loadPGN(String s) {
         loadPGNHead(s);
 
-        return loadPGNMoves(s);
+        if(loadPGNMoves(s)) {
+            dispatchState();
+            return true;
+        }
+        return false;
     }
 
     protected void dispatchMove(final int move) {
@@ -632,4 +641,34 @@ public abstract class GameApi {
     public ArrayList<PGNEntry> getPGNEntries() {
         return _arrPGN;
     }
+
+    public void setPGNHeadProperty(String sProp, String sValue) {
+        _mapPGNHead.put(sProp, sValue);
+    }
+
+    public void setDateLong(long lTime) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(lTime);
+        Date d = cal.getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
+        setPGNHeadProperty("Date", formatter.format(d));
+    }
+
+    public String getPGNHeadProperty(String sProp) {
+        return _mapPGNHead.get(sProp);
+    }
+
+    public String getWhite() {
+        return getPGNHeadProperty("White");
+    }
+
+    public String getBlack() {
+        return getPGNHeadProperty("Black");
+    }
+
+    public Date getDate() {
+        String s = getPGNHeadProperty("Date");
+        return PGNHelper.getDate(s);
+    }
+
 }
