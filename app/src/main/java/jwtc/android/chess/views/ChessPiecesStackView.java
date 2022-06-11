@@ -28,8 +28,6 @@ public class ChessPiecesStackView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.i(TAG, " onLayout " + changed + " l " + l );
-
         final int count = getChildCount();
         final int height = getHeight();
 
@@ -37,15 +35,19 @@ public class ChessPiecesStackView extends ViewGroup {
             final View child = getChildAt(i);
 
             if (child.getVisibility() != GONE) {
-                layoutChild(child, i, height);
+                final int pos = child instanceof ChessSquareView
+                        ? ((ChessSquareView) child).getPos()
+                        : ((ChessPieceView) child).getPos();
+                layoutChild(child, pos, height);
             }
         }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        setMeasuredDimension(height * getChildCount(), height);
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = width / 5;
+        setMeasuredDimension(width , height);
     }
 
     public void layoutChild(View child, int index, int height) {

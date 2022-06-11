@@ -33,9 +33,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     private static final String TAG = "ChessBoardActivity";
 
     protected GameApi gameApi;
-    protected MyDragListener myDragListener = new MyDragListener();
-    protected MyTouchListener myTouchListener = new MyTouchListener();
-    protected MyClickListener myClickListener = new MyClickListener();
+    protected MyDragListener myDragListener;
+    protected MyTouchListener myTouchListener;
+    protected MyClickListener myClickListener;
     protected JNI jni;
     protected ChessBoardView chessBoardView;
     protected SoundPool spSound = null;
@@ -84,12 +84,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void afterCreate() {
-
         Log.d(TAG, " afterCreate");
 
         jni = JNI.getInstance();
         chessBoardView = findViewById(R.id.includeboard);
 
+        myDragListener = new MyDragListener();
+        myTouchListener = new MyTouchListener();
+        myClickListener = new MyClickListener();
 //        LayoutTransition lt = new LayoutTransition();
 //        lt.disableTransitionType(LayoutTransition.DISAPPEARING);
 //        lt.setDuration(200);
@@ -376,7 +378,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    private final class MyDragListener implements View.OnDragListener {
+    protected class MyDragListener implements View.OnDragListener {
 
         @Override
         public boolean onDrag(View view, DragEvent event) {
@@ -428,7 +430,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    private final class MyTouchListener implements View.OnTouchListener {
+    protected class MyTouchListener implements View.OnTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (view instanceof ChessPieceView) {
                 final int pos =  ((ChessPieceView) view).getPos();
