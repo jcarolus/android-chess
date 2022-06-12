@@ -538,11 +538,11 @@ public class ICSChessView extends ChessViewBase {
             String _sTimePerMove = st.nextToken();  // time it took to make a move
             String sLastMoveDisplay = st.nextToken();  // algebraic notation move
             if (sLastMoveDisplay.contains("+")) {
-                _parent.soundCheck();
+//                _parent.soundCheck();
             } else if (sLastMoveDisplay.contains("x")) {
-                _parent.soundCapture();
+//                _parent.soundCapture();
             } else {
-                _parent.soundMove();
+//                _parent.soundMove();
             }
             int iFlipBoardOrientation = Integer.parseInt(st.nextToken()); //0 = White on Bottom / 1 = Black on bottom
 

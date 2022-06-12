@@ -112,7 +112,7 @@ public class ICSPlayerDlg extends Dialog {
                     String _sConsoleEditText = et.getText().toString();
 
                     _parent.sendString("tell " + _opponentName + " " + _sConsoleEditText);
-                    _parent.addConsoleText("\n" + getContext().getResources().getString(R.string.ics_you) + ": " + _sConsoleEditText + "\n");
+//                    _parent.addConsoleText("\n" + getContext().getResources().getString(R.string.ics_you) + ": " + _sConsoleEditText + "\n");
                     et.setText("");
 
                     return true;

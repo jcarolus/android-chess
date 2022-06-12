@@ -33,21 +33,6 @@
             android:minHeight="50dip">
 
             <TextView
-                android:text="@string/ics_client_presets"
-                style="@style/MyLabelTextStyle" />
-
-            <Spinner
-                android:id="@+id/SpinnerLoginPresets"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dip"></Spinner>
-        </TableRow>
-
-        <TableRow
-            style="@style/MyRowStyle"
-            android:minHeight="50dip">
-
-            <TextView
                 android:text="@string/ics_client_handle"
                 style="@style/MyLabelTextStyle"
                 android:layout_width="wrap_content"

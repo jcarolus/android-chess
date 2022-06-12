@@ -30,6 +30,13 @@ public class SetupActivity extends ChessBoardActivity {
     private ChessPiecesStackView blackPieces;
     private ChessPiecesStackView whitePieces;
     private Spinner spinnerEPFile;
+    private RadioButton radioTurnWhite;
+    private RadioButton radioTurnBlack;
+
+    private CheckBox checkWhiteCastleShort;
+    private CheckBox checkWhiteCastleLong;
+    private CheckBox checkBlackCastleShort;
+    private CheckBox checkBlackCastleLong;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,12 @@ public class SetupActivity extends ChessBoardActivity {
 
         blackPieces = findViewById(R.id.blackPieces);
         whitePieces = findViewById(R.id.whitePieces);
+        radioTurnWhite = findViewById(R.id.RadioSetupTurnWhite);
+        radioTurnBlack = findViewById(R.id.RadioSetupTurnBlack);
+        checkWhiteCastleShort = findViewById(R.id.CheckBoxSetupWhiteCastleShort);
+        checkWhiteCastleLong = findViewById(R.id.CheckBoxSetupWhiteCastleLong);
+        checkBlackCastleShort = findViewById(R.id.CheckBoxSetupBlackCastleShort);
+        checkBlackCastleLong = findViewById(R.id.CheckBoxSetupBlackCastleLong);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.field_files, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -74,22 +87,22 @@ public class SetupActivity extends ChessBoardActivity {
     protected void onResume() {
         SharedPreferences prefs = getPrefs();
 
-        resetBoard();
-        RadioButton radioTurnWhite = findViewById(R.id.RadioSetupTurnWhite);
-        radioTurnWhite.setChecked(true);
+        final String sFEN = prefs.getString("FEN", null);
+        if (sFEN == null) {
+            resetBoard();
+            radioTurnWhite.setChecked(true);
+        } else {
+            jni.initFEN(sFEN);
+            radioTurnWhite.setChecked(jni.getTurn() == BoardConstants.WHITE);
+            radioTurnBlack.setChecked(jni.getTurn() == BoardConstants.BLACK);
+        }
 
         super.onResume();
     }
 
     protected void onSave() {
 
-        RadioButton radioTurnWhite = findViewById(R.id.RadioSetupTurnWhite);
-        RadioButton radioTurnBlack = findViewById(R.id.RadioSetupTurnBlack);
 
-        CheckBox checkWhiteCastleShort = findViewById(R.id.CheckBoxSetupWhiteCastleShort);
-        CheckBox checkWhiteCastleLong = findViewById(R.id.CheckBoxSetupWhiteCastleLong);
-        CheckBox checkBlackCastleShort = findViewById(R.id.CheckBoxSetupBlackCastleShort);
-        CheckBox checkBlackCastleLong = findViewById(R.id.CheckBoxSetupBlackCastleLong);
 
         final int turn = radioTurnWhite.isChecked() ? 1 : 0;
 
@@ -135,22 +148,22 @@ public class SetupActivity extends ChessBoardActivity {
 
         if (jni.isLegalPosition() == 0) {
             new AlertDialog.Builder(this)
-                    .setTitle("Use illegal position?")
-                    .setPositiveButton(getString(R.string.alert_yes),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
+                .setTitle("Use illegal position?")
+                .setPositiveButton(getString(R.string.alert_yes),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
 
-                                    commitFEN();
-                                    SetupActivity.this.finish();
-                                }
-                            })
-                    .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
+                                commitFEN();
+                                SetupActivity.this.finish();
+                            }
+                        })
+                .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
         } else {
             commitFEN();
             finish();
@@ -224,14 +237,19 @@ public class SetupActivity extends ChessBoardActivity {
 
     // p = _jni.pieceAt(t, _selectedPosition);
     public void addPiece(final int pos, final int piece, final int turn) {
+        Log.d(TAG, "addPiece " + pos + " " + piece + " " + turn);
         jni.putPiece(pos, piece, turn);
     }
 
     public void removePiece(final int pos) {
-        if (jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD) {
+        final int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
+        if (whitePiece != BoardConstants.FIELD) {
+            Log.d(TAG, "removePiece white " + pos + " " + whitePiece);
             jni.removePiece(BoardConstants.WHITE, pos);
         }
-        if (jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD) {
+        final int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
+        if (blackPiece != BoardConstants.FIELD) {
+            Log.d(TAG, "removePiece black " + pos + " " + blackPiece);
             jni.removePiece(BoardConstants.BLACK, pos);
         }
     }
@@ -253,57 +271,36 @@ public class SetupActivity extends ChessBoardActivity {
         public boolean onDrag(View view, DragEvent event) {
             int action = event.getAction();
             if (view instanceof ChessSquareView) {
-                final int pos = ((ChessSquareView) view).getPos();
+                final ChessSquareView droppedOnSquare = (ChessSquareView) view;
+                final int toPos = droppedOnSquare.getPos();
 
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DROP:
-                        Log.i(TAG, "onDrag DROP " + pos);
+                        Log.i(TAG, "onDrag DROP " + toPos);
                         // Dropped, reassign View to ViewGroup
                         View fromView = (View) event.getLocalState();
                         if (fromView instanceof ChessPieceView) {
                             final ChessPieceView pieceView = (ChessPieceView) fromView;
-                            final int toPos = ((ChessSquareView) view).getPos();
                             final int fromPos = pieceView.getPos();
 
-                            boolean droppedOnKing = false;
+                            // drop on board
+                            if (droppedOnSquare.getParent() instanceof ChessBoardView) {
+                                boolean droppedOnKing = jni.pieceAt(BoardConstants.WHITE, toPos) == BoardConstants.KING || jni.pieceAt(BoardConstants.BLACK, toPos) == BoardConstants.KING;
 
-                            if (view.getParent() instanceof ChessBoardView) {
-                                final int count = chessBoardView.getChildCount();
-                                for (int i = 0; i < count; i++) {
-                                    final View child = chessBoardView.getChildAt(i);
-                                    if (child instanceof ChessPieceView) {
-                                        if (((ChessPieceView) child).getPos() == toPos) {
-                                            if (((ChessPieceView) child).getPiece() == BoardConstants.KING) {
-                                                droppedOnKing = true;
-                                            } else {
-                                                chessBoardView.removeView(child);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (!droppedOnKing) {
-                                removePiece(fromPos);
-
-                                if (view.getParent() instanceof ChessBoardView) {
+                                if (!droppedOnKing) {
+                                    removePiece(fromPos);
                                     removePiece(toPos);
 
                                     addPiece(toPos, pieceView.getPiece(), pieceView.getColor());
-
-                                    if (pieceView.getParent() instanceof ChessPiecesStackView) {
-                                        ChessPieceView droppedPiece = new ChessPieceView(SetupActivity.this, pieceView.getColor(), pieceView.getPiece(), toPos);
-                                        droppedPiece.setOnTouchListener(myTouchListener);
-                                        chessBoardView.addView(droppedPiece);
-                                    } else {
-                                        pieceView.setPos(toPos);
-                                        chessBoardView.layoutChild(pieceView);
-                                    }
-                                } else {
-                                    chessBoardView.removeView(pieceView);
+                                }
+                            } else {
+                                // dropped back
+                                if (pieceView.getParent() instanceof ChessBoardView) {
+                                    removePiece(fromPos);
                                 }
                             }
 
+                            rebuildBoard();
                             pieceView.setVisibility(View.VISIBLE);
                         }
 
