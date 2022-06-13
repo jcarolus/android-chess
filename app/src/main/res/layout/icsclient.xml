@@ -94,4 +94,23 @@
         </TableRow>
 
     </TableLayout>
+
+    <ViewSwitcher
+        android:id="@+id/ViewSwitcherPlayMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TableRow>
+                <Button android:id="@+id/ButtonChallenge"
+                    android:text="@string/ics_seekchallenge"></Button>
+                <Button android:id="@+id/ButtonPuzzle"
+                    android:text="@string/ics_menu_puzzlebot_mate"></Button>
+            </TableRow>
+        </TableLayout>
+
+    </ViewSwitcher>
+
 </LinearLayout>

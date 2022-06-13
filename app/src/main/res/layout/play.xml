@@ -37,11 +37,19 @@
 
             <TextView
                 android:id="@+id/TextViewTopTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 style="@style/MyNormalTextStyle"
                 android:text="Title..." />
+
+            <jwtc.android.chess.views.ChessPiecesStackView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginRight="1dip"
+                android:id="@+id/topPieces" />
         </TableRow>
     </TableLayout>
 
@@ -87,11 +95,18 @@
 
             <TextView
                 android:id="@+id/TextViewTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 style="@style/MyNormalTextStyle"
                 android:text="Title..." />
+
+            <jwtc.android.chess.views.ChessPiecesStackView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:id="@+id/bottomPieces" />
         </TableRow>
 
     </TableLayout>

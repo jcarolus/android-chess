@@ -1,13 +1,22 @@
-package jwtc.chess.clock;
+package jwtc.android.chess.services;
+import android.os.Handler;
+import android.os.Message;
+
 import jwtc.chess.board.BoardConstants;
 
-public class Clock {
-    protected static final String TAG = "Clock";
+public class LocalClockApi extends ClockApi {
+    protected static final String TAG = "LocalClockApi";
 
     protected long increment = 0;
-    protected long whiteRemaining = 0;
-    protected long blackRemaining = 0;
     protected long startTime = 0;
+
+    protected Handler updateHandler = new Handler() {
+        // @Override
+        public void handleMessage(Message msg) {
+            dispatchClockTime();
+            super.handleMessage(msg);
+        }
+    };
 
     public void setTimer(long given, long increment) {
         this.increment = increment;
@@ -31,7 +40,11 @@ public class Clock {
         startTime = currentTime;
     }
 
-    public long getRemaining(int turn) {
-        return turn == BoardConstants.WHITE ? whiteRemaining : blackRemaining;
+    private class RunnableImp implements Runnable {
+        @Override
+        public void run() {
+            Message m = new Message();
+            updateHandler.sendMessage(m);
+        }
     }
 }

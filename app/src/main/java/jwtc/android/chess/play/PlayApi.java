@@ -20,6 +20,16 @@ public class PlayApi extends GameApi implements EngineListener {
     }
 
     @Override
+    public String getBlackPlayer() {
+        return null;
+    }
+
+    @Override
+    public String getWhitePlayer() {
+        return null;
+    }
+
+    @Override
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
 

@@ -67,7 +67,7 @@ public class ICSApi extends GameApi implements ICSListener {
 
     @Override
     public void OnIllegalMove() {
-
+        dispatchState();
     }
 
     @Override
@@ -392,8 +392,20 @@ public class ICSApi extends GameApi implements ICSListener {
 
         } catch (Exception ex) {
             Log.e("parseGame", ex.toString());
+
+            dispatchState();
             return false;
         }
 
+    }
+
+    @Override
+    public String getBlackPlayer() {
+        return null;
+    }
+
+    @Override
+    public String getWhitePlayer() {
+        return null;
     }
 }

@@ -31,6 +31,9 @@ import jwtc.android.chess.activities.GlobalPreferencesActivity;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.options;
+import jwtc.android.chess.views.CapturedCountView;
+import jwtc.android.chess.views.ChessPieceView;
+import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
@@ -49,6 +52,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     ImageButton playButton;
     private boolean vsCPU = true;
     private int turn = 1;
+    private ChessPiecesStackView topPieces;
+    private ChessPiecesStackView bottomPieces;
 
     @Override
     public boolean requestMove(int from, int to) {
@@ -85,6 +90,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         seekBar = findViewById(R.id.SeekBarMain);
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setMax(1);
+
+        topPieces = findViewById(R.id.topPieces);
+        bottomPieces = findViewById(R.id.bottomPieces);
 
         ImageButton butNext = findViewById(R.id.ButtonNext);
         butNext.setOnClickListener(new View.OnClickListener() {
@@ -206,6 +214,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void OnMove(int move) {
         super.OnMove(move);
 
+        updateCapturedPieces();
         updateSeekBar();
     }
 
@@ -238,6 +247,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void OnState() {
         super.OnState();
 
+        updateCapturedPieces();
         updateSeekBar();
     }
 
@@ -338,6 +348,43 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         seekBar.setProgress(jni.getNumBoard() - 1);
 //        seekBar.invalidate();
         Log.d(TAG, "updateSeekBar " + seekBar.getMax() + " - " + seekBar.getProgress());
+    }
+
+    protected void updateCapturedPieces() {
+        topPieces.removeAllViews();
+        bottomPieces.removeAllViews();
+
+        int piece, turnAt;
+        // turn
+        for (turnAt = 0; turnAt < 2; turnAt++) {
+            for (piece = 0; piece < 5; piece++) {
+                int numCaptured = jni.getNumCaptured(turnAt, piece);
+//                Log.d(TAG, "numCaptured for " + turnAt + " " + piece + " " + numCaptured);
+                if (numCaptured > 0) {
+                    ChessPieceView capturedPiece = new ChessPieceView(this, turnAt, piece, piece);
+                    CapturedCountView capturedCountView = new CapturedCountView(this, numCaptured, piece);
+                    if (turn == BoardConstants.WHITE) {
+                        if (turnAt == BoardConstants.BLACK) {
+                            bottomPieces.addView(capturedPiece);
+                            bottomPieces.addView(capturedCountView);
+                        } else {
+                            topPieces.addView(capturedPiece);
+                            topPieces.addView(capturedCountView);
+                        }
+                    } else {
+                        if (turnAt == BoardConstants.WHITE) {
+                            bottomPieces.addView(capturedPiece);
+                            bottomPieces.addView(capturedCountView);
+                        } else {
+                            topPieces.addView(capturedPiece);
+                            topPieces.addView(capturedCountView);
+                        }
+                    }
+                }
+            }
+        }
+
+        // topPieces.addView();
     }
 
 

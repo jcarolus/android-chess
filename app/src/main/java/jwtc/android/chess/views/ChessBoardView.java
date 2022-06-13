@@ -47,8 +47,6 @@ public class ChessBoardView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.i(TAG, " onLayout " + changed + " l " + l );
-
         final int count = getChildCount();
 
         for (int i = 0; i < count; i++) {

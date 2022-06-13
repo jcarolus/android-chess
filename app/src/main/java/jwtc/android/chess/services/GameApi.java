@@ -53,6 +53,9 @@ public abstract class GameApi {
         this.listeners.remove(listener);
     }
 
+    public abstract String getBlackPlayer();
+    public abstract String getWhitePlayer();
+
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
         if (jni.isEnded() != 0)

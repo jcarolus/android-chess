@@ -93,6 +93,10 @@
 
     <style name="ChessTheme" parent="Theme.AppCompat">
         <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 </resources>

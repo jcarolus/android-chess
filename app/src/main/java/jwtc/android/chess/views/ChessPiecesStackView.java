@@ -37,7 +37,9 @@ public class ChessPiecesStackView extends ViewGroup {
             if (child.getVisibility() != GONE) {
                 final int pos = child instanceof ChessSquareView
                         ? ((ChessSquareView) child).getPos()
-                        : ((ChessPieceView) child).getPos();
+                        : (child instanceof ChessPieceView
+                            ? ((ChessPieceView) child).getPos()
+                            : ((CapturedCountView) child).getPiece());
                 layoutChild(child, pos, height);
             }
         }

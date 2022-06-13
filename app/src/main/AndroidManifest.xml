@@ -12,7 +12,7 @@
         android:theme="@style/ChessTheme">
         <service android:name=".ics.ICSServer"></service>
         <activity
-            android:name=".ics.ICSClient"
+            android:name=".play.PlayActivity"
             android:label="TEST"
             android:configChanges="orientation"
             android:screenOrientation="portrait">

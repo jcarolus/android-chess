@@ -127,6 +127,10 @@ public class ICSServer extends Service {
         return false;
     }
 
+    public String getHandle() {
+        return handle;
+    }
+
     public boolean isGuest() {
         return handle != null && handle.startsWith("Guest");
     }

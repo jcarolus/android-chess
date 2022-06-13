@@ -51,6 +51,7 @@ import org.json.JSONException;
 
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.chess.Pos;
 
 public class ICSClient extends ChessBoardActivity implements ICSListener {
     public static final String TAG = "ICSClient";
@@ -61,7 +62,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
     private String _server, _handle, _pwd, _ficsHandle, _ficsPwd, _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
     private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-            _notifyON, _bConsoleText, _bICSVolume, _ICSNotifyLifeCycle;
+            _notifyON, _bICSVolume, _ICSNotifyLifeCycle;
     private Button _butLogin;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
 //	public ICSChatDlg _dlgChat;
@@ -172,6 +173,23 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
         _bTimeWarning = true;
         _bEndGameDialog = true;
         _bShowClockPGN = true;
+
+        Button buttonChallenge = findViewById(R.id.ButtonChallenge);
+        buttonChallenge.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _dlgMatch.show();
+            }
+        });
+
+        Button buttonMate = findViewById(R.id.ButtonPuzzle);
+        buttonMate.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("tell puzzlebot getmate");
+            }
+        });
+        //
 
 //        _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
 //                new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
@@ -784,14 +802,14 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
 
     @Override
     public boolean requestMove(int from, int to) {
-        return false;
+        String sMove = Pos.toString(from) + "-" + Pos.toString(to);
+        sendString(sMove);
+        return true;
     }
 
     @Override
     protected void onResume() {
         Log.i(TAG, "onResume");
-
-
 
         invalidateOptionsMenu(); // update OptionsMenu
 
@@ -1012,14 +1030,14 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
         editor.putString("ics_handle", _ficsHandle);
         editor.putString("ics_password", _ficsPwd);
 
-        JSONArray jArray = new JSONArray();
-        JSONArray jArrayPasswords = new JSONArray();
-        for (int i = 0; i < _adapterHandles.getCount(); i++) {
-            jArray.put(_adapterHandles.getItem(i));
-            jArrayPasswords.put(_arrayPasswords.get(i));
-        }
-        editor.putString("ics_handle_array", jArray.toString());
-        editor.putString("ics_password_array", jArrayPasswords.toString());
+//        JSONArray jArray = new JSONArray();
+//        JSONArray jArrayPasswords = new JSONArray();
+//        for (int i = 0; i < _adapterHandles.getCount(); i++) {
+//            jArray.put(_adapterHandles.getItem(i));
+//            jArrayPasswords.put(_arrayPasswords.get(i));
+//        }
+//        editor.putString("ics_handle_array", jArray.toString());
+//        editor.putString("ics_password_array", jArrayPasswords.toString());
 
         editor.putBoolean("ICSVolume", _bICSVolume);
 
@@ -1068,12 +1086,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
     }
 
     public void sendString(String s) {
-
-        if (_bConsoleText) {        // allows user ICS console text only
-            _bConsoleText = false;
-        }
-
-        if (!icsServer.sendString(s)) {
+        if (icsServer != null && !icsServer.sendString(s)) {
             try {
                 new AlertDialog.Builder(ICSClient.this)
                         .setTitle(R.string.title_error)
@@ -1275,12 +1288,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
 
     @Override
     public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
-        _mapPlayers.clear();
-        for (int i = 0; i < playerList.size(); i++) {
-            _mapPlayers.add(playerList.get(i));
-        }
-        Collections.sort(_mapPlayers, new ComparatorHashRating());
-        _adapterPlayers.notifyDataSetChanged();
+//        _mapPlayers.clear();
+//        for (int i = 0; i < playerList.size(); i++) {
+//            _mapPlayers.add(playerList.get(i));
+//        }
+//        Collections.sort(_mapPlayers, new ComparatorHashRating());
+//        _adapterPlayers.notifyDataSetChanged();
     }
 
     @Override
@@ -1430,31 +1443,30 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
 
     @Override
     public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
-        _mapChallenges.clear();
-        for (int i = 0; i < soughtList.size(); i++) {
-            _mapChallenges.add(soughtList.get(i));
-        }
-        _adapterChallenges.notifyDataSetChanged();
+//        _mapChallenges.clear();
+//        for (int i = 0; i < soughtList.size(); i++) {
+//            _mapChallenges.add(soughtList.get(i));
+//        }
+//        _adapterChallenges.notifyDataSetChanged();
     }
 
     @Override
     public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
-        _mapGames.clear();
-        for (int i = 0; i < games.size(); i++) {
-            _mapGames.add(games.get(i));
-        }
-
-        _adapterGames.notifyDataSetChanged();
-
+//        _mapGames.clear();
+//        for (int i = 0; i < games.size(); i++) {
+//            _mapGames.add(games.get(i));
+//        }
+//
+//        _adapterGames.notifyDataSetChanged();
     }
 
     @Override
     public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
-        _mapStored.clear();
-        for (int i = 0; i < games.size(); i++) {
-            _mapStored.add(games.get(i));
-        }
-        _adapterStored.notifyDataSetChanged();
+//        _mapStored.clear();
+//        for (int i = 0; i < games.size(); i++) {
+//            _mapStored.add(games.get(i));
+//        }
+//        _adapterStored.notifyDataSetChanged();
     }
 
     @Override

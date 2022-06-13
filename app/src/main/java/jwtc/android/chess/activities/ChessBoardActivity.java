@@ -388,15 +388,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DRAG_ENTERED:
-                        Log.i(TAG, "onDrag ENTERED " + pos);
+//                        Log.i(TAG, "onDrag ENTERED " + pos);
                         view.setSelected(true);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
-                        Log.i(TAG, "onDrag EXITED" + pos);
+//                        Log.i(TAG, "onDrag EXITED" + pos);
                         view.setSelected(false);
                         break;
                     case DragEvent.ACTION_DROP:
-                        Log.i(TAG, "onDrag DROP " + pos);
+//                        Log.i(TAG, "onDrag DROP " + pos);
                         // Dropped, reassign View to ViewGroup
                         View fromView = (View) event.getLocalState();
                         if (fromView instanceof ChessPieceView) {
@@ -436,7 +436,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 final int pos =  ((ChessPieceView) view).getPos();
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    Log.i(TAG, "onTouch DOWN " + pos);
+//                    Log.i(TAG, "onTouch DOWN " + pos);
 
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
@@ -444,7 +444,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     view.setVisibility(View.INVISIBLE);
                     return true;
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    Log.i(TAG, "onTouch UP " + pos);
+//                    Log.i(TAG, "onTouch UP " + pos);
 
                     view.setVisibility(View.VISIBLE);
                     view.invalidate();

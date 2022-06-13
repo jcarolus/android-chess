@@ -26,6 +26,14 @@ public class ICSLoginDlg extends Dialog {
 
                 final String handle = editHandle.getText().toString();
                 final String pwd = editPwd.getText().toString();
+
+                /*
+                defaultHost = chessclub.com
+                hosts = chessclub.com queen.chessclub.com
+                ports = 5000 23
+                id = icc
+                 */
+
                 if (handle != "" && pwd != "") {
                     icsServer.startSession("freechess.org", 23, handle, pwd, "fics% ");
                     ICSLoginDlg.this.dismiss();
