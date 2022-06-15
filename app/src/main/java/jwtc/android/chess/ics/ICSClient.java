@@ -51,10 +51,13 @@ import org.json.JSONException;
 
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.chess.Pos;
 
-public class ICSClient extends ChessBoardActivity implements ICSListener {
+public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener {
     public static final String TAG = "ICSClient";
+
+    public static final int REQUEST_LOGIN = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3, REQUEST_MENU = 4;
 
     private ICSServer icsServer = null;
 
@@ -90,6 +93,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
 
     private Matcher _matgame;
 
+    private ArrayList<HashMap<String, String>> mapMenu = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> _mapChallenges = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> _mapPlayers = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> _mapGames = new ArrayList<HashMap<String, String>>();
@@ -131,7 +135,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
             icsServer.addListener(ICSClient.this);
             icsServer.addListener((ICSApi)gameApi);
 
-            _dlgLogin = new ICSLoginDlg(ICSClient.this, icsServer);
+            _dlgLogin = new ICSLoginDlg(ICSClient.this, ICSClient.this, REQUEST_LOGIN);
 
             openLoginDialogOfNotConnected();
         }
@@ -161,9 +165,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
 
         afterCreate();
 
-        _dlgMatch = new ICSMatchDlg(this);
+        _dlgMatch = new ICSMatchDlg(this, this, REQUEST_CHALLENGE);
         _dlgPlayer = new ICSPlayerDlg(this);
-        _dlgConfirm = new ICSConfirmDlg(this);
+        _dlgConfirm = new ICSConfirmDlg(this, this, REQUEST_CONFIRM);
         _dlgOver = new ICSGameOverDlg(this);
 
 
@@ -178,7 +182,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
         buttonChallenge.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                _dlgMatch.show();
+                //                SharedPreferences myPrefs = getContext().getSharedPreferences(_parent.get_ficsHandle().toLowerCase(), getContext().MODE_PRIVATE);
+//                _dlgMatch.showWithPrefs();
             }
         });
 
@@ -190,6 +195,21 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
             }
         });
         //
+
+        String[] from = { "menu_item" };
+        int[] to = { R.id.MenuText };
+        SimpleAdapter menuAdapter = new SimpleAdapter(this, mapMenu, R.layout.menu_item, from, to);
+
+        final ICSMenuDialog menuDialog = new ICSMenuDialog(this, this, REQUEST_MENU, menuAdapter);
+
+        ImageButton buttonMenu = findViewById(R.id.ButtonMenu);
+        buttonMenu.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadMenu();
+                menuDialog.show();
+            }
+        });
 
 //        _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
 //                new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
@@ -337,6 +357,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
 
         Log.i("ICSClient", "onCreate");
     }
+
+    public void loadMenu() {
+        mapMenu.clear();
+        mapMenu.add(new HashMap<String, String>() {{ put("menu_item", "test"); }}) ;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1208,6 +1234,15 @@ public class ICSClient extends ChessBoardActivity implements ICSListener {
             Log.e(TAG, "vibrator process error", e);
         }
 
+    }
+
+    @Override
+    public void OnDialogResult(int requestCode, Bundle data) {
+        switch (requestCode) {
+            case REQUEST_LOGIN:
+                icsServer.startSession("freechess.org", 23, data.getString("handle"), data.getString("pwd"), "fics% ");
+                break;
+        }
     }
 
     public class ComparatorHashName implements java.util.Comparator<HashMap<String, String>> {

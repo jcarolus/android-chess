@@ -17,7 +17,7 @@ public class ColorSchemes {
 
         // green
         colorScheme[2][0] = 0xff8eb59b;
-        colorScheme[2][1] = 0xffcae787;
+        colorScheme[2][1] = 0xff8ce787;
         colorScheme[2][2] = 0xcc9ff3b4;
 
         // grey

@@ -19,9 +19,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.ViewSwitcher;
 
 import java.io.InputStream;
 
+import jwtc.android.chess.GamesListView;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.MyPGNProvider;
 import jwtc.android.chess.R;
@@ -30,21 +32,23 @@ import jwtc.android.chess.activities.GamePreferenceActivity;
 import jwtc.android.chess.activities.GlobalPreferencesActivity;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.helpers.PGNHelper;
-import jwtc.android.chess.options;
+import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
+import jwtc.chess.board.ChessBoard;
 
 
-public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, EngineListener {
+public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, EngineListener, ResultDialogListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;
     public static final int REQUEST_OPTIONS = 3;
     public static final int REQUEST_NEWGAME = 4;
     public static final int REQUEST_FROM_QR_CODE = 5;
+    public static final int REQUEST_MENU = 5;
 
     private long _lGameID;
     private SeekBar seekBar;
@@ -54,6 +58,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private int turn = 1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
+    private ViewSwitcher _switchTurnMe, _switchTurnOpp;
 
     @Override
     public boolean requestMove(int from, int to) {
@@ -85,6 +90,15 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         progressBarEngine = findViewById(R.id.ProgressBarPlay);
 
+        final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU);
+
+        ImageButton buttonMenu = findViewById(R.id.ButtonMenu);
+        buttonMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                menuDialog.show();
+            }
+        });
         // findViewById(R.id.TextViewClockTimeOpp)
 
         seekBar = findViewById(R.id.SeekBarMain);
@@ -109,6 +123,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 gameApi.undoMove();
             }
         });
+
+        _switchTurnMe = (ViewSwitcher) findViewById(R.id.ImageTurnMe);
+        _switchTurnOpp = (ViewSwitcher) findViewById(R.id.ImageTurnOpp);
     }
 
     @Override
@@ -169,7 +186,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             } else {
                 sPGN = prefs.getString("game_pgn", null);
                 Log.i("onResume", "pgn: " + sPGN);
-                gameApi.loadPGN(sPGN);
+                if (sPGN != null) {
+                    gameApi.loadPGN(sPGN);
+                }
             }
         }
 
@@ -209,6 +228,43 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         super.onPause();
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.i(TAG, "onActivityResult");
+
+        if (requestCode == REQUEST_OPEN) {
+            if (resultCode == RESULT_OK) {
+
+                Uri uri = data.getData();
+                try {
+                    _lGameID = Long.parseLong(uri.getLastPathSegment());
+                } catch (Exception ex) {
+                    _lGameID = 0;
+                }
+                SharedPreferences.Editor editor = this.getPrefs().edit();
+                editor.putLong("game_id", _lGameID);
+                editor.putInt("boardNum", 0);
+                editor.putString("FEN", null);
+//                @TODO
+//                editor.putInt("playMode", _chessView.HUMAN_HUMAN);
+                editor.putBoolean("playAsBlack", false);
+                editor.commit();
+            }
+        } else if (requestCode == REQUEST_FROM_QR_CODE) {
+            if (resultCode == RESULT_OK) {
+                String contents = data.getStringExtra("SCAN_RESULT");
+                //String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+
+                SharedPreferences.Editor editor = this.getPrefs().edit();
+                editor.putLong("game_id", 0);
+                editor.putInt("boardNum", 0);
+                editor.putString("FEN", contents);
+                editor.commit();
+                //doToast("Content: " + contents + "::" + format);
+            }
+        }
+    }
+
 
     @Override
     public void OnMove(int move) {
@@ -216,6 +272,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         updateCapturedPieces();
         updateSeekBar();
+        updateTurnSwitchers();
     }
 
     @Override
@@ -249,77 +306,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         updateCapturedPieces();
         updateSeekBar();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.play_topmenu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        Intent intent;
-        String s;
-        switch (item.getItemId()) {
-            case R.id.action_game_settings:
-                intent = new Intent();
-                intent.setClass(PlayActivity.this, GamePreferenceActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_new:
-                gameApi.newGame();
-                return true;
-            case R.id.action_new_960:
-                showChess960Dialog();
-                return true;
-            case R.id.action_save:
-
-                return true;
-            case R.id.action_open:
-
-                return true;
-            case R.id.action_prefs:
-                intent = new Intent();
-                intent.setClass(PlayActivity.this, GlobalPreferencesActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_setup:
-                intent = new Intent();
-                intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
-                startActivityForResult(intent, REQUEST_SETUP);
-                return true;
-            case R.id.action_options:
-
-                return true;
-            case R.id.action_email:
-
-                return true;
-            case R.id.action_clock:
-
-                return true;
-            case R.id.action_clip_pgn:
-
-                return true;
-            case R.id.action_fromclip:
-
-                return true;
-            case R.id.action_help:
-                intent = new Intent();
-                intent.setClass(PlayActivity.this, HtmlActivity.class);
-                intent.putExtra(HtmlActivity.HELP_MODE, "help_play");
-                startActivity(intent);
-                return true;
-            case R.id.action_from_qrcode:
-
-                return true;
-            case R.id.action_to_qrcode:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        updateTurnSwitchers();
     }
 
     @Override
@@ -383,8 +370,16 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 }
             }
         }
+    }
 
-        // topPieces.addView();
+    protected void updateTurnSwitchers() {
+        final int currentTurn = jni.getTurn();
+
+        _switchTurnOpp.setVisibility(currentTurn == BoardConstants.BLACK && turn == BoardConstants.WHITE || currentTurn == BoardConstants.WHITE && turn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
+        _switchTurnOpp.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
+
+        _switchTurnMe.setVisibility(currentTurn == BoardConstants.WHITE && turn == BoardConstants.WHITE || currentTurn == BoardConstants.BLACK && turn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
+        _switchTurnMe.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
     }
 
 
@@ -484,5 +479,55 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void OnDialogResult(int requestCode, Bundle data) {
+        switch (requestCode) {
+            case REQUEST_MENU:
+                Intent intent;
+                String item = data.getString("item");
+
+                if (item.equals(getString(R.string.menu_game_settings))) {
+                    intent = new Intent();
+                    intent.setClass(PlayActivity.this, GamePreferenceActivity.class);
+                    startActivity(intent);
+                } else if (item.equals(getString(R.string.menu_new))) {
+                    gameApi.newGame();
+                } else if (item.equals(getString(R.string.menu_new_960))) {
+                    showChess960Dialog();
+                } else if (item.equals(getString(R.string.menu_setup))) {
+                    intent = new Intent();
+                    intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
+                    startActivityForResult(intent, REQUEST_SETUP);
+                } else if (item.equals(getString(R.string.menu_save_game))) {
+
+                } else if (item.equals(getString(R.string.menu_load_game))) {
+                    intent = new Intent();
+                    intent.setClass(PlayActivity.this, GamesListView.class);
+                    startActivityForResult(intent, PlayActivity.REQUEST_OPEN);
+                } else if (item.equals(getString(R.string.menu_prefs))) {
+                    intent = new Intent();
+                    intent.setClass(PlayActivity.this, GlobalPreferencesActivity.class);
+                    startActivity(intent);
+                } else if (item.equals(getString(R.string.menu_set_clock))) {
+
+                } else if (item.equals(getString(R.string.menu_clip_pgn))) {
+
+                } else if (item.equals(getString(R.string.menu_fromclip))) {
+
+                } else if (item.equals(getString(R.string.menu_from_qrcode))) {
+
+                } else if (item.equals(getString(R.string.menu_to_qrcode))) {
+
+                } else if (item.equals(getString(R.string.menu_help))) {
+                    intent = new Intent();
+                    intent.setClass(PlayActivity.this, HtmlActivity.class);
+                    intent.putExtra(HtmlActivity.HELP_MODE, "help_play");
+                    startActivity(intent);
+                }
+
+                break;
+        }
     }
 }

@@ -95,6 +95,8 @@
 
     </TableLayout>
 
+    <ImageButton android:id="@+id/ButtonMenu" android:layout_height="48dip" android:layout_width="48dip" android:src="@drawable/ic_three_dots_vertical" />
+
     <ViewSwitcher
         android:id="@+id/ViewSwitcherPlayMode"
         android:layout_width="match_parent"

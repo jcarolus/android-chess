@@ -2,17 +2,21 @@ package jwtc.android.chess.ics;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.ResultDialog;
+import jwtc.android.chess.helpers.ResultDialogListener;
 
-public class ICSLoginDlg extends Dialog {
+public class ICSLoginDlg extends ResultDialog {
 
-    public ICSLoginDlg(Context context, final ICSServer icsServer) {
-        super(context);
+    public ICSLoginDlg(Context context, final ResultDialogListener listener, int requestCode) {
+        super(context, listener, requestCode);
 
         setContentView(R.layout.ics_login);
         setCancelable(false);
@@ -35,7 +39,13 @@ public class ICSLoginDlg extends Dialog {
                  */
 
                 if (handle != "" && pwd != "") {
-                    icsServer.startSession("freechess.org", 23, handle, pwd, "fics% ");
+
+                    Bundle data = new Bundle();
+                    data.putCharSequence("handle", handle);
+                    data.putCharSequence("pwd", pwd);
+
+                    setResult(data);
+
                     ICSLoginDlg.this.dismiss();
                 } else {
                     if (handle == "") {

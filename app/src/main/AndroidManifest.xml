@@ -12,19 +12,6 @@
         android:theme="@style/ChessTheme">
         <service android:name=".ics.ICSServer"></service>
         <activity
-            android:name=".play.PlayActivity"
-            android:label="TEST"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".start"
             android:label="@string/app_name"
             android:configChanges="orientation"
@@ -63,14 +50,13 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".main"
+            android:name=".play.PlayActivity"
             android:label="@string/app_name_play"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -172,6 +158,18 @@
         </activity>
         <activity
             android:name="jwtc.android.chess.puzzle.practice"
+            android:label="@string/app_name"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".start" />
+        </activity>
+        <activity
+            android:name="jwtc.android.chess.ics.ICSClient"
             android:label="@string/app_name"
             android:configChanges="orientation"
             android:screenOrientation="portrait">

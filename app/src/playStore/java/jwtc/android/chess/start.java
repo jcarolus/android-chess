@@ -1,5 +1,6 @@
 package jwtc.android.chess;
 
+import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.puzzle.practice;
 import jwtc.android.chess.puzzle.puzzle;
 import jwtc.android.chess.tools.pgntool;
@@ -123,7 +124,7 @@ public class start extends AppCompatActivity {
                     Intent i = new Intent();
                     Log.i("start", _ssActivity);
                     if (_ssActivity.equals(getString(R.string.start_play))) {
-                        i.setClass(start.this, main.class);
+                        i.setClass(start.this, PlayActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_practice))) {
@@ -140,6 +141,7 @@ public class start extends AppCompatActivity {
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_ics))) {
                         i.setClass(start.this, ICSClient.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_pgn))) {
                         i.setClass(start.this, pgntool.class);

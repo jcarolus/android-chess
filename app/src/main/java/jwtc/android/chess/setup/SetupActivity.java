@@ -288,7 +288,9 @@ public class SetupActivity extends ChessBoardActivity {
                                 boolean droppedOnKing = jni.pieceAt(BoardConstants.WHITE, toPos) == BoardConstants.KING || jni.pieceAt(BoardConstants.BLACK, toPos) == BoardConstants.KING;
 
                                 if (!droppedOnKing) {
-                                    removePiece(fromPos);
+                                    if (pieceView.getParent() instanceof ChessBoardView) {
+                                        removePiece(fromPos);
+                                    }
                                     removePiece(toPos);
 
                                     addPiece(toPos, pieceView.getPiece(), pieceView.getColor());

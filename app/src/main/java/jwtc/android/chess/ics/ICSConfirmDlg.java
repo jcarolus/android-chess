@@ -1,9 +1,11 @@
 package jwtc.android.chess.ics;
 
 import jwtc.android.chess.*;
+import jwtc.android.chess.helpers.ResultDialog;
+import jwtc.android.chess.helpers.ResultDialogListener;
 
-import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,16 +13,13 @@ import android.widget.TextView;
 /**
  *
  */
-public class ICSConfirmDlg extends Dialog {
+public class ICSConfirmDlg extends ResultDialog {
 
-    private ICSClient _parent;
     private String _sendString;
     private TextView _tvText;
 
-    public ICSConfirmDlg(Context context) {
-        super(context);
-
-        _parent = (ICSClient) context;
+    public ICSConfirmDlg(Context context, ResultDialogListener listener, int requestCode) {
+        super(context, listener, requestCode);
 
         setContentView(R.layout.icsconfirm);
 
@@ -31,7 +30,10 @@ public class ICSConfirmDlg extends Dialog {
         Button butYes = (Button) findViewById(R.id.ButtonConfirmYes);
         butYes.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                _parent.sendString(_sendString);
+                Bundle data = new Bundle();
+                data.putCharSequence("data", _sendString);
+                setResult(data);
+//                _parent.sendString(_sendString);
                 dismiss();
             }
         });

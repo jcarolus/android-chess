@@ -9,6 +9,22 @@
         <item>@string/start_about</item>
         <item>@string/start_pgn</item>
     </string-array>
+    <string-array name="play_menu">
+        <item>@string/menu_game_settings</item>
+        <item>@string/menu_new</item>
+        <item>@string/menu_new_960</item>
+        <item>@string/menu_setup</item>
+        <item>@string/menu_save_game</item>
+        <item>@string/menu_load_game</item>
+        <item>@string/menu_prefs</item>
+        <item>@string/menu_set_clock</item>
+        <item>@string/menu_email_game</item>
+        <item>@string/menu_clip_pgn</item>
+        <item>@string/menu_fromclip</item>
+        <item>@string/menu_from_qrcode</item>
+        <item>@string/menu_to_qrcode</item>
+        <item>@string/menu_help</item>
+    </string-array>
     <string-array name="levels_ply">
         <item>1 ply</item>
         <item>2 ply</item>
