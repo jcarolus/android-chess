@@ -18,11 +18,6 @@
         <item>@string/menu_load_game</item>
         <item>@string/menu_prefs</item>
         <item>@string/menu_set_clock</item>
-        <item>@string/menu_email_game</item>
-        <item>@string/menu_clip_pgn</item>
-        <item>@string/menu_fromclip</item>
-        <item>@string/menu_from_qrcode</item>
-        <item>@string/menu_to_qrcode</item>
         <item>@string/menu_help</item>
     </string-array>
     <string-array name="levels_ply">

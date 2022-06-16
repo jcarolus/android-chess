@@ -34,7 +34,10 @@ public class ChessBoardView extends ViewGroup {
     }
 
     public void setRotated(boolean rotated) {
-        this.rotated = rotated;
+        if (this.rotated != rotated) {
+            this.rotated = rotated;
+            requestLayout();
+        }
     }
 
     /**
@@ -47,16 +50,7 @@ public class ChessBoardView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        final int count = getChildCount();
-
-        for (int i = 0; i < count; i++) {
-            final View child = getChildAt(i);
-
-            if (child.getVisibility() != GONE) {
-                layoutChild(child);
-            }
-        }
-
+        layoutChildren();
     }
 
     @Override
@@ -76,4 +70,15 @@ public class ChessBoardView extends ViewGroup {
         child.layout(col * width, row * width, col * width + width, row * width + width);
     }
 
+    protected void layoutChildren() {
+        final int count = getChildCount();
+
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+
+            if (child.getVisibility() != GONE) {
+                layoutChild(child);
+            }
+        }
+    }
 }

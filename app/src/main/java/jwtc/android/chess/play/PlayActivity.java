@@ -11,17 +11,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
 
 import jwtc.android.chess.GamesListView;
 import jwtc.android.chess.HtmlActivity;
@@ -33,37 +33,45 @@ import jwtc.android.chess.activities.GlobalPreferencesActivity;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.services.ClockListener;
+import jwtc.android.chess.services.LocalClockApi;
 import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
-import jwtc.chess.board.ChessBoard;
 
 
-public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, EngineListener, ResultDialogListener {
+public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, EngineListener, ResultDialogListener, ClockListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;
-    public static final int REQUEST_OPTIONS = 3;
-    public static final int REQUEST_NEWGAME = 4;
-    public static final int REQUEST_FROM_QR_CODE = 5;
+    public static final int REQUEST_GAME_SETTINGS = 3;
+    public static final int REQUEST_FROM_QR_CODE = 4;
     public static final int REQUEST_MENU = 5;
+    public static final int REQUEST_CLOCK = 6;
+    public static final int REQUEST_SAVE_GAME = 7;
 
-    private long _lGameID;
+    private LocalClockApi localClock = new LocalClockApi();
+    private long lGameID;
     private SeekBar seekBar;
     private ProgressBar progressBarEngine;
     ImageButton playButton;
     private boolean vsCPU = true;
-    private int turn = 1;
+    private int myTurn = 1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
-    private ViewSwitcher _switchTurnMe, _switchTurnOpp;
+    private ViewSwitcher switchTurnMe, switchTurnOpp;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock;
 
     @Override
     public boolean requestMove(int from, int to) {
-        if (jni.getTurn() == turn || vsCPU == false) {
-            return gameApi.requestMove(from, to);
+        if (jni.getTurn() == myTurn || vsCPU == false) {
+            if (gameApi.requestMove(from, to)) {
+                if (vsCPU) {
+                    ((PlayApi) gameApi).engine.play();
+                }
+            }
         }
         return false;
     }
@@ -76,6 +84,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         gameApi = new PlayApi();
         ((PlayApi)gameApi).engine.addListener(this);
+
+        localClock.addListener(this);
 
         gameApi.newGame();
 
@@ -99,7 +109,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 menuDialog.show();
             }
         });
-        // findViewById(R.id.TextViewClockTimeOpp)
 
         seekBar = findViewById(R.id.SeekBarMain);
         seekBar.setOnSeekBarChangeListener(this);
@@ -124,18 +133,19 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             }
         });
 
-        _switchTurnMe = (ViewSwitcher) findViewById(R.id.ImageTurnMe);
-        _switchTurnOpp = (ViewSwitcher) findViewById(R.id.ImageTurnOpp);
+        switchTurnMe = findViewById(R.id.ImageTurnMe);
+        switchTurnOpp = findViewById(R.id.ImageTurnOpp);
+
+        textViewOpponent = findViewById(R.id.TextViewOpponent);
+        textViewMe = findViewById(R.id.TextViewMe);
+
+        textViewOpponentClock = findViewById(R.id.TextViewClockTimeOpp);
+        textViewMyClock = findViewById(R.id.TextViewClockTimeMe);
     }
 
     @Override
     protected void onResume() {
         SharedPreferences prefs = getPrefs();
-
-        vsCPU = prefs.getBoolean("opponent", true);
-        turn = prefs.getBoolean("turn", true) ? 1 : 0;
-
-        chessBoardView.setRotated(turn == BoardConstants.BLACK);
 
         String sPGN = "";
         String sFEN = prefs.getString("FEN", null);
@@ -145,7 +155,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         Uri uri = intent.getData();
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
-            _lGameID = 0;
+            lGameID = 0;
             Log.i("onResume", "action send with type " + type);
             if ("application/x-chess-pgn".equals(type)) {
                 sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -162,7 +172,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 }
             }
         } else if (uri != null) {
-            _lGameID = 0;
+            lGameID = 0;
             Log.i(TAG, "onResume opening " + uri.toString());
 
             try {
@@ -176,12 +186,12 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         } else if (sFEN != null) {
             // default, from prefs
             Log.i("onResume", "Loading FEN " + sFEN);
-            _lGameID = 0;
+            lGameID = 0;
             gameApi.initFEN(sFEN, true);
         } else {
-            _lGameID = prefs.getLong("game_id", 0);
-            if (_lGameID > 0) {
-                Log.i("onResume", "loading saved game " + _lGameID);
+            lGameID = prefs.getLong("game_id", 0);
+            if (lGameID > 0) {
+                Log.i("onResume", "loading saved game " + lGameID);
                 loadGame();
             } else {
                 sPGN = prefs.getString("game_pgn", null);
@@ -192,6 +202,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             }
         }
 
+        updateGameSettingsByPrefs();
+        updateClockByPrefs();
 
         super.onResume();
     }
@@ -201,7 +213,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     protected void onPause() {
         //Debug.stopMethodTracing();
 
-        if (_lGameID > 0) {
+        localClock.stopClock();
+
+        if (lGameID > 0) {
             ContentValues values = new ContentValues();
 
             values.put(PGNColumns.DATE, gameApi.getDate().getTime());
@@ -214,9 +228,14 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             saveGame(values, false);
         }
         SharedPreferences.Editor editor = this.getPrefs().edit();
-        editor.putLong("game_id", _lGameID);
+        editor.putLong("game_id", lGameID);
         editor.putString("game_pgn", gameApi.exportFullPGN());
         editor.putString("FEN", null); //
+
+
+        editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
+        editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
+        editor.putLong("clockStartTime", localClock.getLastMeasureTime());
 
 //         if (_uriNotification == null)
 //            editor.putString("NotificationUri", null);
@@ -237,12 +256,12 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
                 Uri uri = data.getData();
                 try {
-                    _lGameID = Long.parseLong(uri.getLastPathSegment());
+                    lGameID = Long.parseLong(uri.getLastPathSegment());
                 } catch (Exception ex) {
-                    _lGameID = 0;
+                    lGameID = 0;
                 }
                 SharedPreferences.Editor editor = this.getPrefs().edit();
-                editor.putLong("game_id", _lGameID);
+                editor.putLong("game_id", lGameID);
                 editor.putInt("boardNum", 0);
                 editor.putString("FEN", null);
 //                @TODO
@@ -270,9 +289,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void OnMove(int move) {
         super.OnMove(move);
 
-        updateCapturedPieces();
-        updateSeekBar();
-        updateTurnSwitchers();
+        updateGUI();
     }
 
     @Override
@@ -304,9 +321,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void OnState() {
         super.OnState();
 
-        updateCapturedPieces();
-        updateSeekBar();
-        updateTurnSwitchers();
+        updateGUI();
     }
 
     @Override
@@ -330,6 +345,18 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         // TODO Auto-generated method stub
     }
 
+    protected void updateGUI() {
+        // only if on top of move stack
+        if (this.gameApi.getPGNSize() == jni.getNumBoard() - 1) {
+            localClock.switchTurn(jni.getTurn());
+        }
+
+        rebuildBoard();
+        updateCapturedPieces();
+        updateSeekBar();
+        updateTurnSwitchers();
+    }
+
     protected void updateSeekBar() {
         seekBar.setMax(this.gameApi.getPGNSize());
         seekBar.setProgress(jni.getNumBoard() - 1);
@@ -337,12 +364,16 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         Log.d(TAG, "updateSeekBar " + seekBar.getMax() + " - " + seekBar.getProgress());
     }
 
+    protected void updatePlayers() {
+        textViewOpponent.setText(gameApi.getOpponentPlayerName());
+        textViewMe.setText(gameApi.getMyPlayerName());
+    }
+
     protected void updateCapturedPieces() {
         topPieces.removeAllViews();
         bottomPieces.removeAllViews();
 
         int piece, turnAt;
-        // turn
         for (turnAt = 0; turnAt < 2; turnAt++) {
             for (piece = 0; piece < 5; piece++) {
                 int numCaptured = jni.getNumCaptured(turnAt, piece);
@@ -350,7 +381,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 if (numCaptured > 0) {
                     ChessPieceView capturedPiece = new ChessPieceView(this, turnAt, piece, piece);
                     CapturedCountView capturedCountView = new CapturedCountView(this, numCaptured, piece);
-                    if (turn == BoardConstants.WHITE) {
+                    if (myTurn == BoardConstants.WHITE) {
                         if (turnAt == BoardConstants.BLACK) {
                             bottomPieces.addView(capturedPiece);
                             bottomPieces.addView(capturedCountView);
@@ -375,68 +406,15 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     protected void updateTurnSwitchers() {
         final int currentTurn = jni.getTurn();
 
-        _switchTurnOpp.setVisibility(currentTurn == BoardConstants.BLACK && turn == BoardConstants.WHITE || currentTurn == BoardConstants.WHITE && turn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
-        _switchTurnOpp.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
+        switchTurnOpp.setVisibility(currentTurn == BoardConstants.BLACK && myTurn == BoardConstants.WHITE || currentTurn == BoardConstants.WHITE && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
+        switchTurnOpp.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
 
-        _switchTurnMe.setVisibility(currentTurn == BoardConstants.WHITE && turn == BoardConstants.WHITE || currentTurn == BoardConstants.BLACK && turn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
-        _switchTurnMe.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
+        switchTurnMe.setVisibility(currentTurn == BoardConstants.WHITE && myTurn == BoardConstants.WHITE || currentTurn == BoardConstants.BLACK && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
+        switchTurnMe.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
     }
 
 
-    private void loadGame() {
-        if (_lGameID > 0) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, _lGameID);
-            Cursor c = managedQuery(uri, PGNColumns.COLUMNS, null, null, null);
-            if (c != null && c.getCount() == 1) {
-
-                c.moveToFirst();
-
-                _lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
-                String sPGN = c.getString(c.getColumnIndex(PGNColumns.PGN));
-                gameApi.loadPGN(sPGN);
-
-                gameApi.setPGNHeadProperty("Event", c.getString(c.getColumnIndex(PGNColumns.EVENT)));
-                gameApi.setPGNHeadProperty("White", c.getString(c.getColumnIndex(PGNColumns.WHITE)));
-                gameApi.setPGNHeadProperty("Black", c.getString(c.getColumnIndex(PGNColumns.BLACK)));
-                gameApi.setDateLong(c.getLong(c.getColumnIndex(PGNColumns.DATE)));
-
-            } else {
-                _lGameID = 0; // probably deleted
-            }
-        } else {
-            _lGameID = 0;
-        }
-    }
-
-    public void saveGame(ContentValues values, boolean bCopy) {
-
-        SharedPreferences.Editor editor = this.getPrefs().edit();
-        editor.putString("FEN", null);
-        editor.commit();
-
-        gameApi.setPGNHeadProperty("Event", (String) values.get(PGNColumns.EVENT));
-        gameApi.setPGNHeadProperty("White", (String) values.get(PGNColumns.WHITE));
-        gameApi.setPGNHeadProperty("Black", (String) values.get(PGNColumns.BLACK));
-        gameApi.setDateLong((Long) values.get(PGNColumns.DATE));
-
-//        _fGameRating = (Float) values.get(PGNColumns.RATING);
-        //
-
-        if (_lGameID > 0 && (bCopy == false)) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, _lGameID);
-            getContentResolver().update(uri, values, null, null);
-        } else {
-            Uri uri = MyPGNProvider.CONTENT_URI;
-            Uri uriInsert = getContentResolver().insert(uri, values);
-            Cursor c = managedQuery(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
-            if (c != null && c.getCount() == 1) {
-                c.moveToFirst();
-                _lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
-            }
-        }
-    }
-
-    private void toggleEngineProgress(boolean showProgress) {
+    protected void toggleEngineProgress(boolean showProgress) {
         Log.d(TAG, "toggleEngineProgress " + showProgress);
         if (showProgress) {
             playButton.setVisibility(View.GONE);
@@ -447,7 +425,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         }
     }
 
-    private void showChess960Dialog() {
+    protected void showChess960Dialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this);
         builder.setTitle(getString(R.string.title_chess960_manual_random));
         final EditText input = new EditText(PlayActivity.this);
@@ -489,9 +467,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 String item = data.getString("item");
 
                 if (item.equals(getString(R.string.menu_game_settings))) {
-                    intent = new Intent();
-                    intent.setClass(PlayActivity.this, GamePreferenceActivity.class);
-                    startActivity(intent);
+                    GameSettingsDialog settingsDialog = new GameSettingsDialog(this, this, REQUEST_GAME_SETTINGS, getPrefs());
+                    settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
                 } else if (item.equals(getString(R.string.menu_new_960))) {
@@ -501,7 +478,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
                     startActivityForResult(intent, REQUEST_SETUP);
                 } else if (item.equals(getString(R.string.menu_save_game))) {
-
+                    saveGame();
                 } else if (item.equals(getString(R.string.menu_load_game))) {
                     intent = new Intent();
                     intent.setClass(PlayActivity.this, GamesListView.class);
@@ -511,15 +488,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     intent.setClass(PlayActivity.this, GlobalPreferencesActivity.class);
                     startActivity(intent);
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
-
-                } else if (item.equals(getString(R.string.menu_clip_pgn))) {
-
-                } else if (item.equals(getString(R.string.menu_fromclip))) {
-
-                } else if (item.equals(getString(R.string.menu_from_qrcode))) {
-
-                } else if (item.equals(getString(R.string.menu_to_qrcode))) {
-
+                    final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
+                    menuDialog.show();
                 } else if (item.equals(getString(R.string.menu_help))) {
                     intent = new Intent();
                     intent.setClass(PlayActivity.this, HtmlActivity.class);
@@ -528,6 +498,136 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 }
 
                 break;
+            case REQUEST_CLOCK:
+                updateClockByPrefs();
+                updateGUI();
+                break;
+
+            case REQUEST_GAME_SETTINGS:
+                updateGameSettingsByPrefs();
+                updateGUI();
+                break;
+
+            case REQUEST_SAVE_GAME:
+                saveGameFromDialog(data);
+                break;
+        }
+    }
+
+    @Override
+    public void OnClockTime() {
+        textViewOpponentClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+        textViewMyClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+    }
+
+    protected void updateClockByPrefs() {
+        SharedPreferences prefs = getPrefs();
+        long increment = prefs.getLong("clockIncrement", 0);
+        long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
+        long blackRemaining = prefs.getLong("clockBlackMillies", 0);
+        long startTime = prefs.getLong("clockStartTime", 0);
+        localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
+    }
+
+    protected void updateGameSettingsByPrefs() {
+        SharedPreferences prefs = getPrefs();
+
+        vsCPU = prefs.getBoolean("opponent", true);
+        myTurn = prefs.getBoolean("myTurn", true) ? 1 : 0;
+
+        chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
+
+        if (myTurn != jni.getTurn() && vsCPU) {
+            ((PlayApi) gameApi).engine.play();
+        }
+    }
+
+
+    public void saveGame() {
+        String sEvent = gameApi.getPGNHeadProperty("Event");
+        if (sEvent == null)
+            sEvent = getString(R.string.savegame_event_question);
+        String sWhite = gameApi.getWhite();
+        if (sWhite == null)
+            sWhite = getString(R.string.savegame_white_question);
+        String sBlack = gameApi.getBlack();
+        if (sBlack == null)
+            sBlack = getString(R.string.savegame_black_question);
+
+        Date dd = gameApi.getDate();
+        if (dd == null)
+            dd = Calendar.getInstance().getTime();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dd);
+
+        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, cal, gameApi.exportFullPGN(), lGameID > 0);
+        saveDialog.show();
+    }
+
+
+    protected void saveGameFromDialog(Bundle data) {
+
+        ContentValues values = new ContentValues();
+        boolean bCopy = data.getBoolean("copy");
+
+        values.put(PGNColumns.DATE, data.getLong(PGNColumns.DATE));
+        values.put(PGNColumns.WHITE, data.getString(PGNColumns.WHITE));
+        values.put(PGNColumns.BLACK, data.getString(PGNColumns.BLACK));
+        values.put(PGNColumns.PGN, data.getString(PGNColumns.PGN));
+        values.put(PGNColumns.RATING, data.getFloat(PGNColumns.RATING));
+        values.put(PGNColumns.EVENT, data.getString(PGNColumns.EVENT));
+
+        saveGame(values, bCopy);
+    }
+
+    protected void loadGame() {
+        if (lGameID > 0) {
+            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
+            Cursor c = managedQuery(uri, PGNColumns.COLUMNS, null, null, null);
+            if (c != null && c.getCount() == 1) {
+
+                c.moveToFirst();
+
+                lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
+                String sPGN = c.getString(c.getColumnIndex(PGNColumns.PGN));
+                gameApi.loadPGN(sPGN);
+
+                gameApi.setPGNHeadProperty("Event", c.getString(c.getColumnIndex(PGNColumns.EVENT)));
+                gameApi.setPGNHeadProperty("White", c.getString(c.getColumnIndex(PGNColumns.WHITE)));
+                gameApi.setPGNHeadProperty("Black", c.getString(c.getColumnIndex(PGNColumns.BLACK)));
+                gameApi.setDateLong(c.getLong(c.getColumnIndex(PGNColumns.DATE)));
+
+            } else {
+                lGameID = 0; // probably deleted
+            }
+        } else {
+            lGameID = 0;
+        }
+    }
+
+    protected void saveGame(ContentValues values, boolean bCopy) {
+
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+        editor.putString("FEN", null);
+        editor.commit();
+
+        gameApi.setPGNHeadProperty("Event", (String) values.get(PGNColumns.EVENT));
+        gameApi.setPGNHeadProperty("White", (String) values.get(PGNColumns.WHITE));
+        gameApi.setPGNHeadProperty("Black", (String) values.get(PGNColumns.BLACK));
+        gameApi.setDateLong((Long) values.get(PGNColumns.DATE));
+
+        if (lGameID > 0 && (bCopy == false)) {
+            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
+            getContentResolver().update(uri, values, null, null);
+        } else {
+            Uri uri = MyPGNProvider.CONTENT_URI;
+            Uri uriInsert = getContentResolver().insert(uri, values);
+            Cursor c = managedQuery(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+            if (c != null && c.getCount() == 1) {
+                c.moveToFirst();
+                lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
+            }
         }
     }
 }

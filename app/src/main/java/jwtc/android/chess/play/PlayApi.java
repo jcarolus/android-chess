@@ -20,24 +20,13 @@ public class PlayApi extends GameApi implements EngineListener {
     }
 
     @Override
-    public String getBlackPlayer() {
+    public String getOpponentPlayerName() {
         return null;
     }
 
     @Override
-    public String getWhitePlayer() {
+    public String getMyPlayerName() {
         return null;
-    }
-
-    @Override
-    public boolean requestMove(int from, int to) {
-        Log.i(TAG, "requestMove");
-
-        if (super.requestMove(from, to)) {
-            engine.play();
-            return true;
-        }
-        return false;
     }
 
     @Override

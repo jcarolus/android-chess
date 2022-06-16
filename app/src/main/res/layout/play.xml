@@ -36,7 +36,7 @@
                 style="@style/MyNormalTextStyle" />
 
             <TextView
-                android:id="@+id/TextViewTopTitle"
+                android:id="@+id/TextViewOpponent"
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                 style="@style/MyNormalTextStyle" />
 
             <TextView
-                android:id="@+id/TextViewTitle"
+                android:id="@+id/TextViewMe"
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"

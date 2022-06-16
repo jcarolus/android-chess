@@ -12,4 +12,12 @@ public class ICSClockApi extends ClockApi {
         this.whiteRemaining = remaining;
         dispatchClockTime();
     }
+
+    public long getBlackRemaining() {
+        return blackRemaining;
+    }
+
+    public long getWhiteRemaining() {
+        return whiteRemaining;
+    }
 }

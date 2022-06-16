@@ -53,8 +53,8 @@ public abstract class GameApi {
         this.listeners.remove(listener);
     }
 
-    public abstract String getBlackPlayer();
-    public abstract String getWhitePlayer();
+    public abstract String getOpponentPlayerName();
+    public abstract String getMyPlayerName();
 
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");

@@ -4,12 +4,12 @@ import jwtc.android.chess.services.GameApi;
 
 public class SetupApi extends GameApi {
     @Override
-    public String getBlackPlayer() {
+    public String getOpponentPlayerName() {
         return "";
     }
 
     @Override
-    public String getWhitePlayer() {
+    public String getMyPlayerName() {
         return "";
     }
 }

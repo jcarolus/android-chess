@@ -400,12 +400,12 @@ public class ICSApi extends GameApi implements ICSListener {
     }
 
     @Override
-    public String getBlackPlayer() {
+    public String getOpponentPlayerName() {
         return null;
     }
 
     @Override
-    public String getWhitePlayer() {
+    public String getMyPlayerName() {
         return null;
     }
 }
