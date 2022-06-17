@@ -78,18 +78,6 @@
                 android:value=".start" />
         </activity>
         <activity
-            android:name=".options"
-            android:label="@string/app_name"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main" />
-        </activity>
-        <activity
             android:name=".mainPrefs"
             android:label="@string/preferences"
             android:configChanges="orientation"
@@ -99,7 +87,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main" />
+                android:value=".play.PlayActivity" />
         </activity>
         <activity
             android:name=".setup.SetupActivity"
@@ -130,10 +118,10 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".main" />
+                android:value=".play.PlayActivity" />
         </activity>
         <activity
-            android:name="jwtc.android.chess.puzzle.puzzle"
+            android:name="jwtc.android.chess.puzzle.PuzzleActivity"
             android:label="@string/app_name"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
@@ -154,7 +142,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".puzzle.puzzle" />
+                android:value=".puzzle.PuzzleActivity" />
         </activity>
         <activity
             android:name="jwtc.android.chess.puzzle.practice"

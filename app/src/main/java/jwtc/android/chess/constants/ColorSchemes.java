@@ -8,32 +8,32 @@ public class ColorSchemes {
         // yellow
         colorScheme[0][0] = 0xffdeac5d;
         colorScheme[0][1] = 0xfff9e3c0;
-        colorScheme[0][2] = 0xccf3ed4b;
+        colorScheme[0][2] = 0xfff3ed4b;
 
         // blue
         colorScheme[1][0] = 0xff28628b;
         colorScheme[1][1] = 0xff7dbdea;
-        colorScheme[1][2] = 0xcc9fdef3;
+        colorScheme[1][2] = 0xff9fdef3;
 
         // green
-        colorScheme[2][0] = 0xff8eb59b;
-        colorScheme[2][1] = 0xff8ce787;
-        colorScheme[2][2] = 0xcc9ff3b4;
+        colorScheme[2][0] = 0xff6a8974;
+        colorScheme[2][1] = 0xff8eb59b;
+        colorScheme[2][2] = 0xff98e5ab;
 
         // grey
         colorScheme[3][0] = 0xffc0c0c0;
         colorScheme[3][1] = 0xffffffff;
-        colorScheme[3][2] = 0xccf3ed4b;
+        colorScheme[3][2] = 0xfff3ed4b;
 
         // brown
-        colorScheme[4][0] = 0xff65390d; //4c2b0a
-        colorScheme[4][1] = 0xffb98b4f;
-        colorScheme[4][2] = 0xccf3ed4b;
+        colorScheme[4][0] = 0xff704d33;
+        colorScheme[4][1] = 0xffaf701d;
+        colorScheme[4][2] = 0xfff3ed4b;
         // 347733
         // red
-        colorScheme[5][0] = 0xffff2828;
-        colorScheme[5][1] = 0xffffd1d1;
-        colorScheme[5][2] = 0xccf3ed4b;
+        colorScheme[5][0] = 0xffc85252;
+        colorScheme[5][1] = 0xffd09a9a;
+        colorScheme[5][2] = 0x00f3ed4b;
     }
 
     public static int getLight() {

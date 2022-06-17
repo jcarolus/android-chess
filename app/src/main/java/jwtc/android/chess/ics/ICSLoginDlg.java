@@ -19,7 +19,7 @@ public class ICSLoginDlg extends ResultDialog {
         super(context, listener, requestCode);
 
         setContentView(R.layout.ics_login);
-        setCancelable(false);
+//        setCancelable(false);
 
         Button buttonLogin = findViewById(R.id.ButICSLogin);
         buttonLogin.setOnClickListener(new View.OnClickListener() {

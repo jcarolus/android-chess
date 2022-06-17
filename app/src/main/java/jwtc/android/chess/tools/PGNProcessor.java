@@ -16,10 +16,8 @@ public abstract class PGNProcessor {
 
     public static final int MSG_PROCESSED_PGN = 1;
     public static final int MSG_FAILED_PGN = 2;
-    //public static final int MSG_EXCEPTION = 3;
-    public static final int MSG_FINISHED = 4;
-    public static final int MSG_PROCESSED_FILE = 5;
-    public static final int MSG_FATAL_ERROR = 6;
+    public static final int MSG_FINISHED = 3;
+    public static final int MSG_FATAL_ERROR = 4;
 
     public void processZipFile(final InputStream is) {
 

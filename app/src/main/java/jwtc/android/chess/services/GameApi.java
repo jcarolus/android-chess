@@ -53,8 +53,13 @@ public abstract class GameApi {
         this.listeners.remove(listener);
     }
 
-    public abstract String getOpponentPlayerName();
-    public abstract String getMyPlayerName();
+    public String getOpponentPlayerName() {
+        return "";
+    }
+
+    public String getMyPlayerName() {
+        return "";
+    }
 
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");

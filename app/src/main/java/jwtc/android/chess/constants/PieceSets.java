@@ -5,10 +5,11 @@ import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
 public class PieceSets {
-    public static int[][][] PIECES = new int[3][2][6]; // set:color:piece
+    public static int[][][] PIECES = new int[4][2][6]; // set:color:piece
     public static final int ALPHA = 0;
     public static final int MERIDA = 1;
     public static final int LEIPZIG = 2;
+    public static final int CALIFORNIA = 3;
 
     public static int selectedSet = 0;
 
@@ -51,5 +52,18 @@ public class PieceSets {
         PIECES[LEIPZIG][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_leipzig_wr;
         PIECES[LEIPZIG][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_leipzig_wq;
         PIECES[LEIPZIG][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_leipzig_wk;
+
+        PIECES[CALIFORNIA][ChessBoard.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_california_bp;
+        PIECES[CALIFORNIA][ChessBoard.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_california_bn;
+        PIECES[CALIFORNIA][ChessBoard.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_california_bb;
+        PIECES[CALIFORNIA][ChessBoard.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_california_br;
+        PIECES[CALIFORNIA][ChessBoard.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_california_bq;
+        PIECES[CALIFORNIA][ChessBoard.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_california_bk;
+        PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_california_wp;
+        PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_california_wn;
+        PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_california_wb;
+        PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_california_wr;
+        PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_california_wq;
+        PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_california_wk;
     }
 }

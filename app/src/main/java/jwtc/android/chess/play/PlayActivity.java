@@ -438,7 +438,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
                 if (seed >= 0 && seed <= 960) {
                     gameApi.newGameRandomFischer(seed);
-
+                    lGameID = 0;
                 } else {
                     doToast(getString(R.string.err_chess960_position_range));
                 }
@@ -452,6 +452,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             public void onClick(DialogInterface dialog, int which) {
             int seed = -1;
             gameApi.newGameRandomFischer(seed);
+            lGameID = 0;
             }
         });
 
@@ -471,6 +472,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
+                    lGameID = 0;
                 } else if (item.equals(getString(R.string.menu_new_960))) {
                     showChess960Dialog();
                 } else if (item.equals(getString(R.string.menu_setup))) {

@@ -72,10 +72,11 @@
     </string-array>
     <string-array name="colorscheme_indexes">
         <item>0</item>
-        <item>2</item>
+        <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>5</item>
     </string-array>
     <string-array name="options_wakelock">
         <item>Use wake lock</item>
@@ -243,10 +244,12 @@
         <item>Alpha</item>
         <item>Merida</item>
         <item>Leipzig</item>
+        <item>California</item>
     </string-array>
     <string-array name="piecesetKeyarray">
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 </resources>
