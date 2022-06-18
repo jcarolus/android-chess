@@ -41,6 +41,7 @@ public abstract class GameApi {
 
     public GameApi() {
         jni = JNI.getInstance();
+        jni.reset();
         _mapPGNHead = new HashMap<String, String>();
         _arrPGN = new ArrayList<PGNEntry>();
     }
@@ -429,6 +430,8 @@ public abstract class GameApi {
 
     private boolean loadPGNMoves(String s) {
 
+        jni.newGame();
+
         _arrPGN.clear();
 
         s = s.replaceAll("[\\r\\n\\t]+", " ");
@@ -574,6 +577,7 @@ public abstract class GameApi {
             }
 
         } catch (Exception e) {
+            Log.d(TAG, "Error loading PGN");
             //System.out.println("@" + e);
             return false;
         }

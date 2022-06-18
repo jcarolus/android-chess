@@ -38,6 +38,7 @@ import jwtc.android.chess.services.LocalClockApi;
 import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
+import jwtc.chess.Move;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
@@ -56,9 +57,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private long lGameID;
     private SeekBar seekBar;
     private ProgressBar progressBarEngine;
-    ImageButton playButton;
+    private ImageButton playButton;
     private boolean vsCPU = true;
-    private int myTurn = 1;
+    private int myTurn = 1, requestMoveFrom, requestMoveTo;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
@@ -73,8 +74,14 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 }
             }
         } else {
-//            highlightedPositions.add(from);
-//            highlightedPositions.add(to);
+            if (requestMoveFrom != -1 && requestMoveTo != -1) {
+                highlightedPositions.clear();
+            } else {
+                requestMoveFrom = from;
+                requestMoveTo = to;
+                highlightedPositions.add(from);
+                highlightedPositions.add(to);
+            }
         }
         return false;
     }
@@ -89,8 +96,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         ((PlayApi)gameApi).engine.addListener(this);
 
         localClock.addListener(this);
-
-        gameApi.newGame();
 
         afterCreate();
 
@@ -150,6 +155,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
     @Override
     protected void onResume() {
+        super.onResume();
+
         SharedPreferences prefs = getPrefs();
 
         String sPGN = "";
@@ -209,8 +216,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         updateGameSettingsByPrefs();
         updateClockByPrefs();
-
-        super.onResume();
     }
 
 
@@ -294,12 +299,22 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void OnMove(int move) {
         super.OnMove(move);
 
-        updateGUI();
+        final int to = Move.getTo(move);
+        highlightedPositions.clear();
+        highlightedPositions.add(to);
+
+        updateSelectedSquares();
     }
 
     @Override
     public void OnEngineMove(int move) {
         toggleEngineProgress(false);
+
+        final int to = Move.getTo(move);
+        highlightedPositions.clear();
+        highlightedPositions.add(to);
+
+        updateSelectedSquares();
     }
 
     @Override
@@ -356,7 +371,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             localClock.switchTurn(jni.getTurn());
         }
 
-        rebuildBoard();
         updateCapturedPieces();
         updateSeekBar();
         updateTurnSwitchers();

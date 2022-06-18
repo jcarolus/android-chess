@@ -835,6 +835,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     protected void onResume() {
+        super.onResume();
         Log.i(TAG, "onResume");
 
         invalidateOptionsMenu(); // update OptionsMenu
@@ -942,7 +943,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         openLoginDialogOfNotConnected();
 
-        super.onResume();
+
     }
 
     public void openLoginDialogOfNotConnected() {

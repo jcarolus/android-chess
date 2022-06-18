@@ -61,7 +61,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void OnMove(int move) {
         Log.d(TAG, "OnMove " + move);
-        updateBoardWithMove(move);
+        rebuildBoard();
 
         if (spSound != null) {
             if (Move.isCheck(move)) {
@@ -130,8 +130,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } catch (NumberFormatException ex) {
             Log.e(TAG, ex.getMessage());
         }
-        rebuildBoard();
-
 
         if (prefs.getBoolean("moveToSpeech", false)) {
             textToSpeech = new TextToSpeechApi(this, this);
@@ -158,6 +156,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         final int state = jni.getState();
         final int turn = jni.getTurn();
 
+        Log.d(TAG, "state " + state);
+
         // ⚑ ✓ ½
         String labelForWhiteKing = null;
         String labelForBlackKing = null;
@@ -166,12 +166,22 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 labelForWhiteKing = turn == BoardConstants.BLACK ? "✓" : "#";
                 labelForBlackKing = turn == BoardConstants.WHITE ? "✓" : "#";
                 break;
-            case ChessBoard.DRAW_50:
             case ChessBoard.DRAW_MATERIAL:
             case ChessBoard.DRAW_REPEAT:
             case ChessBoard.DRAW_AGREEMENT:
                 labelForWhiteKing = "½";
                 labelForBlackKing = "½";
+                break;
+            case ChessBoard.DRAW_50:
+                labelForWhiteKing = "50";
+                labelForBlackKing = "50";
+                break;
+            case ChessBoard.CHECK:
+                if (turn == ChessBoard.WHITE) {
+                    labelForWhiteKing = "+";
+                } else {
+                    labelForBlackKing = "+";
+                }
                 break;
         }
 
@@ -204,88 +214,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         updateSelectedSquares();
     }
 
-    public void updateBoardWithMove(int move) {
-        final int from = Move.getFrom(move);
-        final int to = Move.getTo(move);
-        final boolean isOO = Move.isOO(move);
-        final boolean isOOO = Move.isOOO(move);
-        final boolean isHit = Move.isHIT(move);
-        final boolean isPromo = Move.isPromotionMove(move);
-        final int turnOfMove = jni.getTurn() == ChessBoard.BLACK ? ChessBoard.WHITE : ChessBoard.BLACK;
-        final int count = chessBoardView.getChildCount();
-
-        ChessPieceView rook = null;
-        if (isOO || isOOO) {
-            // find a rook that is not on it;s place
-            for (int i = 0; i < count; i++) {
-                final View child = chessBoardView.getChildAt(i);
-                if (child instanceof ChessPieceView) {
-                    final ChessPieceView chessPieceView = (ChessPieceView) child;
-                    if (chessPieceView.getPiece() == BoardConstants.ROOK && chessPieceView.getColor() == turnOfMove) {
-                        final int pos = ((ChessPieceView) child).getPos();
-                        final int piece = jni.pieceAt(turnOfMove, pos);
-                        if (piece != BoardConstants.ROOK) {
-                            rook = (ChessPieceView)child;
-                        }
-                    }
-                }
-            }
-            if (rook != null) {
-                for (int i = 0; i < 64; i++) {
-                    final int piece = jni.pieceAt(turnOfMove, i);
-                    if (piece == BoardConstants.ROOK) {
-                        final ChessPieceView pieceView = getPieceOnBoard(i, turnOfMove, BoardConstants.ROOK);
-                        if (pieceView == null){
-                            rook.setPos(i);
-                            chessBoardView.layoutChild(rook);
-                            break;
-                        }
-                    }
-                }
-            }
-
-        }
-
-        if (isHit) {
-            for (int i = 0; i < count; i++) {
-                final View child = chessBoardView.getChildAt(i);
-
-                if (child instanceof ChessPieceView) {
-                    final int currentPos = ((ChessPieceView) child).getPos();
-                    if (currentPos == to) {
-                        chessBoardView.removeView(child);
-                        break;
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < count; i++) {
-            final View child = chessBoardView.getChildAt(i);
-
-            if (child instanceof ChessPieceView) {
-                final int currentPos = ((ChessPieceView) child).getPos();
-                if (currentPos == from) {
-                    ((ChessPieceView) child).setPos(to);
-                    if (isPromo) {
-                        ((ChessPieceView) child).promote(Move.getPromotionPiece(move));
-                    }
-                    chessBoardView.layoutChild(child);
-                }
-            }
-        }
-    }
-
     public void updateSelectedSquares() {
         final int count = chessBoardView.getChildCount();
         for (int i = 0; i < count; i++) {
             final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessSquareView) {
-                //((ChessSquareView) child).setHighlighted(true);
+                final ChessSquareView squareView = (ChessSquareView) child;
+                if (squareView.getSelected()){
+                    squareView.setSelected(squareView.getPos() == lastPosition);
+                }
+
+                squareView.setHighlighted(highlightedPositions.contains(i));
             }
         }
     }
-
 
     @Override
     // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
@@ -368,22 +311,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return null;
     }
 
-    protected void resetSelectedSquares() {
-        final int count = chessBoardView.getChildCount();
-        for (int i = 0; i < count; i++) {
-            final View child = chessBoardView.getChildAt(i);
-
-            if (child instanceof ChessSquareView) {
-                final ChessSquareView squareView = (ChessSquareView) child;
-                if (squareView.getSelected()){
-                    squareView.setSelected(squareView.getPos() == lastPosition);
-                }
-
-                squareView.setHighlighted(highlightedPositions.contains(i));
-            }
-        }
-    }
-
     protected ChessSquareView getSquareAt(int pos) {
         final int count = chessBoardView.getChildCount();
         for (int i = 0; i < count; i++) {
@@ -409,7 +336,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     requestMove(lastPosition, toPos);
                 }
                 lastPosition = -1;
-                ChessBoardActivity.this.resetSelectedSquares();
+                ChessBoardActivity.this.updateSelectedSquares();
             }
         }
     }
@@ -452,7 +379,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                                 requestMove(fromPos, toPos);
                                 lastPosition = -1;
                             }
-                            ChessBoardActivity.this.resetSelectedSquares();
+                            ChessBoardActivity.this.updateSelectedSquares();
                             fromView.setVisibility(View.VISIBLE);
                         }
 
