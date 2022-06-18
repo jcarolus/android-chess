@@ -68,10 +68,13 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public boolean requestMove(int from, int to) {
         if (jni.getTurn() == myTurn || vsCPU == false) {
             if (gameApi.requestMove(from, to)) {
-                if (vsCPU) {
+                if (vsCPU && jni.isEnded() == 0) {
                     ((PlayApi) gameApi).engine.play();
                 }
             }
+        } else {
+//            highlightedPositions.add(from);
+//            highlightedPositions.add(to);
         }
         return false;
     }
@@ -94,7 +97,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         playButton = findViewById(R.id.ButtonPlay);
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                ((PlayApi)gameApi).engine.play();
+                if (jni.isEnded() == 0) {
+                    ((PlayApi) gameApi).engine.play();
+                }
             }
         });
 
@@ -539,7 +544,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
-        if (myTurn != jni.getTurn() && vsCPU) {
+        if (myTurn != jni.getTurn() && vsCPU && jni.isEnded() == 0) {
             ((PlayApi) gameApi).engine.play();
         }
     }

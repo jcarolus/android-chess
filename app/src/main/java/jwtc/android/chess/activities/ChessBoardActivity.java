@@ -13,11 +13,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
+import jwtc.android.chess.views.ChessPieceLabelView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.R;
@@ -41,6 +43,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected SoundPool spSound = null;
     protected TextToSpeechApi textToSpeech = null;
     protected int lastPosition = -1;
+    protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
 
     public static final int MODE_BLINDFOLD_SHOWPIECES = 0;
     public static final int MODE_BLINDFOLD_HIDEPIECES = 1;
@@ -150,6 +153,27 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public void rebuildBoard() {
 
         chessBoardView.removePieces();
+        chessBoardView.removeLabels();
+
+        final int state = jni.getState();
+        final int turn = jni.getTurn();
+
+        // ⚑ ✓ ½
+        String labelForWhiteKing = null;
+        String labelForBlackKing = null;
+        switch (state) {
+            case ChessBoard.MATE:
+                labelForWhiteKing = turn == BoardConstants.BLACK ? "✓" : "#";
+                labelForBlackKing = turn == BoardConstants.WHITE ? "✓" : "#";
+                break;
+            case ChessBoard.DRAW_50:
+            case ChessBoard.DRAW_MATERIAL:
+            case ChessBoard.DRAW_REPEAT:
+            case ChessBoard.DRAW_AGREEMENT:
+                labelForWhiteKing = "½";
+                labelForBlackKing = "½";
+                break;
+        }
 
         for (int i = 0; i < 64; i++) {
             int color = ChessBoard.BLACK;
@@ -164,6 +188,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 p.setOnTouchListener(myTouchListener);
 
                 chessBoardView.addView(p);
+
+                if (piece == BoardConstants.KING) {
+                    if (color == BoardConstants.WHITE && labelForWhiteKing != null) {
+                        ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, labelForWhiteKing);
+                        chessBoardView.addView(labelView);
+                    } else if (color == BoardConstants.BLACK && labelForBlackKing != null) {
+                        ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, labelForBlackKing);
+                        chessBoardView.addView(labelView);
+                    }
+                }
             }
         }
 
@@ -344,6 +378,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 if (squareView.getSelected()){
                     squareView.setSelected(squareView.getPos() == lastPosition);
                 }
+
+                squareView.setHighlighted(highlightedPositions.contains(i));
             }
         }
     }
@@ -452,6 +488,35 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
             }
             return false;
+        }
+    }
+
+    public static int chessStateToR(int s) {
+        switch (s) {
+            case ChessBoard.MATE:
+                return R.string.state_mate;
+            case ChessBoard.DRAW_MATERIAL:
+                return R.string.state_draw_material;
+            case ChessBoard.CHECK:
+                return R.string.state_check;
+            case ChessBoard.STALEMATE:
+                return R.string.state_draw_stalemate;
+            case ChessBoard.DRAW_50:
+                return R.string.state_draw_50;
+            case ChessBoard.DRAW_REPEAT:
+                return R.string.state_draw_repeat;
+            case ChessBoard.BLACK_FORFEIT_TIME:
+                return R.string.state_black_forfeits_time;
+            case ChessBoard.WHITE_FORFEIT_TIME:
+                return R.string.state_white_forfeits_time;
+            case ChessBoard.BLACK_RESIGNED:
+                return R.string.state_black_resigned;
+            case ChessBoard.WHITE_RESIGNED:
+                return R.string.state_white_resigned;
+            case ChessBoard.DRAW_AGREEMENT:
+                return R.string.state_draw_agreement;
+            default:
+                return R.string.state_play;
         }
     }
 }

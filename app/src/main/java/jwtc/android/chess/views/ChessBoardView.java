@@ -2,7 +2,6 @@ package jwtc.android.chess.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,6 +25,18 @@ public class ChessBoardView extends ViewGroup {
         while(i < getChildCount()) {
             final View child = getChildAt(i);
             if (child instanceof ChessPieceView) {
+                removeView(child);
+                continue;
+            }
+            i++;
+        }
+    }
+
+    public void removeLabels() {
+        int i = 0;
+        while(i < getChildCount()) {
+            final View child = getChildAt(i);
+            if (child instanceof ChessPieceLabelView) {
                 removeView(child);
                 continue;
             }
@@ -61,13 +72,22 @@ public class ChessBoardView extends ViewGroup {
     }
 
     public void layoutChild(View child) {
-        final int pos = child instanceof ChessSquareView ? ((ChessSquareView) child).getPos() : ((ChessPieceView) child).getPos();
+        final int pos = child instanceof ChessSquareView
+                ? ((ChessSquareView) child).getPos()
+                : (child instanceof ChessPieceView
+                    ? ((ChessPieceView) child).getPos()
+                    : ((ChessPieceLabelView) child).getPos());
         final int width = getWidth() / 8;
         // rotated
         final int actualPos = rotated ? 63 - pos : pos;
         final int row = BoardConstants.ROW[actualPos];
         final int col = BoardConstants.COL[actualPos];
-        child.layout(col * width, row * width, col * width + width, row * width + width);
+
+        if (child instanceof ChessPieceLabelView) {
+            child.layout(col * width, row * width, col * width + width / 2, row * width + width / 2);
+        } else {
+            child.layout(col * width, row * width, col * width + width, row * width + width);
+        }
     }
 
     protected void layoutChildren() {

@@ -14,7 +14,6 @@ public class LocalEngine extends EngineApi {
     @Override
     public void play() {
         Log.d(TAG, "play " + msecs + ", " + ply);
-
         for (EngineListener listener: listeners) {
             listener.OnEngineStarted();
         }
