@@ -54,12 +54,12 @@ public abstract class GameApi {
         this.listeners.remove(listener);
     }
 
-    public String getOpponentPlayerName() {
-        return "";
+    public String getOpponentPlayerName(int myTurn) {
+        return getPGNHeadProperty(myTurn == BoardConstants.BLACK ? "White" : "Black");
     }
 
-    public String getMyPlayerName() {
-        return "";
+    public String getMyPlayerName(int myTurn) {
+        return getPGNHeadProperty(myTurn == BoardConstants.WHITE ? "White" : "Black");
     }
 
     public boolean requestMove(int from, int to) {
@@ -200,6 +200,8 @@ public abstract class GameApi {
     }
 
     public boolean loadPGN(String s) {
+        jni.newGame();
+
         loadPGNHead(s);
 
         if(loadPGNMoves(s)) {
@@ -429,9 +431,6 @@ public abstract class GameApi {
     }
 
     private boolean loadPGNMoves(String s) {
-
-        jni.newGame();
-
         _arrPGN.clear();
 
         s = s.replaceAll("[\\r\\n\\t]+", " ");

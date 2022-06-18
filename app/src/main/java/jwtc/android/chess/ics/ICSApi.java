@@ -400,12 +400,12 @@ public class ICSApi extends GameApi implements ICSListener {
     }
 
     @Override
-    public String getOpponentPlayerName() {
+    public String getOpponentPlayerName(int myTurn) {
         return null;
     }
 
     @Override
-    public String getMyPlayerName() {
+    public String getMyPlayerName(int myTurn) {
         return null;
     }
 }

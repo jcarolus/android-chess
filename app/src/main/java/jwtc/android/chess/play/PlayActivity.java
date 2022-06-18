@@ -59,7 +59,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ProgressBar progressBarEngine;
     private ImageButton playButton;
     private boolean vsCPU = true;
-    private int myTurn = 1, requestMoveFrom, requestMoveTo;
+    private int myTurn = 1, requestMoveFrom = -1, requestMoveTo = -1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
@@ -74,14 +74,14 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 }
             }
         } else {
-            if (requestMoveFrom != -1 && requestMoveTo != -1) {
-                highlightedPositions.clear();
-            } else {
-                requestMoveFrom = from;
-                requestMoveTo = to;
-                highlightedPositions.add(from);
-                highlightedPositions.add(to);
-            }
+//            if (requestMoveFrom != -1 && requestMoveTo != -1) {
+//                highlightedPositions.clear();
+//            } else {
+//                requestMoveFrom = from;
+//                requestMoveTo = to;
+//                highlightedPositions.add(from);
+//                highlightedPositions.add(to);
+//            }
         }
         return false;
     }
@@ -374,6 +374,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         updateCapturedPieces();
         updateSeekBar();
         updateTurnSwitchers();
+        updatePlayers();
     }
 
     protected void updateSeekBar() {
@@ -384,8 +385,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     protected void updatePlayers() {
-        textViewOpponent.setText(gameApi.getOpponentPlayerName());
-        textViewMe.setText(gameApi.getMyPlayerName());
+        textViewOpponent.setText(gameApi.getOpponentPlayerName(myTurn));
+        textViewMe.setText(gameApi.getMyPlayerName(myTurn));
     }
 
     protected void updateCapturedPieces() {

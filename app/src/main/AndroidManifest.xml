@@ -11,6 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/ChessTheme">
         <service android:name=".ics.ICSServer"></service>
+        <service android:name=".tools.ImportService"></service>
         <activity
             android:name=".start"
             android:label="@string/app_name"

@@ -10,6 +10,7 @@ import android.util.Log;
 
 
 public abstract class PGNProcessor {
+    private static final String TAG = "PGNProcessor";
 
     protected Handler m_threadUpdateHandler;
     protected Thread m_thread = null;
@@ -20,6 +21,7 @@ public abstract class PGNProcessor {
     public static final int MSG_FATAL_ERROR = 4;
 
     public void processZipFile(final InputStream is) {
+        Log.d(TAG, "processZipfile");
 
         m_thread = new Thread(new Runnable() {
             public void run() {
@@ -32,7 +34,7 @@ public abstract class PGNProcessor {
                             continue;
                         } else {
 
-                            Log.i("hasEntry", entry.getName());
+                            Log.d(TAG, "hasEntry " + entry.getName());
 
                             StringBuffer sb = new StringBuffer();
                             byte[] buffer = new byte[2048];
@@ -61,7 +63,7 @@ public abstract class PGNProcessor {
                     m.what = MSG_FATAL_ERROR;
                     m_threadUpdateHandler.sendMessage(m);
 
-                    Log.e("PGNProcessor", e.toString());
+                    Log.e(TAG, "Failed " + e.toString());
                 }
             }
         });
@@ -76,6 +78,7 @@ public abstract class PGNProcessor {
     }
 
     public void processPGNFile(final InputStream is) {
+        Log.d(TAG, "processPGNFile");
 
         new Thread(new Runnable() {
             public void run() {

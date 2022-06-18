@@ -20,12 +20,12 @@ public class PlayApi extends GameApi implements EngineListener {
     }
 
     @Override
-    public String getOpponentPlayerName() {
+    public String getOpponentPlayerName(int myTurn) {
         return null;
     }
 
     @Override
-    public String getMyPlayerName() {
+    public String getMyPlayerName(int myTurn) {
         return null;
     }
 

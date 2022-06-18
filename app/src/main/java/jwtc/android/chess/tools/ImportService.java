@@ -11,6 +11,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,10 +26,11 @@ import jwtc.chess.PGNColumns;
 public class ImportService extends Service {
     private static final String TAG = "ImportService";
 
+    public static final String IMPORT_MODE = "import_mode";
     public static final int IMPORT_LOCAL_PGN = 0;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
-    private PGNProcessor _processor;
+    private PGNProcessor _processor; // @TODO could be multiple
     private ImportApi importApi;
     private final IBinder mBinder = new ImportService.LocalBinder();
 
@@ -52,9 +55,28 @@ public class ImportService extends Service {
         final Uri uri = intent.getData();
         Bundle extras = intent.getExtras();
 
-        // IMPORT_LOCAL_PGN
-        _processor = new PGNImportProcessor(importApi, getContentResolver());
-        _processor.m_threadUpdateHandler = new ImportService.ThreadMessageHandler(this);
+        final int mode = extras.getInt(IMPORT_MODE);
+
+        Log.d(TAG, "mode " + mode);
+
+        importApi = new ImportApi();
+
+        switch (mode) {
+            case IMPORT_LOCAL_PGN:
+                _processor = new PGNImportProcessor(importApi, getContentResolver());
+                _processor.m_threadUpdateHandler = new ImportService.ThreadMessageHandler(this);
+
+                try {
+                    InputStream is = getAssets().open("puzzles.pgn");
+                    _processor.processPGNFile(is);
+                } catch (IOException e) {
+                    for (ImportListener listener : listeners) {
+                        listener.OnImportFatalError();
+                    }
+                    _processor = null;
+                }
+            break;
+        }
 
         return START_STICKY;
     }
@@ -87,8 +109,8 @@ public class ImportService extends Service {
         }
     }
 
-    private class LocalBinder extends Binder {
-        ImportService getService() {
+    public class LocalBinder extends Binder {
+        public ImportService getService() {
             return ImportService.this;
         }
     }
