@@ -9,7 +9,7 @@
         android:id="@+id/includeboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/board" />
+        layout="@layout/chessboard" />
 
     <!--
     <TextView android:layout_width="wrap_content" android:layout_height="320dip"

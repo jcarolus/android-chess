@@ -138,7 +138,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
             if (totalPuzzles == 0) {
 
                 Intent intent = new Intent(this, ImportService.class);
-                intent.putExtra(ImportService.IMPORT_MODE, ImportService.IMPORT_LOCAL_PGN);
+                intent.putExtra(ImportService.IMPORT_MODE, ImportService.IMPORT_PUZZLES);
                 startService(intent);
 
             } else {
@@ -182,29 +182,29 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     }
 
     @Override
-    public void OnImportStarted() {
+    public void OnImportStarted(int mode) {
         Log.d(TAG, "OnImportStarted");
     }
 
     @Override
-    public void OnImportSuccess() {
+    public void OnImportSuccess(int mode) {
         Log.d(TAG, "OnImportSuccess");
 
         loadPuzzles();
     }
 
     @Override
-    public void OnImportFail() {
+    public void OnImportFail(int mode) {
         Log.d(TAG, "OnImportFail");
     }
 
     @Override
-    public void OnImportFinished() {
+    public void OnImportFinished(int mode) {
         Log.d(TAG, "OnImportFinished");
     }
 
     @Override
-    public void OnImportFatalError() {
+    public void OnImportFatalError(int mode) {
         Log.d(TAG, "OnImportFatalError");
     }
 }

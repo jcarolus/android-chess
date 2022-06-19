@@ -5,20 +5,18 @@ import android.content.ContentValues;
 import android.net.Uri;
 import android.util.Log;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;
 
-public class PGNImportProcessor extends PGNProcessor {
-    private static final String TAG = "PGNImportProcessor";
+public class PuzzleImportProcessor extends PGNProcessor {
+    private static final String TAG = "PuzzleImportProcessor";
 
     private GameApi gameApi;
     private ContentResolver contentResolver;
 
-    public PGNImportProcessor(GameApi gameApi, ContentResolver contentResolver) {
+    public PuzzleImportProcessor(int mode, GameApi gameApi, ContentResolver contentResolver) {
+        super(mode);
         this.gameApi = gameApi;
         this.contentResolver = contentResolver;
     }

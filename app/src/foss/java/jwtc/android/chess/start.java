@@ -17,7 +17,7 @@ import android.widget.Toast;
 import java.util.Locale;
 
 import jwtc.android.chess.ics.ICSClient;
-import jwtc.android.chess.puzzle.practice;
+import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
 import jwtc.android.chess.tools.pgntool;
 
@@ -71,7 +71,7 @@ public class start extends Activity {
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_practice))) {
-                        i.setClass(start.this, practice.class);
+                        i.setClass(start.this, PracticeActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_puzzles))) {

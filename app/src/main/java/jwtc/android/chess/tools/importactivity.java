@@ -546,7 +546,7 @@ public class importactivity extends AppCompatActivity {
     private class PGNImportProcessor extends PGNProcessor {
 
         public PGNImportProcessor() {
-
+            super(0);
         }
 
         @Override
@@ -587,7 +587,7 @@ public class importactivity extends AppCompatActivity {
     private class PGNDbProcessor extends PGNProcessor {
 
         public PGNDbProcessor() {
-
+            super(0);
         }
 
         @Override
@@ -629,7 +629,7 @@ public class importactivity extends AppCompatActivity {
     private class PracticeImportProcessor extends PGNProcessor {
 
         public PracticeImportProcessor() {
-
+            super(0);
         }
 
         @Override
@@ -731,6 +731,7 @@ public class importactivity extends AppCompatActivity {
         private ContentResolver _cr;
 
         public PuzzleImportProcessor() {
+            super(0);
             _cr = importactivity.this.getContentResolver();
             _cr.delete(MyPuzzleProvider.CONTENT_URI_PUZZLES, "1=1", null);
 
@@ -764,6 +765,7 @@ public class importactivity extends AppCompatActivity {
         String _sVariation = _gameControl.getPGNHeadProperty("Black");
 
         public OpeningImportProcessor() {
+            super(0);
             _jArray = new JSONArray();
         }
 

@@ -1,9 +1,9 @@
 package jwtc.android.chess.tools;
 
 public interface ImportListener {
-    void OnImportStarted();
-    void OnImportSuccess();
-    void OnImportFail();
-    void OnImportFinished();
-    void OnImportFatalError();
+    void OnImportStarted(int mode);
+    void OnImportSuccess(int mode);
+    void OnImportFail(int mode);
+    void OnImportFinished(int mode);
+    void OnImportFatalError(int mode);
 }
