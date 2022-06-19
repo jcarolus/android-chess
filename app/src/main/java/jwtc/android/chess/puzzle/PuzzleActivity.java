@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -18,6 +19,7 @@ import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.tools.ImportListener;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
+import jwtc.chess.board.BoardConstants;
 
 public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, ImportListener {
     private static final String TAG = "PuzzleActivity";
@@ -34,7 +36,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     public boolean requestMove(int from, int to) {
 
         if (gameApi.getPGNSize() <= jni.getNumBoard() - 1) {
-//            setMessage(getString(R.string.puzzle_already_solved));
+            setMessage(getString(R.string.puzzle_already_solved));
             return gameApi.requestMove(from, to);
         }
         int move = gameApi.getPGNEntries().get(jni.getNumBoard() - 1)._move;
@@ -55,11 +57,11 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 				updateState();
 			}*/
 
-        return true;
+            return true;
         } else {
             // check for illegal move
 
-//            setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? getString(R.string.puzzle_not_correct_move) : getString(R.string.puzzle_invalid_move)));
+            setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? getString(R.string.puzzle_not_correct_move) : getString(R.string.puzzle_invalid_move)));
             _imgStatus.setImageResource(R.drawable.indicator_error);
         }
 
@@ -108,6 +110,26 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         _imgTurn = findViewById(R.id.ImageTurn);
 
         _imgStatus = findViewById(R.id.ImageStatus);
+
+        _butPrev = (ImageButton) findViewById(R.id.ButtonPuzzlePrevious);
+        _butPrev.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                if (currentPosition > 0) {
+                    currentPosition--;
+                }
+                startPuzzle();
+            }
+        });
+
+        _butNext = (ImageButton) findViewById(R.id.ButtonPuzzleNext);
+        _butNext.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                if (currentPosition + 1 < totalPuzzles) {
+                    currentPosition++;
+                    startPuzzle();
+                }
+            }
+        });
     }
 
     @Override
@@ -146,6 +168,9 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
                 if (totalPuzzles < currentPosition + 1) {
                     currentPosition = 0;
                 }
+
+
+                _seekBar.setMax(totalPuzzles - 1);
                 startPuzzle();
             }
         } else {
@@ -154,21 +179,64 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     }
 
     protected void startPuzzle() {
+        Log.d(TAG, "startPuzzle " + currentPosition);
         _cursor.moveToPosition(currentPosition);
         String sPGN = _cursor.getString(_cursor.getColumnIndex(MyPuzzleProvider.COL_PGN));
 
         Log.d(TAG, "startPuzzle " + sPGN);
 
         gameApi.loadPGN(sPGN);
+        gameApi.jumptoMove(0);
+
+        final int turn = jni.getTurn();
+        chessBoardView.setRotated(turn == BoardConstants.BLACK);
+
+        _imgTurn.setImageResource((turn == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack));
+
+        if (_seekBar != null) {
+            _seekBar.setProgress(currentPosition);
+        }
+
+        String sWhite = gameApi.getWhite();
+        if (sWhite == null) {
+            sWhite = "";
+        } else {
+            sWhite = sWhite.replace("?", "");
+        }
+//        String sDate = gameApi.getDate();
+//        if (sDate == null) {
+//            sDate = "";
+//        } else {
+//            sDate = sDate.replace("????", "");
+//            sDate = sDate.replace(".??.??", "");
+//        }
+
+//        if (sWhite.length() > 0 && sDate.length() > 0) {
+//            sWhite += ", ";
+//        }
+
+        _tvPuzzleText.setText("# " + (currentPosition + 1) + " - " + sWhite /*+ sDate*/); // + "\n\n" + _mapPGNHead.get("Event") + ", " + _mapPGNHead.get("Date").replace(".??.??", ""));
+
     }
 
     protected void updateGUI() {
 
     }
 
+    public void setMessage(String sMsg) {
+        _tvPuzzleText.setText(sMsg);
+    }
+
+    public void setMessage(int res) {
+        _tvPuzzleText.setText(res);
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+        if (fromUser) {
+            currentPosition = progress;
+            startPuzzle();
+        }
     }
 
     @Override

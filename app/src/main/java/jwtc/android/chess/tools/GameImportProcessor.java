@@ -3,6 +3,7 @@ package jwtc.android.chess.tools;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
+import android.os.Handler;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -16,8 +17,8 @@ public class GameImportProcessor extends PGNProcessor {
     private GameApi gameApi;
     private ContentResolver contentResolver;
 
-    public GameImportProcessor(int mode, GameApi gameApi, ContentResolver contentResolver) {
-        super(mode);
+    public GameImportProcessor(int mode, Handler updateHandler, GameApi gameApi, ContentResolver contentResolver) {
+        super(mode, updateHandler);
         this.gameApi = gameApi;
         this.contentResolver = contentResolver;
     }

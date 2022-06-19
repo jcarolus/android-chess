@@ -3,6 +3,7 @@ package jwtc.android.chess.tools;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
@@ -15,8 +16,8 @@ public class PuzzleImportProcessor extends PGNProcessor {
     private GameApi gameApi;
     private ContentResolver contentResolver;
 
-    public PuzzleImportProcessor(int mode, GameApi gameApi, ContentResolver contentResolver) {
-        super(mode);
+    public PuzzleImportProcessor(int mode, Handler updateHandler, GameApi gameApi, ContentResolver contentResolver) {
+        super(mode, updateHandler);
         this.gameApi = gameApi;
         this.contentResolver = contentResolver;
     }

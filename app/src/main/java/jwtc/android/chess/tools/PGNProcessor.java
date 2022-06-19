@@ -23,8 +23,9 @@ public abstract class PGNProcessor {
     public static final int MSG_FINISHED = 4;
     public static final int MSG_FATAL_ERROR = 5;
 
-    PGNProcessor(int mode) {
+    PGNProcessor(int mode, Handler updateHandler) {
         this.mode = mode;
+        this.m_threadUpdateHandler = updateHandler;
     }
 
     public void processZipFile(final InputStream is) {
@@ -53,23 +54,12 @@ public abstract class PGNProcessor {
 
                                 processPGNPart(sb);
                             }
-                            Message m = new Message();
-                            if (processPGN(sb.toString())) {
-                                m.what = MSG_PROCESSED_PGN;
-                            } else {
-                                m.what = MSG_FAILED_PGN;
-                            }
-                            m_threadUpdateHandler.sendMessage(m);
 
-                            m = new Message();
-                            m.what = MSG_FINISHED;
-                            m_threadUpdateHandler.sendMessage(m);
+                            sendMessage(MSG_FINISHED);
                         }
                     }
                 } catch (IOException e) {
-                    Message m = new Message();
-                    m.what = MSG_FATAL_ERROR;
-                    m_threadUpdateHandler.sendMessage(m);
+                    sendMessage(MSG_FATAL_ERROR);
 
                     Log.e(TAG, "Failed " + e.toString());
                 }

@@ -80,6 +80,23 @@ public abstract class GameApi {
         return true;
     }
 
+    public boolean requestMoveCastle(int from, int to) {
+        if (jni.isEnded() != 0) {
+            return false;
+        }
+
+        if (jni.doCastleMove(from, to) == 0) {
+            return false;
+        }
+        final int move = jni.getMyMove();
+
+        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", move);
+
+        dispatchMove(move);
+
+        return true;
+    }
+
     public void move(int move) {
         if (move(move, "", true)) {
             dispatchMove(move);

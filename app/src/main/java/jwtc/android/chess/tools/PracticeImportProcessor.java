@@ -3,7 +3,10 @@ package jwtc.android.chess.tools;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
+
+import java.util.TreeSet;
 
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
@@ -17,10 +20,12 @@ public class PracticeImportProcessor extends PGNProcessor {
     private JNI jni;
     private GameApi gameApi;
     private ContentResolver contentResolver;
+    private TreeSet<Long> _arrKeys;
 
-    public PracticeImportProcessor(int mode, GameApi gameApi, ContentResolver contentResolver) {
-        super(mode);
+    public PracticeImportProcessor(int mode, Handler updateHandler, GameApi gameApi, ContentResolver contentResolver) {
+        super(mode, updateHandler);
         jni = JNI.getInstance();
+        _arrKeys = new TreeSet<Long>();
         this.gameApi = gameApi;
         this.contentResolver = contentResolver;
     }
@@ -31,6 +36,14 @@ public class PracticeImportProcessor extends PGNProcessor {
         if (gameApi.loadPGN(sPGN)) {
 
             if (jni.getState() == ChessBoard.MATE) {
+
+                long lKey = jni.getHashKey();
+
+                if (false == _arrKeys.contains(lKey)) {
+                    _arrKeys.add(lKey);
+                } else {
+                    return false;
+                }
 
                 int startExport = gameApi.getPGNSize();
 

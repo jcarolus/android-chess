@@ -1,6 +1,8 @@
 package jwtc.android.chess.activities;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -29,6 +31,7 @@ import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
+import jwtc.chess.board.BoardMembers;
 import jwtc.chess.board.ChessBoard;
 
 abstract public class ChessBoardActivity extends BaseActivity implements GameListener, OnInitListener {
@@ -56,7 +59,63 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean skipReturn = true;
     private String keyboardBuffer = "";
 
-    abstract public boolean requestMove(int from, int to);
+    public boolean requestMove(final int from, final int to) {
+        if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
+                BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
+                BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7
+                ||
+                jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
+                        BoardMembers.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
+                        BoardMembers.ROW_TURN[BoardConstants.BLACK][to] == 7) {
+
+            final String[] items = getResources().getStringArray(R.array.promotionpieces);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.title_pick_promo);
+            builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    dialog.dismiss();
+                    jni.setPromo(4 - item);
+                    gameApi.requestMove(from, to);
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+
+//            if (_vibrator != null) {
+//                _vibrator.vibrate(40L);
+//            }
+
+            return true;
+        } else if (jni.isAmbiguousCastle(from, to) != 0) { // in case of Fischer
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.title_castle);
+            builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    dialog.dismiss();
+                    gameApi.requestMoveCastle(from, to);
+                }
+            });
+            builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    dialog.dismiss();
+                    if (from != to) {
+                        gameApi.requestMove(from, to);
+                    }
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+
+//            if (_vibrator != null) {
+//                _vibrator.vibrate(40L);
+//            }
+
+            return true; // done, return from method!
+        }
+        return gameApi.requestMove(from, to);
+    }
 
     @Override
     public void OnMove(int move) {
@@ -230,23 +289,23 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    @Override
-    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        int action = event.getAction();
-        boolean isDown = action == 0;
-
-        if (skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
-            return true;
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
-        }
-
-        return super.dispatchKeyEvent(event);
-    }
+//    @Override
+//    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
+//    public boolean dispatchKeyEvent(KeyEvent event) {
+//        int keyCode = event.getKeyCode();
+//        int action = event.getAction();
+//        boolean isDown = action == 0;
+//
+//        if (skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
+//            return true;
+//        }
+//
+//        if (keyCode == KeyEvent.KEYCODE_MENU) {
+//            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
+//        }
+//
+//        return super.dispatchKeyEvent(event);
+//    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

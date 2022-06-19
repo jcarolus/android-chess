@@ -66,13 +66,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock;
 
     @Override
-    public boolean requestMove(int from, int to) {
+    public boolean requestMove(final int from, final int to) {
         if (jni.getTurn() == myTurn || vsCPU == false) {
-            if (gameApi.requestMove(from, to)) {
-                if (vsCPU && jni.isEnded() == 0) {
-                    ((PlayApi) gameApi).engine.play();
-                }
-            }
+            return super.requestMove(from, to);
         } else {
 //            if (requestMoveFrom != -1 && requestMoveTo != -1) {
 //                highlightedPositions.clear();
@@ -304,6 +300,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         highlightedPositions.add(to);
 
         updateSelectedSquares();
+
+        if (vsCPU && jni.isEnded() == 0 && jni.getTurn() != myTurn) {
+            ((PlayApi) gameApi).engine.play();
+        }
     }
 
     @Override

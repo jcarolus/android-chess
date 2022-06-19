@@ -26,6 +26,8 @@ public class ImportService extends Service {
     public static final int IMPORT_PUZZLES = 1;
     public static final int IMPORT_GAMES = 2;
     public static final int IMPORT_PRACTICE = 3;
+    public static final int IMPORT_OPENINGS = 4;
+    public static final int IMPORT_DATABASE = 5;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
     private PGNProcessor _processor; // @TODO could be multiple
@@ -50,10 +52,14 @@ public class ImportService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "Received start id " + startId + ": " + intent);
 
+        if (intent == null) {
+            return START_STICKY;
+        }
         final Uri uri = intent.getData();
         Bundle extras = intent.getExtras();
 
         final int mode = extras.getInt(IMPORT_MODE);
+        Handler updateHandler = new ImportService.ThreadMessageHandler(this);
 
         Log.d(TAG, "mode " + mode);
 
@@ -61,8 +67,7 @@ public class ImportService extends Service {
 
         switch (mode) {
             case IMPORT_PUZZLES:
-                _processor = new PuzzleImportProcessor(mode, importApi, getContentResolver());
-                _processor.m_threadUpdateHandler = new ImportService.ThreadMessageHandler(this);
+                _processor = new PuzzleImportProcessor(mode, updateHandler, importApi, getContentResolver());
 
                 InputStream isPuzzles;
                 try {
@@ -81,7 +86,7 @@ public class ImportService extends Service {
 
             case IMPORT_GAMES:
                 if (uri != null) {
-                    _processor = new GameImportProcessor(mode, importApi, getContentResolver());
+                    _processor = new GameImportProcessor(mode, updateHandler, importApi, getContentResolver());
                     try {
                         InputStream isGames = getContentResolver().openInputStream(uri);
                         if (uri.getPath().lastIndexOf(".zip") > 0) {
@@ -97,7 +102,7 @@ public class ImportService extends Service {
                 }
                 break;
             case IMPORT_PRACTICE:
-                _processor = new PracticeImportProcessor(mode, importApi, getContentResolver());
+                _processor = new PracticeImportProcessor(mode, updateHandler, importApi, getContentResolver());
                 try {
                     InputStream isPractice;
                     if (uri == null) {
@@ -109,6 +114,34 @@ public class ImportService extends Service {
                 } catch (IOException e) {
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode);
                     _processor = null;
+                }
+                break;
+            case IMPORT_OPENINGS:
+                if (uri != null) {
+                    _processor = new OpeningImportProcessor(mode, updateHandler, importApi);
+                    try {
+                        InputStream isOpenings = getContentResolver().openInputStream(uri);
+                        _processor.processPGNFile(isOpenings);
+
+                    } catch (Exception ex) {
+                        Log.e(TAG, ex.toString());
+                        dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode);
+                        _processor = null;
+                    }
+                }
+                break;
+            case IMPORT_DATABASE:
+                if (uri != null) {
+                    _processor = new PGNDbProcessor(mode, updateHandler, importApi);
+                    try {
+                        InputStream isDatabase = getContentResolver().openInputStream(uri);
+                        _processor.processPGNFile(isDatabase);
+
+                    } catch (Exception ex) {
+                        Log.e(TAG, ex.toString());
+                        dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode);
+                        _processor = null;
+                    }
                 }
                 break;
         }
