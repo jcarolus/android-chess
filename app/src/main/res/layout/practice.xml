@@ -11,11 +11,6 @@
         android:layout_height="wrap_content"
         layout="@layout/chessboard" />
 
-    <!--
-    <TextView android:layout_width="wrap_content" android:layout_height="320dip"
-        android:id="@+id/includeboard"
-    />
-    -->
 
     <TableLayout
         android:id="@+id/LayoutTurn"
@@ -89,13 +84,6 @@
                 android:paddingLeft="8dip"
                 android:paddingRight="8dip" />
 
-            <ImageButton
-                android:id="@+id/ButtonPracticePause"
-                android:src="@drawable/av_pause"
-                android:layout_height="40dip"
-                android:layout_width="40dip"
-                style="@style/ChessImageButton" />
-
             <Button
                 android:id="@+id/ButtonPracticeShow"
                 android:text="@string/puzzle_show"
@@ -106,7 +94,7 @@
 
             <ImageButton
                 android:id="@+id/ButtonPracticeNext"
-                android:src="@drawable/navigation_next_item"
+                android:src="@drawable/ic_chevron_right"
                 android:layout_height="40dip"
                 android:layout_width="40dip"
                 style="@style/ChessImageButton" />

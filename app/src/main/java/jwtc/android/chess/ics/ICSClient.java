@@ -60,10 +60,11 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public static final int REQUEST_LOGIN = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3, REQUEST_MENU = 4;
 
     private ICSServer icsServer = null;
+    private boolean mShouldUnbind = false;
 
     protected String _sConsoleEditText;
     private String _server, _handle, _pwd, _ficsHandle, _ficsPwd, _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
-    private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
+    private int  _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
             _notifyON, _bICSVolume, _ICSNotifyLifeCycle;
     private Button _butLogin;
@@ -71,6 +72,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //	public ICSChatDlg _dlgChat;
 
     private EditText _editHandle, _editPwd, _editConsole, _editBoard;
+    private ViewAnimator viewAnimatorPlayMode;
 
     private Spinner _spinnerHandles;
     private ArrayAdapter<String> _adapterHandles;
@@ -99,11 +101,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private ArrayList<HashMap<String, String>> _mapGames = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> _mapStored = new ArrayList<HashMap<String, String>>();
 
-    private AlternatingRowColorAdapter _adapterGames, _adapterPlayers, _adapterChallenges, _adapterStored;
+    private SimpleAdapter _adapterGames, _adapterPlayers, _adapterChallenges, _adapterStored;
 
     ArrayAdapter<String> _adapterWelcome;
-
-    protected static final int SERVER_FICS = 1;
 
     protected static final int VIEW_MAIN_BOARD = 0;
     protected static final int VIEW_MAIN_LOBBY = 1;
@@ -132,11 +132,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             // cast its IBinder to a concrete class and directly access it.
             Log.i(TAG, "onServiceConnected");
             icsServer = ((ICSServer.LocalBinder)service).getService();
-            icsServer.addListener(ICSClient.this);
-            icsServer.addListener((ICSApi)gameApi);
 
-            _dlgLogin = new ICSLoginDlg(ICSClient.this, ICSClient.this, REQUEST_LOGIN);
-
+            addListeners();
             openLoginDialogOfNotConnected();
         }
 
@@ -165,18 +162,27 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         afterCreate();
 
+        _dlgLogin = new ICSLoginDlg(ICSClient.this, ICSClient.this, REQUEST_LOGIN);
         _dlgMatch = new ICSMatchDlg(this, this, REQUEST_CHALLENGE);
         _dlgPlayer = new ICSPlayerDlg(this);
         _dlgConfirm = new ICSConfirmDlg(this, this, REQUEST_CONFIRM);
         _dlgOver = new ICSGameOverDlg(this);
 
-
-        _serverType = SERVER_FICS;
         _iConsoleCharacterSize = 10;
         _bAutoSought = true;
         _bTimeWarning = true;
         _bEndGameDialog = true;
         _bShowClockPGN = true;
+
+        viewAnimatorPlayMode = findViewById(R.id.ViewAnimatorPlayMode);
+
+        Button buttonLogin = findViewById(R.id.ButtonLogin);
+        buttonLogin.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _dlgLogin.show();
+            }
+        });
 
         Button buttonChallenge = findViewById(R.id.ButtonChallenge);
         buttonChallenge.setOnClickListener(new OnClickListener() {
@@ -211,19 +217,35 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             }
         });
 
-//        _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
-//                new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
+        _adapterChallenges = new SimpleAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
+                new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
 //
 //        _listChallenges = (ListView) findViewById(R.id.ICSChallenges);
 //        _listChallenges.setAdapter(_adapterChallenges);
 //        _listChallenges.setOnItemClickListener(this);
 //
-//        _adapterPlayers = new AlternatingRowColorAdapter(ICSClient.this, _mapPlayers, R.layout.ics_player_row,
-//                new String[]{"text_name", "text_rating"}, new int[]{R.id.text_name, R.id.text_rating});
+        _adapterPlayers = new SimpleAdapter(ICSClient.this, _mapPlayers, R.layout.ics_player_row,
+                new String[]{"text_name", "text_rating"},
+                new int[]{R.id.text_name, R.id.text_rating});
 //
 //
-//        _adapterStored = new AlternatingRowColorAdapter(ICSClient.this, _mapStored, R.layout.ics_stored_row,
-//                new String[]{"nr_stored", "color_stored", "text_name_stored", "available_stored"}, new int[]{R.id.nr_stored, R.id.color_stored, R.id.text_name_stored, R.id.available_stored});
+        /*
+        item.put("nr", match.group(1));
+            item.put("text_rating1", match.group(2));
+            item.put("text_name1", match.group(3));
+            item.put("text_rating2", match.group(4));
+            item.put("text_name2", match.group(5));
+            item.put("text_type", match.group(6).toUpperCase() + match.group(7).toUpperCase());
+            item.put("text_time1", match.group(10) + ":" + match.group(11));
+            item.put("text_time2", match.group(12) + ":" + match.group(13));
+         */
+        _adapterGames = new SimpleAdapter(ICSClient.this, _mapGames, R.layout.ics_game_row,
+                new String[]{"nr", "text_name1", "text_name2"},
+                new int[]{R.id.nr, R.id.text_name1, R.id.text_name2});
+
+        _adapterStored = new SimpleAdapter(ICSClient.this, _mapStored, R.layout.ics_stored_row,
+                new String[]{"nr_stored", "color_stored", "text_name_stored", "available_stored"},
+                new int[]{R.id.nr_stored, R.id.color_stored, R.id.text_name_stored, R.id.available_stored});
 
 //        _listStored = (ListView) findViewById(R.id.ICSStored);
 //        _listStored.setAdapter(_adapterStored);
@@ -937,13 +959,23 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             _ringNotification = RingtoneManager.getRingtone(this, tmpUri);
         }
 
+
+        addListeners();
+        openLoginDialogOfNotConnected();
+    }
+
+    public void addListeners() {
         if (icsServer != null) {
             icsServer.addListener(this);
+            icsServer.addListener((ICSApi) gameApi);
         }
+    }
 
-        openLoginDialogOfNotConnected();
-
-
+    public void removeListeners() {
+        if (icsServer != null) {
+            icsServer.removeListener(this);
+            icsServer.removeListener((ICSApi) gameApi);
+        }
     }
 
     public void openLoginDialogOfNotConnected() {
@@ -1048,9 +1080,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     protected void onPause() {
         Log.i(TAG, "onPause");
 
-        if (icsServer != null) {
-            icsServer.removeListener(this);
-        }
+        removeListeners();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
@@ -1086,8 +1116,13 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         Log.i(TAG, "onStart");
         super.onStart();
 
+        mShouldUnbind = false;
+
+//        startService(new Intent(ICSClient.this, ICSServer.class));
+
         if (bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE)) {
             Log.i(TAG, "Bind to ICSServer");
+            mShouldUnbind = true;
         } else {
             globalToast("Could not init remote chess process");
             Log.e(TAG, "Error: The requested service doesn't exist, or this client isn't allowed access to it.");
@@ -1099,16 +1134,18 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         Log.i(TAG, "onStop");
         super.onStop();
 
-        unbindService(mConnection);
+        if (mShouldUnbind) {
+            unbindService(mConnection);
+        }
     }
 
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
 
-        if (icsServer != null) {
-            icsServer.removeListener(this);
-        }
+        removeListeners();
+
+//        icsServer = null;
         super.onDestroy();
     }
 
@@ -1289,6 +1326,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //        _adapterWelcome.add(getString(R.string.menu_help));
 //
 //        _adapterWelcome.notifyDataSetChanged();
+
+        viewAnimatorPlayMode.setDisplayedChild(2); // @TODO
     }
 
     @Override
@@ -1303,8 +1342,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnSessionEnded() {
-        doToast("ICS service ended unexpectedly");
-        finish();
+        viewAnimatorPlayMode.setDisplayedChild(0);
     }
 
     @Override
@@ -1324,12 +1362,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
-//        _mapPlayers.clear();
-//        for (int i = 0; i < playerList.size(); i++) {
-//            _mapPlayers.add(playerList.get(i));
-//        }
-//        Collections.sort(_mapPlayers, new ComparatorHashRating());
-//        _adapterPlayers.notifyDataSetChanged();
+        _mapPlayers.clear();
+        for (int i = 0; i < playerList.size(); i++) {
+            _mapPlayers.add(playerList.get(i));
+        }
+        Collections.sort(_mapPlayers, new ComparatorHashRating());
+        _adapterPlayers.notifyDataSetChanged();
     }
 
     @Override
@@ -1479,30 +1517,30 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
-//        _mapChallenges.clear();
-//        for (int i = 0; i < soughtList.size(); i++) {
-//            _mapChallenges.add(soughtList.get(i));
-//        }
-//        _adapterChallenges.notifyDataSetChanged();
+        _mapChallenges.clear();
+        for (int i = 0; i < soughtList.size(); i++) {
+            _mapChallenges.add(soughtList.get(i));
+        }
+        _adapterChallenges.notifyDataSetChanged();
     }
 
     @Override
     public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
-//        _mapGames.clear();
-//        for (int i = 0; i < games.size(); i++) {
-//            _mapGames.add(games.get(i));
-//        }
-//
-//        _adapterGames.notifyDataSetChanged();
+        _mapGames.clear();
+        for (int i = 0; i < games.size(); i++) {
+            _mapGames.add(games.get(i));
+        }
+
+        _adapterGames.notifyDataSetChanged();
     }
 
     @Override
     public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
-//        _mapStored.clear();
-//        for (int i = 0; i < games.size(); i++) {
-//            _mapStored.add(games.get(i));
-//        }
-//        _adapterStored.notifyDataSetChanged();
+        _mapStored.clear();
+        for (int i = 0; i < games.size(); i++) {
+            _mapStored.add(games.get(i));
+        }
+        _adapterStored.notifyDataSetChanged();
     }
 
     @Override

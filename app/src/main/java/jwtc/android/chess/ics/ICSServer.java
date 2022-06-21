@@ -78,7 +78,7 @@ public class ICSServer extends Service {
                 _socket = new TelnetSocket(server, port);
             } catch (Exception ex) {
                 Message message = new Message();
-                message.what = ICSThreadMessageHandler.MSG_CONNECTION_ERROR;
+                message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
                 threadHandler.sendMessage(message);
                 return;
             }
@@ -100,7 +100,11 @@ public class ICSServer extends Service {
                 }
                 Log.i(TAG, "End of workerTelnet");
                 cancelKeepAliveTimer();
-                stopSelf();
+
+                Message message = new Message();
+                message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
+                threadHandler.sendMessage(message);
+                //
             } catch (Exception ex) {
                 Message message = new Message();
                 message.what = ICSThreadMessageHandler.MSG_ERROR;
@@ -141,9 +145,9 @@ public class ICSServer extends Service {
                 String buffer = msg.getData().getString("buffer");
                 handleBufferMessage(buffer);
                 break;
-            case ICSThreadMessageHandler.MSG_CONNECTION_ERROR:
-                Log.i(TAG, "MSG_CONNECTION_ERROR");
-                for (ICSListener listener: listeners) {listener.OnError();}
+            case ICSThreadMessageHandler.MSG_CONNECTION_CLOSED:
+                Log.i(TAG, "MSG_CONNECTION_CLOSED");
+                for (ICSListener listener: listeners) {listener.OnSessionEnded();}
                 break;
             case ICSThreadMessageHandler.MSG_ERROR:
                 Log.i(TAG, "MSG_ERROR");

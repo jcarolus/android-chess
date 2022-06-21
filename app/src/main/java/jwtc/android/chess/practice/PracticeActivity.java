@@ -24,7 +24,6 @@ import java.util.TimerTask;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
-import jwtc.android.chess.puzzle.PuzzleActivity;
 import jwtc.android.chess.tools.ImportListener;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
@@ -33,16 +32,16 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeActivity extends ChessBoardActivity implements ImportListener {
     private static final String TAG = "PracticeActivity";
 
-    private TextView _tvPracticeMove, _tvPracticeTime, _tvPracticeAvgTime;
-    private Button _butShow;
-    private ImageButton _butPause, _butNext;
-    private int _numTotal, _iPos;
-    private Cursor _cursor;
-    private Timer _timer;
-    private int _ticks, _playTicks;
-    private ViewSwitcher _switchTurn;
-    private ImageView _imgStatus;
-    protected ContentResolver _cr;
+    private TextView tvPracticeMove, tvPracticeTime, tvPracticeAvgTime;
+    private Button buttonShow;
+    private ImageButton buttonNext;
+    private int totalPuzzles, currentPos;
+    private Cursor cursor;
+    private Timer timer;
+    private int ticks, playTicks;
+    private ViewSwitcher switchTurn;
+    private ImageView imgStatus;
+    private ContentResolver contentResolver;
     private boolean _isPlaying;
     private ImportService importService;
 
@@ -50,7 +49,7 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
         /** Gets called on every message that is received */
         // @Override
         public void handleMessage(Message msg) {
-            _tvPracticeTime.setText(formatTime(msg.getData().getInt("ticks")));
+            tvPracticeTime.setText(formatTime(msg.getData().getInt("ticks")));
         }
 
     };
@@ -92,18 +91,18 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
 
             if (gameApi.getPGNSize() == jni.getNumBoard() - 1) {
                 //play();
-                _imgStatus.setImageResource(R.drawable.indicator_ok);
+                imgStatus.setImageResource(R.drawable.indicator_ok);
                 setMessage("Correct!");
                 _isPlaying = false;
-                _butNext.setEnabled(true);
-                _butShow.setEnabled(false);
+                buttonNext.setEnabled(true);
+                buttonShow.setEnabled(false);
             } else {
                 gameApi.jumptoMove(jni.getNumBoard());
             }
 
             return true;
         } else {
-            _imgStatus.setImageResource(R.drawable.indicator_error);
+            imgStatus.setImageResource(R.drawable.indicator_error);
             setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? " is not expected" : " is an illegal move"));
         }
         return false;
@@ -120,37 +119,37 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
 
         _isPlaying = false;
 
-        _cr = getContentResolver();
+        contentResolver = getContentResolver();
 
-        _tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
-        _tvPracticeTime = (TextView) findViewById(R.id.TextViewPracticeTime);
-        _tvPracticeAvgTime = (TextView) findViewById(R.id.TextViewPracticeAvgTime);
+        tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
+        tvPracticeTime = (TextView) findViewById(R.id.TextViewPracticeTime);
+        tvPracticeAvgTime = (TextView) findViewById(R.id.TextViewPracticeAvgTime);
 
-        _switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
+        switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
 
-        _imgStatus = (ImageView) findViewById(R.id.ImageStatus);
+        imgStatus = (ImageView) findViewById(R.id.ImageStatus);
 
-        _butShow = (Button) findViewById(R.id.ButtonPracticeShow);
-        _butNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
+        buttonShow = (Button) findViewById(R.id.ButtonPracticeShow);
+        buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
 
-        _butShow.setOnClickListener(new View.OnClickListener() {
+        buttonShow.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
 
                 gameApi.jumptoMove(jni.getNumBoard());
 
                 if (gameApi.getPGNSize() == jni.getNumBoard() - 1) {
-                    _butNext.setEnabled(true);
-                    _butShow.setEnabled(false);
+                    buttonNext.setEnabled(true);
+                    buttonShow.setEnabled(false);
                 }
             }
         });
 
-        _butNext.setOnClickListener(new View.OnClickListener() {
+        buttonNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                _butNext.setEnabled(false);
-                _butShow.setEnabled(true);
-                if (_iPos + 1 < _numTotal) {
-                    _iPos++;
+                buttonNext.setEnabled(false);
+                buttonShow.setEnabled(true);
+                if (currentPos + 1 < totalPuzzles) {
+                    currentPos++;
                     startPuzzle();
                 } else {
                     // completed
@@ -179,80 +178,81 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
         super.onPause();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
-        if (_timer != null)
-            _timer.cancel();
-        _timer = null;
+        if (timer != null)
+            timer.cancel();
+        timer = null;
         _isPlaying = false;
 
 
-        editor.putInt("practicePos", _iPos);
-        editor.putInt("practiceTicks", _ticks);
+        editor.putInt("practicePos", currentPos);
+        editor.putInt("practiceTicks", ticks);
     }
 
     protected void loadPuzzles() {
         SharedPreferences prefs = getPrefs();
 
-        _ticks = prefs.getInt("practiceTicks", 0);
-        _playTicks = 0;
+        ticks = prefs.getInt("practiceTicks", 0);
+        playTicks = 0;
 
-        _iPos = prefs.getInt("practicePos", 0);
+        currentPos = prefs.getInt("practicePos", 0);
 
-        _cursor = managedQuery(MyPuzzleProvider.CONTENT_URI_PRACTICES, MyPuzzleProvider.COLUMNS, null, null, "");
+        cursor = managedQuery(MyPuzzleProvider.CONTENT_URI_PRACTICES, MyPuzzleProvider.COLUMNS, null, null, "");
 
-        if (_cursor != null) {
-            _numTotal = _cursor.getCount();
+        if (cursor != null) {
+            totalPuzzles = cursor.getCount();
 
-            if (_numTotal > 0) {
-                if (_iPos + 1 >= _numTotal) {
-                    _iPos = 0;
+            if (totalPuzzles > 0) {
+                if (currentPos + 1 >= totalPuzzles) {
+                    currentPos = 0;
                 }
                 startPuzzle();
             } else {
                 Intent intent = new Intent(this, ImportService.class);
                 intent.putExtra(ImportService.IMPORT_MODE, ImportService.IMPORT_PRACTICE);
                 startService(intent);
+                // bindService?
             }
         }
     }
 
     protected void startPuzzle() {
-        _cursor.moveToPosition(_iPos);
+        cursor.moveToPosition(currentPos);
         _isPlaying = true;
-        _playTicks = 0;
+        playTicks = 0;
 
-        String sPGN = _cursor.getString(_cursor.getColumnIndex(MyPuzzleProvider.COL_PGN));
+        String sPGN = cursor.getString(cursor.getColumnIndex(MyPuzzleProvider.COL_PGN));
 
-        Log.i("ChessViewPractice", "init: " + sPGN);
+        Log.i(TAG, "init: " + sPGN);
 
         gameApi.loadPGN(sPGN);
 
         gameApi.jumptoMove(0);
 
-        Log.i("ChessViewPractice", gameApi.getPGNSize() + " moves from " + sPGN + " turn " + jni.getTurn());
+        Log.i(TAG, gameApi.getPGNSize() + " moves from " + sPGN + " turn " + jni.getTurn());
 
         final int turn = jni.getTurn();
         chessBoardView.setRotated(turn == BoardConstants.BLACK);
 
-        _tvPracticeMove.setText("# " + (_iPos + 1));
+        tvPracticeMove.setText("# " + (currentPos + 1));
 
         if (turn == BoardConstants.BLACK) {
-            _switchTurn.setDisplayedChild(0);
+            switchTurn.setDisplayedChild(0);
         } else {
-            _switchTurn.setDisplayedChild(1);
+            switchTurn.setDisplayedChild(1);
         }
 
-        _imgStatus.setImageResource(R.drawable.indicator_none);
+        imgStatus.setImageResource(R.drawable.indicator_none);
 
-        Float f = (float) (_ticks) / (_iPos + 1);
-        _tvPracticeAvgTime.setText(String.format("%.1f", f));
+        Float f = (float) (ticks) / (currentPos + 1);
+        tvPracticeAvgTime.setText(String.format("%.1f", f));
     }
 
     public void setMessage(String sMsg) {
-        _tvPracticeMove.setText(sMsg);
+        tvPracticeMove.setText(sMsg);
     }
 
     public void setMessage(int res) {
-        _tvPracticeMove.setText(res);
+        tvPracticeMove.setText(res);
     }
 
     @Override
@@ -283,21 +283,21 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
     }
 
     protected void scheduleTimer() {
-        _timer = new Timer(true);
-        _timer.schedule(new TimerTask() {
+        timer = new Timer(true);
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
 
                 if (false == _isPlaying) {
                     return;
                 }
-                _ticks++;
-                _playTicks++;
+                ticks++;
+                playTicks++;
 
                 Message msg = new Message();
                 msg.what = 1;
                 Bundle bun = new Bundle();
-                bun.putInt("ticks", _playTicks);
+                bun.putInt("ticks", playTicks);
                 msg.setData(bun);
                 m_timerHandler.sendMessage(msg);
 

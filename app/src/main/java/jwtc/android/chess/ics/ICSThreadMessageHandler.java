@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference;
 public class ICSThreadMessageHandler extends Handler {
     public static final int MSG_PARSE = 1;
     public static final int MSG_ERROR = 2;
-    public static final int MSG_CONNECTION_ERROR = 3;
+    public static final int MSG_CONNECTION_CLOSED = 3;
 
     private WeakReference<ICSServer> serverWeakReference;
 

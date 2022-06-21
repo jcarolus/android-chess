@@ -17,7 +17,6 @@ import org.json.JSONObject;
 import androidx.appcompat.app.AppCompatActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
-import jwtc.android.chess.puzzle.practice;
 import jwtc.chess.GameControl;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
@@ -310,14 +309,6 @@ public class importactivity extends AppCompatActivity {
                     getContentResolver().delete(MyPuzzleProvider.CONTENT_URI_PRACTICES, "1=1", null);
 
                     Log.i(TAG, "Deleted practices");
-
-                    Intent practiceIntent = new Intent();
-                    practiceIntent.setClass(this, practice.class);
-                    practiceIntent.setData(uri);
-
-                    doToast("Practice set was copied");
-
-                    startActivity(practiceIntent);
 
                 } catch (Exception e) {
 
