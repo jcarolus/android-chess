@@ -120,35 +120,35 @@ public class ICSChessView extends ChessViewBase {
         _tvTimePerMove = (TextView) _activity.findViewById(R.id.TextViewICSTimePerMove);
         _tvMoveNumber = (TextView) _activity.findViewById(R.id.TextViewMoveNumber);
 
-        _butCancelMove = (Button) _activity.findViewById(R.id.ButtonCancelMove);
-        _butCancelMove.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
-                m_iFrom = -1;
-                m_iTo = -1;
-                _bHandleClick = true;
-                _jni.undo();
-                paint();
-                // switch back
-                _viewSwitchConfirm.setDisplayedChild(0);
-                if (_bConfirmMoveLongClick) {
-                    _bConfirmMoveLongClick = false;
-                }
-            }
-        });
-        _butConfirmMove = (Button) _activity.findViewById(R.id.ButtonConfirmMove);
-        _butConfirmMove.setOnClickListener(new OnClickListener() {
-            public void onClick(View arg0) {
-
-                _tvLastMove.setText("...");
-                String sMove = Pos.toString(m_iFrom) + "-" + Pos.toString(m_iTo);
-                _parent.sendString(sMove);
-                m_iFrom = -1;
-                // switch back
-                _viewSwitchConfirm.setDisplayedChild(0);
-            }
-        });
-
-        _viewSwitchConfirm = (ViewSwitcher) _activity.findViewById(R.id.ViewSitcherConfirmAndText);
+//        _butCancelMove = (Button) _activity.findViewById(R.id.ButtonCancelMove);
+//        _butCancelMove.setOnClickListener(new OnClickListener() {
+//            public void onClick(View arg0) {
+//                m_iFrom = -1;
+//                m_iTo = -1;
+//                _bHandleClick = true;
+//                _jni.undo();
+//                paint();
+//                // switch back
+//                _viewSwitchConfirm.setDisplayedChild(0);
+//                if (_bConfirmMoveLongClick) {
+//                    _bConfirmMoveLongClick = false;
+//                }
+//            }
+//        });
+//        _butConfirmMove = (Button) _activity.findViewById(R.id.ButtonConfirmMove);
+//        _butConfirmMove.setOnClickListener(new OnClickListener() {
+//            public void onClick(View arg0) {
+//
+//                _tvLastMove.setText("...");
+//                String sMove = Pos.toString(m_iFrom) + "-" + Pos.toString(m_iTo);
+//                _parent.sendString(sMove);
+//                m_iFrom = -1;
+//                // switch back
+//                _viewSwitchConfirm.setDisplayedChild(0);
+//            }
+//        });
+//
+//        _viewSwitchConfirm = (ViewSwitcher) _activity.findViewById(R.id.ViewSitcherConfirmAndText);
 
         _butImageBackward = (ImageButton) _activity.findViewById(R.id.ButtonICSExamineBackward);
         _butImageBackward.setOnClickListener(new OnClickListener() {

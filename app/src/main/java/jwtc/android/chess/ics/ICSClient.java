@@ -1,43 +1,29 @@
 package jwtc.android.chess.ics;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Vibrator;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.widget.AdapterView.OnItemClickListener;
 
-import java.io.FileOutputStream;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,37 +38,41 @@ import org.json.JSONException;
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.services.ClockListener;
+import jwtc.android.chess.services.LocalClockApi;
 import jwtc.chess.Pos;
+import jwtc.chess.board.BoardConstants;
 
-public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener {
+public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener, AdapterView.OnItemClickListener, ClockListener {
     public static final String TAG = "ICSClient";
 
     public static final int REQUEST_LOGIN = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3, REQUEST_MENU = 4;
 
     private ICSServer icsServer = null;
     private boolean mShouldUnbind = false;
+    private LocalClockApi localClockApi = new LocalClockApi();
 
     protected String _sConsoleEditText;
-    private String _server, _handle, _pwd, _ficsHandle, _ficsPwd, _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
+    private String _server, _handle, _pwd, _ficsHandle, _ficsPwd, _sFile, _FEN = "";
     private int  _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
             _notifyON, _bICSVolume, _ICSNotifyLifeCycle;
     private Button _butLogin;
+    private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
+            _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber;
     private TextView _tvHeader, _tvConsole, _tvPlayConsole;
-//	public ICSChatDlg _dlgChat;
 
     private EditText _editHandle, _editPwd, _editConsole, _editBoard;
-    private ViewAnimator viewAnimatorPlayMode;
+    private ViewAnimator viewAnimatorRoot, viewAnimatorPlayMode;
 
     private Spinner _spinnerHandles;
     private ArrayAdapter<String> _adapterHandles;
     private ArrayList<String> _arrayPasswords;
 
     //private EditText _editPrompt;
-    private ListView _listChallenges, _listPlayers, _listGames, _listStored, _listWelcome;
+    private ListView listChallenges, listPlayers, _listGames, _listStored, _listWelcome;
     private ICSChessView _view;
     private ChessViewBase _viewbase;
-    protected ICSLoginDlg _dlgLogin;
     protected ICSMatchDlg _dlgMatch;
     private ICSPlayerDlg _dlgPlayer;
     private ICSConfirmDlg _dlgConfirm;
@@ -96,27 +86,23 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private Matcher _matgame;
 
     private ArrayList<HashMap<String, String>> mapMenu = new ArrayList<HashMap<String, String>>();
-    private ArrayList<HashMap<String, String>> _mapChallenges = new ArrayList<HashMap<String, String>>();
-    private ArrayList<HashMap<String, String>> _mapPlayers = new ArrayList<HashMap<String, String>>();
-    private ArrayList<HashMap<String, String>> _mapGames = new ArrayList<HashMap<String, String>>();
-    private ArrayList<HashMap<String, String>> _mapStored = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapChallenges = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapPlayers = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapGames = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapStored = new ArrayList<HashMap<String, String>>();
 
-    private SimpleAdapter _adapterGames, _adapterPlayers, _adapterChallenges, _adapterStored;
+    private SimpleAdapter adapterGames, adapterPlayers, adapterChallenges, adapterStored;
 
     ArrayAdapter<String> _adapterWelcome;
 
-    protected static final int VIEW_MAIN_BOARD = 0;
-    protected static final int VIEW_MAIN_LOBBY = 1;
-    protected static final int VIEW_MAIN_NOT_CONNECTED = 2;
-    protected static final int VIEW_MAIN_LOGIN = 3;
-
-    protected static final int VIEW_SUB_PLAYERS = 0;
-    protected static final int VIEW_SUB_GAMES = 1;
-    protected static final int VIEW_SUB_WELCOME = 2;
-    protected static final int VIEW_SUB_CHALLENGES = 3;
-    protected static final int VIEW_SUB_PROGRESS = 4;
-    protected static final int VIEW_SUB_CONSOLE = 5;
-    protected static final int VIEW_SUB_STORED = 6;
+    protected static final int VIEW_LOGIN = 0;
+    protected static final int VIEW_LOADING = 1;
+    protected static final int VIEW_BOARD = 2;
+    protected static final int VIEW_PLAYERS = 3;
+    protected static final int VIEW_GAMES = 4;
+    protected static final int VIEW_CHALLENGES = 5;
+    protected static final int VIEW_STORED = 6;
+    protected static final int VIEW_CONSOLE = 7;
 
     protected static final int DECREASE = 0;
 
@@ -134,7 +120,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             icsServer = ((ICSServer.LocalBinder)service).getService();
 
             addListeners();
-            openLoginDialogOfNotConnected();
+            showLoginIfNotConnected();
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -156,13 +142,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
 
-        setContentView(R.layout.icsclient);
+        setContentView(R.layout.ics_client);
 
         gameApi = new ICSApi();
 
         afterCreate();
 
-        _dlgLogin = new ICSLoginDlg(ICSClient.this, ICSClient.this, REQUEST_LOGIN);
         _dlgMatch = new ICSMatchDlg(this, this, REQUEST_CHALLENGE);
         _dlgPlayer = new ICSPlayerDlg(this);
         _dlgConfirm = new ICSConfirmDlg(this, this, REQUEST_CONFIRM);
@@ -174,33 +159,72 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _bEndGameDialog = true;
         _bShowClockPGN = true;
 
+        viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorPlayMode = findViewById(R.id.ViewAnimatorPlayMode);
 
-        Button buttonLogin = findViewById(R.id.ButtonLogin);
+
+        _tvPlayerTop = findViewById(R.id.TextViewTop);
+        _tvPlayerBottom = findViewById(R.id.TextViewBottom);
+
+        _tvPlayerTopRating = findViewById(R.id.TextViewICSTwoRating);
+        _tvPlayerBottomRating = findViewById(R.id.TextViewICSOneRating);
+
+        _tvClockTop = findViewById(R.id.TextViewClockTop);
+        _tvClockBottom = findViewById(R.id.TextViewClockBottom);
+
+        _tvBoardNum = findViewById(R.id.TextViewICSBoardNum);
+        _tvLastMove = findViewById(R.id.TextViewICSBoardLastMove);
+        _tvTimePerMove = findViewById(R.id.TextViewICSTimePerMove);
+        _tvMoveNumber = findViewById(R.id.TextViewMoveNumber);
+
+
+        Button buttonLogin = findViewById(R.id.ButICSLogin);
         buttonLogin.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                _dlgLogin.show();
+                EditText editHandle = findViewById(R.id.EditICSHandle);
+                EditText editPwd = findViewById(R.id.EditICSPwd);
+
+                final String handle = editHandle.getText().toString();
+                final String pwd = editPwd.getText().toString();
+
+                /*
+                defaultHost = chessclub.com
+                hosts = chessclub.com queen.chessclub.com
+                ports = 5000 23
+                id = icc
+                 */
+
+                if (handle != "" && pwd != "") {
+                    icsServer.startSession("freechess.org", 23, handle, pwd, "fics% ");
+                } else {
+                    if (handle == "") {
+                        globalToast(getString(R.string.msg_ics_enter_handle));
+                    }
+                    if (handle != "guest" && pwd == "") {
+                        globalToast(getString(R.string.msg_ics_enter_password));
+                    }
+                }
             }
         });
 
-        Button buttonChallenge = findViewById(R.id.ButtonChallenge);
-        buttonChallenge.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //                SharedPreferences myPrefs = getContext().getSharedPreferences(_parent.get_ficsHandle().toLowerCase(), getContext().MODE_PRIVATE);
-//                _dlgMatch.showWithPrefs();
-            }
-        });
-
-        Button buttonMate = findViewById(R.id.ButtonPuzzle);
-        buttonMate.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("tell puzzlebot getmate");
-            }
-        });
-        //
+//        Button buttonChallenge = findViewById(R.id.ButtonChallenge);
+//        buttonChallenge.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //                SharedPreferences myPrefs = getContext().getSharedPreferences(_parent.get_ficsHandle().toLowerCase(), getContext().MODE_PRIVATE);
+////                _dlgMatch.showWithPrefs();
+//            }
+//        });
+//
+//        Button buttonMate = findViewById(R.id.ButtonPuzzle);
+//        buttonMate.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                sendString("tell puzzlebot getmate");
+//            }
+//        });
+//        //
 
         String[] from = { "menu_item" };
         int[] to = { R.id.MenuText };
@@ -217,16 +241,20 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             }
         });
 
-        _adapterChallenges = new SimpleAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
+        adapterChallenges = new SimpleAdapter(ICSClient.this, mapChallenges, R.layout.ics_seek_row,
                 new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
 //
-//        _listChallenges = (ListView) findViewById(R.id.ICSChallenges);
-//        _listChallenges.setAdapter(_adapterChallenges);
-//        _listChallenges.setOnItemClickListener(this);
+        listChallenges = findViewById(R.id.ListChallenges);
+        listChallenges.setAdapter(adapterChallenges);
+        listChallenges.setOnItemClickListener(this);
 //
-        _adapterPlayers = new SimpleAdapter(ICSClient.this, _mapPlayers, R.layout.ics_player_row,
+        adapterPlayers = new SimpleAdapter(ICSClient.this, mapPlayers, R.layout.ics_player_row,
                 new String[]{"text_name", "text_rating"},
                 new int[]{R.id.text_name, R.id.text_rating});
+
+        listPlayers = findViewById(R.id.ListPlayers);
+        listPlayers.setAdapter(adapterPlayers);
+        listPlayers.setOnItemClickListener(this);
 //
 //
         /*
@@ -239,28 +267,32 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             item.put("text_time1", match.group(10) + ":" + match.group(11));
             item.put("text_time2", match.group(12) + ":" + match.group(13));
          */
-        _adapterGames = new SimpleAdapter(ICSClient.this, _mapGames, R.layout.ics_game_row,
+        adapterGames = new SimpleAdapter(ICSClient.this, mapGames, R.layout.ics_game_row,
                 new String[]{"nr", "text_name1", "text_name2"},
                 new int[]{R.id.nr, R.id.text_name1, R.id.text_name2});
 
-        _adapterStored = new SimpleAdapter(ICSClient.this, _mapStored, R.layout.ics_stored_row,
+        _listGames = findViewById(R.id.ListGames);
+        _listGames.setAdapter(adapterGames);
+        _listGames.setOnItemClickListener(this);
+
+        adapterStored = new SimpleAdapter(ICSClient.this, mapStored, R.layout.ics_stored_row,
                 new String[]{"nr_stored", "color_stored", "text_name_stored", "available_stored"},
                 new int[]{R.id.nr_stored, R.id.color_stored, R.id.text_name_stored, R.id.available_stored});
 
 //        _listStored = (ListView) findViewById(R.id.ICSStored);
-//        _listStored.setAdapter(_adapterStored);
+//        _listStored.setAdapter(adapterStored);
 //         _listStored.setOnItemClickListener(this);
 
 
-        ImageButton butQuick2 = (ImageButton) findViewById(R.id.ButtonICSConsoleQuickCmd);
-        if (butQuick2 != null) { // crashes reported on this being null
-            butQuick2.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    //showMenu();
-                    openOptionsMenu();
-                }
-            });
-        }
+//        ImageButton butQuick2 = (ImageButton) findViewById(R.id.ButtonICSConsoleQuickCmd);
+//        if (butQuick2 != null) { // crashes reported on this being null
+//            butQuick2.setOnClickListener(new OnClickListener() {
+//                public void onClick(View arg0) {
+//                    //showMenu();
+//                    openOptionsMenu();
+//                }
+//            });
+//        }
 
 
 //        _spinnerHandles = (Spinner) findViewById(R.id.SpinnerLoginPresets);
@@ -377,12 +409,16 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
 //        switchToLoginView();
 
+        localClockApi.addListener(this);
+
         Log.i("ICSClient", "onCreate");
     }
 
     public void loadMenu() {
         mapMenu.clear();
-        mapMenu.add(new HashMap<String, String>() {{ put("menu_item", "test"); }}) ;
+        mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_games)); }}) ;
+        mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_top_blitz)); }}) ;
+        mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_puzzlebot_mate)); }}) ;
     }
 
 
@@ -442,7 +478,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //        boolean isConnected = isConnected();
 //        boolean isUserPlaying = get_view().isUserPlaying();
 //        boolean isNotGuest = isConnected && icsServer.isGuest();
-//        int viewMode = this.get_view()._viewMode;
+//        int viewMode = gameApi.getViewMode();
 //
 ////        menu.findItem(R.string.menu_flip).setVisible(isConnected && viewMode != ICSChessView.VIEW_NONE);
 //        menu.findItem(R.string.ics_menu_takeback).setVisible(isConnected && isUserPlaying);
@@ -961,26 +997,24 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
 
         addListeners();
-        openLoginDialogOfNotConnected();
+        showLoginIfNotConnected();
     }
 
     public void addListeners() {
         if (icsServer != null) {
             icsServer.addListener(this);
-            icsServer.addListener((ICSApi) gameApi);
         }
     }
 
     public void removeListeners() {
         if (icsServer != null) {
             icsServer.removeListener(this);
-            icsServer.removeListener((ICSApi) gameApi);
         }
     }
 
-    public void openLoginDialogOfNotConnected() {
-        if (icsServer != null && _dlgLogin != null && !icsServer.isConnected()) {
-            _dlgLogin.show();
+    public void showLoginIfNotConnected() {
+        if (!isConnected()) {
+            viewAnimatorRoot.setDisplayedChild(VIEW_LOGIN);
         }
     }
 
@@ -1001,9 +1035,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     public String get_whiteHandle() {
-        if (_whiteHandle != null) {
-            return _whiteHandle;
-        }  // _whiteHandle is mat1 and mat2 match
         try {
             return _matgame.group(1);
         } catch (Exception e) { // return _matgame match
@@ -1012,9 +1043,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     public String get_whiteRating() {
-        if (_whiteRating != null) {
-            return _whiteRating;
-        }
         try {
             return _matgame.group(2);
         } catch (Exception e) {
@@ -1023,9 +1051,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     public String get_blackHandle() {
-        if (_blackHandle != null) {
-            return _blackHandle;
-        }
         try {
             return _matgame.group(3);
         } catch (Exception e) {
@@ -1034,9 +1059,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     public String get_blackRating() {
-        if (_blackRating != null) {
-            return _blackRating;
-        }
         try {
             return _matgame.group(4);
         } catch (Exception e) {
@@ -1170,15 +1192,15 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        if (arg0 == _listChallenges) {
-            if (_mapChallenges.size() > arg2) {
-                HashMap<String, String> m = _mapChallenges.get(arg2);
+        if (arg0 == listChallenges) {
+            if (mapChallenges.size() > arg2) {
+                HashMap<String, String> m = mapChallenges.get(arg2);
                 Log.i("onItemClick", "item " + m.get("play"));
                 sendString("play " + m.get("play"));
             }
-        } else if (arg0 == _listPlayers) {
-            if (_mapPlayers.size() > arg2) {
-                HashMap<String, String> m = _mapPlayers.get(arg2);
+        } else if (arg0 == listPlayers) {
+            if (mapPlayers.size() > arg2) {
+                HashMap<String, String> m = mapPlayers.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name"));
                 _dlgPlayer.opponentName(m.get("text_name"));
                 _dlgPlayer._tvPlayerListConsole.setText("");  // clear TextView
@@ -1186,8 +1208,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
             }
         } else if (arg0 == _listGames) {
-            if (_mapGames.size() > arg2) {
-                HashMap<String, String> m = _mapGames.get(arg2);
+            if (mapGames.size() > arg2) {
+                HashMap<String, String> m = mapGames.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name1"));
                 sendString("observe " + m.get("text_name1"));
                 sendString("refresh");
@@ -1196,8 +1218,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //                switchToBoardView();
             }
         } else if (arg0 == _listStored) {
-            if (_mapStored.size() > arg2) {
-                HashMap<String, String> m = _mapStored.get(arg2);
+            if (mapStored.size() > arg2) {
+                HashMap<String, String> m = mapStored.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name_stored"));
                 sendString("match " + m.get("text_name_stored"));
 //                switchToBoardView();
@@ -1209,7 +1231,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             } else if (selected.equals(getString(R.string.ics_menu_players))) {
 //                switchToPlayersView();
             } else if (selected.equals(getString(R.string.ics_menu_challenges))) {
-                switchToChallengeView();
+                loadChallenges();
             }  else if (selected.equals(getString(R.string.ics_menu_seek))) {
                  _dlgMatch._rbSeek.setChecked(true);
                  _dlgMatch._rbSeek.performClick();
@@ -1241,12 +1263,25 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         }
     }
 
-
-    public void switchToChallengeView() {
-        sendString("sought");
-        _tvHeader.setText(R.string.ics_menu_challenges);
+    public void setLoading() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_LOADING);
     }
 
+    public void loadChallenges() {
+        sendString("sought");
+        viewAnimatorRoot.setDisplayedChild(VIEW_CHALLENGES);
+//        _tvHeader.setText(R.string.ics_menu_challenges);
+    }
+
+    public void loadGames() {
+        setLoading();
+        sendString("games");
+    }
+
+    public void loadTopBlitz() {
+        setLoading();
+        sendString("obs /b");
+    }
 
     public void soundNotification() {
         if (_ringNotification != null) {
@@ -1277,9 +1312,17 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnDialogResult(int requestCode, Bundle data) {
         switch (requestCode) {
-            case REQUEST_LOGIN:
-                icsServer.startSession("freechess.org", 23, data.getString("handle"), data.getString("pwd"), "fics% ");
+            case REQUEST_MENU:
+                String action = data.getString("item", null);
+                if (action != null) {
+                    if (action.equals(getString(R.string.ics_menu_games))) {
+                        loadGames();
+                    } else if (action.equals(getString(R.string.ics_menu_top_blitz))) {
+                        loadTopBlitz();
+                    }
+                }
                 break;
+
         }
     }
 
@@ -1327,12 +1370,13 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //
 //        _adapterWelcome.notifyDataSetChanged();
 
-        viewAnimatorPlayMode.setDisplayedChild(2); // @TODO
+        loadChallenges();
     }
 
     @Override
     public void OnLoginFailed() {
         doToast("Could not log you in");
+        viewAnimatorRoot.setDisplayedChild(VIEW_LOGIN);
     }
 
     @Override
@@ -1342,7 +1386,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnSessionEnded() {
-        viewAnimatorPlayMode.setDisplayedChild(0);
+        viewAnimatorPlayMode.setDisplayedChild(VIEW_LOGIN);
     }
 
     @Override
@@ -1362,16 +1406,21 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
-        _mapPlayers.clear();
+        mapPlayers.clear();
         for (int i = 0; i < playerList.size(); i++) {
-            _mapPlayers.add(playerList.get(i));
+            mapPlayers.add(playerList.get(i));
         }
-        Collections.sort(_mapPlayers, new ComparatorHashRating());
-        _adapterPlayers.notifyDataSetChanged();
+        Collections.sort(mapPlayers, new ComparatorHashRating());
+        adapterPlayers.notifyDataSetChanged();
+
+        viewAnimatorRoot.setDisplayedChild(VIEW_PLAYERS);
     }
 
     @Override
     public void OnBoardUpdated(String gameLine, String handle) {
+        ((ICSApi) gameApi).parseGame(gameLine, handle);
+
+        viewAnimatorRoot.setDisplayedChild(VIEW_BOARD);
 //        if (get_view().parseGame(gameLine, handle)) {
 //            switchToBoardView();
 //        } else {
@@ -1517,30 +1566,31 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
-        _mapChallenges.clear();
+        mapChallenges.clear();
         for (int i = 0; i < soughtList.size(); i++) {
-            _mapChallenges.add(soughtList.get(i));
+            mapChallenges.add(soughtList.get(i));
         }
-        _adapterChallenges.notifyDataSetChanged();
+        adapterChallenges.notifyDataSetChanged();
     }
 
     @Override
     public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
-        _mapGames.clear();
+        mapGames.clear();
         for (int i = 0; i < games.size(); i++) {
-            _mapGames.add(games.get(i));
+            mapGames.add(games.get(i));
         }
 
-        _adapterGames.notifyDataSetChanged();
+        adapterGames.notifyDataSetChanged();
+        viewAnimatorRoot.setDisplayedChild(VIEW_GAMES);
     }
 
     @Override
     public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
-        _mapStored.clear();
+        mapStored.clear();
         for (int i = 0; i < games.size(); i++) {
-            _mapStored.add(games.get(i));
+            mapStored.add(games.get(i));
         }
-        _adapterStored.notifyDataSetChanged();
+        adapterStored.notifyDataSetChanged();
     }
 
     @Override
@@ -1553,6 +1603,29 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnConsoleOutput(String buffer) {
 //        addConsoleText(buffer);
+    }
+
+
+    @Override
+    public void OnState() {
+        super.OnState();
+
+        ICSApi icsApi = (ICSApi)gameApi;
+        int myTurn = icsApi.getMyTurn();
+        _tvLastMove.setText(icsApi.getLastMove());
+        _tvPlayerTop.setText(icsApi.getOpponentPlayerName(myTurn));
+        _tvPlayerBottom.setText(icsApi.getMyPlayerName(myTurn));
+
+
+        localClockApi.startClock(icsApi.getIncrement(), icsApi.getWhiteRemaining(), icsApi.getBlackRemaining(), icsApi.getCurrentTurn(), System.currentTimeMillis());
+
+    }
+
+    @Override
+    public void OnClockTime() {
+        int myTurn = ((ICSApi) gameApi).getMyTurn();
+        _tvClockTop.setText(myTurn == BoardConstants.WHITE ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
+        _tvClockBottom.setText(myTurn == BoardConstants.BLACK ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
     }
 
     private class AlternatingRowColorAdapter extends SimpleAdapter {

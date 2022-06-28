@@ -78,15 +78,13 @@
             <Button
                 android:text="@string/button_register"
                 android:id="@+id/ButICSRegister"
-                android:layout_alignParentLeft="true"
-                android:layout_width="40dip"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content" />
 
             <Button
                 android:text="@string/button_login"
                 android:id="@+id/ButICSLogin"
-                android:layout_alignParentRight="true"
-                android:layout_width="40dip"
+                android:layout_width="0dip"
                 android:layout_height="wrap_content" />
         </TableRow>
     </TableLayout>

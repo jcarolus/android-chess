@@ -2,203 +2,29 @@ package jwtc.android.chess.ics;
 
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
-public class ICSApi extends GameApi implements ICSListener {
+public class ICSApi extends GameApi {
     public static final String TAG = "GameApi";
-    public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_WATCH = 2, VIEW_EXAMINE = 3, VIEW_PUZZLE = 4, VIEW_ENDGAME = 5;
+    public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_OBSERVE = 2, VIEW_EXAMINE = 3;
+
+    private int gameNum, myTurn, currentTurn;
+    private String whitePlayer;
+    private String blackPlayer;
+    private String playerMe;
+    private String opponent;
+    private int viewMode;
+    private int iTime, iIncrement;
+    private int whiteRemaining;
+    private int blackRemaining;
+    private String lastMove;
 
-    protected int _iGameNum;
-    protected String _whitePlayer;
-    protected String _blackPlayer;
-    protected boolean _flippedBoard = true;
-    protected String _playerMe;
-    protected String _opponent;
-    protected int _viewMode;
-    protected boolean _bCanPreMove;
-    protected int _iWhiteRemaining;
-    protected int _iBlackRemaining;
-
-    @Override
-    public void OnLoginSuccess() {
-
-    }
-
-    @Override
-    public void OnLoginFailed() {
-
-    }
-
-    @Override
-    public void OnLoggingIn() {
-
-    }
-
-    @Override
-    public void OnSessionEnded() {
-
-    }
-
-    @Override
-    public void OnError() {
-
-    }
-
-    @Override
-    public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
-
-    }
-
-    @Override
-    public void OnBoardUpdated(String gameLine, String handle) {
-        parseGame(gameLine, handle);
-    }
-
-    @Override
-    public void OnChallenged(HashMap<String, String> challenge) {
-
-    }
-
-    @Override
-    public void OnIllegalMove() {
-        dispatchState();
-    }
-
-    @Override
-    public void OnSeekNotAvailable() {
-
-    }
-
-    @Override
-    public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
-
-    }
-
-    @Override
-    public void OnGameNumberUpdated(int number) {
-
-    }
-
-    @Override
-    public void OnOpponentRequestsAbort() {
-
-    }
-
-    @Override
-    public void OnOpponentRequestsAdjourn() {
-
-    }
-
-    @Override
-    public void OnOpponentOffersDraw() {
-
-    }
-
-    @Override
-    public void OnOpponentRequestsTakeBack() {
-
-    }
-
-    @Override
-    public void OnAbortConfirmed() {
-
-    }
-
-    @Override
-    public void OnPlayGameResult(String message) {
-
-    }
-
-    @Override
-    public void OnPlayGameStopped() {
-
-    }
-
-    @Override
-    public void OnYourRequestSended() {
-
-    }
-
-    @Override
-    public void OnChatReceived() {
-
-    }
-
-    @Override
-    public void OnResumingAdjournedGame() {
-
-    }
-
-    @Override
-    public void OnAbortedOrAdjourned() {
-
-    }
-
-    @Override
-    public void OnObservingGameStarted() {
-
-    }
-
-    @Override
-    public void OnObservingGameStopped() {
-
-    }
-
-    @Override
-    public void OnPuzzleStarted() {
-
-    }
-
-    @Override
-    public void OnPuzzleStopped() {
-
-    }
-
-    @Override
-    public void OnExaminingGameStarted() {
-
-    }
-
-    @Override
-    public void OnExaminingGameStopped() {
-
-    }
-
-    @Override
-    public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
-
-    }
-
-    @Override
-    public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
-
-    }
-
-    @Override
-    public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
-
-    }
-
-    @Override
-    public void OnEndGameResult(int state) {
-
-    }
-
-    @Override
-    public void OnConsoleOutput(String buffer) {
-
-    }
 
     public synchronized boolean parseGame(String line, String sMe) {
         //Log.i(TAG, "parseGame" + line);
-
-        String _sNumberOfMove;
 
         try {
             //<12> rnbqkb-r pppppppp -----n-- -------- ----P--- -------- PPPPKPPP RNBQ-BNR B -1 0 0 1 1 0 7 Newton Einstein 1 2 12 39 39 119 122 2 K/e1-e2 (0:06) Ke2 0
@@ -244,10 +70,10 @@ public class ICSApi extends GameApi implements ICSListener {
             //B 0 0 1 1 0 7 Newton Einstein 1 2 12 39 39 119 122 2 K/e1-e2 (0:06) Ke2 0
             StringTokenizer st = new StringTokenizer(line);
             String _sTurn = st.nextToken();  // _sTurn is "W" or "B"
-            int _iTurn = BoardConstants.WHITE;  //  _iTurn is  1  or  0
+            currentTurn = BoardConstants.WHITE;  //  _iTurn is  1  or  0
             if (_sTurn.equals("B")) {
                 jni.setTurn(BoardConstants.BLACK);
-                _iTurn = BoardConstants.BLACK;
+                currentTurn = BoardConstants.BLACK;
             }
             // -1 none, or 0-7 for column indicates double pawn push
             int iEPColumn = Integer.parseInt(st.nextToken());
@@ -259,7 +85,7 @@ public class ICSApi extends GameApi implements ICSListener {
             int ep = -1;
             if (iEPColumn >= 0) {
                 // calc from previous turn!
-                if (_iTurn == BoardConstants.WHITE) {
+                if (currentTurn == BoardConstants.WHITE) {
                     ep = iEPColumn + 16;
                 } else {
                     ep = iEPColumn + 40;
@@ -269,26 +95,22 @@ public class ICSApi extends GameApi implements ICSListener {
 
             // skip the check for gamenum?
             int iTmp = Integer.parseInt(st.nextToken());
-            int _iGameNum = iTmp;
+            gameNum = iTmp;
 
-            /*
-            if(_iGameNum != iTmp){
-    			Log.i("parseGame", "Gamenum " + _iGameNum + " <> " + iTmp);
-    			return false;
-    		}
-    		*/
-            _whitePlayer = st.nextToken();
-            _blackPlayer = st.nextToken();
+            whitePlayer = st.nextToken();
+            blackPlayer = st.nextToken();
 
-            if (_blackPlayer.equalsIgnoreCase(sMe)) {
-                _flippedBoard = true;
-                _playerMe = _blackPlayer;
-            } else if (_whitePlayer.equalsIgnoreCase(sMe)) {
-                _flippedBoard = false;
-                _playerMe = _whitePlayer;
+            if (blackPlayer.equalsIgnoreCase(sMe)) {
+                myTurn = BoardConstants.BLACK;
+                playerMe = blackPlayer;
+                opponent = whitePlayer;
+            } else if (whitePlayer.equalsIgnoreCase(sMe)) {
+                myTurn = BoardConstants.WHITE;
+                playerMe = whitePlayer;
+                opponent = blackPlayer;
             }
 
-            int _iMe = Integer.parseInt(st.nextToken()); // my relation number to this game
+            final int relationNumber = Integer.parseInt(st.nextToken()); // my relation number to this game
             /*
             -3 isolated position, such as for "ref 3" or the "sposition" command
             -2 I am observing game being examined
@@ -297,43 +119,26 @@ public class ICSApi extends GameApi implements ICSListener {
              1 I am playing and it is my move
              0 I am observing a game being played
              */
-            if ((_iMe == 2 || _iMe == -2)) {  //  I am the examiner or observer of this game
+            if ((relationNumber == 2 || relationNumber == -2)) {  //  I am the examiner or observer of this game
                 //initiate textviews in examine mode
                 //_tvMoveNumber.setText("1");
-                _viewMode = VIEW_EXAMINE;
-            }
-            //_bHandleClick = (iMe == 1);
-
-
-            //_bInTheGame = iMe == 1 || iMe == -1;
-            _bCanPreMove = false;
-            if (_viewMode == VIEW_PLAY) {
-                _opponent = _blackPlayer.equals(sMe) ? _whitePlayer : _blackPlayer;
-                if (_iMe == 1) {
-
-//                    if (m_iFrom != -1 && m_iTo != -1) {
-//                        _tvLastMove.setText("...");
-//                        String sMove = Pos.toString(m_iFrom) + "-" + Pos.toString(m_iTo);
-//                        _parent.sendString(sMove);
-//                        m_iFrom = -1;
-//
-//                    } else {
-//                        Log.i("ICSChessView", "Sound notification!");
-//                        _parent.soundNotification();
-//                    }
-                } else {
-                    _bCanPreMove = true;
-                }
+                viewMode = VIEW_EXAMINE;
+            } else if (relationNumber == 1 || relationNumber == -1) {
+                viewMode = VIEW_PLAY;
+            } else if (relationNumber == 0) {
+                viewMode = VIEW_OBSERVE;
+            } else {
+                viewMode = VIEW_NONE;
             }
 
-            int iTime = Integer.parseInt(st.nextToken());
-            int iIncrement = Integer.parseInt(st.nextToken());
+            iTime = Integer.parseInt(st.nextToken());
+            iIncrement = Integer.parseInt(st.nextToken());
             int iWhiteMaterialStrength = Integer.parseInt(st.nextToken());
             int iBlackMaterialStrength = Integer.parseInt(st.nextToken());
-            _iWhiteRemaining = Integer.parseInt(st.nextToken());
-            _iBlackRemaining = Integer.parseInt(st.nextToken());
-            _sNumberOfMove = st.nextToken(); // the number of the move about to be made
-            String sMove = st.nextToken();  // machine notation move
+            whiteRemaining = Integer.parseInt(st.nextToken());
+            blackRemaining = Integer.parseInt(st.nextToken());
+            String _sNumberOfMove = st.nextToken(); // the number of the move about to be made
+            lastMove = st.nextToken();  // machine notation move
             String _sTimePerMove = st.nextToken();  // time it took to make a move
             String sLastMoveDisplay = st.nextToken();  // algebraic notation move
             if (sLastMoveDisplay.contains("+")) {
@@ -343,42 +148,6 @@ public class ICSApi extends GameApi implements ICSListener {
             } else {
 //                _parent.soundMove();
             }
-            int iFlipBoardOrientation = Integer.parseInt(st.nextToken()); //0 = White on Bottom / 1 = Black on bottom
-
-
-            //int iFrom = -1;
-            if (false == sMove.equals("none") && sMove.length() > 2) {
-
-//                _tvLastMove.setText(_iTurn == 1 ? "." + sLastMoveDisplay : sLastMoveDisplay);  // display last move
-//                _tvTimePerMove.setText(_sTimePerMove);
-//                // The about to be move is converted to the current move
-//                _tvMoveNumber.setText(_iTurn == 0 ? _sNumberOfMove : Integer.toString(Integer.parseInt(_sNumberOfMove) - 1));
-//
-//                if (sMove.equals("o-o")) {
-//                    if (_iTurn == BoardConstants.WHITE)
-//                        m_iTo = Pos.fromString("g8");
-//                    else
-//                        m_iTo = Pos.fromString("g1");
-//                } else if (sMove.equals("o-o-o")) {
-//                    if (_iTurn == BoardConstants.WHITE)
-//                        m_iTo = Pos.fromString("c8");
-//                    else
-//                        m_iTo = Pos.fromString("c1");
-//                } else {
-//                    // gxh8=R
-//                    try {
-//                        //K/e1-e2
-//                        m_iTo = Pos.fromString(sMove.substring(sMove.length() - 2));
-//                        //iFrom = Pos.fromString(sMove.substring(sMove.length()-5, 2));
-//                    } catch (Exception ex2) {
-//                        m_iTo = -1;
-//                        Log.i("parseGame", "Could not parse move: " + sMove + " in " + sMove.substring(sMove.length() - 2));
-//                    }
-//                }
-            } else {
-//                _tvLastMove.setText("");
-            }
-
             //
             jni.setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
 
@@ -399,13 +168,45 @@ public class ICSApi extends GameApi implements ICSListener {
 
     }
 
-    @Override
-    public String getOpponentPlayerName(int myTurn) {
-        return null;
+    public int getViewMode() {
+        return viewMode;
     }
 
     @Override
     public String getMyPlayerName(int myTurn) {
-        return null;
+        return playerMe;
+    }
+
+    @Override
+    public String getOpponentPlayerName(int myTurn) {
+        return opponent;
+    }
+
+    public long getTime() {
+        return (long)iTime * 1000;
+    }
+
+    public long getIncrement() {
+        return (long)iIncrement * 1000;
+    }
+
+    public long getWhiteRemaining() {
+        return (long)whiteRemaining * 1000;
+    }
+
+    public long getBlackRemaining() {
+        return (long)blackRemaining * 1000;
+    }
+
+    public String getLastMove() {
+        return lastMove;
+    }
+
+    public int getMyTurn() {
+        return myTurn;
+    }
+
+    public int getCurrentTurn() {
+        return currentTurn;
     }
 }

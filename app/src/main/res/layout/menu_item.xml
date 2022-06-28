@@ -7,6 +7,8 @@
     <TextView
         android:id="@+id/MenuText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        style="@style/MyNormalTextStyle"
+        android:layout_margin="4dip"/>
 
 </LinearLayout>
