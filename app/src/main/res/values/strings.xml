@@ -423,6 +423,7 @@
     <string name="ics_unfollow">UnFollow</string>
     <string name="ics_match">Match</string>
     <string name="ics_gamenumber">Game #</string>
+    <string name="ics_quit">Quit?</string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Could not start the activity</string>

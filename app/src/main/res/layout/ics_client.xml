@@ -8,10 +8,11 @@
         android:id="@+id/ButtonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dip"
         android:layout_alignParentBottom="true"
         android:stretchColumns="0">
         <TableRow>
-            <TextView android:id="@+id/TextViewMode"
+            <TextView android:id="@+id/TextViewTitle"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -70,13 +71,17 @@
 
         <!-- 6 -->
         <ListView
+            android:id="@+id/ListMenu"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:drawSelectorOnTop="false" />
+
+        <!-- 7 -->
+        <ListView
             android:id="@+id/ListStored"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:drawSelectorOnTop="false" />
 
     </ViewAnimator>
-
-
-
 </RelativeLayout>

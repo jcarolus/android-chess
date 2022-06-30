@@ -119,6 +119,7 @@
     </TableLayout>
 
     <LinearLayout
+        android:id="@+id/LayoutExamineButtons"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -141,7 +142,7 @@
             android:layout_margin="5dp" />
 
         <ImageButton
-            android:id="@+id/ButtonICSRevert"
+            android:id="@+id/ButtonICSExamineRevert"
             android:src="@drawable/ic_backspace"
             android:layout_width="48dip"
             android:layout_height="48dip"
@@ -149,6 +150,45 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:layout_marginRight="30dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/LayoutPlayButtons"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dip">
 
+        <Button android:id="@+id/ButtonAbort"
+            android:text="@string/ics_menu_abort"
+            android:layout_height="48dip"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+        />
+
+        <Button android:id="@+id/ButtonResign"
+            android:text="@string/ics_menu_resign"
+            android:layout_height="48dip"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            />
+        <Button android:id="@+id/ButtonDraw"
+            android:text="@string/ics_menu_draw"
+            android:layout_height="48dip"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            />
+        <Button android:id="@+id/ButtonFlag"
+            android:text="@string/ics_menu_flag"
+            android:layout_height="48dip"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/ButtonTakeBack"
+            android:src="@drawable/ic_backspace"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            style="@style/ChessImageButton" />
     </LinearLayout>
 </LinearLayout>

@@ -164,7 +164,7 @@ public class ICSChessView extends ChessViewBase {
             }
         });
 
-        _butImageRevert = (ImageButton) _activity.findViewById(R.id.ButtonICSRevert);
+        _butImageRevert = (ImageButton) _activity.findViewById(R.id.ButtonICSExamineRevert);
         _butImageRevert.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {

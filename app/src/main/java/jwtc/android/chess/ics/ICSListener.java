@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public interface ICSListener {
     void OnLoginSuccess();
-    void OnLoginFailed();
+    void OnLoginFailed(String error);
     void OnLoggingIn();
     void OnSessionEnded();
     void OnError();

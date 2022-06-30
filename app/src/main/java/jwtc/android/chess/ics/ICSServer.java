@@ -201,11 +201,12 @@ public class ICSServer extends Service {
                     for (ICSListener listener: listeners) {listener.OnLoggingIn();}
                     return;
                 } else {
-                    Log.i(TAG, "Could net send handle");
-                    return;
+                    dispatchLoginerror("Could net send handle");
                 }
+            } else {
+                dispatchLoginerror("Unexpected response while expecting login prompt");
             }
-            Log.i(TAG, "Unexpected buffer when expecting login prompt");
+
             return;
         }
 
@@ -220,15 +221,15 @@ public class ICSServer extends Service {
                             expectingState = EXPECT_PASSWORD_RESPONSE;
                             return;
                         } else {
-                            Log.i(TAG, "Could net send handle");
+                            dispatchLoginerror("Could net send handle");
                             return;
                         }
                     } else {
-                        Log.i(TAG, "Could not get guest handle from response");
+                        dispatchLoginerror("Could not get guest handle from response");
                         return;
                     }
                 }
-                Log.i(TAG, "Unexpected buffer on guest login response");
+                dispatchLoginerror("Unexpected response on guest login");
                 return;
             }
             if (buffer.contains("password: ")) {
@@ -236,11 +237,11 @@ public class ICSServer extends Service {
                     expectingState = EXPECT_PASSWORD_RESPONSE;
                     return;
                 } else {
-                    Log.i(TAG, "Could net send handle");
+                    dispatchLoginerror("Could net send password");
                     return;
                 }
             }
-            Log.i(TAG, "Unexpected buffer on guest login response");
+            dispatchLoginerror("Unexpected response on guest login");
             return;
         }
 
@@ -252,11 +253,11 @@ public class ICSServer extends Service {
                     for (ICSListener listener: listeners) {listener.OnLoginSuccess();}
                     return;
                 }
-                Log.i(TAG, "Unexpected buffer on guest password response: " + buffer);
+                dispatchLoginerror("Unexpected buffer on guest password response: " + buffer);
                 return;
             }
             if (icsPatterns.isInvalidPassword(buffer)) {
-                for (ICSListener listener: listeners) {listener.OnLoginFailed();}
+                dispatchLoginerror("Invalid password");
                 return;
             }
             if (icsPatterns.isSessionStarting(buffer)) {
@@ -264,12 +265,12 @@ public class ICSServer extends Service {
                 for (ICSListener listener: listeners) {listener.OnLoginSuccess();}
                 return;
             }
-            Log.i(TAG, "Unexpected buffer on password response: " + buffer);
+            dispatchLoginerror("Unexpected buffer on password response: " + buffer);
             return;
         }
 
         if (expectingState != EXPECT_PROMPT) {
-            Log.i(TAG, "Unvalid expect state");
+            Log.i(TAG, "Invalid expect state");
             return;
         }
 
@@ -474,5 +475,9 @@ public class ICSServer extends Service {
         ICSServer getService() {
             return ICSServer.this;
         }
+    }
+
+    private void dispatchLoginerror(String error) {
+        for (ICSListener listener: listeners) {listener.OnLoginFailed(error);}
     }
 }

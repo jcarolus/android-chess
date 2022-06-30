@@ -131,6 +131,8 @@ public class ICSApi extends GameApi {
                 viewMode = VIEW_NONE;
             }
 
+            Log.d(TAG, "ViewMode " + viewMode);
+
             iTime = Integer.parseInt(st.nextToken());
             iIncrement = Integer.parseInt(st.nextToken());
             int iWhiteMaterialStrength = Integer.parseInt(st.nextToken());

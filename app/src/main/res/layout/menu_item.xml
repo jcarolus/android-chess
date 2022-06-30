@@ -9,6 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/MyNormalTextStyle"
-        android:layout_margin="4dip"/>
+        android:layout_margin="8dip"/>
 
 </LinearLayout>
