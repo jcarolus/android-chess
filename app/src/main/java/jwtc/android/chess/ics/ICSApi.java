@@ -11,7 +11,7 @@ public class ICSApi extends GameApi {
     public static final String TAG = "GameApi";
     public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_OBSERVE = 2, VIEW_EXAMINE = 3;
 
-    private int gameNum, myTurn, currentTurn;
+    private int gameNum, myTurn, turn;
     private String whitePlayer;
     private String blackPlayer;
     private String playerMe;
@@ -70,10 +70,10 @@ public class ICSApi extends GameApi {
             //B 0 0 1 1 0 7 Newton Einstein 1 2 12 39 39 119 122 2 K/e1-e2 (0:06) Ke2 0
             StringTokenizer st = new StringTokenizer(line);
             String _sTurn = st.nextToken();  // _sTurn is "W" or "B"
-            currentTurn = BoardConstants.WHITE;  //  _iTurn is  1  or  0
+            turn = BoardConstants.WHITE;  //  _iTurn is  1  or  0
             if (_sTurn.equals("B")) {
                 jni.setTurn(BoardConstants.BLACK);
-                currentTurn = BoardConstants.BLACK;
+                turn = BoardConstants.BLACK;
             }
             // -1 none, or 0-7 for column indicates double pawn push
             int iEPColumn = Integer.parseInt(st.nextToken());
@@ -85,7 +85,7 @@ public class ICSApi extends GameApi {
             int ep = -1;
             if (iEPColumn >= 0) {
                 // calc from previous turn!
-                if (currentTurn == BoardConstants.WHITE) {
+                if (turn == BoardConstants.WHITE) {
                     ep = iEPColumn + 16;
                 } else {
                     ep = iEPColumn + 40;
@@ -100,15 +100,6 @@ public class ICSApi extends GameApi {
             whitePlayer = st.nextToken();
             blackPlayer = st.nextToken();
 
-            if (blackPlayer.equalsIgnoreCase(sMe)) {
-                myTurn = BoardConstants.BLACK;
-                playerMe = blackPlayer;
-                opponent = whitePlayer;
-            } else if (whitePlayer.equalsIgnoreCase(sMe)) {
-                myTurn = BoardConstants.WHITE;
-                playerMe = whitePlayer;
-                opponent = blackPlayer;
-            }
 
             final int relationNumber = Integer.parseInt(st.nextToken()); // my relation number to this game
             /*
@@ -131,6 +122,22 @@ public class ICSApi extends GameApi {
                 viewMode = VIEW_NONE;
             }
 
+            if (viewMode == VIEW_PLAY) {
+                if (blackPlayer.equalsIgnoreCase(sMe)) {
+                    myTurn = BoardConstants.BLACK;
+                    playerMe = blackPlayer;
+                    opponent = whitePlayer;
+                } else if (whitePlayer.equalsIgnoreCase(sMe)) {
+                    myTurn = BoardConstants.WHITE;
+                    playerMe = whitePlayer;
+                    opponent = blackPlayer;
+                }
+            } else {
+                myTurn = BoardConstants.WHITE;
+                playerMe = whitePlayer;
+                opponent = blackPlayer;
+            }
+
             Log.d(TAG, "ViewMode " + viewMode);
 
             iTime = Integer.parseInt(st.nextToken());
@@ -140,12 +147,12 @@ public class ICSApi extends GameApi {
             whiteRemaining = Integer.parseInt(st.nextToken());
             blackRemaining = Integer.parseInt(st.nextToken());
             String _sNumberOfMove = st.nextToken(); // the number of the move about to be made
-            lastMove = st.nextToken();  // machine notation move
+            String sMoveNotation = st.nextToken();  // machine notation move
             String _sTimePerMove = st.nextToken();  // time it took to make a move
-            String sLastMoveDisplay = st.nextToken();  // algebraic notation move
-            if (sLastMoveDisplay.contains("+")) {
+            lastMove = st.nextToken();  // algebraic notation move
+            if (lastMove.contains("+")) {
 //                _parent.soundCheck();
-            } else if (sLastMoveDisplay.contains("x")) {
+            } else if (lastMove.contains("x")) {
 //                _parent.soundCapture();
             } else {
 //                _parent.soundMove();
@@ -208,7 +215,7 @@ public class ICSApi extends GameApi {
         return myTurn;
     }
 
-    public int getCurrentTurn() {
-        return currentTurn;
+    public int getTurn() {
+        return turn;
     }
 }

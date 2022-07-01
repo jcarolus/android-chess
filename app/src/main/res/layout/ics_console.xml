@@ -2,45 +2,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:id="@+id/LayoutICSBoardConsole"
     android:padding="2dip">
 
-    <TableLayout
-        android:id="@+id/TableConsoleEditAndButton"
+
+    <EditText
+        android:id="@+id/EditICSConsole"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:stretchColumns="0">
+        android:text=""
+        android:inputType="text"
+        android:imeOptions="actionSend" />
 
-        <TableRow>
-
-            <EditText
-                android:id="@+id/EditICSConsole"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:inputType="text"
-                android:imeOptions="actionSend" />
-
-            <ImageButton
-                android:id="@+id/ButtonICSConsoleQuickCmd"
-                android:src="@drawable/ellipsis"
-                android:layout_width="40dip"
-                android:layout_height="40dip"
-                style="@style/ChessImageButton" />
-        </TableRow>
-    </TableLayout>
 
     <ScrollView
         android:id="@+id/ScrollICSConsole"
         android:layout_alignParentTop="true"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@id/TableConsoleEditAndButton">
+        android:layout_above="@id/EditICSConsole">
 
         <TextView
             android:text="..."
-            android:id="@+id/TextViewICSBoardConsole"
+            android:id="@+id/TextViewConsole"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="2dip"

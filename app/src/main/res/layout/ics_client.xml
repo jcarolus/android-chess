@@ -83,5 +83,10 @@
             android:layout_height="fill_parent"
             android:drawSelectorOnTop="false" />
 
+        <!-- 8 -->
+        <include layout="@layout/ics_console"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
+
     </ViewAnimator>
 </RelativeLayout>

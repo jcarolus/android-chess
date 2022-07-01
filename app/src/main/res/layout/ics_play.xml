@@ -3,17 +3,34 @@
     android:id="@+id/ICSPlay"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:layout_margin="4dip">
 
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:shrinkColumns="0,1,2"
-        android:stretchColumns="3"
+        android:shrinkColumns="0,1,2,3"
+        android:stretchColumns="4"
         android:layout_marginBottom="2dip">
 
-        <TableRow>
+        <TableRow android:gravity="center_vertical">
+            <ViewSwitcher
+                android:id="@+id/ImageTurnOpp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip">
 
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+            </ViewSwitcher>
             <TextView
                 android:id="@+id/TextViewClockTop"
                 android:layout_height="wrap_content"
@@ -61,10 +78,27 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dip"
-        android:shrinkColumns="0,1,2"
-        android:stretchColumns="3">
+        android:shrinkColumns="0,1,2,3"
+        android:stretchColumns="4">
 
-        <TableRow>
+        <TableRow android:gravity="center_vertical">
+            <ViewSwitcher
+                android:id="@+id/ImageTurnMe"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip">
+
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+            </ViewSwitcher>
             <TextView
                 android:id="@+id/TextViewClockBottom"
                 android:layout_height="wrap_content"

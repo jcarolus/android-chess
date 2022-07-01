@@ -25,7 +25,6 @@ public class ICSMatchDlg extends ResultDialog {
 
     public static final String TAG = "ICSMatchDlg";
 
-    private SharedPreferences prefs;
     private TextView _tvPlayerName, _tvRatingRangeMIN, _tvRatingRangeMAX, _tvManual, _tvFormula;
     protected RadioButton _rbSeek, _rbChallenge;
     private Spinner _spinTime, _spinIncrement, _spinVariant, _spinColor;
@@ -34,7 +33,7 @@ public class ICSMatchDlg extends ResultDialog {
     private Button _butOk, _butCancel;
     private CheckBox _checkRated, _checkManual, _checkFormula;
 
-    public ICSMatchDlg(Context context, ResultDialogListener listener, int requestCode) {
+    public ICSMatchDlg(Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.ics_match);
@@ -178,7 +177,8 @@ public class ICSMatchDlg extends ResultDialog {
                 Bundle data = new Bundle();
                 data.putCharSequence("challenge", s);
 
-//                Toast.makeText(_parent, R.string.toast_challenge_posted, Toast.LENGTH_SHORT).show();
+                setResult(data);
+
             }
         });
         _butCancel = (Button) findViewById(R.id.ButtonMatchCancel);
@@ -187,11 +187,6 @@ public class ICSMatchDlg extends ResultDialog {
                 ICSMatchDlg.this.dismiss();
             }
         });
-    }
-
-    public void showWithPrefs(SharedPreferences prefs) {
-        this.prefs = prefs;
-        show();
     }
 
 
