@@ -9,6 +9,10 @@ import java.util.ArrayList;
 
 public abstract class EngineApi {
     private static final String TAG = "EngineApi";
+
+    public static final int LEVEL_TIME = 1;
+    public static final int LEVEL_PLY = 2;
+
     protected static final int MSG_MOVE = 1;
     protected static final int MSG_INFO = 2;
     protected int msecs = 0;

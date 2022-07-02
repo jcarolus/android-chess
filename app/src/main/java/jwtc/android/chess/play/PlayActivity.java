@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -28,8 +29,9 @@ import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.activities.GamePreferenceActivity;
 import jwtc.android.chess.activities.GlobalPreferencesActivity;
+import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
@@ -64,6 +66,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock;
+    private TableLayout layoutBoardTop, layoutBoardBottom;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -147,6 +150,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         textViewOpponentClock = findViewById(R.id.TextViewClockTimeOpp);
         textViewMyClock = findViewById(R.id.TextViewClockTimeMe);
+
+        layoutBoardTop = findViewById(R.id.LayoutBoardTop);
+        layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
     }
 
     @Override
@@ -161,6 +167,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         String action = intent.getAction();
         String type = intent.getType();
         Uri uri = intent.getData();
+
+        layoutBoardTop.setBackgroundColor(ColorSchemes.getDark());
+        layoutBoardBottom.setBackgroundColor(ColorSchemes.getDark());
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             lGameID = 0;
@@ -299,7 +308,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         highlightedPositions.clear();
         highlightedPositions.add(to);
 
-        updateSelectedSquares();
+        updateGUI();
 
         if (vsCPU && jni.isEnded() == 0 && jni.getTurn() != myTurn) {
             ((PlayApi) gameApi).engine.play();
@@ -314,7 +323,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         highlightedPositions.clear();
         highlightedPositions.add(to);
 
-        updateSelectedSquares();
+        updateGUI();
     }
 
     @Override
@@ -371,6 +380,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             localClock.switchTurn(jni.getTurn());
         }
 
+        updateSelectedSquares();
         updateCapturedPieces();
         updateSeekBar();
         updateTurnSwitchers();
@@ -556,6 +566,15 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         vsCPU = prefs.getBoolean("opponent", true);
         myTurn = prefs.getBoolean("myTurn", true) ? 1 : 0;
+
+        int mode = prefs.getInt("levelMode", EngineApi.LEVEL_TIME);
+
+        int levelTime = prefs.getInt("level", 2);
+        int levelPly = prefs.getInt("levelPly", 2);
+        int secs[] = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
+
+        ((PlayApi)gameApi).engine.setMsecs(mode == EngineApi.LEVEL_TIME ? secs[levelTime] : 0);
+        ((PlayApi)gameApi).engine.setPly(mode == EngineApi.LEVEL_PLY ? levelPly : 0);
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 

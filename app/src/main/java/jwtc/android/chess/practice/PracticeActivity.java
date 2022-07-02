@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -23,6 +25,7 @@ import java.util.TimerTask;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.tools.ImportListener;
 import jwtc.android.chess.tools.ImportService;
@@ -44,6 +47,7 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
     private ContentResolver contentResolver;
     private boolean _isPlaying;
     private ImportService importService;
+    private TableLayout layoutTurn;
 
     protected Handler m_timerHandler = new Handler() {
         /** Gets called on every message that is received */
@@ -117,6 +121,7 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
 
         afterCreate();
 
+        layoutTurn = findViewById(R.id.LayoutTurn);
         _isPlaying = false;
 
         contentResolver = getContentResolver();
@@ -166,6 +171,8 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
         super.onResume();
 
         Log.i(TAG, "onResume");
+
+        layoutTurn.setBackgroundColor(ColorSchemes.getDark());
 
         _isPlaying = false;
         scheduleTimer();

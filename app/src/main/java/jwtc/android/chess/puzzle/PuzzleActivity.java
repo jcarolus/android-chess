@@ -11,11 +11,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.tools.ImportListener;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
@@ -31,6 +34,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     private ImageView _imgStatus;
     private int currentPosition, totalPuzzles;
     private ImportService importService;
+    private TableLayout layoutTurn;
 
     @Override
     public boolean requestMove(int from, int to) {
@@ -101,6 +105,8 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         afterCreate();
 
+        layoutTurn = findViewById(R.id.LayoutTurn);
+
         currentPosition = 0;
         totalPuzzles = 0;
         _seekBar = findViewById(R.id.SeekBarPuzzle);
@@ -135,6 +141,8 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     @Override
     protected void onResume() {
         Log.i(TAG, "onResume");
+
+        layoutTurn.setBackgroundColor(ColorSchemes.getDark());
 
         loadPuzzles();
 

@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -25,6 +26,7 @@ public class ICSServer extends Service {
     protected static final int EXPECT_PROMPT = 4;
 
     private final IBinder mBinder = new LocalBinder();
+    private Handler keepAliveTimerHandler = new KeepAliveHandler();
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     private Timer keepAlivetimer = null;
@@ -444,7 +446,7 @@ public class ICSServer extends Service {
             keepAlivetimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    keepAliveTimerHandler.sendEmptyMessage(0);
+                keepAliveTimerHandler.sendEmptyMessage(0);
                 }
             }, 30000, 30000);  // send every 30 seconds
         }
@@ -456,13 +458,6 @@ public class ICSServer extends Service {
             keepAlivetimer = null;
         }
     }
-
-    Handler keepAliveTimerHandler = new Handler() { // todo static or leaks may occur? use WeakReference as in 153
-        @Override
-        public void handleMessage(Message msg) {
-            sendString("sought");
-        }
-    };
 
     @Nullable
     @Override
@@ -479,5 +474,21 @@ public class ICSServer extends Service {
 
     private void dispatchLoginerror(String error) {
         for (ICSListener listener: listeners) {listener.OnLoginFailed(error);}
+    }
+
+    private class KeepAliveHandler extends Handler {
+        WeakReference<ICSServer> icsServerReference;
+
+        public KeepAliveHandler() {
+            icsServerReference = new WeakReference<ICSServer>(ICSServer.this);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            ICSServer icsServer = this.icsServerReference.get();
+            if (icsServer != null) {
+                icsServer.sendString("sought");
+            }
+        }
     }
 }
