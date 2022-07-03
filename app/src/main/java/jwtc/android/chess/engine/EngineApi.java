@@ -34,7 +34,7 @@ public abstract class EngineApi {
                 String message = msg.getData().getString("message");
                 Log.d(TAG, "handleMessage INFO " + message);
                 for (EngineListener listener: listeners) {
-                    listener.OnInfo(message);
+                    listener.OnEngineInfo(message);
                 }
             }
             super.handleMessage(msg);
@@ -65,13 +65,13 @@ public abstract class EngineApi {
     abstract public void destroy();
 
     public void setMsecs(int msecs) {
+        Log.d(TAG, "setMsecs " + msecs);
         this.msecs = msecs;
-        this.ply = 0;
     }
 
     public void setPly(int ply) {
+        Log.d(TAG, "setPly " + ply);
         this.ply = ply;
-        this.msecs = 0;
     }
 
     public void addListener(EngineListener listener) {

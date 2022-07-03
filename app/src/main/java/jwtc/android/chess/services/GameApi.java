@@ -18,7 +18,7 @@ import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
-public abstract class GameApi {
+public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
     protected JNI jni;

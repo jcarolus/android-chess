@@ -25,8 +25,8 @@ public class GameSettingsDialog extends ResultDialog {
         final boolean playAsWhite = prefs.getBoolean("myTurn", true);
 
         final int levelMode = prefs.getInt("levelMode", EngineApi.LEVEL_TIME);
-        final int seconds = prefs.getInt("level", 2);
-        final int ply = prefs.getInt("levelPly", 2);
+        final int levelTime = prefs.getInt("level", 2);
+        final int levelPly = prefs.getInt("levelPly", 2);
 
         final RadioButton radioAndroid = findViewById(R.id.radioAndroid);
         final RadioButton radioHuman = findViewById(R.id.radioHuman);
@@ -55,6 +55,9 @@ public class GameSettingsDialog extends ResultDialog {
 
         radioTime.setChecked(levelMode == EngineApi.LEVEL_TIME);
         radioPly.setChecked(levelMode == EngineApi.LEVEL_PLY);
+
+        spinnerLevelTime.setSelection(levelTime - 1);
+        spinnerLevelPly.setSelection(levelPly - 1);
 
         Button buttonOk = findViewById(R.id.ButtonOk);
         buttonOk.setOnClickListener(new View.OnClickListener() {

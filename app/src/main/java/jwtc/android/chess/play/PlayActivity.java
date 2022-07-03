@@ -33,9 +33,12 @@ import jwtc.android.chess.activities.GlobalPreferencesActivity;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
+import jwtc.android.chess.engine.LocalEngine;
+import jwtc.android.chess.engine.UCIEngine;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.services.ClockListener;
+import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.LocalClockApi;
 import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
@@ -56,6 +59,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public static final int REQUEST_SAVE_GAME = 7;
 
     private LocalClockApi localClock = new LocalClockApi();
+    private EngineApi myEngine;
     private long lGameID;
     private SeekBar seekBar;
     private ProgressBar progressBarEngine;
@@ -65,7 +69,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue;
     private TableLayout layoutBoardTop, layoutBoardBottom;
 
     @Override
@@ -91,8 +95,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         setContentView(R.layout.play);
 
-        gameApi = new PlayApi();
-        ((PlayApi)gameApi).engine.addListener(this);
+        gameApi = new GameApi();
 
         localClock.addListener(this);
 
@@ -102,7 +105,25 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 if (jni.isEnded() == 0) {
-                    ((PlayApi) gameApi).engine.play();
+                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this)
+                            .setTitle(getString(R.string.title_create_new_line))
+                            .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                myEngine.play();
+                            }
+                        });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    } else {
+                        myEngine.play();
+                    }
                 }
             }
         });
@@ -153,6 +174,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         layoutBoardTop = findViewById(R.id.LayoutBoardTop);
         layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
+
+        textViewEngineValue = findViewById(R.id.TextViewEngineValue);
     }
 
     @Override
@@ -168,8 +191,29 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         String type = intent.getType();
         Uri uri = intent.getData();
 
+        String sEngine = prefs.getString("UCIEngine", null);
+        if (sEngine != null) {
+            Log.i("ChessView", "UCIEngine " + sEngine);
+            String sEnginePath = "/data/data/jwtc.android.chess/" + sEngine;
+
+            myEngine = new UCIEngine();
+            ((UCIEngine)myEngine).initEngine(sEnginePath);
+
+            textViewEngineValue.setText("UCI engine " + sEngine);
+
+        } else {
+            myEngine = new LocalEngine();
+        }
+        myEngine.addListener(this);
+
         layoutBoardTop.setBackgroundColor(ColorSchemes.getDark());
         layoutBoardBottom.setBackgroundColor(ColorSchemes.getDark());
+
+        textViewOpponent.setTextColor(ColorSchemes.getHightlightColor());
+        textViewMe.setTextColor(ColorSchemes.getHightlightColor());
+        textViewOpponentClock.setTextColor(ColorSchemes.getHightlightColor());
+        textViewMyClock.setTextColor(ColorSchemes.getHightlightColor());
+
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             lGameID = 0;
@@ -227,6 +271,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     @Override
     protected void onPause() {
         //Debug.stopMethodTracing();
+
+        myEngine.abort();
+        myEngine.removeListener(this);
 
         localClock.stopClock();
 
@@ -311,13 +358,15 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         updateGUI();
 
         if (vsCPU && jni.isEnded() == 0 && jni.getTurn() != myTurn) {
-            ((PlayApi) gameApi).engine.play();
+            myEngine.play();
         }
     }
 
     @Override
     public void OnEngineMove(int move) {
         toggleEngineProgress(false);
+
+        gameApi.move(move);
 
         final int to = Move.getTo(move);
         highlightedPositions.clear();
@@ -327,8 +376,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     @Override
-    public void OnInfo(String message) {
-
+    public void OnEngineInfo(String message) {
+        textViewEngineValue.setText(message);
     }
 
     @Override
@@ -573,13 +622,13 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         int levelPly = prefs.getInt("levelPly", 2);
         int secs[] = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
 
-        ((PlayApi)gameApi).engine.setMsecs(mode == EngineApi.LEVEL_TIME ? secs[levelTime] : 0);
-        ((PlayApi)gameApi).engine.setPly(mode == EngineApi.LEVEL_PLY ? levelPly : 0);
+        myEngine.setMsecs(mode == EngineApi.LEVEL_TIME ? secs[levelTime] * 1000 : 0);
+        myEngine.setPly(mode == EngineApi.LEVEL_PLY ? levelPly : 0);
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
         if (myTurn != jni.getTurn() && vsCPU && jni.isEnded() == 0) {
-            ((PlayApi) gameApi).engine.play();
+            myEngine.play();
         }
     }
 

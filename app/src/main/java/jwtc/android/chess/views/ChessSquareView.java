@@ -67,8 +67,9 @@ public class ChessSquareView extends View {
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
 
         if (highlighted) {
+            int strokeWidth = getWidth() / 8;
             highlightPaint.setStyle(Paint.Style.STROKE);
-            highlightPaint.setStrokeWidth(getWidth() / 10);
+            highlightPaint.setStrokeWidth(strokeWidth);
             highlightPaint.setColor(ColorSchemes.getHightlightColor());
             canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), highlightPaint);
         }

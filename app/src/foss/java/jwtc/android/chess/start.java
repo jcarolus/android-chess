@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.Locale;
 
 import jwtc.android.chess.ics.ICSClient;
+import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
 import jwtc.android.chess.tools.pgntool;

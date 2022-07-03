@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.TypedValue;
 import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatTextView;
+import jwtc.android.chess.constants.ColorSchemes;
 
 public class CapturedCountView extends AppCompatTextView {
     private int piece;
@@ -13,6 +14,7 @@ public class CapturedCountView extends AppCompatTextView {
 
         this.piece = piece;
         setTextSize(TypedValue.COMPLEX_UNIT_SP,8);
+        setTextColor(ColorSchemes.getHightlightColor());
 
         if (count > 0) {
             setText("" + count);

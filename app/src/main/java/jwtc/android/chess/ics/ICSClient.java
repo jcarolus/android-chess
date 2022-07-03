@@ -274,17 +274,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             }
         });
 
-//        Button buttonChallenge = findViewById(R.id.ButtonChallenge);
-//        buttonChallenge.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //                SharedPreferences myPrefs = getContext().getSharedPreferences(_parent.get_ficsHandle().toLowerCase(), getContext().MODE_PRIVATE);
-////                _dlgMatch.showWithPrefs();
-//            }
-//        });
-
         textViewTitle = findViewById(R.id.TextViewTitle);
-
 
         String[] from = { "menu_item" };
         int[] to = { R.id.MenuText };
@@ -475,133 +465,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         localClockApi.addListener(this);
 
         Log.i("ICSClient", "onCreate");
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-//        menu.add(Menu.NONE, R.string.menu_prefs, Menu.NONE, R.string.menu_prefs);
-//        menu.add(Menu.NONE, R.string.menu_flip, Menu.NONE, R.string.menu_flip);
-        menu.add(Menu.NONE, R.string.ics_menu_takeback, Menu.NONE, R.string.ics_menu_takeback);
-        menu.add(Menu.NONE, R.string.ics_menu_adjourn, Menu.NONE, R.string.ics_menu_adjourn);
-        menu.add(Menu.NONE, R.string.ics_menu_draw, Menu.NONE, R.string.ics_menu_draw);
-        menu.add(Menu.NONE, R.string.ics_menu_resign, Menu.NONE, R.string.ics_menu_resign);
-        menu.add(Menu.NONE, R.string.ics_menu_abort, Menu.NONE, R.string.ics_menu_abort);
-        menu.add(Menu.NONE, R.string.ics_menu_flag, Menu.NONE, R.string.ics_menu_flag);
-        menu.add(Menu.NONE, R.string.ics_menu_refresh, Menu.NONE, R.string.ics_menu_refresh);
-//        menu.add(Menu.NONE, R.string.ics_menu_challenges, Menu.NONE, R.string.ics_menu_challenges);
-//        menu.add(Menu.NONE, R.string.ics_menu_games, Menu.NONE, R.string.ics_menu_games);
-//        menu.add(Menu.NONE, R.string.ics_menu_stored, Menu.NONE, R.string.ics_menu_stored);
-//        menu.add(Menu.NONE, R.string.ics_menu_seek, Menu.NONE, R.string.ics_menu_seek);
-//        menu.add(Menu.NONE, R.string.ics_menu_players, Menu.NONE, R.string.ics_menu_players);
-//        menu.add(Menu.NONE, R.string.ics_menu_top_blitz, Menu.NONE, R.string.ics_menu_top_blitz);
-//        menu.add(Menu.NONE, R.string.ics_menu_top_standard, Menu.NONE, R.string.ics_menu_top_standard);
-//        menu.add(Menu.NONE, R.string.ics_menu_stop_puzzle, Menu.NONE, R.string.ics_menu_stop_puzzle);
-
-//        menu.add(Menu.NONE, R.string.ics_menu_console, Menu.NONE, R.string.ics_menu_console);
-
-        menu.add("tell puzzlebot hint");
-//        menu.add("unexamine");
-        menu.add("tell endgamebot hint");
-        menu.add("tell endgamebot move");
-//        menu.add("tell endgamebot stop");
-
-//        menu.add(Menu.NONE, R.string.ics_menu_unobserve, Menu.NONE, R.string.ics_menu_unobserve);
-//        menu.add(Menu.NONE, R.string.menu_help, Menu.NONE, R.string.menu_help);
-
-        try {
-            SharedPreferences prefs = this.getPrefs();
-            JSONArray jArray = new JSONArray(prefs.getString("ics_custom_commands", CustomCommands.DEFAULT_COMMANDS));
-
-            for (int i = 0; i < jArray.length(); i++) {
-
-                try {
-                    menu.add(jArray.getString(i));
-                } catch (JSONException e) {
-                }
-            }
-        } catch (JSONException e) {
-        }
-
-
-        return true;
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        Intent i;
-        switch (item.getItemId()) {
-            case R.string.menu_prefs:
-                i = new Intent();
-                i.setClass(ICSClient.this, ICSPrefs.class);
-                startActivity(i);
-                return true;
-            case R.string.menu_flip:
-                _view.flipBoard();
-                _view.paint();
-                sendString("refresh");
-                return true;
-            case R.string.ics_menu_refresh:
-                sendString("refresh");
-                return true;
-            case R.string.ics_menu_takeback:
-                sendString("takeback 2");
-                return true;
-            case R.string.ics_menu_resume:
-                sendString("resume");
-                return true;
-            case R.string.ics_menu_abort:
-                sendString("abort");
-                // game will stop by way of toast
-                return true;
-            case R.string.ics_menu_adjourn:
-                sendString("adjourn");
-                return true;
-            case R.string.ics_menu_draw:
-                sendString("draw");
-                return true;
-            case R.string.ics_menu_flag:
-                sendString("flag");
-                return true;
-            case R.string.ics_menu_resign:
-                sendString("resign");
-                return true;
-            case R.string.ics_menu_games:
-
-
-                return true;
-            case R.string.ics_menu_stored:
-
-
-                sendString("stored");
-                return true;
-            case R.string.ics_menu_challenges:
-
-                return true;
-        }
-
-        // check menu for ending tag of <NR>, then delete tag and allow a command with no return
-//        if (item.getTitle() != null) {
-//            String itemTitle = item.getTitle().toString();
-//            if (itemTitle.length() > 4 && itemTitle.substring(itemTitle.length() - 4).equals("<NR>")) {
-//                if (_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_CONSOLE) {
-//                    _editConsole.setText(itemTitle.substring(0, itemTitle.length() - 4));
-//                    _editConsole.requestFocus();
-//                    _editConsole.setSelection(_editConsole.getText().length());
-//                } else {
-//                    _editBoard.setText(itemTitle.substring(0, itemTitle.length() - 4));
-//                    _editBoard.requestFocus();
-//                    _editBoard.setSelection(_editBoard.getText().length());
-//                }
-//            } else {
-//                sendString(item.getTitle().toString());
-//            }
-//        }
-        return true;
     }
 
     @Override
@@ -926,6 +789,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public boolean requestMove(int from, int to) {
+        // @TODO also move piece, and implement pre-move
+
+        // if (jni.pieceAt(BoardConstants.WHITE, from)
         String sMove = Pos.toString(from) + "-" + Pos.toString(to);
         sendString(sMove);
         return true;
@@ -939,7 +805,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         invalidateOptionsMenu(); // update OptionsMenu
 
         SharedPreferences prefs = this.getPrefs();
-
 
         _ficsHandle = prefs.getString("ics_handle", null);
         _ficsPwd = prefs.getString("ics_password", null);
@@ -1544,11 +1409,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         playButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_PLAY ? View.VISIBLE : View.GONE);
         examineButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_EXAMINE ? View.VISIBLE : View.GONE);
-
-//        switch (viewMode) {
-//            case
-//        }
-
     }
 
     @Override
