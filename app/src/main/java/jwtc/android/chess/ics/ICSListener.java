@@ -36,7 +36,7 @@ public interface ICSListener {
     void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList);
     void OnGameListResult(ArrayList<HashMap<String, String>> games);
     void OnStoredListResult(ArrayList<HashMap<String, String>> games);
-    void OnEndGameResult(int state);
+    void OnGameEndedResult(int state);
     void OnConsoleOutput(String buffer);
 
 }

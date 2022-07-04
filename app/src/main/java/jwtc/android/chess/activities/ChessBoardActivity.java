@@ -45,7 +45,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ChessBoardView chessBoardView;
     protected SoundPool spSound = null;
     protected TextToSpeechApi textToSpeech = null;
-    protected int lastPosition = -1;
+    protected int lastPosition = -1, premoveFrom = -1, premoveTo = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
 
     public static final int MODE_BLINDFOLD_SHOWPIECES = 0;
@@ -354,15 +354,35 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    protected void setPremove(int from, int to) {
+        this.premoveFrom = from;
+        this.premoveTo = to;
+        highlightedPositions.clear();
+        highlightedPositions.add(from);
+        highlightedPositions.add(to);
+    }
 
-    protected ChessPieceView getPieceOnBoard(int pos, int color, int piece) {
+    protected void resetPremove() {
+        this.premoveFrom = -1;
+        this.premoveTo = -1;
+        highlightedPositions.clear();
+
+        rebuildBoard();
+        updateSelectedSquares();
+    }
+
+    protected boolean hasPremoved() {
+        return premoveFrom != -1;
+    }
+
+    protected ChessPieceView getPieceViewOnPosition(int pos) {
         final int count = chessBoardView.getChildCount();
         for (int i = 0; i < count; i++) {
             final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessPieceView) {
                 final ChessPieceView pieceView = (ChessPieceView)child;
-                if (pieceView.getPiece() == piece && pieceView.getColor() == color && pieceView.getPos() == pos) {
+                if (pieceView.getPos() == pos) {
                     return pieceView;
                 }
             }
@@ -390,12 +410,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         @Override
         public void onClick(View view) {
             if (view instanceof ChessSquareView) {
-                final int toPos = ((ChessSquareView) view).getPos();
-                if (lastPosition != -1) {
-                    requestMove(lastPosition, toPos);
+                if (hasPremoved()) {
+                    resetPremove();
+                } else {
+                    final int toPos = ((ChessSquareView) view).getPos();
+                    if (lastPosition != -1) {
+                        ChessPieceView pieceViewFrom = getPieceViewOnPosition(lastPosition);
+                        if (pieceViewFrom != null) {
+                            pieceViewFrom.setPos(toPos);
+                            chessBoardView.layoutChild(pieceViewFrom);
+                        }
+                        requestMove(lastPosition, toPos);
+                    }
+                    lastPosition = -1;
+                    ChessBoardActivity.this.updateSelectedSquares();
                 }
-                lastPosition = -1;
-                ChessBoardActivity.this.updateSelectedSquares();
             }
         }
     }
@@ -422,19 +451,24 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         // Dropped, reassign View to ViewGroup
                         View fromView = (View) event.getLocalState();
                         if (fromView instanceof ChessPieceView) {
+                            ChessPieceView pieceViewFrom = (ChessPieceView) fromView;
                             final int toPos = ((ChessSquareView) view).getPos();
-                            final int fromPos = ((ChessPieceView) fromView).getPos();
+                            final int fromPos = pieceViewFrom.getPos();
 
                             if (toPos == fromPos) {
                                 // a click
                                 Log.d(TAG, "click " + lastPosition);
                                 if (lastPosition != -1) {
+                                    pieceViewFrom.setPos(toPos);
+                                    chessBoardView.layoutChild(pieceViewFrom);
                                     requestMove(lastPosition, toPos);
                                     lastPosition = -1;
                                 } else {
                                     lastPosition = toPos;
                                 }
                             } else {
+                                pieceViewFrom.setPos(toPos);
+                                chessBoardView.layoutChild(pieceViewFrom);
                                 requestMove(fromPos, toPos);
                                 lastPosition = -1;
                             }
@@ -454,9 +488,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected class MyTouchListener implements View.OnTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (view instanceof ChessPieceView) {
-                final int pos =  ((ChessPieceView) view).getPos();
-
+            if (hasPremoved()) {
+                resetPremove();
+            } else if (view instanceof ChessPieceView) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 //                    Log.i(TAG, "onTouch DOWN " + pos);
 

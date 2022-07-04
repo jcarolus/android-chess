@@ -396,7 +396,7 @@ public class ICSServer extends Service {
 
             int result = icsPatterns.gameState(line);
             if (result != ChessBoard.PLAY) {
-                for (ICSListener listener: listeners) {listener.OnEndGameResult(result);}
+                for (ICSListener listener: listeners) {listener.OnGameEndedResult(result);}
                 continue;
             }
 

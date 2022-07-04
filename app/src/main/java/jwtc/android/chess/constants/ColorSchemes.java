@@ -9,7 +9,7 @@ public class ColorSchemes {
         colorScheme[0][0] = 0xffdeac5d;
         colorScheme[0][1] = 0xfff9e3c0;
         colorScheme[0][2] = 0xfff3ed4b;
-        colorScheme[0][3] = 0xff000000;
+        colorScheme[0][3] = 0xcc000000;
 
         // blue
         colorScheme[1][0] = 0xff28628b;

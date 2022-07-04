@@ -789,11 +789,20 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public boolean requestMove(int from, int to) {
-        // @TODO also move piece, and implement pre-move
+        // @TODO implement pre-move
+        highlightedPositions.clear();
+        highlightedPositions.add(from);
+        highlightedPositions.add(to);
 
-        // if (jni.pieceAt(BoardConstants.WHITE, from)
-        String sMove = Pos.toString(from) + "-" + Pos.toString(to);
-        sendString(sMove);
+        ICSApi icsApi = (ICSApi) gameApi;
+        if (icsApi.getMyTurn() == icsApi.getTurn()) {
+
+            // if (jni.pieceAt(BoardConstants.WHITE, from)
+            String sMove = Pos.toString(from) + "-" + Pos.toString(to);
+            sendString(sMove);
+        } else if (isPlaying) {
+            setPremove(from, to);
+        }
         return true;
     }
 
@@ -1583,10 +1592,11 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
-    public void OnEndGameResult(int state) {
+    public void OnGameEndedResult(int state) {
         int res = UI.chessStateToR(state);
         gameToast(getString(res), true);
-//        this.get_view().setStopPlaying();
+
+        isPlaying = false;
     }
 
     @Override
@@ -1594,10 +1604,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
          addConsoleText(buffer);
     }
 
-
     @Override
     public void OnState() {
-        super.OnState();
 
         ICSApi icsApi = (ICSApi)gameApi;
         int myTurn = icsApi.getMyTurn();
@@ -1615,6 +1623,13 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         switchTurnMe.setVisibility(turn == BoardConstants.WHITE && myTurn == BoardConstants.WHITE || turn == BoardConstants.BLACK && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
         switchTurnMe.setDisplayedChild(turn == BoardConstants.BLACK ? 0 : 1);
+
+        if (myTurn == turn && hasPremoved()) {
+            requestMove(premoveFrom, premoveTo);
+            resetPremove();
+        }
+
+        super.OnState();
     }
 
     @Override
