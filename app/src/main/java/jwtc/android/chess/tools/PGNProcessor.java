@@ -51,9 +51,9 @@ public abstract class PGNProcessor {
 
                             while ((len = zis.read(buffer, 0, buffer.length)) != -1) {
                                 sb.append(new String(buffer, 0, len));
-
-                                processPGNPart(sb);
                             }
+
+                            processPGNPart(sb);
 
                             sendMessage(MSG_FINISHED);
                         }
@@ -87,38 +87,24 @@ public abstract class PGNProcessor {
                     int len;
                     byte[] buffer = new byte[2048];
 
-                    //Log.i("processPGN", "available " + is.available());
-
                     while ((len = is.read(buffer, 0, buffer.length)) != -1) {
                         sb.append(new String(buffer, 0, len));
 
-//                        processPGNPart(sb);
-
-                        //Log.i("processPGN", "loop stringbuffer " + len);
+                        processPGNPart(sb);
                     }
-
-                    processPGNPart(sb);
-
-//                    Message m = new Message();
-//                    if (processPGN(sb.toString())) {
-//                        m.what = MSG_PROCESSED_PGN;
-//                    } else {
-//                        m.what = MSG_FAILED_PGN;
-//                    }
-//                    m_threadUpdateHandler.sendMessage(m);
 
                     sendMessage(MSG_FINISHED);
 
                 } catch (Exception e) {
                     sendMessage(MSG_FATAL_ERROR);
 
-                    Log.e("PGNProcessor", e.toString());
+                    Log.e(TAG, e.toString());
                 }
             }
         }).start();
     }
 
-    public void processPGNPart(StringBuffer sb) {
+    public void processPGNPart(final StringBuffer sb) {
         int pos1 = 0, pos2 = 0;
         String s;
         pos1 = sb.indexOf("[Event \"");

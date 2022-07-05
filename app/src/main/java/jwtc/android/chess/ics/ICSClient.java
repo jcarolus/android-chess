@@ -114,11 +114,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            // This is called when the connection with the service has been
-            // established, giving us the service object we can use to
-            // interact with the service.  Because we have bound to a explicit
-            // service that we know is running in our own process, we can
-            // cast its IBinder to a concrete class and directly access it.
             Log.i(TAG, "onServiceConnected");
             icsServer = ((ICSServer.LocalBinder)service).getService();
 
@@ -127,10 +122,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
-            // Because it is running in our same process, we should never
-            // see this happen.
             OnSessionEnded();
             icsServer = null;
             Log.i(TAG, "onServiceDisconnected");
@@ -1053,10 +1044,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         Log.i(TAG, "onStart");
         super.onStart();
 
-
-//        startService(new Intent(ICSClient.this, ICSServer.class));
         if (icsServer == null) {
-
             if (bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE)) {
                 Log.i(TAG, "Bind to ICSServer");
             } else {

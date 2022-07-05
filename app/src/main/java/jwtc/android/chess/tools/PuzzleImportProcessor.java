@@ -26,15 +26,10 @@ public class PuzzleImportProcessor extends PGNProcessor {
     public synchronized boolean processPGN(final String sPGN) {
 
         if (gameApi.loadPGN(sPGN)) {
-
-            Log.d(TAG, "processPGN success");
-
             ContentValues values = new ContentValues();
             values.put(PGNColumns.PGN, gameApi.exportFullPGN());
 
-            Uri uriInsert = contentResolver.insert(MyPuzzleProvider.CONTENT_URI_PUZZLES, values);
-
-            Log.d(TAG, "inserted " + (uriInsert != null ? uriInsert.toString() : "null"));
+            contentResolver.insert(MyPuzzleProvider.CONTENT_URI_PUZZLES, values);
             return true;
         }
         return false;

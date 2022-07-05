@@ -1,6 +1,7 @@
 package jwtc.android.chess.puzzle;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -35,6 +37,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     private int currentPosition, totalPuzzles;
     private ImportService importService;
     private TableLayout layoutTurn;
+    private ViewSwitcher switchRoot;
 
     @Override
     public boolean requestMove(int from, int to) {
@@ -48,23 +51,11 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         if (Move.equalPositions(move, theMove)) {
             gameApi.jumptoMove(jni.getNumBoard());
-
-//            updateState();
-
-//            setMessage("Correct!");
             _imgStatus.setImageResource(R.drawable.indicator_ok);
-			/*
-			if(_arrPGN.size() == m_game.getBoard().getNumBoard()-1)
-				play();
-			else {
-				jumptoMove(m_game.getBoard().getNumBoard());
-				updateState();
-			}*/
 
             return true;
         } else {
             // check for illegal move
-
             setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? getString(R.string.puzzle_not_correct_move) : getString(R.string.puzzle_invalid_move)));
             _imgStatus.setImageResource(R.drawable.indicator_error);
         }
@@ -74,22 +65,17 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            // This is called when the connection with the service has been
-            // established, giving us the service object we can use to
-            // interact with the service.  Because we have bound to a explicit
-            // service that we know is running in our own process, we can
-            // cast its IBinder to a concrete class and directly access it.
             Log.i(TAG, "onServiceConnected");
             importService = ((ImportService.LocalBinder)service).getService();
             importService.addListener(PuzzleActivity.this);
+
+            if (totalPuzzles == 0) {
+                switchRoot.setDisplayedChild(1);
+                importService.startImport(null, ImportService.IMPORT_PUZZLES);
+            }
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
-            // Because it is running in our same process, we should never
-            // see this happen.
-//            OnSessionEnded();
             importService = null;
             Log.i(TAG, "onServiceDisconnected");
         }
@@ -105,6 +91,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         afterCreate();
 
+        switchRoot = findViewById(R.id.ViewSwitcherRoot);
         layoutTurn = findViewById(R.id.LayoutTurn);
 
         currentPosition = 0;
@@ -149,6 +136,32 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         super.onResume();
     }
 
+    @Override
+    protected void onStart() {
+        Log.i(TAG, "onStart");
+        super.onStart();
+
+        if (importService == null) {
+            if (!bindService(new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
+                doToast("Could not import puzzle set");
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i(TAG, "onDestroy");
+
+        if (importService != null) {
+            importService.removeListener(this);
+        }
+
+        unbindService(mConnection);
+        importService = null;
+
+        super.onDestroy();
+    }
+
     protected void loadPuzzles() {
         Log.i(TAG, "loadPuzzles");
 
@@ -165,18 +178,12 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
             Log.d(TAG, "totalPuzzles " + totalPuzzles);
 
-            if (totalPuzzles == 0) {
-
-                Intent intent = new Intent(this, ImportService.class);
-                intent.putExtra(ImportService.IMPORT_MODE, ImportService.IMPORT_PUZZLES);
-                startService(intent);
-
-            } else {
+            if (totalPuzzles > 0) {
+                switchRoot.setDisplayedChild(0);
 
                 if (totalPuzzles < currentPosition + 1) {
                     currentPosition = 0;
                 }
-
 
                 _seekBar.setMax(totalPuzzles - 1);
                 startPuzzle();
@@ -263,20 +270,14 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     }
 
     @Override
-    public void OnImportSuccess(int mode) {
-        Log.d(TAG, "OnImportSuccess");
-
-        loadPuzzles();
-    }
-
-    @Override
-    public void OnImportFail(int mode) {
-        Log.d(TAG, "OnImportFail");
+    public void OnImportProgress(int mode) {
+        Log.d(TAG, "OnImportProgress");
     }
 
     @Override
     public void OnImportFinished(int mode) {
         Log.d(TAG, "OnImportFinished");
+        loadPuzzles();
     }
 
     @Override

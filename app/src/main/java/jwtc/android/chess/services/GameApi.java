@@ -104,7 +104,7 @@ public class GameApi {
     }
 
     public void undoMove() {
-        Log.d(TAG, "undoMove");
+//        Log.d(TAG, "undoMove");
 
         jni.undo();
         dispatchState();
@@ -229,7 +229,7 @@ public class GameApi {
     }
 
     protected void dispatchMove(final int move) {
-        Log.d(TAG, "dispatchMove " + move);
+//        Log.d(TAG, "dispatchMove " + move);
 
         for (GameListener listener : listeners) {
             listener.OnMove(move);
@@ -237,7 +237,7 @@ public class GameApi {
     }
 
     protected void dispatchState() {
-        Log.d(TAG, "dispatchState");
+//        Log.d(TAG, "dispatchState");
 
         for (GameListener listener : listeners) {
             listener.OnState();
@@ -245,7 +245,7 @@ public class GameApi {
     }
 
     private boolean move(int move, String sAnnotation, boolean bUpdate) {
-        Log.i(TAG, "move " + move);
+//        Log.i(TAG, "move " + move);
         if (jni.move(move) == 0) {
             return false;
         }
@@ -603,7 +603,7 @@ public class GameApi {
 
 
     public void addPGNEntry(int ply, String sMove, String sAnnotation, int move) {
-        Log.d(TAG, "addPGNEntry " + ply + ": " + sMove);
+//        Log.d(TAG, "addPGNEntry " + ply + ": " + sMove);
         while (ply >= 0 && _arrPGN.size() >= ply) {
             _arrPGN.remove(_arrPGN.size() - 1);
         }

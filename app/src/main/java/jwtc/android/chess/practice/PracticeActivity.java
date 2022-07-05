@@ -1,7 +1,7 @@
 package jwtc.android.chess.practice;
 
 import android.content.ComponentName;
-import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -42,11 +41,10 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
     private Cursor cursor;
     private Timer timer;
     private int ticks, playTicks;
-    private ViewSwitcher switchTurn;
+    private ViewSwitcher switchTurn, switchRoot;
     private ImageView imgStatus;
-    private ContentResolver contentResolver;
-    private boolean _isPlaying;
-    private ImportService importService;
+    private boolean isPlaying;
+    private ImportService importService = null;
     private TableLayout layoutTurn;
 
     protected Handler m_timerHandler = new Handler() {
@@ -60,22 +58,17 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            // This is called when the connection with the service has been
-            // established, giving us the service object we can use to
-            // interact with the service.  Because we have bound to a explicit
-            // service that we know is running in our own process, we can
-            // cast its IBinder to a concrete class and directly access it.
             Log.i(TAG, "onServiceConnected");
             importService = ((ImportService.LocalBinder)service).getService();
             importService.addListener(PracticeActivity.this);
+
+            if (totalPuzzles == 0) {
+                importService.startImport(null, ImportService.IMPORT_PRACTICE);
+                switchRoot.setDisplayedChild(1);
+            }
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
-            // Because it is running in our same process, we should never
-            // see this happen.
-//            OnSessionEnded();
             importService = null;
             Log.i(TAG, "onServiceDisconnected");
         }
@@ -97,7 +90,7 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
                 //play();
                 imgStatus.setImageResource(R.drawable.indicator_ok);
                 setMessage("Correct!");
-                _isPlaying = false;
+                isPlaying = false;
                 buttonNext.setEnabled(true);
                 buttonShow.setEnabled(false);
             } else {
@@ -121,10 +114,10 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
 
         afterCreate();
 
-        layoutTurn = findViewById(R.id.LayoutTurn);
-        _isPlaying = false;
+        switchRoot = findViewById(R.id.ViewSwitcherRoot);
 
-        contentResolver = getContentResolver();
+        layoutTurn = findViewById(R.id.LayoutTurn);
+        isPlaying = false;
 
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
         tvPracticeTime = (TextView) findViewById(R.id.TextViewPracticeTime);
@@ -162,8 +155,6 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
                 }
             }
         });
-
-
     }
 
     @Override
@@ -174,7 +165,7 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
 
         layoutTurn.setBackgroundColor(ColorSchemes.getDark());
 
-        _isPlaying = false;
+        isPlaying = false;
         scheduleTimer();
 
         loadPuzzles();
@@ -188,11 +179,37 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
         if (timer != null)
             timer.cancel();
         timer = null;
-        _isPlaying = false;
+        isPlaying = false;
 
 
         editor.putInt("practicePos", currentPos);
         editor.putInt("practiceTicks", ticks);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(TAG, "onStart");
+        super.onStart();
+
+        if (importService == null) {
+            if (!bindService(new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
+                doToast("Could not import practice set");
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i(TAG, "onDestroy");
+
+        if (importService != null) {
+            importService.removeListener(this);
+        }
+
+        unbindService(mConnection);
+        importService = null;
+
+        super.onDestroy();
     }
 
     protected void loadPuzzles() {
@@ -209,22 +226,19 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
             totalPuzzles = cursor.getCount();
 
             if (totalPuzzles > 0) {
+                switchRoot.setDisplayedChild(0);
+
                 if (currentPos + 1 >= totalPuzzles) {
                     currentPos = 0;
                 }
                 startPuzzle();
-            } else {
-                Intent intent = new Intent(this, ImportService.class);
-                intent.putExtra(ImportService.IMPORT_MODE, ImportService.IMPORT_PRACTICE);
-                startService(intent);
-                // bindService?
             }
         }
     }
 
     protected void startPuzzle() {
         cursor.moveToPosition(currentPos);
-        _isPlaying = true;
+        isPlaying = true;
         playTicks = 0;
 
         String sPGN = cursor.getString(cursor.getColumnIndex(MyPuzzleProvider.COL_PGN));
@@ -268,20 +282,14 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
     }
 
     @Override
-    public void OnImportSuccess(int mode) {
-        Log.d(TAG, "OnImportSuccess");
-
-        loadPuzzles();
-    }
-
-    @Override
-    public void OnImportFail(int mode) {
-        Log.d(TAG, "OnImportFail");
+    public void OnImportProgress(int mode) {
+        Log.d(TAG, "OnImportProgress");
     }
 
     @Override
     public void OnImportFinished(int mode) {
         Log.d(TAG, "OnImportFinished");
+        loadPuzzles();
     }
 
     @Override
@@ -295,7 +303,7 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
             @Override
             public void run() {
 
-                if (false == _isPlaying) {
+                if (false == isPlaying) {
                     return;
                 }
                 ticks++;

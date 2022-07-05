@@ -132,88 +132,92 @@ public class importactivity extends AppCompatActivity {
 
 
             if (_mode == pgntool.MODE_IMPORT) {
-                _processor = new PGNImportProcessor();
-                _processor.m_threadUpdateHandler = new Handler() {
-                    /** Gets called on every message that is received */
-                    // @Override
-                    public void handleMessage(Message msg) {
-
-                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
-                            _cnt++;
-                            _tvWorkCnt.setText("Processed " + _cnt);
-                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
-                            _cntFail++;
-                            _tvWorkCntFail.setText("Failed " + _cntFail);
-                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("Imported " + _cnt + " games");
-                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("An error occured, import failed");
-                        }
-                    }
-                };
+                // @TODO
+//                _processor = new PGNImportProcessor();
+//                _processor.m_threadUpdateHandler = new Handler() {
+//                    /** Gets called on every message that is received */
+//                    // @Override
+//                    public void handleMessage(Message msg) {
+//
+//                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
+//                            _cnt++;
+//                            _tvWorkCnt.setText("Processed " + _cnt);
+//                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
+//                            _cntFail++;
+//                            _tvWorkCntFail.setText("Failed " + _cntFail);
+//                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("Imported " + _cnt + " games");
+//                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("An error occured, import failed");
+//                        }
+//                    }
+//                };
             } else if (_mode == pgntool.MODE_DB_IMPORT) {
 
-                _arrKeys.clear();
-
-                _processor = new PGNDbProcessor();
-                _processor.m_threadUpdateHandler = new Handler() {
-                    /** Gets called on every message that is received */
-                    // @Override
-                    public void handleMessage(Message msg) {
-
-                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
-                            _cnt++;
-                            _tvWorkCnt.setText("Processed " + _cnt);
-                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
-                            _cntFail++;
-                            _tvWorkCntFail.setText("Failed " + _cntFail);
-                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
-                            writeHashKeysToFile();
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("Imported " + _cnt + " games; " + _arrKeys.size() + " positions.");
-                            _processing = false;
-                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("An error occured, import failed");
-                            _processing = false;
-                        }
-                    }
-                };
+                // @TODO
+//                _arrKeys.clear();
+//
+//                _processor = new PGNDbProcessor();
+//                _processor.m_threadUpdateHandler = new Handler() {
+//                    /** Gets called on every message that is received */
+//                    // @Override
+//                    public void handleMessage(Message msg) {
+//
+//                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
+//                            _cnt++;
+//                            _tvWorkCnt.setText("Processed " + _cnt);
+//                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
+//                            _cntFail++;
+//                            _tvWorkCntFail.setText("Failed " + _cntFail);
+//                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
+//                            writeHashKeysToFile();
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("Imported " + _cnt + " games; " + _arrKeys.size() + " positions.");
+//                            _processing = false;
+//                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("An error occured, import failed");
+//                            _processing = false;
+//                        }
+//                    }
+//                };
 
             } else if (_mode == pgntool.MODE_CREATE_PRACTICE) {
-                _arrKeys.clear();
 
-                Log.i(TAG, "Create practice set");
-
-                getContentResolver().delete(MyPuzzleProvider.CONTENT_URI_PRACTICES, "1=1", null);
-                Log.i(TAG, "Deleted practices");
-
-                _processor = new PracticeImportProcessor();
-                _processor.m_threadUpdateHandler = new Handler() {
-                    /** Gets called on every message that is received */
-                    // @Override
-                    public void handleMessage(Message msg) {
-
-                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
-                            _cnt++;
-                            _tvWorkCnt.setText("Processed " + _cnt);
-                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
-                            _cntFail++;
-                            _tvWorkCntFail.setText("Failed " + _cntFail);
-                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
-
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("Imported " + _cnt + " practice positions");
-                            _processing = false;
-                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("An error occured, import failed");
-                            _processing = false;
-                        }
-                    }
-                };
+                // @TODO
+//                _arrKeys.clear();
+//
+//                Log.i(TAG, "Create practice set");
+//
+//                getContentResolver().delete(MyPuzzleProvider.CONTENT_URI_PRACTICES, "1=1", null);
+//                Log.i(TAG, "Deleted practices");
+//
+//                _processor = new PracticeImportProcessor();
+//                _processor.m_threadUpdateHandler = new Handler() {
+//                    /** Gets called on every message that is received */
+//                    // @Override
+//                    public void handleMessage(Message msg) {
+//
+//                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
+//                            _cnt++;
+//                            _tvWorkCnt.setText("Processed " + _cnt);
+//                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
+//                            _cntFail++;
+//                            _tvWorkCntFail.setText("Failed " + _cntFail);
+//                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
+//
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("Imported " + _cnt + " practice positions");
+//                            _processing = false;
+//                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("An error occured, import failed");
+//                            _processing = false;
+//                        }
+//                    }
+//                };
 
             } else if (_mode == pgntool.MODE_DB_POINT) {
 
@@ -326,60 +330,62 @@ public class importactivity extends AppCompatActivity {
                 editor.putInt("puzzlePos", 0);
                 editor.commit();
 
-                _processor = new PuzzleImportProcessor();
-                _processor.m_threadUpdateHandler = new Handler() {
-                    /** Gets called on every message that is received */
-                    // @Override
-                    public void handleMessage(Message msg) {
-
-                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
-                            _cnt++;
-                            _tvWorkCnt.setText("Processed " + _cnt);
-                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
-                            _cntFail++;
-                            _tvWorkCntFail.setText("Failed " + _cntFail);
-                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
-
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("Imported " + _cnt + " puzzle positions");
-                            _processing = false;
-                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("An error occured, import failed");
-                            _processing = false;
-                        }
-                    }
-                };
+                // @TODO
+//                _processor = new PuzzleImportProcessor();
+//                _processor.m_threadUpdateHandler = new Handler() {
+//                    /** Gets called on every message that is received */
+//                    // @Override
+//                    public void handleMessage(Message msg) {
+//
+//                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
+//                            _cnt++;
+//                            _tvWorkCnt.setText("Processed " + _cnt);
+//                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
+//                            _cntFail++;
+//                            _tvWorkCntFail.setText("Failed " + _cntFail);
+//                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
+//
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("Imported " + _cnt + " puzzle positions");
+//                            _processing = false;
+//                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("An error occured, import failed");
+//                            _processing = false;
+//                        }
+//                    }
+//                };
             } else if (_mode == pgntool.MODE_IMPORT_OPENINGDATABASE) {
-                _processor = new OpeningImportProcessor();
-                _processor.m_threadUpdateHandler = new Handler() {
-                    /** Gets called on every message that is received */
-                    // @Override
-                    public void handleMessage(Message msg) {
-
-                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
-                            _cnt++;
-                            _tvWorkCnt.setText("Processed " + _cnt);
-                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
-                            _cntFail++;
-                            _tvWorkCntFail.setText("Failed " + _cntFail);
-                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
-
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("Imported " + _cnt + " openings");
-                            _processing = false;
-
-                            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                            cm.setText(_processor.getString());
-                            //Log.i("DONE_OPENING", _processor.getString());
-
-                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
-                            _progress.setVisibility(View.INVISIBLE);
-                            _tvWorkCnt.setText("An error occured, import failed");
-                            _processing = false;
-                        }
-                    }
-                };
+                /// @TODO
+//                _processor = new OpeningImportProcessor();
+//                _processor.m_threadUpdateHandler = new Handler() {
+//                    /** Gets called on every message that is received */
+//                    // @Override
+//                    public void handleMessage(Message msg) {
+//
+//                        if (msg.what == PGNProcessor.MSG_PROCESSED_PGN) {
+//                            _cnt++;
+//                            _tvWorkCnt.setText("Processed " + _cnt);
+//                        } else if (msg.what == PGNProcessor.MSG_FAILED_PGN) {
+//                            _cntFail++;
+//                            _tvWorkCntFail.setText("Failed " + _cntFail);
+//                        } else if (msg.what == PGNProcessor.MSG_FINISHED) {
+//
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("Imported " + _cnt + " openings");
+//                            _processing = false;
+//
+//                            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+//                            cm.setText(_processor.getString());
+//                            //Log.i("DONE_OPENING", _processor.getString());
+//
+//                        } else if (msg.what == PGNProcessor.MSG_FATAL_ERROR) {
+//                            _progress.setVisibility(View.INVISIBLE);
+//                            _tvWorkCnt.setText("An error occured, import failed");
+//                            _processing = false;
+//                        }
+//                    }
+//                };
             } else {
 
                 finish();
@@ -532,318 +538,4 @@ public class importactivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
-    private class PGNImportProcessor extends PGNProcessor {
-
-        public PGNImportProcessor() {
-            super(0, null);
-        }
-
-        @Override
-        public synchronized boolean processPGN(final String sPGN) {
-
-            //Log.i("processPGN", sPGN);
-            if (_gameControl.loadPGN(sPGN)) {
-
-                ContentValues values = new ContentValues();
-                values.put(PGNColumns.EVENT, _gameControl.getPGNHeadProperty("Event"));
-                values.put(PGNColumns.WHITE, _gameControl.getWhite());
-                values.put(PGNColumns.BLACK, _gameControl.getBlack());
-                values.put(PGNColumns.PGN, _gameControl.exportFullPGN());
-                values.put(PGNColumns.RATING, 2.5F);
-
-                // todo date goes wrong #################################
-                Date dd = _gameControl.getDate();
-                if (dd == null)
-                    dd = Calendar.getInstance().getTime();
-
-                values.put(PGNColumns.DATE, dd.getTime());
-
-                Uri uri = Uri.parse("content://jwtc.android.chess.MyPGNProvider/games");
-                Uri uriInsert = getContentResolver().insert(uri, values);
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public String getString() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-    }
-
-    private class PGNDbProcessor extends PGNProcessor {
-
-        public PGNDbProcessor() {
-            super(0, null);
-        }
-
-        @Override
-        public synchronized boolean processPGN(final String sPGN) {
-
-            long lKey;
-            //Log.i("import", "processPGN:" + sPGN);
-            if (_gameControl.loadPGN(sPGN)) {
-                int ply = 0, pgnSize = _gameControl.getArrPGNSize();
-                int existingCnt = 0;
-                //Log.i("import", "processPGN - gameSize:" + pgnSize);
-                while (ply <= pgnSize && ply <= _untilPly) {
-                    //_jni.getNumBoard();
-                    _gameControl.jumptoMove(ply);
-
-                    lKey = _jni.getHashKey();
-
-                    if (false == _arrKeys.contains(lKey)) {
-                        _arrKeys.add(lKey);
-                    } else {
-                        existingCnt++;
-                    }
-                    ply++;
-                }
-                //Log.i("import", "processPGN - existing keys: " + existingCnt);
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public String getString() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-    }
-
-    private class PracticeImportProcessor extends PGNProcessor {
-
-        public PracticeImportProcessor() {
-            super(0, null);
-        }
-
-        @Override
-        public synchronized boolean processPGN(final String sPGN) {
-
-            //Log.i("processPGN", sPGN);
-            if (_gameControl.loadPGN(sPGN)) {
-
-                if (_jni.getState() == ChessBoard.MATE) {
-
-                    int startExport = _gameControl.getArrPGNSize();
-
-                    int plies = 2, undos = 0, moves = 0;
-                    String s = "";
-                    String[] arrMoves = {
-                            _gameControl.exportMovesPGNFromPly(startExport),
-                            "", // not interested in move from opponent
-                            _gameControl.exportMovesPGNFromPly(startExport - 3),
-                    };
-
-                    if (startExport >= 3) { // at least 3 half moves for a 2 move mate
-
-                        while (plies <= 4) {
-                            undos = 0;
-                            while (undos <= moves) { // undo one extra
-                                //Log.i(TAG, "undo");
-                                _gameControl.undo();
-                                undos++;
-                            }
-                            String sFEN = _jni.toFEN();
-
-                            _jni.searchDepth(plies);
-
-                            int move = _jni.getMove();
-                            int value = _jni.peekSearchBestValue();
-
-                            //Log.i(TAG, moves + ", Move " + Move.toDbgString(move) + " val: " + value + " at plies " + plies);
-
-                            if (value == 100000 * (plies % 2 == 0 ? 1 : -1) && _jni.move(move) != 0) {
-                                _gameControl.addPGNEntry(_jni.getNumBoard() - 1, _jni.getMyMoveToString(), "", _jni.getMyMove(), true);
-
-                                // save when it's our move
-                                if (plies % 2 == 0) {
-                                    if (plies == 4) {
-                                        Log.i(TAG, "YESS");
-                                    }
-                                    s = "[FEN \"" + sFEN + "\"]\n" + arrMoves[moves];
-                                }
-                                moves++;
-                                plies++;
-
-                            } else {
-                                //Log.i(TAG, "Stop at plies " + plies);
-                                break;
-                            }
-                        }
-
-                        if (s.length() > 0) {
-                            try {
-
-                                Cursor cursor = managedQuery(MyPuzzleProvider.CONTENT_URI_PRACTICES, MyPuzzleProvider.COLUMNS, PGNColumns.PGN + "=?", new String[]{s}, "");
-                                if (cursor != null) {
-                                    if (cursor.getCount() > 0) {
-                                        //Log.i(TAG, "DOUBLE!");
-                                        return false;
-                                    }
-                                    cursor.close();
-                                }
-                                //Log.i(TAG, "SAVING: " + s);
-
-                                ContentValues values = new ContentValues();
-                                values.put(PGNColumns.PGN, s);
-
-                                Uri uri = MyPuzzleProvider.CONTENT_URI_PRACTICES;
-                                Uri uriInsert = getContentResolver().insert(uri, values);
-
-                                return true;
-                            } catch (Exception ex) {
-                                Log.e(TAG, ex.toString());
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public String getString() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-    }
-
-    private class PuzzleImportProcessor extends PGNProcessor {
-
-        private ContentResolver _cr;
-
-        public PuzzleImportProcessor() {
-            super(0, null);
-            _cr = importactivity.this.getContentResolver();
-            _cr.delete(MyPuzzleProvider.CONTENT_URI_PUZZLES, "1=1", null);
-
-            Log.i(TAG, "Created puzzle import instance, deleted puzzles");
-        }
-
-        @Override
-        public synchronized boolean processPGN(final String sPGN) {
-
-            ContentValues values;
-            values = new ContentValues();
-            values.put("PGN", sPGN);
-            _cr.insert(MyPuzzleProvider.CONTENT_URI_PUZZLES, values);
-
-            return true;
-        }
-
-        @Override
-        public String getString() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-    }
-
-    private class OpeningImportProcessor extends PGNProcessor {
-
-        public JSONArray _jArray;
-        ArrayList<PGNEntry> _arrMoves;
-        String _sECO = _gameControl.getPGNHeadProperty("Event");
-        String _sName = _gameControl.getPGNHeadProperty("White");
-        String _sVariation = _gameControl.getPGNHeadProperty("Black");
-
-        public OpeningImportProcessor() {
-            super(0, null);
-            _jArray = new JSONArray();
-        }
-
-        @Override
-        public boolean processPGN(String sPGN) {
-            if (_gameControl.loadPGN(sPGN)) {
-                _sECO = _gameControl.getPGNHeadProperty("Event");
-                _sName = _gameControl.getPGNHeadProperty("White");
-                _sVariation = _gameControl.getPGNHeadProperty("Black");
-                if (_sVariation.equals("black ?")) {
-                    _sVariation = "";
-                }
-                _arrMoves = _gameControl.getPGNEntries();
-
-                findOrInsertEntry(_jArray, _arrMoves.remove(0));
-
-                return true;
-            }
-            return false;
-        }
-
-
-        // m = move
-        // a = array
-        // e = ECO
-        // v = variation
-        protected void findOrInsertEntry(JSONArray curArray, PGNEntry entry) {
-            boolean bFound = false;
-            for (int i = 0; i < curArray.length(); i++) {
-                try {
-                    JSONObject jObj = (JSONObject) curArray.get(i);
-
-                    if (jObj.getString("m").equals(entry._sMove)) {
-
-                        bFound = true;
-                        JSONArray newArray;
-                        if (jObj.has("a")) {
-                            newArray = (JSONArray) jObj.get("a");
-                        } else {
-                            newArray = new JSONArray();
-                            jObj.put("a", newArray);
-                        }
-
-                        if (_arrMoves.size() == 0) {
-                            jObj.put("e", _sECO);
-                            jObj.put("n", _sName);
-                            jObj.put("v", _sVariation);
-                        } else {
-                            findOrInsertEntry(newArray, _arrMoves.remove(0));
-                        }
-
-                    }
-
-                } catch (JSONException e) {
-
-                }
-
-            }
-            if (false == bFound) {
-                JSONObject newObject = new JSONObject();
-                try {
-                    JSONArray newArray = new JSONArray();
-
-                    newObject.put("m", entry._sMove);
-                    newObject.put("a", newArray);
-
-                    if (_arrMoves.size() == 0) {
-                        newObject.put("e", _sECO);
-                        newObject.put("n", _sName);
-                        newObject.put("v", _sVariation);
-                    }
-
-                    curArray.put(newObject);
-
-                    if (_arrMoves.size() > 0) {
-                        findOrInsertEntry(newArray, _arrMoves.remove(0));
-                    }
-
-                } catch (JSONException e) {
-                }
-            }
-        }
-
-        @Override
-        public String getString() {
-            return _jArray.toString();
-        }
-    }
-
 }

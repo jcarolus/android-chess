@@ -22,7 +22,6 @@ import jwtc.android.chess.services.GameApi;
 public class ImportService extends Service {
     private static final String TAG = "ImportService";
 
-    public static final String IMPORT_MODE = "import_mode";
     public static final int IMPORT_PUZZLES = 1;
     public static final int IMPORT_GAMES = 2;
     public static final int IMPORT_PRACTICE = 3;
@@ -30,9 +29,15 @@ public class ImportService extends Service {
     public static final int IMPORT_DATABASE = 5;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
-    private PGNProcessor _processor; // @TODO could be multiple
+    private PuzzleImportProcessor puzzleImportProcessor = null;
+    private GameImportProcessor gameImportProcessor = null;
+    private PracticeImportProcessor practiceImportProcessor = null;
+    private OpeningImportProcessor openingImportProcessor = null;
+    private PGNDbProcessor pgnDbProcessor = null;
+
     private ImportApi importApi;
     private final IBinder mBinder = new ImportService.LocalBinder();
+    private Handler updateHandler = new ImportService.ThreadMessageHandler(this);
 
     public void addListener(ImportListener listener) {
         this.listeners.add(listener);
@@ -51,24 +56,19 @@ public class ImportService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "Received start id " + startId + ": " + intent);
+        return START_STICKY;
+    }
 
-        if (intent == null) {
-            return START_STICKY;
-        }
-        final Uri uri = intent.getData();
-        Bundle extras = intent.getExtras();
-
-        final int mode = extras.getInt(IMPORT_MODE);
-        Handler updateHandler = new ImportService.ThreadMessageHandler(this);
-
+    public void startImport(final Uri uri, final int mode) {
         Log.d(TAG, "mode " + mode);
 
         importApi = new ImportApi();
 
         switch (mode) {
             case IMPORT_PUZZLES:
-                _processor = new PuzzleImportProcessor(mode, updateHandler, importApi, getContentResolver());
-
+                if (puzzleImportProcessor == null) {
+                    puzzleImportProcessor = new PuzzleImportProcessor(mode, updateHandler, importApi, getContentResolver());
+                }
                 InputStream isPuzzles;
                 try {
                     if (uri == null) {
@@ -76,33 +76,35 @@ public class ImportService extends Service {
                     } else {
                         isPuzzles = getContentResolver().openInputStream(uri);
                     }
-                    _processor.processPGNFile(isPuzzles);
+                    puzzleImportProcessor.processPGNFile(isPuzzles);
                 } catch (IOException e) {
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode);
-                    _processor = null;
                 }
 
                 break;
 
             case IMPORT_GAMES:
                 if (uri != null) {
-                    _processor = new GameImportProcessor(mode, updateHandler, importApi, getContentResolver());
+                    if (gameImportProcessor == null) {
+                        gameImportProcessor = new GameImportProcessor(mode, updateHandler, importApi, getContentResolver());
+                    }
                     try {
                         InputStream isGames = getContentResolver().openInputStream(uri);
                         if (uri.getPath().lastIndexOf(".zip") > 0) {
-                            _processor.processZipFile(isGames);
+                            gameImportProcessor.processZipFile(isGames);
                         } else {
-                            _processor.processPGNFile(isGames);
+                            gameImportProcessor.processPGNFile(isGames);
                         }
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
                         dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode);
-                        _processor = null;
                     }
                 }
                 break;
             case IMPORT_PRACTICE:
-                _processor = new PracticeImportProcessor(mode, updateHandler, importApi, getContentResolver());
+                if (practiceImportProcessor == null) {
+                    practiceImportProcessor = new PracticeImportProcessor(mode, updateHandler, importApi, getContentResolver());
+                }
                 try {
                     InputStream isPractice;
                     if (uri == null) {
@@ -110,51 +112,62 @@ public class ImportService extends Service {
                     } else {
                         isPractice = getContentResolver().openInputStream(uri);
                     }
-                    _processor.processPGNFile(isPractice);
+                    practiceImportProcessor.processPGNFile(isPractice);
                 } catch (IOException e) {
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode);
-                    _processor = null;
                 }
                 break;
             case IMPORT_OPENINGS:
                 if (uri != null) {
-                    _processor = new OpeningImportProcessor(mode, updateHandler, importApi);
+                    if (openingImportProcessor == null) {
+                        openingImportProcessor = new OpeningImportProcessor(mode, updateHandler, importApi);
+                    }
                     try {
                         InputStream isOpenings = getContentResolver().openInputStream(uri);
-                        _processor.processPGNFile(isOpenings);
+                        openingImportProcessor.processPGNFile(isOpenings);
 
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
                         dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode);
-                        _processor = null;
                     }
                 }
                 break;
             case IMPORT_DATABASE:
                 if (uri != null) {
-                    _processor = new PGNDbProcessor(mode, updateHandler, importApi);
+                    if (pgnDbProcessor == null) {
+                        pgnDbProcessor = new PGNDbProcessor(mode, updateHandler, importApi);
+                    }
                     try {
                         InputStream isDatabase = getContentResolver().openInputStream(uri);
-                        _processor.processPGNFile(isDatabase);
+                        pgnDbProcessor.processPGNFile(isDatabase);
 
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
                         dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode);
-                        _processor = null;
                     }
                 }
                 break;
         }
-
-        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy");
 
-        if (_processor != null) {
-            _processor.stopProcessing();
+        if (puzzleImportProcessor != null) {
+            puzzleImportProcessor.stopProcessing();
+        }
+        if (gameImportProcessor != null) {
+            gameImportProcessor.stopProcessing();
+        }
+        if (practiceImportProcessor != null) {
+            practiceImportProcessor.stopProcessing();
+        }
+        if (openingImportProcessor != null) {
+            openingImportProcessor.stopProcessing();
+        }
+        if (pgnDbProcessor != null) {
+            pgnDbProcessor.stopProcessing();
         }
     }
 
@@ -174,10 +187,7 @@ public class ImportService extends Service {
         for (ImportListener listener : listeners) {
             switch (what) {
                 case PGNProcessor.MSG_PROCESSED_PGN:
-                    listener.OnImportSuccess(mode);
-                    break;
-                case PGNProcessor.MSG_FAILED_PGN:
-                    listener.OnImportFail(mode);
+                    listener.OnImportProgress(mode);
                     break;
                 case PGNProcessor.MSG_FINISHED:
                     listener.OnImportFinished(mode);
