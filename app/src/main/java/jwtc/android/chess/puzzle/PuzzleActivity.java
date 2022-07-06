@@ -21,12 +21,13 @@ import android.widget.ViewSwitcher;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportListener;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
-public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, ImportListener {
+public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener {
     private static final String TAG = "PuzzleActivity";
     private Cursor _cursor = null;
     private SeekBar _seekBar;
@@ -35,7 +36,6 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     private ImageButton _butPrev, _butNext;
     private ImageView _imgStatus;
     private int currentPosition, totalPuzzles;
-    private ImportService importService;
     private TableLayout layoutTurn;
     private ViewSwitcher switchRoot;
 
@@ -62,24 +62,6 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         return false;
     }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.i(TAG, "onServiceConnected");
-            importService = ((ImportService.LocalBinder)service).getService();
-            importService.addListener(PuzzleActivity.this);
-
-            if (totalPuzzles == 0) {
-                switchRoot.setDisplayedChild(1);
-                importService.startImport(null, ImportService.IMPORT_PUZZLES);
-            }
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            importService = null;
-            Log.i(TAG, "onServiceDisconnected");
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -136,32 +118,6 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         super.onResume();
     }
 
-    @Override
-    protected void onStart() {
-        Log.i(TAG, "onStart");
-        super.onStart();
-
-        if (importService == null) {
-            if (!bindService(new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
-                doToast("Could not import puzzle set");
-            }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.i(TAG, "onDestroy");
-
-        if (importService != null) {
-            importService.removeListener(this);
-        }
-
-        unbindService(mConnection);
-        importService = null;
-
-        super.onDestroy();
-    }
-
     protected void loadPuzzles() {
         Log.i(TAG, "loadPuzzles");
 
@@ -187,6 +143,11 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
                 _seekBar.setMax(totalPuzzles - 1);
                 startPuzzle();
+            } else {
+                Intent intent = new Intent();
+                intent.setClass(PuzzleActivity.this, ImportActivity.class);
+                intent.putExtra("mode", ImportService.IMPORT_PUZZLES);
+                startActivityForResult(intent, ImportService.IMPORT_PUZZLES);
             }
         } else {
             Log.d(TAG, "Cursor is null");
@@ -262,26 +223,5 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
-    }
-
-    @Override
-    public void OnImportStarted(int mode) {
-        Log.d(TAG, "OnImportStarted");
-    }
-
-    @Override
-    public void OnImportProgress(int mode) {
-        Log.d(TAG, "OnImportProgress");
-    }
-
-    @Override
-    public void OnImportFinished(int mode) {
-        Log.d(TAG, "OnImportFinished");
-        loadPuzzles();
-    }
-
-    @Override
-    public void OnImportFatalError(int mode) {
-        Log.d(TAG, "OnImportFatalError");
     }
 }

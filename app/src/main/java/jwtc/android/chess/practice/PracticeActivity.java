@@ -26,12 +26,13 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
+import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportListener;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
-public class PracticeActivity extends ChessBoardActivity implements ImportListener {
+public class PracticeActivity extends ChessBoardActivity {
     private static final String TAG = "PracticeActivity";
 
     private TextView tvPracticeMove, tvPracticeTime, tvPracticeAvgTime;
@@ -44,7 +45,6 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
     private ViewSwitcher switchTurn, switchRoot;
     private ImageView imgStatus;
     private boolean isPlaying;
-    private ImportService importService = null;
     private TableLayout layoutTurn;
 
     protected Handler m_timerHandler = new Handler() {
@@ -56,23 +56,7 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
 
     };
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.i(TAG, "onServiceConnected");
-            importService = ((ImportService.LocalBinder)service).getService();
-            importService.addListener(PracticeActivity.this);
 
-            if (totalPuzzles == 0) {
-                importService.startImport(null, ImportService.IMPORT_PRACTICE);
-                switchRoot.setDisplayedChild(1);
-            }
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            importService = null;
-            Log.i(TAG, "onServiceDisconnected");
-        }
-    };
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -181,36 +165,11 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
         timer = null;
         isPlaying = false;
 
-
         editor.putInt("practicePos", currentPos);
         editor.putInt("practiceTicks", ticks);
     }
 
-    @Override
-    protected void onStart() {
-        Log.i(TAG, "onStart");
-        super.onStart();
 
-        if (importService == null) {
-            if (!bindService(new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
-                doToast("Could not import practice set");
-            }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.i(TAG, "onDestroy");
-
-        if (importService != null) {
-            importService.removeListener(this);
-        }
-
-        unbindService(mConnection);
-        importService = null;
-
-        super.onDestroy();
-    }
 
     protected void loadPuzzles() {
         SharedPreferences prefs = getPrefs();
@@ -232,6 +191,11 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
                     currentPos = 0;
                 }
                 startPuzzle();
+            } else {
+                Intent intent = new Intent();
+                intent.setClass(PracticeActivity.this, ImportActivity.class);
+                intent.putExtra("mode", ImportService.IMPORT_PRACTICE);
+                startActivityForResult(intent, ImportService.IMPORT_PRACTICE);
             }
         }
     }
@@ -274,27 +238,6 @@ public class PracticeActivity extends ChessBoardActivity implements ImportListen
 
     public void setMessage(int res) {
         tvPracticeMove.setText(res);
-    }
-
-    @Override
-    public void OnImportStarted(int mode) {
-        Log.d(TAG, "OnImportStarted");
-    }
-
-    @Override
-    public void OnImportProgress(int mode) {
-        Log.d(TAG, "OnImportProgress");
-    }
-
-    @Override
-    public void OnImportFinished(int mode) {
-        Log.d(TAG, "OnImportFinished");
-        loadPuzzles();
-    }
-
-    @Override
-    public void OnImportFatalError(int mode) {
-        Log.d(TAG, "OnImportFatalError");
     }
 
     protected void scheduleTimer() {

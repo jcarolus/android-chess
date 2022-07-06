@@ -15,7 +15,7 @@ public abstract class PGNProcessor {
 
     protected Handler m_threadUpdateHandler;
     protected Thread m_thread = null;
-    protected int mode;
+    protected int mode, successCount, failCount;
 
     public static final int MSG_STARTED = 1;
     public static final int MSG_PROCESSED_PGN = 2;
@@ -25,6 +25,8 @@ public abstract class PGNProcessor {
 
     PGNProcessor(int mode, Handler updateHandler) {
         this.mode = mode;
+        this.successCount = 0;
+        this.failCount = 0;
         this.m_threadUpdateHandler = updateHandler;
     }
 
@@ -114,7 +116,13 @@ public abstract class PGNProcessor {
                 break;
             s = sb.substring(pos1, pos2);
 
-            sendMessage(processPGN(s) ? MSG_PROCESSED_PGN : MSG_FAILED_PGN);
+            if (processPGN(s)) {
+                successCount++;
+                sendMessage(MSG_PROCESSED_PGN);
+            } else {
+                failCount++;
+                sendMessage(MSG_FAILED_PGN);
+            }
 
             sb.delete(0, pos2);
 
@@ -126,6 +134,8 @@ public abstract class PGNProcessor {
         Message m = new Message();
         Bundle data = new Bundle();
         data.putInt("mode", mode);
+        data.putInt("successCount", successCount);
+        data.putInt("failCount", failCount);
         m.what = what;
 
         m_threadUpdateHandler.sendMessage(m);

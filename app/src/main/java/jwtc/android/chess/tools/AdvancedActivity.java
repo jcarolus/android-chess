@@ -38,19 +38,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class pgntool extends AppCompatActivity {
+public class AdvancedActivity extends AppCompatActivity {
 
-    public static final String TAG = "pgntool";
-
-    protected static final int MODE_IMPORT = 1;
-    protected static final int MODE_DB_IMPORT = 2;
-    protected static final int MODE_DB_POINT = 3;
-    protected static final int MODE_UCI_INSTALL = 4;
-    protected static final int MODE_UCI_DB_INSTALL = 5;
-    protected static final int MODE_CREATE_PRACTICE = 6;
-    protected static final int MODE_IMPORT_PRACTICE = 7;
-    protected static final int MODE_IMPORT_PUZZLE = 8;
-    protected static final int MODE_IMPORT_OPENINGDATABASE = 9;
+    public static final String TAG = "AdvancedActivity";
     protected static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     protected static final String EXTRA_MODE = "jwtc.android.chess.tools.Mode";
@@ -77,7 +67,7 @@ public class pgntool extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-                if (false == pgntool.this.hasPermission()) {
+                if (false == AdvancedActivity.this.hasPermission()) {
                     return;
                 }
 
@@ -87,18 +77,18 @@ public class pgntool extends AppCompatActivity {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, MODE_IMPORT);
+                    startActivityForResult(i, ImportService.IMPORT_GAMES);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_create_db_explanation))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, MODE_DB_IMPORT);
+                    startActivityForResult(i, ImportService.IMPORT_DATABASE);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_point_db_explanation))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, MODE_DB_POINT);
+                    startActivityForResult(i, ImportService.DB_POINT);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_install_uci_engine))) {
 
                     // install engine via open chess engine interface
@@ -109,7 +99,7 @@ public class pgntool extends AppCompatActivity {
                         if (engines.size() > 0) {
 
                             ArrayList<String> arrList = new ArrayList<String>();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
 
                             for (int i = 0; i < engines.size(); i++) {
                                 arrList.add(engines.get(i).getName());
@@ -124,7 +114,7 @@ public class pgntool extends AppCompatActivity {
                                     Log.i("engines", sEngine);
 
                                     try {
-                                        selectedEngine.copyToFiles(pgntool.this.getContentResolver(), pgntool.this.getFilesDir());
+                                        selectedEngine.copyToFiles(AdvancedActivity.this.getContentResolver(), AdvancedActivity.this.getFilesDir());
                                         UCIWrapper.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/*");
 
                                         SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
@@ -144,7 +134,7 @@ public class pgntool extends AppCompatActivity {
                         } else {
 
                             Log.i("engines", "No engines found");
-                            AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
                             builder.setTitle(getString(R.string.pgntool_uci_engines_not_found));
 
                             builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
@@ -162,13 +152,13 @@ public class pgntool extends AppCompatActivity {
 
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
                     builder.setTitle(getString(R.string.pgntool_confirm_delete));
 
                     builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            pgntool.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
+                            AdvancedActivity.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
                             doToast(getString(R.string.pgntool_deleted));
                         }
                     });
@@ -183,14 +173,14 @@ public class pgntool extends AppCompatActivity {
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_help))) {
                     Intent i = new Intent();
-                    i.setClass(pgntool.this, HtmlActivity.class);
+                    i.setClass(AdvancedActivity.this, HtmlActivity.class);
                     i.putExtra(HtmlActivity.HELP_MODE, "help_pgntool");
                     startActivity(i);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_point_uci_engine))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, MODE_UCI_INSTALL);
+                    startActivityForResult(i, ImportService.UCI_INSTALL);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_engine))) {
                     SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
@@ -213,7 +203,7 @@ public class pgntool extends AppCompatActivity {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, MODE_UCI_DB_INSTALL);
+                    startActivityForResult(i, ImportService.UCI_DB_INSTALL);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_database))) {
                     SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
@@ -234,7 +224,7 @@ public class pgntool extends AppCompatActivity {
                     }
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(pgntool.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
                     builder.setTitle(getString(R.string.pgntool_confirm_practice_reset));
 
                     builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
@@ -265,24 +255,19 @@ public class pgntool extends AppCompatActivity {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, MODE_IMPORT_PRACTICE);
+                    startActivityForResult(i, ImportService.IMPORT_PRACTICE);
 
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_create_practice_explanation))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    startActivityForResult(i, MODE_IMPORT_PRACTICE);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_puzzle))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, MODE_IMPORT_PUZZLE);
+                    startActivityForResult(i, ImportService.IMPORT_PUZZLES);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_opening))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    startActivityForResult(i, MODE_IMPORT_OPENINGDATABASE);
+//                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//                    i.addCategory(Intent.CATEGORY_OPENABLE);
+//                    i.setType("*/*");
+//                    startActivityForResult(i, ImportService.);
                 }
                 //
             }
@@ -311,8 +296,8 @@ public class pgntool extends AppCompatActivity {
 
                 if (uri != null) {
                     Intent myIntent = new Intent();
-                    myIntent.putExtra(pgntool.EXTRA_MODE, requestCode);
-                    myIntent.setClass(pgntool.this, importactivity.class);
+                    myIntent.putExtra(AdvancedActivity.EXTRA_MODE, requestCode);
+                    myIntent.setClass(AdvancedActivity.this, ImportActivity.class);
                     myIntent.setData(uri);
 
                     startActivity(myIntent);
