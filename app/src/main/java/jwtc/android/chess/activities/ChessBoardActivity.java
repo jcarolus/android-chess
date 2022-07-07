@@ -446,7 +446,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 //                        Log.i(TAG, "onDrag EXITED" + pos);
                         view.setSelected(false);
                         break;
-                    case DragEvent.ACTION_DROP:
+                    case DragEvent.ACTION_DROP: {
 //                        Log.i(TAG, "onDrag DROP " + pos);
                         // Dropped, reassign View to ViewGroup
                         View fromView = (View) event.getLocalState();
@@ -473,10 +473,23 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                                 lastPosition = -1;
                             }
                             ChessBoardActivity.this.updateSelectedSquares();
-                            fromView.setVisibility(View.VISIBLE);
                         }
+                        fromView.setVisibility(View.VISIBLE);
 
                         break;
+                    }
+                    case DragEvent.ACTION_DRAG_ENDED: {
+                        final View droppedView = (View) event.getLocalState();
+                        if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
+                            droppedView.post(new Runnable(){
+                                @Override
+                                public void run() {
+                                    droppedView.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                        break;
+                    }
                     default:
                         break;
                 }
@@ -500,7 +513,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     view.setVisibility(View.INVISIBLE);
                     return true;
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-//                    Log.i(TAG, "onTouch UP " + pos);
+//                    Log.i(TAG, "onTouch UP");
 
                     view.setVisibility(View.VISIBLE);
                     view.invalidate();

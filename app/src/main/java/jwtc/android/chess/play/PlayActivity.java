@@ -75,7 +75,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     @Override
     public boolean requestMove(final int from, final int to) {
         if (jni.getTurn() == myTurn || vsCPU == false) {
-            return super.requestMove(from, to);
+
+            if (super.requestMove(from, to)) {
+                return true;
+            }
         } else {
 //            if (requestMoveFrom != -1 && requestMoveTo != -1) {
 //                highlightedPositions.clear();
@@ -86,6 +89,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 //                highlightedPositions.add(to);
 //            }
         }
+        rebuildBoard();
         return false;
     }
 

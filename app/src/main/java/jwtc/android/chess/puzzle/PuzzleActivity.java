@@ -1,43 +1,35 @@
 package jwtc.android.chess.puzzle;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.tools.ImportActivity;
-import jwtc.android.chess.tools.ImportListener;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
 public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener {
     private static final String TAG = "PuzzleActivity";
-    private Cursor _cursor = null;
-    private SeekBar _seekBar;
-    private TextView _tvPuzzleText;
-    private ImageView _imgTurn;
-    private ImageButton _butPrev, _butNext;
-    private ImageView _imgStatus;
+    private Cursor cursor = null;
+    private SeekBar seekBar;
+    private TextView tvPuzzleText;
+    private ImageView imgTurn;
+    private ImageButton butPrev, butNext;
+    private ImageView imgStatus;
     private int currentPosition, totalPuzzles;
     private TableLayout layoutTurn;
-    private ViewSwitcher switchRoot;
 
     @Override
     public boolean requestMove(int from, int to) {
@@ -51,13 +43,15 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         if (Move.equalPositions(move, theMove)) {
             gameApi.jumptoMove(jni.getNumBoard());
-            _imgStatus.setImageResource(R.drawable.indicator_ok);
+            imgStatus.setImageResource(R.drawable.indicator_ok);
+            setMessage("");
 
             return true;
         } else {
             // check for illegal move
             setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? getString(R.string.puzzle_not_correct_move) : getString(R.string.puzzle_invalid_move)));
-            _imgStatus.setImageResource(R.drawable.indicator_error);
+            imgStatus.setImageResource(R.drawable.indicator_error);
+            rebuildBoard();
         }
 
         return false;
@@ -73,21 +67,20 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         afterCreate();
 
-        switchRoot = findViewById(R.id.ViewSwitcherRoot);
         layoutTurn = findViewById(R.id.LayoutTurn);
 
         currentPosition = 0;
         totalPuzzles = 0;
-        _seekBar = findViewById(R.id.SeekBarPuzzle);
-        _seekBar.setOnSeekBarChangeListener(this);
+        seekBar = findViewById(R.id.SeekBarPuzzle);
+        seekBar.setOnSeekBarChangeListener(this);
 
-        _tvPuzzleText = findViewById(R.id.TextViewPuzzleText);
-        _imgTurn = findViewById(R.id.ImageTurn);
+        tvPuzzleText = findViewById(R.id.TextViewPuzzleText);
+        imgTurn = findViewById(R.id.ImageTurn);
 
-        _imgStatus = findViewById(R.id.ImageStatus);
+        imgStatus = findViewById(R.id.ImageStatus);
 
-        _butPrev = (ImageButton) findViewById(R.id.ButtonPuzzlePrevious);
-        _butPrev.setOnClickListener(new View.OnClickListener() {
+        butPrev = (ImageButton) findViewById(R.id.ButtonPuzzlePrevious);
+        butPrev.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 if (currentPosition > 0) {
                     currentPosition--;
@@ -96,8 +89,8 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
             }
         });
 
-        _butNext = (ImageButton) findViewById(R.id.ButtonPuzzleNext);
-        _butNext.setOnClickListener(new View.OnClickListener() {
+        butNext = (ImageButton) findViewById(R.id.ButtonPuzzleNext);
+        butNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 if (currentPosition + 1 < totalPuzzles) {
                     currentPosition++;
@@ -112,6 +105,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         Log.i(TAG, "onResume");
 
         layoutTurn.setBackgroundColor(ColorSchemes.getDark());
+        tvPuzzleText.setTextColor(ColorSchemes.getHightlightColor());
 
         loadPuzzles();
 
@@ -123,25 +117,23 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         SharedPreferences prefs = getPrefs();
 
-        _cursor = managedQuery(MyPuzzleProvider.CONTENT_URI_PUZZLES, MyPuzzleProvider.COLUMNS, null, null, "");
+        cursor = managedQuery(MyPuzzleProvider.CONTENT_URI_PUZZLES, MyPuzzleProvider.COLUMNS, null, null, "");
 
         currentPosition = prefs.getInt("puzzlePos", 0);
 
         Log.d(TAG, "currentPosition " + currentPosition);
 
-        if (_cursor != null) {
-            totalPuzzles= _cursor.getCount();
+        if (cursor != null) {
+            totalPuzzles= cursor.getCount();
 
             Log.d(TAG, "totalPuzzles " + totalPuzzles);
 
             if (totalPuzzles > 0) {
-                switchRoot.setDisplayedChild(0);
-
                 if (totalPuzzles < currentPosition + 1) {
                     currentPosition = 0;
                 }
 
-                _seekBar.setMax(totalPuzzles - 1);
+                seekBar.setMax(totalPuzzles - 1);
                 startPuzzle();
             } else {
                 Intent intent = new Intent();
@@ -156,8 +148,8 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
     protected void startPuzzle() {
         Log.d(TAG, "startPuzzle " + currentPosition);
-        _cursor.moveToPosition(currentPosition);
-        String sPGN = _cursor.getString(_cursor.getColumnIndex(MyPuzzleProvider.COL_PGN));
+        cursor.moveToPosition(currentPosition);
+        String sPGN = cursor.getString(cursor.getColumnIndex(MyPuzzleProvider.COL_PGN));
 
         Log.d(TAG, "startPuzzle " + sPGN);
 
@@ -167,10 +159,10 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         final int turn = jni.getTurn();
         chessBoardView.setRotated(turn == BoardConstants.BLACK);
 
-        _imgTurn.setImageResource((turn == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack));
+        imgTurn.setImageResource((turn == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack));
 
-        if (_seekBar != null) {
-            _seekBar.setProgress(currentPosition);
+        if (seekBar != null) {
+            seekBar.setProgress(currentPosition);
         }
 
         String sWhite = gameApi.getWhite();
@@ -191,7 +183,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 //            sWhite += ", ";
 //        }
 
-        _tvPuzzleText.setText("# " + (currentPosition + 1) + " - " + sWhite /*+ sDate*/); // + "\n\n" + _mapPGNHead.get("Event") + ", " + _mapPGNHead.get("Date").replace(".??.??", ""));
+        tvPuzzleText.setText("# " + (currentPosition + 1) + " - " + sWhite /*+ sDate*/); // + "\n\n" + _mapPGNHead.get("Event") + ", " + _mapPGNHead.get("Date").replace(".??.??", ""));
 
     }
 
@@ -200,11 +192,11 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     }
 
     public void setMessage(String sMsg) {
-        _tvPuzzleText.setText(sMsg);
+        tvPuzzleText.setText(sMsg);
     }
 
     public void setMessage(int res) {
-        _tvPuzzleText.setText(res);
+        tvPuzzleText.setText(res);
     }
 
     @Override

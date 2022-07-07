@@ -42,7 +42,7 @@ public class PracticeActivity extends ChessBoardActivity {
     private Cursor cursor;
     private Timer timer;
     private int ticks, playTicks;
-    private ViewSwitcher switchTurn, switchRoot;
+    private ViewSwitcher switchTurn;
     private ImageView imgStatus;
     private boolean isPlaying;
     private TableLayout layoutTurn;
@@ -62,6 +62,7 @@ public class PracticeActivity extends ChessBoardActivity {
     public boolean requestMove(final int from, final int to) {
         if (gameApi.getPGNSize() <= jni.getNumBoard() - 1) {
             setMessage("Finished position");
+            rebuildBoard();
             return false;
         }
         int move = gameApi.getPGNEntries().get(jni.getNumBoard() - 1)._move;
@@ -85,6 +86,7 @@ public class PracticeActivity extends ChessBoardActivity {
         } else {
             imgStatus.setImageResource(R.drawable.indicator_error);
             setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? " is not expected" : " is an illegal move"));
+            rebuildBoard();
         }
         return false;
     }
@@ -97,8 +99,6 @@ public class PracticeActivity extends ChessBoardActivity {
         gameApi = new PracticeApi();
 
         afterCreate();
-
-        switchRoot = findViewById(R.id.ViewSwitcherRoot);
 
         layoutTurn = findViewById(R.id.LayoutTurn);
         isPlaying = false;
@@ -148,6 +148,8 @@ public class PracticeActivity extends ChessBoardActivity {
         Log.i(TAG, "onResume");
 
         layoutTurn.setBackgroundColor(ColorSchemes.getDark());
+        tvPracticeTime.setTextColor(ColorSchemes.getHightlightColor());
+        tvPracticeMove.setTextColor(ColorSchemes.getHightlightColor());
 
         isPlaying = false;
         scheduleTimer();
@@ -185,8 +187,6 @@ public class PracticeActivity extends ChessBoardActivity {
             totalPuzzles = cursor.getCount();
 
             if (totalPuzzles > 0) {
-                switchRoot.setDisplayedChild(0);
-
                 if (currentPos + 1 >= totalPuzzles) {
                     currentPos = 0;
                 }

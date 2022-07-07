@@ -273,7 +273,7 @@ public class ImportService extends Service {
         }
     }
 
-    protected void dispatchEvent(int what, int mode, int successCount, int failCount) {
+    protected void dispatchEvent(final int what, final int mode, final int successCount, final int failCount) {
         for (ImportListener listener : listeners) {
             switch (what) {
                 case PGNProcessor.MSG_PROCESSED_PGN:

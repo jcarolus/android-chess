@@ -787,7 +787,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         ICSApi icsApi = (ICSApi) gameApi;
         if (icsApi.getMyTurn() == icsApi.getTurn()) {
-
+            // @TODO is playing/examining
             // if (jni.pieceAt(BoardConstants.WHITE, from)
             String sMove = Pos.toString(from) + "-" + Pos.toString(to);
             sendString(sMove);
@@ -1437,7 +1437,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnIllegalMove() {
-
+        rebuildBoard();
+        highlightedPositions.clear();
+        updateSelectedSquares();
     }
 
     @Override

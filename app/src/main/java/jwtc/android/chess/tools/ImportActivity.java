@@ -136,8 +136,8 @@ public class ImportActivity extends AppCompatActivity implements ImportListener 
 
     @Override
     public void OnImportProgress(int mode, int succeeded, int failed) {
-        _tvWorkCnt.setText("Processed " + succeeded);
-        _tvWorkCntFail.setText("Failed " + failed);
+        _tvWorkCnt.setText("" + succeeded);
+        _tvWorkCntFail.setText("" + failed);
     }
 
     @Override

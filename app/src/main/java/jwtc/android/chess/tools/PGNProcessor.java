@@ -137,6 +137,7 @@ public abstract class PGNProcessor {
         data.putInt("successCount", successCount);
         data.putInt("failCount", failCount);
         m.what = what;
+        m.setData(data);
 
         m_threadUpdateHandler.sendMessage(m);
     }

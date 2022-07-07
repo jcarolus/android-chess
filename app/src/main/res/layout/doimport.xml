@@ -3,36 +3,42 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="10px"
-
-    >
+    android:gravity="center"
+    android:padding="16dip">
 
     <TextView
         android:id="@+id/TextViewDoImport"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="12px"
-        android:paddingLeft="20px" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/TextViewDoImportCnt"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="12px"
-        android:paddingLeft="20px" />
-
-    <TextView
-        android:id="@+id/TextViewDoImportCntFail"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="12px"
-        android:paddingLeft="20px" />
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TableRow android:layout_margin="8dip">
+            <TextView android:text="Added"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/TextViewDoImportCnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100dip" />
+        </TableRow>
+        <TableRow android:layout_margin="8dip">
+            <TextView android:text="Ignored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/TextViewDoImportCntFail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100dip" />
+        </TableRow>
+    </TableLayout>
 
     <ProgressBar
         android:id="@+id/ProgressDoImport"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
-
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
