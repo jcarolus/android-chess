@@ -30,6 +30,13 @@
             android:key="moveToSpeech"
             android:defaultValue="false"/>
 
+        <CheckBoxPreference
+            android:title="@string/pref_eco"
+            android:defaultValue="true"
+            android:summary="@string/pref_eco_desc"
+            android:key="showECO"
+            />
+
     </PreferenceCategory>
 
 

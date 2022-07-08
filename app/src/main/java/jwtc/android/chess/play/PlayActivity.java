@@ -39,6 +39,7 @@ import jwtc.android.chess.engine.UCIEngine;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.services.ClockListener;
+import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.LocalClockApi;
 import jwtc.android.chess.views.CapturedCountView;
@@ -61,6 +62,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
     private LocalClockApi localClock = new LocalClockApi();
     private EngineApi myEngine;
+    private EcoService ecoService = new EcoService();
     private long lGameID;
     private SeekBar seekBar;
     private ProgressBar progressBarEngine;
@@ -254,7 +256,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         textViewOpponentClock.setTextColor(ColorSchemes.getHightlightColor());
         textViewMyClock.setTextColor(ColorSchemes.getHightlightColor());
 
-
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             lGameID = 0;
             Log.i("onResume", "action send with type " + type);
@@ -305,6 +306,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         updateGameSettingsByPrefs();
         updateClockByPrefs();
+
+        if (prefs.getBoolean("showECO", true)) {
+            ecoService.load(getAssets());
+        }
     }
 
 
@@ -477,6 +482,11 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         updateSeekBar();
         updateTurnSwitchers();
         updatePlayers();
+
+        String sEco = ecoService.getEco(gameApi.getPGNEntries());
+        if (sEco != null) {
+            doToast(sEco);
+        }
     }
 
     protected void updateSeekBar() {
