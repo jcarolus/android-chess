@@ -3,6 +3,7 @@ package jwtc.android.chess.play;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -55,6 +56,21 @@ public class GameSettingsDialog extends ResultDialog {
 
         radioTime.setChecked(levelMode == EngineApi.LEVEL_TIME);
         radioPly.setChecked(levelMode == EngineApi.LEVEL_PLY);
+
+        // radio group
+        radioTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                radioPly.setChecked(!radioTime.isChecked());
+            }
+        });
+
+        radioPly.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                radioTime.setChecked(!radioPly.isChecked());
+            }
+        });
 
         spinnerLevelTime.setSelection(levelTime - 1);
         spinnerLevelPly.setSelection(levelPly - 1);

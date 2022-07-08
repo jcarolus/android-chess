@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -25,7 +26,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     private Cursor cursor = null;
     private SeekBar seekBar;
     private TextView tvPuzzleText;
-    private ImageView imgTurn;
+    private ViewSwitcher switchTurn;
     private ImageButton butPrev, butNext;
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles;
@@ -75,7 +76,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         seekBar.setOnSeekBarChangeListener(this);
 
         tvPuzzleText = findViewById(R.id.TextViewPuzzleText);
-        imgTurn = findViewById(R.id.ImageTurn);
+        switchTurn = findViewById(R.id.ImageTurn);
 
         imgStatus = findViewById(R.id.ImageStatus);
 
@@ -159,7 +160,11 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         final int turn = jni.getTurn();
         chessBoardView.setRotated(turn == BoardConstants.BLACK);
 
-        imgTurn.setImageResource((turn == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack));
+        if (turn == BoardConstants.BLACK) {
+            switchTurn.setDisplayedChild(0);
+        } else {
+            switchTurn.setDisplayedChild(1);
+        }
 
         if (seekBar != null) {
             seekBar.setProgress(currentPosition);

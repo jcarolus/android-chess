@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.board.BoardConstants;
 
 public class ChessBoardView extends ViewGroup {
@@ -45,9 +46,29 @@ public class ChessBoardView extends ViewGroup {
     }
 
     public void setRotated(boolean rotated) {
+        ColorSchemes.isRotated = rotated;
         if (this.rotated != rotated) {
             this.rotated = rotated;
+            final int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                final View child = getChildAt(i);
+                if (child instanceof ChessSquareView) {
+                    // depends on rotated state, so invalidate
+                    child.invalidate();
+                }
+            }
+
             requestLayout();
+        }
+    }
+
+    public void invalidatePieces() {
+        final int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (child instanceof ChessPieceView) {
+                ((ChessPieceView)child).resetImageResource();
+            }
         }
     }
 

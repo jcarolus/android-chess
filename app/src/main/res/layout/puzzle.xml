@@ -22,13 +22,23 @@
         android:stretchColumns="1">
 
         <TableRow android:gravity="center_vertical">
-            <ImageView
+            <ViewSwitcher
                 android:id="@+id/ImageTurn"
-                android:src="@drawable/turnwhite"
-                android:layout_height="12dip"
-                android:layout_width="12dip"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
                 android:paddingLeft="8dip"
-                android:paddingRight="8dip" />
+                android:paddingRight="8dip">
+
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_width="12dip"
+                    android:layout_height="12dip" />
+
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+            </ViewSwitcher>
 
             <TextView
                 android:id="@+id/TextViewPuzzleText"

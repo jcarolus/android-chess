@@ -17,6 +17,15 @@ public class ChessPiecesStackView extends ViewGroup {
         super(context, attributeSet);
     }
 
+    public void invalidatePieces() {
+        final int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (child instanceof ChessPieceView) {
+                ((ChessPieceView)child).resetImageResource();
+            }
+        }
+    }
 
     /**
      * Any layout manager that doesn't scroll will want this.

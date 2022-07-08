@@ -6,7 +6,9 @@ import android.view.View;
 
 
 import androidx.appcompat.widget.AppCompatImageView;
+import jwtc.android.chess.R;
 import jwtc.android.chess.constants.PieceSets;
+import jwtc.chess.board.BoardConstants;
 
 public class ChessPieceView extends AppCompatImageView {
     private int color;
@@ -18,10 +20,11 @@ public class ChessPieceView extends AppCompatImageView {
         super(context);
         setFocusable(true);
 
-        setImageResource(PieceSets.PIECES[PieceSets.selectedSet][color][piece]);
         this.pos = pos;
         this.piece = piece;
         this.color = color;
+
+        setMyImageResource();
     }
 
     public int getPos() {
@@ -44,10 +47,10 @@ public class ChessPieceView extends AppCompatImageView {
     }
 
     public void promote(int piece) {
-        setImageResource(PieceSets.PIECES[PieceSets.selectedSet][color][piece]);
         this.piece = piece;
-        invalidate();
+        resetImageResource();
     }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -57,5 +60,20 @@ public class ChessPieceView extends AppCompatImageView {
         Log.d("Piece", "onMeasure" + widthSize);
 
         setMeasuredDimension(widthSize, widthSize);
+    }
+
+    public void resetImageResource() {
+        setMyImageResource();
+        invalidate();
+    }
+
+    protected void setMyImageResource() {
+        if (PieceSets.selectedBlindfoldMode == PieceSets.BLINDFOLD_SHOW_PIECES) {
+            setImageResource(PieceSets.PIECES[PieceSets.selectedSet][color][piece]);
+        } else if (PieceSets.selectedBlindfoldMode == PieceSets.BLINDFOLD_SHOW_PIECE_LOCATION) {
+            setImageResource(color == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack);
+        } else {
+            setImageResource(android.R.color.transparent);
+        }
     }
 }

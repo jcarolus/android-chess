@@ -1,12 +1,16 @@
 package jwtc.android.chess.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
 
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.chess.Pos;
 import jwtc.chess.board.ChessBoard;
 
 public class ChessSquareView extends View {
@@ -16,6 +20,7 @@ public class ChessSquareView extends View {
 
     private static Paint paint = new Paint();
     private static Paint highlightPaint = new Paint();
+    public static Bitmap bitmapPattern = null;
 
     public ChessSquareView(Context context, int pos) {
         super(context);
@@ -65,6 +70,40 @@ public class ChessSquareView extends View {
             paint.setColor(fieldColor == ChessBoard.WHITE ? ColorSchemes.getLight() : ColorSchemes.getDark());
         }
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
+
+        if (bitmapPattern != null) {
+            float scale = (float) getWidth() / bitmapPattern.getWidth();
+            Matrix matrixScale = new Matrix();
+            matrixScale.setScale(scale, scale);
+            canvas.drawBitmap(bitmapPattern, matrixScale, paint);
+        }
+
+        if (ColorSchemes.showCoords) {
+            String coord = "";
+            if (pos > 55) {
+                coord = Pos.colToString(pos).toUpperCase();
+            } else {
+                if (pos % 8 == 0) {
+                    coord = Pos.rowToString(pos);
+                }
+            }
+            if (coord.length() > 0) {
+                final boolean isRot = ColorSchemes.isRotated;
+                final int size = getHeight();
+                final int textSize = size > 60 ? ((int) (size) / 5) : 10;
+
+                paint.setColor(0x99ffffff);
+                canvas.drawRect(
+                        isRot ? size - textSize : 0,
+                        isRot ? 0 : size - textSize,
+                        isRot ? size : textSize,
+                        isRot ? textSize : size, paint);
+
+                paint.setColor(0x99000000);
+                paint.setTextSize(textSize - 4);
+                canvas.drawText(coord, isRot ? size - textSize + 4: 4, isRot ? textSize - 4 : size - 4, paint);
+            }
+        }
 
         if (highlighted) {
             int strokeWidth = getWidth() / 8;

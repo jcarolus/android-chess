@@ -31,6 +31,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.activities.GlobalPreferencesActivity;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
@@ -180,6 +181,41 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
 
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
+
+        ImageButton butBlindFoldShow = (ImageButton) findViewById(R.id.ButtonBlindfoldShow);
+        butBlindFoldShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
+                chessBoardView.invalidatePieces();
+                topPieces.setVisibility(View.VISIBLE);
+                bottomPieces.setVisibility(View.VISIBLE);
+                topPieces.invalidatePieces();
+                bottomPieces.invalidatePieces();
+            }
+        });
+
+        ImageButton butBlindFoldLocations = (ImageButton) findViewById(R.id.ButtonBlindfoldLocations);
+        butBlindFoldLocations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECE_LOCATION;
+                chessBoardView.invalidatePieces();
+                topPieces.setVisibility(View.INVISIBLE);
+                bottomPieces.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        ImageButton butBlindFoldHide = (ImageButton) findViewById(R.id.ButtonBlindfoldHide);
+        butBlindFoldHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
+                chessBoardView.invalidatePieces();
+                topPieces.setVisibility(View.INVISIBLE);
+                bottomPieces.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     @Override
@@ -355,8 +391,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void OnMove(int move) {
         super.OnMove(move);
 
+        final int from = Move.getFrom(move);
         final int to = Move.getTo(move);
         highlightedPositions.clear();
+        highlightedPositions.add(from);
         highlightedPositions.add(to);
 
         updateGUI();
@@ -371,9 +409,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         toggleEngineProgress(false);
 
         gameApi.move(move);
-
+        final int from = Move.getFrom(move);
         final int to = Move.getTo(move);
         highlightedPositions.clear();
+        highlightedPositions.add(from);
         highlightedPositions.add(to);
 
         updateGUI();
@@ -626,8 +665,11 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         int levelPly = prefs.getInt("levelPly", 2);
         int secs[] = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
 
-        myEngine.setMsecs(mode == EngineApi.LEVEL_TIME ? secs[levelTime] * 1000 : 0);
-        myEngine.setPly(mode == EngineApi.LEVEL_PLY ? levelPly : 0);
+        if (mode == EngineApi.LEVEL_TIME) {
+            myEngine.setMsecs(secs[levelTime] * 1000);
+        } else {
+            myEngine.setPly(levelPly);
+        }
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 

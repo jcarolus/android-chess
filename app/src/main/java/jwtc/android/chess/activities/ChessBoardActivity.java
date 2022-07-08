@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.speech.tts.TextToSpeech;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -179,6 +182,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
+        String sPat = prefs.getString("tileSet", "");
+        if (sPat.length() > 0) {
+            AssetManager assetManager = getAssets();
+            try {
+                ChessSquareView.bitmapPattern = BitmapFactory.decodeStream(assetManager.open("tiles/" + sPat + ".png"));
+            } catch (IOException ex) {
+                ChessSquareView.bitmapPattern = null;
+            }
+        } else {
+            ChessSquareView.bitmapPattern = null;
+        }
+        ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
+
         skipReturn = prefs.getBoolean("skipReturn", true);
         keyboardBuffer = "";
 
@@ -189,6 +205,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } catch (NumberFormatException ex) {
             Log.e(TAG, ex.getMessage());
         }
+
+        PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
 
         if (prefs.getBoolean("moveToSpeech", false)) {
             textToSpeech = new TextToSpeechApi(this, this);

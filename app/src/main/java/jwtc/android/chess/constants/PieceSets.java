@@ -11,7 +11,12 @@ public class PieceSets {
     public static final int LEIPZIG = 2;
     public static final int CALIFORNIA = 3;
 
+    public static final int BLINDFOLD_SHOW_PIECES = 0;
+    public static final int BLINDFOLD_HIDE_PIECES = 1;
+    public static final int BLINDFOLD_SHOW_PIECE_LOCATION = 2;
+
     public static int selectedSet = 0;
+    public static int selectedBlindfoldMode = 0;
 
     static {
         PIECES[ALPHA][ChessBoard.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_alpha_bp;

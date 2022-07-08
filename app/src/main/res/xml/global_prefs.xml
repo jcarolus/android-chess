@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <PreferenceCategory android:title="@string/enginepreferences">
-
-        <EditTextPreference
-            android:defaultValue="5"
-            android:dialogTitle="@string/pref_engine_seconds"
-            android:inputType="numberDecimal"
-            android:digits="0123456789"
-            android:key="pref_engine_seconds"
-            android:summary="@string/pref_engine_seconds_desc"
-            android:title="@string/pref_engine_seconds" />
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/boardprerences">
 
         <ListPreference

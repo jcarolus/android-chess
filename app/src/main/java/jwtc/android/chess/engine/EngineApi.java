@@ -67,11 +67,13 @@ public abstract class EngineApi {
     public void setMsecs(int msecs) {
         Log.d(TAG, "setMsecs " + msecs);
         this.msecs = msecs;
+        this.ply = 0;
     }
 
     public void setPly(int ply) {
         Log.d(TAG, "setPly " + ply);
         this.ply = ply;
+        this.msecs = 0;
     }
 
     public void addListener(EngineListener listener) {
