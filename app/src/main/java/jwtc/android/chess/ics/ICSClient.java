@@ -891,6 +891,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //        }
 
 
+        // @TODO
         String sTmp = prefs.getString("NotificationUri", null);
         if (sTmp == null) {
             _ringNotification = null;
@@ -898,7 +899,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             Uri tmpUri = Uri.parse(sTmp);
             _ringNotification = RingtoneManager.getRingtone(this, tmpUri);
         }
-
 
         addListeners();
         showLoginIfNotConnected();
@@ -988,7 +988,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
             Notification.Builder builder = new Notification.Builder(this);
             builder.setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.chess)
+                    .setSmallIcon(R.drawable.ic_logo)
                     .setWhen(System.currentTimeMillis())
                     .setAutoCancel(true)
                     .setLights(Color.CYAN, 100, 100)
@@ -1113,16 +1113,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 Log.i("onItemClick", "item " + m.get("text_name1"));
                 sendString("observe " + m.get("text_name1"));
                 sendString("refresh");
-//                get_view().setViewMode(ICSChessView.VIEW_WATCH);
-//                get_view().setGameNum(Integer.parseInt((String) m.get("nr")));
-//                switchToBoardView();
             }
         } else if (arg0 == _listStored) {
             if (mapStored.size() > arg2) {
                 HashMap<String, String> m = mapStored.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name_stored"));
                 sendString("match " + m.get("text_name_stored"));
-//                switchToBoardView();
             }
         } else if (arg0 == listMenu) {
             if (mapMenu.size() > arg2) {
@@ -1278,26 +1274,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         if (_ringNotification != null) {
             _ringNotification.play();
         }
-    }
-
-    // @TODO move to BaseActivity
-    public void vibration(int seq) {
-        try {
-            int v1, v2;
-            if (seq == 1) {
-                v1 = 200;    // increase
-                v2 = 500;
-            } else {
-                v1 = 500;    // decrease
-                v2 = 200;
-            }
-            long[] pattern = {500, v1, 100, v2};
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(pattern, -1);
-        } catch (Exception e) {
-            Log.e(TAG, "vibrator process error", e);
-        }
-
     }
 
     @Override

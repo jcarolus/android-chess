@@ -1,8 +1,11 @@
 package jwtc.android.chess.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -48,6 +51,25 @@ public class BaseActivity extends AppCompatActivity {
         t.show();
     }
 
+    // @TODO
+    public void vibration(int seq) {
+        try {
+            int v1, v2;
+            if (seq == 1) {
+                v1 = 200;    // increase
+                v2 = 500;
+            } else {
+                v1 = 500;    // decrease
+                v2 = 200;
+            }
+            long[] pattern = {500, v1, 100, v2};
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(pattern, -1);
+        } catch (Exception e) {
+            Log.e(TAG, "vibrator process error", e);
+        }
+
+    }
 
     /*
      public static void makeActionOverflowMenuShown(Activity activity) {

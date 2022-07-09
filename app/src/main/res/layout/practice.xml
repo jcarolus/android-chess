@@ -55,7 +55,7 @@
 
             <ImageView
                 android:id="@+id/ImageStatus"
-                android:src="@drawable/indicator_none"
+                android:src="@drawable/ic_check_none"
                 android:layout_height="48dip"
                 android:layout_width="38dip"
                 android:paddingLeft="8dip"

@@ -547,7 +547,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     // @TODO
-    protected void emailPGN() {
+    public void emailPGN() {
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 

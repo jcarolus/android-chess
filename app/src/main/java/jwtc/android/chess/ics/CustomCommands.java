@@ -148,7 +148,7 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
         MenuItem item1;
 
         item1 = menu.add(getString(R.string.menu_new_command));
-        item1.setIcon(R.drawable.content_new);
+        item1.setIcon(R.drawable.ic_plus);
 
         return true;
     }

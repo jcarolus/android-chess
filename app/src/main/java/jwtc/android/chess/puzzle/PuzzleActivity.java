@@ -44,14 +44,14 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         if (Move.equalPositions(move, theMove)) {
             gameApi.jumptoMove(jni.getNumBoard());
-            imgStatus.setImageResource(R.drawable.indicator_ok);
+            imgStatus.setImageResource(R.drawable.ic_check);
             setMessage("");
 
             return true;
         } else {
             // check for illegal move
             setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? getString(R.string.puzzle_not_correct_move) : getString(R.string.puzzle_invalid_move)));
-            imgStatus.setImageResource(R.drawable.indicator_error);
+            imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
             rebuildBoard();
         }
 

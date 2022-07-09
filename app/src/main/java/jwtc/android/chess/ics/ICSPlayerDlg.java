@@ -138,18 +138,18 @@ public class ICSPlayerDlg extends Dialog {
 
                 alertDialog.setView(input);
                 alertDialog.setOnKeyListener(new OnKeyListener() {
-                                                 @Override
-                                                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                                                     if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                                                         // set _sConsoleEditText for a match pattern
-                                                         _parent._sConsoleEditText = "smoves " + _opponentName + " " + input.getText();
-                                                         _parent.sendString("smoves " + _opponentName + " " + input.getText());
-                                                         alertDialog.dismiss();
-                                                         return true;
-                                                     }
-                                                     return false;
-                                                 }
-                                             }
+                         @Override
+                         public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                             if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                                 // set _sConsoleEditText for a match pattern
+                                 _parent._sConsoleEditText = "smoves " + _opponentName + " " + input.getText();
+                                 _parent.sendString("smoves " + _opponentName + " " + input.getText());
+                                 alertDialog.dismiss();
+                                 return true;
+                             }
+                             return false;
+                         }
+                     }
                 );
 
                 alertDialog.show();

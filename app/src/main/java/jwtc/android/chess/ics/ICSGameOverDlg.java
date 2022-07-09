@@ -19,7 +19,7 @@ public class ICSGameOverDlg extends Dialog {
     public static final String TAG = "ICSGameOverDlg";
 
     private ICSClient _parent;
-    private Button _butGoodGame, _butRematch, _butExamine, _butClipBoard, _butSend, _butExit;
+    private Button _butRematch, _butExamine, _butSend, _butExit;
     private TextView _tvGameResult, _tvSendMessagesTitle;
 
     private Pattern _pattSmoves = Pattern.compile("[s|S]moves (\\w+) (\\d+)");
@@ -46,16 +46,6 @@ public class ICSGameOverDlg extends Dialog {
         _tvGameResult = (TextView) findViewById(R.id.tvGameResult);
         _tvGameResult.setGravity(Gravity.CENTER);
 
-        _tvSendMessagesTitle = (TextView) findViewById(R.id.textView);
-
-        _butGoodGame = (Button) findViewById(R.id.ButtonGameGoodGame);
-        _butGoodGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                _parent.sendString("tell " + _parent.get_view().getOpponent() + " Good Game!");
-//                _parent.gameToast("You told " + _parent.get_view().getOpponent() + ", \"Good Game!\"", false);
-            }
-        });
 
         _butRematch = (Button) findViewById(R.id.ButtonGameRematch);
         _butRematch.setOnClickListener(new View.OnClickListener() {
@@ -94,26 +84,17 @@ public class ICSGameOverDlg extends Dialog {
             }
         });
 
-        _butClipBoard = (Button) findViewById(R.id.ButtonGameClipBoard);
-        _butClipBoard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                _parent.copyToClipBoard();
-            }
-        });
 
         _butSend = (Button) findViewById(R.id.ButtonGameSend);
         _butSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                _parent.SendToApp();
+                _parent.emailPGN();
             }
         });
     }
 
     public void setWasPlaying(boolean bWasPlaying) {
-        _tvSendMessagesTitle.setVisibility((bWasPlaying ? View.VISIBLE : View.GONE));
-        _butGoodGame.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
         _butRematch.setVisibility(bWasPlaying ? View.VISIBLE : View.GONE);
     }
 

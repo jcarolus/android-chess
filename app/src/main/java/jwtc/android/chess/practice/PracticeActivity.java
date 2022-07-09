@@ -73,7 +73,7 @@ public class PracticeActivity extends ChessBoardActivity {
 
             if (gameApi.getPGNSize() == jni.getNumBoard() - 1) {
                 //play();
-                imgStatus.setImageResource(R.drawable.indicator_ok);
+                imgStatus.setImageResource(R.drawable.ic_check);
                 setMessage("Correct!");
                 isPlaying = false;
                 buttonNext.setEnabled(true);
@@ -84,7 +84,7 @@ public class PracticeActivity extends ChessBoardActivity {
 
             return true;
         } else {
-            imgStatus.setImageResource(R.drawable.indicator_error);
+            imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
             setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? " is not expected" : " is an illegal move"));
             rebuildBoard();
         }
@@ -226,7 +226,7 @@ public class PracticeActivity extends ChessBoardActivity {
             switchTurn.setDisplayedChild(1);
         }
 
-        imgStatus.setImageResource(R.drawable.indicator_none);
+        imgStatus.setImageResource(R.drawable.ic_check_none);
 
         Float f = (float) (ticks) / (currentPos + 1);
         tvPracticeAvgTime.setText(String.format("%.1f", f));
