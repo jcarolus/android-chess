@@ -92,6 +92,7 @@ public class ChessSquareView extends View {
                 final int size = getHeight();
                 final int textSize = size > 60 ? ((int) (size) / 5) : 10;
 
+                paint.setFlags(Paint.ANTI_ALIAS_FLAG);
                 paint.setColor(0x99ffffff);
                 canvas.drawRect(
                         isRot ? size - textSize : 0,

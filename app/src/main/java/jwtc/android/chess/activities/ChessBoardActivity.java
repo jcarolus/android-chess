@@ -3,11 +3,14 @@ package jwtc.android.chess.activities;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.net.Uri;
+import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.DragEvent;
@@ -17,6 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -542,6 +546,38 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    // @TODO
+    protected void emailPGN() {
+        try {
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+
+                String sFile = Environment.getExternalStorageDirectory() + "/chess_history.pgn";
+                String s = gameApi.exportFullPGN();
+
+                FileOutputStream fos;
+
+                fos = new FileOutputStream(sFile);
+                fos.write(s.getBytes());
+                fos.flush();
+                fos.close();
+
+                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_SUBJECT, "chess pgn");
+                sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + sFile));
+                sendIntent.setType("application/x-chess-pgn");
+
+                startActivity(sendIntent);
+            } else {
+                doToast(getString(R.string.err_sd_not_mounted));
+            }
+        } catch (Exception e) {
+
+            doToast(getString(R.string.err_send_email));
+            Log.e("ex", e.toString());
+            return;
+        }
+    }
+
     public static int chessStateToR(int s) {
         switch (s) {
             case ChessBoard.MATE:
@@ -570,4 +606,89 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 return R.string.state_play;
         }
     }
+
+
+    /*
+    protected void dpadFirst() {
+        if (_dpadPos == -1) {
+            _dpadPos = _jni.getTurn() == ChessBoard.BLACK ? ChessBoard.e8 : ChessBoard.e1;
+        }
+    }
+
+    public void dpadUp() {
+        dpadFirst();
+        if (_view.getFlippedBoard()) {
+            if (_dpadPos < 55) {
+                _dpadPos += 8;
+                paintBoard();
+            }
+        } else {
+            if (_dpadPos > 8) {
+                _dpadPos -= 8;
+                paintBoard();
+            }
+        }
+    }
+
+    public void dpadDown() {
+        dpadFirst();
+        if (_view.getFlippedBoard()) {
+            if (_dpadPos > 8) {
+                _dpadPos -= 8;
+                paintBoard();
+            }
+        } else {
+            if (_dpadPos < 55) {
+                _dpadPos += 8;
+                paintBoard();
+            }
+        }
+    }
+
+    public void dpadLeft() {
+        dpadFirst();
+        if (_view.getFlippedBoard()) {
+            if (_dpadPos < 63) {
+                _dpadPos++;
+                paintBoard();
+            }
+        } else {
+            if (_dpadPos > 1) {
+                _dpadPos--;
+                paintBoard();
+            }
+        }
+    }
+
+    public void dpadRight() {
+        dpadFirst();
+        if (_view.getFlippedBoard()) {
+            if (_dpadPos > 1) {
+                _dpadPos--;
+                paintBoard();
+            }
+        } else {
+            if (_dpadPos < 63) {
+                _dpadPos++;
+                paintBoard();
+            }
+        }
+    }
+
+    public void dpadSelect() {
+        if (_dpadPos != -1) {
+            if (m_iFrom == -1) {
+                m_iFrom = _dpadPos;
+                paintBoard();
+            } else {
+                if (_view.getFlippedBoard()) {
+                    handleClick(_view.getFieldIndex(_dpadPos));
+                } else {
+                    handleClick(_dpadPos);
+                }
+            }
+
+        }
+    }
+     */
 }
