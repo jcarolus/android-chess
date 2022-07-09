@@ -18,10 +18,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
-import jwtc.android.chess.R;
+import jwtc.android.chess.engine.UCIEngine;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.algorithm.UCIWrapper;
 
 
 public class ImportService extends Service {
@@ -166,7 +165,7 @@ public class ImportService extends Service {
 
                     try {
                         FileInputStream fis = new FileInputStream(sPath);
-                        UCIWrapper.install(fis, sEngine);
+                        UCIEngine.install(fis, sEngine);
 
                         SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
                         editor.putString("UCIEngine", sEngine);
@@ -189,7 +188,7 @@ public class ImportService extends Service {
 
                     try {
                         FileInputStream fis = new FileInputStream(sPath);
-                        UCIWrapper.installDb(fis, sDatabase);
+                        UCIEngine.installDb(fis, sDatabase);
 
                         SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
                         editor.putString("UCIDatabase", sDatabase);

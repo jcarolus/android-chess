@@ -44,11 +44,7 @@ public class GamesListView extends ListActivity implements OnItemClickListener, 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MyBaseActivity.prepareWindowSettings(this);
-
         setContentView(R.layout.gameslist);
-
-        MyBaseActivity.makeActionOverflowMenuShown(this);
 
         _sortBy = PGNColumns.DATE;
         _sortOrder = "ASC";

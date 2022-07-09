@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jwtc.android.chess.ChessFieldView;
 import jwtc.chess.board.ChessBoard;
 
 public class ICSPatterns {

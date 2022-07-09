@@ -3,8 +3,8 @@ package jwtc.android.chess.ics;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import jwtc.android.chess.MyBaseActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.activities.BaseActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -21,7 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class CustomCommands extends MyBaseActivity implements OnItemClickListener {
+public class CustomCommands extends BaseActivity implements OnItemClickListener {
 
     public static final String TAG = "CustomCommands";
     public static final String DEFAULT_COMMANDS = "[" +
@@ -100,12 +100,8 @@ public class CustomCommands extends MyBaseActivity implements OnItemClickListene
 
         setContentView(R.layout.customcommands);
 
-        this.makeActionOverflowMenuShown();
-
         _listCommands = (ListView) findViewById(R.id.ListCustomCommands);
-
         _listCommands.setOnItemClickListener(this);
-
     }
 
     @Override

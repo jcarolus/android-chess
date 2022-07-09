@@ -74,8 +74,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     //private EditText _editPrompt;
     private ListView listChallenges, listPlayers, _listGames, _listStored, _listWelcome, listMenu;
-    private ICSChessView _view;
-    private ChessViewBase _viewbase;
     protected ICSMatchDlg _dlgMatch;
     private ICSPlayerDlg _dlgPlayer;
     private ICSConfirmDlg _dlgConfirm;
@@ -1583,7 +1581,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnGameEndedResult(int state) {
-        int res = UI.chessStateToR(state);
+        int res = chessStateToR(state);
         gameToast(getString(res), true);
 
         isPlaying = false;

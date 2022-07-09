@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.MyPGNProvider;
 import jwtc.android.chess.R;
+import jwtc.android.chess.engine.UCIEngine;
 import jwtc.chess.PGNColumns;
-import jwtc.chess.algorithm.UCIWrapper;
 
 import android.Manifest;
 import android.app.Activity;
@@ -115,7 +115,7 @@ public class AdvancedActivity extends AppCompatActivity {
 
                                     try {
                                         selectedEngine.copyToFiles(AdvancedActivity.this.getContentResolver(), AdvancedActivity.this.getFilesDir());
-                                        UCIWrapper.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/*");
+                                        UCIEngine.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/*");
 
                                         SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
                                         editor.putString("UCIEngine", sEngine);

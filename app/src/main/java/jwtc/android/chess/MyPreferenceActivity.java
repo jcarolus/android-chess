@@ -14,12 +14,8 @@ public class MyPreferenceActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MyBaseActivity.prepareWindowSettings(this);
-
         PreferenceManager pm = getPreferenceManager();
         pm.setSharedPreferencesName("ChessPlayer");
-
-        MyBaseActivity.makeActionOverflowMenuShown(this);
     }
 
     @Override
