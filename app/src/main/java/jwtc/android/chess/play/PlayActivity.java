@@ -235,13 +235,17 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         String sEngine = prefs.getString("UCIEngine", null);
         if (sEngine != null) {
-            Log.i("ChessView", "UCIEngine " + sEngine);
+            Log.i(TAG, "UCIEngine " + sEngine);
             String sEnginePath = "/data/data/jwtc.android.chess/" + sEngine;
 
             myEngine = new UCIEngine();
-            ((UCIEngine)myEngine).initEngine(sEnginePath);
 
-            textViewEngineValue.setText("UCI engine " + sEngine);
+            if (((UCIEngine)myEngine).initEngine(sEnginePath)) {
+
+                textViewEngineValue.setText("UCI engine " + sEngine);
+            } else {
+                textViewEngineValue.setText("UCI engine " + sEngine + " failed to run!");
+            }
 
         } else {
             myEngine = new LocalEngine();
@@ -441,6 +445,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     @Override
     public void OnEngineError() {
         toggleEngineProgress(false);
+        textViewEngineValue.setText("Engine error!");
     }
 
     @Override
@@ -684,7 +689,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
         if (myTurn != jni.getTurn() && vsCPU && jni.isEnded() == 0) {
-            myEngine.play();
+            if (myEngine.isReady()) {
+                myEngine.play();
+            }
         }
     }
 

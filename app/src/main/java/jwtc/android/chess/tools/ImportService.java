@@ -1,20 +1,24 @@
 package jwtc.android.chess.tools;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.OpenableColumns;
 import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
@@ -70,6 +74,9 @@ public class ImportService extends Service {
 
     public void startImport(final Uri uri, final int mode) {
         Log.d(TAG, "mode " + mode);
+        if (uri != null) {
+            Log.d(TAG, "uri " + uri.toString());
+        }
 
         importApi = new ImportApi();
 
@@ -158,13 +165,13 @@ public class ImportService extends Service {
                 break;
             case UCI_INSTALL:
                 if (uri != null) {
-                    String sPath = uri.getPath();
-                    String sEngine = uri.getLastPathSegment(); //"robbolito-android"; //bikjump2.1    stockfish2.0
-
-                    Log.i(TAG, "Install UCI " + sPath + " as " + sEngine);
-
                     try {
-                        FileInputStream fis = new FileInputStream(sPath);
+                        String sEngine = getUriDisplayName(this.getBaseContext(), uri);
+
+                        Log.i(TAG, "Install UCI " + sEngine);
+
+                        InputStream fis = getContentResolver().openInputStream(uri);
+
                         UCIEngine.install(fis, sEngine);
 
                         SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
@@ -173,7 +180,7 @@ public class ImportService extends Service {
 
                         dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
 
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         Log.e(TAG, e.toString());
                         dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
                     }
@@ -181,12 +188,13 @@ public class ImportService extends Service {
                 break;
             case UCI_DB_INSTALL:
                 if (uri != null) {
-                    String sPath = uri.getPath();
-                    String sDatabase = uri.getLastPathSegment(); //"goi.bin"
-
-                    Log.i(TAG, "Install UCI database " + sPath + " as " + sDatabase);
 
                     try {
+                        String sPath = getUriDisplayName(this.getBaseContext(), uri);
+                        String sDatabase = uri.getLastPathSegment(); //"goi.bin"
+
+                        Log.i(TAG, "Install UCI database " + sPath + " as " + sDatabase);
+
                         FileInputStream fis = new FileInputStream(sPath);
                         UCIEngine.installDb(fis, sDatabase);
 
@@ -196,7 +204,7 @@ public class ImportService extends Service {
 
                         dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
 
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         Log.e(TAG, e.toString());
                         dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
                     }
@@ -287,6 +295,27 @@ public class ImportService extends Service {
                     break;
             }
         }
+    }
+
+    protected  String getUriDisplayName(Context context, Uri uri) throws URISyntaxException {
+        Log.d(TAG, "getUriDisplayName " + uri.getScheme());
+
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            Cursor cursor = null;
+            try {
+                cursor = context.getContentResolver().query(uri, null, null, null, null);
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+            }
+        }
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getLastPathSegment();
+        }
+
+        return null;
     }
 
 //    protected TreeSet<Long> _arrKeys;

@@ -3,12 +3,15 @@ package jwtc.android.chess.engine;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +22,7 @@ import jwtc.chess.Pos;
 public class UCIEngine extends EngineApi {
     private static final String TAG = "UCIEngine";
 
-    private BufferedReader _reader;//, _readerError;
+    private BufferedReader _reader, _readerError;
     private PrintWriter _writer;
     private Process _process;
     private String databaseName;
@@ -65,18 +68,25 @@ public class UCIEngine extends EngineApi {
         this.databaseName = databaseName;
     }
 
-    public void initEngine(String sEnginePath) {
+    public boolean initEngine(String sEnginePath) {
 
 
         try {
             Log.i(TAG, "intitializing " + sEnginePath);
             // Executes the command.
-            _process = Runtime.getRuntime().exec(sEnginePath);
+            List<String> args = new ArrayList<String>();
+            args.add(sEnginePath);
+            ProcessBuilder pb = new ProcessBuilder(args);
+            pb.directory(new File("/data/data/jwtc.android.chess/"));
+            pb.redirectErrorStream(true);
+            _process = pb.start();
 
+//            _readerError = new BufferedReader(new InputStreamReader(_process.getErrorStream()));
+            _writer = new PrintWriter(new OutputStreamWriter(_process.getOutputStream()));
+
+            sendCommand("uci");
             // Reads stdout.
             _reader = new BufferedReader(new InputStreamReader(_process.getInputStream()));
-            //_readerError = new BufferedReader(new InputStreamReader(_process.getErrorStream()));
-            _writer = new PrintWriter(new OutputStreamWriter(_process.getOutputStream()));
 
             new Thread(new Runnable() {
                 public void run() {
@@ -85,18 +95,16 @@ public class UCIEngine extends EngineApi {
                     String tmp;
                     int from, to, iPos, iLine = 0;
                     try {
-
-                        //while ((read = _reader.read(buffer)) > 0) {
-                        //    output.append(buffer, 0, read);
-                        //tmp = output.toString();
-
                         int i = 0;
 
                         while (true) {
                             tmp = _reader.readLine();
 
                             Log.i(TAG, iLine + ">>" + tmp);
-                            //m_control.sendMessageFromThread();
+                            if (tmp == null) {
+                                sendErrorMessageFromThread();
+                                break;
+                            }
 
                             // parse response
                             iPos = tmp.indexOf("info");
@@ -156,6 +164,8 @@ public class UCIEngine extends EngineApi {
                             iLine++;
                         }
                     } catch (Exception ex) {
+                        sendErrorMessageFromThread();
+
                         if (_process != null) {
                             _process.destroy();
                             _process = null;
@@ -165,10 +175,23 @@ public class UCIEngine extends EngineApi {
                 }
             }).start();
 
-            sendCommand("uci");
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        String s = _readerError.readLine();
+//                        Log.d(TAG, "stderr " + s);
+//                        sendErrorMessageFromThread();
+//                    } catch (Exception ex) {
+//                        sendErrorMessageFromThread();
+//                    }
+//                }
+//            }).start();
+
+            return true;
 
         } catch (Exception e) {
             Log.e(TAG, "init error: " + e);
+            return false;
         }
     }
 
@@ -180,32 +203,31 @@ public class UCIEngine extends EngineApi {
         }
     }
 
-
-
     public static void install(final InputStream in, final String sEngine) {
         new Thread(new Runnable() {
             public void run() {
-                // TODO
-
-                try {
-                    OutputStream out = new FileOutputStream("/data/data/jwtc.android.chess/" + sEngine);
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-
-                    out.close();
-                    in.close();
-
-                    runConsole("/system/bin/ls /data/data/jwtc.android.chess/");
-                    runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/" + sEngine);
-
-                    Log.i(TAG, "install completed");
-                } catch (Exception ex) {
-
-                    Log.e(TAG, "install error: " + ex.toString());
+            try {
+                OutputStream out = new FileOutputStream("/data/data/jwtc.android.chess/" + sEngine);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
                 }
+
+                out.close();
+                in.close();
+
+                List<String> args = new ArrayList<String>();
+                args.add("chmod");
+                args.add("744");
+                args.add(sEngine);
+                runConsole(args, "/data/data/jwtc.android.chess/");
+
+                Log.i(TAG, "install completed");
+            } catch (Exception ex) {
+
+                Log.e(TAG, "install error: " + ex.toString());
+            }
             }
         }).start();
     }
@@ -213,51 +235,111 @@ public class UCIEngine extends EngineApi {
     public static void installDb(final InputStream in, final String sDatabase) {
         new Thread(new Runnable() {
             public void run() {
-                // TODO
-
-                try {
-                    OutputStream out = new FileOutputStream("/data/data/jwtc.android.chess/" + sDatabase);
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-
-                    out.close();
-                    in.close();
-
-                    runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/" + sDatabase);
-                    runConsole("/system/bin/ls /data/data/jwtc.android.chess/");
-
-                    Log.i(TAG, "install completed");
-                } catch (Exception ex) {
-
-                    Log.e(TAG, "install error: " + ex.toString());
+            // TODO
+            try {
+                OutputStream out = new FileOutputStream("/data/data/jwtc.android.chess/" + sDatabase);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
                 }
+
+                out.close();
+                in.close();
+
+                List<String> args = new ArrayList<String>();
+                args.add("chmod");
+                args.add("744");
+                args.add(sDatabase);
+                runConsole(args, "/data/data/jwtc.android.chess/");
+                args.clear();
+                args.add("ls");
+                args.add("-la");
+                runConsole(args, "/data/data/jwtc.android.chess/");
+
+            } catch (Exception ex) {
+
+                Log.e(TAG, "install error: " + ex.toString());
+            }
             }
         }).start();
     }
 
-    public static String runConsole(String sCmd) {
+    public static void runConsole(final List<String> args, final String workingDir) {
+        Log.d(TAG, "runConsole");
         try {
-            // Executes the command.
-            Process process = Runtime.getRuntime().exec(sCmd);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            int read;
-            char[] buffer = new char[4096];
-            StringBuffer output = new StringBuffer();
-            while ((read = reader.read(buffer)) > 0) {
-                output.append(buffer, 0, read);
+
+            ProcessBuilder pb = new ProcessBuilder(args);
+            pb.directory(new File(workingDir));
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            String result = "";
+            InputStream in = process.getInputStream();
+            byte[] re = new byte[1024];
+            while (in.read(re) != -1) {
+                result = result + new String(re);
             }
-            reader.close();
-
-            // Waits for the command to finish.
-            process.waitFor();
-
-            return output.toString();
+            Log.d(TAG, result);
+//            Process process = Runtime.getRuntime().exec("sh");
+//            final BufferedReader readerStdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//            final BufferedReader readerStderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+//            final PrintWriter processWriter = new PrintWriter(new OutputStreamWriter(process.getOutputStream()));
+//
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        processWriter.println(sCmd);
+//                        processWriter.flush();
+//                        String sOut = "";
+//                        while(true) {
+//                            String tmp = readerStdout.readLine();
+//                            if (tmp == null) {
+//                                break;
+//                            }
+//                            sOut += tmp;
+//                        }
+//
+//                        Log.d(TAG, "=> "  + sOut);
+//                        processWriter.println("exit");
+//                        processWriter.flush();
+//
+//                    } catch (Exception e) {
+//                        Log.d(TAG, "out thread" + e.getMessage());
+//                    }
+//                }
+//            }).start();
+//
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        String sOut = "";
+//                        while(true) {
+//                            String tmp = readerStderr.readLine();
+//                            if (tmp == null) {
+//                                break;
+//                            }
+//                            sOut += tmp;
+//                        }
+//
+//                        Log.d(TAG, "!! "  + sOut);
+//
+//                    } catch (Exception e) {
+//                        Log.d(TAG, e.getMessage());
+//                    }
+//                }
+//            }).start();
+//
+//            // Waits for the command to finish.
+//            Log.d(TAG, "waiting...");
+//            process.waitFor();
+//            readerStdout.close();
+//            readerStderr.close();
+//            Log.d(TAG, "runConsole done...");
 
         } catch (Exception e) {
-            return null;
+            Log.d(TAG, "Outer error " + e.getMessage());
         }
+
     }
 }

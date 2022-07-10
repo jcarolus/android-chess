@@ -169,8 +169,8 @@ public class PracticeActivity extends ChessBoardActivity {
 
         editor.putInt("practicePos", currentPos);
         editor.putInt("practiceTicks", ticks);
+        editor.commit();
     }
-
 
 
     protected void loadPuzzles() {

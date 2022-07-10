@@ -42,9 +42,6 @@ public class AdvancedActivity extends AppCompatActivity {
 
     public static final String TAG = "AdvancedActivity";
     protected static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
-
-    protected static final String EXTRA_MODE = "jwtc.android.chess.tools.Mode";
-
     private ListView _lvStart;
 
     /**
@@ -115,7 +112,12 @@ public class AdvancedActivity extends AppCompatActivity {
 
                                     try {
                                         selectedEngine.copyToFiles(AdvancedActivity.this.getContentResolver(), AdvancedActivity.this.getFilesDir());
-                                        UCIEngine.runConsole("/system/bin/chmod 744 /data/data/jwtc.android.chess/*");
+
+                                        List<String> args = new ArrayList<String>();
+                                        args.add("chmod");
+                                        args.add("744");
+                                        args.add(sEngine);
+                                        UCIEngine.runConsole(args, "/data/data/jwtc.android.chess/");
 
                                         SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
                                         editor.putString("UCIEngine", sEngine);
@@ -177,7 +179,7 @@ public class AdvancedActivity extends AppCompatActivity {
                     i.putExtra(HtmlActivity.HELP_MODE, "help_pgntool");
                     startActivity(i);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_point_uci_engine))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
                     startActivityForResult(i, ImportService.UCI_INSTALL);
@@ -296,7 +298,7 @@ public class AdvancedActivity extends AppCompatActivity {
 
                 if (uri != null) {
                     Intent myIntent = new Intent();
-                    myIntent.putExtra(AdvancedActivity.EXTRA_MODE, requestCode);
+                    myIntent.putExtra("mode", requestCode);
                     myIntent.setClass(AdvancedActivity.this, ImportActivity.class);
                     myIntent.setData(uri);
 

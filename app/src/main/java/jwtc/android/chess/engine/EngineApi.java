@@ -15,6 +15,7 @@ public abstract class EngineApi {
 
     protected static final int MSG_MOVE = 1;
     protected static final int MSG_INFO = 2;
+    protected static final int MSG_ERROR = 3;
     protected int msecs = 0;
     protected int ply = 0;
 
@@ -36,6 +37,10 @@ public abstract class EngineApi {
                 for (EngineListener listener: listeners) {
                     listener.OnEngineInfo(message);
                 }
+            } else if (msg.what == MSG_ERROR) {
+                for (EngineListener listener: listeners) {
+                    listener.OnEngineError();
+                }
             }
             super.handleMessage(msg);
         }
@@ -56,6 +61,12 @@ public abstract class EngineApi {
         b.putInt("move", move);
         m.what = MSG_MOVE;
         m.setData(b);
+        updateHandler.sendMessage(m);
+    }
+
+    public void sendErrorMessageFromThread() {
+        Message m = new Message();
+        m.what = MSG_ERROR;
         updateHandler.sendMessage(m);
     }
 

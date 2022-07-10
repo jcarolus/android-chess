@@ -1464,7 +1464,14 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnPlayGameResult(String message) {
         gameToast(message, true);
-//        get_view().setStopPlaying();
+
+        highlightedPositions.clear();
+        updateSelectedSquares();
+
+        _dlgOver.setHandle(icsServer.getHandle());
+        _dlgOver.setWasPlaying(isPlaying);
+        _dlgOver.updateGameResultText(message);
+        _dlgOver.show();
         isPlaying = false;
     }
 

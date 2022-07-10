@@ -113,6 +113,16 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         super.onResume();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+
+        editor.putInt("puzzlePos", currentPosition);
+        editor.commit();
+    }
+
     protected void loadPuzzles() {
         Log.i(TAG, "loadPuzzles");
 
