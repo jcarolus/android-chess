@@ -5,13 +5,14 @@ import android.util.Log;
 import java.util.StringTokenizer;
 
 import jwtc.android.chess.services.GameApi;
+import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 public class ICSApi extends GameApi {
     public static final String TAG = "GameApi";
     public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_OBSERVE = 2, VIEW_EXAMINE = 3;
 
-    private int gameNum, myTurn, turn;
+    private int gameNum, myTurn, turn, lastTo = -1;
     private String whitePlayer;
     private String blackPlayer;
     private String playerMe;
@@ -150,6 +151,7 @@ public class ICSApi extends GameApi {
             String sMoveNotation = st.nextToken();  // machine notation move
             String _sTimePerMove = st.nextToken();  // time it took to make a move
             lastMove = st.nextToken();  // algebraic notation move
+
             if (lastMove.contains("+")) {
 //                _parent.soundCheck();
             } else if (lastMove.contains("x")) {
@@ -157,6 +159,31 @@ public class ICSApi extends GameApi {
             } else {
 //                _parent.soundMove();
             }
+
+            lastTo = -1;
+
+            if (lastMove.equals("o-o")) {
+                if (turn == BoardConstants.WHITE)
+                    lastTo = Pos.fromString("g8");
+                else
+                    lastTo = Pos.fromString("g1");
+            } else if (lastMove.equals("o-o-o")) {
+                if (turn == BoardConstants.WHITE)
+                    lastTo = Pos.fromString("c8");
+                else
+                    lastTo = Pos.fromString("c1");
+            } else {
+                // gxh8=R
+                try {
+                    //K/e1-e2
+                    lastTo = Pos.fromString(lastMove.substring(lastMove.length() - 2));
+                    //iFrom = Pos.fromString(lastMove.substring(lastMove.length()-5, 2));
+                } catch (Exception ex2) {
+                    lastTo = -1;
+                    Log.i(TAG, "Could not parse move: " + lastMove + " in " + lastMove.substring(lastMove.length() - 2));
+                }
+            }
+
             //
             jni.setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
 
@@ -217,5 +244,9 @@ public class ICSApi extends GameApi {
 
     public int getTurn() {
         return turn;
+    }
+
+    public int getLastTo() {
+        return lastTo;
     }
 }

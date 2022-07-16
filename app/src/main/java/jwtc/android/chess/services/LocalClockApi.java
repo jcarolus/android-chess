@@ -24,6 +24,7 @@ public class LocalClockApi extends ClockApi {
 
     public void startClock(long increment, long whiteRemaining, long blackRemaining, int turn, long startTime) {
         Log.d(TAG, "startClock " + increment + " " + whiteRemaining + " " + blackRemaining + " " + turn);
+
         this.increment = increment;
         this.whiteRemaining = whiteRemaining;
         this.blackRemaining = blackRemaining;
@@ -55,10 +56,10 @@ public class LocalClockApi extends ClockApi {
         if (currentTurn == BoardConstants.BLACK) {
             final long currentTime = System.currentTimeMillis();
             final long usedMillies = (currentTime - lastMeasureTime);
-
-            return blackRemaining - usedMillies;
+            final long remaining = blackRemaining - usedMillies;
+            return remaining >= 0 ? remaining : 0;
         } else {
-            return blackRemaining;
+            return blackRemaining >= 0 ? blackRemaining : 0;
         }
     }
 
@@ -66,10 +67,10 @@ public class LocalClockApi extends ClockApi {
         if (currentTurn == BoardConstants.WHITE) {
             final long currentTime = System.currentTimeMillis();
             final long usedMillies = (currentTime - lastMeasureTime);
-
-            return whiteRemaining - usedMillies;
+            final long remaining = whiteRemaining - usedMillies;
+            return remaining >= 0 ? remaining : 0;
         }
-        return whiteRemaining;
+        return whiteRemaining >= 0 ? whiteRemaining : 0;
     }
 
     public long getLastMeasureTime() {

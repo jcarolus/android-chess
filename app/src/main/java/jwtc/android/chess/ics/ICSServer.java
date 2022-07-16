@@ -192,7 +192,7 @@ public class ICSServer extends Service {
     }
 
     private void parse(String buffer) {
-        //Log.i(TAG, expectingState + "; parse: " + buffer);
+//        Log.i(TAG, expectingState + "; parse: " + buffer);
         String[] lines = buffer.split("\n\r");
         int lineCount = lines.length;
 

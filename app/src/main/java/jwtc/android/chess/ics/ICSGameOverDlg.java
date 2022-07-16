@@ -64,7 +64,6 @@ public class ICSGameOverDlg extends Dialog {
             }
         });
 
-
         _butSend = (Button) findViewById(R.id.ButtonGameSend);
         _butSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +75,7 @@ public class ICSGameOverDlg extends Dialog {
 
     public void setHandle(String handle) {
         this.handle = handle;
+        _butExamine.setVisibility(this.handle.startsWith("Guest") ? View.INVISIBLE : View.VISIBLE);
     }
 
     public void setWasPlaying(boolean bWasPlaying) {

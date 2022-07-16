@@ -218,6 +218,15 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 bottomPieces.setVisibility(View.INVISIBLE);
             }
         });
+
+        final ImageButton butMute = findViewById(R.id.ButtonSoundMute);
+        butMute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fVolume = fVolume == 1.0f ? 0 : 1.0f;
+                butMute.setImageResource(fVolume == 1.0f ? R.drawable.ic_volume_mute : R.drawable.ic_volume_down);
+            }
+        });
     }
 
     @Override
@@ -304,6 +313,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 Log.i("onResume", "pgn: " + sPGN);
                 if (sPGN != null) {
                     gameApi.loadPGN(sPGN);
+                } else {
+                    gameApi.newGame();
                 }
             }
         }
