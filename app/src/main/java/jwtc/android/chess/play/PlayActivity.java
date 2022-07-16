@@ -24,9 +24,9 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 
-import jwtc.android.chess.GamesListView;
+import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.HtmlActivity;
-import jwtc.android.chess.MyPGNProvider;
+import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.activities.GlobalPreferencesActivity;
@@ -620,7 +620,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     saveGame();
                 } else if (item.equals(getString(R.string.menu_load_game))) {
                     intent = new Intent();
-                    intent.setClass(PlayActivity.this, GamesListView.class);
+                    intent.setClass(PlayActivity.this, GamesListActivity.class);
                     startActivityForResult(intent, PlayActivity.REQUEST_OPEN);
                 } else if (item.equals(getString(R.string.menu_prefs))) {
                     intent = new Intent();

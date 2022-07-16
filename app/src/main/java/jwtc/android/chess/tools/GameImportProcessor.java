@@ -43,7 +43,7 @@ public class GameImportProcessor extends PGNProcessor {
 
             values.put(PGNColumns.DATE, dd.getTime());
 
-            Uri uri = Uri.parse("content://jwtc.android.chess.MyPGNProvider/games");
+            Uri uri = Uri.parse("content://jwtc.android.chess.helpers.MyPGNProvider/games");
             Uri uriInsert = contentResolver.insert(uri, values);
             return true;
         }

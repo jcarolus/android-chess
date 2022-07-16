@@ -10,16 +10,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -29,9 +26,10 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.chess.PGNColumns;
 
-public class GamesListView extends ListActivity implements OnItemClickListener, OnItemLongClickListener {
+public class GamesListActivity extends ListActivity implements OnItemClickListener, OnItemLongClickListener {
 
     ListView _listGames;
     //LayoutInflater _inflater;
