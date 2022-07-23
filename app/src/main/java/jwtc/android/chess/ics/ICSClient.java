@@ -1,47 +1,34 @@
 package jwtc.android.chess.ics;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Vibrator;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.widget.AdapterView.OnItemClickListener;
 
-import java.io.FileOutputStream;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,38 +37,48 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import jwtc.android.chess.*;
+import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.services.ClockListener;
+import jwtc.android.chess.services.LocalClockApi;
+import jwtc.chess.Pos;
+import jwtc.chess.board.BoardConstants;
 
-public class ICSClient extends MyBaseActivity implements OnItemClickListener, ICSListener {
+public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener, AdapterView.OnItemClickListener, ClockListener {
+    public static final String TAG = "ICSClient";
 
-    private ICSServer icsServer;
-    private boolean mShouldUnbind = false;
+    public static final int REQUEST_LOGIN = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3, REQUEST_MENU = 4;
+
+    private ICSServer icsServer = null;
+    private LocalClockApi localClockApi = new LocalClockApi();
+
     protected String _sConsoleEditText;
-    private String _server, _handle, _pwd, _ficsHandle, _ficsPwd, _sFile, _FEN = "", _whiteRating, _blackRating, _whiteHandle, _blackHandle;
-    private int _port, _serverType, _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
+    private String _FEN = "", _sFile;
+    private int  _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-            _notifyON, _bConsoleText, _bICSVolume, _ICSNotifyLifeCycle;
-    private Button _butLogin;
-    private TextView _tvHeader, _tvConsole, _tvPlayConsole;
-//	public ICSChatDlg _dlgChat;
+            _notifyON, _bICSVolume, _ICSNotifyLifeCycle, isPlaying;
+    private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
+            _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber, textViewTitle;
+    private TextView _tvConsole;
 
+    private ViewSwitcher switchTurnMe, switchTurnOpp;
+    private ImageButton buttonMenu;
     private EditText _editHandle, _editPwd, _editConsole, _editBoard;
+    private ViewAnimator viewAnimatorRoot, viewAnimatorPlayMode;
+    private LinearLayout playButtonsLayout, examineButtonsLayout;
+    private ScrollView _scrollConsole;
 
     private Spinner _spinnerHandles;
     private ArrayAdapter<String> _adapterHandles;
     private ArrayList<String> _arrayPasswords;
 
     //private EditText _editPrompt;
-    private ListView _listChallenges, _listPlayers, _listGames, _listStored, _listWelcome;
-    private ICSChessView _view;
-    private ChessViewBase _viewbase;
+    private ListView listChallenges, listPlayers, _listGames, _listStored, _listWelcome, listMenu;
     protected ICSMatchDlg _dlgMatch;
     private ICSPlayerDlg _dlgPlayer;
     private ICSConfirmDlg _dlgConfirm;
-    private ICSChatDlg _dlgChat;
     private ICSGameOverDlg _dlgOver;
     private StringBuilder PGN;
-    private ViewAnimator _viewAnimatorMain, _viewAnimatorLobby;
-    private ScrollView _scrollConsole, _scrollPlayConsole;
 
     private Ringtone _ringNotification;
 
@@ -89,31 +86,24 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     private Matcher _matgame;
 
-    private ArrayList<HashMap<String, String>> _mapChallenges = new ArrayList<HashMap<String, String>>();
-    private ArrayList<HashMap<String, String>> _mapPlayers = new ArrayList<HashMap<String, String>>();
-    private ArrayList<HashMap<String, String>> _mapGames = new ArrayList<HashMap<String, String>>();
-    private ArrayList<HashMap<String, String>> _mapStored = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapMenu = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapChallenges = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapPlayers = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapGames = new ArrayList<HashMap<String, String>>();
+    private ArrayList<HashMap<String, String>> mapStored = new ArrayList<HashMap<String, String>>();
 
-    private AlternatingRowColorAdapter _adapterGames, _adapterPlayers, _adapterChallenges, _adapterStored;
+    private SimpleAdapter adapterGames, adapterPlayers, adapterChallenges, adapterStored, adapterMenu;
 
-    ArrayAdapter<String> _adapterWelcome;
+    protected static final int VIEW_LOGIN = 0;
+    protected static final int VIEW_LOADING = 1;
+    protected static final int VIEW_BOARD = 2;
+    protected static final int VIEW_PLAYERS = 3;
+    protected static final int VIEW_GAMES = 4;
+    protected static final int VIEW_CHALLENGES = 5;
+    protected static final int VIEW_MENU = 6;
+    protected static final int VIEW_STORED = 7;
+    protected static final int VIEW_CONSOLE = 8;
 
-    public static final String TAG = "ICSClient";
-
-    protected static final int SERVER_FICS = 1;
-
-    protected static final int VIEW_MAIN_BOARD = 0;
-    protected static final int VIEW_MAIN_LOBBY = 1;
-    protected static final int VIEW_MAIN_NOT_CONNECTED = 2;
-    protected static final int VIEW_MAIN_LOGIN = 3;
-
-    protected static final int VIEW_SUB_PLAYERS = 0;
-    protected static final int VIEW_SUB_GAMES = 1;
-    protected static final int VIEW_SUB_WELCOME = 2;
-    protected static final int VIEW_SUB_CHALLENGES = 3;
-    protected static final int VIEW_SUB_PROGRESS = 4;
-    protected static final int VIEW_SUB_CONSOLE = 5;
-    protected static final int VIEW_SUB_STORED = 6;
 
     protected static final int DECREASE = 0;
 
@@ -122,22 +112,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            // This is called when the connection with the service has been
-            // established, giving us the service object we can use to
-            // interact with the service.  Because we have bound to a explicit
-            // service that we know is running in our own process, we can
-            // cast its IBinder to a concrete class and directly access it.
             Log.i(TAG, "onServiceConnected");
             icsServer = ((ICSServer.LocalBinder)service).getService();
-            icsServer.addListener(ICSClient.this);
-            icsServer.startSession("freechess.org", 23, _handle, _pwd, "fics% ");
+
+            addListeners();
+            showLoginIfNotConnected();
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
-            // Because it is running in our same process, we should never
-            // see this happen.
             OnSessionEnded();
             icsServer = null;
             Log.i(TAG, "onServiceDisconnected");
@@ -152,90 +134,201 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
 
-        setContentView(R.layout.icsclient);
+        setContentView(R.layout.ics_client);
 
-        this.makeActionOverflowMenuShown();
+        gameApi = new ICSApi();
 
-        // needs to be called first because of chess statics init
-        _view = new ICSChessView(this);
-        _view.init();
+        afterCreate();
 
-        _dlgMatch = new ICSMatchDlg(this);
+        isPlaying = false;
+
+        _dlgMatch = new ICSMatchDlg(this, this, REQUEST_CHALLENGE, getPrefs());
         _dlgPlayer = new ICSPlayerDlg(this);
-        _dlgConfirm = new ICSConfirmDlg(this);
-        _dlgChat = new ICSChatDlg(this);
+        _dlgConfirm = new ICSConfirmDlg(this, this, REQUEST_CONFIRM);
         _dlgOver = new ICSGameOverDlg(this);
 
-        _tvHeader = (TextView) findViewById(R.id.TextViewHeader);
-        _tvHeader.setGravity(Gravity.CENTER);
-
-        //_dlgChat = new ICSChatDlg(this);
-
-        _serverType = SERVER_FICS;
         _iConsoleCharacterSize = 10;
         _bAutoSought = true;
         _bTimeWarning = true;
         _bEndGameDialog = true;
         _bShowClockPGN = true;
 
-        _adapterChallenges = new AlternatingRowColorAdapter(ICSClient.this, _mapChallenges, R.layout.ics_seek_row,
+        viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
+        viewAnimatorPlayMode = findViewById(R.id.ViewAnimatorPlayMode);
+
+        playButtonsLayout = findViewById(R.id.LayoutPlayButtons);
+        examineButtonsLayout = findViewById(R.id.LayoutExamineButtons);
+
+        _tvPlayerTop = findViewById(R.id.TextViewTop);
+        _tvPlayerBottom = findViewById(R.id.TextViewBottom);
+
+        _tvPlayerTopRating = findViewById(R.id.TextViewICSTwoRating);
+        _tvPlayerBottomRating = findViewById(R.id.TextViewICSOneRating);
+
+        _tvClockTop = findViewById(R.id.TextViewClockTop);
+        _tvClockBottom = findViewById(R.id.TextViewClockBottom);
+
+        _tvBoardNum = findViewById(R.id.TextViewICSBoardNum);
+        _tvLastMove = findViewById(R.id.TextViewICSBoardLastMove);
+        _tvTimePerMove = findViewById(R.id.TextViewICSTimePerMove);
+        _tvMoveNumber = findViewById(R.id.TextViewMoveNumber);
+
+        switchTurnMe = findViewById(R.id.ImageTurnMe);
+        switchTurnOpp = findViewById(R.id.ImageTurnOpp);
+
+        _tvConsole = findViewById(R.id.TextViewConsole);
+        _tvConsole.setTypeface(Typeface.MONOSPACE);
+
+        _editHandle = findViewById(R.id.EditICSHandle);
+        _editPwd = findViewById(R.id.EditICSPwd);
+
+        Button buttonLogin = findViewById(R.id.ButICSLogin);
+        buttonLogin.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                final String handle = _editHandle.getText().toString();
+                final String pwd = _editPwd.getText().toString();
+
+                /*
+                defaultHost = chessclub.com
+                hosts = chessclub.com queen.chessclub.com
+                ports = 5000 23
+                id = icc
+                 */
+
+                if (handle != "" && pwd != "") {
+                    setLoadingView();
+                    icsServer.startSession("freechess.org", 23, handle, pwd, "fics% ");
+                } else {
+                    if (handle == "") {
+                        globalToast(getString(R.string.msg_ics_enter_handle));
+                    }
+                    if (handle != "guest" && pwd == "") {
+                        globalToast(getString(R.string.msg_ics_enter_password));
+                    }
+                }
+            }
+        });
+
+        Button buttonResign = findViewById(R.id.ButtonResign);
+        buttonResign.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("resign");
+            }
+        });
+
+        Button buttonDraw = findViewById(R.id.ButtonDraw);
+        buttonDraw.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("draw");
+            }
+        });
+
+        Button buttonFlag = findViewById(R.id.ButtonFlag);
+        buttonFlag.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("flag");
+            }
+        });
+
+        OnClickListener takeBackListener = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("revert");
+            }
+        };
+
+        ImageButton buttonTakeBack = findViewById(R.id.ButtonTakeBack);
+        buttonTakeBack.setOnClickListener(takeBackListener);
+
+        ImageButton buttonRevert = findViewById(R.id.ButtonICSExamineRevert);
+        buttonRevert.setOnClickListener(takeBackListener);
+
+        ImageButton buttonBackward = findViewById(R.id.ButtonICSExamineBackward);
+        buttonBackward.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("backward");
+            }
+        });
+
+        ImageButton buttonForward = findViewById(R.id.ButtonICSExamineForward);
+        buttonForward.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("forward");
+            }
+        });
+
+        textViewTitle = findViewById(R.id.TextViewTitle);
+
+        String[] from = { "menu_item" };
+        int[] to = { R.id.MenuText };
+        adapterMenu = new SimpleAdapter(this, mapMenu, R.layout.menu_item, from, to);
+
+        listMenu = findViewById(R.id.ListMenu);
+        listMenu.setAdapter(adapterMenu);
+        listMenu.setOnItemClickListener(this);
+
+        buttonMenu = findViewById(R.id.ButtonMenu);
+        buttonMenu.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMenuView();
+            }
+        });
+
+        adapterChallenges = new SimpleAdapter(ICSClient.this, mapChallenges, R.layout.ics_seek_row,
                 new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
+//
+        listChallenges = findViewById(R.id.ListChallenges);
+        listChallenges.setAdapter(adapterChallenges);
+        listChallenges.setOnItemClickListener(this);
+//
+        adapterPlayers = new SimpleAdapter(ICSClient.this, mapPlayers, R.layout.ics_player_row,
+                new String[]{"text_name", "text_rating"},
+                new int[]{R.id.text_name, R.id.text_rating});
 
-        _listChallenges = (ListView) findViewById(R.id.ICSChallenges);
-        _listChallenges.setAdapter(_adapterChallenges);
-        _listChallenges.setOnItemClickListener(this);
+        listPlayers = findViewById(R.id.ListPlayers);
+        listPlayers.setAdapter(adapterPlayers);
+        listPlayers.setOnItemClickListener(this);
+//
+//
+        /*
+        item.put("nr", match.group(1));
+            item.put("text_rating1", match.group(2));
+            item.put("text_name1", match.group(3));
+            item.put("text_rating2", match.group(4));
+            item.put("text_name2", match.group(5));
+            item.put("text_type", match.group(6).toUpperCase() + match.group(7).toUpperCase());
+            item.put("text_time1", match.group(10) + ":" + match.group(11));
+            item.put("text_time2", match.group(12) + ":" + match.group(13));
+         */
+        adapterGames = new SimpleAdapter(ICSClient.this, mapGames, R.layout.ics_game_row,
+                new String[]{"nr", "text_name1", "text_name2"},
+                new int[]{R.id.nr, R.id.text_name1, R.id.text_name2});
 
-        _adapterPlayers = new AlternatingRowColorAdapter(ICSClient.this, _mapPlayers, R.layout.ics_player_row,
-                new String[]{"text_name", "text_rating"}, new int[]{R.id.text_name, R.id.text_rating});
-
-        _listPlayers = (ListView) findViewById(R.id.ICSPlayers);
-        _listPlayers.setAdapter(_adapterPlayers);
-        _listPlayers.setOnItemClickListener(this);
-
-        _adapterWelcome  = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-        _listWelcome = findViewById(R.id.WelcomeList);
-        _listWelcome.setAdapter(_adapterWelcome);
-        _listWelcome.setOnItemClickListener(this);
-
-        _adapterGames = new AlternatingRowColorAdapter(ICSClient.this, _mapGames, R.layout.ics_game_row,
-                new String[]{"nr", "text_type", "text_name1", "text_name2", "text_rating1", "text_rating2", "text_time1", "text_time2"},
-                new int[]{R.id.nr, R.id.text_type, R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2, R.id.text_time1, R.id.text_time2});
-
-        _listGames = (ListView) findViewById(R.id.ICSGames);
-        _listGames.setAdapter(_adapterGames);
+        _listGames = findViewById(R.id.ListGames);
+        _listGames.setAdapter(adapterGames);
         _listGames.setOnItemClickListener(this);
 
-        _adapterStored = new AlternatingRowColorAdapter(ICSClient.this, _mapStored, R.layout.ics_stored_row,
-                new String[]{"nr_stored", "color_stored", "text_name_stored", "available_stored"}, new int[]{R.id.nr_stored, R.id.color_stored, R.id.text_name_stored, R.id.available_stored});
+        adapterStored = new SimpleAdapter(ICSClient.this, mapStored, R.layout.ics_stored_row,
+                new String[]{"nr_stored", "color_stored", "text_name_stored", "available_stored"},
+                new int[]{R.id.nr_stored, R.id.color_stored, R.id.text_name_stored, R.id.available_stored});
 
-        _listStored = (ListView) findViewById(R.id.ICSStored);
-        _listStored.setAdapter(_adapterStored);
-        _listStored.setOnItemClickListener(this);
+//        _listStored = (ListView) findViewById(R.id.ICSStored);
+//        _listStored.setAdapter(adapterStored);
+//         _listStored.setOnItemClickListener(this);
 
-        _viewAnimatorMain = (ViewAnimator) findViewById(R.id.ViewAnimatorMain);
-        _viewAnimatorMain.setOutAnimation(this, R.anim.slide_left);
-        _viewAnimatorMain.setInAnimation(this, R.anim.slide_right);
 
-        _viewAnimatorLobby = (ViewAnimator) findViewById(R.id.ViewAnimatorLobby);
-        _viewAnimatorLobby.setOutAnimation(this, R.anim.slide_left);
-        _viewAnimatorLobby.setInAnimation(this, R.anim.slide_right);
-
-        _scrollConsole = (ScrollView) findViewById(R.id.ScrollICSConsole);
-        _scrollPlayConsole = (ScrollView) findViewById(R.id.ScrollPlayConsole);
-
-        /*
-        ImageButton butClose = (ImageButton)findViewById(R.id.ButtonBoardClose);
-        butClose.setOnClickListener(new OnClickListener() {
-        	public void onClick(View arg0) {
-        		unsetBoard();
-        		switchToWelcomeView();
-        	}
-        });
-        */
-
-//        ImageButton butQuick = (ImageButton) findViewById(R.id.ButtonICSQuickCmd);
-//        if (butQuick != null) {
-//            butQuick.setOnClickListener(new OnClickListener() {
+//        ImageButton butQuick2 = (ImageButton) findViewById(R.id.ButtonICSConsoleQuickCmd);
+//        if (butQuick2 != null) { // crashes reported on this being null
+//            butQuick2.setOnClickListener(new OnClickListener() {
 //                public void onClick(View arg0) {
 //                    //showMenu();
 //                    openOptionsMenu();
@@ -243,115 +336,69 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 //            });
 //        }
 
-        ImageButton butQuick2 = (ImageButton) findViewById(R.id.ButtonICSConsoleQuickCmd);
-        if (butQuick2 != null) { // crashes reported on this being null
-            butQuick2.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    //showMenu();
-                    openOptionsMenu();
-                }
-            });
-        }
 
-        ImageButton butChat = (ImageButton) findViewById(R.id.ButtonICSChat);
-        if (butChat != null) {
-            butChat.setOnClickListener(new OnClickListener() {
-                public void onClick(View arg0) {
-                    //ICSChatDlg
-                    _dlgChat.show();
-                    _bConsoleText = true;
-                    _dlgChat.prepare();
-                }
-            });
-        }
+//        _spinnerHandles = (Spinner) findViewById(R.id.SpinnerLoginPresets);
+//
+//        _spinnerHandles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//
+//            @Override
+//            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+//                _editHandle.setText(_spinnerHandles.getSelectedItem().toString());
+//                _editPwd.setText(_arrayPasswords.get(position));
+//                if (_arrayPasswords.get(position).length() < 2) {
+//                    _editPwd.setText("");
+//                }
+//                Log.d(TAG, _spinnerHandles.getSelectedItem().toString());
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parentView) {
+//                Log.d(TAG, "nothing selected in spinner");
+//            }
+//        });
 
-        _editHandle = (EditText) findViewById(R.id.EditICSHandle);
-        _editHandle.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    _editPwd.setText(""); // clear password box for new handle
-                    return false;  // this allows focus to the password box
-                }
-                return false;
-            }
-        });
-
-        _editPwd = (EditText) findViewById(R.id.EditICSPwd);
-
-        _spinnerHandles = (Spinner) findViewById(R.id.SpinnerLoginPresets);
-
-        _spinnerHandles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                _editHandle.setText(_spinnerHandles.getSelectedItem().toString());
-                _editPwd.setText(_arrayPasswords.get(position));
-                if (_arrayPasswords.get(position).length() < 2) {
-                    _editPwd.setText("");
-                }
-                Log.d(TAG, _spinnerHandles.getSelectedItem().toString());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                Log.d(TAG, "nothing selected in spinner");
-            }
-        });
-
-        /////////////////////////
-        final Handler actionHandler = new Handler();
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                new AlertDialog.Builder(ICSClient.this)
-                        .setTitle("Delete entry")
-                        .setMessage("Are you sure you want to delete " + _spinnerHandles.getSelectedItem().toString() + "?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                String newData = _spinnerHandles.getSelectedItem().toString();
-                                _adapterHandles.remove(newData);
-                                _adapterHandles.notifyDataSetChanged();
-                                _arrayPasswords.remove(_spinnerHandles.getSelectedItemPosition());
-                                _editHandle.setText("");
-                                _editPwd.setText("");
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // do nothing
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        };
-
-        _spinnerHandles.setOnTouchListener(new View.OnTouchListener() { // simulate long press on spinner
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    actionHandler.postDelayed(runnable, 650);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    actionHandler.removeCallbacks(runnable);
-                }
-                return false;
-            }
-        });
+//        final Handler actionHandler = new Handler();
+//        final Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                new AlertDialog.Builder(ICSClient.this)
+//                        .setTitle("Delete entry")
+//                        .setMessage("Are you sure you want to delete " + _spinnerHandles.getSelectedItem().toString() + "?")
+//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                String newData = _spinnerHandles.getSelectedItem().toString();
+//                                _adapterHandles.remove(newData);
+//                                _adapterHandles.notifyDataSetChanged();
+//                                _arrayPasswords.remove(_spinnerHandles.getSelectedItemPosition());
+//                                _editHandle.setText("");
+//                                _editPwd.setText("");
+//                            }
+//                        })
+//                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                // do nothing
+//                            }
+//                        })
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .show();
+//            }
+//        };
+//
+//        _spinnerHandles.setOnTouchListener(new View.OnTouchListener() { // simulate long press on spinner
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                    actionHandler.postDelayed(runnable, 650);
+//                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+//                    actionHandler.removeCallbacks(runnable);
+//                }
+//                return false;
+//            }
+//        });
         /////////////////////
 
-        _butLogin = (Button) findViewById(R.id.ButICSLogin);
-        if (_butLogin != null) {
-            _butLogin.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View arg0) {
-                    startSession(_editHandle.getText().toString(), _editPwd.getText().toString());
-                }
-            });
-        }
-        _tvConsole = (TextView) findViewById(R.id.TextViewICSBoardConsole);
-        _tvPlayConsole = (TextView) findViewById(R.id.TextViewICSPlayConsole);
 
-        OnKeyListener okl = new OnKeyListener() {
+        View.OnKeyListener okl = new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) ||
                         event.getAction() == EditorInfo.IME_ACTION_DONE
@@ -360,7 +407,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
                     EditText et = (EditText) v;
                     _sConsoleEditText = et.getText().toString();
 
-                    _bConsoleText = true;  // show text when user types to ICS
                     sendString(_sConsoleEditText);
                     et.setText("");
 
@@ -376,13 +422,16 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
             _editConsole.setSingleLine(true);
             _editConsole.setOnKeyListener(okl);
         }
-        _editBoard = (EditText) findViewById(R.id.EditICSBoard);
-        if (_editBoard != null) {
-            _editBoard.setSingleLine(true);
-            _editBoard.setOnKeyListener(okl);
-        }
 
-        Button butReg = (Button) findViewById(R.id.ButICSRegister);
+        _scrollConsole = findViewById(R.id.ScrollICSConsole);
+
+//        _editBoard = (EditText) findViewById(R.id.EditICSBoard);
+//        if (_editBoard != null) {
+//            _editBoard.setSingleLine(true);
+//            _editBoard.setOnKeyListener(okl);
+//        }
+//
+        Button butReg = findViewById(R.id.ButICSRegister);
         if (butReg != null) {
             butReg.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View arg0) {
@@ -399,307 +448,87 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
             });
         }
 
-        final int REQUEST_CODE_ASK_PERMISSIONS = 123;  // Ask permission to write to external storage for android 6 and above
-        int hasWritePermission =
-                ContextCompat.checkSelfPermission(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (hasWritePermission != PackageManager.PERMISSION_GRANTED) {
-
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(ICSClient.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(ICSClient.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_CODE_ASK_PERMISSIONS);
-            } else {
-                globalToast("NEED PERMISSION TO WRITE GAMES TO SD CARD"); // Show toast if user denied permission
-                ActivityCompat.requestPermissions(ICSClient.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_CODE_ASK_PERMISSIONS);
-            }
-        }
-
 
         _ringNotification = null;
 
-        switchToLoginView();
+//        switchToLoginView();
+
+        localClockApi.addListener(this);
 
         Log.i("ICSClient", "onCreate");
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-//        menu.add(Menu.NONE, R.string.menu_prefs, Menu.NONE, R.string.menu_prefs);
-//        menu.add(Menu.NONE, R.string.menu_flip, Menu.NONE, R.string.menu_flip);
-        menu.add(Menu.NONE, R.string.ics_menu_takeback, Menu.NONE, R.string.ics_menu_takeback);
-        menu.add(Menu.NONE, R.string.ics_menu_adjourn, Menu.NONE, R.string.ics_menu_adjourn);
-        menu.add(Menu.NONE, R.string.ics_menu_draw, Menu.NONE, R.string.ics_menu_draw);
-        menu.add(Menu.NONE, R.string.ics_menu_resign, Menu.NONE, R.string.ics_menu_resign);
-        menu.add(Menu.NONE, R.string.ics_menu_abort, Menu.NONE, R.string.ics_menu_abort);
-        menu.add(Menu.NONE, R.string.ics_menu_flag, Menu.NONE, R.string.ics_menu_flag);
-        menu.add(Menu.NONE, R.string.ics_menu_refresh, Menu.NONE, R.string.ics_menu_refresh);
-//        menu.add(Menu.NONE, R.string.ics_menu_challenges, Menu.NONE, R.string.ics_menu_challenges);
-//        menu.add(Menu.NONE, R.string.ics_menu_games, Menu.NONE, R.string.ics_menu_games);
-//        menu.add(Menu.NONE, R.string.ics_menu_stored, Menu.NONE, R.string.ics_menu_stored);
-//        menu.add(Menu.NONE, R.string.ics_menu_seek, Menu.NONE, R.string.ics_menu_seek);
-//        menu.add(Menu.NONE, R.string.ics_menu_players, Menu.NONE, R.string.ics_menu_players);
-//        menu.add(Menu.NONE, R.string.ics_menu_top_blitz, Menu.NONE, R.string.ics_menu_top_blitz);
-//        menu.add(Menu.NONE, R.string.ics_menu_top_standard, Menu.NONE, R.string.ics_menu_top_standard);
-//        menu.add(Menu.NONE, R.string.ics_menu_stop_puzzle, Menu.NONE, R.string.ics_menu_stop_puzzle);
-
-//        menu.add(Menu.NONE, R.string.ics_menu_console, Menu.NONE, R.string.ics_menu_console);
-
-        menu.add("tell puzzlebot hint");
-//        menu.add("unexamine");
-        menu.add("tell endgamebot hint");
-        menu.add("tell endgamebot move");
-//        menu.add("tell endgamebot stop");
-
-//        menu.add(Menu.NONE, R.string.ics_menu_unobserve, Menu.NONE, R.string.ics_menu_unobserve);
-//        menu.add(Menu.NONE, R.string.menu_help, Menu.NONE, R.string.menu_help);
-
-        try {
-            SharedPreferences prefs = this.getPrefs();
-            JSONArray jArray = new JSONArray(prefs.getString("ics_custom_commands", CustomCommands.DEFAULT_COMMANDS));
-
-            for (int i = 0; i < jArray.length(); i++) {
-
-                try {
-                    menu.add(jArray.getString(i));
-                } catch (JSONException e) {
-                }
-            }
-        } catch (JSONException e) {
-        }
-
-
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-        boolean isConnected = isConnected();
-        boolean isUserPlaying = get_view().isUserPlaying();
-        boolean isNotGuest = isConnected && icsServer.isGuest();
-        int viewMode = this.get_view()._viewMode;
-
-//        menu.findItem(R.string.menu_flip).setVisible(isConnected && viewMode != ICSChessView.VIEW_NONE);
-        menu.findItem(R.string.ics_menu_takeback).setVisible(isConnected && isUserPlaying);
-
-        menu.findItem(R.string.ics_menu_adjourn).setVisible(isConnected && isUserPlaying && isNotGuest);
-        menu.findItem(R.string.ics_menu_draw).setVisible(isConnected && isUserPlaying);
-        menu.findItem(R.string.ics_menu_resign).setVisible(isConnected && isUserPlaying);
-        menu.findItem(R.string.ics_menu_abort).setVisible(isConnected && isUserPlaying);
-        menu.findItem(R.string.ics_menu_flag).setVisible(isConnected && isUserPlaying);
-        menu.findItem(R.string.ics_menu_refresh).setVisible(isConnected && isUserPlaying);
-
-//        menu.findItem(R.string.ics_menu_challenges).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
-//        menu.findItem(R.string.ics_menu_games).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
-//        menu.findItem(R.string.ics_menu_stored).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE && isNotGuest);
-//        menu.findItem(R.string.ics_menu_seek).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
-//        menu.findItem(R.string.ics_menu_players).setVisible(isConnected && viewMode == ICSChessView.VIEW_NONE);
-
-//        menu.findItem(R.string.ics_menu_stop_puzzle).setVisible(isConnected && viewMode == ICSChessView.VIEW_PUZZLE);
-
-//        menu.findItem(R.string.ics_menu_unobserve).setVisible(isConnected && viewMode == ICSChessView.VIEW_WATCH);
-
-//        menu.findItem(R.string.ics_menu_console).setVisible(isConnected);
-
-        for (int i = 0; i < menu.size(); i++) {
-            MenuItem item = menu.getItem(i);
-            String title = item.getTitle().toString();
-            if (title.equals("tell puzzlebot hint")) {
-                item.setVisible(isConnected && viewMode == ICSChessView.VIEW_PUZZLE);
-            } else if (title.equals("tell endgamebot hint")) {
-                item.setVisible(isConnected && viewMode == ICSChessView.VIEW_ENDGAME);
-            } else if (title.equals("tell endgamebot move")) {
-                item.setVisible(isConnected && viewMode == ICSChessView.VIEW_ENDGAME);
-            } else if (title.equals("tell endgamebot stop")) {
-                item.setVisible(isConnected && viewMode == ICSChessView.VIEW_ENDGAME);
-            }
-        }
-
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        Intent i;
-        switch (item.getItemId()) {
-            case R.string.menu_prefs:
-                i = new Intent();
-                i.setClass(ICSClient.this, ICSPrefs.class);
-                startActivity(i);
-                return true;
-            case R.string.menu_flip:
-                _view.flipBoard();
-                _view.paint();
-                sendString("refresh");
-                return true;
-            case R.string.ics_menu_refresh:
-                sendString("refresh");
-                return true;
-            case R.string.ics_menu_takeback:
-                sendString("takeback 2");
-                return true;
-            case R.string.ics_menu_resume:
-                sendString("resume");
-                return true;
-            case R.string.ics_menu_abort:
-                sendString("abort");
-                // game will stop by way of toast
-                return true;
-            case R.string.ics_menu_adjourn:
-                sendString("adjourn");
-                return true;
-            case R.string.ics_menu_draw:
-                sendString("draw");
-                return true;
-            case R.string.ics_menu_flag:
-                sendString("flag");
-                return true;
-            case R.string.ics_menu_resign:
-                sendString("resign");
-                return true;
-            case R.string.ics_menu_games:
-                // switchToLoadingView();
-                switchToGamesView();
-
-                return true;
-            case R.string.ics_menu_stored:
-                switchToStoredView();
-                sendString("stored");
-                return true;
-            case R.string.ics_menu_challenges:
-                switchToChallengeView();
-                return true;
-        }
-
-        // check menu for ending tag of <NR>, then delete tag and allow a command with no return
-        if (item.getTitle() != null) {
-            String itemTitle = item.getTitle().toString();
-            if (itemTitle.length() > 4 && itemTitle.substring(itemTitle.length() - 4).equals("<NR>")) {
-                if (_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_CONSOLE) {
-                    _editConsole.setText(itemTitle.substring(0, itemTitle.length() - 4));
-                    _editConsole.requestFocus();
-                    _editConsole.setSelection(_editConsole.getText().length());
-                } else {
-                    _editBoard.setText(itemTitle.substring(0, itemTitle.length() - 4));
-                    _editBoard.requestFocus();
-                    _editBoard.setSelection(_editBoard.getText().length());
-                }
-            } else {
-                sendString(item.getTitle().toString());
-            }
-        }
-        return true;
-    }
-
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if (_viewAnimatorMain.getDisplayedChild() == VIEW_MAIN_LOBBY) {
-                if (_viewAnimatorLobby.getDisplayedChild() == VIEW_SUB_WELCOME) {
-                    finish();
-                } else {
-                    switchToWelcomeView();
-                }
-            } else if (_viewAnimatorMain.getDisplayedChild() == VIEW_MAIN_BOARD) {
-                // @TODO
-                switch(get_view().getViewMode()) {
-                    case ICSChessView.VIEW_PLAY:
+            ICSApi icsApi = (ICSApi)gameApi;
+            int rootView = viewAnimatorRoot.getDisplayedChild();
+
+            if (rootView == VIEW_BOARD) {
+                int viewMode = icsApi.getViewMode();
+
+                if (viewMode == ICSApi.VIEW_PLAY) {
+                    if (isPlaying) {
                         new AlertDialog.Builder(ICSClient.this)
-                                .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
-                                .setPositiveButton(getString(R.string.alert_yes),
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int whichButton) {
-                                                dialog.dismiss();
-                                                sendString("abort");
-                                                get_view().stopGame();
-                                                switchToWelcomeView();
+                            .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
+                            .setPositiveButton(getString(R.string.alert_yes),
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            dialog.dismiss();
+                                            sendString("abort");
 
-                                            }
-                                        })
-                                .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .show();
-                        break;
-                    case ICSChessView.VIEW_WATCH:
-                        sendString("unobserve");
-                        get_view().stopGame();
-                        switchToWelcomeView();
-                        break;
-                    case ICSChessView.VIEW_PUZZLE:
-                        sendString("tell puzzlebot stop");
-                        get_view().stopGame();
-                        switchToWelcomeView();
-                        break;
-                    case ICSChessView.VIEW_ENDGAME:
-                        sendString("tell endgamebot stop");
-                        get_view().stopGame();
-                        switchToWelcomeView();
-                        break;
-                    case ICSChessView.VIEW_EXAMINE:
-                        sendString("unexamine");
-                        get_view().stopGame();
-                        switchToWelcomeView();
-                        break;
-                    case ICSChessView.VIEW_NONE:
-                        get_view().stopGame();
-                        switchToWelcomeView();
-                        break;
+                                            setMenuView();
+                                        }
+                                    })
+                            .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                    } else {
+                        setMenuView();
+                    }
+                    return true;
                 }
-
-
+                else {
+                    switch(viewMode) {
+                        case ICSApi.VIEW_OBSERVE:
+                            sendString("unobserve");
+                            break;
+                        case ICSApi.VIEW_EXAMINE:
+                            sendString("unexamine");
+                            break;
+                    }
+                    setMenuView();
+                }
+                return true;
             } else {
-                finish();
+                stopSession(R.string.ics_quit);
+                return true;
             }
-            return true;
+        } else {
+            finish();
         }
+
         return super.onKeyDown(keyCode, event);
     }
 
-//    public void stopSession(String sReason) {
-//        Log.e("stopSession", sReason);
-//        if (isFinishing()) {
-//            return;
-//        }
-//        new AlertDialog.Builder(ICSClient.this)
-//                .setTitle(R.string.title_error)
-//                .setMessage(sReason)
-//                .setPositiveButton(R.string.alert_ok,
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int whichButton) {
-//                                dialog.dismiss();
-//                                finish();
-//                            }
-//                        })
-//                .show();
-//    }
+    public void stopSession(int resource) {
 
-    public void startSession(final String h, final String p) {
-        if (h == "") {
-            globalToast(getString(R.string.msg_ics_enter_handle));
+        if (isFinishing()) {
             return;
         }
-        if (h != "guest" && p == "") {
-            globalToast(getString(R.string.msg_ics_enter_password));
-            return;
-        }
-
-        if (bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE)) {
-            mShouldUnbind = true;
-            Log.i(TAG, "Bind to ICSServer");
-
-            _handle = h;
-            _pwd = p;
-            switchToLoadingView();
-
-        } else {
-            globalToast("Could not init remote chess process");
-            Log.e(TAG, "Error: The requested service doesn't exist, or this client isn't allowed access to it.");
-        }
+        new AlertDialog.Builder(ICSClient.this)
+            .setTitle(resource)
+//            .setMessage(resource)
+            .setPositiveButton(R.string.alert_ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                })
+            .show();
     }
 
     protected void makeGamePGN(String sEnd) {
@@ -746,12 +575,12 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
         PGN.append(sBeg + "\n\n");
 
-        saveGameSDCard();
+//        saveGameSDCard();
 
-        _dlgOver.updateGameResultText(_matgame.group(11)); // game result message sent to dialog
-
-        _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
-        _dlgOver.show();
+//        _dlgOver.updateGameResultText(_matgame.group(11)); // game result message sent to dialog
+//
+//        _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
+//        _dlgOver.show();
         //_dlgOver.prepare();
 
     }
@@ -853,117 +682,13 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
                 text = getString(R.string.ics_game_over);
             }
         } else if (line.contains("} 1/2-1/2")) {  // draw
-            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)), false);
-            get_view().setViewMode(ICSChessView.VIEW_NONE);
+            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)));
+
             return;
         }
 
-        gameToast(String.format(getString(R.string.ics_game_over_format), text), true);
+        gameToast(String.format(getString(R.string.ics_game_over_format), text));
 
-        get_view().setViewMode(ICSChessView.VIEW_NONE);
-    }
-
-    public void copyToClipBoard() {
-        try {
-            @SuppressWarnings("deprecation")
-            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            cm.setText(PGN.toString());
-            doToast(getString(R.string.ics_copy_clipboard));
-        } catch (Exception e) {
-            doToast(getString(R.string.err_copy_clipboard));
-            Log.e("ex", e.toString());
-        }
-    }
-
-    public void saveGameSDCard() {
-        try {
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-
-                _sFile = Environment.getExternalStorageDirectory() + "/chessgamesonline.pgn";
-
-                FileOutputStream fos;
-
-                fos = new FileOutputStream(_sFile, true);
-                fos.write(PGN.toString().getBytes());
-                fos.flush();
-                fos.close();
-
-                doToast(getString(R.string.ics_save_game));
-
-            } else {
-                doToast(getString(R.string.err_sd_not_mounted));
-            }
-        } catch (Exception e) {
-
-            doToast(getString(R.string.err_saving_game));
-            Log.e("ex", e.toString());
-        }
-
-    }
-
-    public void SendToApp() {
-
-        try {
-            Intent sendIntent = new Intent(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_SUBJECT, "chess pgn");
-            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + _sFile));
-            sendIntent.setType("application/x-chess-pgn");
-
-            startActivity(sendIntent);
-
-        } catch (Exception e) {
-
-            doToast(getString(R.string.err_send_email));
-            Log.e("ex", e.toString());
-        }
-    }
-
-    public void addConsoleText(final String s) {
-
-        _tvConsole.setTypeface(Typeface.MONOSPACE);  // Monospace gives each character the same width
-        _tvPlayConsole.setTypeface(Typeface.MONOSPACE);
-        _dlgPlayer._tvPlayerListConsole.setTypeface(Typeface.MONOSPACE);
-
-        _tvConsole.setTextSize(_iConsoleCharacterSize); // sets console text size
-        _tvPlayConsole.setTextSize(_iConsoleCharacterSize);
-        _dlgPlayer._tvPlayerListConsole.setTextSize(_iConsoleCharacterSize);
-
-        if (_dlgPlayer.isShowing()) {
-            _dlgPlayer._tvPlayerListConsole.append(s);
-            _dlgPlayer._scrollPlayerListConsole.post(new Runnable() {
-                public void run() {
-                    _dlgPlayer._scrollPlayerListConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
-                }
-            });
-            return;
-        }
-
-
-        final String s2 = _tvConsole.getText() + "\n\n" + s;
-        if (s2.length() > 8192) {
-            _tvConsole.setText(s2.substring(s2.length() - 4096));
-        } else {
-            _tvConsole.append("\n\n" + s);
-        }
-
-        _scrollConsole.post(new Runnable() {//
-            public void run() {
-                _scrollConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
-            }
-        });
-
-
-        final String s3 = _tvPlayConsole.getText() + "\n\n" + s;
-        if (s3.length() > 1024) {
-            _tvPlayConsole.setText(s3.substring(s3.length() - 512));
-        } else {
-            _tvPlayConsole.append("\n\n" + s);
-        }
-        _scrollPlayConsole.post(new Runnable() {
-            public void run() {
-                _scrollPlayConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
-            }
-        });
     }
 
     private void confirmShow(String title, String text, String sendstring) {
@@ -972,10 +697,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         _dlgConfirm.show();
     }
 
-    public void gameToast(final String text, final boolean stop) {
-        if (stop) {
-            get_view().stopGame();
-        }
+    public void gameToast(final String text) {
         Toast t = Toast.makeText(this, text, Toast.LENGTH_LONG);
         t.setGravity(Gravity.CENTER, 0, 0);
         t.show();
@@ -989,27 +711,42 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     @Override
-    protected void onResume() {
-        Log.i(TAG, "onResume");
+    public boolean requestMove(int from, int to) {
+        highlightedPositions.clear();
+        highlightedPositions.add(from);
+        highlightedPositions.add(to);
 
-        if (icsServer != null) {
-            icsServer.addListener(this);
+        ICSApi icsApi = (ICSApi) gameApi;
+        if (isPlaying) {
+            if (icsApi.getMyTurn() == icsApi.getTurn()) {
+                // @TODO promotion
+                // if (jni.pieceAt(BoardConstants.WHITE, from)
+                String sMove = Pos.toString(from) + "-" + Pos.toString(to);
+                sendString(sMove);
+            } else  {
+                setPremove(from, to);
+            }
+        } else {
+            String sMove = Pos.toString(from) + "-" + Pos.toString(to);
+            sendString(sMove);
         }
+        return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume");
 
         invalidateOptionsMenu(); // update OptionsMenu
 
         SharedPreferences prefs = this.getPrefs();
 
-        _viewbase._showCoords = prefs.getBoolean("showCoords", false);
-
-        ChessImageView._colorScheme = prefs.getInt("ColorScheme", 0);
-
-        _view.setConfirmMove(prefs.getBoolean("ICSConfirmMove", false));
-
-        _ficsHandle = prefs.getString("ics_handle", null);
-        _ficsPwd = prefs.getString("ics_password", null);
+        _editHandle.setText(prefs.getString("ics_handle", "guest"));
+        _editPwd.setText(prefs.getString("ics_password", ""));
 
         _iConsoleCharacterSize = Integer.parseInt(prefs.getString("ICSConsoleCharacterSize", "10"));
+        _tvConsole.setTextSize(_iConsoleCharacterSize);
 
         _bAutoSought = prefs.getBoolean("ICSAutoSought", true);
 
@@ -1033,65 +770,66 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         _notifyON = prefs.getBoolean("ICSGameStartBringToFront", true);
 
         /////////////////////////////////////////////
-        _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-        _arrayPasswords = new ArrayList<String>();
+//        _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+//        _arrayPasswords = new ArrayList<String>();
+//
+//        if (_ficsHandle != null) {
+//            _adapterHandles.add(_ficsHandle);
+//            _arrayPasswords.add(_ficsPwd);
+//        }
+//
+//        try {
+//            JSONArray jArray = new JSONArray(prefs.getString("ics_handle_array", "guest"));
+//            JSONArray jArrayPasswords = new JSONArray(prefs.getString("ics_password_array", ""));
+//            for (int i = 0; i < jArray.length(); i++) {
+//                _adapterHandles.add(jArray.getString(i));
+//                _arrayPasswords.add(jArrayPasswords.getString(i));
+//            }
+//        } catch (JSONException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//
+//        int t = 0;
+//        boolean g = false;
+//        for (int i = 0; i < _adapterHandles.getCount(); i++) {
+//            String x = _adapterHandles.getItem(i).toString();
+//            if (x.equals(_ficsHandle)) {
+//                t++;
+//            }
+//            if (x.equals("guest")) {
+//                g = true;  // flag to check if guest is in the spinner
+//            }
+//        }
+//        if (t > 1) {  // work around for remove - delete every occurrence and add latest - this will add latest password
+//            while (t > 0) {
+//                _adapterHandles.remove(_ficsHandle);
+//                _arrayPasswords.remove(_adapterHandles.getPosition(_ficsHandle) + 1);
+//                t--;
+//            }
+//            _adapterHandles.add(_ficsHandle);
+//            _arrayPasswords.add(_ficsPwd);
+//        }
+//
+//        if (g == false) {
+//            _adapterHandles.add("guest"); // if no guest then add guest
+//            _arrayPasswords.add(" ");
+//        }
+//
+//        _spinnerHandles.setAdapter(_adapterHandles);
+//
+//        _spinnerHandles.setSelection(_adapterHandles.getPosition(_ficsHandle));
+//
+//
+//        /////////////////////////////////////////////////////////////////
+//
+//        if (_ficsHandle == null) {
+//            _ficsHandle = "guest";
+//            _ficsPwd = "";
+//        }
 
-        if (_ficsHandle != null) {
-            _adapterHandles.add(_ficsHandle);
-            _arrayPasswords.add(_ficsPwd);
-        }
 
-        try {
-            JSONArray jArray = new JSONArray(prefs.getString("ics_handle_array", "guest"));
-            JSONArray jArrayPasswords = new JSONArray(prefs.getString("ics_password_array", ""));
-            for (int i = 0; i < jArray.length(); i++) {
-                _adapterHandles.add(jArray.getString(i));
-                _arrayPasswords.add(jArrayPasswords.getString(i));
-            }
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        int t = 0;
-        boolean g = false;
-        for (int i = 0; i < _adapterHandles.getCount(); i++) {
-            String x = _adapterHandles.getItem(i).toString();
-            if (x.equals(_ficsHandle)) {
-                t++;
-            }
-            if (x.equals("guest")) {
-                g = true;  // flag to check if guest is in the spinner
-            }
-        }
-        if (t > 1) {  // work around for remove - delete every occurrence and add latest - this will add latest password
-            while (t > 0) {
-                _adapterHandles.remove(_ficsHandle);
-                _arrayPasswords.remove(_adapterHandles.getPosition(_ficsHandle) + 1);
-                t--;
-            }
-            _adapterHandles.add(_ficsHandle);
-            _arrayPasswords.add(_ficsPwd);
-        }
-
-        if (g == false) {
-            _adapterHandles.add("guest"); // if no guest then add guest
-            _arrayPasswords.add(" ");
-        }
-
-        _spinnerHandles.setAdapter(_adapterHandles);
-
-        _spinnerHandles.setSelection(_adapterHandles.getPosition(_ficsHandle));
-
-
-        /////////////////////////////////////////////////////////////////
-
-        if (_ficsHandle == null) {
-            _ficsHandle = "guest";
-            _ficsPwd = "";
-        }
-
-
+        // @TODO
         String sTmp = prefs.getString("NotificationUri", null);
         if (sTmp == null) {
             _ringNotification = null;
@@ -1100,33 +838,26 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
             _ringNotification = RingtoneManager.getRingtone(this, tmpUri);
         }
 
-        if (isConnected()) {
-            Log.i(TAG, "resume, connected mode" + get_view().getViewMode());
-            if (get_view().getViewMode() != ICSChessView.VIEW_NONE) {
-                switchToBoardView();
-            } else {
-                switchToWelcomeView();
-            }
-        } else {
-            _editHandle.setText(_ficsHandle);
-            _editPwd.setText(_ficsPwd);
-            if (_ficsPwd.length() < 2) {
-                _editPwd.setText("");
-            }
-
-            /////////////////////////////////////////////////////
-            // DEBUG
-            //switchToBoardView();
-            /////////////////////////////////////////////////////
-
-            // real
-            switchToLoginView();
-        }
-        super.onResume();
+        addListeners();
+        showLoginIfNotConnected();
     }
 
-    public String get_ficsHandle() {
-        return _ficsHandle;
+    public void addListeners() {
+        if (icsServer != null) {
+            icsServer.addListener(this);
+        }
+    }
+
+    public void removeListeners() {
+        if (icsServer != null) {
+            icsServer.removeListener(this);
+        }
+    }
+
+    public void showLoginIfNotConnected() {
+        if (!isConnected()) {
+            setLoginView();
+        }
     }
 
     public boolean is_bTimeWarning() {
@@ -1142,9 +873,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public String get_whiteHandle() {
-        if (_whiteHandle != null) {
-            return _whiteHandle;
-        }  // _whiteHandle is mat1 and mat2 match
         try {
             return _matgame.group(1);
         } catch (Exception e) { // return _matgame match
@@ -1153,9 +881,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public String get_whiteRating() {
-        if (_whiteRating != null) {
-            return _whiteRating;
-        }
         try {
             return _matgame.group(2);
         } catch (Exception e) {
@@ -1164,9 +889,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public String get_blackHandle() {
-        if (_blackHandle != null) {
-            return _blackHandle;
-        }
         try {
             return _matgame.group(3);
         } catch (Exception e) {
@@ -1175,9 +897,6 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public String get_blackRating() {
-        if (_blackRating != null) {
-            return _blackRating;
-        }
         try {
             return _matgame.group(4);
         } catch (Exception e) {
@@ -1203,7 +922,7 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
             Notification.Builder builder = new Notification.Builder(this);
             builder.setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.chess)
+                    .setSmallIcon(R.drawable.ic_logo)
                     .setWhen(System.currentTimeMillis())
                     .setAutoCancel(true)
                     .setLights(Color.CYAN, 100, 100)
@@ -1221,23 +940,21 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     protected void onPause() {
         Log.i(TAG, "onPause");
 
-        if (icsServer != null) {
-            icsServer.removeListener(this);
-        }
+        removeListeners();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        editor.putString("ics_handle", _ficsHandle);
-        editor.putString("ics_password", _ficsPwd);
+        editor.putString("ics_handle", _editHandle.getText().toString());
+        editor.putString("ics_password", _editPwd.getText().toString());
 
-        JSONArray jArray = new JSONArray();
-        JSONArray jArrayPasswords = new JSONArray();
-        for (int i = 0; i < _adapterHandles.getCount(); i++) {
-            jArray.put(_adapterHandles.getItem(i));
-            jArrayPasswords.put(_arrayPasswords.get(i));
-        }
-        editor.putString("ics_handle_array", jArray.toString());
-        editor.putString("ics_password_array", jArrayPasswords.toString());
+//        JSONArray jArray = new JSONArray();
+//        JSONArray jArrayPasswords = new JSONArray();
+//        for (int i = 0; i < _adapterHandles.getCount(); i++) {
+//            jArray.put(_adapterHandles.getItem(i));
+//            jArrayPasswords.put(_arrayPasswords.get(i));
+//        }
+//        editor.putString("ics_handle_array", jArray.toString());
+//        editor.putString("ics_password_array", jArrayPasswords.toString());
 
         editor.putBoolean("ICSVolume", _bICSVolume);
 
@@ -1258,35 +975,38 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     protected void onStart() {
         Log.i(TAG, "onStart");
         super.onStart();
+
+        if (icsServer == null) {
+            if (bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE)) {
+                Log.i(TAG, "Bind to ICSServer");
+            } else {
+                globalToast("Could not init remote chess process");
+                Log.e(TAG, "Error: The requested service doesn't exist, or this client isn't allowed access to it.");
+            }
+        }
     }
 
     @Override
     protected void onStop() {
         Log.i(TAG, "onStop");
         super.onStop();
+
     }
 
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
 
-        if (icsServer != null) {
-            icsServer.removeListener(this);
-        }
-        if (mShouldUnbind) {
-            unbindService(mConnection);
-        }
+        removeListeners();
+
+        unbindService(mConnection);
+        icsServer = null;
+
         super.onDestroy();
     }
 
     public void sendString(String s) {
-
-        if (_bConsoleText) {        // allows user ICS console text only
-            addConsoleText(s);
-            _bConsoleText = false;
-        }
-
-        if (!icsServer.sendString(s)) {
+        if (icsServer != null && !icsServer.sendString(s)) {
             try {
                 new AlertDialog.Builder(ICSClient.this)
                         .setTitle(R.string.title_error)
@@ -1306,15 +1026,15 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        if (arg0 == _listChallenges) {
-            if (_mapChallenges.size() > arg2) {
-                HashMap<String, String> m = _mapChallenges.get(arg2);
+        if (arg0 == listChallenges) {
+            if (mapChallenges.size() > arg2) {
+                HashMap<String, String> m = mapChallenges.get(arg2);
                 Log.i("onItemClick", "item " + m.get("play"));
                 sendString("play " + m.get("play"));
             }
-        } else if (arg0 == _listPlayers) {
-            if (_mapPlayers.size() > arg2) {
-                HashMap<String, String> m = _mapPlayers.get(arg2);
+        } else if (arg0 == listPlayers) {
+            if (mapPlayers.size() > arg2) {
+                HashMap<String, String> m = mapPlayers.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name"));
                 _dlgPlayer.opponentName(m.get("text_name"));
                 _dlgPlayer._tvPlayerListConsole.setText("");  // clear TextView
@@ -1322,148 +1042,166 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
             }
         } else if (arg0 == _listGames) {
-            if (_mapGames.size() > arg2) {
-                HashMap<String, String> m = _mapGames.get(arg2);
+            if (mapGames.size() > arg2) {
+                HashMap<String, String> m = mapGames.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name1"));
                 sendString("observe " + m.get("text_name1"));
                 sendString("refresh");
-                get_view().setViewMode(ICSChessView.VIEW_WATCH);
-                get_view().setGameNum(Integer.parseInt((String) m.get("nr")));
-                switchToBoardView();
             }
         } else if (arg0 == _listStored) {
-            if (_mapStored.size() > arg2) {
-                HashMap<String, String> m = _mapStored.get(arg2);
+            if (mapStored.size() > arg2) {
+                HashMap<String, String> m = mapStored.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name_stored"));
                 sendString("match " + m.get("text_name_stored"));
-                switchToBoardView();
             }
-        } else if (arg0 == _listWelcome) {
-            String selected = _adapterWelcome.getItem(arg2);
-            if (selected.equals(getString(R.string.ics_menu_games))) {
-                switchToGamesView();
-            } else if (selected.equals(getString(R.string.ics_menu_players))) {
-                switchToPlayersView();
-            } else if (selected.equals(getString(R.string.ics_menu_challenges))) {
-                switchToChallengeView();
-            }  else if (selected.equals(getString(R.string.ics_menu_seek))) {
-                 _dlgMatch._rbSeek.setChecked(true);
-                 _dlgMatch._rbSeek.performClick();
-                 _dlgMatch.show();
-            } else if (selected.equals(getString(R.string.ics_menu_top_blitz))) {
-                sendString("obs /b");
-                get_view().setViewMode(ICSChessView.VIEW_WATCH);
-            } else if (selected.equals(getString(R.string.ics_menu_top_standard))) {
-                sendString("obs /s");
-                get_view().setViewMode(ICSChessView.VIEW_WATCH);
-            } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_mate))) {
-                sendString("tell puzzlebot getmate");
-            } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_tactics))) {
-                sendString("tell puzzlebot gettactics");
-            } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_study))) {
-                sendString("tell puzzlebot getstudy");
-            } else if (selected.equals(getString(R.string.ics_menu_console))) {
-                switchToConsoleView();
-            } else if (selected.equals(getString(R.string.menu_prefs))) {
-                Intent i = new Intent();
-                i.setClass(ICSClient.this, ICSPrefs.class);
-                startActivity(i);
-            } else if (selected.equals(getString(R.string.menu_help))) {
-                Intent i = new Intent();
-                i.setClass(ICSClient.this, HtmlActivity.class);
-                i.putExtra(HtmlActivity.HELP_MODE, "help_online");
-                startActivity(i);
+        } else if (arg0 == listMenu) {
+            if (mapMenu.size() > arg2) {
+                HashMap<String, String> m = mapMenu.get(arg2);
+                String selected = m.get("menu_item");
+
+                if (selected.equals(getString(R.string.ics_menu_games))) {
+                    loadGames();
+                } else if (selected.equals(getString(R.string.ics_menu_top_blitz))) {
+                    sendString("obs /b");
+                } else if (selected.equals(getString(R.string.ics_menu_players))) {
+                    loadPlayers();
+                } else if (selected.equals(getString(R.string.ics_menu_challenges))) {
+                    loadChallenges();
+                } else if (selected.equals(getString(R.string.ics_menu_seek))) {
+                    _dlgMatch._rbSeek.setChecked(true);
+                    _dlgMatch._rbSeek.performClick();
+                    _dlgMatch.show();
+                } else if (selected.equals(getString(R.string.ics_menu_top_blitz))) {
+                    sendString("obs /b");
+                } else if (selected.equals(getString(R.string.ics_menu_top_standard))) {
+                    sendString("obs /s");
+                } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_mate))) {
+                    sendString("tell puzzlebot getmate");
+                } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_tactics))) {
+                    sendString("tell puzzlebot gettactics");
+                } else if (selected.equals(getString(R.string.ics_menu_puzzlebot_study))) {
+                    sendString("tell puzzlebot getstudy");
+                } else if (selected.equals(getString(R.string.ics_menu_console))) {
+                    setConsoleView();
+                } else if (selected.equals(getString(R.string.menu_prefs))) {
+                    Intent i = new Intent();
+                    i.setClass(ICSClient.this, ICSPrefs.class);
+                    startActivity(i);
+                } else if (selected.equals(getString(R.string.menu_help))) {
+                    Intent i = new Intent();
+                    i.setClass(ICSClient.this, HtmlActivity.class);
+                    i.putExtra(HtmlActivity.HELP_MODE, "help_online");
+                    startActivity(i);
+                } else {
+                    // assume a custom command
+                    sendString(selected);
+                }
             }
         }
     }
 
-    public void switchToBoardView() {
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_BOARD) {
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_BOARD);
+    public void setMenuView() {
+        mapMenu.clear();
+
+        final int[] resources = {
+                R.string.ics_menu_challenges,
+                R.string.ics_menu_seek,
+                R.string.ics_menu_games,
+                R.string.ics_menu_puzzlebot_mate,
+                R.string.ics_menu_puzzlebot_tactics,
+                R.string.ics_menu_puzzlebot_study,
+                R.string.ics_menu_players,
+                R.string.ics_menu_top_blitz,
+                R.string.ics_menu_top_standard,
+                R.string.menu_prefs,
+                R.string.ics_menu_console,
+                R.string.menu_help,
+
+                // endgamebot dialog (kbnk, ...)?
+        };
+
+        for (int i = 0; i < resources.length; i++) {
+            final int index = i;
+            mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(resources[index])); }}) ;
         }
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_WELCOME);  // used for lobby default
+
+        try {
+            SharedPreferences prefs = this.getPrefs();
+            final JSONArray jArray = new JSONArray(prefs.getString("ics_custom_commands", CustomCommands.DEFAULT_COMMANDS));
+
+            for (int i = 0; i < jArray.length(); i++) {
+                final int index = i;
+                try {
+                    mapMenu.add(new HashMap<String, String>() {{ put("menu_item", jArray.getString(index)); }}) ;
+                } catch (JSONException e) {
+                }
+            }
+        } catch (JSONException e) {
+        }
+
+        adapterMenu.notifyDataSetChanged();
+
+        viewAnimatorRoot.setDisplayedChild(VIEW_MENU);
+        buttonMenu.setVisibility(View.GONE);
+
+        textViewTitle.setText(icsServer != null  ? icsServer.getHandle() : "--");
     }
 
-//    public void switchToLobbyView(){
-//        if(_viewAnimatorMain.getDisplayedChild() != 0)
-//            _viewAnimatorMain.setDisplayedChild(0);
-//    }
-    public void switchToWelcomeView(){
-        _tvHeader.setText(String.format(getString(R.string.ics_welcome_format), _handle));
-        if(_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_WELCOME);
+    public void setLoadingView() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_LOADING);
+        buttonMenu.setVisibility(View.GONE);
+        textViewTitle.setText("");
     }
 
-    public void switchToChallengeView() {
+    public void setPlayerView() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_PLAYERS);
+        buttonMenu.setVisibility(View.VISIBLE);
+        textViewTitle.setText(R.string.ics_menu_players);
+    }
+
+    public void setGamesView() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_GAMES);
+        buttonMenu.setVisibility(View.VISIBLE);
+        textViewTitle.setText(R.string.ics_menu_games);
+    }
+
+    public void setChallengeView() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_CHALLENGES);
+        buttonMenu.setVisibility(View.VISIBLE);
+        textViewTitle.setText(R.string.ics_menu_challenges);
+    }
+
+    public void setBoardView() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_BOARD);
+        buttonMenu.setVisibility(View.GONE);
+        textViewTitle.setText("");
+    }
+
+    public void setLoginView() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_LOGIN);
+        buttonMenu.setVisibility(View.GONE);
+        textViewTitle.setText("");
+    }
+
+    public void setConsoleView() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_CONSOLE);
+        buttonMenu.setVisibility(View.VISIBLE);
+        textViewTitle.setText("");
+    }
+
+    public void loadChallenges() {
         sendString("sought");
-        _tvHeader.setText(R.string.ics_menu_challenges);
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_CHALLENGES);
+        setChallengeView();
     }
 
-    public void switchToPlayersView() {
-        sendString("who a");
-        _tvHeader.setText(Integer.toString(_adapterPlayers.getCount()) + " " + getString(R.string.ics_available_players));
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_PLAYERS);
-    }
-
-    public void switchToGamesView() {
+    public void loadGames() {
+        setLoadingView();
         sendString("games");
-        _mapGames.clear();
-        _adapterGames.notifyDataSetChanged();
-
-        _tvHeader.setText(R.string.ics_menu_games);
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_GAMES);
     }
 
-    public void switchToStoredView() {
-        _mapStored.clear();
-        _adapterStored.notifyDataSetChanged();
-
-        _tvHeader.setText(R.string.ics_menu_stored);
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY)
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_STORED);
-    }
-
-    public void switchToLoadingView() {
-        _tvHeader.setText(R.string.title_loading);
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY) {
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
-        }
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_PROGRESS);
-    }
-
-    public void switchToLoginView() {
-        _butLogin.setEnabled(true);
-        _tvHeader.setText("Login");
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOGIN) {
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOGIN);
-        }
-    }
-
-    public void switchToConsoleView() {
-        _tvHeader.setText("Console");
-        if (_viewAnimatorMain.getDisplayedChild() != VIEW_MAIN_LOBBY) {
-            _viewAnimatorMain.setDisplayedChild(VIEW_MAIN_LOBBY);
-        }
-        _viewAnimatorLobby.setDisplayedChild(VIEW_SUB_CONSOLE);
-
-        _scrollConsole.post(new Runnable() {
-            public void run() {
-                _scrollConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
-            }
-        });
-    }
-
-    public ICSChessView get_view() {
-        return _view;
+    public void loadPlayers() {
+        setLoadingView();
+        sendString("players");
     }
 
     public void soundNotification() {
@@ -1472,23 +1210,18 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         }
     }
 
-    public void vibration(int seq) {
-        try {
-            int v1, v2;
-            if (seq == 1) {
-                v1 = 200;    // increase
-                v2 = 500;
-            } else {
-                v1 = 500;    // decrease
-                v2 = 200;
-            }
-            long[] pattern = {500, v1, 100, v2};
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(pattern, -1);
-        } catch (Exception e) {
-            Log.e(TAG, "vibrator process error", e);
-        }
+    @Override
+    public void OnDialogResult(int requestCode, Bundle data) {
+        switch (requestCode) {
+            case REQUEST_CHALLENGE:
+                String challenge = data.getString("challenge");
+                if (challenge != null) {
+                    sendString(challenge);
+                    doToast(getString(R.string.toast_challenge_posted));
+                }
+                break;
 
+        }
     }
 
     public class ComparatorHashName implements java.util.Comparator<HashMap<String, String>> {
@@ -1520,27 +1253,15 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
         sendString("set gin 0"); // current server game results - turn off - some clients turn it on
         sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
 
-        _adapterWelcome.add(getString(R.string.ics_menu_games));
-        _adapterWelcome.add(getString(R.string.ics_menu_players));
-        _adapterWelcome.add(getString(R.string.ics_menu_challenges));
-        _adapterWelcome.add(getString(R.string.ics_menu_seek));
-        _adapterWelcome.add(getString(R.string.ics_menu_top_blitz));
-        _adapterWelcome.add(getString(R.string.ics_menu_top_standard));
-        _adapterWelcome.add(getString(R.string.ics_menu_puzzlebot_mate));
-        _adapterWelcome.add(getString(R.string.ics_menu_puzzlebot_tactics));
-        _adapterWelcome.add(getString(R.string.ics_menu_puzzlebot_study));
-        _adapterWelcome.add(getString(R.string.ics_menu_console));
-        _adapterWelcome.add(getString(R.string.menu_prefs));
-        _adapterWelcome.add(getString(R.string.menu_help));
+        // _handle = handle;
 
-        _adapterWelcome.notifyDataSetChanged();
-        switchToWelcomeView();
+        setMenuView();
     }
 
     @Override
-    public void OnLoginFailed() {
-        doToast("Could not log you in");
-        switchToLoginView();
+    public void OnLoginFailed(String error) {
+        doToast("Could not log you in " + error);
+        setLoginView();
     }
 
     @Override
@@ -1549,40 +1270,48 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     @Override
-    public void OnSessionEnded() { switchToLoginView(); }
+    public void OnSessionEnded() {
+        setLoginView();
+    }
 
     @Override
     public void OnError() {
         Log.i(TAG, "OnError");
         new AlertDialog.Builder(ICSClient.this)
-                .setTitle(ICSClient.this.getString(R.string.ics_error))
-                .setPositiveButton(getString(R.string.alert_ok),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                                finish();
-                            }
-                        })
-                .show();
+            .setTitle(ICSClient.this.getString(R.string.ics_error))
+            .setPositiveButton(getString(R.string.alert_ok),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    })
+            .show();
     }
 
     @Override
     public void OnPlayerList(ArrayList<HashMap<String, String>> playerList) {
-        _mapPlayers.clear();
+        mapPlayers.clear();
         for (int i = 0; i < playerList.size(); i++) {
-            _mapPlayers.add(playerList.get(i));
+            mapPlayers.add(playerList.get(i));
         }
-        Collections.sort(_mapPlayers, new ComparatorHashRating());
-        _adapterPlayers.notifyDataSetChanged();
+        Collections.sort(mapPlayers, new ComparatorHashRating());
+        adapterPlayers.notifyDataSetChanged();
+
+        setPlayerView();
     }
 
     @Override
     public void OnBoardUpdated(String gameLine, String handle) {
-        if (get_view().parseGame(gameLine, handle)) {
-            switchToBoardView();
-        } else {
-            Log.i(TAG, "Could not parse game line " + gameLine);
-        }
+        ICSApi icsApi = (ICSApi) gameApi;
+        icsApi.parseGame(gameLine, handle);
+
+        setBoardView();
+
+        int viewMode = icsApi.getViewMode();
+
+        playButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_PLAY ? View.VISIBLE : View.GONE);
+        examineButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_EXAMINE ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -1614,7 +1343,9 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnIllegalMove() {
-
+        rebuildBoard();
+        highlightedPositions.clear();
+        updateSelectedSquares();
     }
 
     @Override
@@ -1625,13 +1356,18 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     @Override
     public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
         globalToast("Game initialized");
+        Log.d(TAG, "OnPlayGameStarted " + whiteHandle + blackHandle + whiteRating + blackRating);
+        if (icsServer != null) {
+            if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
+                isPlaying = true;
+            }
+        }
     }
 
     @Override
     public void OnGameNumberUpdated(int number) {
         if (number > 0) {
-            get_view().setGameNum(number);
-            get_view().setViewMode(ICSChessView.VIEW_PLAY);
+//            get_view().setGameNum(number);
         }
     }
 
@@ -1657,24 +1393,25 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnAbortConfirmed() {
-        gameToast("Game aborted by mutual agreement", true);
-        get_view().setStopPlaying();
+        gameToast("Game aborted by mutual agreement");
+        isPlaying = false;
+//        get_view().setStopPlaying();
     }
 
     @Override
     public void OnPlayGameResult(String message) {
-        gameToast(message, true);
-        get_view().setStopPlaying();
+        gameToast(message);
     }
 
     @Override
     public void OnPlayGameStopped() {
-        get_view().setStopPlaying();
+//        get_view().setStopPlaying();
+        isPlaying = false;
     }
 
     @Override
     public void OnYourRequestSended() {
-        gameToast(getString(R.string.ics_request_sent), false);
+        gameToast(getString(R.string.ics_request_sent));
     }
 
     @Override
@@ -1684,12 +1421,14 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnResumingAdjournedGame() {
-        gameToast("Resuming adjourned game", false);
+        gameToast("Resuming adjourned game");
+        isPlaying = true;
     }
 
     @Override
     public void OnAbortedOrAdjourned() {
-        gameToast("Game stopped (aborted or adjourned)", false);
+        gameToast("Game stopped (aborted or adjourned)");
+        isPlaying = false;
     }
 
     @Override
@@ -1713,6 +1452,11 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
     }
 
     @Override
+    public void OnPuzzleSolved() {
+        globalToast("Puzzle solved");
+    }
+
+    @Override
     public void OnExaminingGameStarted() {
         globalToast("Examining a game");
     }
@@ -1724,57 +1468,125 @@ public class ICSClient extends MyBaseActivity implements OnItemClickListener, IC
 
     @Override
     public void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList) {
-        _mapChallenges.clear();
+        mapChallenges.clear();
         for (int i = 0; i < soughtList.size(); i++) {
-            _mapChallenges.add(soughtList.get(i));
+            mapChallenges.add(soughtList.get(i));
         }
-        _adapterChallenges.notifyDataSetChanged();
+        adapterChallenges.notifyDataSetChanged();
     }
 
     @Override
     public void OnGameListResult(ArrayList<HashMap<String, String>> games) {
-        _mapGames.clear();
+        mapGames.clear();
         for (int i = 0; i < games.size(); i++) {
-            _mapGames.add(games.get(i));
+            mapGames.add(games.get(i));
         }
 
-        _adapterGames.notifyDataSetChanged();
-
+        adapterGames.notifyDataSetChanged();
+        setGamesView();
     }
 
     @Override
     public void OnStoredListResult(ArrayList<HashMap<String, String>> games) {
-        _mapStored.clear();
+        mapStored.clear();
         for (int i = 0; i < games.size(); i++) {
-            _mapStored.add(games.get(i));
+            mapStored.add(games.get(i));
         }
-        _adapterStored.notifyDataSetChanged();
+        adapterStored.notifyDataSetChanged();
     }
 
     @Override
-    public void OnEndGameResult(int state) {
-        int res = UI.chessStateToR(state);
-        gameToast(getString(res), true);
-        this.get_view().setStopPlaying();
+    public void OnGameEndedResult(int state) {
+        int res = chessStateToR(state);
+
+        highlightedPositions.clear();
+        updateSelectedSquares();
+        localClockApi.stopClock();
+
+        if (_bEndGameDialog) {
+            _dlgOver.setHandle(icsServer.getHandle());
+            _dlgOver.setWasPlaying(isPlaying);
+            _dlgOver.updateGameResultText(getString(res));
+            _dlgOver.show();
+        } else {
+            gameToast(getString(res));
+        }
+
+        isPlaying = false;
     }
 
     @Override
     public void OnConsoleOutput(String buffer) {
-        addConsoleText(buffer);
+         addConsoleText(buffer);
     }
 
-    private class AlternatingRowColorAdapter extends SimpleAdapter {
+    @Override
+    public void OnState() {
 
-        public AlternatingRowColorAdapter(Context context, List<HashMap<String, String>> data, int resource, String[] from, int[] to) {
-            super(context, data, resource, from, to);
+        ICSApi icsApi = (ICSApi)gameApi;
+        int myTurn = icsApi.getMyTurn();
+        int turn = icsApi.getTurn();
+        _tvLastMove.setText(icsApi.getLastMove());
+        _tvPlayerTop.setText(icsApi.getOpponentPlayerName(myTurn));
+        _tvPlayerBottom.setText(icsApi.getMyPlayerName(myTurn));
+
+        int lastTo = icsApi.getLastTo();
+        highlightedPositions.clear();
+        if (lastTo != -1) {
+            highlightedPositions.add(lastTo);
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            view.setBackgroundColor(position % 2 == 0 ? 0x55888888 : 0x55666666);
-            return view;
+        chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
+
+        localClockApi.startClock(icsApi.getIncrement(), icsApi.getWhiteRemaining(), icsApi.getBlackRemaining(), icsApi.getTurn(), System.currentTimeMillis());
+
+        switchTurnOpp.setVisibility(turn == BoardConstants.BLACK && myTurn == BoardConstants.WHITE || turn == BoardConstants.WHITE && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
+        switchTurnOpp.setDisplayedChild(turn == BoardConstants.BLACK ? 0 : 1);
+
+        switchTurnMe.setVisibility(turn == BoardConstants.WHITE && myTurn == BoardConstants.WHITE || turn == BoardConstants.BLACK && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
+        switchTurnMe.setDisplayedChild(turn == BoardConstants.BLACK ? 0 : 1);
+
+        if (myTurn == turn && hasPremoved()) {
+            requestMove(premoveFrom, premoveTo);
+            resetPremove();
         }
+
+        super.OnState();
+    }
+
+    @Override
+    public void OnClockTime() {
+        int myTurn = ((ICSApi) gameApi).getMyTurn();
+        _tvClockTop.setText(myTurn == BoardConstants.WHITE ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
+        _tvClockBottom.setText(myTurn == BoardConstants.BLACK ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
+
+        if (isPlaying) {
+            long remaining = myTurn == BoardConstants.WHITE ? localClockApi.getWhiteRemaining() : localClockApi.getBlackRemaining();
+            if (remaining < _TimeWarning * 1000) {
+                _tvClockBottom.setBackgroundColor(0xCCFF0000);
+            } else {
+                _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            if (_bTimeWarning) {
+                // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
+            }
+        }
+    }
+
+    protected void addConsoleText(String s) {
+        final String s2 = _tvConsole.getText() + "\n\n" + s;
+        if (s2.length() > 8192) {
+            _tvConsole.setText(s2.substring(s2.length() - 4096));
+        } else {
+            _tvConsole.append("\n\n" + s);
+        }
+
+        _scrollConsole.post(new Runnable() {//
+            public void run() {
+                _scrollConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
+            }
+        });
     }
 }
 

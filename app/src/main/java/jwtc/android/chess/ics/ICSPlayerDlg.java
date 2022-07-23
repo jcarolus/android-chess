@@ -112,7 +112,7 @@ public class ICSPlayerDlg extends Dialog {
                     String _sConsoleEditText = et.getText().toString();
 
                     _parent.sendString("tell " + _opponentName + " " + _sConsoleEditText);
-                    _parent.addConsoleText("\n" + getContext().getResources().getString(R.string.ics_you) + ": " + _sConsoleEditText + "\n");
+//                    _parent.addConsoleText("\n" + getContext().getResources().getString(R.string.ics_you) + ": " + _sConsoleEditText + "\n");
                     et.setText("");
 
                     return true;
@@ -138,18 +138,18 @@ public class ICSPlayerDlg extends Dialog {
 
                 alertDialog.setView(input);
                 alertDialog.setOnKeyListener(new OnKeyListener() {
-                                                 @Override
-                                                 public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                                                     if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                                                         // set _sConsoleEditText for a match pattern
-                                                         _parent._sConsoleEditText = "smoves " + _opponentName + " " + input.getText();
-                                                         _parent.sendString("smoves " + _opponentName + " " + input.getText());
-                                                         alertDialog.dismiss();
-                                                         return true;
-                                                     }
-                                                     return false;
-                                                 }
-                                             }
+                         @Override
+                         public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                             if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                                 // set _sConsoleEditText for a match pattern
+                                 _parent._sConsoleEditText = "smoves " + _opponentName + " " + input.getText();
+                                 _parent.sendString("smoves " + _opponentName + " " + input.getText());
+                                 alertDialog.dismiss();
+                                 return true;
+                             }
+                             return false;
+                         }
+                     }
                 );
 
                 alertDialog.show();

@@ -230,9 +230,4 @@
         <item>ru</item>
         <item>de</item>
     </string-array>
-    <string-array name="UCIArray">
-        <item>default</item>
-        <item>robollito</item>
-        <item>bik</item>
-    </string-array>
 </resources>

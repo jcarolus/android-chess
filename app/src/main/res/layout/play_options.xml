@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/TextViewSetupTurn"
+                android:text="@string/msg_setup_turn"
+                style="@style/MyLabelTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/RadioGroupSetup"
+                android:orientation="horizontal"
+                android:layout_below="@id/TextViewSetupTurn"
+                style="@style/MyRowStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/RadioSetupTurnWhite"
+                    android:text="@string/msg_setup_turn_white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:id="@+id/RadioSetupTurnBlack"
+                    android:text="@string/msg_setup_turn_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RadioGroup>
+        </TableRow>
+
+    </TableLayout>
+
+</ScrollView>

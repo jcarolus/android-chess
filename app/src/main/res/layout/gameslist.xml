@@ -9,12 +9,12 @@
         android:layout_height="wrap_content"
         android:stretchColumns="1">
 
-        <TableRow>
+        <TableRow android:gravity="center_vertical">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/action_search" />
+                android:src="@drawable/ic_search" />
 
             <EditText
                 android:id="@+id/EditTextGamesList"

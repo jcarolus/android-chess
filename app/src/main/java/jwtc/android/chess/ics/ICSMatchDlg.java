@@ -1,10 +1,12 @@
 package jwtc.android.chess.ics;
 
 import jwtc.android.chess.*;
+import jwtc.android.chess.helpers.ResultDialog;
+import jwtc.android.chess.helpers.ResultDialogListener;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -15,12 +17,11 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  *
  */
-public class ICSMatchDlg extends Dialog {
+public class ICSMatchDlg extends ResultDialog {
 
     public static final String TAG = "ICSMatchDlg";
 
@@ -31,12 +32,9 @@ public class ICSMatchDlg extends Dialog {
     private ArrayAdapter<CharSequence> _adapterTime, _adapterIncrement, _adapterVariant, _adapterColor;
     private Button _butOk, _butCancel;
     private CheckBox _checkRated, _checkManual, _checkFormula;
-    private ICSClient _parent;
 
-    public ICSMatchDlg(Context context) {
-        super(context);
-
-        _parent = (ICSClient) context;
+    public ICSMatchDlg(Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs) {
+        super(context, listener, requestCode);
 
         setContentView(R.layout.ics_match);
 
@@ -57,15 +55,14 @@ public class ICSMatchDlg extends Dialog {
                 _checkFormula.setVisibility(View.GONE);  // if formula is valuable enough then
                 _tvFormula.setVisibility(View.GONE);     // change these to VISIBLE
 
-                SharedPreferences myPrefs = getContext().getSharedPreferences(_parent.get_ficsHandle().toLowerCase(), getContext().MODE_PRIVATE);
-                String spinTime = myPrefs.getString("spinTime", "5");
-                String spinIncrement = myPrefs.getString("spinIncrement", "4");
-                String spinVariant = myPrefs.getString("spinVariant", "0");
-                String spinColor = myPrefs.getString("spinColor", "0");
-                String editRatingRangeMIN = myPrefs.getString("editRatingRangeMIN", "0");
-                String editRatingRangeMAX = myPrefs.getString("editRatingRangeMAX", "9999");
-                Boolean checkRated = myPrefs.getBoolean("checkRated", false);
-                Boolean checkManual = myPrefs.getBoolean("checkManual", false);
+                String spinTime = prefs.getString("spinTime", "5");
+                String spinIncrement = prefs.getString("spinIncrement", "4");
+                String spinVariant = prefs.getString("spinVariant", "0");
+                String spinColor = prefs.getString("spinColor", "0");
+                String editRatingRangeMIN = prefs.getString("editRatingRangeMIN", "0");
+                String editRatingRangeMAX = prefs.getString("editRatingRangeMAX", "9999");
+                Boolean checkRated = prefs.getBoolean("checkRated", false);
+                Boolean checkManual = prefs.getBoolean("checkManual", false);
 
                 _spinTime.setSelection(Integer.parseInt(spinTime));
                 _spinIncrement.setSelection(Integer.parseInt(spinIncrement));
@@ -164,9 +161,7 @@ public class ICSMatchDlg extends Dialog {
                     s += "wild fr ";
                 }
 
-
-                SharedPreferences mPrefs = getContext().getSharedPreferences(_parent.get_ficsHandle().toLowerCase(), Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = mPrefs.edit();
+                SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("spinTime", String.valueOf(_spinTime.getSelectedItemPosition()));
                 editor.putString("spinIncrement", String.valueOf(_spinIncrement.getSelectedItemPosition()));
                 editor.putString("spinVariant", String.valueOf(_spinVariant.getSelectedItemPosition()));
@@ -178,8 +173,12 @@ public class ICSMatchDlg extends Dialog {
                 editor.apply();
 
                 Log.i("ICSMatchDlg", s);
-                _parent.sendString(s);
-                Toast.makeText(_parent, R.string.toast_challenge_posted, Toast.LENGTH_SHORT).show();
+
+                Bundle data = new Bundle();
+                data.putCharSequence("challenge", s);
+
+                setResult(data);
+
             }
         });
         _butCancel = (Button) findViewById(R.id.ButtonMatchCancel);
@@ -189,6 +188,7 @@ public class ICSMatchDlg extends Dialog {
             }
         });
     }
+
 
     public void setPlayer(String s) {
         _editPlayer.setText(s);

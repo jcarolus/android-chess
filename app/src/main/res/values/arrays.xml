@@ -9,6 +9,17 @@
         <item>@string/start_about</item>
         <item>@string/start_pgn</item>
     </string-array>
+    <string-array name="play_menu">
+        <item>@string/menu_game_settings</item>
+        <item>@string/menu_new</item>
+        <item>@string/menu_new_960</item>
+        <item>@string/menu_setup</item>
+        <item>@string/menu_save_game</item>
+        <item>@string/menu_load_game</item>
+        <item>@string/menu_prefs</item>
+        <item>@string/menu_set_clock</item>
+        <item>@string/menu_help</item>
+    </string-array>
     <string-array name="levels_ply">
         <item>1 ply</item>
         <item>2 ply</item>
@@ -59,15 +70,14 @@
         <item>Brown</item>
         <item>Red</item>
     </string-array>
-    <!-- 
-    <integer-array name="colorscheme_indexes">
+    <string-array name="colorscheme_indexes">
         <item>0</item>
-        <item>2</item>
+        <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
-    </integer-array>
-     -->
+        <item>5</item>
+    </string-array>
     <string-array name="options_wakelock">
         <item>Use wake lock</item>
         <item>Do not use wake lock</item>
@@ -230,9 +240,16 @@
         <item>ru</item>
         <item>de</item>
     </string-array>
-    <string-array name="UCIArray">
-        <item>default</item>
-        <item>robollito</item>
-        <item>bik</item>
+    <string-array name="piecesetarray">
+        <item>Alpha</item>
+        <item>Merida</item>
+        <item>Leipzig</item>
+        <item>California</item>
+    </string-array>
+    <string-array name="piecesetKeyarray">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 </resources>

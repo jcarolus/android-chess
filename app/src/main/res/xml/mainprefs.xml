@@ -54,23 +54,12 @@
             android:defaultValue="true"
             android:summary="@string/pref_skipreturn_desc"
             android:key="skipReturn" />
-        <!--
         <CheckBoxPreference
             android:title="@string/pref_eco"
             android:defaultValue="true"
             android:summary="@string/pref_eco_desc"
             android:key="showECO"
             />
-        -->
-        <!--
-        <ListPreference
-            android:title="@string/pref_uci"
-            android:summary="@string/pref_uci_desc"
-            android:key="UCIEngine"
-            android:defaultValue="default"
-            android:entries="@array/UCIArray"
-            android:entryValues="@array/UCIArray" />
-         -->
     </PreferenceCategory>
 
 </PreferenceScreen>

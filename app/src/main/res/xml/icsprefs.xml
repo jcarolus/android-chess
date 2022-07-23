@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
     <PreferenceCategory android:title="@string/playonlinepreferences">
-        <CheckBoxPreference
-            android:title="@string/pref_icsconfirmmove"
-            android:defaultValue="false"
-            android:summary="@string/pref_icsconfirmmove_desc"
-            android:key="ICSConfirmMove" />
-
         <Preference
             android:title="@string/pref_icscustomcommand"
             android:summary="@string/pref_icscustomcommand_desc"
@@ -68,6 +61,4 @@
             android:key="ICSGameStartBringToFront" />
 
     </PreferenceCategory>
-
-    §
 </PreferenceScreen>

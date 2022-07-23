@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jwtc.android.chess.ChessFieldView;
 import jwtc.chess.board.ChessBoard;
 
 public class ICSPatterns {
@@ -310,6 +309,10 @@ public class ICSPatterns {
 
     public boolean isPuzzleStopped(String line) {
         return line.indexOf("Your current problem has been stopped") >= 0;
+    }
+
+    public boolean isPuzzleSolved(String line) {
+        return line.indexOf("You solved problem number ") >= 0;
     }
 
     public HashMap<String, String> parseSought(String line) {

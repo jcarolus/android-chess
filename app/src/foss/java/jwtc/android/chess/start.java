@@ -17,8 +17,9 @@ import android.widget.Toast;
 import java.util.Locale;
 
 import jwtc.android.chess.ics.ICSClient;
-import jwtc.android.chess.puzzle.practice;
-import jwtc.android.chess.puzzle.puzzle;
+import jwtc.android.chess.play.PlayActivity;
+import jwtc.android.chess.practice.PracticeActivity;
+import jwtc.android.chess.puzzle.PuzzleActivity;
 import jwtc.android.chess.tools.pgntool;
 
 
@@ -67,15 +68,15 @@ public class start extends Activity {
                     Intent i = new Intent();
                     Log.i("start", _ssActivity);
                     if (_ssActivity.equals(getString(R.string.start_play))) {
-                        i.setClass(start.this, main.class);
+                        i.setClass(start.this, PlayActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_practice))) {
-                        i.setClass(start.this, practice.class);
+                        i.setClass(start.this, PracticeActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_puzzles))) {
-                        i.setClass(start.this, puzzle.class);
+                        i.setClass(start.this, PuzzleActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_about))) {
@@ -96,8 +97,11 @@ public class start extends Activity {
                         i.setClass(start.this, HtmlActivity.class);
                         i.putExtra(HtmlActivity.HELP_MODE, "help");
                         startActivity(i);
+                    } else {
+                        Log.d(TAG, "Nothing to start");
                     }
                 } catch (Exception ex) {
+                    Log.d(TAG, "Exception " + (ex != null ? ex.getMessage() : " no ex"));
                     Toast t = Toast.makeText(start.this, R.string.toast_could_not_start_activity, Toast.LENGTH_LONG);
                     t.setGravity(Gravity.BOTTOM, 0, 0);
                     t.show();

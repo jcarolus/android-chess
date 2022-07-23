@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/gamepreferences">
+        <CheckBoxPreference
+            android:title="@string/pref_vs_cpu"
+            android:defaultValue="true"
+            android:summary="@string/pref_vs_cpu_desc"
+            android:key="opponent" />
+
+        <SwitchPreference
+            android:key="turn"
+            android:defaultValue="true"
+            android:summaryOff="@string/options_play_black"
+            android:summaryOn="@string/options_play_white"
+            android:title="@string/pref_turn"
+            android:summary="@string/pref_turn_desc" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

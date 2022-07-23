@@ -12,7 +12,9 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-public class HtmlActivity extends MyBaseActivity {
+import jwtc.android.chess.activities.BaseActivity;
+
+public class HtmlActivity extends BaseActivity {
 
     public static final String TAG = "HtmlActivity";
     public static String HELP_MODE = "HELP_MODE";
@@ -30,7 +32,6 @@ public class HtmlActivity extends MyBaseActivity {
 
         setContentView(R.layout.help);
 
-        this.makeActionOverflowMenuShown();
         // html assets localization
         if (Locale.getDefault().getLanguage().equals("es")) {
             _lang = "es";

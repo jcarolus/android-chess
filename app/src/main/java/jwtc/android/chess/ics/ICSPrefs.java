@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 
-import jwtc.android.chess.MyPreferenceActivity;
+import jwtc.android.chess.activities.BasePreferenceActivity;
 import jwtc.android.chess.R;
 
-public class ICSPrefs extends MyPreferenceActivity {
+public class ICSPrefs extends BasePreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

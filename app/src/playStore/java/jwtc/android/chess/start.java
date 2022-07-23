@@ -1,8 +1,9 @@
 package jwtc.android.chess;
 
-import jwtc.android.chess.puzzle.practice;
-import jwtc.android.chess.puzzle.puzzle;
-import jwtc.android.chess.tools.pgntool;
+import jwtc.android.chess.play.PlayActivity;
+import jwtc.android.chess.practice.PracticeActivity;
+import jwtc.android.chess.puzzle.PuzzleActivity;
+import jwtc.android.chess.tools.AdvancedActivity;
 import jwtc.android.chess.ics.*;
 import jwtc.chess.JNI;
 
@@ -100,7 +101,7 @@ public class start extends AppCompatActivity {
             startActivity(intent);
         }
 
-        _jni = new JNI();
+        _jni = JNI.getInstance();
 
         _lastMessage = "";
 
@@ -123,15 +124,15 @@ public class start extends AppCompatActivity {
                     Intent i = new Intent();
                     Log.i("start", _ssActivity);
                     if (_ssActivity.equals(getString(R.string.start_play))) {
-                        i.setClass(start.this, main.class);
+                        i.setClass(start.this, PlayActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_practice))) {
-                        i.setClass(start.this, practice.class);
+                        i.setClass(start.this, PracticeActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_puzzles))) {
-                        i.setClass(start.this, puzzle.class);
+                        i.setClass(start.this, PuzzleActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_about))) {
@@ -140,9 +141,10 @@ public class start extends AppCompatActivity {
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_ics))) {
                         i.setClass(start.this, ICSClient.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_pgn))) {
-                        i.setClass(start.this, pgntool.class);
+                        i.setClass(start.this, AdvancedActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_globalpreferences))) {

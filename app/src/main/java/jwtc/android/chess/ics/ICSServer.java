@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -25,6 +26,7 @@ public class ICSServer extends Service {
     protected static final int EXPECT_PROMPT = 4;
 
     private final IBinder mBinder = new LocalBinder();
+    private Handler keepAliveTimerHandler = new KeepAliveHandler();
     private TelnetSocket _socket;
     private Thread _workerTelnet;
     private Timer keepAlivetimer = null;
@@ -78,7 +80,7 @@ public class ICSServer extends Service {
                 _socket = new TelnetSocket(server, port);
             } catch (Exception ex) {
                 Message message = new Message();
-                message.what = ICSThreadMessageHandler.MSG_CONNECTION_ERROR;
+                message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
                 threadHandler.sendMessage(message);
                 return;
             }
@@ -100,7 +102,11 @@ public class ICSServer extends Service {
                 }
                 Log.i(TAG, "End of workerTelnet");
                 cancelKeepAliveTimer();
-                stopSelf();
+
+                Message message = new Message();
+                message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
+                threadHandler.sendMessage(message);
+                //
             } catch (Exception ex) {
                 Message message = new Message();
                 message.what = ICSThreadMessageHandler.MSG_ERROR;
@@ -127,6 +133,10 @@ public class ICSServer extends Service {
         return false;
     }
 
+    public String getHandle() {
+        return handle;
+    }
+
     public boolean isGuest() {
         return handle != null && handle.startsWith("Guest");
     }
@@ -137,9 +147,9 @@ public class ICSServer extends Service {
                 String buffer = msg.getData().getString("buffer");
                 handleBufferMessage(buffer);
                 break;
-            case ICSThreadMessageHandler.MSG_CONNECTION_ERROR:
-                Log.i(TAG, "MSG_CONNECTION_ERROR");
-                for (ICSListener listener: listeners) {listener.OnError();}
+            case ICSThreadMessageHandler.MSG_CONNECTION_CLOSED:
+                Log.i(TAG, "MSG_CONNECTION_CLOSED");
+                for (ICSListener listener: listeners) {listener.OnSessionEnded();}
                 break;
             case ICSThreadMessageHandler.MSG_ERROR:
                 Log.i(TAG, "MSG_ERROR");
@@ -182,7 +192,7 @@ public class ICSServer extends Service {
     }
 
     private void parse(String buffer) {
-        //Log.i(TAG, expectingState + "; parse: " + buffer);
+//        Log.i(TAG, expectingState + "; parse: " + buffer);
         String[] lines = buffer.split("\n\r");
         int lineCount = lines.length;
 
@@ -193,11 +203,12 @@ public class ICSServer extends Service {
                     for (ICSListener listener: listeners) {listener.OnLoggingIn();}
                     return;
                 } else {
-                    Log.i(TAG, "Could net send handle");
-                    return;
+                    dispatchLoginerror("Could net send handle");
                 }
+            } else {
+                dispatchLoginerror("Unexpected response while expecting login prompt");
             }
-            Log.i(TAG, "Unexpected buffer when expecting login prompt");
+
             return;
         }
 
@@ -212,15 +223,15 @@ public class ICSServer extends Service {
                             expectingState = EXPECT_PASSWORD_RESPONSE;
                             return;
                         } else {
-                            Log.i(TAG, "Could net send handle");
+                            dispatchLoginerror("Could net send handle");
                             return;
                         }
                     } else {
-                        Log.i(TAG, "Could not get guest handle from response");
+                        dispatchLoginerror("Could not get guest handle from response");
                         return;
                     }
                 }
-                Log.i(TAG, "Unexpected buffer on guest login response");
+                dispatchLoginerror("Unexpected response on guest login");
                 return;
             }
             if (buffer.contains("password: ")) {
@@ -228,11 +239,11 @@ public class ICSServer extends Service {
                     expectingState = EXPECT_PASSWORD_RESPONSE;
                     return;
                 } else {
-                    Log.i(TAG, "Could net send handle");
+                    dispatchLoginerror("Could net send password");
                     return;
                 }
             }
-            Log.i(TAG, "Unexpected buffer on guest login response");
+            dispatchLoginerror("Unexpected response on guest login");
             return;
         }
 
@@ -244,11 +255,11 @@ public class ICSServer extends Service {
                     for (ICSListener listener: listeners) {listener.OnLoginSuccess();}
                     return;
                 }
-                Log.i(TAG, "Unexpected buffer on guest password response: " + buffer);
+                dispatchLoginerror("Unexpected buffer on guest password response: " + buffer);
                 return;
             }
             if (icsPatterns.isInvalidPassword(buffer)) {
-                for (ICSListener listener: listeners) {listener.OnLoginFailed();}
+                dispatchLoginerror("Invalid password");
                 return;
             }
             if (icsPatterns.isSessionStarting(buffer)) {
@@ -256,12 +267,12 @@ public class ICSServer extends Service {
                 for (ICSListener listener: listeners) {listener.OnLoginSuccess();}
                 return;
             }
-            Log.i(TAG, "Unexpected buffer on password response: " + buffer);
+            dispatchLoginerror("Unexpected buffer on password response: " + buffer);
             return;
         }
 
         if (expectingState != EXPECT_PROMPT) {
-            Log.i(TAG, "Unvalid expect state");
+            Log.i(TAG, "Invalid expect state");
             return;
         }
 
@@ -385,7 +396,7 @@ public class ICSServer extends Service {
 
             int result = icsPatterns.gameState(line);
             if (result != ChessBoard.PLAY) {
-                for (ICSListener listener: listeners) {listener.OnEndGameResult(result);}
+                for (ICSListener listener: listeners) {listener.OnGameEndedResult(result);}
                 continue;
             }
 
@@ -419,6 +430,11 @@ public class ICSServer extends Service {
                 continue;
             }
 
+            if (icsPatterns.isPuzzleSolved(line)) {
+                for (ICSListener listener: listeners) {listener.OnPuzzleSolved();}
+                continue;
+            }
+
             if (icsPatterns.filterOutput(line)) {
                 continue;
             }
@@ -435,7 +451,7 @@ public class ICSServer extends Service {
             keepAlivetimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    keepAliveTimerHandler.sendEmptyMessage(0);
+                keepAliveTimerHandler.sendEmptyMessage(0);
                 }
             }, 30000, 30000);  // send every 30 seconds
         }
@@ -448,13 +464,6 @@ public class ICSServer extends Service {
         }
     }
 
-    Handler keepAliveTimerHandler = new Handler() { // todo static or leaks may occur? use WeakReference as in 153
-        @Override
-        public void handleMessage(Message msg) {
-            sendString("sought");
-        }
-    };
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -465,6 +474,26 @@ public class ICSServer extends Service {
     public class LocalBinder extends Binder {
         ICSServer getService() {
             return ICSServer.this;
+        }
+    }
+
+    private void dispatchLoginerror(String error) {
+        for (ICSListener listener: listeners) {listener.OnLoginFailed(error);}
+    }
+
+    private class KeepAliveHandler extends Handler {
+        WeakReference<ICSServer> icsServerReference;
+
+        public KeepAliveHandler() {
+            icsServerReference = new WeakReference<ICSServer>(ICSServer.this);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            ICSServer icsServer = this.icsServerReference.get();
+            if (icsServer != null) {
+                icsServer.sendString("sought");
+            }
         }
     }
 }

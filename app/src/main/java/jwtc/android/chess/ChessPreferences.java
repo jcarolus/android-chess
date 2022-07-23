@@ -8,16 +8,14 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
-import android.view.MenuItem;
 
-import jwtc.android.chess.ics.CustomCommands;
+import jwtc.android.chess.activities.BasePreferenceActivity;
 
 
-public class ChessPreferences extends MyPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class ChessPreferences extends BasePreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static int REQUEST_SOUND = 1;
     private static String TAG = "ChessPreferences";
@@ -39,32 +37,6 @@ public class ChessPreferences extends MyPreferenceActivity implements SharedPref
         addPreferencesFromResource(R.xml.globalprefs);
 
         prefs.registerOnSharedPreferenceChangeListener(this);
-
-        Preference prefColor = (Preference) findPreference("colorSchemeHandle");
-        prefColor.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-
-                final String[] items = getResources().getStringArray(R.array.colorschemes);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(ChessPreferences.this);
-                builder.setTitle(R.string.title_pick_colorscheme);
-                builder.setSingleChoiceItems(items, _colorScheme, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-
-                        _colorScheme = item;
-                        editor.putInt("ColorScheme", _colorScheme);
-
-                        editor.commit();
-
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
-
-                return true;
-            }
-        });
 
         Preference prefSound = (Preference) findPreference("soundHandle");
         prefSound.setOnPreferenceClickListener(new OnPreferenceClickListener() {

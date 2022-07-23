@@ -3,17 +3,35 @@
     android:id="@+id/ICSPlay"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:padding="4dip">
 
     <TableLayout
+        android:id="@+id/LayoutBoardTop"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:shrinkColumns="0,1,2"
-        android:stretchColumns="3"
+        android:shrinkColumns="0,1,2,3"
+        android:stretchColumns="4"
         android:layout_marginBottom="2dip">
 
-        <TableRow>
+        <TableRow android:gravity="center_vertical">
+            <ViewSwitcher
+                android:id="@+id/ImageTurnOpp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip">
 
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+            </ViewSwitcher>
             <TextView
                 android:id="@+id/TextViewClockTop"
                 android:layout_height="wrap_content"
@@ -51,24 +69,39 @@
     </TableLayout>
 
     <include
-        layout="@layout/board"
-        android:layout_width="wrap_content"
+        android:id="@+id/includeboard"
+        layout="@layout/chessboard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/includeboard" />
-    <!--
-       <TextView android:layout_width="wrap_content" android:layout_height="320dip"
-           android:id="@+id/includeboard"
-           android:layout_below="@id/TablePlayerTop"/>
-        -->
+        android:layout_marginTop="2dip"
+        android:layout_marginBottom="2dip"/>
+
     <TableLayout
+        android:id="@+id/LayoutBoardBottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dip"
-        android:shrinkColumns="0,1,2"
-        android:stretchColumns="3">
+        android:shrinkColumns="0,1,2,3"
+        android:stretchColumns="4">
 
-        <TableRow>
+        <TableRow android:gravity="center_vertical">
+            <ViewSwitcher
+                android:id="@+id/ImageTurnMe"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip">
 
+                <ImageView
+                    android:src="@drawable/turnblack"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+
+                <ImageView
+                    android:src="@drawable/turnwhite"
+                    android:layout_height="12dip"
+                    android:layout_width="12dip" />
+            </ViewSwitcher>
             <TextView
                 android:id="@+id/TextViewClockBottom"
                 android:layout_height="wrap_content"
@@ -100,8 +133,7 @@
                 android:gravity="right|center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:layout_marginRight="5dp"
-                android:visibility="visible" />
+                android:layout_marginRight="5dp" />
 
             <TextView
                 android:id="@+id/TextViewICSTimePerMove"
@@ -123,124 +155,70 @@
         </TableRow>
     </TableLayout>
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/LayoutExamineButtons"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/LayoutPlayerControl"
         android:layout_marginTop="2dip">
-
-        <TableLayout
-            android:id="@+id/TableICSPlayButtons"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:stretchColumns="0">
-
-            <TableRow>
-
-                <EditText
-                    android:id="@+id/EditICSBoard"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:inputType="text"
-                    android:imeOptions="actionSend" />
-
-                <ImageButton
-                    android:id="@+id/ButtonICSChat"
-                    android:src="@drawable/social_chat"
-                    android:layout_width="40dip"
-                    android:layout_height="40dip"
-                    style="@style/ChessImageButton" />
-
-            </TableRow>
-        </TableLayout>
-
-        <TextView
-            android:id="@+id/dummy"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_below="@+id/TableICSPlayButtons"
-            android:layout_centerHorizontal="true"
-            android:visibility="invisible" />
 
         <ImageButton
             android:id="@+id/ButtonICSExamineBackward"
-            android:src="@drawable/navigation_previous_item"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:src="@drawable/ic_chevron_left"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
             style="@style/ChessImageButton"
-            android:layout_below="@+id/TableICSPlayButtons"
-            android:layout_toLeftOf="@+id/dummy"
-            android:layout_margin="5dp"
-            android:visibility="gone" />
+            android:layout_margin="5dp" />
 
         <ImageButton
             android:id="@+id/ButtonICSExamineForward"
-            android:src="@drawable/navigation_next_item"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:src="@drawable/ic_chevron_right"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
             style="@style/ChessImageButton"
-            android:layout_below="@+id/TableICSPlayButtons"
-            android:layout_toRightOf="@+id/dummy"
-            android:layout_margin="5dp"
-            android:visibility="gone" />
+            android:layout_margin="5dp" />
 
         <ImageButton
-            android:id="@+id/ButtonICSRevert"
-            android:src="@drawable/navigation_revert"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/ButtonICSExamineRevert"
+            android:src="@drawable/ic_backspace"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
             style="@style/ChessImageButton"
-            android:layout_below="@+id/TableICSPlayButtons"
-            android:layout_toLeftOf="@+id/ButtonICSExamineBackward"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:layout_marginRight="30dp"
-            android:visibility="gone" />
+            android:layout_marginRight="30dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/LayoutPlayButtons"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dip">
 
-        <!-- ############### -->
-        <ViewSwitcher
-            android:id="@+id/ViewSitcherConfirmAndText"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@id/ButtonICSExamineBackward">
+        <Button android:id="@+id/ButtonResign"
+            android:text="@string/ics_menu_resign"
+            android:layout_height="48dip"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            />
+        <Button android:id="@+id/ButtonDraw"
+            android:text="@string/ics_menu_draw"
+            android:layout_height="48dip"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            />
+        <Button android:id="@+id/ButtonFlag"
+            android:text="@string/ics_menu_flag"
+            android:layout_height="48dip"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            />
 
-            <ScrollView
-                android:id="@+id/ScrollPlayConsole"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-
-                <TextView
-                    android:text="Welcome to ICS, press menu to continue"
-                    android:id="@+id/TextViewICSPlayConsole"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/MyTextStyle" />
-            </ScrollView>
-
-            <TableLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginTop="16dip"
-                android:stretchColumns="*">
-
-                <TableRow>
-
-                    <Button
-                        android:id="@+id/ButtonCancelMove"
-                        android:text="@string/alert_cancel"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
-                        android:id="@+id/ButtonConfirmMove"
-                        android:text="@string/alert_confirm"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" />
-                </TableRow>
-            </TableLayout>
-
-        </ViewSwitcher>
-    </RelativeLayout>
+        <ImageButton
+            android:id="@+id/ButtonTakeBack"
+            android:src="@drawable/ic_backspace"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            style="@style/ChessImageButton" />
+    </LinearLayout>
 </LinearLayout>

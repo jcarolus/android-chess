@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public interface ICSListener {
     void OnLoginSuccess();
-    void OnLoginFailed();
+    void OnLoginFailed(String error);
     void OnLoggingIn();
     void OnSessionEnded();
     void OnError();
@@ -31,12 +31,13 @@ public interface ICSListener {
     void OnObservingGameStopped();
     void OnPuzzleStarted();
     void OnPuzzleStopped();
+    void OnPuzzleSolved();
     void OnExaminingGameStarted();
     void OnExaminingGameStopped();
     void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList);
     void OnGameListResult(ArrayList<HashMap<String, String>> games);
     void OnStoredListResult(ArrayList<HashMap<String, String>> games);
-    void OnEndGameResult(int state);
+    void OnGameEndedResult(int state);
     void OnConsoleOutput(String buffer);
 
 }

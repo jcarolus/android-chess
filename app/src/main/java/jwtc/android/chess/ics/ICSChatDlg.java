@@ -33,12 +33,12 @@ public class ICSChatDlg extends Dialog {
         Button butYes = (Button) findViewById(R.id.ButtonChatOk);
         butYes.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                String opponent = _parent.get_view().getOpponent();
-                if (opponent.length() > 0) {
-                    _parent.sendString("tell " + opponent + " " + _editChat.getText().toString());
-                } else {
-                    _parent.sendString("whisper " + _editChat.getText().toString());
-                }
+//                String opponent = _parent.get_view().getOpponent();
+//                if (opponent.length() > 0) {
+//                    _parent.sendString("tell " + opponent + " " + _editChat.getText().toString());
+//                } else {
+//                    _parent.sendString("whisper " + _editChat.getText().toString());
+//                }
                 dismiss();
             }
         });
@@ -54,12 +54,12 @@ public class ICSChatDlg extends Dialog {
 
 
     public void prepare() {
-        String opponent = _parent.get_view().getOpponent();
-        if (opponent.length() > 0) {
-            _tvChat.setText("tell opponent (" + opponent + ")");
-        } else {
-            _tvChat.setText("whisper");
-        }
+//        String opponent = _parent.get_view().getOpponent();
+//        if (opponent.length() > 0) {
+//            _tvChat.setText("tell opponent (" + opponent + ")");
+//        } else {
+//            _tvChat.setText("whisper");
+//        }
         _editChat.setText("");
         _editChat.requestFocus();
     }

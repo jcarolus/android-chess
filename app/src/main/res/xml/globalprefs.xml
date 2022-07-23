@@ -21,18 +21,21 @@
             android:summary="@string/pref_fullscreen_desc"
             android:key="fullScreen" />
 
-        <Preference
-            android:title="@string/pref_colorscheme"
-            android:summary="@string/pref_colorscheme_desc"
-            android:key="colorSchemeHandle" />
+        <ListPreference
+            android:title="@string/pref_pieceset"
+            android:summary="@string/pref_pieceset_desc"
+            android:key="pieceset"
+            android:defaultValue="0"
+            android:entries="@array/piecesetarray"
+            android:entryValues="@array/piecesetKeyarray" />
 
         <ListPreference
-            android:title="@string/pref_tileset"
-            android:summary="@string/pref_tileset_desc"
-            android:key="tileSet"
-            android:defaultValue=""
-            android:entries="@array/tileArray"
-            android:entryValues="@array/tileKeyArray" />
+            android:title="@string/pref_colorscheme"
+            android:summary="@string/pref_colorscheme_desc"
+            android:key="colorscheme"
+            android:defaultValue="0"
+            android:entries="@array/colorschemes"
+            android:entryValues="@array/colorscheme_indexes" />
 
         <CheckBoxPreference
             android:title="@string/pref_showLastMove"
@@ -51,11 +54,5 @@
             android:summary="@string/pref_sound_desc"
             android:key="soundHandle" />
 
-        <CheckBoxPreference
-            android:title="@string/pref_extrahighlight"
-            android:defaultValue="false"
-            android:summary="@string/pref_extrahighlight_desc"
-            android:key="extrahighlight" />
     </PreferenceCategory>
-
 </PreferenceScreen>
