@@ -38,32 +38,6 @@ public class ChessPreferences extends BasePreferenceActivity implements SharedPr
 
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        Preference prefColor = (Preference) findPreference("colorSchemeHandle");
-        prefColor.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-
-                final String[] items = getResources().getStringArray(R.array.colorschemes);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(ChessPreferences.this);
-                builder.setTitle(R.string.title_pick_colorscheme);
-                builder.setSingleChoiceItems(items, _colorScheme, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-
-                        _colorScheme = item;
-                        editor.putInt("ColorScheme", _colorScheme);
-
-                        editor.commit();
-
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
-
-                return true;
-            }
-        });
-
         Preference prefSound = (Preference) findPreference("soundHandle");
         prefSound.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
