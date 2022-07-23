@@ -311,6 +311,10 @@ public class ICSPatterns {
         return line.indexOf("Your current problem has been stopped") >= 0;
     }
 
+    public boolean isPuzzleSolved(String line) {
+        return line.indexOf("You solved problem number ") >= 0;
+    }
+
     public HashMap<String, String> parseSought(String line) {
         Matcher match = sought.matcher(line);
         if (match.matches()) {

@@ -51,11 +51,5 @@
             android:summary="@string/pref_sound_desc"
             android:key="soundHandle" />
 
-        <CheckBoxPreference
-            android:title="@string/pref_extrahighlight"
-            android:defaultValue="false"
-            android:summary="@string/pref_extrahighlight_desc"
-            android:key="extrahighlight" />
     </PreferenceCategory>
-
 </PreferenceScreen>

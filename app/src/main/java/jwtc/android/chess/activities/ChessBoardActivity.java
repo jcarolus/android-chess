@@ -83,7 +83,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 public void onClick(DialogInterface dialog, int item) {
                     dialog.dismiss();
                     jni.setPromo(4 - item);
-                    gameApi.requestMove(from, to);
+                    if (!gameApi.requestMove(from, to)) {
+                        rebuildBoard();
+                    }
                 }
             });
             AlertDialog alert = builder.create();
@@ -144,7 +146,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
 
-    // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
 
     @Override
     public void OnState() {

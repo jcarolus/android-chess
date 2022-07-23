@@ -31,6 +31,7 @@ public interface ICSListener {
     void OnObservingGameStopped();
     void OnPuzzleStarted();
     void OnPuzzleStopped();
+    void OnPuzzleSolved();
     void OnExaminingGameStarted();
     void OnExaminingGameStopped();
     void OnSoughtResult(ArrayList<HashMap<String, String>> soughtList);

@@ -506,39 +506,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 stopSession(R.string.ics_quit);
                 return true;
             }
-                // @TODO
-//                switch(get_view().getViewMode()) {
-//                    case ICSChessView.VIEW_PLAY:
-
-//
-//                        break;
-//                    case ICSChessView.VIEW_WATCH:
-//                        sendString("unobserve");
-//                        get_view().stopGame();
-//                        switchToWelcomeView();
-//                        break;
-//                    case ICSChessView.VIEW_PUZZLE:
-//                        sendString("tell puzzlebot stop");
-//                        get_view().stopGame();
-//                        switchToWelcomeView();
-//                        break;
-//                    case ICSChessView.VIEW_ENDGAME:
-//                        sendString("tell endgamebot stop");
-//                        get_view().stopGame();
-//                        switchToWelcomeView();
-//                        break;
-//                    case ICSChessView.VIEW_EXAMINE:
-//                        sendString("unexamine");
-//                        get_view().stopGame();
-//                        switchToWelcomeView();
-//                        break;
-//                    case ICSChessView.VIEW_NONE:
-//                        get_view().stopGame();
-//                        switchToWelcomeView();
-//                        break;
-//                }
-//
-
         } else {
             finish();
         }
@@ -724,38 +691,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     }
 
-    public void copyToClipBoard() {
-        try {
-            @SuppressWarnings("deprecation")
-            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            cm.setText(PGN.toString());
-            doToast(getString(R.string.ics_copy_clipboard));
-        } catch (Exception e) {
-            doToast(getString(R.string.err_copy_clipboard));
-            Log.e("ex", e.toString());
-        }
-    }
-
-
-    // @TODO move to ChessBoardActivity
-    public void SendToApp() {
-
-        try {
-            Intent sendIntent = new Intent(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_SUBJECT, "chess pgn");
-            sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + _sFile));
-            sendIntent.setType("application/x-chess-pgn");
-
-            startActivity(sendIntent);
-
-        } catch (Exception e) {
-
-            doToast(getString(R.string.err_send_email));
-            Log.e("ex", e.toString());
-        }
-    }
-
-
     private void confirmShow(String title, String text, String sendstring) {
         _dlgConfirm.setSendString(sendstring);
         _dlgConfirm.setText(title, text);
@@ -777,7 +712,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public boolean requestMove(int from, int to) {
-        // @TODO implement pre-move
         highlightedPositions.clear();
         highlightedPositions.add(from);
         highlightedPositions.add(to);
@@ -785,7 +719,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         ICSApi icsApi = (ICSApi) gameApi;
         if (isPlaying) {
             if (icsApi.getMyTurn() == icsApi.getTurn()) {
-                // @TODO is playing/examining
+                // @TODO promotion
                 // if (jni.pieceAt(BoardConstants.WHITE, from)
                 String sMove = Pos.toString(from) + "-" + Pos.toString(to);
                 sendString(sMove);
@@ -1518,6 +1452,11 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
+    public void OnPuzzleSolved() {
+        globalToast("Puzzle solved");
+    }
+
+    @Override
     public void OnExaminingGameStarted() {
         globalToast("Examining a game");
     }
@@ -1630,7 +1569,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             }
 
             if (_bTimeWarning) {
-
+                // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
             }
         }
     }

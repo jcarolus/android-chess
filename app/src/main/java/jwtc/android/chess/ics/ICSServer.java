@@ -430,6 +430,11 @@ public class ICSServer extends Service {
                 continue;
             }
 
+            if (icsPatterns.isPuzzleSolved(line)) {
+                for (ICSListener listener: listeners) {listener.OnPuzzleSolved();}
+                continue;
+            }
+
             if (icsPatterns.filterOutput(line)) {
                 continue;
             }

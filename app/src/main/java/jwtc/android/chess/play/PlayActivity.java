@@ -668,6 +668,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void OnClockTime() {
         textViewOpponentClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
         textViewMyClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+
+        // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
     }
 
     protected void updateClockByPrefs() {

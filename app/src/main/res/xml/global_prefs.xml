@@ -2,22 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/boardprerences">
 
-        <ListPreference
-            android:title="@string/pref_pieceset"
-            android:summary="@string/pref_pieceset_desc"
-            android:key="pieceset"
-            android:defaultValue="0"
-            android:entries="@array/piecesetarray"
-            android:entryValues="@array/piecesetKeyarray" />
-
-        <ListPreference
-            android:title="@string/pref_colorscheme"
-            android:summary="@string/pref_colorscheme_desc"
-            android:key="colorscheme"
-            android:defaultValue="0"
-            android:entries="@array/colorschemes"
-            android:entryValues="@array/colorscheme_indexes" />
-
         <CheckBoxPreference
             android:title="@string/pref_sound"
             android:summary="@string/pref_sound_desc"
@@ -38,6 +22,5 @@
             />
 
     </PreferenceCategory>
-
 
 </PreferenceScreen>
