@@ -251,6 +251,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             case ChessBoard.DRAW_MATERIAL:
             case ChessBoard.DRAW_REPEAT:
             case ChessBoard.DRAW_AGREEMENT:
+            case ChessBoard.STALEMATE:
                 labelForWhiteKing = "½";
                 labelForBlackKing = "½";
                 break;

@@ -297,21 +297,10 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         listPlayers = findViewById(R.id.ListPlayers);
         listPlayers.setAdapter(adapterPlayers);
         listPlayers.setOnItemClickListener(this);
-//
-//
-        /*
-        item.put("nr", match.group(1));
-            item.put("text_rating1", match.group(2));
-            item.put("text_name1", match.group(3));
-            item.put("text_rating2", match.group(4));
-            item.put("text_name2", match.group(5));
-            item.put("text_type", match.group(6).toUpperCase() + match.group(7).toUpperCase());
-            item.put("text_time1", match.group(10) + ":" + match.group(11));
-            item.put("text_time2", match.group(12) + ":" + match.group(13));
-         */
+
         adapterGames = new SimpleAdapter(ICSClient.this, mapGames, R.layout.ics_game_row,
-                new String[]{"nr", "text_name1", "text_name2"},
-                new int[]{R.id.nr, R.id.text_name1, R.id.text_name2});
+                new String[]{"nr", "text_name1", "text_name2", "text_rating1", "text_rating2", "text_time1", "text_time2", "text_type"},
+                new int[]{R.id.nr, R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2, R.id.text_time1, R.id.text_time2, R.id.text_type});
 
         _listGames = findViewById(R.id.ListGames);
         _listGames.setAdapter(adapterGames);
