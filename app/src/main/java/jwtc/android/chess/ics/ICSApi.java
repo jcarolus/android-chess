@@ -75,6 +75,8 @@ public class ICSApi extends GameApi {
             if (_sTurn.equals("B")) {
                 jni.setTurn(BoardConstants.BLACK);
                 turn = BoardConstants.BLACK;
+            } else {
+                jni.setTurn(BoardConstants.WHITE);
             }
             // -1 none, or 0-7 for column indicates double pawn push
             int iEPColumn = Integer.parseInt(st.nextToken());
@@ -176,7 +178,13 @@ public class ICSApi extends GameApi {
                 // gxh8=R
                 try {
                     //K/e1-e2
-                    lastTo = Pos.fromString(lastMove.substring(lastMove.length() - 2));
+                    String lastClean = lastMove.replaceAll("(#|=.)", "");
+                    if (lastClean.length() >= 2) {
+                        lastTo = Pos.fromString(lastClean.substring(lastClean.length() - 2));
+                    } else {
+                        lastTo = -1;
+                        Log.i(TAG, "Could not parse move: " + lastClean);
+                    }
                     //iFrom = Pos.fromString(lastMove.substring(lastMove.length()-5, 2));
                 } catch (Exception ex2) {
                     lastTo = -1;
@@ -188,6 +196,8 @@ public class ICSApi extends GameApi {
             jni.setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
 
             jni.commitBoard();
+
+            Log.d(TAG, "FEN " + jni.toFEN() + "  " + jni.getState());
 
             // _board
             dispatchState();

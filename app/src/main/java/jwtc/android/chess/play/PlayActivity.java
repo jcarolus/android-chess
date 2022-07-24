@@ -258,6 +258,20 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         } else {
             myEngine = new LocalEngine();
+
+            // opening database path
+            String sOpeningDb = prefs.getString("OpeningDb", null);
+            if (sOpeningDb == null) {
+                try {
+                    ((LocalEngine) myEngine).installDb(getAssets().open("db.bin"), "/data/data/jwtc.android.chess/db.bin");
+                } catch (Exception e) {
+                    Log.d(TAG, "Exception installing db " + e.getMessage());
+                }
+            } else {
+                Uri uriDb = Uri.parse(sOpeningDb);
+                ((LocalEngine) myEngine).setOpeningDb(uriDb.getPath());
+            }
+
         }
         myEngine.addListener(this);
 
