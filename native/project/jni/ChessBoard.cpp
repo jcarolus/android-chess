@@ -175,13 +175,17 @@ void ChessBoard::calcState(ChessBoard* board)
 
 	int move; 
 	m_indexMoves = 0;
+
+    memcpy(board, this, SIZEOF_BOARD);
+    boolean isIncheck = board->isSquareAttacked(m_turn, board->m_kingPos);
+
 	while(hasMoreMoves())
 	{
 		move = getNextMove();
 		
 		//char buf[20];
 		//Move::toDbgString(move, buf);
-		//DEBUG_PRINT(buf);
+		//DEBUG_PRINT("%s\n", buf);
 		//co.pl("Filtering " + );
 
 		makeMove(move, board);
@@ -189,7 +193,6 @@ void ChessBoard::calcState(ChessBoard* board)
 		// check if king is attacked - since a move is done, this is in m_o_kingPos
 		if(board->isSquareAttacked(m_turn, board->m_o_kingPos))
 		{
-			//co.pl("removed");
 			removeMoveElementAt();
 		}
 		else
@@ -212,7 +215,7 @@ void ChessBoard::calcState(ChessBoard* board)
 	if(m_sizeMoves == 0)
 	{
 		// state set to check in makeMove
-		if(m_state == CHECK)
+		if(m_state == CHECK || isIncheck)
 		{
 			m_state = MATE;
 			//co.pl("MATE");
@@ -2301,7 +2304,7 @@ void ChessBoard::toFENBoard(char* s){
 // return complete FEN representation of the board
 ////////////////////////////////////////////////////////////////////////////////
 void ChessBoard::toFEN(char* s){
-	
+
 	toFENBoard(s);
 	char buf[10];
 	
@@ -2408,7 +2411,7 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
 	if(!bccl && !bccs)
 		m_castlings[BLACK] |= MASK_KING;
 
-        DEBUG_PRINT("setCastlingsEP - A %d, H %d, cw %d, cb %d", COL_AROOK, COL_HROOK, m_castlings[WHITE], m_castlings[BLACK]);
+        DEBUG_PRINT("setCastlingsEP - A %d, H %d, cw %d, cb %d\n", COL_AROOK, COL_HROOK, m_castlings[WHITE], m_castlings[BLACK]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

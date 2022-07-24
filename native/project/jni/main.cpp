@@ -147,11 +147,12 @@ void testSpecial(){
 	char buf[1024] = "", s[255];
 	ChessBoard *board = g->getBoard();
 
+    board->reset();
 
         board->put(ChessBoard::f8, ChessBoard::KING, ChessBoard::BLACK);
 
-        board->put(ChessBoard::f5, ChessBoard::KING, ChessBoard::WHITE);
-        board->put(ChessBoard::a1, ChessBoard::ROOK, ChessBoard::WHITE);
+        board->put(ChessBoard::f6, ChessBoard::KING, ChessBoard::WHITE);
+        board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::WHITE);
 
 
 /*
@@ -181,12 +182,16 @@ void testSpecial(){
 	
 
 	board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
-	//board->setTurn(0);
+	board->setTurn(0);
 	g->commitBoard();
 
 	board->toFEN(buf);
 	DEBUG_PRINT(buf, 0);
 
+    // board->calcState(board);
+    DEBUG_PRINT("state %d\n", board->getState());
+
+/*
         g->setSearchTime(2);
         g->search(); 
 
@@ -198,7 +203,7 @@ void testSpecial(){
 
         int m = g->getBestMove();
         g->move(m);
-
+*/
 
         //g->setSearchTime(1);
         //g->search();
