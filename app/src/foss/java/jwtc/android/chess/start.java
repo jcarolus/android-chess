@@ -20,7 +20,7 @@ import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
-import jwtc.android.chess.tools.pgntool;
+import jwtc.android.chess.tools.AdvancedActivity;
 
 
 public class start extends Activity {
@@ -87,7 +87,7 @@ public class start extends Activity {
                         i.setClass(start.this, ICSClient.class);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_pgn))) {
-                        i.setClass(start.this, pgntool.class);
+                        i.setClass(start.this, AdvancedActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_globalpreferences))) {
