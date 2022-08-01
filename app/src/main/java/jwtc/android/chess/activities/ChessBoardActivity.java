@@ -37,6 +37,7 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
+import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;
 import jwtc.chess.board.ChessBoard;
@@ -129,6 +130,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void OnMove(int move) {
         Log.d(TAG, "OnMove " + move);
+        lastPosition = -1;
+
         rebuildBoard();
 
         if (spSound != null) {
@@ -644,14 +647,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             _dpadPos = -1;
             updateSelectedSquares();
         }
-        Log.d(TAG, "dpad focus " + hasFocus);
+        Log.d(TAG, "dpad focus " + hasFocus + ", " + _dpadPos);
     }
 
     public boolean dpadUp() {
         if (_dpadPos == -1) {
             return false;
         }
-        if (_dpadPos > 8) {
+        if (_dpadPos >= 8) {
             _dpadPos -= 8;
             updateSelectedSquares();
             return true;
@@ -675,7 +678,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (_dpadPos == -1) {
             return false;
         }
-        if (_dpadPos > 1) {
+        if (Pos.col(_dpadPos) > 0) {
             _dpadPos--;
             updateSelectedSquares();
             return true;
@@ -687,7 +690,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (_dpadPos == -1) {
             return false;
         }
-        if (_dpadPos < 63) {
+
+        if (Pos.col(_dpadPos) < 7) {
             _dpadPos++;
             updateSelectedSquares();
             return true;
