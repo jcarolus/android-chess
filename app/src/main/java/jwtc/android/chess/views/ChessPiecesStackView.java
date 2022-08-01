@@ -56,8 +56,14 @@ public class ChessPiecesStackView extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int height = width / 5;
+        if (height > heightSize) {
+            height = heightSize;
+        }
+
         setMeasuredDimension(width , height);
     }
 

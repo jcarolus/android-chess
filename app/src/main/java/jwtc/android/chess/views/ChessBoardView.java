@@ -2,6 +2,7 @@ package jwtc.android.chess.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -87,9 +88,12 @@ public class ChessBoardView extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // take the full width
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        // take the full width in portrait
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        setMeasuredDimension(widthSize, widthSize);
+        int heightSize =  MeasureSpec.getSize(heightMeasureSpec);
+        int size = widthSize < heightSize ? widthSize : heightSize;
+        setMeasuredDimension(size, size);
     }
 
     public void layoutChild(View child) {

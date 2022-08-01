@@ -16,8 +16,7 @@
             android:name=".start"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,8 +28,7 @@
         <activity
             android:name=".ChessPreferences"
             android:label="@string/globalpreferences"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".start" />
@@ -39,23 +37,19 @@
         <activity
             android:name=".HtmlActivity"
             android:label="@string/app_name_help"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
+            android:configChanges="orientation"></activity>
         <activity
             android:name=".activities.GlobalPreferencesActivity"
             android:label="@string/enginepreferences"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
+            android:configChanges="orientation"></activity>
         <activity
             android:name=".activities.GamePreferenceActivity"
             android:label="@string/enginepreferences"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
+            android:configChanges="orientation"></activity>
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -82,8 +76,7 @@
         <activity
             android:name=".setup.SetupActivity"
             android:label="@string/app_name_setup"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>

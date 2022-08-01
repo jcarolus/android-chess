@@ -52,14 +52,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ChessBoardView chessBoardView;
     protected SoundPool spSound = null;
     protected TextToSpeechApi textToSpeech = null;
-    protected int lastPosition = -1, premoveFrom = -1, premoveTo = -1;
+    protected int lastPosition = -1, premoveFrom = -1, premoveTo = -1, _dpadPos = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
 
     public static final int MODE_BLINDFOLD_SHOWPIECES = 0;
     public static final int MODE_BLINDFOLD_HIDEPIECES = 1;
     public static final int MODE_BLINDFOLD_SHOWPIECELOCATION = 2;
 
-    protected int soundTickTock, soundCheck, soundMove, soundCapture;
+    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
 
     protected int modeBlindfold = MODE_BLINDFOLD_SHOWPIECES;
     protected boolean allowPremove = true;
@@ -149,7 +149,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     @Override
     public void OnState() {
-        Log.d(TAG, "OnState");
         rebuildBoard();
     }
 
@@ -158,6 +157,33 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         jni = JNI.getInstance();
         chessBoardView = findViewById(R.id.includeboard);
+        chessBoardView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                dpadFocus(hasFocus);
+            }
+        });
+
+        chessBoardView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                            return dpadSelect();
+                        case KeyEvent.KEYCODE_DPAD_DOWN:
+                            return dpadDown();
+                        case KeyEvent.KEYCODE_DPAD_LEFT:
+                            return dpadLeft();
+                        case KeyEvent.KEYCODE_DPAD_RIGHT:
+                            return dpadRight();
+                        case KeyEvent.KEYCODE_DPAD_UP:
+                            return dpadUp();
+                    }
+                }
+                return false;
+            }
+        });
 
         myDragListener = new MyDragListener();
         myTouchListener = new MyTouchListener();
@@ -225,6 +251,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             soundCheck = spSound.load(this, R.raw.smallneigh, 2);
             soundMove = spSound.load(this, R.raw.move, 1);
             soundCapture = spSound.load(this, R.raw.capture, 1);
+            soundNewGame = spSound.load(this, R.raw.chesspiecesfall, 1);
         } else {
             spSound = null;
         }
@@ -237,8 +264,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         final int state = jni.getState();
         final int turn = jni.getTurn();
-
-        Log.d(TAG, "state " + state);
 
         // ⚑ ✓ ½
         String labelForWhiteKing = null;
@@ -304,10 +329,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
             if (child instanceof ChessSquareView) {
                 final ChessSquareView squareView = (ChessSquareView) child;
-                if (squareView.getSelected()){
-                    squareView.setSelected(squareView.getPos() == lastPosition);
-                }
 
+                squareView.setSelected(squareView.getPos() == lastPosition || squareView.getPos() == _dpadPos);
                 squareView.setHighlighted(highlightedPositions.contains(i));
             }
         }
@@ -355,8 +378,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             Log.i(TAG, "handleClickFromPositionString " + keyboardBuffer);
             // @TODO
             //_chessView.handleClickFromPositionString(keyboardBuffer);
+            /*
+              int index = Pos.fromString(keyboardBuffer);
+
+                return handleClick(index);
+             */
             keyboardBuffer = "";
         }
+
         return super.onKeyDown(keyCode, event);
     }
 
@@ -483,10 +512,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                                 // a click
                                 Log.d(TAG, "click " + lastPosition);
                                 if (lastPosition != -1) {
-                                    pieceViewFrom.setPos(toPos);
-                                    chessBoardView.layoutChild(pieceViewFrom);
-                                    requestMove(lastPosition, toPos);
-                                    lastPosition = -1;
+                                    handleClick(toPos);
+
                                 } else {
                                     lastPosition = toPos;
                                 }
@@ -609,88 +636,85 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    protected void dpadFocus(boolean hasFocus) {
+        if (hasFocus) {
+            _dpadPos = jni.getTurn() == ChessBoard.BLACK ? ChessBoard.e8 : ChessBoard.e1;
+            updateSelectedSquares();
+        } else {
+            _dpadPos = -1;
+            updateSelectedSquares();
+        }
+        Log.d(TAG, "dpad focus " + hasFocus);
+    }
 
-    /*
-    protected void dpadFirst() {
+    public boolean dpadUp() {
         if (_dpadPos == -1) {
-            _dpadPos = _jni.getTurn() == ChessBoard.BLACK ? ChessBoard.e8 : ChessBoard.e1;
+            return false;
         }
+        if (_dpadPos > 8) {
+            _dpadPos -= 8;
+            updateSelectedSquares();
+            return true;
+        }
+        return false;
     }
 
-    public void dpadUp() {
-        dpadFirst();
-        if (_view.getFlippedBoard()) {
-            if (_dpadPos < 55) {
-                _dpadPos += 8;
-                paintBoard();
-            }
-        } else {
-            if (_dpadPos > 8) {
-                _dpadPos -= 8;
-                paintBoard();
-            }
+    public boolean dpadDown() {
+        if (_dpadPos == -1) {
+            return false;
         }
+        if (_dpadPos < 55) {
+            _dpadPos += 8;
+            updateSelectedSquares();
+            return true;
+        }
+        return false;
     }
 
-    public void dpadDown() {
-        dpadFirst();
-        if (_view.getFlippedBoard()) {
-            if (_dpadPos > 8) {
-                _dpadPos -= 8;
-                paintBoard();
-            }
-        } else {
-            if (_dpadPos < 55) {
-                _dpadPos += 8;
-                paintBoard();
-            }
+    public boolean dpadLeft() {
+        if (_dpadPos == -1) {
+            return false;
         }
+        if (_dpadPos > 1) {
+            _dpadPos--;
+            updateSelectedSquares();
+            return true;
+        }
+        return false;
     }
 
-    public void dpadLeft() {
-        dpadFirst();
-        if (_view.getFlippedBoard()) {
-            if (_dpadPos < 63) {
-                _dpadPos++;
-                paintBoard();
-            }
-        } else {
-            if (_dpadPos > 1) {
-                _dpadPos--;
-                paintBoard();
-            }
+    public boolean dpadRight() {
+        if (_dpadPos == -1) {
+            return false;
         }
+        if (_dpadPos < 63) {
+            _dpadPos++;
+            updateSelectedSquares();
+            return true;
+        }
+        return false;
     }
 
-    public void dpadRight() {
-        dpadFirst();
-        if (_view.getFlippedBoard()) {
-            if (_dpadPos > 1) {
-                _dpadPos--;
-                paintBoard();
-            }
-        } else {
-            if (_dpadPos < 63) {
-                _dpadPos++;
-                paintBoard();
-            }
-        }
-    }
-
-    public void dpadSelect() {
+    public boolean dpadSelect() {
         if (_dpadPos != -1) {
-            if (m_iFrom == -1) {
-                m_iFrom = _dpadPos;
-                paintBoard();
+            if (lastPosition == -1) {
+                lastPosition = _dpadPos;
+                updateSelectedSquares();
             } else {
-                if (_view.getFlippedBoard()) {
-                    handleClick(_view.getFieldIndex(_dpadPos));
-                } else {
-                    handleClick(_dpadPos);
-                }
+                handleClick(_dpadPos);
             }
-
+            return true;
         }
+        return false;
     }
-     */
+
+    protected void handleClick(int index) {
+        ChessPieceView pieceViewFrom = getPieceViewOnPosition(lastPosition);
+        if (pieceViewFrom != null) {
+            pieceViewFrom.setPos(index);
+            chessBoardView.layoutChild(pieceViewFrom);
+        }
+        requestMove(lastPosition, index);
+        lastPosition = -1;
+    }
 }

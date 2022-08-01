@@ -154,14 +154,6 @@ public class ICSApi extends GameApi {
             String _sTimePerMove = st.nextToken();  // time it took to make a move
             lastMove = st.nextToken();  // algebraic notation move
 
-            if (lastMove.contains("+")) {
-//                _parent.soundCheck();
-            } else if (lastMove.contains("x")) {
-//                _parent.soundCapture();
-            } else {
-//                _parent.soundMove();
-            }
-
             lastTo = -1;
 
             if (lastMove.equals("o-o")) {
