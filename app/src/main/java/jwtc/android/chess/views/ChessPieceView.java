@@ -54,6 +54,7 @@ public class ChessPieceView extends AppCompatImageView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         View parent = (View) this.getParent();
         int widthSize = parent.getWidth();
 

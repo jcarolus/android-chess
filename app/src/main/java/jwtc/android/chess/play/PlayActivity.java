@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -74,6 +75,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue;
     private TableLayout layoutBoardTop, layoutBoardBottom;
+    private ImageButton butMute;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -219,7 +221,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             }
         });
 
-        final ImageButton butMute = findViewById(R.id.ButtonSoundMute);
+        butMute = findViewById(R.id.ButtonSoundMute);
         butMute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,6 +285,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         textViewOpponentClock.setTextColor(ColorSchemes.getHightlightColor());
         textViewMyClock.setTextColor(ColorSchemes.getHightlightColor());
 
+        updateClockByPrefs();
+
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             lGameID = 0;
             Log.i("onResume", "action send with type " + type);
@@ -291,6 +295,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 if (sPGN != null) {
                     sPGN = sPGN.trim();
                     gameApi.loadPGN(sPGN);
+                    updateForNewGame();
                 }
             } else {
                 sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -298,6 +303,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     sFEN = sFEN.trim();
 
                     gameApi.initFEN(sFEN, true);
+                    updateForNewGame();
                 }
             }
         } else if (uri != null) {
@@ -317,6 +323,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             Log.i("onResume", "Loading FEN " + sFEN);
             lGameID = 0;
             gameApi.initFEN(sFEN, true);
+            updateForNewGame();
         } else {
             lGameID = prefs.getLong("game_id", 0);
             if (lGameID > 0) {
@@ -329,16 +336,20 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     gameApi.loadPGN(sPGN);
                 } else {
                     gameApi.newGame();
+                    updateForNewGame();
                 }
             }
         }
 
         updateGameSettingsByPrefs();
-        updateClockByPrefs();
 
         if (prefs.getBoolean("showECO", true)) {
             ecoService.load(getAssets());
         }
+
+
+        butMute.setVisibility(spSound == null ? View.INVISIBLE : View.VISIBLE);
+        butMute.setImageResource(fVolume == 1.0f ? R.drawable.ic_volume_mute : R.drawable.ic_volume_down);
     }
 
 
@@ -601,6 +612,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 if (seed >= 0 && seed <= 960) {
                     gameApi.newGameRandomFischer(seed);
                     lGameID = 0;
+                    updateForNewGame();
                 } else {
                     doToast(getString(R.string.err_chess960_position_range));
                 }
@@ -615,6 +627,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             int seed = -1;
             gameApi.newGameRandomFischer(seed);
             lGameID = 0;
+            updateForNewGame();
             }
         });
 
@@ -635,6 +648,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
                     lGameID = 0;
+                    updateForNewGame();
                 } else if (item.equals(getString(R.string.menu_new_960))) {
                     showChess960Dialog();
                 } else if (item.equals(getString(R.string.menu_setup))) {
@@ -683,7 +697,13 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         textViewOpponentClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
         textViewMyClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
 
-        // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
+//        long remaining = myTurn == BoardConstants.WHITE ? localClock.getWhiteRemaining() : localClock.getBlackRemaining();
+//        if (remaining < _TimeWarning * 1000) {
+//            textViewMyClock.setBackgroundColor(0xCCFF0000);
+//            // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
+//        } else {
+//            textViewMyClock.setBackgroundColor(Color.TRANSPARENT);
+//        }
     }
 
     protected void updateClockByPrefs() {
@@ -693,6 +713,22 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         long blackRemaining = prefs.getLong("clockBlackMillies", 0);
         long startTime = prefs.getLong("clockStartTime", 0);
         localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
+    }
+
+    protected void updateForNewGame() {
+        SharedPreferences prefs = getPrefs();
+        long increment = prefs.getLong("clockIncrement", 0);
+        long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
+        long blackRemaining = prefs.getLong("clockBlackMillies", 0);
+        long startTime = prefs.getLong("clockStartTime", 0);
+        if (startTime > 0) {
+            startTime = System.currentTimeMillis();
+        }
+        localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
+
+        if (spSound != null) {
+            spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
+        }
     }
 
     protected void updateGameSettingsByPrefs() {

@@ -13,9 +13,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Vibrator;
 
-import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -446,6 +444,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         Log.i("ICSClient", "onCreate");
     }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -1301,6 +1300,17 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         playButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_PLAY ? View.VISIBLE : View.GONE);
         examineButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_EXAMINE ? View.VISIBLE : View.GONE);
+
+        String lastMove = icsApi.getLastMove();
+        if (spSound != null) {
+            if (lastMove.contains("+") || lastMove.contains("#")) {
+                spSound.play(soundCheck, fVolume, fVolume, 1, 0, 1);
+            } else if (lastMove.contains("x")) {
+                spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);
+            } else {
+                spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
+            }
+        }
     }
 
     @Override
@@ -1349,6 +1359,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
                 isPlaying = true;
+                if (spSound != null) {
+                    spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
+                }
             }
         }
     }
@@ -1557,8 +1570,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
             }
 
-            if (_bTimeWarning) {
-                // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
+            if (_bTimeWarning && spSound != null) {
+                spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
             }
         }
     }

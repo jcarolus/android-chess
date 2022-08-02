@@ -13,6 +13,7 @@
             android:text="Minutes"></TextView>
         <EditText
             android:id="@+id/EditMinutes"
+            android:inputType="number"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"></EditText>
@@ -25,6 +26,7 @@
             android:text="Increment in seconds"></TextView>
         <EditText
             android:id="@+id/EditIncrement"
+            android:inputType="number"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"></EditText>

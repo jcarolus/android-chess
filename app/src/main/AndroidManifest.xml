@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jwtc.android.chess"
     android:installLocation="auto"
-    android:versionCode="167"
-    android:versionName="9.0.0">
+    android:versionCode="169"
+    android:versionName="9.0.2">
 
     <application
         android:name="android.app.Application"
@@ -16,8 +16,7 @@
             android:name=".start"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,8 +28,7 @@
         <activity
             android:name=".ChessPreferences"
             android:label="@string/globalpreferences"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".start" />
@@ -39,23 +37,19 @@
         <activity
             android:name=".HtmlActivity"
             android:label="@string/app_name_help"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
+            android:configChanges="orientation"></activity>
         <activity
             android:name=".activities.GlobalPreferencesActivity"
             android:label="@string/enginepreferences"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
+            android:configChanges="orientation"></activity>
         <activity
             android:name=".activities.GamePreferenceActivity"
             android:label="@string/enginepreferences"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
+            android:configChanges="orientation"></activity>
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -82,8 +76,7 @@
         <activity
             android:name=".setup.SetupActivity"
             android:label="@string/app_name_setup"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -101,8 +94,7 @@
         <activity
             android:name=".GamesListActivity"
             android:label="@string/app_name_save_games"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -113,8 +105,7 @@
         <activity
             android:name="jwtc.android.chess.puzzle.PuzzleActivity"
             android:label="@string/app_name"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -125,8 +116,7 @@
         <activity
             android:name="jwtc.android.chess.practice.PracticeActivity"
             android:label="@string/app_name"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -137,8 +127,8 @@
         <activity
             android:name="jwtc.android.chess.ics.ICSClient"
             android:label="@string/app_name"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:screenOrientation="locked"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -149,8 +139,7 @@
         <activity
             android:name="jwtc.android.chess.ics.ICSPrefs"
             android:label="@string/preferences"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -162,8 +151,7 @@
         <activity
             android:name="jwtc.android.chess.ics.CustomCommands"
             android:label="@string/preferences"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -174,8 +162,7 @@
         <activity
             android:name="jwtc.android.chess.tools.AdvancedActivity"
             android:label="@string/app_name_pgntools"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -186,8 +173,7 @@
         <activity
             android:name="jwtc.android.chess.tools.ImportActivity"
             android:label="@string/app_name_import"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
