@@ -471,15 +471,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 } else {
                     final int toPos = ((ChessSquareView) view).getPos();
                     if (lastPosition != -1) {
-                        ChessPieceView pieceViewFrom = getPieceViewOnPosition(lastPosition);
-                        if (pieceViewFrom != null) {
-                            pieceViewFrom.setPos(toPos);
-                            chessBoardView.layoutChild(pieceViewFrom);
-                        }
-                        requestMove(lastPosition, toPos);
+                        handleClick(toPos);
                     }
-                    lastPosition = -1;
-                    ChessBoardActivity.this.updateSelectedSquares();
                 }
             }
         }
@@ -506,29 +499,29 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 //                        Log.i(TAG, "onDrag DROP " + pos);
                         // Dropped, reassign View to ViewGroup
                         View fromView = (View) event.getLocalState();
-                        if (fromView instanceof ChessPieceView) {
-                            ChessPieceView pieceViewFrom = (ChessPieceView) fromView;
-                            final int toPos = ((ChessSquareView) view).getPos();
-                            final int fromPos = pieceViewFrom.getPos();
+                        if (fromView != null) {
+                            if (fromView instanceof ChessPieceView) {
+                                ChessPieceView pieceViewFrom = (ChessPieceView) fromView;
+                                final int toPos = ((ChessSquareView) view).getPos();
+                                final int fromPos = pieceViewFrom.getPos();
 
-                            if (toPos == fromPos) {
-                                // a click
-                                Log.d(TAG, "click " + lastPosition);
-                                if (lastPosition != -1) {
-                                    handleClick(toPos);
-
+                                if (toPos == fromPos) {
+                                    // a click
+                                    if (lastPosition != -1) {
+                                        handleClick(toPos);
+                                    } else {
+                                        lastPosition = toPos;
+                                    }
                                 } else {
-                                    lastPosition = toPos;
+                                    pieceViewFrom.setPos(toPos);
+                                    chessBoardView.layoutChild(pieceViewFrom);
+                                    requestMove(fromPos, toPos);
+                                    lastPosition = -1;
                                 }
-                            } else {
-                                pieceViewFrom.setPos(toPos);
-                                chessBoardView.layoutChild(pieceViewFrom);
-                                requestMove(fromPos, toPos);
-                                lastPosition = -1;
+                                ChessBoardActivity.this.updateSelectedSquares();
                             }
-                            ChessBoardActivity.this.updateSelectedSquares();
+                            fromView.setVisibility(View.VISIBLE);
                         }
-                        fromView.setVisibility(View.VISIBLE);
 
                         break;
                     }
@@ -713,6 +706,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void handleClick(int index) {
+        Log.d(TAG, "handleClick " + index);
         ChessPieceView pieceViewFrom = getPieceViewOnPosition(lastPosition);
         if (pieceViewFrom != null) {
             pieceViewFrom.setPos(index);
@@ -720,5 +714,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         requestMove(lastPosition, index);
         lastPosition = -1;
+        ChessBoardActivity.this.updateSelectedSquares();
     }
 }

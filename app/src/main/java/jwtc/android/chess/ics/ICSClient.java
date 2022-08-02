@@ -13,9 +13,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Vibrator;
 
-import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -446,6 +444,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         Log.i("ICSClient", "onCreate");
     }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -1304,7 +1303,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         String lastMove = icsApi.getLastMove();
         if (spSound != null) {
-            if (lastMove.contains("+")) {
+            if (lastMove.contains("+") || lastMove.contains("#")) {
                 spSound.play(soundCheck, fVolume, fVolume, 1, 0, 1);
             } else if (lastMove.contains("x")) {
                 spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);

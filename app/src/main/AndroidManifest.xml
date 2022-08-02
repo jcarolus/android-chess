@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jwtc.android.chess"
     android:installLocation="auto"
-    android:versionCode="167"
-    android:versionName="9.0.0">
+    android:versionCode="169"
+    android:versionName="9.0.2">
 
     <application
         android:name="android.app.Application"
@@ -127,6 +127,7 @@
         <activity
             android:name="jwtc.android.chess.ics.ICSClient"
             android:label="@string/app_name"
+            android:screenOrientation="locked"
             android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
