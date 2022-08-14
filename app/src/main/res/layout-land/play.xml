@@ -146,14 +146,14 @@
                             <ImageButton
                                 android:id="@+id/ButtonPlay"
                                 android:src="@drawable/ic_icon_play"
-                                android:layout_height="48dip"
-                                android:layout_width="48dip"
+                                android:layout_height="40dip"
+                                android:layout_width="40dip"
                                 style="@style/ChessImageButton" />
 
                             <ProgressBar
                                 android:id="@+id/ProgressBarPlay"
-                                android:layout_width="48dip"
-                                android:layout_height="48dip"
+                                android:layout_width="40dip"
+                                android:layout_height="40dip"
                                 style="?android:attr/progressBarStyleLarge"
                                 android:visibility="gone" />
                         </RelativeLayout>
@@ -174,8 +174,8 @@
 
                         <ImageButton android:id="@+id/ButtonMenu"
                             android:src="@drawable/ic_three_dots_vertical"
-                            android:layout_width="48dip"
-                            android:layout_height="48dip" />
+                            android:layout_width="40dip"
+                            android:layout_height="40dip" />
 
                     </TableRow>
                 </TableLayout>
@@ -190,20 +190,20 @@
                         <ImageButton
                             android:id="@+id/ButtonPrevious"
                             android:src="@drawable/ic_chevron_left"
-                            android:layout_height="48dip"
-                            android:layout_width="48dip"
+                            android:layout_height="40dip"
+                            android:layout_width="40dip"
                             style="@style/ChessImageButton" />
                         <SeekBar
                             android:id="@+id/SeekBarMain"
                             android:layout_marginLeft="8dip"
                             android:layout_marginRight="8dip"
                             android:layout_width="fill_parent"
-                            android:layout_height="48dip" />
+                            android:layout_height="40dip" />
                         <ImageButton
                             android:id="@+id/ButtonNext"
                             android:src="@drawable/ic_chevron_right"
-                            android:layout_height="48dip"
-                            android:layout_width="48dip"
+                            android:layout_height="40dip"
+                            android:layout_width="40dip"
                             style="@style/ChessImageButton" />
                     </TableRow>
                 </TableLayout>
@@ -215,33 +215,33 @@
                         <ImageButton
                             android:id="@+id/ButtonBlindfoldShow"
                             android:src="@drawable/ic_eye"
-                            android:layout_height="48dip"
-                            android:layout_width="48dip"
+                            android:layout_height="40dip"
+                            android:layout_width="40dip"
                             style="@style/ChessImageButton" />
                         <ImageButton
                             android:id="@+id/ButtonBlindfoldLocations"
                             android:src="@drawable/ic_sunglasses"
-                            android:layout_height="48dip"
-                            android:layout_width="48dip"
+                            android:layout_height="40dip"
+                            android:layout_width="40dip"
                             style="@style/ChessImageButton" />
                         <ImageButton
                             android:id="@+id/ButtonBlindfoldHide"
                             android:src="@drawable/ic_eye_slash"
-                            android:layout_height="48dip"
-                            android:layout_width="48dip"
+                            android:layout_height="40dip"
+                            android:layout_width="40dip"
                             style="@style/ChessImageButton" />
                         <ViewSwitcher android:id="@+id/ViewSwitchSound">
                             <ImageButton
                                 android:id="@+id/ButtonSoundMute"
                                 android:src="@drawable/ic_volume_mute"
-                                android:layout_height="48dip"
-                                android:layout_width="48dip"
+                                android:layout_height="40dip"
+                                android:layout_width="40dip"
                                 style="@style/ChessImageButton" />
                             <ImageButton
                                 android:id="@+id/ButtonSoundOn"
                                 android:src="@drawable/ic_volume_down"
-                                android:layout_height="48dip"
-                                android:layout_width="48dip"
+                                android:layout_height="40dip"
+                                android:layout_width="40dip"
                                 style="@style/ChessImageButton" />
                         </ViewSwitcher>
                     </TableRow>

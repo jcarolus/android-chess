@@ -2,10 +2,10 @@
 <resources>
 
     <style name="ChessImageButton">
-        <item name="android:padding">4dip</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:gravity">center_vertical</item>
-        <!--<item name="android:background">@android:color/background_dark</item>-->
+        <item name="android:background">@drawable/button_background</item>
+        <item name="android:tint">@color/primaryTextColor</item>
     </style>
 
     <style name="ChessTextViewStyle" parent="android:Widget.TextView">
@@ -91,8 +91,18 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="ChessTheme" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="ChessTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryVariantColor</item>
+        <item name="colorOnSecondary">@color/secondaryTextColor</item>
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorOnSurface">@color/surfaceTextColor</item>
+        <item name="android:colorBackground">@color/backgroundColor</item>
+        <item name="colorOnBackground">@color/textOnBackgroundColor</item>
     </style>
 
 </resources>
