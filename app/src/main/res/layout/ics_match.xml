@@ -2,7 +2,8 @@
 <ScrollView android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="8dip">
 
     <TableLayout
         android:layout_width="fill_parent"
@@ -174,12 +175,14 @@
 
             <Button
                 android:text="@string/button_cancel"
-                android:id="@+id/ButtonMatchCancel" />
+                android:id="@+id/ButtonMatchCancel"
+                android:layout_margin="2dip"/>
 
             <Button
                 android:text="@string/button_ok"
                 android:id="@+id/ButtonMatchOk"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_margin="2dip"/>
         </TableRow>
 
     </TableLayout>

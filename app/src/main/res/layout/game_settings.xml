@@ -85,14 +85,16 @@
                 android:text="@string/button_cancel"
                 android:minWidth="100dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="2dip"/>
 
             <Button
                 android:id="@+id/ButtonOk"
                 android:text="@string/button_ok"
                 android:minWidth="100dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="2dip"/>
         </TableRow>
 
     </TableLayout>

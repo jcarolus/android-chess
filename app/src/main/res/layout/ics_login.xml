@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="8dip">
 
     <TableLayout
         android:id="@+id/TableICSLogin"
@@ -79,13 +80,15 @@
                 android:text="@string/button_register"
                 android:id="@+id/ButICSRegister"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginRight="2dip"/>
 
             <Button
                 android:text="@string/button_login"
                 android:id="@+id/ButICSLogin"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dip"/>
         </TableRow>
     </TableLayout>
 </RelativeLayout>

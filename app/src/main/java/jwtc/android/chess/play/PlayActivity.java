@@ -729,6 +729,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         if (spSound != null) {
             spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
         }
+
+        resetSelectedSquares();
     }
 
     protected void updateGameSettingsByPrefs() {

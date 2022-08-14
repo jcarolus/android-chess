@@ -62,7 +62,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private ImageButton buttonMenu;
     private EditText _editHandle, _editPwd, _editConsole, _editBoard;
-    private ViewAnimator viewAnimatorRoot, viewAnimatorPlayMode;
+    private ViewAnimator viewAnimatorRoot;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
     private ScrollView _scrollConsole;
 
@@ -152,7 +152,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _bShowClockPGN = true;
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
-        viewAnimatorPlayMode = findViewById(R.id.ViewAnimatorPlayMode);
 
         playButtonsLayout = findViewById(R.id.LayoutPlayButtons);
         examineButtonsLayout = findViewById(R.id.LayoutExamineButtons);
@@ -1356,6 +1355,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
         globalToast("Game initialized");
         Log.d(TAG, "OnPlayGameStarted " + whiteHandle + blackHandle + whiteRating + blackRating);
+        resetSelectedSquares();
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
                 isPlaying = true;
@@ -1435,6 +1435,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnObservingGameStarted() {
+        resetSelectedSquares();
         globalToast("Observing a game");
     }
 
@@ -1445,6 +1446,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnPuzzleStarted() {
+        resetSelectedSquares();
         globalToast("Puzzle started");
     }
 
@@ -1460,6 +1462,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnExaminingGameStarted() {
+        resetSelectedSquares();
         globalToast("Examining a game");
     }
 

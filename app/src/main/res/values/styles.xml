@@ -91,7 +91,7 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="ChessTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="ChessTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
