@@ -15,7 +15,7 @@
         <activity
             android:name=".start"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MaterialComponents"
+            android:theme="@style/ChessStart"
             android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

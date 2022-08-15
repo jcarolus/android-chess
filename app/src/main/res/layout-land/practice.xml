@@ -97,8 +97,6 @@
                 <ImageButton
                     android:id="@+id/ButtonPracticeNext"
                     android:src="@drawable/ic_chevron_right"
-                    android:layout_height="40dip"
-                    android:layout_width="40dip"
                     style="@style/ChessImageButton" />
             </TableRow>
         </TableLayout>

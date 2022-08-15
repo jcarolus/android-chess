@@ -89,14 +89,12 @@
                 android:text="@string/puzzle_show"
                 android:paddingLeft="8dip"
                 android:paddingRight="8dip"
-                android:layout_height="40dip"
-                android:layout_width="wrap_content" />
+                android:layout_width="wrap_content"
+                style="@style/ChessButton"/>
 
             <ImageButton
                 android:id="@+id/ButtonPracticeNext"
                 android:src="@drawable/ic_chevron_right"
-                android:layout_height="40dip"
-                android:layout_width="40dip"
                 style="@style/ChessImageButton" />
         </TableRow>
     </TableLayout>

@@ -36,6 +36,7 @@ import org.json.JSONException;
 
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
@@ -64,6 +65,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private EditText _editHandle, _editPwd, _editConsole, _editBoard;
     private ViewAnimator viewAnimatorRoot;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
+    private TableLayout layoutBoardTop, layoutBoardBottom;
     private ScrollView _scrollConsole;
 
     private Spinner _spinnerHandles;
@@ -155,6 +157,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         playButtonsLayout = findViewById(R.id.LayoutPlayButtons);
         examineButtonsLayout = findViewById(R.id.LayoutExamineButtons);
+
+        layoutBoardTop = findViewById(R.id.LayoutBoardTop);
+        layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
 
         _tvPlayerTop = findViewById(R.id.TextViewTop);
         _tvPlayerBottom = findViewById(R.id.TextViewBottom);
@@ -814,6 +819,24 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //            _ficsHandle = "guest";
 //            _ficsPwd = "";
 //        }
+
+        layoutBoardTop.setBackgroundColor(ColorSchemes.getDark());
+        layoutBoardBottom.setBackgroundColor(ColorSchemes.getDark());
+
+
+        _tvPlayerTop.setTextColor(ColorSchemes.getHightlightColor());
+        _tvPlayerBottom.setTextColor(ColorSchemes.getHightlightColor());
+
+        _tvPlayerTopRating.setTextColor(ColorSchemes.getHightlightColor());
+        _tvPlayerBottomRating.setTextColor(ColorSchemes.getHightlightColor());
+
+        _tvClockTop.setTextColor(ColorSchemes.getHightlightColor());
+        _tvClockBottom.setTextColor(ColorSchemes.getHightlightColor());
+
+        _tvBoardNum.setTextColor(ColorSchemes.getHightlightColor());
+        _tvLastMove.setTextColor(ColorSchemes.getHightlightColor());
+        _tvTimePerMove.setTextColor(ColorSchemes.getHightlightColor());
+        _tvMoveNumber.setTextColor(ColorSchemes.getHightlightColor());
 
 
         // @TODO

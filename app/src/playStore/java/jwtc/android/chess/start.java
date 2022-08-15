@@ -102,6 +102,7 @@ public class start extends AppCompatActivity {
         }
 
         _jni = JNI.getInstance();
+        _jni.reset();
 
         _lastMessage = "";
 

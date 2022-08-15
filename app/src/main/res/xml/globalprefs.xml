@@ -38,12 +38,6 @@
             android:entryValues="@array/colorscheme_indexes" />
 
         <CheckBoxPreference
-            android:title="@string/pref_showLastMove"
-            android:defaultValue="true"
-            android:summary="@string/pref_showLastMove_desc"
-            android:key="showLastMove" />
-
-        <CheckBoxPreference
             android:title="@string/pref_showCoords"
             android:defaultValue="false"
             android:summary="@string/pref_showCoords_desc"

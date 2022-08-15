@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <dimen name="boardSquare">40dp</dimen>
-    <dimen name="boardSize">320dp</dimen>
+    <dimen name="imageButtonSize">48dp</dimen>
 
     <dimen name="normalTextSize">12sp</dimen>
     <dimen name="normalPaddingX">8dp</dimen>

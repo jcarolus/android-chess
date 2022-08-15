@@ -80,15 +80,15 @@
                 android:text="@string/button_register"
                 android:id="@+id/ButICSRegister"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="2dip"/>
+                android:layout_marginRight="2dip"
+                style="@style/ChessButton"/>
 
             <Button
                 android:text="@string/button_login"
                 android:id="@+id/ButICSLogin"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="2dip"/>
+                android:layout_marginLeft="2dip"
+                style="@style/ChessButton"/>
         </TableRow>
     </TableLayout>
 </RelativeLayout>
