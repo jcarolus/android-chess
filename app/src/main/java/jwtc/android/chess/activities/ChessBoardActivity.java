@@ -55,15 +55,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected TextToSpeechApi textToSpeech = null;
     protected int lastPosition = -1, premoveFrom = -1, premoveTo = -1, _dpadPos = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
-
-    public static final int MODE_BLINDFOLD_SHOWPIECES = 0;
-    public static final int MODE_BLINDFOLD_HIDEPIECES = 1;
-    public static final int MODE_BLINDFOLD_SHOWPIECELOCATION = 2;
-
     protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
-
-    protected int modeBlindfold = MODE_BLINDFOLD_SHOWPIECES;
-    protected boolean allowPremove = true;
     protected boolean skipReturn = true;
     private String keyboardBuffer = "";
 
@@ -339,6 +331,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    public void resetSelectedSquares() {
+        lastPosition = -1;
+        premoveFrom = -1;
+        premoveTo = -1;
+
+        highlightedPositions.clear();
+        updateSelectedSquares();
+    }
+
 //    @Override
 //    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
 //    public boolean dispatchKeyEvent(KeyEvent event) {
@@ -411,6 +412,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void setPremove(int from, int to) {
+        Log.d(TAG, "setPremove");
         this.premoveFrom = from;
         this.premoveTo = to;
         highlightedPositions.clear();
@@ -419,6 +421,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void resetPremove() {
+        Log.d(TAG, "resetPremove");
         this.premoveFrom = -1;
         this.premoveTo = -1;
         highlightedPositions.clear();

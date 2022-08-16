@@ -19,11 +19,11 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/ics_offer_rematch"
             android:id="@+id/ButtonGameRematch"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            style="@style/ChessButton"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,20 +36,20 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/ics_examine"
             android:id="@+id/ButtonGameExamine"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            style="@style/ChessButton"/>
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/ics_send_app"
             android:id="@+id/ButtonGameSend"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="20dp"
+            style="@style/ChessButton"/>
 
         <Button
             style="?android:attr/buttonStyleSmall"

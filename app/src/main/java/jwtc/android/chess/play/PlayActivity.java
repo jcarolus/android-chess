@@ -348,7 +348,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         }
 
 
-        butMute.setVisibility(spSound == null ? View.INVISIBLE : View.VISIBLE);
+        // butMute.setVisibility(spSound == null ? View.INVISIBLE : View.VISIBLE);
         butMute.setImageResource(fVolume == 1.0f ? R.drawable.ic_volume_mute : R.drawable.ic_volume_down);
     }
 
@@ -729,6 +729,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         if (spSound != null) {
             spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
         }
+
+        resetSelectedSquares();
     }
 
     protected void updateGameSettingsByPrefs() {

@@ -36,6 +36,7 @@ import org.json.JSONException;
 
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
@@ -62,8 +63,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private ImageButton buttonMenu;
     private EditText _editHandle, _editPwd, _editConsole, _editBoard;
-    private ViewAnimator viewAnimatorRoot, viewAnimatorPlayMode;
+    private ViewAnimator viewAnimatorRoot;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
+    private TableLayout layoutBoardTop, layoutBoardBottom;
     private ScrollView _scrollConsole;
 
     private Spinner _spinnerHandles;
@@ -152,10 +154,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _bShowClockPGN = true;
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
-        viewAnimatorPlayMode = findViewById(R.id.ViewAnimatorPlayMode);
 
         playButtonsLayout = findViewById(R.id.LayoutPlayButtons);
         examineButtonsLayout = findViewById(R.id.LayoutExamineButtons);
+
+        layoutBoardTop = findViewById(R.id.LayoutBoardTop);
+        layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
 
         _tvPlayerTop = findViewById(R.id.TextViewTop);
         _tvPlayerBottom = findViewById(R.id.TextViewBottom);
@@ -816,6 +820,24 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //            _ficsPwd = "";
 //        }
 
+        layoutBoardTop.setBackgroundColor(ColorSchemes.getDark());
+        layoutBoardBottom.setBackgroundColor(ColorSchemes.getDark());
+
+
+        _tvPlayerTop.setTextColor(ColorSchemes.getHightlightColor());
+        _tvPlayerBottom.setTextColor(ColorSchemes.getHightlightColor());
+
+        _tvPlayerTopRating.setTextColor(ColorSchemes.getHightlightColor());
+        _tvPlayerBottomRating.setTextColor(ColorSchemes.getHightlightColor());
+
+        _tvClockTop.setTextColor(ColorSchemes.getHightlightColor());
+        _tvClockBottom.setTextColor(ColorSchemes.getHightlightColor());
+
+        _tvBoardNum.setTextColor(ColorSchemes.getHightlightColor());
+        _tvLastMove.setTextColor(ColorSchemes.getHightlightColor());
+        _tvTimePerMove.setTextColor(ColorSchemes.getHightlightColor());
+        _tvMoveNumber.setTextColor(ColorSchemes.getHightlightColor());
+
 
         // @TODO
         String sTmp = prefs.getString("NotificationUri", null);
@@ -1356,6 +1378,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating) {
         globalToast("Game initialized");
         Log.d(TAG, "OnPlayGameStarted " + whiteHandle + blackHandle + whiteRating + blackRating);
+        resetSelectedSquares();
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
                 isPlaying = true;
@@ -1435,6 +1458,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnObservingGameStarted() {
+        resetSelectedSquares();
         globalToast("Observing a game");
     }
 
@@ -1445,6 +1469,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnPuzzleStarted() {
+        resetSelectedSquares();
         globalToast("Puzzle started");
     }
 
@@ -1460,6 +1485,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnExaminingGameStarted() {
+        resetSelectedSquares();
         globalToast("Examining a game");
     }
 

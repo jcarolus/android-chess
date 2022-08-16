@@ -1,7 +1,5 @@
 package jwtc.android.chess;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
@@ -20,7 +18,6 @@ public class ChessPreferences extends BasePreferenceActivity implements SharedPr
     private static int REQUEST_SOUND = 1;
     private static String TAG = "ChessPreferences";
     private Uri _uriNotification;
-    private int _colorScheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +27,6 @@ public class ChessPreferences extends BasePreferenceActivity implements SharedPr
         pm.setSharedPreferencesName("ChessPlayer");
 
         final SharedPreferences prefs = pm.getSharedPreferences();
-        final SharedPreferences.Editor editor = prefs.edit();
-        _colorScheme = prefs.getInt("ColorScheme", 0);
         _uriNotification = Uri.parse(prefs.getString("NotificationUri", ""));
 
         addPreferencesFromResource(R.xml.globalprefs);
