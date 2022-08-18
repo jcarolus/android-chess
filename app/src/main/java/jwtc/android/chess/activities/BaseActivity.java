@@ -36,8 +36,6 @@ public class BaseActivity extends AppCompatActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
-        // fVolume = prefs.getBoolean("moveSoundOn", true) ? 1 : 0;
-
         super.onResume();
     }
 

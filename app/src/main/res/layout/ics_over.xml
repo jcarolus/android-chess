@@ -25,14 +25,6 @@
             android:layout_marginTop="10dp"
             style="@style/ChessButton"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/ics_game"
-            android:id="@+id/textView2"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -52,12 +44,11 @@
             style="@style/ChessButton"/>
 
         <Button
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:id="@+id/ButtonGameExit"
-            android:background="@android:drawable/ic_menu_close_clear_cancel" />
+            android:text="@string/button_close" />
 
     </LinearLayout>
 </ScrollView>

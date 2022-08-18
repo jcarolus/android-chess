@@ -240,16 +240,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             textToSpeech = null;
         }
 
-        if (prefs.getBoolean("moveSounds", false)) {
-            spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
-            soundTickTock = spSound.load(this, R.raw.ticktock, 1);
-            soundCheck = spSound.load(this, R.raw.smallneigh, 2);
-            soundMove = spSound.load(this, R.raw.move, 1);
-            soundCapture = spSound.load(this, R.raw.capture, 1);
-            soundNewGame = spSound.load(this, R.raw.chesspiecesfall, 1);
-        } else {
-            spSound = null;
-        }
+        fVolume = prefs.getBoolean("moveSounds", false) ? 1.0f : 0.0f;
+
+        spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
+        soundTickTock = spSound.load(this, R.raw.ticktock, 1);
+        soundCheck = spSound.load(this, R.raw.smallneigh, 2);
+        soundMove = spSound.load(this, R.raw.move, 1);
+        soundCapture = spSound.load(this, R.raw.capture, 1);
+        soundNewGame = spSound.load(this, R.raw.chesspiecesfall, 1);
     }
 
     public void rebuildBoard() {
@@ -575,17 +573,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     // @TODO
-    public void emailPGN() {
+    public void emailPGN(String PGN) {
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 
                 String sFile = Environment.getExternalStorageDirectory() + "/chess_history.pgn";
-                String s = gameApi.exportFullPGN();
 
                 FileOutputStream fos;
 
                 fos = new FileOutputStream(sFile);
-                fos.write(s.getBytes());
+                fos.write(PGN.getBytes());
                 fos.flush();
                 fos.close();
 

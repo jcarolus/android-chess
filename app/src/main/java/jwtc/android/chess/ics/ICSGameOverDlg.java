@@ -68,7 +68,7 @@ public class ICSGameOverDlg extends Dialog {
         _butSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                _parent.emailPGN();
+                _parent.sendString("oldmoves " + handle);
             }
         });
     }

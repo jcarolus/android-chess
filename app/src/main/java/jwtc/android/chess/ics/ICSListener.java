@@ -39,5 +39,5 @@ public interface ICSListener {
     void OnStoredListResult(ArrayList<HashMap<String, String>> games);
     void OnGameEndedResult(int state);
     void OnConsoleOutput(String buffer);
-
+    void OnGameHistory(String PGN);
 }

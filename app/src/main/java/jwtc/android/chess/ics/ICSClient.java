@@ -80,8 +80,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private ICSGameOverDlg _dlgOver;
     private StringBuilder PGN;
 
-    private Ringtone _ringNotification;
-
     private TimeZone tz = TimeZone.getDefault();
 
     private Matcher _matgame;
@@ -106,9 +104,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
 
     protected static final int DECREASE = 0;
-
-    protected static int[] whiteClk = new int[200]; // PGN time clock
-    protected static int[] blackClk = new int[200];
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -269,8 +264,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         textViewTitle = findViewById(R.id.TextViewTitle);
 
-        String[] from = { "menu_item" };
-        int[] to = { R.id.MenuText };
+        String[] from = {"menu_item"};
+        int[] to = {R.id.MenuText};
         adapterMenu = new SimpleAdapter(this, mapMenu, R.layout.menu_item, from, to);
 
         listMenu = findViewById(R.id.ListMenu);
@@ -440,66 +435,64 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         }
 
 
-        _ringNotification = null;
-
-//        switchToLoginView();
-
         localClockApi.addListener(this);
 
-        Log.i("ICSClient", "onCreate");
+        startService(new Intent(ICSClient.this, ICSServer.class));
+        bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE);
     }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            ICSApi icsApi = (ICSApi)gameApi;
-            int rootView = viewAnimatorRoot.getDisplayedChild();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.d(TAG, "onKeyDown repeat " + event.getRepeatCount());
+            if (event.getRepeatCount() == 0) {
+                ICSApi icsApi = (ICSApi) gameApi;
+                int rootView = viewAnimatorRoot.getDisplayedChild();
 
-            if (rootView == VIEW_BOARD) {
-                int viewMode = icsApi.getViewMode();
+                if (rootView == VIEW_BOARD) {
+                    int viewMode = icsApi.getViewMode();
 
-                if (viewMode == ICSApi.VIEW_PLAY) {
-                    if (isPlaying) {
-                        new AlertDialog.Builder(ICSClient.this)
-                            .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
-                            .setPositiveButton(getString(R.string.alert_yes),
-                                    new DialogInterface.OnClickListener() {
+                    if (viewMode == ICSApi.VIEW_PLAY) {
+                        if (isPlaying) {
+                            new AlertDialog.Builder(ICSClient.this)
+                                    .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
+                                    .setPositiveButton(getString(R.string.alert_yes),
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int whichButton) {
+                                                    dialog.dismiss();
+                                                    sendString("abort");
+
+                                                    setMenuView();
+                                                }
+                                            })
+                                    .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int whichButton) {
                                             dialog.dismiss();
-                                            sendString("abort");
-
-                                            setMenuView();
                                         }
-                                    })
-                            .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                }
-                            }).show();
+                                    }).show();
+                        } else {
+                            setMenuView();
+                        }
+                        return true;
                     } else {
+                        switch (viewMode) {
+                            case ICSApi.VIEW_OBSERVE:
+                                sendString("unobserve");
+                                break;
+                            case ICSApi.VIEW_EXAMINE:
+                                sendString("unexamine");
+                                break;
+                        }
                         setMenuView();
                     }
                     return true;
+                } else {
+                    stopSession(R.string.ics_quit);
+                    return true;
                 }
-                else {
-                    switch(viewMode) {
-                        case ICSApi.VIEW_OBSERVE:
-                            sendString("unobserve");
-                            break;
-                        case ICSApi.VIEW_EXAMINE:
-                            sendString("unexamine");
-                            break;
-                    }
-                    setMenuView();
-                }
-                return true;
             } else {
-                stopSession(R.string.ics_quit);
-                return true;
+                finish();
             }
-        } else {
-            finish();
         }
 
         return super.onKeyDown(keyCode, event);
@@ -523,135 +516,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             .show();
     }
 
-    protected void makeGamePGN(String sEnd) {
-
-        String sBeg;
-
-        sEnd = sEnd.trim().replaceAll(" +", " ");
-        sEnd = sEnd.replaceAll("\\{.*\\}", "");
-
-        String site = "FICS";
-        String _FEN1, _FEN2;
-
-        sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
-
-        if (_bShowClockPGN) {
-            sBeg = convertTimeUsedToClock(sBeg);
-        } else {
-            sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
-        }
-
-        //Log.d(TAG, "\n" + sBeg);
-
-        PGN = new StringBuilder("");
-        PGN.append("[Event \"" + _matgame.group(7) + "\"]\n");
-        PGN.append("[Site \"" + site + "\"]\n");
-        PGN.append("[Date \"" + _matgame.group(5) + _matgame.group(6) + "\"]\n");
-        PGN.append("[White \"" + _matgame.group(1) + "\"]\n");
-        PGN.append("[Black \"" + _matgame.group(3) + "\"]\n");
-        PGN.append("[Result \"" + _matgame.group(12) + "\"]\n");
-        PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
-        PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
-        String _minutestoseconds = Integer.toString(Integer.parseInt(_matgame.group(8)) * 60);
-        PGN.append("[TimeControl \"" + _minutestoseconds + "+" +
-                _matgame.group(9) + "\"]\n");
-
-        if (!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
-            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
-            _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
-            if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
-                PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
-            }
-            _FEN = "";  // reset to capture starting FEN for next game
-        }
-
-        PGN.append(sBeg + "\n\n");
-
-//        saveGameSDCard();
-
-//        _dlgOver.updateGameResultText(_matgame.group(11)); // game result message sent to dialog
-//
-//        _dlgOver.setWasPlaying(get_view().getOpponent().length() > 0);
-//        _dlgOver.show();
-        //_dlgOver.prepare();
-
-    }
-
-    private String convertTimeUsedToClock(String sBeg) {
-
-        int time = Integer.parseInt(_matgame.group(8)), incTime = Integer.parseInt(_matgame.group(9));
-        ;
-
-        int incTurn = 1;
-        boolean turn = true;
-
-        time = time * 60; // convert minutes to seconds
-
-        whiteClk[0] = time;  // initial start time
-        blackClk[0] = time;
-
-        Pattern p = Pattern.compile("\\((\\d+):(\\d+)\\)");
-        Matcher m = p.matcher(sBeg);
-
-        while (m.find()) {
-
-            int min = 0, sec = 0, time1 = 0;
-
-            min = min + Integer.parseInt(m.group(1)) * 60;
-            sec = Integer.parseInt(m.group(2));
-            time1 = min + sec;
-
-            if (turn) {
-                time1 = whiteClock(time1, incTurn, incTime);
-                turn = false;
-            } else {
-                time1 = blackClock(time1, incTurn, incTime);
-                turn = true;
-                incTurn++;
-            }
-
-            String clock1 = convertSecondsToClock(time1);
-
-            sBeg = sBeg.replaceFirst("\\((\\d+):(\\d+)\\)", clock1);  // replace time used with clock
-
-        }
-
-        return sBeg;
-    }
-
-    private int whiteClock(int time1, int incTurn, int incTime) {
-
-        whiteClk[incTurn] = whiteClk[incTurn - 1] - time1;
-        if (incTurn > 1) {
-            whiteClk[incTurn] = whiteClk[incTurn] + incTime;
-        }
-
-        return whiteClk[incTurn];
-    }
-
-    private int blackClock(int time1, int incTurn, int incTime) {
-
-        blackClk[incTurn] = blackClk[incTurn - 1] - time1;
-        if (incTurn > 1) {
-            blackClk[incTurn] = blackClk[incTurn] + incTime;
-        }
-
-        return blackClk[incTurn];
-    }
-
-    private String convertSecondsToClock(int time1) {
-        String clock, timeString;
-        int hours, minutes, seconds;
-        hours = time1 / 3600;
-        minutes = (time1 % 3600) / 60;
-        seconds = time1 % 60;
-
-        timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-
-        clock = "{[%clk " + timeString + "]}";
-
-        return clock;
-    }
 
     protected void gameOverToast(String line) {  // send toast result of the game
 
@@ -839,15 +703,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _tvMoveNumber.setTextColor(ColorSchemes.getHightlightColor());
 
 
-        // @TODO
-        String sTmp = prefs.getString("NotificationUri", null);
-        if (sTmp == null) {
-            _ringNotification = null;
-        } else {
-            Uri tmpUri = Uri.parse(sTmp);
-            _ringNotification = RingtoneManager.getRingtone(this, tmpUri);
-        }
-
         addListeners();
         showLoginIfNotConnected();
     }
@@ -867,6 +722,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void showLoginIfNotConnected() {
         if (!isConnected()) {
             setLoginView();
+        } else {
+            setMenuView();
         }
     }
 
@@ -982,21 +839,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
-    protected void onStart() {
-        Log.i(TAG, "onStart");
-        super.onStart();
-
-        if (icsServer == null) {
-            if (bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE)) {
-                Log.i(TAG, "Bind to ICSServer");
-            } else {
-                globalToast("Could not init remote chess process");
-                Log.e(TAG, "Error: The requested service doesn't exist, or this client isn't allowed access to it.");
-            }
-        }
-    }
-
-    @Override
     protected void onStop() {
         Log.i(TAG, "onStop");
         super.onStop();
@@ -1010,7 +852,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         removeListeners();
 
         unbindService(mConnection);
-        icsServer = null;
 
         super.onDestroy();
     }
@@ -1212,12 +1053,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void loadPlayers() {
         setLoadingView();
         sendString("players");
-    }
-
-    public void soundNotification() {
-        if (_ringNotification != null) {
-            _ringNotification.play();
-        }
     }
 
     @Override
@@ -1426,6 +1261,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnPlayGameResult(String message) {
         gameToast(message);
+    }
+
+    @Override
+    public void OnGameHistory(String PGN) {
+        Log.d(TAG, "OnGameHistory " + PGN);
+        emailPGN(PGN);
     }
 
     @Override

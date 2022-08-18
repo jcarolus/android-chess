@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
 
 import androidx.annotation.Nullable;
 import jwtc.chess.board.ChessBoard;
@@ -63,6 +64,7 @@ public class ICSServer extends Service {
             _socket.close();
         } catch (Exception ex) { }
         _socket = null;
+        expectingState = EXPECT_LOGIN_PROMPT;
     }
 
     public void startSession(final String server, final int port, final String handle, final String password, final String prompt) {
@@ -318,6 +320,25 @@ public class ICSServer extends Service {
             if (playerList.size() > 0) {
                 for (ICSListener listener: listeners) {listener.OnPlayerList(playerList);}
             }
+            return;
+        }
+
+
+        buffer = buffer
+                .replace(Character.valueOf((char) 7).toString(), "")
+                .replace(prompt, "")
+                .replace("\\", "")
+                .replace("\t", "")
+                .replace("\r", "")
+                .trim();
+        buffer = buffer.replaceAll("[\n]{2,}", "\n");
+
+        Matcher endGame = icsPatterns.gameHistoryMatcher(buffer, lineCount);
+        if (endGame != null) {
+            Log.d(TAG, "Matched end game!");
+            String PGN = icsPatterns.parseGameHistory(buffer, endGame);
+            for (ICSListener listener: listeners) {listener.OnGameHistory(PGN);}
+            //
             return;
         }
 

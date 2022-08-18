@@ -3,12 +3,6 @@
     <PreferenceCategory android:title="@string/boardprerences">
 
         <CheckBoxPreference
-            android:title="@string/pref_sound"
-            android:summary="@string/pref_sound_desc"
-            android:key="moveSounds"
-            android:defaultValue="false"/>
-
-        <CheckBoxPreference
             android:title="@string/pref_speech"
             android:summary="@string/pref_speech_desc"
             android:key="moveToSpeech"
