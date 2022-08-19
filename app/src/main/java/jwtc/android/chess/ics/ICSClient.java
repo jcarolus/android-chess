@@ -5,11 +5,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -25,11 +24,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,23 +36,25 @@ import org.json.JSONException;
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
+import jwtc.chess.PGNColumns;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener, AdapterView.OnItemClickListener, ClockListener {
     public static final String TAG = "ICSClient";
 
-    public static final int REQUEST_LOGIN = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3, REQUEST_MENU = 4;
+    public static final int REQUEST_SAVE_GAME = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3, REQUEST_MENU = 4;
 
     private ICSServer icsServer = null;
     private LocalClockApi localClockApi = new LocalClockApi();
 
     protected String _sConsoleEditText;
-    private String _FEN = "", _sFile;
-    private int  _TimeWarning, _gameStartSound, _iConsoleCharacterSize;
+    private int  _TimeWarning, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
             _notifyON, _bICSVolume, _ICSNotifyLifeCycle, isPlaying;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
@@ -78,7 +79,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private ICSPlayerDlg _dlgPlayer;
     private ICSConfirmDlg _dlgConfirm;
     private ICSGameOverDlg _dlgOver;
-    private StringBuilder PGN;
 
     private TimeZone tz = TimeZone.getDefault();
 
@@ -491,6 +491,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     return true;
                 }
             } else {
+                stopService(new Intent(ICSClient.this, ICSServer.class));
                 finish();
             }
         }
@@ -621,8 +622,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         notificationManager.cancel(0); // 0 is notification id
         _ICSNotifyLifeCycle = false;
 
-        _gameStartSound = Integer.parseInt(prefs.getString("ICSGameStartSound", "1"));
-
         _notifyON = prefs.getBoolean("ICSGameStartBringToFront", true);
 
         /////////////////////////////////////////////
@@ -735,42 +734,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         return _TimeWarning;
     }
 
-    public int get_gameStartSound() {
-        return _gameStartSound;
-    }
-
-    public String get_whiteHandle() {
-        try {
-            return _matgame.group(1);
-        } catch (Exception e) { // return _matgame match
-            return "";
-        }
-    }
-
-    public String get_whiteRating() {
-        try {
-            return _matgame.group(2);
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public String get_blackHandle() {
-        try {
-            return _matgame.group(3);
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public String get_blackRating() {
-        try {
-            return _matgame.group(4);
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
     public boolean isConnected() {
         if (this.icsServer != null) {
             return this.icsServer.isConnected();
@@ -779,7 +742,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     public void notificationAPP() {
-
+        // @TODO bring to Service?
         if (_notifyON && _ICSNotifyLifeCycle) {
 
             Intent intent = new Intent(this, ICSClient.class);
@@ -1055,6 +1018,21 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         sendString("players");
     }
 
+    public void saveGameFromBundle(Bundle data) {
+        ContentValues values = new ContentValues();
+
+        values.put(PGNColumns.DATE, data.getLong(PGNColumns.DATE));
+        values.put(PGNColumns.WHITE, data.getString(PGNColumns.WHITE));
+        values.put(PGNColumns.BLACK, data.getString(PGNColumns.BLACK));
+        values.put(PGNColumns.PGN, data.getString(PGNColumns.PGN));
+        values.put(PGNColumns.RATING, data.getFloat(PGNColumns.RATING));
+        values.put(PGNColumns.EVENT, data.getString(PGNColumns.EVENT));
+
+        Uri uri = MyPGNProvider.CONTENT_URI;
+        Uri uriInsert = getContentResolver().insert(uri, values);
+        managedQuery(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+    }
+
     @Override
     public void OnDialogResult(int requestCode, Bundle data) {
         switch (requestCode) {
@@ -1065,7 +1043,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     doToast(getString(R.string.toast_challenge_posted));
                 }
                 break;
-
+            case REQUEST_SAVE_GAME:
+                saveGameFromBundle(data);
+                break;
         }
     }
 
@@ -1264,9 +1244,10 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
-    public void OnGameHistory(String PGN) {
+    public void OnGameHistory(String sEvent, String sWhite, String sBlack, Calendar cal, String PGN) {
         Log.d(TAG, "OnGameHistory " + PGN);
-        emailPGN(PGN);
+        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, cal, PGN, false);
+        saveDialog.show();
     }
 
     @Override

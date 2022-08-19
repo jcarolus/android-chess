@@ -36,8 +36,8 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:text="@string/ics_send_app"
-            android:id="@+id/ButtonGameSend"
+            android:text="@string/button_save"
+            android:id="@+id/ButtonGameSave"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"

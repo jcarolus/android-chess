@@ -110,8 +110,9 @@ public class start extends Activity {
         });
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == 1) {
+        if (resultCode == RESULT_OK) {
             Log.i(TAG, "finish and restart");
 
             Intent intent = new Intent(this, start.class);

@@ -10,7 +10,10 @@ import android.os.Message;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -336,8 +339,38 @@ public class ICSServer extends Service {
         Matcher endGame = icsPatterns.gameHistoryMatcher(buffer, lineCount);
         if (endGame != null) {
             Log.d(TAG, "Matched end game!");
-            String PGN = icsPatterns.parseGameHistory(buffer, endGame);
-            for (ICSListener listener: listeners) {listener.OnGameHistory(PGN);}
+            String flatPGN = icsPatterns.parseGameHistory(buffer, endGame);
+            String sEvent = endGame.group(7);
+            String sWhite = endGame.group(1);
+            String sBlack = endGame.group(3);
+            String sDate = endGame.group(5) + endGame.group(6);
+            Date dd;
+            try {
+                // Thu Aug 18, 18:55 CET 2022
+                SimpleDateFormat formatter = new SimpleDateFormat("EE MMM d, H:m 'CET' Y");
+                dd = formatter.parse(sDate);
+            } catch (Exception ex) {
+                dd = Calendar.getInstance().getTime();
+            }
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dd);
+
+            StringBuilder PGN = new StringBuilder("");
+            PGN.append("[Event \"" + sEvent + "\"]\n");
+            PGN.append("[Date \"" + sDate + "\"]\n");
+            PGN.append("[White \"" + sWhite + "\"]\n");
+            PGN.append("[Black \"" + sBlack + "\"]\n");
+            PGN.append("[Result \"" + endGame.group(11).trim() + "\"]\n");
+            PGN.append("[WhiteElo \"" + endGame.group(2) + "\"]\n");
+            PGN.append("[BlackElo \"" + endGame.group(4) + "\"]\n");
+            String _minutestoseconds = Integer.toString(Integer.parseInt(endGame.group(8)) * 60);
+            PGN.append("[TimeControl \"" + _minutestoseconds +  "+" + endGame.group(9) + "\"]\n");
+            PGN.append(flatPGN + "\n\n");
+
+            String fullPGN = PGN.toString();
+
+            for (ICSListener listener: listeners) {listener.OnGameHistory(sEvent, sWhite, sBlack, cal, fullPGN);}
             //
             return;
         }

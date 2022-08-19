@@ -25,7 +25,7 @@ public class ChessPreferences extends BasePreferenceActivity implements SharedPr
 
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        setResult(0);
+        setResult(RESULT_CANCELED);
     }
 
 
@@ -34,7 +34,7 @@ public class ChessPreferences extends BasePreferenceActivity implements SharedPr
 
         if (s.equals("localelanguage")) {
             Log.i(TAG, s);
-            setResult(1);
+            setResult(RESULT_OK);
         }
     }
 }

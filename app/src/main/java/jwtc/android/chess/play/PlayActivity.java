@@ -653,11 +653,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
                     final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
                     menuDialog.show();
-                } else if (item.equals(getString(R.string.menu_help))) {
-                    intent = new Intent();
-                    intent.setClass(PlayActivity.this, HtmlActivity.class);
-                    intent.putExtra(HtmlActivity.HELP_MODE, "help_play");
-                    startActivity(intent);
                 }
 
                 break;

@@ -396,28 +396,17 @@ public class ICSPatterns {
         String site = "FICS";
         String _FEN1, _FEN2;
 
-        String sBeg = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
+        String sMoves = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
 
 //        if (_bShowClockPGN){
 //            sBeg = convertTimeUsedToClock(sBeg);
 //        }
 // else:
-        sBeg = sBeg.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
+        sMoves = sMoves.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
 
 
         //Log.d(TAG, "\n" + sBeg);
 
-        StringBuilder PGN = new StringBuilder("");
-        PGN.append("[Event \"" + _matgame.group(7) + "\"]\n");
-        PGN.append("[Site \"" + site + "\"]\n");
-        PGN.append("[Date \"" + _matgame.group(5) + _matgame.group(6) + "\"]\n");
-        PGN.append("[White \"" + _matgame.group(1) + "\"]\n");
-        PGN.append("[Black \"" + _matgame.group(3) + "\"]\n");
-        PGN.append("[Result \"" + _matgame.group(11).trim() + "\"]\n");
-        PGN.append("[WhiteElo \"" + _matgame.group(2) + "\"]\n");
-        PGN.append("[BlackElo \"" + _matgame.group(4) + "\"]\n");
-        String _minutestoseconds = Integer.toString(Integer.parseInt(_matgame.group(8)) * 60);
-        PGN.append("[TimeControl \"" + _minutestoseconds +  "+" + _matgame.group(9) + "\"]\n");
 
 //        if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
 //            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
@@ -428,8 +417,8 @@ public class ICSPatterns {
 //            _FEN = "";  // reset to capture starting FEN for next game
 //        }
 
-        PGN.append(sBeg + "\n\n");
-        return PGN.toString();
+
+        return sMoves;
     }
 
     public boolean filterOutput(String line) {

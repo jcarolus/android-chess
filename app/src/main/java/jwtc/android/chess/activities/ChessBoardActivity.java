@@ -2,6 +2,7 @@ package jwtc.android.chess.activities;
 
 import android.app.AlertDialog;
 import android.content.ClipData;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
@@ -37,6 +39,7 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
+import jwtc.chess.PGNColumns;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;
@@ -569,37 +572,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
             }
             return false;
-        }
-    }
-
-    // @TODO
-    public void emailPGN(String PGN) {
-        try {
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-
-                String sFile = Environment.getExternalStorageDirectory() + "/chess_history.pgn";
-
-                FileOutputStream fos;
-
-                fos = new FileOutputStream(sFile);
-                fos.write(PGN.getBytes());
-                fos.flush();
-                fos.close();
-
-                Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_SUBJECT, "chess pgn");
-                sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + sFile));
-                sendIntent.setType("application/x-chess-pgn");
-
-                startActivity(sendIntent);
-            } else {
-                doToast(getString(R.string.err_sd_not_mounted));
-            }
-        } catch (Exception e) {
-
-            doToast(getString(R.string.err_send_email));
-            Log.e("ex", e.toString());
-            return;
         }
     }
 

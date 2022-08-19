@@ -9,8 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.regex.Matcher;
-
 
 // @TODO convert to ResultDialog without _parent
 public class ICSGameOverDlg extends Dialog {
@@ -18,9 +16,8 @@ public class ICSGameOverDlg extends Dialog {
     public static final String TAG = "ICSGameOverDlg";
 
     private ICSClient _parent;
-    private Button _butRematch, _butExamine, _butSend, _butExit;
+    private Button _butRematch, _butExamine, butSave, _butExit;
     private TextView _tvGameResult;
-    private Matcher match;
     private String handle;
 
 
@@ -51,7 +48,7 @@ public class ICSGameOverDlg extends Dialog {
             @Override
             public void onClick(View view) {
                 _parent.sendString("rematch");
-                ICSGameOverDlg.this.dismiss(); // close dialog
+                ICSGameOverDlg.this.dismiss();
             }
         });
 
@@ -60,15 +57,16 @@ public class ICSGameOverDlg extends Dialog {
             @Override
             public void onClick(View v) {
                 _parent.sendString("examine " + handle + " -1"); // examine last game
-                ICSGameOverDlg.this.dismiss(); // close dialog
+                ICSGameOverDlg.this.dismiss();
             }
         });
 
-        _butSend = (Button) findViewById(R.id.ButtonGameSend);
-        _butSend.setOnClickListener(new View.OnClickListener() {
+        butSave = (Button) findViewById(R.id.ButtonGameSave);
+        butSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 _parent.sendString("oldmoves " + handle);
+                ICSGameOverDlg.this.dismiss();
             }
         });
     }
