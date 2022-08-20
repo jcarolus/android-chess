@@ -253,6 +253,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         soundNewGame = spSound.load(this, R.raw.chesspiecesfall, 1);
     }
 
+    @Override
+    protected void onPause() {
+        Log.i(TAG, "onPause");
+
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+        editor.putBoolean("moveSounds", fVolume == 1.0f);
+
+        editor.commit();
+
+        super.onPause();
+    }
+
     public void rebuildBoard() {
 
         chessBoardView.removePieces();

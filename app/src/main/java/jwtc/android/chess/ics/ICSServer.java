@@ -1,7 +1,12 @@
 package jwtc.android.chess.ics;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +25,7 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 
 import androidx.annotation.Nullable;
+import jwtc.android.chess.R;
 import jwtc.chess.board.ChessBoard;
 
 public class ICSServer extends Service {
@@ -387,6 +393,9 @@ public class ICSServer extends Service {
 
             HashMap<String, String> board = icsPatterns.parseBoard(line);
             if (board != null) {
+                if (listeners.size() == 0) {
+                    moveNotitication();
+                }
                 for (ICSListener listener: listeners) {listener.OnBoardUpdated(board.get("board"), handle);}
                 continue;
             }
@@ -517,6 +526,29 @@ public class ICSServer extends Service {
             keepAlivetimer = null;
         }
     }
+
+    public void moveNotitication() {
+        Log.d(TAG, "moveNotitication");
+
+        Intent intent = new Intent(this, ICSClient.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_logo)
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+                .setLights(Color.CYAN, 100, 100)
+                .setContentTitle(getString(R.string.ics_notification_title))
+                .setContentText(getString(R.string.ics_notification_text));
+
+        Notification notification = builder.build();
+
+        notificationManager.notify(1, notification);
+    }
+
 
     @Nullable
     @Override

@@ -128,7 +128,8 @@
             android:name="jwtc.android.chess.ics.ICSClient"
             android:label="@string/app_name"
             android:screenOrientation="locked"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>

@@ -12,7 +12,7 @@ public class ICSPatterns {
     private static final String TAG = "ICSPatterns";
     // FICS
     // Challenge: withca (----) GuestFHYH (----) unrated blitz 10 0
-    protected static final Pattern challenge = Pattern.compile("Challenge\\: (\\w+) \\((.+)\\) (\\w+) \\((.+)\\) (rated |unrated )(standard |blitz |wild )(\\d+) (\\d+)( \\(adjourned\\))?.*");
+    protected static final Pattern challenge = Pattern.compile("Challenge\\: (\\w+) \\((.+)\\) (\\w+) \\((.+)\\) (rated |unrated )(standard |blitz |wild |lightning )(\\d+) (\\d+)( \\(adjourned\\))?.*");
 
     // @TODO ===========================================================================================
     //    C Opponent       On Type          Str  M    ECO Date
@@ -79,7 +79,6 @@ public class ICSPatterns {
 
     public Matcher gameHistoryMatcher(String buffer, int lineCount) {
         if (lineCount > 3) {
-            Log.d(TAG, "try endgame match on: "  + buffer);
             Matcher ret = pattEndGame.matcher(buffer);
             if (ret.find()) {
                 Log.d(TAG, "MATCHES");

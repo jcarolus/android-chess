@@ -1,9 +1,6 @@
 package jwtc.android.chess.ics;
 
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.ServiceConnection;
@@ -48,7 +45,7 @@ import jwtc.chess.board.BoardConstants;
 public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener, AdapterView.OnItemClickListener, ClockListener {
     public static final String TAG = "ICSClient";
 
-    public static final int REQUEST_SAVE_GAME = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3, REQUEST_MENU = 4;
+    public static final int REQUEST_SAVE_GAME = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3;
 
     private ICSServer icsServer = null;
     private LocalClockApi localClockApi = new LocalClockApi();
@@ -56,7 +53,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     protected String _sConsoleEditText;
     private int  _TimeWarning, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-            _notifyON, _bICSVolume, _ICSNotifyLifeCycle;
+            _notifyON, _bICSVolume;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
             _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber, textViewTitle;
     private TextView _tvConsole;
@@ -68,6 +65,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private LinearLayout playButtonsLayout, examineButtonsLayout;
     private TableLayout layoutBoardTop, layoutBoardBottom;
     private ScrollView _scrollConsole;
+    private Switch switchSound;
 
     private Spinner _spinnerHandles;
     private ArrayAdapter<String> _adapterHandles;
@@ -231,18 +229,21 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             }
         });
 
-        OnClickListener takeBackListener = new OnClickListener() {
+        ImageButton buttonTakeBack = findViewById(R.id.ButtonTakeBack);
+        buttonTakeBack.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendString("takeback");
+            }
+        });
+
+        ImageButton buttonRevert = findViewById(R.id.ButtonICSExamineRevert);
+        buttonRevert.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendString("revert");
             }
-        };
-
-        ImageButton buttonTakeBack = findViewById(R.id.ButtonTakeBack);
-        buttonTakeBack.setOnClickListener(takeBackListener);
-
-        ImageButton buttonRevert = findViewById(R.id.ButtonICSExamineRevert);
-        buttonRevert.setOnClickListener(takeBackListener);
+        });
 
         ImageButton buttonBackward = findViewById(R.id.ButtonICSExamineBackward);
         buttonBackward.setOnClickListener(new OnClickListener() {
@@ -257,6 +258,13 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             @Override
             public void onClick(View v) {
                 sendString("forward");
+            }
+        });
+
+        switchSound = findViewById(R.id.SwitchSound);
+        switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                fVolume = switchSound.isChecked() ? 1.0f : 0.0f;
             }
         });
 
@@ -458,8 +466,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                                         public void onClick(DialogInterface dialog, int whichButton) {
                                             dialog.dismiss();
                                             sendString("abort");
-
-                                            setMenuView();
                                         }
                                     })
                             .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
@@ -609,11 +615,11 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         _bICSVolume = prefs.getBoolean("ICSVolume", true);
 
+        switchSound.setChecked(prefs.getBoolean("moveSounds", false));
 
         // get rid of notification for tap to play
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(0); // 0 is notification id
-        _ICSNotifyLifeCycle = false;
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        notificationManager.cancel(0); // 0 is notification id
 
         _notifyON = prefs.getBoolean("ICSGameStartBringToFront", true);
 
@@ -715,6 +721,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         if (!isConnected()) {
             setLoginView();
         } else if (((ICSApi)gameApi).getViewMode() == ICSApi.VIEW_NONE) {
+            Log.d(TAG, "View none");
             setMenuView();
         } else {
             sendString("refresh");
@@ -735,31 +742,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             return this.icsServer.isConnected();
         }
         return false;
-    }
-
-    public void notificationAPP() {
-        // @TODO bring to Service?
-        if (_notifyON && _ICSNotifyLifeCycle) {
-
-            Intent intent = new Intent(this, ICSClient.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-            NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-
-            Notification.Builder builder = new Notification.Builder(this);
-            builder.setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.ic_logo)
-                    .setWhen(System.currentTimeMillis())
-                    .setAutoCancel(true)
-                    .setLights(Color.CYAN, 100, 100)
-                    .setContentTitle(getString(R.string.ics_notification_title))
-                    .setContentText(getString(R.string.ics_notification_text));
-
-            Notification notification = builder.getNotification();
-
-            notificationManager.notify(0, notification);
-
-        }
     }
 
     @Override
@@ -785,8 +767,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         editor.putBoolean("ICSVolume", _bICSVolume);
 
         editor.commit();
-
-        _ICSNotifyLifeCycle = true;
 
         super.onPause();
     }
@@ -999,6 +979,11 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         textViewTitle.setText("");
     }
 
+    public void resetBoardView() {
+        ((ICSApi)gameApi).resetViewMode();
+        localClockApi.stopClock();
+    }
+
     public void loadChallenges() {
         sendString("sought");
         setChallengeView();
@@ -1041,6 +1026,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 break;
             case REQUEST_SAVE_GAME:
                 saveGameFromBundle(data);
+                break;
+            case REQUEST_CONFIRM:
+                sendString(data.getString("data"));
                 break;
         }
     }
@@ -1229,8 +1217,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnAbortConfirmed() {
         gameToast("Game aborted by mutual agreement");
-        ((ICSApi)gameApi).resetViewMode();
-//        get_view().setStopPlaying();
+        resetBoardView();
     }
 
     @Override
@@ -1247,7 +1234,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnPlayGameStopped() {
-        ((ICSApi)gameApi).resetViewMode();
+        resetBoardView();
     }
 
     @Override
@@ -1268,7 +1255,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnAbortedOrAdjourned() {
         gameToast("Game stopped (aborted or adjourned)");
-        ((ICSApi)gameApi).resetViewMode();
+        resetBoardView();
     }
 
     @Override
@@ -1280,7 +1267,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnObservingGameStopped() {
         globalToast("No longer observing the game");
-        ((ICSApi)gameApi).resetViewMode();
+        resetBoardView();
     }
 
     @Override
@@ -1291,7 +1278,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnPuzzleStopped() {
-        ((ICSApi)gameApi).resetViewMode();
+        resetBoardView();
         globalToast("Puzzle stopped");
     }
 
@@ -1308,7 +1295,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnExaminingGameStopped() {
-        ((ICSApi)gameApi).resetViewMode();
+        resetBoardView();
         globalToast("No longer examining the game");
     }
 
@@ -1359,7 +1346,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             gameToast(getString(res));
         }
 
-        icsApi.resetViewMode();
+        resetBoardView();
     }
 
     @Override
@@ -1409,15 +1396,18 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         if (((ICSApi)gameApi).getViewMode() == ICSApi.VIEW_PLAY) {
             long remaining = myTurn == BoardConstants.WHITE ? localClockApi.getWhiteRemaining() : localClockApi.getBlackRemaining();
-            if (remaining < _TimeWarning * 1000) {
+            boolean needWarning = remaining < _TimeWarning * 1000 && remaining > 0;
+            if (needWarning) {
                 _tvClockBottom.setBackgroundColor(0xCCFF0000);
             } else {
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
             }
 
-            if (_bTimeWarning && spSound != null) {
+            if (_bTimeWarning && needWarning && spSound != null) {
                 spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
             }
+        } else {
+            _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 

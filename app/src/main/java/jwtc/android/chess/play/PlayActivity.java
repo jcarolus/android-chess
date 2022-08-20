@@ -192,8 +192,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                fVolume = switchSound.isChecked() ? 1.0f : 0.0f;
-           }
-       });
+            }
+        });
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
         switchBlindfold.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
