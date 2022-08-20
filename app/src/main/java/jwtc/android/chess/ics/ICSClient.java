@@ -56,7 +56,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     protected String _sConsoleEditText;
     private int  _TimeWarning, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-            _notifyON, _bICSVolume, _ICSNotifyLifeCycle, isPlaying;
+            _notifyON, _bICSVolume, _ICSNotifyLifeCycle;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
             _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber, textViewTitle;
     private TextView _tvConsole;
@@ -134,8 +134,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         gameApi = new ICSApi();
 
         afterCreate();
-
-        isPlaying = false;
 
         _dlgMatch = new ICSMatchDlg(this, this, REQUEST_CHALLENGE, getPrefs());
         _dlgPlayer = new ICSPlayerDlg(this);
@@ -453,26 +451,23 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     int viewMode = icsApi.getViewMode();
 
                     if (viewMode == ICSApi.VIEW_PLAY) {
-                        if (isPlaying) {
-                            new AlertDialog.Builder(ICSClient.this)
-                                    .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
-                                    .setPositiveButton(getString(R.string.alert_yes),
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int whichButton) {
-                                                    dialog.dismiss();
-                                                    sendString("abort");
-
-                                                    setMenuView();
-                                                }
-                                            })
-                                    .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
+                        new AlertDialog.Builder(ICSClient.this)
+                            .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
+                            .setPositiveButton(getString(R.string.alert_yes),
+                                    new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int whichButton) {
                                             dialog.dismiss();
+                                            sendString("abort");
+
+                                            setMenuView();
                                         }
-                                    }).show();
-                        } else {
-                            setMenuView();
-                        }
+                                    })
+                            .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+
                         return true;
                     } else {
                         switch (viewMode) {
@@ -486,13 +481,10 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                         setMenuView();
                     }
                     return true;
-                } else {
+                } else if (isConnected()) {
                     stopSession(R.string.ics_quit);
                     return true;
                 }
-            } else {
-                stopService(new Intent(ICSClient.this, ICSServer.class));
-                finish();
             }
         }
 
@@ -511,6 +503,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
+                        stopService(new Intent(ICSClient.this, ICSServer.class));
                         finish();
                     }
                 })
@@ -574,7 +567,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         highlightedPositions.add(to);
 
         ICSApi icsApi = (ICSApi) gameApi;
-        if (isPlaying) {
+        if (icsApi.getViewMode() == ICSApi.VIEW_PLAY) {
             if (icsApi.getMyTurn() == icsApi.getTurn()) {
                 // @TODO promotion
                 // if (jni.pieceAt(BoardConstants.WHITE, from)
@@ -721,8 +714,11 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void showLoginIfNotConnected() {
         if (!isConnected()) {
             setLoginView();
-        } else {
+        } else if (((ICSApi)gameApi).getViewMode() == ICSApi.VIEW_NONE) {
             setMenuView();
+        } else {
+            sendString("refresh");
+            setBoardView();
         }
     }
 
@@ -1196,7 +1192,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         resetSelectedSquares();
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
-                isPlaying = true;
                 if (spSound != null) {
                     spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
                 }
@@ -1234,7 +1229,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnAbortConfirmed() {
         gameToast("Game aborted by mutual agreement");
-        isPlaying = false;
+        ((ICSApi)gameApi).resetViewMode();
 //        get_view().setStopPlaying();
     }
 
@@ -1252,8 +1247,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnPlayGameStopped() {
-//        get_view().setStopPlaying();
-        isPlaying = false;
+        ((ICSApi)gameApi).resetViewMode();
     }
 
     @Override
@@ -1269,13 +1263,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnResumingAdjournedGame() {
         gameToast("Resuming adjourned game");
-        isPlaying = true;
     }
 
     @Override
     public void OnAbortedOrAdjourned() {
         gameToast("Game stopped (aborted or adjourned)");
-        isPlaying = false;
+        ((ICSApi)gameApi).resetViewMode();
     }
 
     @Override
@@ -1287,6 +1280,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnObservingGameStopped() {
         globalToast("No longer observing the game");
+        ((ICSApi)gameApi).resetViewMode();
     }
 
     @Override
@@ -1297,6 +1291,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnPuzzleStopped() {
+        ((ICSApi)gameApi).resetViewMode();
         globalToast("Puzzle stopped");
     }
 
@@ -1313,6 +1308,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnExaminingGameStopped() {
+        ((ICSApi)gameApi).resetViewMode();
         globalToast("No longer examining the game");
     }
 
@@ -1348,6 +1344,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnGameEndedResult(int state) {
         int res = chessStateToR(state);
+        ICSApi icsApi = (ICSApi)gameApi;
 
         highlightedPositions.clear();
         updateSelectedSquares();
@@ -1355,14 +1352,14 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         if (_bEndGameDialog) {
             _dlgOver.setHandle(icsServer.getHandle());
-            _dlgOver.setWasPlaying(isPlaying);
+            _dlgOver.setWasPlaying(icsApi.getViewMode() == ICSApi.VIEW_PLAY);
             _dlgOver.updateGameResultText(getString(res));
             _dlgOver.show();
         } else {
             gameToast(getString(res));
         }
 
-        isPlaying = false;
+        icsApi.resetViewMode();
     }
 
     @Override
@@ -1410,7 +1407,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _tvClockTop.setText(myTurn == BoardConstants.WHITE ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
         _tvClockBottom.setText(myTurn == BoardConstants.BLACK ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
 
-        if (isPlaying) {
+        if (((ICSApi)gameApi).getViewMode() == ICSApi.VIEW_PLAY) {
             long remaining = myTurn == BoardConstants.WHITE ? localClockApi.getWhiteRemaining() : localClockApi.getBlackRemaining();
             if (remaining < _TimeWarning * 1000) {
                 _tvClockBottom.setBackgroundColor(0xCCFF0000);

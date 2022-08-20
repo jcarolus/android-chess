@@ -17,7 +17,7 @@ public class ICSApi extends GameApi {
     private String blackPlayer;
     private String playerMe;
     private String opponent;
-    private int viewMode;
+    private int viewMode = VIEW_NONE;
     private int iTime, iIncrement;
     private int whiteRemaining;
     private int blackRemaining;
@@ -208,6 +208,10 @@ public class ICSApi extends GameApi {
 
     public int getViewMode() {
         return viewMode;
+    }
+
+    public void resetViewMode() {
+        viewMode = VIEW_NONE;
     }
 
     @Override
