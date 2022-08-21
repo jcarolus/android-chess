@@ -22,6 +22,7 @@ public interface ICSListener {
     void OnOpponentOffersDraw();
     void OnOpponentRequestsTakeBack();
     void OnAbortConfirmed();
+    void OnDrawConfirmed();
     void OnPlayGameResult(String message);
     void OnPlayGameStopped();
     void OnYourRequestSended();

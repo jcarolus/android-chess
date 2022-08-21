@@ -53,7 +53,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     protected String _sConsoleEditText;
     private int  _TimeWarning, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-            _notifyON, _bICSVolume;
+            notificationsOn, _bICSVolume;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
             _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber, textViewTitle;
     private TextView _tvConsole;
@@ -621,7 +621,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 //        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 //        notificationManager.cancel(0); // 0 is notification id
 
-        _notifyON = prefs.getBoolean("ICSGameStartBringToFront", true);
+        notificationsOn = prefs.getBoolean("ICSGameStartBringToFront", true);
 
         /////////////////////////////////////////////
 //        _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
@@ -708,6 +708,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void addListeners() {
         if (icsServer != null) {
             icsServer.addListener(this);
+            icsServer.setNotifications(notificationsOn);
         }
     }
 
@@ -1217,6 +1218,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnAbortConfirmed() {
         gameToast("Game aborted by mutual agreement");
+        resetBoardView();
+    }
+
+    @Override
+    public void OnDrawConfirmed() {
+        gameToast("Game drawn by mutual agreement");
         resetBoardView();
     }
 

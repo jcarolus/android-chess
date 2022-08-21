@@ -49,11 +49,16 @@ public class ICSServer extends Service {
     protected String password;
     protected String opponent;
     protected ICSPatterns icsPatterns = new ICSPatterns();
+    protected boolean notificationsOn = false;
 
     public void addListener(ICSListener listener) {
         this.listeners.add(listener);
     }
     public void removeListener(ICSListener listener) {this.listeners.remove(listener);}
+
+    public void setNotifications(boolean on) {
+        notificationsOn = on;
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -393,7 +398,7 @@ public class ICSServer extends Service {
 
             HashMap<String, String> board = icsPatterns.parseBoard(line);
             if (board != null) {
-                if (listeners.size() == 0) {
+                if (listeners.size() == 0 && notificationsOn) {
                     moveNotitication();
                 }
                 for (ICSListener listener: listeners) {listener.OnBoardUpdated(board.get("board"), handle);}
@@ -434,6 +439,11 @@ public class ICSServer extends Service {
 
             if (icsPatterns.isAbortedConfirmed(line)) {
                 for (ICSListener listener: listeners) {listener.OnAbortConfirmed();}
+                continue;
+            }
+
+            if (icsPatterns.isDrawConfirmed(line)) {
+                for (ICSListener listener: listeners) {listener.OnDrawConfirmed();}
                 continue;
             }
 
