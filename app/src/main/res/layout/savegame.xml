@@ -3,9 +3,11 @@
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dip">
 
         <RatingBar
             android:layout_width="wrap_content"
@@ -19,8 +21,7 @@
         <TableLayout
             android:id="@+id/TableSaveOptions"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/RatingBarSave">
+            android:layout_height="wrap_content">
 
             <TableRow
                 android:layout_width="fill_parent"
@@ -88,41 +89,30 @@
             </TableRow>
         </TableLayout>
 
-        <TableLayout
+        <Button
+            android:id="@+id/ButtonSaveSave"
+            android:text="@string/button_save"
+            android:layout_weight="1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/TableSaveOptions">
+            android:layout_margin="0px" />
 
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/ButtonSaveCopy"
+            android:text="@string/button_save_copy"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0px" />
 
-                <Button
-                    android:id="@+id/ButtonSaveSave"
-                    android:text="@string/button_save"
-                    android:layout_weight="1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="0px" />
+        <Button
+            android:id="@+id/ButtonSaveCancel"
+            android:text="@string/button_cancel"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0px" />
 
-                <Button
-                    android:id="@+id/ButtonSaveCopy"
-                    android:text="@string/button_save_copy"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="0px" />
-
-                <Button
-                    android:id="@+id/ButtonSaveCancel"
-                    android:text="@string/button_cancel"
-                    android:layout_weight="1"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="0px" />
-            </TableRow>
-        </TableLayout>
-
-    </RelativeLayout>
+    </LinearLayout>
 </ScrollView>

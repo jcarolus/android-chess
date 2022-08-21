@@ -1,5 +1,7 @@
 package jwtc.android.chess.ics;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,9 +9,10 @@ import java.util.regex.Pattern;
 import jwtc.chess.board.ChessBoard;
 
 public class ICSPatterns {
+    private static final String TAG = "ICSPatterns";
     // FICS
     // Challenge: withca (----) GuestFHYH (----) unrated blitz 10 0
-    protected static final Pattern challenge = Pattern.compile("Challenge\\: (\\w+) \\((.+)\\) (\\w+) \\((.+)\\) (rated |unrated )(standard |blitz |wild )(\\d+) (\\d+)( \\(adjourned\\))?.*");
+    protected static final Pattern challenge = Pattern.compile("Challenge\\: (\\w+) \\((.+)\\) (\\w+) \\((.+)\\) (rated |unrated )(standard |blitz |wild |lightning )(\\d+) (\\d+)( \\(adjourned\\))?.*");
 
     // @TODO ===========================================================================================
     //    C Opponent       On Type          Str  M    ECO Date
@@ -30,9 +33,6 @@ public class ICSPatterns {
 
     //1269.allko                    ++++.kaspalesweb(U)
     protected static final Pattern playerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
-
-    protected static final Pattern endGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s(\\w.+)\\," +
-            " initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\} (.*)"); //beginning of game
 
     // FICS
     //209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
@@ -60,6 +60,8 @@ public class ICSPatterns {
     protected static final Pattern gameNumber = Pattern.compile("\\{Game (\\d+) .*");
     protected static final Pattern clock = Pattern.compile("\\((\\d+):(\\d+)\\)");
 
+    protected static final Pattern pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s+(\\w.+), initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\}");
+
     public static final String EMPTY = "";
     protected static final String loginChars = "\r\n\uefbf\ubdef\ubfbd\uefbf\ubdef\ubfbd\ud89e\u0001\ufffd\ufffd";
 
@@ -73,6 +75,17 @@ public class ICSPatterns {
 
     public boolean containsPlayersDisplayed(String buffer, int lineCount) {
         return lineCount > 3 && buffer.indexOf("\\") == -1 && buffer.indexOf("players displayed (of ") > 0;
+    }
+
+    public Matcher gameHistoryMatcher(String buffer, int lineCount) {
+        if (lineCount > 3) {
+            Matcher ret = pattEndGame.matcher(buffer);
+            if (ret.find()) {
+                Log.d(TAG, "MATCHES");
+                return ret;
+            }
+        }
+        return null;
     }
 
     public boolean isInvalidPassword(String buffer) {
@@ -375,6 +388,38 @@ public class ICSPatterns {
         return null;
     }
 
+    public String parseGameHistory(String sEnd, Matcher _matgame) {
+        sEnd = sEnd.trim().replaceAll(" +", " ");
+        sEnd = sEnd.replaceAll("\\{.*\\}", "");
+
+        String site = "FICS";
+        String _FEN1, _FEN2;
+
+        String sMoves = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
+
+//        if (_bShowClockPGN){
+//            sBeg = convertTimeUsedToClock(sBeg);
+//        }
+// else:
+        sMoves = sMoves.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
+
+
+        //Log.d(TAG, "\n" + sBeg);
+
+
+//        if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
+//            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
+//            _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
+//            if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
+//                PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
+//            }
+//            _FEN = "";  // reset to capture starting FEN for next game
+//        }
+
+
+        return sMoves;
+    }
+
     public boolean filterOutput(String line) {
         return line.length() < 3 || line.contains("seeking");
     }
@@ -410,5 +455,19 @@ public class ICSPatterns {
 
     public static boolean isEmpty(final CharSequence cs) {
         return cs == null || cs.length() == 0;
+    }
+
+    private String convertSecondsToClock(int time1) {
+        String clock, timeString;
+        int hours, minutes, seconds;
+        hours = time1 / 3600;
+        minutes = (time1 % 3600) / 60;
+        seconds = time1 % 60;
+
+        timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+        clock = "{[%clk " + timeString + "]}";
+
+        return clock;
     }
 }

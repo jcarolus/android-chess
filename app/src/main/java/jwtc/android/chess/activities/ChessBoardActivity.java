@@ -2,6 +2,7 @@ package jwtc.android.chess.activities;
 
 import android.app.AlertDialog;
 import android.content.ClipData;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
@@ -37,6 +39,7 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
+import jwtc.chess.PGNColumns;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;
@@ -240,16 +243,26 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             textToSpeech = null;
         }
 
-        if (prefs.getBoolean("moveSounds", false)) {
-            spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
-            soundTickTock = spSound.load(this, R.raw.ticktock, 1);
-            soundCheck = spSound.load(this, R.raw.smallneigh, 2);
-            soundMove = spSound.load(this, R.raw.move, 1);
-            soundCapture = spSound.load(this, R.raw.capture, 1);
-            soundNewGame = spSound.load(this, R.raw.chesspiecesfall, 1);
-        } else {
-            spSound = null;
-        }
+        fVolume = prefs.getBoolean("moveSounds", false) ? 1.0f : 0.0f;
+
+        spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
+        soundTickTock = spSound.load(this, R.raw.ticktock, 1);
+        soundCheck = spSound.load(this, R.raw.smallneigh, 2);
+        soundMove = spSound.load(this, R.raw.move, 1);
+        soundCapture = spSound.load(this, R.raw.capture, 1);
+        soundNewGame = spSound.load(this, R.raw.chesspiecesfall, 1);
+    }
+
+    @Override
+    protected void onPause() {
+        Log.i(TAG, "onPause");
+
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+        editor.putBoolean("moveSounds", fVolume == 1.0f);
+
+        editor.commit();
+
+        super.onPause();
     }
 
     public void rebuildBoard() {
@@ -571,38 +584,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
             }
             return false;
-        }
-    }
-
-    // @TODO
-    public void emailPGN() {
-        try {
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-
-                String sFile = Environment.getExternalStorageDirectory() + "/chess_history.pgn";
-                String s = gameApi.exportFullPGN();
-
-                FileOutputStream fos;
-
-                fos = new FileOutputStream(sFile);
-                fos.write(s.getBytes());
-                fos.flush();
-                fos.close();
-
-                Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_SUBJECT, "chess pgn");
-                sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + sFile));
-                sendIntent.setType("application/x-chess-pgn");
-
-                startActivity(sendIntent);
-            } else {
-                doToast(getString(R.string.err_sd_not_mounted));
-            }
-        } catch (Exception e) {
-
-            doToast(getString(R.string.err_send_email));
-            Log.e("ex", e.toString());
-            return;
         }
     }
 

@@ -1,7 +1,12 @@
 package jwtc.android.chess.ics;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,12 +15,17 @@ import android.os.Message;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
 
 import androidx.annotation.Nullable;
+import jwtc.android.chess.R;
 import jwtc.chess.board.ChessBoard;
 
 public class ICSServer extends Service {
@@ -39,11 +49,16 @@ public class ICSServer extends Service {
     protected String password;
     protected String opponent;
     protected ICSPatterns icsPatterns = new ICSPatterns();
+    protected boolean notificationsOn = false;
 
     public void addListener(ICSListener listener) {
         this.listeners.add(listener);
     }
     public void removeListener(ICSListener listener) {this.listeners.remove(listener);}
+
+    public void setNotifications(boolean on) {
+        notificationsOn = on;
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -63,6 +78,7 @@ public class ICSServer extends Service {
             _socket.close();
         } catch (Exception ex) { }
         _socket = null;
+        expectingState = EXPECT_LOGIN_PROMPT;
     }
 
     public void startSession(final String server, final int port, final String handle, final String password, final String prompt) {
@@ -321,6 +337,55 @@ public class ICSServer extends Service {
             return;
         }
 
+
+        buffer = buffer
+                .replace(Character.valueOf((char) 7).toString(), "")
+                .replace(prompt, "")
+                .replace("\\", "")
+                .replace("\t", "")
+                .replace("\r", "")
+                .trim();
+        buffer = buffer.replaceAll("[\n]{2,}", "\n");
+
+        Matcher endGame = icsPatterns.gameHistoryMatcher(buffer, lineCount);
+        if (endGame != null) {
+            Log.d(TAG, "Matched end game!");
+            String flatPGN = icsPatterns.parseGameHistory(buffer, endGame);
+            String sEvent = endGame.group(7);
+            String sWhite = endGame.group(1);
+            String sBlack = endGame.group(3);
+            String sDate = endGame.group(5) + endGame.group(6);
+            Date dd;
+            try {
+                // Thu Aug 18, 18:55 CET 2022
+                SimpleDateFormat formatter = new SimpleDateFormat("EE MMM d, H:m 'CET' Y");
+                dd = formatter.parse(sDate);
+            } catch (Exception ex) {
+                dd = Calendar.getInstance().getTime();
+            }
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dd);
+
+            StringBuilder PGN = new StringBuilder("");
+            PGN.append("[Event \"" + sEvent + "\"]\n");
+            PGN.append("[Date \"" + sDate + "\"]\n");
+            PGN.append("[White \"" + sWhite + "\"]\n");
+            PGN.append("[Black \"" + sBlack + "\"]\n");
+            PGN.append("[Result \"" + endGame.group(11).trim() + "\"]\n");
+            PGN.append("[WhiteElo \"" + endGame.group(2) + "\"]\n");
+            PGN.append("[BlackElo \"" + endGame.group(4) + "\"]\n");
+            String _minutestoseconds = Integer.toString(Integer.parseInt(endGame.group(8)) * 60);
+            PGN.append("[TimeControl \"" + _minutestoseconds +  "+" + endGame.group(9) + "\"]\n");
+            PGN.append(flatPGN + "\n\n");
+
+            String fullPGN = PGN.toString();
+
+            for (ICSListener listener: listeners) {listener.OnGameHistory(sEvent, sWhite, sBlack, cal, fullPGN);}
+            //
+            return;
+        }
+
         // single line parsing
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i].replace(prompt, "");
@@ -333,6 +398,9 @@ public class ICSServer extends Service {
 
             HashMap<String, String> board = icsPatterns.parseBoard(line);
             if (board != null) {
+                if (listeners.size() == 0 && notificationsOn) {
+                    moveNotitication();
+                }
                 for (ICSListener listener: listeners) {listener.OnBoardUpdated(board.get("board"), handle);}
                 continue;
             }
@@ -371,6 +439,11 @@ public class ICSServer extends Service {
 
             if (icsPatterns.isAbortedConfirmed(line)) {
                 for (ICSListener listener: listeners) {listener.OnAbortConfirmed();}
+                continue;
+            }
+
+            if (icsPatterns.isDrawConfirmed(line)) {
+                for (ICSListener listener: listeners) {listener.OnDrawConfirmed();}
                 continue;
             }
 
@@ -463,6 +536,29 @@ public class ICSServer extends Service {
             keepAlivetimer = null;
         }
     }
+
+    public void moveNotitication() {
+        Log.d(TAG, "moveNotitication");
+
+        Intent intent = new Intent(this, ICSClient.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_logo)
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+                .setLights(Color.CYAN, 100, 100)
+                .setContentTitle(getString(R.string.ics_notification_title))
+                .setContentText(getString(R.string.ics_notification_text));
+
+        Notification notification = builder.build();
+
+        notificationManager.notify(1, notification);
+    }
+
 
     @Nullable
     @Override

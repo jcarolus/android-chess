@@ -46,14 +46,6 @@
             android:summary="@string/prefs_icsshowclocksummary"
             android:key="ICSClockPGN" />
 
-        <ListPreference
-            android:title="@string/pref_icsgamestartsound"
-            android:key="ICSGameStartSound"
-            android:summary="@string/pref_icsgamestartsound_desc"
-            android:entries="@array/gamestartsound"
-            android:entryValues="@array/gamestartsound_values"
-            android:defaultValue="1" />
-
         <CheckBoxPreference
             android:title="@string/pref_icsnotification"
             android:defaultValue="true"

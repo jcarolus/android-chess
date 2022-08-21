@@ -33,7 +33,6 @@ public class ICSConfirmDlg extends ResultDialog {
                 Bundle data = new Bundle();
                 data.putCharSequence("data", _sendString);
                 setResult(data);
-//                _parent.sendString(_sendString);
                 dismiss();
             }
         });

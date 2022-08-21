@@ -13,10 +13,12 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -75,7 +77,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue;
     private TableLayout layoutBoardTop, layoutBoardBottom;
-    private ImageButton butMute;
+    private Switch switchSound, switchBlindfold;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -186,49 +188,32 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
 
-        ImageButton butBlindFoldShow = (ImageButton) findViewById(R.id.ButtonBlindfoldShow);
-        butBlindFoldShow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
-                chessBoardView.invalidatePieces();
-                topPieces.setVisibility(View.VISIBLE);
-                bottomPieces.setVisibility(View.VISIBLE);
-                topPieces.invalidatePieces();
-                bottomPieces.invalidatePieces();
+        switchSound = findViewById(R.id.SwitchSound);
+        switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+               fVolume = switchSound.isChecked() ? 1.0f : 0.0f;
             }
         });
 
-        ImageButton butBlindFoldLocations = (ImageButton) findViewById(R.id.ButtonBlindfoldLocations);
-        butBlindFoldLocations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECE_LOCATION;
-                chessBoardView.invalidatePieces();
-                topPieces.setVisibility(View.INVISIBLE);
-                bottomPieces.setVisibility(View.INVISIBLE);
-            }
-        });
+        switchBlindfold = findViewById(R.id.SwitchBlindfold);
+        switchBlindfold.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (switchBlindfold.isChecked()) {
+                    PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
+                    chessBoardView.invalidatePieces();
+                    topPieces.setVisibility(View.INVISIBLE);
+                    bottomPieces.setVisibility(View.INVISIBLE);
+                } else {
+                    PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
+                    chessBoardView.invalidatePieces();
+                    topPieces.setVisibility(View.VISIBLE);
+                    bottomPieces.setVisibility(View.VISIBLE);
+                    topPieces.invalidatePieces();
+                    bottomPieces.invalidatePieces();
+                }
+           }
+       });
 
-        ImageButton butBlindFoldHide = (ImageButton) findViewById(R.id.ButtonBlindfoldHide);
-        butBlindFoldHide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
-                chessBoardView.invalidatePieces();
-                topPieces.setVisibility(View.INVISIBLE);
-                bottomPieces.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        butMute = findViewById(R.id.ButtonSoundMute);
-        butMute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fVolume = fVolume == 1.0f ? 0 : 1.0f;
-                butMute.setImageResource(fVolume == 1.0f ? R.drawable.ic_volume_mute : R.drawable.ic_volume_down);
-            }
-        });
     }
 
     @Override
@@ -348,8 +333,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         }
 
 
-        // butMute.setVisibility(spSound == null ? View.INVISIBLE : View.VISIBLE);
-        butMute.setImageResource(fVolume == 1.0f ? R.drawable.ic_volume_mute : R.drawable.ic_volume_down);
+        switchSound.setChecked(prefs.getBoolean("moveSounds", false));
+        switchBlindfold.setChecked(false);
     }
 
 
@@ -668,11 +653,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
                     final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
                     menuDialog.show();
-                } else if (item.equals(getString(R.string.menu_help))) {
-                    intent = new Intent();
-                    intent.setClass(PlayActivity.this, HtmlActivity.class);
-                    intent.putExtra(HtmlActivity.HELP_MODE, "help_play");
-                    startActivity(intent);
                 }
 
                 break;

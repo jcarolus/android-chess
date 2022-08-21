@@ -198,29 +198,21 @@
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TableRow android:gravity="center_horizontal">
-                    <ImageButton
-                        android:id="@+id/ButtonBlindfoldShow"
-                        android:src="@drawable/ic_eye"
-                        style="@style/ChessImageButton" />
-                    <ImageButton
-                        android:id="@+id/ButtonBlindfoldLocations"
-                        android:src="@drawable/ic_sunglasses"
-                        style="@style/ChessImageButton" />
-                    <ImageButton
-                        android:id="@+id/ButtonBlindfoldHide"
-                        android:src="@drawable/ic_eye_slash"
-                        style="@style/ChessImageButton" />
-                    <ViewSwitcher android:id="@+id/ViewSwitchSound">
-                        <ImageButton
-                            android:id="@+id/ButtonSoundMute"
-                            android:src="@drawable/ic_volume_mute"
-                            style="@style/ChessImageButton" />
-                        <ImageButton
-                            android:id="@+id/ButtonSoundOn"
-                            android:src="@drawable/ic_volume_down"
-                            style="@style/ChessImageButton" />
-                    </ViewSwitcher>
+                <TableRow>
+                    <Switch android:id="@+id/SwitchBlindfold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="@string/pref_show_blindfold"
+                        android:checked="true"
+                        ></Switch>
+                    <Switch android:id="@+id/SwitchSound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="@string/pref_sound"
+                        android:checked="true"
+                        ></Switch>
                 </TableRow>
             </TableLayout>
 
