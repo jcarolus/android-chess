@@ -9,19 +9,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 
 import androidx.annotation.Nullable;
@@ -36,10 +32,9 @@ public class ICSServer extends Service {
     protected static final int EXPECT_PROMPT = 4;
 
     private final IBinder mBinder = new LocalBinder();
-    private Handler keepAliveTimerHandler = new KeepAliveHandler();
+    // private Handler keepAliveTimerHandler = new KeepAliveHandler();
     private TelnetSocket _socket;
     private Thread _workerTelnet;
-    private Timer keepAlivetimer = null;
     private ArrayList<ICSListener> listeners = new ArrayList<>();
     protected ICSThreadMessageHandler threadHandler = new ICSThreadMessageHandler(this);
     protected int expectingState;
@@ -117,7 +112,7 @@ public class ICSServer extends Service {
                     }
                 }
                 Log.i(TAG, "End of workerTelnet");
-                cancelKeepAliveTimer();
+                threadHandler.cancelTimeout();
 
                 Message message = new Message();
                 message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
@@ -135,11 +130,8 @@ public class ICSServer extends Service {
 
     public boolean sendString(String s) {
         Log.i(TAG, "sendString: " + s);
+        threadHandler.setTimeout(30000);
         return _socket != null && _socket.sendString(s + "\n");
-    }
-
-    public boolean isUserPlaying() {
-        return false;
     }
 
     public boolean isConnected() {
@@ -170,6 +162,9 @@ public class ICSServer extends Service {
             case ICSThreadMessageHandler.MSG_ERROR:
                 Log.i(TAG, "MSG_ERROR");
                 for (ICSListener listener: listeners) {listener.OnError();}
+                break;
+            case ICSThreadMessageHandler.MSG_TIMEOUT:
+                sendString("sought");
                 break;
             default:
                 Log.e(TAG, "Unecpected msg.what");
@@ -292,8 +287,6 @@ public class ICSServer extends Service {
             return;
         }
 
-        startKeepAliveTimer();
-
         // check multiline responses
         if (icsPatterns.containsGamesDisplayed(buffer, lineCount)) {
             ArrayList<HashMap<String, String>> games = new ArrayList<HashMap<String, String>>();
@@ -383,6 +376,10 @@ public class ICSServer extends Service {
 
             for (ICSListener listener: listeners) {listener.OnGameHistory(sEvent, sWhite, sBlack, cal, fullPGN);}
             //
+            return;
+        }
+
+        if (icsPatterns.filterBuffer(buffer)) {
             return;
         }
 
@@ -508,32 +505,13 @@ public class ICSServer extends Service {
                 continue;
             }
 
-            if (icsPatterns.filterOutput(line)) {
+            if (icsPatterns.filterLine(line)) {
                 continue;
             }
 
             Log.i(TAG, "[" + line + "]");
 
             for (ICSListener listener: listeners) {listener.OnConsoleOutput(line);}
-        }
-    }
-
-    public void startKeepAliveTimer() {
-        if (keepAlivetimer == null) {
-            keepAlivetimer = new Timer(true);
-            keepAlivetimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                keepAliveTimerHandler.sendEmptyMessage(0);
-                }
-            }, 30000, 30000);  // send every 30 seconds
-        }
-    }
-
-    public void cancelKeepAliveTimer() {
-        if (keepAlivetimer != null) {
-            keepAlivetimer.cancel();
-            keepAlivetimer = null;
         }
     }
 
@@ -577,19 +555,4 @@ public class ICSServer extends Service {
         for (ICSListener listener: listeners) {listener.OnLoginFailed(error);}
     }
 
-    private class KeepAliveHandler extends Handler {
-        WeakReference<ICSServer> icsServerReference;
-
-        public KeepAliveHandler() {
-            icsServerReference = new WeakReference<ICSServer>(ICSServer.this);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            ICSServer icsServer = this.icsServerReference.get();
-            if (icsServer != null) {
-                icsServer.sendString("sought");
-            }
-        }
-    }
 }

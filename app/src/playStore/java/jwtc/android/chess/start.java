@@ -151,10 +151,6 @@ public class start extends AppCompatActivity {
                     } else if (_ssActivity.equals(getString(R.string.start_globalpreferences))) {
                         i.setClass(start.this, ChessPreferences.class);
                         startActivityForResult(i, 0);
-                    } else if (_ssActivity.equals(getString(R.string.menu_help))) {
-                        i.setClass(start.this, HtmlActivity.class);
-                        i.putExtra(HtmlActivity.HELP_MODE, "help");
-                        startActivity(i);
                     }
                 } catch (Exception ex) {
                     Toast t = Toast.makeText(start.this, R.string.toast_could_not_start_activity, Toast.LENGTH_LONG);

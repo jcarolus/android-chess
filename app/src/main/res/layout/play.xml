@@ -216,6 +216,13 @@
                 </TableRow>
             </TableLayout>
 
+            <TextView
+                android:id="@+id/TextViewEcoValue"
+                style="@style/MyNormalTextStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dip" />
+
         </LinearLayout>
 
     </ScrollView>

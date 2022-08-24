@@ -8,6 +8,6 @@
     <color name="secondaryTextColor">#fafafa</color>
     <color name="backgroundColor">#000000</color>
     <color name="textOnBackgroundColor">#fafafa</color>
-    <color name="surfaceColor">#000000</color>
-    <color name="surfaceTextColor">#cccccc</color>
+    <color name="surfaceColor">#444444</color>
+    <color name="surfaceTextColor">#fafafa</color>
 </resources>

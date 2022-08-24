@@ -21,7 +21,6 @@
     <string name="start_pgn">Расширенные</string>
     <string name="start_ics">Игра онлайн</string>
     <string name="start_globalpreferences">Глобальные настройки</string>
-    <string name="start_convergence">Экран ТВ</string>
 
     <string name="globalpreferences">Глобальные настройки</string>
     <string name="puzzlepreferences">Настройки головоломок</string>
@@ -270,10 +269,6 @@
     <string name="msg_ics_enter_handle">Пожалуйста, введите свой ник</string>
     <string name="msg_ics_enter_password">Пожалуйста, введите пароль</string>
     <string name="msg_progress">Прогресс:</string>
-    <string name="msg_server_stopped">Сервер остановлен</string>
-    <string name="msg_your_code">"Ваш код: "</string>
-    <string name="msg_not_valid_ip">"У вас недействительный LAN IP адрес\nIP: "</string>
-    <string name="msg_server">Не удаётся запустить сервер</string>
 
     <string name="err_sd_not_mounted">Для обработки вашего запроса должна быть установлена SD-карта.</string>
     <string name="err_send_email">E-mail не может быть создан.</string>
@@ -287,7 +282,7 @@
     <string name="err_saving_game">Ошибка сохранения игры в chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Ошибка сохранения в буфер обмена</string>
 
-    <string name="pgntool_export_explanation">Экспорт игровой базы данных на SD-карту</string>
+    <string name="pgntool_export_explanation">Экспорт игровой базы данных</string>
     <string name="pgntool_import_explanation">Импорт игр в игровую базу данных</string>
     <string name="pgntool_delete_explanation">Удалить все игры из игровой базы данных</string>
     <string name="pgntool_add_db_explanation">Добавить игры в базу данных дебютов</string>
@@ -404,6 +399,9 @@
     <string name="ics_unfollow">Отписаться</string>
     <string name="ics_match">Матч</string>
     <string name="ics_gamenumber">Игра #</string>
+
+    <string name="practice_help"> Найдите матовую комбинацию (может быть более одного хода).\nВаше время и среднее время для каждой позиции указано рядом с доской.\nНажмите кнопку \'Показать\' для решения.\nНажмите кнопку \'>\', чтобы перейти к следующей позиции.\nИногда может быть найдено несколько решений, но приложение принимает только одно из них.</string>
+    <string name="puzzle_help">Это трудные головоломки, содержащие мат в два хода.\nЦель - найти первый ход, который приведёт к вынужденному мату в течение двух ходов.\nДругими словами, после того, как вы сделаете правильный ход, противник не сможет избежатьмата при вашем следующем ходе.\nПосле этого первого хода головоломка считается решённой.\nНажмите кнопку \'Показать\' для решения.\nИсточник: ИСКУССТВО МАТА В ДВА ХОДА, Эдуардо Садьер</string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Не удалось начать действие</string>

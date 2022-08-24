@@ -93,10 +93,6 @@ public class start extends Activity {
                     } else if (_ssActivity.equals(getString(R.string.start_globalpreferences))) {
                         i.setClass(start.this, ChessPreferences.class);
                         startActivityForResult(i, 0);
-                    } else if (_ssActivity.equals(getString(R.string.menu_help))) {
-                        i.setClass(start.this, HtmlActivity.class);
-                        i.putExtra(HtmlActivity.HELP_MODE, "help");
-                        startActivity(i);
                     } else {
                         Log.d(TAG, "Nothing to start");
                     }

@@ -6,11 +6,8 @@
 
 ## Roadmap
 - take items from the feature-request list (GitHub issue list)
-- new high-res piece-sets
-- translation to other languages (starting with Italian)
+- translation improvements (some translations are old or inconsistent).
 - add an "ECO" button to explore and choose an opening from the ECO opening database
-- tournament / competition
-- screen cast
 
 
 ### Native build:

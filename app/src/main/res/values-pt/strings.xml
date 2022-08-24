@@ -21,7 +21,6 @@
     <string name="start_pgn">Avançado</string>
     <string name="start_ics">Jogue online</string>
     <string name="start_globalpreferences">Configuração global</string>
-    <string name="start_convergence">Tela da TV</string>
 
     <string name="globalpreferences">Configuração global</string>
     <string name="puzzlepreferences">Configuração enigma</string>
@@ -270,10 +269,6 @@
     <string name="msg_ics_enter_handle">Por favor entre seu código</string>
     <string name="msg_ics_enter_password">Por favor entre sua senha</string>
     <string name="msg_progress">Progresso:</string>
-    <string name="msg_server_stopped">Servidor parou</string>
-    <string name="msg_your_code">"Seu código: "</string>
-    <string name="msg_not_valid_ip">"Você não está num endereço LAN IP válido \nIP: "</string>
-    <string name="msg_server">Servidor não podia começar</string>
 
     <string name="err_sd_not_mounted">A fim de processar sua solicitação, necessita montar seu cartão SD.</string>
     <string name="err_send_email">E-mail could not be created.</string>
@@ -287,7 +282,7 @@
     <string name="err_saving_game">Erro salvando jogo no chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Erro copiando para área de transferência</string>
 
-    <string name="pgntool_export_explanation">Exportar banco de dados do jogo para cartão-sd</string>
+    <string name="pgntool_export_explanation">Exportar banco de dados do jogo</string>
     <string name="pgntool_import_explanation">Importar jogos no banco de dados do jogo</string>
     <string name="pgntool_delete_explanation">Remover todos os jogos no banco de dados do jogo</string>
     <string name="pgntool_add_db_explanation">Adicionar jogos ao banco de dados de aberturas</string>
@@ -404,6 +399,9 @@
     <string name="ics_unfollow">Deixar de seguir</string>
     <string name="ics_match">Partida</string>
     <string name="ics_gamenumber">Jogo #</string>
+
+    <string name="practice_help">Encontre o Check-Mate (pode haver mais de um movimento).\nO seu tempo e o tempo médio por posição são mostrados ao lado do tabuleiro.\nPressione o botão \'Mostre\' para a solução.\nPressione o botão ">" para ir para a próxima posição.\nÀs vezes, várias soluções podem ser encontradas, mas a aplicação aceita apenas uma.</string>
+    <string name="puzzle_help">Estes são difíceis quebra-cabeças de Mate em dois.\nO objetivo é encontrar o primeiro movimento que leva a um mate forçado dentro de dois movimentos. \nEm outras palavras, depois de fazer o movimento correto, o adversário não pode impedir um mate em seu próximo movimento. \nApós este primeiro passo, o quebra-cabeças é resolvido.\nPressione o botão \'Mostre\' para a solução.\nFonte: EL ARTE DEL MATE EN DOS por Eduardo Sadier</string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Não foi possível iniciar a atividade</string>

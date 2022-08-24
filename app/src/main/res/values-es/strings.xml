@@ -21,7 +21,6 @@
     <string name="start_pgn">Avanzado</string>
     <string name="start_ics">Juega en línea</string>
     <string name="start_globalpreferences">Configuración global</string>
-    <string name="start_convergence">Pantalla TV</string>
 
     <string name="globalpreferences">Configuración global</string>
     <string name="puzzlepreferences">Configuración rompecabezas</string>
@@ -270,10 +269,6 @@
     <string name="msg_ics_enter_handle">Por favor introduzca su codigo</string>
     <string name="msg_ics_enter_password">Por favor introduzca su contraseña</string>
     <string name="msg_progress">Progreso:</string>
-    <string name="msg_server_stopped">El servidor ha parado</string>
-    <string name="msg_your_code">"Tu codigo: "</string>
-    <string name="msg_not_valid_ip">"No estás en una dirección LAN IP valida\nIP: "</string>
-    <string name="msg_server">No pudo empezar el servidor</string>
 
     <string name="err_sd_not_mounted">Para procesar su solicitud, tiene que montar su tarjeta SD.</string>
     <string name="err_send_email">No se pudo crear un correo electronico.</string>
@@ -287,8 +282,8 @@
     <string name="err_saving_game">Error en guardar jugo en chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Error durante copia en portapapeles</string>
 
-    <string name="pgntool_export_explanation">Exportar juego a la base de datos de la tarjeta-sd</string>
-    <string name="pgntool_import_explanation">Importar juego a la base de datos de la tarjeta-sd</string>
+    <string name="pgntool_export_explanation">Exportar juego a la base de datos</string>
+    <string name="pgntool_import_explanation">Importar juegos a la base de datos</string>
     <string name="pgntool_delete_explanation">Eliminar todos los juegos a la base de datos de la tarjeta-sd</string>
     <string name="pgntool_add_db_explanation">Añadir juegos a la base de datos inicial</string>
     <string name="pgntool_create_db_explanation">Create base de datos inicial</string>
@@ -404,6 +399,9 @@
     <string name="ics_unfollow">Dejar de seguir</string>
     <string name="ics_match">Partido</string>
     <string name="ics_gamenumber">Juego #</string>
+
+    <string name="practice_help">Encuentra el Check-Mate (puede ser más de un movimiento).\nSu tiempo y el tiempo promedio por posición se muestran al lado del tablero.\nPresione el botón "Mostre" para la solución.\nPulse el botón \'>\' para pasar a la siguiente posición.\nA veces se pueden encontrar múltiples soluciones, pero la aplicación sólo acepta una..</string>
+    <string name="puzzle_help">Estos son duros rompecabezas de Mate en dos\nEl objectivo es encontrar el primer movimiento que conduce a un mate forzado dentro de dos movimientos.\nEn otras palabras, después de realizar el movimiento correcto, el oponente no puede evitar un mate en su siguiente movimiento.\nDespués de este primer movimiento, el rompecabezas se resuelve.\nPresione el botón "Mostrar" para la solución.\nFuente: EL ARTE DEL MATE EN DOS de Eduardo Sadier</string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">No pudo empezar la actividad</string>

@@ -75,7 +75,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEcoValue;
     private TableLayout layoutBoardTop, layoutBoardBottom;
     private Switch switchSound, switchBlindfold;
 
@@ -187,6 +187,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
 
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
+        textViewEcoValue = findViewById(R.id.TextViewEcoValue);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -379,7 +380,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         super.onPause();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         Log.i(TAG, "onActivityResult");
 
@@ -509,10 +511,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         updateTurnSwitchers();
         updatePlayers();
 
-        String sEco = ecoService.getEco(gameApi.getPGNEntries());
-        if (sEco != null) {
-            doToast(sEco);
-        }
+        String sEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard() - 1);
+        textViewEcoValue.setText( sEco != null ? sEco : "");
     }
 
     protected void updateSeekBar() {

@@ -21,7 +21,6 @@
     <string name="start_pgn">高级</string>
     <string name="start_ics">在线对局</string>
     <string name="start_globalpreferences">通用参数设置</string>
-    <string name="start_convergence">电视屏幕</string>
 
     <string name="globalpreferences">通用设置</string>
     <string name="puzzlepreferences">配置拼图</string>
@@ -270,10 +269,6 @@
     <string name="msg_ics_enter_handle">请输入你的句柄</string>
     <string name="msg_ics_enter_password">请输入你的密码</string>
     <string name="msg_progress">进程:</string>
-    <string name="msg_server_stopped">服务器停止响应</string>
-    <string name="msg_your_code">"你的代码: "</string>
-    <string name="msg_not_valid_ip">"你没有获得有效的LAN IP地址\nIP: "</string>
-    <string name="msg_server">服务器不能启动</string>
 
     <string name="err_sd_not_mounted">要继续你的请求, 必须安装SD卡.</string>
     <string name="err_send_email">不能创建电子邮件.</string>
@@ -287,7 +282,7 @@
     <string name="err_saving_game">保存到chessgamesonline.pgn时错误</string>
     <string name="err_copy_clipboard">复制到剪贴板时错误</string>
 
-    <string name="pgntool_export_explanation">导出对局数据到SD卡</string>
+    <string name="pgntool_export_explanation">导出对局数据</string>
     <string name="pgntool_import_explanation">导入对局到游戏数据库</string>
     <string name="pgntool_delete_explanation">删除游戏数据库内所有对局</string>
     <string name="pgntool_add_db_explanation">增加对局到开放式数据库</string>
@@ -404,6 +399,9 @@
     <string name="ics_unfollow">取消关注</string>
     <string name="ics_match">匹配</string>
     <string name="ics_gamenumber">对局编号#</string>
+
+    <string name="practice_help">找到胜利的步骤 (可能不只一步).\n你的用时和平均每步用时会在棋盘边显示.\n点击\'显示Show\' 按钮, 查看正确的步骤和下法.\n点击 \'下一步 > \' 按钮来查看下一步正确的步骤.\n有时候存在多种制胜方法和步骤, 但本软件只保存和认可其中的一种.</string>
+    <string name="puzzle_help">这些对局(题局)有 两步内必胜的将军 方法.\n目标是 找到关键的第一步 , 这一步导致在两步内取得一个必能将死对方的方法.\n或者说, 如果你走对了这一正确的一步, 对方将无法躲开你的下一步将军.\n在这第一步后, 题局就被成功解答.\n点击\'显示Show\' 按钮来获得答案.\n来源: EL ARTE DEL MATE EN DOS 作者 Eduardo Sadier</string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">无法进行这些操作</string>

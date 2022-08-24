@@ -16,10 +16,8 @@ import jwtc.chess.PGNEntry;
 public class EcoService {
     private static final String TAG = "EcoService";
     private JSONArray _jArrayECO = null;
-    private String _sPrevECO;
 
     public void load(final AssetManager assetManager) {
-        _sPrevECO = null;
 
         if (_jArrayECO == null) {
 
@@ -52,13 +50,12 @@ public class EcoService {
         }
     }
 
-    public String getEco(final ArrayList<PGNEntry> _arrPGN) {
+    public String getEco(final ArrayList<PGNEntry> _arrPGN, int maxLevel) {
         if (_jArrayECO != null) {
-            String sECO = getECOInfo(0, _arrPGN, _jArrayECO);
+            String sECO = getECOInfo(0, _arrPGN, _jArrayECO, maxLevel);
             Log.i(TAG, sECO == null ? "No ECO" : sECO);
-            if (sECO != null && (_sPrevECO != null && _sPrevECO.equals(sECO) == false) || _sPrevECO == null) {
+            if (sECO != null) {
                 if (sECO != null && sECO.trim().length() > 0) {
-                    _sPrevECO = sECO;
                     return sECO;
                 }
             }
@@ -66,29 +63,40 @@ public class EcoService {
         return null;
     }
 
-    private String getECOInfo(int level, final ArrayList<PGNEntry> _arrPGN, final JSONArray jArray) {
-        if (level < _arrPGN.size()) {
+    private String getECOInfo(int level, final ArrayList<PGNEntry> _arrPGN, final JSONArray jArray, int maxLevel) {
+        if (level < _arrPGN.size() && level < maxLevel) {
             PGNEntry entry = _arrPGN.get(level);
             try {
                 for (int i = 0; i < jArray.length(); i++) {
                     JSONObject jObj = (JSONObject) jArray.get(i);
                     if (jObj.get("m").equals(entry._sMove)) {
 
-                        String sCurrent = jObj.getString("e") + ": " + jObj.getString("n") + (jObj.getString("v").length() > 0 ? ", " + jObj.getString("v") : "");
-                        String sNext = null;
+                        String sCurrent = "";
+                        if (jObj.has("e")) {
+                            sCurrent = jObj.getString("e") + ": " + jObj.getString("n");
+                            if (jObj.has("v")) {
+                                sCurrent += (jObj.getString("v").length() > 0 ? ", " + jObj.getString("v") : "");
+                            }
+                        }
 
-                        if (jObj.has("a")) {
-                            sNext = getECOInfo(level + 1, _arrPGN, jObj.getJSONArray("a"));
+                        if (level + 1 < maxLevel) {
+                            String sNext = null;
+
+                            if (jObj.has("a") && level + 1 < maxLevel) {
+                                sNext = getECOInfo(level + 1, _arrPGN, jObj.getJSONArray("a"), maxLevel);
+                            }
+
+                            if (sNext == null) {
+                                return null;
+                            }
+
+                            return sNext.length() != 0 ? sNext : sCurrent;
                         }
-                        if (sNext == null) {
-                            return sCurrent;
-                        }
-                        return sNext;
+                        return sCurrent;
+
                     }
                 }
-            } catch (Exception ex) {
-
-            }
+            } catch (Exception ex) {}
         }
         return null;
     }

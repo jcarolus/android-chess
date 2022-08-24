@@ -21,7 +21,6 @@
     <string name="start_pgn">Advanced</string>
     <string name="start_ics">Play online</string>
     <string name="start_globalpreferences">Global settings</string>
-    <string name="start_convergence">TV Screen</string>
 
     <string name="globalpreferences">Global settings</string>
     <string name="puzzlepreferences">Puzzle settings</string>
@@ -285,10 +284,6 @@
     <string name="msg_ics_enter_handle">Please enter your handle</string>
     <string name="msg_ics_enter_password">Please enter your password</string>
     <string name="msg_progress">Progress:</string>
-    <string name="msg_server_stopped">Server stopped</string>
-    <string name="msg_your_code">"Your code: "</string>
-    <string name="msg_not_valid_ip">"You are not on a valid LAN IP address\nIP: "</string>
-    <string name="msg_server">Could not start server</string>
 
     <string name="err_sd_not_mounted">In order to process your request, your SD-card needs to be mounted.</string>
     <string name="err_send_email">E-mail could not be created.</string>
@@ -302,7 +297,7 @@
     <string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Error during copy to ClipBoard</string>
 
-    <string name="pgntool_export_explanation">Export game database to sd-card</string>
+    <string name="pgntool_export_explanation">Export game database</string>
     <string name="pgntool_import_explanation">Import games into the game database</string>
     <string name="pgntool_delete_explanation">Delete all games in the game database</string>
     <string name="pgntool_add_db_explanation">Add games to openingdatabase</string>
@@ -424,6 +419,9 @@
     <string name="ics_match">Match</string>
     <string name="ics_gamenumber">Game #</string>
     <string name="ics_quit">Quit?</string>
+
+    <string name="practice_help">Find the Check-Mate (can be more than one move)\nYour time and average time per position is shown next to the board.\nPress the \'Show\' button for the solution.\nPress the \'>\' button to go to the next position.\nSometimes multiple solutions can be found, but the application only accepts one.</string>
+    <string name="puzzle_help">These are tough Mate in two puzzles.\nThe goal is to find the first move that leads to a forced mate within two moves.\nIn other words, after you make the correct move, the opponent can not prevent a mate on your next move.\nAfter this first move, the puzzle is solved.\nPress the \'Show\' button for the solution.\nSource: EL ARTE DEL MATE EN DOS by Eduardo Sadier</string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Could not start the activity</string>

@@ -2,19 +2,24 @@ package jwtc.android.chess.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import jwtc.android.chess.HtmlActivity;
 
 
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
+    public static final int NO_RESULT = 0;
 
     protected float fVolume = 1.0f;
 
@@ -49,6 +54,16 @@ public class BaseActivity extends AppCompatActivity {
         t.show();
     }
 
+    public void sharePGN(String PGN) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, PGN);
+        sendIntent.setType("application/x-chess-pgn");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
+    }
+
     // @TODO
     public void vibration(int seq) {
         try {
@@ -67,6 +82,13 @@ public class BaseActivity extends AppCompatActivity {
             Log.e(TAG, "vibrator process error", e);
         }
 
+    }
+
+    public void showHelp(String section) {
+        Intent i = new Intent();
+        i.setClass(this, HtmlActivity.class);
+        i.putExtra(HtmlActivity.HELP_MODE, section);
+        startActivity(i);
     }
 
     /*
