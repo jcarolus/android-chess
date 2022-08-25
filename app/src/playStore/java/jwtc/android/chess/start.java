@@ -138,7 +138,7 @@ public class start extends AppCompatActivity {
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_about))) {
                         i.setClass(start.this, HtmlActivity.class);
-                        i.putExtra(HtmlActivity.HELP_MODE, "about");
+                        i.putExtra(HtmlActivity.HELP_STRING_RESOURCE, R.string.about_help);
                         startActivity(i);
                     } else if (_ssActivity.equals(getString(R.string.start_ics))) {
                         i.setClass(start.this, ICSClient.class);

@@ -402,6 +402,80 @@
 
     <string name="practice_help">Trova lo scacco matto (potrebbe volerci più di una mossa).\nIl tempo e il tempo medio per posizione è; mostrato accanto alla scacchiera.\nPremi il pulsante \'Mostra\' per vedere la soluzione.\nPremi il pulsante \'>\' per andare alla posizione successiva.\nTalvolta possono essere trovate più; soluzioni, ma l\'applicazione ne accetta solamente una.</string>
     <string name="puzzle_help">Questi sono problemi difficili di Matto in due mosse.\nL\'obiettivo è; quello di trovare la prima mossa che conduce a un matto forzato entro due mosse.\nIn altre parole, dopo che hai fatto la mossa corretta, l\'avversario non può; impedire il matto derivante dalla tua prossima mossa.\nDopo questa prima mossa il problema è; risolto.\nPremi il pulsante \'Mostra\' per avere la soluzione.\nFonte: EL ARTE DEL MATE EN DOS di Eduardo Sadier</string>
+    <string name="advanced_help"><![CDATA[
+<h3>Avanzate</h3>
+    <p>Crea o importa le tue cose qui.</p>
+
+    <h4>Esporta il database di gioco nella scheda SD</h4>
+    <p>Tutte le partite nel database possono essere esportate nella scheda SD in un singolo file
+        PGN. Questo file verr&agrave; denominato chess.pgn e un eventuale file già esistente verr&agrave;
+        sovrascritto.</p>
+
+    <h4>Importa le partite nel database di gioco</h4>
+    <p>Usa questa opzione per aggiungere partite al database di gioco. L\'opzione permette di
+        navigare a un file PGN. Selezionalo per importarlo.</p>
+
+    <h4>Cancella tutte le partite dal database di gioco</h4>
+    <p>Usa questa opzione se vuoi ripulire il database di gioco. Assicurati di aver fatto un backup
+        nella scheda SD, poich&eacute; l\'azione non pu&ograve; essere annullata.</p>
+
+    <h4>Crea database delle aperture</h4>
+    <p>Naviga fino a un file PGN nella scheda SD e questo verr&agrave; convertito in un database
+        delle aperture con lo stesso nome, ma con un nome di file con estensione .bin. Attualmente
+        tutte le partite nel file PGN saranno analizzate fino alla mossa 17.</p>
+
+    <h4>Imposta database delle aperture</h4>
+    <p>Naviga fino al file .bin appena creato (database delle aperture) per permettere a Scacchi di
+        utilizzarlo.</p>
+
+    <h4>Disinstalla motore UCI</h4>
+    <p>Elimina il motore UCI installato.</p>
+
+    <h4>Crea set di pratica</h4>
+    <p>Crea posizioni per la pratica dalle partite terminate con uno scacco matto. Naviga fino al
+        file per elaborarlo. Le partite rifiutate normalmente lo sono perch&eacute; non finiscono in
+        uno scacco matto o sono duplicati di altre partite</p>
+
+    <h4>Azzera set di pratica</h4>
+    <p>Vuoi ricominciare la pratica? Questa opzione azzerer&agrave; anche il contatore del tempo
+        medio.</p>
+
+     ]]></string>
+    <string name="about_help"><![CDATA[
+<p>Creato da <i>Jeroen Carolus</i></p>
+
+<p>Per supporto, informazioni riguardo gli aggiornamenti, e per l\'ultima versione dell\'applicazione,
+    consulta il sito web dello sviluppatore <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
+
+<p>Si ringrazia <i>Peter van Grijfland</i> per il coinvolgimento, gli eccellenti suggerimenti e il
+    beta testing.</p>
+<p>Contributi da GitHub:</p>
+<p><i>Tim Tennyson</i>: Diversi miglioramenti.</p>
+<p><i>Alessandro Dal Bello, Paolo Straffi</i>: Traduzione italiana.</p>
+<p><i>Ildar Gubaidulin</i>: Traduzione russa.</p>
+<p><i>Marcella De Rosa</i>: Traduzioni spagnolo e portoghese.</p>
+<p><i>Stan Zheng</i>: traduzione cinese.</p>
+    ]]></string>
+    <string name="online_help"> <![CDATA[
+<p>
+        <strong>FICS: Free Internet Chess Server</strong> permette di giocare online con migliaia di
+        giocatori di scacchi.<br/>
+        Attenzione: se il tuo dispositivo passa da un Internet access point a un altro, la
+        connessione pu&ograve; interrompersi. Nessun timeseal &egrave; implementato.<br/>
+    </p>
+    <h4>Menu</h4>
+    <strong>Sfide</strong><br/>
+    Chi &egrave; alla ricerca di un match. Clicca su un giocatore nella lista per accettare la
+    sfida.<br/>
+    <strong>Cerca</strong><br/>
+    Imposta la tua sfida. Se inserisci il nome di un giocatore che conosci potrai sfidarlo
+    direttamente.<br/>
+    <strong>Partite</strong><br/>
+    Guarda le partite che si stanno giocando online. Un gran maestro pu&ograve; essere identificato
+    dal prefisso GM davanti al nome.<br/>
+    <strong>Giocatori</strong><br/>
+    Mostra i giocatori di inattività con rating.<br/>
+    ]]></string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>

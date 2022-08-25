@@ -24,7 +24,7 @@ public class EcoService {
             (new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(1000);
 
                         long start = System.currentTimeMillis();
                         InputStream in = assetManager.open("ECO.json");

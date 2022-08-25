@@ -84,10 +84,10 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void showHelp(String section) {
+    public void showHelp(int resource) {
         Intent i = new Intent();
         i.setClass(this, HtmlActivity.class);
-        i.putExtra(HtmlActivity.HELP_MODE, section);
+        i.putExtra(HtmlActivity.HELP_STRING_RESOURCE, resource);
         startActivity(i);
     }
 

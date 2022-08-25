@@ -33,43 +33,47 @@
         <ScrollView android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <RelativeLayout
-                android:layout_width="fill_parent"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/TextViewSetupTurn"
-                    android:text="@string/msg_setup_turn"
-                    style="@style/MyLabelTextStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <RadioGroup
-                    android:id="@+id/RadioGroupSetup"
-                    android:orientation="horizontal"
-                    android:layout_below="@id/TextViewSetupTurn"
-                    style="@style/MyRowStyle"
-                    android:layout_width="fill_parent"
+                <TableLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+                    <TableRow  style="@style/MyRowStyle">
+                        <TextView
+                            android:id="@+id/TextViewSetupTurn"
+                            android:text="@string/msg_setup_turn"
+                            style="@style/MyLabelTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-                    <RadioButton
-                        android:id="@+id/RadioSetupTurnWhite"
-                        android:text="@string/msg_setup_turn_white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        <RadioGroup
+                            android:id="@+id/RadioGroupSetup"
+                            android:orientation="horizontal"
+                            style="@style/MyRowStyle"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content">
 
-                    <RadioButton
-                        android:id="@+id/RadioSetupTurnBlack"
-                        android:text="@string/msg_setup_turn_black"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </RadioGroup>
+                            <RadioButton
+                                android:id="@+id/RadioSetupTurnWhite"
+                                android:text="@string/msg_setup_turn_white"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <RadioButton
+                                android:id="@+id/RadioSetupTurnBlack"
+                                android:text="@string/msg_setup_turn_black"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </RadioGroup>
+                    </TableRow>
+                </TableLayout>
 
                 <TableLayout
                     android:id="@+id/TableSetupEnPassant"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/RadioGroupSetup">
+                    android:layout_height="wrap_content">
 
                     <TableRow style="@style/MyRowStyle">
 
@@ -89,7 +93,6 @@
 
                 <TableLayout
                     android:id="@+id/TableSetupCastling"
-                    android:layout_below="@id/TableSetupEnPassant"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:stretchColumns="*">
@@ -146,7 +149,6 @@
                 <TableLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/TableSetupCastling"
                     android:stretchColumns="*">
 
                     <TableRow style="@style/MyRowStyle">
@@ -168,7 +170,7 @@
 
                 </TableLayout>
 
-            </RelativeLayout>
+            </LinearLayout>
 
         </ScrollView>
     </LinearLayout>

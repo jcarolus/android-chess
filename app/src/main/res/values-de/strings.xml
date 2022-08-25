@@ -398,6 +398,73 @@
 
     <string name="practice_help">Finde das Schachmatt (kann aus mehr als einem Zug bestehen).\nIhre Zeit und die durchschnittliche Zeit pro Position werden neben der Tafel angezeigt.\nDrücken Sie die Schaltfläche „Anzeigen“ für die Lösung.\nDrücken Sie die Schaltfläche „>“, um zur nächsten Position zu gelangen.\nManchmal können mehrere Lösungen gefunden werden, aber die Anwendung akzeptiert nur eine.</string>
     <string name="puzzle_help">Dies sind knifflige Matt in Two-Rätsel.\nDas Ziel ist es, den ersten Zug zu finden, der innerhalb von zwei zu einem erzwungenen Matt führt bewegt.\nMit anderen Worten, nachdem Sie den richtigen Zug gemacht haben, kann der Gegner ein Matt auf Sie nicht verhindern nächster Zug.\nNach diesem ersten Zug ist das Rätsel gelöst.\nDrücken Sie die Schaltfläche „Anzeigen“ für die Lösung.\nQuelle: EL ARTE DEL MATE EN DOS von Eduardo Sadier</string>
+    <string name="advanced_help"><![CDATA[
+<p>Erstellen oder importieren Sie hier Ihre eigenen Inhalte.</p>
+
+    <h4>Spieldatenbank auf SD-Karte exportieren</h4>
+    <p>Alle Spiele in der Spieledatenbank können in eine einzige PGN-Datei auf der SD-Karte exportiert werden. Diese Datei
+        heißt chess.pgn und eine vorhandene Datei wird überschrieben.</p>
+
+    <h4>Spiele in die Spieledatenbank importieren</h4>
+    <p>Verwenden Sie diese Option, um Spiele zur Spieledatenbank hinzuzufügen. Damit können Sie nach einer PGN-Datei suchen. Auswählen
+        und wählen Sie „Importieren“.</p>
+
+    <h4>Alle Spiele in der Spieledatenbank löschen</h4>
+    <p>Verwenden Sie diese Option, wenn Sie die Spieldatenbank bereinigen möchten. Stellen Sie sicher, dass Sie zuerst ein Backup erstellen
+        auf SD-Karte, diese Aktion kann nicht rückgängig gemacht werden.</p>
+
+    <h4>Eröffnungsdatenbank erstellen</h4>
+    <p>Durchsuchen Sie eine PGN-Datei auf der SD-Karte und sie wird in eine Eröffnungsdatenbank mit konvertiert
+        denselben Namen, aber mit der Dateinamenerweiterung .bin. Derzeit werden alle Spiele in der PGN-Datei gespeichert
+        geparst bis 17 ply.</p>
+
+    <h4>Eröffnungsdatenbank festlegen</h4>
+    <p>Durchsuchen Sie die neu erstellte .bin-Eröffnungsdatenbankdatei, damit Chess sie verwenden kann.</p>
+
+    <h4>UCI-Engine deinstallieren</h4>
+    <p>Entfernen Sie die installierte UCI-Engine.</p>
+
+    <h4>Übungssatz erstellen</h4>
+    <p>Erzeugt Übungsstellungen aus Partien, die mit Schachmatt enden. Navigieren Sie zu der Datei, um
+        Prozess. Fehleingaben sind in der Regel Partien, die nicht mit Schachmatt endeten oder eine sind
+        duplizieren</p>
+
+    <h4>Übungsset zurücksetzen</h4>
+    <p>Möchten Sie noch einmal mit dem Üben beginnen? Dadurch wird auch Ihr durchschnittlicher Zeitzähler zurückgesetzt.</p>
+     ]]></string>
+    <string name="about_help"><![CDATA[
+<p>Erstellt von <i>Jeroen Carolus</i></p>
+
+<p>Für Support, Informationen über Updates und die neueste Version: Bitte besuchen Sie die Entwickler-Website
+    <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
+
+<p>Danke an <i>Peter van Grijfland</i> für sein Engagement, seine hervorragenden Vorschläge und seine Beta-Tests.
+</p>
+<p>GitHub-Beiträge:</p>
+<p><i>Tim Tennyson</i>: Mehrere Verbesserungen.</p>
+<p><i>Alessandro Dal Bello, Paolo Straffi</i>: Italienische Übersetzung.</p>
+<p><i>Ildar Gubaidulin</i>: Russische Übersetzung.</p>
+<p><i>Marcella De Rosa</i>: Spanische und portugiesische Übersetzungen.</p>
+<p><i>Stan Zheng</i>: Chinesische Übersetzung.</p>
+    ]]></string>
+    <string name="online_help"> <![CDATA[
+<p>
+        <strong>FICS: Free Internet Chess Server</strong> lässt Sie mit Tausenden von Schachspielen spielen
+        Spieler online.<br/>
+        Achtung: Wenn Ihr Gerät von einem Internetzugangspunkt zu einem anderen wechselt, wird die Verbindung
+        kann brechen. Es gibt kein Zeitsiegel.<br/>
+    </p>
+    <h4>Menü</h4>
+    <strong>Herausforderungen</strong><br/>
+    Dies zeigt Spieler, die ein Match suchen. Klicken Sie auf den Spieler in der Liste, um eine Herausforderung anzunehmen.<br/>
+    <strong>Suchen</strong><br/>
+    Richten Sie Ihre eigene Herausforderung ein. Wenn Sie das Handle eines Spielers eingeben, den Sie kennen, wird dies direkt
+    Herausforderung.<br/>
+    <strong>Spiele</strong><br/>
+    Sehen Sie sich Spiele an, die online gespielt werden. Einen Großmeister erkennen Sie am GM-Präfix am Griff.<br/>
+    <strong>Spieler</strong><br/>
+    Zeigt untätige Spieler mit Bewertungen.<br/>
+    ]]></string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Aktivität konnte nicht gestartet werden</string>

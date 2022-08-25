@@ -307,6 +307,21 @@ public class SetupActivity extends ChessBoardActivity {
                         }
 
                         break;
+
+
+                    case DragEvent.ACTION_DRAG_ENDED: {
+                        final View droppedView = (View) event.getLocalState();
+                        if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
+                            droppedView.post(new Runnable(){
+                                @Override
+                                public void run() {
+                                    droppedView.setVisibility(View.VISIBLE);
+                                }
+                            });
+                        }
+                        break;
+                    }
+
                     default:
                         break;
                 }

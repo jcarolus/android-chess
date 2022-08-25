@@ -402,6 +402,62 @@
 
     <string name="practice_help">找到胜利的步骤 (可能不只一步).\n你的用时和平均每步用时会在棋盘边显示.\n点击\'显示Show\' 按钮, 查看正确的步骤和下法.\n点击 \'下一步 > \' 按钮来查看下一步正确的步骤.\n有时候存在多种制胜方法和步骤, 但本软件只保存和认可其中的一种.</string>
     <string name="puzzle_help">这些对局(题局)有 两步内必胜的将军 方法.\n目标是 找到关键的第一步 , 这一步导致在两步内取得一个必能将死对方的方法.\n或者说, 如果你走对了这一正确的一步, 对方将无法躲开你的下一步将军.\n在这第一步后, 题局就被成功解答.\n点击\'显示Show\' 按钮来获得答案.\n来源: EL ARTE DEL MATE EN DOS 作者 Eduardo Sadier</string>
+    <string name="advanced_help"><![CDATA[
+<h3>高级</h3>
+    <p>创建或导入自定义棋局.</p>
+
+    <h4>将对局资料导出到SD卡</h4>
+    <p>所有的对局都可以以PGN文件的形式导出到SD卡. 这个文件名为 chess.pgn, 当新一局保存时旧的对局文件会被替换覆盖.</p>
+
+    <h4>导入游戏</h4>
+    <p>使用"add games"的选项可以新建一局游戏. 可以让你游览各PGN文件, 从中选择要导入的对局.</p>
+
+    <h4>删除数据库中所有对局资料</h4>
+    <p>在这一菜单下, 你可以清空所有对局资料. 请先备份好数据, 被清空资料将不可以被恢复.</p>
+
+    <h4>创建开放数据库</h4>
+    <p>浏览SD卡内的PGN文件, 该文件将被转换为一个开放式数据库但文件名有.BIN作为后缀. 该文件内所有对局将被提取, 最多17层.</p>
+
+    <h4>设置开放数据库</h4>
+    <p>游览刚刚创建的开放数据库, 并让国际象棋使用它.</p>
+
+    <h4>卸载通用国际象棋界面引擎(UCI)</h4>
+    <p>卸载通用国际象棋界面引擎(UCI)</p>
+
+    <h4>创建对局练习集</h4>
+    <p>创建一个必胜残局. 打开文件继续此残局. 如果最终不能获胜或只能重复相同的步骤, 则说明之前走子错误</p>
+
+    <h4>对局练习复原</h4>
+    <p>想重新恢复对局练习? 这同时也会重置你的计时器.</p>
+     ]]></string>
+    <string name="about_help"><![CDATA[
+<p>本软件开发者为<i>Jeroen Carolus</i></p>
+
+<p>请前往开发者网站获取最新的版本和帮助: <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
+
+<p>在此感谢 <i>Peter van Grijfland</i> 为本软件提供了测试和积极的优化建议.</p>
+<p>Github上参与人员:</p>
+<p><i>Tim Tennyson</i>: 为本软件做了一些优化.</p>
+<p><i>Alessandro Dal Bello, Paolo Straffi</i>: 完成了意大利语翻译.</p>
+<p><i>Ildar Gubaidulin</i>: 俄语翻译</p>
+<p><i>Marcella De Rosa</i>: 葡萄牙语,西班牙语翻译.</p>
+<p><i>Stan Zheng</i>: 中国的翻译.</p>
+    ]]></string>
+    <string name="online_help"> <![CDATA[
+<p>
+        <strong>FICS: 免费的国际象棋网络服务器</strong> 让你与数千位国际象棋爱好者同时在线竞技.<br/>
+        警告: 如果你的设备从一个网络接入点转换到另一个接入点时, 网络连接可能会断开. 此时下棋计时器会中断.<br/>
+    </p>
+    <h4>菜单</h4>
+    <strong>挑战</strong><br/>
+    用于寻找对手对局. 点击列表中的选手来发起挑战.<br/>
+    <strong>寻战</strong><br/>
+    设置你要挑战的选手. 如果你填写你知道的一个选手的名字,将会直接发起挑战.<br/>
+    <strong>观战</strong><br/>
+    在线观看选手对局. 高段位选手的对局会被系统标识出来.<br/>
+    <strong>选手清单</strong><br/>
+    可以显示空闲中的选手及其等级.<br/>
+    ]]></string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">无法进行这些操作</string>

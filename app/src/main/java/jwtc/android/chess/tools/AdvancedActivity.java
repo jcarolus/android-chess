@@ -2,7 +2,6 @@ package jwtc.android.chess.tools;
 
 import java.io.File;
 
-import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
@@ -95,7 +94,7 @@ public class AdvancedActivity extends BaseActivity {
                     alert.show();
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_help))) {
-                    showHelp("help_pgntool");
+                    showHelp(R.string.advanced_help);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_engine))) {
                     SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
                     String sEngine = prefs.getString("UCIEngine", null);

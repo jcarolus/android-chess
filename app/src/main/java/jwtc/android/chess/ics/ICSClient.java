@@ -879,7 +879,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     i.setClass(ICSClient.this, ICSPrefs.class);
                     startActivity(i);
                 } else if (selected.equals(getString(R.string.menu_help))) {
-                    showHelp("help_online");
+                    showHelp(R.string.online_help);
                 } else {
                     // assume a custom command
                     sendString(selected);
