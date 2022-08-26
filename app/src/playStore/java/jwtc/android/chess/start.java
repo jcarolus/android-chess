@@ -11,11 +11,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -88,18 +91,19 @@ public class start extends AppCompatActivity {
 
         Locale locale = new Locale(myLanguage);    // myLanguage is current language
         Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config,
-                getBaseContext().getResources().getDisplayMetrics());
+
+        Resources resources = getResources();
+        Configuration configuration = resources.getConfiguration();
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        configuration.setLocale(locale);
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+            getApplicationContext().createConfigurationContext(configuration);
+        } else {
+            resources.updateConfiguration(configuration, displayMetrics);
+        }
 
         setContentView(R.layout.start);
-
-        if (getIntent().getBooleanExtra("RESTART", false)) {
-            finish();
-            Intent intent = new Intent(this, start.class);
-            startActivity(intent);
-        }
 
         _jni = JNI.getInstance();
         _jni.reset();
@@ -172,33 +176,8 @@ public class start extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Log.i(TAG, "finish and restart");
-
-            Intent intent = new Intent(this, start.class);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("RESTART", true);
-            startActivity(intent);
-
-        }
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-
-        SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
-        if (getData.getBoolean("RESTART", false)) {
-            finish();
-            Intent intent = new Intent(this, start.class);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-            SharedPreferences.Editor editor = getData.edit();
-            editor.putBoolean("RESTART", false);
-            editor.apply();
-
-            startActivity(intent);
+            Log.i(TAG, "recreate");
+            recreate();
         }
     }
 
@@ -480,9 +459,4 @@ public class start extends AppCompatActivity {
         mWaitingForReconnect = false;
         mSessionId = null;
     }
-
-    public static String get_ssActivity() {
-        return _ssActivity;
-    }
-
 }

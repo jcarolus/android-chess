@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jwtc.android.chess"
     android:installLocation="auto"
-    android:versionCode="171"
-    android:versionName="9.1.2">
+    android:versionCode="172"
+    android:versionName="9.1.3">
 
     <application
         android:name="android.app.Application"
@@ -40,11 +40,15 @@
             android:configChanges="orientation"></activity>
         <activity
             android:name=".activities.GlobalPreferencesActivity"
-            android:label="@string/enginepreferences"
-            android:configChanges="orientation"></activity>
+            android:label="@string/globalpreferences"
+            android:configChanges="orientation">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".start" />
+        </activity>
         <activity
             android:name=".activities.GamePreferenceActivity"
-            android:label="@string/enginepreferences"
+            android:label="@string/playpreferences"
             android:configChanges="orientation"></activity>
         <activity
             android:name=".play.PlayActivity"
