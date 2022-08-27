@@ -9,17 +9,27 @@
         <item>@string/start_about</item>
         <item>@string/start_pgn</item>
     </string-array>
+    <string-array name="play_menu">
+        <item>@string/menu_game_settings</item>
+        <item>@string/menu_new</item>
+        <item>@string/menu_new_960</item>
+        <item>@string/menu_setup</item>
+        <item>@string/menu_save_game</item>
+        <item>@string/menu_load_game</item>
+        <item>@string/menu_prefs</item>
+        <item>@string/menu_set_clock</item>
+    </string-array>
     <string-array name="levels_ply">
-        <item>1 полуход</item>
-        <item>2 полухода</item>
-        <item>3 полухода</item>
-        <item>4 полухода</item>
-        <item>5 полуходов</item>
-        <item>6 полуходов</item>
-        <item>7 полуходов</item>
-        <item>8 полуходов</item>
-        <item>9 полуходов</item>
-        <item>10 полуходов</item>
+        <item>1 ply</item>
+        <item>2 ply</item>
+        <item>3 ply</item>
+        <item>4 ply</item>
+        <item>5 ply</item>
+        <item>6 ply</item>
+        <item>7 ply</item>
+        <item>8 ply</item>
+        <item>9 ply</item>
+        <item>10 ply</item>
     </string-array>
     <string-array name="levels_time">
         <item>@string/choice_level_1</item>
@@ -40,41 +50,40 @@
         <item>@string/choice_knight</item>
     </string-array>
     <string-array name="playmodes">
-        <item>Вы против Android</item>
-        <item>Android против вас</item>
-        <item>Игровая доска</item>
+        <item>Toi contre Android</item>
+        <item>Android contre toi</item>
+        <item>Echiquier</item>
     </string-array>
     <string-array name="clockchoices">
-        <item>без времени</item>
-        <item>2 минуты</item>
-        <item>5 минут</item>
-        <item>10 минут</item>
-        <item>30 минут</item>
+        <item>Pas de pendule</item>
+        <item>2 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
     </string-array>
     <string-array name="colorschemes">
-        <item>Жёлтый</item>
-        <item>Синий</item>
-        <item>Зелёный</item>
-        <item>Серый</item>
-        <item>Коричневый</item>
-        <item>Красный</item>
+        <item>Jaune</item>
+        <item>Bleu</item>
+        <item>Vert</item>
+        <item>Gris</item>
+        <item>Marron</item>
+        <item>Rouge</item>
     </string-array>
-    <!-- 
-    <integer-array name="colorscheme_indexes">
+    <string-array name="colorscheme_indexes">
         <item>0</item>
-        <item>2</item>
+        <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
-    </integer-array>
-     -->
+        <item>5</item>
+    </string-array>
     <string-array name="options_wakelock">
-        <item>Использовать удержание в режиме бодрствования</item>
-        <item>Не использовать удержание в режиме бодрствования</item>
+        <item>Utiliser l'application en arrière plan</item>
+        <item>Ne pas utiliser l'application en arrière plan</item>
     </string-array>
     <string-array name="match_subject">
-        <item>Искать</item>
-        <item>Вызов</item>
+        <item>Rechercher</item>
+        <item>Challenge</item>
     </string-array>
     <string-array name="match_time_minutes">
         <item>0</item>
@@ -114,13 +123,13 @@
         <item>@string/choice_match_rated</item>
     </string-array>
     <string-array name="match_variant">
-        <item>Стандартные</item>
-        <item>Шахматы-960 (экспериментальные)</item>
+        <item>Standard</item>
+        <item>Chess 960 (expérimental)</item>
     </string-array>
     <string-array name="match_color">
-        <item>Произвольно</item>
-        <item>Белые</item>
-        <item>Чёрные</item>
+        <item>Aléatoire</item>
+        <item>Blancs</item>
+        <item>Noirs</item>
     </string-array>
     <string-array name="console_character_size">
         <item>6</item>
@@ -141,11 +150,11 @@
         <item>18</item>
     </string-array>
     <string-array name="time_warning">
-        <item>5 секунд</item>
-        <item>10 секунд</item>
-        <item>25 секунд</item>
-        <item>45 секунд</item>
-        <item>1 минута</item>
+        <item>5 secondes</item>
+        <item>10 secondes</item>
+        <item>25 secondes</item>
+        <item>45 secondes</item>
+        <item>1 minute</item>
     </string-array>
     <string-array name="time_warning_values">
         <item>5</item>
@@ -155,10 +164,10 @@
         <item>60</item>
     </string-array>
     <string-array name="gamestartsound">
-        <item>Нет</item>
-        <item>Звук и вибрация</item>
-        <item>Только звук</item>
-        <item>Только вибрация</item>
+        <item>Aucun</item>
+        <item>Son et vibration</item>
+        <item>Seulement le son</item>
+        <item>Seulement les vibrations</item>
     </string-array>
     <string-array name="gamestartsound_values">
         <item>0</item>
@@ -167,7 +176,7 @@
         <item>3</item>
     </string-array>
     <string-array name="field_files">
-        <item>нет</item>
+        <item>none</item>
         <item>a</item>
         <item>b</item>
         <item>c</item>
@@ -193,7 +202,7 @@
         <!-- <item>@string/pgntool_import_practice</item> -->
         <item>@string/pgntool_reset_practice</item>
         <item>@string/pgntool_import_puzzle</item>
-        <item>@string/pgntool_import_opening</item>
+<!--        <item>@string/pgntool_import_opening</item>-->
         <item>@string/pgntool_help</item>
     </string-array>
     <string-array name="tileKeyArray">
@@ -205,12 +214,12 @@
         <item>circuit</item>
     </string-array>
     <string-array name="tileArray">
-        <item>нет</item>
-        <item>двойная тень</item>
-        <item>одиночная тень</item>
-        <item>полоски</item>
-        <item>облака</item>
-        <item>схема</item>
+        <item>Aucun</item>
+        <item>ombre double</item>
+        <item>ombre simple</item>
+        <item>bandes</item>
+        <item>nuages</item>
+        <item>cercle</item>
     </string-array>
     <string-array name="localearray">
         <item>中文</item>
@@ -231,5 +240,17 @@
         <item>ru</item>
         <item>de</item>
 	<item>fr</item>
+    </string-array>
+    <string-array name="piecesetarray">
+        <item>Alpha</item>
+        <item>Merida</item>
+        <item>Leipzig</item>
+        <item>California</item>
+    </string-array>
+    <string-array name="piecesetKeyarray">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 </resources>
