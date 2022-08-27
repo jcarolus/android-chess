@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -28,7 +27,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import jwtc.android.chess.GamesListActivity;
-import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -38,7 +36,6 @@ import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
-import jwtc.android.chess.engine.UCIEngine;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.services.ClockListener;
@@ -75,7 +72,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEcoValue;
     private TableLayout layoutBoardTop, layoutBoardBottom;
     private Switch switchSound, switchBlindfold;
 
@@ -187,6 +184,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
 
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
+        textViewEcoValue = findViewById(R.id.TextViewEcoValue);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -229,37 +227,21 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         String type = intent.getType();
         Uri uri = intent.getData();
 
-        String sEngine = prefs.getString("UCIEngine", null);
-        if (sEngine != null) {
-            Log.i(TAG, "UCIEngine " + sEngine);
-            String sEnginePath = "/data/data/jwtc.android.chess/" + sEngine;
+        myEngine = new LocalEngine();
 
-            myEngine = new UCIEngine();
-
-            if (((UCIEngine)myEngine).initEngine(sEnginePath)) {
-
-                textViewEngineValue.setText("UCI engine " + sEngine);
-            } else {
-                textViewEngineValue.setText("UCI engine " + sEngine + " failed to run!");
+        // opening database path
+        String sOpeningDb = prefs.getString("OpeningDb", null);
+        if (sOpeningDb == null) {
+            try {
+                ((LocalEngine) myEngine).installDb(getAssets().open("db.bin"), "/data/data/jwtc.android.chess/db.bin");
+            } catch (Exception e) {
+                Log.d(TAG, "Exception installing db " + e.getMessage());
             }
-
         } else {
-            myEngine = new LocalEngine();
-
-            // opening database path
-            String sOpeningDb = prefs.getString("OpeningDb", null);
-            if (sOpeningDb == null) {
-                try {
-                    ((LocalEngine) myEngine).installDb(getAssets().open("db.bin"), "/data/data/jwtc.android.chess/db.bin");
-                } catch (Exception e) {
-                    Log.d(TAG, "Exception installing db " + e.getMessage());
-                }
-            } else {
-                Uri uriDb = Uri.parse(sOpeningDb);
-                ((LocalEngine) myEngine).setOpeningDb(uriDb.getPath());
-            }
-
+            Uri uriDb = Uri.parse(sOpeningDb);
+            ((LocalEngine) myEngine).setOpeningDb(uriDb.getPath());
         }
+
         myEngine.addListener(this);
 
         layoutBoardTop.setBackgroundColor(ColorSchemes.getDark());
@@ -332,7 +314,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             ecoService.load(getAssets());
         }
 
-
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
     }
@@ -379,7 +360,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         super.onPause();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         Log.i(TAG, "onActivityResult");
 
@@ -508,11 +490,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         updateSeekBar();
         updateTurnSwitchers();
         updatePlayers();
-
-        String sEco = ecoService.getEco(gameApi.getPGNEntries());
-        if (sEco != null) {
-            doToast(sEco);
-        }
+        updateEco();
     }
 
     protected void updateSeekBar() {
@@ -525,6 +503,11 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     protected void updatePlayers() {
         textViewOpponent.setText(gameApi.getOpponentPlayerName(myTurn));
         textViewMe.setText(gameApi.getMyPlayerName(myTurn));
+    }
+
+    protected void updateEco() {
+        String sEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard() - 1);
+        textViewEcoValue.setText( sEco != null ? sEco : "");
     }
 
     protected void updateCapturedPieces() {

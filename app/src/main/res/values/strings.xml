@@ -21,7 +21,6 @@
     <string name="start_pgn">Advanced</string>
     <string name="start_ics">Play online</string>
     <string name="start_globalpreferences">Global settings</string>
-    <string name="start_convergence">TV Screen</string>
 
     <string name="globalpreferences">Global settings</string>
     <string name="puzzlepreferences">Puzzle settings</string>
@@ -285,10 +284,6 @@
     <string name="msg_ics_enter_handle">Please enter your handle</string>
     <string name="msg_ics_enter_password">Please enter your password</string>
     <string name="msg_progress">Progress:</string>
-    <string name="msg_server_stopped">Server stopped</string>
-    <string name="msg_your_code">"Your code: "</string>
-    <string name="msg_not_valid_ip">"You are not on a valid LAN IP address\nIP: "</string>
-    <string name="msg_server">Could not start server</string>
 
     <string name="err_sd_not_mounted">In order to process your request, your SD-card needs to be mounted.</string>
     <string name="err_send_email">E-mail could not be created.</string>
@@ -302,7 +297,7 @@
     <string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Error during copy to ClipBoard</string>
 
-    <string name="pgntool_export_explanation">Export game database to sd-card</string>
+    <string name="pgntool_export_explanation">Export game database</string>
     <string name="pgntool_import_explanation">Import games into the game database</string>
     <string name="pgntool_delete_explanation">Delete all games in the game database</string>
     <string name="pgntool_add_db_explanation">Add games to openingdatabase</string>
@@ -424,6 +419,84 @@
     <string name="ics_match">Match</string>
     <string name="ics_gamenumber">Game #</string>
     <string name="ics_quit">Quit?</string>
+
+    <string name="practice_help">Find the Check-Mate (can be more than one move)\nYour time and average time per position is shown next to the board.\nPress the \'Show\' button for the solution.\nPress the \'>\' button to go to the next position.\nSometimes multiple solutions can be found, but the application only accepts one.</string>
+    <string name="puzzle_help">These are tough Mate in two puzzles.\nThe goal is to find the first move that leads to a forced mate within two moves.\nIn other words, after you make the correct move, the opponent can not prevent a mate on your next move.\nAfter this first move, the puzzle is solved.\nPress the \'Show\' button for the solution.\nSource: EL ARTE DEL MATE EN DOS by Eduardo Sadier</string>
+    <string name="advanced_help">
+         <![CDATA[
+<h3>Advanced</h3>
+    <p>Create or import your own stuff here.</p>
+
+    <h4>Export game database to sd-card</h4>
+    <p>All games in the game database can be exported to a single PGN file on sd-card. This file
+        will be named chess.pgn and an existing file will be overwritten.</p>
+
+    <h4>Import games into the game database</h4>
+    <p>Use this option to add games to the game database. It lets you browse to a PGN file. Select
+        and choose to import.</p>
+
+    <h4>Delete all games in the game database</h4>
+    <p>Use this option if you want to clean up the game database. Make sure you first make a backup
+        to sd-card, this action can not be undone.</p>
+
+    <h4>Create openingdatabase</h4>
+    <p>Browse to a PGN file on sd-card and it will be converted into an openingdatabase with the
+        same name but with file name extension .bin. Currently all games in the PGN file will be
+        parsed until 17 ply.</p>
+
+    <h4>Set openingdatabase</h4>
+    <p>Browse to the newly created .bin openingdatabase file to let Chess use it.</p>
+
+    <h4>Uninstall UCI engine</h4>
+    <p>Remove the installed UCI engine.</p>
+
+    <h4>Create practice set</h4>
+    <p>Creates practice positions from games that end in a check-mate. Browse to the file to
+        process. Failed entries are usually games that did not end in a check-mate or are a
+        duplicate</p>
+
+    <h4>Reset practice set</h4>
+    <p>Want to start over practicing? This will also reset your average time counter.</p>
+
+        ]]>
+    </string>
+    <string name="about_help">
+        <![CDATA[
+        <p>Created by <i>Jeroen Carolus</i></p>
+
+<p>For support, information about updates and the latest version: please go to the developer website
+    <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
+
+<p>Thanks to <i>Peter van Grijfland</i> for his involvement, excellent suggestions and beta testing.
+</p>
+<p>GitHub contributions:</p>
+<p><i>Tim Tennyson</i>: Several improvements.</p>
+<p><i>Alessandro Dal Bello, Paolo Straffi</i>: Italian translation.</p>
+<p><i>Ildar Gubaidulin</i>: Russian translation.</p>
+<p><i>Marcella De Rosa</i>: Spanish and Portuguese translations.</p>
+<p><i>Stan Zheng</i>: Chinese translation.</p>
+        ]]>
+    </string>
+    <string name="online_help">
+        <![CDATA[
+        <p>
+        <strong>FICS: Free Internet Chess Server</strong> lets you play with thousands of chess
+        players online.<br/>
+        Warning: if your device switches from one internet access point to another, the connection
+        can break. There is no timeseal.<br/>
+    </p>
+    <h4>Menu</h4>
+    <strong>Challenges</strong><br/>
+    This shows players seeking a match. Click on the player in the list to accept a challenge.<br/>
+    <strong>Seek</strong><br/>
+    Set up your own challenge. If you fill in the handle of a player you know, it will make a direct
+    challenge.<br/>
+    <strong>Games</strong><br/>
+    Watch games being played online. A grandmaster can be identified by the GM prefix to the handle.<br/>
+    <strong>Players</strong><br/>
+    Shows idle players with ratings.<br/>
+         ]]>
+    </string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Could not start the activity</string>

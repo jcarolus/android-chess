@@ -21,7 +21,6 @@
     <string name="start_pgn">Avançado</string>
     <string name="start_ics">Jogue online</string>
     <string name="start_globalpreferences">Configuração global</string>
-    <string name="start_convergence">Tela da TV</string>
 
     <string name="globalpreferences">Configuração global</string>
     <string name="puzzlepreferences">Configuração enigma</string>
@@ -270,10 +269,6 @@
     <string name="msg_ics_enter_handle">Por favor entre seu código</string>
     <string name="msg_ics_enter_password">Por favor entre sua senha</string>
     <string name="msg_progress">Progresso:</string>
-    <string name="msg_server_stopped">Servidor parou</string>
-    <string name="msg_your_code">"Seu código: "</string>
-    <string name="msg_not_valid_ip">"Você não está num endereço LAN IP válido \nIP: "</string>
-    <string name="msg_server">Servidor não podia começar</string>
 
     <string name="err_sd_not_mounted">A fim de processar sua solicitação, necessita montar seu cartão SD.</string>
     <string name="err_send_email">E-mail could not be created.</string>
@@ -287,7 +282,7 @@
     <string name="err_saving_game">Erro salvando jogo no chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Erro copiando para área de transferência</string>
 
-    <string name="pgntool_export_explanation">Exportar banco de dados do jogo para cartão-sd</string>
+    <string name="pgntool_export_explanation">Exportar banco de dados do jogo</string>
     <string name="pgntool_import_explanation">Importar jogos no banco de dados do jogo</string>
     <string name="pgntool_delete_explanation">Remover todos os jogos no banco de dados do jogo</string>
     <string name="pgntool_add_db_explanation">Adicionar jogos ao banco de dados de aberturas</string>
@@ -404,6 +399,79 @@
     <string name="ics_unfollow">Deixar de seguir</string>
     <string name="ics_match">Partida</string>
     <string name="ics_gamenumber">Jogo #</string>
+
+    <string name="practice_help">Encontre o Check-Mate (pode haver mais de um movimento).\nO seu tempo e o tempo médio por posição são mostrados ao lado do tabuleiro.\nPressione o botão \'Mostre\' para a solução.\nPressione o botão ">" para ir para a próxima posição.\nÀs vezes, várias soluções podem ser encontradas, mas a aplicação aceita apenas uma.</string>
+    <string name="puzzle_help">Estes são difíceis quebra-cabeças de Mate em dois.\nO objetivo é encontrar o primeiro movimento que leva a um mate forçado dentro de dois movimentos. \nEm outras palavras, depois de fazer o movimento correto, o adversário não pode impedir um mate em seu próximo movimento. \nApós este primeiro passo, o quebra-cabeças é resolvido.\nPressione o botão \'Mostre\' para a solução.\nFonte: EL ARTE DEL MATE EN DOS por Eduardo Sadier</string>
+    <string name="advanced_help"><![CDATA[
+<h3>Avançado</h3>
+    <p>Criar ou importar seu próprio material aqui</p>
+
+    <h4>Exportar banco de dados do jogo para cartão SD</h4>
+    <p>Todos os jogos no banco de dados do jogo podem ser exportados para um único arquivo PGN no
+        cartão SD. Este arquivo será nomeado chess.pgn y será sobrescrito num arquivo existente.</p>
+
+    <h4>Importar jogos no banco de dados do jogo</h4>
+    <p>Use esta opção para adicionar jogos ao banco de dados do jogo. Selecione e escolhe de
+        importar</p>
+
+    <h4>Excluir todos os jogos no banco de dados do jogo</h4>
+    <p>Use esta opção se você deseja limpar o banco de dados jogo. Assegure-se primeiro de fazer uma
+        cópia de segurança para o cartão SD, porqué esta ação não pode ser desfeita.</p>
+
+    <h4>Criar um banco de dados de aberturas</h4>
+    <p>Navegue até um arquivo PGN no cartão SD e ele será convertido em um banco de dados de
+        aberturas com o mesmo nome, mas com arquivo de extensão .bin. Atualmente todos os jogos no
+        arquivo PGN serão analisados até 17 jogadores.</p>
+
+    <h4>Configurar um banco de dados de aberturas</h4>
+    <p>Abre o recém-criado arquivo do banco de dados de aberturas .bin para deixar Xadrez
+        usá-lo.</p>
+
+    <h4>Desinstalar o motor UCI</h4>
+    <p>Remova o motor UCI instalado.</p>
+
+    <h4>Criar configuração de práticas</h4>
+    <p>Crie posições de prática de jogos que terminam em um cheque-mate. Abre o arquivo para
+        processar. Accessos que falharam são geralmente jogos que não terminam em um cheque-mate ou
+        que são duplicados</p>
+
+    <h4>Configuração de prática de reset</h4>
+    <p>Quer começar a prática? Isso também irá redefinir seu contador de tempo médio.</p>
+     ]]></string>
+    <string name="about_help"><![CDATA[
+<p>Criado por <i>Jeroen Carolus</i></p>
+
+<p>Para apoio, informações sobre atualizações e a versão mais recente: por favor, acesse o site do
+    desenvolvedor <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
+
+<p>Graças ao <i>Peter van Grijfland</i> por seu envolvimento, excelentes sugestões e testes beta.
+</p>
+<p>Contribuções GitHub:</p>
+<p><i>Tim Tennyson</i>: várias melhorias</p>
+<p><i>Alessandro Dal Bello, Paolo Straffi</i>: traducção italiana</p>
+<p><i>Ildar Gubaidulin</i>: traducção russa</p>
+<p><i>Marcella De Rosa</i>: traducção espanhola e portuguesa</p>
+<p><i>Stan Zheng</i>: Tradução chinês.</p>
+    ]]></string>
+    <string name="online_help"> <![CDATA[
+<p>
+        <strong>FICS: Free Internet Chess Server</strong> permite que você jogue com milhares de
+        jogadores de xadrez online.<br/>
+        Aviso: se o dispositivo muda de um ponto de acesso à Internet para outro, a conexão pode
+        quebrar. Não há timeseal.<br/>
+    </p>
+    <h4>Menu</h4>
+    <strong>Desafios</strong><br/>
+    Mostra os jogadores que procuram uma partida. Clique no player na lista para aceitar um desafio.<br/>
+    <strong>Procure</strong><br/>
+    Configure o seu próprio desafio. Se você preencher o pseudônimo de um jogador que você sabe, vai
+    fazer um desafio direto com ele.<br/>
+    <strong>Jogos</strong><br/>
+    Olhe os jogos que estão sendo jogados online. Um grande mestre pode ser identificado pelo
+    prefixo GM antes do pseudônimo.<br/>
+    <strong>Jogadores</strong><br/>
+    Mostra jogadores parados com classificações.<br/>
+    ]]></string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Não foi possível iniciar a atividade</string>

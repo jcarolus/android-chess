@@ -30,6 +30,7 @@ public class ICSPatterns {
     //Pattern _pattSeeking = Pattern.compile("(\\w+) \\((.+)\\) seeking (\\d+) (\\d+) (rated |unrated ?)(standard |blitz |lightning )(\\[white\\] |\\[black\\] )?(f |m )?\\(\"play (\\d+)\" to respond\\)");
 
     protected static final Pattern chat = Pattern.compile("(\\w+)(\\(\\w+\\))? tells you\\: (.+)");
+    protected static final Pattern shouts = Pattern.compile("(\\w+)(\\(\\w+\\))? (c-)?shouts\\: (.+)");
 
     //1269.allko                    ++++.kaspalesweb(U)
     protected static final Pattern playerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
@@ -420,8 +421,24 @@ public class ICSPatterns {
         return sMoves;
     }
 
-    public boolean filterOutput(String line) {
+    public boolean filterLine(String line) {
         return line.length() < 3 || line.contains("seeking");
+    }
+
+    // filter chats and shouts
+    public boolean filterBuffer(String buffer) {
+        Matcher matchChat = chat.matcher(buffer);
+        if (matchChat.find()) {
+            Log.d(TAG, "Filter chat " + matchChat.group(0));
+            return true;
+        }
+        Matcher matchShout = shouts.matcher(buffer);
+        if (matchShout.find()) {
+            Log.d(TAG, "Filter shout " + matchShout.group(0));
+            return true;
+        }
+
+        return false;
     }
 
     public static String replaceChars(final String str, final String searchChars, String replaceChars) {

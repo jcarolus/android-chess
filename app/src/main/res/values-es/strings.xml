@@ -21,7 +21,6 @@
     <string name="start_pgn">Avanzado</string>
     <string name="start_ics">Juega en línea</string>
     <string name="start_globalpreferences">Configuración global</string>
-    <string name="start_convergence">Pantalla TV</string>
 
     <string name="globalpreferences">Configuración global</string>
     <string name="puzzlepreferences">Configuración rompecabezas</string>
@@ -270,10 +269,6 @@
     <string name="msg_ics_enter_handle">Por favor introduzca su codigo</string>
     <string name="msg_ics_enter_password">Por favor introduzca su contraseña</string>
     <string name="msg_progress">Progreso:</string>
-    <string name="msg_server_stopped">El servidor ha parado</string>
-    <string name="msg_your_code">"Tu codigo: "</string>
-    <string name="msg_not_valid_ip">"No estás en una dirección LAN IP valida\nIP: "</string>
-    <string name="msg_server">No pudo empezar el servidor</string>
 
     <string name="err_sd_not_mounted">Para procesar su solicitud, tiene que montar su tarjeta SD.</string>
     <string name="err_send_email">No se pudo crear un correo electronico.</string>
@@ -287,8 +282,8 @@
     <string name="err_saving_game">Error en guardar jugo en chessgamesonline.pgn</string>
     <string name="err_copy_clipboard">Error durante copia en portapapeles</string>
 
-    <string name="pgntool_export_explanation">Exportar juego a la base de datos de la tarjeta-sd</string>
-    <string name="pgntool_import_explanation">Importar juego a la base de datos de la tarjeta-sd</string>
+    <string name="pgntool_export_explanation">Exportar juego a la base de datos</string>
+    <string name="pgntool_import_explanation">Importar juegos a la base de datos</string>
     <string name="pgntool_delete_explanation">Eliminar todos los juegos a la base de datos de la tarjeta-sd</string>
     <string name="pgntool_add_db_explanation">Añadir juegos a la base de datos inicial</string>
     <string name="pgntool_create_db_explanation">Create base de datos inicial</string>
@@ -404,6 +399,81 @@
     <string name="ics_unfollow">Dejar de seguir</string>
     <string name="ics_match">Partido</string>
     <string name="ics_gamenumber">Juego #</string>
+
+    <string name="practice_help">Encuentra el Check-Mate (puede ser más de un movimiento).\nSu tiempo y el tiempo promedio por posición se muestran al lado del tablero.\nPresione el botón "Mostre" para la solución.\nPulse el botón \'>\' para pasar a la siguiente posición.\nA veces se pueden encontrar múltiples soluciones, pero la aplicación sólo acepta una..</string>
+    <string name="puzzle_help">Estos son duros rompecabezas de Mate en dos\nEl objectivo es encontrar el primer movimiento que conduce a un mate forzado dentro de dos movimientos.\nEn otras palabras, después de realizar el movimiento correcto, el oponente no puede evitar un mate en su siguiente movimiento.\nDespués de este primer movimiento, el rompecabezas se resuelve.\nPresione el botón "Mostrar" para la solución.\nFuente: EL ARTE DEL MATE EN DOS de Eduardo Sadier</string>
+    <string name="advanced_help"><![CDATA[
+<h3>Avanzado</h3>
+    <p>Crear o importar sus proprias cosas aquí</p>
+
+    <h4>Exportar base de datos del juego a tarjeta sd</h4>
+    <p>Todos los juegos en la base de datos del juego pueden ser exportados a un solo archivo PGN en
+        la tarjeta SD. Este archivo se denominará chess.pgn y será sobrescrito a un archivo
+        existente.</p>
+
+    <h4>Importar juegos a la base de datos del juego</h4>
+    <p>Utilice esta opción para agregar juegos a la base de datos del juego. Le permite navegar a un
+        archivo PGN. Seleccione y elija de importar</p>
+
+    <h4>Borrar todos los juegos en la base de datos de juegos</h4>
+    <p>Utilice esta opción si desea limpiar la base de datos del juego. Asegúrese de hacer primero
+        una copia de seguridad de la tarjeta SD, porqué esta acción no se puede deshacer</p>
+
+    <h4>Crear una base de datos de aperturas</h4>
+    <p>Abra un archivo PGN en la tarjeta SD y se conviertirá en una base de datos de aperturas con
+        el mismo nombre pero con extensión de archivo .bin. Actualmente todos los juegos en el
+        archivo PGN serán analizados hasta 17 jugadores.</p>
+
+    <h4>Configuración de base de datos de aperturas</h4>
+    <p>Abra la base de datos de aperturas recién creada para que Ajedrez la utilice.</p>
+
+    <h4>Desinstalar el motor UCI</h4>
+    <p>Elimine el motor UCI instalado.</p>
+
+    <h4>Crear configuración de práctica</h4>
+    <p>Crea posiciones de práctica de juegos que terminan en un jaque mate. Abra el archivo para
+        procesarlo. Accesos fallidos suelen ser los juegos que no terminaron en un jaque mate o son
+        un duplicado</p>
+
+    <h4>Configuración de práctica de reinicio</h4>
+    <p>¿Quiere volver a empezar la práctica? Se restablecerá también el contador de tiempo
+        medio.</p>
+     ]]></string>
+    <string name="about_help"><![CDATA[
+<p>Creado por <i>Jeroen Carolus</i></p>
+
+<p>Para suporte tecnico, información acerca de las actualizaciónes y la última versión: por favor
+    visite la página web del desarrollador <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
+
+<p>Gracias a <i>Peter van Grijfland</i> por su participación, excelentes sugerencias y prueba beta.
+</p>
+<p>Contribuciónes GitHub:</p>
+<p><i>Tim Tennyson</i>: Varias mejoras.</p>
+<p><i>Alessandro Dal Bello, Paolo Straffi</i>: traducción al Italiano.</p>
+<p><i>Ildar Gubaidulin</i>: traducción al Ruso </p>
+<p><i>Marcella De Rosa</i>: traducción al Español y al Portugués </p>
+<p><i>Stan Zheng</i>: Traducción china.</p>
+    ]]></string>
+    <string name="online_help"> <![CDATA[
+<p>
+        <strong>FICS: Free Internet Chess Server</strong> le permite jugar con miles de jugadores de
+        ajedrez en línea..<br/>
+        Advertencia: si el dispositivo cambia de punto de acceso a Internet, la conexión puede
+        romperse. No hay timeseal.<br/>
+    </p>
+    <h4>Menú</h4>
+    <strong>Desafíos</strong><br/>
+    Muestra los jugadores que buscan un partido. Haga clic en el reproductor de la lista para
+    aceptar un desafío.<br/>
+    <strong>Buscar</strong><br/>
+    Configure su propio desafío. Si inserta el codigo de un jugador que conoce, hará un desafío
+    directo con el.<br/>
+    <strong>Juegos</strong><br/>
+    Mire los juegos que se están reproduciendo en línea. Un gran maestro puede ser identificado por
+    el prefijo GM antes del codigo.<br/>
+    <strong>Jugadores</strong><br/>
+    Muestra los jugadores inactivos con puntuaciones.<br/>
+    ]]></string>
 
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">No pudo empezar la actividad</string>

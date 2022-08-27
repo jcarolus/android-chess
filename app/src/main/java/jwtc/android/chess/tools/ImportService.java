@@ -17,14 +17,16 @@ import android.util.Log;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
-import jwtc.android.chess.engine.UCIEngine;
+import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
+import jwtc.chess.PGNColumns;
 
 
 public class ImportService extends Service {
@@ -35,10 +37,9 @@ public class ImportService extends Service {
     public static final int IMPORT_PRACTICE = 3;
     public static final int IMPORT_OPENINGS = 4;
     public static final int IMPORT_DATABASE = 5;
-    public static final int UCI_INSTALL = 6;
-    public static final int UCI_DB_INSTALL = 7;
     public static final int PRACTICE_RESET = 8;
     public static final int DB_POINT = 9;
+    public static final int EXPORT_GAME_DATABASE = 10;
 
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
@@ -163,53 +164,6 @@ public class ImportService extends Service {
                     }
                 }
                 break;
-            case UCI_INSTALL:
-                if (uri != null) {
-                    try {
-                        String sEngine = getUriDisplayName(this.getBaseContext(), uri);
-
-                        Log.i(TAG, "Install UCI " + sEngine);
-
-                        InputStream fis = getContentResolver().openInputStream(uri);
-
-                        UCIEngine.install(fis, sEngine);
-
-                        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
-                        editor.putString("UCIEngine", sEngine);
-                        editor.commit();
-
-                        dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
-
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString());
-                        dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
-                    }
-                }
-                break;
-            case UCI_DB_INSTALL:
-                if (uri != null) {
-
-                    try {
-                        String sPath = getUriDisplayName(this.getBaseContext(), uri);
-                        String sDatabase = uri.getLastPathSegment(); //"goi.bin"
-
-                        Log.i(TAG, "Install UCI database " + sPath + " as " + sDatabase);
-
-                        FileInputStream fis = new FileInputStream(sPath);
-                        UCIEngine.installDb(fis, sDatabase);
-
-                        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
-                        editor.putString("UCIDatabase", sDatabase);
-                        editor.commit();
-
-                        dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
-
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString());
-                        dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
-                    }
-                }
-                break;
             case PRACTICE_RESET:
                 try {
                     SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
@@ -234,6 +188,22 @@ public class ImportService extends Service {
 
                         editor.putString("OpeningDb", uri.toString());
                         editor.commit();
+
+                        dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                    dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
+                }
+                break;
+            case EXPORT_GAME_DATABASE:
+                try {
+                    if (uri != null) {
+                        OutputStream fos = getContentResolver().openOutputStream(uri);
+                        String PGN = collectGameDatabaseAsPGN();
+                        fos.write(PGN.getBytes());
+                        fos.flush();
+                        fos.close();
 
                         dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
                     }
@@ -316,6 +286,26 @@ public class ImportService extends Service {
         }
 
         return null;
+    }
+
+    protected String collectGameDatabaseAsPGN() {
+        String s = "";
+        Context context = this.getBaseContext();
+        Cursor cursor = context.getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, null, null, PGNColumns.DEFAULT_SORT_ORDER);
+        if (cursor != null) {
+
+            if (cursor.getCount() > 0) {
+
+                cursor.moveToFirst();
+
+                while (cursor.isAfterLast() == false) {
+                    s += cursor.getString(cursor.getColumnIndex(PGNColumns.PGN)) + "\n\n\n";
+                    cursor.moveToNext();
+                }
+
+            }
+        }
+        return s;
     }
 
 //    protected TreeSet<Long> _arrKeys;

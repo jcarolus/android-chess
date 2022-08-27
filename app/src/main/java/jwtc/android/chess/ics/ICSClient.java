@@ -879,10 +879,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     i.setClass(ICSClient.this, ICSPrefs.class);
                     startActivity(i);
                 } else if (selected.equals(getString(R.string.menu_help))) {
-                    Intent i = new Intent();
-                    i.setClass(ICSClient.this, HtmlActivity.class);
-                    i.putExtra(HtmlActivity.HELP_MODE, "help_online");
-                    startActivity(i);
+                    showHelp(R.string.online_help);
                 } else {
                     // assume a custom command
                     sendString(selected);
@@ -935,7 +932,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         viewAnimatorRoot.setDisplayedChild(VIEW_MENU);
         buttonMenu.setVisibility(View.GONE);
 
-        textViewTitle.setText(icsServer != null  ? icsServer.getHandle() : "--");
+        textViewTitle.setText(icsServer != null ? icsServer.getHandle() : "--");
     }
 
     public void setLoadingView() {
@@ -1062,7 +1059,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         sendString("set kibitz 1"); // for puzzlebot
         sendString("set gin 0"); // current server game results - turn off - some clients turn it on
         sendString("set tzone " + tz.getDisplayName(false, TimeZone.SHORT));  // sets timezone
-
+        sendString("set interface \"Chess\" app for Android by Jeroen Carolus");
         // _handle = handle;
 
         setMenuView();

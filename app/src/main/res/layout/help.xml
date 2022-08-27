@@ -12,12 +12,18 @@
         android:id="@+id/textVersionName"
         android:layout_alignParentTop="true"
         android:gravity="center"
-        android:paddingTop="15dp" />
+        android:layout_margin="8dip" />
 
-    <android.webkit.WebView
-        android:id="@+id/WebViewHelp"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/textVersionName" />
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dip"
+        android:layout_below="@+id/textVersionName">
+        <TextView
+            android:id="@+id/TextViewHelp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+             />
+    </ScrollView>
 </RelativeLayout>
