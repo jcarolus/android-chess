@@ -78,8 +78,8 @@
         <item>5</item>
     </string-array>
     <string-array name="options_wakelock">
-        <item>Utiliser l'application en arrière plan</item>
-        <item>Ne pas utiliser l'application en arrière plan</item>
+        <item>Utiliser l\'application en arrière plan</item>
+        <item>Ne pas utiliser l\'application en arrière plan</item>
     </string-array>
     <string-array name="match_subject">
         <item>Rechercher</item>

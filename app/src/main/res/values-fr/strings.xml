@@ -31,7 +31,7 @@
     <string name="boardprerences">Paramètres du plateau</string>
     <string name="gamepreferences">Paramètres de la partie</string>
     <string name="preferences">Paramètres</string>
-    <string name="pref_wakelock">Utiliser l'application en arrière plan</string>
+    <string name="pref_wakelock">Utiliser l\'application en arrière plan</string>
     <string name="pref_wakelock_desc">Cela préviendra de la mise en veille de votre téléphone</string>
     <string name="pref_colorscheme">Jeu de couleurs </string>
     <string name="pref_colorscheme_desc">Couleurs des cases du plateau</string>
@@ -46,15 +46,15 @@
     <string name="pref_move_sound_on">Son du coup</string>
     <string name="pref_move_sound_on_desc">Produire un son lorsque le coup est joué</string>
     <string name="pref_eco">Info ECO</string>
-    <string name="pref_eco_desc">Affichage de l'ECO des ouvertures lorsque cela est possible</string>
+    <string name="pref_eco_desc">Affichage de l\'ECO des ouvertures lorsque cela est possible</string>
     <string name="pref_extrahighlight">Mise en évidence</string>
     <string name="pref_extrahighlight_desc">Mettre en évidence le coup</string>
     <string name="pref_fullscreen">Activer le plein écran</string>
-    <string name="pref_fullscreen_desc">Recommandé pour les petits écrans ou l'affichage en paysage, sinon des éléments peuvent disparaitre</string>
+    <string name="pref_fullscreen_desc">Recommandé pour les petits écrans ou l\'affichage en paysage, sinon des éléments peuvent disparaitre</string>
     <string name="pref_onLoadJumpToLastMove">Aller au dernier coup</string>
-    <string name="pref_onLoadJumpToLastMove_desc">Lorsque l'application se met en veille, aller au dernier coup</string>
+    <string name="pref_onLoadJumpToLastMove_desc">Lorsque l\'application se met en veille, aller au dernier coup</string>
     <string name="pref_uci">Moteur UCI</string>
-    <string name="pref_uci_desc">Sélectionner le moteur d'échecs à utiliser</string>
+    <string name="pref_uci_desc">Sélectionner le moteur d\'échecs à utiliser</string>
     <string name="pref_pieceset">Type de pièces</string>
     <string name="pref_pieceset_desc">Sélectionner le type de pièces à afficher</string>
     <string name="pref_tileset">Motif du plateau</string>
@@ -66,24 +66,24 @@
     <string name="pref_icsconsolecharactersize">Taille des lettres de la console</string>
     <string name="pref_icsconsolecharactersize_desc">Ajuster la taille des lettres de la console</string>
     <string name="pref_icsautosought">Recherche automatique</string>
-    <string name="pref_icsautosought_desc">Rafaraichir l'affichage des challenges automatiquement</string>
+    <string name="pref_icsautosought_desc">Rafaraichir l\'affichage des challenges automatiquement</string>
     <string name="pref_icstimewarning">Alerte peu de temps restant</string>
-    <string name="pref_icstimewarning_desc">Un tic-tac vous alerte si votre temps restant est inférieur ou égal à la Valeur de l'Alerte de Temps restant</string>
-    <string name="pref_icstimewarningsecs">Valeur de l'Alerte de Temps restant (sec)</string>
-    <string name="pref_icstimewarningsecs_desc">A combien de secondes l'alerte de temps démarre ?</string>
+    <string name="pref_icstimewarning_desc">Un tic-tac vous alerte si votre temps restant est inférieur ou égal à la Valeur de l\'Alerte de Temps restant</string>
+    <string name="pref_icstimewarningsecs">Valeur de l\'Alerte de Temps restant (sec)</string>
+    <string name="pref_icstimewarningsecs_desc">A combien de secondes l\'alerte de temps démarre ?</string>
     <string name="prefs_icsendgamedialog">Boite de dialogue de fin de partie</string>
     <string name="prefs_icsendgamesummary">A la fin de la partie, voulez-vous une boite de dialogue de sauvegarde ?</string>
-    <string name="prefs_icsshowclock">Affichage de l'horloge en PGN</string>
+    <string name="prefs_icsshowclock">Affichage de l\'horloge en PGN</string>
     <string name="pref_icsgamestartsound">Son du départ de la partie</string>
     <string name="pref_icsgamestartsound_desc">Jouer un son lors du commencement de la partie ou de la perte de la connection</string>
-    <string name="pref_icsnotification">Notification d'une nouvelle partie</string>
-    <string name="prefs_icsnotificationsummary">Voulez vous connaitre le démarrage d'une partie avec l'apparition d'une icône ?</string>
+    <string name="pref_icsnotification">Notification d\'une nouvelle partie</string>
+    <string name="prefs_icsnotificationsummary">Voulez vous connaitre le démarrage d\'une partie avec l\'apparition d\'une icône ?</string>
     <string name="pref_puzzle_show_seekbar">Affichage de la barre de rechercher</string>
     <string name="pref_puzzle_show_seekbar_desc">Navigation rapide dans les puzzles avec la barre de recherche</string>
     <string name="pref_localelanguage">Définisser votre langue</string>
     <string name="pref_localelanguage_desc">Choisissez la langue que vous voulez utiliser</string>
     <string name="pref_skipreturn">Ignorer le retour à la ligne</string>
-    <string name="pref_skipreturn_desc">Pour les plateaux USB, un saut à la ligne sera ignoré ainsi l'application ne sera pas fermée</string>
+    <string name="pref_skipreturn_desc">Pour les plateaux USB, un saut à la ligne sera ignoré ainsi l\'application ne sera pas fermée</string>
     <string name="pref_engine_seconds">Temps limite pour le moteur</string>
     <string name="pref_engine_seconds_desc">Le nombre de secondes que le moteur peut prendre pour jouer son coup</string>
     <string name="pref_vs_cpu">Contre le processeur</string>
@@ -96,7 +96,7 @@
     <string name="button_menu">Menu</string>
     <string name="button_cancel">Annulé</string>
     <string name="button_login">Login</string>
-    <string name="button_register">S'enregistrer</string>
+    <string name="button_register">S\'enregistrer</string>
     <string name="button_close">Fermer</string>
     <string name="button_save">Sauvegarder</string>
     <string name="button_save_copy">Sauvegarder une copie</string>
@@ -118,7 +118,7 @@
     <string name="title_offers_draw">Composer une requête</string>
     <string name="title_offers_adjourn">Reporter la requête</string>
     <string name="title_pick_level">Sélectionner le niveau de la partie</string>
-    <string name="title_pick_wakelock">Sélectionner l'option de mise en veille</string>
+    <string name="title_pick_wakelock">Sélectionner l\'option de mise en veille</string>
     <string name="title_info">Information</string>
     <string name="title_menu">Menu</string>
     <string name="title_welcome">Bienvenue</string>
@@ -135,8 +135,8 @@
     <string name="title_create_new_line">Créer une nouvelle ligne ?</string>
     <string name="title_chess960_manual_random">Chess 960 :: Position manuel nr ou aléatoire ?</string>
     <string name="title_edit_or_delete">Editer ou supprimer ?</string>
-    <string name="title_edit_command">Commande d'édition</string>
-    <string name="title_ics_mode_idle">A l'arrêt</string>
+    <string name="title_edit_command">Commande d\'édition</string>
+    <string name="title_ics_mode_idle">A l\'arrêt</string>
     <string name="title_ics_mode_play">Jouer</string>
     <string name="title_ics_mode_watch">Regarder</string>
     <string name="title_ics_mode_examine">Examiner</string>
@@ -160,9 +160,9 @@
     <string name="menu_pgn_tool">Outil PGN</string>
     <string name="menu_about">A propos</string>
     <string name="menu_exit">Quitter</string>
-    <string name="menu_flip">Inverser l'échiquier</string>
+    <string name="menu_flip">Inverser l\'échiquier</string>
     <string name="menu_more">Plus…</string>
-    <string name="menu_setup">Configuration de l'échiquier</string>
+    <string name="menu_setup">Configuration de l\'échiquier</string>
     <string name="menu_from_qrcode">Depuis un QR-code</string>
     <string name="menu_to_qrcode">Vers un QR-code</string>
     <string name="menu_new_command">Nouvelle commande</string>
@@ -191,9 +191,9 @@
     <string name="options_default">Echecs standard</string>
     <string name="options_960">Chess 960 - Fischer aléatoire</string>
     <string name="options_load_database">Chargement de la base de données des ouvertures</string>
-    <string name="options_auto_flip">Inverser automatiquement l'échiquier</string>
-    <string name="options_flip">Inverser l'échiquier</string>
-    <string name="options_setup">Configuration de l'échiquier</string>
+    <string name="options_auto_flip">Inverser automatiquement l\'échiquier</string>
+    <string name="options_flip">Inverser l\'échiquier</string>
+    <string name="options_setup">Configuration de l\'échiquier</string>
     <string name="options_show_moves">Montrer les coups</string>
     <string name="options_level_time">Niveau (temps)</string>
     <string name="options_level_ply">Niveau (joueur)</string>
@@ -239,10 +239,10 @@
     <string name="choice_edit">Editer</string>
     <string name="choice_delete">Supprimer</string>
 
-    <string name="puzzle_error_install">Une erreur est apparue pendant l'installation</string>
+    <string name="puzzle_error_install">Une erreur est apparue pendant l\'installation</string>
     <string name="puzzle_already_solved">(la position est déjà trouvée)</string>
-    <string name="puzzle_not_correct_move"> ce n'est pas le coup attendu</string>
-    <string name="puzzle_invalid_move"> c'est un coup invalide</string>
+    <string name="puzzle_not_correct_move"> ce n\'est pas le coup attendu</string>
+    <string name="puzzle_invalid_move"> c\'est un coup invalide</string>
     <string name="puzzle_all_completed">Vous avez solutionné tous les puzzles !!!</string>
     <string name="puzzle_pick_promotion">Choisir la pièce pour une promotion</string>
 
@@ -285,16 +285,16 @@
     <string name="msg_ics_enter_handle">Entrez SVP votre nom</string>
     <string name="msg_ics_enter_password">Entrez SVP votre mot de passe</string>
     <string name="msg_progress">Progression :</string>
-    <string name="msg_server_stopped">Le serveur s'est arrêté</string>
+    <string name="msg_server_stopped">Le serveur s\'est arrêté</string>
     <string name="msg_your_code">"Votre code : "</string>
-    <string name="msg_not_valid_ip">"Vous n'êtes pas sur une adresse IP valide\nIP: "</string>
+    <string name="msg_not_valid_ip">"Vous n\'êtes pas sur une adresse IP valide\nIP: "</string>
     <string name="msg_server">Impossible de démarrer le serveur</string>
 
     <string name="err_sd_not_mounted">Pour réaliser votre reqête, votre carte SD doit être montée.</string>
-    <string name="err_send_email">L'adresse e-mail n'a pas pu être créée.</string>
-    <string name="err_load_fen">La position FEN n'a pas pu être chargée</string>
-    <string name="err_load_pgn">L'historique PGN n'a pas pu être chargée</string>
-    <string name="err_no_clip_text">Il n'y a pas de texte dans le presse papier</string>
+    <string name="err_send_email">L\'adresse e-mail n\'a pas pu être créée.</string>
+    <string name="err_load_fen">La position FEN n\'a pas pu être chargée</string>
+    <string name="err_load_pgn">L\'historique PGN n\'a pas pu être chargée</string>
+    <string name="err_no_clip_text">Il n\'y a pas de texte dans le presse papier</string>
     <string name="err_install_barcode_scanner">Installer SVP le scanner de QR Code (ZXing)</string>
     <string name="err_chess960_position_range">Position invalide, entrez un nombre entre 0 et 960</string>
     <string name="err_chess960_position_format">Poistion invalide, entrez un nombre</string>
@@ -310,26 +310,26 @@
     <string name="pgntool_point_db_explanation">Etablir une base de données des ouvertures</string>
     <string name="pgntool_install_uci_engine">Installer un moteur UCI</string>
     <string name="pgntool_point_uci_engine">Installer manuellement un moteur UCI</string>
-    <string name="pgntool_uci_engines_not_found">Aucun moteur UCI n'a été trouvé</string>
+    <string name="pgntool_uci_engines_not_found">Aucun moteur UCI n\'a été trouvé</string>
     <string name="pgntool_uci_engine_success">Moteur UCI %s installé</string>
-    <string name="pgntool_uci_engine_error">Une erreur s'est produite, impossible d'installer le moteur UCI</string>
+    <string name="pgntool_uci_engine_error">Une erreur s\'est produite, impossible d\'installer le moteur UCI</string>
     <string name="pgntool_unset_uci_engine">Désinstaller le moteur UCI</string>
     <string name="pgntool_install_uci_database">Installer une base de données UCI</string>
     <string name="pgntool_uci_database_success">La base de données UCI %s a été installée</string>
-    <string name="pgntool_uci_database_error">Une erreur s'est produite, impossible d'installer une base de données UCI</string>
+    <string name="pgntool_uci_database_error">Une erreur s\'est produite, impossible d\'installer une base de données UCI</string>
     <string name="pgntool_unset_uci_database">Désinstaller une base de données UCI</string>
     <string name="pgntool_help">Aide</string>
     <string name="pgntool_numexport">Exporter %1$d parties à chess.pgn</string>
     <string name="pgntool_confirm_delete">Etes-vous sûr ?</string>
     <string name="pgntool_deleted">Toutes les parties ont été supprimées</string>
-    <string name="pgntool_create_practice_explanation">Créer un groupe de parties d'entrainement</string>
-    <string name="pgntool_import_practice">Importer un groupe de parties d'entrainement</string>
-    <string name="pgntool_reset_practice">Réinitialiser les parties d'entrainement - recommencer à zéro</string>
+    <string name="pgntool_create_practice_explanation">Créer un groupe de parties d\'entrainement</string>
+    <string name="pgntool_import_practice">Importer un groupe de parties d\'entrainement</string>
+    <string name="pgntool_reset_practice">Réinitialiser les parties d\'entrainement - recommencer à zéro</string>
     <string name="pgntool_confirm_practice_reset">Etes-vous sûr de vouloir recommencer à zéro ?</string>
     <string name="pgntool_import_puzzle">Importer des puzzles</string>
     <string name="pgntool_import_opening">Utilsé par le développeur</string>
 
-    <string name="practice_set_reset">Les parties d'entrainements ont été mise à zéro</string>
+    <string name="practice_set_reset">Les parties d\'entrainements ont été mise à zéro</string>
 
     <string name="ics_client_handle">Nom</string>
     <string name="ics_client_password">Mot de passe</string>
@@ -356,7 +356,7 @@
     <string name="ics_menu_takeback">Reprendre un coup en arrière</string>
     <string name="ics_menu_closeboard">Fermer le plateau</string>
     <string name="ics_menu_console">Console</string>
-    <string name="ics_menu_unobserve">Arrêter l'observation</string>
+    <string name="ics_menu_unobserve">Arrêter l\'observation</string>
     <string name="ics_menu_stop_puzzle">Arrêter le puzzle</string>
     <string name="ics_menu_top_blitz">Top Blitz</string>
     <string name="ics_menu_top_standard">Top Standard</string>
@@ -371,7 +371,7 @@
     <string name="ics_available_players">Joueurs disponibles (en attente)</string>
     <string name="ics_offers_abort">Votre adversaire souhaite abandonner la partie.\nVoulez-vous accepter ?</string>
     <string name="ics_offers_draw">Votre adversaire vous propose la nulle.\nVoulez-vous accepter ?</string>
-    <string name="ics_offers_adjourn">Votre adversaire vous propose d'ajourner ma partie.\nVoulez-vous accepter ?</string>
+    <string name="ics_offers_adjourn">Votre adversaire vous propose d\'ajourner ma partie.\nVoulez-vous accepter ?</string>
     <string name="ics_offers_takeback">Votre adversaire vous propose de revenir un coup en arrière.\nVoulez-vous accepter ?</string>
     <string name="ics_request_sent">Demande envoyée</string>
     <string name="ics_game_over">Partie terminée</string>
@@ -380,7 +380,7 @@
 
     <string name="ics_save_game">Sauvegarde de chessgamesonline.pgn avec succès</string>
     <string name="ics_copy_clipboard">Partie copiée dans le presse papier avec succès</string>
-    <string name="ics_messages">Messages envoyées à l'adversaire</string>
+    <string name="ics_messages">Messages envoyées à l\'adversaire</string>
     <string name="ics_good_game">Bonne partie</string>
     <string name="ics_offer_rematch">Offrir la revanche</string>
     <string name="ics_game">Partie</string>
@@ -388,7 +388,7 @@
     <string name="ics_send_app">Envoyé à APPLICATION</string>
     <string name="ics_copy_clipboard_text">Copié dans CLIPBOARD</string>
 
-    <string name="ics_error_connection">Impossible de se connecter au serveur. Assurez-vous d'avoir une connection internet disponible</string>
+    <string name="ics_error_connection">Impossible de se connecter au serveur. Assurez-vous d\'avoir une connection internet disponible</string>
     <string name="ics_lost_connection">La connection au serveur est suspendue.</string>
     <string name="ics_error">Une erreur est survenue. Essayez SVP plus tard.</string>
 
@@ -426,7 +426,7 @@
     <string name="ics_quit">Quitter ?</string>
 
     <!-- Toast strings -->
-    <string name="toast_could_not_start_activity">Impossible de démarrer l'activité</string>
+    <string name="toast_could_not_start_activity">Impossible de démarrer l\'activité</string>
     <string name="toast_challenge_posted">Challenge posté</string>
     <string name="prefs_icsshowclocksummary">Dans le fichier PGN, montrer le temps pour chaque coup</string>
 
