@@ -21,6 +21,7 @@
     <string name="start_pgn">高级</string>
     <string name="start_ics">在线对局</string>
     <string name="start_globalpreferences">通用参数设置</string>
+    <string name="start_boardpreferences">棋盘设置</string>
 
     <string name="globalpreferences">通用设置</string>
     <string name="puzzlepreferences">配置拼图</string>

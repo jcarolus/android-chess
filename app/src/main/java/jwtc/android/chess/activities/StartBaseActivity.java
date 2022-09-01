@@ -96,6 +96,9 @@ public class StartBaseActivity  extends AppCompatActivity {
                     } else if (requestedItem.equals(getString(R.string.start_globalpreferences))) {
                         i.setClass(StartBaseActivity.this, ChessPreferences.class);
                         startActivityForResult(i, 0);
+                    } else if (requestedItem.equals(getString(R.string.start_boardpreferences))) {
+                        i.setClass(StartBaseActivity.this, BoardPreferencesActivity.class);
+                        startActivity(i);
                     } else {
                         Log.d(TAG, "Nothing to start");
                     }

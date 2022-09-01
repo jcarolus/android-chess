@@ -21,6 +21,7 @@
     <string name="start_pgn">Avançado</string>
     <string name="start_ics">Jogue online</string>
     <string name="start_globalpreferences">Configuração global</string>
+    <string name="start_boardpreferences">Configurações do tabuleiro de xadrez</string>
 
     <string name="globalpreferences">Configuração global</string>
     <string name="puzzlepreferences">Configuração enigma</string>

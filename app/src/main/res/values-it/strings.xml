@@ -21,6 +21,7 @@
     <string name="start_pgn">Avanzate</string>
     <string name="start_ics">Gioca online</string>
     <string name="start_globalpreferences">Preferenze globali</string>
+    <string name="start_boardpreferences">Impostazioni della scacchiera</string>
 
     <string name="globalpreferences">Preferenze globali</string>
     <string name="puzzlepreferences">Preferenze Puzzle</string>

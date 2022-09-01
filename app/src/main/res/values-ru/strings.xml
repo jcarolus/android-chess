@@ -21,6 +21,7 @@
     <string name="start_pgn">Расширенные</string>
     <string name="start_ics">Игра онлайн</string>
     <string name="start_globalpreferences">Глобальные настройки</string>
+    <string name="start_boardpreferences">Настройки шахматной доски</string>
 
     <string name="globalpreferences">Глобальные настройки</string>
     <string name="puzzlepreferences">Настройки головоломок</string>
