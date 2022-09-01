@@ -225,6 +225,7 @@
         <item>Español</item>
         <item>Pусский</item>
         <item>Deutsch</item>
+	<item>Français</item>
     </string-array>
     <string-array name="localeKeyarray">
         <item>zh</item>
@@ -234,6 +235,7 @@
         <item>es</item>
         <item>ru</item>
         <item>de</item>
+	<item>fr</item>
     </string-array>
     <string-array name="piecesetarray">
         <item>Alpha</item>
