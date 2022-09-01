@@ -1,35 +1,22 @@
 package jwtc.android.chess;
 
-import jwtc.android.chess.play.PlayActivity;
-import jwtc.android.chess.practice.PracticeActivity;
-import jwtc.android.chess.puzzle.PuzzleActivity;
-import jwtc.android.chess.tools.AdvancedActivity;
-import jwtc.android.chess.ics.*;
+import jwtc.android.chess.activities.StartBaseActivity;
 import jwtc.chess.JNI;
 
-import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.view.MenuItemCompat;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.Button;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -48,9 +35,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
-public class start extends AppCompatActivity {
-
-    //private ListView _lvStart;
+public class start extends StartBaseActivity {
     public static final String TAG = "start";
 
     private MediaRouter mMediaRouter;
@@ -66,12 +51,9 @@ public class start extends AppCompatActivity {
     private boolean mWaitingForReconnect;
     private String mSessionId;
 
-    private ListView _list;
-
     private JNI _jni;
     private Timer _timer;
     private String _lastMessage;
-    private static String _ssActivity = "";
 
     /**
      * Called when the activity is first created.
@@ -79,31 +61,6 @@ public class start extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
-        String myLanguage = getData.getString("localelanguage", "");
-
-        Locale current = getResources().getConfiguration().locale;
-        String language = current.getLanguage();
-        if (myLanguage.equals("")) {    // localelanguage not used yet? then use device default locale
-            myLanguage = language;
-        }
-
-        Locale locale = new Locale(myLanguage);    // myLanguage is current language
-        Locale.setDefault(locale);
-
-        Resources resources = getResources();
-        Configuration configuration = resources.getConfiguration();
-        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        configuration.setLocale(locale);
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
-            getApplicationContext().createConfigurationContext(configuration);
-        } else {
-            resources.updateConfiguration(configuration, displayMetrics);
-        }
-
-        setContentView(R.layout.start);
 
         _jni = JNI.getInstance();
         _jni.reset();
@@ -118,51 +75,6 @@ public class start extends AppCompatActivity {
             }
         }, 1000, 500);
 
-        String[] title = getResources().getStringArray(R.array.start_menu);
-
-        _list = (ListView) findViewById(R.id.ListStart);
-        _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                _ssActivity = parent.getItemAtPosition(position).toString();
-                try {
-                    Intent i = new Intent();
-                    Log.i("start", _ssActivity);
-                    if (_ssActivity.equals(getString(R.string.start_play))) {
-                        i.setClass(start.this, PlayActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (_ssActivity.equals(getString(R.string.start_practice))) {
-                        i.setClass(start.this, PracticeActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (_ssActivity.equals(getString(R.string.start_puzzles))) {
-                        i.setClass(start.this, PuzzleActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (_ssActivity.equals(getString(R.string.start_about))) {
-                        i.setClass(start.this, HtmlActivity.class);
-                        i.putExtra(HtmlActivity.HELP_STRING_RESOURCE, R.string.about_help);
-                        startActivity(i);
-                    } else if (_ssActivity.equals(getString(R.string.start_ics))) {
-                        i.setClass(start.this, ICSClient.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (_ssActivity.equals(getString(R.string.start_pgn))) {
-                        i.setClass(start.this, AdvancedActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (_ssActivity.equals(getString(R.string.start_globalpreferences))) {
-                        i.setClass(start.this, ChessPreferences.class);
-                        startActivityForResult(i, 0);
-                    }
-                } catch (Exception ex) {
-                    Toast t = Toast.makeText(start.this, R.string.toast_could_not_start_activity, Toast.LENGTH_LONG);
-                    t.setGravity(Gravity.BOTTOM, 0, 0);
-                    t.show();
-                }
-            }
-        });
 
         // Configure Cast device discovery
         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
@@ -170,14 +82,39 @@ public class start extends AppCompatActivity {
                 .addControlCategory(CastMediaControlIntent.categoryForCast("05EB93C6")).build();
         mMediaRouterCallback = new MyMediaRouterCallback();
 
+        final String packageName = "jwtc.android.chess";
 
-    }
+        Button buttonShare = findViewById(R.id.ButtonShare);
+        if (buttonShare != null) {
+            buttonShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/plain");
+                    i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+                    i.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + packageName);
+                    startActivity(Intent.createChooser(i, "Share"));
+                }
+            });
+        }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            Log.i(TAG, "recreate");
-            recreate();
+        Button buttonRate = findViewById(R.id.ButtonRate);
+        if (buttonRate != null) {
+            buttonRate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = Uri.parse("market://details?id=" + packageName);
+                    Intent i = new Intent(Intent.ACTION_VIEW, uri);
+                    // To count with Play market backstack, After pressing back button,
+                    // to taken back to our application, we need to add following flags to intent.
+                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                    try {
+                        startActivity(i);
+                    } catch (ActivityNotFoundException e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                    }
+                }
+            });
         }
     }
 
