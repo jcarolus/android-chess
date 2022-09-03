@@ -23,7 +23,8 @@
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TableRow  style="@style/MyRowStyle">
+                <TableRow  style="@style/MyRowStyle"
+                    android:layout_margin="8dip">
                     <TextView
                         android:text="@string/pref_pieceset"
                         style="@style/MyLabelTextStyle"
@@ -37,7 +38,8 @@
                         android:entries="@array/piecesetarray"/>
 
                 </TableRow>
-                <TableRow style="@style/MyRowStyle">
+                <TableRow style="@style/MyRowStyle"
+                    android:layout_margin="8dip">
                     <TextView
                         android:text="@string/pref_colorscheme"
                         style="@style/MyLabelTextStyle"
@@ -51,7 +53,8 @@
                         android:entries="@array/colorschemes"/>
                 </TableRow>
 
-                <TableRow style="@style/MyRowStyle">
+                <TableRow style="@style/MyRowStyle"
+                    android:layout_margin="8dip">
                     <TextView
                         android:text="@string/pref_tileset"
                         style="@style/MyLabelTextStyle"
@@ -65,8 +68,8 @@
                         android:entries="@array/tileArray"/>
                 </TableRow>
 
-                <TableRow  style="@style/MyRowStyle">
-
+                <TableRow  style="@style/MyRowStyle"
+                    android:layout_margin="8dip">
                     <CheckBox
                         android:id="@+id/CheckBoxCoordinates"
                         android:text="@string/pref_showCoords"

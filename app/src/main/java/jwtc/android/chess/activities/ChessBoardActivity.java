@@ -212,16 +212,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         String sPat = prefs.getString("tileSet", "");
-        if (sPat.length() > 0) {
-            AssetManager assetManager = getAssets();
-            try {
-                ChessSquareView.bitmapPattern = BitmapFactory.decodeStream(assetManager.open("tiles/" + sPat + ".png"));
-            } catch (IOException ex) {
-                ChessSquareView.bitmapPattern = null;
-            }
-        } else {
-            ChessSquareView.bitmapPattern = null;
-        }
+        updateTileSet(sPat);
+
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
 
         skipReturn = prefs.getBoolean("skipReturn", true);
@@ -699,5 +691,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         requestMove(lastPosition, index);
         lastPosition = -1;
         ChessBoardActivity.this.updateSelectedSquares();
+    }
+
+    protected void updateTileSet(String sPat) {
+        if (sPat.length() > 0) {
+            AssetManager assetManager = getAssets();
+            try {
+                ChessSquareView.bitmapPattern = BitmapFactory.decodeStream(assetManager.open("tiles/" + sPat + ".png"));
+            } catch (IOException ex) {
+                ChessSquareView.bitmapPattern = null;
+            }
+        } else {
+            ChessSquareView.bitmapPattern = null;
+        }
     }
 }

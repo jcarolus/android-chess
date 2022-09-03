@@ -5,11 +5,12 @@ import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
 public class PieceSets {
-    public static int[][][] PIECES = new int[4][2][6]; // set:color:piece
+    public static int[][][] PIECES = new int[5][2][6]; // set:color:piece
     public static final int ALPHA = 0;
     public static final int MERIDA = 1;
     public static final int LEIPZIG = 2;
     public static final int CALIFORNIA = 3;
+    public static final int ELISA = 4;
 
     public static final int BLINDFOLD_SHOW_PIECES = 0;
     public static final int BLINDFOLD_HIDE_PIECES = 1;
@@ -70,5 +71,18 @@ public class PieceSets {
         PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_california_wr;
         PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_california_wq;
         PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_california_wk;
+
+        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_elisa_bp;
+        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_elisa_bn;
+        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_elisa_bb;
+        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_elisa_br;
+        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_elisa_bq;
+        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_elisa_bk;
+        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_elisa_wp;
+        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_elisa_wn;
+        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_elisa_wb;
+        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_elisa_wr;
+        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_elisa_wq;
+        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_elisa_wk;
     }
 }
