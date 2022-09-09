@@ -477,4 +477,31 @@
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Não foi possível iniciar a atividade</string>
     <string name="toast_challenge_posted">Desafio publicado</string>
+
+    <!-- array items -->
+    <string name="tile_none">none</string>
+    <string name="tile_double_shade">double shade</string>
+    <string name="tile_single_shade">single shade</string>
+
+    <string name="color_scheme_yellow">Amarelo</string>
+    <string name="color_scheme_blue">Azul</string>
+    <string name="color_scheme_green">Verde</string>
+    <string name="color_scheme_grey">Cinza</string>
+    <string name="color_scheme_brown">Marrom</string>
+    <string name="color_scheme_red">Vermelho</string>
+
+    <string name="match_option_color_random">Aleatorio</string>
+    <string name="match_option_color_white">Branco</string>
+    <string name="match_option_color_black">Preto</string>
+
+    <string name="time_warning_5">5 segundos</string>
+    <string name="time_warning_10">10 segundos</string>
+    <string name="time_warning_25">25 segundos</string>
+    <string name="time_warning_45">45 segundos</string>
+    <string name="time_warning_60">1 minuto</string>
+
+    <string name="game_start_sound_none">Ninguém</string>
+    <string name="game_start_sound_sound_and_vibration">som e vibração</string>
+    <string name="game_start_sound_sound_only">só som</string>
+    <string name="game_start_sound_vibration">só vibração</string>
 </resources>

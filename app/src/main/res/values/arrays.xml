@@ -50,25 +50,13 @@
         <item>@string/choice_bishop</item>
         <item>@string/choice_knight</item>
     </string-array>
-    <string-array name="playmodes">
-        <item>You vs Android</item>
-        <item>Android vs you</item>
-        <item>Playing board</item>
-    </string-array>
-    <string-array name="clockchoices">
-        <item>no clock</item>
-        <item>2 minutes</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>30 minutes</item>
-    </string-array>
     <string-array name="colorschemes">
-        <item>Yellow</item>
-        <item>Blue</item>
-        <item>Green</item>
-        <item>Grey</item>
-        <item>Brown</item>
-        <item>Red</item>
+        <item>@string/color_scheme_yellow</item>
+        <item>@string/color_scheme_blue</item>
+        <item>@string/color_scheme_green</item>
+        <item>@string/color_scheme_grey</item>
+        <item>@string/color_scheme_brown</item>
+        <item>@string/color_scheme_red</item>
     </string-array>
     <string-array name="colorscheme_indexes">
         <item>0</item>
@@ -77,14 +65,6 @@
         <item>3</item>
         <item>4</item>
         <item>5</item>
-    </string-array>
-    <string-array name="options_wakelock">
-        <item>Use wake lock</item>
-        <item>Do not use wake lock</item>
-    </string-array>
-    <string-array name="match_subject">
-        <item>Seek</item>
-        <item>Challenge</item>
     </string-array>
     <string-array name="match_time_minutes">
         <item>0</item>
@@ -128,9 +108,9 @@
         <item>Chess 960 (experimental)</item>
     </string-array>
     <string-array name="match_color">
-        <item>Random</item>
-        <item>White</item>
-        <item>Black</item>
+        <item>@string/match_option_color_random</item>
+        <item>@string/match_option_color_white</item>
+        <item>@string/match_option_color_black</item>
     </string-array>
     <string-array name="console_character_size">
         <item>6</item>
@@ -151,11 +131,11 @@
         <item>18</item>
     </string-array>
     <string-array name="time_warning">
-        <item>5 seconds</item>
-        <item>10 seconds</item>
-        <item>25 seconds</item>
-        <item>45 seconds</item>
-        <item>1 minute</item>
+        <item>@string/time_warning_5</item>
+        <item>@string/time_warning_10</item>
+        <item>@string/time_warning_25</item>
+        <item>@string/time_warning_45</item>
+        <item>@string/time_warning_60</item>
     </string-array>
     <string-array name="time_warning_values">
         <item>5</item>
@@ -165,10 +145,10 @@
         <item>60</item>
     </string-array>
     <string-array name="gamestartsound">
-        <item>None</item>
-        <item>sound and vibration</item>
-        <item>sound only</item>
-        <item>vibration only</item>
+        <item>@string/game_start_sound_none</item>
+        <item>@string/game_start_sound_sound_and_vibration</item>
+        <item>@string/game_start_sound_sound_only</item>
+        <item>@string/game_start_sound_vibration</item>
     </string-array>
     <string-array name="gamestartsound_values">
         <item>0</item>
@@ -203,49 +183,49 @@
         <item>@string/pgntool_help</item>
     </string-array>
     <string-array name="tileKeyArray">
-        <item></item>
-        <item>shade</item>
-        <item>shade_bottom</item>
-        <item>stripes</item>
-        <item>clouds</item>
-        <item>circuit</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
     <string-array name="tileArray">
-        <item>none</item>
-        <item>double shade</item>
-        <item>single shade</item>
-        <item>stripes</item>
-        <item>clouds</item>
-        <item>circuit</item>
+        <item>@string/tile_none</item>
+        <item>@string/tile_single_shade</item>
+        <item>@string/tile_double_shade</item>
     </string-array>
     <string-array name="localearray">
-        <item>中文</item>
-        <item>English</item>
-        <item>Italiano</item>
-        <item>português</item>
-        <item>Español</item>
-        <item>Pусский</item>
-        <item>Deutsch</item>
+        <item>@string/locale_zh_title</item>
+        <item>@string/locale_en_title</item>
+        <item>@string/locale_it_title</item>
+        <item>@string/locale_pt_title</item>
+        <item>@string/locale_es_title</item>
+        <item>@string/locale_ru_title</item>
+        <item>@string/locale_de_title</item>
     </string-array>
     <string-array name="localeKeyarray">
-        <item>zh</item>
-        <item>en</item>
-        <item>it</item>
-        <item>pt</item>
-        <item>es</item>
-        <item>ru</item>
+        <item>@string/locale_zh</item>
+        <item>@string/locale_en</item>
+        <item>@string/locale_it</item>
+        <item>@string/locale_pt</item>
+        <item>@string/locale_es</item>
+        <item>@string/locale_ru</item>
         <item>de</item>
     </string-array>
     <string-array name="piecesetarray">
-        <item>Alpha</item>
-        <item>Merida</item>
-        <item>Leipzig</item>
-        <item>California</item>
+        <item>@string/pieceset_alpha</item>
+        <item>@string/pieceset_merida</item>
+        <item>@string/pieceset_leipzig</item>
+        <item>@string/pieceset_california</item>
+        <item>@string/pieceset_companion</item>
+        <item>@string/pieceset_chessnut</item>
+        <item>@string/pieceset_kosal</item>
     </string-array>
     <string-array name="piecesetKeyarray">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
     </string-array>
 </resources>

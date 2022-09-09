@@ -9,8 +9,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 
-import java.util.Arrays;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
@@ -59,7 +57,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         spinnerTileSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                updateTileSet(getSelectedTileSet(pos));
+                ColorSchemes.selectedPattern = pos;
                 chessBoardView.invalidateSquares();
             }
 
@@ -92,11 +90,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         spinnerPieceSet.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
         spinnerColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
-
-        int pos = Arrays.asList(getTileItems()).indexOf(prefs.getString("tileSet", ""));
-        if (pos >= 0) {
-            spinnerTileSet.setSelection(pos);
-        }
+        spinnerTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
 
         rebuildBoard();
     }
@@ -109,7 +103,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         editor.putString("pieceset", "" + spinnerPieceSet.getSelectedItemPosition());
         editor.putString("colorscheme", "" + spinnerColorScheme.getSelectedItemPosition());
-        editor.putString("tileSet", getSelectedTileSet(spinnerTileSet.getSelectedItemPosition()));
+        editor.putString("squarePattern", "" + spinnerTileSet.getSelectedItemPosition());
         editor.putBoolean("showCoords", checkBoxCoordinates.isChecked());
 
         editor.commit();
@@ -120,11 +114,4 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         return false;
     }
 
-    protected String getSelectedTileSet(int pos) {
-        return getTileItems()[pos];
-    }
-
-    protected String[] getTileItems() {
-        return getResources().getStringArray(R.array.tileKeyArray);
-    }
 }

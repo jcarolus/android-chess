@@ -7,8 +7,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.Pos;
 import jwtc.chess.board.ChessBoard;
@@ -71,11 +73,17 @@ public class ChessSquareView extends View {
         }
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
 
-        if (bitmapPattern != null) {
-            float scale = (float) getWidth() / bitmapPattern.getWidth();
-            Matrix matrixScale = new Matrix();
-            matrixScale.setScale(scale, scale);
-            canvas.drawBitmap(bitmapPattern, matrixScale, paint);
+//        if (bitmapPattern != null) {
+//            float scale = (float) getWidth() / bitmapPattern.getWidth();
+//            Matrix matrixScale = new Matrix();
+//            matrixScale.setScale(scale, scale);
+//            canvas.drawBitmap(bitmapPattern, matrixScale, paint);
+//        }
+        int patternDrawable = ColorSchemes.getSelectedPatternDrawable();
+        if (patternDrawable > 0) {
+            Drawable d = getResources().getDrawable(patternDrawable, null);
+            d.setBounds(0, 0, getWidth(), getHeight());
+            d.draw(canvas);
         }
 
         if (ColorSchemes.showCoords) {

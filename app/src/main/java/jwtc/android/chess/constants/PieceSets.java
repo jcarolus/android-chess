@@ -5,12 +5,14 @@ import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
 public class PieceSets {
-    public static int[][][] PIECES = new int[5][2][6]; // set:color:piece
+    public static int[][][] PIECES = new int[7][2][6]; // set:color:piece
     public static final int ALPHA = 0;
     public static final int MERIDA = 1;
     public static final int LEIPZIG = 2;
     public static final int CALIFORNIA = 3;
-    public static final int ELISA = 4;
+    public static final int COMPANION = 4;
+    public static final int CHESSNUT = 5;
+    public static final int KOSAL = 6;
 
     public static final int BLINDFOLD_SHOW_PIECES = 0;
     public static final int BLINDFOLD_HIDE_PIECES = 1;
@@ -72,17 +74,43 @@ public class PieceSets {
         PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_california_wq;
         PIECES[CALIFORNIA][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_california_wk;
 
-        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_elisa_bp;
-        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_elisa_bn;
-        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_elisa_bb;
-        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_elisa_br;
-        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_elisa_bq;
-        PIECES[ELISA][ChessBoard.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_elisa_bk;
-        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_elisa_wp;
-        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_elisa_wn;
-        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_elisa_wb;
-        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_elisa_wr;
-        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_elisa_wq;
-        PIECES[ELISA][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_elisa_wk;
+        PIECES[COMPANION][ChessBoard.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_companion_bp;
+        PIECES[COMPANION][ChessBoard.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_companion_bn;
+        PIECES[COMPANION][ChessBoard.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_companion_bb;
+        PIECES[COMPANION][ChessBoard.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_companion_br;
+        PIECES[COMPANION][ChessBoard.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_companion_bq;
+        PIECES[COMPANION][ChessBoard.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_companion_bk;
+        PIECES[COMPANION][ChessBoard.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_companion_wp;
+        PIECES[COMPANION][ChessBoard.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_companion_wn;
+        PIECES[COMPANION][ChessBoard.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_companion_wb;
+        PIECES[COMPANION][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_companion_wr;
+        PIECES[COMPANION][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_companion_wq;
+        PIECES[COMPANION][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_companion_wk;
+
+        PIECES[CHESSNUT][ChessBoard.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_chessnut_bp;
+        PIECES[CHESSNUT][ChessBoard.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_chessnut_bn;
+        PIECES[CHESSNUT][ChessBoard.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_chessnut_bb;
+        PIECES[CHESSNUT][ChessBoard.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_chessnut_br;
+        PIECES[CHESSNUT][ChessBoard.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_chessnut_bq;
+        PIECES[CHESSNUT][ChessBoard.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_chessnut_bk;
+        PIECES[CHESSNUT][ChessBoard.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_chessnut_wp;
+        PIECES[CHESSNUT][ChessBoard.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_chessnut_wn;
+        PIECES[CHESSNUT][ChessBoard.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_chessnut_wb;
+        PIECES[CHESSNUT][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_chessnut_wr;
+        PIECES[CHESSNUT][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_chessnut_wq;
+        PIECES[CHESSNUT][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_chessnut_wk;
+
+        PIECES[KOSAL][ChessBoard.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_kosal_bp;
+        PIECES[KOSAL][ChessBoard.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_kosal_bn;
+        PIECES[KOSAL][ChessBoard.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_kosal_bb;
+        PIECES[KOSAL][ChessBoard.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_kosal_br;
+        PIECES[KOSAL][ChessBoard.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_kosal_bq;
+        PIECES[KOSAL][ChessBoard.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_kosal_bk;
+        PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_kosal_wp;
+        PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_kosal_wn;
+        PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_kosal_wb;
+        PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_kosal_wr;
+        PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_kosal_wq;
+        PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_kosal_wk;
     }
 }

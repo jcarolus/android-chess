@@ -1,10 +1,13 @@
 package jwtc.android.chess.constants;
 
+import jwtc.android.chess.R;
+
 public class ColorSchemes {
     private static int[][] colorScheme = new int[6][4];
     public static int selectedColorScheme = 0;
     public static boolean showCoords = false;
     public static boolean isRotated = false; // not ideal
+    public static int selectedPattern = 0;
     
     static {
         // yellow
@@ -19,9 +22,9 @@ public class ColorSchemes {
         colorScheme[1][2] = 0xff9fdef3;
         colorScheme[1][3] = 0xccffffff;
 
-        // green
-        colorScheme[2][0] = 0xff6a8974;
-        colorScheme[2][1] = 0xff8eb59b;
+        // green - ,
+        colorScheme[2][0] = 0xff769655;
+        colorScheme[2][1] = 0xffeeeed2;
         colorScheme[2][2] = 0xff98e5ab;
         colorScheme[2][3] = 0xccffffff;
 
@@ -59,5 +62,14 @@ public class ColorSchemes {
 
     public static int getSelectedColor() {
         return colorScheme[selectedColorScheme][2];
+    }
+
+    public static int getSelectedPatternDrawable() {
+        switch (selectedPattern) {
+            case 1: return R.drawable.square_single_shade;
+            case 2: return R.drawable.square_double_shade;
+        }
+
+        return 0;
     }
 }

@@ -14,7 +14,8 @@
         android:id="@+id/includeboard" />
 
     <ScrollView android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:layout_marginTop="8dip">
 
         <LinearLayout
             android:orientation="vertical"
@@ -23,58 +24,47 @@
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TableRow  style="@style/MyRowStyle"
-                    android:layout_margin="8dip">
-                    <TextView
-                        android:text="@string/pref_pieceset"
-                        style="@style/MyLabelTextStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                <TableRow  style="@style/MyRowStyle">
 
                     <Spinner
                         android:id="@+id/SpinnerPieceSet"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/piecesetarray"/>
-
-                </TableRow>
-                <TableRow style="@style/MyRowStyle"
-                    android:layout_margin="8dip">
-                    <TextView
-                        android:text="@string/pref_colorscheme"
-                        style="@style/MyLabelTextStyle"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dip"
+                        android:entries="@array/piecesetarray"/>
 
                     <Spinner
                         android:id="@+id/SpinnerColorScheme"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dip"
                         android:entries="@array/colorschemes"/>
+
                 </TableRow>
 
-                <TableRow style="@style/MyRowStyle"
-                    android:layout_margin="8dip">
+                <TableRow style="@style/MyRowStyle">
                     <TextView
                         android:text="@string/pref_tileset"
                         style="@style/MyLabelTextStyle"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dip"/>
 
                     <Spinner
                         android:id="@+id/SpinnerTileSet"
-                        android:layout_width="fill_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dip"
                         android:entries="@array/tileArray"/>
                 </TableRow>
 
-                <TableRow  style="@style/MyRowStyle"
-                    android:layout_margin="8dip">
+                <TableRow  style="@style/MyRowStyle">
                     <CheckBox
                         android:id="@+id/CheckBoxCoordinates"
                         android:text="@string/pref_showCoords"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dip"/>
                 </TableRow>
 
             </TableLayout>
