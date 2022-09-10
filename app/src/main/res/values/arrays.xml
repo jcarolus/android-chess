@@ -199,22 +199,24 @@
         <item>@string/tile_double_shade</item>
     </string-array>
     <string-array name="localearray">
-        <item>@string/locale_zh_title</item>
         <item>@string/locale_en_title</item>
+        <item>@string/locale_zh_title</item>
         <item>@string/locale_it_title</item>
         <item>@string/locale_pt_title</item>
         <item>@string/locale_es_title</item>
         <item>@string/locale_ru_title</item>
         <item>@string/locale_de_title</item>
+        <item>@string/locale_fr_title</item>
     </string-array>
     <string-array name="localeKeyarray">
-        <item>@string/locale_zh</item>
         <item>@string/locale_en</item>
+        <item>@string/locale_zh</item>
         <item>@string/locale_it</item>
         <item>@string/locale_pt</item>
         <item>@string/locale_es</item>
         <item>@string/locale_ru</item>
-        <item>de</item>
+        <item>@string/locale_de</item>
+        <item>@string/locale_fr</item>
     </string-array>
     <string-array name="piecesetarray">
         <item>@string/pieceset_alpha</item>
