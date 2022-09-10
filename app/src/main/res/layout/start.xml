@@ -6,10 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".start">
 
+    <TableLayout
+        android:id="@+id/BottomTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        <TableRow android:gravity="center_vertical">
+            <Button
+                android:id="@+id/ButtonShare"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dip"
+                android:text="Share"
+                android:drawableLeft="@drawable/ic_share_fill"/>
+        </TableRow>
+    </TableLayout>
     <ListView
         android:id="@+id/ListStart"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/BottomTable"
         android:drawSelectorOnTop="false"
         android:entries="@array/start_menu" />
 </RelativeLayout>

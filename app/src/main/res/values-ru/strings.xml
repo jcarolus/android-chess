@@ -21,6 +21,7 @@
     <string name="start_pgn">Расширенные</string>
     <string name="start_ics">Игра онлайн</string>
     <string name="start_globalpreferences">Глобальные настройки</string>
+    <string name="start_boardpreferences">Настройки шахматной доски</string>
 
     <string name="globalpreferences">Глобальные настройки</string>
     <string name="puzzlepreferences">Настройки головоломок</string>
@@ -477,4 +478,33 @@
     <string name="toast_could_not_start_activity">Не удалось начать действие</string>
     <string name="toast_challenge_posted">Вызов опубликован</string>
 
+    <!-- array items -->
+    <string name="tile_none">none</string>
+    <string name="tile_double_shade">double shade</string>
+    <string name="tile_single_shade">single shade</string>
+
+    <string name="color_scheme_yellow">Жёлтый</string>
+    <string name="color_scheme_blue">Синий</string>
+    <string name="color_scheme_green">Зелёный</string>
+    <string name="color_scheme_grey">Серый</string>
+    <string name="color_scheme_brown">Коричневый</string>
+    <string name="color_scheme_red">Красный</string>
+    <string name="color_scheme_orange">Oранжевый</string>
+    <string name="color_scheme_pink">Розовый</string>
+    <string name="color_scheme_purple">Пурпурный</string>
+
+    <string name="match_option_color_random">Произвольно</string>
+    <string name="match_option_color_white">Белые</string>
+    <string name="match_option_color_black">Чёрные</string>
+
+    <string name="time_warning_5">5 секунд</string>
+    <string name="time_warning_10">10 секунд</string>
+    <string name="time_warning_25">25 секунд</string>
+    <string name="time_warning_45">45 секунд</string>
+    <string name="time_warning_60">1 минута</string>
+
+    <string name="game_start_sound_none">Нет</string>
+    <string name="game_start_sound_sound_and_vibration">Звук и вибрация</string>
+    <string name="game_start_sound_sound_only">Только звук</string>
+    <string name="game_start_sound_vibration">Только вибрация</string>
 </resources>

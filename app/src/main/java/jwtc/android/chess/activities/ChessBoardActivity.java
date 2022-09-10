@@ -211,17 +211,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
-        String sPat = prefs.getString("tileSet", "");
-        if (sPat.length() > 0) {
-            AssetManager assetManager = getAssets();
-            try {
-                ChessSquareView.bitmapPattern = BitmapFactory.decodeStream(assetManager.open("tiles/" + sPat + ".png"));
-            } catch (IOException ex) {
-                ChessSquareView.bitmapPattern = null;
-            }
-        } else {
-            ChessSquareView.bitmapPattern = null;
-        }
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
 
         skipReturn = prefs.getBoolean("skipReturn", true);
@@ -230,6 +219,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         try {
             PieceSets.selectedSet = Integer.parseInt(prefs.getString("pieceset", "0"));
             ColorSchemes.selectedColorScheme = Integer.parseInt(prefs.getString("colorscheme", "0"));
+            ColorSchemes.selectedPattern = Integer.parseInt(prefs.getString("squarePattern", "0"));
 
         } catch (NumberFormatException ex) {
             Log.e(TAG, ex.getMessage());
@@ -338,7 +328,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (child instanceof ChessSquareView) {
                 final ChessSquareView squareView = (ChessSquareView) child;
 
-                squareView.setSelected(squareView.getPos() == lastPosition || squareView.getPos() == _dpadPos);
+                squareView.setSelected(squareView.getPos() == lastPosition);
+                squareView.setFocussed(squareView.getPos() == _dpadPos);
                 squareView.setHighlighted(highlightedPositions.contains(i));
             }
         }

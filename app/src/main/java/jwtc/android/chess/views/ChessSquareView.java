@@ -7,8 +7,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.Pos;
 import jwtc.chess.board.ChessBoard;
@@ -17,16 +19,17 @@ public class ChessSquareView extends View {
     private int pos;
     private boolean selected;
     private boolean highlighted;
+    private boolean focussed;
 
     private static Paint paint = new Paint();
     private static Paint highlightPaint = new Paint();
-    public static Bitmap bitmapPattern = null;
 
     public ChessSquareView(Context context, int pos) {
         super(context);
         this.pos = pos;
         selected = false;
         highlighted = false;
+        focussed = false;
     }
 
     public int getPos() {
@@ -62,8 +65,16 @@ public class ChessSquareView extends View {
         return this.highlighted;
     }
 
+    public void setFocussed(boolean focussed) {
+        if (this.focussed != focussed) {
+            this.focussed = focussed;
+            this.invalidate();
+        }
+    }
+
     public void onDraw(Canvas canvas) {
-        if (selected) {
+
+        if (this.selected) {
             paint.setColor(ColorSchemes.getSelectedColor());
         } else {
             final int fieldColor = (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? ChessBoard.WHITE : ChessBoard.BLACK) : (((pos >> 3) & 1) == 0 ? ChessBoard.BLACK : ChessBoard.WHITE);
@@ -71,11 +82,18 @@ public class ChessSquareView extends View {
         }
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
 
-        if (bitmapPattern != null) {
-            float scale = (float) getWidth() / bitmapPattern.getWidth();
-            Matrix matrixScale = new Matrix();
-            matrixScale.setScale(scale, scale);
-            canvas.drawBitmap(bitmapPattern, matrixScale, paint);
+        int patternDrawable = ColorSchemes.getSelectedPatternDrawable();
+        if (patternDrawable > 0) {
+            Drawable d = getResources().getDrawable(patternDrawable, null);
+            d.setTint(ColorSchemes.getSelectedColor());
+            d.setBounds(0, 0, getWidth(), getHeight());
+            d.draw(canvas);
+        }
+
+        if (focussed) {
+            Drawable d = getResources().getDrawable(R.drawable.ic_select, null);
+            d.setBounds(0, 0, getWidth(), getHeight());
+            d.draw(canvas);
         }
 
         if (ColorSchemes.showCoords) {

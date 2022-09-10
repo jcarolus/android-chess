@@ -21,6 +21,7 @@
     <string name="start_pgn">Advanced</string>
     <string name="start_ics">Play online</string>
     <string name="start_globalpreferences">Global settings</string>
+    <string name="start_boardpreferences">Chess board settings</string>
 
     <string name="globalpreferences">Global settings</string>
     <string name="puzzlepreferences">Puzzle settings</string>
@@ -503,4 +504,58 @@
     <string name="toast_challenge_posted">Challenge posted</string>
     <string name="prefs_icsshowclocksummary">In the PGN, show the clock times on each move</string>
 
+    <!-- array items -->
+    <string name="locale_zh_title">中文</string>
+    <string name="locale_en_title">English</string>
+    <string name="locale_it_title">Italiano</string>
+    <string name="locale_pt_title">português</string>
+    <string name="locale_es_title">Español</string>
+    <string name="locale_ru_title">Pусский</string>
+    <string name="locale_de_title">Deutsch</string>
+
+    <string name="locale_zh">zh</string>
+    <string name="locale_en">en</string>
+    <string name="locale_it">it</string>
+    <string name="locale_pt">pt</string>
+    <string name="locale_es">es</string>
+    <string name="locale_ru">ru</string>
+    <string name="locale_de">de</string>
+
+    <string name="pieceset_alpha">Alpha</string>
+    <string name="pieceset_merida">Merida</string>
+    <string name="pieceset_leipzig">Leipzig</string>
+    <string name="pieceset_california">California</string>
+    <string name="pieceset_companion">Companion</string>
+    <string name="pieceset_chessnut">Chessnut</string>
+    <string name="pieceset_kosal">Kosal</string>
+    <string name="pieceset_staunty">Staunty</string>
+
+    <string name="tile_none">none</string>
+    <string name="tile_double_shade">double shade</string>
+    <string name="tile_single_shade">single shade</string>
+
+    <string name="color_scheme_yellow">Yellow</string>
+    <string name="color_scheme_blue">Blue</string>
+    <string name="color_scheme_green">Green</string>
+    <string name="color_scheme_grey">Grey</string>
+    <string name="color_scheme_brown">Brown</string>
+    <string name="color_scheme_red">Red</string>
+    <string name="color_scheme_orange">Orange</string>
+    <string name="color_scheme_pink">Pink</string>
+    <string name="color_scheme_purple">Purple</string>
+
+    <string name="match_option_color_random">Random</string>
+    <string name="match_option_color_white">White</string>
+    <string name="match_option_color_black">Black</string>
+
+    <string name="time_warning_5">5 seconds</string>
+    <string name="time_warning_10">10 seconds</string>
+    <string name="time_warning_25">25 seconds</string>
+    <string name="time_warning_45">45 seconds</string>
+    <string name="time_warning_60">1 minute</string>
+
+    <string name="game_start_sound_none">None</string>
+    <string name="game_start_sound_sound_and_vibration">sound and vibration</string>
+    <string name="game_start_sound_sound_only">sound only</string>
+    <string name="game_start_sound_vibration">vibration only</string>
 </resources>

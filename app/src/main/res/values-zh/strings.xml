@@ -21,6 +21,7 @@
     <string name="start_pgn">高级</string>
     <string name="start_ics">在线对局</string>
     <string name="start_globalpreferences">通用参数设置</string>
+    <string name="start_boardpreferences">棋盘设置</string>
 
     <string name="globalpreferences">通用设置</string>
     <string name="puzzlepreferences">配置拼图</string>
@@ -463,4 +464,33 @@
     <string name="toast_could_not_start_activity">无法进行这些操作</string>
     <string name="toast_challenge_posted">发布挑战</string>
 
+    <!-- array items -->
+    <string name="tile_none">none</string>
+    <string name="tile_double_shade">double shade</string>
+    <string name="tile_single_shade">single shade</string>
+
+    <string name="color_scheme_yellow">黄色</string>
+    <string name="color_scheme_blue">蓝色</string>
+    <string name="color_scheme_green">绿色</string>
+    <string name="color_scheme_grey">灰色</string>
+    <string name="color_scheme_brown">棕色</string>
+    <string name="color_scheme_red">红色</string>
+    <string name="color_scheme_orange">橙</string>
+    <string name="color_scheme_pink">粉色的</string>
+    <string name="color_scheme_purple">紫色的</string>
+
+    <string name="match_option_color_random">随机</string>
+    <string name="match_option_color_white">白色</string>
+    <string name="match_option_color_black">黑色</string>
+
+    <string name="time_warning_5">5 秒</string>
+    <string name="time_warning_10">10 秒</string>
+    <string name="time_warning_25">25 秒</string>
+    <string name="time_warning_45">45 秒</string>
+    <string name="time_warning_60">1 分钟</string>
+
+    <string name="game_start_sound_none">无声音</string>
+    <string name="game_start_sound_sound_and_vibration">响声加振动</string>
+    <string name="game_start_sound_sound_only">只有声音</string>
+    <string name="game_start_sound_vibration">只有振动</string>
 </resources>

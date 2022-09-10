@@ -73,6 +73,16 @@ public class ChessBoardView extends ViewGroup {
         }
     }
 
+    public void invalidateSquares() {
+        final int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (child instanceof ChessSquareView) {
+                ((ChessSquareView)child).invalidate();
+            }
+        }
+    }
+
     /**
      * Any layout manager that doesn't scroll will want this.
      */

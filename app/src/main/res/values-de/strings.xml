@@ -21,6 +21,7 @@
     <string name="start_pgn">Erweitert</string>
     <string name="start_ics">Online spielen</string>
     <string name="start_globalpreferences">Globale Einstellungen</string>
+    <string name="start_boardpreferences">Schachbretteinstellungen</string>
 
     <string name="globalpreferences">Globale Einstellungen</string>
     <string name="puzzlepreferences">Puzzle Einstellungen</string>
@@ -472,5 +473,35 @@
     <string name="title_annotate">Kommentiere</string>
     <string name="practice_set_reset">Übungspositionen wurden zurückgesetzt</string>
     <string name="menu_new_command_message">Schreibe \u003cNR\u003e ans Ende eines Befehls für keine Rückgabe Beispiel: tell ChessMaster \u003cNR\u003e</string>
+
+    <!-- array items -->
+    <string name="tile_none">Aus</string>
+    <string name="tile_double_shade">Doppel Schatten</string>
+    <string name="tile_single_shade">Einzel Schatten</string>
+
+    <string name="color_scheme_yellow">Gelb</string>
+    <string name="color_scheme_blue">Blau</string>
+    <string name="color_scheme_green">Grün</string>
+    <string name="color_scheme_grey">Grau</string>
+    <string name="color_scheme_brown">Braun</string>
+    <string name="color_scheme_red">Rot</string>
+    <string name="color_scheme_orange">Orange</string>
+    <string name="color_scheme_pink">Pinke</string>
+    <string name="color_scheme_purple">Lila</string>
+
+    <string name="match_option_color_random">Zufällig</string>
+    <string name="match_option_color_white">Weiß</string>
+    <string name="match_option_color_black">Schwarz</string>
+
+    <string name="time_warning_5">5 Sekunden</string>
+    <string name="time_warning_10">10 Sekunden</string>
+    <string name="time_warning_25">25 Sekunden</string>
+    <string name="time_warning_45">45 Sekunden</string>
+    <string name="time_warning_60">1 Minute</string>
+
+    <string name="game_start_sound_none">Aus</string>
+    <string name="game_start_sound_sound_and_vibration">Ton und Vibration</string>
+    <string name="game_start_sound_sound_only">Ton und Vibration</string>
+    <string name="game_start_sound_vibration">Nur Vibration</string>
 
 </resources>

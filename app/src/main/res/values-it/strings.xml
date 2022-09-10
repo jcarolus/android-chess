@@ -21,6 +21,7 @@
     <string name="start_pgn">Avanzate</string>
     <string name="start_ics">Gioca online</string>
     <string name="start_globalpreferences">Preferenze globali</string>
+    <string name="start_boardpreferences">Impostazioni della scacchiera</string>
 
     <string name="globalpreferences">Preferenze globali</string>
     <string name="puzzlepreferences">Preferenze Puzzle</string>
@@ -481,4 +482,33 @@
     <string name="toast_could_not_start_activity">Impossibile avviare l\'Activity</string>
     <string name="toast_challenge_posted">Sfida lanciata</string>
 
+    <!-- array items -->
+    <string name="tile_none">none</string>
+    <string name="tile_double_shade">double shade</string>
+    <string name="tile_single_shade">single shade</string>
+
+    <string name="color_scheme_yellow">Giallo</string>
+    <string name="color_scheme_blue">Blu</string>
+    <string name="color_scheme_green">Verde</string>
+    <string name="color_scheme_grey">Grigio</string>
+    <string name="color_scheme_brown">Marrone</string>
+    <string name="color_scheme_red">Rosso</string>
+    <string name="color_scheme_orange">Arancione</string>
+    <string name="color_scheme_pink">Rosa</string>
+    <string name="color_scheme_purple">Viola</string>
+
+    <string name="match_option_color_random">casuale</string>
+    <string name="match_option_color_white">bianco</string>
+    <string name="match_option_color_black">nero</string>
+
+    <string name="time_warning_5">5 secondi</string>
+    <string name="time_warning_10">10 secondi</string>
+    <string name="time_warning_25">25 secondi</string>
+    <string name="time_warning_45">45 secondi</string>
+    <string name="time_warning_60">1 minuto</string>
+
+    <string name="game_start_sound_none">nessuno</string>
+    <string name="game_start_sound_sound_and_vibration">suono e le vibrazioni</string>
+    <string name="game_start_sound_sound_only">solo il suono</string>
+    <string name="game_start_sound_vibration">solo vibrazione</string>
 </resources>
