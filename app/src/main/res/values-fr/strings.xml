@@ -21,7 +21,6 @@
     <string name="start_pgn">Paramètres avancés</string>
     <string name="start_ics">Partie en ligne</string>
     <string name="start_globalpreferences">Paramètres globaux</string>
-    <string name="start_convergence">Ecran TV</string>
 
     <string name="globalpreferences">Paramètres globaux</string>
     <string name="puzzlepreferences">Paramètres des puzzles</string>
@@ -285,10 +284,6 @@
     <string name="msg_ics_enter_handle">Entrez SVP votre nom</string>
     <string name="msg_ics_enter_password">Entrez SVP votre mot de passe</string>
     <string name="msg_progress">Progression :</string>
-    <string name="msg_server_stopped">Le serveur s\'est arrêté</string>
-    <string name="msg_your_code">"Votre code : "</string>
-    <string name="msg_not_valid_ip">"Vous n\'êtes pas sur une adresse IP valide\nIP: "</string>
-    <string name="msg_server">Impossible de démarrer le serveur</string>
 
     <string name="err_sd_not_mounted">Pour réaliser votre reqête, votre carte SD doit être montée.</string>
     <string name="err_send_email">L\'adresse e-mail n\'a pas pu être créée.</string>
@@ -430,4 +425,33 @@
     <string name="toast_challenge_posted">Challenge posté</string>
     <string name="prefs_icsshowclocksummary">Dans le fichier PGN, montrer le temps pour chaque coup</string>
 
+    <!-- array items -->
+    <string name="tile_none">rien</string>
+    <string name="tile_double_shade">double abat-jour</string>
+    <string name="tile_single_shade">abat-jour unique</string>
+
+    <string name="color_scheme_yellow">Jaune</string>
+    <string name="color_scheme_blue">Bleue</string>
+    <string name="color_scheme_green">Verte</string>
+    <string name="color_scheme_grey">Grise</string>
+    <string name="color_scheme_brown">Marron</string>
+    <string name="color_scheme_red">Rouge</string>
+    <string name="color_scheme_orange">Orange</string>
+    <string name="color_scheme_pink">Rose</string>
+    <string name="color_scheme_purple">Violette</string>
+
+    <string name="match_option_color_random">Aléatoire</string>
+    <string name="match_option_color_white">Blanc</string>
+    <string name="match_option_color_black">Noir</string>
+
+    <string name="time_warning_5">5 secondes</string>
+    <string name="time_warning_10">10 secondes</string>
+    <string name="time_warning_25">25 secondes</string>
+    <string name="time_warning_45">45 secondes</string>
+    <string name="time_warning_60">1 minute</string>
+
+    <string name="game_start_sound_none">rien</string>
+    <string name="game_start_sound_sound_and_vibration">son et vibration</string>
+    <string name="game_start_sound_sound_only">son seulement</string>
+    <string name="game_start_sound_vibration">vibration uniquement</string>
 </resources>
