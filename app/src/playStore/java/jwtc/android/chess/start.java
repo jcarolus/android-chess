@@ -97,25 +97,6 @@ public class start extends StartBaseActivity {
                 }
             });
         }
-
-        Button buttonRate = findViewById(R.id.ButtonRate);
-        if (buttonRate != null) {
-            buttonRate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Uri uri = Uri.parse("market://details?id=" + packageName);
-                    Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                    // To count with Play market backstack, After pressing back button,
-                    // to taken back to our application, we need to add following flags to intent.
-                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                    try {
-                        startActivity(i);
-                    } catch (ActivityNotFoundException e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
-                    }
-                }
-            });
-        }
     }
 
     @Override

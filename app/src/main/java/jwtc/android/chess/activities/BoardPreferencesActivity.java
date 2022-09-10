@@ -93,6 +93,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         spinnerTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
 
         rebuildBoard();
+
+        spinnerPieceSet.requestFocus();
     }
 
     @Override

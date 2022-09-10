@@ -328,7 +328,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (child instanceof ChessSquareView) {
                 final ChessSquareView squareView = (ChessSquareView) child;
 
-                squareView.setSelected(squareView.getPos() == lastPosition || squareView.getPos() == _dpadPos);
+                squareView.setSelected(squareView.getPos() == lastPosition);
+                squareView.setFocussed(squareView.getPos() == _dpadPos);
                 squareView.setHighlighted(highlightedPositions.contains(i));
             }
         }

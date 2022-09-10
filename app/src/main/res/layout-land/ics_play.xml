@@ -172,7 +172,8 @@
                 <ImageButton
                     android:id="@+id/ButtonICSExamineBackward"
                     android:src="@drawable/ic_chevron_left"
-                    style="@style/ChessImageButton" />
+                    style="@style/ChessImageButton"
+                    android:nextFocusLeft="@id/includeboard"/>
 
                 <ImageButton
                     android:id="@+id/ButtonICSExamineForward"
@@ -197,6 +198,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     style="@style/ChessButton"
+                    android:nextFocusLeft="@id/includeboard"
                     />
                 <Button android:id="@+id/ButtonDraw"
                     android:text="@string/ics_menu_draw"
@@ -223,6 +225,7 @@
                 android:layout_margin="8dp"
                 android:text="@string/pref_sound"
                 android:checked="true"
+                android:nextFocusLeft="@id/includeboard"
                 ></Switch>
         </LinearLayout>
 

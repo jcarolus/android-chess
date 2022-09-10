@@ -19,13 +19,6 @@
                 android:layout_margin="8dip"
                 android:text="Share"
                 android:drawableLeft="@drawable/ic_share_fill"/>
-            <Button
-                android:id="@+id/ButtonRate"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:text="Rate"
-                android:drawableLeft="@drawable/ic_hand_thumbs_up_fill"/>
         </TableRow>
     </TableLayout>
     <ListView

@@ -74,7 +74,8 @@
                 <ImageButton
                     android:id="@+id/ButtonPuzzlePrevious"
                     android:src="@drawable/ic_chevron_left"
-                    style="@style/ChessImageButton" />
+                    style="@style/ChessImageButton"
+                    android:nextFocusLeft="@id/includeboard"/>
 
                 <SeekBar
                     android:id="@+id/SeekBarPuzzle"

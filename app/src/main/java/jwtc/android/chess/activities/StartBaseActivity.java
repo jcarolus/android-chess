@@ -111,6 +111,7 @@ public class StartBaseActivity  extends AppCompatActivity {
             }
         });
 
+        _list.requestFocus();
     }
 
     @Override

@@ -475,6 +475,9 @@
     <string name="color_scheme_grey">灰色</string>
     <string name="color_scheme_brown">棕色</string>
     <string name="color_scheme_red">红色</string>
+    <string name="color_scheme_orange">橙</string>
+    <string name="color_scheme_pink">粉色的</string>
+    <string name="color_scheme_purple">紫色的</string>
 
     <string name="match_option_color_random">随机</string>
     <string name="match_option_color_white">白色</string>

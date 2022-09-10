@@ -59,8 +59,8 @@ public class ColorSchemes {
         colorScheme[7][3] = 0xccffffff;
 
         // purple
-        colorScheme[8][0] = 0xffab1a9a;
-        colorScheme[8][1] = 0xffc272b8;
+        colorScheme[8][0] = 0xff805ad5;
+        colorScheme[8][1] = 0xffac8eed;
         colorScheme[8][2] = 0xfffcd2f7;
         colorScheme[8][3] = 0xccffffff;
     }

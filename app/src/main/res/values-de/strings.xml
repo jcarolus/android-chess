@@ -485,6 +485,9 @@
     <string name="color_scheme_grey">Grau</string>
     <string name="color_scheme_brown">Braun</string>
     <string name="color_scheme_red">Rot</string>
+    <string name="color_scheme_orange">Orange</string>
+    <string name="color_scheme_pink">Pinke</string>
+    <string name="color_scheme_purple">Lila</string>
 
     <string name="match_option_color_random">Zufällig</string>
     <string name="match_option_color_white">Weiß</string>

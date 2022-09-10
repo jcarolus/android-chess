@@ -92,7 +92,8 @@
                     android:paddingLeft="8dip"
                     android:paddingRight="8dip"
                     android:layout_height="40dip"
-                    android:layout_width="wrap_content" />
+                    android:layout_width="wrap_content"
+                    android:nextFocusLeft="@id/includeboard"/>
 
                 <ImageButton
                     android:id="@+id/ButtonPracticeNext"

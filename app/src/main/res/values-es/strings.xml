@@ -491,6 +491,9 @@
     <string name="color_scheme_grey">Gris</string>
     <string name="color_scheme_brown">Marron</string>
     <string name="color_scheme_red">Rojo</string>
+    <string name="color_scheme_orange">Naranja</string>
+    <string name="color_scheme_pink">Rosa</string>
+    <string name="color_scheme_purple">Púrpura</string>
 
     <string name="match_option_color_random">Aleatorio</string>
     <string name="match_option_color_white">Blanco</string>

@@ -489,6 +489,9 @@
     <string name="color_scheme_grey">Серый</string>
     <string name="color_scheme_brown">Коричневый</string>
     <string name="color_scheme_red">Красный</string>
+    <string name="color_scheme_orange">Oранжевый</string>
+    <string name="color_scheme_pink">Розовый</string>
+    <string name="color_scheme_purple">Пурпурный</string>
 
     <string name="match_option_color_random">Произвольно</string>
     <string name="match_option_color_white">Белые</string>

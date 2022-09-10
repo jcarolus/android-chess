@@ -10,7 +10,9 @@
         android:id="@+id/includeboard"
         layout="@layout/chessboard"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+
+        android:nextFocusRight="@id/ButtonPlay"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -146,7 +148,8 @@
                             <ImageButton
                                 android:id="@+id/ButtonPlay"
                                 android:src="@drawable/ic_icon_play"
-                                style="@style/ChessImageButton" />
+                                style="@style/ChessImageButton"
+                                android:nextFocusLeft="@id/includeboard"/>
 
                             <ProgressBar
                                 android:id="@+id/ProgressBarPlay"
@@ -187,7 +190,8 @@
                         <ImageButton
                             android:id="@+id/ButtonPrevious"
                             android:src="@drawable/ic_chevron_left"
-                            style="@style/ChessImageButton" />
+                            style="@style/ChessImageButton"
+                            android:nextFocusLeft="@id/includeboard"/>
                         <SeekBar
                             android:id="@+id/SeekBarMain"
                             android:layout_marginLeft="8dip"
