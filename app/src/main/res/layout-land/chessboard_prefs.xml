@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="4dip"
+    android:id="@+id/LayoutMain">
+
+    <include
+        layout="@layout/chessboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/includeboard" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:id="@+id/SpinnerPieceSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+            android:entries="@array/piecesetarray"/>
+
+        <Spinner
+            android:id="@+id/SpinnerColorScheme"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+            android:entries="@array/colorschemes"/>
+
+        <TextView
+            android:text="@string/pref_tileset"
+            style="@style/MyLabelTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"/>
+
+        <Spinner
+            android:id="@+id/SpinnerTileSet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+            android:entries="@array/tileArray"/>
+
+        <CheckBox
+            android:id="@+id/CheckBoxCoordinates"
+            android:text="@string/pref_showCoords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"/>
+
+    </LinearLayout>
+
+</LinearLayout>
