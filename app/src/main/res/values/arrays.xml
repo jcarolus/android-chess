@@ -57,6 +57,9 @@
         <item>@string/color_scheme_grey</item>
         <item>@string/color_scheme_brown</item>
         <item>@string/color_scheme_red</item>
+        <item>@string/color_scheme_orange</item>
+        <item>@string/color_scheme_pink</item>
+        <item>@string/color_scheme_purple</item>
     </string-array>
     <string-array name="colorscheme_indexes">
         <item>0</item>
@@ -65,6 +68,9 @@
         <item>3</item>
         <item>4</item>
         <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
     </string-array>
     <string-array name="match_time_minutes">
         <item>0</item>
@@ -218,6 +224,7 @@
         <item>@string/pieceset_companion</item>
         <item>@string/pieceset_chessnut</item>
         <item>@string/pieceset_kosal</item>
+        <item>@string/pieceset_staunty</item>
     </string-array>
     <string-array name="piecesetKeyarray">
         <item>0</item>
@@ -227,5 +234,6 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
+        <item>7</item>
     </string-array>
 </resources>

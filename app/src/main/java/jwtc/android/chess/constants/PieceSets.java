@@ -5,7 +5,7 @@ import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
 public class PieceSets {
-    public static int[][][] PIECES = new int[7][2][6]; // set:color:piece
+    public static int[][][] PIECES = new int[8][2][6]; // set:color:piece
     public static final int ALPHA = 0;
     public static final int MERIDA = 1;
     public static final int LEIPZIG = 2;
@@ -13,6 +13,7 @@ public class PieceSets {
     public static final int COMPANION = 4;
     public static final int CHESSNUT = 5;
     public static final int KOSAL = 6;
+    public static final int STAUNTY = 7;
 
     public static final int BLINDFOLD_SHOW_PIECES = 0;
     public static final int BLINDFOLD_HIDE_PIECES = 1;
@@ -112,5 +113,18 @@ public class PieceSets {
         PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_kosal_wr;
         PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_kosal_wq;
         PIECES[KOSAL][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_kosal_wk;
+
+        PIECES[STAUNTY][ChessBoard.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_staunty_bp;
+        PIECES[STAUNTY][ChessBoard.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_staunty_bn;
+        PIECES[STAUNTY][ChessBoard.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_staunty_bb;
+        PIECES[STAUNTY][ChessBoard.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_staunty_br;
+        PIECES[STAUNTY][ChessBoard.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_staunty_bq;
+        PIECES[STAUNTY][ChessBoard.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_staunty_bk;
+        PIECES[STAUNTY][ChessBoard.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_staunty_wp;
+        PIECES[STAUNTY][ChessBoard.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_staunty_wn;
+        PIECES[STAUNTY][ChessBoard.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_staunty_wb;
+        PIECES[STAUNTY][ChessBoard.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_staunty_wr;
+        PIECES[STAUNTY][ChessBoard.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_staunty_wq;
+        PIECES[STAUNTY][ChessBoard.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_staunty_wk;
     }
 }

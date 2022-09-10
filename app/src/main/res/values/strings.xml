@@ -528,6 +528,7 @@
     <string name="pieceset_companion">Companion</string>
     <string name="pieceset_chessnut">Chessnut</string>
     <string name="pieceset_kosal">Kosal</string>
+    <string name="pieceset_staunty">Staunty</string>
 
     <string name="tile_none">none</string>
     <string name="tile_double_shade">double shade</string>
@@ -539,6 +540,9 @@
     <string name="color_scheme_grey">Grey</string>
     <string name="color_scheme_brown">Brown</string>
     <string name="color_scheme_red">Red</string>
+    <string name="color_scheme_orange">Orange</string>
+    <string name="color_scheme_pink">Pink</string>
+    <string name="color_scheme_purple">Purple</string>
 
     <string name="match_option_color_random">Random</string>
     <string name="match_option_color_white">White</string>
