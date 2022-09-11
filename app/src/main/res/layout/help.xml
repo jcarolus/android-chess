@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -10,15 +11,13 @@
         android:textSize="14sp"
         android:text=" "
         android:id="@+id/textVersionName"
-        android:layout_alignParentTop="true"
         android:gravity="center"
         android:layout_margin="8dip" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dip"
-        android:layout_below="@+id/textVersionName">
+        android:layout_marginTop="16dip">
         <TextView
             android:id="@+id/TextViewHelp"
             android:layout_width="fill_parent"
@@ -26,4 +25,4 @@
             android:layout_margin="8dip"
              />
     </ScrollView>
-</RelativeLayout>
+</LinearLayout>
