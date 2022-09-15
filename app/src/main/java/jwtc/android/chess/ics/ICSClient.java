@@ -1225,20 +1225,10 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
-    public void OnPlayGameResult(String message) {
-        gameToast(message);
-    }
-
-    @Override
     public void OnGameHistory(String sEvent, String sWhite, String sBlack, Calendar cal, String PGN) {
         Log.d(TAG, "OnGameHistory " + PGN);
         SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, cal, PGN, false);
         saveDialog.show();
-    }
-
-    @Override
-    public void OnPlayGameStopped() {
-        resetBoardView();
     }
 
     @Override

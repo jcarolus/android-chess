@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import jwtc.android.chess.ChessPreferences;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
@@ -37,8 +38,8 @@ public class StartBaseActivity  extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences getData = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
-        String myLanguage = getData.getString("localelanguage", "");
+        SharedPreferences prefs = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
+        String myLanguage = prefs.getString("localelanguage", "");
 
         Locale current = getResources().getConfiguration().locale;
         String language = current.getLanguage();
@@ -58,6 +59,12 @@ public class StartBaseActivity  extends AppCompatActivity {
             getApplicationContext().createConfigurationContext(configuration);
         } else {
             resources.updateConfiguration(configuration, displayMetrics);
+        }
+
+        if (prefs.getBoolean("nightMode", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         }
 
         setContentView(layoutResource);

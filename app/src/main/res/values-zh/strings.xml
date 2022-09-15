@@ -82,6 +82,8 @@
     <string name="pref_localelanguage_desc">选择要使用的语言</string>
     <string name="pref_skipreturn">忽略回车键</string>
     <string name="pref_skipreturn_desc">使用USB键盘时, 忽略回车键以避免关闭应用</string>
+    <string name="pref_night_mode">夜间模式</string>
+    <string name="pref_night_mode_desc">强制应用进入夜间模式</string>
 
     <string name="button_play">对局</string>
     <string name="button_undo">撤消</string>

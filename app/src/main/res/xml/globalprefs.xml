@@ -27,5 +27,11 @@
             android:key="moveSounds"
             android:defaultValue="false"/>
 
+        <CheckBoxPreference
+            android:title="@string/pref_night_mode"
+            android:summary="@string/pref_night_mode_desc"
+            android:key="nightMode"
+            android:defaultValue="false"/>
+
     </PreferenceCategory>
 </PreferenceScreen>

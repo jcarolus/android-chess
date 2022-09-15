@@ -89,6 +89,9 @@
     <string name="pref_vs_cpu_desc">Partie contre le processeur/moteur</string>
     <string name="pref_turn">Côté</string>
     <string name="pref_turn_desc">De quel côté du plateau voulez-vous jouer ?</string>
+    <string name="pref_night_mode">Mode nuit</string>
+    <string name="pref_night_mode_desc">Forcer l\'application en mode nuit</string>
+
     <string name="button_play">Jouer</string>
     <string name="button_undo">Annuler</string>
     <string name="button_ok">OK</string>

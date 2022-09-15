@@ -82,6 +82,8 @@
     <string name="pref_localelanguage_desc">Escolha o idioma que você gostaria de usar</string>
     <string name="pref_skipreturn">Saltar jogada de retorno</string>
     <string name="pref_skipreturn_desc">Para a placa USB, uma jogada de retorno será ignorada para que ela não feche o aplicativo</string>
+    <string name="pref_night_mode">Modo noturno</string>
+    <string name="pref_night_mode_desc">Forçar o aplicativo no modo noturno</string>
 
     <string name="button_play">Joga</string>
     <string name="button_undo">Desfaz</string>

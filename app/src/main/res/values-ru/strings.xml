@@ -82,6 +82,8 @@
     <string name="pref_localelanguage_desc">Выбрать язык для использования</string>
     <string name="pref_skipreturn">Пропускать возврат каретки</string>
     <string name="pref_skipreturn_desc">На USB-клавиатурах будет пропуск возврата каретки, чтобы приложение не закрывалось</string>
+    <string name="pref_night_mode">Ночной режим</string>
+    <string name="pref_night_mode_desc">Переведите приложение в ночной режим</string>
 
     <string name="button_play">Игра</string>
     <string name="button_undo">Отменить</string>

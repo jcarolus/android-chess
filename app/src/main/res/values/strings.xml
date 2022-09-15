@@ -90,6 +90,9 @@
     <string name="pref_vs_cpu_desc">Play versus the CPU/Engine</string>
     <string name="pref_turn">Side</string>
     <string name="pref_turn_desc">Which side of the board you play</string>
+    <string name="pref_night_mode">Night mode</string>
+    <string name="pref_night_mode_desc">Force the app into night mode</string>
+
     <string name="button_play">Play</string>
     <string name="button_undo">Undo</string>
     <string name="button_ok">OK</string>

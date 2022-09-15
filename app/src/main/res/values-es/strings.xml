@@ -82,6 +82,8 @@
     <string name="pref_localelanguage_desc">Elige el idioma que prefieres utilizar</string>
     <string name="pref_skipreturn">Saltar movimiento de retorno</string>
     <string name="pref_skipreturn_desc">Para el tablero en USB, el movimiento de retorno se omitirá para que no se cierre la aplicación</string>
+    <string name="pref_night_mode">Modo nocturno</string>
+    <string name="pref_night_mode_desc">Forzar la aplicación en modo nocturno</string>
 
     <string name="button_play">Juega</string>
     <string name="button_undo">Deshace</string>

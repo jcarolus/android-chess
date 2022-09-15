@@ -63,7 +63,7 @@ public class ChessPreferences extends BasePreferenceActivity implements SharedPr
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
 
-        if (s.equals("localelanguage")) {
+        if (s.equals("localelanguage") || s.equals("nightMode")) {
             setResult(RESULT_OK);
             finish();
         }
