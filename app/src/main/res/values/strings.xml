@@ -90,6 +90,9 @@
     <string name="pref_vs_cpu_desc">Play versus the CPU/Engine</string>
     <string name="pref_turn">Side</string>
     <string name="pref_turn_desc">Which side of the board you play</string>
+    <string name="pref_night_mode">Night mode</string>
+    <string name="pref_night_mode_desc">Force the app into night mode</string>
+
     <string name="button_play">Play</string>
     <string name="button_undo">Undo</string>
     <string name="button_ok">OK</string>
@@ -512,6 +515,7 @@
     <string name="locale_es_title">Español</string>
     <string name="locale_ru_title">Pусский</string>
     <string name="locale_de_title">Deutsch</string>
+    <string name="locale_fr_title">Français</string>
 
     <string name="locale_zh">zh</string>
     <string name="locale_en">en</string>
@@ -520,6 +524,7 @@
     <string name="locale_es">es</string>
     <string name="locale_ru">ru</string>
     <string name="locale_de">de</string>
+    <string name="locale_fr">fr</string>
 
     <string name="pieceset_alpha">Alpha</string>
     <string name="pieceset_merida">Merida</string>

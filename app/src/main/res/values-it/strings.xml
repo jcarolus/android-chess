@@ -82,6 +82,8 @@
     <string name="pref_localelanguage_desc">Scegli la lingua che si desidera utilizzare</string>
     <string name="pref_skipreturn">Skip carriage return</string>
     <string name="pref_skipreturn_desc">For USB board, a carriage return will be skipped so it does not close the app</string>
+    <string name="pref_night_mode">Modalità notturna</string>
+    <string name="pref_night_mode_desc">Forza l\'app in modalità notte</string>
 
     <string name="button_play">Gioca</string>
     <string name="button_undo">Annulla</string>
