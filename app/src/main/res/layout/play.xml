@@ -187,7 +187,7 @@
                         android:layout_marginLeft="8dip"
                         android:layout_marginRight="8dip"
                         android:layout_width="fill_parent"
-                        android:layout_height="40dip" />
+                        android:layout_height="48dip" />
                     <ImageButton
                         android:id="@+id/ButtonNext"
                         android:src="@drawable/ic_chevron_right"
@@ -199,20 +199,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TableRow>
-                    <Switch android:id="@+id/SwitchBlindfold"
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchBlindfold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:text="@string/pref_show_blindfold"
                         android:checked="true"
-                        ></Switch>
-                    <Switch android:id="@+id/SwitchSound"
+                        ></com.google.android.material.switchmaterial.SwitchMaterial>
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:text="@string/pref_sound"
                         android:checked="true"
-                        ></Switch>
+                        ></com.google.android.material.switchmaterial.SwitchMaterial>
                 </TableRow>
             </TableLayout>
 

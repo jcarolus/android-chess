@@ -22,6 +22,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
@@ -74,7 +76,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEcoValue;
     private TableLayout layoutBoardTop, layoutBoardBottom;
-    private Switch switchSound, switchBlindfold;
+    private SwitchMaterial switchSound, switchBlindfold;
 
     @Override
     public boolean requestMove(final int from, final int to) {

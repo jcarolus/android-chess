@@ -20,6 +20,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -60,16 +62,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private ImageButton buttonMenu;
-    private EditText _editHandle, _editPwd, _editConsole, _editBoard;
+    private EditText _editHandle, _editPwd, _editConsole;
     private ViewAnimator viewAnimatorRoot;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
     private TableLayout layoutBoardTop, layoutBoardBottom;
     private ScrollView _scrollConsole;
-    private Switch switchSound;
-
-    private Spinner _spinnerHandles;
-    private ArrayAdapter<String> _adapterHandles;
-    private ArrayList<String> _arrayPasswords;
+    private SwitchMaterial switchSound;
 
     //private EditText _editPrompt;
     private ListView listChallenges, listPlayers, _listGames, _listStored, _listWelcome, listMenu;
@@ -79,8 +77,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private ICSGameOverDlg _dlgOver;
 
     private TimeZone tz = TimeZone.getDefault();
-
-    private Matcher _matgame;
 
     private ArrayList<HashMap<String, String>> mapMenu = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> mapChallenges = new ArrayList<HashMap<String, String>>();
@@ -313,82 +309,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 new String[]{"nr_stored", "color_stored", "text_name_stored", "available_stored"},
                 new int[]{R.id.nr_stored, R.id.color_stored, R.id.text_name_stored, R.id.available_stored});
 
-//        _listStored = (ListView) findViewById(R.id.ICSStored);
-//        _listStored.setAdapter(adapterStored);
-//         _listStored.setOnItemClickListener(this);
-
-
-//        ImageButton butQuick2 = (ImageButton) findViewById(R.id.ButtonICSConsoleQuickCmd);
-//        if (butQuick2 != null) { // crashes reported on this being null
-//            butQuick2.setOnClickListener(new OnClickListener() {
-//                public void onClick(View arg0) {
-//                    //showMenu();
-//                    openOptionsMenu();
-//                }
-//            });
-//        }
-
-
-//        _spinnerHandles = (Spinner) findViewById(R.id.SpinnerLoginPresets);
-//
-//        _spinnerHandles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//
-//            @Override
-//            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//                _editHandle.setText(_spinnerHandles.getSelectedItem().toString());
-//                _editPwd.setText(_arrayPasswords.get(position));
-//                if (_arrayPasswords.get(position).length() < 2) {
-//                    _editPwd.setText("");
-//                }
-//                Log.d(TAG, _spinnerHandles.getSelectedItem().toString());
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parentView) {
-//                Log.d(TAG, "nothing selected in spinner");
-//            }
-//        });
-
-//        final Handler actionHandler = new Handler();
-//        final Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                new AlertDialog.Builder(ICSClient.this)
-//                        .setTitle("Delete entry")
-//                        .setMessage("Are you sure you want to delete " + _spinnerHandles.getSelectedItem().toString() + "?")
-//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                String newData = _spinnerHandles.getSelectedItem().toString();
-//                                _adapterHandles.remove(newData);
-//                                _adapterHandles.notifyDataSetChanged();
-//                                _arrayPasswords.remove(_spinnerHandles.getSelectedItemPosition());
-//                                _editHandle.setText("");
-//                                _editPwd.setText("");
-//                            }
-//                        })
-//                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                // do nothing
-//                            }
-//                        })
-//                        .setIcon(android.R.drawable.ic_dialog_alert)
-//                        .show();
-//            }
-//        };
-//
-//        _spinnerHandles.setOnTouchListener(new View.OnTouchListener() { // simulate long press on spinner
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    actionHandler.postDelayed(runnable, 650);
-//                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-//                    actionHandler.removeCallbacks(runnable);
-//                }
-//                return false;
-//            }
-//        });
-        /////////////////////
-
+        _listStored = (ListView) findViewById(R.id.ListStored);
+        _listStored.setAdapter(adapterStored);
+        _listStored.setOnItemClickListener(this);
 
         View.OnKeyListener okl = new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -417,12 +340,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         _scrollConsole = findViewById(R.id.ScrollICSConsole);
 
-//        _editBoard = (EditText) findViewById(R.id.EditICSBoard);
-//        if (_editBoard != null) {
-//            _editBoard.setSingleLine(true);
-//            _editBoard.setOnKeyListener(okl);
-//        }
-//
         Button butReg = findViewById(R.id.ButICSRegister);
         if (butReg != null) {
             butReg.setOnClickListener(new View.OnClickListener() {
@@ -516,37 +433,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             .show();
     }
 
-
-    protected void gameOverToast(String line) {  // send toast result of the game
-
-        String text = "";
-        text = line.substring(line.indexOf(")") + 2, line.indexOf("}"));  // gets name and state of name
-
-        if (line.contains("} 1-0") || line.contains("} 0-1")) {
-
-
-            if (line.indexOf(" resigns} ") > 0) {  // make translation friendly
-                text = text.replace("resigns", getString(R.string.state_resigned));
-
-            } else if (line.indexOf("checkmated") > 0) {
-                text = text.replace("checkmated", getString(R.string.state_mate));
-
-            } else if (line.indexOf("forfeits on time") > 0) {
-                text = text.replace("forfeits on time", getString(R.string.state_time));
-
-            } else {
-                text = getString(R.string.ics_game_over);
-            }
-        } else if (line.contains("} 1/2-1/2")) {  // draw
-            gameToast(String.format(getString(R.string.ics_game_over_format), getString(R.string.state_draw)));
-
-            return;
-        }
-
-        gameToast(String.format(getString(R.string.ics_game_over_format), text));
-
-    }
-
     private void confirmShow(String title, String text, String sendstring) {
         _dlgConfirm.setSendString(sendstring);
         _dlgConfirm.setText(title, text);
@@ -623,65 +509,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         notificationsOn = prefs.getBoolean("ICSGameStartBringToFront", true);
 
-        /////////////////////////////////////////////
-//        _adapterHandles = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-//        _arrayPasswords = new ArrayList<String>();
-//
-//        if (_ficsHandle != null) {
-//            _adapterHandles.add(_ficsHandle);
-//            _arrayPasswords.add(_ficsPwd);
-//        }
-//
-//        try {
-//            JSONArray jArray = new JSONArray(prefs.getString("ics_handle_array", "guest"));
-//            JSONArray jArrayPasswords = new JSONArray(prefs.getString("ics_password_array", ""));
-//            for (int i = 0; i < jArray.length(); i++) {
-//                _adapterHandles.add(jArray.getString(i));
-//                _arrayPasswords.add(jArrayPasswords.getString(i));
-//            }
-//        } catch (JSONException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//
-//        int t = 0;
-//        boolean g = false;
-//        for (int i = 0; i < _adapterHandles.getCount(); i++) {
-//            String x = _adapterHandles.getItem(i).toString();
-//            if (x.equals(_ficsHandle)) {
-//                t++;
-//            }
-//            if (x.equals("guest")) {
-//                g = true;  // flag to check if guest is in the spinner
-//            }
-//        }
-//        if (t > 1) {  // work around for remove - delete every occurrence and add latest - this will add latest password
-//            while (t > 0) {
-//                _adapterHandles.remove(_ficsHandle);
-//                _arrayPasswords.remove(_adapterHandles.getPosition(_ficsHandle) + 1);
-//                t--;
-//            }
-//            _adapterHandles.add(_ficsHandle);
-//            _arrayPasswords.add(_ficsPwd);
-//        }
-//
-//        if (g == false) {
-//            _adapterHandles.add("guest"); // if no guest then add guest
-//            _arrayPasswords.add(" ");
-//        }
-//
-//        _spinnerHandles.setAdapter(_adapterHandles);
-//
-//        _spinnerHandles.setSelection(_adapterHandles.getPosition(_ficsHandle));
-//
-//
-//        /////////////////////////////////////////////////////////////////
-//
-//        if (_ficsHandle == null) {
-//            _ficsHandle = "guest";
-//            _ficsPwd = "";
-//        }
-
         layoutBoardTop.setBackgroundColor(ColorSchemes.getDark());
         layoutBoardBottom.setBackgroundColor(ColorSchemes.getDark());
 
@@ -730,14 +557,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         }
     }
 
-    public boolean is_bTimeWarning() {
-        return _bTimeWarning;
-    }
-
-    public int get_TimeWarning() {
-        return _TimeWarning;
-    }
-
     public boolean isConnected() {
         if (this.icsServer != null) {
             return this.icsServer.isConnected();
@@ -755,16 +574,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         editor.putString("ics_handle", _editHandle.getText().toString());
         editor.putString("ics_password", _editPwd.getText().toString());
-
-//        JSONArray jArray = new JSONArray();
-//        JSONArray jArrayPasswords = new JSONArray();
-//        for (int i = 0; i < _adapterHandles.getCount(); i++) {
-//            jArray.put(_adapterHandles.getItem(i));
-//            jArrayPasswords.put(_arrayPasswords.get(i));
-//        }
-//        editor.putString("ics_handle_array", jArray.toString());
-//        editor.putString("ics_password_array", jArrayPasswords.toString());
-
         editor.putBoolean("ICSVolume", _bICSVolume);
 
         editor.commit();
@@ -828,7 +637,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 HashMap<String, String> m = mapPlayers.get(arg2);
                 Log.i("onItemClick", "item " + m.get("text_name"));
                 _dlgPlayer.opponentName(m.get("text_name"));
-                _dlgPlayer._tvPlayerListConsole.setText("");  // clear TextView
                 _dlgPlayer.show();
 
             }
@@ -880,6 +688,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     startActivity(i);
                 } else if (selected.equals(getString(R.string.menu_help))) {
                     showHelp(R.string.online_help);
+                } else if (selected.equals(getString(R.string.ics_menu_stored))) {
+                    loadStored();
                 } else {
                     // assume a custom command
                     sendString(selected);
@@ -904,13 +714,15 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 R.string.menu_prefs,
                 R.string.ics_menu_console,
                 R.string.menu_help,
-
-                // endgamebot dialog (kbnk, ...)?
         };
 
         for (int i = 0; i < resources.length; i++) {
             final int index = i;
             mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(resources[index])); }}) ;
+        }
+
+        if (!icsServer.isGuest()) {
+            mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_stored)); }}) ;
         }
 
         try {
@@ -977,6 +789,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         textViewTitle.setText("");
     }
 
+    public void setStoredView() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_STORED);
+        buttonMenu.setVisibility(View.VISIBLE);
+        textViewTitle.setText("");
+    }
+
     public void resetBoardView() {
         ((ICSApi)gameApi).resetViewMode();
         localClockApi.stopClock();
@@ -995,6 +813,11 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void loadPlayers() {
         setLoadingView();
         sendString("players");
+    }
+
+    public void loadStored() {
+        setLoadingView();
+        sendString("stored");
     }
 
     public void saveGameFromBundle(Bundle data) {
@@ -1078,6 +901,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnSessionEnded() {
+        doToast(getString(R.string.ics_lost_connection));
         setLoginView();
     }
 
@@ -1320,6 +1144,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             mapStored.add(games.get(i));
         }
         adapterStored.notifyDataSetChanged();
+        setStoredView();
     }
 
     @Override

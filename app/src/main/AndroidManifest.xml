@@ -140,7 +140,7 @@
         </activity>
         <activity
             android:name="jwtc.android.chess.ics.ICSClient"
-            android:label="@string/app_name"
+            android:label="@string/app_name_playonline"
             android:screenOrientation="locked"
             android:configChanges="orientation"
             android:launchMode="singleInstance">

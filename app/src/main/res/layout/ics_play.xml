@@ -214,11 +214,11 @@
             style="@style/ChessImageButton" />
     </LinearLayout>
 
-    <Switch android:id="@+id/SwitchSound"
+    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="@string/pref_sound"
         android:checked="true"
-        ></Switch>
+        ></com.google.android.material.switchmaterial.SwitchMaterial>
 </LinearLayout>
