@@ -2,16 +2,10 @@ package jwtc.android.chess.activities;
 
 import android.app.AlertDialog;
 import android.content.ClipData;
-import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.net.Uri;
-import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.DragEvent;
@@ -21,13 +15,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import jwtc.android.chess.constants.ColorSchemes;
-import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
@@ -39,7 +30,6 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
-import jwtc.chess.PGNColumns;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;

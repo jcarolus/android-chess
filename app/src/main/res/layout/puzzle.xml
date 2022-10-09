@@ -85,6 +85,11 @@
                 android:id="@+id/ButtonPuzzleNext"
                 android:src="@drawable/ic_chevron_right"
                 style="@style/ChessImageButton" />
+
+            <Button android:id="@+id/ButtonPuzzleShow"
+                android:text="@string/puzzle_show"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton"/>
         </TableRow>
     </TableLayout>
 

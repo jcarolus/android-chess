@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -31,13 +32,15 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles;
     private TableLayout layoutTurn;
+    private Button butShow;
 
     @Override
     public boolean requestMove(int from, int to) {
 
         if (gameApi.getPGNSize() <= jni.getNumBoard() - 1) {
             setMessage(getString(R.string.puzzle_already_solved));
-            return gameApi.requestMove(from, to);
+            rebuildBoard();
+            return false;
         }
         int move = gameApi.getPGNEntries().get(jni.getNumBoard() - 1)._move;
         int theMove = Move.makeMove(from, to);
@@ -97,6 +100,13 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
                     currentPosition++;
                     startPuzzle();
                 }
+            }
+        });
+
+        butShow = findViewById(R.id.ButtonPuzzleShow);
+        butShow.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                gameApi.jumptoMove(jni.getNumBoard());
             }
         });
     }

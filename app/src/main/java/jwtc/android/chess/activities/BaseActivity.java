@@ -88,25 +88,4 @@ public class BaseActivity extends AppCompatActivity {
         i.putExtra(HtmlActivity.HELP_STRING_RESOURCE, resource);
         startActivity(i);
     }
-
-    /*
-     public static void makeActionOverflowMenuShown(Activity activity) {
-        //devices with hardware menu button (e.g. Samsung Note) don't show action overflow menu
-        try {
-            ViewConfiguration config = ViewConfiguration.get(activity);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception e) {
-            Log.d("main", e.getLocalizedMessage());
-        }
-    }
-
-    // @see http://stackoverflow.com/questions/9739498/android-action-bar-not-showing-overflow
-    public void makeActionOverflowMenuShown() {
-        makeActionOverflowMenuShown(this);
-    }
-     */
 }
