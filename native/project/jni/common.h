@@ -8,30 +8,30 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-//#define stringtype std::string
-//typedef stringtype String;
+// #define stringtype std::string
+// typedef stringtype String;
 
-#define DEBUG_LEVEL 0 // bitmask for debug levels
+#define DEBUG_LEVEL 0  // bitmask for debug levels
 
 #define DEBUG_MODE 0
 
 #define TARGET_ANDROID 1
 
 #if DEBUG_MODE
-	#if TARGET_ANDROID
-		#include <android/log.h>
-		#define DEBUG_PRINT(s, args...) __android_log_print(ANDROID_LOG_INFO, "JNI-Chess-Game", s, args)
-	#else
-		#define DEBUG_PRINT(s, args...) fprintf(stdout, s, args)
-	#endif
+#if TARGET_ANDROID
+#include <android/log.h>
+#define DEBUG_PRINT(s, args...) __android_log_print(ANDROID_LOG_INFO, "JNI-Chess-Game", s, args)
 #else
-	#define DEBUG_PRINT(s, args...) (s)
+#define DEBUG_PRINT(s, args...) fprintf(stdout, s, args)
+#endif
+#else
+#define DEBUG_PRINT(s, args...) (s)
 #endif
 
 #ifdef _MSC_VER
-	#define longlong __int64
+#define longlong __int64
 #else
-	#define longlong unsigned long long
+#define longlong unsigned long long
 #endif
 typedef longlong BITBOARD;
 
