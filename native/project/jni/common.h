@@ -13,9 +13,13 @@
 
 #define DEBUG_LEVEL 0  // bitmask for debug levels
 
-#define DEBUG_MODE 0
-
+#ifdef TERMINAL
+#define DEBUG_MODE     1
+#define TARGET_ANDROID 0
+#else
+#define DEBUG_MODE     0
 #define TARGET_ANDROID 1
+#endif
 
 #if DEBUG_MODE
 #if TARGET_ANDROID
