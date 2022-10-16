@@ -12,12 +12,14 @@ void startThread();
 void testSpecial();
 void testGame();
 void testSpeed();
+void testDB();
 void testSetupMate();
 void testSetupCastle();
 void testSetupQuiesce();
 void testHouse();
 void newGame();
 void initStuff();
+void printFENAndState(ChessBoard *board);
 
 static Game *g;
 
@@ -28,94 +30,29 @@ void *search_thread(void *arg) {
 int main(int argc, char **argv) {
     ChessBoard::initStatics();
 
-    g = new Game();
-    testSpecial();
-
-    // miniTest();
+    miniTest();
     // unitTest();
-
-    /*
-    g = new Game();
-
-    g->loadDB("/home/jeroen/db.bin", 3);
-
-    newGame();
-
-    g->searchDB();
-     */
-
-    // testSpeed();
-
-    // testGame();
-
-    // sleep(5);
+    //  testSpeed();
+    //   testGame();
+    //  sleep(5);
     DEBUG_PRINT("\n\n=== DONE ===\n", 0);
-
-    // delete g;
 }
 
 void miniTest() {
-    /*
-        g = new Game();
-        testSetupCastle();
-
-        int m, from, to;
-        char buf[1024] = "";
-        ChessBoard *board = g->getBoard();
-
-        board->toFEN(buf);
-        DEBUG_PRINT("\nFEN\n%s\n", buf);
-
-        board->getMoves();
-
-        //DEBUG_PRINT("COL HROOK after getMoves() = %d\n", ChessBoard::COL_HROOK);
-
-        while(board->hasMoreMoves())
-        {
-           m = board->getNextMove();
-           from = Move_getFrom(m);
-           to = Move_getTo(m);
-           if(Move_isOO(m)){
-                DEBUG_PRINT("\n[%d-%d]\n", from, to);
-           }
-        }
-
-
-        m = Move_makeMoveOO(ChessBoard::f1, ChessBoard::g1);
-
-        DEBUG_PRINT("COL HROOK before # %d\n", ChessBoard::COL_HROOK);
-        g->move(m);
-
-        board = g->getBoard();
-        board->toFEN(buf);
-        DEBUG_PRINT("\nFEN\n%s\n", buf);
-
-        board->printB(buf);
-        DEBUG_PRINT("\nB\n%s\n", buf);
-
-        g->reset();
-
-        delete g;
-
-        return;
-    */
     g = new Game();
     testSetupQuiesce();
     g->searchLimited(2);
     delete g;
-    return;
+
     g = new Game();
     testSetupMate();
-    g->searchLimited(2);
+    g->searchLimited(4);
 
     delete g;
 }
 void unitTest() {
     g = new Game();
     testSpecial();
-    delete g;
-    g = new Game();
-    testSetupMate();
     delete g;
     g = new Game();
     testSetupQuiesce();
@@ -136,7 +73,6 @@ void startThread() {
 void testSpecial() {
     DEBUG_PRINT("Testing Special position\n", 0);
 
-    char buf[1024] = "", s[255];
     ChessBoard *board = g->getBoard();
 
     board->reset();
@@ -175,11 +111,7 @@ void testSpecial() {
     board->setTurn(0);
     g->commitBoard();
 
-    board->toFEN(buf);
-    DEBUG_PRINT(buf, 0);
-
-    // board->calcState(board);
-    DEBUG_PRINT("state %d\n", board->getState());
+    printFENAndState(board);
 
     /*
             g->setSearchTime(2);
@@ -247,33 +179,39 @@ void testGame() {
         // if(i++ > 70)
         //     break;
     }
-    char buf[512];
-    board->toFEN(buf);
-    DEBUG_PRINT("\nFEN\n%s\n", buf);
-}
-void testSpeed() {
-    char buf[1024] = "", s[255];
 
+    printFENAndState(board);
+}
+
+void testDB() {
+    g = new Game();
+
+    g->loadDB("/home/jeroen/db.bin", 3);
+
+    newGame();
+
+    g->searchDB();
+}
+
+void testSpeed() {
     g = new Game();
 
     ChessBoard *board = g->getBoard();
 
     newGame();
 
-    board->toFEN(buf);
-    DEBUG_PRINT(buf, 0);
+    printFENAndState(board);
 
     // sprintf(s, "State %d = %d = %d\n", g->getBoard()->getState(), g->getBoard()->isEnded(),
     // g->getBoard()->getNumMoves()); DEBUG_PRINT(s);
 
-    g->setSearchTime(30);
+    g->setSearchTime(10);
     g->search();
 }
 
 void testSetupMate() {
     DEBUG_PRINT("Testing mate position\n", 0);
 
-    char buf[1024] = "", s[255];
     ChessBoard *board = g->getBoard();
 
     board->put(ChessBoard::h7, ChessBoard::PAWN, ChessBoard::BLACK);
@@ -290,13 +228,11 @@ void testSetupMate() {
     // board->setTurn(0);
     g->commitBoard();
 
-    board->toFEN(buf);
-    DEBUG_PRINT(buf, 0);
+    printFENAndState(board);
 }
 
 void testSetupCastle() {
     DEBUG_PRINT("Testing castling position\n", 0);
-    char buf[1024] = "", s[255];
     ChessBoard *board = g->getBoard();
 
     board->put(ChessBoard::c8, ChessBoard::KING, ChessBoard::BLACK);
@@ -312,12 +248,10 @@ void testSetupCastle() {
 
     DEBUG_PRINT("COL HROOK after commit = %d\n", ChessBoard::COL_HROOK);
 
-    board->toFEN(buf);
-    DEBUG_PRINT(buf, 0);
+    printFENAndState(board);
 }
 
 void testSetupQuiesce() {
-    char buf[1024] = "", s[255];
     ChessBoard *board = g->getBoard();
 
     board->put(ChessBoard::d7, ChessBoard::PAWN, ChessBoard::BLACK);
@@ -335,22 +269,19 @@ void testSetupQuiesce() {
     board->setTurn(0);
     g->commitBoard();
 
-    board->toFEN(buf);
-    DEBUG_PRINT(buf, 0);
+    printFENAndState(board);
 }
 
 void testHouse() {
-    char buf[1024] = "", s[255];
+    ChessBoard *board = g->getBoard();
 
-    g->getBoard()->toFEN(buf);
-    DEBUG_PRINT(buf, 0);
+    printFENAndState(board);
 
     if (g->putPieceHouse(ChessBoard::e2, ChessBoard::KNIGHT, false)) {
         DEBUG_PRINT("PUT HOUSE\n", 0);
     }
 
-    g->getBoard()->toFEN(buf);
-    DEBUG_PRINT(buf, 0);
+    printFENAndState(board);
 }
 
 void newGame() {
@@ -398,5 +329,50 @@ void newGame() {
 void initStuff() {
     for (int i = 0; i < 64; i++) {
         DEBUG_PRINT("%lldLL, ", ChessBoard::ROOK_RANGE[i] | ChessBoard::BISHOP_RANGE[i]);
+    }
+}
+
+void printFENAndState(ChessBoard *board) {
+    char buf[512];
+    board->toFEN(buf);
+    DEBUG_PRINT("\nFEN\t%s\n", buf);
+
+    int state = board->getState();
+
+    switch (state) {
+        case ChessBoard::PLAY:
+            DEBUG_PRINT("Play\n", 0);
+            break;
+
+        case ChessBoard::CHECK:
+            DEBUG_PRINT("Check\n", 0);
+            break;
+
+        case ChessBoard::INVALID:
+            DEBUG_PRINT("Invalid\n", 0);
+            break;
+
+        case ChessBoard::DRAW_MATERIAL:
+            DEBUG_PRINT("Draw material\n", 0);
+            break;
+
+        case ChessBoard::DRAW_50:
+            DEBUG_PRINT("Draw 50 move\n", 0);
+            break;
+
+        case ChessBoard::MATE:
+            DEBUG_PRINT("Mate\n", 0);
+            break;
+
+        case ChessBoard::STALEMATE:
+            DEBUG_PRINT("Stalemate\n", 0);
+            break;
+
+        case ChessBoard::DRAW_REPEAT:
+            DEBUG_PRINT("Draw repetition\n", 0);
+            break;
+
+        default:
+            break;
     }
 }

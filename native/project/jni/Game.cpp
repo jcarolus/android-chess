@@ -1,11 +1,9 @@
 #include "Game.h"
 
-////////////////////////////////////////////////////////////////////////////////
 int Game::DB_SIZE = 0;
 FILE *Game::DB_FP = NULL;
 int Game::DB_DEPTH = 5;
 
-////////////////////////////////////////////////////////////////////////////////
 Game::Game(void) {
     m_board = new ChessBoard();
     m_promotionPiece = ChessBoard::QUEEN;
@@ -20,9 +18,7 @@ Game::Game(void) {
     reset();
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // TODO clean up all chessboards related to m_board
-////////////////////////////////////////////////////////////////////////////////
 Game::~Game(void) {
     if (DB_FP) {
         DEBUG_PRINT("\nClosing DB file\n", 0);
@@ -39,10 +35,8 @@ Game::~Game(void) {
         delete tmp;
     }
 
-    DEBUG_PRINT("\nDeleting board\n", 0);
     delete m_board;
 
-    DEBUG_PRINT("\nDeleting boardRefurbish\n", 0);
     delete m_boardRefurbish;
 
     /* since boardfactory gets corrupted (don't know how+where), lets
@@ -56,10 +50,8 @@ Game::~Game(void) {
 
 
 */
-    DEBUG_PRINT("Destroyed\n", 0);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 void Game::reset() {
     // clean up history
     ChessBoard *cb, *tmp;
@@ -163,10 +155,9 @@ void Game::undo() {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// returns the move found
-////////////////////////////////////////////////////////////////////////////////
+#pragma region Search methods
 
+// returns the move found
 void Game::setSearchTime(int secs) {
     m_milliesGiven = 1000 * (long) secs;
     m_bSearching = true;
@@ -368,9 +359,7 @@ boolean Game::alphaBetaRoot(const int depth, int alpha, const int beta) {
     return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // alphaBeta
-////////////////////////////////////////////////////////////////////////////////
 int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int beta) {
     if (m_evalCount % 1000 == 0) {
         if (timeUp()) {
@@ -609,9 +598,7 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
     return alpha;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // limited search, no quiesce
-////////////////////////////////////////////////////////////////////////////////
 void Game::searchLimited(const int depth) {
     m_bSearching = true;
     m_bestMove = 0;
@@ -746,9 +733,7 @@ int Game::alphaBetaLimited(ChessBoard *board, const int depth, int alpha, const 
     return best;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // search the hashkey database, randomly choose a move
-////////////////////////////////////////////////////////////////////////////////
 int Game::searchDB() {
     if (DB_SIZE == 0 || DB_FP == NULL) {
         DEBUG_PRINT("No database search\n", 0);
@@ -791,7 +776,7 @@ int Game::searchDB() {
     int i = rand() % iCnt;
     return moveArr[i];
 }
-////////////////////////////////////////////////////////////////////////////////
+
 // House variant search
 // allowAttack as for putPieceHouse
 /*
@@ -800,7 +785,7 @@ int Game::searchHouse(boolean allowAttack)
         return 0;
 }
 */
-////////////////////////////////////////////////////////////////////////////////
+
 // allowAttack, if a new piece on the board is allowed to attack immediatly,
 // for crazyhouse that's ok, for parachute not
 boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowAttack) {
@@ -813,7 +798,10 @@ boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowA
     return false;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+#pragma endregion
+
+#pragma region Database methods
+
 void Game::loadDB(const char *sFile, int depth) {
     if (DB_FP != NULL) {
         fclose(DB_FP);
@@ -915,22 +903,22 @@ boolean Game::readDBAt(int iPos, BITBOARD &bb) {
     return false;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// search timing functions
+#pragma endregion
 
-////////////////////////////////////////////////////////////////////////////////
+#pragma region Search timing functions
+
 void Game::startTime() {
     timeval time;
     gettimeofday(&time, NULL);
     m_millies = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 boolean Game::timeUp() {
     timeval time;
     gettimeofday(&time, NULL);
     return (m_milliesGiven < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies));
 }
+
 // return true if we consumed more than x'd of tme
 boolean Game::usedTime() {
     timeval time;
@@ -938,9 +926,10 @@ boolean Game::usedTime() {
     return ((m_milliesGiven / 3) < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies));
 }
 
-////////////////////////////////////////////////////////////////////////////////
 long Game::timePassed() {
     timeval time;
     gettimeofday(&time, NULL);
     return ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies);
 }
+
+#pragma endregion

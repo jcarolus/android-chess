@@ -26,7 +26,7 @@
 
 `native/project/jni/$ <ndk>/ndk-build`
 
-e.g. `<sdk>/ndk/22.1.7171670/ndk-build` (or add to PATH)
+e.g. `$ANDROID_SDK_ROOT/ndk/22.1.7171670/ndk-build` (or add to PATH)
 
 Copy the generated `native/project/libs/*` to ` app/src/main/jniLibs/`
 

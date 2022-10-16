@@ -196,3 +196,5 @@ sftp-config.json
 *.tmproj
 *.tmproject
 tmtags
+
+.vscode/
