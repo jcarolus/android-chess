@@ -2135,12 +2135,6 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl,
     if (!bccl && !bccs) {
         m_castlings[BLACK] |= MASK_KING;
     }
-
-    DEBUG_PRINT("setCastlingsEP - A %d, H %d, cw %d, cb %d\n",
-                COL_AROOK,
-                COL_HROOK,
-                m_castlings[WHITE],
-                m_castlings[BLACK]);
 }
 
 // change variables so that side to move is turn

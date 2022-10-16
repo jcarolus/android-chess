@@ -2,24 +2,29 @@
 
 #include <pthread.h>
 #include <unistd.h>
+#include <functional>
 
 #include "ChessBoard.h"
 #include "Game.h"
 
+typedef bool (*TestFunction)();
+
 void miniTest();
 void unitTest();
 void startThread();
-void testSpecial();
-void testGame();
-void testSpeed();
-void testDB();
-void testSetupMate();
-void testSetupCastle();
-void testSetupQuiesce();
-void testHouse();
+bool testSpecial();
+bool testGame();
+bool testSpeed();
+bool testDB();
+bool testSetupMate();
+bool testSetupCastle();
+bool testSetupQuiesce();
+bool testHouse();
 void newGame();
-void initStuff();
 void printFENAndState(ChessBoard *board);
+bool expectEqualInt(int a, int b, char *message);
+
+using std::function;
 
 static Game *g;
 
@@ -30,12 +35,25 @@ void *search_thread(void *arg) {
 int main(int argc, char **argv) {
     ChessBoard::initStatics();
 
-    miniTest();
+    TestFunction tests[] = {testSpecial, testSetupCastle, testSetupQuiesce};
+
+    int testFail = 0, testSuccess = 0;
+    for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
+        g = new Game();
+        if (tests[i]()) {
+            testSuccess++;
+        } else {
+            testFail++;
+        }
+        delete g;
+    }
+
+    // miniTest();
     // unitTest();
-    //  testSpeed();
-    //   testGame();
-    //  sleep(5);
-    DEBUG_PRINT("\n\n=== DONE ===\n", 0);
+    // testSpeed();
+    // testGame();
+    // sleep(5);
+    DEBUG_PRINT("\n\n=== DONE === SUCCESS: [%d] FAIL: [%d]\n", testSuccess, testFail);
 }
 
 void miniTest() {
@@ -60,6 +78,8 @@ void unitTest() {
     g = new Game();
     // testSpeed();
     delete g;
+
+    // testSetupCastle();
 }
 
 void startThread() {
@@ -70,48 +90,22 @@ void startThread() {
     DEBUG_PRINT("Done creatingthread\n", 0);
 }
 
-void testSpecial() {
-    DEBUG_PRINT("Testing Special position\n", 0);
-
+bool testSpecial() {
     ChessBoard *board = g->getBoard();
 
     board->reset();
-
     board->put(ChessBoard::f8, ChessBoard::KING, ChessBoard::BLACK);
-
     board->put(ChessBoard::f6, ChessBoard::KING, ChessBoard::WHITE);
     board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::WHITE);
-
-    /*
-            board->put(ChessBoard::f8, ChessBoard::ROOK, ChessBoard::BLACK);
-            board->put(ChessBoard::h8, ChessBoard::KING, ChessBoard::BLACK);
-            board->put(ChessBoard::e7, ChessBoard::QUEEN, ChessBoard::WHITE);
-            board->put(ChessBoard::f7, ChessBoard::PAWN, ChessBoard::BLACK);
-            board->put(ChessBoard::g7, ChessBoard::QUEEN, ChessBoard::BLACK);
-
-            board->put(ChessBoard::e6, ChessBoard::PAWN, ChessBoard::BLACK);
-
-            board->put(ChessBoard::b5, ChessBoard::PAWN, ChessBoard::BLACK);
-            board->put(ChessBoard::d5, ChessBoard::PAWN, ChessBoard::BLACK);
-            board->put(ChessBoard::g5, ChessBoard::PAWN, ChessBoard::WHITE);
-
-            board->put(ChessBoard::c4, ChessBoard::PAWN, ChessBoard::BLACK);
-            board->put(ChessBoard::f4, ChessBoard::PAWN, ChessBoard::WHITE);
-
-            board->put(ChessBoard::b3, ChessBoard::PAWN, ChessBoard::BLACK);
-            board->put(ChessBoard::e3, ChessBoard::PAWN, ChessBoard::WHITE);
-
-            board->put(ChessBoard::d2, ChessBoard::PAWN, ChessBoard::WHITE);
-
-            board->put(ChessBoard::a1, ChessBoard::BISHOP, ChessBoard::WHITE);
-            board->put(ChessBoard::b1, ChessBoard::KING, ChessBoard::WHITE);
-     */
-
     board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
     board->setTurn(0);
     g->commitBoard();
 
-    printFENAndState(board);
+    return expectEqualInt(g->getBoard()->getState(),
+                          ChessBoard::MATE,
+                          "State should equal MATE %d but was %d\n");
+
+    // printFENAndState(board);
 
     /*
             g->setSearchTime(2);
@@ -130,13 +124,10 @@ void testSpecial() {
     // g->setSearchTime(1);
     // g->search();
 
-    DEBUG_PRINT("\ndone\n", 0);
-
     // 5r1k/4Qpq1/4p3/1p1p2P1/2p2P2/1p2P3/3P4/BK6 b - -
 }
 
-void testGame() {
-    g = new Game();
+bool testGame() {
     ChessBoard *board, *tmp = new ChessBoard();
 
     newGame();
@@ -181,21 +172,21 @@ void testGame() {
     }
 
     printFENAndState(board);
+
+    return true;
 }
 
-void testDB() {
-    g = new Game();
-
+bool testDB() {
     g->loadDB("/home/jeroen/db.bin", 3);
 
     newGame();
 
     g->searchDB();
+
+    return true;
 }
 
-void testSpeed() {
-    g = new Game();
-
+bool testSpeed() {
     ChessBoard *board = g->getBoard();
 
     newGame();
@@ -207,11 +198,11 @@ void testSpeed() {
 
     g->setSearchTime(10);
     g->search();
+
+    return true;
 }
 
-void testSetupMate() {
-    DEBUG_PRINT("Testing mate position\n", 0);
-
+bool testSetupMate() {
     ChessBoard *board = g->getBoard();
 
     board->put(ChessBoard::h7, ChessBoard::PAWN, ChessBoard::BLACK);
@@ -228,11 +219,12 @@ void testSetupMate() {
     // board->setTurn(0);
     g->commitBoard();
 
-    printFENAndState(board);
+    // printFENAndState(board);
+
+    return true;
 }
 
-void testSetupCastle() {
-    DEBUG_PRINT("Testing castling position\n", 0);
+bool testSetupCastle() {
     ChessBoard *board = g->getBoard();
 
     board->put(ChessBoard::c8, ChessBoard::KING, ChessBoard::BLACK);
@@ -246,12 +238,13 @@ void testSetupCastle() {
     // board->setTurn(0);
     g->commitBoard();
 
-    DEBUG_PRINT("COL HROOK after commit = %d\n", ChessBoard::COL_HROOK);
+    // DEBUG_PRINT("COL HROOK after commit = %d\n", ChessBoard::COL_HROOK);
 
-    printFENAndState(board);
+    // printFENAndState(board);
+    return true;
 }
 
-void testSetupQuiesce() {
+bool testSetupQuiesce() {
     ChessBoard *board = g->getBoard();
 
     board->put(ChessBoard::d7, ChessBoard::PAWN, ChessBoard::BLACK);
@@ -269,10 +262,11 @@ void testSetupQuiesce() {
     board->setTurn(0);
     g->commitBoard();
 
-    printFENAndState(board);
+    // printFENAndState(board);
+    return true;
 }
 
-void testHouse() {
+bool testHouse() {
     ChessBoard *board = g->getBoard();
 
     printFENAndState(board);
@@ -281,7 +275,8 @@ void testHouse() {
         DEBUG_PRINT("PUT HOUSE\n", 0);
     }
 
-    printFENAndState(board);
+    // printFENAndState(board);
+    return true;
 }
 
 void newGame() {
@@ -324,12 +319,6 @@ void newGame() {
     board->setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
 
     g->commitBoard();
-}
-
-void initStuff() {
-    for (int i = 0; i < 64; i++) {
-        DEBUG_PRINT("%lldLL, ", ChessBoard::ROOK_RANGE[i] | ChessBoard::BISHOP_RANGE[i]);
-    }
 }
 
 void printFENAndState(ChessBoard *board) {
@@ -375,4 +364,12 @@ void printFENAndState(ChessBoard *board) {
         default:
             break;
     }
+}
+
+bool expectEqualInt(int a, int b, char *message) {
+    if (a != b) {
+        DEBUG_PRINT(message, a, b);
+        return false;
+    }
+    return true;
 }

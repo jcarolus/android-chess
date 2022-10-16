@@ -235,7 +235,6 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_loadDB(JNIEnv* env,
     const char* nativeString = env->GetStringUTFChars(sFile, 0);
     stGame->loadDB(nativeString, depth);
     env->ReleaseStringUTFChars(sFile, nativeString);
-    //"db-5.bin"
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_interrupt(JNIEnv* env, jobject thiz) {
     stGame->m_bInterrupted = true;

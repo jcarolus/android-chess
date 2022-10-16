@@ -6,5 +6,3 @@ pg:
 
 clean:
 	rm -rf *o chess
-
-
