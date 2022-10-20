@@ -109,6 +109,8 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
                 gameApi.jumptoMove(jni.getNumBoard());
             }
         });
+
+        chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
     }
 
     @Override

@@ -6,23 +6,26 @@
 
 #include "ChessBoard.h"
 #include "Game.h"
+#include "Move.h"
 
 typedef bool (*TestFunction)();
 
 void miniTest();
-void unitTest();
 void startThread();
-bool testSpecial();
 bool testGame();
-bool testSpeed();
+void speedTest();
 bool testDB();
 bool testSetupMate();
 bool testSetupCastle();
 bool testSetupQuiesce();
 bool testHouse();
+bool testMoves();
+bool testGenmoves();
 void newGame();
 void printFENAndState(ChessBoard *board);
+void printMove(int move);
 bool expectEqualInt(int a, int b, char *message);
+bool expectEqualString(char *a, char *b, char *message);
 
 using std::function;
 
@@ -35,7 +38,8 @@ void *search_thread(void *arg) {
 int main(int argc, char **argv) {
     ChessBoard::initStatics();
 
-    TestFunction tests[] = {testSpecial, testSetupCastle, testSetupQuiesce};
+    TestFunction tests[] =
+        {testSetupMate, testSetupCastle, testSetupQuiesce, testMoves, testDB, testGame};
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
@@ -48,49 +52,15 @@ int main(int argc, char **argv) {
         delete g;
     }
 
-    // miniTest();
-    // unitTest();
-    // testSpeed();
-    // testGame();
-    // sleep(5);
     DEBUG_PRINT("\n\n=== DONE === SUCCESS: [%d] FAIL: [%d]\n", testSuccess, testFail);
-}
-
-void miniTest() {
-    g = new Game();
-    testSetupQuiesce();
-    g->searchLimited(2);
-    delete g;
-
-    g = new Game();
-    testSetupMate();
-    g->searchLimited(4);
-
-    delete g;
-}
-void unitTest() {
-    g = new Game();
-    testSpecial();
-    delete g;
-    g = new Game();
-    testSetupQuiesce();
-    delete g;
-    g = new Game();
-    // testSpeed();
-    delete g;
-
-    // testSetupCastle();
 }
 
 void startThread() {
     pthread_t tid;
-
-    DEBUG_PRINT("Creating thread\n", 0);
     pthread_create(&tid, NULL, search_thread, NULL);
-    DEBUG_PRINT("Done creatingthread\n", 0);
 }
 
-bool testSpecial() {
+bool testSetupMate() {
     ChessBoard *board = g->getBoard();
 
     board->reset();
@@ -101,30 +71,7 @@ bool testSpecial() {
     board->setTurn(0);
     g->commitBoard();
 
-    return expectEqualInt(g->getBoard()->getState(),
-                          ChessBoard::MATE,
-                          "State should equal MATE %d but was %d\n");
-
-    // printFENAndState(board);
-
-    /*
-            g->setSearchTime(2);
-            g->search();
-
-
-            while(g->m_bSearching){
-                DEBUG_PRINT("Main thread sleeping\n", 0);
-                sleep(1);
-            }
-
-            int m = g->getBestMove();
-            g->move(m);
-    */
-
-    // g->setSearchTime(1);
-    // g->search();
-
-    // 5r1k/4Qpq1/4p3/1p1p2P1/2p2P2/1p2P3/3P4/BK6 b - -
+    return expectEqualInt(g->getBoard()->getState(), ChessBoard::MATE, "State should equal MATE");
 }
 
 bool testGame() {
@@ -136,12 +83,9 @@ bool testGame() {
     int m, i = 0;
     boolean bMoved;
     while (!board->isEnded()) {
-        DEBUG_PRINT("\nEntering loop\n", 0);
-
-        g->setSearchTime(3);
+        g->setSearchTime(1);
         startThread();
         while (g->m_bSearching) {
-            DEBUG_PRINT("Main thread sleeping\n", 0);
             sleep(1);
         }
 
@@ -154,21 +98,14 @@ bool testGame() {
             DEBUG_PRINT("\nBAILING OUT - not moved\n", 0);
             break;
         }
-#if DEBUG_LEVEL == 1
-        char buf[512];
-        board->toFEN(buf);
-        DEBUG_PRINT("\nFEN\n%s\n", buf);
 
-        if (board->getNumBoard() >= 119) {
-            char buf[2048];
-            board->printB(buf);
-            DEBUG_PRINT(buf, 0);
+        char buf[20];
+        board->myMoveToString(buf);
+        DEBUG_PRINT("\n=====> %d, %d, %s\n", board->getNumBoard(), board->getState(), buf);
+
+        if (i++ > 20) {
+            break;
         }
-#endif
-        DEBUG_PRINT("\n=====> %d, %d\n", board->getNumBoard(), board->getState());
-
-        // if(i++ > 70)
-        //     break;
     }
 
     printFENAndState(board);
@@ -177,49 +114,17 @@ bool testGame() {
 }
 
 bool testDB() {
-    g->loadDB("/home/jeroen/db.bin", 3);
+    g->loadDB("db.bin", 3);
 
     newGame();
 
-    g->searchDB();
+    int move = g->searchDB();
+    printMove(move);
 
-    return true;
-}
+    g->move(move);
 
-bool testSpeed() {
-    ChessBoard *board = g->getBoard();
-
-    newGame();
-
-    printFENAndState(board);
-
-    // sprintf(s, "State %d = %d = %d\n", g->getBoard()->getState(), g->getBoard()->isEnded(),
-    // g->getBoard()->getNumMoves()); DEBUG_PRINT(s);
-
-    g->setSearchTime(10);
-    g->search();
-
-    return true;
-}
-
-bool testSetupMate() {
-    ChessBoard *board = g->getBoard();
-
-    board->put(ChessBoard::h7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::h8, ChessBoard::KING, ChessBoard::BLACK);
-    board->put(ChessBoard::g7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::BLACK);
-    // board->put(ChessBoard::b8, ChessBoard::ROOK, ChessBoard::BLACK);
-
-    board->put(ChessBoard::b1, ChessBoard::ROOK, ChessBoard::WHITE);
-    board->put(ChessBoard::b2, ChessBoard::ROOK, ChessBoard::WHITE);
-    board->put(ChessBoard::c1, ChessBoard::KING, ChessBoard::WHITE);
-
-    board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
-    // board->setTurn(0);
-    g->commitBoard();
-
-    // printFENAndState(board);
+    move = g->searchDB();
+    printMove(move);
 
     return true;
 }
@@ -238,10 +143,12 @@ bool testSetupCastle() {
     // board->setTurn(0);
     g->commitBoard();
 
-    // DEBUG_PRINT("COL HROOK after commit = %d\n", ChessBoard::COL_HROOK);
+    char buf[512];
+    board->toFEN(buf);
 
-    // printFENAndState(board);
-    return true;
+    bool ret = expectEqualString("r1k5/8/8/8/8/8/8/5KR1 w KQkq - 0 1", buf, "testSetupCastle");
+
+    return ret;
 }
 
 bool testSetupQuiesce() {
@@ -277,6 +184,40 @@ bool testHouse() {
 
     // printFENAndState(board);
     return true;
+}
+
+bool testMoves() {
+    newGame();
+
+    return g->requestMove(ChessBoard::e2, ChessBoard::e4) &&
+           g->requestMove(ChessBoard::e7, ChessBoard::e5) &&
+           g->requestMove(ChessBoard::g1, ChessBoard::f3) &&
+           g->requestMove(ChessBoard::b8, ChessBoard::c6) &&
+           g->requestMove(ChessBoard::d1, ChessBoard::e2) &&
+           g->requestMove(ChessBoard::f8, ChessBoard::e7);
+}
+
+bool testGenmoves() {
+    ChessBoard *board = g->getBoard();
+    board->hasMoreMoves();
+    board->getNextMove();
+    board->getNumMoves();
+
+    return true;
+}
+
+void speedTest() {
+    ChessBoard *board = g->getBoard();
+
+    newGame();
+
+    printFENAndState(board);
+
+    // sprintf(s, "State %d = %d = %d\n", g->getBoard()->getState(), g->getBoard()->isEnded(),
+    // g->getBoard()->getNumMoves()); DEBUG_PRINT(s);
+
+    g->setSearchTime(10);
+    g->search();
 }
 
 void newGame() {
@@ -319,6 +260,12 @@ void newGame() {
     board->setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
 
     g->commitBoard();
+}
+
+void printMove(int move) {
+    char buf[10];
+    Move::toDbgString(move, buf);
+    DEBUG_PRINT("Move %s\n", buf);
 }
 
 void printFENAndState(ChessBoard *board) {
@@ -368,7 +315,15 @@ void printFENAndState(ChessBoard *board) {
 
 bool expectEqualInt(int a, int b, char *message) {
     if (a != b) {
-        DEBUG_PRINT(message, a, b);
+        DEBUG_PRINT("FAILED: %s => Expected %d but got %d", message, a, b);
+        return false;
+    }
+    return true;
+}
+
+bool expectEqualString(char *a, char *b, char *message) {
+    if (strcmp(a, b) != 0) {
+        DEBUG_PRINT("FAILED: %s => Expected [%s] but got [%s]", message, a, b);
         return false;
     }
     return true;

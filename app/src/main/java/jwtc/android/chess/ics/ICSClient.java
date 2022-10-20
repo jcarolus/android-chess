@@ -358,6 +358,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         }
 
 
+        chessBoardView.setNextFocusRightId(R.id.SwitchSound);
+
         localClockApi.addListener(this);
 
         startService(new Intent(ICSClient.this, ICSServer.class));
@@ -772,7 +774,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     public void setBoardView() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_BOARD);
+        if (viewAnimatorRoot.getDisplayedChild() != VIEW_BOARD) {
+            viewAnimatorRoot.setDisplayedChild(VIEW_BOARD);
+        }
         buttonMenu.setVisibility(View.GONE);
         textViewTitle.setText("");
     }
@@ -1238,11 +1242,13 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             _tvConsole.append("\n\n" + s);
         }
 
-        _scrollConsole.post(new Runnable() {//
-            public void run() {
-                _scrollConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
-            }
-        });
+        if (viewAnimatorRoot.getDisplayedChild() == VIEW_CONSOLE) {
+            _scrollConsole.post(new Runnable() {
+                public void run() {
+                    _scrollConsole.fullScroll(HorizontalScrollView.FOCUS_DOWN);
+                }
+            });
+        }
     }
 }
 

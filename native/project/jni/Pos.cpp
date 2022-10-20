@@ -11,11 +11,7 @@ Pos::~Pos(void) {
 // used to initialize values, no speed needed
 
 int Pos::fromString(const char* s) {
-    // if(s.length() != 2)
-    //	co.pl("Cannot create Pos from: " + s);
     char c = s[0], tmp[2];
-    // if(c < 'a' || c > 'h')
-    //	co.pl("Cannot create Pos from: " + c);
     int col, row;
     tmp[0] = s[1];
     tmp[1] = '\0';

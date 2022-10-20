@@ -21,7 +21,6 @@ Game::Game(void) {
 // TODO clean up all chessboards related to m_board
 Game::~Game(void) {
     if (DB_FP) {
-        DEBUG_PRINT("\nClosing DB file\n", 0);
         fclose(DB_FP);
         DB_FP = NULL;
     }
@@ -39,17 +38,11 @@ Game::~Game(void) {
 
     delete m_boardRefurbish;
 
-    /* since boardfactory gets corrupted (don't know how+where), lets
-     * leave this as a memory leak
-    DEBUG_PRINT("\nDeleting boardFactory\n", 0);
-        for(int i = 0; i < MAX_DEPTH; i++){
-            delete m_boardFactory[i];
-            DEBUG_PRINT("%d ", i);
-
-        }
-
-
-*/
+    // DEBUG_PRINT("\nDeleting boardFactory\n", 0);
+    // for (int i = 0; i < MAX_DEPTH; i++) {
+    //     delete m_boardFactory[i];
+    //     DEBUG_PRINT("%d ", i);
+    // }
 }
 
 void Game::reset() {
@@ -64,8 +57,6 @@ void Game::reset() {
 
     m_board->reset();
     m_board->calcState(m_boardRefurbish);
-
-    // DEBUG_PRINT("Reset\n", 0);
 }
 
 void Game::commitBoard() {
@@ -95,21 +86,10 @@ boolean Game::requestMove(int from, int to) {
     ChessBoard *nb = new ChessBoard();
     if (m_board->requestMove(from, to, nb, m_boardRefurbish, m_promotionPiece)) {
         m_board = nb;
-        // DEBUG_PRINT("Performed move (request)\n", 0);
         return true;
     } else {
+        delete nb;
         DEBUG_PRINT("%d-%d not moved...(request)\n\0", from, to);
-
-        /*
-        char buf[2048] = "";
-        memset(buf, '\0', sizeof(buf));
-        m_board->printB(buf);
-        DEBUG_PRINT(buf, 0);
-
-        memset(buf, '\0', sizeof(buf));
-        m_board->getPGNMoves(m_boardRefurbish, buf);
-        DEBUG_PRINT(buf, 0);
-        */
         return false;
     }
 }
@@ -119,25 +99,9 @@ boolean Game::move(int move) {
 
     if (m_board->requestMove(move, nb, m_boardRefurbish)) {
         m_board = nb;
-        // DEBUG_PRINT("Performed move\n", 0);
         return true;
     } else {
-#if DEBUG_LEVEL & 3
-
-        char buf[2048] = "";
-        Move::toDbgString(move, buf);
-        strcat(buf, " not moved...\n\0");
-        DEBUG_PRINT(buf, 0);
-
-        memset(buf, '\0', sizeof(buf));
-        m_board->printB(buf);
-        DEBUG_PRINT(buf, 0);
-
-        memset(buf, '\0', sizeof(buf));
-        m_board->getPGNMoves(m_boardRefurbish, buf);
-        DEBUG_PRINT(buf, 0);
-#endif
-
+        delete nb;
         return false;
     }
 }
@@ -148,10 +112,6 @@ void Game::undo() {
     if (cb != NULL) {
         m_board = cb;
         delete tmp;
-
-        // DEBUG_PRINT("Undo\n", 0);
-    } else {
-        // DEBUG_PRINT("NOT -- Undo\n", 0);
     }
 }
 
@@ -187,7 +147,7 @@ void Game::search() {
 
     startTime();
 
-    DEBUG_PRINT("Start alphabeta iterative deepening\n", 0);
+    // DEBUG_PRINT("Start alphabeta iterative deepening\n", 0);
 
     char buf[20];
     // reset principal variation for this search
@@ -199,7 +159,7 @@ void Game::search() {
     int reachedDepth = 0;
     boolean bContinue = true;
     for (m_searchDepth = 1; m_searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); m_searchDepth++) {
-        DEBUG_PRINT("Search at depth %d\n", m_searchDepth);
+        // DEBUG_PRINT("Search at depth %d\n", m_searchDepth);
 
         bContinue =
             alphaBetaRoot(m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
@@ -224,7 +184,7 @@ void Game::search() {
             }
             // bail out if we're over 50% of time, next depth will take more than sum of previous
             if (usedTime()) {
-                DEBUG_PRINT("Bailing out\n", 0);
+                // DEBUG_PRINT("Bailing out\n", 0);
                 break;
             }
         } else {
@@ -237,7 +197,6 @@ void Game::search() {
         }
     }
 
-    // #if DEBUG_LEVEL & 3
     Move::toDbgString(m_bestMove, buf);
     DEBUG_PRINT(
         "\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
@@ -247,7 +206,7 @@ void Game::search() {
         reachedDepth,
         timePassed(),
         (double) m_evalCount / timePassed());
-    // #endif
+
     m_bSearching = false;
 }
 
@@ -269,7 +228,6 @@ boolean Game::alphaBetaRoot(const int depth, int alpha, const int beta) {
         // self check is illegal!
         if (nextBoard->checkInSelfCheck()) {
             // not valid, remove this move and continue
-            // DEBUG_PRINT("#", 0);
             m_board->removeMoveElementAt();
             continue;
         }
@@ -277,26 +235,11 @@ boolean Game::alphaBetaRoot(const int depth, int alpha, const int beta) {
         // generate the moves for this next board in order to validate the board
         nextBoard->genMoves();
 
-#if DEBUG_LEVEL & 1
-        // char bbuf[2048];
-        // nextBoard->printB(bbuf);
-        // DEBUG_PRINT("\n%s\n", bbuf);
-#endif
         if (nextBoard->checkInCheck()) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("!", 0);
-#endif
             nextBoard->setMyMoveCheck();
             move = Move_setCheck(move);
         }
         // ok valid move
-
-#if DEBUG_LEVEL & 1
-        char buf[20];
-        Move::toDbgString(move, buf);
-        DEBUG_PRINT("\n====== %s [ > ", buf);
-#endif
-
         // at depth one is at the leaves, so call quiescent search
         if (depth == 1) {
             value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
@@ -306,9 +249,6 @@ boolean Game::alphaBetaRoot(const int depth, int alpha, const int beta) {
             value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
         }
 
-#if DEBUG_LEVEL & 1
-        DEBUG_PRINT(":: %d ", value);
-#endif
         if (value > best) {
             best = value;
             bestMove = move;
@@ -316,21 +256,13 @@ boolean Game::alphaBetaRoot(const int depth, int alpha, const int beta) {
         }
 
         if (best > alpha) {
-            // co.pl(" a= " + best);
             alpha = best;
         }
 
         if (best >= beta) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("\nBreak out main loop %d\n", best);
-#endif
             break;
         }
     }
-
-#if DEBUG_LEVEL & 1
-    DEBUG_PRINT("]", 0);
-#endif
 
     // we're interrupted, no move and no value!
     if (m_bInterrupted) {
@@ -344,17 +276,9 @@ boolean Game::alphaBetaRoot(const int depth, int alpha, const int beta) {
         if (m_board->getNumMoves() == 0) {
             DEBUG_PRINT("NO moves in aphaBetaRoot!", 0);
         }
-
-#if DEBUG_LEVEL & 1
-        DEBUG_PRINT("\n==> alphaBetaRoot NO continuation %d\n", m_board->getNumMoves());
-#endif
-
         // do not contine, so return false
         return false;
     }
-#if DEBUG_LEVEL & 1
-    DEBUG_PRINT("\n==> alphaBetaRoot continue %d\n", m_board->getNumMoves());
-#endif
 
     return true;
 }
@@ -388,7 +312,6 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
         // self check is illegal!
         if (nextBoard->checkInSelfCheck()) {
             // not valid, remove this move and continue
-            // DEBUG_PRINT("#", 0);
             board->removeMoveElementAt();
             continue;
         }
@@ -397,19 +320,10 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
         nextBoard->genMoves();
 
         if (nextBoard->checkInCheck()) {
-            // DEBUG_PRINT("+", 0);
-
             nextBoard->setMyMoveCheck();
             move = Move_setCheck(move);
         }
         // ok valid move
-
-#if DEBUG_LEVEL & 1
-        char buf[20];
-        Move::toDbgString(move, buf);
-        DEBUG_PRINT("\n%d %s > ", depth, buf);
-#endif
-
         // at depth one is at the leaves, so call quiescent search
         if (depth == 1) {
             value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
@@ -424,39 +338,20 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
         }
 
         if (best > alpha) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("$ best > alpha %d > %d ", best, alpha);
-#endif
-
             alpha = best;
         }
 
         if (best >= beta) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("$ best >= beta break, %d > %d\n", best, beta);
-#endif
-
             break;
         }
     }
     // no valid moves, so mate or stalemate
     if (board->getNumMoves() == 0) {
-        // DEBUG_PRINT("@", 0);
         if (Move_isCheck(board->getMyMove())) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("\nMate #\n", 0);
-#endif
             return (-ChessBoard::VALUATION_MATE);
         }
-#if DEBUG_LEVEL & 1
-        DEBUG_PRINT("\nStalemate\n", 0);
-#endif
         return ChessBoard::VALUATION_DRAW;
     }
-
-#if DEBUG_LEVEL & 4
-    DEBUG_PRINT("\n==> alphaBeta #moves: %d\n", board->getNumMoves());
-#endif
 
     return best;
 }
@@ -471,15 +366,8 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
     }
 
     if (m_bInterrupted) {
-#if DEBUG_LEVEL & 1
-        DEBUG_PRINT("\nQ interrupted @%d\n", depth);
-#endif
         return alpha;  //
     }
-
-#if DEBUG_LEVEL & 1
-    DEBUG_PRINT(" %d{", depth);
-#endif
 
     // administer evaluation count and get the board value
     m_evalCount++;
@@ -490,18 +378,12 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
 
     if (!Move_isCheck(board->getMyMove())) {
         if (boardValue >= beta) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("X%d,%d ", depth, value, beta);
-#endif
             return beta;
         }
     }
 
     if (depth == 0)  // ok, max quiesce depth is reached; return this value
     {
-#if DEBUG_LEVEL & 1
-        // DEBUG_PRINT(".%d", boardValue);
-#endif
         // get the value of this node
         return boardValue;
     }
@@ -538,18 +420,9 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         // nextBoard->genMoves();
 
         if (nextBoard->checkInCheck()) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("!", 0);
-#endif
             nextBoard->setMyMoveCheck();
             move = Move_setCheck(move);
         }
-
-#if DEBUG_LEVEL & 1
-        char buf[20];
-        Move::toDbgString(move, buf);
-        DEBUG_PRINT(" %s ", buf);
-#endif
 
         // quiescent search
         if (Move_isHIT(move) || Move_isCheck(move) || Move_isPromotionMove(move)) {
@@ -565,12 +438,7 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
                 alpha = value;
 
                 if (value >= beta) {
-#if DEBUG_LEVEL & 1
-                    DEBUG_PRINT("B", 0);
-#endif
-
                     return beta;
-                    // break;
                 }
             }
         }
@@ -578,23 +446,12 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
 
     // no valid moves, so mate or stalemate
     if (board->getNumMoves() == 0) {
-        // DEBUG_PRINT("@", 0);
         if (Move_isCheck(board->getMyMove())) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("Q.#\n", 0);
-#endif
             return (-ChessBoard::VALUATION_MATE);
         }
-#if DEBUG_LEVEL & 1
-        DEBUG_PRINT("Q.$\n", 0);
-#endif
         return ChessBoard::VALUATION_DRAW;
     }
 
-#if DEBUG_LEVEL & 1
-    DEBUG_PRINT("|%d} %d @%d\n", board->getNumMoves(), alpha, depth);
-
-#endif
     return alpha;
 }
 
@@ -654,7 +511,6 @@ int Game::alphaBetaLimited(ChessBoard *board, const int depth, int alpha, const 
         // self check is illegal!
         if (nextBoard->checkInSelfCheck()) {
             // not valid, remove this move and continue
-            // DEBUG_PRINT("#", 0);
             board->removeMoveElementAt();
             continue;
         }
@@ -663,18 +519,10 @@ int Game::alphaBetaLimited(ChessBoard *board, const int depth, int alpha, const 
         nextBoard->genMoves();
 
         if (nextBoard->checkInCheck()) {
-            // DEBUG_PRINT("+", 0);
-
             nextBoard->setMyMoveCheck();
             move = Move_setCheck(move);
         }
         // ok valid move
-
-#if DEBUG_LEVEL & 1
-        char buf[20];
-        Move::toDbgString(move, buf);
-        DEBUG_PRINT("\n%d %s > ", depth, buf);
-#endif
 
         // at depth one is at the leaves, so call board value
         if (depth == 1) {
@@ -692,39 +540,20 @@ int Game::alphaBetaLimited(ChessBoard *board, const int depth, int alpha, const 
         }
 
         if (best > alpha) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("$ best > alpha %d > %d ", best, alpha);
-#endif
-
             alpha = best;
         }
 
         if (best >= beta) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("$ best >= beta break, %d > %d\n", best, beta);
-#endif
-
             break;
         }
     }
     // no valid moves, so mate or stalemate
     if (board->getNumMoves() == 0) {
-        // DEBUG_PRINT("@", 0);
         if (Move_isCheck(board->getMyMove())) {
-#if DEBUG_LEVEL & 1
-            DEBUG_PRINT("\nMate #\n", 0);
-#endif
             return (-ChessBoard::VALUATION_MATE);
         }
-#if DEBUG_LEVEL & 1
-        DEBUG_PRINT("\nStalemate\n", 0);
-#endif
         return ChessBoard::VALUATION_DRAW;
     }
-
-#if DEBUG_LEVEL & 1
-    DEBUG_PRINT("\n==> alphaBeta #moves: %d\n", board->getNumMoves());
-#endif
 
     if (depth == m_searchDepth) {
         m_bestMove = bestMove;
@@ -736,7 +565,6 @@ int Game::alphaBetaLimited(ChessBoard *board, const int depth, int alpha, const 
 // search the hashkey database, randomly choose a move
 int Game::searchDB() {
     if (DB_SIZE == 0 || DB_FP == NULL) {
-        DEBUG_PRINT("No database search\n", 0);
         return 0;
     }
     if (m_board->getNumBoard() > Game::DB_DEPTH) {
@@ -757,8 +585,6 @@ int Game::searchDB() {
         m_board->makeMove(move, tmpBoard);
         const BITBOARD bb = tmpBoard->getHashKey();
 
-        // DEBUG_PRINT("Trying to find %lld\n", bb);
-
         if (findDBKey(bb) < DB_SIZE) {
             moveArr[iCnt++] = move;
         }
@@ -768,7 +594,7 @@ int Game::searchDB() {
         return 0;
     }
 
-    DEBUG_PRINT("Choosing from %d moves\n,", iCnt);
+    DEBUG_PRINT("Choosing from %d moves\n", iCnt);
 
     timeval time;
     gettimeofday(&time, NULL);
@@ -878,7 +704,7 @@ boolean Game::readDBAt(int iPos, BITBOARD &bb) {
     if (iPos < DB_SIZE && fseek(DB_FP, iPos * 8, SEEK_SET) == 0) {
         static char buf[8];
         int cnt = fread(buf, 1, 8, DB_FP);
-        // DEBUG_PRINT(".");
+
         if (cnt != 8) {
             DEBUG_PRINT("Could not read database at %d\n", iPos);
             return false;

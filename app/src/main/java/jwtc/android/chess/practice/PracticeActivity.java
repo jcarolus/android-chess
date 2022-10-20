@@ -77,7 +77,6 @@ public class PracticeActivity extends ChessBoardActivity {
                 setMessage("Correct!");
                 isPlaying = false;
                 buttonNext.setEnabled(true);
-                buttonShow.setEnabled(false);
             } else {
                 gameApi.jumptoMove(jni.getNumBoard());
             }
@@ -121,7 +120,6 @@ public class PracticeActivity extends ChessBoardActivity {
 
                 if (gameApi.getPGNSize() == jni.getNumBoard() - 1) {
                     buttonNext.setEnabled(true);
-                    buttonShow.setEnabled(false);
                 }
             }
         });
@@ -129,7 +127,6 @@ public class PracticeActivity extends ChessBoardActivity {
         buttonNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 buttonNext.setEnabled(false);
-                buttonShow.setEnabled(true);
                 if (currentPos + 1 < totalPuzzles) {
                     currentPos++;
                     startPuzzle();
@@ -139,6 +136,8 @@ public class PracticeActivity extends ChessBoardActivity {
                 }
             }
         });
+
+        chessBoardView.setNextFocusRightId(R.id.ButtonPracticeShow);
     }
 
     @Override

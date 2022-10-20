@@ -10,7 +10,7 @@
         android:id="@+id/includeboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/chessboard" />
+        layout="@layout/chessboard"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -91,8 +91,8 @@
                     android:text="@string/puzzle_show"
                     android:paddingLeft="8dip"
                     android:paddingRight="8dip"
-                    android:layout_height="40dip"
                     android:layout_width="wrap_content"
+                    style="@style/ChessButton"
                     android:nextFocusLeft="@id/includeboard"/>
 
                 <ImageButton

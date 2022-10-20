@@ -609,6 +609,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public boolean dpadUp() {
+        Log.d(TAG, "dpadUp " + _dpadPos);
         if (_dpadPos == -1) {
             return false;
         }
@@ -621,6 +622,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public boolean dpadDown() {
+        Log.d(TAG, "dpadDown " + _dpadPos);
         if (_dpadPos == -1) {
             return false;
         }
@@ -633,6 +635,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public boolean dpadLeft() {
+        Log.d(TAG, "dpadLeft " + _dpadPos);
         if (_dpadPos == -1) {
             return false;
         }
@@ -645,6 +648,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public boolean dpadRight() {
+        Log.d(TAG, "dpadRight " + _dpadPos);
         if (_dpadPos == -1) {
             return false;
         }
@@ -658,6 +662,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public boolean dpadSelect() {
+        Log.d(TAG, "dpadSelect " + _dpadPos);
         if (_dpadPos != -1) {
             if (lastPosition == -1) {
                 lastPosition = _dpadPos;
