@@ -103,7 +103,7 @@ bool testGame() {
         board->myMoveToString(buf);
         DEBUG_PRINT("\n=====> %d, %d, %s\n", board->getNumBoard(), board->getState(), buf);
 
-        if (i++ > 20) {
+        if (i++ > 5) {
             break;
         }
     }

@@ -38,11 +38,9 @@ Game::~Game(void) {
 
     delete m_boardRefurbish;
 
-    // DEBUG_PRINT("\nDeleting boardFactory\n", 0);
-    // for (int i = 0; i < MAX_DEPTH; i++) {
-    //     delete m_boardFactory[i];
-    //     DEBUG_PRINT("%d ", i);
-    // }
+    for (int i = 0; i < MAX_DEPTH; i++) {
+        delete m_boardFactory[i];
+    }
 }
 
 void Game::reset() {
@@ -168,15 +166,6 @@ void Game::search() {
         // break; //debug
 
         if (bContinue) {
-#if DEBUG_LEVEL & 2
-            DEBUG_PRINT("\n +-+-+-+-+-+-+-+-PV: ", 0);
-
-            for (i = 0; i < m_searchDepth; i++) {
-                Move::toDbgString(m_arrPVMoves[i], buf);
-                DEBUG_PRINT(" > %s", buf);
-            }
-            DEBUG_PRINT(" {%d}\n", m_bestValue);
-#endif
             reachedDepth++;
             if (m_bestValue == ChessBoard::VALUATION_MATE) {
                 DEBUG_PRINT("Found checkmate, stopping search\n", 0);
@@ -211,7 +200,7 @@ void Game::search() {
 }
 
 boolean Game::alphaBetaRoot(const int depth, int alpha, const int beta) {
-    if (m_bInterrupted) {
+    if (m_bInterrupted || depth >= MAX_DEPTH) {
         return false;  //
     }
     int value = 0;
@@ -290,7 +279,7 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
             m_bInterrupted = true;
         }
     }
-    if (m_bInterrupted) {
+    if (m_bInterrupted || depth >= MAX_DEPTH) {
         return alpha;  //
     }
     int value = 0;
@@ -365,7 +354,7 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         }
     }
 
-    if (m_bInterrupted) {
+    if (m_bInterrupted || depth >= MAX_DEPTH) {
         return alpha;  //
     }
 

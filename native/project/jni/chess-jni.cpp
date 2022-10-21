@@ -63,14 +63,11 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_undo(JNIEnv* env, jobject thiz) {
 
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_reset(JNIEnv* env, jobject thiz) {
     stGame->reset();
-    // DEBUG_PRINT("Reset\n", 0);
 }
 JNIEXPORT void JNICALL
 Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, jint pos, jint piece, jint turn) {
     ChessBoard* board = stGame->getBoard();
     board->put(pos, piece, turn);
-
-    // DEBUG_PRINT("Put [%d, %d, %d]\n", pos, piece, turn);
 }
 
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz, jint secs) {

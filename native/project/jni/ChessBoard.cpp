@@ -8,8 +8,6 @@ ChessBoard::ChessBoard(void) {
 }
 
 ChessBoard::~ChessBoard(void) {
-    // if(m_parent)
-    //	delete m_parent;
 }
 
 #pragma region Attack functions
@@ -1751,41 +1749,6 @@ void ChessBoard::commitBoard() {
 // duplicate/clone the board
 void ChessBoard::duplicate(ChessBoard* ret) {
     memcpy(ret, this, SIZEOF_BOARD);
-    /*
-        ret->m_turn = this->m_turn;
-        ret->m_o_turn = this->m_o_turn;
-        ret->m_ep = this->m_ep;
-        ret->m_state = this->m_state;
-        ret->m_castlings[BLACK] = this->m_castlings[BLACK];
-        ret->m_castlings[WHITE] = this->m_castlings[WHITE];
-        ret->m_50RuleCount = this->m_50RuleCount;
-        ret->m_hashKey = this->m_hashKey;
-        ret->m_parent = this->m_parent;
-        ret->m_myMove = this->m_myMove;
-        ret->m_numBoard = this->m_numBoard;
-
-        ret->m_quality = this->m_quality;
-        ret->m_o_quality = this->m_o_quality;
-        ret->m_kingPos = this->m_kingPos;
-        ret->m_o_kingPos = this->m_o_kingPos;
-
-        ret->m_bitbPositions[BLACK] = this->m_bitbPositions[BLACK];
-        ret->m_bitbPositions[WHITE] = this->m_bitbPositions[WHITE];
-        ret->m_bitb = this->m_bitb;
-        ret->m_bitb_45 = this->m_bitb_45;
-        ret->m_bitb_90 = this->m_bitb_90;
-        ret->m_bitb_315 = this->m_bitb_315;
-        ret->m_bitbAttackMoveSquares = this->m_bitbAttackMoveSquares;
-
-        for(int i = 0; i < NUM_PIECES; i++)
-        {
-                ret->m_bitbPieces[BLACK][i] = this->m_bitbPieces[BLACK][i];
-                ret->m_bitbPieces[WHITE][i] = this->m_bitbPieces[WHITE][i];
-        }
-        ret->m_sizeMoves = this->m_sizeMoves;
-        for(int i = 0; i < m_sizeMoves; i++)
-                ret->m_arrMoves[i] = this->m_arrMoves[i];
-     */
 }
 
 // convinient method to return pointer to first board
