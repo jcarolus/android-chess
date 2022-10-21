@@ -96,4 +96,6 @@ class Move {
 #define Move_isHouseMove(move) (((move >> Move::SHIFT_HOUSE) & Move::MASK_BOOL) == Move::MASK_BOOL)
 
     static void toDbgString(const int move, char* buf);
+
+    static void toBitString(const int move, char* ret);
 };

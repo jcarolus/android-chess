@@ -89,7 +89,7 @@ boolean Game::requestMove(int from, int to) {
         return true;
     } else {
         delete nb;
-        DEBUG_PRINT("%d-%d not moved...(request)\n\0", from, to);
+        DEBUG_PRINT("%d-%d not moved...(request)\n", from, to);
         return false;
     }
 }

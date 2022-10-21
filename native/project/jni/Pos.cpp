@@ -42,16 +42,16 @@ int Pos::col(const int val) {
 // @val positional value [0-63] - no check on valid range
 
 void Pos::toString(const int val, char* buf) {
-    sprintf(buf, "%c%d\0", (char) (Pos::col(val) + (int) 'a'), 8 - Pos::row(val));
+    sprintf(buf, "%c%d", (char) (Pos::col(val) + (int) 'a'), 8 - Pos::row(val));
 }
 
 // returns string representation of the row of val - human represented so from bottom to top
 // ["1"-"8"]
 
 void Pos::rowToString(const int val, char* buf) {
-    sprintf(buf, "%d\0", (8 - Pos::row(val)));
+    sprintf(buf, "%d", (8 - Pos::row(val)));
 }
 // returns string representation of the column. ["a"-"h"]
 void Pos::colToString(const int val, char* buf) {
-    sprintf(buf, "%c\0", ((char) (Pos::col(val) + (int) 'a')));
+    sprintf(buf, "%c", ((char) (Pos::col(val) + (int) 'a')));
 }

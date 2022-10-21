@@ -32,3 +32,18 @@ void Move::toDbgString(const int move, char* buf) {
     }
     strcat(buf, "]");
 }
+
+void Move::toBitString(const int move, char* ret) {
+    strcpy(ret, "");
+    int bT = 1;
+    int i = 0;
+    while (i < 32) {
+        if ((move & bT) == bT) {
+            strcat(ret, "1");
+        } else {
+            strcat(ret, "0");
+        }
+        i++;
+        bT <<= 1;
+    }
+}

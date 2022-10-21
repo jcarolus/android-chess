@@ -29,7 +29,7 @@
 #define DEBUG_PRINT(s, args...) fprintf(stdout, s, args)
 #endif
 #else
-#define DEBUG_PRINT(s, args...) (s)
+#define DEBUG_PRINT(s, args...)
 #endif
 
 #ifdef _MSC_VER

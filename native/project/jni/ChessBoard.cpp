@@ -101,9 +101,6 @@ BITBOARD ChessBoard::kingAttacks(const int turn, BITBOARD bb) {
 // is nothing at @pos
 boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
     BITBOARD square = BITS[pos];
-    // co.pl("turn" + turn + " pos " + pos);
-    // co.pl(bitbToString(bb));
-    // co.pl(bitbToString(m_bitbPieces[turn^1][QUEEN] & bb));
     int o_turn = turn ^ 1;
 
     if ((m_bitbPieces[o_turn][KNIGHT] & KNIGHT_RANGE[pos]) != 0) {
@@ -186,7 +183,6 @@ void ChessBoard::calcState(ChessBoard* board) {
         // char buf[20];
         // Move::toDbgString(move, buf);
         // DEBUG_PRINT("%s\n", buf);
-        // co.pl("Filtering " + );
 
         makeMove(move, board);
 
@@ -196,29 +192,21 @@ void ChessBoard::calcState(ChessBoard* board) {
         } else {
             // check if opponent king is checked
             if (board->isSquareAttacked(m_o_turn, board->m_kingPos)) {
-                // co.pl("CHECK! " + m_indexMoves);
                 //  set checked flag in move - so in makeMove m_state can be set to check
                 m_arrMoves[m_indexMoves - 1] = Move_setCheck(move);
             }
         }
     }
 
-    // co.pl("attackedbits ");
-    // co.pl(ChessBoard::bitbToString(m_bitbAttackMoveSquares));
-    // co.pl("After filter " + m_sizeMoves + " - state " + m_state);
-
     // game over when no moves left
     if (m_sizeMoves == 0) {
         // state set to check in makeMove
         if (m_state == CHECK || isIncheck) {
             m_state = MATE;
-            // co.pl("MATE");
         } else {
             m_state = STALEMATE;
-            // co.pl("STALEMATE");
         }
     }
-    // printB();
 }
 
 // this is called from search, so check for king of turn
@@ -507,34 +495,9 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
     ret->m_bitbAttackMoveSquares = 0L;
     // EOF COPY
 
-    // BOF COPY
-    /*
-    ret->m_hashKey = m_hashKey;
-
-    ret->m_bitbAttackMoveSquares = 0L;
-
-    ret->m_bitb = m_bitb;
-    ret->m_bitb_45 = m_bitb_45;
-    ret->m_bitb_90 = m_bitb_90;
-    ret->m_bitb_315 = m_bitb_315;
-
-    for(int i = 0; i < NUM_PIECES; i++)
-    {
-            ret->m_bitbPieces[BLACK][i] = this->m_bitbPieces[BLACK][i];
-            ret->m_bitbPieces[WHITE][i] = this->m_bitbPieces[WHITE][i];
-    }
-    ret->m_bitbPositions[m_turn] = m_bitbPositions[m_turn];
-    ret->m_bitbPositions[m_o_turn] = m_bitbPositions[m_o_turn];
-
-    ret->m_castlings[BLACK] = m_castlings[BLACK];
-    ret->m_castlings[WHITE] = m_castlings[WHITE];
-    */
-    // EOF COPYY
-
     // if it is a 'first pawn move' set ep square
     if (Move_isFirstPawnMove(move)) {
         ret->m_ep = to + (m_turn == WHITE ? 8 : -8);
-        // co.pl("Setting EP " + to + " from move " + Move::toDbgString(move));
     } else {
         ret->m_ep = -1;
     }
@@ -546,7 +509,6 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
         ret->m_state = CHECK;
     } else {
         ret->m_state = PLAY;  // not the final state, but different to this
-                              //
     }
 
     // administration for castling
@@ -566,18 +528,6 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
         ret->m_kingPos = m_o_kingPos;
         ret->m_o_kingPos = m_kingPos;
     }
-
-    // debug "assertation"
-    // TODO remove (is a result from incorrect administration of m_pieces)
-    // status is fixed, but since final makeMove is not done yet, leave this code
-    /*
-    if((m_bitbPositions[m_turn] & BITS[from]) == 0)
-    {
-            //co.pl("MakeMove pieces = -1 at move " + Move::toDbgString(move));
-            //printB();
-            //System.exit(0);
-    }
-    */
 
     if (Move_isHIT(move)) {
         ret->m_50RuleCount = 0;
@@ -827,18 +777,14 @@ boolean ChessBoard::containsQuiescenceMove() {
 // the attackedsquares bitb is updated
 void ChessBoard::addMoves(const int from, BITBOARD bb) {
     int to;
-    // co.pl("addmoves " + from);
-    // co.pl(ChessBoard::bitbToString(bb));
 
     m_bitbAttackMoveSquares |= bb;
     while (bb != 0) {
         to = ChessBoard::trailingZeros(bb);
 
-        // co.pl("AddMove from " + from + " to " + to);
         bb &= NOT_BITS[to];
         if ((m_bitbPositions[m_o_turn] & BITS[to]) != 0) {
             if ((m_bitbPieces[m_o_turn][KING] & BITS[to]) != 0) {
-                // co.pl("1 INVALID STATE FROM MOVE -- " + from + " - " + to);
                 return;
             } else {
                 addMoveElement(Move_makeMoveHit(from, to));
@@ -861,7 +807,6 @@ void ChessBoard::addPawnCaptureMove(const int move) {
 void ChessBoard::addMove(const int from, const int to) {
     if ((m_bitbPositions[m_o_turn] & BITS[to]) != 0) {
         if ((m_bitbPieces[m_o_turn][KING] & BITS[to]) != 0) {
-            // co.pl("2 INVALID STATE FROM MOVE -- " + from + " - " + to);
             return;
         }
     }
@@ -1049,8 +994,6 @@ void ChessBoard::genKnightMoves() {
 }
 
 BITBOARD ChessBoard::rookMoves(const int turn, const int pos) {
-    // co.pl("90 pos " + pos + " << " + SHIFT_90[pos] + " = " + ((int)(m_bitb_90 >> SHIFT_90[pos]) &
-    // 0xFF));
     return (~m_bitbPositions[turn]) &
            ((RANK_MOVES[pos][(int) (m_bitb >> SHIFT_0[pos]) & 0xFF]) |
             (FILE_MOVES[pos][(int) (m_bitb_90 >> SHIFT_90[pos]) & 0xFF]));
@@ -1066,15 +1009,6 @@ void ChessBoard::genRookMoves() {
 }
 
 BITBOARD ChessBoard::bishopMoves(const int turn, const int pos) {
-    //		co.pl("45 pos " + pos + " << " + SHIFT_45[pos] + " mask " +
-    // ChessBoard::bits8ToString(MASK_45[pos]) + " on " + ChessBoard::bits8ToString((int)((m_bitb_45
-    //>> SHIFT_45[pos]) & 0xFF)) + " = " + ChessBoard::bits8ToString(((int)(m_bitb_45 >>
-    // SHIFT_45[pos]) & MASK_45[pos]))); 		co.pl("315 pos " + pos + " << " +
-    // SHIFT_315[pos]
-    // + " mask "
-    //+ ChessBoard::bits8ToString(MASK_315[pos]) + " on " +
-    // ChessBoard::bits8ToString((int)((m_bitb_315 >> SHIFT_315[pos]) & 0xFF)) + " = " +
-    // ChessBoard::bits8ToString(((int)(m_bitb_315 >> SHIFT_315[pos]) & MASK_315[pos])));
     return (~m_bitbPositions[turn]) &
            ((DIAG_45_MOVES[pos][(int) (m_bitb_45 >> SHIFT_45[pos]) & MASK_45[pos]]) |
             (DIAG_315_MOVES[pos][(int) (m_bitb_315 >> SHIFT_315[pos]) & MASK_315[pos]]));
@@ -1514,7 +1448,6 @@ int ChessBoard::boardValueExtension() {
     /*
     if(m_parent == NULL)
         return 0;
-    //co.pl("boardValue called with NULL parent!!!");
     */
     // lone king
     if (m_quality == 0) {
@@ -1988,7 +1921,7 @@ void ChessBoard::toFENBoard(char* s) {
         }
         if (i > 0 && i % 8 == 0) {
             if (numEmpty > 0) {
-                sprintf(buf, "%d\0", numEmpty);
+                sprintf(buf, "%d", numEmpty);
                 strcat(s, buf);
                 numEmpty = 0;
             }
@@ -2000,7 +1933,7 @@ void ChessBoard::toFENBoard(char* s) {
             numEmpty++;
         } else {
             if (numEmpty > 0) {
-                sprintf(buf, "%d\0", numEmpty);
+                sprintf(buf, "%d", numEmpty);
                 strcat(s, buf);
             }
             strcat(s, sP);
@@ -2008,7 +1941,7 @@ void ChessBoard::toFENBoard(char* s) {
         }
     }
     if (numEmpty > 0) {
-        sprintf(buf, "%d\0", numEmpty);
+        sprintf(buf, "%d", numEmpty);
         strcat(s, buf);
     }
     strcat(s, " ");
@@ -2055,7 +1988,7 @@ void ChessBoard::toFEN(char* s) {
     }
 
     strcat(s, " ");
-    sprintf(buf, "%d\0", m_50RuleCount);
+    sprintf(buf, "%d", m_50RuleCount);
     strcat(s, buf);
     strcat(s, " ");
     int cnt = 0;
@@ -2066,7 +1999,7 @@ void ChessBoard::toFEN(char* s) {
         tmpBoard = tmpBoard->m_parent;
     }
     cnt = cnt / 2 + 1;
-    sprintf(buf, "%d\0", cnt);
+    sprintf(buf, "%d", cnt);
     strcat(s, buf);
 }
 
@@ -3979,8 +3912,6 @@ void ChessBoard::initMoveArrays() {
 
             while (ROW[tmp] < 7) {
                 tmp += 8;
-                // co.pl("ROW+" + ROW[tmp] + " r90 " + ROT_90_BITS[tmp]);
-                // co.pl(bitbToString(ROT_90_BITS[tmp]));
 
                 if ((bits & bit) == bit) {
                     bbFile |= BITS[tmp];
@@ -3996,8 +3927,6 @@ void ChessBoard::initMoveArrays() {
             bit = (int) pow(2, ROW[tmp] - 1);
             while (ROW[tmp] > 0) {
                 tmp -= 8;
-                // co.pl("ROW-" + ROW[tmp] + " - " + tmp + " - " + bit);
-                // co.pl(bitbToString(ROT_90_BITS[tmp]));
 
                 if ((bits & bit) == bit) {
                     bbFile |= BITS[tmp];
@@ -4008,19 +3937,15 @@ void ChessBoard::initMoveArrays() {
 
                 bit /= 2;
             }
-            // co.pl("--");
-            // co.pl(bitbToString(bbFile));
+
             FILE_MOVES[pos][bits] = bbFile;
 
             // 45
             tmp = pos;
             bit = (int) pow(2, MIN(ROW[tmp], 7 - COL[tmp]) + 1);
-            // co.pl("pos bit + 1 = " + bit);
-            // co.pl(bitbToString(ROT_45_BITS[tmp]));
 
             while (COL[tmp] > 0 && ROW[tmp] < 7) {
                 tmp += 7;
-                // co.pl("bit+" + bit);
 
                 if ((bits & bit) == bit) {
                     bb45 |= BITS[tmp];
@@ -4034,10 +3959,9 @@ void ChessBoard::initMoveArrays() {
 
             tmp = pos;
             bit = (int) pow(2, MIN(ROW[tmp], 7 - COL[tmp]) - 1);
-            // co.pl("pos bit - 1 = " + bit);
+
             while (COL[tmp] < 7 && ROW[tmp] > 0) {
                 tmp -= 7;
-                // co.pl("bit" + bit);
 
                 if ((bits & bit) == bit) {
                     bb45 |= BITS[tmp];
@@ -4049,20 +3973,15 @@ void ChessBoard::initMoveArrays() {
                 bit /= 2;
             }
 
-            // co.pl(bitbToString(bb45));
             DIAG_45_MOVES[pos][bits] = bb45;
 
             // 315
 
             tmp = pos;
             bit = (int) pow(2, MIN(ROW[tmp], COL[tmp]) + 1);
-            // co.pl(bit);
-            // co.pl(bitbToString(ROT_45_BITS[tmp]));
 
             while (COL[tmp] < 7 && ROW[tmp] < 7) {
                 tmp += 9;
-                // co.pl("ROW+" + ROW[tmp] + " r90 " + ROT_90_BITS[tmp]);
-                // co.pl(bitbToString(ROT_90_BITS[tmp]));
 
                 if ((bits & bit) == bit) {
                     bb315 |= BITS[tmp];
@@ -4078,8 +3997,6 @@ void ChessBoard::initMoveArrays() {
             bit = (int) pow(2, MIN(ROW[tmp], COL[tmp]) - 1);
             while (COL[tmp] > 0 && ROW[tmp] > 0) {
                 tmp -= 9;
-                // co.pl("ROW+" + ROW[tmp] + " r90 " + ROT_90_BITS[tmp]);
-                // co.pl(bitbToString(ROT_90_BITS[tmp]));
 
                 if ((bits & bit) == bit) {
                     bb315 |= BITS[tmp];
@@ -4091,7 +4008,6 @@ void ChessBoard::initMoveArrays() {
                 bit /= 2;
             }
 
-            // co.pl(bitbToString(bb315));
             DIAG_315_MOVES[pos][bits] = bb315;
         }
     }
@@ -4218,7 +4134,7 @@ void ChessBoard::bitbToString(const BITBOARD bb, char* ret) {
 void ChessBoard::printB(char* s) {
     char buf[1024];
     sprintf(s,
-            "\n# %d. State %d qualities: %d, %d\nCastling %d %d\n\0",
+            "\n# %d. State %d qualities: %d, %d\nCastling %d %d\n",
             m_numBoard,
             m_state,
             m_quality,
