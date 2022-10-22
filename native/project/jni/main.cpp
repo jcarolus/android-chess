@@ -15,7 +15,10 @@ void startThread();
 bool testGame();
 void speedTest();
 bool testDB();
+bool testSetupNewGame();
 bool testSetupMate();
+bool testInCheck();
+bool testInSelfCheck();
 bool testSetupCastle();
 bool testSetupQuiesce();
 bool testHouse();
@@ -36,10 +39,23 @@ void *search_thread(void *arg) {
 }
 
 int main(int argc, char **argv) {
+    DEBUG_PRINT("\n\n=== START TESTS == \n", 0);
+
     ChessBoard::initStatics();
 
-    TestFunction tests[] =
-        {testSetupMate, testSetupCastle, testSetupQuiesce, testMoves, testDB, testGame};
+    TestFunction tests[] = {testSetupNewGame,
+                            testSetupMate,
+                            testInCheck,
+                            testInSelfCheck,
+                            testSetupCastle,
+                            testSetupQuiesce,
+                            testMoves,
+                            testDB,
+                            testGame};
+
+    // TestFunction tests[] = {
+    //     testInCheck,
+    // };
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
@@ -58,6 +74,41 @@ int main(int argc, char **argv) {
 void startThread() {
     pthread_t tid;
     pthread_create(&tid, NULL, search_thread, NULL);
+}
+
+bool testSetupNewGame() {
+    newGame();
+    char buf[255];
+
+    ChessBoard *board = g->getBoard();
+    board->toFEN(buf);
+
+    return expectEqualString("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                             buf,
+                             "testSetupNewGame");
+}
+
+bool testInCheck() {
+    ChessBoard *board = g->getBoard();
+
+    board->reset();
+    board->put(ChessBoard::f8, ChessBoard::KING, ChessBoard::BLACK);
+    board->put(ChessBoard::b1, ChessBoard::KING, ChessBoard::WHITE);
+    board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::WHITE);
+    board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
+    board->setTurn(0);
+    g->commitBoard();
+
+    // bool b = board->checkInCheck();
+    // if (b) {
+    //     DEBUG_PRINT("in check!\n", 0);
+    // }
+
+    return expectEqualInt(g->getBoard()->getState(), ChessBoard::CHECK, "State should equal CHECK");
+}
+
+bool testInSelfCheck() {
+    return true;
 }
 
 bool testSetupMate() {
@@ -189,12 +240,18 @@ bool testHouse() {
 bool testMoves() {
     newGame();
 
-    return g->requestMove(ChessBoard::e2, ChessBoard::e4) &&
-           g->requestMove(ChessBoard::e7, ChessBoard::e5) &&
-           g->requestMove(ChessBoard::g1, ChessBoard::f3) &&
-           g->requestMove(ChessBoard::b8, ChessBoard::c6) &&
-           g->requestMove(ChessBoard::d1, ChessBoard::e2) &&
-           g->requestMove(ChessBoard::f8, ChessBoard::e7);
+    bool ret = g->requestMove(ChessBoard::e2, ChessBoard::e4) &&
+               g->requestMove(ChessBoard::e7, ChessBoard::e5) &&
+               g->requestMove(ChessBoard::g1, ChessBoard::f3) &&
+               g->requestMove(ChessBoard::b8, ChessBoard::c6) &&
+               g->requestMove(ChessBoard::d1, ChessBoard::e2) &&
+               g->requestMove(ChessBoard::f8, ChessBoard::e7);
+
+    if (!ret) {
+        DEBUG_PRINT("testMoves failed\n", 0);
+    }
+
+    return ret;
 }
 
 bool testGenmoves() {
@@ -315,7 +372,7 @@ void printFENAndState(ChessBoard *board) {
 
 bool expectEqualInt(int a, int b, char *message) {
     if (a != b) {
-        DEBUG_PRINT("FAILED: %s => Expected %d but got %d", message, a, b);
+        DEBUG_PRINT("FAILED: %s => Expected [%d] but got [%d]\n", message, a, b);
         return false;
     }
     return true;
@@ -323,7 +380,7 @@ bool expectEqualInt(int a, int b, char *message) {
 
 bool expectEqualString(char *a, char *b, char *message) {
     if (strcmp(a, b) != 0) {
-        DEBUG_PRINT("FAILED: %s => Expected [%s] but got [%s]", message, a, b);
+        DEBUG_PRINT("FAILED: %s => Expected [%s] but got [%s]\n", message, a, b);
         return false;
     }
     return true;

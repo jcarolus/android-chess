@@ -382,7 +382,6 @@ class ChessBoard {
     int bishopValueExtension(const int turn);
     int rookValueExtension(const int turn);
     int getAvailableCol(int colNum);
-    // boolean initFEN(const char* sFEN);
     void toFEN(char* s);
     void toFENBoard(char* s);
 
@@ -421,8 +420,6 @@ class ChessBoard {
     boolean isFieldAt(const int p);
     int getIndex(const int col, const int row);
 
-    // String toFENBoard();
-    // String toFEN();
     void initHashKey();
     // put a @piece on @sPos with @turn
     // void put(const String sPos, const int piece, const int turn);
@@ -476,9 +473,7 @@ class ChessBoard {
     // oppsite of m_turn
     int m_o_turn;
     // kings position (of turn)
-    int m_kingPos;
-    // opponents king position
-    int m_o_kingPos;
+    int m_kingPositions[2];
     // state of the game - one of the states constants - see below
     int m_state;
     // administration of number of moves for "no hits rule" - when a board result from a hit or a
@@ -507,6 +502,7 @@ class ChessBoard {
     int m_myMove;
 
     // to keep track of the material quality of self and opponent
+    int m_qualities[2];
     int m_quality;
     int m_o_quality;
 
