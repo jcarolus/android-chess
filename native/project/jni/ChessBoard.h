@@ -503,8 +503,6 @@ class ChessBoard {
 
     // to keep track of the material quality of self and opponent
     int m_qualities[2];
-    int m_quality;
-    int m_o_quality;
 
     // array that is re-used as a temporary array for scoring the moves
     int m_arrScoreMoves[MAX_MOVES];

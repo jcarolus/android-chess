@@ -160,6 +160,10 @@ bool testGame() {
     }
 
     printFENAndState(board);
+    char buf[512];
+    board->printB(buf);
+
+    DEBUG_PRINT("\n%s\n", buf);
 
     return true;
 }

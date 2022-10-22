@@ -288,22 +288,24 @@ boolean ChessBoard::isEnded() {
         m_bitbPieces[m_turn][ROOK] == 0 && m_bitbPieces[m_o_turn][ROOK] == 0 &&
         m_bitbPieces[m_turn][QUEEN] == 0 && m_bitbPieces[m_o_turn][QUEEN] == 0) {
         // KNk or KBk is draw
-        if (m_o_quality == 0 && (m_quality <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-                                 m_quality <= ChessBoard::PIECE_VALUES[BISHOP])) {
+        if (m_qualities[m_o_turn] == 0 &&
+            (m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
+             m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
             m_state = ChessBoard::DRAW_MATERIAL;
             return true;
         }
-        if (m_quality == 0 && (m_o_quality <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-                               m_o_quality <= ChessBoard::PIECE_VALUES[BISHOP])) {
+        if (m_qualities[m_turn] == 0 &&
+            (m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
+             m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
             m_state = ChessBoard::DRAW_MATERIAL;
             return true;
         }
         // also KNkn and KBkb, KBkn are almost always draw; theoretical mates only with king in
         // corner (and own piece next to it)
-        if ((m_o_quality <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-             m_o_quality <= ChessBoard::PIECE_VALUES[BISHOP]) &&
-            (m_quality <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-             m_quality <= ChessBoard::PIECE_VALUES[BISHOP])) {
+        if ((m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
+             m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[BISHOP]) &&
+            (m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
+             m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
             // test for either king NOT in a corner
             if (!(m_kingPositions[m_o_turn] == a8 || m_kingPositions[m_o_turn] == h8 ||
                   m_kingPositions[m_o_turn] == a1 || m_kingPositions[m_o_turn] == h1 ||
@@ -529,11 +531,10 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
 
     if (Move_isHIT(move)) {
         ret->m_50RuleCount = 0;
-        ret->m_o_quality = m_quality;
 
         // separate handling for en-passant, because the captured piece is not on the to square
         if (Move_isEP(move)) {
-            ret->m_quality = m_o_quality - ChessBoard::PIECE_VALUES[PAWN];
+            ret->m_qualities[m_o_turn] = m_qualities[m_o_turn] - ChessBoard::PIECE_VALUES[PAWN];
             if (m_turn == WHITE) {
                 ret->m_hashKey ^= HASH_KEY[m_o_turn][PAWN][to + 8];
                 ret->m_bitbPositions[m_o_turn] &= NOT_BITS[to + 8];
@@ -557,7 +558,7 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
             // normal hit
             const int pieceTo = pieceAt(m_o_turn, to);
             ret->m_hashKey ^= HASH_KEY[m_o_turn][pieceTo][to];
-            ret->m_quality = m_o_quality - ChessBoard::PIECE_VALUES[pieceTo];
+            ret->m_qualities[m_o_turn] = m_qualities[m_o_turn] - ChessBoard::PIECE_VALUES[pieceTo];
             ret->m_bitbPieces[m_o_turn][pieceTo] &= NOT_BITS[to];
             ret->m_bitbPositions[m_o_turn] &= NOT_BITS[to];
 
@@ -565,8 +566,6 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
         }
     } else  // not a hit
     {
-        ret->m_o_quality = m_quality;
-        ret->m_quality = m_o_quality;
         if ((m_bitbPieces[m_turn][PAWN] & BITS[from]) != 0) {
             ret->m_50RuleCount = 0;
         } else {
@@ -598,7 +597,7 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
 
     // replace promotion piece
     if (Move_isPromotionMove(move)) {
-        ret->m_o_quality += ChessBoard::PIECE_VALUES[Move_getPromotionPiece(move)];
+        ret->m_qualities[m_turn] += ChessBoard::PIECE_VALUES[Move_getPromotionPiece(move)];
         ret->m_bitbPieces[m_turn][Move_getPromotionPiece(move)] |= BITS[to];
         ret->m_bitbPieces[m_turn][PAWN] &= NOT_BITS[to];
         ret->m_hashKey ^= HASH_KEY[m_turn][PAWN][to];
@@ -1292,7 +1291,7 @@ int ChessBoard::scoreMove(int move) {
     }
 
     if (piece == KING) {
-        if (m_o_quality == 0) {
+        if (m_qualities[m_o_turn] == 0) {
             return 20000;
         }
         return 0;
@@ -1362,7 +1361,7 @@ int ChessBoard::boardValue() {
             return ChessBoard::VALUATION_DRAW_REPEAT;
     */
     // standard super simple evaluation. sum of material quality
-    return m_quality - m_o_quality;
+    return m_qualities[m_turn] - m_qualities[m_o_turn];
 }
 
 // boardValue will call this method when one of the players only has its king
@@ -1372,12 +1371,12 @@ int ChessBoard::loneKingValue(const int turn) {
         return ChessBoard::VALUATION_LONE_KING_BONUS -
                ChessBoard::VALUATION_LONE_KING *
                    HOOK_DISTANCE[m_kingPositions[m_turn]][m_kingPositions[m_o_turn]] -
-               ChessBoard::VALUATION_KING_ENDINGS[m_kingPositions[m_o_turn]] + m_quality;
+               ChessBoard::VALUATION_KING_ENDINGS[m_kingPositions[m_o_turn]] + m_qualities[m_turn];
     }
     return ChessBoard::VALUATION_LONE_KING_BONUS -
            ChessBoard::VALUATION_LONE_KING *
                HOOK_DISTANCE[m_kingPositions[m_o_turn]][m_kingPositions[m_turn]] -
-           ChessBoard::VALUATION_KING_ENDINGS[m_kingPositions[m_turn]] + m_o_quality;
+           ChessBoard::VALUATION_KING_ENDINGS[m_kingPositions[m_turn]] + m_qualities[m_o_turn];
 }
 
 // return "value" of king bishop knight against lone king
@@ -1439,7 +1438,7 @@ int ChessBoard::boardValueExtension() {
     if(m_state == ChessBoard::DRAW_REPEAT)
     {
             // penalty when better or equal quality
-            if(m_quality >= m_o_quality)
+            if(m_qualities[m_turn] >= m_qualities[m_o_turn])
                     return ChessBoard::VALUATION_DRAW_REPEAT;
             return ChessBoard::VALUATION_DRAW;
     }
@@ -1450,11 +1449,11 @@ int ChessBoard::boardValueExtension() {
         return 0;
     */
     // lone king
-    if (m_quality == 0) {
+    if (m_qualities[m_turn] == 0) {
         // no pawns to promote but enough mating material (m_state != DRAW_MATERIAL)
         if (m_bitbPieces[m_o_turn][PAWN] == 0) {
             // kbnk is special case
-            if ((m_o_quality ==
+            if ((m_qualities[m_o_turn] ==
                  ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
                 ChessBoard::bitCount(m_bitbPieces[m_o_turn][KNIGHT]) == 1 &&
                 ChessBoard::bitCount(m_bitbPieces[m_o_turn][BISHOP]) == 1) {
@@ -1465,9 +1464,9 @@ int ChessBoard::boardValueExtension() {
         // promote pawns
         return -promotePawns(m_o_turn);
     }  // opponent has lone king
-    else if (m_o_quality == 0) {
+    else if (m_qualities[m_o_turn] == 0) {
         if (m_bitbPieces[m_turn][PAWN] == 0) {
-            if ((m_quality ==
+            if ((m_qualities[m_turn] ==
                  ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
                 ChessBoard::bitCount(m_bitbPieces[m_turn][KNIGHT]) == 1 &&
                 ChessBoard::bitCount(m_bitbPieces[m_turn][BISHOP]) == 1) {
@@ -1481,7 +1480,7 @@ int ChessBoard::boardValueExtension() {
 
     // always start with
     // standard basic evaluation. sum of material quality
-    int val = m_quality - m_o_quality;
+    int val = m_qualities[m_turn] - m_qualities[m_o_turn];
 
     /*
     // center and king squares attacked
@@ -1785,10 +1784,6 @@ void ChessBoard::switchTurn() {
     int tmp = m_turn;
     m_turn = m_o_turn;
     m_o_turn = tmp;
-
-    tmp = m_quality;
-    m_quality = m_o_quality;
-    m_o_quality = tmp;
 }
 int ChessBoard::opponentTurn() {
     return m_o_turn;
@@ -2092,9 +2087,9 @@ void ChessBoard::put(const int pos, const int piece, const int turn) {
         m_kingPositions[turn] = pos;
     } else {
         if (turn == WHITE) {
-            m_quality += PIECE_VALUES[piece];
+            m_qualities[m_turn] += PIECE_VALUES[piece];
         } else {
-            m_o_quality += PIECE_VALUES[piece];
+            m_qualities[m_o_turn] += PIECE_VALUES[piece];
         }
     }
 }
@@ -2124,7 +2119,7 @@ boolean ChessBoard::putHouse(const int pos,
         nextBoard->m_bitb_315 |= ROT_315_BITS[pos];
         nextBoard->m_hashKey ^= HASH_KEY[m_turn][piece][pos];
 
-        nextBoard->m_quality += ChessBoard::PIECE_VALUES[piece];
+        nextBoard->m_qualities[m_turn] += ChessBoard::PIECE_VALUES[piece];
         nextBoard->m_numBoard = m_numBoard + 1;
         nextBoard->m_myMove = 0;  // no move!
 
@@ -2262,16 +2257,16 @@ void ChessBoard::myMoveToString(char* buf) {
 
 //	 to initialize the quality members after a position is set up
 void ChessBoard::calcQuality() {
-    m_quality = 0;
-    m_o_quality = 0;
+    m_qualities[m_turn] = 0;
+    m_qualities[m_o_turn] = 0;
     int p;
     for (int i = 0; i < ChessBoard::NUM_FIELDS; i++) {
         if (isPieceOfColorAt(m_turn, i)) {
             p = pieceAt(m_turn, i);
-            m_quality += ChessBoard::PIECE_VALUES[p];
+            m_qualities[m_turn] += ChessBoard::PIECE_VALUES[p];
         } else if (isPieceOfColorAt(m_o_turn, i)) {
             p = pieceAt(m_o_turn, i);
-            m_o_quality += ChessBoard::PIECE_VALUES[p];
+            m_qualities[m_o_turn] += ChessBoard::PIECE_VALUES[p];
         }
     }
 }
@@ -4096,8 +4091,8 @@ void ChessBoard::printB(char* s) {
             "\n# %d. State %d qualities: %d, %d\nCastling %d %d\n",
             m_numBoard,
             m_state,
-            m_quality,
-            m_o_quality,
+            m_qualities[m_turn],
+            m_qualities[m_o_turn],
             m_castlings[m_turn],
             m_castlings[m_o_turn]);
 
