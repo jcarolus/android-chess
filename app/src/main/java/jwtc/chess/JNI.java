@@ -63,7 +63,7 @@ public class JNI {
 
         setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
 
-        commitBoard();
+        commitBoard(BoardConstants.VARIANT_DEFAULT);
     }
 
 
@@ -145,7 +145,7 @@ public class JNI {
                         setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
 
                         setTurn(turn);
-                        commitBoard();
+                        commitBoard(BoardConstants.VARIANT_DEFAULT);
 
                         return true;
                     }
@@ -340,7 +340,7 @@ public class JNI {
 
         setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
 
-        commitBoard();
+        commitBoard(BoardConstants.VARIANT_DEFAULT);
 
         return ret;
     }
@@ -389,7 +389,7 @@ public class JNI {
 
     public native int getTurn();
 
-    public native void commitBoard();
+    public native void commitBoard(int variant);
 
     public native void setTurn(int turn);
 

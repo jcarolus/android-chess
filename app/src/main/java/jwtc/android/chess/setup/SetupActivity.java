@@ -144,7 +144,7 @@ public class SetupActivity extends ChessBoardActivity {
                 checkBlackCastleLong.isChecked() ? 1 : 0,
                 checkBlackCastleShort.isChecked() ? 1 : 0,
                 iEP, 0);
-        jni.commitBoard();
+        jni.commitBoard(BoardConstants.VARIANT_DEFAULT);
 
         if (jni.isLegalPosition() == 0) {
             new AlertDialog.Builder(this)

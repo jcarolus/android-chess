@@ -97,7 +97,7 @@ bool testInCheck() {
     board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::WHITE);
     board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
     board->setTurn(0);
-    g->commitBoard();
+    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
 
     // bool b = board->checkInCheck();
     // if (b) {
@@ -120,7 +120,7 @@ bool testSetupMate() {
     board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::WHITE);
     board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
     board->setTurn(0);
-    g->commitBoard();
+    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
 
     return expectEqualInt(g->getBoard()->getState(), ChessBoard::MATE, "State should equal MATE");
 }
@@ -196,7 +196,7 @@ bool testSetupCastle() {
 
     board->setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
     // board->setTurn(0);
-    g->commitBoard();
+    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
 
     char buf[512];
     board->toFEN(buf);
@@ -222,7 +222,7 @@ bool testSetupQuiesce() {
 
     board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
     board->setTurn(0);
-    g->commitBoard();
+    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
 
     // printFENAndState(board);
     return true;
@@ -320,7 +320,7 @@ void newGame() {
 
     board->setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
 
-    g->commitBoard();
+    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
 }
 
 void printMove(int move) {

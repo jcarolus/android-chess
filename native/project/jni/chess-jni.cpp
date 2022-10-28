@@ -129,8 +129,8 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setCastlingsEPAnd50(JNIEnv* env,
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumBoard(JNIEnv* env, jobject thiz) {
     return stGame->getBoard()->getNumBoard();
 }
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard(JNIEnv* env, jobject thiz) {
-    stGame->commitBoard();
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard(JNIEnv* env, jobject thiz, jint variant) {
+    stGame->commitBoard(variant);
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setTurn(JNIEnv* env, jobject thiz, jint turn) {
     stGame->getBoard()->setTurn(turn);
@@ -291,7 +291,7 @@ static JNINativeMethod sMethods[] = {
     {"setCastlingsEPAnd50", "(IIIIII)V", (void*) Java_jwtc_chess_JNI_setCastlingsEPAnd50},
     {"getNumBoard", "()I", (void*) Java_jwtc_chess_JNI_getNumBoard},
     {"getTurn", "()I", (void*) Java_jwtc_chess_JNI_getTurn},
-    {"commitBoard", "()V", (void*) Java_jwtc_chess_JNI_commitBoard},
+    {"commitBoard", "(I)V", (void*) Java_jwtc_chess_JNI_commitBoard},
     {"setTurn", "(I)V", (void*) Java_jwtc_chess_JNI_setTurn},
     {"getMoveArraySize", "()I", (void*) Java_jwtc_chess_JNI_getMoveArraySize},
     {"getMoveArrayAt", "(I)I", (void*) Java_jwtc_chess_JNI_getMoveArrayAt},

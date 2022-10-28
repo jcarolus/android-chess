@@ -6,6 +6,9 @@ import jwtc.chess.*;
 public class BoardConstants {
     public static Valuation m_valuation = new Valuation();
 
+    public static final int VARIANT_DEFAULT = 1;
+    public static final int VARIANT_DUCK = 2;
+
     // states of the game ////////////////////////////////////////////////////////////////////////////
     public static final int PLAY = 1;
     public static final int CHECK = 2;

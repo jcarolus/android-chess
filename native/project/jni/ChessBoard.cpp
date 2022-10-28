@@ -98,6 +98,10 @@ BITBOARD ChessBoard::kingAttacks(const int turn, BITBOARD bb) {
 // returns true when square of turn is attacked - it does not matter if there
 // is nothing at @pos
 boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
+    if (pos < 0 || pos > 63) {
+        return false;
+    }
+
     BITBOARD square = BITS[pos];
     int o_turn = turn ^ 1;
 
@@ -167,6 +171,17 @@ void ChessBoard::calcState(ChessBoard* board) {
     if (isEnded()) {
         return;
     }
+
+    if (m_variant == VARIANT_DUCK) {
+        // for duck chess, a captured king indicates end of game
+        if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 ||
+            m_kingPositions[m_o_turn] < 0 || m_kingPositions[m_o_turn] > 63) {
+            m_state = MATE;
+        }
+        // no need to calculate anything else for the state
+        return;
+    }
+
     genMoves();
 
     int move;
@@ -212,15 +227,9 @@ void ChessBoard::calcState(ChessBoard* board) {
 
 // this is called from search, so check for king of turn
 boolean ChessBoard::checkInCheck() {
-    // working:
     if (isSquareAttacked(m_turn, m_kingPositions[m_turn])) {
-        // if(m_bitbAttackMoveSquares & BITS[m_kingPositions[m_o_turn]]){
-        //  todo consider not taking king moves in attackmovessquares?
-        //    if((KING_RANGE[m_kingPositions[m_turn]] & BITS[m_kingPositions[m_o_turn]]) == 0){
-
         m_state = CHECK;
         return true;
-        //    }
     }
     return false;
 }
@@ -228,14 +237,15 @@ boolean ChessBoard::checkInCheck() {
 // this is called from search, so check for opponent king!
 // only valid result if called after genmoves
 boolean ChessBoard::checkInSelfCheck() {
-    // orig:
-    // return (m_bitbAttackMoveSquares & BITS[m_kingPositions[m_o_turn]]);
-    // working
     return isSquareAttacked(m_o_turn, m_kingPositions[m_o_turn]);
 }
 
 int ChessBoard::getState() {
     return m_state;
+}
+
+int ChessBoard::getVariant() {
+    return m_variant;
 }
 
 boolean ChessBoard::isLegalPosition() {
@@ -409,6 +419,10 @@ boolean ChessBoard::requestMove(const int from,
                                 ChessBoard* board,
                                 ChessBoard* tmpBoard,
                                 int promoPiece) {
+    // if duckPos was not set, the previous turn was not completed, so no valid piece move
+    if (m_variant == VARIANT_DUCK && m_duckPos == -1 && m_parent != NULL) {
+        return false;
+    }
     if (isEnded()) {
         return false;
     }
@@ -429,6 +443,16 @@ boolean ChessBoard::requestMove(const int from,
             return true;
         }
     }
+    return false;
+}
+
+boolean ChessBoard::requestDuckMove(int newDuckPos, ChessBoard* board) {
+    if (board->m_duckPos == -1 && board->m_variant == VARIANT_DUCK) {
+        board->putDuck(newDuckPos);
+
+        return true;
+    }
+
     return false;
 }
 
@@ -489,15 +513,13 @@ boolean ChessBoard::requestMove(const int m, ChessBoard* board, ChessBoard* tmpB
 // make move @move, and initialize datastructure of board @ret to the new
 // position
 void ChessBoard::makeMove(const int move, ChessBoard* ret) {
-    // ret->reset();
-
     const int from = Move_getFrom(move), to = Move_getTo(move);
     const int pieceFrom = pieceAt(m_turn, from);
 
-    // BOF COPY
     memcpy(ret, this, SIZEOF_BOARD);
+
     ret->m_bitbAttackMoveSquares = 0L;
-    // EOF COPY
+    ret->m_duckPos = -1;
 
     // if it is a 'first pawn move' set ep square
     if (Move_isFirstPawnMove(move)) {
@@ -561,6 +583,11 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
             ret->m_qualities[m_o_turn] = m_qualities[m_o_turn] - ChessBoard::PIECE_VALUES[pieceTo];
             ret->m_bitbPieces[m_o_turn][pieceTo] &= NOT_BITS[to];
             ret->m_bitbPositions[m_o_turn] &= NOT_BITS[to];
+
+            if (pieceTo == KING && m_variant == VARIANT_DUCK) {
+                // a valid move in Duck chess to capture the king
+                ret->m_kingPositions[m_o_turn] = -1;
+            }
 
             // bitb and rotated bitb's do not have to be changed here
         }
@@ -1429,25 +1456,16 @@ int ChessBoard::promotePawns(const int turn) {
 
 // Extended evaluation function
 int ChessBoard::boardValueExtension() {
-    // no m_state
-    /*
-    if(m_state == ChessBoard::MATE)
-            return -ChessBoard::VALUATION_MATE;
-    if(m_state == ChessBoard::DRAW_MATERIAL || m_state == ChessBoard::DRAW_50)
-            return ChessBoard::VALUATION_DRAW;
-    if(m_state == ChessBoard::DRAW_REPEAT)
-    {
-            // penalty when better or equal quality
-            if(m_qualities[m_turn] >= m_qualities[m_o_turn])
-                    return ChessBoard::VALUATION_DRAW_REPEAT;
-            return ChessBoard::VALUATION_DRAW;
-    }
-    */
+    // always start with
+    // standard basic evaluation. sum of material quality
+    int val = m_qualities[m_turn] - m_qualities[m_o_turn];
 
-    /*
-    if(m_parent == NULL)
-        return 0;
-    */
+    // one of the kings not on the board, return just the default value
+    if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 ||
+        m_kingPositions[m_o_turn] < 0 || m_kingPositions[m_o_turn] > 63) {
+        return val;
+    }
+
     // lone king
     if (m_qualities[m_turn] == 0) {
         // no pawns to promote but enough mating material (m_state != DRAW_MATERIAL)
@@ -1476,28 +1494,7 @@ int ChessBoard::boardValueExtension() {
         }
         return promotePawns(m_turn);
     }
-    // TODO some known end-game evaluations (kqkq, kqkr, krkn, krkb...)
-
-    // always start with
-    // standard basic evaluation. sum of material quality
-    int val = m_qualities[m_turn] - m_qualities[m_o_turn];
-
-    /*
-    // center and king squares attacked
-
-    val += ChessBoard::bitCount(m_bitbAttackMoveSquares & (ChessBoard::CENTER_SQUARES |
-    KING_RANGE[m_kingPositions[m_o_turn]])) * 2; val -=
-    ChessBoard::bitCount(m_parent->m_bitbAttackMoveSquares & (ChessBoard::CENTER_SQUARES |
-    KING_RANGE[m_kingPositions[m_turn]])) * 2;
-
-    // attacked square count
-    val += ChessBoard::bitCount(m_bitbAttackMoveSquares);
-    val -= ChessBoard::bitCount(m_parent->m_bitbAttackMoveSquares);
-
-    // attacked pieces
-    val += ChessBoard::bitCount(m_bitbAttackMoveSquares & m_bitbPositions[m_o_turn]);
-    val -= ChessBoard::bitCount(m_parent->m_bitbAttackMoveSquares & m_bitbPositions[m_turn]);
-    */
+    // TODO some more known end-game evaluations (kqkq, kqkr, krkn, krkb...)
 
     val += pawnValueExtension(m_turn);
     val -= pawnValueExtension(m_o_turn);
@@ -1709,14 +1706,16 @@ int ChessBoard::getAvailableCol(int colNum) {
 // set all default values
 // king positions are e1 and e8, but bitboards are emptied
 void ChessBoard::reset() {
+    m_variant = VARIANT_DEFAULT;
     m_numBoard = 1;
     m_parent = NULL;
     m_myMove = 0;
+    m_duckPos = -1;
 
     m_turn = WHITE;
     m_o_turn = BLACK;
-    m_kingPositions[m_turn] = e1;  // -1?
-    m_kingPositions[m_o_turn] = e8;
+    m_kingPositions[m_turn] = -1;
+    m_kingPositions[m_o_turn] = -1;
     m_state = -1;
     m_ep = -1;
     m_castlings[BLACK] = 0;
@@ -1742,11 +1741,15 @@ void ChessBoard::reset() {
 }
 
 // after pieces have been added, commit the board; and do necassary calc
-void ChessBoard::commitBoard() {
+void ChessBoard::commitBoard(const int variant) {
+    if (variant == VARIANT_DUCK) {
+        m_variant = VARIANT_DUCK;
+    } else {
+        m_variant = VARIANT_DEFAULT;
+    }
     m_state = PLAY;
     initHashKey();
     calcQuality();
-    // DEBUG_PRINT("commitBoard\n", 0);
 }
 
 // duplicate/clone the board
@@ -1778,6 +1781,10 @@ int ChessBoard::getNoHitCount() {
     return m_50RuleCount;
 }
 int ChessBoard::getTurn() {
+    if (m_variant == VARIANT_DUCK && m_parent != NULL && m_duckPos == -1) {
+        // the move was made, but not the duck move
+        return m_o_turn;
+    }
     return m_turn;
 }
 void ChessBoard::switchTurn() {
@@ -1876,6 +1883,8 @@ void ChessBoard::toFENBoard(char* s) {
         } else if (isPieceOfColorAt(WHITE, i)) {
             piece = pieceAt(WHITE, i);
             sP[0] = arrP[WHITE][piece];
+        } else if (i == m_duckPos) {
+            sP[0] = '$';
         }
         if (i > 0 && i % 8 == 0) {
             if (numEmpty > 0) {
@@ -2040,14 +2049,8 @@ void ChessBoard::setTurn(const int turn) {
 int ChessBoard::getNumCaptured(int turn, int piece) {
     ChessBoard* tmpBoard = this;
     int cnt = ChessBoard::bitCount(m_bitbPieces[turn][piece]);
-#if DEBUG_LEVEL & 2
-    DEBUG_PRINT("CountCaptured [%d, %d]@%d", turn, piece, cnt);
-#endif
 
     while (tmpBoard->m_parent != NULL) {
-#if DEBUG_LEVEL & 2
-        DEBUG_PRINT(".%d", ChessBoard::bitCount(tmpBoard->m_bitbPieces[turn][piece]));
-#endif
         tmpBoard = tmpBoard->m_parent;
     }
     return ChessBoard::bitCount(tmpBoard->m_bitbPieces[turn][piece]) - cnt;
@@ -2150,6 +2153,23 @@ void ChessBoard::remove(const int t, const int p) {
     m_bitb_45 &= ~ROT_45_BITS[p];
     m_bitb_90 &= ~ROT_90_BITS[p];
     m_bitb_315 &= ~ROT_315_BITS[p];
+}
+
+void ChessBoard::putDuck(const int duckPos) {
+    if (m_duckPos != -1) {
+        m_bitb &= NOT_BITS[duckPos];
+        m_bitb_45 &= ~ROT_45_BITS[duckPos];
+        m_bitb_90 &= ~ROT_90_BITS[duckPos];
+        m_bitb_315 &= ~ROT_315_BITS[duckPos];
+    }
+
+    m_duckPos = duckPos;
+
+    BITBOARD bb = BITS[duckPos];
+    m_bitb |= bb;
+    m_bitb_45 |= ROT_45_BITS[duckPos];
+    m_bitb_90 |= ROT_90_BITS[duckPos];
+    m_bitb_315 |= ROT_315_BITS[duckPos];
 }
 
 // undo a move
@@ -4111,9 +4131,9 @@ void ChessBoard::printB(char* s) {
     //s += "Pieces"+ "\n";
     //s += piecesToString()+ "\n";
     */
-    strcat(s, "\nBitb\n");
-    bitbToString(m_bitb, buf);
-    strcat(s, buf);
+    // strcat(s, "\nBitb\n");
+    // bitbToString(m_bitb, buf);
+    // strcat(s, buf);
     /*
     strcat(s, "\nBitb45\n");
     bitbToString(m_bitb_45, buf);

@@ -187,7 +187,7 @@ public class ICSApi extends GameApi {
             //
             jni.setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
 
-            jni.commitBoard();
+            jni.commitBoard(BoardConstants.VARIANT_DEFAULT);
 
             Log.d(TAG, "FEN " + jni.toFEN() + "  " + jni.getState());
 

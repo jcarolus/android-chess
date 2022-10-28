@@ -57,8 +57,8 @@ void Game::reset() {
     m_board->calcState(m_boardRefurbish);
 }
 
-void Game::commitBoard() {
-    m_board->commitBoard();
+void Game::commitBoard(const int variant) {
+    m_board->commitBoard(variant);
     m_board->calcState(m_boardRefurbish);
 }
 
@@ -135,12 +135,14 @@ void Game::search() {
         return;
     }
 
-    int move = searchDB();
-    if (move != 0) {
-        m_bestMove = move;
-        m_bSearching = false;
-
-        return;
+    // DB search only makes sens for the default chess variant
+    if (m_board->getVariant() == ChessBoard::VARIANT_DEFAULT) {
+        int move = searchDB();
+        if (move != 0) {
+            m_bestMove = move;
+            m_bSearching = false;
+            return;
+        }
     }
 
     startTime();

@@ -9,7 +9,7 @@ class Game {
     ~Game(void);
 
     void reset();
-    void commitBoard();
+    void commitBoard(const int variant);
     ChessBoard* getBoard();
     boolean requestMove(int from, int to);
     boolean move(int);
