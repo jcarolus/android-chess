@@ -69,7 +69,11 @@ public class ChessPieceView extends AppCompatImageView {
 
     protected void setMyImageResource() {
         if (PieceSets.selectedBlindfoldMode == PieceSets.BLINDFOLD_SHOW_PIECES) {
-            setImageResource(PieceSets.PIECES[PieceSets.selectedSet][color][piece]);
+            if (piece == BoardConstants.DUCK) {
+                setImageResource(color == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
+            } else {
+                setImageResource(PieceSets.PIECES[PieceSets.selectedSet][color][piece]);
+            }
         } else if (PieceSets.selectedBlindfoldMode == PieceSets.BLINDFOLD_SHOW_PIECE_LOCATION) {
             setImageResource(color == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack);
         } else {

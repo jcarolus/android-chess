@@ -619,6 +619,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     gameApi.newGame();
                     lGameID = 0;
                     updateForNewGame();
+                } else if (item.equals(getString(R.string.menu_new_duck))) {
+                    gameApi.newGame(BoardConstants.VARIANT_DUCK);
+                    lGameID = 0;
+                    updateForNewGame();
                 } else if (item.equals(getString(R.string.menu_new_960))) {
                     showChess960Dialog();
                 } else if (item.equals(getString(R.string.menu_setup))) {

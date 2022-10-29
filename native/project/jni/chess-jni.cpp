@@ -57,6 +57,11 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_requestMove(JNIEnv* env,
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_move(JNIEnv* env, jobject thiz, jint move) {
     return (int) stGame->move(move);
 }
+
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_requestDuckMove(JNIEnv* env, jobject thiz, jint duckPos) {
+    return (int) stGame->requestDuckMove(duckPos);
+}
+
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_undo(JNIEnv* env, jobject thiz) {
     stGame->undo();
 }
@@ -183,6 +188,9 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getTurn(JNIEnv* env, jobject thiz) {
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_pieceAt(JNIEnv* env, jobject thiz, jint turn, jint pos) {
     return stGame->getBoard()->pieceAt(turn, pos);
 }
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getDuckPos(JNIEnv* env, jobject thiz) {
+    return stGame->getBoard()->getDuckPos();
+}
 JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_getMyMoveToString(JNIEnv* env, jobject thiz) {
     char buf[20];
     stGame->getBoard()->myMoveToString(buf);
@@ -273,6 +281,7 @@ static JNINativeMethod sMethods[] = {
     {"isInited", "()I", (void*) Java_jwtc_chess_JNI_isInited},
     {"requestMove", "(II)I", (void*) Java_jwtc_chess_JNI_requestMove},
     {"move", "(I)I", (void*) Java_jwtc_chess_JNI_move},
+    {"requestDuckMove", "(I)I", (void*) Java_jwtc_chess_JNI_requestDuckMove},
     {"undo", "()V", (void*) Java_jwtc_chess_JNI_undo},
     {"reset", "()V", (void*) Java_jwtc_chess_JNI_reset},
     {"putPiece", "(III)V", (void*) Java_jwtc_chess_JNI_putPiece},
@@ -296,6 +305,7 @@ static JNINativeMethod sMethods[] = {
     {"getMoveArraySize", "()I", (void*) Java_jwtc_chess_JNI_getMoveArraySize},
     {"getMoveArrayAt", "(I)I", (void*) Java_jwtc_chess_JNI_getMoveArrayAt},
     {"pieceAt", "(II)I", (void*) Java_jwtc_chess_JNI_pieceAt},
+    {"getDuckPos", "()I", (void*) Java_jwtc_chess_JNI_getDuckPos},
     {"getMyMoveToString", "()Ljava/lang/String;", (void*) Java_jwtc_chess_JNI_getMyMoveToString},
     {"getMyMove", "()I", (void*) Java_jwtc_chess_JNI_getMyMove},
     {"isLegalPosition", "()I", (void*) Java_jwtc_chess_JNI_isLegalPosition},

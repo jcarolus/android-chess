@@ -28,25 +28,16 @@ public class BoardConstants {
     public static final int BLACK = 0;
     public static final int WHITE = 1;
 
-    // index and representation of the pieces array and values - must be from [0-5].
+    // index and representation of the pieces array and values
     public static final int PAWN = 0;
     public static final int KNIGHT = 1;
     public static final int BISHOP = 2;
     public static final int ROOK = 3;
     public static final int QUEEN = 4;
     public static final int KING = 5;
+    public static final int DUCK = 6;
     // not a piece: a field
     public static final int FIELD = -1;
-
-    // not consequently used - 64 fields on a chess board, 6 pieces
-    public static final int NUM_FIELDS = 64;
-    public static final int NUM_PIECES = 6;
-    public static final int MAX_MOVES = 255; // maximum number of moves possible from a position - not yet above 218 found documented
-
-    // all bits set to one for the rows (index is row)
-    public static final long[] ROW_BITS = {255L, 65280L, 16711680L, 4278190080L, 1095216660480L, 280375465082880L, 71776119061217280L, -72057594037927936L};
-    // same as ROW_BITS but for the files
-    public static final long[] FILE_BITS = {72340172838076673L, 144680345676153346L, 289360691352306692L, 578721382704613384L, 1157442765409226768L, 2314885530818453536L, 4629771061636907072L, -9187201950435737472L};
 
     // "enumeration" integer position values
     public static final int a8 = 0, b8 = 1, c8 = 2, d8 = 3, e8 = 4, f8 = 5, g8 = 6, h8 = 7;

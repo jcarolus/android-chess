@@ -26,6 +26,10 @@ public class JNI {
     }
 
     public void newGame() {
+        newGame(BoardConstants.VARIANT_DEFAULT);
+    }
+
+    public void newGame(int variant) {
         reset();
         putPiece(BoardConstants.a8, BoardConstants.ROOK, BoardConstants.BLACK);
         putPiece(BoardConstants.b8, BoardConstants.KNIGHT, BoardConstants.BLACK);
@@ -63,7 +67,11 @@ public class JNI {
 
         setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
 
-        commitBoard(BoardConstants.VARIANT_DEFAULT);
+        commitBoard(variant);
+
+        if (variant == BoardConstants.VARIANT_DUCK) {
+            requestDuckMove(BoardConstants.h5);
+        }
     }
 
 
@@ -351,6 +359,8 @@ public class JNI {
 
     public native int requestMove(int from, int to);
 
+    public native int requestDuckMove(int duckPos);
+
     public native int move(int move);
 
     public native void undo();
@@ -399,6 +409,8 @@ public class JNI {
     public native int getMoveArrayAt(int i);
 
     public native int pieceAt(int turn, int pos);
+
+    public native int getDuckPos();
 
     public native String getMyMoveToString();
 

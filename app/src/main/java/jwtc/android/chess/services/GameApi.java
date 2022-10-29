@@ -151,8 +151,11 @@ public class GameApi {
         return false;
     }
 
-
     public void newGame() {
+        newGame(BoardConstants.VARIANT_DEFAULT);
+    }
+
+    public void newGame(int variant) {
         Date d = Calendar.getInstance().getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
 
@@ -166,7 +169,7 @@ public class GameApi {
 
         _arrPGN.clear();
 
-        jni.newGame();
+        jni.newGame(variant);
 
         dispatchState();
     }

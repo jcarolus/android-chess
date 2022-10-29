@@ -13,6 +13,7 @@
     <string-array name="play_menu">
         <item>@string/menu_game_settings</item>
         <item>@string/menu_new</item>
+        <item>@string/menu_new_duck</item>
         <item>@string/menu_new_960</item>
         <item>@string/menu_setup</item>
         <item>@string/menu_save_game</item>

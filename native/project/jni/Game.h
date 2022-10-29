@@ -12,6 +12,7 @@ class Game {
     void commitBoard(const int variant);
     ChessBoard* getBoard();
     boolean requestMove(int from, int to);
+    boolean requestDuckMove(int duckPos);
     boolean move(int);
     void undo();
     void setPromo(int p);

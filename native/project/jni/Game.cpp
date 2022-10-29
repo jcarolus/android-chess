@@ -92,6 +92,11 @@ boolean Game::requestMove(int from, int to) {
     }
 }
 
+boolean Game::requestDuckMove(int duckPos) {
+    ChessBoard *board = getBoard();
+    return board->requestDuckMove(duckPos);
+}
+
 boolean Game::move(int move) {
     ChessBoard *nb = new ChessBoard();
 

@@ -311,7 +311,7 @@ class ChessBoard {
     boolean isAmbiguousCastle(const int from, const int to);
     int getCastleMove(const int from, const int to);
     boolean requestMove(const int m, ChessBoard* board, ChessBoard* tmpBoard);
-    boolean requestDuckMove(int newDuckPos, ChessBoard* board);
+    boolean requestDuckMove(int newDuckPos);
     void makeMove(const int move, ChessBoard* ret);
     boolean containsQuiescenceMove();
     void addMoves(const int from, BITBOARD bb);
@@ -386,6 +386,7 @@ class ChessBoard {
     int pieceAt(const int t, const int p);  // TODO inline?
     boolean isPieceOfColorAt(const int t, const int p);
     boolean isFieldAt(const int p);
+    int getDuckPos();
     int getIndex(const int col, const int row);
 
     void initHashKey();

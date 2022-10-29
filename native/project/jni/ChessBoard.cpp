@@ -172,6 +172,8 @@ void ChessBoard::calcState(ChessBoard* board) {
         return;
     }
 
+    genMoves();
+
     if (m_variant == VARIANT_DUCK) {
         // for duck chess, a captured king indicates end of game
         if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 ||
@@ -181,8 +183,6 @@ void ChessBoard::calcState(ChessBoard* board) {
         // no need to calculate anything else for the state
         return;
     }
-
-    genMoves();
 
     int move;
     m_indexMoves = 0;
@@ -446,9 +446,9 @@ boolean ChessBoard::requestMove(const int from,
     return false;
 }
 
-boolean ChessBoard::requestDuckMove(int newDuckPos, ChessBoard* board) {
-    if (board->m_duckPos == -1 && board->m_variant == VARIANT_DUCK) {
-        board->putDuck(newDuckPos);
+boolean ChessBoard::requestDuckMove(int newDuckPos) {
+    if (m_duckPos == -1 && m_variant == VARIANT_DUCK) {
+        putDuck(newDuckPos);
 
         return true;
     }
@@ -1861,6 +1861,15 @@ boolean ChessBoard::isPieceOfColorAt(const int t, const int p) {
 boolean ChessBoard::isFieldAt(const int p) {
     return (m_bitb & BITS[p]) == 0;
 }
+int ChessBoard::getDuckPos() {
+    if (m_duckPos != -1) {
+        return m_duckPos;
+    }
+    if (m_parent != NULL) {
+        return m_parent->m_duckPos;
+    }
+    return -1;
+}
 int ChessBoard::getIndex(const int col, const int row) {
     return (row * 8) + col;
 }
@@ -1877,14 +1886,14 @@ void ChessBoard::toFENBoard(char* s) {
     for (int i = 0; i < 64; i++) {
         sP[0] = '\0';
 
-        if (isPieceOfColorAt(BLACK, i)) {
+        if (i == m_duckPos) {
+            sP[0] = '$';
+        } else if (isPieceOfColorAt(BLACK, i)) {
             piece = pieceAt(BLACK, i);
             sP[0] = arrP[BLACK][piece];
         } else if (isPieceOfColorAt(WHITE, i)) {
             piece = pieceAt(WHITE, i);
             sP[0] = arrP[WHITE][piece];
-        } else if (i == m_duckPos) {
-            sP[0] = '$';
         }
         if (i > 0 && i % 8 == 0) {
             if (numEmpty > 0) {
@@ -2156,17 +2165,23 @@ void ChessBoard::remove(const int t, const int p) {
 }
 
 void ChessBoard::putDuck(const int duckPos) {
-    if (m_duckPos != -1) {
-        m_bitb &= NOT_BITS[duckPos];
-        m_bitb_45 &= ~ROT_45_BITS[duckPos];
-        m_bitb_90 &= ~ROT_90_BITS[duckPos];
-        m_bitb_315 &= ~ROT_315_BITS[duckPos];
+    const int oldDuckPos = getDuckPos();
+    if (oldDuckPos != -1) {
+        m_bitb &= NOT_BITS[oldDuckPos];
+        m_bitbPositions[WHITE] &= NOT_BITS[oldDuckPos];
+        m_bitbPositions[BLACK] &= NOT_BITS[oldDuckPos];
+
+        m_bitb_45 &= ~ROT_45_BITS[oldDuckPos];
+        m_bitb_90 &= ~ROT_90_BITS[oldDuckPos];
+        m_bitb_315 &= ~ROT_315_BITS[oldDuckPos];
     }
 
     m_duckPos = duckPos;
 
     BITBOARD bb = BITS[duckPos];
     m_bitb |= bb;
+    m_bitbPositions[WHITE] |= bb;
+    m_bitbPositions[BLACK] |= bb;
     m_bitb_45 |= ROT_45_BITS[duckPos];
     m_bitb_90 |= ROT_90_BITS[duckPos];
     m_bitb_315 |= ROT_315_BITS[duckPos];
@@ -4118,22 +4133,17 @@ void ChessBoard::printB(char* s) {
 
     // s += "HashKey "+ "\n";
     // s += bitbToString(m_hashKey)+ "\n";
-    /*
+
     strcat(s, "bitbPositions 0\n");
     bitbToString(m_bitbPositions[BLACK], buf);
     strcat(s, buf);
     strcat(s, "\nbitbPositions 1\n");
     bitbToString(m_bitbPositions[WHITE], buf);
     strcat(s, buf);
-     */
 
-    /*
-    //s += "Pieces"+ "\n";
-    //s += piecesToString()+ "\n";
-    */
-    // strcat(s, "\nBitb\n");
-    // bitbToString(m_bitb, buf);
-    // strcat(s, buf);
+    strcat(s, "\nBitb\n");
+    bitbToString(m_bitb, buf);
+    strcat(s, buf);
     /*
     strcat(s, "\nBitb45\n");
     bitbToString(m_bitb_45, buf);

@@ -53,7 +53,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     private String keyboardBuffer = "";
 
     public boolean requestMove(final int from, final int to) {
-        if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
+        if (jni.getDuckPos() == from) {
+            jni.requestDuckMove(to);
+        } else if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
                 BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
                 BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7
                 ||
@@ -252,6 +254,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         final int state = jni.getState();
         final int turn = jni.getTurn();
+        final int duckPos = jni.getDuckPos();
 
         // ⚑ ✓ ½
         String labelForWhiteKing = null;
@@ -283,7 +286,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         for (int i = 0; i < 64; i++) {
             int color = ChessBoard.BLACK;
-            int piece = jni.pieceAt(color, i);
+            int piece = i == duckPos ? BoardConstants.DUCK : jni.pieceAt(color, i);
             if (piece == BoardConstants.FIELD) {
                 color = ChessBoard.WHITE;
                 piece = jni.pieceAt(color, i);
