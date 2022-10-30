@@ -876,6 +876,13 @@ void ChessBoard::genPawnMoves() {
     // bbOthers bitb for opponent pieces + en-passant position when available
     BITBOARD bbTmp, bbOthers = m_bitbPositions[m_o_turn] | (m_ep == -1 ? 0L : BITS[m_ep]);
 
+    if (m_variant == VARIANT_DUCK) {
+        int duckPos = getDuckPos();
+        if (duckPos != -1) {
+            bbOthers &= NOT_BITS[duckPos];
+        }
+    }
+
     int iPos;
 
     if (m_turn == WHITE) {
@@ -2190,8 +2197,7 @@ void ChessBoard::putDuck(const int duckPos) {
 
     BITBOARD bb = BITS[duckPos];
     m_bitb |= bb;
-    m_bitbPositions[WHITE] |= bb;
-    m_bitbPositions[BLACK] |= bb;
+    m_bitbPositions[m_turn] |= bb;
     m_bitb_45 |= ROT_45_BITS[duckPos];
     m_bitb_90 |= ROT_90_BITS[duckPos];
     m_bitb_315 |= ROT_315_BITS[duckPos];

@@ -281,6 +281,13 @@ bool testDuck() {
     }
     ret = g->requestMove(ChessBoard::e7, ChessBoard::e5);
     if (ret) {
+        DEBUG_PRINT("move e7-e5 should not", 0);
+        return false;
+    }
+
+    ret = g->requestMove(ChessBoard::d7, ChessBoard::e6);
+    if (ret) {
+        DEBUG_PRINT("move d7-e6 should not", 0);
         return false;
     }
 

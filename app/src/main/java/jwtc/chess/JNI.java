@@ -80,7 +80,7 @@ public class JNI {
 
         reset();
         try {
-
+            int variant = BoardConstants.VARIANT_DEFAULT;
             String s;
             int pos = 0, i = 0, iAdd;
             while (pos < 64 && i < sFEN.length()) {
@@ -110,6 +110,9 @@ public class JNI {
                     putPiece(pos, BoardConstants.PAWN, BoardConstants.BLACK);
                 } else if (s.equals("P")) {
                     putPiece(pos, BoardConstants.PAWN, BoardConstants.WHITE);
+                } else if (s.equals("$")) {
+                    variant = BoardConstants.VARIANT_DUCK;
+                    requestDuckMove(pos);
                 } else if (s.equals("/")) {
                     iAdd = 0;
                 } else {
@@ -153,7 +156,7 @@ public class JNI {
                         setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
 
                         setTurn(turn);
-                        commitBoard(BoardConstants.VARIANT_DEFAULT);
+                        commitBoard(variant);
 
                         return true;
                     }
