@@ -6,7 +6,7 @@ import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
 public class JNI {
-
+    private static final String TAG = "JNI";
     private static volatile JNI instance;
 
     private JNI() {}
@@ -82,7 +82,7 @@ public class JNI {
         try {
             int variant = BoardConstants.VARIANT_DEFAULT;
             String s;
-            int pos = 0, i = 0, iAdd;
+            int pos = 0, i = 0, iAdd, duckPos = -1;
             while (pos < 64 && i < sFEN.length()) {
                 iAdd = 1;
                 s = sFEN.substring(i, i + 1);
@@ -111,8 +111,8 @@ public class JNI {
                 } else if (s.equals("P")) {
                     putPiece(pos, BoardConstants.PAWN, BoardConstants.WHITE);
                 } else if (s.equals("$")) {
+                    duckPos = pos;
                     variant = BoardConstants.VARIANT_DUCK;
-                    requestDuckMove(pos);
                 } else if (s.equals("/")) {
                     iAdd = 0;
                 } else {
@@ -157,6 +157,10 @@ public class JNI {
 
                         setTurn(turn);
                         commitBoard(variant);
+
+                        if (variant == BoardConstants.VARIANT_DUCK) {
+                            requestDuckMove(duckPos);
+                        }
 
                         return true;
                     }

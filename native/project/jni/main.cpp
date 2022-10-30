@@ -271,9 +271,20 @@ bool testGenmoves() {
 }
 
 bool testDuck() {
+    char buf[512];
+    ChessBoard *board;
+    bool ret;
+    
     newGameDuck();
 
-    bool ret = g->requestMove(ChessBoard::e2, ChessBoard::e4);
+    board = g->getBoard();
+    board->toFEN(buf);
+    ret = expectEqualString("rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", buf, "testDuck");
+    if (!ret) {
+        return false;
+    }
+
+    ret = g->requestMove(ChessBoard::e2, ChessBoard::e4);
     ret = g->requestDuckMove(ChessBoard::e6);
     if (!ret) {
         DEBUG_PRINT("no request duck move 1", 0);
@@ -291,8 +302,7 @@ bool testDuck() {
         return false;
     }
 
-    ChessBoard *board = g->getBoard();
-    char buf[512];
+    board = g->getBoard();
     board->toFEN(buf);
     ret = expectEqualString("rnbqkbnr/pppppppp/4$3/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", buf, "testDuck");
     if (!ret) {

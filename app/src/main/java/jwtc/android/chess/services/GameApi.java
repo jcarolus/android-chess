@@ -166,13 +166,15 @@ public class GameApi {
         _mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
         _mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
         _mapPGNHead.put("Date", formatter.format(d));
-        if (variant == BoardConstants.VARIANT_DUCK) {
-            _mapPGNHead.put("Variant", "Duck");
-        }
 
         _arrPGN.clear();
 
         jni.newGame(variant);
+
+        if (variant == BoardConstants.VARIANT_DUCK) {
+            _mapPGNHead.put("Setup", "1");
+            _mapPGNHead.put("FEN", jni.toFEN());
+        }
 
         dispatchState();
     }
@@ -189,11 +191,6 @@ public class GameApi {
                 _mapPGNHead.put("Round", "?");
                 _mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
                 _mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
-
-                int duckPos = jni.getDuckPos();
-                if (duckPos != -1) {
-                    _mapPGNHead.put("Variant", "Duck");
-                }
             }
             _mapPGNHead.put("Setup", "1");
             _mapPGNHead.put("FEN", sFEN);
