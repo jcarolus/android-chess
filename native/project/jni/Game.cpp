@@ -94,7 +94,11 @@ boolean Game::requestMove(int from, int to) {
 
 boolean Game::requestDuckMove(int duckPos) {
     ChessBoard *board = getBoard();
-    return board->requestDuckMove(duckPos);
+    if (board->requestDuckMove(duckPos)) {
+        board->genMoves();
+        return true;
+    }
+    return false;
 }
 
 boolean Game::move(int move) {

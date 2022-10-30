@@ -45,20 +45,20 @@ int main(int argc, char **argv) {
 
     ChessBoard::initStatics();
 
-    TestFunction tests[] = {testSetupNewGame,
-                            testSetupMate,
-                            testInCheck,
-                            testInSelfCheck,
-                            testSetupCastle,
-                            testSetupQuiesce,
-                            testMoves,
-                            testDB,
-                            testDuck
-                            /*testGame*/};
+    // TestFunction tests[] = {testSetupNewGame,
+    //                         testSetupMate,
+    //                         testInCheck,
+    //                         testInSelfCheck,
+    //                         testSetupCastle,
+    //                         testSetupQuiesce,
+    //                         testMoves,
+    //                         testDB,
+    //                         testDuck
+    //                         /*testGame*/};
 
-    // TestFunction tests[] = {
-    //     testInCheck,
-    // };
+    TestFunction tests[] = {
+        testDuck,
+    };
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
@@ -276,6 +276,11 @@ bool testDuck() {
     bool ret = g->requestMove(ChessBoard::e2, ChessBoard::e4);
     ret = g->requestDuckMove(ChessBoard::e6);
     if (!ret) {
+        DEBUG_PRINT("no request duck move 1", 0);
+        return false;
+    }
+    ret = g->requestMove(ChessBoard::e7, ChessBoard::e5);
+    if (ret) {
         return false;
     }
 
@@ -289,9 +294,51 @@ bool testDuck() {
 
     ret = expectEqualInt(board->getDuckPos(), ChessBoard::e6, "testDuck");
 
-    board->printB(buf);
+    // board->printB(buf);
+    // DEBUG_PRINT("\n%s\n", buf);
+    ret = g->requestMove(ChessBoard::d7, ChessBoard::d5);
+    if (!ret) {
+        DEBUG_PRINT("no d7-d5", 0);
+        return false;
+    }
 
-    DEBUG_PRINT("\n%s\n", buf);
+    ret = g->requestDuckMove(ChessBoard::e3);
+    if (!ret) {
+        DEBUG_PRINT("no duck e3", 0);
+        return false;
+    }
+
+    ret = g->requestMove(ChessBoard::f1, ChessBoard::b5);
+    if (!ret) {
+        DEBUG_PRINT("no f1-b5", 0);
+        return false;
+    }
+
+    ret = g->requestDuckMove(ChessBoard::f3);
+    if (!ret) {
+        DEBUG_PRINT("no duck f3", 0);
+        return false;
+    }
+
+    ret = g->requestMove(ChessBoard::f7, ChessBoard::f6);
+    if (!ret) {
+        DEBUG_PRINT("no f7-f6", 0);
+        return false;
+    }
+
+    ret = g->requestDuckMove(ChessBoard::f4);
+    if (!ret) {
+        DEBUG_PRINT("no duck f4 x", 0);
+        return false;
+    }
+
+    ret = g->requestMove(ChessBoard::b5, ChessBoard::e8);
+    if (!ret) {
+        DEBUG_PRINT("no b5-e8", 0);
+        return false;
+    }
+
+    ret = expectEqualInt(ChessBoard::MATE, g->getBoard()->getState(), "State mate");
 
     return ret;
 }

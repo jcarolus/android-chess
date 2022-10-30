@@ -175,12 +175,7 @@ void ChessBoard::calcState(ChessBoard* board) {
     genMoves();
 
     if (m_variant == VARIANT_DUCK) {
-        // for duck chess, a captured king indicates end of game
-        if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 ||
-            m_kingPositions[m_o_turn] < 0 || m_kingPositions[m_o_turn] > 63) {
-            m_state = MATE;
-        }
-        // no need to calculate anything else for the state
+        // no need to calculate anything else, duck chess allows king capture
         return;
     }
 
@@ -283,6 +278,13 @@ String ChessBoard::getStateToString()
 // returns true when the game is ended
 // TODO repeat check can be made more efficient with repeat index of hashkey
 boolean ChessBoard::isEnded() {
+    if (m_variant == VARIANT_DUCK) {
+        // for duck chess, a captured king indicates end of game
+        if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 ||
+            m_kingPositions[m_o_turn] < 0 || m_kingPositions[m_o_turn] > 63) {
+            m_state = MATE;
+        }
+    }
     if (m_state == MATE || m_state == STALEMATE) {
         return true;
     }
@@ -448,6 +450,14 @@ boolean ChessBoard::requestMove(const int from,
 
 boolean ChessBoard::requestDuckMove(int newDuckPos) {
     if (m_duckPos == -1 && m_variant == VARIANT_DUCK) {
+        // old duck pos
+        if (m_parent != NULL && m_parent->m_duckPos == newDuckPos) {
+            return false;
+        }
+        // occupied
+        if (m_bitb & BITS[newDuckPos]) {
+            return false;
+        }
         putDuck(newDuckPos);
 
         return true;
@@ -808,7 +818,7 @@ void ChessBoard::addMoves(const int from, BITBOARD bb) {
 
         bb &= NOT_BITS[to];
         if ((m_bitbPositions[m_o_turn] & BITS[to]) != 0) {
-            if ((m_bitbPieces[m_o_turn][KING] & BITS[to]) != 0) {
+            if (m_variant != VARIANT_DUCK && (m_bitbPieces[m_o_turn][KING] & BITS[to]) != 0) {
                 return;
             } else {
                 addMoveElement(Move_makeMoveHit(from, to));
