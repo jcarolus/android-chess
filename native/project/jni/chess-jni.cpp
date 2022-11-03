@@ -191,6 +191,11 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_pieceAt(JNIEnv* env, jobject thiz, jin
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getDuckPos(JNIEnv* env, jobject thiz) {
     return stGame->getBoard()->getDuckPos();
 }
+
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMyDuckPos(JNIEnv* env, jobject thiz) {
+    return stGame->getBoard()->getMyDuckPos();
+}
+
 JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_getMyMoveToString(JNIEnv* env, jobject thiz) {
     char buf[20];
     stGame->getBoard()->myMoveToString(buf);
@@ -306,6 +311,7 @@ static JNINativeMethod sMethods[] = {
     {"getMoveArrayAt", "(I)I", (void*) Java_jwtc_chess_JNI_getMoveArrayAt},
     {"pieceAt", "(II)I", (void*) Java_jwtc_chess_JNI_pieceAt},
     {"getDuckPos", "()I", (void*) Java_jwtc_chess_JNI_getDuckPos},
+    {"getMyDuckPos", "()I", (void*) Java_jwtc_chess_JNI_getMyDuckPos},
     {"getMyMoveToString", "()Ljava/lang/String;", (void*) Java_jwtc_chess_JNI_getMyMoveToString},
     {"getMyMove", "()I", (void*) Java_jwtc_chess_JNI_getMyMove},
     {"isLegalPosition", "()I", (void*) Java_jwtc_chess_JNI_isLegalPosition},

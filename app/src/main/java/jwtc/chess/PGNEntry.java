@@ -3,11 +3,12 @@ package jwtc.chess;
 public class PGNEntry {
 
     public String _sMove, _sAnnotation;
-    public int _move;
+    public int _move, _duckMove;
 
-    public PGNEntry(String sM, String sA, int m) {
+    public PGNEntry(String sM, String sA, int move, int duckMove) {
         _sMove = sM;
         _sAnnotation = sA;
-        _move = m;
+        _move = move;
+        _duckMove = duckMove;
     }
 }

@@ -1887,6 +1887,9 @@ int ChessBoard::getDuckPos() {
     }
     return -1;
 }
+boolean ChessBoard::getMyDuckPos() {
+    return m_duckPos;
+}
 int ChessBoard::getIndex(const int col, const int row) {
     return (row * 8) + col;
 }

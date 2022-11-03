@@ -54,7 +54,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     public boolean requestMove(final int from, final int to) {
         if (jni.getDuckPos() == from) {
-            jni.requestDuckMove(to);
+            return gameApi.requestDuckMove(to);
         } else if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
                 BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
                 BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7

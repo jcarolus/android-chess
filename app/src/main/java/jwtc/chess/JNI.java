@@ -419,6 +419,8 @@ public class JNI {
 
     public native int getDuckPos();
 
+    public native int getMyDuckPos();
+
     public native String getMyMoveToString();
 
     public native int getMyMove();

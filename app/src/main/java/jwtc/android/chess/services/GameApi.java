@@ -31,7 +31,7 @@ public class GameApi {
         try {
             _patNum = Pattern.compile("(\\d+)\\.");
             _patAnnot = Pattern.compile("\\{([^\\{]*)\\}");
-            _patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(\\+|#)?([\\?\\!]*)?[\\s]*");
+            _patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
             _patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(\\+|#)?([\\?\\!]*)?");
         } catch (Exception e) {}
     }
@@ -73,7 +73,7 @@ public class GameApi {
 
         final int move = jni.getMyMove();
 
-        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", move);
+        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", move, -1);
 
         dispatchMove(move);
 
@@ -90,9 +90,22 @@ public class GameApi {
         }
         final int move = jni.getMyMove();
 
-        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", move);
+        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", move, -1);
 
         dispatchMove(move);
+
+        return true;
+    }
+
+    public boolean requestDuckMove(int duckPos) {
+        if (jni.requestDuckMove(duckPos) == 0) {
+            return false;
+        }
+
+        int index = jni.getNumBoard() - 2;
+        if (index >= 0 && index < _arrPGN.size()) {
+            _arrPGN.get(index)._duckMove = duckPos;
+        }
 
         return true;
     }
@@ -122,6 +135,10 @@ public class GameApi {
             if (ply >= boardPly) {
                 while (ply >= boardPly) {
                     jni.move(_arrPGN.get(boardPly - 1)._move);
+                    Log.d(TAG, "duck at " + _arrPGN.get(boardPly - 1)._duckMove);
+                    if (_arrPGN.get(boardPly - 1)._duckMove != -1) {
+                        jni.requestDuckMove(_arrPGN.get(boardPly - 1)._duckMove);
+                    }
                     boardPly++;
                 }
             } else {
@@ -257,7 +274,7 @@ public class GameApi {
         if (jni.move(move) == 0) {
             return false;
         }
-        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), sAnnotation, jni.getMyMove());
+        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), sAnnotation, jni.getMyMove(), jni.getMyDuckPos());
 
         return true;
     }
@@ -299,9 +316,7 @@ public class GameApi {
             String sFile = matchToken.group(5);
             String sRank = matchToken.group(6);
             String sPromote = matchToken.group(7);
-            String sCheck = matchToken.group(8);
-            String sMark = matchToken.group(9);
-
+            String sDuck = matchToken.group(8);
 
             if (sFile == null) {
                 return false;
@@ -367,8 +382,17 @@ public class GameApi {
 
                     if (move(move, "", false)) {
                         int numBoard = jni.getNumBoard() - 3;
-                        if (numBoard >= 0)
+                        if (numBoard >= 0) {
                             setAnnotation(numBoard, sAnnotation);
+                        }
+
+                        if (sDuck != null) {
+                            sDuck = sDuck.substring(1);
+                            try {
+                                requestDuckMove(Pos.fromString(sDuck));
+                            } catch (Exception e) {}
+                        }
+
                         return true;
                     } else {
                         return false;
@@ -610,12 +634,12 @@ public class GameApi {
     }
 
 
-    public void addPGNEntry(int ply, String sMove, String sAnnotation, int move) {
+    public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, int duckMove) {
 //        Log.d(TAG, "addPGNEntry " + ply + ": " + sMove);
         while (ply >= 0 && _arrPGN.size() >= ply) {
             _arrPGN.remove(_arrPGN.size() - 1);
         }
-        _arrPGN.add(new PGNEntry(sMove, sAnnotation, move));
+        _arrPGN.add(new PGNEntry(sMove, sAnnotation, move, duckMove));
     }
 
     public int getFromOfNextMove() {
@@ -664,7 +688,11 @@ public class GameApi {
         for (int i = iPly; i < _arrPGN.size(); i++) {
             if ((i - iPly) % 2 == 0)
                 s += ((i - iPly) / 2 + 1) + ". ";
-            s += _arrPGN.get(i)._sMove + " ";
+            s += _arrPGN.get(i)._sMove;
+            if (_arrPGN.get(i)._duckMove != -1) {
+                s += "@" + Pos.toString(_arrPGN.get(i)._duckMove);
+            }
+            s += " ";
 
             // TODO this was commented? bug?
             if (_arrPGN.get(i)._sAnnotation.length() > 0)

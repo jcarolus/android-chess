@@ -464,9 +464,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
 
-            if (jni.getNumBoard() - 1 > progress)
+            if (jni.getNumBoard() - 1 > progress) {
                 progress++;
-
+            }
             this.gameApi.jumptoMove(progress);
         }
     }

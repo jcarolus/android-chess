@@ -387,6 +387,7 @@ class ChessBoard {
     boolean isPieceOfColorAt(const int t, const int p);
     boolean isFieldAt(const int p);
     int getDuckPos();
+    boolean getMyDuckPos();
     int getIndex(const int col, const int row);
 
     void initHashKey();
