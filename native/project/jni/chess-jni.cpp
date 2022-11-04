@@ -48,10 +48,7 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_isInited(JNIEnv* env, jobject thiz) {
     return stGame != NULL;
 }
 
-JNIEXPORT int JNICALL Java_jwtc_chess_JNI_requestMove(JNIEnv* env,
-                                                      jobject thiz,
-                                                      jint from,
-                                                      jint to) {
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_requestMove(JNIEnv* env, jobject thiz, jint from, jint to) {
     return (int) stGame->requestMove(from, to);
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_move(JNIEnv* env, jobject thiz, jint move) {
@@ -69,8 +66,7 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_undo(JNIEnv* env, jobject thiz) {
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_reset(JNIEnv* env, jobject thiz) {
     stGame->reset();
 }
-JNIEXPORT void JNICALL
-Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, jint pos, jint piece, jint turn) {
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, jint pos, jint piece, jint turn) {
     ChessBoard* board = stGame->getBoard();
     board->put(pos, piece, turn);
 }
@@ -83,7 +79,7 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz,
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchDepth(JNIEnv* env, jobject thiz, jint depth) {
     pthread_t tid;
-    
+
     stGame->setSearchLimit(depth);
     pthread_create(&tid, NULL, search_thread, NULL);
 }
@@ -207,17 +203,11 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_isLegalPosition(JNIEnv* env, jobject t
     return stGame->getBoard()->isLegalPosition();
 }
 
-JNIEXPORT int JNICALL Java_jwtc_chess_JNI_isAmbiguousCastle(JNIEnv* env,
-                                                            jobject thiz,
-                                                            jint from,
-                                                            jint to) {
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_isAmbiguousCastle(JNIEnv* env, jobject thiz, jint from, jint to) {
     return stGame->getBoard()->isAmbiguousCastle(from, to);
 }
 
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_doCastleMove(JNIEnv* env,
-                                                        jobject thiz,
-                                                        jint from,
-                                                        jint to) {
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_doCastleMove(JNIEnv* env, jobject thiz, jint from, jint to) {
     int move = stGame->getBoard()->getCastleMove(from, to);
     stGame->move(move);
 }
@@ -228,19 +218,13 @@ JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_toFEN(JNIEnv* env, jobject thiz) {
     return env->NewStringUTF(buf);
 }
 
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_removePiece(JNIEnv* env,
-                                                       jobject thiz,
-                                                       jint turn,
-                                                       jint pos) {
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_removePiece(JNIEnv* env, jobject thiz, jint turn, jint pos) {
     stGame->getBoard()->remove(turn, pos);
 }
 JNIEXPORT BITBOARD JNICALL Java_jwtc_chess_JNI_getHashKey(JNIEnv* env, jobject thiz) {
     return stGame->getBoard()->getHashKey();
 }
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_loadDB(JNIEnv* env,
-                                                  jobject thiz,
-                                                  jstring sFile,
-                                                  jint depth) {
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_loadDB(JNIEnv* env, jobject thiz, jstring sFile, jint depth) {
     const char* nativeString = env->GetStringUTFChars(sFile, 0);
     stGame->loadDB(nativeString, depth);
     env->ReleaseStringUTFChars(sFile, nativeString);
@@ -248,10 +232,7 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_loadDB(JNIEnv* env,
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_interrupt(JNIEnv* env, jobject thiz) {
     stGame->m_bInterrupted = true;
 }
-JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumCaptured(JNIEnv* env,
-                                                         jobject thiz,
-                                                         jint turn,
-                                                         jint piece) {
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumCaptured(JNIEnv* env, jobject thiz, jint turn, jint piece) {
     return stGame->getBoard()->getNumCaptured(turn, piece);
 }
 
@@ -260,24 +241,17 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEvalPropertyCount(JNIEnv* env, jobj
     return 0;
 }
 
-JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_getEvalPropertyName(JNIEnv* env,
-                                                                  jobject thiz,
-                                                                  jint iProp) {
+JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_getEvalPropertyName(JNIEnv* env, jobject thiz, jint iProp) {
     char buf[20];
 
     return env->NewStringUTF(buf);
 }
 
-JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEvalPropertyValue(JNIEnv* env,
-                                                               jobject thiz,
-                                                               jint iProp) {
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEvalPropertyValue(JNIEnv* env, jobject thiz, jint iProp) {
     return 0;
 }
 
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setEvalPropertyValue(JNIEnv* env,
-                                                                jobject thiz,
-                                                                jint iProp,
-                                                                jint value) {
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setEvalPropertyValue(JNIEnv* env, jobject thiz, jint iProp, jint value) {
 }
 
 static JNINativeMethod sMethods[] = {
@@ -322,9 +296,7 @@ static JNINativeMethod sMethods[] = {
     {"loadDB", "(Ljava/lang/String;I)V", (void*) Java_jwtc_chess_JNI_loadDB},
     {"interrupt", "()V", (void*) Java_jwtc_chess_JNI_interrupt},
     {"getNumCaptured", "(II)I", (void*) Java_jwtc_chess_JNI_getNumCaptured},
-    {"getEvalPropertyName",
-     "(I)Ljava/lang/String;",
-     (void*) Java_jwtc_chess_JNI_getEvalPropertyName},
+    {"getEvalPropertyName", "(I)Ljava/lang/String;", (void*) Java_jwtc_chess_JNI_getEvalPropertyName},
     {"getEvalPropertyCount", "()I", (void*) Java_jwtc_chess_JNI_getEvalPropertyCount},
     {"getEvalPropertyValue", "(I)I", (void*) Java_jwtc_chess_JNI_getEvalPropertyValue},
     {"setEvalPropertyValue", "(II)V", (void*) Java_jwtc_chess_JNI_setEvalPropertyValue}};
@@ -355,10 +327,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     return JNI_VERSION_1_4;
 }
 
-int jniRegisterNativeMethods(JNIEnv* env,
-                             const char* className,
-                             const JNINativeMethod* gMethods,
-                             int numMethods) {
+int jniRegisterNativeMethods(JNIEnv* env, const char* className, const JNINativeMethod* gMethods, int numMethods) {
     jclass clazz;
 
     DEBUG_PRINT("Registering %s natives\n", className);

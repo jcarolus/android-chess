@@ -86,9 +86,7 @@ bool testSetupNewGame() {
     ChessBoard *board = g->getBoard();
     board->toFEN(buf);
 
-    return expectEqualString("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-                             buf,
-                             "testSetupNewGame");
+    return expectEqualString("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", buf, "testSetupNewGame");
 }
 
 bool testInCheck() {
@@ -137,7 +135,7 @@ bool testGame() {
     int m, i = 0;
     boolean bMoved;
     while (!board->isEnded()) {
-        //g->setSearchTime(1);
+        // g->setSearchTime(1);
         g->setSearchLimit(2);
         startThread();
         while (g->m_bSearching) {
@@ -248,12 +246,9 @@ bool testHouse() {
 bool testMoves() {
     newGame();
 
-    bool ret = g->requestMove(ChessBoard::e2, ChessBoard::e4) &&
-               g->requestMove(ChessBoard::e7, ChessBoard::e5) &&
-               g->requestMove(ChessBoard::g1, ChessBoard::f3) &&
-               g->requestMove(ChessBoard::b8, ChessBoard::c6) &&
-               g->requestMove(ChessBoard::d1, ChessBoard::e2) &&
-               g->requestMove(ChessBoard::f8, ChessBoard::e7);
+    bool ret = g->requestMove(ChessBoard::e2, ChessBoard::e4) && g->requestMove(ChessBoard::e7, ChessBoard::e5) &&
+               g->requestMove(ChessBoard::g1, ChessBoard::f3) && g->requestMove(ChessBoard::b8, ChessBoard::c6) &&
+               g->requestMove(ChessBoard::d1, ChessBoard::e2) && g->requestMove(ChessBoard::f8, ChessBoard::e7);
 
     if (!ret) {
         DEBUG_PRINT("testMoves failed\n", 0);
@@ -275,7 +270,7 @@ bool testDuck() {
     char buf[512];
     ChessBoard *board;
     bool ret;
-    
+
     newGameDuck();
 
     board = g->getBoard();

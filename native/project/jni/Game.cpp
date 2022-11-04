@@ -175,8 +175,7 @@ void Game::search() {
         for (m_searchDepth = 1; m_searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); m_searchDepth++) {
             // DEBUG_PRINT("Search at depth %d\n", m_searchDepth);
 
-            bContinue =
-                alphaBetaRoot(m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+            bContinue = alphaBetaRoot(m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
 
             if (bContinue) {
                 reachedDepth++;
@@ -184,7 +183,8 @@ void Game::search() {
                     DEBUG_PRINT("Found checkmate, stopping search\n", 0);
                     break;
                 }
-                // bail out if we're over 50% of time, next depth will take more than sum of previous
+                // bail out if we're over 50% of time, next depth will take more than sum of
+                // previous
                 if (usedTime()) {
                     // DEBUG_PRINT("Bailing out\n", 0);
                     break;
@@ -205,14 +205,13 @@ void Game::search() {
     }
 
     Move::toDbgString(m_bestMove, buf);
-    DEBUG_PRINT(
-        "\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
-        m_bestValue,
-        m_evalCount,
-        buf,
-        reachedDepth,
-        timePassed(),
-        (double) m_evalCount / timePassed());
+    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
+                m_bestValue,
+                m_evalCount,
+                buf,
+                reachedDepth,
+                timePassed(),
+                (double) m_evalCount / timePassed());
 
     m_bSearching = false;
 }

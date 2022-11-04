@@ -40,21 +40,19 @@ class Move {
 
 #define Move_makeMove(from, to) (from | (to << Move::SHIFT_TO))
 
-#define Move_makeMoveFirstPawn(from, to) \
-    (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_FIRSTPAWN))
+#define Move_makeMoveFirstPawn(from, to) (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_FIRSTPAWN))
 
 #define Move_makeMoveHit(from, to) (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_HIT))
 
-#define Move_makeMoveEP(from, to) \
-    (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_HIT) | (1 << Move::SHIFT_EP))
+#define Move_makeMoveEP(from, to) (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_HIT) | (1 << Move::SHIFT_EP))
 
 #define Move_makeMoveOO(from, to) (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_OO))
 
 #define Move_makeMoveOOO(from, to) (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_OOO))
 
-#define Move_makeMovePromotion(from, to, piece, bHit)               \
-    (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_PROMOTION) | \
-     (piece << Move::SHIFT_PROMOTIONPIECE) | (bHit ? (1 << Move::SHIFT_HIT) : 0))
+#define Move_makeMovePromotion(from, to, piece, bHit)                                                       \
+    (from | (to << Move::SHIFT_TO) | (1 << Move::SHIFT_PROMOTION) | (piece << Move::SHIFT_PROMOTIONPIECE) | \
+     (bHit ? (1 << Move::SHIFT_HIT) : 0))
 
 #define Move_makeMoveHouse(pos, piece) \
     ((pos << Move::SHIFT_TO) | (piece << Move::SHIFT_PROMOTIONPIECE) | (1 << Move::SHIFT_HOUSE))
@@ -67,8 +65,7 @@ class Move {
      ((m >> Move::SHIFT_TO) & Move::MASK_POS) == ((m2 >> Move::SHIFT_TO) & Move::MASK_POS))
 
 // return true when "to" in both arguments are equal
-#define Move_equalTos(m, m2) \
-    (((m >> Move::SHIFT_TO) & Move::MASK_POS) == ((m2 >> Move::SHIFT_TO) & Move::MASK_POS))
+#define Move_equalTos(m, m2) (((m >> Move::SHIFT_TO) & Move::MASK_POS) == ((m2 >> Move::SHIFT_TO) & Move::MASK_POS))
 
 // returns "from" of the move
 #define Move_getFrom(move) (move & Move::MASK_POS)
@@ -85,11 +82,9 @@ class Move {
 
 #define Move_isCheck(move) (((move >> Move::SHIFT_CHECK) & Move::MASK_BOOL) == Move::MASK_BOOL)
 
-#define Move_isFirstPawnMove(move) \
-    (((move >> Move::SHIFT_FIRSTPAWN) & Move::MASK_BOOL) == Move::MASK_BOOL)
+#define Move_isFirstPawnMove(move) (((move >> Move::SHIFT_FIRSTPAWN) & Move::MASK_BOOL) == Move::MASK_BOOL)
 
-#define Move_isPromotionMove(move) \
-    (((move >> Move::SHIFT_PROMOTION) & Move::MASK_BOOL) == Move::MASK_BOOL)
+#define Move_isPromotionMove(move) (((move >> Move::SHIFT_PROMOTION) & Move::MASK_BOOL) == Move::MASK_BOOL)
 
 #define Move_getPromotionPiece(move) ((move >> Move::SHIFT_PROMOTIONPIECE) & Move::MASK_PIECE)
 

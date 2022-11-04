@@ -114,14 +114,12 @@ boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
         // todo - is saving a method call really an improvement?
 
         if ((BISHOP_RANGE[pos] & m_bitbPieces[o_turn][BISHOP]) != 0) {
-            if ((bishopAttacks(o_turn, m_bitbPieces[o_turn][BISHOP] & BISHOP_RANGE[pos]) &
-                 square) != 0) {
+            if ((bishopAttacks(o_turn, m_bitbPieces[o_turn][BISHOP] & BISHOP_RANGE[pos]) & square) != 0) {
                 return true;
             }
         }
         if ((QUEEN_RANGE[pos] & m_bitbPieces[o_turn][QUEEN]) != 0) {
-            if ((queenAttacks(o_turn, m_bitbPieces[o_turn][QUEEN] & QUEEN_RANGE[pos]) & square) !=
-                0) {
+            if ((queenAttacks(o_turn, m_bitbPieces[o_turn][QUEEN] & QUEEN_RANGE[pos]) & square) != 0) {
                 return true;
             }
         }
@@ -248,8 +246,7 @@ boolean ChessBoard::isLegalPosition() {
         (m_bitbPieces[BLACK][PAWN] & (ROW_BITS[0] | ROW_BITS[7]))) {
         return false;
     }
-    if (ChessBoard::bitCount(m_bitbPieces[WHITE][PAWN]) > 8 ||
-        ChessBoard::bitCount(m_bitbPieces[BLACK][PAWN]) > 8) {
+    if (ChessBoard::bitCount(m_bitbPieces[WHITE][PAWN]) > 8 || ChessBoard::bitCount(m_bitbPieces[BLACK][PAWN]) > 8) {
         return false;
     }
     if (isSquareAttacked(m_o_turn, m_kingPositions[m_o_turn])) {
@@ -280,8 +277,8 @@ String ChessBoard::getStateToString()
 boolean ChessBoard::isEnded() {
     if (m_variant == VARIANT_DUCK) {
         // for duck chess, a captured king indicates end of game
-        if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 ||
-            m_kingPositions[m_o_turn] < 0 || m_kingPositions[m_o_turn] > 63) {
+        if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 || m_kingPositions[m_o_turn] < 0 ||
+            m_kingPositions[m_o_turn] > 63) {
             m_state = MATE;
         }
     }
@@ -296,19 +293,16 @@ boolean ChessBoard::isEnded() {
     // check DRAW by material
     //  first check for no pawns, rooks and queens on either side.
     //  ASSUME: value of knight or bishop is never twice as big as the other
-    if (m_bitbPieces[m_turn][PAWN] == 0 && m_bitbPieces[m_o_turn][PAWN] == 0 &&
-        m_bitbPieces[m_turn][ROOK] == 0 && m_bitbPieces[m_o_turn][ROOK] == 0 &&
-        m_bitbPieces[m_turn][QUEEN] == 0 && m_bitbPieces[m_o_turn][QUEEN] == 0) {
+    if (m_bitbPieces[m_turn][PAWN] == 0 && m_bitbPieces[m_o_turn][PAWN] == 0 && m_bitbPieces[m_turn][ROOK] == 0 &&
+        m_bitbPieces[m_o_turn][ROOK] == 0 && m_bitbPieces[m_turn][QUEEN] == 0 && m_bitbPieces[m_o_turn][QUEEN] == 0) {
         // KNk or KBk is draw
-        if (m_qualities[m_o_turn] == 0 &&
-            (m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-             m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
+        if (m_qualities[m_o_turn] == 0 && (m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
+                                           m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
             m_state = ChessBoard::DRAW_MATERIAL;
             return true;
         }
-        if (m_qualities[m_turn] == 0 &&
-            (m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-             m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
+        if (m_qualities[m_turn] == 0 && (m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
+                                         m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
             m_state = ChessBoard::DRAW_MATERIAL;
             return true;
         }
@@ -320,9 +314,8 @@ boolean ChessBoard::isEnded() {
              m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
             // test for either king NOT in a corner
             if (!(m_kingPositions[m_o_turn] == a8 || m_kingPositions[m_o_turn] == h8 ||
-                  m_kingPositions[m_o_turn] == a1 || m_kingPositions[m_o_turn] == h1 ||
-                  m_kingPositions[m_turn] == a8 || m_kingPositions[m_turn] == h8 ||
-                  m_kingPositions[m_turn] == a1 || m_kingPositions[m_turn] == h1)) {
+                  m_kingPositions[m_o_turn] == a1 || m_kingPositions[m_o_turn] == h1 || m_kingPositions[m_turn] == a8 ||
+                  m_kingPositions[m_turn] == h8 || m_kingPositions[m_turn] == a1 || m_kingPositions[m_turn] == h1)) {
                 m_state = ChessBoard::DRAW_MATERIAL;
                 return true;
             }
@@ -416,11 +409,7 @@ int ChessBoard::ambigiousMove() {
 }
 
 // returns true if the move is a valid move - the move will be made when valid
-boolean ChessBoard::requestMove(const int from,
-                                const int to,
-                                ChessBoard* board,
-                                ChessBoard* tmpBoard,
-                                int promoPiece) {
+boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece) {
     // if duckPos was not set, the previous turn was not completed, so no valid piece move
     if (m_variant == VARIANT_DUCK && m_duckPos == -1 && m_parent != NULL) {
         return false;
@@ -620,8 +609,7 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
     ret->m_bitb_315 |= ROT_315_BITS[to];
 
     // clean up from
-    if (from !=
-        to) {  // if from == to, when castling in random Fischer it is possible the kings stays
+    if (from != to) {  // if from == to, when castling in random Fischer it is possible the kings stays
         ret->m_hashKey ^= HASH_KEY[m_turn][pieceFrom][from];
         ret->m_bitbPieces[m_turn][pieceFrom] &= NOT_BITS[from];
         ret->m_bitbPositions[m_turn] &= NOT_BITS[from];
@@ -658,8 +646,7 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
             }
             // only move if rook is not already on spot (random fischer)
             if (rookFrom != f1) {
-                ret->m_bitbPositions[m_turn] |=
-                    BITS[f1];  // already done that? => no; to = pos of king
+                ret->m_bitbPositions[m_turn] |= BITS[f1];  // already done that? => no; to = pos of king
                 ret->m_bitbPieces[m_turn][ROOK] |= BITS[f1];
                 ret->m_bitbPieces[m_turn][ROOK] &= NOT_BITS[rookFrom];
                 ret->m_bitb |= BITS[f1];
@@ -1035,9 +1022,8 @@ void ChessBoard::genKnightMoves() {
 }
 
 BITBOARD ChessBoard::rookMoves(const int turn, const int pos) {
-    return (~m_bitbPositions[turn]) &
-           ((RANK_MOVES[pos][(int) (m_bitb >> SHIFT_0[pos]) & 0xFF]) |
-            (FILE_MOVES[pos][(int) (m_bitb_90 >> SHIFT_90[pos]) & 0xFF]));
+    return (~m_bitbPositions[turn]) & ((RANK_MOVES[pos][(int) (m_bitb >> SHIFT_0[pos]) & 0xFF]) |
+                                       (FILE_MOVES[pos][(int) (m_bitb_90 >> SHIFT_90[pos]) & 0xFF]));
 }
 void ChessBoard::genRookMoves() {
     BITBOARD bbPiece = m_bitbPieces[m_turn][ROOK];
@@ -1050,9 +1036,8 @@ void ChessBoard::genRookMoves() {
 }
 
 BITBOARD ChessBoard::bishopMoves(const int turn, const int pos) {
-    return (~m_bitbPositions[turn]) &
-           ((DIAG_45_MOVES[pos][(int) (m_bitb_45 >> SHIFT_45[pos]) & MASK_45[pos]]) |
-            (DIAG_315_MOVES[pos][(int) (m_bitb_315 >> SHIFT_315[pos]) & MASK_315[pos]]));
+    return (~m_bitbPositions[turn]) & ((DIAG_45_MOVES[pos][(int) (m_bitb_45 >> SHIFT_45[pos]) & MASK_45[pos]]) |
+                                       (DIAG_315_MOVES[pos][(int) (m_bitb_315 >> SHIFT_315[pos]) & MASK_315[pos]]));
 }
 void ChessBoard::genBishopMoves() {
     BITBOARD bbPiece = m_bitbPieces[m_turn][BISHOP];
@@ -1109,8 +1094,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
                 if (posRook <= h1) {  // the rook is to the right of the king
                     // check if we found the rook and if it's on its original rank
-                    if (COL[posRook] == ChessBoard::COL_HROOK &&
-                        (m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
+                    if (COL[posRook] == ChessBoard::COL_HROOK && (m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
                         // can we castle
                         if (isPosFree(f1) && isPosFree(g1) ||  // both squares free
                             posRook == f1 && isPosFree(g1) ||  // rook allready on f1, g1 free
@@ -1130,8 +1114,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
             !isSquareAttacked(m_turn, c1)) {
             // default starting position of rook and king, default chess rules apply
             if (pos == e1 && ChessBoard::COL_AROOK == 0) {
-                if (isPosFree(d1) && isPosFree(c1) && isPosFree(b1) &&
-                    (m_bitbPieces[WHITE][ROOK] & BITS[a1]) != 0) {
+                if (isPosFree(d1) && isPosFree(c1) && isPosFree(b1) && (m_bitbPieces[WHITE][ROOK] & BITS[a1]) != 0) {
                     addKingMove(Move_makeMoveOOO(pos, c1));
                 }
             } else  // random Fischer chess
@@ -1143,8 +1126,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
                 if (posRook >= a1) {
                     // check if we found the rook
-                    if (COL[posRook] == ChessBoard::COL_AROOK &&
-                        (m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
+                    if (COL[posRook] == ChessBoard::COL_AROOK && (m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
                         // can we castle
                         if (isPosFree(d1) && isPosFree(c1) ||  // d1 and c1 free
                             posRook == d1 && isPosFree(c1) ||  // rook allready on d1, c1 free
@@ -1176,12 +1158,10 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
                 if (posRook <= h8) {
                     // check if we found the rook
-                    if (COL[posRook] == ChessBoard::COL_HROOK &&
-                        (m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
+                    if (COL[posRook] == ChessBoard::COL_HROOK && (m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
                         // can we castle
                         if (isPosFree(f8) && isPosFree(g8) || posRook == f8 && isPosFree(g8) ||
-                            posRook == g8 && pos == f8 ||
-                            posRook == g8 && isPosFree(f8) ||  // rook in place of king
+                            posRook == g8 && pos == f8 || posRook == g8 && isPosFree(f8) ||  // rook in place of king
                             pos == g8 && isPosFree(f8) || pos == f8 && isPosFree(g8)) {
                             addKingMove(Move_makeMoveOO(pos, g8));
                         }
@@ -1193,8 +1173,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
             !isSquareAttacked(m_turn, c8)) {
             // default starting position of rook and king, default chess rules apply
             if (pos == e8 && ChessBoard::COL_AROOK == 0) {
-                if (isPosFree(d8) && isPosFree(c8) && isPosFree(b8) &&
-                    (m_bitbPieces[BLACK][ROOK] & BITS[a8]) != 0) {
+                if (isPosFree(d8) && isPosFree(c8) && isPosFree(b8) && (m_bitbPieces[BLACK][ROOK] & BITS[a8]) != 0) {
                     addKingMove(Move_makeMoveOOO(pos, c8));
                 }
             } else  // random Fischer chess
@@ -1206,12 +1185,11 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
                 if (posRook >= a8) {
                     // check if we found the rook
-                    if (COL[posRook] == ChessBoard::COL_AROOK &&
-                        (m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
+                    if (COL[posRook] == ChessBoard::COL_AROOK && (m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
                         // can we castle
                         if (isPosFree(d8) && isPosFree(c8) || posRook == d8 && isPosFree(c8) ||
-                            posRook == c8 && pos == d8 || pos == c8 && isPosFree(d8) ||
-                            pos == d8 && isPosFree(c8) || posRook == c8 && isPosFree(d8)) {
+                            posRook == c8 && pos == d8 || pos == c8 && isPosFree(d8) || pos == d8 && isPosFree(c8) ||
+                            posRook == c8 && isPosFree(d8)) {
                             addKingMove(Move_makeMoveOOO(pos, c8));
                         }
                     }
@@ -1326,8 +1304,7 @@ int ChessBoard::scoreMove(int move) {
         if (Move_isEP(move)) {
             return 30000;
         }
-        return 30000 + ChessBoard::PIECE_VALUES[pieceAt(m_o_turn, to)] -
-               ChessBoard::PIECE_VALUES[piece];
+        return 30000 + ChessBoard::PIECE_VALUES[pieceAt(m_o_turn, to)] - ChessBoard::PIECE_VALUES[piece];
     }
     // we don't know if a move is check!
     if (/*Move_isCheck(move) || */ Move_isPromotionMove(move)) {
@@ -1413,13 +1390,11 @@ int ChessBoard::boardValue() {
 int ChessBoard::loneKingValue(const int turn) {
     if (turn == m_turn) {
         return ChessBoard::VALUATION_LONE_KING_BONUS -
-               ChessBoard::VALUATION_LONE_KING *
-                   HOOK_DISTANCE[m_kingPositions[m_turn]][m_kingPositions[m_o_turn]] -
+               ChessBoard::VALUATION_LONE_KING * HOOK_DISTANCE[m_kingPositions[m_turn]][m_kingPositions[m_o_turn]] -
                ChessBoard::VALUATION_KING_ENDINGS[m_kingPositions[m_o_turn]] + m_qualities[m_turn];
     }
     return ChessBoard::VALUATION_LONE_KING_BONUS -
-           ChessBoard::VALUATION_LONE_KING *
-               HOOK_DISTANCE[m_kingPositions[m_o_turn]][m_kingPositions[m_turn]] -
+           ChessBoard::VALUATION_LONE_KING * HOOK_DISTANCE[m_kingPositions[m_o_turn]][m_kingPositions[m_turn]] -
            ChessBoard::VALUATION_KING_ENDINGS[m_kingPositions[m_turn]] + m_qualities[m_o_turn];
 }
 
@@ -1440,9 +1415,8 @@ int ChessBoard::kbnkValue(const int turn) {
         }
     }
     value += (300 - 6 * HOOK_DISTANCE[winnerKingPos][loserKingPos]);
-    value -= ((m_bitbPieces[turn][BISHOP] & WHITE_SQUARES) == 0)
-                 ? ChessBoard::VALUATION_KBNK_SCORE[0][loserKingPos]
-                 : ChessBoard::VALUATION_KBNK_SCORE[1][loserKingPos];
+    value -= ((m_bitbPieces[turn][BISHOP] & WHITE_SQUARES) == 0) ? ChessBoard::VALUATION_KBNK_SCORE[0][loserKingPos]
+                                                                 : ChessBoard::VALUATION_KBNK_SCORE[1][loserKingPos];
     value -= ChessBoard::VALUATION_KING_ENDINGS[loserKingPos];
     value -= HOOK_DISTANCE[trailingZeros(m_bitbPieces[turn][BISHOP])][loserKingPos];
     value -= HOOK_DISTANCE[trailingZeros(m_bitbPieces[turn][KNIGHT])][loserKingPos];
@@ -1478,8 +1452,8 @@ int ChessBoard::boardValueExtension() {
     int val = m_qualities[m_turn] - m_qualities[m_o_turn];
 
     // one of the kings not on the board, return just the default value
-    if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 ||
-        m_kingPositions[m_o_turn] < 0 || m_kingPositions[m_o_turn] > 63) {
+    if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 || m_kingPositions[m_o_turn] < 0 ||
+        m_kingPositions[m_o_turn] > 63) {
         return val;
     }
 
@@ -1488,8 +1462,7 @@ int ChessBoard::boardValueExtension() {
         // no pawns to promote but enough mating material (m_state != DRAW_MATERIAL)
         if (m_bitbPieces[m_o_turn][PAWN] == 0) {
             // kbnk is special case
-            if ((m_qualities[m_o_turn] ==
-                 ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
+            if ((m_qualities[m_o_turn] == ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
                 ChessBoard::bitCount(m_bitbPieces[m_o_turn][KNIGHT]) == 1 &&
                 ChessBoard::bitCount(m_bitbPieces[m_o_turn][BISHOP]) == 1) {
                 return -kbnkValue(m_o_turn);
@@ -1501,8 +1474,7 @@ int ChessBoard::boardValueExtension() {
     }  // opponent has lone king
     else if (m_qualities[m_o_turn] == 0) {
         if (m_bitbPieces[m_turn][PAWN] == 0) {
-            if ((m_qualities[m_turn] ==
-                 ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
+            if ((m_qualities[m_turn] == ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
                 ChessBoard::bitCount(m_bitbPieces[m_turn][KNIGHT]) == 1 &&
                 ChessBoard::bitCount(m_bitbPieces[m_turn][BISHOP]) == 1) {
                 return kbnkValue(m_turn);
@@ -1573,8 +1545,7 @@ int ChessBoard::kingValueExtension(const int turn) {
     }
     // m_bitbPieces[turn][KING]
     if (turn == m_turn) {
-        return (ChessBoard::bitCount(KING_RANGE[m_kingPositions[m_turn]] &
-                                     m_bitbPieces[turn][PAWN]) *
+        return (ChessBoard::bitCount(KING_RANGE[m_kingPositions[m_turn]] & m_bitbPieces[turn][PAWN]) *
                 VALUATION_PAWN_IN_KING_RANGE) +
                val;
     }
@@ -1586,8 +1557,7 @@ int ChessBoard::knightValueExtension(const int turn) {
     ///
     BITBOARD bbPiece = m_bitbPieces[turn][KNIGHT];
     int iPos;
-    int val = ChessBoard::bitCount(m_bitbPieces[turn][KNIGHT] & CENTER_4x4_SQUARES) *
-              VALUATION_KNIGHT_CENTER;
+    int val = ChessBoard::bitCount(m_bitbPieces[turn][KNIGHT] & CENTER_4x4_SQUARES) * VALUATION_KNIGHT_CENTER;
     while (bbPiece != 0) {
         iPos = ChessBoard::trailingZeros(bbPiece);
         bbPiece &= NOT_BITS[iPos];
@@ -2001,12 +1971,7 @@ void ChessBoard::toFEN(char* s) {
 
 // in case of a setup, set 'white can castle short'=>wccs etc and ep square
 // and number of moves for 50 move rule
-void ChessBoard::setCastlingsEPAnd50(boolean wccl,
-                                     boolean wccs,
-                                     boolean bccl,
-                                     boolean bccs,
-                                     int ep,
-                                     int r50) {
+void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, boolean bccs, int ep, int r50) {
     m_ep = ep;
     m_50RuleCount = r50;
     COL_AROOK = 0;
@@ -2489,10 +2454,10 @@ BITBOARD ChessBoard::HASH_TURN;
 // shift, rotation and mask arrays. index is position
 
 // shifts on non rotated bitboard, used for rank move generation
-const int ChessBoard::SHIFT_0[64] = {
-    0,  0,  0,  0,  0,  0,  0,  0,  8,  8,  8,  8,  8,  8,  8,  8,  16, 16, 16, 16, 16, 16,
-    16, 16, 24, 24, 24, 24, 24, 24, 24, 24, 32, 32, 32, 32, 32, 32, 32, 32, 40, 40, 40, 40,
-    40, 40, 40, 40, 48, 48, 48, 48, 48, 48, 48, 48, 56, 56, 56, 56, 56, 56, 56, 56};
+const int ChessBoard::SHIFT_0[64] = {0,  0,  0,  0,  0,  0,  0,  0,  8,  8,  8,  8,  8,  8,  8,  8,
+                                     16, 16, 16, 16, 16, 16, 16, 16, 24, 24, 24, 24, 24, 24, 24, 24,
+                                     32, 32, 32, 32, 32, 32, 32, 32, 40, 40, 40, 40, 40, 40, 40, 40,
+                                     48, 48, 48, 48, 48, 48, 48, 48, 56, 56, 56, 56, 56, 56, 56, 56};
 
 // "rotation" table, for the 45 degrees diagonal move generation
 const int ChessBoard::ROT_45[64] = {a8, b8, d8, g8, c7, h7, f6, e5, c8, e8, h8, d7, a6, g6, f5, e4,
@@ -2501,23 +2466,23 @@ const int ChessBoard::ROT_45[64] = {a8, b8, d8, g8, c7, h7, f6, e5, c8, e8, h8, 
                                     d5, c4, b3, h3, e2, a1, d1, f1, d4, c3, a2, f2, b1, e1, g1, h1};
 
 // same as above, but with BIT positions
-const BITBOARD ChessBoard::ROT_45_BITS[64] = {
-    A8, B8, D8, G8, C7, H7, F6, E5, C8, E8, H8, D7, A6, G6, F5, E4, F8, A7, E7, B6, H6, G5,
-    F4, D3, B7, F7, C6, A5, H5, G4, E3, B2, G7, D6, B5, A4, H4, F3, C2, G2, E6, C5, B4, A3,
-    G3, D2, H2, C1, D5, C4, B3, H3, E2, A1, D1, F1, D4, C3, A2, F2, B1, E1, G1, H1};
+const BITBOARD ChessBoard::ROT_45_BITS[64] = {A8, B8, D8, G8, C7, H7, F6, E5, C8, E8, H8, D7, A6, G6, F5, E4,
+                                              F8, A7, E7, B6, H6, G5, F4, D3, B7, F7, C6, A5, H5, G4, E3, B2,
+                                              G7, D6, B5, A4, H4, F3, C2, G2, E6, C5, B4, A3, G3, D2, H2, C1,
+                                              D5, C4, B3, H3, E2, A1, D1, F1, D4, C3, A2, F2, B1, E1, G1, H1};
 
 // the shifts used on the 45 bitb
-const int ChessBoard::SHIFT_45[64] = {
-    0,  1,  3,  6,  10, 15, 21, 28, 1,  3,  6,  10, 15, 21, 28, 36, 3,  6,  10, 15, 21, 28,
-    36, 43, 6,  10, 15, 21, 28, 36, 43, 49, 10, 15, 21, 28, 36, 43, 49, 54, 15, 21, 28, 36,
-    43, 49, 54, 58, 21, 28, 36, 43, 49, 54, 58, 61, 28, 36, 43, 49, 54, 58, 61, 63};
+const int ChessBoard::SHIFT_45[64] = {0,  1,  3,  6,  10, 15, 21, 28, 1,  3,  6,  10, 15, 21, 28, 36,
+                                      3,  6,  10, 15, 21, 28, 36, 43, 6,  10, 15, 21, 28, 36, 43, 49,
+                                      10, 15, 21, 28, 36, 43, 49, 54, 15, 21, 28, 36, 43, 49, 54, 58,
+                                      21, 28, 36, 43, 49, 54, 58, 61, 28, 36, 43, 49, 54, 58, 61, 63};
 
 // the masks used on the 45 bitb
-const int ChessBoard::MASK_45[64] = {
-    0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F,
-    0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F,
-    0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07,
-    0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01};
+const int ChessBoard::MASK_45[64] = {0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x03, 0x07, 0x0F, 0x1F, 0x3F,
+                                     0x7F, 0xFF, 0x7F, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x0F, 0x1F,
+                                     0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x1F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F,
+                                     0x0F, 0x3F, 0x7F, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x7F, 0xFF, 0x7F, 0x3F,
+                                     0x1F, 0x0F, 0x07, 0x03, 0xFF, 0x7F, 0x3F, 0x1F, 0x0F, 0x07, 0x03, 0x01};
 
 // "rotation" table for file move generation
 /*
@@ -2533,15 +2498,15 @@ const int ChessBoard::ROT_90[64] = {
 };
 */
 
-const BITBOARD ChessBoard::ROT_90_BITS[64] = {
-    A1, A2, A3, A4, A5, A6, A7, A8, B1, B2, B3, B4, B5, B6, B7, B8, C1, C2, C3, C4, C5, C6,
-    C7, C8, D1, D2, D3, D4, D5, D6, D7, D8, E1, E2, E3, E4, E5, E6, E7, E8, F1, F2, F3, F4,
-    F5, F6, F7, F8, G1, G2, G3, G4, G5, G6, G7, G8, H1, H2, H3, H4, H5, H6, H7, H8};
+const BITBOARD ChessBoard::ROT_90_BITS[64] = {A1, A2, A3, A4, A5, A6, A7, A8, B1, B2, B3, B4, B5, B6, B7, B8,
+                                              C1, C2, C3, C4, C5, C6, C7, C8, D1, D2, D3, D4, D5, D6, D7, D8,
+                                              E1, E2, E3, E4, E5, E6, E7, E8, F1, F2, F3, F4, F5, F6, F7, F8,
+                                              G1, G2, G3, G4, G5, G6, G7, G8, H1, H2, H3, H4, H5, H6, H7, H8};
 
-const int ChessBoard::SHIFT_90[64] = {
-    56, 48, 40, 32, 24, 16, 8,  0,  56, 48, 40, 32, 24, 16, 8,  0,  56, 48, 40, 32, 24, 16,
-    8,  0,  56, 48, 40, 32, 24, 16, 8,  0,  56, 48, 40, 32, 24, 16, 8,  0,  56, 48, 40, 32,
-    24, 16, 8,  0,  56, 48, 40, 32, 24, 16, 8,  0,  56, 48, 40, 32, 24, 16, 8,  0
+const int ChessBoard::SHIFT_90[64] = {56, 48, 40, 32, 24, 16, 8,  0,  56, 48, 40, 32, 24, 16, 8,  0,  56,
+                                      48, 40, 32, 24, 16, 8,  0,  56, 48, 40, 32, 24, 16, 8,  0,  56, 48,
+                                      40, 32, 24, 16, 8,  0,  56, 48, 40, 32, 24, 16, 8,  0,  56, 48, 40,
+                                      32, 24, 16, 8,  0,  56, 48, 40, 32, 24, 16, 8,  0
 
 };
 
@@ -2557,15 +2522,15 @@ const int ChessBoard::ROT_315[64] = {
                 a8, c8, f8, b7, g7, e6, d5, d4};
 */
 
-const BITBOARD ChessBoard::ROT_315_BITS[64] = {
-    E5, E4, D3, B2, G2, C1, F1, H1, F6, F5, F4, E3, C2, H2, D1, G1, H7, G6, G5, G4, F3, D2,
-    A1, E1, C7, A6, H6, H5, H4, G3, E2, B1, G8, D7, B6, A5, A4, A3, H3, F2, D8, H8, E7, C6,
-    B5, B4, B3, A2, B8, E8, A7, F7, D6, C5, C4, C3, A8, C8, F8, B7, G7, E6, D5, D4};
+const BITBOARD ChessBoard::ROT_315_BITS[64] = {E5, E4, D3, B2, G2, C1, F1, H1, F6, F5, F4, E3, C2, H2, D1, G1,
+                                               H7, G6, G5, G4, F3, D2, A1, E1, C7, A6, H6, H5, H4, G3, E2, B1,
+                                               G8, D7, B6, A5, A4, A3, H3, F2, D8, H8, E7, C6, B5, B4, B3, A2,
+                                               B8, E8, A7, F7, D6, C5, C4, C3, A8, C8, F8, B7, G7, E6, D5, D4};
 
-const int ChessBoard::SHIFT_315[64] = {
-    28, 36, 43, 49, 54, 58, 61, 63, 21, 28, 36, 43, 49, 54, 58, 61, 15, 21, 28, 36, 43, 49,
-    54, 58, 10, 15, 21, 28, 36, 43, 49, 54, 6,  10, 15, 21, 28, 36, 43, 49, 3,  6,  10, 15,
-    21, 28, 36, 43, 1,  3,  6,  10, 15, 21, 28, 36, 0,  1,  3,  6,  10, 15, 21, 28};
+const int ChessBoard::SHIFT_315[64] = {28, 36, 43, 49, 54, 58, 61, 63, 21, 28, 36, 43, 49, 54, 58, 61,
+                                       15, 21, 28, 36, 43, 49, 54, 58, 10, 15, 21, 28, 36, 43, 49, 54,
+                                       6,  10, 15, 21, 28, 36, 43, 49, 3,  6,  10, 15, 21, 28, 36, 43,
+                                       1,  3,  6,  10, 15, 21, 28, 36, 0,  1,  3,  6,  10, 15, 21, 28};
 
 const int ChessBoard::MASK_315[64] = {
 
@@ -2934,17 +2899,15 @@ const BITBOARD ChessBoard::KING_RANGE[64] = {770LL,
 // (BITBOARD)-630998412249528312LL, (BITBOARD)-1189939234739318768LL,
 // (BITBOARD)-2307821974952271840LL, (BITBOARD)-4615925424881254080LL, 9214611748970332801LL};
 const int ChessBoard::ROW_TURN[2][64] = {
-    {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2,
-     2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5,
-     5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7},
-    {7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5,
-     5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2,
-     2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}};
+    {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+     4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7},
+    {7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
+     3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}};
 
-const int ChessBoard::VALUATION_KING_ENDINGS[64] = {
-    0,  6,  12, 18, 18, 12, 6,  0,  6,  12, 18, 24, 24, 18, 12, 6,  12, 18, 24, 32, 32, 24,
-    18, 12, 18, 24, 32, 48, 48, 32, 24, 18, 18, 24, 32, 48, 48, 32, 24, 18, 12, 18, 24, 32,
-    32, 24, 18, 12, 6,  12, 18, 24, 24, 18, 12, 6,  0,  6,  12, 18, 18, 12, 6,  0};
+const int ChessBoard::VALUATION_KING_ENDINGS[64] = {0,  6,  12, 18, 18, 12, 6,  0,  6,  12, 18, 24, 24, 18, 12, 6,
+                                                    12, 18, 24, 32, 32, 24, 18, 12, 18, 24, 32, 48, 48, 32, 24, 18,
+                                                    18, 24, 32, 48, 48, 32, 24, 18, 12, 18, 24, 32, 32, 24, 18, 12,
+                                                    6,  12, 18, 24, 24, 18, 12, 6,  0,  6,  12, 18, 18, 12, 6,  0};
 
 // kbnk score, first index is "square color" of the bishop, second index the position of the losing
 // king after gnu-chess
@@ -2962,14 +2925,13 @@ const int ChessBoard::VALUATION_KBNK_SCORE[2][64] = {
 
 // trailing zeros precalculated on 8bit numbers
 const char ChessBoard::TRAILING_ZEROS_8_BITS[256] = {
-    0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-    5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0};
+    0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2,
+    0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 6, 0, 1, 0, 2, 0, 1, 0, 3, 0,
+    1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1,
+    0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0,
+    2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3,
+    0, 1, 0, 2, 0, 1, 0, 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0,
+    1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0};
 // too much to precalc, filled by instantiation of a Game object
 // precalculated bitcount of 8bit numbers
 // const char ChessBoard::BIT_COUNT_8_BITS[] =

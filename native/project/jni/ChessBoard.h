@@ -303,11 +303,7 @@ class ChessBoard {
     boolean isEnded();
     boolean checkEnded();
     int ambigiousMove();
-    boolean requestMove(const int from,
-                        const int to,
-                        ChessBoard* board,
-                        ChessBoard* tmpBoard,
-                        int promoPiece);
+    boolean requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece);
     boolean isAmbiguousCastle(const int from, const int to);
     int getCastleMove(const int from, const int to);
     boolean requestMove(const int m, ChessBoard* board, ChessBoard* tmpBoard);
@@ -356,12 +352,7 @@ class ChessBoard {
     int getAvailableCol(int colNum);
     void toFEN(char* s);
     void toFENBoard(char* s);
-    void setCastlingsEPAnd50(boolean wccl,
-                             boolean wccs,
-                             boolean bccl,
-                             boolean bccs,
-                             int ep,
-                             int r50);
+    void setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, boolean bccs, int ep, int r50);
     void setTurn(const int turn);
     int getNumCaptured(int turn, int piece);
     int getNumBoard();
