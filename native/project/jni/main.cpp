@@ -45,20 +45,20 @@ int main(int argc, char **argv) {
 
     ChessBoard::initStatics();
 
-    // TestFunction tests[] = {testSetupNewGame,
-    //                         testSetupMate,
-    //                         testInCheck,
-    //                         testInSelfCheck,
-    //                         testSetupCastle,
-    //                         testSetupQuiesce,
-    //                         testMoves,
-    //                         testDB,
-    //                         testDuck
-    //                         /*testGame*/};
+    TestFunction tests[] = {testSetupNewGame,
+                            testSetupMate,
+                            testInCheck,
+                            testInSelfCheck,
+                            testSetupCastle,
+                            testSetupQuiesce,
+                            testMoves,
+                            testDB,
+                            testDuck,
+                            testGame};
 
-    TestFunction tests[] = {
-        testDuck,
-    };
+    // TestFunction tests[] = {
+    //     testDuck,
+    // };
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
@@ -137,7 +137,8 @@ bool testGame() {
     int m, i = 0;
     boolean bMoved;
     while (!board->isEnded()) {
-        g->setSearchTime(1);
+        //g->setSearchTime(1);
+        g->setSearchLimit(2);
         startThread();
         while (g->m_bSearching) {
             sleep(1);

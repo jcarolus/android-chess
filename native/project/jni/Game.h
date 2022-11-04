@@ -20,12 +20,11 @@ class Game {
     int getBestMoveAt(int ply);
 
     void setSearchTime(int secs);
+    void setSearchLimit(int depth);
     void search();
     boolean alphaBetaRoot(const int depth, int alpha, const int beta);
     int alphaBeta(ChessBoard* board, const int depth, int alpha, const int beta);
     inline int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);
-    void searchLimited(const int depth);
-    int alphaBetaLimited(ChessBoard* board, const int depth, int alpha, const int beta);
     int searchDB();
     int searchHouse();
     boolean putPieceHouse(const int pos, const int piece, const boolean allowAttack);
@@ -40,12 +39,13 @@ class Game {
     int m_evalCount;
     int m_bestValue;
     int m_searchDepth;
+    int m_searchLimit;
 
    protected:
     long findDBKey(BITBOARD bbKey);
     boolean readDBAt(int iPos, BITBOARD& bb);
 
-    int m_bestMove;
+    int m_bestMove, m_bestDuckMove;
     static const int MAX_DEPTH = 20;
     static const int QUIESCE_DEPTH = 5;  // makes effective max depth 15
 

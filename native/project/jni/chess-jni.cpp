@@ -79,14 +79,13 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz,
     pthread_t tid;
 
     stGame->setSearchTime(secs);
-
-    DEBUG_PRINT("Creating search thread\n", 0);
     pthread_create(&tid, NULL, search_thread, NULL);
-
-    DEBUG_PRINT("Done creating search thread\n", 0);
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchDepth(JNIEnv* env, jobject thiz, jint depth) {
-    stGame->searchLimited(depth);
+    pthread_t tid;
+    
+    stGame->setSearchLimit(depth);
+    pthread_create(&tid, NULL, search_thread, NULL);
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMove(JNIEnv* env, jobject thiz) {
     return stGame->getBestMove();
