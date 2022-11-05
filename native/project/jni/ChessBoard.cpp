@@ -805,7 +805,7 @@ void ChessBoard::addMoves(const int from, BITBOARD bb) {
 
         bb &= NOT_BITS[to];
         if ((m_bitbPositions[m_o_turn] & BITS[to]) != 0) {
-            if (m_variant != VARIANT_DUCK && (m_bitbPieces[m_o_turn][KING] & BITS[to]) != 0) {
+            if (m_variant == VARIANT_DEFAULT && (m_bitbPieces[m_o_turn][KING] & BITS[to]) != 0) {
                 return;
             } else {
                 addMoveElement(Move_makeMoveHit(from, to));
@@ -2187,6 +2187,13 @@ boolean ChessBoard::hasMoreMoves() {
 // advance pointer in generated moves array
 int ChessBoard::getNextMove() {
     return m_arrMoves[m_indexMoves++];
+}
+
+int ChessBoard::getMoveAt(const int i) {
+    if (i >= 0 && i < m_sizeMoves) {
+        return m_arrMoves[i];
+    }
+    return 0;
 }
 
 int ChessBoard::getNumMoves() {
@@ -4140,12 +4147,12 @@ void ChessBoard::printB(char* s) {
     // bitbToString(m_bitbAttackMoveSquares, buf);
     // strcat(s, buf);
 
-    // strcat(s, "\nMoves:\n");
-    // for(int i = 0; i < m_sizeMoves; i++){
-    //	Move::toDbgString(m_arrMoves[i], buf);
-    //		strcat(s, buf);
-    //		strcat(s, ";");
-    //	}
+    strcat(s, "\nMoves:\n");
+    for (int i = 0; i < m_sizeMoves; i++) {
+        Move::toDbgString(m_arrMoves[i], buf);
+        strcat(s, buf);
+        strcat(s, ";");
+    }
     /*
     strcat(s, "\nHistory:\n");
     Move::toDbgString(m_myMove, buf);

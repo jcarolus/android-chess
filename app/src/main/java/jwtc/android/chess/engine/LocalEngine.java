@@ -93,7 +93,7 @@ public class LocalEngine extends EngineApi {
                 if (ply > 0) {
                     jni.searchDepth(ply);
                 } else {
-                    jni.searchMove(msecs / 1000);
+                    jni.searchMove(msecs);
                 }
 
                 long lMillies = System.currentTimeMillis();

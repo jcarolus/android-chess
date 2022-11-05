@@ -71,10 +71,10 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, j
     board->put(pos, piece, turn);
 }
 
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz, jint secs) {
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz, jint msecs) {
     pthread_t tid;
 
-    stGame->setSearchTime(secs);
+    stGame->setSearchTime(msecs);
     pthread_create(&tid, NULL, search_thread, NULL);
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchDepth(JNIEnv* env, jobject thiz, jint depth) {

@@ -17,6 +17,7 @@ class Game {
     void undo();
     void setPromo(int p);
     int getBestMove();
+    int getBestDuckMove();
     int getBestMoveAt(int ply);
 
     void setSearchTime(int secs);
@@ -60,5 +61,5 @@ class Game {
     ChessBoard* m_boardRefurbish;
     ChessBoard* m_board;
     int m_promotionPiece;
-    int m_arrPVMoves[MAX_DEPTH];
+    int m_arrBestMoves[MAX_DEPTH];
 };

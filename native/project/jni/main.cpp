@@ -25,6 +25,7 @@ bool testHouse();
 bool testMoves();
 bool testGenmoves();
 bool testDuck();
+bool testDuckGame();
 void newGame();
 void newGameDuck();
 void printFENAndState(ChessBoard *board);
@@ -127,7 +128,7 @@ bool testSetupMate() {
 }
 
 bool testGame() {
-    ChessBoard *board, *tmp = new ChessBoard();
+    ChessBoard *board;
 
     newGame();
     board = g->getBoard();
@@ -135,8 +136,8 @@ bool testGame() {
     int m, i = 0;
     boolean bMoved;
     while (!board->isEnded()) {
-        // g->setSearchTime(1);
-        g->setSearchLimit(2);
+        g->setSearchTime(3);
+        // g->setSearchLimit(2);
         startThread();
         while (g->m_bSearching) {
             sleep(1);
@@ -147,14 +148,14 @@ bool testGame() {
         bMoved = g->move(m);
         board = g->getBoard();
 
-        if (!bMoved) {
-            DEBUG_PRINT("\nBAILING OUT - not moved\n", 0);
-            break;
-        }
-
         char buf[20];
         board->myMoveToString(buf);
         DEBUG_PRINT("\n=====> %d, %d, %s\n", board->getNumBoard(), board->getState(), buf);
+
+        if (!bMoved) {
+            DEBUG_PRINT("\nBAILING OUT - not moved %d\n", m);
+            break;
+        }
 
         if (i++ > 5) {
             break;
@@ -354,6 +355,50 @@ bool testDuck() {
     ret = expectEqualInt(ChessBoard::MATE, g->getBoard()->getState(), "State mate");
 
     return ret;
+}
+
+bool testDuckGame() {
+    ChessBoard *board;
+
+    newGameDuck();
+    board = g->getBoard();
+
+    int m, i = 0;
+    boolean bMoved;
+    while (!board->isEnded()) {
+        // g->setSearchTime(1);
+        g->setSearchLimit(1);
+        startThread();
+        while (g->m_bSearching) {
+            sleep(1);
+        }
+
+        m = g->getBestMove();
+
+        bMoved = g->move(m);
+        board = g->getBoard();
+
+        if (!bMoved) {
+            DEBUG_PRINT("\nBAILING OUT - not moved\n", 0);
+            break;
+        }
+
+        char buf[20];
+        board->myMoveToString(buf);
+        DEBUG_PRINT("\n=====> %d, %d, %s\n", board->getNumBoard(), board->getState(), buf);
+
+        if (i++ > 5) {
+            break;
+        }
+    }
+
+    printFENAndState(board);
+    char buf[512];
+    board->printB(buf);
+
+    DEBUG_PRINT("\n%s\n", buf);
+
+    return true;
 }
 
 void speedTest() {

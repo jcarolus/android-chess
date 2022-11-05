@@ -396,6 +396,7 @@ class ChessBoard {
     // methods that operate on the move array m_arrMoves
     boolean hasMoreMoves();
     int getNextMove();
+    int getMoveAt(const int i);
     int getNumMoves();
     // replace current selected element with the last element, hereby overwriting the current
     // element and decreasing size
