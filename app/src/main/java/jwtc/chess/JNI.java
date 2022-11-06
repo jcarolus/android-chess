@@ -31,147 +31,17 @@ public class JNI {
 
     public void newGame(int variant) {
         reset();
-        putPiece(BoardConstants.a8, BoardConstants.ROOK, BoardConstants.BLACK);
-        putPiece(BoardConstants.b8, BoardConstants.KNIGHT, BoardConstants.BLACK);
-        putPiece(BoardConstants.c8, BoardConstants.BISHOP, BoardConstants.BLACK);
-        putPiece(BoardConstants.d8, BoardConstants.QUEEN, BoardConstants.BLACK);
-        putPiece(BoardConstants.e8, BoardConstants.KING, BoardConstants.BLACK);
-        putPiece(BoardConstants.f8, BoardConstants.BISHOP, BoardConstants.BLACK);
-        putPiece(BoardConstants.g8, BoardConstants.KNIGHT, BoardConstants.BLACK);
-        putPiece(BoardConstants.h8, BoardConstants.ROOK, BoardConstants.BLACK);
-        putPiece(BoardConstants.a7, BoardConstants.PAWN, BoardConstants.BLACK);
-        putPiece(BoardConstants.b7, BoardConstants.PAWN, BoardConstants.BLACK);
-        putPiece(BoardConstants.c7, BoardConstants.PAWN, BoardConstants.BLACK);
-        putPiece(BoardConstants.d7, BoardConstants.PAWN, BoardConstants.BLACK);
-        putPiece(BoardConstants.e7, BoardConstants.PAWN, BoardConstants.BLACK);
-        putPiece(BoardConstants.f7, BoardConstants.PAWN, BoardConstants.BLACK);
-        putPiece(BoardConstants.g7, BoardConstants.PAWN, BoardConstants.BLACK);
-        putPiece(BoardConstants.h7, BoardConstants.PAWN, BoardConstants.BLACK);
 
-        putPiece(BoardConstants.a1, BoardConstants.ROOK, BoardConstants.WHITE);
-        putPiece(BoardConstants.b1, BoardConstants.KNIGHT, BoardConstants.WHITE);
-        putPiece(BoardConstants.c1, BoardConstants.BISHOP, BoardConstants.WHITE);
-        putPiece(BoardConstants.d1, BoardConstants.QUEEN, BoardConstants.WHITE);
-        putPiece(BoardConstants.e1, BoardConstants.KING, BoardConstants.WHITE);
-        putPiece(BoardConstants.f1, BoardConstants.BISHOP, BoardConstants.WHITE);
-        putPiece(BoardConstants.g1, BoardConstants.KNIGHT, BoardConstants.WHITE);
-        putPiece(BoardConstants.h1, BoardConstants.ROOK, BoardConstants.WHITE);
-        putPiece(BoardConstants.a2, BoardConstants.PAWN, BoardConstants.WHITE);
-        putPiece(BoardConstants.b2, BoardConstants.PAWN, BoardConstants.WHITE);
-        putPiece(BoardConstants.c2, BoardConstants.PAWN, BoardConstants.WHITE);
-        putPiece(BoardConstants.d2, BoardConstants.PAWN, BoardConstants.WHITE);
-        putPiece(BoardConstants.e2, BoardConstants.PAWN, BoardConstants.WHITE);
-        putPiece(BoardConstants.f2, BoardConstants.PAWN, BoardConstants.WHITE);
-        putPiece(BoardConstants.g2, BoardConstants.PAWN, BoardConstants.WHITE);
-        putPiece(BoardConstants.h2, BoardConstants.PAWN, BoardConstants.WHITE);
-
-        setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
-
-        commitBoard(variant);
-
-        if (variant == BoardConstants.VARIANT_DUCK) {
-            requestDuckMove(BoardConstants.h5);
+        if (variant == BoardConstants.VARIANT_DEFAULT) {
+            newGameFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        } else {
+            newGameFromFEN("rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         }
     }
 
 
     public final boolean initFEN(final String sFEN) {
-        // rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
-
-        reset();
-        try {
-            int variant = BoardConstants.VARIANT_DEFAULT;
-            String s;
-            int pos = 0, i = 0, iAdd, duckPos = -1;
-            while (pos < 64 && i < sFEN.length()) {
-                iAdd = 1;
-                s = sFEN.substring(i, i + 1);
-                if (s.equals("k")) {
-                    putPiece(pos, BoardConstants.KING, BoardConstants.BLACK);
-                } else if (s.equals("K")) {
-                    putPiece(pos, BoardConstants.KING, BoardConstants.WHITE);
-                } else if (s.equals("q")) {
-                    putPiece(pos, BoardConstants.QUEEN, BoardConstants.BLACK);
-                } else if (s.equals("Q")) {
-                    putPiece(pos, BoardConstants.QUEEN, BoardConstants.WHITE);
-                } else if (s.equals("r")) {
-                    putPiece(pos, BoardConstants.ROOK, BoardConstants.BLACK);
-                } else if (s.equals("R")) {
-                    putPiece(pos, BoardConstants.ROOK, BoardConstants.WHITE);
-                } else if (s.equals("b")) {
-                    putPiece(pos, BoardConstants.BISHOP, BoardConstants.BLACK);
-                } else if (s.equals("B")) {
-                    putPiece(pos, BoardConstants.BISHOP, BoardConstants.WHITE);
-                } else if (s.equals("n")) {
-                    putPiece(pos, BoardConstants.KNIGHT, BoardConstants.BLACK);
-                } else if (s.equals("N")) {
-                    putPiece(pos, BoardConstants.KNIGHT, BoardConstants.WHITE);
-                } else if (s.equals("p")) {
-                    putPiece(pos, BoardConstants.PAWN, BoardConstants.BLACK);
-                } else if (s.equals("P")) {
-                    putPiece(pos, BoardConstants.PAWN, BoardConstants.WHITE);
-                } else if (s.equals("$")) {
-                    duckPos = pos;
-                    variant = BoardConstants.VARIANT_DUCK;
-                } else if (s.equals("/")) {
-                    iAdd = 0;
-                } else {
-                    iAdd = Integer.parseInt(s);
-                }
-                pos += iAdd;
-                i++;
-            }
-            i++;// skip space
-            if (i < sFEN.length()) {
-                int wccl = 0, wccs = 0, bccl = 0, bccs = 0, colA = 0, colH = 7, ep = -1, r50 = 0, turn;
-                String[] arr = sFEN.substring(i).split(" ");
-                if (arr.length > 0) {
-                    if (arr[0].equals("w")) {
-                        turn = BoardConstants.WHITE;
-                    } else {
-                        turn = BoardConstants.BLACK;
-                    }
-                    if (arr.length > 1) {
-                        if (arr[1].indexOf("k") != -1) {
-                            bccs = 1;
-                        }
-                        if (arr[1].indexOf("q") != -1) {
-                            bccl = 1;
-                        }
-                        if (arr[1].indexOf("K") != -1) {
-                            wccs = 1;
-                        }
-                        if (arr[1].indexOf("Q") != -1) {
-                            wccl = 1;
-                        }
-
-                        if (arr.length > 2) {
-                            if (false == arr[2].equals("-")) {
-                                ep = Pos.fromString(arr[2]);
-                            }
-                            if (arr.length > 3) {
-                                r50 = Integer.parseInt(arr[3]);
-                            }
-                        }
-                        setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
-
-                        setTurn(turn);
-                        commitBoard(variant);
-
-                        if (variant == BoardConstants.VARIANT_DUCK) {
-                            requestDuckMove(duckPos);
-                        }
-
-                        return true;
-                    }
-                }
-
-            }
-        } catch (Exception ex) {
-            //Log.e("initFEN", ex.toString());
-            return false;
-        }
-        return false;
+        return newGameFromFEN(sFEN) != 0;
     }
 
     protected boolean isPosFree(int pos) {
@@ -355,7 +225,7 @@ public class JNI {
 
         setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
 
-        commitBoard(BoardConstants.VARIANT_DEFAULT);
+        commitBoard();
 
         return ret;
     }
@@ -373,6 +243,8 @@ public class JNI {
     public native void undo();
 
     public native void reset();
+
+    public native int newGameFromFEN(String sFEN);
 
     public native void putPiece(int pos, int piece, int turn);
 
@@ -406,7 +278,7 @@ public class JNI {
 
     public native int getTurn();
 
-    public native void commitBoard(int variant);
+    public native void commitBoard();
 
     public native void setTurn(int turn);
 

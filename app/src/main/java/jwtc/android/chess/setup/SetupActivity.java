@@ -102,8 +102,6 @@ public class SetupActivity extends ChessBoardActivity {
 
     protected void onSave() {
 
-
-
         final int turn = radioTurnWhite.isChecked() ? 1 : 0;
 
         jni.setTurn(turn);
@@ -144,7 +142,7 @@ public class SetupActivity extends ChessBoardActivity {
                 checkBlackCastleLong.isChecked() ? 1 : 0,
                 checkBlackCastleShort.isChecked() ? 1 : 0,
                 iEP, 0);
-        jni.commitBoard(BoardConstants.VARIANT_DEFAULT);
+        jni.commitBoard();
 
         if (jni.isLegalPosition() == 0) {
             new AlertDialog.Builder(this)

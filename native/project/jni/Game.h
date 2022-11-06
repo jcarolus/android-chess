@@ -9,7 +9,8 @@ class Game {
     ~Game(void);
 
     void reset();
-    void commitBoard(const int variant);
+    boolean newGameFromFEN(char* sFEN);
+    void commitBoard();
     ChessBoard* getBoard();
     boolean requestMove(int from, int to);
     boolean requestDuckMove(int duckPos);

@@ -283,7 +283,7 @@ class ChessBoard {
 
     // methods
     void reset();
-    void commitBoard(const int variant);
+    void commitBoard();
     // duplicate this object
     void duplicate(ChessBoard* ret);
     ChessBoard* getFirstBoard();
@@ -352,6 +352,7 @@ class ChessBoard {
     int getAvailableCol(int colNum);
     void toFEN(char* s);
     void toFENBoard(char* s);
+    boolean parseFEN(char* sFEN);
     void setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, boolean bccs, int ep, int r50);
     void setTurn(const int turn);
     int getNumCaptured(int turn, int piece);

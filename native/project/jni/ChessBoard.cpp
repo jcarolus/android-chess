@@ -1728,12 +1728,7 @@ void ChessBoard::reset() {
 }
 
 // after pieces have been added, commit the board; and do necassary calc
-void ChessBoard::commitBoard(const int variant) {
-    if (variant == VARIANT_DUCK) {
-        m_variant = VARIANT_DUCK;
-    } else {
-        m_variant = VARIANT_DEFAULT;
-    }
+void ChessBoard::commitBoard() {
     m_state = PLAY;
     initHashKey();
     calcQuality();
@@ -1916,6 +1911,104 @@ void ChessBoard::toFENBoard(char* s) {
     } else {
         strcat(s, "b");
     }
+}
+
+boolean ChessBoard::parseFEN(char* sFEN) {
+    reset();
+
+    m_variant = VARIANT_DEFAULT;
+    char s;
+    int pos = 0, i = 0, iAdd, duckPos = -1;
+    while (pos < 64 && i < strlen(sFEN)) {
+        iAdd = 1;
+        s = sFEN[i];
+        if (s == 'k') {
+            put(pos, KING, BLACK);
+        } else if (s == 'K') {
+            put(pos, KING, WHITE);
+        } else if (s == 'q') {
+            put(pos, QUEEN, BLACK);
+        } else if (s == 'Q') {
+            put(pos, QUEEN, WHITE);
+        } else if (s == 'r') {
+            put(pos, ROOK, BLACK);
+        } else if (s == 'R') {
+            put(pos, ROOK, WHITE);
+        } else if (s == 'b') {
+            put(pos, BISHOP, BLACK);
+        } else if (s == 'B') {
+            put(pos, BISHOP, WHITE);
+        } else if (s == 'n') {
+            put(pos, KNIGHT, BLACK);
+        } else if (s == 'N') {
+            put(pos, KNIGHT, WHITE);
+        } else if (s == 'p') {
+            put(pos, PAWN, BLACK);
+        } else if (s == 'P') {
+            put(pos, PAWN, WHITE);
+        } else if (s == '$') {
+            duckPos = pos;
+            m_variant = VARIANT_DUCK;
+        } else if (s == '/') {
+            iAdd = 0;
+        } else {
+            iAdd = (int) s - 48;
+        }
+        pos += iAdd;
+        i++;
+    }
+    i++;  // skip space
+    if (i < strlen(sFEN)) {
+        int wccl = 0, wccs = 0, bccl = 0, bccs = 0, colA = 0, colH = 7, ep = -1, r50 = 0, turn;
+        const int restLen = strlen(sFEN) - i;
+        char sRest[restLen + 1];
+        memcpy(sRest, &sFEN[i], restLen);
+        sRest[restLen] = '\0';
+        char* token = strtok(sRest, " ");
+        if (token != NULL) {
+            if (strcmp(token, "w") == 0) {
+                turn = WHITE;
+            } else {
+                turn = BLACK;
+            }
+            token = strtok(NULL, " ");
+            if (token != 0) {
+                if (strstr(token, "k") != NULL) {
+                    bccs = 1;
+                }
+                if (strstr(token, "q") != NULL) {
+                    bccl = 1;
+                }
+                if (strstr(token, "K") != NULL) {
+                    wccs = 1;
+                }
+                if (strstr(token, "Q") != NULL) {
+                    wccl = 1;
+                }
+                token = strtok(NULL, " ");
+                if (token != NULL) {
+                    if (strcmp(token, "-") != 0) {
+                        ep = Pos::fromString(token);
+                    }
+                    token = strtok(NULL, " ");
+                    if (token != NULL) {
+                        r50 = atoi(token);
+                    }
+                }
+
+                setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
+                setTurn(turn);
+                commitBoard();
+
+                if (m_variant == VARIANT_DUCK) {
+                    requestDuckMove(duckPos);
+                }
+
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 // return complete FEN representation of the board

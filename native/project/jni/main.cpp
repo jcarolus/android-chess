@@ -10,6 +10,13 @@
 
 typedef bool (*TestFunction)();
 
+typedef struct {
+    char *sInFEN;
+    char *sOutFEN;
+    int depth;
+    char *message;
+} InOutFEN;
+
 void miniTest();
 void startThread();
 bool testGame();
@@ -26,12 +33,14 @@ bool testMoves();
 bool testGenmoves();
 bool testDuck();
 bool testDuckGame();
+bool testEngine();
 void newGame();
 void newGameDuck();
 void printFENAndState(ChessBoard *board);
 void printMove(int move);
 bool expectEqualInt(int a, int b, char *message);
 bool expectEqualString(char *a, char *b, char *message);
+bool expectEngineMove(InOutFEN scenario);
 
 using std::function;
 
@@ -55,7 +64,7 @@ int main(int argc, char **argv) {
                             testMoves,
                             testDB,
                             testDuck,
-                            testGame};
+                            testEngine};
 
     // TestFunction tests[] = {
     //     testDuck,
@@ -99,7 +108,7 @@ bool testInCheck() {
     board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::WHITE);
     board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
     board->setTurn(0);
-    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
+    g->commitBoard();
 
     // bool b = board->checkInCheck();
     // if (b) {
@@ -122,7 +131,7 @@ bool testSetupMate() {
     board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::WHITE);
     board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
     board->setTurn(0);
-    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
+    g->commitBoard();
 
     return expectEqualInt(g->getBoard()->getState(), ChessBoard::MATE, "State should equal MATE");
 }
@@ -199,7 +208,7 @@ bool testSetupCastle() {
 
     board->setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
     // board->setTurn(0);
-    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
+    g->commitBoard();
 
     char buf[512];
     board->toFEN(buf);
@@ -225,7 +234,7 @@ bool testSetupQuiesce() {
 
     board->setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
     board->setTurn(0);
-    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
+    g->commitBoard();
 
     // printFENAndState(board);
     return true;
@@ -401,6 +410,23 @@ bool testDuckGame() {
     return true;
 }
 
+bool testEngine() {
+    InOutFEN scenarios[2] = {
+        {"8/8/8/8/8/r2k4/8/3K4 b - - 0 1", "8/8/8/8/8/3k4/8/r2K4 w - - 1 1", 1, "Mate in one"},
+        {"r6k/6pp/8/8/8/8/1R6/1R1K4 w - - 0 1", "rR5k/6pp/8/8/8/8/8/1R1K4 b - - 1 1", 2, "Mate in two"},
+    };
+
+    bool bRet = true;
+
+    for (int i = 0; i < 2; i++) {
+        if (!expectEngineMove(scenarios[i])) {
+            bRet = false;
+        }
+    }
+
+    return bRet;
+}
+
 void speedTest() {
     ChessBoard *board = g->getBoard();
 
@@ -416,89 +442,11 @@ void speedTest() {
 }
 
 void newGame() {
-    ChessBoard *board = g->getBoard();
-
-    board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::BLACK);
-    board->put(ChessBoard::b8, ChessBoard::KNIGHT, ChessBoard::BLACK);
-    board->put(ChessBoard::c8, ChessBoard::BISHOP, ChessBoard::BLACK);
-    board->put(ChessBoard::d8, ChessBoard::QUEEN, ChessBoard::BLACK);
-    board->put(ChessBoard::e8, ChessBoard::KING, ChessBoard::BLACK);
-    board->put(ChessBoard::f8, ChessBoard::BISHOP, ChessBoard::BLACK);
-    board->put(ChessBoard::g8, ChessBoard::KNIGHT, ChessBoard::BLACK);
-    board->put(ChessBoard::h8, ChessBoard::ROOK, ChessBoard::BLACK);
-    board->put(ChessBoard::a7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::b7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::c7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::d7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::e7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::f7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::g7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::h7, ChessBoard::PAWN, ChessBoard::BLACK);
-
-    board->put(ChessBoard::a1, ChessBoard::ROOK, ChessBoard::WHITE);
-    board->put(ChessBoard::b1, ChessBoard::KNIGHT, ChessBoard::WHITE);
-    board->put(ChessBoard::c1, ChessBoard::BISHOP, ChessBoard::WHITE);
-    board->put(ChessBoard::d1, ChessBoard::QUEEN, ChessBoard::WHITE);
-    board->put(ChessBoard::e1, ChessBoard::KING, ChessBoard::WHITE);
-    board->put(ChessBoard::f1, ChessBoard::BISHOP, ChessBoard::WHITE);
-    board->put(ChessBoard::g1, ChessBoard::KNIGHT, ChessBoard::WHITE);
-    board->put(ChessBoard::h1, ChessBoard::ROOK, ChessBoard::WHITE);
-    board->put(ChessBoard::a2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::b2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::c2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::d2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::e2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::f2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::g2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::h2, ChessBoard::PAWN, ChessBoard::WHITE);
-
-    board->setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
-
-    g->commitBoard(ChessBoard::VARIANT_DEFAULT);
+    g->newGameFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
 void newGameDuck() {
-    ChessBoard *board = g->getBoard();
-
-    board->put(ChessBoard::a8, ChessBoard::ROOK, ChessBoard::BLACK);
-    board->put(ChessBoard::b8, ChessBoard::KNIGHT, ChessBoard::BLACK);
-    board->put(ChessBoard::c8, ChessBoard::BISHOP, ChessBoard::BLACK);
-    board->put(ChessBoard::d8, ChessBoard::QUEEN, ChessBoard::BLACK);
-    board->put(ChessBoard::e8, ChessBoard::KING, ChessBoard::BLACK);
-    board->put(ChessBoard::f8, ChessBoard::BISHOP, ChessBoard::BLACK);
-    board->put(ChessBoard::g8, ChessBoard::KNIGHT, ChessBoard::BLACK);
-    board->put(ChessBoard::h8, ChessBoard::ROOK, ChessBoard::BLACK);
-    board->put(ChessBoard::a7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::b7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::c7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::d7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::e7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::f7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::g7, ChessBoard::PAWN, ChessBoard::BLACK);
-    board->put(ChessBoard::h7, ChessBoard::PAWN, ChessBoard::BLACK);
-
-    board->put(ChessBoard::a1, ChessBoard::ROOK, ChessBoard::WHITE);
-    board->put(ChessBoard::b1, ChessBoard::KNIGHT, ChessBoard::WHITE);
-    board->put(ChessBoard::c1, ChessBoard::BISHOP, ChessBoard::WHITE);
-    board->put(ChessBoard::d1, ChessBoard::QUEEN, ChessBoard::WHITE);
-    board->put(ChessBoard::e1, ChessBoard::KING, ChessBoard::WHITE);
-    board->put(ChessBoard::f1, ChessBoard::BISHOP, ChessBoard::WHITE);
-    board->put(ChessBoard::g1, ChessBoard::KNIGHT, ChessBoard::WHITE);
-    board->put(ChessBoard::h1, ChessBoard::ROOK, ChessBoard::WHITE);
-    board->put(ChessBoard::a2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::b2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::c2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::d2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::e2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::f2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::g2, ChessBoard::PAWN, ChessBoard::WHITE);
-    board->put(ChessBoard::h2, ChessBoard::PAWN, ChessBoard::WHITE);
-
-    board->setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
-
-    g->commitBoard(ChessBoard::VARIANT_DUCK);
-
-    g->requestDuckMove(ChessBoard::h5);
+    g->newGameFromFEN("rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
 void printMove(int move) {
@@ -566,4 +514,28 @@ bool expectEqualString(char *a, char *b, char *message) {
         return false;
     }
     return true;
+}
+
+bool expectEngineMove(InOutFEN scenario) {
+    g->newGameFromFEN(scenario.sInFEN);
+
+    g->setSearchLimit(scenario.depth);
+    startThread();
+    while (g->m_bSearching) {
+        sleep(1);
+    }
+
+    int m = g->getBestMove();
+
+    boolean bMoved = g->move(m);
+    if (!bMoved) {
+        DEBUG_PRINT("Not moved for [%s]\n", scenario.message);
+        return false;
+    }
+    ChessBoard *board = g->getBoard();
+
+    char buf[512];
+    board->toFEN(buf);
+
+    return expectEqualString(scenario.sOutFEN, buf, scenario.message);
 }

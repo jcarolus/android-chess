@@ -25,6 +25,7 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_move(JNIEnv* env, jobject thiz, jint m
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_requestDuckMove(JNIEnv* env, jobject thiz, jint duckPos);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_undo(JNIEnv* env, jobject thiz);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_reset(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_newGameFromFEN(JNIEnv* env, jobject thiz, jstring str);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, jint pos, jint piece, jint turn);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz, jint msecs);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchDepth(JNIEnv* env, jobject thiz, jint depth);
@@ -47,7 +48,7 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setCastlingsEPAnd50(JNIEnv* env,
                                                                jint ep,
                                                                jint r50);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumBoard(JNIEnv* env, jobject thiz);
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard(JNIEnv* env, jobject thiz, jint variant);
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard(JNIEnv* env, jobject thiz);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setTurn(JNIEnv* env, jobject thiz, jint turn);
 // JNIEXPORT jintArray JNICALL Java_jwtc_chess_JNI_getMoveArray(JNIEnv *env, jobject thiz);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMoveArraySize(JNIEnv* env, jobject thiz);

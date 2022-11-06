@@ -11,22 +11,13 @@ static jint stArrMoves[ChessBoard::MAX_MOVES];
 
 static void* search_thread(void* arg) {
     JNIEnv* env;
-    /*
-        JavaVMAttachArgs args;
-        args.version= JNI_VERSION_1_2;
-        args.name="user";
-        args.group=NULL;
-    */
 
-    DEBUG_PRINT("Attaching to thread in search_thread\n", 0);
     if (jvm->AttachCurrentThread(&env, NULL) != JNI_OK) {
         DEBUG_PRINT("Could not attach to current thread\n", 0);
         return NULL;
     }
 
-    DEBUG_PRINT("Calling native search method\n", 0);
     stGame->search();
-    DEBUG_PRINT("Detaching from current thread\n", 0);
 
     if (jvm->DetachCurrentThread() != JNI_OK) {
         DEBUG_PRINT("Could not deattach from current thread\n", 0);
@@ -35,13 +26,10 @@ static void* search_thread(void* arg) {
 }
 
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_destroy(JNIEnv* env, jobject thiz) {
-    // TODO
-    /*
-    if(stGame != NULL){
+    if (stGame != NULL) {
         delete stGame;
         stGame = NULL;
     }
-     */
 }
 
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_isInited(JNIEnv* env, jobject thiz) {
@@ -69,6 +57,21 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_reset(JNIEnv* env, jobject thiz) {
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, jint pos, jint piece, jint turn) {
     ChessBoard* board = stGame->getBoard();
     board->put(pos, piece, turn);
+}
+
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_newGameFromFEN(JNIEnv* env, jobject thiz, jstring str) {
+    // const jsize len = env->GetStringUTFLength(str);
+    jboolean isCopy;
+    const char* strChars = env->GetStringUTFChars(str, &isCopy);
+    char* sFEN = strdup(strChars);
+
+    if (isCopy == JNI_TRUE) {
+        env->ReleaseStringUTFChars(str, strChars);
+    }
+    boolean ret = stGame->newGameFromFEN(sFEN);
+
+    delete sFEN;
+    return ret;
 }
 
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz, jint msecs) {
@@ -129,8 +132,8 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setCastlingsEPAnd50(JNIEnv* env,
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumBoard(JNIEnv* env, jobject thiz) {
     return stGame->getBoard()->getNumBoard();
 }
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard(JNIEnv* env, jobject thiz, jint variant) {
-    stGame->commitBoard(variant);
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard(JNIEnv* env, jobject thiz) {
+    stGame->commitBoard();
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setTurn(JNIEnv* env, jobject thiz, jint turn) {
     stGame->getBoard()->setTurn(turn);
@@ -262,6 +265,7 @@ static JNINativeMethod sMethods[] = {
     {"requestDuckMove", "(I)I", (void*) Java_jwtc_chess_JNI_requestDuckMove},
     {"undo", "()V", (void*) Java_jwtc_chess_JNI_undo},
     {"reset", "()V", (void*) Java_jwtc_chess_JNI_reset},
+    {"mewGameFromFEN", "(Ljava/lang/String)I", (void*) Java_jwtc_chess_JNI_newGameFromFEN},
     {"putPiece", "(III)V", (void*) Java_jwtc_chess_JNI_putPiece},
     {"searchMove", "(I)V", (void*) Java_jwtc_chess_JNI_searchMove},
     {"searchDepth", "(I)V", (void*) Java_jwtc_chess_JNI_searchDepth},
@@ -278,7 +282,7 @@ static JNINativeMethod sMethods[] = {
     {"setCastlingsEPAnd50", "(IIIIII)V", (void*) Java_jwtc_chess_JNI_setCastlingsEPAnd50},
     {"getNumBoard", "()I", (void*) Java_jwtc_chess_JNI_getNumBoard},
     {"getTurn", "()I", (void*) Java_jwtc_chess_JNI_getTurn},
-    {"commitBoard", "(I)V", (void*) Java_jwtc_chess_JNI_commitBoard},
+    {"commitBoard", "()V", (void*) Java_jwtc_chess_JNI_commitBoard},
     {"setTurn", "(I)V", (void*) Java_jwtc_chess_JNI_setTurn},
     {"getMoveArraySize", "()I", (void*) Java_jwtc_chess_JNI_getMoveArraySize},
     {"getMoveArrayAt", "(I)I", (void*) Java_jwtc_chess_JNI_getMoveArrayAt},

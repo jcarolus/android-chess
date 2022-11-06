@@ -56,8 +56,20 @@ void Game::reset() {
     m_board->calcState(m_boardRefurbish);
 }
 
-void Game::commitBoard(const int variant) {
-    m_board->commitBoard(variant);
+boolean Game::newGameFromFEN(char *sFEN) {
+    reset();
+    ChessBoard *board = getBoard();
+    int ret = board->parseFEN(sFEN);
+    if (ret) {
+        commitBoard();
+    } else {
+        reset();
+    }
+    return ret;
+}
+
+void Game::commitBoard() {
+    m_board->commitBoard();
     m_board->calcState(m_boardRefurbish);
 }
 
