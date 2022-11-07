@@ -154,6 +154,7 @@ void Game::setSearchLimit(int depth) {
 void Game::search() {
     m_bSearching = true;
     m_bestMove = 0;
+    m_bestDuckMove = -1;
     m_bestValue = 0;
     m_bInterrupted = false;
     m_evalCount = 0;
@@ -165,16 +166,9 @@ void Game::search() {
         return;
     }
 
-    if (m_board->getNumMoves() <= 1) {
+    if (m_board->getNumMoves() == 0) {
+        DEBUG_PRINT("NO moves!", 0);
         m_bSearching = false;
-
-        if (m_board->getNumMoves() == 0) {
-            DEBUG_PRINT("NO moves!", 0);
-
-            return;
-        }
-
-        m_bestMove = m_board->getMoveAt(0);
         return;
     }
 
@@ -188,6 +182,8 @@ void Game::search() {
         }
     }
 
+    m_evalCount++;  // at least one so Nps is valid for non DB move
+
     startTime();
 
     char buf[20];
@@ -195,6 +191,7 @@ void Game::search() {
     int i;
     for (i = 0; i < MAX_DEPTH; i++) {
         m_arrBestMoves[i] = 0;
+        m_arrBestDuckMoves[i] = -1;
     }
 
     if (m_milliesGiven > 0) {
@@ -232,12 +229,14 @@ void Game::search() {
     }
 
     m_bestMove = m_arrBestMoves[0];
+    m_bestDuckMove = m_arrBestDuckMoves[0];
 
     Move::toDbgString(m_bestMove, buf);
-    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
+    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%d\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
                 m_bestValue,
                 m_evalCount,
                 buf,
+                m_bestDuckMove,
                 m_searchDepth,
                 timePassed(),
                 (double) m_evalCount / timePassed());
@@ -288,36 +287,43 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
             move = Move_setCheck(move);
         }
 
-        /*
-
         if (m_board->getVariant() == ChessBoard::VARIANT_DUCK) {
-                    int duckMove = -1, numMoves = nextBoard->getNumMoves(), i, duckValue = 0, bestDuckValue = best;
-                    for (i = 0; i < numMoves; i++) {
-                        move = nextBoard->getMoveAt(i);
-                        if (Move_isHIT(move)) {
-                            continue;
-                        }
-                        duckMove = Move_getTo(move);
-                        nextBoard->putDuck(duckMove);
-
-                        nextBoard->getMoves();
-
-                        duckValue = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
-
-                        if (duckValue > bestDuckValue) {
-                            bestDuckValue = duckValue;
-                            bestDuckMove = duckMove;
-                        }
-                    }
+            int duckMove = -1, numMoves = nextBoard->getNumMoves(), i, duckValue = 0,
+                bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1;
+            for (i = 0; i < numMoves; i++) {
+                duckMove = nextBoard->getMoveAt(i);
+                if (Move_isHIT(duckMove)) {
+                    continue;
                 }
-        */
+                duckMove = Move_getTo(duckMove);  // actual duckMove is a position
+                nextBoard->requestDuckMove(duckMove);
 
-        // at depth one is at the leaves, so call quiescent search
-        if (depth == 1) {
-            value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
+                nextBoard->getMoves();
 
+                if (depth == 0) {
+                    m_evalCount++;
+                    duckValue = -nextBoard->boardValueExtension();
+                } else {
+                    duckValue = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
+                }
+
+                if (duckValue > bestDuckValue) {
+                    bestDuckValue = duckValue;
+                    m_arrBestDuckMoves[m_searchDepth - depth] = duckMove;
+                }
+
+                if (bestDuckValue > beta) {
+                    break;
+                }
+            }
+            value = bestDuckValue;
         } else {
-            value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
+            // at depth one is at the leaves, so call quiescent search
+            if (depth == 1) {
+                value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
+            } else {
+                value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
+            }
         }
 
         if (value > best) {

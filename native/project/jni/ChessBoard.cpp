@@ -1838,7 +1838,7 @@ int ChessBoard::pieceAt(const int t, const int p) {
     return FIELD;
 }
 boolean ChessBoard::isPieceOfColorAt(const int t, const int p) {
-    return (m_bitbPositions[t] & BITS[p]) != 0;
+    return (m_bitbPositions[t] & BITS[p]) != 0 && m_duckPos != p;
 }
 boolean ChessBoard::isFieldAt(const int p) {
     return (m_bitb & BITS[p]) == 0;

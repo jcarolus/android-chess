@@ -63,4 +63,5 @@ class Game {
     ChessBoard* m_board;
     int m_promotionPiece;
     int m_arrBestMoves[MAX_DEPTH];
+    int m_arrBestDuckMoves[MAX_DEPTH];
 };

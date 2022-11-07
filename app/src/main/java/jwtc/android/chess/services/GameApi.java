@@ -107,6 +107,8 @@ public class GameApi {
             _arrPGN.get(index)._duckMove = duckPos;
         }
 
+        dispatchState();
+
         return true;
     }
 

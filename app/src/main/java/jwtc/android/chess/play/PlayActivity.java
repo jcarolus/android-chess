@@ -419,7 +419,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     @Override
-    public void OnEngineMove(int move) {
+    public void OnEngineMove(int move, int duckMove) {
         toggleEngineProgress(false);
 
         gameApi.move(move);
@@ -428,6 +428,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         highlightedPositions.clear();
         highlightedPositions.add(from);
         highlightedPositions.add(to);
+
+        if (duckMove != -1) {
+            gameApi.requestDuckMove(duckMove);
+        }
 
         updateGUI();
     }

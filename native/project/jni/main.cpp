@@ -65,21 +65,22 @@ int main(int argc, char **argv) {
 
     ChessBoard::initStatics();
 
-    TestFunction tests[] = {testSetupNewGame,
-                            testSetupMate,
-                            testInCheck,
-                            testInSelfCheck,
-                            testSetupCastle,
-                            testSetupQuiesce,
-                            testMoves,
-                            testDB,
-                            testDuck,
-                            testEngine,
-                            testSequence};
+    // TestFunction tests[] = {testSetupNewGame,
+    //                         testSetupMate,
+    //                         testInCheck,
+    //                         testInSelfCheck,
+    //                         testSetupCastle,
+    //                         testSetupQuiesce,
+    //                         testMoves,
+    //                         testDB,
+    //                         testDuck,
+    //                         testEngine,
+    //                         testSequence};
 
-    // TestFunction tests[] = {
-    //     testDuck,
-    // };
+    TestFunction tests[] = {
+        // testGame,
+        testDuckGame,
+    };
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
@@ -383,23 +384,31 @@ bool testDuckGame() {
     newGameDuck();
     board = g->getBoard();
 
-    int m, i = 0;
-    boolean bMoved;
+    int m, d, i = 0;
+    boolean bMoved, bDuckMoved;
     while (!board->isEnded()) {
         // g->setSearchTime(1);
-        g->setSearchLimit(1);
+        g->setSearchLimit(2);
         startThread();
         while (g->m_bSearching) {
             sleep(1);
         }
 
         m = g->getBestMove();
+        d = g->getBestDuckMove();
 
         bMoved = g->move(m);
+        bDuckMoved = g->requestDuckMove(d);
+
         board = g->getBoard();
 
         if (!bMoved) {
             DEBUG_PRINT("\nBAILING OUT - not moved\n", 0);
+            break;
+        }
+
+        if (!bDuckMoved) {
+            DEBUG_PRINT("\nBAILING OUT - duck not moved\n", 0);
             break;
         }
 

@@ -89,6 +89,9 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchDepth(JNIEnv* env, jobject thiz
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMove(JNIEnv* env, jobject thiz) {
     return stGame->getBestMove();
 }
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getDuckMove(JNIEnv* env, jobject thiz) {
+    return stGame->getBestDuckMove();
+}
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getBoardValue(JNIEnv* env, jobject thiz) {
     return stGame->getBoard()->boardValueExtension();
 }
@@ -270,6 +273,7 @@ static JNINativeMethod sMethods[] = {
     {"searchMove", "(I)V", (void*) Java_jwtc_chess_JNI_searchMove},
     {"searchDepth", "(I)V", (void*) Java_jwtc_chess_JNI_searchDepth},
     {"getMove", "()I", (void*) Java_jwtc_chess_JNI_getMove},
+    {"getDuckMove", "()I", (void*) Java_jwtc_chess_JNI_getDuckMove},
     {"getBoardValue", "()I", (void*) Java_jwtc_chess_JNI_getBoardValue},
     {"peekSearchDone", "()I", (void*) Java_jwtc_chess_JNI_peekSearchDone},
     {"peekSearchBestMove", "(I)I", (void*) Java_jwtc_chess_JNI_peekSearchBestMove},

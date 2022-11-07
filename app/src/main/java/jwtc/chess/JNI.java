@@ -254,6 +254,8 @@ public class JNI {
 
     public native int getMove();
 
+    public native int getDuckMove();
+
     public native int getBoardValue();
 
     public native int peekSearchDone();
