@@ -15,7 +15,15 @@ typedef struct {
     char *sOutFEN;
     int depth;
     char *message;
-} InOutFEN;
+} EngineInOutFEN;
+
+typedef struct {
+    char *sInFEN;
+    char *sOutFEN;
+    int *moves;
+    int moveNum;
+    char *message;
+} SequenceInOutFEN;
 
 void miniTest();
 void startThread();
@@ -34,13 +42,15 @@ bool testGenmoves();
 bool testDuck();
 bool testDuckGame();
 bool testEngine();
+bool testSequence();
 void newGame();
 void newGameDuck();
 void printFENAndState(ChessBoard *board);
 void printMove(int move);
 bool expectEqualInt(int a, int b, char *message);
 bool expectEqualString(char *a, char *b, char *message);
-bool expectEngineMove(InOutFEN scenario);
+bool expectEngineMove(EngineInOutFEN scenario);
+bool expectSequence(SequenceInOutFEN scenario);
 
 using std::function;
 
@@ -64,7 +74,8 @@ int main(int argc, char **argv) {
                             testMoves,
                             testDB,
                             testDuck,
-                            testEngine};
+                            testEngine,
+                            testSequence};
 
     // TestFunction tests[] = {
     //     testDuck,
@@ -411,15 +422,48 @@ bool testDuckGame() {
 }
 
 bool testEngine() {
-    InOutFEN scenarios[2] = {
+    EngineInOutFEN scenarios[3] = {
         {"8/8/8/8/8/r2k4/8/3K4 b - - 0 1", "8/8/8/8/8/3k4/8/r2K4 w - - 1 1", 1, "Mate in one"},
         {"r6k/6pp/8/8/8/8/1R6/1R1K4 w - - 0 1", "rR5k/6pp/8/8/8/8/8/1R1K4 b - - 1 1", 2, "Mate in two"},
+        {"2Q5/5pk1/8/8/1b6/1b6/r3n1P1/2K5 w - - 0 1", "2Q5/5pk1/8/8/1b6/1b6/r3n1P1/1K6 b - - 1 1", 2, "In check"}};
+
+    bool bRet = true;
+
+    for (int i = 0; i < 3; i++) {
+        if (!expectEngineMove(scenarios[i])) {
+            bRet = false;
+        }
+    }
+
+    return bRet;
+}
+
+bool testSequence() {
+    SequenceInOutFEN scenarios[2] = {
+        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+         "r1bqkbnr/pppp1ppp/2n5/8/3pP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 0 4",
+         (int[]){Move_makeMoveFirstPawn(ChessBoard::e2, ChessBoard::e4),
+                 Move_makeMoveFirstPawn(ChessBoard::e7, ChessBoard::e5),
+                 Move_makeMove(ChessBoard::g1, ChessBoard::f3),
+                 Move_makeMove(ChessBoard::b8, ChessBoard::c6),
+                 Move_makeMoveFirstPawn(ChessBoard::d2, ChessBoard::d4),
+                 Move_makeMoveHit(ChessBoard::e5, ChessBoard::d4)},
+         6,
+         "Opening"},
+        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+         "rnb1kbnr/pppp1ppp/4p3/8/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3",
+         (int[]){Move_makeMove(ChessBoard::f2, ChessBoard::f3),
+                 Move_makeMove(ChessBoard::e7, ChessBoard::e6),
+                 Move_makeMoveFirstPawn(ChessBoard::g2, ChessBoard::g4),
+                 Move_setCheck(Move_makeMove(ChessBoard::d8, ChessBoard::h4))},
+         4,
+         "To mate"},
     };
 
     bool bRet = true;
 
     for (int i = 0; i < 2; i++) {
-        if (!expectEngineMove(scenarios[i])) {
+        if (!expectSequence(scenarios[i])) {
             bRet = false;
         }
     }
@@ -516,7 +560,7 @@ bool expectEqualString(char *a, char *b, char *message) {
     return true;
 }
 
-bool expectEngineMove(InOutFEN scenario) {
+bool expectEngineMove(EngineInOutFEN scenario) {
     g->newGameFromFEN(scenario.sInFEN);
 
     g->setSearchLimit(scenario.depth);
@@ -529,11 +573,30 @@ bool expectEngineMove(InOutFEN scenario) {
 
     boolean bMoved = g->move(m);
     if (!bMoved) {
+        printMove(m);
         DEBUG_PRINT("Not moved for [%s]\n", scenario.message);
         return false;
     }
     ChessBoard *board = g->getBoard();
 
+    char buf[512];
+    board->toFEN(buf);
+
+    return expectEqualString(scenario.sOutFEN, buf, scenario.message);
+}
+
+bool expectSequence(SequenceInOutFEN scenario) {
+    g->newGameFromFEN(scenario.sInFEN);
+
+    for (int i = 0; i < scenario.moveNum; i++) {
+        boolean bMoved = g->move(scenario.moves[i]);
+        if (!bMoved) {
+            DEBUG_PRINT("Not moved for [%s] - [%d]\n", scenario.message, i);
+            return false;
+        }
+    }
+
+    ChessBoard *board = g->getBoard();
     char buf[512];
     board->toFEN(buf);
 

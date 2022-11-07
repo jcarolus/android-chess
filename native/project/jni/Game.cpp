@@ -174,7 +174,7 @@ void Game::search() {
             return;
         }
 
-        m_bestMove = m_board->getNextMove();
+        m_bestMove = m_board->getMoveAt(0);
         return;
     }
 
