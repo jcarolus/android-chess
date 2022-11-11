@@ -1,12 +1,12 @@
-#include "common.h"
+#include "../common.h"
 
 #include <pthread.h>
 #include <unistd.h>
 #include <functional>
 
-#include "ChessBoard.h"
-#include "Game.h"
-#include "Move.h"
+#include "../ChessBoard.h"
+#include "../Game.h"
+#include "../Move.h"
 
 typedef bool (*TestFunction)();
 
@@ -24,6 +24,13 @@ typedef struct {
     int moveNum;
     char *message;
 } SequenceInOutFEN;
+
+typedef struct {
+    char *sInFEN;
+    int *moves;
+    int moveNum;
+    char *message;
+} NonSequenceInFEN;
 
 void miniTest();
 void startThread();
@@ -51,6 +58,7 @@ bool expectEqualInt(int a, int b, char *message);
 bool expectEqualString(char *a, char *b, char *message);
 bool expectEngineMove(EngineInOutFEN scenario);
 bool expectSequence(SequenceInOutFEN scenario);
+bool expectNonSequence(NonSequenceInFEN scenario);
 
 using std::function;
 
@@ -65,22 +73,22 @@ int main(int argc, char **argv) {
 
     ChessBoard::initStatics();
 
-    // TestFunction tests[] = {testSetupNewGame,
-    //                         testSetupMate,
-    //                         testInCheck,
-    //                         testInSelfCheck,
-    //                         testSetupCastle,
-    //                         testSetupQuiesce,
-    //                         testMoves,
-    //                         testDB,
-    //                         testDuck,
-    //                         testEngine,
-    //                         testSequence};
+    TestFunction tests[] = {testSetupNewGame,
+                            testSetupMate,
+                            testInCheck,
+                            testInSelfCheck,
+                            testSetupCastle,
+                            testSetupQuiesce,
+                            testMoves,
+                            testDB,
+                            testDuck,
+                            testEngine,
+                            testSequence};
 
-    TestFunction tests[] = {
-        // testGame,
-        testDuckGame,
-    };
+    // TestFunction tests[] = {
+    //     // testGame,
+    //     testDuckGame,
+    // };
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
@@ -402,19 +410,19 @@ bool testDuckGame() {
 
         board = g->getBoard();
 
+        char buf[20];
+        board->myMoveToString(buf);
+        DEBUG_PRINT("\n=====> %d, %d, %s, %d\n", board->getNumBoard(), board->getState(), buf, d);
+
         if (!bMoved) {
             DEBUG_PRINT("\nBAILING OUT - not moved\n", 0);
-            break;
+            return false;
         }
 
         if (!bDuckMoved) {
             DEBUG_PRINT("\nBAILING OUT - duck not moved\n", 0);
-            break;
+            return false;
         }
-
-        char buf[20];
-        board->myMoveToString(buf);
-        DEBUG_PRINT("\n=====> %d, %d, %s\n", board->getNumBoard(), board->getState(), buf);
 
         if (i++ > 5) {
             break;
@@ -610,4 +618,18 @@ bool expectSequence(SequenceInOutFEN scenario) {
     board->toFEN(buf);
 
     return expectEqualString(scenario.sOutFEN, buf, scenario.message);
+}
+
+bool expectNonSequence(NonSequenceInFEN scenario) {
+    g->newGameFromFEN(scenario.sInFEN);
+
+    for (int i = 0; i < scenario.moveNum; i++) {
+        boolean bMoved = g->move(scenario.moves[i]);
+        if (bMoved) {
+            DEBUG_PRINT("Moved for [%s] - [%d]\n", scenario.message, i);
+            return false;
+        }
+    }
+
+    return true;
 }

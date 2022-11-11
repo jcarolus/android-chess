@@ -9,6 +9,7 @@ class ChessBoard {
     ChessBoard(void);
     ~ChessBoard(void);
 
+#pragma region Statics
     // variants
     static const int VARIANT_DEFAULT = 1;
     static const int VARIANT_DUCK = 2;
@@ -251,22 +252,13 @@ class ChessBoard {
 
     // trailing zeros precalculated on 8bit numbers
     static const char TRAILING_ZEROS_8_BITS[256];
-    // too much to precalc, filled by instantiation of a Game object
+    // filled by instantiation of a Game object
     static char TRAILING_ZEROS_16_BITS[65536];
-    // precalculated bitcount of 8bit numbers
-    // static const char BIT_COUNT_8_BITS[256];
+    // precalculated bitcounts
     static char BIT_COUNT_16_BITS[65536];
-    // TODO when bitCount is used more, create 16 bit array for precalc
-
-    inline int trailingZeros(const BITBOARD bb);
-    // number of bits in bitb @bb
-    inline int bitCount(const BITBOARD bb);
-
     static BITBOARD HASH_KEYS[773];
-
     static const size_t SIZEOF_BOARD;
 
-    // static methods
     static void initStatics();
     static void initValuation();
     static void initBitCount();
@@ -279,12 +271,17 @@ class ChessBoard {
 
     static void bitbToString(const BITBOARD bb, char* buf);
     static void pieceToString(const int p, char* buf);
+
+#pragma endregion
+
+    inline int trailingZeros(const BITBOARD bb);
+    // number of bits in bitb @bb
+    inline int bitCount(const BITBOARD bb);
+
     void printB(char* buf);
 
-    // methods
     void reset();
     void commitBoard();
-    // duplicate this object
     void duplicate(ChessBoard* ret);
     ChessBoard* getFirstBoard();
 
@@ -345,7 +342,7 @@ class ChessBoard {
     int boardValueExtension();
     int pawnValueExtension(const int turn);
     int kingValueExtension(const int turn);
-    inline int queenValueExtension(const int turn);  // TODO welke allemaal inline?
+    inline int queenValueExtension(const int turn);
     int knightValueExtension(const int turn);
     int bishopValueExtension(const int turn);
     int rookValueExtension(const int turn);
@@ -375,7 +372,7 @@ class ChessBoard {
     inline boolean isPosFree(const int p);
     boolean isPosFriend(const int p);
     boolean isPosEnemy(const int p);
-    int pieceAt(const int t, const int p);  // TODO inline?
+    int pieceAt(const int t, const int p);
     boolean isPieceOfColorAt(const int t, const int p);
     boolean isFieldAt(const int p);
     int getDuckPos();
@@ -393,29 +390,19 @@ class ChessBoard {
     void putDuck(const int duckPos);
 
     ChessBoard* undoMove();
-
-    // methods that operate on the move array m_arrMoves
     boolean hasMoreMoves();
     int getNextMove();
     int getMoveAt(const int i);
     int getNumMoves();
-    // replace current selected element with the last element, hereby overwriting the current
-    // element and decreasing size
     void removeMoveElementAt();
     void addMoveElement(const int move);
     int remainingMoves();
     void myMoveToString(char* s);
-
-    //	 to initialize the quality members after a position is set up
     void calcQuality();
 
    protected:
-    // member variables
-
-    // bit boards
-
+    // size 2 for BLACK = 0 and WHITE = 1
     BITBOARD m_bitbPieces[2][NUM_PIECES];
-    // bitb of BLACKs and WHITEs pieces
     BITBOARD m_bitbPositions[2];
     // bitb of all pieces
     BITBOARD m_bitb;
@@ -431,7 +418,7 @@ class ChessBoard {
     // variant of the game - one of the variant constants
     int m_variant;
 
-    // en passant position - if no = -1
+    // en passant position. -1 if not set
     int m_ep;
     // who's turn is it - BLACK or WHITE
     int m_turn;
@@ -449,8 +436,7 @@ class ChessBoard {
     // for each turn an int that holds bitmask of move of "short rook", king and "long rook".
     int m_castlings[2];
 
-    // following 3 members to hold a fast datastructure for the moves from this board
-    // the array of moves
+    // the array of possible moves
     int m_arrMoves[MAX_MOVES];
     // size of the array
     int m_sizeMoves;
@@ -459,7 +445,7 @@ class ChessBoard {
 
     // sequence number of the bord
     int m_numBoard;
-    // parent bord (predesessor)
+    // parent bord (contains previous position)
     ChessBoard* m_parent;
     // the move that resulted in this board. for the first board 0
     int m_myMove;

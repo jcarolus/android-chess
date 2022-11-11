@@ -186,7 +186,7 @@ void Game::search() {
 
     startTime();
 
-    char buf[20];
+    char moveBuf[20], duckMoveBuf[4];
     // reset best moves for this search
     int i;
     for (i = 0; i < MAX_DEPTH; i++) {
@@ -208,8 +208,8 @@ void Game::search() {
                     for (i = 0; i < MAX_DEPTH; i++) {
                         int moveAt = getBestMoveAt(i);
                         if (moveAt != 0) {
-                            Move::toDbgString(moveAt, buf);
-                            DEBUG_PRINT("%s,", buf);
+                            Move::toDbgString(moveAt, moveBuf);
+                            DEBUG_PRINT("%s,", moveBuf);
                         }
                     }
                     DEBUG_PRINT("Found checkmate, stopping search\n", 0);
@@ -231,12 +231,13 @@ void Game::search() {
     m_bestMove = m_arrBestMoves[0];
     m_bestDuckMove = m_arrBestDuckMoves[0];
 
-    Move::toDbgString(m_bestMove, buf);
-    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%d\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
+    Move::toDbgString(m_bestMove, moveBuf);
+    Pos::toString(m_bestDuckMove, duckMoveBuf);
+    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
                 m_bestValue,
                 m_evalCount,
-                buf,
-                m_bestDuckMove,
+                moveBuf,
+                duckMoveBuf,
                 m_searchDepth,
                 timePassed(),
                 (double) m_evalCount / timePassed());
@@ -289,7 +290,7 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
 
         if (m_board->getVariant() == ChessBoard::VARIANT_DUCK) {
             int duckMove = -1, numMoves = nextBoard->getNumMoves(), i, duckValue = 0,
-                bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1;
+                bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1, moveCount = 0;
             for (i = 0; i < numMoves; i++) {
                 duckMove = nextBoard->getMoveAt(i);
                 if (Move_isHIT(duckMove)) {
@@ -313,6 +314,10 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
                 }
 
                 if (bestDuckValue > beta) {
+                    break;
+                }
+
+                if (moveCount++ > 8 && depth > 0) {
                     break;
                 }
             }
@@ -377,9 +382,8 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         }
     }
 
-    if (depth == 0)  // ok, max quiesce depth is reached; return this value
-    {
-        // get the value of this node
+    if (depth == 0) {
+        // max quiesce depth is reached; return this value
         return boardValue;
     }
 
@@ -387,14 +391,11 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         return beta;
     }
 
-    // futility pruning here? i.e. can alpha be improved
-
     // update lower bound
     if (boardValue > alpha) {
         alpha = boardValue;
     }
     int move;
-    // int best = (-ChessBoard::VALUATION_MATE)-1;
 
     ChessBoard *nextBoard = m_boardFactory[MAX_DEPTH - depth];
     board->scoreMoves();
@@ -410,10 +411,6 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
             continue;
         }
 
-        // generate the moves for this next board in order to validate the board
-        // todo, reset this if attackedMoveSquares are working
-        // nextBoard->genMoves();
-
         if (nextBoard->checkInCheck()) {
             nextBoard->setMyMoveCheck();
             move = Move_setCheck(move);
@@ -422,9 +419,6 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         // quiescent search
         if (Move_isHIT(move) || Move_isCheck(move) || Move_isPromotionMove(move)) {
             // a valid and active move, so continue quiescent search
-
-            // optimization; only generate when needed
-            // todo back to before checkInCheck?
             nextBoard->genMoves();
 
             value = -quiesce(nextBoard, depth - 1, -beta, -alpha);

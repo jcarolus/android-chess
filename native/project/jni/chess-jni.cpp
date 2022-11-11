@@ -1,10 +1,5 @@
 #include "chess-jni.hpp"
 
-////////////////////////////////////////////////////////////////////////////////
-// TODO functions depend on the existing objext in stGame,
-// build a check for NULL
-////////////////////////////////////////////////////////////////////////////////
-
 static Game* stGame = NULL;
 static JavaVM* jvm;
 static jint stArrMoves[ChessBoard::MAX_MOVES];
@@ -60,7 +55,6 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, j
 }
 
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_newGameFromFEN(JNIEnv* env, jobject thiz, jstring str) {
-    // const jsize len = env->GetStringUTFLength(str);
     jboolean isCopy;
     const char* strChars = env->GetStringUTFChars(str, &isCopy);
     char* sFEN = strdup(strChars);
@@ -141,37 +135,9 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard(JNIEnv* env, jobject thiz
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setTurn(JNIEnv* env, jobject thiz, jint turn) {
     stGame->getBoard()->setTurn(turn);
 }
-/*
-JNIEXPORT jintArray JNICALL Java_jwtc_chess_JNI_getMoveArray(JNIEnv *env, jobject thiz)
-{
-        ChessBoard *board = stGame->getBoard();
-        board->getMoves();
-        int size = board->getNumMoves();
-
-         jintArray result;
-         result = env->NewIntArray(size);
-         if (result == NULL) {
-                 return NULL; // out of memory error thrown
-         }
-         int i = 0;
-         // fill a temp structure to use to populate the java int array
-         jint fill[size];
-
-         while(board->hasMoreMoves())
-         {
-                fill[i++] = board->getNextMove();
-         }
-         // move from the temp structure to the java structure
-         env->SetIntArrayRegion(result, 0, size, fill);
-         return result;
-}
-*/
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMoveArraySize(JNIEnv* env, jobject thiz) {
     ChessBoard* board = stGame->getBoard();
     board->getMoves();
-    // DEBUG_PRINT("W hasOO %d, hasOOO %d B hasOO %d, hasOOO %d | COL %d, %d", board->hasOO(1),
-    // board->hasOOO(1), board->hasOO(0), board->hasOOO(0), ChessBoard::COL_AROOK,
-    // ChessBoard::COL_HROOK);
     int i = 0;
     while (board->hasMoreMoves()) {
         stArrMoves[i++] = board->getNextMove();

@@ -16,30 +16,6 @@ ChessBoard::~ChessBoard(void) {
 // moves like en-passant and castlings have to be generated
 // return a bitb with bits set to 1 where the piece can move to
 
-/*
-BITBOARD ChessBoard::pawnAttacks(const int turn, const BITBOARD bb)
-{
-        // no en-passant, no promotion, only for detection of attacked squares
-        // TODO with file BITS and other "BITS_pawn[pos]" this can be improved
-         old
-        BITBOARD bbTmp = 0L;
-        int o_turn = turn ^1;
-
-        if(turn == WHITE)
-        {
-                bbTmp = ((bb & ~FILE_BITS[0]) >> 9) & m_bitbPositions[o_turn];
-                bbTmp |= ((bb & ~FILE_BITS[7]) >> 7) & m_bitbPositions[o_turn];
-                return bbTmp;
-        }
-        else
-        {
-                bbTmp = ((bb & ~FILE_BITS[7]) << 9) & m_bitbPositions[o_turn];
-                bbTmp |= ((bb & ~FILE_BITS[0]) << 7) & m_bitbPositions[o_turn];
-                return bbTmp;
-        }
-}
-*/
-
 BITBOARD ChessBoard::knightAttacks(const int turn, BITBOARD bb) {
     int pos;
     BITBOARD bbRet = 0;
@@ -111,8 +87,6 @@ boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
 
     // except the knight, all pieces work within queen range
     if ((QUEEN_RANGE[pos] & m_bitbPositions[o_turn]) != 0) {
-        // todo - is saving a method call really an improvement?
-
         if ((BISHOP_RANGE[pos] & m_bitbPieces[o_turn][BISHOP]) != 0) {
             if ((bishopAttacks(o_turn, m_bitbPieces[o_turn][BISHOP] & BISHOP_RANGE[pos]) & square) != 0) {
                 return true;
@@ -132,9 +106,6 @@ boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
         if ((m_bitbPieces[o_turn][PAWN] & PAWN_RANGE[turn][pos]) != 0) {
             return true;
         }
-        // TODO more efficient pawn attack range (instead of king_range)
-        // if((pawnAttacks(o_turn, m_bitbPieces[o_turn][PAWN] & KING_RANGE[pos]) & square) != 0)
-        //	return true;
 
         if ((m_bitbPieces[o_turn][KING] & KING_RANGE[pos]) != 0) {
             return true;
@@ -142,19 +113,6 @@ boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
     }
     return false;
 }
-
-/*
-// returns bitb of all attack moves. unused
-BITBOARD ChessBoard::getAttacks(const int turn)
-{
-        return pawnAttacks(turn, m_bitbPieces[turn][PAWN]) |
-                   knightAttacks(turn, m_bitbPieces[turn][KNIGHT]) |
-                   bishopAttacks(turn, m_bitbPieces[turn][BISHOP]) |
-                   rookAttacks(turn, m_bitbPieces[turn][ROOK]) |
-                   queenAttacks(turn, m_bitbPieces[turn][QUEEN]) |
-                   kingAttacks(turn, m_bitbPieces[turn][KING]);
-}
-*/
 
 #pragma endregion
 
@@ -180,7 +138,6 @@ void ChessBoard::calcState(ChessBoard* board) {
     int move;
     m_indexMoves = 0;
 
-    // memcpy(board, this, SIZEOF_BOARD);
     boolean isIncheck = this->isSquareAttacked(m_turn, m_kingPositions[m_turn]);
     if (isIncheck) {
         m_state = CHECK;
@@ -3032,10 +2989,6 @@ const char ChessBoard::TRAILING_ZEROS_8_BITS[256] = {
     2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3,
     0, 1, 0, 2, 0, 1, 0, 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0,
     1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0};
-// too much to precalc, filled by instantiation of a Game object
-// precalculated bitcount of 8bit numbers
-// const char ChessBoard::BIT_COUNT_8_BITS[] =
-// {0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,2,3,3,4,3,4,4,5,3,4,4,5,4,5,5,6,3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,3,4,4,5,4,5,5,6,4,5,5,6,5,6,6,7,4,5,5,6,5,6,6,7,5,6,6,7,6,7,7,8};
 
 #pragma endregion
 
@@ -3055,12 +3008,6 @@ int ChessBoard::trailingZeros(const BITBOARD bb) {
 
 // number of bits in bitb @bb
 int ChessBoard::bitCount(const BITBOARD bb) {
-    /*
-        return BIT_COUNT_8_BITS[(int)((bb >> 56) & 0xFF)] + BIT_COUNT_8_BITS[(int)((bb >> 48) &
-       0xFF)] + BIT_COUNT_8_BITS[(int)((bb >> 40) & 0xFF)] + BIT_COUNT_8_BITS[(int)((bb >> 32) &
-       0xFF)] + BIT_COUNT_8_BITS[(int)((bb >> 24) & 0xFF)] + BIT_COUNT_8_BITS[(int)((bb >> 16) &
-       0xFF)] + BIT_COUNT_8_BITS[(int)((bb >> 8) & 0xFF)] + BIT_COUNT_8_BITS[(int)(bb & 0xFF)];
-        */
     return (ChessBoard::BIT_COUNT_16_BITS[(int) ((bb >> 48) & 0xffff)] +
             ChessBoard::BIT_COUNT_16_BITS[(int) ((bb >> 32) & 0xffff)] +
             ChessBoard::BIT_COUNT_16_BITS[(int) ((bb >> 16) & 0xffff)] +
