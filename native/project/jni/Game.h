@@ -8,6 +8,10 @@ class Game {
     Game(void);
     ~Game(void);
 
+    static Game* getInstance();
+    static void deleteInstance();
+    static void* search_wrapper(void* arg);
+
     void reset();
     boolean newGameFromFEN(char* sFEN);
     void commitBoard();
@@ -48,10 +52,11 @@ class Game {
     boolean readDBAt(int iPos, BITBOARD& bb);
 
     int m_bestMove, m_bestDuckMove;
+    long m_millies, m_milliesGiven;
+
+    static Game* game;
     static const int MAX_DEPTH = 20;
     static const int QUIESCE_DEPTH = 5;  // makes effective max depth 15
-
-    long m_millies, m_milliesGiven;
 
     static int DB_SIZE;
     static FILE* DB_FP;

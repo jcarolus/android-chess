@@ -3,6 +3,7 @@
 int Game::DB_SIZE = 0;
 FILE *Game::DB_FP = NULL;
 int Game::DB_DEPTH = 5;
+Game *Game::game = NULL;
 
 Game::Game(void) {
     m_board = new ChessBoard();
@@ -40,6 +41,27 @@ Game::~Game(void) {
     for (int i = 0; i < MAX_DEPTH; i++) {
         delete m_boardFactory[i];
     }
+}
+
+// the non thread safe solution; assumption is that getInsance is called before any threads are created
+Game *Game::getInstance() {
+    if (Game::game == NULL) {
+        ChessBoard::initStatics();
+        Game::game = new Game();
+    }
+    return Game::game;
+}
+
+void Game::deleteInstance() {
+    if (Game::game != NULL) {
+        delete Game::game;
+        Game::game = NULL;
+    }
+}
+
+void *Game::search_wrapper(void *arg) {
+    Game::getInstance()->search();
+    return 0;
 }
 
 void Game::reset() {

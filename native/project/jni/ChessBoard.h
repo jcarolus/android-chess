@@ -313,7 +313,6 @@ class ChessBoard {
     void addMove(const int from, const int to);
     int getMyMove();
     void genMoves();
-    void genMovesHouse();
     void genPawnMoves();
     BITBOARD knightMoves(const int turn, const int pos);
     void genKnightMoves();

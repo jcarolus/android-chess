@@ -17,7 +17,7 @@
 bin/
 gen/
 native/project/obj/
-native/project/jni/chess
+native/project/jni/tests/chess
 native/project/libs/**/*.so
 
 # Gradle files
