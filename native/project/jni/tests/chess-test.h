@@ -45,6 +45,8 @@ class ChessTest {
     static bool expectEngineMove(EngineInOutFEN scenario);
     static bool expectSequence(SequenceInOutFEN scenario);
     static bool expectNonSequence(NonSequenceInFEN scenario);
+    static bool expectStateForFEN(Game *game, char *sFEN, int state, char *message);
+    static bool expectInFENIsOutFEN(Game *game, char *sFEN, char *message);
 };
 
 #endif

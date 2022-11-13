@@ -28,7 +28,6 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
 
     int movesPerformed = 0;
     while (movesPerformed < scenario.numMoves) {
-
         ChessTest::startSearchThread();
         while (scenario.game->m_bSearching) {
             sleep(1);
@@ -93,4 +92,20 @@ bool ChessTest::expectNonSequence(NonSequenceInFEN scenario) {
     }
 
     return true;
+}
+
+bool ChessTest::expectStateForFEN(Game *game, char *sFEN, int state, char *message) {
+    game->newGameFromFEN(sFEN);
+
+    return ChessTest::expectEqualInt(game->getBoard()->getState(), state, message);
+}
+
+bool ChessTest::expectInFENIsOutFEN(Game *game, char *sFEN, char *message) {
+    game->newGameFromFEN(sFEN);
+
+    ChessBoard *board = game->getBoard();
+    char buf[512];
+    board->toFEN(buf);
+
+    return expectEqualString(sFEN, buf, message);
 }
