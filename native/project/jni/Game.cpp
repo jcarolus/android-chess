@@ -253,16 +253,16 @@ void Game::search() {
     m_bestMove = m_arrBestMoves[0];
     m_bestDuckMove = m_arrBestDuckMoves[0];
 
-    // Move::toDbgString(m_bestMove, moveBuf);
-    // Pos::toString(m_bestDuckMove, duckMoveBuf);
-    // DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
-    //             m_bestValue,
-    //             m_evalCount,
-    //             moveBuf,
-    //             duckMoveBuf,
-    //             m_searchDepth,
-    //             timePassed(),
-    //             (double) m_evalCount / timePassed());
+    Move::toDbgString(m_bestMove, moveBuf);
+    Pos::toString(m_bestDuckMove, duckMoveBuf);
+    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
+                m_bestValue,
+                m_evalCount,
+                moveBuf,
+                duckMoveBuf,
+                m_searchDepth,
+                timePassed(),
+                (double) m_evalCount / timePassed());
 
     m_bSearching = false;
 }
@@ -285,14 +285,14 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
     }
 
     // only search vor duck moves very first iteration
-    if (board->getVariant() == ChessBoard::VARIANT_DUCK && m_searchDepth - depth > 0) {
-        board->setVariant(ChessBoard::VARIANT_DEFAULT);
-    }
+    // if (board->getVariant() == ChessBoard::VARIANT_DUCK && m_searchDepth - depth > 0) {
+    //     board->setVariant(ChessBoard::VARIANT_DEFAULT);
+    // }
 
     board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth]);
 
     int best = (-ChessBoard::VALUATION_MATE) - 1;
-    int move = 0;
+    int move = 0, bestDuckMove = -1;
     ChessBoard *nextBoard = m_boardFactory[depth];
 
     while (board->hasMoreMoves()) {
@@ -317,35 +317,56 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
         }
 
         if (nextBoard->getVariant() == ChessBoard::VARIANT_DUCK) {
-            int duckMove = -1, numMoves = nextBoard->getNumMoves(), i, duckValue = 0,
-                bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1;
-            for (i = 0; i < numMoves; i++) {
-                duckMove = nextBoard->getMoveAt(i);
-                if (Move_isHIT(duckMove)) {
-                    continue;
-                }
-                duckMove = Move_getTo(duckMove);  // actual duckMove is a position
-                nextBoard->requestDuckMove(duckMove);
+            if (nextBoard->areKingsOnTheBoard()) {
+                int duckMove = -1, numMoves = nextBoard->getNumMoves(), i, duckValue = 0,
+                    bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1;
+                ChessBoard *duckBoard = new ChessBoard();
+                ChessBoard *calcDuckBoard = new ChessBoard();
+                for (i = 0; i < numMoves; i++) {
+                    duckMove = nextBoard->getMoveAt(i);
+                    if (Move_isHIT(duckMove)) {
+                        continue;
+                    }
+                    duckMove = Move_getTo(duckMove);  // actual duckMove is a position
+                    if ((duckMove == ChessBoard::g8 || duckMove == 23) && m_searchDepth == depth) {
+                        ;
+                    }
+                    memcpy(duckBoard, nextBoard, ChessBoard::SIZEOF_BOARD);
+                    if (!duckBoard->requestDuckMove(duckMove)) {
+                        DEBUG_PRINT("Could not make duckMove %d\n", duckMove);
+                        continue;
+                    }
 
-                nextBoard->getMoves();
+                    duckBoard->calcState(calcDuckBoard);
+                    if (duckBoard->getState() == ChessBoard::MATE) {
+                        duckValue = -duckBoard->boardValueExtension();
+                    } else {
+                        if (depth == 0) {
+                            m_evalCount++;
+                            duckValue = -duckBoard->boardValueExtension();
+                        } else {
+                            duckBoard->getMoves();
+                            duckValue = -alphaBeta(duckBoard, depth - 1, -beta, -alpha);
+                        }
+                    }
 
-                if (depth == 0) {
-                    m_evalCount++;
-                    duckValue = -nextBoard->boardValueExtension();
-                } else {
-                    duckValue = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
-                }
+                    if (duckValue > bestDuckValue) {
+                        bestDuckValue = duckValue;
+                        bestDuckMove = duckMove;
+                    }
 
-                if (duckValue > bestDuckValue) {
-                    bestDuckValue = duckValue;
-                    m_arrBestDuckMoves[m_searchDepth - depth] = duckMove;
+                    if (bestDuckValue > beta) {
+                        break;
+                    }
                 }
+                delete duckBoard;
+                delete calcDuckBoard;
+                value = bestDuckValue;
 
-                if (bestDuckValue > beta) {
-                    break;
-                }
+            } else {
+                value = -nextBoard->boardValueExtension();
+                bestDuckMove = -1;
             }
-            value = bestDuckValue;
         } else {
             // at depth one is at the leaves, so call quiescent search
             if (depth == 1) {
@@ -358,6 +379,7 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
         if (value > best) {
             best = value;
             m_arrBestMoves[m_searchDepth - depth] = move;
+            m_arrBestDuckMoves[m_searchDepth - depth] = bestDuckMove;
         }
 
         if (best > alpha) {

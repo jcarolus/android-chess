@@ -298,6 +298,7 @@ class ChessBoard {
     int getVariant();
     void setVariant(int variant);
     boolean isLegalPosition();
+    boolean areKingsOnTheBoard();
     boolean isEnded();
     boolean checkEnded();
     int ambigiousMove();
@@ -388,6 +389,7 @@ class ChessBoard {
                      const boolean allowAttack);
     void remove(const int t, const int p);
     void putDuck(const int duckPos);
+    void unsetDuckPos();
 
     ChessBoard* undoMove();
     boolean hasMoreMoves();

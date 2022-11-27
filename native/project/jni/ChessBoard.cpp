@@ -213,11 +213,24 @@ boolean ChessBoard::isLegalPosition() {
     if (ChessBoard::bitCount(m_bitbPieces[WHITE][PAWN]) > 8 || ChessBoard::bitCount(m_bitbPieces[BLACK][PAWN]) > 8) {
         return false;
     }
+    if (!areKingsOnTheBoard()) {
+        return false;
+    }
     if (isSquareAttacked(m_o_turn, m_kingPositions[m_o_turn])) {
         return false;
     }
     return true;
 }
+
+boolean ChessBoard::areKingsOnTheBoard() {
+    // one of the kings not on the board, return just the default value
+    if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 || m_kingPositions[m_o_turn] < 0 ||
+        m_kingPositions[m_o_turn] > 63) {
+        return false;
+    }
+    return true;
+}
+
 /*
 String ChessBoard::getStateToString()
 {
@@ -547,8 +560,8 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
             ret->m_bitbPieces[m_o_turn][pieceTo] &= NOT_BITS[to];
             ret->m_bitbPositions[m_o_turn] &= NOT_BITS[to];
 
-            if (pieceTo == KING && m_variant == VARIANT_DUCK) {
-                // a valid move in Duck chess to capture the king
+            if (pieceTo == KING) {
+                // can be a valid move for e.g. Duck chess
                 ret->m_kingPositions[m_o_turn] = -1;
             }
 
@@ -2223,6 +2236,11 @@ void ChessBoard::putDuck(const int duckPos) {
     m_bitb_315 |= ROT_315_BITS[duckPos];
 }
 
+void ChessBoard::unsetDuckPos() {
+    // leave the bitboards!
+    m_duckPos = -1;
+}
+
 // undo a move
 // the current board is not deleted since it exists in refurbish table for reuse
 ChessBoard* ChessBoard::undoMove() {
@@ -2610,7 +2628,7 @@ const int ChessBoard::COL[64] = {0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7,
 
 // bitb arrays, indexed on position. contains the the bit positions that can be
 // reached from that position
-const int ChessBoard::PIECE_VALUES[6] = {100, 320, 340, 500, 900, 0};
+const int ChessBoard::PIECE_VALUES[6] = {100, 320, 340, 500, 900, 50000};
 const BITBOARD ChessBoard::BISHOP_RANGE[64] = {(BITBOARD) -9205322385119247872LL,
                                                36099303471056128LL,
                                                141012904249856LL,
