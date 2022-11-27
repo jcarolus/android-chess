@@ -135,6 +135,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    @Override
+    public void OnDuckMove(int duckMove) {
+        Log.d(TAG, "OnDuckMove " + duckMove);
+        lastPosition = -1;
+
+        rebuildBoard();
+    }
 
 
     @Override

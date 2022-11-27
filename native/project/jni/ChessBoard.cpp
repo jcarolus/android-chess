@@ -198,6 +198,13 @@ int ChessBoard::getVariant() {
     return m_variant;
 }
 
+void ChessBoard::setVariant(int variant) {
+    m_variant = variant;
+    if (variant == VARIANT_DEFAULT) {
+        m_duckPos = -1;
+    }
+}
+
 boolean ChessBoard::isLegalPosition() {
     if ((m_bitbPieces[WHITE][PAWN] & (ROW_BITS[0] | ROW_BITS[7])) ||
         (m_bitbPieces[BLACK][PAWN] & (ROW_BITS[0] | ROW_BITS[7]))) {
@@ -1156,7 +1163,7 @@ void ChessBoard::getMoves() {
     m_indexMoves = 0;
 }
 
-// sort generated moves
+// score generated moves
 void ChessBoard::getScoredMoves() {
     int i, j, tmp, tmpMove, from, to, piece;
     for (i = 0; i < m_sizeMoves; i++) {

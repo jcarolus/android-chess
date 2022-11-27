@@ -29,6 +29,7 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
     int movesPerformed = 0;
     while (movesPerformed < scenario.numMoves) {
         ChessTest::startSearchThread();
+        sleep(1);
         while (scenario.game->m_bSearching) {
             sleep(1);
         }
@@ -38,7 +39,8 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
 
         boolean bMoved = scenario.game->move(m);
         if (!bMoved) {
-            // printMove(m);
+            printMove(m);
+            printFENAndState(scenario.game->getBoard());
             DEBUG_PRINT("Not moved for [%s] on move number %d\n", scenario.message, movesPerformed);
             return false;
         }
@@ -50,6 +52,9 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
                 DEBUG_PRINT("Not duck moved for [%s] on move number %d\n", scenario.message, movesPerformed);
                 return false;
             }
+        } else if (scenario.isDuck) {
+            DEBUG_PRINT("Expected a duck move for [%s] on  move number %d\n", scenario.message, movesPerformed);
+            return false;
         }
 
         movesPerformed++;
@@ -108,4 +113,55 @@ bool ChessTest::expectInFENIsOutFEN(Game *game, char *sFEN, char *message) {
     board->toFEN(buf);
 
     return expectEqualString(sFEN, buf, message);
+}
+
+void ChessTest::printMove(int move) {
+    char buf[10];
+    Move::toDbgString(move, buf);
+    DEBUG_PRINT("Move %s\n", buf);
+}
+
+void ChessTest::printFENAndState(ChessBoard *board) {
+    char buf[512];
+    board->toFEN(buf);
+    DEBUG_PRINT("\nFEN\t%s\n", buf);
+
+    int state = board->getState();
+
+    switch (state) {
+        case ChessBoard::PLAY:
+            DEBUG_PRINT("Play\n", 0);
+            break;
+
+        case ChessBoard::CHECK:
+            DEBUG_PRINT("Check\n", 0);
+            break;
+
+        case ChessBoard::INVALID:
+            DEBUG_PRINT("Invalid\n", 0);
+            break;
+
+        case ChessBoard::DRAW_MATERIAL:
+            DEBUG_PRINT("Draw material\n", 0);
+            break;
+
+        case ChessBoard::DRAW_50:
+            DEBUG_PRINT("Draw 50 move\n", 0);
+            break;
+
+        case ChessBoard::MATE:
+            DEBUG_PRINT("Mate\n", 0);
+            break;
+
+        case ChessBoard::STALEMATE:
+            DEBUG_PRINT("Stalemate\n", 0);
+            break;
+
+        case ChessBoard::DRAW_REPEAT:
+            DEBUG_PRINT("Draw repetition\n", 0);
+            break;
+
+        default:
+            break;
+    }
 }

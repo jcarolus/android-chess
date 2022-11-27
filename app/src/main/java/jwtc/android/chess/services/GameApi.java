@@ -107,13 +107,16 @@ public class GameApi {
             _arrPGN.get(index)._duckMove = duckPos;
         }
 
-        dispatchState();
+        dispatchDuckhMove(duckPos);
 
         return true;
     }
 
-    public void move(int move) {
+    public void move(int move, int duckMove) {
         if (move(move, "", true)) {
+            if (duckMove != -1) {
+                this.requestDuckMove(duckMove);
+            }
             dispatchMove(move);
         }
     }
@@ -260,6 +263,14 @@ public class GameApi {
 
         for (GameListener listener : listeners) {
             listener.OnMove(move);
+        }
+    }
+
+    protected void dispatchDuckhMove(final int duckMove) {
+//        Log.d(TAG, "dispatchDuckhMove " + move);
+
+        for (GameListener listener : listeners) {
+            listener.OnDuckMove(duckMove);
         }
     }
 

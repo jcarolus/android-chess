@@ -123,7 +123,7 @@ boolean Game::requestMove(int from, int to) {
         return true;
     } else {
         delete nb;
-        DEBUG_PRINT("%d-%d not moved...(request)\n", from, to);
+        // DEBUG_PRINT("%d-%d not moved...(request)\n", from, to);
         return false;
     }
 }
@@ -253,16 +253,16 @@ void Game::search() {
     m_bestMove = m_arrBestMoves[0];
     m_bestDuckMove = m_arrBestDuckMoves[0];
 
-    Move::toDbgString(m_bestMove, moveBuf);
-    Pos::toString(m_bestDuckMove, duckMoveBuf);
-    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
-                m_bestValue,
-                m_evalCount,
-                moveBuf,
-                duckMoveBuf,
-                m_searchDepth,
-                timePassed(),
-                (double) m_evalCount / timePassed());
+    // Move::toDbgString(m_bestMove, moveBuf);
+    // Pos::toString(m_bestDuckMove, duckMoveBuf);
+    // DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
+    //             m_bestValue,
+    //             m_evalCount,
+    //             moveBuf,
+    //             duckMoveBuf,
+    //             m_searchDepth,
+    //             timePassed(),
+    //             (double) m_evalCount / timePassed());
 
     m_bSearching = false;
 }
@@ -283,6 +283,12 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
     if (board->checkEnded()) {
         return ChessBoard::VALUATION_DRAW;
     }
+
+    // only search vor duck moves very first iteration
+    if (board->getVariant() == ChessBoard::VARIANT_DUCK && m_searchDepth - depth > 0) {
+        board->setVariant(ChessBoard::VARIANT_DEFAULT);
+    }
+
     board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth]);
 
     int best = (-ChessBoard::VALUATION_MATE) - 1;
@@ -310,9 +316,9 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
             move = Move_setCheck(move);
         }
 
-        if (m_board->getVariant() == ChessBoard::VARIANT_DUCK) {
+        if (nextBoard->getVariant() == ChessBoard::VARIANT_DUCK) {
             int duckMove = -1, numMoves = nextBoard->getNumMoves(), i, duckValue = 0,
-                bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1, moveCount = 0;
+                bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1;
             for (i = 0; i < numMoves; i++) {
                 duckMove = nextBoard->getMoveAt(i);
                 if (Move_isHIT(duckMove)) {
@@ -336,10 +342,6 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
                 }
 
                 if (bestDuckValue > beta) {
-                    break;
-                }
-
-                if (moveCount++ > 8 && depth > 0) {
                     break;
                 }
             }
@@ -494,11 +496,11 @@ int Game::searchDB() {
         }
     }
     if (iCnt == 0) {
-        DEBUG_PRINT("No move found in openingsdatabase\n", 0);
+        // DEBUG_PRINT("No move found in openingsdatabase\n", 0);
         return 0;
     }
 
-    DEBUG_PRINT("Choosing from %d moves\n", iCnt);
+    // DEBUG_PRINT("Choosing from %d moves\n", iCnt);
 
     timeval time;
     gettimeofday(&time, NULL);
@@ -566,7 +568,7 @@ void Game::loadDB(const char *sFile, int depth) {
             DEBUG_PRINT("FOUND KEY %lld...%ld\n", bb, pos);
         }
         */
-        DEBUG_PRINT("Set filepointer ok, filesize %ld...\n", DB_SIZE);
+        // DEBUG_PRINT("Set filepointer ok, filesize %ld...\n", DB_SIZE);
 
     } else {
         DEBUG_PRINT("Could not open file %s\n", sFile);

@@ -25,8 +25,6 @@ bool testSequence();
 bool testNonSequence();
 void newGame();
 void newGameDuck();
-void printFENAndState(ChessBoard *board);
-void printMove(int move);
 
 int main(int argc, char **argv) {
     DEBUG_PRINT("\n\n=== START TESTS == \n", 0);
@@ -39,26 +37,29 @@ int main(int argc, char **argv) {
                             testDB,
                             testDuck,
                             testEngine,
-                            testSequence,
-                            testNonSequence};
+                            testSequence/*,
+                            testNonSequence*/};
 
     // TestFunction tests[] = {
     //     // testGame,
-    //     testDuckGame,
+    //     testDuck,
     // };
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
         Game::deleteInstance();
 
+        DEBUG_PRINT("\n* Test %d\n", i);
         if (tests[i]()) {
             testSuccess++;
         } else {
+            DEBUG_PRINT("\n=====> Test %d FAILED\n", i);
             testFail++;
         }
     }
 
     DEBUG_PRINT("\n\n=== DONE === SUCCESS: [%d] FAIL: [%d]\n", testSuccess, testFail);
+    return 0;
 }
 
 bool testSetupNewGame() {
@@ -97,12 +98,18 @@ bool testDB() {
     newGame();
 
     int move = Game::getInstance()->searchDB();
-    printMove(move);
+    if (move == 0) {
+        return false;
+    }
+    // ChessTest::printMove(move);
 
     Game::getInstance()->move(move);
 
     move = Game::getInstance()->searchDB();
-    printMove(move);
+
+    if (move == 0) {
+        return false;
+    }
 
     return true;
 }
@@ -212,30 +219,45 @@ bool testDuck() {
 }
 
 bool testEngine() {
-    EngineInOutFEN scenarios[4] = {
-        {Game::getInstance(), "8/8/8/8/8/r2k4/8/3K4 b - - 0 1", "8/8/8/8/8/3k4/8/r2K4 w - - 1 1", 1, 1, "Mate in one"},
-        {Game::getInstance(),
-         "r6k/6pp/8/8/8/8/1R6/1R1K4 w - - 0 1",
-         "rR5k/6pp/8/8/8/8/8/1R1K4 b - - 1 1",
-         2,
-         1,
-         "Mate in two"},
-        {Game::getInstance(),
-         "2Q5/5pk1/8/8/1b6/1b6/r3n1P1/2K5 w - - 0 1",
-         "2Q5/5pk1/8/8/1b6/1b6/r3n1P1/1K6 b - - 1 1",
-         2,
-         1,
-         "In check"},
-        {Game::getInstance(),
-         "5r1k/1p2Qpq1/2p1p3/3p2P1/5P2/2B1P3/2K5/8 b - - 0 1",
-         "5r1k/1p2Q1q1/2p1pp2/3p2P1/5P2/2B1P3/2K5/8 w - - 0 1",
-         2,
-         1,
-         "Quiescent"}};  // TODO improve
+    EngineInOutFEN scenarios[5] = {{Game::getInstance(),
+                                    "8/8/8/8/8/r2k4/8/3K4 b - - 0 1",
+                                    "8/8/8/8/8/3k4/8/r2K4 w - - 1 1",
+                                    1,
+                                    1,
+                                    false,
+                                    "Mate in one"},
+                                   {Game::getInstance(),
+                                    "r6k/6pp/8/8/8/8/1R6/1R1K4 w - - 0 1",
+                                    "rR5k/6pp/8/8/8/8/8/1R1K4 b - - 1 1",
+                                    2,
+                                    1,
+                                    false,
+                                    "Mate in two"},
+                                   {Game::getInstance(),
+                                    "2Q5/5pk1/8/8/1b6/1b6/r3n1P1/2K5 w - - 0 1",
+                                    "2Q5/5pk1/8/8/1b6/1b6/r3n1P1/1K6 b - - 1 1",
+                                    2,
+                                    1,
+                                    false,
+                                    "In check"},
+                                   {Game::getInstance(),
+                                    "5r1k/1p2Qpq1/2p1p3/3p2P1/5P2/2B1P3/2K5/8 b - - 0 1",
+                                    "5r1k/1p2Q1q1/2p1pp2/3p2P1/5P2/2B1P3/2K5/8 w - - 0 1",
+                                    2,
+                                    1,
+                                    false,
+                                    "Quiescent"},
+                                   {Game::getInstance(),
+                                    "rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+                                    "rnbqkbnr/pppp1ppp/4p3/8/3$4/5N2/PPPPPPPP/RNBQKB1R w KQkq - 0 2",
+                                    2,
+                                    2,
+                                    true,
+                                    "Duck"}};
 
     bool bRet = true;
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         if (!ChessTest::expectEngineMove(scenarios[i])) {
             bRet = false;
         }
@@ -314,55 +336,4 @@ void newGame() {
 
 void newGameDuck() {
     Game::getInstance()->newGameFromFEN("rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-}
-
-void printMove(int move) {
-    char buf[10];
-    Move::toDbgString(move, buf);
-    DEBUG_PRINT("Move %s\n", buf);
-}
-
-void printFENAndState(ChessBoard *board) {
-    char buf[512];
-    board->toFEN(buf);
-    DEBUG_PRINT("\nFEN\t%s\n", buf);
-
-    int state = board->getState();
-
-    switch (state) {
-        case ChessBoard::PLAY:
-            DEBUG_PRINT("Play\n", 0);
-            break;
-
-        case ChessBoard::CHECK:
-            DEBUG_PRINT("Check\n", 0);
-            break;
-
-        case ChessBoard::INVALID:
-            DEBUG_PRINT("Invalid\n", 0);
-            break;
-
-        case ChessBoard::DRAW_MATERIAL:
-            DEBUG_PRINT("Draw material\n", 0);
-            break;
-
-        case ChessBoard::DRAW_50:
-            DEBUG_PRINT("Draw 50 move\n", 0);
-            break;
-
-        case ChessBoard::MATE:
-            DEBUG_PRINT("Mate\n", 0);
-            break;
-
-        case ChessBoard::STALEMATE:
-            DEBUG_PRINT("Stalemate\n", 0);
-            break;
-
-        case ChessBoard::DRAW_REPEAT:
-            DEBUG_PRINT("Draw repetition\n", 0);
-            break;
-
-        default:
-            break;
-    }
 }

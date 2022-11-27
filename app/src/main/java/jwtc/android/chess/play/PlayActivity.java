@@ -419,19 +419,26 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     @Override
+    public void OnDuckMove(int duckMove) {
+        super.OnDuckMove(duckMove);
+
+        updateGUI();
+
+        if (vsCPU && jni.isEnded() == 0 && jni.getTurn() != myTurn) {
+            myEngine.play();
+        }
+    }
+
+    @Override
     public void OnEngineMove(int move, int duckMove) {
         toggleEngineProgress(false);
 
-        gameApi.move(move);
+        gameApi.move(move, duckMove);
         final int from = Move.getFrom(move);
         final int to = Move.getTo(move);
         highlightedPositions.clear();
         highlightedPositions.add(from);
         highlightedPositions.add(to);
-
-        if (duckMove != -1) {
-            gameApi.requestDuckMove(duckMove);
-        }
 
         updateGUI();
     }

@@ -296,6 +296,7 @@ class ChessBoard {
     boolean checkInSelfCheck();
     int getState();
     int getVariant();
+    void setVariant(int variant);
     boolean isLegalPosition();
     boolean isEnded();
     boolean checkEnded();
