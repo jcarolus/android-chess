@@ -142,6 +142,7 @@
 
     <string name="menu_help">Ajuda</string>
     <string name="menu_new">Novo jogo</string>
+    <string name="menu_new_duck">Pato Novo (experimental)</string>
     <string name="menu_clear">Remove</string>
     <string name="menu_options">Opções</string>
     <string name="menu_email_game">Manda jogo por e-mail</string>

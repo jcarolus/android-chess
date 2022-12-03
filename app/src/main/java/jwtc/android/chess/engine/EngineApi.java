@@ -7,6 +7,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import jwtc.chess.Move;
+import jwtc.chess.Pos;
+
 public abstract class EngineApi {
     private static final String TAG = "EngineApi";
 
@@ -27,7 +30,7 @@ public abstract class EngineApi {
             if (msg.what == MSG_MOVE) {
                 int move = msg.getData().getInt("move");
                 int duckMove = msg.getData().getInt("duckMove");
-                Log.d(TAG, "handleMessage MOVE " + move);
+                Log.d(TAG, "handleMessage MOVE " + Move.toDbgString(move) + " :: " + Pos.toString(duckMove));
                 for (EngineListener listener: listeners) {
                     listener.OnEngineMove(move, duckMove);
                 }

@@ -3,22 +3,6 @@
 static JavaVM* jvm;
 static jint stArrMoves[ChessBoard::MAX_MOVES];
 
-static void* search_thread(void* arg) {
-    JNIEnv* env;
-
-    if (jvm->AttachCurrentThread(&env, NULL) != JNI_OK) {
-        DEBUG_PRINT("Could not attach to current thread\n", 0);
-        return NULL;
-    }
-
-    Game::getInstance()->search();
-
-    if (jvm->DetachCurrentThread() != JNI_OK) {
-        DEBUG_PRINT("Could not deattach from current thread\n", 0);
-    }
-    return NULL;
-}
-
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_destroy(JNIEnv* env, jobject thiz) {
     Game::deleteInstance();
 }
@@ -64,13 +48,13 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz,
     pthread_t tid;
 
     Game::getInstance()->setSearchTime(msecs);
-    pthread_create(&tid, NULL, search_thread, NULL);
+    Game::getInstance()->search();
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchDepth(JNIEnv* env, jobject thiz, jint depth) {
     pthread_t tid;
 
     Game::getInstance()->setSearchLimit(depth);
-    pthread_create(&tid, NULL, search_thread, NULL);
+    Game::getInstance()->search();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMove(JNIEnv* env, jobject thiz) {
     return Game::getInstance()->getBestMove();

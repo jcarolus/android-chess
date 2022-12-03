@@ -1,4 +1,4 @@
-# android-chess :: Chess game for Android
+# Chess game for Android
 
 
 ## Objectives

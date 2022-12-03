@@ -116,7 +116,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     @Override
     public void OnMove(int move) {
-        Log.d(TAG, "OnMove " + move);
+        Log.d(TAG, "OnMove " + Move.toDbgString(move));
         lastPosition = -1;
 
         rebuildBoard();
@@ -137,7 +137,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     @Override
     public void OnDuckMove(int duckMove) {
-        Log.d(TAG, "OnDuckMove " + duckMove);
+        Log.d(TAG, "OnDuckMove " + Pos.toString(duckMove));
         lastPosition = -1;
 
         rebuildBoard();

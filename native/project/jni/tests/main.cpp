@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
                             testNonSequence*/};
 
     EngineInOutFEN testScenario = {Game::getInstance(),
-                                   "5R$k/6pp/8/7P/8/8/7K/8 b - - 0 1",
+                                   "5R1k/6pp/8/7P/7$/8/7K/8 b - - 0 1",
                                    "5R$k/6pp/8/8/7P/8/7K/8 b - - 0 1",
                                    2,
                                    2,

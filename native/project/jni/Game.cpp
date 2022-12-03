@@ -321,7 +321,6 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
                 int duckMove = -1, numMoves = nextBoard->getNumMoves(), i, duckValue = 0,
                     bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1;
                 ChessBoard *duckBoard = new ChessBoard();
-                ChessBoard *calcDuckBoard = new ChessBoard();
                 for (i = 0; i < numMoves; i++) {
                     duckMove = nextBoard->getMoveAt(i);
                     if (Move_isHIT(duckMove)) {
@@ -337,7 +336,7 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
                         continue;
                     }
 
-                    duckBoard->calcState(calcDuckBoard);
+                    duckBoard->calcState(m_boardRefurbish);
                     if (duckBoard->getState() == ChessBoard::MATE) {
                         duckValue = -duckBoard->boardValueExtension();
                     } else {
@@ -360,7 +359,6 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
                     }
                 }
                 delete duckBoard;
-                delete calcDuckBoard;
                 value = bestDuckValue;
 
             } else {

@@ -114,10 +114,17 @@ public class GameApi {
 
     public void move(int move, int duckMove) {
         if (move(move, "", true)) {
+            Log.d(TAG, "Performed move " + Move.toDbgString(move));
             if (duckMove != -1) {
-                this.requestDuckMove(duckMove);
+                if (this.requestDuckMove(duckMove)) {
+                    Log.d(TAG, "Performed duck move " + Pos.toString(duckMove));
+                } else {
+                    Log.d(TAG, "Not duck moved " + Pos.toString(duckMove));
+                }
             }
             dispatchMove(move);
+        } else {
+            Log.d(TAG, "Not moved " + Move.toDbgString(move));
         }
     }
 

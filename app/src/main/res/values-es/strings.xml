@@ -142,6 +142,7 @@
 
     <string name="menu_help">Ayuda</string>
     <string name="menu_new">Nuevo juego</string>
+    <string name="menu_new_duck">Pato nuevo (experimental)</string>
     <string name="menu_clear">Limpia</string>
     <string name="menu_options">Opciones</string>
     <string name="menu_email_game">Juego e-mail</string>
