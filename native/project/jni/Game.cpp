@@ -140,6 +140,7 @@ boolean Game::requestDuckMove(int duckPos) {
 boolean Game::move(int move) {
     ChessBoard *nb = new ChessBoard();
 
+    //m_board->calcState(m_boardRefurbish);
     if (m_board->requestMove(move, nb, m_boardRefurbish)) {
         m_board = nb;
         return true;
@@ -327,9 +328,7 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
                         continue;
                     }
                     duckMove = Move_getTo(duckMove);  // actual duckMove is a position
-                    if ((duckMove == ChessBoard::g8 || duckMove == 23) && m_searchDepth == depth) {
-                        ;
-                    }
+
                     memcpy(duckBoard, nextBoard, ChessBoard::SIZEOF_BOARD);
                     if (!duckBoard->requestDuckMove(duckMove)) {
                         DEBUG_PRINT("Could not make duckMove %d\n", duckMove);

@@ -17,14 +17,18 @@
 #define DEBUG_MODE     1
 #define TARGET_ANDROID 0
 #else
-#define DEBUG_MODE     0
+#define DEBUG_MODE     1
 #define TARGET_ANDROID 1
 #endif
 
 #if DEBUG_MODE
 #if TARGET_ANDROID
 #include <android/log.h>
-#define DEBUG_PRINT(s, args...) __android_log_print(ANDROID_LOG_INFO, "JNI-Chess-Game", s, args)
+#define DEBUG_PRINT(x...) do { \
+  char buf[512]; \
+  sprintf(buf, x); \
+  __android_log_print(ANDROID_LOG_ERROR,"JNI-CHESS", "%s | %s:%i", buf, __FILE__, __LINE__); \
+} while (0)
 #else
 #define DEBUG_PRINT(s, args...) fprintf(stdout, s, args)
 #endif

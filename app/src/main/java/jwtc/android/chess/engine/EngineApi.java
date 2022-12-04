@@ -37,7 +37,7 @@ public abstract class EngineApi {
 
             } else if (msg.what == MSG_INFO) {
                 String message = msg.getData().getString("message");
-                Log.d(TAG, "handleMessage INFO " + message);
+                // Log.d(TAG, "handleMessage INFO " + message);
                 for (EngineListener listener: listeners) {
                     listener.OnEngineInfo(message);
                 }

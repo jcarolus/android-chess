@@ -389,6 +389,7 @@ int ChessBoard::ambigiousMove() {
 boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece) {
     // if duckPos was not set, the previous turn was not completed, so no valid piece move
     if (m_variant == VARIANT_DUCK && m_duckPos == -1 && m_parent != NULL) {
+        DEBUG_PRINT("requestMove duck with duckPos -1", 0);
         return false;
     }
     if (isEnded()) {
@@ -411,6 +412,7 @@ boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board,
             return true;
         }
     }
+    DEBUG_PRINT("requestMove exhausted all moves", 0);
     return false;
 }
 
@@ -422,13 +424,14 @@ boolean ChessBoard::requestDuckMove(int newDuckPos) {
         }
         // occupied
         if (m_bitb & BITS[newDuckPos]) {
+            DEBUG_PRINT("requestDuckMove occupied %d", newDuckPos);
             return false;
         }
         putDuck(newDuckPos);
 
         return true;
     }
-
+    DEBUG_PRINT("requestDuckMove duckPos != -1 for variant %d", m_variant);
     return false;
 }
 
@@ -469,6 +472,7 @@ int ChessBoard::getCastleMove(const int from, const int to) {
 // iterate over all moves, if valid move, than make the move
 boolean ChessBoard::requestMove(const int m, ChessBoard* board, ChessBoard* tmpBoard) {
     if (isEnded()) {
+        DEBUG_PRINT("ChessBoard::requestMove but isEnded", 0);
         return false;
     }
     m_indexMoves = 0;
@@ -483,6 +487,7 @@ boolean ChessBoard::requestMove(const int m, ChessBoard* board, ChessBoard* tmpB
             return true;
         }
     }
+    DEBUG_PRINT("ChessBoard::requestMove exhausted (%d)", m_sizeMoves);
     return false;
 }
 
