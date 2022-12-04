@@ -472,7 +472,7 @@ int ChessBoard::getCastleMove(const int from, const int to) {
 // iterate over all moves, if valid move, than make the move
 boolean ChessBoard::requestMove(const int m, ChessBoard* board, ChessBoard* tmpBoard) {
     if (isEnded()) {
-        DEBUG_PRINT("ChessBoard::requestMove but isEnded", 0);
+        DEBUG_PRINT("ChessBoard::requestMove but isEnded - %d", m_turn);
         return false;
     }
     m_indexMoves = 0;
@@ -487,7 +487,7 @@ boolean ChessBoard::requestMove(const int m, ChessBoard* board, ChessBoard* tmpB
             return true;
         }
     }
-    DEBUG_PRINT("ChessBoard::requestMove exhausted (%d)", m_sizeMoves);
+    DEBUG_PRINT("ChessBoard::requestMove exhausted (%d) - %d", m_sizeMoves, m_turn);
     return false;
 }
 
