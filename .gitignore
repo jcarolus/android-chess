@@ -7,6 +7,8 @@
 *.apk
 *.ap_
 
+app/.cxx/*
+
 # Files for the Dalvik VM
 *.dex
 
@@ -17,8 +19,9 @@
 bin/
 gen/
 native/project/obj/
-native/project/jni/tests/chess
+native/project/jni/chess
 native/project/libs/**/*.so
+native/project/jni/chess.dSYM/*
 
 # Gradle files
 .gradle/

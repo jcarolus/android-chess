@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jwtc.android.chess"
     android:installLocation="auto"
-    android:versionCode="175"
-    android:versionName="9.2.2">
+    android:versionCode="181"
+    android:versionName="9.2.3">
 
     <application
         android:name="android.app.Application"
@@ -11,13 +11,14 @@
         android:label="@string/app_name"
         android:theme="@style/ChessTheme"
         android:banner="@drawable/ic_feature">
-        <service android:name=".ics.ICSServer"></service>
-        <service android:name=".tools.ImportService"></service>
+        <service android:name=".ics.ICSServer" android:exported="true"></service>
+        <service android:name=".tools.ImportService" android:exported="true"></service>
         <activity
             android:name=".start"
             android:label="@string/app_name"
             android:theme="@style/ChessStart"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -33,20 +34,22 @@
         <activity
             android:name=".ChessPreferences"
             android:label="@string/globalpreferences"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".start" />
         </activity>
-
         <activity
             android:name=".HtmlActivity"
             android:label="@string/app_name_help"
-            android:configChanges="orientation"></activity>
+            android:configChanges="orientation"
+            android:exported="true"></activity>
         <activity
             android:name=".activities.GlobalPreferencesActivity"
             android:label="@string/globalpreferences"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".start" />
@@ -54,16 +57,19 @@
         <activity
             android:name=".activities.BoardPreferencesActivity"
             android:label="@string/globalpreferences"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
         </activity>
         <activity
             android:name=".activities.GamePreferenceActivity"
             android:label="@string/playpreferences"
-            android:configChanges="orientation"></activity>
+            android:configChanges="orientation"
+            android:exported="true"></activity>
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -90,17 +96,16 @@
         <activity
             android:name=".setup.SetupActivity"
             android:label="@string/app_name_setup"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/x-chess-fen" />
             </intent-filter>
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".play.PlayActivity" />
@@ -108,7 +113,8 @@
         <activity
             android:name=".GamesListActivity"
             android:label="@string/app_name_save_games"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -119,7 +125,8 @@
         <activity
             android:name="jwtc.android.chess.puzzle.PuzzleActivity"
             android:label="@string/app_name"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -130,7 +137,8 @@
         <activity
             android:name="jwtc.android.chess.practice.PracticeActivity"
             android:label="@string/app_name"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -143,7 +151,8 @@
             android:label="@string/app_name_playonline"
             android:screenOrientation="locked"
             android:configChanges="orientation"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -154,7 +163,8 @@
         <activity
             android:name="jwtc.android.chess.ics.ICSPrefs"
             android:label="@string/preferences"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -162,11 +172,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ics.ICSClient" />
         </activity>
-        <!-- <service android:name="jwtc.android.chess.ics.ICSService"/> -->
         <activity
             android:name="jwtc.android.chess.ics.CustomCommands"
             android:label="@string/preferences"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -177,7 +187,8 @@
         <activity
             android:name="jwtc.android.chess.tools.AdvancedActivity"
             android:label="@string/app_name_pgntools"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -188,7 +199,8 @@
         <activity
             android:name="jwtc.android.chess.tools.ImportActivity"
             android:label="@string/app_name_import"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -198,15 +210,14 @@
                 <data android:mimeType="application/x-chess-pgn" />
             </intent-filter>
         </activity>
-
         <provider
             android:name=".helpers.MyPGNProvider"
             android:authorities="jwtc.android.chess.helpers.MyPGNProvider"
-            android:exported="false" />
+            android:exported="true" />
         <provider
             android:name=".puzzle.MyPuzzleProvider"
             android:authorities="jwtc.android.chess.puzzle.MyPuzzleProvider"
-            android:exported="false" />
+            android:exported="true" />
     </application>
     <supports-screens
         android:anyDensity="true"
@@ -220,4 +231,5 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.software.leanback" android:required="false" />
 </manifest>
