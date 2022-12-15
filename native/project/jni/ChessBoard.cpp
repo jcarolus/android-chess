@@ -424,7 +424,7 @@ boolean ChessBoard::requestDuckMove(int newDuckPos) {
         }
         // occupied
         if (m_bitb & BITS[newDuckPos]) {
-            DEBUG_PRINT("requestDuckMove occupied %d", newDuckPos);
+            DEBUG_PRINT("requestDuckMove occupied %d, %d", newDuckPos, m_turn);
             return false;
         }
         putDuck(newDuckPos);

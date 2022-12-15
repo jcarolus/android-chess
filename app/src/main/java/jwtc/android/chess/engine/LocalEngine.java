@@ -74,9 +74,10 @@ public class LocalEngine extends EngineApi {
 
     @Override
     public void abort() {
-        if (enginePeekThread != null) {
+        abortPeek();
+
+        if (engineSearchThread != null) {
             Log.d(TAG, "abort");
-            abortPeek();
 
             try {
                 synchronized (this) {
@@ -89,7 +90,6 @@ public class LocalEngine extends EngineApi {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
 
             for (EngineListener listener: listeners) {
                 listener.OnEngineAborted();
@@ -108,14 +108,18 @@ public class LocalEngine extends EngineApi {
         public void run() {
             try {
                 JNI jni = JNI.getInstance();
-                if (jni.isEnded() != 0)
+                if (jni.isEnded() != 0) {
+                    Log.d(TAG, "search called while game was ended");
                     return;
-
+                }
                 long lMillies = System.currentTimeMillis();
                 if (ply > 0) {
                     jni.searchDepth(ply);
-                } else {
+                } else if (msecs > 0){
                     jni.searchMove(msecs);
+                } else {
+                    Log.d(TAG, "No ply and no msecs to work with");
+                    return;
                 }
 
                 int move = jni.getMove();
@@ -187,15 +191,17 @@ public class LocalEngine extends EngineApi {
     }
 
     private void abortPeek() {
-        try {
-            synchronized (this) {
-                enginePeekThread.interrupt();
-            }
-            enginePeekThread.join();
+        if (enginePeekThread != null) {
+            try {
+                synchronized (this) {
+                    enginePeekThread.interrupt();
+                }
+                enginePeekThread.join();
 
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }

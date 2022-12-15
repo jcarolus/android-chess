@@ -26,6 +26,8 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
 
     scenario.game->setSearchLimit(scenario.depth);
 
+    char buf[1024];
+    ChessBoard *board;
     int movesPerformed = 0;
     while (movesPerformed < scenario.numMoves) {
         ChessTest::startSearchThread();
@@ -39,8 +41,11 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
 
         boolean bMoved = scenario.game->move(m);
         if (!bMoved) {
+            board = scenario.game->getBoard();
             printMove(m);
-            printFENAndState(scenario.game->getBoard());
+            printFENAndState(board);
+            board->printB(buf);
+            DEBUG_PRINT("DBG: %s\n", buf);
             DEBUG_PRINT("Not moved for [%s] on move number %d\n", scenario.message, movesPerformed);
             return false;
         }
@@ -59,9 +64,7 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
 
         movesPerformed++;
     }
-    ChessBoard *board = scenario.game->getBoard();
-
-    char buf[512];
+    board = scenario.game->getBoard();
     board->toFEN(buf);
 
     return expectEqualString(scenario.sOutFEN, buf, scenario.message);

@@ -17,7 +17,7 @@
 #define DEBUG_MODE     1
 #define TARGET_ANDROID 0
 #else
-#define DEBUG_MODE     0
+#define DEBUG_MODE     1
 #define TARGET_ANDROID 1
 #endif
 

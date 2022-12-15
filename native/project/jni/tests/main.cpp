@@ -40,16 +40,16 @@ int main(int argc, char **argv) {
                             testSequence/*,
                             testNonSequence*/};
 
-    EngineInOutFEN testScenario = {Game::getInstance(),
-                                   "5R1k/6pp/8/7P/7$/8/7K/8 b - - 0 1",
-                                   "5R$k/6pp/8/8/7P/8/7K/8 b - - 0 1",
-                                   2,
-                                   2,
-                                   true,
-                                   "Duck"};
+    // EngineInOutFEN testScenario = {Game::getInstance(),
+    //                                "4k3/4p3/8/8/8/8/4Q3/4K3 w - - 0 1",
+    //                                "4k3/4p3/8/8/8/8/4Q3/4K3 w - - 0 1",
+    //                                2,
+    //                                2,
+    //                                false,
+    //                                "x"};
 
-    ChessTest::expectEngineMove(testScenario);
-    return 0;
+    // ChessTest::expectEngineMove(testScenario);
+    // return 0;
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
