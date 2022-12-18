@@ -141,6 +141,7 @@
 
     <string name="menu_help">Hilfe</string>
     <string name="menu_new">Neues Spiel</string>
+    <string name="menu_new_duck">Neue Ente (experimentell)</string>
     <string name="menu_clear">Leeren</string>
     <string name="menu_options">Optionen</string>
     <string name="menu_email_game">E-Mail Spiel</string>

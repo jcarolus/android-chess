@@ -126,13 +126,13 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                         builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                myEngine.play();
+                                playIfEngineCanMove();
                             }
                         });
                         AlertDialog alert = builder.create();
                         alert.show();
                     } else {
-                        myEngine.play();
+                        playIfEngineCanMove();
                     }
                 }
             }
@@ -413,16 +413,23 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         updateGUI();
 
-        if (vsCPU && jni.isEnded() == 0 && jni.getTurn() != myTurn) {
-            myEngine.play();
-        }
+        playIfEngineMove();
     }
 
     @Override
-    public void OnEngineMove(int move) {
+    public void OnDuckMove(int duckMove) {
+        super.OnDuckMove(duckMove);
+
+        updateGUI();
+
+        playIfEngineMove();
+    }
+
+    @Override
+    public void OnEngineMove(int move, int duckMove) {
         toggleEngineProgress(false);
 
-        gameApi.move(move);
+        gameApi.move(move, duckMove);
         final int from = Move.getFrom(move);
         final int to = Move.getTo(move);
         highlightedPositions.clear();
@@ -464,9 +471,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
 
-            if (jni.getNumBoard() - 1 > progress)
+            if (jni.getNumBoard() - 1 > progress) {
                 progress++;
-
+            }
             this.gameApi.jumptoMove(progress);
         }
     }
@@ -619,6 +626,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     gameApi.newGame();
                     lGameID = 0;
                     updateForNewGame();
+                } else if (item.equals(getString(R.string.menu_new_duck))) {
+                    gameApi.newGame(BoardConstants.VARIANT_DUCK);
+                    lGameID = 0;
+                    updateForNewGame();
                 } else if (item.equals(getString(R.string.menu_new_960))) {
                     showChess960Dialog();
                 } else if (item.equals(getString(R.string.menu_setup))) {
@@ -718,11 +729,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
-        if (myTurn != jni.getTurn() && vsCPU && jni.isEnded() == 0) {
-            if (myEngine.isReady()) {
-                myEngine.play();
-            }
-        }
+        playIfEngineMove();
     }
 
 
@@ -811,6 +818,20 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 c.moveToFirst();
                 lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
             }
+        }
+    }
+
+    protected void playIfEngineMove() {
+        Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
+        if (myTurn != jni.getTurn() && vsCPU) {
+            playIfEngineCanMove();
+        }
+    }
+
+    protected void playIfEngineCanMove() {
+        Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
+        if (myEngine.isReady() && jni.isEnded() == 0 && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+            myEngine.play();
         }
     }
 }

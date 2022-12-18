@@ -3,6 +3,7 @@
 int Game::DB_SIZE = 0;
 FILE *Game::DB_FP = NULL;
 int Game::DB_DEPTH = 5;
+Game *Game::game = NULL;
 
 Game::Game(void) {
     m_board = new ChessBoard();
@@ -18,7 +19,6 @@ Game::Game(void) {
     reset();
 }
 
-// TODO clean up all chessboards related to m_board
 Game::~Game(void) {
     if (DB_FP) {
         fclose(DB_FP);
@@ -43,6 +43,27 @@ Game::~Game(void) {
     }
 }
 
+// the non thread safe solution; assumption is that getInsance is called before any threads are created
+Game *Game::getInstance() {
+    if (Game::game == NULL) {
+        ChessBoard::initStatics();
+        Game::game = new Game();
+    }
+    return Game::game;
+}
+
+void Game::deleteInstance() {
+    if (Game::game != NULL) {
+        delete Game::game;
+        Game::game = NULL;
+    }
+}
+
+void *Game::search_wrapper(void *arg) {
+    Game::getInstance()->search();
+    return 0;
+}
+
 void Game::reset() {
     // clean up history
     ChessBoard *cb, *tmp;
@@ -55,6 +76,18 @@ void Game::reset() {
 
     m_board->reset();
     m_board->calcState(m_boardRefurbish);
+}
+
+boolean Game::newGameFromFEN(char *sFEN) {
+    reset();
+    ChessBoard *board = getBoard();
+    int ret = board->parseFEN(sFEN);
+    if (ret) {
+        commitBoard();
+    } else {
+        reset();
+    }
+    return ret;
 }
 
 void Game::commitBoard() {
@@ -73,9 +106,12 @@ void Game::setPromo(int p) {
 int Game::getBestMove() {
     return m_bestMove;
 }
+int Game::getBestDuckMove() {
+    return m_bestDuckMove;
+}
 int Game::getBestMoveAt(int ply) {
     if (ply >= 0 && ply < MAX_DEPTH) {
-        return m_arrPVMoves[ply];
+        return m_arrBestMoves[ply];
     }
     return 0;
 }
@@ -87,14 +123,24 @@ boolean Game::requestMove(int from, int to) {
         return true;
     } else {
         delete nb;
-        DEBUG_PRINT("%d-%d not moved...(request)\n", from, to);
+        // DEBUG_PRINT("%d-%d not moved...(request)\n", from, to);
         return false;
     }
+}
+
+boolean Game::requestDuckMove(int duckPos) {
+    ChessBoard *board = getBoard();
+    if (board->requestDuckMove(duckPos)) {
+        board->genMoves();
+        return true;
+    }
+    return false;
 }
 
 boolean Game::move(int move) {
     ChessBoard *nb = new ChessBoard();
 
+    m_board->calcState(m_boardRefurbish);
     if (m_board->requestMove(move, nb, m_boardRefurbish)) {
         m_board = nb;
         return true;
@@ -117,159 +163,116 @@ void Game::undo() {
 
 // returns the move found
 void Game::setSearchTime(int secs) {
-    m_milliesGiven = 1000 * (long) secs;
+    m_milliesGiven = (long) secs;
+    m_searchLimit = 0;
+    m_bSearching = true;
+}
+
+void Game::setSearchLimit(int depth) {
+    m_milliesGiven = 0;
+    m_searchLimit = depth;
     m_bSearching = true;
 }
 
 void Game::search() {
     m_bSearching = true;
     m_bestMove = 0;
+    m_bestDuckMove = -1;
     m_bestValue = 0;
     m_bInterrupted = false;
     m_evalCount = 0;
 
-    // 50 move rule and repetition check
+    m_board->calcState(m_boardRefurbish);
+
     // no need to search if the game has allready ended
     if (m_board->isEnded()) {
         m_bSearching = false;
         return;
     }
 
-    int move = searchDB();
-    if (move != 0) {
-        m_bestMove = move;
+    if (m_board->getNumMoves() == 0) {
+        DEBUG_PRINT("NO moves!", 0);
         m_bSearching = false;
-
         return;
     }
 
+    // DB search only makes sens for the default chess variant
+    if (m_board->getVariant() == ChessBoard::VARIANT_DEFAULT) {
+        int move = searchDB();
+        if (move != 0) {
+            m_bestMove = move;
+            m_bSearching = false;
+            return;
+        }
+    }
+
+    m_evalCount++;  // at least one so Nps is valid for non DB move
+
     startTime();
 
-    // DEBUG_PRINT("Start alphabeta iterative deepening\n", 0);
-
-    char buf[20];
-    // reset principal variation for this search
+    char moveBuf[20], duckMoveBuf[4];
+    // reset best moves for this search
     int i;
     for (i = 0; i < MAX_DEPTH; i++) {
-        m_arrPVMoves[i] = 0;
+        m_arrBestMoves[i] = 0;
+        m_arrBestDuckMoves[i] = -1;
     }
 
-    int reachedDepth = 0;
-    boolean bContinue = true;
-    for (m_searchDepth = 1; m_searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); m_searchDepth++) {
-        // DEBUG_PRINT("Search at depth %d\n", m_searchDepth);
+    if (m_milliesGiven > 0) {
+        DEBUG_PRINT("Search with millies given %ld", m_milliesGiven);
 
-        bContinue =
-            alphaBetaRoot(m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+        for (m_searchDepth = 1; m_searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); m_searchDepth++) {
+            m_bestValue = alphaBeta(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
 
-        // todo -----------------------------------------------------------
-        // break; //debug
+            DEBUG_PRINT("Searched at depth %d - value: %d - move: %d - num moves: %d\n", m_searchDepth, m_bestValue, getBestMoveAt(m_searchDepth), m_board->getNumMoves());
 
-        if (bContinue) {
-            reachedDepth++;
-            if (m_bestValue == ChessBoard::VALUATION_MATE) {
-                DEBUG_PRINT("Found checkmate, stopping search\n", 0);
-                break;
-            }
-            // bail out if we're over 50% of time, next depth will take more than sum of previous
-            if (usedTime()) {
-                // DEBUG_PRINT("Bailing out\n", 0);
-                break;
-            }
-        } else {
             if (m_bInterrupted) {
-                DEBUG_PRINT("Interrupted search\n", 0);
+                break;
             } else {
-                DEBUG_PRINT("No continuation, only one move\n", 0);
+                if (m_bestValue == ChessBoard::VALUATION_MATE) {
+                    for (i = 0; i < MAX_DEPTH; i++) {
+                        int moveAt = getBestMoveAt(i);
+                        if (moveAt != 0) {
+                            Move::toDbgString(moveAt, moveBuf);
+                            DEBUG_PRINT("%s,", moveBuf);
+                        }
+                    }
+                    DEBUG_PRINT("Found checkmate, stopping search\n", 0);
+                    break;
+                }
+
+                // bail out if we're over 50% of time, next depth will take more than sum of previous
+                if (usedTime()) {
+                    DEBUG_PRINT("Time over 50 pct - no further deepening\n", 0);
+                    break;
+                }
             }
-            break;
         }
+    } else {
+        DEBUG_PRINT("Search with limit given: %d\n", m_searchLimit);
+        m_searchDepth = m_searchLimit;
+        m_bestValue = alphaBeta(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
     }
 
-    Move::toDbgString(m_bestMove, buf);
-    DEBUG_PRINT(
-        "\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
-        m_bestValue,
-        m_evalCount,
-        buf,
-        reachedDepth,
-        timePassed(),
-        (double) m_evalCount / timePassed());
+    m_bestMove = m_arrBestMoves[0];
+    m_bestDuckMove = m_arrBestDuckMoves[0];
+
+    if (m_bInterrupted) {
+        DEBUG_PRINT("Interrupted search\n", 0);
+    }
+
+    Move::toDbgString(m_bestMove, moveBuf);
+    Pos::toString(m_bestDuckMove, duckMoveBuf);
+    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
+                m_bestValue,
+                m_evalCount,
+                moveBuf,
+                duckMoveBuf,
+                m_searchDepth,
+                timePassed(),
+                (double) m_evalCount / timePassed());
 
     m_bSearching = false;
-}
-
-boolean Game::alphaBetaRoot(const int depth, int alpha, const int beta) {
-    if (m_bInterrupted || depth >= MAX_DEPTH) {
-        return false;  //
-    }
-    int value = 0;
-
-    m_board->scoreMovesPV(m_arrPVMoves[m_searchDepth - depth]);
-
-    int best = (-ChessBoard::VALUATION_MATE) - 1;
-    int move = 0, bestMove = 0;
-    ChessBoard *nextBoard = m_boardFactory[depth];
-
-    while (m_board->hasMoreMoves()) {
-        move = m_board->getNextScoredMove();
-        m_board->makeMove(move, nextBoard);
-        // self check is illegal!
-        if (nextBoard->checkInSelfCheck()) {
-            // not valid, remove this move and continue
-            m_board->removeMoveElementAt();
-            continue;
-        }
-
-        // generate the moves for this next board in order to validate the board
-        nextBoard->genMoves();
-
-        if (nextBoard->checkInCheck()) {
-            nextBoard->setMyMoveCheck();
-            move = Move_setCheck(move);
-        }
-        // ok valid move
-        // at depth one is at the leaves, so call quiescent search
-        if (depth == 1) {
-            value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
-        } else {
-            // if not PV then narrow search window
-
-            value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
-        }
-
-        if (value > best) {
-            best = value;
-            bestMove = move;
-            m_arrPVMoves[m_searchDepth - depth] = move;
-        }
-
-        if (best > alpha) {
-            alpha = best;
-        }
-
-        if (best >= beta) {
-            break;
-        }
-    }
-
-    // we're interrupted, no move and no value!
-    if (m_bInterrupted) {
-        return false;
-    }
-
-    m_bestMove = bestMove;
-    m_bestValue = best;
-
-    if (m_board->getNumMoves() <= 1) {
-        if (m_board->getNumMoves() == 0) {
-            DEBUG_PRINT("NO moves in aphaBetaRoot!", 0);
-        }
-        // do not contine, so return false
-        return false;
-    }
-
-    return true;
 }
 
 // alphaBeta
@@ -280,7 +283,7 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
         }
     }
     if (m_bInterrupted || depth >= MAX_DEPTH) {
-        return alpha;  //
+        return alpha; 
     }
     int value = 0;
 
@@ -288,54 +291,108 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
     if (board->checkEnded()) {
         return ChessBoard::VALUATION_DRAW;
     }
-    board->scoreMovesPV(m_arrPVMoves[m_searchDepth - depth]);
+
+    board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth]);
 
     int best = (-ChessBoard::VALUATION_MATE) - 1;
-    int move = 0;
+    int move = 0, bestDuckMove = -1, variant = m_board->getVariant();
     ChessBoard *nextBoard = m_boardFactory[depth];
 
     while (board->hasMoreMoves()) {
         move = board->getNextScoredMove();
         board->makeMove(move, nextBoard);
 
-        // self check is illegal!
-        if (nextBoard->checkInSelfCheck()) {
-            // not valid, remove this move and continue
-            board->removeMoveElementAt();
-            continue;
+        // self check is illegal for default chess
+        if (variant == ChessBoard::VARIANT_DEFAULT) {
+            if (nextBoard->checkInSelfCheck()) {
+                // not valid, remove this move and continue
+                board->removeMoveElementAt();
+                continue;
+            }
         }
 
         // generate the moves for this next board in order to validate the board
         nextBoard->genMoves();
 
-        if (nextBoard->checkInCheck()) {
+        if (variant == ChessBoard::VARIANT_DEFAULT && nextBoard->checkInCheck()) {
             nextBoard->setMyMoveCheck();
             move = Move_setCheck(move);
         }
-        // ok valid move
-        // at depth one is at the leaves, so call quiescent search
-        if (depth == 1) {
-            value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
 
+        if (variant == ChessBoard::VARIANT_DUCK) {
+            if (nextBoard->areKingsOnTheBoard()) {
+                int tmpDuckMove = -1, duckMove = -1, numMoves = nextBoard->getNumMoves(), i, duckValue = 0,
+                    bestDuckValue = (-ChessBoard::VALUATION_MATE) - 1;
+                ChessBoard *duckBoard = new ChessBoard();
+                for (i = 0; i < numMoves; i++) {
+                    tmpDuckMove = nextBoard->getMoveAt(i);
+                    if (Move_isHIT(tmpDuckMove)) {
+                        continue;
+                    }
+                    duckMove = Move_getTo(tmpDuckMove);  // actual duckMove is a position
+
+                    memcpy(duckBoard, nextBoard, ChessBoard::SIZEOF_BOARD);
+                    if (!duckBoard->requestDuckMove(duckMove)) {
+                        DEBUG_PRINT("Could not make duckMove %d, %d\n", duckMove, Move_getFrom(tmpDuckMove));
+                        continue;
+                    }
+
+                    duckBoard->calcState(m_boardRefurbish);
+                    if (duckBoard->getState() == ChessBoard::MATE) {
+                        duckValue = -duckBoard->boardValueExtension();
+                    } else {
+                        if (depth == 0) {
+                            m_evalCount++;
+                            duckValue = -duckBoard->boardValueExtension();
+                        } else {
+                            duckBoard->getMoves();
+                            duckValue = -alphaBeta(duckBoard, depth - 1, -beta, -alpha);
+                        }
+                    }
+
+                    if (duckValue > bestDuckValue) {
+                        bestDuckValue = duckValue;
+                        bestDuckMove = duckMove;
+                    }
+
+                    if (bestDuckValue > beta) {
+                        break;
+                    }
+                }
+                delete duckBoard;
+                value = bestDuckValue;
+
+            } else {
+                value = -nextBoard->boardValueExtension();
+                bestDuckMove = -1;
+            }
         } else {
-            value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
+            // at depth one is at the leaves, so call quiescent search
+            if (depth == 1) {
+                value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
+            } else {
+                value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
+            }
         }
 
-        if (value > best) {
+        if (value > best && !m_bInterrupted) {
             best = value;
-            m_arrPVMoves[m_searchDepth - depth] = move;
+            m_arrBestMoves[m_searchDepth - depth] = move;
+            m_arrBestDuckMoves[m_searchDepth - depth] = bestDuckMove;
         }
 
         if (best > alpha) {
             alpha = best;
         }
 
-        if (best >= beta) {
+        if (best >= beta || m_bInterrupted) {
             break;
         }
     }
+
     // no valid moves, so mate or stalemate
     if (board->getNumMoves() == 0) {
+        m_evalCount++;
         if (Move_isCheck(board->getMyMove())) {
             return (-ChessBoard::VALUATION_MATE);
         }
@@ -371,9 +428,8 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         }
     }
 
-    if (depth == 0)  // ok, max quiesce depth is reached; return this value
-    {
-        // get the value of this node
+    if (depth == 0) {
+        // max quiesce depth is reached; return this value
         return boardValue;
     }
 
@@ -381,14 +437,11 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         return beta;
     }
 
-    // futility pruning here? i.e. can alpha be improved
-
     // update lower bound
     if (boardValue > alpha) {
         alpha = boardValue;
     }
     int move;
-    // int best = (-ChessBoard::VALUATION_MATE)-1;
 
     ChessBoard *nextBoard = m_boardFactory[MAX_DEPTH - depth];
     board->scoreMoves();
@@ -404,10 +457,6 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
             continue;
         }
 
-        // generate the moves for this next board in order to validate the board
-        // todo, reset this if attackedMoveSquares are working
-        // nextBoard->genMoves();
-
         if (nextBoard->checkInCheck()) {
             nextBoard->setMyMoveCheck();
             move = Move_setCheck(move);
@@ -416,9 +465,6 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         // quiescent search
         if (Move_isHIT(move) || Move_isCheck(move) || Move_isPromotionMove(move)) {
             // a valid and active move, so continue quiescent search
-
-            // optimization; only generate when needed
-            // todo back to before checkInCheck?
             nextBoard->genMoves();
 
             value = -quiesce(nextBoard, depth - 1, -beta, -alpha);
@@ -442,113 +488,6 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
     }
 
     return alpha;
-}
-
-// limited search, no quiesce
-void Game::searchLimited(const int depth) {
-    m_bSearching = true;
-    m_bestMove = 0;
-    m_bestValue = 0;
-    m_bInterrupted = false;
-    m_evalCount = 0;
-
-    // 50 move rule and repetition check
-    // no need to search if the game has allready ended
-    if (m_board->isEnded()) {
-        m_bSearching = false;
-        return;
-    }
-
-    int move = searchDB();
-    if (move != 0) {
-        m_bestMove = move;
-        m_bSearching = false;
-
-        return;
-    }
-
-    m_searchDepth = depth;
-    alphaBetaLimited(m_board, depth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
-
-    char buf[32];
-    Move::toDbgString(m_bestMove, buf);
-    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\ndepth\t%d\n\n",
-                m_bestValue,
-                m_evalCount,
-                buf,
-                depth);
-
-    m_bSearching = false;
-}
-int Game::alphaBetaLimited(ChessBoard *board, const int depth, int alpha, const int beta) {
-    int value = 0;
-
-    // 50 move rule and repetition check
-    if (board->checkEnded()) {
-        return ChessBoard::VALUATION_DRAW;
-    }
-    board->scoreMovesPV(m_arrPVMoves[m_searchDepth - depth]);
-
-    int best = (-ChessBoard::VALUATION_MATE) - 1, bestMove = 0;
-    int move = 0;
-    ChessBoard *nextBoard = m_boardFactory[depth];
-
-    while (board->hasMoreMoves()) {
-        move = board->getNextScoredMove();
-        board->makeMove(move, nextBoard);
-
-        // self check is illegal!
-        if (nextBoard->checkInSelfCheck()) {
-            // not valid, remove this move and continue
-            board->removeMoveElementAt();
-            continue;
-        }
-
-        // generate the moves for this next board in order to validate the board
-        nextBoard->genMoves();
-
-        if (nextBoard->checkInCheck()) {
-            nextBoard->setMyMoveCheck();
-            move = Move_setCheck(move);
-        }
-        // ok valid move
-
-        // at depth one is at the leaves, so call board value
-        if (depth == 1) {
-            m_evalCount++;
-            value = -nextBoard->boardValueExtension();
-
-        } else {
-            value = -alphaBetaLimited(nextBoard, depth - 1, -beta, -alpha);
-        }
-
-        if (value > best) {
-            best = value;
-            m_arrPVMoves[m_searchDepth - depth] = move;
-            bestMove = move;
-        }
-
-        if (best > alpha) {
-            alpha = best;
-        }
-
-        if (best >= beta) {
-            break;
-        }
-    }
-    // no valid moves, so mate or stalemate
-    if (board->getNumMoves() == 0) {
-        if (Move_isCheck(board->getMyMove())) {
-            return (-ChessBoard::VALUATION_MATE);
-        }
-        return ChessBoard::VALUATION_DRAW;
-    }
-
-    if (depth == m_searchDepth) {
-        m_bestMove = bestMove;
-        m_bestValue = best;
-    }
-    return best;
 }
 
 // search the hashkey database, randomly choose a move
@@ -579,11 +518,11 @@ int Game::searchDB() {
         }
     }
     if (iCnt == 0) {
-        DEBUG_PRINT("No move found in openingsdatabase\n", 0);
+        // DEBUG_PRINT("No move found in openingsdatabase\n", 0);
         return 0;
     }
 
-    DEBUG_PRINT("Choosing from %d moves\n", iCnt);
+    // DEBUG_PRINT("Choosing from %d moves\n", iCnt);
 
     timeval time;
     gettimeofday(&time, NULL);
@@ -651,7 +590,7 @@ void Game::loadDB(const char *sFile, int depth) {
             DEBUG_PRINT("FOUND KEY %lld...%ld\n", bb, pos);
         }
         */
-        DEBUG_PRINT("Set filepointer ok, filesize %ld...\n", DB_SIZE);
+        // DEBUG_PRINT("Set filepointer ok, filesize %ld...\n", DB_SIZE);
 
     } else {
         DEBUG_PRINT("Could not open file %s\n", sFile);
@@ -729,6 +668,9 @@ void Game::startTime() {
 }
 
 boolean Game::timeUp() {
+    if (m_milliesGiven == 0) {
+        return false;
+    }
     timeval time;
     gettimeofday(&time, NULL);
     return (m_milliesGiven < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies));

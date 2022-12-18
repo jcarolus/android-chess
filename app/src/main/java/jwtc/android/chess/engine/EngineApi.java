@@ -7,6 +7,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import jwtc.chess.Move;
+import jwtc.chess.Pos;
+
 public abstract class EngineApi {
     private static final String TAG = "EngineApi";
 
@@ -26,14 +29,15 @@ public abstract class EngineApi {
         public void handleMessage(Message msg) {
             if (msg.what == MSG_MOVE) {
                 int move = msg.getData().getInt("move");
-                Log.d(TAG, "handleMessage MOVE " + move);
+                int duckMove = msg.getData().getInt("duckMove");
+                Log.d(TAG, "handleMessage MOVE " + Move.toDbgString(move) + " :: " + Pos.toString(duckMove));
                 for (EngineListener listener: listeners) {
-                    listener.OnEngineMove(move);
+                    listener.OnEngineMove(move, duckMove);
                 }
 
             } else if (msg.what == MSG_INFO) {
                 String message = msg.getData().getString("message");
-                Log.d(TAG, "handleMessage INFO " + message);
+                // Log.d(TAG, "handleMessage INFO " + message);
                 for (EngineListener listener: listeners) {
                     listener.OnEngineInfo(message);
                 }
@@ -55,10 +59,11 @@ public abstract class EngineApi {
         updateHandler.sendMessage(m);
     }
 
-    public void sendMoveMessageFromThread(int move) {
+    public void sendMoveMessageFromThread(int move, int duckMove) {
         Message m = new Message();
         Bundle b = new Bundle();
         b.putInt("move", move);
+        b.putInt("duckMove", duckMove);
         m.what = MSG_MOVE;
         m.setData(b);
         updateHandler.sendMessage(m);

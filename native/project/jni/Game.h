@@ -8,23 +8,29 @@ class Game {
     Game(void);
     ~Game(void);
 
+    static Game* getInstance();
+    static void deleteInstance();
+    static void* search_wrapper(void* arg);
+
     void reset();
+    boolean newGameFromFEN(char* sFEN);
     void commitBoard();
     ChessBoard* getBoard();
     boolean requestMove(int from, int to);
+    boolean requestDuckMove(int duckPos);
     boolean move(int);
     void undo();
     void setPromo(int p);
     int getBestMove();
+    int getBestDuckMove();
     int getBestMoveAt(int ply);
 
     void setSearchTime(int secs);
+    void setSearchLimit(int depth);
     void search();
     boolean alphaBetaRoot(const int depth, int alpha, const int beta);
     int alphaBeta(ChessBoard* board, const int depth, int alpha, const int beta);
     inline int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);
-    void searchLimited(const int depth);
-    int alphaBetaLimited(ChessBoard* board, const int depth, int alpha, const int beta);
     int searchDB();
     int searchHouse();
     boolean putPieceHouse(const int pos, const int piece, const boolean allowAttack);
@@ -39,16 +45,18 @@ class Game {
     int m_evalCount;
     int m_bestValue;
     int m_searchDepth;
+    int m_searchLimit;
 
    protected:
     long findDBKey(BITBOARD bbKey);
     boolean readDBAt(int iPos, BITBOARD& bb);
 
-    int m_bestMove;
+    int m_bestMove, m_bestDuckMove;
+    long m_millies, m_milliesGiven;
+
+    static Game* game;
     static const int MAX_DEPTH = 20;
     static const int QUIESCE_DEPTH = 5;  // makes effective max depth 15
-
-    long m_millies, m_milliesGiven;
 
     static int DB_SIZE;
     static FILE* DB_FP;
@@ -59,5 +67,6 @@ class Game {
     ChessBoard* m_boardRefurbish;
     ChessBoard* m_board;
     int m_promotionPiece;
-    int m_arrPVMoves[MAX_DEPTH];
+    int m_arrBestMoves[MAX_DEPTH];
+    int m_arrBestDuckMoves[MAX_DEPTH];
 };

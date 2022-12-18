@@ -102,8 +102,6 @@ public class SetupActivity extends ChessBoardActivity {
 
     protected void onSave() {
 
-
-
         final int turn = radioTurnWhite.isChecked() ? 1 : 0;
 
         jni.setTurn(turn);

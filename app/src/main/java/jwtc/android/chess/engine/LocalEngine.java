@@ -12,7 +12,8 @@ import jwtc.chess.Move;
 public class LocalEngine extends EngineApi {
     private static final String TAG = "LocalEngine";
 
-    private Thread engineThread = null;
+    private Thread enginePeekThread = null;
+    private Thread engineSearchThread = null;
 
     public void setOpeningDb(String sFileName) {
         Log.d(TAG, "setOpeningDb " + sFileName);
@@ -48,12 +49,22 @@ public class LocalEngine extends EngineApi {
     @Override
     public void play() {
         Log.d(TAG, "play " + msecs + ", " + ply);
+
+        JNI jni = JNI.getInstance();
+        if (jni.isEnded() != 0) {
+            Log.d(TAG, "ended!");
+            return;
+        }
+
         for (EngineListener listener: listeners) {
             listener.OnEngineStarted();
         }
 
-        engineThread = new Thread(new RunnableImp());
-        engineThread.start();
+        engineSearchThread = new Thread(new RunnableSearch());
+        engineSearchThread.start();
+
+        enginePeekThread = new Thread(new RunnablePeeker());
+        enginePeekThread.start();
     }
 
     @Override
@@ -63,105 +74,133 @@ public class LocalEngine extends EngineApi {
 
     @Override
     public void abort() {
-        if (engineThread != null) {
+        abortPeek();
+
+        if (engineSearchThread != null) {
+            Log.d(TAG, "abort");
+
             try {
                 synchronized (this) {
-                    engineThread.interrupt();
+                    engineSearchThread.interrupt();
                     JNI.getInstance().interrupt();
                 }
-                engineThread.join();
+                engineSearchThread.join();
+
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            }
+
+            for (EngineListener listener: listeners) {
+                listener.OnEngineAborted();
             }
         }
     }
 
     @Override
     public void destroy() {
-        engineThread = null;
+        enginePeekThread = null;
+        engineSearchThread = null;
     }
 
-    private class RunnableImp implements Runnable {
+    private class RunnableSearch implements Runnable {
         @Override
         public void run() {
             try {
                 JNI jni = JNI.getInstance();
-                if (jni.isEnded() != 0)
+                if (jni.isEnded() != 0) {
+                    Log.d(TAG, "search called while game was ended");
                     return;
-
-
+                }
+                long lMillies = System.currentTimeMillis();
                 if (ply > 0) {
                     jni.searchDepth(ply);
-                    int move = jni.getMove();
-                    sendMoveMessageFromThread(move);
-
-                    int evalCnt = jni.getEvalCount();
-                    String s;
-
-                    if (evalCnt == 0) {
-                        s = "From opening book";
-                    } else {
-                        s = "Searched at " + ply + " ply";
-                    }
-                    sendMessageFromThread(s);
-
+                } else if (msecs > 0){
+                    jni.searchMove(msecs);
                 } else {
-                    jni.searchMove(msecs / 1000);
+                    Log.d(TAG, "No ply and no msecs to work with");
+                    return;
+                }
 
-                    long lMillies = System.currentTimeMillis();
-                    int move, tmpMove, value, ply = 1, evalCnt, j, iSleep = 1000, iNps;
-                    String s;
-                    float fValue;
-                    while (jni.peekSearchDone() == 0) {
-                        Thread.sleep(iSleep);
+                int move = jni.getMove();
+                sendMoveMessageFromThread(move, jni.getDuckMove());
 
-                        ply = jni.peekSearchDepth();
+                int value = jni.peekSearchBestValue();
+                float fValue = (float) value / 100.0F;
+                int evalCnt = jni.getEvalCount();
 
-                        value = jni.peekSearchBestValue();
-                        evalCnt = jni.getEvalCount();
-                        fValue = (float) value / 100.0F;
+                String s;
+                if (evalCnt == 0) {
+                    s = "From opening book";
+                } else {
+                    //s = "";
+                    int iTime = (int) ((System.currentTimeMillis() - lMillies) / 1000);
+                    int iNps = iTime > 0 ? (int) (evalCnt / iTime) : 0;
+                    s = iNps + " N/s (" + iTime + " s)" + "\n\t" + String.format("%.2f", fValue);
+                }
+                sendMessageFromThread(s);
 
-                        s = "";
+            } catch (Exception ex) {
+                ex.printStackTrace(System.out);
+            }
+        }
+    }
 
-                        if (ply > 5) {
-                            ply = 5;
-                        }
-                        for (j = 0; j < ply; j++) {
-                            tmpMove = jni.peekSearchBestMove(j);
-                            if (tmpMove != 0)
-                                s += Move.toDbgString(tmpMove).replace("[", "").replace("]", "") + " ";
-                        }
-                        if (ply == 5) {
-                            s += "...";
-                        }
+    private class RunnablePeeker implements Runnable {
+        @Override
+        public void run() {
+            try {
+                JNI jni = JNI.getInstance();
+                Thread.sleep(300);
 
-                        s = s + "\n\t" + String.format("%.2f", fValue) /*+ "\t@ " + ply*/;
-
-                        sendMessageFromThread(s);
-                    }
-
-                    move = jni.getMove();
-                    sendMoveMessageFromThread(move);
+                int move, value, ply = 1, j, iSleep = 1000;
+                String s;
+                float fValue;
+                while (jni.peekSearchDone() == 0) {
+                    ply = jni.peekSearchDepth();
 
                     value = jni.peekSearchBestValue();
                     fValue = (float) value / 100.0F;
-                    evalCnt = jni.getEvalCount();
 
-                    if (evalCnt == 0) {
-                        s = "From opening book";
-                    } else {
-                        //s = "";
-                        int iTime = (int) ((System.currentTimeMillis() - lMillies) / 1000);
-                        iNps = (int) (evalCnt / iTime);
-                        s = iNps + " N/s (" + iTime + " s)" + "\n\t" + String.format("%.2f", fValue);
+                    s = "";
+
+                    if (ply > 5) {
+                        ply = 5;
                     }
+                    for (j = 0; j < ply; j++) {
+                        move = jni.peekSearchBestMove(j);
+                        if (move != 0)
+                            s += Move.toDbgString(move).replace("[", "").replace("]", "") + " ";
+                    }
+                    if (ply == 5) {
+                        s += "...";
+                    }
+
+                    s = s + "\n\t" + String.format("%.2f", fValue) /*+ "\t@ " + ply*/;
+
                     sendMessageFromThread(s);
 
-                } // else to level = 1
+                    Thread.sleep(iSleep);
+                }
+
                 ///////////////////////////////////////////////////////////////////////
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
+            }
+        }
+    }
+
+    private void abortPeek() {
+        if (enginePeekThread != null) {
+            try {
+                synchronized (this) {
+                    enginePeekThread.interrupt();
+                }
+                enginePeekThread.join();
+
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
     }

@@ -142,6 +142,7 @@
 
     <string name="menu_help">帮助</string>
     <string name="menu_new">新的游戏</string>
+    <string name="menu_new_duck">新鸭子（实验</string>
     <string name="menu_clear">清除</string>
     <string name="menu_options">选项</string>
     <string name="menu_email_game">电子邮件发送对局</string>

@@ -3,7 +3,7 @@ BasedOnStyle: Google
 IndentWidth: 4
 ---
 Language: Cpp
-ColumnLimit: 100
+ColumnLimit: 120
 PointerAlignment: Right
 AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: true

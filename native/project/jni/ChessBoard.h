@@ -9,22 +9,22 @@ class ChessBoard {
     ChessBoard(void);
     ~ChessBoard(void);
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    // enumeration van game state
+#pragma region Statics
+    // variants
+    static const int VARIANT_DEFAULT = 1;
+    static const int VARIANT_DUCK = 2;
+
+    // enumeration of game states
     static const int PLAY = 1;
     static const int CHECK = 2;
-    static const int INVALID =
-        3;  // only occurs when king can be hit or when invalid number of pieces is on the board
-            // (more than one king). can be used when setting up a new position
+    static const int INVALID = 3;        // can be used when setting up a new position
     static const int DRAW_MATERIAL = 4;  // no one can win (ie KING against KING)
     static const int DRAW_50 = 5;        // after 25 full moves no hit or pawnmove occured
     static const int MATE = 6;
     static const int STALEMATE = 7;
     static const int DRAW_REPEAT = 8;  // draw by repetition (3 times same board position)
-    // ///////////////////////////////////////////////////////////////////////////////////////////////
 
     // array index of data memebers that hold data for either black or white. these must be 0 and 1
-    // cause arrays are of length 2
     static const int BLACK = 0;
     static const int WHITE = 1;
 
@@ -38,7 +38,6 @@ class ChessBoard {
     // not a piece: a field
     static const int FIELD = -1;
 
-    ///////////////////////////////////////////////////////////////////////////////
     // Evalutation values
     static int ARRVALUATION[64];
     static const int INDEX_VALUATION_DRAW_REPEAT = 6;
@@ -87,8 +86,6 @@ class ChessBoard {
     static const int VALUATION_PAWN_IN_KING_RANGE = 5;
     static const int VALUATION_PAWN_ROW = 5;
     static const int VALUATION_PAWN_CENTRE_FIRST_ROW = -30;
-
-    /////////////////////////////////////////////////////////////
 
     // castlings masks
     static const int MASK_AROOK = 1;
@@ -192,7 +189,6 @@ class ChessBoard {
     static const BITBOARD WHITE_SQUARES = 0x55AA55AA55AA55AALL;
     static const BITBOARD BLACK_SQUARES = 0xAA55AA55AA55AA55LL;
 
-    ///////////////////////////////////////////////////////////////////////////////////////
     // shift, rotation and mask arrays. index is position
 
     // shifts on non rotated bitboard, used for rank move generation
@@ -215,7 +211,6 @@ class ChessBoard {
     static const BITBOARD ROT_315_BITS[64];
     static const int SHIFT_315[64];
     static const int MASK_315[64];
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // instead of calling a method row(pos), position is index on array for the rows
     static const int ROW[64];
@@ -244,24 +239,6 @@ class ChessBoard {
     static const int ROW_TURN[2][64];
 
     static BITBOARD PASSED_PAWN_MASK[2][64];
-    // combined BISHOP, ROOK, and KNIGHT ranges
-    // const BITBOARD[] MOVE_CROSS = {-9132982212281038850L, 180779649147539453L,
-    // 289501704257216507L, 578721933554499319L, 1157442771892337903L, 2314886639001336031L,
-    // 4630054752962539711L, -9114576973763387265L, 4693051017167109639L, -9060642039358554865L,
-    // 325459995009219359L, 578862400275412798L, 1157444425085677436L, 2315169225636372472L,
-    // 4702396040998862832L, -9041951996023636000L, 2382695603659212551L, 4765391211613458191L,
-    // -8915961646187602145L, 614821880829263422L, 1157867642580597884L, 2387511404205701368L,
-    // 4775021704588030192L, -8896701768356863776L, 1227520104343209737L, 2455041308214890258L,
-    // 4910083715958251300L, -8626295171094528439L, 1266211321280232594L, 2460365044244346916L,
-    // 4920447509705322568L, -8606131633082277744L, 650497458799315217L, 1301276396887151138L,
-    // 2602834273062822980L, 5277725044946913672L, -7891295079032385007L, 2664152820428055586L,
-    // 5255965472313067588L, -8007153297626460024L, 506652789238731041L, 1085364276338762306L,
-    // 2242787250538824836L, 4485294125612632072L, 8970307875760115984L, -506408697671179743L,
-    // -1085156468651965374L, -2242652010613536636L, 575905529148285249L, 1152093637079876226L,
-    // 2304469852943057924L, 4537163586841610248L, 9002551054605291536L, -513418087855152864L,
-    // -1098894869259861439L, -2269848432069278590L, -142137127715389055L, -211934086904511998L,
-    // -351528005282823164L, -630998412249528312L, -1189939234739318768L, -2307821974952271840L,
-    // -4615925424881254080L, 9214611748970332801L};
 
     // arrays for hashes that will be used to generate hashKey of a board position.
     static BITBOARD HASH_KEY[2][NUM_PIECES][64];
@@ -275,22 +252,13 @@ class ChessBoard {
 
     // trailing zeros precalculated on 8bit numbers
     static const char TRAILING_ZEROS_8_BITS[256];
-    // too much to precalc, filled by instantiation of a Game object
+    // filled by instantiation of a Game object
     static char TRAILING_ZEROS_16_BITS[65536];
-    // precalculated bitcount of 8bit numbers
-    // static const char BIT_COUNT_8_BITS[256];
+    // precalculated bitcounts
     static char BIT_COUNT_16_BITS[65536];
-    // TODO when bitCount is used more, create 16 bit array for precalc
-
-    inline int trailingZeros(const BITBOARD bb);
-    // number of bits in bitb @bb
-    inline int bitCount(const BITBOARD bb);
-
     static BITBOARD HASH_KEYS[773];
-
     static const size_t SIZEOF_BOARD;
-    ///////////////////////////////////////////////////////////////////////////////////
-    // static methods
+
     static void initStatics();
     static void initValuation();
     static void initBitCount();
@@ -303,42 +271,42 @@ class ChessBoard {
 
     static void bitbToString(const BITBOARD bb, char* buf);
     static void pieceToString(const int p, char* buf);
+
+#pragma endregion
+
+    inline int trailingZeros(const BITBOARD bb);
+    // number of bits in bitb @bb
+    inline int bitCount(const BITBOARD bb);
+
     void printB(char* buf);
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    // methods
     void reset();
     void commitBoard();
-    // duplicate this object
     void duplicate(ChessBoard* ret);
     ChessBoard* getFirstBoard();
 
-    // BITBOARD pawnAttacks(const int turn, const BITBOARD bb);
     BITBOARD knightAttacks(const int turn, BITBOARD bb);
     BITBOARD bishopAttacks(const int turn, BITBOARD bb);
     BITBOARD rookAttacks(const int turn, BITBOARD bb);
     BITBOARD queenAttacks(const int turn, BITBOARD bb);
     BITBOARD kingAttacks(const int turn, BITBOARD bb);
     boolean isSquareAttacked(const int turn, const int pos);
-    //	BITBOARD getAttacks(const int turn);
     void calcState(ChessBoard* board);
     boolean checkInCheck();
     boolean checkInSelfCheck();
     int getState();
+    int getVariant();
+    void setVariant(int variant);
     boolean isLegalPosition();
-    //	String getStateToString();
+    boolean areKingsOnTheBoard();
     boolean isEnded();
     boolean checkEnded();
     int ambigiousMove();
-    boolean requestMove(const int from,
-                        const int to,
-                        ChessBoard* board,
-                        ChessBoard* tmpBoard,
-                        int promoPiece);
+    boolean requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece);
     boolean isAmbiguousCastle(const int from, const int to);
     int getCastleMove(const int from, const int to);
     boolean requestMove(const int m, ChessBoard* board, ChessBoard* tmpBoard);
-    // boolean requestMove(String sPgn, ChessBoard board, ChessBoard tmpBoard);
+    boolean requestDuckMove(int newDuckPos);
     void makeMove(const int move, ChessBoard* ret);
     boolean containsQuiescenceMove();
     void addMoves(const int from, BITBOARD bb);
@@ -347,7 +315,6 @@ class ChessBoard {
     void addMove(const int from, const int to);
     int getMyMove();
     void genMoves();
-    void genMovesHouse();
     void genPawnMoves();
     BITBOARD knightMoves(const int turn, const int pos);
     void genKnightMoves();
@@ -369,7 +336,6 @@ class ChessBoard {
     int scoreMove(int move);
     void setMyMoveCheck();
     void getPGNMoves(ChessBoard* board, char* sz);
-    // String getHistoryDebug();
     int boardValue();
     int loneKingValue(const int turn);
     int kbnkValue(const int turn);
@@ -377,25 +343,17 @@ class ChessBoard {
     int boardValueExtension();
     int pawnValueExtension(const int turn);
     int kingValueExtension(const int turn);
-    inline int queenValueExtension(const int turn);  // TODO welke allemaal inline?
+    inline int queenValueExtension(const int turn);
     int knightValueExtension(const int turn);
     int bishopValueExtension(const int turn);
     int rookValueExtension(const int turn);
     int getAvailableCol(int colNum);
-    // boolean initFEN(const char* sFEN);
     void toFEN(char* s);
     void toFENBoard(char* s);
-
-    void setCastlingsEPAnd50(boolean wccl,
-                             boolean wccs,
-                             boolean bccl,
-                             boolean bccs,
-                             int ep,
-                             int r50);
+    boolean parseFEN(char* sFEN);
+    void setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, boolean bccs, int ep, int r50);
     void setTurn(const int turn);
     int getNumCaptured(int turn, int piece);
-
-    ///////////////////////////////////////////////////////////////////////////////////
     int getNumBoard();
     BITBOARD getHashKey();
     int countPieces();
@@ -405,7 +363,6 @@ class ChessBoard {
     int opponentTurn();
     boolean isPieceOfTurnAt(const int p);
     int getEP();
-    // has @t a short castling left
     boolean hasOO(const int t);
     boolean hasOOO(const int t);
     BITBOARD bitbPositions();
@@ -416,17 +373,14 @@ class ChessBoard {
     inline boolean isPosFree(const int p);
     boolean isPosFriend(const int p);
     boolean isPosEnemy(const int p);
-    int pieceAt(const int t, const int p);  // TODO inline?
+    int pieceAt(const int t, const int p);
     boolean isPieceOfColorAt(const int t, const int p);
     boolean isFieldAt(const int p);
+    int getDuckPos();
+    boolean getMyDuckPos();
     int getIndex(const int col, const int row);
 
-    // String toFENBoard();
-    // String toFEN();
     void initHashKey();
-    // put a @piece on @sPos with @turn
-    // void put(const String sPos, const int piece, const int turn);
-    // put a piece on the board. update all applicable memebers - bitb's etc. except hash
     void put(const int pos, const int piece, const int turn);
     boolean putHouse(const int pos,
                      const int piece,
@@ -434,30 +388,23 @@ class ChessBoard {
                      ChessBoard* tmpBoard,
                      const boolean allowAttack);
     void remove(const int t, const int p);
-    ChessBoard* undoMove();
+    void putDuck(const int duckPos);
+    void unsetDuckPos();
 
-    /////////////////////////////////////////////////////////////////////////////////////////
-    // methods that operate on the move array m_arrMoves
+    ChessBoard* undoMove();
     boolean hasMoreMoves();
     int getNextMove();
+    int getMoveAt(const int i);
     int getNumMoves();
-    // replace current selected element with the last element, hereby overwriting the current
-    // element and decreasing size
     void removeMoveElementAt();
     void addMoveElement(const int move);
     int remainingMoves();
     void myMoveToString(char* s);
-
-    //	 to initialize the quality members after a position is set up
     void calcQuality();
-    ///////////////////////////////////////////////////////////////////////////////////
 
    protected:
-    ///////////////////////////////////////////////////////////////////////////////
-    // member variables
-
+    // size 2 for BLACK = 0 and WHITE = 1
     BITBOARD m_bitbPieces[2][NUM_PIECES];
-    // bitb of BLACKs and WHITEs pieces
     BITBOARD m_bitbPositions[2];
     // bitb of all pieces
     BITBOARD m_bitb;
@@ -469,30 +416,29 @@ class ChessBoard {
     BITBOARD m_bitb_315;
     // bitb with all attacked fields set to 1
     BITBOARD m_bitbAttackMoveSquares;
-    // en passant position - if no = -1
+
+    // variant of the game - one of the variant constants
+    int m_variant;
+
+    // en passant position. -1 if not set
     int m_ep;
     // who's turn is it - BLACK or WHITE
     int m_turn;
     // oppsite of m_turn
     int m_o_turn;
     // kings position (of turn)
-    int m_kingPos;
-    // opponents king position
-    int m_o_kingPos;
-    // state of the game - one of the states constants - see below
+    int m_kingPositions[2];
+    // state of the game - one of the states constants
     int m_state;
     // administration of number of moves for "no hits rule" - when a board result from a hit or a
     // pawn move, the count is reset to 0.
     int m_50RuleCount;
     // hashKey of this board
     BITBOARD m_hashKey;
-    // TODO repcount
-
     // for each turn an int that holds bitmask of move of "short rook", king and "long rook".
     int m_castlings[2];
 
-    // following 3 members to hold a fast datastructure for the moves from this board
-    // the array of moves
+    // the array of possible moves
     int m_arrMoves[MAX_MOVES];
     // size of the array
     int m_sizeMoves;
@@ -501,14 +447,15 @@ class ChessBoard {
 
     // sequence number of the bord
     int m_numBoard;
-    // parent bord (predesessor)
+    // parent bord (contains previous position)
     ChessBoard* m_parent;
     // the move that resulted in this board. for the first board 0
     int m_myMove;
+    // position of the duck (VARIANT_DUCK)
+    int m_duckPos;
 
     // to keep track of the material quality of self and opponent
-    int m_quality;
-    int m_o_quality;
+    int m_qualities[2];
 
     // array that is re-used as a temporary array for scoring the moves
     int m_arrScoreMoves[MAX_MOVES];

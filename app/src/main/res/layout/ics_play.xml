@@ -72,9 +72,7 @@
         android:id="@+id/includeboard"
         layout="@layout/chessboard"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dip"
-        android:layout_marginBottom="2dip"/>
+        android:layout_height="wrap_content"/>
 
     <TableLayout
         android:id="@+id/LayoutBoardBottom"
@@ -213,6 +211,7 @@
             android:layout_margin="2dip"
             style="@style/ChessImageButton" />
     </LinearLayout>
+
 
     <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
         android:layout_width="wrap_content"

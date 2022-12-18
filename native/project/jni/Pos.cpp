@@ -39,10 +39,14 @@ int Pos::col(const int val) {
 }
 
 // returns string representation of the value; ie "d5"
-// @val positional value [0-63] - no check on valid range
+// @val positional value [0-63]
 
 void Pos::toString(const int val, char* buf) {
-    sprintf(buf, "%c%d", (char) (Pos::col(val) + (int) 'a'), 8 - Pos::row(val));
+    if (val >= 0 && val < 64) {
+        sprintf(buf, "%c%d", (char) (Pos::col(val) + (int) 'a'), 8 - Pos::row(val));
+    } else {
+        sprintf(buf, "X");
+    }
 }
 
 // returns string representation of the row of val - human represented so from bottom to top
