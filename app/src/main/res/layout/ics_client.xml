@@ -9,21 +9,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="8dip"
+        android:layout_margin="4dip"
         >
         <TableLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
             android:stretchColumns="0">
             <TableRow>
                 <TextView android:id="@+id/TextViewTitle"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_margin="2dip"
                     android:text="-"
                     />
+                <ImageButton
+                    android:id="@+id/ButtonRefresh"
+                    android:src="@drawable/ic_arrow_clockwise"
+                    android:layout_margin="2dip"
+                    style="@style/ChessImageButton" />
+
                 <ImageButton android:id="@+id/ButtonMenu"
                     android:src="@drawable/ic_three_dots_vertical"
                     android:layout_width="48dip"
