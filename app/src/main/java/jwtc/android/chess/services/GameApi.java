@@ -32,7 +32,7 @@ public class GameApi {
             _patNum = Pattern.compile("(\\d+)\\.");
             _patAnnot = Pattern.compile("\\{([^\\{]*)\\}");
             _patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
-            _patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(\\+|#)?([\\?\\!]*)?");
+            _patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?");
         } catch (Exception e) {}
     }
 
@@ -98,7 +98,8 @@ public class GameApi {
     }
 
     public boolean requestDuckMove(int duckPos) {
-        if (moveDuck(duckPos)) {
+//        Log.d(TAG, " requestDuckMove " + Pos.toString(duckPos));
+        if (!moveDuck(duckPos)) {
             return false;
         }
 
@@ -269,7 +270,7 @@ public class GameApi {
     }
 
     protected void dispatchDuckMove(final int duckMove) {
-//        Log.d(TAG, "dispatchDuckMove " + move);
+        Log.d(TAG, "dispatchDuckMove " + duckMove);
 
         for (GameListener listener : listeners) {
             listener.OnDuckMove(duckMove);
@@ -325,8 +326,18 @@ public class GameApi {
                 if (bMatch) {
                     if (move(move, "", false)) {
                         int numBoard = jni.getNumBoard() - 3;
-                        if (numBoard >= 0)
+                        if (numBoard >= 0) {
                             setAnnotation(numBoard, sAnnotation);
+                        }
+
+                        String sDuck = matchToken.group(2);
+                        if (sDuck != null) {
+                            sDuck = sDuck.substring(1);
+                            try {
+                                moveDuck(Pos.fromString(sDuck));
+                            } catch (Exception e) {}
+                        }
+
                         return true;
                     } else {
                         return false;
@@ -636,7 +647,7 @@ public class GameApi {
                             matchToken = _patCastling.matcher(token);
                             if (matchToken.matches()) {
 
-                                if (requestMove(token, null, matchToken.group(1), sAnnotation)) {
+                                if (requestMove(token, matchToken, matchToken.group(1), sAnnotation)) {
                                     sAnnotation = "";
                                 } else {
                                     break;

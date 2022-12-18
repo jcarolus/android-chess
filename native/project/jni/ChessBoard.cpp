@@ -420,6 +420,7 @@ boolean ChessBoard::requestDuckMove(int newDuckPos) {
     if (m_duckPos == -1 && m_variant == VARIANT_DUCK) {
         // old duck pos
         if (m_parent != NULL && m_parent->m_duckPos == newDuckPos) {
+            DEBUG_PRINT("requestDuckMove has parent and same duckPos %d, %d", m_parent->m_duckPos, newDuckPos);
             return false;
         }
         // occupied

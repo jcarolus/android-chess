@@ -822,13 +822,14 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     protected void playIfEngineMove() {
+        Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
         if (myTurn != jni.getTurn() && vsCPU) {
             playIfEngineCanMove();
         }
     }
 
     protected void playIfEngineCanMove() {
-//        Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
+        Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
         if (myEngine.isReady() && jni.isEnded() == 0 && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
             myEngine.play();
         }
