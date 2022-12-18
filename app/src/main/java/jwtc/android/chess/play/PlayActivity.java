@@ -126,13 +126,13 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                         builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                myEngine.play();
+                                playIfEngineCanMove();
                             }
                         });
                         AlertDialog alert = builder.create();
                         alert.show();
                     } else {
-                        myEngine.play();
+                        playIfEngineCanMove();
                     }
                 }
             }
@@ -413,9 +413,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         updateGUI();
 
-        if (vsCPU && jni.isEnded() == 0 && jni.getTurn() != myTurn) {
-            myEngine.play();
-        }
+        playIfEngineMove();
     }
 
     @Override
@@ -424,9 +422,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         updateGUI();
 
-        if (vsCPU && jni.isEnded() == 0 && jni.getTurn() != myTurn) {
-            myEngine.play();
-        }
+        playIfEngineMove();
     }
 
     @Override
@@ -733,11 +729,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
-        if (myTurn != jni.getTurn() && vsCPU && jni.isEnded() == 0) {
-            if (myEngine.isReady()) {
-                myEngine.play();
-            }
-        }
+        playIfEngineMove();
     }
 
 
@@ -826,6 +818,19 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 c.moveToFirst();
                 lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
             }
+        }
+    }
+
+    protected void playIfEngineMove() {
+        if (myTurn != jni.getTurn() && vsCPU) {
+            playIfEngineCanMove();
+        }
+    }
+
+    protected void playIfEngineCanMove() {
+//        Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
+        if (myEngine.isReady() && jni.isEnded() == 0 && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+            myEngine.play();
         }
     }
 }

@@ -98,16 +98,11 @@ public class GameApi {
     }
 
     public boolean requestDuckMove(int duckPos) {
-        if (jni.requestDuckMove(duckPos) == 0) {
+        if (moveDuck(duckPos)) {
             return false;
         }
 
-        int index = jni.getNumBoard() - 2;
-        if (index >= 0 && index < _arrPGN.size()) {
-            _arrPGN.get(index)._duckMove = duckPos;
-        }
-
-        dispatchDuckhMove(duckPos);
+        dispatchDuckMove(duckPos);
 
         return true;
     }
@@ -273,8 +268,8 @@ public class GameApi {
         }
     }
 
-    protected void dispatchDuckhMove(final int duckMove) {
-//        Log.d(TAG, "dispatchDuckhMove " + move);
+    protected void dispatchDuckMove(final int duckMove) {
+//        Log.d(TAG, "dispatchDuckMove " + move);
 
         for (GameListener listener : listeners) {
             listener.OnDuckMove(duckMove);
@@ -296,6 +291,18 @@ public class GameApi {
         }
         addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), sAnnotation, jni.getMyMove(), jni.getMyDuckPos());
 
+        return true;
+    }
+
+    private boolean moveDuck(int duckMove) {
+        if (jni.requestDuckMove(duckMove) == 0) {
+            return false;
+        }
+
+        int index = jni.getNumBoard() - 2;
+        if (index >= 0 && index < _arrPGN.size()) {
+            _arrPGN.get(index)._duckMove = duckMove;
+        }
         return true;
     }
 
@@ -409,7 +416,7 @@ public class GameApi {
                         if (sDuck != null) {
                             sDuck = sDuck.substring(1);
                             try {
-                                requestDuckMove(Pos.fromString(sDuck));
+                                moveDuck(Pos.fromString(sDuck));
                             } catch (Exception e) {}
                         }
 
@@ -598,16 +605,18 @@ public class GameApi {
                 } else {
                     break;
                 }
-                if (token.equals(".."))
+                if (token.equals("..")) {
                     continue;
+                }
 
                 matchToken = _patNum.matcher(token);
                 if (matchToken.matches()) {
                     tmp = Integer.parseInt(matchToken.group(1));
                     if (tmp == numMove)
                         numMove++;
-                    else
+                    else {
                         break;
+                    }
                 } else {
                     matchToken = _patAnnot.matcher(token);
                     if (matchToken.matches()) {
@@ -706,8 +715,9 @@ public class GameApi {
         }
 
         for (int i = iPly; i < _arrPGN.size(); i++) {
-            if ((i - iPly) % 2 == 0)
+            if ((i - iPly) % 2 == 0) {
                 s += ((i - iPly) / 2 + 1) + ". ";
+            }
             s += _arrPGN.get(i)._sMove;
             if (_arrPGN.get(i)._duckMove != -1) {
                 s += "@" + Pos.toString(_arrPGN.get(i)._duckMove);
@@ -715,8 +725,9 @@ public class GameApi {
             s += " ";
 
             // TODO this was commented? bug?
-            if (_arrPGN.get(i)._sAnnotation.length() > 0)
+            if (_arrPGN.get(i)._sAnnotation.length() > 0) {
                 s += " {" + _arrPGN.get(i)._sAnnotation + "}\n ";
+            }
         }
 
         return s;
