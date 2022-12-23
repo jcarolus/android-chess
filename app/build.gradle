@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            storeFile file('/Users/jcarolus/Projecten/Chess/android-keystore')
+            storeFile file('../../android-keystore')
         }
     }
     compileSdkVersion 31

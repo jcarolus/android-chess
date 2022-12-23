@@ -1849,7 +1849,7 @@ void ChessBoard::toFENBoard(char* s) {
     for (int i = 0; i < 64; i++) {
         sP[0] = '\0';
 
-        if (i == m_duckPos) {
+        if (i == getDuckPos()) {
             sP[0] = '$';
         } else if (isPieceOfColorAt(BLACK, i)) {
             piece = pieceAt(BLACK, i);
