@@ -152,6 +152,7 @@
             android:screenOrientation="locked"
             android:configChanges="orientation"
             android:launchMode="singleInstance"
+            android:taskAffinity=""
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -74,6 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+
     <TableLayout
         android:id="@+id/LayoutBoardBottom"
         android:layout_width="fill_parent"
@@ -152,72 +153,86 @@
                 android:layout_height="20dp" />
         </TableRow>
     </TableLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/LayoutExamineButtons"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip">
 
-    <LinearLayout
-        android:id="@+id/LayoutExamineButtons"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dip">
+                <ImageButton
+                    android:id="@+id/ButtonICSExamineBackward"
+                    android:src="@drawable/ic_chevron_left"
+                    style="@style/ChessImageButton" />
 
-        <ImageButton
-            android:id="@+id/ButtonICSExamineBackward"
-            android:src="@drawable/ic_chevron_left"
-            style="@style/ChessImageButton" />
+                <ImageButton
+                    android:id="@+id/ButtonICSExamineForward"
+                    android:src="@drawable/ic_chevron_right"
+                    style="@style/ChessImageButton" />
 
-        <ImageButton
-            android:id="@+id/ButtonICSExamineForward"
-            android:src="@drawable/ic_chevron_right"
-            style="@style/ChessImageButton" />
+                <ImageButton
+                    android:id="@+id/ButtonICSExamineRevert"
+                    android:src="@drawable/ic_backspace"
+                    style="@style/ChessImageButton"
+                    android:layout_marginRight="30dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/LayoutPlayButtons"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dip">
 
-        <ImageButton
-            android:id="@+id/ButtonICSExamineRevert"
-            android:src="@drawable/ic_backspace"
-            style="@style/ChessImageButton"
-            android:layout_marginRight="30dp" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/LayoutPlayButtons"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="2dip">
+                <Button android:id="@+id/ButtonResign"
+                    android:text="@string/ics_menu_resign"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_margin="2dip"
+                    style="@style/ChessButton"
+                    />
+                <Button android:id="@+id/ButtonDraw"
+                    android:text="@string/ics_menu_draw"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_margin="2dip"
+                    style="@style/ChessButton"
+                    />
+                <Button android:id="@+id/ButtonFlag"
+                    android:text="@string/ics_menu_flag"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_margin="2dip"
+                    style="@style/ChessButton"
+                    />
+            </LinearLayout>
 
-        <Button android:id="@+id/ButtonResign"
-            android:text="@string/ics_menu_resign"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_margin="2dip"
-            style="@style/ChessButton"
-            />
-        <Button android:id="@+id/ButtonDraw"
-            android:text="@string/ics_menu_draw"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_margin="2dip"
-            style="@style/ChessButton"
-            />
-        <Button android:id="@+id/ButtonFlag"
-            android:text="@string/ics_menu_flag"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_margin="2dip"
-            style="@style/ChessButton"
-            />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageButton
+                    android:id="@+id/ButtonTakeBack"
+                    android:src="@drawable/ic_backspace"
+                    style="@style/ChessImageButton" />
+                <ImageButton
+                    android:id="@+id/ButtonRefresh"
+                    android:src="@drawable/ic_arrow_clockwise"
+                    style="@style/ChessImageButton" />
+            </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/ButtonTakeBack"
-            android:src="@drawable/ic_backspace"
-            android:layout_margin="2dip"
-            style="@style/ChessImageButton" />
-    </LinearLayout>
-
-
-    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/pref_sound"
-        android:checked="true"
-        ></com.google.android.material.switchmaterial.SwitchMaterial>
+            <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/pref_sound"
+                android:checked="true"
+                ></com.google.android.material.switchmaterial.SwitchMaterial>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

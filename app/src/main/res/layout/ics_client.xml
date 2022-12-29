@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ViewAnimator
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ViewAnimatorRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/ButtonBar"
+    android:layout_height="fill_parent"
+    android:layout_alignParentTop="true"
+    android:layout_above="@id/HorizontalSpacer"
+    >
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="4dip"
-        >
+        android:layout_height="match_parent">
+
         <TableLayout
+            android:id="@+id/ButtonBar"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="4dip"
             android:stretchColumns="0">
             <TableRow>
                 <TextView android:id="@+id/TextViewTitle"
@@ -21,84 +24,85 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dip"
-                    android:text="-"
+                    android:text=""
                     />
-                <ImageButton
-                    android:id="@+id/ButtonRefresh"
-                    android:src="@drawable/ic_arrow_clockwise"
-                    android:layout_margin="2dip"
-                    style="@style/ChessImageButton" />
-
                 <ImageButton android:id="@+id/ButtonMenu"
                     android:src="@drawable/ic_three_dots_vertical"
                     android:layout_width="48dip"
                     android:layout_height="48dip" />
             </TableRow>
         </TableLayout>
-    </com.google.android.material.card.MaterialCardView>
 
-    <ViewAnimator
-        android:id="@+id/ViewAnimatorRoot"
+        <View
+            android:id="@+id/HorizontalSpacer"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_above="@id/ButtonBar"
+            />
+
+        <ViewAnimator
+            android:id="@+id/ViewAnimatorSub"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentTop="true"
+            android:layout_above="@id/HorizontalSpacer"
+            >
+
+            <!-- 0 -->
+            <include layout="@layout/ics_login"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" />
+
+            <!-- 1 -->
+            <include layout="@layout/loader"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" />
+
+            <!-- 2 -->
+            <ListView
+                android:id="@+id/ListPlayers"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawSelectorOnTop="false" />
+
+            <!-- 3 -->
+            <ListView
+                android:id="@+id/ListGames"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawSelectorOnTop="false" />
+
+            <!-- 4 -->
+            <ListView
+                android:id="@+id/ListChallenges"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawSelectorOnTop="false" />
+
+            <!-- 5 -->
+            <ListView
+                android:id="@+id/ListMenu"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawSelectorOnTop="false" />
+
+            <!-- 6 -->
+            <ListView
+                android:id="@+id/ListStored"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:drawSelectorOnTop="false" />
+
+            <!-- 7 -->
+            <include layout="@layout/ics_console"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" />
+
+        </ViewAnimator>
+    </RelativeLayout>
+    <!-- 1 -->
+    <include layout="@layout/ics_play"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/ButtonBar"
-        >
-
-        <!-- 0 -->
-        <include layout="@layout/ics_login"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
-
-        <!-- 1 -->
-        <include layout="@layout/loader"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
-
-        <!-- 2 -->
-        <include layout="@layout/ics_play"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- 3 -->
-        <ListView
-            android:id="@+id/ListPlayers"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:drawSelectorOnTop="false" />
-
-        <!-- 4 -->
-        <ListView
-            android:id="@+id/ListGames"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:drawSelectorOnTop="false" />
-
-        <!-- 5 -->
-        <ListView
-            android:id="@+id/ListChallenges"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:drawSelectorOnTop="false" />
-
-        <!-- 6 -->
-        <ListView
-            android:id="@+id/ListMenu"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:drawSelectorOnTop="false" />
-
-        <!-- 7 -->
-        <ListView
-            android:id="@+id/ListStored"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:drawSelectorOnTop="false" />
-
-        <!-- 8 -->
-        <include layout="@layout/ics_console"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
-
-    </ViewAnimator>
-</RelativeLayout>
+        android:layout_height="wrap_content" />
+</ViewAnimator>

@@ -212,10 +212,18 @@
                     android:layout_weight="1"
                     style="@style/ChessButton"
                     />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <ImageButton
                     android:id="@+id/ButtonTakeBack"
                     android:src="@drawable/ic_backspace"
+                    style="@style/ChessImageButton" />
+                <ImageButton
+                    android:id="@+id/ButtonRefresh"
+                    android:src="@drawable/ic_arrow_clockwise"
                     style="@style/ChessImageButton" />
             </LinearLayout>
 
