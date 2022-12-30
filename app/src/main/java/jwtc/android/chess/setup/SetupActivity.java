@@ -248,6 +248,7 @@ public class SetupActivity extends ChessBoardActivity {
     public void addPiece(final int pos, final int piece, final int turn) {
         Log.d(TAG, "addPiece " + pos + " " + piece + " " + turn);
         if (piece == BoardConstants.DUCK) {
+            jni.setVariant(BoardConstants.VARIANT_DEFAULT); // resets duck
             jni.setVariant(BoardConstants.VARIANT_DUCK);
             jni.requestDuckMove(pos);
         } else {
