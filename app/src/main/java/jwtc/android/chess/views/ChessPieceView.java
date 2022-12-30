@@ -57,7 +57,7 @@ public class ChessPieceView extends AppCompatImageView {
         View parent = (View) this.getParent();
         int widthSize = parent.getWidth();
 
-        Log.d("Piece", "onMeasure" + widthSize);
+//        Log.d("Piece", "onMeasure" + widthSize);
 
         setMeasuredDimension(widthSize, widthSize);
     }

@@ -29,6 +29,8 @@ public class SetupActivity extends ChessBoardActivity {
 
     private ChessPiecesStackView blackPieces;
     private ChessPiecesStackView whitePieces;
+    private ChessPiecesStackView duckStack;
+
     private Spinner spinnerEPFile;
     private RadioButton radioTurnWhite;
     private RadioButton radioTurnBlack;
@@ -50,6 +52,7 @@ public class SetupActivity extends ChessBoardActivity {
 
         blackPieces = findViewById(R.id.blackPieces);
         whitePieces = findViewById(R.id.whitePieces);
+        duckStack = findViewById(R.id.duckStack);
         radioTurnWhite = findViewById(R.id.RadioSetupTurnWhite);
         radioTurnBlack = findViewById(R.id.RadioSetupTurnBlack);
         checkWhiteCastleShort = findViewById(R.id.CheckBoxSetupWhiteCastleShort);
@@ -222,6 +225,14 @@ public class SetupActivity extends ChessBoardActivity {
             whitePieceView.setOnTouchListener(myTouchListener);
             whitePieces.addView(whitePieceView);
         }
+
+        ChessSquareView squareForDuck = new ChessSquareView(this, 0);
+        squareForDuck.setOnDragListener(myDragListener);
+        duckStack.addView(squareForDuck);
+
+        ChessPieceView duckView = new ChessPieceView(this, BoardConstants.WHITE, BoardConstants.DUCK, 0);
+        duckView.setOnTouchListener(myTouchListener);
+        duckStack.addView(duckView);
     }
 
     public void resetBoard() {
@@ -236,19 +247,28 @@ public class SetupActivity extends ChessBoardActivity {
     // p = _jni.pieceAt(t, _selectedPosition);
     public void addPiece(final int pos, final int piece, final int turn) {
         Log.d(TAG, "addPiece " + pos + " " + piece + " " + turn);
-        jni.putPiece(pos, piece, turn);
+        if (piece == BoardConstants.DUCK) {
+            jni.setVariant(BoardConstants.VARIANT_DUCK);
+            jni.requestDuckMove(pos);
+        } else {
+            jni.putPiece(pos, piece, turn);
+        }
     }
 
     public void removePiece(final int pos) {
-        final int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
-        if (whitePiece != BoardConstants.FIELD) {
-            Log.d(TAG, "removePiece white " + pos + " " + whitePiece);
-            jni.removePiece(BoardConstants.WHITE, pos);
-        }
-        final int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
-        if (blackPiece != BoardConstants.FIELD) {
-            Log.d(TAG, "removePiece black " + pos + " " + blackPiece);
-            jni.removePiece(BoardConstants.BLACK, pos);
+        if (jni.getDuckPos() == pos) {
+            jni.setVariant(BoardConstants.VARIANT_DEFAULT);
+        } else {
+            final int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
+            if (whitePiece != BoardConstants.FIELD) {
+                Log.d(TAG, "removePiece white " + pos + " " + whitePiece);
+                jni.removePiece(BoardConstants.WHITE, pos);
+            }
+            final int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
+            if (blackPiece != BoardConstants.FIELD) {
+                Log.d(TAG, "removePiece black " + pos + " " + blackPiece);
+                jni.removePiece(BoardConstants.BLACK, pos);
+            }
         }
     }
 

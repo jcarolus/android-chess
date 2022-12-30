@@ -19,6 +19,7 @@ int jniRegisterNativeMethods(JNIEnv* env, const char* className, const JNINative
 extern "C" {
 
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_destroy(JNIEnv* env, jobject thiz);
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setVariant(JNIEnv* env, jobject thiz, jint variant);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_requestMove(JNIEnv* env, jobject thiz, jint from, jint to);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_move(JNIEnv* env, jobject thiz, jint move);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_requestDuckMove(JNIEnv* env, jobject thiz, jint duckPos);
