@@ -67,6 +67,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </RadioGroup>
+
+                        <jwtc.android.chess.views.ChessPiecesStackView
+                            android:layout_width="@dimen/imageButtonSize"
+                            android:layout_height="@dimen/imageButtonSize"
+                            android:layout_marginLeft="16dip"
+                            android:layout_marginRight="4dip"
+                            android:id="@+id/duckStack" />
                     </TableRow>
                 </TableLayout>
 
