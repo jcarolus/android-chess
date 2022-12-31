@@ -201,7 +201,7 @@ int ChessBoard::getVariant() {
 void ChessBoard::setVariant(int variant) {
     m_variant = variant;
     if (variant == VARIANT_DEFAULT) {
-        m_duckPos = -1;
+        unsetDuckPos();
     }
 }
 
@@ -2221,16 +2221,7 @@ void ChessBoard::remove(const int t, const int p) {
 }
 
 void ChessBoard::putDuck(const int duckPos) {
-    const int oldDuckPos = getDuckPos();
-    if (oldDuckPos != -1) {
-        m_bitb &= NOT_BITS[oldDuckPos];
-        m_bitbPositions[WHITE] &= NOT_BITS[oldDuckPos];
-        m_bitbPositions[BLACK] &= NOT_BITS[oldDuckPos];
-
-        m_bitb_45 &= ~ROT_45_BITS[oldDuckPos];
-        m_bitb_90 &= ~ROT_90_BITS[oldDuckPos];
-        m_bitb_315 &= ~ROT_315_BITS[oldDuckPos];
-    }
+    unsetDuckPos();
 
     m_duckPos = duckPos;
 
@@ -2243,7 +2234,16 @@ void ChessBoard::putDuck(const int duckPos) {
 }
 
 void ChessBoard::unsetDuckPos() {
-    // leave the bitboards!
+    const int oldDuckPos = getDuckPos();
+    if (oldDuckPos != -1) {
+        m_bitb &= NOT_BITS[oldDuckPos];
+        m_bitbPositions[WHITE] &= NOT_BITS[oldDuckPos];
+        m_bitbPositions[BLACK] &= NOT_BITS[oldDuckPos];
+
+        m_bitb_45 &= ~ROT_45_BITS[oldDuckPos];
+        m_bitb_90 &= ~ROT_90_BITS[oldDuckPos];
+        m_bitb_315 &= ~ROT_315_BITS[oldDuckPos];
+    }
     m_duckPos = -1;
 }
 

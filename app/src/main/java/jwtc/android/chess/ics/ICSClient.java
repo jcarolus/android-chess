@@ -61,9 +61,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private TextView _tvConsole;
 
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private ImageButton buttonMenu, buttonRefresh;
+    private ImageButton buttonMenu, buttonRefresh, buttonTakeBack;
     private EditText _editHandle, _editPwd, _editConsole;
-    private ViewAnimator viewAnimatorRoot;
+    private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
     private TableLayout layoutBoardTop, layoutBoardBottom;
     private ScrollView _scrollConsole;
@@ -86,16 +86,17 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     private SimpleAdapter adapterGames, adapterPlayers, adapterChallenges, adapterStored, adapterMenu;
 
+    protected static final int VIEW_LOBBY = 0;
+    protected static final int VIEW_BOARD = 1;
+
     protected static final int VIEW_LOGIN = 0;
     protected static final int VIEW_LOADING = 1;
-    protected static final int VIEW_BOARD = 2;
-    protected static final int VIEW_PLAYERS = 3;
-    protected static final int VIEW_GAMES = 4;
-    protected static final int VIEW_CHALLENGES = 5;
-    protected static final int VIEW_MENU = 6;
-    protected static final int VIEW_STORED = 7;
-    protected static final int VIEW_CONSOLE = 8;
-
+    protected static final int VIEW_PLAYERS = 2;
+    protected static final int VIEW_GAMES = 3;
+    protected static final int VIEW_CHALLENGES = 4;
+    protected static final int VIEW_MENU = 5;
+    protected static final int VIEW_STORED = 6;
+    protected static final int VIEW_CONSOLE = 7;
 
     protected static final int DECREASE = 0;
 
@@ -141,6 +142,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _bShowClockPGN = true;
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
+        viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
 
         playButtonsLayout = findViewById(R.id.LayoutPlayButtons);
         examineButtonsLayout = findViewById(R.id.LayoutExamineButtons);
@@ -225,7 +227,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             }
         });
 
-        ImageButton buttonTakeBack = findViewById(R.id.ButtonTakeBack);
+        buttonTakeBack = findViewById(R.id.ButtonTakeBack);
         buttonTakeBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -751,38 +753,38 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         adapterMenu.notifyDataSetChanged();
 
-        viewAnimatorRoot.setDisplayedChild(VIEW_MENU);
+        hideBoardView();
+        viewAnimatorSub.setDisplayedChild(VIEW_MENU);
         buttonMenu.setVisibility(View.GONE);
-        buttonRefresh.setVisibility(View.GONE);
 
         textViewTitle.setText(icsServer != null ? icsServer.getHandle() : "--");
     }
 
     public void setLoadingView() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_LOADING);
+        hideBoardView();
+        viewAnimatorSub.setDisplayedChild(VIEW_LOADING);
         buttonMenu.setVisibility(View.GONE);
-        buttonRefresh.setVisibility(View.GONE);
         textViewTitle.setText("");
     }
 
     public void setPlayerView() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_PLAYERS);
+        hideBoardView();
+        viewAnimatorSub.setDisplayedChild(VIEW_PLAYERS);
         buttonMenu.setVisibility(View.VISIBLE);
-        buttonRefresh.setVisibility(View.GONE);
         textViewTitle.setText(R.string.ics_menu_players);
     }
 
     public void setGamesView() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_GAMES);
+        hideBoardView();
+        viewAnimatorSub.setDisplayedChild(VIEW_GAMES);
         buttonMenu.setVisibility(View.VISIBLE);
-        buttonRefresh.setVisibility(View.GONE);
         textViewTitle.setText(R.string.ics_menu_games);
     }
 
     public void setChallengeView() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_CHALLENGES);
+        hideBoardView();
+        viewAnimatorSub.setDisplayedChild(VIEW_CHALLENGES);
         buttonMenu.setVisibility(View.VISIBLE);
-        buttonRefresh.setVisibility(View.GONE);
         textViewTitle.setText(R.string.ics_menu_challenges);
     }
 
@@ -791,28 +793,33 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             viewAnimatorRoot.setDisplayedChild(VIEW_BOARD);
         }
         buttonMenu.setVisibility(View.GONE);
-        buttonRefresh.setVisibility(View.VISIBLE);
         textViewTitle.setText("");
     }
 
+    public void hideBoardView() {
+        if (viewAnimatorRoot.getDisplayedChild() != VIEW_LOBBY) {
+            viewAnimatorRoot.setDisplayedChild(VIEW_LOBBY);
+        }
+    }
+
     public void setLoginView() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_LOGIN);
+        hideBoardView();
+        viewAnimatorSub.setDisplayedChild(VIEW_LOGIN);
         buttonMenu.setVisibility(View.GONE);
-        buttonRefresh.setVisibility(View.GONE);
         textViewTitle.setText("");
     }
 
     public void setConsoleView() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_CONSOLE);
+        hideBoardView();
+        viewAnimatorSub.setDisplayedChild(VIEW_CONSOLE);
         buttonMenu.setVisibility(View.VISIBLE);
-        buttonRefresh.setVisibility(View.GONE);
         textViewTitle.setText("");
     }
 
     public void setStoredView() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_STORED);
+        hideBoardView();
+        viewAnimatorSub.setDisplayedChild(VIEW_STORED);
         buttonMenu.setVisibility(View.VISIBLE);
-        buttonRefresh.setVisibility(View.GONE);
         textViewTitle.setText("");
     }
 
@@ -963,6 +970,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         int viewMode = icsApi.getViewMode();
 
         playButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_PLAY ? View.VISIBLE : View.GONE);
+        buttonTakeBack.setVisibility(viewMode == ICSApi.VIEW_PLAY ? View.VISIBLE : View.GONE);
         examineButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_EXAMINE ? View.VISIBLE : View.GONE);
 
         String lastMove = icsApi.getLastMove();

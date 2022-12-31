@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import jwtc.android.chess.R;
+
 public class ChessPiecesStackView extends ViewGroup {
     private static final String TAG = "ChessPiecesStackView";
 
@@ -59,7 +61,9 @@ public class ChessPiecesStackView extends ViewGroup {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        int height = width / 5;
+        int numChilds = getId() == R.id.duckStack ? 1 : 5; // hack, an attr is another solution
+
+        int height = width / numChilds;
         if (height > heightSize) {
             height = heightSize;
         }

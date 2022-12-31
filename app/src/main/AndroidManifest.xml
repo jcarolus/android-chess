@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jwtc.android.chess"
     android:installLocation="auto"
-    android:versionCode="184"
-    android:versionName="9.3.2">
+    android:versionCode="186"
+    android:versionName="9.3.4">
 
     <application
         android:name="android.app.Application"
@@ -152,6 +152,7 @@
             android:screenOrientation="locked"
             android:configChanges="orientation"
             android:launchMode="singleInstance"
+            android:taskAffinity=""
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

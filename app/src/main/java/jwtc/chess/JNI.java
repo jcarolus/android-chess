@@ -232,6 +232,8 @@ public class JNI {
 
     public native void destroy();
 
+    public native void setVariant(int variant);
+
     public native int requestMove(int from, int to);
 
     public native int requestDuckMove(int duckPos);
