@@ -172,11 +172,8 @@ public class LocalEngine extends EngineApi {
                         if (move != 0)
                             s += Move.toDbgString(move).replace("[", "").replace("]", "") + " ";
                     }
-                    if (ply == 5) {
-                        s += "...";
-                    }
 
-                    s = s + "\n\t" + String.format("%.2f", fValue) /*+ "\t@ " + ply*/;
+                    s = s + "\t\t" + String.format("%.2f", fValue) /*+ "\t@ " + ply*/;
 
                     sendMessageFromThread(s);
 
