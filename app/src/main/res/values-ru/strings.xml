@@ -360,14 +360,14 @@
     <string name="ics_tells_you">%1$s говорит вам: %2$s</string>
 
     <string name="ics_save_game">Успешно сохранено в chessgamesonline.pgn</string>
-    <string name="ics_copy_clipboard">Игра успешно сохранена в буфер обмена</string>
+    <string name="copied_clipboard_success">Игра успешно сохранена в буфер обмена</string>
     <string name="ics_messages">Отправить сообщения противнику</string>
     <string name="ics_good_game">Хорошая игра</string>
     <string name="ics_offer_rematch">Предложить МАТЧ-РЕВАНШ</string>
     <string name="ics_game">Игра</string>
     <string name="ics_examine">Исследовать</string>
     <string name="ics_send_app">Отправить в ПРИЛОЖЕНИЕ</string>
-    <string name="ics_copy_clipboard_text">Скопировать в БУФЕР ОБМЕНА</string>
+    <string name="copied_clipboard_success_text">Скопировать в БУФЕР ОБМЕНА</string>
 
     <string name="ics_error_connection">Не удаётся подключиться к серверу. Убедитесь, что ваше интернет-подключение активно.</string>
     <string name="ics_lost_connection">Подключение к серверу оборвано.</string>

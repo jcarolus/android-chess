@@ -360,14 +360,14 @@
     <string name="ics_tells_you">%1$s lhe diz: %2$s</string>
 
     <string name="ics_save_game">Salvado com éxito para o chessgamesonline.pgn</string>
-    <string name="ics_copy_clipboard">Jogo copiado com éxito para o área de transferência</string>
+    <string name="copied_clipboard_success">Jogo copiado com éxito para o área de transferência</string>
     <string name="ics_messages">Envía mensagens para os oponentes</string>
     <string name="ics_good_game">Bom jogo</string>
     <string name="ics_offer_rematch">Oferece NOVA COMPETIÇÃO</string>
     <string name="ics_game">Jogo</string>
     <string name="ics_examine">Examina</string>
     <string name="ics_send_app">Envia para o APLICATIVO</string>
-    <string name="ics_copy_clipboard_text">Copia para ÁREA DE TRANSFERÊNCIA</string>
+    <string name="copied_clipboard_success_text">Copia para ÁREA DE TRANSFERÊNCIA</string>
 
     <string name="ics_error_connection">Não podia conectar ao servidor. Assegura que tem conexão internet ativada</string>
     <string name="ics_lost_connection">Conexão para servidor quebrada</string>

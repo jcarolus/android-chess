@@ -379,14 +379,14 @@
     <string name="ics_tells_you">%1$s tells you: %2$s</string>
 
     <string name="ics_save_game">Successfully saved to chessgamesonline.pgn</string>
-    <string name="ics_copy_clipboard">Game copied to clipboard successfully</string>
+    <string name="copied_clipboard_success">Game copied to clipboard successfully</string>
     <string name="ics_messages">Send Messages to opponent</string>
     <string name="ics_good_game">Good Game</string>
     <string name="ics_offer_rematch">Offer REMATCH</string>
     <string name="ics_game">Game</string>
     <string name="ics_examine">Examine</string>
     <string name="ics_send_app">Send to APPLICATION</string>
-    <string name="ics_copy_clipboard_text">Copy to CLIPBOARD</string>
+    <string name="copied_clipboard_success_text">Copy to CLIPBOARD</string>
 
     <string name="ics_error_connection">Could not connect to server. Make sure you have your internet connection enabled</string>
     <string name="ics_lost_connection">Connection to server is broken.</string>

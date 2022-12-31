@@ -20,6 +20,8 @@
         <item>@string/menu_load_game</item>
         <item>@string/menu_prefs</item>
         <item>@string/menu_set_clock</item>
+        <item>@string/menu_fromclip</item>
+        <item>@string/menu_clip_pgn</item>
     </string-array>
     <string-array name="levels_ply">
         <item>1 ply</item>

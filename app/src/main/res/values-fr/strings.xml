@@ -378,14 +378,14 @@
     <string name="ics_tells_you">%1$s vous dit : %2$s</string>
 
     <string name="ics_save_game">Sauvegarde de chessgamesonline.pgn avec succès</string>
-    <string name="ics_copy_clipboard">Partie copiée dans le presse papier avec succès</string>
+    <string name="copied_clipboard_success">Partie copiée dans le presse papier avec succès</string>
     <string name="ics_messages">Messages envoyées à l\'adversaire</string>
     <string name="ics_good_game">Bonne partie</string>
     <string name="ics_offer_rematch">Offrir la revanche</string>
     <string name="ics_game">Partie</string>
     <string name="ics_examine">Examiner</string>
     <string name="ics_send_app">Envoyé à APPLICATION</string>
-    <string name="ics_copy_clipboard_text">Copié dans CLIPBOARD</string>
+    <string name="copied_clipboard_success_text">Copié dans CLIPBOARD</string>
 
     <string name="ics_error_connection">Impossible de se connecter au serveur. Assurez-vous d\'avoir une connection internet disponible</string>
     <string name="ics_lost_connection">La connection au serveur est suspendue.</string>

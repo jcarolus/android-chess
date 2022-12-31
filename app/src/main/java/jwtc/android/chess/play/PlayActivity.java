@@ -380,8 +380,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 editor.putLong("game_id", lGameID);
                 editor.putInt("boardNum", 0);
                 editor.putString("FEN", null);
-//                @TODO
-//                editor.putInt("playMode", _chessView.HUMAN_HUMAN);
                 editor.putBoolean("playAsBlack", false);
                 editor.commit();
             }
@@ -395,7 +393,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 editor.putInt("boardNum", 0);
                 editor.putString("FEN", contents);
                 editor.commit();
-                //doToast("Content: " + contents + "::" + format);
             }
         }
     }
@@ -649,6 +646,19 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
                     final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
                     menuDialog.show();
+                } else if (item.equals(getString(R.string.menu_fromclip))) {
+                    String s = getStringFromClipboard();
+                    if (gameApi.loadPGN(s)) {
+                        lGameID = 0;
+                        updateForNewGame();
+                    } else {
+                        if (gameApi.initFEN(s, true)) {
+                            lGameID = 0;
+                            updateForNewGame();
+                        }
+                    }
+                } else if (item.equals(getString(R.string.menu_clip_pgn))) {
+                    stringToClipboard(gameApi.exportFullPGN(), getString(R.string.copied_clipboard_success));
                 }
 
                 break;

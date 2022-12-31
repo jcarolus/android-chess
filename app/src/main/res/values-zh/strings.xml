@@ -360,14 +360,14 @@
     <string name="ics_tells_you">%1$s 告诉你: %2$s</string>
 
     <string name="ics_save_game">成功地保存到chessgamesonline.pgn</string>
-    <string name="ics_copy_clipboard">对局已成功复制到剪贴板</string>
+    <string name="copied_clipboard_success">对局已成功复制到剪贴板</string>
     <string name="ics_messages">给对手发送消息</string>
     <string name="ics_good_game">精彩的对局</string>
     <string name="ics_offer_rematch">进行复赛</string>
     <string name="ics_game">对局</string>
     <string name="ics_examine">测验</string>
     <string name="ics_send_app">发送给应用</string>
-    <string name="ics_copy_clipboard_text">复制到剪贴板</string>
+    <string name="copied_clipboard_success_text">复制到剪贴板</string>
 
     <string name="ics_error_connection">无法连接服务器. 请检查你有可用的网络连接</string>
     <string name="ics_lost_connection">连接服务器存在问题.</string>
