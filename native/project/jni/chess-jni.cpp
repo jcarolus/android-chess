@@ -75,7 +75,7 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchBestMove(JNIEnv* env, jobjec
     return Game::getInstance()->getBestMoveAt(ply);
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchBestValue(JNIEnv* env, jobject thiz) {
-    return Game::getInstance()->m_bestValue;
+    return Game::getInstance()->m_bestMoveAndValue.value;
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchDepth(JNIEnv* env, jobject thiz) {
     return Game::getInstance()->m_searchDepth;
