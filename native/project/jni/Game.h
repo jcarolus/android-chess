@@ -34,7 +34,7 @@ class Game {
     void setSearchTime(int secs);
     void setSearchLimit(int depth);
     void search();
-    MoveAndValue alphaBeta(ChessBoard* board, const int depth, int alpha, const int beta);
+    int alphaBeta(ChessBoard* board, const int depth, int alpha, const int beta);
     // @TODO actual performance testing inline vs regular
     inline int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);
     int searchDB();

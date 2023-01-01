@@ -223,18 +223,19 @@ void Game::search() {
         DEBUG_PRINT("Search with millies given %ld", m_milliesGiven);
 
         for (m_searchDepth = 1; m_searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); m_searchDepth++) {
-            m_bestMoveAndValue =
-                alphaBeta(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+            alphaBeta(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
 
             DEBUG_PRINT("Searched at depth %d - value: %d - move: %d - num moves: %d\n",
                         m_searchDepth,
-                        m_bestMoveAndValue.value,
+                        m_arrBestMoves[0].value,
                         getBestMoveAt(m_searchDepth),
                         m_board->getNumMoves());
 
             if (m_bInterrupted) {
                 break;
             } else {
+                m_bestMoveAndValue = m_arrBestMoves[0];
+
                 if (m_bestMoveAndValue.value == ChessBoard::VALUATION_MATE) {
                     for (i = 0; i < MAX_DEPTH; i++) {
                         int moveAt = getBestMoveAt(i);
@@ -257,7 +258,9 @@ void Game::search() {
     } else {
         DEBUG_PRINT("Search with limit given: %d\n", m_searchLimit);
         m_searchDepth = m_searchLimit;
-        m_bestMoveAndValue = alphaBeta(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+        alphaBeta(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+
+        m_bestMoveAndValue = m_arrBestMoves[0];
     }
 
     if (m_bInterrupted) {
@@ -278,19 +281,19 @@ void Game::search() {
     m_bSearching = false;
 }
 
-MoveAndValue Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int beta) {
+int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int beta) {
     if (m_evalCount % 1000 == 0) {
         if (timeUp()) {
             m_bInterrupted = true;
         }
     }
     if (m_bInterrupted || depth >= MAX_DEPTH) {
-        return {alpha, 0, -1};
+        return alpha;
     }
 
     // 50 move rule and repetition check
     if (board->checkEnded()) {
-        return {ChessBoard::VALUATION_DRAW, 0, -1};
+        return ChessBoard::VALUATION_DRAW;
     }
 
     board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth].move);
@@ -352,8 +355,7 @@ MoveAndValue Game::alphaBeta(ChessBoard *board, const int depth, int alpha, cons
                             currentDuck.value = -duckBoard->boardValueExtension();
                         } else {
                             duckBoard->getMoves();
-                            nextDuck = alphaBeta(duckBoard, depth - 1, -beta, -alpha);
-                            currentDuck.value = -nextDuck.value;
+                            currentDuck.value = -alphaBeta(duckBoard, depth - 1, -beta, -alpha);
                         }
                     }
 
@@ -377,8 +379,7 @@ MoveAndValue Game::alphaBeta(ChessBoard *board, const int depth, int alpha, cons
             if (depth == 1) {
                 current.value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
             } else {
-                next = alphaBeta(nextBoard, depth - 1, -beta, -alpha);
-                current.value = -next.value;
+                current.value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
             }
         }
 
@@ -400,12 +401,12 @@ MoveAndValue Game::alphaBeta(ChessBoard *board, const int depth, int alpha, cons
     if (board->getNumMoves() == 0) {
         m_evalCount++;
         if (Move_isCheck(board->getMyMove())) {
-            return {.value = (-ChessBoard::VALUATION_MATE), .move = 0, .duckMove = -1};
+            return -ChessBoard::VALUATION_MATE;
         }
-        return {.value = ChessBoard::VALUATION_DRAW, .move = 0, .duckMove = -1};
+        return ChessBoard::VALUATION_DRAW;
     }
 
-    return best;
+    return best.value;
 }
 
 //
