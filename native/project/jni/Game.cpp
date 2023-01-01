@@ -109,11 +109,22 @@ int Game::getBestMove() {
 int Game::getBestDuckMove() {
     return m_bestMoveAndValue.duckMove;
 }
+int Game::getBestValue() {
+    return m_bestMoveAndValue.value;
+}
+
 int Game::getBestMoveAt(int ply) {
     if (ply >= 0 && ply < MAX_DEPTH) {
         return m_arrBestMoves[ply].move;
     }
     return 0;
+}
+
+int Game::getBestDuckMoveAt(int ply) {
+    if (ply >= 0 && ply < MAX_DEPTH) {
+        return m_arrBestMoves[ply].duckMove;
+    }
+    return -1;
 }
 
 boolean Game::requestMove(int from, int to) {
@@ -326,9 +337,8 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
 
         if (variant == ChessBoard::VARIANT_DUCK) {
             if (nextBoard->areKingsOnTheBoard()) {
-                MoveAndValue currentDuck = {.value = 0, .move = 0, .duckMove = -1};
+                MoveAndValue currentDuck;
                 MoveAndValue bestDuck = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
-                MoveAndValue nextDuck;
                 int tmpDuckMove = -1, numMoves = nextBoard->getNumMoves(), i;
                 ChessBoard *duckBoard = new ChessBoard();
                 for (i = 0; i < numMoves; i++) {
@@ -336,7 +346,9 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
                     if (Move_isHIT(tmpDuckMove)) {
                         continue;
                     }
-                    currentDuck.duckMove = Move_getTo(tmpDuckMove);  // actual duckMove is a position
+                    currentDuck = (MoveAndValue){.value = 0,
+                                                 .move = 0,
+                                                 .duckMove = Move_getTo(tmpDuckMove)};  // actual duckMove is a position
 
                     memcpy(duckBoard, nextBoard, ChessBoard::SIZEOF_BOARD);
                     if (!duckBoard->requestDuckMove(currentDuck.duckMove)) {

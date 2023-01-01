@@ -29,7 +29,9 @@ class Game {
     void setPromo(int p);
     int getBestMove();
     int getBestDuckMove();
+    int getBestValue();
     int getBestMoveAt(int ply);
+    int getBestDuckMoveAt(int ply);
 
     void setSearchTime(int secs);
     void setSearchLimit(int depth);

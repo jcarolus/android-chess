@@ -262,6 +262,8 @@ public class JNI {
 
     public native int peekSearchBestMove(int ply);
 
+    public native int peekSearchBestDuckMove(int ply);
+
     public native int peekSearchBestValue();
 
     public native int peekSearchDepth();
