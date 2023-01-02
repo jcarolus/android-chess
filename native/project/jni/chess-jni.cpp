@@ -74,8 +74,12 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchDone(JNIEnv* env, jobject th
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchBestMove(JNIEnv* env, jobject thiz, jint ply) {
     return Game::getInstance()->getBestMoveAt(ply);
 }
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchBestDuckMove(JNIEnv* env, jobject thiz, jint ply) {
+    return Game::getInstance()->getBestDuckMoveAt(ply);
+}
+
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchBestValue(JNIEnv* env, jobject thiz) {
-    return Game::getInstance()->m_bestValue;
+    return Game::getInstance()->getBestValue();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchDepth(JNIEnv* env, jobject thiz) {
     return Game::getInstance()->m_searchDepth;
@@ -222,6 +226,7 @@ static JNINativeMethod sMethods[] = {
     {"getBoardValue", "()I", (void*) Java_jwtc_chess_JNI_getBoardValue},
     {"peekSearchDone", "()I", (void*) Java_jwtc_chess_JNI_peekSearchDone},
     {"peekSearchBestMove", "(I)I", (void*) Java_jwtc_chess_JNI_peekSearchBestMove},
+    {"peekSearchBestDuckMove", "(I)I", (void*) Java_jwtc_chess_JNI_peekSearchBestDuckMove},
     {"peekSearchBestValue", "()I", (void*) Java_jwtc_chess_JNI_peekSearchBestValue},
     {"peekSearchDepth", "()I", (void*) Java_jwtc_chess_JNI_peekSearchDepth},
     {"getEvalCount", "()I", (void*) Java_jwtc_chess_JNI_getEvalCount},

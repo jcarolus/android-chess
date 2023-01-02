@@ -356,14 +356,14 @@
     <string name="ics_tells_you">%1$s sagt: %2$s</string>
 
     <string name="ics_save_game">Erfolgreich gespeichert nach chessgamesonline.pgn</string>
-    <string name="ics_copy_clipboard">Spiel wurde erfolgreich in die Zwischenablage kopiert</string>
+    <string name="copied_clipboard_success">Spiel wurde erfolgreich in die Zwischenablage kopiert</string>
     <string name="ics_messages">Schreibe eine Nachricht an deinen Gegner</string>
     <string name="ics_good_game">Gutes Spiel</string>
     <string name="ics_offer_rematch">Neues Spiel anbieten</string>
     <string name="ics_game">Spiel</string>
     <string name="ics_examine">Analysieren</string>
     <string name="ics_send_app">Schicke an APPLICATION</string>
-    <string name="ics_copy_clipboard_text">In die Zwischenablage kopieren</string>
+    <string name="copied_clipboard_success_text">In die Zwischenablage kopieren</string>
 
     <string name="ics_error_connection">Verbindung zum Server konnte nicht hergestellt werden. Prüfe, ob eine Internetverbindung besteht</string>
     <string name="ics_lost_connection">Verbidung zum Server verloren.</string>

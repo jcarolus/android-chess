@@ -255,9 +255,9 @@ bool testEngine() {
                                     "Quiescent"},
                                    {Game::getInstance(),
                                     "5Q1k/6pp/8/$7/8/8/7K/8 b - - 0 1",
-                                    "5Q$k/6pp/8/8/8/8/7K/8 b - - 0 1",
+                                    "5Q$k/7p/8/6p1/8/8/7K/8 w - g6 0 1",
                                     2,
-                                    2,
+                                    1,
                                     true,
                                     "Duck"}};
 

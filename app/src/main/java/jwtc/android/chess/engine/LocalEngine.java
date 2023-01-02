@@ -8,6 +8,7 @@ import java.io.OutputStream;
 
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
+import jwtc.chess.Pos;
 
 public class LocalEngine extends EngineApi {
     private static final String TAG = "LocalEngine";
@@ -153,7 +154,7 @@ public class LocalEngine extends EngineApi {
                 JNI jni = JNI.getInstance();
                 Thread.sleep(300);
 
-                int move, value, ply = 1, j, iSleep = 1000;
+                int move, value, ply = 1, j, iSleep = 1000, duckMove;
                 String s;
                 float fValue;
                 while (jni.peekSearchDone() == 0) {
@@ -169,14 +170,17 @@ public class LocalEngine extends EngineApi {
                     }
                     for (j = 0; j < ply; j++) {
                         move = jni.peekSearchBestMove(j);
-                        if (move != 0)
-                            s += Move.toDbgString(move).replace("[", "").replace("]", "") + " ";
-                    }
-                    if (ply == 5) {
-                        s += "...";
+                        if (move != 0) {
+                            s += Move.toDbgString(move).replace("[", "").replace("]", "");
+                            duckMove = jni.peekSearchBestDuckMove(j);
+                            if (duckMove != -1) {
+                                s += "@" + Pos.toString(duckMove);
+                            }
+                            s += " ";
+                        }
                     }
 
-                    s = s + "\n\t" + String.format("%.2f", fValue) /*+ "\t@ " + ply*/;
+                    s = s + "\t\t" + String.format("%.2f", fValue) /*+ "\t@ " + ply*/;
 
                     sendMessageFromThread(s);
 

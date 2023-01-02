@@ -140,7 +140,7 @@
                         android:id="@+id/LayoutEngineInfo"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:stretchColumns="2">
+                        android:stretchColumns="1">
                         <TableRow
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content">
@@ -163,18 +163,18 @@
                                     android:visibility="gone" />
                             </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/TextViewEngine"
-                                style="@style/MyNormalTextStyle"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="4dip" />
 
                             <TextView
                                 android:id="@+id/TextViewEngineValue"
                                 style="@style/MyNormalTextStyle"
-                                android:layout_width="fill_parent"
+                                android:layout_width="0dp"
+                                android:layout_weight="2"
                                 android:layout_height="wrap_content"
+                                android:scrollHorizontally="false"
+                                android:singleLine="false"
+                                android:minLines="2"
+                                android:maxLines="2"
+                                android:ellipsize="end"
                                 android:padding="4dip" />
 
                             <ImageButton android:id="@+id/ButtonMenu"

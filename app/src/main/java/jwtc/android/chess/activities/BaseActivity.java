@@ -1,6 +1,8 @@
 package jwtc.android.chess.activities;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,12 +20,16 @@ import jwtc.android.chess.HtmlActivity;
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     public static final int NO_RESULT = 0;
+    private ClipboardManager clipboardManager;
+    private ClipData clipData;
 
     protected float fVolume = 1.0f;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        clipboardManager = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
     }
 
     @Override
@@ -52,14 +58,26 @@ public class BaseActivity extends AppCompatActivity {
         t.show();
     }
 
-    public void sharePGN(String PGN) {
+    public void shareString(String s) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, PGN);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, s);
         sendIntent.setType("application/x-chess-pgn");
 
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
+    }
+
+    public void stringToClipboard(String s, String sToast) {
+        clipData = ClipData.newPlainText("text", s);
+        clipboardManager.setPrimaryClip(clipData);
+        doToast(sToast);
+    }
+
+    public String getStringFromClipboard() {
+        ClipData pData = clipboardManager.getPrimaryClip();
+        ClipData.Item item = pData.getItemAt(0);
+        return item.getText().toString();
     }
 
     // @TODO

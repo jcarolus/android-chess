@@ -3,6 +3,12 @@
 #include "common.h"
 #include "ChessBoard.h"
 
+typedef struct {
+    int value;
+    int move;
+    int duckMove;
+} MoveAndValue;
+
 class Game {
    public:
     Game(void);
@@ -23,13 +29,15 @@ class Game {
     void setPromo(int p);
     int getBestMove();
     int getBestDuckMove();
+    int getBestValue();
     int getBestMoveAt(int ply);
+    int getBestDuckMoveAt(int ply);
 
     void setSearchTime(int secs);
     void setSearchLimit(int depth);
     void search();
-    boolean alphaBetaRoot(const int depth, int alpha, const int beta);
     int alphaBeta(ChessBoard* board, const int depth, int alpha, const int beta);
+    // @TODO actual performance testing inline vs regular
     inline int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);
     int searchDB();
     int searchHouse();
@@ -43,7 +51,6 @@ class Game {
     boolean m_bInterrupted;
     boolean m_bSearching;
     int m_evalCount;
-    int m_bestValue;
     int m_searchDepth;
     int m_searchLimit;
 
@@ -51,7 +58,7 @@ class Game {
     long findDBKey(BITBOARD bbKey);
     boolean readDBAt(int iPos, BITBOARD& bb);
 
-    int m_bestMove, m_bestDuckMove;
+    MoveAndValue m_bestMoveAndValue;
     long m_millies, m_milliesGiven;
 
     static Game* game;
@@ -67,6 +74,5 @@ class Game {
     ChessBoard* m_boardRefurbish;
     ChessBoard* m_board;
     int m_promotionPiece;
-    int m_arrBestMoves[MAX_DEPTH];
-    int m_arrBestDuckMoves[MAX_DEPTH];
+    MoveAndValue m_arrBestMoves[MAX_DEPTH];
 };
