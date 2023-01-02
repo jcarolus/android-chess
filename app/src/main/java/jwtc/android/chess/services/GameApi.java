@@ -380,8 +380,12 @@ public class GameApi {
                 }
             }
 
-            int moveTo = Pos.fromString(sFile + sRank);
-            int from, to, piece, t = jni.getTurn();
+            int moveTo, from, to, piece, t = jni.getTurn();
+            try {
+                moveTo = Pos.fromString(sFile + sRank);
+            } catch (Exception ex) {
+                return false;
+            }
 
             for (int i = 0; i < size; i++) {
                 bMatch = false;

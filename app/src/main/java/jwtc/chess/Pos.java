@@ -10,16 +10,23 @@ public class Pos {
     // returns positional value [0-63] for squares [a8-h1]
     // when a position cannot be created a message is sent on console out (co).
     // used to initialize values, no speed needed
-    public static int fromString(final String s) {
+    public static int fromString(final String s) throws Exception {
         //if(s.length() != 2)
         //	co.pl("Cannot create Pos from: " + s);
         char c = s.charAt(0);
-        //if(c < 'a' || c > 'h')
-        //	co.pl("Cannot create Pos from: " + c);
+        if(c < 'a' || c > 'h') {
+            throw new Exception("Invalid file for position [" + s + "]");
+        }
         int col, row = Integer.parseInt(s.substring(1));
         col = (int) c - (int) 'a';
 
-        return ((8 - row) * 8) + col;
+        int ret = ((8 - row) * 8) + col;
+
+        if (ret < 0 || ret > 64) {
+            throw new Exception("Invalid position [" + s + "] => " + ret);
+        }
+
+        return ret;
     }
 
     // returns positional value [0-63] from a column and row.

@@ -38,9 +38,10 @@ Game::~Game(void) {
 
     delete m_boardRefurbish;
 
-    for (int i = 0; i < MAX_DEPTH; i++) {
-        delete m_boardFactory[i];
-    }
+    // somehow boardFactory seems to cause segmentation
+//    for (int i = 0; i < MAX_DEPTH; i++) {
+//        delete m_boardFactory[i];
+//    }
 }
 
 // the non thread safe solution; assumption is that getInsance is called before any threads are created
