@@ -57,7 +57,7 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
                 DEBUG_PRINT("Not duck moved for [%s] on move number %d\n", scenario.message, movesPerformed);
                 return false;
             }
-        } else if (scenario.isDuck) {
+        } else if (scenario.isDuck && !scenario.game->getBoard()->isEnded()) {
             DEBUG_PRINT("Expected a duck move for [%s] on  move number %d\n", scenario.message, movesPerformed);
             return false;
         }

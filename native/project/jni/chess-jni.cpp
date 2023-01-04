@@ -66,7 +66,7 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getDuckMove(JNIEnv* env, jobject thiz)
     return Game::getInstance()->getBestDuckMove();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getBoardValue(JNIEnv* env, jobject thiz) {
-    return Game::getInstance()->getBoard()->boardValueExtension();
+    return Game::getInstance()->getBoard()->boardValue();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchDone(JNIEnv* env, jobject thiz) {
     return Game::getInstance()->m_bSearching ? 0 : 1;

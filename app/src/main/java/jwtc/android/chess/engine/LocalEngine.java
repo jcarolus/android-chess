@@ -138,10 +138,11 @@ public class LocalEngine extends EngineApi {
                     int iTime = (int) ((System.currentTimeMillis() - lMillies) / 1000);
                     if (iTime > 0) {
                         int iNps = (int) (evalCnt / iTime);
-                        s = iNps + " N/s (" + iTime + " s)" + "\n\t" + String.format("%.2f", fValue);
+                        s = iNps + " N/s (" + iTime + " s)";
                     } else {
                         s = evalCnt + " N";
                     }
+                    s += "\n\t" + String.format("%.2f", fValue);
                 }
                 sendMessageFromThread(s);
 

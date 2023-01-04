@@ -279,6 +279,7 @@ class ChessBoard {
     inline int bitCount(const BITBOARD bb);
 
     void printB(char* buf);
+    void printMoves(char* buf);
 
     void reset();
     void commitBoard();
@@ -340,7 +341,6 @@ class ChessBoard {
     int loneKingValue(const int turn);
     int kbnkValue(const int turn);
     int promotePawns(const int turn);
-    int boardValueExtension();
     int pawnValueExtension(const int turn);
     int kingValueExtension(const int turn);
     inline int queenValueExtension(const int turn);

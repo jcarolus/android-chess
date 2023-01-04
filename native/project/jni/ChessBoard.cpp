@@ -1346,23 +1346,6 @@ String ChessBoard::getHistoryDebug()
 
 #pragma region Evaluation
 
-// BASIC evaluation function
-// returns the value of the board, called from search method to compare board
-// values
-int ChessBoard::boardValue() {
-    // no state!
-    /*
-    if(m_state == ChessBoard::MATE)
-            return -ChessBoard::VALUATION_MATE;
-    if(m_state == ChessBoard::DRAW_MATERIAL || m_state == ChessBoard::DRAW_50)
-            return ChessBoard::VALUATION_DRAW;
-    if(m_state == ChessBoard::DRAW_REPEAT)
-            return ChessBoard::VALUATION_DRAW_REPEAT;
-    */
-    // standard super simple evaluation. sum of material quality
-    return m_qualities[m_turn] - m_qualities[m_o_turn];
-}
-
 // boardValue will call this method when one of the players only has its king
 // on the board and no pawns
 int ChessBoard::loneKingValue(const int turn) {
@@ -1424,14 +1407,22 @@ int ChessBoard::promotePawns(const int turn) {
 }
 
 // Extended evaluation function
-int ChessBoard::boardValueExtension() {
-    // always start with
+int ChessBoard::boardValue() {
+    // one of the kings not on the board
+
+    if (m_kingPositions[m_turn] < 0) {
+        return -VALUATION_MATE;
+    }
+
+    if (m_kingPositions[m_o_turn] < 0) {
+        return VALUATION_MATE;
+    }
+
     // standard basic evaluation. sum of material quality
     int val = m_qualities[m_turn] - m_qualities[m_o_turn];
 
-    // one of the kings not on the board, return just the default value
-    if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 || m_kingPositions[m_o_turn] < 0 ||
-        m_kingPositions[m_o_turn] > 63) {
+    // invalid state
+    if (m_kingPositions[m_turn] > 63 || m_kingPositions[m_o_turn] > 63) {
         return val;
     }
 
@@ -2141,7 +2132,6 @@ void ChessBoard::initHashKey() {
 }
 
 // put a piece on the board. update all applicable memebers - bitb's etc.
-// assumes m_turn == WHITE !!!!
 void ChessBoard::put(const int pos, const int piece, const int turn) {
     BITBOARD bb = BITS[pos];
     m_bitbPieces[turn][piece] |= bb;
@@ -2154,11 +2144,7 @@ void ChessBoard::put(const int pos, const int piece, const int turn) {
     if (piece == KING) {
         m_kingPositions[turn] = pos;
     } else {
-        if (turn == WHITE) {
-            m_qualities[m_turn] += PIECE_VALUES[piece];
-        } else {
-            m_qualities[m_o_turn] += PIECE_VALUES[piece];
-        }
+        m_qualities[turn] += PIECE_VALUES[piece];
     }
 }
 
@@ -4221,6 +4207,15 @@ void ChessBoard::printB(char* s) {
             strcat(s, "\n");
     }
         */
+}
+
+void ChessBoard::printMoves(char* s) {
+    char buf[10];
+    for (int i = 0; i < m_sizeMoves; i++) {
+        Move::toDbgString(m_arrMoves[i], buf);
+        strcat(s, buf);
+        strcat(s, ";");
+    }
 }
 
 #pragma endregion

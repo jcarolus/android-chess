@@ -37,6 +37,7 @@ class Game {
     void setSearchLimit(int depth);
     void search();
     int alphaBeta(ChessBoard* board, const int depth, int alpha, const int beta);
+    int alphaBetaDuck(ChessBoard* board, const int depth, int alpha, const int beta);
     // @TODO actual performance testing inline vs regular
     inline int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);
     int searchDB();
