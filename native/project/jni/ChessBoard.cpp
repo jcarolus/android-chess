@@ -1226,21 +1226,23 @@ void ChessBoard::setMyMoveCheck() {
 // lazy sorting the m_arrMoves, on each call get the best scored move and put on
 // m_indexMoves and return. advance m_indexMoves
 int ChessBoard::getNextScoredMove() {
-    int bestScore = -1, bestIndex = 0;
+    int bestScore = -1, bestIndex = -1;
     for (int i = m_indexMoves; i < m_sizeMoves; i++) {
         if (m_arrScoreMoves[i] > bestScore) {
             bestScore = m_arrScoreMoves[i];
             bestIndex = i;
         }
     }
-    // swap score
-    bestScore = m_arrScoreMoves[m_indexMoves];
-    m_arrScoreMoves[m_indexMoves] = m_arrScoreMoves[bestIndex];
-    m_arrScoreMoves[bestIndex] = bestScore;
-    // swap move
-    bestScore = m_arrMoves[m_indexMoves];
-    m_arrMoves[m_indexMoves] = m_arrMoves[bestIndex];
-    m_arrMoves[bestIndex] = bestScore;
+    if (bestIndex >= 0) {
+        // swap score
+        bestScore = m_arrScoreMoves[m_indexMoves];
+        m_arrScoreMoves[m_indexMoves] = m_arrScoreMoves[bestIndex];
+        m_arrScoreMoves[bestIndex] = bestScore;
+        // swap move
+        bestScore = m_arrMoves[m_indexMoves];
+        m_arrMoves[m_indexMoves] = m_arrMoves[bestIndex];
+        m_arrMoves[bestIndex] = bestScore;
+    }
     return m_arrMoves[m_indexMoves++];
 }
 

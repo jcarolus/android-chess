@@ -493,6 +493,7 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
 
     while (board->hasMoreMoves()) {
         current = (MoveAndValue){.value = 0, .move = board->getNextScoredMove(), .duckMove = -1};
+
         board->makeMove(current.move, nextBoard);
 
         // generate the moves for this next board in order to validate the board
@@ -519,11 +520,6 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
                 }
 
                 duckBoard->calcState(m_boardRefurbish);
-                // if (currentDuck.duckMove == 30 && duckBoard->getTurn() == ChessBoard::BLACK) {
-                //     char movesBuf[1024];
-                //     duckBoard->printMoves(movesBuf);
-                //     DEBUG_PRINT("\nMoves %s\n", movesBuf);
-                // }
                 duckBoard->getMoves();
                 currentDuck.value = -alphaBetaDuck(duckBoard, depth - 1, -beta, -alpha);
 
@@ -550,13 +546,6 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
         if (current.value > best.value && !m_bInterrupted) {
             best = current;
             m_arrBestMoves[m_searchDepth - depth] = current;
-        }
-
-        if (m_searchDepth == 3 && depth == 3) {
-            char moveBuf[20], duckBuf[5];
-            Move::toDbgString(current.move, moveBuf);
-            Pos::toString(current.duckMove, duckBuf);
-            DEBUG_PRINT("\n%s @ %s => %d\n", moveBuf, duckBuf, current.value);
         }
 
         if (best.value > alpha) {

@@ -40,18 +40,18 @@ int main(int argc, char **argv) {
                             testSequence/*,
                             testNonSequence*/};
 
-    EngineInOutFEN testScenario = {Game::getInstance(),
-                                   //    "8/7Q/7k/8/8/6$1/8/7K b - - 0 1",
-                                   //    "8/7k/8/8/8/5$2/8/7K w - - 0 1",
-                                   "8/5Q1p/7k/5$1p/4Bn2/6q1/6P1/7K w - - 0 1",
-                                   "8/7p/7Q/7p/4Bn2/5$2/6q1/7K b - - 0 1",
-                                   3,
-                                   1,
-                                   true,
-                                   "TEST SCENARIO"};
+    // EngineInOutFEN testScenario = {Game::getInstance(),
+    //                                //    "8/7Q/7k/8/8/6$1/8/7K b - - 0 1",
+    //                                //    "8/7k/8/8/8/5$2/8/7K w - - 0 1",
+    //                                "8/7Q/7k/6$p/4Bn2/6q1/6P1/7K b - - 0 1",
+    //                                "8/7p/7Q/7p/4Bn2/5$2/6q1/7K w - - 0 1",
+    //                                2,
+    //                                1,
+    //                                true,
+    //                                "TEST SCENARIO"};
 
-    ChessTest::expectEngineMove(testScenario);
-    return 0;
+    // ChessTest::expectEngineMove(testScenario);
+    // return 0;
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
@@ -271,7 +271,7 @@ bool testEngine() {
                                     "Duck capture king in one"},
                                    {Game::getInstance(),
                                     "8/5Q1p/7k/5$1p/4Bn2/6q1/6P1/7K w - - 0 1",
-                                    "8/7p/7Q/7p/4Bn2/5$2/6q1/7K b - - 0 1",
+                                    "8/7p/7Q/7p/4B3/3$2q1/6n1/7K b - - 0 2",
                                     3,
                                     3,
                                     true,
