@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jwtc.android.chess"
     android:installLocation="auto"
-    android:versionCode="187"
-    android:versionName="9.3.5">
+    android:versionCode="188"
+    android:versionName="9.3.6">
 
     <application
         android:name="android.app.Application"

@@ -6,6 +6,7 @@
 # Built application files
 *.apk
 *.ap_
+*.aab
 
 app/.cxx/*
 
