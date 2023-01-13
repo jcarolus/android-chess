@@ -11,8 +11,9 @@ public class Pos {
     // when a position cannot be created a message is sent on console out (co).
     // used to initialize values, no speed needed
     public static int fromString(final String s) throws Exception {
-        //if(s.length() != 2)
-        //	co.pl("Cannot create Pos from: " + s);
+        if(s.length() != 2) {
+            throw new Exception("Invalid position [" + s + "]");
+        }
         char c = s.charAt(0);
         if(c < 'a' || c > 'h') {
             throw new Exception("Invalid file for position [" + s + "]");
@@ -48,8 +49,14 @@ public class Pos {
     }
 
     // returns string representation of the value; ie "d5"
-    // @val positional value [0-63] - no check on valid range
+    // -1 is duck position, otherwihse return "?"
     public static String toString(final int val) {
+        if (val > 63 || val < -1) {
+            return "?";
+        }
+        if (val == -1) {
+            return "X";
+        }
         return "" + ((char) (Pos.col(val) + (int) 'a')) + "" + (8 - Pos.row(val));
     }
 

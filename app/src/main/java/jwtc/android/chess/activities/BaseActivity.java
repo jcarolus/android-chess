@@ -72,6 +72,8 @@ public class BaseActivity extends AppCompatActivity {
         clipData = ClipData.newPlainText("text", s);
         clipboardManager.setPrimaryClip(clipData);
         doToast(sToast);
+
+        Log.d(TAG, "to clipboard: " + s);
     }
 
     public String getStringFromClipboard() {

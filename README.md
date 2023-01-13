@@ -6,6 +6,7 @@
 - Free
 - NO ads
 - Published on the Google Play store https://play.google.com/store/apps/details?id=jwtc.android.chess
+- Published on F-droid https://f-droid.org/packages/jwtc.android.chess/
 
 
 ## Special features

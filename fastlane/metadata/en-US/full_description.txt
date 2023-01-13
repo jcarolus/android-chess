@@ -1,0 +1,1 @@
+Play chess online or offline. Solve puzzles. Supports Chess 960 and Duck Chess.

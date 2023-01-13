@@ -302,6 +302,7 @@ public class GameApi {
 
         int index = jni.getNumBoard() - 2;
         if (index >= 0 && index < _arrPGN.size()) {
+            Log.d(TAG, " set duckmove " + index + " " + Pos.toString(duckMove));
             _arrPGN.get(index)._duckMove = duckMove;
         }
         return true;
@@ -679,7 +680,7 @@ public class GameApi {
 
 
     public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, int duckMove) {
-//        Log.d(TAG, "addPGNEntry " + ply + ": " + sMove);
+        Log.d(TAG, "addPGNEntry " + ply + ": " + sMove + " @ " + Pos.toString(duckMove) + " = " + duckMove);
         while (ply >= 0 && _arrPGN.size() >= ply) {
             _arrPGN.remove(_arrPGN.size() - 1);
         }
