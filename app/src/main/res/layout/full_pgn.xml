@@ -6,9 +6,7 @@
             android:id="@+id/LayoutContent"
             android:numColumns="2"
             android:layout_width="match_parent" android:layout_height="0dp"
-            android:layout_weight="1"
-            android:horizontalSpacing="4dip"
-            android:verticalSpacing="4dip">
+            android:layout_weight="1">
 
         </GridView>
 
@@ -16,8 +14,9 @@
         android:id="@+id/LayoutButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TableRow style="@style/MyRowStyle">
+        <TableRow style="@style/MyRowStyle" android:gravity="right">
             <ImageButton
+                android:id="@+id/ButtonClip"
                 style="@style/ChessImageButton"
                 android:src="@drawable/ic_clipboard"
                 />

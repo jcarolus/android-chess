@@ -20,16 +20,13 @@ import jwtc.android.chess.HtmlActivity;
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     public static final int NO_RESULT = 0;
-    private ClipboardManager clipboardManager;
-    private ClipData clipData;
+
 
     protected float fVolume = 1.0f;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        clipboardManager = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
     }
 
     @Override
@@ -66,20 +63,6 @@ public class BaseActivity extends AppCompatActivity {
 
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
-    }
-
-    public void stringToClipboard(String s, String sToast) {
-        clipData = ClipData.newPlainText("text", s);
-        clipboardManager.setPrimaryClip(clipData);
-        doToast(sToast);
-
-        Log.d(TAG, "to clipboard: " + s);
-    }
-
-    public String getStringFromClipboard() {
-        ClipData pData = clipboardManager.getPrimaryClip();
-        ClipData.Item item = pData.getItemAt(0);
-        return item.getText().toString();
     }
 
     // @TODO

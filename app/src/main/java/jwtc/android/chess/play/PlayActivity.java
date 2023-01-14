@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import jwtc.android.chess.GamesListActivity;
+import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -656,7 +657,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
                     menuDialog.show();
                 } else if (item.equals(getString(R.string.menu_fromclip))) {
-                    String s = getStringFromClipboard();
+                    String s = Clipboard.getStringFromClipboard();
                     if (gameApi.loadPGN(s)) {
                         lGameID = 0;
                         updateForNewGame();
@@ -667,7 +668,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                         }
                     }
                 } else if (item.equals(getString(R.string.menu_clip_pgn))) {
-                    stringToClipboard(gameApi.exportFullPGN(), getString(R.string.copied_clipboard_success));
+                    Clipboard.stringToClipboard(this, gameApi.exportFullPGN(), getString(R.string.copied_clipboard_success));
                 }
 
                 break;
