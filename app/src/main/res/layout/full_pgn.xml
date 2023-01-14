@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+        <GridView
+            android:id="@+id/LayoutContent"
+            android:numColumns="2"
+            android:layout_width="match_parent" android:layout_height="0dp"
+            android:layout_weight="1"
+            android:horizontalSpacing="4dip"
+            android:verticalSpacing="4dip">
 
-</com.google.android.flexbox.FlexboxLayout>
+        </GridView>
+
+    <TableLayout
+        android:id="@+id/LayoutButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow style="@style/MyRowStyle">
+            <ImageButton
+                style="@style/ChessImageButton"
+                android:src="@drawable/ic_clipboard"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:text="@string/button_close"
+                android:id="@+id/ButtonClose"
+                style="@style/ChessButton"
+                />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

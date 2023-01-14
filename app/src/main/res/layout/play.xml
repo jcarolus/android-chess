@@ -193,6 +193,12 @@
                         android:id="@+id/ButtonNext"
                         android:src="@drawable/ic_chevron_right"
                         style="@style/ChessImageButton" />
+
+                    <ImageButton
+                        android:id="@+id/ButtonPGN"
+                        android:src="@drawable/ic_list_ul"
+                        style="@style/ChessImageButton" />
+
                 </TableRow>
             </TableLayout>
             <TableLayout

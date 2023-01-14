@@ -173,6 +173,15 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             }
         });
 
+        ImageButton butPgn = findViewById(R.id.ButtonPGN);
+        butPgn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PGNDialog dialog = new PGNDialog(PlayActivity.this, gameApi);
+                dialog.show();
+            }
+        });
+
         switchTurnMe = findViewById(R.id.ImageTurnMe);
         switchTurnOpp = findViewById(R.id.ImageTurnOpp);
 
