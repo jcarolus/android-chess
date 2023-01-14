@@ -5,8 +5,14 @@
     >
 
     <TableRow
+        style="@style/MyRowStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ImageTurn"
+            android:layout_height="12dip"
+            android:layout_width="12dip" />
 
         <TextView
             android:id="@+id/TextViewNumMove"

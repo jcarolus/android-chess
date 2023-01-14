@@ -32,9 +32,11 @@ public class PGNDialog extends Dialog {
 
         setContentView(R.layout.full_pgn);
 
+        final JNI jni = JNI.getInstance();
+
         ArrayList<HashMap<String, String>> mapMoves = new ArrayList<HashMap<String, String>>();
         SimpleAdapter adapterMoves = new SimpleAdapter(context, mapMoves, R.layout.pgn_item,
-                new String[]{"nr", "move", "annotation"}, new int[]{R.id.TextViewNumMove, R.id.TextViewMove, R.id.TextViewAnnotation});
+                new String[]{"turn", "nr", "move", "annotation"}, new int[]{R.id.ImageTurn, R.id.TextViewNumMove, R.id.TextViewMove, R.id.TextViewAnnotation});
 
         GridView contentLayout = findViewById(R.id.LayoutContent);
 
@@ -47,16 +49,18 @@ public class PGNDialog extends Dialog {
             item.put("nr", i % 2 == 0 ? ((i + 1) + ". ") : " ");
             item.put("move", pgnEntries.get(i)._sMove);
             item.put("annotation", pgnEntries.get(i)._sAnnotation);
+            item.put("turn", Integer.toString(jni.getNumBoard() - 2 == i ? R.drawable.turnblack : 0));
 
             mapMoves.add(item);
         }
 
         adapterMoves.notifyDataSetChanged();
+        contentLayout.smoothScrollToPosition(adapterMoves.getCount());
 
         contentLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (JNI.getInstance().getNumBoard() - 1 > position) {
+                if (jni.getNumBoard() - 1 > position) {
                     position++;
                 }
                 gameApi.jumptoMove(position + 1);
