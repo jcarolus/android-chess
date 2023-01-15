@@ -21,6 +21,7 @@ import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
+import jwtc.chess.Pos;
 
 public class PGNDialog extends Dialog {
     private static final String TAG = "PGNDialog";
@@ -45,9 +46,13 @@ public class PGNDialog extends Dialog {
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
 
         for (int i = 0; i < pgnEntries.size(); i++) {
+            String sMove =  pgnEntries.get(i)._sMove;
+            if (pgnEntries.get(i)._duckMove != -1) {
+                sMove += "@" + Pos.toString(pgnEntries.get(i)._duckMove);
+            }
             HashMap<String, String> item = new HashMap<String, String>();
             item.put("nr", i % 2 == 0 ? ((i + 1) + ". ") : " ");
-            item.put("move", pgnEntries.get(i)._sMove);
+            item.put("move", sMove);
             item.put("annotation", pgnEntries.get(i)._sAnnotation);
             item.put("turn", Integer.toString(jni.getNumBoard() - 2 == i ? R.drawable.turnblack : 0));
 
