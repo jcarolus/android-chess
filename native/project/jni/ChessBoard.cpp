@@ -418,6 +418,10 @@ boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board,
 
 boolean ChessBoard::requestDuckMove(int newDuckPos) {
     if (m_duckPos == -1 && m_variant == VARIANT_DUCK) {
+        if (newDuckPos < 0 || newDuckPos > 63) {
+            DEBUG_PRINT("requestDuckMove invalid duckPos %d", newDuckPos);
+            return false;
+        }
         // old duck pos
         if (m_parent != NULL && m_parent->m_duckPos == newDuckPos) {
             DEBUG_PRINT("requestDuckMove has parent and same duckPos %d, %d", m_parent->m_duckPos, newDuckPos);

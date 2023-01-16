@@ -8,9 +8,6 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-// #define stringtype std::string
-// typedef stringtype String;
-
 #define DEBUG_LEVEL 0  // bitmask for debug levels
 
 #ifdef TERMINAL

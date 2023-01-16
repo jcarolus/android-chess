@@ -312,7 +312,7 @@ public class GameApi {
 
         boolean bMatch = false;
         int size = jni.getMoveArraySize();
-        int move;
+        int move, duckMove;
 
         if (sCastle != null) {
             for (int i = 0; i < size; i++) {
@@ -335,8 +335,13 @@ public class GameApi {
                         if (sDuck != null) {
                             sDuck = sDuck.substring(1);
                             try {
-                                moveDuck(Pos.fromString(sDuck));
-                            } catch (Exception e) {}
+                                duckMove = Pos.fromString(sDuck);
+                                if (!moveDuck(duckMove)) {
+                                    return false;
+                                }
+                            } catch (Exception e) {
+                                return false;
+                            }
                         }
 
                         return true;
@@ -432,8 +437,13 @@ public class GameApi {
                         if (sDuck != null) {
                             sDuck = sDuck.substring(1);
                             try {
-                                moveDuck(Pos.fromString(sDuck));
-                            } catch (Exception e) {}
+                                duckMove = Pos.fromString(sDuck);
+                                if (!moveDuck(duckMove)) {
+                                    return false;
+                                }
+                            } catch (Exception e) {
+                                return false;
+                            }
                         }
 
                         return true;

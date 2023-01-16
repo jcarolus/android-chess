@@ -77,6 +77,12 @@ void Game::reset() {
 
     m_board->reset();
     m_board->calcState(m_boardRefurbish);
+
+    m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
+    int i;
+    for (i = 0; i < MAX_DEPTH; i++) {
+        m_arrBestMoves[i] = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
+    }
 }
 
 boolean Game::newGameFromFEN(char *sFEN) {
@@ -319,7 +325,7 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
 
     board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth].move);
 
-    MoveAndValue best = {(-ChessBoard::VALUATION_MATE) - 1, 0, -1};
+    MoveAndValue best = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
     MoveAndValue current, next;
     ChessBoard *nextBoard = m_boardFactory[depth];
 
@@ -487,7 +493,7 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
 
     board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth].move);
 
-    MoveAndValue best = {(-ChessBoard::VALUATION_MATE) - 1, 0, -1};
+    MoveAndValue best = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
     MoveAndValue current, next;
     ChessBoard *nextBoard = m_boardFactory[depth];
 
