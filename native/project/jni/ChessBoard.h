@@ -336,7 +336,6 @@ class ChessBoard {
     void getScoredMovesTT(const int ttMove, const int killerMove, const int killerMove2);
     int scoreMove(int move);
     void setMyMoveCheck();
-    void getPGNMoves(ChessBoard* board, char* sz);
     int boardValue();
     int loneKingValue(const int turn);
     int kbnkValue(const int turn);
@@ -377,7 +376,7 @@ class ChessBoard {
     boolean isPieceOfColorAt(const int t, const int p);
     boolean isFieldAt(const int p);
     int getDuckPos();
-    boolean getMyDuckPos();
+    int getMyDuckPos();
     int getIndex(const int col, const int row);
 
     void initHashKey();

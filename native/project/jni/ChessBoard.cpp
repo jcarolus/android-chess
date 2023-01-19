@@ -1310,28 +1310,6 @@ int ChessBoard::scoreMove(int move) {
     return 1000 + ROW_TURN[m_turn][to];
 }
 
-// returns comma seperated per 5 moves new-lined string of pgn moves.
-void ChessBoard::getPGNMoves(ChessBoard* board, char* sz) {
-    strcpy(sz, "");
-    int move, i = 0;
-    char tmp[20] = "";
-    ChessBoard* tmpBoard = new ChessBoard();
-    m_indexMoves = 0;
-    while (hasMoreMoves()) {
-        move = getNextMove();
-        makeMove(move, board);
-        board->calcState(tmpBoard);
-        board->myMoveToString(tmp);
-        strcat(sz, tmp);
-        strcat(sz, ",");
-        if (i % 5 == 4) {
-            strcat(sz, "\n");
-        }
-        i++;
-    }
-    delete tmpBoard;
-}
-
 // returns the history of moves in pgn format
 /*
 String ChessBoard::getHistoryDebug()
@@ -1827,7 +1805,7 @@ int ChessBoard::getDuckPos() {
     }
     return -1;
 }
-boolean ChessBoard::getMyDuckPos() {
+int ChessBoard::getMyDuckPos() {
     return m_duckPos;
 }
 int ChessBoard::getIndex(const int col, const int row) {

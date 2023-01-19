@@ -290,7 +290,7 @@ public class GameApi {
         if (jni.move(move) == 0) {
             return false;
         }
-        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), sAnnotation, jni.getMyMove(), jni.getMyDuckPos());
+        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), sAnnotation, jni.getMyMove(), -1);
 
         return true;
     }
