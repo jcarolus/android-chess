@@ -73,7 +73,6 @@ void Game::reset() {
         m_board = cb;
         delete tmp;
     }
-    //
 
     m_board->reset();
     m_board->calcState(m_boardRefurbish);
@@ -183,7 +182,6 @@ void Game::undo() {
 void Game::setSearchTime(int secs) {
     m_milliesGiven = (long) secs;
     m_searchLimit = 0;
-    m_bSearching = true;
 }
 
 void Game::setSearchLimit(int depth) {
@@ -193,10 +191,13 @@ void Game::setSearchLimit(int depth) {
     } else {
         m_searchLimit = MAX_DEPTH - QUIESCE_DEPTH;
     }
-    m_bSearching = true;
 }
 
 void Game::search() {
+    if (m_bSearching) {
+        DEBUG_PRINT("Already searching!", 0);
+        return;
+    }
     m_bSearching = true;
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     m_bInterrupted = false;

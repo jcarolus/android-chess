@@ -657,7 +657,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                     final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
                     menuDialog.show();
                 } else if (item.equals(getString(R.string.menu_fromclip))) {
-                    String s = Clipboard.getStringFromClipboard();
+                    String s = Clipboard.getStringFromClipboard(this);
                     if (gameApi.loadPGN(s)) {
                         lGameID = 0;
                         updateForNewGame();

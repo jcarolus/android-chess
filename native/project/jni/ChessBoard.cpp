@@ -1643,6 +1643,7 @@ void ChessBoard::reset() {
     m_parent = NULL;
     m_myMove = 0;
     m_duckPos = -1;
+    m_sizeMoves = 0;
 
     m_turn = WHITE;
     m_o_turn = BLACK;

@@ -55,7 +55,8 @@ int main(int argc, char **argv) {
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
-        Game::deleteInstance();
+        //Game::deleteInstance();
+        Game::getInstance()->reset();
 
         DEBUG_PRINT("\n* Test %d\n", i);
         if (tests[i]()) {

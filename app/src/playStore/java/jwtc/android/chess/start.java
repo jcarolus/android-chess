@@ -63,7 +63,6 @@ public class start extends StartBaseActivity {
         super.onCreate(savedInstanceState);
 
         _jni = JNI.getInstance();
-        _jni.reset();
 
         _lastMessage = "";
 
