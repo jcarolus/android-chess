@@ -2,14 +2,6 @@
 
 #include <math.h>
 
-ChessBoard::ChessBoard(void) {
-    m_parent = NULL;
-    reset();
-}
-
-ChessBoard::~ChessBoard(void) {
-}
-
 #pragma region Attack functions
 
 // attack functions - used to find out if a king is checked - so no special
@@ -502,7 +494,7 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
     const int from = Move_getFrom(move), to = Move_getTo(move);
     const int pieceFrom = pieceAt(m_turn, from);
 
-    memcpy(ret, this, SIZEOF_BOARD);
+    duplicate(ret);
 
     ret->m_bitbAttackMoveSquares = 0L;
     ret->m_duckPos = -1;

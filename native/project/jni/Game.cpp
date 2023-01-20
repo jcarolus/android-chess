@@ -519,7 +519,8 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
                                              .move = 0,
                                              .duckMove = Move_getTo(tmpDuckMove)};  // actual duckMove is a position
 
-                memcpy(duckBoard, nextBoard, ChessBoard::SIZEOF_BOARD);
+                nextBoard->duplicate(duckBoard);
+
                 if (!duckBoard->requestDuckMove(currentDuck.duckMove)) {
                     DEBUG_PRINT("Could not make duckMove %d, %d\n", currentDuck.duckMove, Move_getFrom(tmpDuckMove));
                     continue;
@@ -600,6 +601,9 @@ int Game::searchDB() {
             moveArr[iCnt++] = move;
         }
     }
+
+    delete tmpBoard;
+
     if (iCnt == 0) {
         // DEBUG_PRINT("No move found in openingsdatabase\n", 0);
         return 0;

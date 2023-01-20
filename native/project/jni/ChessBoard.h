@@ -6,8 +6,6 @@
 
 class ChessBoard {
    public:
-    ChessBoard(void);
-    ~ChessBoard(void);
 
 #pragma region Statics
     // variants
