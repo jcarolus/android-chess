@@ -35,6 +35,16 @@ typedef struct {
     char *message;
 } NonSequenceInFEN;
 
+typedef struct {
+    Game *game;
+    char *sInFEN;
+    int expectedState;
+    int depth;
+    int maxMoves;
+    boolean isDuck;
+    char *message;
+} EngineInFENUntilState;
+
 class ChessTest {
    public:
     ChessTest(void);
@@ -48,6 +58,7 @@ class ChessTest {
     static bool expectNonSequence(NonSequenceInFEN scenario);
     static bool expectStateForFEN(Game *game, char *sFEN, int state, char *message);
     static bool expectInFENIsOutFEN(Game *game, char *sFEN, char *message);
+    static bool expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario);
     static void printMove(int move);
     static void printFENAndState(ChessBoard *board);
 };

@@ -135,6 +135,7 @@ int Game::getBestDuckMoveAt(int ply) {
 
 boolean Game::requestMove(int from, int to) {
     ChessBoard *nb = new ChessBoard();
+    m_board->calcState(m_boardRefurbish);
     if (m_board->requestMove(from, to, nb, m_boardRefurbish, m_promotionPiece)) {
         m_board = nb;
         return true;
@@ -147,6 +148,7 @@ boolean Game::requestMove(int from, int to) {
 
 boolean Game::requestDuckMove(int duckPos) {
     ChessBoard *board = getBoard();
+    board->calcState(m_boardRefurbish);
     if (board->requestDuckMove(duckPos)) {
         board->genMoves();
         return true;

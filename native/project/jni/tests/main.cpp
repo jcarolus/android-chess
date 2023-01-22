@@ -23,6 +23,7 @@ bool testDuck();
 bool testEngine();
 bool testSequence();
 bool testNonSequence();
+bool testEngineRunUntilState();
 void newGame();
 void newGameDuck();
 
@@ -37,9 +38,11 @@ int main(int argc, char **argv) {
                             testDB,
                             testDuck,
                             testEngine,
-                            testSequence/*,
+                            testSequence,
+                            testEngineRunUntilState/*,
                             testNonSequence*/};
 
+    
     // EngineInOutFEN testScenario = {Game::getInstance(),
     //                                //    "8/7Q/7k/8/8/6$1/8/7K b - - 0 1",
     //                                //    "8/7k/8/8/8/5$2/8/7K w - - 0 1",
@@ -55,8 +58,8 @@ int main(int argc, char **argv) {
 
     int testFail = 0, testSuccess = 0;
     for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
-        //Game::deleteInstance();
-        Game::getInstance()->reset();
+        //Game::deleteInstance(); // guaranteed clean
+        Game::getInstance()->reset(); // reuse instance as in the app
 
         DEBUG_PRINT("\n* Test %d\n", i);
         if (tests[i]()) {
@@ -345,6 +348,22 @@ bool testNonSequence() {
     }
 
     return bRet;
+}
+
+bool testEngineRunUntilState() {
+    EngineInFENUntilState scenario = {
+        .game = Game::getInstance(),
+        .sInFEN = "8/4k3/8/8/8/4NN2/3K4/8 w - - 0 1",
+        .expectedState = ChessBoard::DRAW_50,
+        .depth = 3,
+        .maxMoves = 101,
+        .isDuck = false,
+        .message = "Test 50 move rule"
+    };
+    
+    return ChessTest::expectEndingStateWithinMaxMoves(scenario);
+
+    //DEBUG_PRINT("Performed moves %d :: %d\n", scenario.game->getBoard()->getNoHitCount(),  scenario.game->getBoard()->getState());
 }
 
 void speedTest() {

@@ -118,6 +118,58 @@ bool ChessTest::expectInFENIsOutFEN(Game *game, char *sFEN, char *message) {
     return expectEqualString(sFEN, buf, message);
 }
 
+bool ChessTest::expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario) {
+
+    scenario.game->setSearchLimit(scenario.depth);
+
+    scenario.game->newGameFromFEN(scenario.sInFEN);
+    int movesPerformed = 0;
+    int gameState = scenario.game->getBoard()->getState();
+    ChessBoard *board;
+    char buf[1024];
+
+    while (movesPerformed < scenario.maxMoves) {
+
+        scenario.game->search();
+
+        int m = scenario.game->getBestMove();
+        int d = scenario.game->getBestDuckMove();
+
+        boolean bMoved = scenario.game->move(m);
+        if (!bMoved) {
+            board = scenario.game->getBoard();
+            printMove(m);
+            printFENAndState(board);
+            board->printB(buf);
+            DEBUG_PRINT("DBG: %s\n", buf);
+            DEBUG_PRINT("Not moved for [%s] on move number %d\n", scenario.message, movesPerformed);
+            return false;
+        }
+
+        if (d != -1) {
+            bMoved = scenario.game->requestDuckMove(d);
+            if (!bMoved) {
+                // printMove(m);
+                DEBUG_PRINT("Not duck moved for [%s] on move number %d\n", scenario.message, movesPerformed);
+                return false;
+            }
+        } else if (scenario.isDuck && !scenario.game->getBoard()->isEnded()) {
+            DEBUG_PRINT("Expected a duck move for [%s] on  move number %d\n", scenario.message, movesPerformed);
+            return false;
+        }
+
+        gameState = scenario.game->getBoard()->getState();
+
+        if (gameState == scenario.expectedState) {
+            break;
+        }
+
+        movesPerformed++;
+    }
+
+    return expectEqualInt(scenario.expectedState, gameState, scenario.message);
+}
+
 void ChessTest::printMove(int move) {
     char buf[10];
     Move::toDbgString(move, buf);
