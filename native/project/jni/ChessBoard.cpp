@@ -434,22 +434,24 @@ boolean ChessBoard::requestDuckMove(int newDuckPos) {
 
 // Used in random fischer chess where a king move can be a plain move or a
 // castle
-boolean ChessBoard::isAmbiguousCastle(const int from, const int to) {
+int ChessBoard::isAmbiguousCastle(const int from, const int to) {
     m_indexMoves = 0;
-    int move, cnt = 0;
+    int move, cntCastles = 0, cntReqular = 0;
 
     if (abs(Pos::col(from) - Pos::col(to)) <= 1) {
         while (hasMoreMoves()) {
             move = getNextMove();
             if (Move_equalPositions(move, Move_makeMove(from, to))) {
                 if (Move_isOO(move) || Move_isOOO(move)) {
-                    cnt++;
+                    cntCastles++;
+                } else {
+                    cntReqular++;
                 }
             }
         }
-        return (cnt > 0);
+        return cntCastles > 0 && cntReqular > 0 || cntCastles > 0 && cntReqular == 0 && from == to ? 1 : 0;
     }
-    return false;
+    return 0;
 }
 // return the move that is castling from the two provided positions
 int ChessBoard::getCastleMove(const int from, const int to) {

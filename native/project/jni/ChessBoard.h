@@ -302,7 +302,7 @@ class ChessBoard {
     boolean checkEnded();
     int ambigiousMove();
     boolean requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece);
-    boolean isAmbiguousCastle(const int from, const int to);
+    int isAmbiguousCastle(const int from, const int to);
     int getCastleMove(const int from, const int to);
     boolean requestMove(const int m, ChessBoard* board, ChessBoard* tmpBoard);
     boolean requestDuckMove(int newDuckPos);
