@@ -21,6 +21,7 @@ public abstract class EngineApi {
     protected static final int MSG_ERROR = 3;
     protected int msecs = 0;
     protected int ply = 0;
+    protected boolean quiescentSearchOn = true;
 
     protected ArrayList<EngineListener> listeners = new ArrayList<>();
 
@@ -90,6 +91,10 @@ public abstract class EngineApi {
         Log.d(TAG, "setPly " + ply);
         this.ply = ply;
         this.msecs = 0;
+    }
+
+    public void setQuiescentSearchOn(boolean on) {
+        this.quiescentSearchOn = on;
     }
 
     public void addListener(EngineListener listener) {

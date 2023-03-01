@@ -191,6 +191,9 @@
     <string name="options_play_android">Humain contre Android</string>
     <string name="options_play_white">Blanc</string>
     <string name="options_play_black">Noir</string>
+    <string name="options_quiescent_on">Recherche de "Quiescence" sur</string>
+    <string name="options_quiescent_off">
+Recherche de "Quiescence" désactivée</string>
     <string name="options_default">Echecs standard</string>
     <string name="options_960">Chess 960 - Fischer aléatoire</string>
     <string name="options_load_database">Chargement de la base de données des ouvertures</string>

@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import jwtc.android.chess.R;
@@ -28,6 +29,7 @@ public class GameSettingsDialog extends ResultDialog {
         final int levelMode = prefs.getInt("levelMode", EngineApi.LEVEL_TIME);
         final int levelTime = prefs.getInt("level", 2);
         final int levelPly = prefs.getInt("levelPly", 2);
+        final boolean quiescentSearchOn = prefs.getBoolean("quiescentSearchOn", true);
 
         final RadioButton radioAndroid = findViewById(R.id.radioAndroid);
         final RadioButton radioHuman = findViewById(R.id.radioHuman);
@@ -37,6 +39,7 @@ public class GameSettingsDialog extends ResultDialog {
         final RadioButton radioPly = findViewById(R.id.RadioOptionsPly);
         final Spinner spinnerLevelTime = findViewById(R.id.SpinnerOptionsLevelTime);
         final Spinner spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
+        final ToggleButton toggleQuiescent = findViewById(R.id.ToggleQuiescent);
 
         ArrayAdapter<CharSequence> adapterTime = ArrayAdapter.createFromResource(context, R.array.levels_time, android.R.layout.simple_spinner_item);
         adapterTime.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -47,6 +50,8 @@ public class GameSettingsDialog extends ResultDialog {
         adapterPly.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLevelPly.setPrompt(context.getString(R.string.title_pick_level));
         spinnerLevelPly.setAdapter(adapterPly);
+
+        toggleQuiescent.setChecked(quiescentSearchOn);
 
         radioAndroid.setChecked(vsCPU);
         radioHuman.setChecked(!vsCPU);
@@ -88,6 +93,8 @@ public class GameSettingsDialog extends ResultDialog {
                 editor.putInt("levelMode", radioTime.isChecked() ? EngineApi.LEVEL_TIME : EngineApi.LEVEL_PLY);
                 editor.putInt("level", spinnerLevelTime.getSelectedItemPosition() + 1);
                 editor.putInt("levelPly", spinnerLevelPly.getSelectedItemPosition() + 1);
+
+                editor.putBoolean("quiescentSearchOn", toggleQuiescent.isChecked());
 
                 editor.commit();
 

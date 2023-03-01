@@ -180,6 +180,10 @@ void Game::undo() {
 
 #pragma region Search methods
 
+void Game::setQuiescentOn(boolean on) {
+    m_quiescentSearchOn = on;
+}
+
 // returns the move found
 void Game::setSearchTime(int secs) {
     m_milliesGiven = (long) secs;
@@ -408,7 +412,7 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         }
     }
 
-    if (depth == 0) {
+    if (depth == 0 || !m_quiescentSearchOn) {
         // max quiesce depth is reached; return this value
         return boardValue;
     }

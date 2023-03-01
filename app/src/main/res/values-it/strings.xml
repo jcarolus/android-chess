@@ -182,6 +182,8 @@
     <string name="options_play_android">Umano contro Android</string>
     <string name="options_play_white">bianca</string>
     <string name="options_play_black">Nero</string>
+    <string name="options_quiescent_on">Ricerca di "Quiescence" attiva</string>
+    <string name="options_quiescent_off">Ricerca di "Quiescence" disattivata</string>
     <string name="options_960">Scacchi 960 - Fischer Random</string>
     <string name="options_load_database">Carica database aperture</string>
     <string name="options_auto_flip">Auto-inversione scacchiera</string>

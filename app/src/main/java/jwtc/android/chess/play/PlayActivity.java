@@ -747,6 +747,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             myEngine.setPly(levelPly);
         }
 
+        myEngine.setQuiescentSearchOn(prefs.getBoolean("quiescentSearchOn", true));
+
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
         playIfEngineMove();

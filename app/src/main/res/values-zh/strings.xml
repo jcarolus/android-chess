@@ -182,6 +182,8 @@
     <string name="options_play_android">人 vs 安卓机器人</string>
     <string name="options_play_white">白色</string>
     <string name="options_play_black">黑色</string>
+    <string name="options_quiescent_on">搜 Quiescence 索</string>
+    <string name="options_quiescent_off">搜 Quiescence 索</string>
     <string name="options_960">Chess 960 - 费舍尔随机模型</string>
     <string name="options_load_database">载入开放式数据库</string>
     <string name="options_auto_flip">自动旋转棋盘</string>

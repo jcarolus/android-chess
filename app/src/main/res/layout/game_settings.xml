@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -63,9 +63,7 @@
                 android:layout_height="wrap_content" />
         </TableRow>
 
-        <TableRow
-            style="@style/MyRowStyle"
-            android:layout_marginBottom="16dip">
+        <TableRow style="@style/MyRowStyle">
             <RadioButton
                 android:id="@+id/RadioOptionsPly"
                 android:text="@string/options_level_ply"
@@ -76,6 +74,17 @@
                 android:id="@+id/SpinnerOptionsLevelPly"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow style="@style/MyRowStyle"
+            android:layout_marginBottom="16dip">
+            <ToggleButton
+                android:id="@+id/ToggleQuiescent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textOn="@string/options_quiescent_on"
+                android:textOff="@string/options_quiescent_off"/>
         </TableRow>
 
         <TableRow>
@@ -99,4 +108,4 @@
 
     </TableLayout>
 
-</LinearLayout>
+</ScrollView>

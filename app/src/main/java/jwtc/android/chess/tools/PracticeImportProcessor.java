@@ -66,7 +66,7 @@ public class PracticeImportProcessor extends PGNProcessor {
                         }
                         String sFEN = jni.toFEN();
 
-                        jni.searchDepth(plies);
+                        jni.searchDepth(plies, 0);
 
                         int move = jni.getMove();
                         int value = jni.peekSearchBestValue();

@@ -47,15 +47,17 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_newGameFromFEN(JNIEnv* env, jobject th
     return ret;
 }
 
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz, jint msecs) {
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchMove(JNIEnv* env, jobject thiz, jint msecs, jint quiescentOn) {
     pthread_t tid;
 
+    Game::getInstance()->setQuiescentOn(quiescentOn != 0);
     Game::getInstance()->setSearchTime(msecs);
     Game::getInstance()->search();
 }
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchDepth(JNIEnv* env, jobject thiz, jint depth) {
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_searchDepth(JNIEnv* env, jobject thiz, jint depth, jint quiescentOn) {
     pthread_t tid;
 
+    Game::getInstance()->setQuiescentOn(quiescentOn != 0);
     Game::getInstance()->setSearchLimit(depth);
     Game::getInstance()->search();
 }
@@ -219,8 +221,8 @@ static JNINativeMethod sMethods[] = {
     {"reset", "()V", (void*) Java_jwtc_chess_JNI_reset},
     {"mewGameFromFEN", "(Ljava/lang/String)I", (void*) Java_jwtc_chess_JNI_newGameFromFEN},
     {"putPiece", "(III)V", (void*) Java_jwtc_chess_JNI_putPiece},
-    {"searchMove", "(I)V", (void*) Java_jwtc_chess_JNI_searchMove},
-    {"searchDepth", "(I)V", (void*) Java_jwtc_chess_JNI_searchDepth},
+    {"searchMove", "(II)V", (void*) Java_jwtc_chess_JNI_searchMove},
+    {"searchDepth", "(II)V", (void*) Java_jwtc_chess_JNI_searchDepth},
     {"getMove", "()I", (void*) Java_jwtc_chess_JNI_getMove},
     {"getDuckMove", "()I", (void*) Java_jwtc_chess_JNI_getDuckMove},
     {"getBoardValue", "()I", (void*) Java_jwtc_chess_JNI_getBoardValue},

@@ -180,6 +180,8 @@
     <string name="options_play_android">Spieler gegen Android</string>
     <string name="options_play_white">Weiß</string>
     <string name="options_play_black">Schwarz</string>
+    <string name="options_quiescent_on">"Quiescence" suche an</string>
+    <string name="options_quiescent_off">"Quiescence" suche aus</string>
     <string name="options_960">Schach 960 - Fischer Random</string>
     <string name="options_load_database">Lade Eröffnungsdatenbank</string>
     <string name="options_auto_flip">Brett automatisch drehen</string>

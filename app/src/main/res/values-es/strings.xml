@@ -182,6 +182,8 @@
     <string name="options_play_android">Human contra Android</string>
     <string name="options_play_white">Blanco</string>
     <string name="options_play_black">Negro</string>
+    <string name="options_quiescent_on">Búsqueda de "Quiescence" en</string>
+    <string name="options_quiescent_off">Búsqueda de "Quiescence" desactivada</string>
     <string name="options_960">Ajedrez960 - Fischer Random</string>
     <string name="options_load_database">Carga base de datos inicial</string>
     <string name="options_auto_flip">Rotafolio automatico</string>

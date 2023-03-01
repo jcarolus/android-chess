@@ -248,9 +248,9 @@ public class JNI {
 
     public native void putPiece(int pos, int piece, int turn);
 
-    public native void searchMove(int secs);
+    public native void searchMove(int secs, int quiescentOn);
 
-    public native void searchDepth(int depth);
+    public native void searchDepth(int depth, int quiescentOn);
 
     public native int getMove();
 

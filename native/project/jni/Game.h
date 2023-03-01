@@ -33,6 +33,7 @@ class Game {
     int getBestMoveAt(int ply);
     int getBestDuckMoveAt(int ply);
 
+    void setQuiescentOn(boolean on);
     void setSearchTime(int secs);
     void setSearchLimit(int depth);
     void search();
@@ -54,6 +55,7 @@ class Game {
     int m_evalCount;
     int m_searchDepth;
     int m_searchLimit;
+    boolean m_quiescentSearchOn;
 
    protected:
     long findDBKey(BITBOARD bbKey);

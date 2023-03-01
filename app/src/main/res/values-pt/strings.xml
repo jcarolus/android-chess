@@ -182,6 +182,8 @@
     <string name="options_play_android">Humano contra Android</string>
     <string name="options_play_white">Branco</string>
     <string name="options_play_black">Preto</string>
+    <string name="options_quiescent_on">Pesquisa de "Quiescence" ativada</string>
+    <string name="options_quiescent_off">Pesquisa de "Quiescence" desativada</string>
     <string name="options_960">Xadrez 960 - Xadrez aleatório de Fischer</string>
     <string name="options_load_database">Carrega banco de dados das aberturas</string>
     <string name="options_auto_flip">Virar tabuleiro automaticamente</string>

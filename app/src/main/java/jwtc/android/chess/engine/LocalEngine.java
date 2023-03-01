@@ -115,9 +115,9 @@ public class LocalEngine extends EngineApi {
                 }
                 long lMillies = System.currentTimeMillis();
                 if (ply > 0) {
-                    jni.searchDepth(ply);
+                    jni.searchDepth(ply, quiescentSearchOn ? 1 : 0);
                 } else if (msecs > 0){
-                    jni.searchMove(msecs);
+                    jni.searchMove(msecs, quiescentSearchOn ? 1 : 0);
                 } else {
                     Log.d(TAG, "No ply and no msecs to work with");
                     return;
