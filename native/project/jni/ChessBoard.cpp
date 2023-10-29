@@ -1053,12 +1053,12 @@ void ChessBoard::genKingMoves() {
 // TODO can isSquareAttacked be replaced by attacked bits of parent board?
 void ChessBoard::genExtraKingMoves(const int pos) {
     if (m_turn == WHITE) {
-        if (hasOO(m_turn) && !isSquareAttacked(m_turn, pos) && !isSquareAttacked(m_turn, f1) &&
-            !isSquareAttacked(m_turn, g1)) {
+        if (hasOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
             if (pos == e1 && ChessBoard::COL_HROOK == 7) {
                 // String s = printB();
-                if (isPosFree(f1) && isPosFree(g1) && (m_bitbPieces[WHITE][ROOK] & BITS[h1]) != 0) {
+                if (!isSquareAttacked(m_turn, f1) && !isSquareAttacked(m_turn, g1) && isPosFree(f1) && isPosFree(g1) &&
+                    (m_bitbPieces[WHITE][ROOK] & BITS[h1]) != 0) {
                     addKingMove(Move_makeMoveOO(pos, g1));
                 }
             } else  // random Fischer chess
@@ -1086,11 +1086,11 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
             }
         }
-        if (hasOOO(m_turn) && !isSquareAttacked(m_turn, pos) && !isSquareAttacked(m_turn, d1) &&
-            !isSquareAttacked(m_turn, c1)) {
+        if (hasOOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
             if (pos == e1 && ChessBoard::COL_AROOK == 0) {
-                if (isPosFree(d1) && isPosFree(c1) && isPosFree(b1) && (m_bitbPieces[WHITE][ROOK] & BITS[a1]) != 0) {
+                if (!isSquareAttacked(m_turn, d1) && !isSquareAttacked(m_turn, c1) && isPosFree(d1) && isPosFree(c1) &&
+                    isPosFree(b1) && (m_bitbPieces[WHITE][ROOK] & BITS[a1]) != 0) {
                     addKingMove(Move_makeMoveOOO(pos, c1));
                 }
             } else  // random Fischer chess
@@ -1118,11 +1118,11 @@ void ChessBoard::genExtraKingMoves(const int pos) {
             }
         }
     } else {
-        if (hasOO(m_turn) && !isSquareAttacked(m_turn, pos) && !isSquareAttacked(m_turn, f8) &&
-            !isSquareAttacked(m_turn, g8)) {
+        if (hasOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
             if (pos == e8 && ChessBoard::COL_HROOK == 7) {
-                if (isPosFree(f8) && isPosFree(g8) && (m_bitbPieces[BLACK][ROOK] & BITS[h8]) != 0) {
+                if (!isSquareAttacked(m_turn, f8) && !isSquareAttacked(m_turn, g8) && isPosFree(f8) && isPosFree(g8) &&
+                    (m_bitbPieces[BLACK][ROOK] & BITS[h8]) != 0) {
                     addKingMove(Move_makeMoveOO(pos, g8));
                 }
             } else if (ChessBoard::COL_HROOK != 5)  // random Fischer chess
@@ -1145,11 +1145,11 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
             }
         }
-        if (hasOOO(m_turn) && !isSquareAttacked(m_turn, pos) && !isSquareAttacked(m_turn, d8) &&
-            !isSquareAttacked(m_turn, c8)) {
+        if (hasOOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
             if (pos == e8 && ChessBoard::COL_AROOK == 0) {
-                if (isPosFree(d8) && isPosFree(c8) && isPosFree(b8) && (m_bitbPieces[BLACK][ROOK] & BITS[a8]) != 0) {
+                if (!isSquareAttacked(m_turn, d8) && !isSquareAttacked(m_turn, c8) && isPosFree(d8) && isPosFree(c8) &&
+                    isPosFree(b8) && (m_bitbPieces[BLACK][ROOK] & BITS[a8]) != 0) {
                     addKingMove(Move_makeMoveOOO(pos, c8));
                 }
             } else  // random Fischer chess

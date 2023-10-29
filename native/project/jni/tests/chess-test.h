@@ -45,6 +45,14 @@ typedef struct {
     char *message;
 } EngineInFENUntilState;
 
+typedef struct {
+    Game *game;
+    char *sInFEN;
+    int expectedMoveCount;
+    char *expectedMoves[20];
+    bool all;
+} MovesForFEN;
+
 class ChessTest {
    public:
     ChessTest(void);
@@ -59,6 +67,7 @@ class ChessTest {
     static bool expectStateForFEN(Game *game, char *sFEN, int state, char *message);
     static bool expectInFENIsOutFEN(Game *game, char *sFEN, char *message);
     static bool expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario);
+    static bool expectMovesForFEN(MovesForFEN scenario);
     static void printMove(int move);
     static void printFENAndState(ChessBoard *board);
 };

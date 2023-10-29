@@ -6,7 +6,6 @@
 
 class ChessBoard {
    public:
-
 #pragma region Statics
     // variants
     static const int VARIANT_DEFAULT = 1;

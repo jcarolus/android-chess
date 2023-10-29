@@ -24,12 +24,11 @@ bool testEngine();
 bool testSequence();
 bool testNonSequence();
 bool testEngineRunUntilState();
+bool testMoves();
 void newGame();
 void newGameDuck();
 
 int main(int argc, char **argv) {
-    DEBUG_PRINT("\n\n=== START TESTS == \n", 0);
-
     TestFunction tests[] = {testSetupNewGame,
                             testSetupMate,
                             testInCheck,
@@ -39,38 +38,46 @@ int main(int argc, char **argv) {
                             testDuck,
                             testEngine,
                             testSequence,
-                            testEngineRunUntilState/*,
+                            testEngineRunUntilState,
+                            testMoves,
+                            /*,
                             testNonSequence*/};
 
-    
-    // EngineInOutFEN testScenario = {Game::getInstance(),
-    //                                //    "8/7Q/7k/8/8/6$1/8/7K b - - 0 1",
-    //                                //    "8/7k/8/8/8/5$2/8/7K w - - 0 1",
-    //                                "8/7Q/7k/6$p/4Bn2/6q1/6P1/7K b - - 0 1",
-    //                                "8/7p/7Q/7p/4Bn2/5$2/6q1/7K w - - 0 1",
-    //                                2,
-    //                                1,
-    //                                true,
-    //                                "TEST SCENARIO"};
-
-    // ChessTest::expectEngineMove(testScenario);
-    // return 0;
-
+    int testCount = sizeof(tests) / sizeof(TestFunction);
     int testFail = 0, testSuccess = 0;
-    for (int i = 0; i < sizeof(tests) / sizeof(TestFunction); i++) {
-        //Game::deleteInstance(); // guaranteed clean
-        Game::getInstance()->reset(); // reuse instance as in the app
 
-        DEBUG_PRINT("\n* Test %d\n", i);
-        if (tests[i]()) {
-            testSuccess++;
-        } else {
-            DEBUG_PRINT("\n=====> Test %d FAILED\n", i);
-            testFail++;
+    if (argc > 1) {
+        int i = atoi(argv[1]);
+
+        DEBUG_PRINT("\n\n=== SINGLE TEST [%d] == \n", i);
+
+        if (i >= 0 && i < testCount) {
+            Game::getInstance()->reset();
+
+            if (tests[i]()) {
+                testSuccess++;
+            } else {
+                testFail++;
+            }
+        }
+
+    } else {
+        DEBUG_PRINT("\n\n=== START TESTS == \n", 0);
+        for (int i = 0; i < testCount; i++) {
+            // Game::deleteInstance(); // guaranteed clean
+            Game::getInstance()->reset();  // reuse instance as in the app
+
+            DEBUG_PRINT("\n* Test %d\n", i);
+            if (tests[i]()) {
+                testSuccess++;
+            } else {
+                DEBUG_PRINT("\n=====> Test %d FAILED\n", i);
+                testFail++;
+            }
         }
     }
 
-    DEBUG_PRINT("\n\n=== DONE === SUCCESS: [%d] FAIL: [%d]\n", testSuccess, testFail);
+    DEBUG_PRINT("\n\n===> SUCCESS: [%d] FAIL: [%d]\n", testSuccess, testFail);
     return 0;
 }
 
@@ -351,19 +358,36 @@ bool testNonSequence() {
 }
 
 bool testEngineRunUntilState() {
-    EngineInFENUntilState scenario = {
-        .game = Game::getInstance(),
-        .sInFEN = "8/4k3/8/8/8/4NN2/3K4/8 w - - 0 1",
-        .expectedState = ChessBoard::DRAW_50,
-        .depth = 3,
-        .maxMoves = 101,
-        .isDuck = false,
-        .message = "Test 50 move rule"
-    };
-    
+    EngineInFENUntilState scenario = {.game = Game::getInstance(),
+                                      .sInFEN = "8/4k3/8/8/8/4NN2/3K4/8 w - - 0 1",
+                                      .expectedState = ChessBoard::DRAW_50,
+                                      .depth = 3,
+                                      .maxMoves = 101,
+                                      .isDuck = false,
+                                      .message = "Test 50 move rule"};
+
     return ChessTest::expectEndingStateWithinMaxMoves(scenario);
 
-    //DEBUG_PRINT("Performed moves %d :: %d\n", scenario.game->getBoard()->getNoHitCount(),  scenario.game->getBoard()->getState());
+    // DEBUG_PRINT("Performed moves %d :: %d\n", scenario.game->getBoard()->getNoHitCount(),
+    // scenario.game->getBoard()->getState());
+}
+
+bool testMoves() {
+    MovesForFEN scenarios[1] = {{.game = Game::getInstance(),
+                                 .sInFEN = "8/4k3/8/8/8/4NN2/3K4/8 w - - 0 1",
+                                 .expectedMoveCount = 3,
+                                 .expectedMoves = {"Nc4", "Ng4", "Ke1"},
+                                 .all = false}};
+
+    bool bRet = true;
+
+    for (int i = 0; i < 1; i++) {
+        if (!ChessTest::expectMovesForFEN(scenarios[i])) {
+            bRet = false;
+        }
+    }
+
+    return bRet;
 }
 
 void speedTest() {

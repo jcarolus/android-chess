@@ -119,7 +119,6 @@ bool ChessTest::expectInFENIsOutFEN(Game *game, char *sFEN, char *message) {
 }
 
 bool ChessTest::expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario) {
-
     scenario.game->setSearchLimit(scenario.depth);
 
     scenario.game->newGameFromFEN(scenario.sInFEN);
@@ -129,7 +128,6 @@ bool ChessTest::expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario) 
     char buf[1024];
 
     while (movesPerformed < scenario.maxMoves) {
-
         scenario.game->search();
 
         int m = scenario.game->getBestMove();
@@ -168,6 +166,45 @@ bool ChessTest::expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario) 
     }
 
     return expectEqualInt(scenario.expectedState, gameState, scenario.message);
+}
+
+bool ChessTest::expectMovesForFEN(MovesForFEN scenario) {
+    scenario.game->newGameFromFEN(scenario.sInFEN);
+
+    ChessBoard *board = scenario.game->getBoard();
+    int moveCount = board->getNumMoves();
+    if (moveCount != scenario.expectedMoveCount && scenario.all ||
+        moveCount < scenario.expectedMoveCount && !scenario.all) {
+        DEBUG_PRINT("Expected movecount [%d], but got [%d]\n", scenario.expectedMoveCount, moveCount);
+        return false;
+    }
+    int i;
+    char moveArray[moveCount][20];
+
+    ChessBoard *newBoard = new ChessBoard();
+    for (int i = 0; i < moveCount; i++) {
+        int move = board->getMoveAt(i);
+        board->makeMove(move, newBoard);
+
+        newBoard->myMoveToString(moveArray[i]);
+    }
+
+    delete newBoard;
+
+    for (i = 0; i < scenario.expectedMoveCount; i++) {
+        bool contains = false;
+        for (int j = 0; j < moveCount; j++) {
+            if (strcmp(scenario.expectedMoves[i], moveArray[j]) == 0) {
+                contains = true;
+                break;
+            }
+        }
+        if (!contains) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void ChessTest::printMove(int move) {
