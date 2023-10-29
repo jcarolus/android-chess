@@ -57,11 +57,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return gameApi.requestDuckMove(to);
         } else if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
                 BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7
+                BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
+                jni.getTurn() == BoardConstants.WHITE
                 ||
                 jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
                         BoardMembers.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][to] == 7) {
+                        BoardMembers.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
+                        jni.getTurn() == BoardConstants.BLACK) {
 
             final String[] items = getResources().getStringArray(R.array.promotionpieces);
 
@@ -262,6 +264,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         final int state = jni.getState();
         final int turn = jni.getTurn();
         final int duckPos = jni.getDuckPos();
+
+        Log.d(TAG, "state " + state);
 
         // ⚑ ✓ ½
         String labelForWhiteKing = null;

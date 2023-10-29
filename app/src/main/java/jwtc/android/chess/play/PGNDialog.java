@@ -51,7 +51,7 @@ public class PGNDialog extends Dialog {
                 sMove += "@" + Pos.toString(pgnEntries.get(i)._duckMove);
             }
             HashMap<String, String> item = new HashMap<String, String>();
-            item.put("nr", i % 2 == 0 ? ((i + 1) + ". ") : " ");
+            item.put("nr", i % 2 == 0 ? ((i/2 + 1) + ". ") : " ");
             item.put("move", sMove);
             item.put("annotation", pgnEntries.get(i)._sAnnotation);
             item.put("turn", Integer.toString(jni.getNumBoard() - 2 == i ? R.drawable.turnblack : 0));
