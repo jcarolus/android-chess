@@ -244,7 +244,6 @@ public class SetupActivity extends ChessBoardActivity {
         rebuildBoard();
     }
 
-    // p = _jni.pieceAt(t, _selectedPosition);
     public void addPiece(final int pos, final int piece, final int turn) {
         Log.d(TAG, "addPiece " + pos + " " + piece + " " + turn);
         if (piece == BoardConstants.DUCK) {

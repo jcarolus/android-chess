@@ -1056,7 +1056,6 @@ void ChessBoard::genExtraKingMoves(const int pos) {
         if (hasOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
             if (pos == e1 && ChessBoard::COL_HROOK == 7) {
-                // String s = printB();
                 if (!isSquareAttacked(m_turn, f1) && !isSquareAttacked(m_turn, g1) && isPosFree(f1) && isPosFree(g1) &&
                     (m_bitbPieces[WHITE][ROOK] & BITS[h1]) != 0) {
                     addKingMove(Move_makeMoveOO(pos, g1));
@@ -1079,7 +1078,6 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                             pos == g1 && isPosFree(f1) ||      // king allready on g1, f1 free
                             pos == f1 && isPosFree(g1)         // king on f1 and g1 free
                         ) {
-                            // DEBUG_PRINT
                             addKingMove(Move_makeMoveOO(pos, g1));
                         }
                     }
