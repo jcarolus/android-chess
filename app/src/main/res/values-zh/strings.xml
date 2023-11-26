@@ -189,7 +189,7 @@
     <string name="options_auto_flip">自动旋转棋盘</string>
     <string name="options_flip">旋转棋盘</string>
     <string name="options_setup">设置棋盘</string>
-    <string name="options_show_moves">显示步骤</string>
+    <string name="pref_show_possible_moves">显示步骤</string>
     <string name="options_level_time">等级 (时间)</string>
     <string name="options_level_ply">级别 (级别)</string>
 

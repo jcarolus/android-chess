@@ -50,7 +50,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
     protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
-    protected boolean skipReturn = true;
+    protected boolean skipReturn = true, showMoves = false;
     private String keyboardBuffer = "";
 
     public boolean requestMove(final int from, final int to) {
@@ -240,6 +240,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             textToSpeech = null;
         }
+
+        showMoves = prefs.getBoolean("showMoves", false);
 
         fVolume = prefs.getBoolean("moveSounds", false) ? 1.0f : 0.0f;
 
@@ -457,12 +459,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected void setMoveToPositions(int from) {
         Log.d(TAG, "setMoveToPositions " + from);
         moveToPositions.clear();
-        int size = jni.getMoveArraySize();
-        int move;
-        for (int i = 0; i < size; i++) {
-            move = jni.getMoveArrayAt(i);
-            if (Move.getFrom(move) == from) {
-                moveToPositions.add(Move.getTo(move));
+        if (showMoves) {
+            int size = jni.getMoveArraySize();
+            int move;
+            for (int i = 0; i < size; i++) {
+                move = jni.getMoveArrayAt(i);
+                if (Move.getFrom(move) == from) {
+                    moveToPositions.add(Move.getTo(move));
+                }
             }
         }
     }
