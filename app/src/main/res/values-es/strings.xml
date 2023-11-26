@@ -189,7 +189,7 @@
     <string name="options_auto_flip">Rotafolio automatico</string>
     <string name="options_flip">Rotafolio</string>
     <string name="options_setup">Configuración tablero</string>
-    <string name="options_show_moves">Muestra movimientos</string>
+    <string name="pref_show_possible_moves">Muestra movimientos</string>
     <string name="options_level_time">Nivel (tiempo)</string>
     <string name="options_level_ply">Nivel (jugador)</string>
 

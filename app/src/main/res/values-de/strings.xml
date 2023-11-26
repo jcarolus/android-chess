@@ -187,7 +187,7 @@
     <string name="options_auto_flip">Brett automatisch drehen</string>
     <string name="options_flip">Brett drehen</string>
     <string name="options_setup">Brett Einstellungen</string>
-    <string name="options_show_moves">Zeige Spielzüge</string>
+    <string name="pref_show_possible_moves">Zeige Spielzüge</string>
     <string name="options_level_time">Level (Zeit)</string>
     <string name="options_level_ply">Level (ply)</string>
 

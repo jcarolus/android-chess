@@ -189,7 +189,7 @@
     <string name="options_auto_flip">Auto-inversione scacchiera</string>
     <string name="options_flip">Inverti la scacchiera</string>
     <string name="options_setup">Disponi la scacchiera</string>
-    <string name="options_show_moves">Mostra le mosse</string>
+    <string name="pref_show_possible_moves">Mostra le mosse</string>
     <string name="options_level_time">Livello (tempo)</string>
     <string name="options_level_ply">Livello (strati)</string>
 

@@ -412,12 +412,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public void OnMove(int move) {
         super.OnMove(move);
 
-        final int from = Move.getFrom(move);
-        final int to = Move.getTo(move);
-        highlightedPositions.clear();
-        highlightedPositions.add(from);
-        highlightedPositions.add(to);
-
         updateGUI();
 
         playIfEngineMove();
@@ -437,11 +431,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         toggleEngineProgress(false);
 
         gameApi.move(move, duckMove);
-        final int from = Move.getFrom(move);
-        final int to = Move.getTo(move);
+        lastMoveFrom = Move.getFrom(move);
+        lastMoveTo = Move.getTo(move);
         highlightedPositions.clear();
-        highlightedPositions.add(from);
-        highlightedPositions.add(to);
 
         updateGUI();
     }

@@ -1,13 +1,11 @@
 package jwtc.android.chess.views;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 
 import jwtc.android.chess.R;
@@ -20,6 +18,8 @@ public class ChessSquareView extends View {
     private boolean selected;
     private boolean highlighted;
     private boolean focussed;
+    private boolean move;
+    private boolean belowPiece;
 
     private static Paint paint = new Paint();
     private static Paint highlightPaint = new Paint();
@@ -30,6 +30,8 @@ public class ChessSquareView extends View {
         selected = false;
         highlighted = false;
         focussed = false;
+        move = false;
+        belowPiece = false;
     }
 
     public int getPos() {
@@ -72,12 +74,27 @@ public class ChessSquareView extends View {
         }
     }
 
+    public void setMove(boolean move) {
+        if (this.move != move) {
+            this.move = move;
+            this.invalidate();
+        }
+    }
+
+    public void setBelowPiece(boolean belowPiece) {
+        if (this.belowPiece != belowPiece) {
+            this.belowPiece = belowPiece;
+            this.invalidate();
+        }
+    }
+
     public void onDraw(Canvas canvas) {
+
+        final int fieldColor = (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? ChessBoard.WHITE : ChessBoard.BLACK) : (((pos >> 3) & 1) == 0 ? ChessBoard.BLACK : ChessBoard.WHITE);
 
         if (this.selected) {
             paint.setColor(ColorSchemes.getSelectedColor());
         } else {
-            final int fieldColor = (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? ChessBoard.WHITE : ChessBoard.BLACK) : (((pos >> 3) & 1) == 0 ? ChessBoard.BLACK : ChessBoard.WHITE);
             paint.setColor(fieldColor == ChessBoard.WHITE ? ColorSchemes.getLight() : ColorSchemes.getDark());
         }
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
@@ -130,6 +147,15 @@ public class ChessSquareView extends View {
             highlightPaint.setStrokeWidth(strokeWidth);
             highlightPaint.setColor(ColorSchemes.getHightlightColor());
             canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), highlightPaint);
+
+        }
+
+        if (move) {
+            int strokeWidth = getWidth() / 16;
+            highlightPaint.setStyle(Paint.Style.FILL);
+            highlightPaint.setStrokeWidth(belowPiece ? strokeWidth : 0);
+            highlightPaint.setColor(fieldColor == ChessBoard.WHITE ? ColorSchemes.getDark() : ColorSchemes.getLight());
+            canvas.drawCircle(getWidth() / 2, getHeight() / 2, belowPiece ? getHeight() / 2 - strokeWidth : getHeight() / 8, highlightPaint);
         }
     }
 }

@@ -16,7 +16,7 @@ import jwtc.android.chess.services.GameApi;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves;
     private Spinner spinnerPieceSet, spinnerColorScheme, spinnerTileSet;
 
     @Override
@@ -29,6 +29,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         spinnerColorScheme = findViewById(R.id.SpinnerColorScheme);
         spinnerTileSet = findViewById(R.id.SpinnerTileSet);
         checkBoxCoordinates = findViewById(R.id.CheckBoxCoordinates);
+        checkBoxShowMoves = findViewById(R.id.CheckBoxShowMoves);
 
         spinnerPieceSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -87,6 +88,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         jni.newGame();
 
         checkBoxCoordinates.setChecked(prefs.getBoolean("showCoords", false));
+        checkBoxShowMoves.setChecked(prefs.getBoolean("showMoves", true));
 
         spinnerPieceSet.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
         spinnerColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
@@ -107,6 +109,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putString("colorscheme", "" + spinnerColorScheme.getSelectedItemPosition());
         editor.putString("squarePattern", "" + spinnerTileSet.getSelectedItemPosition());
         editor.putBoolean("showCoords", checkBoxCoordinates.isChecked());
+        editor.putBoolean("showMoves", checkBoxShowMoves.isChecked());
 
         editor.commit();
     }
