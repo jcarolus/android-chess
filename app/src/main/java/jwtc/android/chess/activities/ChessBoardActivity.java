@@ -527,16 +527,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DRAG_ENTERED:
-//                        Log.i(TAG, "onDrag ENTERED " + pos);
                         view.setSelected(true);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
-//                        Log.i(TAG, "onDrag EXITED" + pos);
                         view.setSelected(false);
                         break;
                     case DragEvent.ACTION_DROP: {
-//                        Log.i(TAG, "onDrag DROP " + pos);
-                        // Dropped, reassign View to ViewGroup
                         isDragging = false;
                         View fromView = (View) event.getLocalState();
                         if (fromView != null) {
@@ -563,7 +559,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     }
                     case DragEvent.ACTION_DRAG_ENDED: {
                         final View droppedView = (View) event.getLocalState();
-                        Log.i(TAG, "onDrag ENDED " + pos + " " + droppedView != null ? "has view" : "");
                         isDragging = false;
                         if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
                             droppedView.post(new Runnable(){
