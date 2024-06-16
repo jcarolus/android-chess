@@ -51,6 +51,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
     protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
     protected boolean skipReturn = true, showMoves = false;
+    protected boolean isDragging = false;
     private String keyboardBuffer = "";
 
     public boolean requestMove(final int from, final int to) {
@@ -536,6 +537,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     case DragEvent.ACTION_DROP: {
 //                        Log.i(TAG, "onDrag DROP " + pos);
                         // Dropped, reassign View to ViewGroup
+                        isDragging = false;
                         View fromView = (View) event.getLocalState();
                         if (fromView != null) {
                             if (fromView instanceof ChessPieceView) {
@@ -561,6 +563,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     }
                     case DragEvent.ACTION_DRAG_ENDED: {
                         final View droppedView = (View) event.getLocalState();
+                        Log.i(TAG, "onDrag ENDED " + pos + " " + droppedView != null ? "has view" : "");
+                        isDragging = false;
                         if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
                             droppedView.post(new Runnable(){
                                 @Override
@@ -585,24 +589,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (hasPremoved()) {
                 resetPremove();
             } else if (view instanceof ChessPieceView) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (view instanceof ChessPieceView) {
-                        final ChessPieceView pieceView = (ChessPieceView) view;
-                        int from = pieceView.getPos();
-                        if (selectedPosition != from) {
-                            ChessBoardActivity.this.setMoveToPositions(pieceView.getPos());
-                            ChessBoardActivity.this.updateSelectedSquares();
-                        }
+                if (!isDragging && motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    final ChessPieceView pieceView = (ChessPieceView) view;
+                    int from = pieceView.getPos();
+                    if (selectedPosition != from) {
+                        ChessBoardActivity.this.setMoveToPositions(pieceView.getPos());
+                        ChessBoardActivity.this.updateSelectedSquares();
                     }
 
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                     view.startDrag(data, shadowBuilder, view, 0);
                     view.setVisibility(View.INVISIBLE);
+                    isDragging = true;
                     return true;
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-//                    Log.i(TAG, "onTouch UP");
-
                     view.setVisibility(View.VISIBLE);
                     view.invalidate();
                     return true;

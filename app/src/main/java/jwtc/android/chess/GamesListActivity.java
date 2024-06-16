@@ -203,12 +203,11 @@ public class GamesListActivity extends ListActivity implements OnItemClickListen
     }
 
     private String convText(TextView v, String text) {
-        switch (v.getId()) {
-            case R.id.text_date:
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(Long.parseLong(text));
-                return formatter.format(c.getTime());
+        if (v.getId() == R.id.text_date) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(Long.parseLong(text));
+            return formatter.format(c.getTime());
         }
         return text;
     }

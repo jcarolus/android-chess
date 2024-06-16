@@ -6,21 +6,18 @@ android {
             storeFile file('../../android-keystore')
         }
     }
-    compileSdkVersion 33
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 34
+    buildToolsVersion '34'
     defaultConfig {
         applicationId "jwtc.android.chess"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
-    }
-    lintOptions {
-        disable 'MissingTranslation'
     }
     flavorDimensions "deps"
     productFlavors {
@@ -36,6 +33,10 @@ android {
         ndkBuild {
             path file('../native/project/jni/Android.mk')
         }
+    }
+    namespace 'jwtc.android.chess'
+    lint {
+        disable 'MissingTranslation'
     }
 }
 
