@@ -1,6 +1,7 @@
 package jwtc.android.chess;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -24,8 +25,13 @@ public class HtmlActivity extends BaseActivity {
 
         setContentView(R.layout.help);
 
-        _TVversionName = (TextView) findViewById(R.id.textVersionName);
-        _TVversionName.setText(getString(R.string.version_number, BuildConfig.VERSION_NAME)); // "Version:  " + BuildConfig.VERSION_NAME
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+
+            _TVversionName = (TextView) findViewById(R.id.textVersionName);
+            _TVversionName.setText(getString(R.string.version_number, version));
+        } catch (Exception ex) {}
 
         textViewHelp = findViewById(R.id.TextViewHelp);
 
