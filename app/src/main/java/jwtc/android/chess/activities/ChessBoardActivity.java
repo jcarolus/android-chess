@@ -51,7 +51,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
     protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
     protected boolean skipReturn = true, showMoves = false;
-    protected boolean isDragging = false;
     private String keyboardBuffer = "";
 
     public boolean requestMove(final int from, final int to) {
@@ -533,7 +532,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         view.setSelected(false);
                         break;
                     case DragEvent.ACTION_DROP: {
-                        isDragging = false;
                         View fromView = (View) event.getLocalState();
                         if (fromView != null) {
                             if (fromView instanceof ChessPieceView) {
@@ -559,7 +557,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     }
                     case DragEvent.ACTION_DRAG_ENDED: {
                         final View droppedView = (View) event.getLocalState();
-                        isDragging = false;
                         if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
                             droppedView.post(new Runnable(){
                                 @Override
@@ -584,7 +581,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (hasPremoved()) {
                 resetPremove();
             } else if (view instanceof ChessPieceView) {
-                if (!isDragging && motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     final ChessPieceView pieceView = (ChessPieceView) view;
                     int from = pieceView.getPos();
                     if (selectedPosition != from) {
@@ -596,7 +593,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                     view.startDrag(data, shadowBuilder, view, 0);
                     view.setVisibility(View.INVISIBLE);
-                    isDragging = true;
                     return true;
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     view.setVisibility(View.VISIBLE);
