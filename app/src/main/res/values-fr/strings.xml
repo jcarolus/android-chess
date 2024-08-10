@@ -163,7 +163,7 @@
     <string name="menu_pgn_tool">Outil PGN</string>
     <string name="menu_about">A propos</string>
     <string name="menu_exit">Quitter</string>
-    <string name="menu_flip">Inverser l\'échiquier</string>
+    <string name="menu_flip">Inverser</string>
     <string name="menu_more">Plus…</string>
     <string name="menu_setup">Configuration de l\'échiquier</string>
     <string name="menu_from_qrcode">Depuis un QR-code</string>
@@ -185,7 +185,7 @@
     <string name="pref_show_captured">Pièces capturées</string>
     <string name="pref_show_annotate">Coups annotés</string>
     <string name="menu_subview_guess">Evaluer le coup</string>
-    <string name="pref_show_blindfold">Mode aveugle</string>
+    <string name="pref_show_blindfold">Aveugle</string>
 
     <string name="options_play_human">Humain contre humain</string>
     <string name="options_play_android">Humain contre Android</string>
