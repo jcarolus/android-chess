@@ -164,7 +164,7 @@
     <string name="menu_pgn_tool">PGN tool</string>
     <string name="menu_about">About</string>
     <string name="menu_exit">Exit</string>
-    <string name="menu_flip">Flip board</string>
+    <string name="menu_flip">Rotate</string>
     <string name="menu_more">More…</string>
     <string name="menu_setup">Setup board</string>
     <string name="menu_from_qrcode">From QR-code</string>
@@ -186,7 +186,7 @@
     <string name="pref_show_captured">Captured pieces</string>
     <string name="pref_show_annotate">Annotate move</string>
     <string name="menu_subview_guess">Guess the move</string>
-    <string name="pref_show_blindfold">Blindfold mode</string>
+    <string name="pref_show_blindfold">Blindfold</string>
 
     <string name="options_play_human">Human vs Human</string>
     <string name="options_play_android">Human vs Android</string>

@@ -156,7 +156,7 @@
     <string name="menu_pgn_tool">FerramentaPGN</string>
     <string name="menu_about">Cerca de</string>
     <string name="menu_exit">Saír</string>
-    <string name="menu_flip">Virar tabuleiro</string>
+    <string name="menu_flip">Virar</string>
     <string name="menu_more">Mais…</string>
     <string name="menu_setup">Configurar tabuleiro</string>
     <string name="menu_from_qrcode">Desde código-QR</string>
@@ -176,7 +176,7 @@
     <string name="pref_show_captured">Peças capturadas</string>
     <string name="pref_show_annotate">Annotar jogada</string>
     <string name="menu_subview_guess">Adivinhar jogada</string>
-    <string name="pref_show_blindfold">Modo venda</string>
+    <string name="pref_show_blindfold">Venda</string>
 
     <string name="options_play_human">Humano contra Human</string>
     <string name="options_play_android">Humano contra Android</string>

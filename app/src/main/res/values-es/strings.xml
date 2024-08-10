@@ -176,7 +176,7 @@
     <string name="pref_show_captured">Piezas capturadas</string>
     <string name="pref_show_annotate">Anota movimiento</string>
     <string name="menu_subview_guess">Adivina movimiento</string>
-    <string name="pref_show_blindfold">Modo venda</string>
+    <string name="pref_show_blindfold">Venda</string>
 
     <string name="options_play_human">Humano contra Humano</string>
     <string name="options_play_android">Human contra Android</string>

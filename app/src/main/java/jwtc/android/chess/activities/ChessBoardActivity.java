@@ -50,7 +50,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
     protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
-    protected boolean skipReturn = true, showMoves = false;
+    protected boolean skipReturn = true, showMoves = false, flipBoard = false;
     private String keyboardBuffer = "";
 
     public boolean requestMove(final int from, final int to) {

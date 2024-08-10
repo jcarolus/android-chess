@@ -71,13 +71,14 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ProgressBar progressBarEngine;
     private ImageButton playButton;
     private boolean vsCPU = true;
+    private boolean flipBoard = false;
     private int myTurn = 1, requestMoveFrom = -1, requestMoveTo = -1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEcoValue;
     private TableLayout layoutBoardTop, layoutBoardBottom;
-    private SwitchMaterial switchSound, switchBlindfold;
+    private SwitchMaterial switchSound, switchBlindfold, switchFlip;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -224,6 +225,14 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
            }
        });
 
+        switchFlip = findViewById(R.id.SwitchFlip);
+        switchFlip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                flipBoard = switchFlip.isChecked();
+                updateBoardRotation();
+            }
+        });
+
     }
 
     @Override
@@ -357,11 +366,11 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         editor.putString("game_pgn", gameApi.exportFullPGN());
         editor.putString("FEN", null); //
 
-
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
         editor.putLong("clockStartTime", localClock.getLastMeasureTime());
 
+        editor.putBoolean("flipBoard", flipBoard);
 //         if (_uriNotification == null)
 //            editor.putString("NotificationUri", null);
 //        else
@@ -721,6 +730,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         resetSelectedSquares();
     }
 
+    protected void updateBoardRotation() {
+        chessBoardView.setRotated(myTurn == BoardConstants.BLACK && !flipBoard || myTurn == BoardConstants.WHITE && flipBoard);
+    }
+
     protected void updateGameSettingsByPrefs() {
         SharedPreferences prefs = getPrefs();
 
@@ -741,7 +754,11 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         myEngine.setQuiescentSearchOn(prefs.getBoolean("quiescentSearchOn", true));
 
-        chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
+        flipBoard = prefs.getBoolean("flipBoard", false);
+
+        switchFlip.setChecked(flipBoard);
+
+        updateBoardRotation();
 
         playIfEngineMove();
     }

@@ -155,7 +155,7 @@
     <string name="menu_pgn_tool">PGN Werkzeug</string>
     <string name="menu_about">Über</string>
     <string name="menu_exit">Beenden</string>
-    <string name="menu_flip">Brett drehen</string>
+    <string name="menu_flip">Drehen</string>
     <string name="menu_more">Mehr…</string>
     <string name="menu_setup">Brett Einstellungen</string>
     <string name="menu_from_qrcode">Von QR-code</string>
@@ -174,7 +174,7 @@
     <string name="pref_show_captured">Geschlagenene Figuren</string>
     <string name="pref_show_annotate">Kommentiere Zug</string>
     <string name="menu_subview_guess">Rate den Zug</string>
-    <string name="pref_show_blindfold">Blindschach Modus</string>
+    <string name="pref_show_blindfold">Blindschach</string>
 
     <string name="options_play_human">Spieler gegen Spieler</string>
     <string name="options_play_android">Spieler gegen Android</string>
