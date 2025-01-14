@@ -39,21 +39,10 @@ public class StartBaseActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences prefs = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
-        String myLanguage = prefs.getString("localelanguage", "");
-
-        Locale current = getResources().getConfiguration().locale;
-        String language = current.getLanguage();
-        if (myLanguage.equals("")) {    // localelanguage not used yet? then use device default locale
-            myLanguage = language;
-        }
-
-        Locale locale = new Locale(myLanguage);    // myLanguage is current language
-        Locale.setDefault(locale);
 
         Resources resources = getResources();
         Configuration configuration = resources.getConfiguration();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        configuration.setLocale(locale);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
             getApplicationContext().createConfigurationContext(configuration);
@@ -102,7 +91,7 @@ public class StartBaseActivity  extends AppCompatActivity {
                         startActivity(i);
                     } else if (requestedItem.equals(getString(R.string.start_globalpreferences))) {
                         i.setClass(StartBaseActivity.this, ChessPreferences.class);
-                        startActivityForResult(i, 0);
+                        startActivity(i);
                     } else if (requestedItem.equals(getString(R.string.start_boardpreferences))) {
                         i.setClass(StartBaseActivity.this, BoardPreferencesActivity.class);
                         startActivity(i);
@@ -119,14 +108,5 @@ public class StartBaseActivity  extends AppCompatActivity {
         });
 
         _list.requestFocus();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            Log.i(TAG, "recreate");
-            recreate();
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }

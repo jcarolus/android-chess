@@ -406,8 +406,8 @@
     <string name="ics_match">Meci</string>
     <string name="ics_gamenumber">Joc #</string>
 
-    <string name="practice_help"> Găsiți combinația de mat (pot exista mai multe mutări).\nTimpul dumneavoastră și timpul mediu pentru fiecare poziție sunt indicate lângă tablă.\nApăsați butonul 'Afișează' pentru soluție.\nApăsați butonul '>' pentru a trece la următoarea poziție.\nUneori pot fi găsite mai multe soluții, dar aplicația acceptă doar una dintre ele.</string>
-    <string name="puzzle_help">Acestea sunt puzzle-uri dificile, conținând mat în două mutări.\nScopul este să găsiți prima mutare care va duce la un mat forțat în două mutări.\nCu alte cuvinte, după ce faceți mutarea corectă, adversarul nu va putea evita matul la următoarea mutare.\nDupă aceasta, puzzle-ul este considerat rezolvat.\nApăsați butonul 'Afișează' pentru soluție.\nSursă: ARTA MATEI ÎN DOUĂ MUTĂRI, Eduardo Sadier</string>
+    <string name="practice_help"> Găsiți combinația de mat (pot exista mai multe mutări).\nTimpul dumneavoastră și timpul mediu pentru fiecare poziție sunt indicate lângă tablă.\nApăsați butonul \'Afișează\' pentru soluție.\nApăsați butonul \'>\' pentru a trece la următoarea poziție.\nUneori pot fi găsite mai multe soluții, dar aplicația acceptă doar una dintre ele.</string>
+    <string name="puzzle_help">Acestea sunt puzzle-uri dificile, conținând mat în două mutări.\nScopul este să găsiți prima mutare care va duce la un mat forțat în două mutări.\nCu alte cuvinte, după ce faceți mutarea corectă, adversarul nu va putea evita matul la următoarea mutare.\nDupă aceasta, puzzle-ul este considerat rezolvat.\nApăsați butonul \'Afișează\' pentru soluție.\nSursă: ARTA MATEI ÎN DOUĂ MUTĂRI, Eduardo Sadier</string>
     <string name="advanced_help"><![CDATA[
  <h3>Extins</h3>
     <p>Creează sau importă propriile materiale.</p>

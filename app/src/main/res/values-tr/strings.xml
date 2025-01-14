@@ -510,27 +510,6 @@
     <string name="toast_challenge_posted">Karşılaşma gönderildi</string>
     <string name="prefs_icsshowclocksummary">PGN\'de her hamlede saat sürelerini göster</string>
 
-    <!-- array items -->
-    <string name="locale_zh_title">中文</string>
-    <string name="locale_en_title">English</string>
-    <string name="locale_it_title">Italiano</string>
-    <string name="locale_pt_title">português</string>
-    <string name="locale_es_title">Español</string>
-    <string name="locale_ru_title">Pусский</string>
-    <string name="locale_de_title">Deutsch</string>
-    <string name="locale_fr_title">Français</string>
-    <string name="locale_tr_title">Türkçe</string>
-
-    <string name="locale_zh">zh</string>
-    <string name="locale_en">en</string>
-    <string name="locale_it">it</string>
-    <string name="locale_pt">pt</string>
-    <string name="locale_es">es</string>
-    <string name="locale_ru">ru</string>
-    <string name="locale_de">de</string>
-    <string name="locale_fr">fr</string>
-    <string name="locale_tr">tr</string>
-
     <string name="pieceset_alpha">Alfa</string>
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_leipzig">Leipzig</string>
