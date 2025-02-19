@@ -173,6 +173,7 @@
                         android:text="@string/button_cancel"
                         android:layout_width="wrap_content"
                         android:layout_margin="2dip"
+                        android:textColor="#101010"
                         style="@style/ChessButton"/>
 
                     <Button
@@ -180,6 +181,7 @@
                         android:text="@string/button_ok"
                         android:layout_width="wrap_content"
                         android:layout_margin="2dip"
+                        android:textColor="#101010"
                         style="@style/ChessButton"/>
                 </TableRow>
 

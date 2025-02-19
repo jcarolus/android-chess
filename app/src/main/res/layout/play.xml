@@ -141,6 +141,7 @@
                         <ImageButton
                             android:id="@+id/ButtonPlay"
                             android:src="@drawable/ic_icon_play"
+                            android:tint="#101010"
                             style="@style/ChessImageButton" />
 
                         <ProgressBar
@@ -166,6 +167,7 @@
 
                     <ImageButton android:id="@+id/ButtonMenu"
                         android:src="@drawable/ic_three_dots_vertical"
+                        android:tint="#101010"
                         style="@style/ChessImageButton"/>
 
                 </TableRow>
@@ -182,6 +184,7 @@
                     <ImageButton
                         android:id="@+id/ButtonPrevious"
                         android:src="@drawable/ic_chevron_left"
+                        android:tint="#101010"
                         style="@style/ChessImageButton" />
                     <SeekBar
                         android:id="@+id/SeekBarMain"
@@ -192,11 +195,13 @@
                     <ImageButton
                         android:id="@+id/ButtonNext"
                         android:src="@drawable/ic_chevron_right"
+                        android:tint="#101010"
                         style="@style/ChessImageButton" />
 
                     <ImageButton
                         android:id="@+id/ButtonPGN"
                         android:src="@drawable/ic_list_ul"
+                        android:tint="#101010"
                         style="@style/ChessImageButton" />
 
                 </TableRow>
