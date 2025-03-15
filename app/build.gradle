@@ -18,6 +18,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.config
         }
     }
     flavorDimensions "deps"
@@ -36,9 +37,9 @@ android {
         }
     }
     namespace 'jwtc.android.chess'
-    lint {
-        disable 'MissingTranslation'
-    }
+//    lint {
+//        disable 'MissingTranslation'
+//    }
 }
 
 dependencies {
