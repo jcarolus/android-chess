@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import jwtc.android.chess.ChessPreferences;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
 import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
@@ -76,6 +77,10 @@ public class StartBaseActivity  extends AppCompatActivity {
                         startActivity(i);
                     } else if (requestedItem.equals(getString(R.string.start_puzzles))) {
                         i.setClass(StartBaseActivity.this, PuzzleActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(i);
+                    } else if (requestedItem.equals(getString(R.string.start_hotspotboard))) {
+                        i.setClass(StartBaseActivity.this, HotspotBoardActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (requestedItem.equals(getString(R.string.start_about))) {
