@@ -228,6 +228,10 @@ public class GameApi {
         return false;
     }
 
+    public String getFEN() {
+        return jni.toFEN();
+    }
+
     public int newGameRandomFischer(int seed) {
 
         int ret = jni.initRandomFisher(seed);

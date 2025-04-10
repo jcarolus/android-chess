@@ -17,6 +17,23 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TableRow>
+                <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Host"
+                    android:checked="true"
+                    ></com.google.android.material.switchmaterial.SwitchMaterial>
+                <Button android:id="@+id/ButtonConnect"
+                    android:text="Connect"
+                    android:layout_width="wrap_content"
+                    style="@style/ChessButton"/>
+            </TableRow>
+        </TableLayout>
 
     </ScrollView>
 
