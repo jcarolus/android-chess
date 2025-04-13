@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TableLayout;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -27,6 +29,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private Messenger messengerFromService;
     private SwitchMaterial switchHost;
     private Button buttonConnect;
+    private TableLayout layoutConnect;
+    private EditText editName;
     private boolean isHost = true;
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -70,13 +74,16 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.OnMove(move);
 
         Log.d(TAG, "OnMove");
-        Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND);
+        Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
         Bundle bundle = new Bundle();
-        bundle.putString("data", gameApi.getFEN());
-        msg.setData(bundle);
         try {
+            GameMessage message = new GameMessage(gameApi.getFEN(), gameApi.getWhite(), gameApi.getBlack());
+            bundle.putString("data", message.toJsonString());
+            msg.setData(bundle);
+
             messengerFromService.send(msg);
-        } catch (RemoteException e) {
+        } catch (Exception e) {
+            Log.d(TAG, "Could net send game message");
             e.printStackTrace();
         }
     }
@@ -105,13 +112,24 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == HotspotBoardService.MSG_RECEIVED) {
+            if (msg.what == HotspotBoardService.MSG_RECEIVED_GAME_UPDATE) {
                 String data = msg.getData().getString("data");
                 Log.d(TAG, "Received from service: " + data);
                 // Update UI here
                 if (data != null) {
-                    gameApi.initFEN(data, true);
+                    try {
+                        GameMessage message = GameMessage.fromJson(data);
+                        ((HotspotBoardApi)gameApi).onGameUpdate(message);
+
+                    } catch (Exception ex) {
+                        Log.d(TAG, "Could not parse game message: " + ex.toString());
+                    }
                 }
+            } else if (msg.what == HotspotBoardService.MSG_SOCKET_CONNECTED) {
+                layoutConnect.setVisibility(View.GONE);
+
+            } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
+                layoutConnect.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -137,8 +155,16 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonConnect = findViewById(R.id.ButtonConnect);
         buttonConnect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                startSession(isHost);
+                String name = editName.getText().toString();
+                if (name.length() > 0) {
+                    ((HotspotBoardApi)gameApi).setMyName(name);
+                    startSession(isHost);
+                }
             }
         });
+
+        layoutConnect = findViewById(R.id.LayoutConnect);
+
+        editName = findViewById(R.id.EditName);
     }
 }

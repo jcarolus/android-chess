@@ -31,8 +31,8 @@ public class HotspotBoardService extends Service {
     public static final int MSG_START_SESSION = 2;
     public static final int MSG_SOCKET_CONNECTED = 3;
     public static final int MSG_SOCKET_DISCONNECTED = 4;
-    public static final int MSG_SEND = 5;
-    public static final int MSG_RECEIVED = 6;
+    public static final int MSG_SEND_GAME_UPDATE = 5;
+    public static final int MSG_RECEIVED_GAME_UPDATE = 6;
 
     private Thread workerThread;
     private Socket socket = null;
@@ -59,7 +59,7 @@ public class HotspotBoardService extends Service {
                 case MSG_START_SESSION:
                     startSession(msg.arg1 == 1, 8080);
                     break;
-                case MSG_SEND:
+                case MSG_SEND_GAME_UPDATE:
                     if (writer != null) {
                         if (socket == null) {
                             Log.d(TAG, "socket is null");
@@ -91,17 +91,32 @@ public class HotspotBoardService extends Service {
         }
     });
 
-    private void notifyActivity(String data) {
+    private void notifyActivityGameUpdate(String data) {
+        if (activityMessenger == null) {
+            Log.d(TAG, "notifyActivityGameUpdate but activityMessenger is null");
+            return;
+        }
+        Log.d(TAG, "notifyActivityGameUpdate: " + data);
+        try {
+            Message message = Message.obtain(null, MSG_RECEIVED_GAME_UPDATE);
+            Bundle bundle = new Bundle();
+            bundle.putString("data", data);
+            message.setData(bundle);
+            activityMessenger.send(message);
+        } catch (RemoteException e) {
+            Log.d(TAG, "notifyActivityGameUpdate failed");
+            e.printStackTrace();
+        }
+    }
+
+    private void notifyActivity(int what) {
         if (activityMessenger == null) {
             Log.d(TAG, "notifyActivity but activityMessenger is null");
             return;
         }
-        Log.d(TAG, "notifyActivity: " + data);
+        Log.d(TAG, "notifyActivity: " + what);
         try {
-            Message message = Message.obtain(null, MSG_RECEIVED);
-            Bundle bundle = new Bundle();
-            bundle.putString("data", data);
-            message.setData(bundle);
+            Message message = Message.obtain(null, what);
             activityMessenger.send(message);
         } catch (RemoteException e) {
             Log.d(TAG, "notifyActivity failed");
@@ -113,6 +128,7 @@ public class HotspotBoardService extends Service {
     public void onDestroy() {
         Log.i(TAG, "onDestroy");
         tearDown();
+        super.onDestroy();
     }
 
     public void tearDown() {
@@ -146,6 +162,8 @@ public class HotspotBoardService extends Service {
                     socket = new Socket(hostIp, port);
                 }
 
+                notifyActivity(MSG_SOCKET_CONNECTED);
+
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -153,13 +171,17 @@ public class HotspotBoardService extends Service {
                     String response = reader.readLine();
                     Log.d(TAG, "Received from server: " + response);
                     if (response != null) { // null when socket is closed
-                        notifyActivity(response);
+                        notifyActivityGameUpdate(response);
+                    } else {
+                        break;
                     }
                 }
+                notifyActivity(MSG_SOCKET_DISCONNECTED);
                 Log.d(TAG, "socket disconnected in workerThread");
                 // @TODO disconnected
             } catch (Exception ex) {
                 Log.d(TAG, ex.toString());
+                notifyActivity(MSG_SOCKET_DISCONNECTED);
             }
         });
         workerThread.start();
