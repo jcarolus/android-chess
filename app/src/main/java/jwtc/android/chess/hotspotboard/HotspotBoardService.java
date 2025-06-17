@@ -36,6 +36,7 @@ public class HotspotBoardService extends Service {
 
     private Thread workerThread;
     private Socket socket = null;
+    private ServerSocket serverSocket = null;
     BufferedWriter writer = null;
 
     private Messenger activityMessenger;
@@ -139,6 +140,15 @@ public class HotspotBoardService extends Service {
             }
         } catch (Exception ex) {}
         socket = null;
+
+        if (serverSocket != null) {
+            try {
+                serverSocket.close();
+                serverSocket = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void startSession(boolean isHost, final int port) {
@@ -146,8 +156,10 @@ public class HotspotBoardService extends Service {
         workerThread = new Thread(() -> {
             try {
                 if (isHost) {
-                    ServerSocket serverSocket = new ServerSocket(port);
+                    serverSocket = new ServerSocket(port);
+                    Log.d(TAG, "Serversocket created");
                     socket = serverSocket.accept();
+                    Log.d(TAG, "client socket connected to server");
                 } else {
                     WifiManager wifiManager = (WifiManager) HotspotBoardService.this.getSystemService(Context.WIFI_SERVICE);
                     DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
@@ -160,6 +172,8 @@ public class HotspotBoardService extends Service {
                             (hostAddress >> 24 & 0xff));
 
                     socket = new Socket(hostIp, port);
+
+                    Log.d(TAG, "client socket connected");
                 }
 
                 notifyActivity(MSG_SOCKET_CONNECTED);

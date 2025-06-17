@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -23,6 +24,8 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 
+import static android.view.View.INVISIBLE;
+
 public class HotspotBoardActivity extends ChessBoardActivity {
     private final Messenger messengerToService = new Messenger(new IncomingHandler());
     private final String TAG = "HotspotBoardActivity";
@@ -32,6 +35,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private TableLayout layoutConnect;
     private EditText editName;
     private boolean isHost = true;
+    private String startFEN = null;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -56,24 +60,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     };
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart, call bindService");
-        bindService(new Intent(this, HotspotBoardService.class), connection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop");
-        unbindService(connection);
-    }
-
-    @Override
     public void OnMove(int move) {
         super.OnMove(move);
 
         Log.d(TAG, "OnMove");
+
         Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
         Bundle bundle = new Bundle();
         try {
@@ -88,19 +79,39 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
     }
 
+    @Override
+    public boolean requestMove(final int from, final int to) {
+        Log.d(TAG, "requestMove");
+        if (((HotspotBoardApi)gameApi).isMyTurn()) {
+            boolean res = super.requestMove(from, to);
+            if (!res) {
+                rebuildBoard();
+            }
+            return res;
+        }
+        rebuildBoard();
+        Log.d(TAG, "requestMove not my turn");
+        return false;
+    }
+
     public void startSession(boolean isHost) {
+        Log.d(TAG, "startSession called " + isHost);
         try {
             if (messengerFromService != null) {
+                layoutConnect.setVisibility(View.GONE);
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
                 Log.d(TAG, "startMsg " + startMsg == null ? "null" : "object");
                 startMsg.arg1 = isHost ? 1 : 0; // boolean isHost
                 messengerFromService.send(startMsg);
 
-                gameApi.newGame(); // @TODO
+                ((HotspotBoardApi)gameApi).setPlayingAsWhite(isHost);
+                chessBoardView.setRotated(!isHost);
+
             } else {
                 Log.d(TAG, "messengerFromService is null");
             }
         } catch (RemoteException e) {
+            Log.d(TAG, "startSession failed");
             e.printStackTrace();
         }
     }
@@ -135,6 +146,20 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart, call bindService");
+        bindService(new Intent(this, HotspotBoardService.class), connection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+        unbindService(connection);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -156,15 +181,61 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonConnect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 String name = editName.getText().toString();
+                Log.d(TAG, "buttonConnect " + name);
                 if (name.length() > 0) {
                     ((HotspotBoardApi)gameApi).setMyName(name);
+
+
+                    //    gameApi.newGame();
+
                     startSession(isHost);
                 }
+            }
+        });
+
+        Button buttonNew = findViewById(R.id.ButtonNew);
+        buttonNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gameApi.newGame();
             }
         });
 
         layoutConnect = findViewById(R.id.LayoutConnect);
 
         editName = findViewById(R.id.EditName);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences prefs = getPrefs();
+        startFEN = prefs.getString("hotspotboardFEN", null);
+        if (startFEN != null) {
+            gameApi.initFEN(startFEN, true);
+        } else {
+            gameApi.newGame();
+        }
+
+        String sName = prefs.getString("hotspotboardName", "");
+        editName.setText(sName);
+
+        switchHost.setChecked(prefs.getBoolean("hostpotboardIsHost", true));
+
+        Log.d(TAG, "onResume " + sName + " :: " + startFEN);
+    }
+
+    @Override
+    protected void onPause() {
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+
+        String sFEN = gameApi.getFEN();
+        editor.putString("hotspotboardFEN", sFEN);
+        editor.putString("hotspotboardName", ((HotspotBoardApi)gameApi).getMyName());
+        editor.putBoolean("hostpotboardIsHost", ((HotspotBoardApi)gameApi).isPlayingAsWhite());
+
+        editor.commit();
+
+        super.onPause();
     }
 }

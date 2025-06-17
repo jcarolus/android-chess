@@ -17,6 +17,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
         <TableLayout
             android:id="@+id/LayoutConnect"
             android:layout_width="match_parent"
@@ -43,6 +47,12 @@
                     style="@style/ChessButton"/>
             </TableRow>
         </TableLayout>
+
+            <Button android:id="@+id/ButtonNew"
+                android:text="New"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton"/>
+        </LinearLayout>
 
     </ScrollView>
 

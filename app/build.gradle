@@ -12,7 +12,7 @@ android {
         applicationId "jwtc.android.chess"
         minSdkVersion 21
         targetSdkVersion 34
-        resConfigs "en", "zh", "it", "pt", "es", "ru", "de", "fr", "tr", "ro"
+        resourceConfigurations += ['en', 'zh', 'it', 'pt', 'es', 'ru', 'de', 'fr', 'tr', 'ro']
     }
     buildTypes {
         release {
