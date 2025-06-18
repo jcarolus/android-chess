@@ -96,7 +96,7 @@
     <string name="button_undo">Annuler</string>
     <string name="button_ok">OK</string>
     <string name="button_menu">Menu</string>
-    <string name="button_cancel">Annulé</string>
+    <string name="button_cancel">Annuler</string>
     <string name="button_login">Login</string>
     <string name="button_register">S\'enregistrer</string>
     <string name="button_close">Fermer</string>
@@ -108,7 +108,7 @@
 
     <string name="alert_yes">Oui</string>
     <string name="alert_no">Non</string>
-    <string name="alert_cancel">Annulé</string>
+    <string name="alert_cancel">Annuler</string>
     <string name="alert_ok">OK</string>
     <string name="alert_confirm">Confirmer</string>
 
