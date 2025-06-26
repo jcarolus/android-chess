@@ -33,6 +33,22 @@
                     android:text="Host"
                     android:checked="true"
                     ></com.google.android.material.switchmaterial.SwitchMaterial>
+
+                <Button
+                    android:id="@+id/PlayAsWhite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="7dp"
+                    android:text="White" />
+
+                <Button
+                    android:id="@+id/PlayAsBlack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="7dp"
+                    android:text="Black" />
             </TableRow>
             <TableRow>
                 <EditText
