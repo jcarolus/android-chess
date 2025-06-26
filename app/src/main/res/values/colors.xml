@@ -10,4 +10,9 @@
     <color name="textOnBackgroundColor">#fafafa</color>
     <color name="surfaceColor">#eeeeee</color>
     <color name="surfaceTextColor">#000000</color>
+    <color name="tile_dark">#B58863</color>
+    <color name="tile_light">#F0D9B5</color>
+    <color name="tile_dark_selected">#6A9D42</color>
+    <color name="tile_light_selected">#85BC4C</color>
+    <color name="button_selection_blue">#3367D6</color>
 </resources>
