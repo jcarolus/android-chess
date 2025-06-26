@@ -19,6 +19,8 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TableLayout;
 
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.R;
@@ -32,9 +34,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private Messenger messengerFromService;
     private SwitchMaterial switchHost;
     private Button buttonConnect;
+    private Button white;
+    private Button black;
     private TableLayout layoutConnect;
     private EditText editName;
     private boolean isHost = true;
+
     private String startFEN = null;
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -94,18 +99,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         return false;
     }
 
-    public void startSession(boolean isHost) {
+    public void startSession() {
         Log.d(TAG, "startSession called " + isHost);
         try {
             if (messengerFromService != null) {
                 layoutConnect.setVisibility(View.GONE);
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
-                Log.d(TAG, "startMsg " + startMsg == null ? "null" : "object");
+                Log.d(TAG, "startMsg " + (startMsg == null ? "null" : "object"));
                 startMsg.arg1 = isHost ? 1 : 0; // boolean isHost
                 messengerFromService.send(startMsg);
-
-                ((HotspotBoardApi)gameApi).setPlayingAsWhite(isHost);
-                chessBoardView.setRotated(!isHost);
 
             } else {
                 Log.d(TAG, "messengerFromService is null");
@@ -113,6 +115,20 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         } catch (RemoteException e) {
             Log.d(TAG, "startSession failed");
             e.printStackTrace();
+        }
+    }
+
+    private void updateColorButtons(boolean whiteSelected) {
+        if (whiteSelected) {
+            white.setBackgroundColor(ContextCompat.getColor(this, R.color.button_selection_blue));
+            white.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+            black.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
+            black.setTextColor(ContextCompat.getColor(this, R.color.surfaceTextColor));
+        } else {
+            black.setBackgroundColor(ContextCompat.getColor(this, R.color.button_selection_blue));
+            black.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+            white.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
+            white.setTextColor(ContextCompat.getColor(this, R.color.surfaceTextColor));
         }
     }
 
@@ -138,9 +154,22 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 }
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_CONNECTED) {
                 layoutConnect.setVisibility(View.GONE);
+                if (isHost) {
+                    white.setClickable(false);
+                    black.setClickable(false);
+                }
 
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
                 layoutConnect.setVisibility(View.VISIBLE);
+                if (isHost) {
+                    white.setClickable(true);
+                    black.setClickable(true);
+                }
+            } else if (msg.what == HotspotBoardService.MSG_SET_PLAYER_COLOR) {
+                boolean amWhite = msg.arg1 == 1;
+                Log.d(TAG, "Received color from service. I am playing as " + (amWhite ? "White" : "Black"));
+                ((HotspotBoardApi) gameApi).setPlayingAsWhite(amWhite);
+                chessBoardView.setRotated(!amWhite);
             }
         }
     }
@@ -169,11 +198,49 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         afterCreate();
 
+        white = findViewById(R.id.PlayAsWhite);
+        black = findViewById(R.id.PlayAsBlack);
         switchHost = findViewById(R.id.SwitchHost);
         switchHost.setChecked(true);
         switchHost.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isHost = switchHost.isChecked();
+                if (!isHost) {
+                    white.setVisibility(View.INVISIBLE);
+                    black.setVisibility(View.INVISIBLE);
+                }
+                if (isHost) {
+                    white.setVisibility(View.VISIBLE);
+                    black.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        white.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Message msg = Message.obtain(null, HotspotBoardService.MSG_SET_HOST_COLOR);
+                    msg.arg1 = 1;
+                    messengerFromService.send(msg);
+                    updateColorButtons(true);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        black.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Message msg = Message.obtain(null, HotspotBoardService.MSG_SET_HOST_COLOR);
+                    msg.arg1 = 0;
+                    messengerFromService.send(msg);
+                    updateColorButtons(false);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -184,11 +251,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 Log.d(TAG, "buttonConnect " + name);
                 if (name.length() > 0) {
                     ((HotspotBoardApi)gameApi).setMyName(name);
-
-
-                    //    gameApi.newGame();
-
-                    startSession(isHost);
+                    startSession();
                 }
             }
         });
@@ -221,6 +284,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         editName.setText(sName);
 
         switchHost.setChecked(prefs.getBoolean("hostpotboardIsHost", true));
+        updateColorButtons(true);
 
         Log.d(TAG, "onResume " + sName + " :: " + startFEN);
     }
@@ -232,7 +296,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         String sFEN = gameApi.getFEN();
         editor.putString("hotspotboardFEN", sFEN);
         editor.putString("hotspotboardName", ((HotspotBoardApi)gameApi).getMyName());
-        editor.putBoolean("hostpotboardIsHost", ((HotspotBoardApi)gameApi).isPlayingAsWhite());
+        editor.putBoolean("hostpotboardIsHost", isHost);
 
         editor.commit();
 
