@@ -33,6 +33,10 @@ public class HotspotBoardService extends Service {
     public static final int MSG_SOCKET_DISCONNECTED = 4;
     public static final int MSG_SEND_GAME_UPDATE = 5;
     public static final int MSG_RECEIVED_GAME_UPDATE = 6;
+    public static final int MSG_SET_HOST_COLOR = 7;
+    public static final int MSG_SET_PLAYER_COLOR = 8;
+    public static final int COLOR_OF_CLIENT= 9;
+    public static final int MSG_HOST_COLOR_UPDATE = 10;
 
     private Thread workerThread;
     private Socket socket = null;
@@ -40,6 +44,8 @@ public class HotspotBoardService extends Service {
     BufferedWriter writer = null;
 
     private Messenger activityMessenger;
+    private boolean isHost = false;
+    private boolean hostPlaysAsWhite = true;
 
     @Nullable
     @Override
@@ -58,7 +64,12 @@ public class HotspotBoardService extends Service {
                     activityMessenger = msg.replyTo;
                     break;
                 case MSG_START_SESSION:
-                    startSession(msg.arg1 == 1, 8080);
+                    isHost = msg.arg1 == 1;
+                    startSession(isHost, 8080);
+                    break;
+                case MSG_SET_HOST_COLOR:
+                    hostPlaysAsWhite = msg.arg1 == 1;
+                    Log.d(TAG, "Host color set to " + (hostPlaysAsWhite ? "White" : "Black"));
                     break;
                 case MSG_SEND_GAME_UPDATE:
                     if (writer != null) {
@@ -91,6 +102,22 @@ public class HotspotBoardService extends Service {
             }
         }
     });
+
+    private void notifyActivityPlayerColor(boolean playsAsWhite) {
+        if (activityMessenger == null) {
+            Log.d(TAG, "notifyActivityPlayerColor but activityMessenger is null");
+            return;
+        }
+        Log.d(TAG, "notifyActivityPlayerColor: " + (playsAsWhite ? "WHITE" : "BLACK"));
+        try {
+            Message message = Message.obtain(null, MSG_SET_PLAYER_COLOR);
+            message.arg1 = playsAsWhite ? 1 : 0;
+            activityMessenger.send(message);
+        } catch (RemoteException e) {
+            Log.d(TAG, "notifyActivityPlayerColor failed");
+            e.printStackTrace();
+        }
+    }
 
     private void notifyActivityGameUpdate(String data) {
         if (activityMessenger == null) {
@@ -181,11 +208,26 @@ public class HotspotBoardService extends Service {
                 writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+                if (isHost) {
+                    String colorMsg = "COLOR:" + (hostPlaysAsWhite ? "WHITE" : "BLACK");
+                    writer.write(colorMsg + "\n");
+                    writer.flush();
+                    Log.d(TAG, "Sent color info: " + colorMsg);
+                    notifyActivityPlayerColor(hostPlaysAsWhite);
+                }
+
                 while (socket != null && socket.isConnected()) {
                     String response = reader.readLine();
-                    Log.d(TAG, "Received from server: " + response);
+                    Log.d(TAG, "Received from socket: " + response);
                     if (response != null) { // null when socket is closed
-                        notifyActivityGameUpdate(response);
+                        if (response.startsWith("COLOR:")) {
+                            if (!isHost) {
+                                boolean receivedHostIsWhite = response.equals("COLOR:WHITE");
+                                notifyActivityPlayerColor(!receivedHostIsWhite);
+                            }
+                        } else {
+                            notifyActivityGameUpdate(response);
+                        }
                     } else {
                         break;
                     }
