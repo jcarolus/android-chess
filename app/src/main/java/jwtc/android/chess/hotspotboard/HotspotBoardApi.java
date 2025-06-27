@@ -13,6 +13,7 @@ public class HotspotBoardApi extends GameApi {
 
     public void setMyName(String myName) {
         this.myName = myName;
+        this.opponentName = "";
     }
 
 
@@ -25,14 +26,19 @@ public class HotspotBoardApi extends GameApi {
             Log.d(TAG, "GameUpdate without myName");
         }
 
-        if (message.white.equals(myName)) {
+        // if .white is not set, it means it's us and opponent does not know our name
+        if (message.white.isEmpty() || message.white.equals(myName)) {
+            isPlayingAsWhite = true;
             opponentName = message.black;
         } else {
+            isPlayingAsWhite = false;
             opponentName = message.white;
         }
 
         if (message.FEN.length() > 0) {
             initFEN(message.FEN, true);
+        } else {
+            Log.d(TAG, "GameUpdate without FEN");
         }
     }
 
@@ -47,5 +53,12 @@ public class HotspotBoardApi extends GameApi {
 
     public void setPlayingAsWhite(boolean asWhite) {
         isPlayingAsWhite = asWhite;
+    }
+
+    public String getWhite() {
+        return isPlayingAsWhite ? myName : opponentName;
+    }
+    public String getBlack() {
+        return isPlayingAsWhite ? opponentName : myName;
     }
 }

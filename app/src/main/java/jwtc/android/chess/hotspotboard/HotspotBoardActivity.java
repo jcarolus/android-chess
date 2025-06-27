@@ -30,12 +30,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private final Messenger messengerToService = new Messenger(new IncomingHandler());
     private final String TAG = "HotspotBoardActivity";
     private Messenger messengerFromService;
-    private SwitchMaterial switchHost;
+    private SwitchMaterial switchHost, switchPlayAsWhite;
     private Button buttonConnect;
-    private TableLayout layoutConnect;
+    private TableLayout layoutConnect, layoutButtons;
     private EditText editName;
-    private boolean isHost = true;
-    private String startFEN = null;
+    private boolean isHost = true, playAsWhite = true;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -64,19 +63,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.OnMove(move);
 
         Log.d(TAG, "OnMove");
+        this.sendGameUpdate();
 
-        Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
-        Bundle bundle = new Bundle();
-        try {
-            GameMessage message = new GameMessage(gameApi.getFEN(), gameApi.getWhite(), gameApi.getBlack());
-            bundle.putString("data", message.toJsonString());
-            msg.setData(bundle);
-
-            messengerFromService.send(msg);
-        } catch (Exception e) {
-            Log.d(TAG, "Could net send game message");
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -98,14 +86,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Log.d(TAG, "startSession called " + isHost);
         try {
             if (messengerFromService != null) {
-                layoutConnect.setVisibility(View.GONE);
+                this.setConnectedState(true);
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
                 Log.d(TAG, "startMsg " + startMsg == null ? "null" : "object");
                 startMsg.arg1 = isHost ? 1 : 0; // boolean isHost
                 messengerFromService.send(startMsg);
-
-                ((HotspotBoardApi)gameApi).setPlayingAsWhite(isHost);
-                chessBoardView.setRotated(!isHost);
 
             } else {
                 Log.d(TAG, "messengerFromService is null");
@@ -131,16 +116,19 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     try {
                         GameMessage message = GameMessage.fromJson(data);
                         ((HotspotBoardApi)gameApi).onGameUpdate(message);
+                        chessBoardView.setRotated(!((HotspotBoardApi)gameApi).isPlayingAsWhite());
 
                     } catch (Exception ex) {
                         Log.d(TAG, "Could not parse game message: " + ex.toString());
                     }
                 }
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_CONNECTED) {
-                layoutConnect.setVisibility(View.GONE);
-
+                HotspotBoardActivity.this.setConnectedState(true);
+                if (HotspotBoardActivity.this.isHost) {
+                    HotspotBoardActivity.this.sendGameUpdate();
+                }
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
-                layoutConnect.setVisibility(View.VISIBLE);
+                HotspotBoardActivity.this.setConnectedState(false);
             }
         }
     }
@@ -182,12 +170,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             public void onClick(View arg0) {
                 String name = editName.getText().toString();
                 Log.d(TAG, "buttonConnect " + name);
-                if (name.length() > 0) {
+                if (!name.isEmpty()) {
                     ((HotspotBoardApi)gameApi).setMyName(name);
-
-
-                    //    gameApi.newGame();
-
+                    if (isHost) {
+                        ((HotspotBoardApi) gameApi).setPlayingAsWhite(playAsWhite);
+                    }
+                    chessBoardView.setRotated(!((HotspotBoardApi)gameApi).isPlayingAsWhite());
                     startSession(isHost);
                 }
             }
@@ -198,31 +186,44 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             @Override
             public void onClick(View view) {
                 gameApi.newGame();
+
+                ((HotspotBoardApi)gameApi).setPlayingAsWhite(playAsWhite);
+                chessBoardView.setRotated(!((HotspotBoardApi)gameApi).isPlayingAsWhite());
+                HotspotBoardActivity.this.sendGameUpdate();
             }
         });
 
         layoutConnect = findViewById(R.id.LayoutConnect);
+        layoutButtons = findViewById(R.id.LayoutButtons);
+
+        this.setConnectedState(false);
 
         editName = findViewById(R.id.EditName);
+
+        switchPlayAsWhite = findViewById(R.id.SwitchPlayAsWhite);
+        switchPlayAsWhite.setChecked(isHost);
+        switchPlayAsWhite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                playAsWhite = switchPlayAsWhite.isChecked();
+            }
+        });
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
         SharedPreferences prefs = getPrefs();
-        startFEN = prefs.getString("hotspotboardFEN", null);
-        if (startFEN != null) {
-            gameApi.initFEN(startFEN, true);
-        } else {
-            gameApi.newGame();
-        }
+
+        Log.d(TAG, "messengerFromService " + (messengerFromService == null));
+
+        gameApi.newGame();
 
         String sName = prefs.getString("hotspotboardName", "");
         editName.setText(sName);
 
         switchHost.setChecked(prefs.getBoolean("hostpotboardIsHost", true));
-
-        Log.d(TAG, "onResume " + sName + " :: " + startFEN);
+        switchPlayAsWhite.setChecked(prefs.getBoolean("hostpotboardIsHost", true));
     }
 
     @Override
@@ -230,12 +231,37 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         String sFEN = gameApi.getFEN();
-        editor.putString("hotspotboardFEN", sFEN);
         editor.putString("hotspotboardName", ((HotspotBoardApi)gameApi).getMyName());
         editor.putBoolean("hostpotboardIsHost", ((HotspotBoardApi)gameApi).isPlayingAsWhite());
 
         editor.commit();
 
         super.onPause();
+    }
+
+    protected void sendGameUpdate() {
+        Log.d(TAG, "sendGameUpdate");
+        Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
+        Bundle bundle = new Bundle();
+        try {
+            GameMessage message = new GameMessage(gameApi.getFEN(), gameApi.getWhite(), gameApi.getBlack());
+            bundle.putString("data", message.toJsonString());
+            msg.setData(bundle);
+
+            messengerFromService.send(msg);
+        } catch (Exception e) {
+            Log.d(TAG, "Could net send game message");
+            e.printStackTrace();
+        }
+    }
+
+    protected void setConnectedState(boolean isConnected) {
+        if (isConnected) {
+            layoutConnect.setVisibility(View.GONE);
+            layoutButtons.setVisibility(View.VISIBLE);
+        } else {
+            layoutConnect.setVisibility(View.VISIBLE);
+            layoutButtons.setVisibility(View.GONE);
+        }
     }
 }

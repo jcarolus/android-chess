@@ -21,37 +21,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <TableLayout
-            android:id="@+id/LayoutConnect"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TableRow>
-                <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
+            <TableLayout
+                android:id="@+id/LayoutConnect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TableRow>
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="Host"
+                        android:checked="true"
+                        ></com.google.android.material.switchmaterial.SwitchMaterial>
+                </TableRow>
+                <TableRow>
+                    <EditText
+                        android:id="@+id/EditName"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+                <TableRow>
+                    <Button android:id="@+id/ButtonConnect"
+                        android:text="Connect"
+                        android:layout_width="wrap_content"
+                        style="@style/ChessButton"/>
+                </TableRow>
+            </TableLayout>
+            <TableLayout
+                android:id="@+id/LayoutButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TableRow>
+                <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchPlayAsWhite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:text="Host"
+                    android:text="Play as white"
                     android:checked="true"
                     ></com.google.android.material.switchmaterial.SwitchMaterial>
-            </TableRow>
-            <TableRow>
-                <EditText
-                    android:id="@+id/EditName"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-            <TableRow>
-                <Button android:id="@+id/ButtonConnect"
-                    android:text="Connect"
+                </TableRow>
+                <TableRow>
+                <Button android:id="@+id/ButtonNew"
+                    android:text="New"
                     android:layout_width="wrap_content"
                     style="@style/ChessButton"/>
-            </TableRow>
-        </TableLayout>
-
-            <Button android:id="@+id/ButtonNew"
-                android:text="New"
-                android:layout_width="wrap_content"
-                style="@style/ChessButton"/>
+                </TableRow>
+            </TableLayout>
         </LinearLayout>
 
     </ScrollView>

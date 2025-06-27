@@ -39,7 +39,7 @@ public class HotspotBoardService extends Service {
     private ServerSocket serverSocket = null;
     BufferedWriter writer = null;
 
-    private Messenger activityMessenger;
+    private Messenger activityMessenger = null;
 
     @Nullable
     @Override
@@ -133,6 +133,7 @@ public class HotspotBoardService extends Service {
     }
 
     public void tearDown() {
+        activityMessenger = null;
         workerThread = null;
         try {
             if (socket != null && socket.isConnected()) {
