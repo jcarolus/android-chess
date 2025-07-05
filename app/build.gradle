@@ -6,12 +6,12 @@ android {
             storeFile file('../../android-keystore')
         }
     }
-    compileSdkVersion 34
-    buildToolsVersion '34'
+    compileSdkVersion 36
+    buildToolsVersion '36'
     defaultConfig {
         applicationId "jwtc.android.chess"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 36
         resourceConfigurations += ['en', 'zh', 'it', 'pt', 'es', 'ru', 'de', 'fr', 'tr', 'ro']
     }
     buildTypes {
