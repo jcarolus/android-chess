@@ -17,6 +17,7 @@ import android.app.AlertDialog;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
@@ -45,6 +46,8 @@ public class SetupActivity extends ChessBoardActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.setup);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.LayoutMain));
 
         gameApi = new SetupApi();
 

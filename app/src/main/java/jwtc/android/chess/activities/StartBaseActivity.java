@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import jwtc.android.chess.ChessPreferences;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
 import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.play.PlayActivity;
@@ -58,6 +59,8 @@ public class StartBaseActivity  extends AppCompatActivity {
         }
 
         setContentView(layoutResource);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         _list = findViewById(R.id.ListStart);
         _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

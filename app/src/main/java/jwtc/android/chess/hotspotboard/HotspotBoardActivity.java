@@ -23,8 +23,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-
-import static android.view.View.INVISIBLE;
+import jwtc.android.chess.helpers.ActivityHelper;
 
 public class HotspotBoardActivity extends ChessBoardActivity {
     private final Messenger messengerToService = new Messenger(new IncomingHandler());
@@ -154,6 +153,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Log.d(TAG, "onCreate");
         gameApi = new HotspotBoardApi();
         setContentView(R.layout.hotspotboard);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         afterCreate();
 

@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.services.GameApi;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
@@ -24,6 +25,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.chessboard_prefs);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.LayoutMain));
 
         spinnerPieceSet = findViewById(R.id.SpinnerPieceSet);
         spinnerColorScheme = findViewById(R.id.SpinnerColorScheme);
