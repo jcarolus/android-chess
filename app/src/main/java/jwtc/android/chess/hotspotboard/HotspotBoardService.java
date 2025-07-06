@@ -37,6 +37,7 @@ public class HotspotBoardService extends Service {
     public static final int MSG_SET_PLAYER_COLOR = 8;
     public static final int COLOR_OF_CLIENT= 9;
     public static final int MSG_HOST_COLOR_UPDATE = 10;
+    public static final int MSG_DISCONNECT_SOCKET = 11;
 
     private Thread workerThread;
     private Socket socket = null;
@@ -70,6 +71,9 @@ public class HotspotBoardService extends Service {
                 case MSG_SET_HOST_COLOR:
                     hostPlaysAsWhite = msg.arg1 == 1;
                     Log.d(TAG, "Host color set to " + (hostPlaysAsWhite ? "White" : "Black"));
+                    break;
+                case MSG_DISCONNECT_SOCKET:
+                    tearDown();
                     break;
                 case MSG_SEND_GAME_UPDATE:
                     if (writer != null) {
