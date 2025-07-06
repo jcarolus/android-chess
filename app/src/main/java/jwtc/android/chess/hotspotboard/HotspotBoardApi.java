@@ -15,6 +15,13 @@ public class HotspotBoardApi extends GameApi {
         this.myName = myName;
     }
 
+    public String getOpponentName() {
+        return opponentName;
+    }
+
+    public void setOpponentName(String opponentName) {
+        this.opponentName = opponentName;
+    }
 
     public String getMyName() {
         return this.myName;
@@ -25,10 +32,8 @@ public class HotspotBoardApi extends GameApi {
             Log.d(TAG, "GameUpdate without myName");
         }
 
-        if (message.white.equals(myName)) {
-            opponentName = message.black;
-        } else {
-            opponentName = message.white;
+        if (message.playerName != null && message.playerName.length() > 0) {
+            opponentName = message.playerName;
         }
 
         if (message.FEN.length() > 0) {
