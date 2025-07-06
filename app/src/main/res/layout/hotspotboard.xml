@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     android:padding="4dip">
 
+    <TextView
+        android:id="@+id/TextOpponent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:layout_marginBottom="4dp"/>
+
     <include
         android:id="@+id/includeboard"
         android:layout_width="wrap_content"
@@ -13,7 +21,24 @@
         android:layout_marginTop="2dip"
         android:layout_marginBottom="2dip"
         layout="@layout/chessboard" />
+
+    <TextView
+        android:id="@+id/TextPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:layout_marginTop="4dp"/>
     
+    <TextView
+        android:id="@+id/TextStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -21,53 +46,75 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <TableLayout
-            android:id="@+id/LayoutConnect"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TableRow>
-                <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:text="Host"
-                    android:checked="true"
-                    ></com.google.android.material.switchmaterial.SwitchMaterial>
+        
+            <TableLayout
+                android:id="@+id/LayoutConnect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TableRow>
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="Host"
+                        android:checked="true"
+                        ></com.google.android.material.switchmaterial.SwitchMaterial>
 
-                <Button
-                    android:id="@+id/PlayAsWhite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="7dp"
-                    android:text="White" />
+                    <Button
+                        android:id="@+id/PlayAsWhite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="7dp"
+                        android:text="White" />
 
-                <Button
-                    android:id="@+id/PlayAsBlack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="7dp"
-                    android:text="Black" />
-            </TableRow>
-            <TableRow>
-                <EditText
-                    android:id="@+id/EditName"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-            <TableRow>
-                <Button android:id="@+id/ButtonConnect"
-                    android:text="Connect"
-                    android:layout_width="wrap_content"
-                    style="@style/ChessButton"/>
-            </TableRow>
-        </TableLayout>
+                    <Button
+                        android:id="@+id/PlayAsBlack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="7dp"
+                        android:text="Black" />
+                </TableRow>
+                <TableRow>
+                    <EditText
+                        android:id="@+id/EditName"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+                <TableRow>
+                    <Button android:id="@+id/ButtonConnect"
+                        android:text="Connect"
+                        android:layout_width="wrap_content"
+                        style="@style/ChessButton"/>
+                </TableRow>
+            </TableLayout>
 
             <Button android:id="@+id/ButtonNew"
                 android:text="New"
                 android:layout_width="wrap_content"
                 style="@style/ChessButton"/>
+
+            <LinearLayout
+                android:id="@+id/LayoutGameButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <Button android:id="@+id/ButtonResign"
+                    android:text="Resign"
+                    android:layout_width="wrap_content"
+                    style="@style/ChessButton"/>
+
+                <Button android:id="@+id/ButtonDraw"
+                    android:text="Draw"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    style="@style/ChessButton"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>
