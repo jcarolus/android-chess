@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.chess.PGNColumns;
 
@@ -43,6 +44,8 @@ public class GamesListActivity extends ListActivity implements OnItemClickListen
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.gameslist);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         _sortBy = PGNColumns.DATE;
         _sortOrder = "ASC";

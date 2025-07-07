@@ -1,7 +1,9 @@
 package jwtc.android.chess.tools;
 
-import androidx.appcompat.app.AppCompatActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.activities.BaseActivity;
+import jwtc.android.chess.helpers.ActivityHelper;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ImportActivity extends AppCompatActivity implements ImportListener {
+public class ImportActivity extends BaseActivity implements ImportListener {
 
     private ImportService importService = null;
     private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail;
@@ -48,6 +50,8 @@ public class ImportActivity extends AppCompatActivity implements ImportListener 
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.doimport);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         _processing = false;
 

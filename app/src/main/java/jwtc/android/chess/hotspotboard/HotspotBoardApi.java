@@ -38,6 +38,8 @@ public class HotspotBoardApi extends GameApi {
 
         if (message.FEN.length() > 0) {
             initFEN(message.FEN, true);
+        } else {
+            Log.d(TAG, "GameUpdate without FEN");
         }
     }
 

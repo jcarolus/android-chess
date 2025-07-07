@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.core.text.HtmlCompat;
 import jwtc.android.chess.activities.BaseActivity;
+import jwtc.android.chess.helpers.ActivityHelper;
 
 public class HtmlActivity extends BaseActivity {
 
@@ -24,6 +25,8 @@ public class HtmlActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.help);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);

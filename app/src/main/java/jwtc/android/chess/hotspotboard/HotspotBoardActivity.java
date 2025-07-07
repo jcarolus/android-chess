@@ -31,17 +31,17 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.chess.board.BoardConstants;
 
-import static android.view.View.INVISIBLE;
+import jwtc.android.chess.helpers.ActivityHelper;
 
 public class HotspotBoardActivity extends ChessBoardActivity {
     private final Messenger messengerToService = new Messenger(new IncomingHandler());
     private final String TAG = "HotspotBoardActivity";
     private Messenger messengerFromService;
-    private SwitchMaterial switchHost;
+    private SwitchMaterial switchHost, switchPlayAsWhite;
     private Button buttonConnect;
     private Button white;
     private Button black;
-    private TableLayout layoutConnect;
+    private TableLayout layoutConnect, layoutButtons;
     private EditText editName;
     private boolean isHost = true;
     private Button buttonResign, buttonDraw, buttonNew;
@@ -52,6 +52,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private boolean isGameOver = false;
 
     private String startFEN = null;
+    private boolean playAsWhite = true;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -84,6 +85,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.OnMove(move);
 
         Log.d(TAG, "OnMove");
+        this.sendGameUpdate();
 
         Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
         Bundle bundle = new Bundle();
@@ -118,7 +120,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Log.d(TAG, "startSession called " + isHost);
         try {
             if (messengerFromService != null) {
-                layoutConnect.setVisibility(View.GONE);
+                this.setConnectedState(true);
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
                 Log.d(TAG, "startMsg " + (startMsg == null ? "null" : "object"));
                 startMsg.arg1 = isHost ? 1 : 0; // boolean isHost
@@ -175,6 +177,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     try {
                         GameMessage message = GameMessage.fromJson(data);
                         ((HotspotBoardApi)gameApi).onGameUpdate(message);
+                        chessBoardView.setRotated(!((HotspotBoardApi)gameApi).isPlayingAsWhite());
 
                         if (((HotspotBoardApi) gameApi).getOpponentName().length() > 0) {
                             textPlayer.setText(((HotspotBoardApi)gameApi).getMyName());
@@ -278,6 +281,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         gameApi = new HotspotBoardApi();
         setContentView(R.layout.hotspotboard);
 
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
+
         afterCreate();
 
         white = findViewById(R.id.PlayAsWhite);
@@ -347,7 +352,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             public void onClick(View arg0) {
                 String name = editName.getText().toString();
                 Log.d(TAG, "buttonConnect " + name);
-                if (name.length() > 0) {
+                if (!name.isEmpty()) {
                     ((HotspotBoardApi)gameApi).setMyName(name);
                     textPlayer.setText(name);
                     startSession();
@@ -380,20 +385,28 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         });
 
         layoutConnect = findViewById(R.id.LayoutConnect);
+        layoutButtons = findViewById(R.id.LayoutButtons);
 
         editName = findViewById(R.id.EditName);
+
+        switchPlayAsWhite = findViewById(R.id.SwitchPlayAsWhite);
+        switchPlayAsWhite.setChecked(isHost);
+        switchPlayAsWhite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                playAsWhite = switchPlayAsWhite.isChecked();
+            }
+        });
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
         SharedPreferences prefs = getPrefs();
-        startFEN = prefs.getString("hotspotboardFEN", null);
-        if (startFEN != null) {
-            gameApi.initFEN(startFEN, true);
-        } else {
-            gameApi.newGame();
-        }
+
+        Log.d(TAG, "messengerFromService " + (messengerFromService == null));
+
+        gameApi.newGame();
 
         String sName = prefs.getString("hotspotboardName", "");
         editName.setText(sName);
@@ -408,12 +421,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     protected void onPause() {
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        String sFEN = gameApi.getFEN();
-        if (sFEN != null && sFEN.length() > 0) {
-            editor.putString("hotspotboardFEN", sFEN);
-        } else {
-            editor.remove("hotspotboardFEN");
-        }
         editor.putString("hotspotboardName", ((HotspotBoardApi)gameApi).getMyName());
         editor.putBoolean("hostpotboardIsHost", isHost);
 

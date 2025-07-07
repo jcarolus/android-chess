@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -29,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import jwtc.android.chess.GamesListActivity;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
@@ -106,6 +106,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.play);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         gameApi = new GameApi();
 
