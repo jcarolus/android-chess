@@ -37,7 +37,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private final Messenger messengerToService = new Messenger(new IncomingHandler());
     private final String TAG = "HotspotBoardActivity";
     private Messenger messengerFromService;
-    private SwitchMaterial switchHost, switchPlayAsWhite;
+    private SwitchMaterial switchHost;
     private Button buttonConnect;
     private Button white;
     private Button black;
@@ -52,7 +52,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private boolean isGameOver = false;
 
     private String startFEN = null;
-    private boolean playAsWhite = true;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -85,7 +84,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.OnMove(move);
 
         Log.d(TAG, "OnMove");
-        this.sendGameUpdate();
 
         Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
         Bundle bundle = new Bundle();
@@ -120,7 +118,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Log.d(TAG, "startSession called " + isHost);
         try {
             if (messengerFromService != null) {
-                this.setConnectedState(true);
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
                 Log.d(TAG, "startMsg " + (startMsg == null ? "null" : "object"));
                 startMsg.arg1 = isHost ? 1 : 0; // boolean isHost
@@ -388,15 +385,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         layoutButtons = findViewById(R.id.LayoutButtons);
 
         editName = findViewById(R.id.EditName);
-
-        switchPlayAsWhite = findViewById(R.id.SwitchPlayAsWhite);
-        switchPlayAsWhite.setChecked(isHost);
-        switchPlayAsWhite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                playAsWhite = switchPlayAsWhite.isChecked();
-            }
-        });
-
     }
 
     @Override
