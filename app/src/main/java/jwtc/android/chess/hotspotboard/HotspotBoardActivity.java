@@ -25,6 +25,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.R;
@@ -38,20 +40,19 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private final String TAG = "HotspotBoardActivity";
     private Messenger messengerFromService;
     private SwitchMaterial switchHost;
+    private MaterialButtonToggleGroup colorToggleGroup;
+    private MaterialButton buttonWhite;
+    private MaterialButton buttonBlack;
     private Button buttonConnect;
-    private Button white;
-    private Button black;
-    private TableLayout layoutConnect, layoutButtons;
+    private TableLayout layoutConnect;
     private EditText editName;
-    private boolean isHost = true;
+    private boolean isHost = true, isPlayAsWhite = true;
     private Button buttonResign, buttonDraw, buttonNew;
-    private LinearLayout layoutGameButtons;
+    private LinearLayout layoutGameButtons, layoutNewGameButtons;
     private TextView textPlayer, textOpponent;
     private TextView textStatus;
     private Handler statusHandler = new Handler(Looper.getMainLooper());
     private boolean isGameOver = false;
-
-    private String startFEN = null;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -63,10 +64,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             msg.replyTo = messengerToService;
             try {
                 messengerFromService.send(msg);
-                if (((HotspotBoardApi)gameApi).getOpponentName().length() > 0) {
-                    layoutConnect.setVisibility(View.GONE);
-                    layoutGameButtons.setVisibility(View.VISIBLE);
-                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -88,7 +85,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
         Bundle bundle = new Bundle();
         try {
-            GameMessage message = new GameMessage(gameApi.getFEN(), ((HotspotBoardApi)gameApi).getMyName());
+            GameMessage message = new GameMessage(
+                    gameApi.getFEN(),
+                    ((HotspotBoardApi)gameApi).getWhite(),
+                    ((HotspotBoardApi)gameApi).getBlack()
+            );
             bundle.putString("data", message.toJsonString());
             msg.setData(bundle);
 
@@ -116,6 +117,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     public void startSession() {
         Log.d(TAG, "startSession called " + isHost);
+        layoutConnect.setVisibility(View.GONE);
         try {
             if (messengerFromService != null) {
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
@@ -132,23 +134,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
     }
 
-    private void updateColorButtons(boolean whiteSelected) {
-        if (whiteSelected) {
-            white.setBackgroundColor(ContextCompat.getColor(this, R.color.button_selection_blue));
-            white.setTextColor(ContextCompat.getColor(this, android.R.color.white));
-            black.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
-            black.setTextColor(ContextCompat.getColor(this, R.color.surfaceTextColor));
-        } else {
-            black.setBackgroundColor(ContextCompat.getColor(this, R.color.button_selection_blue));
-            black.setTextColor(ContextCompat.getColor(this, android.R.color.white));
-            white.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent));
-            white.setTextColor(ContextCompat.getColor(this, R.color.surfaceTextColor));
-        }
-    }
 
     private void sendGameMessage(int type) {
         try {
-            GameMessage message = new GameMessage(type, gameApi.getFEN(), ((HotspotBoardApi)gameApi).getMyName());
+            GameMessage message = new GameMessage(
+                    type,
+                    gameApi.getFEN(),
+                    ((HotspotBoardApi)gameApi).getWhite(),
+                    ((HotspotBoardApi)gameApi).getBlack()
+            );
             Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
             Bundle bundle = new Bundle();
             bundle.putString("data", message.toJsonString());
@@ -174,19 +168,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     try {
                         GameMessage message = GameMessage.fromJson(data);
                         ((HotspotBoardApi)gameApi).onGameUpdate(message);
-                        chessBoardView.setRotated(!((HotspotBoardApi)gameApi).isPlayingAsWhite());
-
-                        if (((HotspotBoardApi) gameApi).getOpponentName().length() > 0) {
-                            textPlayer.setText(((HotspotBoardApi)gameApi).getMyName());
-                            textOpponent.setText(((HotspotBoardApi)gameApi).getOpponentName());
-                        }
 
                         switch(message.type) {
-                            case GameMessage.TYPE_NEW_GAME:
-                                gameApi.initFEN(message.FEN, true);
-                                rebuildBoard();
-                                buttonDraw.setEnabled(true);
-                                break;
                             case GameMessage.TYPE_RESIGN:
                                 showGameResult("Victory!", ((HotspotBoardApi) gameApi).getOpponentName() + " has resigned.");
                                 break;
@@ -215,38 +198,22 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     }
                 }
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_CONNECTED) {
-                layoutConnect.setVisibility(View.GONE);
-                buttonNew.setVisibility(View.GONE);
-                layoutGameButtons.setVisibility(View.VISIBLE);
+                updateConnectedState(true);
                 if (isHost) {
-                    white.setClickable(false);
-                    black.setClickable(false);
-                    sendGameMessage(GameMessage.TYPE_MOVE); // send initial state
-                } else {
-                    sendGameMessage(GameMessage.TYPE_MOVE);
-                }
 
+                }
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
-                if (isGameOver) {
-                    return;
-                }
-                layoutConnect.setVisibility(View.VISIBLE);
-                buttonNew.setVisibility(View.VISIBLE);
-                layoutGameButtons.setVisibility(View.GONE);
-                if (isHost) {
-                    white.setClickable(true);
-                    black.setClickable(true);
-                }
-                // a player disconnected during the game
-                if (((HotspotBoardApi)gameApi).getOpponentName().length() > 0) {
-                    showGameResult("Victory!", "Your opponent disconnected.");
-                }
+                updateConnectedState(false);
 
-            } else if (msg.what == HotspotBoardService.MSG_SET_PLAYER_COLOR) {
-                boolean amWhite = msg.arg1 == 1;
-                Log.d(TAG, "Received color from service. I am playing as " + (amWhite ? "White" : "Black"));
-                ((HotspotBoardApi) gameApi).setPlayingAsWhite(amWhite);
-                chessBoardView.setRotated(!amWhite);
+//                if (isGameOver) {
+//                    return;
+//                }
+//
+//                // a player disconnected during the game
+//                if (((HotspotBoardApi)gameApi).getOpponentName().length() > 0) {
+//                    showGameResult("Victory!", "Your opponent disconnected.");
+//                }
+
             }
         }
     }
@@ -282,11 +249,26 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         afterCreate();
 
-        white = findViewById(R.id.PlayAsWhite);
-        black = findViewById(R.id.PlayAsBlack);
+        colorToggleGroup = findViewById(R.id.colorToggleGroup);
+        buttonWhite = findViewById(R.id.buttonWhite);
+        buttonBlack = findViewById(R.id.buttonBlack);
+
+        // Set default selection to White
+        colorToggleGroup.check(R.id.buttonWhite);
+        colorToggleGroup.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
+            @Override
+            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+                if (isChecked) {
+                    isPlayAsWhite = checkedId == R.id.buttonWhite;
+                }
+            }
+        });
+
         textPlayer = findViewById(R.id.TextPlayer);
         textOpponent = findViewById(R.id.TextOpponent);
+        layoutConnect = findViewById(R.id.LayoutConnect);
         layoutGameButtons = findViewById(R.id.LayoutGameButtons);
+        layoutNewGameButtons = findViewById(R.id.LayoutNewGame);
         buttonResign = findViewById(R.id.ButtonResign);
         buttonDraw = findViewById(R.id.ButtonDraw);
         buttonNew = findViewById(R.id.ButtonNew);
@@ -295,8 +277,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameApi.newGame();
-                rebuildBoard();
+                newGame();
             }
         });
 
@@ -305,42 +286,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         switchHost.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isHost = switchHost.isChecked();
-                if (!isHost) {
-                    white.setVisibility(View.INVISIBLE);
-                    black.setVisibility(View.INVISIBLE);
-                }
-                if (isHost) {
-                    white.setVisibility(View.VISIBLE);
-                    black.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        white.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    Message msg = Message.obtain(null, HotspotBoardService.MSG_SET_HOST_COLOR);
-                    msg.arg1 = 1;
-                    messengerFromService.send(msg);
-                    updateColorButtons(true);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        black.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    Message msg = Message.obtain(null, HotspotBoardService.MSG_SET_HOST_COLOR);
-                    msg.arg1 = 0;
-                    messengerFromService.send(msg);
-                    updateColorButtons(false);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
             }
         });
 
@@ -381,9 +326,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             }
         });
 
-        layoutConnect = findViewById(R.id.LayoutConnect);
-        layoutButtons = findViewById(R.id.LayoutButtons);
-
         editName = findViewById(R.id.EditName);
     }
 
@@ -394,15 +336,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         Log.d(TAG, "messengerFromService " + (messengerFromService == null));
 
-        gameApi.newGame();
+        // gameApi.newGame();
 
         String sName = prefs.getString("hotspotboardName", "");
         editName.setText(sName);
 
         switchHost.setChecked(prefs.getBoolean("hostpotboardIsHost", true));
-        updateColorButtons(true);
 
-        Log.d(TAG, "onResume " + sName + " :: " + startFEN);
+        updateConnectedState(false);
+        updateGameButtons(false);
     }
 
     @Override
@@ -417,11 +359,33 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.onPause();
     }
 
+    private void newGame() {
+        gameApi.newGame();
+        ((HotspotBoardApi)gameApi).setPlayingAsWhite(isPlayAsWhite);
+        sendGameMessage(GameMessage.TYPE_MOVE); // send initial state
+
+        rebuildBoard();
+    }
+
     private void updateStatus(String status) {
         textStatus.setText(status);
         textStatus.setVisibility(View.VISIBLE);
         statusHandler.removeCallbacksAndMessages(null);
         statusHandler.postDelayed(() -> textStatus.setVisibility(View.GONE), 3000);
+    }
+
+    private void updateConnectedState(boolean isConnected) {
+        layoutConnect.setVisibility(isConnected ? View.GONE : View.VISIBLE);
+        layoutNewGameButtons.setVisibility(isConnected && isHost ? View.VISIBLE : View.GONE);
+
+        if (!isConnected) {
+            textOpponent.setText("Opponent");
+            updateGameButtons(false);
+        }
+    }
+
+    private void updateGameButtons(boolean show) {
+        layoutGameButtons.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     private void showGameResult(String title, String message) {
@@ -433,31 +397,14 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    if (messengerFromService != null) {
-                        try {
-                            Message disconnectMsg = Message.obtain(null, HotspotBoardService.MSG_DISCONNECT_SOCKET);
-                            messengerFromService.send(disconnectMsg);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    isGameOver = false; // ready for a new game
-                    if (gameApi instanceof HotspotBoardApi) {
-                        ((HotspotBoardApi) gameApi).setOpponentName(""); // clear opponent
-                    }
-                    textOpponent.setText("Opponent");
-
-                    layoutConnect.setVisibility(View.VISIBLE);
-                    buttonNew.setVisibility(View.VISIBLE);
-                    layoutGameButtons.setVisibility(View.GONE);
-                    if (isHost) {
-                        white.setClickable(true);
-                        black.setClickable(true);
-                    }
-                    gameApi.newGame();
-                    rebuildBoard();
-                    buttonDraw.setEnabled(true);
+//                    if (messengerFromService != null) {
+//                        try {
+//                            Message disconnectMsg = Message.obtain(null, HotspotBoardService.MSG_DISCONNECT_SOCKET);
+//                            messengerFromService.send(disconnectMsg);
+//                        } catch (RemoteException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
                 })
                 .setCancelable(false)
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -468,7 +415,20 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     public void rebuildBoard() {
         super.rebuildBoard();
 
+        chessBoardView.setRotated(!((HotspotBoardApi)gameApi).isPlayingAsWhite());
+
+        if (((HotspotBoardApi) gameApi).getOpponentName().length() > 0) {
+            textPlayer.setText(((HotspotBoardApi)gameApi).getMyName());
+            textOpponent.setText(((HotspotBoardApi)gameApi).getOpponentName());
+        }
+    }
+
+    @Override
+    public void OnState() {
+        super.OnState();
+
         final int state = jni.getState();
+
         if (state == BoardConstants.MATE) {
             boolean amIWhite = ((HotspotBoardApi)gameApi).isPlayingAsWhite();
             int turn = jni.getTurn();
@@ -488,5 +448,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         } else if (state == BoardConstants.DRAW_MATERIAL) {
             showGameResult("Game Over", "The game is a draw by insufficient material.");
         }
+
+        updateGameButtons(state == BoardConstants.PLAY || state == BoardConstants.CHECK);
     }
 }

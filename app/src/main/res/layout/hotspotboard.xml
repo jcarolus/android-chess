@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -60,26 +61,11 @@
                         android:text="Host"
                         android:checked="true"
                         ></com.google.android.material.switchmaterial.SwitchMaterial>
-
-                    <Button
-                        android:id="@+id/PlayAsWhite"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginTop="7dp"
-                        android:text="White" />
-
-                    <Button
-                        android:id="@+id/PlayAsBlack"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginTop="7dp"
-                        android:text="Black" />
                 </TableRow>
                 <TableRow>
                     <EditText
                         android:id="@+id/EditName"
+                        android:hint="Your name"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content" />
                 </TableRow>
@@ -91,18 +77,12 @@
                 </TableRow>
             </TableLayout>
 
-            <Button android:id="@+id/ButtonNew"
-                android:text="New"
-                android:layout_width="wrap_content"
-                style="@style/ChessButton"/>
-
             <LinearLayout
                 android:id="@+id/LayoutGameButtons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:visibility="gone">
+                android:gravity="center">
 
                 <Button android:id="@+id/ButtonResign"
                     android:text="Resign"
@@ -116,6 +96,40 @@
                     style="@style/ChessButton"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/LayoutNewGame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dip"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/colorToggleGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    >
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonWhite"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="♔ White" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonBlack"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="♚ Black" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+                <Button android:id="@+id/ButtonNew"
+                    android:text="New"
+                    android:layout_width="wrap_content"
+                    style="@style/ChessButton"/>
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>

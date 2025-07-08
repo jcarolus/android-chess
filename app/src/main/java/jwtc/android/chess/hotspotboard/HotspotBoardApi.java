@@ -28,15 +28,19 @@ public class HotspotBoardApi extends GameApi {
     }
 
     public void onGameUpdate(GameMessage message) {
-        if (myName.equals("")) {
+        if (myName.isEmpty()) {
             Log.d(TAG, "GameUpdate without myName");
         }
 
-        if (message.playerName != null && message.playerName.length() > 0) {
-            opponentName = message.playerName;
+        if (message.white.equals(myName) || message.white.isEmpty()) {
+            isPlayingAsWhite = true;
+            opponentName = message.black;
+        } else {
+            isPlayingAsWhite = false;
+            opponentName = message.white;
         }
 
-        if (message.FEN.length() > 0) {
+        if (!message.FEN.isEmpty()) {
             initFEN(message.FEN, true);
         } else {
             Log.d(TAG, "GameUpdate without FEN");
@@ -54,5 +58,13 @@ public class HotspotBoardApi extends GameApi {
 
     public void setPlayingAsWhite(boolean asWhite) {
         isPlayingAsWhite = asWhite;
+    }
+
+    public String getWhite() {
+        return isPlayingAsWhite ? myName : opponentName;
+    }
+
+    public String getBlack() {
+        return isPlayingAsWhite ? opponentName : myName;
     }
 }
