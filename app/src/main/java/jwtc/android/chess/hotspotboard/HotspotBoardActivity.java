@@ -20,12 +20,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -41,8 +38,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private Messenger messengerFromService;
     private SwitchMaterial switchHost;
     private MaterialButtonToggleGroup colorToggleGroup;
-    private MaterialButton buttonWhite;
-    private MaterialButton buttonBlack;
     private Button buttonConnect;
     private TableLayout layoutConnect;
     private EditText editName;
@@ -52,7 +47,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private TextView textPlayer, textOpponent;
     private TextView textStatus;
     private Handler statusHandler = new Handler(Looper.getMainLooper());
-    private boolean isGameOver = false;
+    private int overrideGameState = 0;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -118,6 +113,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     public void startSession() {
         Log.d(TAG, "startSession called " + isHost);
         layoutConnect.setVisibility(View.GONE);
+        updateStatus(isHost ? "Waiting for opponent to connect" : "Trying to connect");
         try {
             if (messengerFromService != null) {
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
@@ -170,7 +166,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                         ((HotspotBoardApi)gameApi).onGameUpdate(message);
 
                         switch(message.type) {
+                            case GameMessage.TYPE_MOVE:
+                                buttonDraw.setEnabled(true);
+                                break;
                             case GameMessage.TYPE_RESIGN:
+                                if (((HotspotBoardApi) gameApi).isPlayingAsWhite()) {
+                                    overrideGameState = BoardConstants.BLACK_RESIGNED;
+                                } else {
+                                    overrideGameState = BoardConstants.WHITE_RESIGNED;
+                                }
                                 showGameResult("Victory!", ((HotspotBoardApi) gameApi).getOpponentName() + " has resigned.");
                                 break;
                             case GameMessage.TYPE_DRAW_OFFER:
@@ -185,11 +189,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                         .show();
                                 break;
                             case GameMessage.TYPE_DRAW_ACCEPT:
+                                overrideGameState = BoardConstants.DRAW_AGREEMENT;
                                 showGameResult("Game Over", "The game is a draw.");
                                 break;
                             case GameMessage.TYPE_DRAW_DECLINE:
+                                buttonDraw.setEnabled(false);
                                 updateStatus("Draw offer declined.");
-                                buttonDraw.setEnabled(true);
                                 break;
                         }
 
@@ -199,21 +204,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 }
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_CONNECTED) {
                 updateConnectedState(true);
-                if (isHost) {
 
-                }
+                updateStatus("Your opponent is connected. " + (isHost ? " Start a new game" : "Wait for your opponent to start a new game"));
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
                 updateConnectedState(false);
 
-//                if (isGameOver) {
-//                    return;
-//                }
-//
-//                // a player disconnected during the game
-//                if (((HotspotBoardApi)gameApi).getOpponentName().length() > 0) {
-//                    showGameResult("Victory!", "Your opponent disconnected.");
-//                }
-
+                updateStatus("Your opponent is no longer connected");
             }
         }
     }
@@ -250,8 +246,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         afterCreate();
 
         colorToggleGroup = findViewById(R.id.colorToggleGroup);
-        buttonWhite = findViewById(R.id.buttonWhite);
-        buttonBlack = findViewById(R.id.buttonBlack);
 
         // Set default selection to White
         colorToggleGroup.check(R.id.buttonWhite);
@@ -310,6 +304,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                         .setMessage("Are you sure you want to resign?")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             sendGameMessage(GameMessage.TYPE_RESIGN);
+                            if (((HotspotBoardApi) gameApi).isPlayingAsWhite()) {
+                                overrideGameState = BoardConstants.WHITE_RESIGNED;
+                            } else {
+                                overrideGameState = BoardConstants.BLACK_RESIGNED;
+                            }
                             showGameResult("Defeat", "You resigned.");
                         })
                         .setNegativeButton("No", null)
@@ -344,7 +343,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         switchHost.setChecked(prefs.getBoolean("hostpotboardIsHost", true));
 
         updateConnectedState(false);
-        updateGameButtons(false);
+        updateGameButtonsVisibility(false);
     }
 
     @Override
@@ -361,10 +360,13 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     private void newGame() {
         gameApi.newGame();
+        overrideGameState = 0;
         ((HotspotBoardApi)gameApi).setPlayingAsWhite(isPlayAsWhite);
         sendGameMessage(GameMessage.TYPE_MOVE); // send initial state
 
         rebuildBoard();
+        updateNewGameButtonVisibility(false);
+        updateGameButtonsVisibility(true);
     }
 
     private void updateStatus(String status) {
@@ -376,35 +378,34 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     private void updateConnectedState(boolean isConnected) {
         layoutConnect.setVisibility(isConnected ? View.GONE : View.VISIBLE);
-        layoutNewGameButtons.setVisibility(isConnected && isHost ? View.VISIBLE : View.GONE);
+
+        updateNewGameButtonVisibility(isConnected);
 
         if (!isConnected) {
             textOpponent.setText("Opponent");
-            updateGameButtons(false);
+            updateGameButtonsVisibility(false);
         }
     }
 
-    private void updateGameButtons(boolean show) {
-        layoutGameButtons.setVisibility(show ? View.VISIBLE : View.GONE);
+    private void updateNewGameButtonVisibility(boolean isVisible) {
+        layoutNewGameButtons.setVisibility(isHost && isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateGameButtonsVisibility(boolean isVisible) {
+        layoutGameButtons.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     private void showGameResult(String title, String message) {
         if (isFinishing() || isDestroyed()) {
             return;
         }
-        isGameOver = true;
+
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-//                    if (messengerFromService != null) {
-//                        try {
-//                            Message disconnectMsg = Message.obtain(null, HotspotBoardService.MSG_DISCONNECT_SOCKET);
-//                            messengerFromService.send(disconnectMsg);
-//                        } catch (RemoteException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
+                    updateGameButtonsVisibility(false);
+                    updateNewGameButtonVisibility(true);
                 })
                 .setCancelable(false)
                 .setIcon(android.R.drawable.ic_dialog_info)
@@ -415,24 +416,17 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     public void rebuildBoard() {
         super.rebuildBoard();
 
-        chessBoardView.setRotated(!((HotspotBoardApi)gameApi).isPlayingAsWhite());
+        final int state = jni.getState();
+        int turn = jni.getTurn();
+        boolean amIWhite = ((HotspotBoardApi)gameApi).isPlayingAsWhite();
+        chessBoardView.setRotated(!amIWhite);
 
         if (((HotspotBoardApi) gameApi).getOpponentName().length() > 0) {
             textPlayer.setText(((HotspotBoardApi)gameApi).getMyName());
             textOpponent.setText(((HotspotBoardApi)gameApi).getOpponentName());
         }
-    }
-
-    @Override
-    public void OnState() {
-        super.OnState();
-
-        final int state = jni.getState();
 
         if (state == BoardConstants.MATE) {
-            boolean amIWhite = ((HotspotBoardApi)gameApi).isPlayingAsWhite();
-            int turn = jni.getTurn();
-
             // if it's white's turn, white is mated (and loses)
             if ((turn == BoardConstants.WHITE && amIWhite) || (turn == BoardConstants.BLACK && !amIWhite)) {
                 showGameResult("Defeat", "You lost by checkmate.");
@@ -449,6 +443,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             showGameResult("Game Over", "The game is a draw by insufficient material.");
         }
 
-        updateGameButtons(state == BoardConstants.PLAY || state == BoardConstants.CHECK);
+        updateGameButtonsVisibility(state == BoardConstants.PLAY || state == BoardConstants.CHECK);
     }
 }
