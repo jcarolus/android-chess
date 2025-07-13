@@ -7,14 +7,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dip">
-
-    <TextView
-        android:id="@+id/TextOpponent"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/LayoutBoardTop"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:layout_marginBottom="4dp"/>
+        android:gravity="center_vertical"
+        android:padding="4dip">
+        <ViewSwitcher
+            android:id="@+id/ImageTurnOpp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip">
+            <ImageView
+                android:src="@drawable/turnblack"
+                android:layout_height="12dip"
+                android:layout_width="12dip" />
+
+            <ImageView
+                android:src="@drawable/turnwhite"
+                android:layout_height="12dip"
+                android:layout_width="12dip" />
+        </ViewSwitcher>
+        <TextView
+            android:id="@+id/TextOpponent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"/>
+    </LinearLayout>
 
     <include
         android:id="@+id/includeboard"
@@ -24,13 +45,35 @@
         android:layout_marginBottom="2dip"
         layout="@layout/chessboard" />
 
-    <TextView
-        android:id="@+id/TextPlayer"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/LayoutBoardBottom"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:layout_marginTop="4dp"/>
+        android:gravity="center_vertical"
+        android:padding="4dip">
+        <ViewSwitcher
+            android:id="@+id/ImageTurnMe"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip">
+            <ImageView
+                android:src="@drawable/turnblack"
+                android:layout_height="12dip"
+                android:layout_width="12dip" />
+
+            <ImageView
+                android:src="@drawable/turnwhite"
+                android:layout_height="12dip"
+                android:layout_width="12dip" />
+        </ViewSwitcher>
+        <TextView
+            android:id="@+id/TextPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/TextStatus"
@@ -43,40 +86,47 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="8dip">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TableLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/LayoutConnect"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TableRow>
-                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:text="Host"
-                        android:checked="true"
-                        ></com.google.android.material.switchmaterial.SwitchMaterial>
-                </TableRow>
-                <TableRow>
-                    <EditText
-                        android:id="@+id/EditName"
-                        android:hint="Your name"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" />
-                </TableRow>
-                <TableRow>
-                    <Button android:id="@+id/ButtonConnect"
-                        android:text="Connect"
-                        android:layout_width="wrap_content"
-                        style="@style/ChessButton"/>
-                </TableRow>
-            </TableLayout>
-
+                android:layout_height="wrap_content"
+                android:padding="8dip"
+                >
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TableRow>
+                        <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:text="Host"
+                            android:checked="true"
+                            />
+                    </TableRow>
+                    <TableRow>
+                        <EditText
+                            android:id="@+id/EditName"
+                            android:hint="Your name"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content" />
+                    </TableRow>
+                    <TableRow>
+                        <Button android:id="@+id/ButtonConnect"
+                            android:text="Connect"
+                            android:layout_width="wrap_content"
+                            style="@style/ChessButton"/>
+                    </TableRow>
+                </TableLayout>
+            </com.google.android.material.card.MaterialCardView>
             <LinearLayout
                 android:id="@+id/LayoutGameButtons"
                 android:layout_width="match_parent"

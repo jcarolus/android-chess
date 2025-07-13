@@ -14,17 +14,18 @@ public class GameMessage {
     public String FEN;
     public String white;
     public String black;
+    public int lastMove;
 
-
-    public GameMessage(int type, String FEN, String white, String black) {
+    public GameMessage(int type, String FEN, String white, String black, int lastMove) {
         this.type = type;
         this.FEN = FEN;
         this.white = white;
         this.black = black;
+        this.lastMove = lastMove;
     }
 
-    public GameMessage(String FEN, String white, String black) {
-        this(TYPE_MOVE, FEN, white, black);
+    public GameMessage(String FEN, String white, String black, int lastMove) {
+        this(TYPE_MOVE, FEN, white, black, lastMove);
     }
 
     public static GameMessage fromJson(String jsonString) throws JSONException {
@@ -33,7 +34,8 @@ public class GameMessage {
         String FEN = json.getString("FEN");
         String white = json.getString("white");
         String black = json.getString("black");
-        return new GameMessage(type, FEN, white, black);
+        int lastMove = json.getInt("lastMove");
+        return new GameMessage(type, FEN, white, black, lastMove);
     }
 
     public String toJsonString() throws JSONException {
@@ -42,6 +44,7 @@ public class GameMessage {
         json.put("FEN", FEN);
         json.put("white", white);
         json.put("black", black);
+        json.put("lastMove", lastMove);
 
         return json.toString();
     }

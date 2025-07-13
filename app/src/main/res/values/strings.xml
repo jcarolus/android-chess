@@ -17,7 +17,7 @@
     <string name="start_lessons">Lessons</string>
     <string name="start_practice">Practice</string>
     <string name="start_puzzles">Puzzles</string>
-    <string name="start_hotspotboard">Hotspot board</string>
+    <string name="start_hotspotboard">Hotspot board (experimental)</string>
     <string name="start_about">About</string>
     <string name="start_pgn">Advanced</string>
     <string name="start_ics">Play online</string>
