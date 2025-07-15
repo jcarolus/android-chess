@@ -1,42 +1,60 @@
 package jwtc.android.chess.helpers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.Build;
+import android.util.Log;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.DisplayCutoutCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 public class ActivityHelper {
-    public static void fixPaddings(Context context, View rootView) {
+    public static void fixPaddings(Activity context, View rootView) {
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             DisplayCutoutCompat cutout = insets.getDisplayCutout();
 
-            boolean isPortrait = context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+            int nightModeFlags = context.getResources().getConfiguration().uiMode
+                    & Configuration.UI_MODE_NIGHT_MASK;
 
-            int topInset = 0;
+            boolean isDarkMode = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES);
 
-            if (isPortrait) {
-                // Only apply top inset if the cutout is at the top OR the status bar is present
-                if (cutout != null) {
-                    topInset = Math.max(systemBars.top, cutout.getSafeInsetTop());
-                } else {
-                    topInset = systemBars.top;
-                }
-                // Apply paddings to avoid cutout (status bar area / camera hole)
-                v.setPadding(
-                        systemBars.left,
-                        topInset,
-                        systemBars.right,
-                        systemBars.bottom
-                );
+            WindowInsetsControllerCompat controller =
+                    new WindowInsetsControllerCompat(context.getWindow(), rootView);
+
+            if (isDarkMode) {
+                controller.setAppearanceLightStatusBars(false);
+            } else {
+                controller.setAppearanceLightStatusBars(true);
             }
 
-            return insets;
+            int orientation = context.getResources().getConfiguration().orientation;
+            int topInset = systemBars.top, leftInset = systemBars.left;
+
+            if (cutout != null) {
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    topInset = Math.max(systemBars.top, cutout.getSafeInsetTop());
+                } else if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+                    leftInset = Math.max(systemBars.left, cutout.getSafeInsetLeft());
+                }
+            }
+            // Apply paddings to avoid cutout (status bar area / camera hole)
+            v.setPadding(
+                    leftInset,
+                    topInset,
+                    systemBars.right,
+                    systemBars.bottom
+            );
+
+            return WindowInsetsCompat.CONSUMED;
         });
     }
 }

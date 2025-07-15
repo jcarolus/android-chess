@@ -1,6 +1,7 @@
 <resources>
     <style name="ChessTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowBackground">@color/backgroundColor</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>

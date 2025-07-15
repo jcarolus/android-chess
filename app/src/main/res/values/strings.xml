@@ -50,8 +50,6 @@
     <string name="pref_eco_desc">Show ECO opening info when available</string>
     <string name="pref_extrahighlight">Extra highlight</string>
     <string name="pref_extrahighlight_desc">Make move highlighting extra visible</string>
-    <string name="pref_fullscreen">Enable full screen</string>
-    <string name="pref_fullscreen_desc">Recommended for small screens and landscape view; elements may fall off the screen otherwise</string>
     <string name="pref_onLoadJumpToLastMove">Jump to last move</string>
     <string name="pref_onLoadJumpToLastMove_desc">When resuming the App, jump to the last move</string>
     <string name="pref_uci">UCI Engine</string>

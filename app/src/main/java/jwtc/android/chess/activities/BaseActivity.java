@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import jwtc.android.chess.HtmlActivity;
 
@@ -35,10 +36,6 @@ public class BaseActivity extends AppCompatActivity {
 
         if (prefs.getBoolean("wakeLock", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-
-        if (prefs.getBoolean("fullScreen", true)) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
         super.onResume();

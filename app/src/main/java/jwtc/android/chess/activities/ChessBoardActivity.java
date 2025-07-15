@@ -215,9 +215,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         super.onResume();
 
         SharedPreferences prefs = getPrefs();
-        if (prefs.getBoolean("fullScreen", true)) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
 
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
 

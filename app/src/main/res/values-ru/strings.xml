@@ -46,8 +46,6 @@
     <string name="pref_eco_desc">Показывать начальную информацию ECO при наличии</string>
     <string name="pref_extrahighlight">Дополнительное выделение</string>
     <string name="pref_extrahighlight_desc">Сделать выделение ходов ещё более заметным</string>
-    <string name="pref_fullscreen">Полноэкранный режим</string>
-    <string name="pref_fullscreen_desc">Рекомендуется для маленьких экранов и горизонтальной ориентации; иначе элементы могут выпадать за пределы экрана</string>
     <string name="pref_onLoadJumpToLastMove">Переход к последнему ходу</string>
     <string name="pref_onLoadJumpToLastMove_desc">Переходить к последнему ходу при возобновлении приложения</string>
     <string name="pref_uci">Движок UCI</string>
