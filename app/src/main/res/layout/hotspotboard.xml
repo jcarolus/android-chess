@@ -100,32 +100,40 @@
                 android:layout_height="wrap_content"
                 android:padding="8dip"
                 >
-                <TableLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TableRow>
-                        <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:text="Host"
-                            android:checked="true"
-                            />
-                    </TableRow>
-                    <TableRow>
-                        <EditText
-                            android:id="@+id/EditName"
-                            android:hint="Your name"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content" />
-                    </TableRow>
-                    <TableRow>
-                        <Button android:id="@+id/ButtonConnect"
-                            android:text="Connect"
-                            android:layout_width="wrap_content"
-                            style="@style/ChessButton"/>
-                    </TableRow>
-                </TableLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:text="Host"
+                    android:checked="true"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:lines="2"
+                    android:minLines="2"
+                    android:maxLines="10"
+                    android:scrollHorizontally="false"
+                    android:ellipsize="none"
+                    android:text="Toggle `host` on if you are running the WiFi Hotspot."
+                    />
+                <EditText
+                    android:id="@+id/EditName"
+                    android:hint="Your name"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"/>
+                <Button android:id="@+id/ButtonConnect"
+                    android:text="Connect"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="8dip"
+                    style="@style/ChessButton"/>
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
             <LinearLayout
                 android:id="@+id/LayoutGameButtons"

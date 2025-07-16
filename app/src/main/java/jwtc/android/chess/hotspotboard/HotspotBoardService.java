@@ -159,6 +159,15 @@ public class HotspotBoardService extends Service {
 
     public void startSession(boolean isHost, final int port) {
         Log.d(TAG, "startSession " + (isHost ? " as host" : " as client"));
+        if (serverSocket != null) {
+            if (!serverSocket.isClosed()) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    Log.d(TAG, "ServerSocket was open, but closing error " + e.getMessage());
+                }
+            }
+        }
         workerThread = new Thread(() -> {
             try {
                 if (isHost) {
@@ -198,7 +207,10 @@ public class HotspotBoardService extends Service {
                 }
                 notifyActivity(MSG_SOCKET_DISCONNECTED);
                 Log.d(TAG, "socket disconnected in workerThread");
-                // @TODO disconnected
+                if (serverSocket != null) {
+                    serverSocket.close();
+                    serverSocket = null;
+                }
             } catch (Exception ex) {
                 Log.d(TAG, ex.toString());
                 notifyActivity(MSG_SOCKET_DISCONNECTED);
