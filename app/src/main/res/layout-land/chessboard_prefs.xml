@@ -63,6 +63,12 @@
                 android:layout_margin="8dip"
                 android:nextFocusLeft="@id/includeboard"/>
 
+            <CheckBox
+                android:id="@+id/CheckBoxShowMoves"
+                android:text="@string/pref_show_possible_moves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dip"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>
