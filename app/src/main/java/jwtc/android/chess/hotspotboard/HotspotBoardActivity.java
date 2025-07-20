@@ -207,7 +207,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 showGameResult("Game Over", "The game is a draw.");
                                 break;
                             case GameMessage.TYPE_DRAW_DECLINE:
-                                buttonDraw.setEnabled(false);
                                 updateStatus("Draw offer declined.");
                                 break;
                         }
