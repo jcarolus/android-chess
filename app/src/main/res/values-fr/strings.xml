@@ -48,8 +48,6 @@
     <string name="pref_eco_desc">Affichage de l\'ECO des ouvertures lorsque cela est possible</string>
     <string name="pref_extrahighlight">Mise en évidence</string>
     <string name="pref_extrahighlight_desc">Mettre en évidence le coup</string>
-    <string name="pref_fullscreen">Activer le plein écran</string>
-    <string name="pref_fullscreen_desc">Recommandé pour les petits écrans ou l\'affichage en paysage, sinon des éléments peuvent disparaitre</string>
     <string name="pref_onLoadJumpToLastMove">Aller au dernier coup</string>
     <string name="pref_onLoadJumpToLastMove_desc">Lorsque l\'application se met en veille, aller au dernier coup</string>
     <string name="pref_uci">Moteur UCI</string>

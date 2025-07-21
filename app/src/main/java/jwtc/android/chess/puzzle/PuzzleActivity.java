@@ -17,6 +17,7 @@ import android.widget.ViewSwitcher;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
@@ -66,6 +67,8 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.puzzle);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.LayoutMain));
 
         gameApi = new PuzzleApi();
 

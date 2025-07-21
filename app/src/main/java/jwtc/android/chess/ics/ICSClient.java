@@ -27,7 +27,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +34,7 @@ import org.json.JSONException;
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.play.SaveGameDialog;
@@ -125,6 +125,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         Log.i(TAG, "onCreate");
 
         setContentView(R.layout.ics_client);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.ViewAnimatorRoot));
 
         gameApi = new ICSApi();
 

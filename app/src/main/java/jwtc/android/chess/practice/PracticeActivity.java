@@ -1,14 +1,10 @@
 package jwtc.android.chess.practice;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -25,9 +21,9 @@ import java.util.TimerTask;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.tools.ImportActivity;
-import jwtc.android.chess.tools.ImportListener;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
@@ -94,6 +90,8 @@ public class PracticeActivity extends ChessBoardActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.practice);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         gameApi = new PracticeApi();
 

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.chess.PGNColumns;
 
@@ -43,6 +44,8 @@ public class GamesListActivity extends ListActivity implements OnItemClickListen
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.gameslist);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         _sortBy = PGNColumns.DATE;
         _sortOrder = "ASC";
@@ -189,12 +192,15 @@ public class GamesListActivity extends ListActivity implements OnItemClickListen
     private void doFilterSort() {
         //_adapter.getFilter().filter(_editFilter.getText().toString());
         //_listGames.invalidate();
-        String s = _editFilter.getText().toString();
-        String sWhere = PGNColumns.WHITE + " LIKE('%" + s + "%') OR " +
-                PGNColumns.BLACK + " LIKE('%" + s + "%') OR " +
-                PGNColumns.EVENT + " LIKE('%" + s + "%')";
+        String s = "%" + _editFilter.getText().toString() + "%";
+        String sWhere = PGNColumns.WHITE + " LIKE ? OR " +
+                PGNColumns.BLACK + " LIKE ? OR " +
+                PGNColumns.EVENT + " LIKE ?";
+        String[] selectionArgs = new String[] {
+            s, s, s
+        };
         Log.i("runQuery", sWhere + " BY " + _sortOrder);
-        _adapter.changeCursor(managedQuery(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, sWhere, null, _sortBy + " " + _sortOrder));
+        _adapter.changeCursor(managedQuery(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, sWhere, selectionArgs, _sortBy + " " + _sortOrder));
 
     }
 

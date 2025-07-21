@@ -395,16 +395,18 @@ public class ICSPatterns {
 
         String site = "FICS";
         String _FEN1, _FEN2;
-
-        String sMoves = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
+        int firstMoveIndex = sEnd.indexOf("1.");
+        String sMoves = "";
+        if (firstMoveIndex >= 0) {
+            sMoves = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
 
 //        if (_bShowClockPGN){
 //            sBeg = convertTimeUsedToClock(sBeg);
 //        }
 // else:
-        sMoves = sMoves.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
+            sMoves = sMoves.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
 
-
+        }
         //Log.d(TAG, "\n" + sBeg);
 
 

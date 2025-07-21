@@ -1,12 +1,15 @@
 <resources>
     <style name="ChessTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowBackground">@color/backgroundColor</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryVariantColor</item>
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorOnSurface">@color/surfaceTextColor</item>
     </style>
 
     <style name="ChessStart" parent="Theme.MaterialComponents.DayNight">

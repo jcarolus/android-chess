@@ -3,6 +3,7 @@ package jwtc.android.chess.tools;
 import java.io.File;
 
 import jwtc.android.chess.activities.BaseActivity;
+import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 
@@ -36,6 +37,8 @@ public class AdvancedActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.pgntool);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         _lvStart = (ListView) findViewById(R.id.ListPgn);
 

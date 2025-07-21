@@ -8,12 +8,6 @@
             android:key="wakeLock" />
 
         <CheckBoxPreference
-            android:title="@string/pref_fullscreen"
-            android:defaultValue="true"
-            android:summary="@string/pref_fullscreen_desc"
-            android:key="fullScreen" />
-
-        <CheckBoxPreference
             android:title="@string/pref_sound"
             android:summary="@string/pref_sound_desc"
             android:key="moveSounds"

@@ -42,7 +42,7 @@ public class ICSServer extends Service {
     protected String currentBuffer;
     protected String prompt;
     protected String handle;
-    protected String password;
+    protected String password = "";
     protected String opponent;
     protected ICSPatterns icsPatterns = new ICSPatterns();
     protected boolean notificationsOn = false;
@@ -132,7 +132,7 @@ public class ICSServer extends Service {
     public boolean sendString(String s) {
         Log.i(TAG, "sendString: " + s);
         threadHandler.setTimeout(30000);
-        return _socket != null && _socket.sendString(s + "\n");
+        return _socket != null && s != null && _socket.sendString(s + "\n");
     }
 
     public boolean isConnected() {

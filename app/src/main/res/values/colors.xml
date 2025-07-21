@@ -6,8 +6,8 @@
     <color name="secondaryVariantColor">#2a8003</color>
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#000000</color>
-    <color name="backgroundColor">#000000</color>
-    <color name="textOnBackgroundColor">#fafafa</color>
+    <color name="backgroundColor">#fafafa</color>
+    <color name="textOnBackgroundColor">#000000</color>
     <color name="surfaceColor">#eeeeee</color>
     <color name="surfaceTextColor">#000000</color>
 </resources>

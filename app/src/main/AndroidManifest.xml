@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="203"
-    android:versionName="9.6.0">
+    android:versionCode="207"
+    android:versionName="9.7.2">
 
     <application
         android:name="android.app.Application"
@@ -12,6 +12,7 @@
         android:banner="@drawable/ic_feature">
         <service android:name=".ics.ICSServer" android:exported="true"></service>
         <service android:name=".tools.ImportService" android:exported="true"></service>
+        <service android:name=".hotspotboard.HotspotBoardService" android:exported="true"></service>
         <activity
             android:name=".start"
             android:label="@string/app_name"
@@ -185,6 +186,19 @@
                 android:value=".ics.ICSPrefs" />
         </activity>
         <activity
+            android:name="jwtc.android.chess.hotspotboard.HotspotBoardActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="locked"
+            android:configChanges="orientation"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".start" />
+        </activity>
+        <activity
             android:name="jwtc.android.chess.tools.AdvancedActivity"
             android:label="@string/app_name_pgntools"
             android:configChanges="orientation"
@@ -226,9 +240,9 @@
         android:smallScreens="false" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FULLSCREEN" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
