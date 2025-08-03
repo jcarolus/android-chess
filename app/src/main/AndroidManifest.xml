@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="207"
-    android:versionName="9.7.2">
+    android:versionCode="208"
+    android:versionName="9.7.3">
 
     <application
         android:name="android.app.Application"
