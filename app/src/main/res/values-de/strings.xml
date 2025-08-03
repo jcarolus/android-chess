@@ -325,7 +325,7 @@
     <string name="ics_menu_resume">Wiederaufnehmen</string>
     <string name="ics_menu_board">Brett</string>
     <string name="ics_menu_help">Hilfe</string>
-    <string name="ics_menu_abort">Abbrechen</string>
+    <string name="menu_abort">Abbrechen</string>
     <string name="ics_menu_adjourn">Verschieben</string>
     <string name="ics_menu_draw">Unentschieden</string>
     <string name="ics_menu_flag">Flagge</string>

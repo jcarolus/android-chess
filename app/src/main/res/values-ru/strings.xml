@@ -328,7 +328,7 @@
     <string name="ics_menu_resume">Итог</string>
     <string name="ics_menu_board">Доска</string>
     <string name="ics_menu_help">Помощь</string>
-    <string name="ics_menu_abort">Прервать</string>
+    <string name="menu_abort">Прервать</string>
     <string name="ics_menu_adjourn">Отложить</string>
     <string name="ics_menu_draw">Ничья</string>
     <string name="ics_menu_flag">Флажок</string>

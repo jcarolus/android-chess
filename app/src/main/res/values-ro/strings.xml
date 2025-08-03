@@ -328,7 +328,7 @@
     <string name="ics_menu_resume">Rezultate</string>
     <string name="ics_menu_board">Tablă</string>
     <string name="ics_menu_help">Ajutor</string>
-    <string name="ics_menu_abort">Întrerupe</string>
+    <string name="menu_abort">Întrerupe</string>
     <string name="ics_menu_adjourn">Amână</string>
     <string name="ics_menu_draw">Remiză</string>
     <string name="ics_menu_flag">Steag</string>

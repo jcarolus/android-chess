@@ -136,6 +136,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
     }
 
+    @Override
+    public boolean needExitConfirmationDialog() {
+        return true;
+    }
+
 
     private void sendGameMessage(int type, int lastMove) {
         try {

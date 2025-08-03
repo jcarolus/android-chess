@@ -328,7 +328,7 @@
     <string name="ics_menu_resume">Reiniciar</string>
     <string name="ics_menu_board">Tabuleiro</string>
     <string name="ics_menu_help">Ajuda</string>
-    <string name="ics_menu_abort">Abortar</string>
+    <string name="menu_abort">Abortar</string>
     <string name="ics_menu_adjourn">Adiar</string>
     <string name="ics_menu_draw">Sacar</string>
     <string name="ics_menu_flag">Assinalar</string>

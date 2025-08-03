@@ -1,24 +1,31 @@
 package jwtc.android.chess.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.widget.Toast;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import jwtc.android.chess.HtmlActivity;
+import jwtc.android.chess.R;
 
 
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
+    private OnBackInvokedCallback backCallback;
     public static final int NO_RESULT = 0;
 
 
@@ -27,6 +34,26 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            backCallback = new OnBackInvokedCallback() {
+                @Override
+                public void onBackInvoked() {
+                    showExitConfirmationDialog();
+                }
+            };
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                    backCallback
+            );
+        } else {
+            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    showExitConfirmationDialog();
+                }
+            });
+        }
     }
 
     @Override
@@ -39,6 +66,30 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && backCallback != null) {
+            getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
+        }
+    }
+
+    public void showExitConfirmationDialog() {
+        if (needExitConfirmationDialog()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.menu_abort))
+                    .setPositiveButton(getString(R.string.alert_yes), (dialog, which) -> finish())
+                    .setNegativeButton(getString(R.string.alert_no), null)
+                    .show();
+        } else {
+            finish();
+        }
+    }
+
+    public boolean needExitConfirmationDialog() {
+        return false;
     }
 
     public SharedPreferences getPrefs() {

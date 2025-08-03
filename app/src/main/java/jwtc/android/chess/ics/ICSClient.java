@@ -379,53 +379,44 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.d(TAG, "onKeyDown repeat " + event.getRepeatCount());
-            if (event.getRepeatCount() == 0) {
-                ICSApi icsApi = (ICSApi) gameApi;
-                int rootView = viewAnimatorRoot.getDisplayedChild();
+    public void showExitConfirmationDialog() {
+        ICSApi icsApi = (ICSApi) gameApi;
+        int rootView = viewAnimatorRoot.getDisplayedChild();
 
-                if (rootView == VIEW_BOARD) {
-                    int viewMode = icsApi.getViewMode();
+        if (rootView == VIEW_BOARD) {
+            int viewMode = icsApi.getViewMode();
 
-                    if (viewMode == ICSApi.VIEW_PLAY) {
-                        new AlertDialog.Builder(ICSClient.this)
-                            .setTitle(ICSClient.this.getString(R.string.ics_menu_abort) + "?")
-                            .setPositiveButton(getString(R.string.alert_yes),
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            dialog.dismiss();
-                                            sendString("abort");
-                                        }
-                                    })
-                            .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
+            if (viewMode == ICSApi.VIEW_PLAY) {
+                new AlertDialog.Builder(ICSClient.this)
+                    .setTitle(ICSClient.this.getString(R.string.menu_abort))
+                    .setPositiveButton(getString(R.string.alert_yes),
+                            new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     dialog.dismiss();
+                                    sendString("abort");
                                 }
-                            }).show();
-
-                        return true;
-                    } else {
-                        switch (viewMode) {
-                            case ICSApi.VIEW_OBSERVE:
-                                sendString("unobserve");
-                                break;
-                            case ICSApi.VIEW_EXAMINE:
-                                sendString("unexamine");
-                                break;
+                            })
+                    .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.dismiss();
                         }
-                        setMenuView();
-                    }
-                    return true;
-                } else if (isConnected()) {
-                    stopSession(R.string.ics_quit);
-                    return true;
+                    }).show();
+            } else {
+                switch (viewMode) {
+                    case ICSApi.VIEW_OBSERVE:
+                        sendString("unobserve");
+                        break;
+                    case ICSApi.VIEW_EXAMINE:
+                        sendString("unexamine");
+                        break;
                 }
+                setMenuView();
             }
+        } else if (isConnected()) {
+            stopSession(R.string.ics_quit);
+        } else {
+            finish();
         }
-
-        return super.onKeyDown(keyCode, event);
     }
 
     public void stopSession(int resource) {
@@ -444,7 +435,13 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                         finish();
                     }
                 })
+            .setNegativeButton(getString(R.string.alert_no), null)
             .show();
+    }
+
+    @Override
+    public boolean needExitConfirmationDialog() {
+        return true;
     }
 
     private void confirmShow(String title, String text, String sendstring) {

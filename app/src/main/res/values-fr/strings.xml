@@ -344,7 +344,7 @@ Recherche de "Quiescence" désactivée</string>
     <string name="ics_menu_resume">Arrêté</string>
     <string name="ics_menu_board">Plateau</string>
     <string name="ics_menu_help">Aide</string>
-    <string name="ics_menu_abort">Annulé</string>
+    <string name="menu_abort">Annulé</string>
     <string name="ics_menu_adjourn">Ajourné</string>
     <string name="ics_menu_draw">Nulle</string>
     <string name="ics_menu_flag">Drapeau</string>

@@ -328,7 +328,7 @@
     <string name="ics_menu_resume">Riprendi</string>
     <string name="ics_menu_board">Scacchiera</string>
     <string name="ics_menu_help">Aiuto</string>
-    <string name="ics_menu_abort">Interrompi</string>
+    <string name="menu_abort">Interrompi</string>
     <string name="ics_menu_adjourn">Aggiorna</string>
     <string name="ics_menu_draw">Patta</string>
     <string name="ics_menu_flag">Bandierina</string>

@@ -345,7 +345,7 @@
     <string name="ics_menu_resume">Resume</string>
     <string name="ics_menu_board">Board</string>
     <string name="ics_menu_help">Help</string>
-    <string name="ics_menu_abort">Abort</string>
+    <string name="menu_abort">Abort</string>
     <string name="ics_menu_adjourn">Adjourn</string>
     <string name="ics_menu_draw">Draw</string>
     <string name="ics_menu_flag">Flag</string>

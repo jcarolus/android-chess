@@ -344,7 +344,7 @@
     <string name="ics_menu_resume">Devam ettir</string>
     <string name="ics_menu_board">Tahta</string>
     <string name="ics_menu_help">Yardım</string>
-    <string name="ics_menu_abort">İptal et</string>
+    <string name="menu_abort">İptal et</string>
     <string name="ics_menu_adjourn">Ertele</string>
     <string name="ics_menu_draw">Oluştur</string>
     <string name="ics_menu_flag">İşaretle</string>

@@ -328,7 +328,7 @@
     <string name="ics_menu_resume">恢复</string>
     <string name="ics_menu_board">棋盘</string>
     <string name="ics_menu_help">帮助</string>
-    <string name="ics_menu_abort">中止</string>
+    <string name="menu_abort">中止</string>
     <string name="ics_menu_adjourn">延后</string>
     <string name="ics_menu_draw">和棋</string>
     <string name="ics_menu_flag">标记</string>
