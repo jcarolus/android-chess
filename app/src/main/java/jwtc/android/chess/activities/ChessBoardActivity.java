@@ -4,6 +4,11 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.speech.tts.TextToSpeech;
@@ -587,7 +592,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     }
 
                     ClipData data = ClipData.newPlainText("", "");
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                    View.DragShadowBuilder shadowBuilder = new MagnifyingDragShadowBuilder(view);
                     view.startDrag(data, shadowBuilder, view, 0);
                     view.setVisibility(View.INVISIBLE);
                     return true;
@@ -598,6 +603,42 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
             }
             return false;
+        }
+
+        protected class MagnifyingDragShadowBuilder extends View.DragShadowBuilder {
+            private static final float SCALE_FACTOR = 2.0f;
+
+            private final Drawable snapshot;
+
+            public MagnifyingDragShadowBuilder(View view) {
+                super(view);
+                // Create a snapshot of the view to draw scaled version later
+                view.setDrawingCacheEnabled(true);
+                Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+                view.setDrawingCacheEnabled(false);
+                snapshot = new BitmapDrawable(view.getResources(), bitmap);
+            }
+
+            @Override
+            public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
+                int width = (int) (getView().getWidth() * SCALE_FACTOR);
+                int height = (int) (getView().getHeight() * SCALE_FACTOR);
+
+                // Set shadow size
+                shadowSize.set(width, height);
+
+                // Set the touch point in the center of width, but above the finger of user
+                shadowTouchPoint.set(width / 2, height);
+
+                // Set bounds for drawing
+                snapshot.setBounds(0, 0, width, height);
+            }
+
+            @Override
+            public void onDrawShadow(Canvas canvas) {
+                // Draw the magnified snapshot
+                snapshot.draw(canvas);
+            }
         }
     }
 
