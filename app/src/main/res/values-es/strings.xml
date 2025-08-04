@@ -443,21 +443,6 @@
     <p>¿Quiere volver a empezar la práctica? Se restablecerá también el contador de tiempo
         medio.</p>
      ]]></string>
-    <string name="about_help"><![CDATA[
-<p>Creado por <i>Jeroen Carolus</i></p>
-
-<p>Para suporte tecnico, información acerca de las actualizaciónes y la última versión: por favor
-    visite la página web del desarrollador <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
-
-<p>Gracias a <i>Peter van Grijfland</i> por su participación, excelentes sugerencias y prueba beta.
-</p>
-<p>Contribuciónes GitHub:</p>
-<p><i>Tim Tennyson</i>: Varias mejoras.</p>
-<p><i>Alessandro Dal Bello, Paolo Straffi</i>: traducción al Italiano.</p>
-<p><i>Ildar Gubaidulin</i>: traducción al Ruso </p>
-<p><i>Marcella De Rosa</i>: traducción al Español y al Portugués </p>
-<p><i>Stan Zheng</i>: Traducción china.</p>
-    ]]></string>
     <string name="online_help"> <![CDATA[
 <p>
         <strong>FICS: Free Internet Chess Server</strong> le permite jugar con miles de jugadores de

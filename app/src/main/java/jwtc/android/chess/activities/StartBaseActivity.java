@@ -3,6 +3,7 @@ package jwtc.android.chess.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
@@ -13,10 +14,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import jwtc.android.chess.ChessPreferences;
@@ -87,9 +90,7 @@ public class StartBaseActivity  extends AppCompatActivity {
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
                     } else if (requestedItem.equals(getString(R.string.start_about))) {
-                        i.setClass(StartBaseActivity.this, HtmlActivity.class);
-                        i.putExtra(HtmlActivity.HELP_STRING_RESOURCE, R.string.about_help);
-                        startActivity(i);
+                        showAbout();
                     } else if (requestedItem.equals(getString(R.string.start_ics))) {
                         i.setClass(StartBaseActivity.this, ICSClient.class);
                         startActivity(i);
@@ -116,5 +117,19 @@ public class StartBaseActivity  extends AppCompatActivity {
         });
 
         _list.requestFocus();
+    }
+
+    public void showAbout() {
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.version_number, version))
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setCancelable(false)
+                    .setIcon(R.drawable.ic_logo)
+                    .show();
+        } catch (Exception ex) {}
     }
 }

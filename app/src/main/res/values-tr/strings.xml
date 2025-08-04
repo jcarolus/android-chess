@@ -465,23 +465,6 @@
 
         ]]>
     </string>
-    <string name="about_help">
-        <![CDATA[
-        <p><i>Jeroen Carolus</i> tarafından geliştirildi</p>
-
-<p>Destek, güncellemeler ve en son sürüm hakkında bilgi için: lütfen geliştiricinin web sitesine gidin
-    <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
-
-<p>Katılımı, mükemmel önerileri ve beta testi için teşekkürler <i>Peter van Grijfland</i>.
-</p>
-<p>GitHub katkıda bulunanları:</p>
-<p><i>Tim Tennyson</i>: Çeşitli iyileştirmeler.</p>
-<p><i>Alessandro Dal Bello, Paolo Straffi</i>: İtalyanca çeviri.</p>
-<p><i>Ildar Gubaidulin</i>: Rusça çeviri.</p>
-<p><i>Marcella De Rosa</i>: İspanyolca ve Portekizce çeviri.</p>
-<p><i>Stan Zheng</i>: Çince çeviri.</p>
-        ]]>
-    </string>
     <string name="online_help">
         <![CDATA[
         <p>

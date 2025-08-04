@@ -466,23 +466,6 @@
 
         ]]>
     </string>
-    <string name="about_help">
-        <![CDATA[
-        <p>Created by <i>Jeroen Carolus</i></p>
-
-<p>For support, information about updates and the latest version: please go to the developer website
-    <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
-
-<p>Thanks to <i>Peter van Grijfland</i> for his involvement, excellent suggestions and beta testing.
-</p>
-<p>GitHub contributions:</p>
-<p><i>Tim Tennyson</i>: Several improvements.</p>
-<p><i>Alessandro Dal Bello, Paolo Straffi</i>: Italian translation.</p>
-<p><i>Ildar Gubaidulin</i>: Russian translation.</p>
-<p><i>Marcella De Rosa</i>: Spanish and Portuguese translations.</p>
-<p><i>Stan Zheng</i>: Chinese translation.</p>
-        ]]>
-    </string>
     <string name="online_help">
         <![CDATA[
         <p>

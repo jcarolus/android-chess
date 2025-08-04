@@ -465,23 +465,6 @@ Recherche de "Quiescence" désactivée</string>
 
         ]]>
     </string>
-    <string name="about_help">
-        <![CDATA[
-        <p>Créé par <i>Jeroen Carolus</i></p>
-
-<p>Pour obtenir de l\'aide, des informations sur les mises à jour et la dernière version : veuillez vous rendre sur le site Web du développeur
-    <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
-
-<p>Merci à <i>Peter van Grijfland</i> pour son implication, ses excellentes suggestions et ses tests bêta.
-</p>
-<p>Contributions GitHub :</p>
-<p><i>Tim Tennyson</i> : plusieurs améliorations.</p>
-<p><i>Alessandro Dal Bello, Paolo Straffi</i> : traduction italienne.</p>
-<p><i>Ildar Gubaidulin</i> : traduction en russe.</p>
-<p><i>Marcella De Rosa</i> : traductions espagnole et portugaise.</p>
-<p><i>Stan Zheng</i> : traduction en chinois.</p>
-        ]]>
-    </string>
     <string name="online_help">
         <![CDATA[
         <p>

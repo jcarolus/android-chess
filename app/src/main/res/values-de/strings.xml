@@ -436,21 +436,6 @@
     <h4>Übungsset zurücksetzen</h4>
     <p>Möchten Sie noch einmal mit dem Üben beginnen? Dadurch wird auch Ihr durchschnittlicher Zeitzähler zurückgesetzt.</p>
      ]]></string>
-    <string name="about_help"><![CDATA[
-<p>Erstellt von <i>Jeroen Carolus</i></p>
-
-<p>Für Support, Informationen über Updates und die neueste Version: Bitte besuchen Sie die Entwickler-Website
-    <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
-
-<p>Danke an <i>Peter van Grijfland</i> für sein Engagement, seine hervorragenden Vorschläge und seine Beta-Tests.
-</p>
-<p>GitHub-Beiträge:</p>
-<p><i>Tim Tennyson</i>: Mehrere Verbesserungen.</p>
-<p><i>Alessandro Dal Bello, Paolo Straffi</i>: Italienische Übersetzung.</p>
-<p><i>Ildar Gubaidulin</i>: Russische Übersetzung.</p>
-<p><i>Marcella De Rosa</i>: Spanische und portugiesische Übersetzungen.</p>
-<p><i>Stan Zheng</i>: Chinesische Übersetzung.</p>
-    ]]></string>
     <string name="online_help"> <![CDATA[
 <p>
         <strong>FICS: Free Internet Chess Server</strong> lässt Sie mit Tausenden von Schachspielen spielen

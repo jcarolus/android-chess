@@ -442,21 +442,6 @@
     <h4>Resetați setul de antrenament</h4>
     <p>Vreți să începeți antrenamentul de la început? Acesta va reseta, de asemenea, contorul timpului mediu.</p>
      ]]></string>
-    <string name="about_help"><![CDATA[
-<p>Creat de <i>Jeroen Carolus</i></p>
-
-<p>Pentru suport personalizat, informații despre actualizări și ultima versiune, vă rugăm să
-    vizitați site-ul oficial al dezvoltatorului: <a href=\'http://www.jwtc.nl/\'>jwtc.nl</a>.</p>
-
-<p>Mulțumiri <i>peter van Gridjfland</i> pentru contribuția sa, sugestii excelente și testare beta.
-</p>
-<p>Colaborarea pe GitHub:</p>
-<p><i>Tim Tennyson</i>: câteva îmbunătățiri.</p>
-<p><i>Alessandro Dal Bellow, Paolo Strafi</i>: traducerea în italiană.</p>
-<p><i>Ildar Gubaydulin</i>: traducerea în rusă.</p>
-<p><i>Marcel De Rosa</i>: traduceri în spaniolă și portugheză.</p>
-<p><i>Stan Zheng</i>: traducerea în chineză.</p>
-    ]]></string>
     <string name="online_help"> <![CDATA[
 <p>
         <strong>FICS: Serviciul de Șah pe Internet Gratuit</strong> permite jucarea cu mii de jucători de șah online.<br/>
