@@ -19,68 +19,131 @@
         android:layout_margin="8dip"
         android:padding="8dip"
         >
-        <LinearLayout
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TableLayout
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TableRow  style="@style/MyRowStyle">
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TableRow  style="@style/MyRowStyle">
+                        <Spinner
+                            android:id="@+id/SpinnerPieceSet"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dip"
+                            android:entries="@array/piecesetarray"/>
 
-                    <Spinner
-                        android:id="@+id/SpinnerPieceSet"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"
-                        android:entries="@array/piecesetarray"/>
+                        <Spinner
+                            android:id="@+id/SpinnerColorScheme"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dip"
+                            android:entries="@array/colorschemes"/>
 
-                    <Spinner
-                        android:id="@+id/SpinnerColorScheme"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"
-                        android:entries="@array/colorschemes"/>
+                    </TableRow>
 
-                </TableRow>
+                    <TableRow style="@style/MyRowStyle">
+                        <TextView
+                            android:text="@string/pref_tileset"
+                            style="@style/MyLabelTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dip"/>
 
-                <TableRow style="@style/MyRowStyle">
-                    <TextView
-                        android:text="@string/pref_tileset"
-                        style="@style/MyLabelTextStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"/>
+                        <Spinner
+                            android:id="@+id/SpinnerTileSet"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dip"
+                            android:entries="@array/tileArray"/>
+                    </TableRow>
 
-                    <Spinner
-                        android:id="@+id/SpinnerTileSet"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"
-                        android:entries="@array/tileArray"/>
-                </TableRow>
+                    <TableRow  style="@style/MyRowStyle">
+                        <CheckBox
+                            android:id="@+id/CheckBoxCoordinates"
+                            android:text="@string/pref_showCoords"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dip"/>
+                    </TableRow>
 
-                <TableRow  style="@style/MyRowStyle">
-                    <CheckBox
-                        android:id="@+id/CheckBoxCoordinates"
-                        android:text="@string/pref_showCoords"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"/>
-                </TableRow>
+                    <TableRow  style="@style/MyRowStyle">
+                        <CheckBox
+                            android:id="@+id/CheckBoxShowMoves"
+                            android:text="@string/pref_show_possible_moves"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dip"/>
+                    </TableRow>
 
-                <TableRow  style="@style/MyRowStyle">
-                    <CheckBox
-                        android:id="@+id/CheckBoxShowMoves"
-                        android:text="@string/pref_show_possible_moves"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"/>
-                </TableRow>
+                    <TableRow  style="@style/MyRowStyle">
+                        <CheckBox
+                            android:id="@+id/CheckBoxUseWakeLock"
+                            android:text="@string/pref_wakelock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dip"
+                            android:layout_marginLeft="8dip"
+                            android:layout_marginRight="8dip"/>
+                    </TableRow>
+                    <TableRow  style="@style/MyRowStyle">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="32dip"
+                            android:layout_marginRight="8dip"
+                            android:layout_marginBottom="8dip"
+                            android:text="@string/pref_wakelock_desc"/>
+                    </TableRow>
 
-            </TableLayout>
+                    <TableRow  style="@style/MyRowStyle">
+                        <CheckBox
+                            android:id="@+id/CheckBoxUseSound"
+                            android:text="@string/pref_sound"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dip"
+                            android:layout_marginLeft="8dip"
+                            android:layout_marginRight="8dip"/>
+                    </TableRow>
+                    <TableRow  style="@style/MyRowStyle">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="32dip"
+                            android:layout_marginRight="8dip"
+                            android:layout_marginBottom="8dip"
+                            android:text="@string/pref_sound_desc"/>
+                    </TableRow>
 
-        </LinearLayout>
+                    <TableRow  style="@style/MyRowStyle">
+                        <CheckBox
+                            android:id="@+id/CheckBoxForceNightMode"
+                            android:text="@string/pref_night_mode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dip"
+                            android:layout_marginLeft="8dip"
+                            android:layout_marginRight="8dip"/>
+                    </TableRow>
+                    <TableRow  style="@style/MyRowStyle">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="32dip"
+                            android:layout_marginRight="8dip"
+                            android:layout_marginBottom="8dip"
+                            android:text="@string/pref_night_mode_desc"/>
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
+        </ScrollView>
     </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

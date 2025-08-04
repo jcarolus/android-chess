@@ -20,7 +20,6 @@
     <string name="start_about">Sobre</string>
     <string name="start_pgn">Avançado</string>
     <string name="start_ics">Jogue online</string>
-    <string name="start_globalpreferences">Configuração global</string>
     <string name="start_boardpreferences">Configurações do tabuleiro de xadrez</string>
 
     <string name="globalpreferences">Configuração global</string>
@@ -165,7 +164,6 @@
     <string name="menu_start">Começa</string>
     <string name="menu_stop">Acaba</string>
     <string name="menu_prefs">Configurações</string>
-    <string name="menu_global_prefs">Configurações globáis</string>
 
     <string name="menu_subview_title">Escolher controles de baixo</string>
     <string name="pref_show_engine_info">Informação de motor</string>

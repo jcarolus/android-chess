@@ -19,56 +19,110 @@
         android:layout_margin="8dip"
         android:padding="8dip"
         >
-        <LinearLayout
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <Spinner
-                android:id="@+id/SpinnerPieceSet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:entries="@array/piecesetarray"
-                android:nextFocusLeft="@id/includeboard"/>
+                <Spinner
+                    android:id="@+id/SpinnerPieceSet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:entries="@array/piecesetarray"
+                    android:nextFocusLeft="@id/includeboard"/>
 
-            <Spinner
-                android:id="@+id/SpinnerColorScheme"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:entries="@array/colorschemes"
-                android:nextFocusLeft="@id/includeboard"/>
+                <Spinner
+                    android:id="@+id/SpinnerColorScheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:entries="@array/colorschemes"
+                    android:nextFocusLeft="@id/includeboard"/>
 
-            <TextView
-                android:text="@string/pref_tileset"
-                style="@style/MyLabelTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"/>
+                <TextView
+                    android:text="@string/pref_tileset"
+                    style="@style/MyLabelTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"/>
 
-            <Spinner
-                android:id="@+id/SpinnerTileSet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:entries="@array/tileArray"
-                android:nextFocusLeft="@id/includeboard"/>
+                <Spinner
+                    android:id="@+id/SpinnerTileSet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:entries="@array/tileArray"
+                    android:nextFocusLeft="@id/includeboard"/>
 
-            <CheckBox
-                android:id="@+id/CheckBoxCoordinates"
-                android:text="@string/pref_showCoords"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:nextFocusLeft="@id/includeboard"/>
+                <CheckBox
+                    android:id="@+id/CheckBoxCoordinates"
+                    android:text="@string/pref_showCoords"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:nextFocusLeft="@id/includeboard"/>
 
-            <CheckBox
-                android:id="@+id/CheckBoxShowMoves"
-                android:text="@string/pref_show_possible_moves"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"/>
-        </LinearLayout>
+                <CheckBox
+                    android:id="@+id/CheckBoxShowMoves"
+                    android:text="@string/pref_show_possible_moves"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"/>
+
+
+                <CheckBox
+                    android:id="@+id/CheckBoxUseWakeLock"
+                    android:text="@string/pref_wakelock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dip"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="8dip"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dip"
+                    android:layout_marginRight="8dip"
+                    android:layout_marginBottom="8dip"
+                    android:text="@string/pref_wakelock_desc"/>
+
+                <CheckBox
+                    android:id="@+id/CheckBoxUseSound"
+                    android:text="@string/pref_sound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dip"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="8dip"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dip"
+                    android:layout_marginRight="8dip"
+                    android:layout_marginBottom="8dip"
+                    android:text="@string/pref_sound_desc"/>
+
+                <CheckBox
+                    android:id="@+id/CheckBoxForceNightMode"
+                    android:text="@string/pref_night_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dip"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="8dip"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="32dip"
+                    android:layout_marginRight="8dip"
+                    android:layout_marginBottom="8dip"
+                    android:text="@string/pref_night_mode_desc"/>
+
+            </LinearLayout>
+        </ScrollView>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

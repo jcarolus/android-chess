@@ -21,7 +21,6 @@
     <string name="start_about">About</string>
     <string name="start_pgn">Advanced</string>
     <string name="start_ics">Play online</string>
-    <string name="start_globalpreferences">Global settings</string>
     <string name="start_boardpreferences">Chess board settings</string>
 
     <string name="globalpreferences">Global settings</string>
@@ -174,7 +173,6 @@
     <string name="menu_start">Start</string>
     <string name="menu_stop">Stop</string>
     <string name="menu_prefs">Settings</string>
-    <string name="menu_global_prefs">Global Settings</string>
     <string name="menu_game_settings">Game Settings</string>
     <string name="menu_new_960">New random Fischer / 960</string>
 

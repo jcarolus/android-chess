@@ -610,14 +610,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             private final Bitmap scaledBitmap;
             private final int circleSize;
             private final int bitmapSize;
-            private final int originalSize;
 
             private final Point touchPoint = new Point(0, 0); // Store touch point for use in onDrawShadow()
 
             public MagnifyingDragShadowBuilder(View view) {
                 super(view);
 
-                originalSize = view.getWidth();
+                int originalSize = view.getWidth();
 
                 bitmapSize = (int) (originalSize * BITMAP_FACTOR);
                 circleSize = (int) (originalSize * CIRCLE_FACTOR);
@@ -631,12 +630,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
             @Override
             public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
-
                 int shadowHeight = circleSize + bitmapSize;
                 shadowSize.set(circleSize, shadowHeight);
                 shadowTouchPoint.set(circleSize / 2, circleSize);
 
-                // Save for drawing circle later
                 touchPoint.set(shadowTouchPoint.x, shadowTouchPoint.y);
             }
 

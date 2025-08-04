@@ -20,7 +20,6 @@
     <string name="start_about">Acerca de nosotros</string>
     <string name="start_pgn">Avanzado</string>
     <string name="start_ics">Juega en línea</string>
-    <string name="start_globalpreferences">Configuración global</string>
     <string name="start_boardpreferences">Configuración del tablero de ajedrez</string>
 
     <string name="globalpreferences">Configuración global</string>
@@ -165,7 +164,6 @@
     <string name="menu_start">Empieza</string>
     <string name="menu_stop">Para</string>
     <string name="menu_prefs">Configuración</string>
-    <string name="menu_global_prefs">Configuración global</string>
 
     <string name="menu_subview_title">Elige bajo controles</string>
     <string name="pref_show_engine_info">Información de motor</string>

@@ -20,7 +20,6 @@
     <string name="start_about">A propos</string>
     <string name="start_pgn">Paramètres avancés</string>
     <string name="start_ics">Partie en ligne</string>
-    <string name="start_globalpreferences">Paramètres globaux</string>
 
     <string name="globalpreferences">Paramètres globaux</string>
     <string name="puzzlepreferences">Paramètres des puzzles</string>
@@ -172,7 +171,6 @@
     <string name="menu_start">Démarrer</string>
     <string name="menu_stop">Arrêter</string>
     <string name="menu_prefs">Paramètres</string>
-    <string name="menu_global_prefs">Paramètres globaux</string>
     <string name="menu_game_settings">Paramètres de la partie</string>
     <string name="menu_new_960">Nouvelle partie aléatoire Fischer / 960</string>
 

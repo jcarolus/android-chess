@@ -20,7 +20,6 @@
     <string name="start_about">Hakkında</string>
     <string name="start_pgn">Gelişmiş</string>
     <string name="start_ics">Çevrim içi oyna</string>
-    <string name="start_globalpreferences">Genel ayarlar</string>
     <string name="start_boardpreferences">Satranç tahtası ayarları</string>
 
     <string name="globalpreferences">Genel ayarlar</string>
@@ -173,7 +172,6 @@
     <string name="menu_start">Başlat</string>
     <string name="menu_stop">Durdur</string>
     <string name="menu_prefs">Ayarlar</string>
-    <string name="menu_global_prefs">Genel Ayarlar</string>
     <string name="menu_game_settings">Oyun Ayarları</string>
     <string name="menu_new_960">Yeni rastgele Fischer / 960</string>
 

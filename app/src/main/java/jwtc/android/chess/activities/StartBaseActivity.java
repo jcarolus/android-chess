@@ -22,8 +22,6 @@ import java.util.Locale;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import jwtc.android.chess.ChessPreferences;
-import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
@@ -97,9 +95,6 @@ public class StartBaseActivity  extends AppCompatActivity {
                     } else if (requestedItem.equals(getString(R.string.start_pgn))) {
                         i.setClass(StartBaseActivity.this, AdvancedActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_globalpreferences))) {
-                        i.setClass(StartBaseActivity.this, ChessPreferences.class);
                         startActivity(i);
                     } else if (requestedItem.equals(getString(R.string.start_boardpreferences))) {
                         i.setClass(StartBaseActivity.this, BoardPreferencesActivity.class);

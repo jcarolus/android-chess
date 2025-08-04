@@ -17,7 +17,7 @@ import jwtc.android.chess.services.GameApi;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxSound, checkBoxNightMode;
     private Spinner spinnerPieceSet, spinnerColorScheme, spinnerTileSet;
 
     @Override
@@ -33,6 +33,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         spinnerTileSet = findViewById(R.id.SpinnerTileSet);
         checkBoxCoordinates = findViewById(R.id.CheckBoxCoordinates);
         checkBoxShowMoves = findViewById(R.id.CheckBoxShowMoves);
+        checkBoxWakeLock = findViewById(R.id.CheckBoxUseWakeLock);
+        checkBoxSound = findViewById(R.id.CheckBoxUseSound);
+        checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
 
         spinnerPieceSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -92,6 +95,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         checkBoxCoordinates.setChecked(prefs.getBoolean("showCoords", false));
         checkBoxShowMoves.setChecked(prefs.getBoolean("showMoves", true));
+        checkBoxWakeLock.setChecked(prefs.getBoolean("wakeLock", false));
+        checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
+        checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
 
         spinnerPieceSet.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
         spinnerColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
@@ -113,6 +119,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putString("squarePattern", "" + spinnerTileSet.getSelectedItemPosition());
         editor.putBoolean("showCoords", checkBoxCoordinates.isChecked());
         editor.putBoolean("showMoves", checkBoxShowMoves.isChecked());
+        editor.putBoolean("wakeLock", checkBoxWakeLock.isChecked());
+        editor.putBoolean("moveSounds", checkBoxSound.isChecked());
+        editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
 
         editor.commit();
     }

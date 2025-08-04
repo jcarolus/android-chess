@@ -20,7 +20,6 @@
     <string name="start_about">Despre aplicație</string>
     <string name="start_pgn">Extins</string>
     <string name="start_ics">Joc online</string>
-    <string name="start_globalpreferences">Preferințe globale</string>
     <string name="start_boardpreferences">Preferințe tablă de şah</string>
 
     <string name="globalpreferences">Preferințe globale</string>
@@ -165,7 +164,6 @@
     <string name="menu_start">Începe</string>
     <string name="menu_stop">Stop</string>
     <string name="menu_prefs">Preferințe</string>
-    <string name="menu_global_prefs">Preferințe globale</string>
 
     <string name="menu_subview_title">Selectați submeniul de gestionare</string>
     <string name="pref_show_engine_info">Informații despre motor</string>
