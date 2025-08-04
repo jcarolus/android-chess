@@ -42,7 +42,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private SwitchMaterial switchHost;
     private MaterialButtonToggleGroup colorToggleGroup;
     private Button buttonConnect;
-    private MaterialCardView layoutConnect;
+    private LinearLayout layoutConnect;
     private EditText editName;
     private boolean isHost = true, isPlayAsWhite = true;
     private Button buttonResign, buttonDraw, buttonNew;

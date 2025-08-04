@@ -94,13 +94,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/LayoutConnect"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dip"
-                >
-                <LinearLayout
+            <LinearLayout
+                    android:id="@+id/LayoutConnect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -133,8 +128,8 @@
                     android:layout_width="wrap_content"
                     android:layout_margin="8dip"
                     style="@style/ChessButton"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/LayoutGameButtons"
                 android:layout_width="match_parent"
