@@ -6,9 +6,9 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.speech.tts.TextToSpeech;
@@ -17,7 +17,6 @@ import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
 import java.util.ArrayList;
@@ -606,38 +605,54 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         protected class MagnifyingDragShadowBuilder extends View.DragShadowBuilder {
-            private static final float SCALE_FACTOR = 2.0f;
+            private static final float BITMAP_FACTOR = 1.25f;
+            private static final float CIRCLE_FACTOR = 2.25f; // must be greater than BITMAP_FACTOR
+            private final Bitmap scaledBitmap;
+            private final int circleSize;
+            private final int bitmapSize;
+            private final int originalSize;
 
-            private final Drawable snapshot;
+            private final Point touchPoint = new Point(0, 0); // Store touch point for use in onDrawShadow()
 
             public MagnifyingDragShadowBuilder(View view) {
                 super(view);
-                // Create a snapshot of the view to draw scaled version later
-                view.setDrawingCacheEnabled(true);
-                Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-                view.setDrawingCacheEnabled(false);
-                snapshot = new BitmapDrawable(view.getResources(), bitmap);
+
+                originalSize = view.getWidth();
+
+                bitmapSize = (int) (originalSize * BITMAP_FACTOR);
+                circleSize = (int) (originalSize * CIRCLE_FACTOR);
+
+                Bitmap bitmap = Bitmap.createBitmap(originalSize, originalSize, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(bitmap);
+                view.draw(canvas);
+
+                scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmapSize, bitmapSize, true);
             }
 
             @Override
             public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
-                int width = (int) (getView().getWidth() * SCALE_FACTOR);
-                int height = (int) (getView().getHeight() * SCALE_FACTOR);
 
-                // Set shadow size
-                shadowSize.set(width, height);
+                int shadowHeight = circleSize + bitmapSize;
+                shadowSize.set(circleSize, shadowHeight);
+                shadowTouchPoint.set(circleSize / 2, circleSize);
 
-                // Set the touch point in the center of width, but above the finger of user
-                shadowTouchPoint.set(width / 2, height);
-
-                // Set bounds for drawing
-                snapshot.setBounds(0, 0, width, height);
+                // Save for drawing circle later
+                touchPoint.set(shadowTouchPoint.x, shadowTouchPoint.y);
             }
 
             @Override
             public void onDrawShadow(Canvas canvas) {
-                // Draw the magnified snapshot
-                snapshot.draw(canvas);
+                canvas.drawBitmap(scaledBitmap, (int)((circleSize - bitmapSize) / 2), (int)((circleSize - bitmapSize) / 2), null);
+
+                int radius = circleSize / 2;
+
+                Paint paint = new Paint();
+                paint.setAntiAlias(true);
+                paint.setColor(Color.BLACK);
+                paint.setStyle(Paint.Style.FILL);
+                paint.setAlpha(128);
+
+                canvas.drawCircle(touchPoint.x, touchPoint.y, radius, paint);
             }
         }
     }
