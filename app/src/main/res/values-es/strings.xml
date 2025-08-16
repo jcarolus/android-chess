@@ -44,6 +44,8 @@
     <string name="pref_eco_desc">Muestra la apertura ECO cuando disponible</string>
     <string name="pref_extrahighlight">Más destacado</string>
     <string name="pref_extrahighlight_desc">Haz el movimiento destacado aún más visible</string>
+    <string name="pref_fullscreen">Permite pantalla completa</string>
+    <string name="pref_fullscreen_desc">Recomendado para pantallas pequeñas y vista apaisada; si no algunos elementos pueden caer fuera de la pantalla</string>
     <string name="pref_onLoadJumpToLastMove">Salta al ultimo movimiento</string>
     <string name="pref_onLoadJumpToLastMove_desc">Al reanudar la aplicación, saltar al último movimiento</string>
     <string name="pref_uci">Motor UCI</string>

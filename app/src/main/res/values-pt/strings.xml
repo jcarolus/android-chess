@@ -44,6 +44,8 @@
     <string name="pref_eco_desc">Mostra informação de abertura da ECO quando disponível</string>
     <string name="pref_extrahighlight">Mais realçado</string>
     <string name="pref_extrahighlight_desc">Faz a jogada realçada ainda mais visível</string>
+    <string name="pref_fullscreen">Permitir tela cheia</string>
+    <string name="pref_fullscreen_desc">Recomendado para telas pequenas e cénarios; de outra forma elementos pode cair fora da tela</string>
     <string name="pref_onLoadJumpToLastMove">Ir para a última jogada</string>
     <string name="pref_onLoadJumpToLastMove_desc">Ao retomar a App, ir para a última jogada</string>
     <string name="pref_uci">Motor UCI</string>

@@ -44,6 +44,8 @@
     <string name="pref_eco_desc">Afișează informațiile ECO inițiale, dacă există</string>
     <string name="pref_extrahighlight">Evidențiere suplimentară</string>
     <string name="pref_extrahighlight_desc">Face evidențierea mutărilor și mai vizibilă</string>
+    <string name="pref_fullscreen">Mod pe tot ecranul</string>
+    <string name="pref_fullscreen_desc">Recomandat pentru ecrane mici și orientare pe orizontală; în caz contrar, elementele ar putea ieși în afara ecranului</string>
     <string name="pref_onLoadJumpToLastMove">Trecere la ultima mutare</string>
     <string name="pref_onLoadJumpToLastMove_desc">Trecere la ultima mutare la reluarea aplicației</string>
     <string name="pref_uci">Motor UCI</string>

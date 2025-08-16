@@ -44,6 +44,8 @@
     <string name="pref_eco_desc">Zeige ECO Eröffnungsinfo, falls vorhanden</string>
     <string name="pref_extrahighlight">Extra Hervorhebung</string>
     <string name="pref_extrahighlight_desc">Zeige Zughervorhebungen</string>
+    <string name="pref_fullscreen">Aktiviere Vollbildmodus</string>
+    <string name="pref_fullscreen_desc">Empfohlen für kleine Bildschirme und Vertikalansicht; Andernfalls könnten manche Elemente nicht angezeigt werden</string>
     <string name="pref_onLoadJumpToLastMove">Springe zum letzten Zug</string>
     <string name="pref_onLoadJumpToLastMove_desc">Springe zum letzten Zug, wenn die App wiederaufgenommen wird</string>
     <string name="pref_uci">UCI Engine</string>

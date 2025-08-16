@@ -2,12 +2,14 @@ package jwtc.android.chess.helpers;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
@@ -19,8 +21,6 @@ import androidx.core.view.WindowInsetsControllerCompat;
 public class ActivityHelper {
     public static void fixPaddings(Activity context, View rootView) {
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            DisplayCutoutCompat cutout = insets.getDisplayCutout();
 
             int nightModeFlags = context.getResources().getConfiguration().uiMode
                     & Configuration.UI_MODE_NIGHT_MASK;
@@ -36,14 +36,20 @@ public class ActivityHelper {
                 controller.setAppearanceLightStatusBars(true);
             }
 
+            SharedPreferences prefs = context.getSharedPreferences("ChessPlayer", Activity.MODE_PRIVATE);
+            boolean fullScreen = prefs.getBoolean("fullScreen", true);
+
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            DisplayCutoutCompat cutout = insets.getDisplayCutout();
             int orientation = context.getResources().getConfiguration().orientation;
-            int topInset = systemBars.top, leftInset = systemBars.left;
+            int topInset = fullScreen ? 0 : systemBars.top;
+            int leftInset = fullScreen ? 0 : systemBars.left;
 
             if (cutout != null) {
                 if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    topInset = Math.max(systemBars.top, cutout.getSafeInsetTop());
+                    topInset = fullScreen ? cutout.getSafeInsetTop() : Math.max(systemBars.top, cutout.getSafeInsetTop());
                 } else if (orientation == Configuration.ORIENTATION_LANDSCAPE){
-                    leftInset = Math.max(systemBars.left, cutout.getSafeInsetLeft());
+                    leftInset = fullScreen ? cutout.getSafeInsetLeft() : Math.max(systemBars.left, cutout.getSafeInsetLeft());
                 }
             }
             // Apply paddings to avoid cutout (status bar area / camera hole)

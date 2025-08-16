@@ -44,6 +44,8 @@
     <string name="pref_eco_desc">空闲时显示ECO 开放信息</string>
     <string name="pref_extrahighlight">特别高亮</string>
     <string name="pref_extrahighlight_desc">让这一步特别高亮的显示</string>
+    <string name="pref_fullscreen">全屏显示</string>
+    <string name="pref_fullscreen_desc">推荐小屏和横屏显示设备使用; 防止有些部分不能显示出来</string>
     <string name="pref_onLoadJumpToLastMove">退至上一步</string>
     <string name="pref_onLoadJumpToLastMove_desc">当重启应用时, 退至上一步</string>
     <string name="pref_uci">通用国际象棋界面引擎</string>

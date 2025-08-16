@@ -47,6 +47,8 @@
     <string name="pref_eco_desc">Varsa ECO açılış bilgilerini göster</string>
     <string name="pref_extrahighlight">Fazladan vurgu</string>
     <string name="pref_extrahighlight_desc">Hamle vurgulamayı daha görünür hale getir</string>
+    <string name="pref_fullscreen">Tam ekranı etkinleştir</string>
+    <string name="pref_fullscreen_desc">Küçük ekranlar ve yatay görünüm için tavsiye edilir; diğer durumlarda ögeler ekranın dışına taşabilir</string>
     <string name="pref_onLoadJumpToLastMove">Son hamleye atla</string>
     <string name="pref_onLoadJumpToLastMove_desc">Uygulamayı devam ettirirken, son hamleye atla</string>
     <string name="pref_uci">UCI Motoru</string>

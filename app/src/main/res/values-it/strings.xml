@@ -44,6 +44,8 @@
     <string name="pref_eco_desc">Mostra informazioni di apertura ECO quando disponibili</string>
     <string name="pref_extrahighlight">Evidenziazione extra</string>
     <string name="pref_extrahighlight_desc">Rende l\'evidenziazione della mossa più visibile</string>
+    <string name="pref_fullscreen">Abilita schermo intero</string>
+    <string name="pref_fullscreen_desc">Consigliato per schermi piccoli e rotazione orizzontale del display. Se non attivata gli elementi potrebbero uscire dallo schermo</string>
     <string name="pref_onLoadJumpToLastMove">Vai all\'ultima mossa</string>
     <string name="pref_onLoadJumpToLastMove_desc">Dopo essere tornati all\'App, salta all\'ultima mossa</string>
     <string name="pref_uci">Motore UCI</string>
