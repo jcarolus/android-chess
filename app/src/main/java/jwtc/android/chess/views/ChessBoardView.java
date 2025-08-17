@@ -103,13 +103,6 @@ public class ChessBoardView extends ViewGroup {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize =  MeasureSpec.getSize(heightMeasureSpec);
         int size = widthSize < heightSize ? widthSize : heightSize;
-        if (widthSize < heightSize) {
-            int reservedForButtons = dpToPx(148);
-            int remaining = heightSize - widthSize;
-            if (remaining < reservedForButtons) {
-                size -= (reservedForButtons - remaining);
-            }
-        }
         setMeasuredDimension(size, size);
     }
 

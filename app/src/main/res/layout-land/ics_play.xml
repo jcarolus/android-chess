@@ -3,8 +3,7 @@
     android:id="@+id/ICSPlay"
     android:orientation="horizontal"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="4dip">
+    android:layout_height="fill_parent">
 
     <include
         android:id="@+id/includeboard"
@@ -191,7 +190,7 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dip">
+                android:layout_margin="1dip">
 
                 <Button android:id="@+id/ButtonResign"
                     android:text="@string/ics_menu_resign"
@@ -230,7 +229,7 @@
             <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:text="@string/pref_sound"
                 android:checked="true"
                 android:nextFocusLeft="@id/includeboard"
