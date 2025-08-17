@@ -276,7 +276,9 @@ public class ICSPatterns {
     }
 
     public boolean isAbortedOrAdourned(String line) {
-        return line.indexOf("{Game " /*+ getGameNum()*/) >= 0 && line.indexOf("} *") > 0;
+        return line.indexOf("{Game " /*+ getGameNum()*/) >= 0 && line.indexOf("} *") > 0 ||
+                line.contains("[You are not playing a game.]") ||
+                line.contains("[You are neither playing, observing nor examining a game.]");
     }
 
     public int gameState(String line) {
@@ -288,11 +290,14 @@ public class ICSPatterns {
             } else if (line.contains("checkmated")) {
                 return ChessBoard.MATE;
             }
-        } else if (line.contains("} 1/2-1/2")) {
+        }
+        if (line.contains("} 1/2-1/2")) {
             if (line.contains("Game drawn by mutual agreement}")) {
                 return ChessBoard.DRAW_AGREEMENT;
             } else if (line.contains("material}")) {
                 return ChessBoard.DRAW_MATERIAL;
+            } else if (line.contains("stalemate}")) {
+                return ChessBoard.STALEMATE;
             } else {
                 return ChessBoard.DRAW_50;
             }
