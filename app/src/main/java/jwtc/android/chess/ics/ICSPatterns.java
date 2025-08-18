@@ -285,7 +285,7 @@ public class ICSPatterns {
         if (line.indexOf("{Game " /*+ getGameNum()*/) >= 0) {
             if (line.contains(" resigns} ")) {
                 return line.contains("} 1-0") ? ChessBoard.BLACK_RESIGNED : ChessBoard.WHITE_RESIGNED;
-            } else if (line.contains("forfeits on time")) {
+            } else if (line.contains("forfeits")) {
                 return line.contains("} 1-0") ? ChessBoard.BLACK_FORFEIT_TIME : ChessBoard.WHITE_FORFEIT_TIME;
             } else if (line.contains("checkmated")) {
                 return ChessBoard.MATE;

@@ -34,8 +34,9 @@ public class ICSServer extends Service {
 
     private final IBinder mBinder = new LocalBinder();
     // private Handler keepAliveTimerHandler = new KeepAliveHandler();
-    private TelnetSocket _socket;
-    private Thread _workerTelnet;
+    private TelnetSocket _socket = null;
+    private Thread _workerTelnet = null;
+    private MyRunnable _runnable = null;
     private ArrayList<ICSListener> listeners = new ArrayList<>();
     protected ICSThreadMessageHandler threadHandler = new ICSThreadMessageHandler(this);
     protected int expectingState;
@@ -69,15 +70,24 @@ public class ICSServer extends Service {
     }
 
     public void tearDown() {
+        if (_socket != null) {
+            try {
+                _socket.close();
+            } catch (Exception ex) {
+                Log.d(TAG, "Error closing socket " + ex.getMessage());
+            }
+            _socket = null;
+        }
+        if (_workerTelnet != null) {
+            _workerTelnet.interrupt();
+        }
         _workerTelnet = null;
-        try {
-            _socket.close();
-        } catch (Exception ex) { }
-        _socket = null;
+        _runnable = null;
         expectingState = EXPECT_LOGIN_PROMPT;
     }
 
     public void startSession(final String server, final int port, final String handle, final String password, final String prompt) {
+        tearDown();
         Log.i(TAG, "startSession " + server + " " + port + " " + handle);
         currentBuffer = "";
         expectingState = EXPECT_LOGIN_PROMPT;
@@ -86,53 +96,15 @@ public class ICSServer extends Service {
         this.password = password;
         opponent = "";
 
-        _workerTelnet = new Thread(new Runnable() {
-            public void run() {
-            try {
-                _socket = new TelnetSocket(server, port);
-            } catch (Exception ex) {
-                Message message = new Message();
-                message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
-                threadHandler.sendMessage(message);
-                return;
-            }
-
-            try {
-                while (_socket != null && _socket.isConnected()) {
-                    String buffer = _socket.readString();
-
-                    // Log.i(TAG, "Buffer " + buffer == null ? "NULL" : buffer);
-
-                    if (buffer != null && buffer.length() > 0) {
-                        Message message = new Message();
-                        message.what = ICSThreadMessageHandler.MSG_PARSE;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("buffer", buffer);
-                        message.setData(bundle);
-                        threadHandler.sendMessage(message);
-                    }
-                }
-                Log.i(TAG, "End of workerTelnet");
-                threadHandler.cancelTimeout();
-
-                Message message = new Message();
-                message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
-                threadHandler.sendMessage(message);
-                //
-            } catch (Exception ex) {
-                Message message = new Message();
-                message.what = ICSThreadMessageHandler.MSG_ERROR;
-                threadHandler.sendMessage(message);
-            }
-            }
-        });
+        _runnable = new MyRunnable(server, port);
+        _workerTelnet = new Thread(_runnable);
         _workerTelnet.start();
     }
 
     public boolean sendString(String s) {
         Log.i(TAG, "sendString: " + s);
         threadHandler.setTimeout(30000);
-        return _socket != null && s != null && _socket.sendString(s + "\n");
+        return _socket != null && _socket.isConnected() && _socket.sendString(s + "\n");
     }
 
     public boolean isConnected() {
@@ -561,4 +533,52 @@ public class ICSServer extends Service {
         for (ICSListener listener: listeners) {listener.OnLoginFailed(error);}
     }
 
+    private class MyRunnable implements Runnable {
+
+        final private String server;
+        final int port;
+        public MyRunnable(String server, int port) {
+            this.server = server;
+            this.port = port;
+        }
+
+        public void run() {
+            try {
+                _socket = new TelnetSocket(server, port);
+            } catch (Exception ex) {
+                Message message = new Message();
+                message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
+                threadHandler.sendMessage(message);
+                return;
+            }
+
+            try {
+                while (_socket != null && _socket.isConnected()) {
+                    String buffer = _socket.readString();
+
+                    // Log.i(TAG, "Buffer " + buffer == null ? "NULL" : buffer);
+
+                    if (buffer != null && buffer.length() > 0) {
+                        Message message = new Message();
+                        message.what = ICSThreadMessageHandler.MSG_PARSE;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("buffer", buffer);
+                        message.setData(bundle);
+                        threadHandler.sendMessage(message);
+                    }
+                }
+                Log.i(TAG, "End of workerTelnet");
+                threadHandler.cancelTimeout();
+
+                Message message = new Message();
+                message.what = ICSThreadMessageHandler.MSG_CONNECTION_CLOSED;
+                threadHandler.sendMessage(message);
+                //
+            } catch (Exception ex) {
+                Message message = new Message();
+                message.what = ICSThreadMessageHandler.MSG_ERROR;
+                threadHandler.sendMessage(message);
+            }
+        }
+    }
 }

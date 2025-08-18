@@ -5,6 +5,7 @@ import org.json.JSONException;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
+import jwtc.android.chess.helpers.ActivityHelper;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -99,6 +100,8 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.customcommands);
+
+        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         _listCommands = (ListView) findViewById(R.id.ListCustomCommands);
         _listCommands.setOnItemClickListener(this);
