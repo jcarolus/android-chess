@@ -13,30 +13,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/includeboard" />
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dip">
-        <TableRow android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <jwtc.android.chess.views.ChessPiecesStackView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginRight="1dip"
-                android:id="@+id/blackPieces" />
-
-            <jwtc.android.chess.views.ChessPiecesStackView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginLeft="1dip"
-                android:id="@+id/whitePieces" />
-
-        </TableRow>
-    </TableLayout>
-
     <ScrollView android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
@@ -44,6 +20,19 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <jwtc.android.chess.views.ChessPiecesStackView
+                android:layout_width="wrap_content"
+                android:layout_height="48dip"
+                android:layout_margin="4dip"
+                android:id="@+id/blackPieces" />
+
+            <jwtc.android.chess.views.ChessPiecesStackView
+                android:layout_width="wrap_content"
+                android:layout_height="48dip"
+                android:layout_margin="4dip"
+                android:id="@+id/whitePieces" />
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -76,8 +65,8 @@
                     </RadioGroup>
 
                     <jwtc.android.chess.views.ChessPiecesStackView
-                        android:layout_width="@dimen/imageButtonSize"
-                        android:layout_height="@dimen/imageButtonSize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dip"
                         android:layout_marginLeft="16dip"
                         android:layout_marginRight="4dip"
                         android:id="@+id/duckStack" />

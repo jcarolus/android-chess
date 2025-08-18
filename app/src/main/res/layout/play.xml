@@ -48,9 +48,8 @@
                 android:text="Title..." />
 
             <jwtc.android.chess.views.ChessPiecesStackView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_width="wrap_content"
+                android:layout_height="24dip"
                 android:layout_marginRight="1dip"
                 android:id="@+id/topPieces" />
         </TableRow>
@@ -107,9 +106,8 @@
                 android:text="Title..." />
 
             <jwtc.android.chess.views.ChessPiecesStackView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_width="wrap_content"
+                android:layout_height="24dip"
                 android:id="@+id/bottomPieces" />
         </TableRow>
 
@@ -212,21 +210,21 @@
                         android:layout_margin="8dp"
                         android:text="@string/pref_show_blindfold"
                         android:checked="true"
-                        ></com.google.android.material.switchmaterial.SwitchMaterial>
+                        />
                     <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:text="@string/pref_sound"
                         android:checked="true"
-                        ></com.google.android.material.switchmaterial.SwitchMaterial>
+                        />
                     <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchFlip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:text="@string/menu_flip"
                         android:checked="true"
-                        ></com.google.android.material.switchmaterial.SwitchMaterial>
+                        />
                 </TableRow>
             </TableLayout>
 
