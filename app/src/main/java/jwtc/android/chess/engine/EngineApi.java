@@ -31,9 +31,10 @@ public abstract class EngineApi {
             if (msg.what == MSG_MOVE) {
                 int move = msg.getData().getInt("move");
                 int duckMove = msg.getData().getInt("duckMove");
+                int value = msg.getData().getInt("value");
                 Log.d(TAG, "handleMessage MOVE " + Move.toDbgString(move) + " :: " + Pos.toString(duckMove));
                 for (EngineListener listener: listeners) {
-                    listener.OnEngineMove(move, duckMove);
+                    listener.OnEngineMove(move, duckMove, value);
                 }
 
             } else if (msg.what == MSG_INFO) {
@@ -60,11 +61,12 @@ public abstract class EngineApi {
         updateHandler.sendMessage(m);
     }
 
-    public void sendMoveMessageFromThread(int move, int duckMove) {
+    public void sendMoveMessageFromThread(int move, int duckMove, int value) {
         Message m = new Message();
         Bundle b = new Bundle();
         b.putInt("move", move);
         b.putInt("duckMove", duckMove);
+        b.putInt("value", value);
         m.what = MSG_MOVE;
         m.setData(b);
         updateHandler.sendMessage(m);

@@ -1,5 +1,7 @@
 package jwtc.android.chess.practice;
 
+import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -70,6 +72,7 @@ public class PracticeActivity extends ChessBoardActivity {
             if (gameApi.getPGNSize() == jni.getNumBoard() - 1) {
                 //play();
                 imgStatus.setImageResource(R.drawable.ic_check);
+                pulseAnimation(imgStatus);
                 setMessage("Correct!");
                 isPlaying = false;
                 buttonNext.setEnabled(true);

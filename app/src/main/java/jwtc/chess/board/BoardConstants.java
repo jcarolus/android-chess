@@ -39,6 +39,8 @@ public class BoardConstants {
     // not a piece: a field
     public static final int FIELD = -1;
 
+    public static final int VALUATION_MATE = 100000;
+
     // "enumeration" integer position values
     public static final int a8 = 0, b8 = 1, c8 = 2, d8 = 3, e8 = 4, f8 = 5, g8 = 6, h8 = 7;
     public static final int a7 = 8, b7 = 9, c7 = 10, d7 = 11, e7 = 12, f7 = 13, g7 = 14, h7 = 15;

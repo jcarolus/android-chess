@@ -12,6 +12,7 @@ import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.ChessBoard;
 
 public class PracticeImportProcessor extends PGNProcessor {
@@ -73,7 +74,7 @@ public class PracticeImportProcessor extends PGNProcessor {
 
                         //Log.i(TAG, moves + ", Move " + Move.toDbgString(move) + " val: " + value + " at plies " + plies);
 
-                        if (value == 100000 * (plies % 2 == 0 ? 1 : -1) && jni.move(move) != 0) {
+                        if (value == BoardConstants.VALUATION_MATE * (plies % 2 == 0 ? 1 : -1) && jni.move(move) != 0) {
                             gameApi.addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", jni.getMyMove(), -1);
 
                             // save when it's our move
