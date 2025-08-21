@@ -8,8 +8,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -37,11 +35,10 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     private SeekBar seekBar;
     private TextView tvPuzzleText;
     private ViewSwitcher switchTurn;
-    private ImageButton butPrev, butNext;
+    private ImageButton butPrev, butNext, butRetry;
     private ImageView imgStatus;
-    private int currentPosition, totalPuzzles, numMovesToSolve = 0, numMovesSolved = 0, myTurn;
+    private int currentPosition, totalPuzzles, myTurn, numMoved = 0;
     private TableLayout layoutTurn;
-    private Button butShow;
 
     @Override
     public boolean requestMove(int from, int to) {
@@ -51,33 +48,16 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
             return false;
         }
 
-        int theMove = Move.makeMove(from, to);
-        // Note: this is not consistent with the nr of plies for the engine
-        if (numMovesSolved < numMovesToSolve) {
-            int move = gameApi.getPGNEntries().get(jni.getNumBoard() - 1)._move;
-
-            if (Move.equalPositions(move, theMove)) {
-                numMovesSolved++;
-
-                gameApi.jumptoMove(jni.getNumBoard());
-                animateCorrect();
-                setMessage("");
-
-                if (jni.isEnded() == 0 && myEngine.isReady()) {
-                    myEngine.play();
-                }
-
-                return true;
-            } else {
-                // check for illegal move
-                setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? getString(R.string.puzzle_not_correct_move) : getString(R.string.puzzle_invalid_move)));
-                imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
-                rebuildBoard();
-            }
-        } else {
-            return super.requestMove(from, to);
+        if (jni.getTurn() != myTurn) {
+            rebuildBoard();
+            return false;
         }
 
+        if (super.requestMove(from, to)) {
+            numMoved++;
+            return true;
+        }
+        rebuildBoard();
         return false;
     }
 
@@ -125,10 +105,10 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
             }
         });
 
-        butShow = findViewById(R.id.ButtonPuzzleShow);
-        butShow.setOnClickListener(new View.OnClickListener() {
+        butRetry = findViewById(R.id.ButtonPuzzleRetry);
+        butRetry.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                gameApi.jumptoMove(jni.getNumBoard());
+                startPuzzle();
             }
         });
 
@@ -206,14 +186,17 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         Log.d(TAG, "startPuzzle " + sPGN);
 
+        lastMoveFrom = -1;
+        lastMoveTo = -1;
+
         gameApi.loadPGN(sPGN);
-        numMovesToSolve = gameApi.getPGNSize();
-        numMovesSolved = 0;
+        numMoved = 0;
         gameApi.jumptoMove(0);
 
         myTurn = jni.getTurn();
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
         imgStatus.setImageResource(R.drawable.ic_check_none);
+        butRetry.setEnabled(false);
 
         if (myTurn == BoardConstants.BLACK) {
             switchTurn.setDisplayedChild(0);
@@ -299,9 +282,16 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     public void OnEngineMove(int move, int duckMove, int value) {
         if (value == -BoardConstants.VALUATION_MATE) {
             gameApi.move(move, duckMove);
+            animateCorrect();
         } else {
-            setMessage(getString(R.string.puzzle_not_correct_move));
+            int moveIndex = gameApi.getPGNSize() - 1;
+            String sMove = "";
+            if (moveIndex >= 0) {
+                sMove = gameApi.getPGNEntries().get(moveIndex)._sMove + " ";
+            }
+            setMessage(sMove + getString(R.string.puzzle_not_correct_move));
             imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
+            butRetry.setEnabled(true);
         }
     }
     @Override

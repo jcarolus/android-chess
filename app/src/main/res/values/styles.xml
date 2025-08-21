@@ -5,13 +5,14 @@
         <item name="android:scaleType">centerInside</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:tint">@color/primaryTextColor</item>
-        <item name="android:backgroundTint">@color/primaryColor</item>
+        <item name="android:backgroundTint">@color/imagebutton_background</item>
         <item name="android:layout_width">@dimen/imageButtonSize</item>
         <item name="android:layout_height">@dimen/imageButtonSize</item>
     </style>
 
     <style name="ChessButton" parent="android:Widget.Material.Button">
         <item name="android:layout_height">@dimen/imageButtonSize</item>
+        <item name="android:backgroundTint">@color/imagebutton_background</item>
     </style>
 
     <style name="ChessTextViewStyle" parent="android:Widget.TextView">
