@@ -39,7 +39,7 @@ public class ActivityHelper {
             }
 
             SharedPreferences prefs = context.getSharedPreferences("ChessPlayer", Activity.MODE_PRIVATE);
-            boolean fullScreen = prefs.getBoolean("fullScreen", true);
+            boolean fullScreen = prefs.getBoolean("fullScreen", false);
 
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             DisplayCutoutCompat cutout = insets.getDisplayCutout();

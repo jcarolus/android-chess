@@ -97,7 +97,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxCoordinates.setChecked(prefs.getBoolean("showCoords", false));
         checkBoxShowMoves.setChecked(prefs.getBoolean("showMoves", true));
         checkBoxWakeLock.setChecked(prefs.getBoolean("wakeLock", false));
-        checkBoxFullscreen.setChecked(prefs.getBoolean("fullScreen", true));
+        checkBoxFullscreen.setChecked(prefs.getBoolean("fullScreen", false));
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
 
