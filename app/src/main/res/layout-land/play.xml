@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dip"
     android:orientation="horizontal">
-
     <include
         android:id="@+id/includeboard"
         layout="@layout/chessboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:nextFocusRight="@id/ButtonPlay"/>
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="4dip">
-
+        android:layout_marginLeft="2dip">
         <TableLayout
             android:id="@+id/LayoutBoardTop"
             android:layout_width="fill_parent"
@@ -75,7 +71,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:padding="4dip">
-
             <TableRow android:gravity="center_vertical">
                 <ViewSwitcher
                     android:id="@+id/ImageTurnMe"
@@ -132,99 +127,88 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
+
+                <TableLayout
+                    android:id="@+id/LayoutEngineInfo"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dip"
-                    >
-                    <TableLayout
-                        android:id="@+id/LayoutEngineInfo"
+                    android:stretchColumns="1">
+                    <TableRow
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:stretchColumns="1">
-                        <TableRow
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content">
-                            <RelativeLayout
-                                android:id="@+id/LayoutPlayButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                >
-                                <ImageButton
-                                    android:id="@+id/ButtonPlay"
-                                    android:src="@drawable/ic_icon_play"
-                                    style="@style/ChessImageButton"
-                                    android:nextFocusLeft="@id/includeboard"/>
+                        android:layout_height="wrap_content">
+                        <RelativeLayout
+                            android:id="@+id/LayoutPlayButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            >
+                            <ImageButton
+                                android:id="@+id/ButtonPlay"
+                                android:src="@drawable/ic_icon_play"
+                                style="@style/ChessImageButton"
+                                android:nextFocusLeft="@id/includeboard"/>
 
-                                <ProgressBar
-                                    android:id="@+id/ProgressBarPlay"
-                                    android:layout_width="40dip"
-                                    android:layout_height="40dip"
-                                    style="?android:attr/progressBarStyleLarge"
-                                    android:visibility="gone" />
-                            </RelativeLayout>
+                            <ProgressBar
+                                android:id="@+id/ProgressBarPlay"
+                                android:layout_width="40dip"
+                                android:layout_height="40dip"
+                                style="?android:attr/progressBarStyleLarge"
+                                android:visibility="gone" />
+                        </RelativeLayout>
 
 
-                            <TextView
-                                android:id="@+id/TextViewEngineValue"
-                                style="@style/MyNormalTextStyle"
-                                android:layout_width="0dp"
-                                android:layout_weight="2"
-                                android:layout_height="wrap_content"
-                                android:scrollHorizontally="false"
-                                android:singleLine="false"
-                                android:minLines="2"
-                                android:maxLines="2"
-                                android:ellipsize="end"
-                                android:padding="4dip" />
+                        <TextView
+                            android:id="@+id/TextViewEngineValue"
+                            style="@style/MyNormalTextStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:scrollHorizontally="false"
+                            android:singleLine="false"
+                            android:minLines="2"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:padding="4dip" />
 
-                            <ImageButton android:id="@+id/ButtonMenu"
-                                android:src="@drawable/ic_three_dots_vertical"
-                                style="@style/ChessImageButton"/>
+                        <ImageButton android:id="@+id/ButtonMenu"
+                            android:src="@drawable/ic_three_dots_vertical"
+                            style="@style/ChessImageButton"/>
 
-                        </TableRow>
-                    </TableLayout>
-                </com.google.android.material.card.MaterialCardView>
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
+                    </TableRow>
+                </TableLayout>
+
+                <TableLayout
+                    android:id="@+id/LayoutHistoryControls"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dip"
-                    android:padding="8dip"
-                    >
-                    <TableLayout
-                        android:id="@+id/LayoutHistoryControls"
+                    android:stretchColumns="1">
+                    <TableRow
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:stretchColumns="1">
-                        <TableRow
+                        android:layout_height="wrap_content">
+                        <ImageButton
+                            android:id="@+id/ButtonPrevious"
+                            android:src="@drawable/ic_chevron_left"
+                            style="@style/ChessImageButton"
+                            android:nextFocusLeft="@id/includeboard"
+                            android:nextFocusDown="@id/SwitchBlindfold" />
+                        <SeekBar
+                            android:id="@+id/SeekBarMain"
+                            android:layout_marginLeft="8dip"
+                            android:layout_marginRight="8dip"
                             android:layout_width="fill_parent"
-                            android:layout_height="wrap_content">
-                            <ImageButton
-                                android:id="@+id/ButtonPrevious"
-                                android:src="@drawable/ic_chevron_left"
-                                style="@style/ChessImageButton"
-                                android:nextFocusLeft="@id/includeboard"
-                                android:nextFocusDown="@id/SwitchBlindfold" />
-                            <SeekBar
-                                android:id="@+id/SeekBarMain"
-                                android:layout_marginLeft="8dip"
-                                android:layout_marginRight="8dip"
-                                android:layout_width="fill_parent"
-                                android:layout_height="48dip"
-                                android:nextFocusDown="@id/SwitchBlindfold"/>
-                            <ImageButton
-                                android:id="@+id/ButtonNext"
-                                android:src="@drawable/ic_chevron_right"
-                                style="@style/ChessImageButton"
-                                android:nextFocusDown="@id/SwitchSound"/>
+                            android:layout_height="48dip"
+                            android:nextFocusDown="@id/SwitchBlindfold"/>
+                        <ImageButton
+                            android:id="@+id/ButtonNext"
+                            android:src="@drawable/ic_chevron_right"
+                            style="@style/ChessImageButton"
+                            android:nextFocusDown="@id/SwitchSound"/>
 
-                            <ImageButton
-                                android:id="@+id/ButtonPGN"
-                                android:src="@drawable/ic_list_ul"
-                                style="@style/ChessImageButton" />
-                        </TableRow>
-                    </TableLayout>
-                </com.google.android.material.card.MaterialCardView>
+                        <ImageButton
+                            android:id="@+id/ButtonPGN"
+                            android:src="@drawable/ic_list_ul"
+                            style="@style/ChessImageButton" />
+                    </TableRow>
+                </TableLayout>
                 <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -255,20 +239,13 @@
                             />
                     </TableRow>
                 </TableLayout>
-
                 <TextView
                     android:id="@+id/TextViewEcoValue"
                     style="@style/MyNormalTextStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:padding="4dip" />
-
             </LinearLayout>
-
         </ScrollView>
-
-
-
     </RelativeLayout>
-
 </LinearLayout>

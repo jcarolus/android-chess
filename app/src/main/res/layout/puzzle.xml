@@ -63,8 +63,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="4dip"
-        android:paddingBottom="4dip"
-        android:stretchColumns="1">
+        android:paddingBottom="4dip">
 
         <TableRow android:gravity="center_vertical">
 
@@ -73,18 +72,14 @@
                 android:src="@drawable/ic_chevron_left"
                 style="@style/ChessImageButton" />
 
-            <SeekBar
-                android:id="@+id/SeekBarPuzzle"
-                android:min="0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip" />
-
             <ImageButton
                 android:id="@+id/ButtonPuzzleNext"
                 android:src="@drawable/ic_chevron_right"
                 style="@style/ChessImageButton" />
+            <Button android:id="@+id/ButtonPuzzleShow"
+                android:text="@string/puzzle_show"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton"/>
 
             <ImageButton
                 android:id="@+id/ButtonPuzzleRetry"

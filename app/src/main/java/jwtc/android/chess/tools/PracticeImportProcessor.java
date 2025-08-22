@@ -75,7 +75,7 @@ public class PracticeImportProcessor extends PGNProcessor {
                         //Log.i(TAG, moves + ", Move " + Move.toDbgString(move) + " val: " + value + " at plies " + plies);
 
                         if (value == BoardConstants.VALUATION_MATE * (plies % 2 == 0 ? 1 : -1) && jni.move(move) != 0) {
-                            gameApi.addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", jni.getMyMove(), -1);
+                            gameApi.addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
 
                             // save when it's our move
                             if (plies % 2 == 0) {

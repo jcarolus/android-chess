@@ -119,7 +119,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 if (jni.isEnded() == 0) {
-                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
+                    if (jni.getNumBoard() <= gameApi.getPGNSize()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this)
                             .setTitle(getString(R.string.title_create_new_line))
                             .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
@@ -156,7 +156,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         seekBar = findViewById(R.id.SeekBarMain);
         seekBar.setOnSeekBarChangeListener(this);
-        seekBar.setMax(1);
+        seekBar.setMax(0);
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
@@ -480,11 +480,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
-
-            if (jni.getNumBoard() - 1 > progress) {
-                progress++;
-            }
-            this.gameApi.jumptoMove(progress);
+            this.gameApi.jumpToBoardNum(progress);
         }
     }
 
@@ -500,7 +496,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
     protected void updateGUI() {
         // only if on top of move stack
-        if (this.gameApi.getPGNSize() == jni.getNumBoard() - 1) {
+        if (this.gameApi.getPGNSize() == jni.getNumBoard()) {
             localClock.switchTurn(jni.getTurn());
         }
 
@@ -514,7 +510,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
     protected void updateSeekBar() {
         seekBar.setMax(this.gameApi.getPGNSize());
-        seekBar.setProgress(jni.getNumBoard() - 1);
+        seekBar.setProgress(jni.getNumBoard());
 //        seekBar.invalidate();
         Log.d(TAG, "updateSeekBar " + seekBar.getMax() + " - " + seekBar.getProgress());
     }
@@ -525,7 +521,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     protected void updateEco() {
-        String sEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard() - 1);
+        String sEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard());
         textViewEcoValue.setText( sEco != null ? sEco : "");
     }
 

@@ -6,12 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -28,17 +29,18 @@ import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
-public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, EngineListener {
+public class PuzzleActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PuzzleActivity";
     private EngineApi myEngine;
     private Cursor cursor = null;
-    private SeekBar seekBar;
     private TextView tvPuzzleText;
     private ViewSwitcher switchTurn;
     private ImageButton butPrev, butNext, butRetry;
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles, myTurn, numMoved = 0;
     private TableLayout layoutTurn;
+    private Button butShow;
+
 
     @Override
     public boolean requestMove(int from, int to) {
@@ -54,7 +56,6 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         }
 
         if (super.requestMove(from, to)) {
-            numMoved++;
             return true;
         }
         rebuildBoard();
@@ -77,8 +78,6 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         currentPosition = 0;
         totalPuzzles = 0;
-        seekBar = findViewById(R.id.SeekBarPuzzle);
-        seekBar.setOnSeekBarChangeListener(this);
 
         tvPuzzleText = findViewById(R.id.TextViewPuzzleText);
         switchTurn = findViewById(R.id.ImageTurn);
@@ -112,6 +111,20 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
             }
         });
 
+        butShow = findViewById(R.id.ButtonPuzzleShow);
+        butShow.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                gameApi.jumpToBoardNum(numMoved);
+                //rebuildBoard();
+                if (jni.isEnded() == 0) {
+                    Log.d(TAG, "show " + numMoved);
+                    myEngine.setPly(4 - numMoved);
+                    myEngine.play();
+                }
+            }
+        });
+
+
         chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
     }
 
@@ -121,7 +134,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
         Log.i(TAG, "onResume");
 
         myEngine = new LocalEngine();
-        myEngine.setPly(3);
+        myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
 
         layoutTurn.setBackgroundColor(ColorSchemes.getDark());
@@ -161,7 +174,6 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
                     currentPosition = 0;
                 }
 
-                seekBar.setMax(totalPuzzles - 1);
                 startPuzzle();
             } else {
                 Intent intent = new Intent();
@@ -191,21 +203,17 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 
         gameApi.loadPGN(sPGN);
         numMoved = 0;
-        gameApi.jumptoMove(0);
+        gameApi.jumpToBoardNum(0);
 
         myTurn = jni.getTurn();
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
         imgStatus.setImageResource(R.drawable.ic_check_none);
-        butRetry.setEnabled(false);
+        butShow.setEnabled(true);
 
         if (myTurn == BoardConstants.BLACK) {
             switchTurn.setDisplayedChild(0);
         } else {
             switchTurn.setDisplayedChild(1);
-        }
-
-        if (seekBar != null) {
-            seekBar.setProgress(currentPosition);
         }
 
         String sWhite = gameApi.getWhite();
@@ -227,11 +235,11 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
 //        }
 
         tvPuzzleText.setText("# " + (currentPosition + 1) + " - " + sWhite /*+ sDate*/); // + "\n\n" + _mapPGNHead.get("Event") + ", " + _mapPGNHead.get("Date").replace(".??.??", ""));
-
     }
 
-    protected void updateGUI() {
-
+    protected void startEngine() {
+        myEngine.setPly(4 - numMoved);
+        myEngine.play();
     }
 
     public void animateCorrect() {
@@ -244,43 +252,35 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) {
-            currentPosition = progress;
-            startPuzzle();
-        }
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
     public void OnMove(int move) {
         super.OnMove(move);
 
         lastMoveFrom = Move.getFrom(move);
         lastMoveTo = Move.getTo(move);
 
+        numMoved++;
+
         updateSelectedSquares();
 
         if (jni.isEnded() == 0 && jni.getTurn() != myTurn) {
-            myEngine.play();
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startEngine();
+                }
+            }, 1000);
         }
         if (jni.isEnded() != 0) {
             animateCorrect();
+            butShow.setEnabled(false);
         }
     }
 
     @Override
     public void OnEngineMove(int move, int duckMove, int value) {
-        if (value == -BoardConstants.VALUATION_MATE) {
+        Log.d(TAG, "OnEngineMove " + value);
+        boolean isMyTurn = myTurn == jni.getTurn();
+        if (value == BoardConstants.VALUATION_MATE * (isMyTurn ? 1 : -1)) {
             gameApi.move(move, duckMove);
             animateCorrect();
         } else {
@@ -291,7 +291,7 @@ public class PuzzleActivity extends ChessBoardActivity implements SeekBar.OnSeek
             }
             setMessage(sMove + getString(R.string.puzzle_not_correct_move));
             imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
-            butRetry.setEnabled(true);
+            numMoved--;
         }
     }
     @Override

@@ -424,7 +424,7 @@
     <string name="ics_gamenumber">Oyun #</string>
     <string name="ics_quit">Çıkılsın mı?</string>
 
-    <string name="practice_help">Şah-Mat\'ı bulun (birden fazla hamle olabilir)\nSüreniz ve konum başına ortalama süreniz tahtanın yanında gösterilir.\nÇözüm için \'Göster\' düğmesine basın.\nSonraki konuma gitmek için \'>\' düğmesine basın.\nBazen birden fazla çözüm bulunabilir, ancak uygulama yalnızca birini kabul eder.</string>
+    <string name="practice_help">Şah Matı Bul (birden fazla hamle olabilir).</string>
     <string name="puzzle_help">Bunlar iki hamlede sıkı Mat bulmacalarıdır.\nAmaç, iki hamle içinde zorunlu bir mat ile sonuçlanan ilk hamleyi bulmaktır.\nBaşka bir deyişle, siz doğru hamleyi yaptıktan sonra, rakip bir sonraki hamlenizde mat olmasını engelleyemez.\nBu ilk hamleden sonra bulmaca çözülür.\nÇözüm için \'Göster\' düğmesine basın.\nKaynak: EL ARTE DEL MATE EN DOS, Eduardo Sadier</string>
     <string name="advanced_help">
          <![CDATA[

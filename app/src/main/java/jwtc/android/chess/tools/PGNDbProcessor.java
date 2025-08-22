@@ -33,9 +33,9 @@ public class PGNDbProcessor extends PGNProcessor {
             int ply = 0, pgnSize = gameApi.getPGNSize();
             int existingCnt = 0;
             //Log.i("import", "processPGN - gameSize:" + pgnSize);
-            while (ply <= pgnSize && ply <= _untilPly) {
+            while (ply < pgnSize && ply < _untilPly) {
                 //_jni.getNumBoard();
-                gameApi.jumptoMove(ply);
+                gameApi.jumpToBoardNum(ply);
 
                 lKey = jni.getHashKey();
 

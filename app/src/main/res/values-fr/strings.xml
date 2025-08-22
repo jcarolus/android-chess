@@ -424,7 +424,7 @@ Recherche de "Quiescence" désactivée</string>
     <string name="ics_gamenumber">Partie #</string>
     <string name="ics_quit">Quitter ?</string>
 
-    <string name="practice_help">Trouvez le Check-Mate (peut être plus d\'un coup)\nVotre temps et votre temps moyen par position sont affichés à côté du tableau.\nAppuyez sur le bouton \'Afficher\' pour la solution.\nAppuyez sur le bouton \'>\' pour passer à la position suivante.\nParfois, plusieurs solutions peuvent être trouvées, mais l\'application n\'en accepte qu\'une seule.</string>
+    <string name="practice_help">Trouver l\'échec et mat (peut être plus d\'un coup).</string>
     <string name="puzzle_help">Ce sont des mats difficiles dans deux puzzles.\nLe but est de trouver le premier coup qui mène à un mat forcé en deux coups.\nEn d\'autres termes, après avoir fait le bon coup, l\'adversaire peut ne pas empêcher un compagnon lors de votre prochain coup.\nAprès ce premier coup, le puzzle est résolu.\nAppuyez sur le bouton \'Afficher\' pour la solution.\nSource : EL ARTE DEL MATE EN DOS par Eduardo Sadier</string>
     <string name="advanced_help">
          <![CDATA[

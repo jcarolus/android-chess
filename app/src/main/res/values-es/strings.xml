@@ -403,7 +403,7 @@
     <string name="ics_match">Partido</string>
     <string name="ics_gamenumber">Juego #</string>
 
-    <string name="practice_help">Encuentra el Check-Mate (puede ser más de un movimiento).\nSu tiempo y el tiempo promedio por posición se muestran al lado del tablero.\nPresione el botón "Mostre" para la solución.\nPulse el botón \'>\' para pasar a la siguiente posición.\nA veces se pueden encontrar múltiples soluciones, pero la aplicación sólo acepta una..</string>
+    <string name="practice_help">Encuentra el jaque mate (puede ser más de un movimiento).</string>
     <string name="puzzle_help">Estos son duros rompecabezas de Mate en dos\nEl objectivo es encontrar el primer movimiento que conduce a un mate forzado dentro de dos movimientos.\nEn otras palabras, después de realizar el movimiento correcto, el oponente no puede evitar un mate en su siguiente movimiento.\nDespués de este primer movimiento, el rompecabezas se resuelve.\nPresione el botón "Mostrar" para la solución.\nFuente: EL ARTE DEL MATE EN DOS de Eduardo Sadier</string>
     <string name="advanced_help"><![CDATA[
 <h3>Avanzado</h3>

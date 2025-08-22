@@ -425,7 +425,7 @@
     <string name="ics_gamenumber">Game #</string>
     <string name="ics_quit">Quit?</string>
 
-    <string name="practice_help">Find the Check-Mate (can be more than one move)\nYour time and average time per position is shown next to the board.\nPress the \'Show\' button for the solution.\nPress the \'>\' button to go to the next position.\nSometimes multiple solutions can be found, but the application only accepts one.</string>
+    <string name="practice_help">Find the Check-Mate (can be more than one move).</string>
     <string name="puzzle_help">These are tough Mate in two puzzles.\nThe goal is to find the first move that leads to a forced mate within two moves.\nIn other words, after you make the correct move, the opponent can not prevent a mate on your next move.\nAfter this first move, the puzzle is solved.\nPress the \'Show\' button for the solution.\nSource: EL ARTE DEL MATE EN DOS by Eduardo Sadier</string>
     <string name="advanced_help">
          <![CDATA[

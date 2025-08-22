@@ -403,7 +403,7 @@
     <string name="ics_match">Incontro</string>
     <string name="ics_gamenumber">Gioco #</string>
 
-    <string name="practice_help">Trova lo scacco matto (potrebbe volerci più di una mossa).\nIl tempo e il tempo medio per posizione è; mostrato accanto alla scacchiera.\nPremi il pulsante \'Mostra\' per vedere la soluzione.\nPremi il pulsante \'>\' per andare alla posizione successiva.\nTalvolta possono essere trovate più; soluzioni, ma l\'applicazione ne accetta solamente una.</string>
+    <string name="practice_help">Trova lo scacco matto (può essere più di una mossa).</string>
     <string name="puzzle_help">Questi sono problemi difficili di Matto in due mosse.\nL\'obiettivo è; quello di trovare la prima mossa che conduce a un matto forzato entro due mosse.\nIn altre parole, dopo che hai fatto la mossa corretta, l\'avversario non può; impedire il matto derivante dalla tua prossima mossa.\nDopo questa prima mossa il problema è; risolto.\nPremi il pulsante \'Mostra\' per avere la soluzione.\nFonte: EL ARTE DEL MATE EN DOS di Eduardo Sadier</string>
     <string name="advanced_help"><![CDATA[
 <h3>Avanzate</h3>
