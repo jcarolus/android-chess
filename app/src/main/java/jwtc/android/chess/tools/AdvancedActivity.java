@@ -144,7 +144,6 @@ public class AdvancedActivity extends BaseActivity {
                             SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putInt("practicePos", 0);
-                            editor.putInt("practiceTicks", 0);
                             editor.commit();
 
                             doToast(getString(R.string.practice_set_reset));

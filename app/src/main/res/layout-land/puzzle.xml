@@ -61,35 +61,45 @@
             </TableRow>
         </TableLayout>
 
-        <TableLayout
+        <LinearLayout
             android:id="@+id/LayoutButtons"
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4dip"
             android:paddingBottom="4dip">
 
-            <TableRow android:gravity="center_vertical">
-                <ImageButton
-                    android:id="@+id/ButtonPuzzlePrevious"
-                    android:src="@drawable/ic_chevron_left"
-                    style="@style/ChessImageButton"
-                    android:nextFocusLeft="@id/includeboard"/>
-                <ImageButton
-                    android:id="@+id/ButtonPuzzleNext"
-                    android:src="@drawable/ic_chevron_right"
-                    style="@style/ChessImageButton" />
-                <Button android:id="@+id/ButtonPuzzleShow"
-                    android:text="@string/puzzle_show"
-                    android:layout_width="wrap_content"
-                    style="@style/ChessButton"/>
+            <ImageButton
+                android:id="@+id/ButtonPuzzlePrevious"
+                android:src="@drawable/ic_chevron_left"
+                style="@style/ChessImageButton" />
 
-                <ImageButton
-                    android:id="@+id/ButtonPuzzleRetry"
-                    android:src="@drawable/ic_arrow_clockwise"
-                    style="@style/ChessImageButton" />
-            </TableRow>
-        </TableLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
 
+            <Button android:id="@+id/ButtonPuzzleShow"
+                android:text="@string/puzzle_show"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton"/>
+
+            <ImageButton
+                android:id="@+id/ButtonPuzzleRetry"
+                android:src="@drawable/ic_arrow_clockwise"
+                style="@style/ChessImageButton" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:id="@+id/ButtonPuzzleNext"
+                android:src="@drawable/ic_chevron_right"
+                style="@style/ChessImageButton" />
+
+        </LinearLayout>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">

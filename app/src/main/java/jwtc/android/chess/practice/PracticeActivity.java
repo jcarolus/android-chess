@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -48,6 +49,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private ImageView imgStatus;
 
     private TableLayout layoutTurn;
+    private RelativeLayout layoutTop;
     private int myTurn, numMoved;
 
     @Override
@@ -82,6 +84,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         afterCreate();
 
         layoutTurn = findViewById(R.id.LayoutTurn);
+        layoutTop = findViewById(R.id.LayoutTop);
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
         switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
         imgStatus = (ImageView) findViewById(R.id.ImageStatus);
@@ -126,6 +129,9 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         myEngine.addListener(this);
 
         layoutTurn.setBackgroundColor(ColorSchemes.getDark());
+        if (layoutTop != null) {
+            layoutTop.setBackgroundColor(ColorSchemes.getDark());
+        }
         tvPracticeMove.setTextColor(ColorSchemes.getHightlightColor());
 
         loadPuzzles();
@@ -176,6 +182,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         Log.i(TAG, "init: " + sPGN);
 
+        lastMoveFrom = -1;
+        lastMoveTo = -1;
         gameApi.loadPGN(sPGN);
 
         gameApi.jumpToBoardNum(0);

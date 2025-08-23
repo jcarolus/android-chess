@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -39,6 +40,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles, myTurn, numMoved = 0;
     private TableLayout layoutTurn;
+    private RelativeLayout layoutTop;
     private Button butShow;
 
 
@@ -75,6 +77,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         afterCreate();
 
         layoutTurn = findViewById(R.id.LayoutTurn);
+        layoutTop = findViewById(R.id.LayoutTop);
 
         currentPosition = 0;
         totalPuzzles = 0;
@@ -138,6 +141,9 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         myEngine.addListener(this);
 
         layoutTurn.setBackgroundColor(ColorSchemes.getDark());
+        if (layoutTop != null) {
+            layoutTop.setBackgroundColor(ColorSchemes.getDark());
+        }
         tvPuzzleText.setTextColor(ColorSchemes.getHightlightColor());
 
         loadPuzzles();
