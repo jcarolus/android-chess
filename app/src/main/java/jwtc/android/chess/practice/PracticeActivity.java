@@ -39,7 +39,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
     private TextView tvPracticeMove;
-    private Button buttonShow;
     private ImageButton buttonNext;
     private int totalPuzzles, currentPos;
     private Cursor cursor;
@@ -50,7 +49,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     private TableLayout layoutTurn;
     private RelativeLayout layoutTop;
-    private int myTurn, numMoved;
+    private int myTurn, numMoved, numPlayed, numSolved;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -88,20 +87,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
         switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
         imgStatus = (ImageView) findViewById(R.id.ImageStatus);
-        buttonShow = (Button) findViewById(R.id.ButtonPracticeShow);
         buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
-
-        buttonShow.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                gameApi.jumpToBoardNum(numMoved);
-                //rebuildBoard();
-                if (jni.isEnded() == 0) {
-                    Log.d(TAG, "show " + numMoved);
-                    myEngine.setPly(4 - numMoved);
-                    myEngine.play();
-                }
-            }
-        });
 
         buttonNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
@@ -115,7 +101,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             }
         });
 
-        chessBoardView.setNextFocusRightId(R.id.ButtonPracticeShow);
+        chessBoardView.setNextFocusRightId(R.id.ButtonPracticeNext);
     }
 
     @Override
@@ -147,14 +133,18 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         timer = null;
 
         editor.putInt("practicePos", currentPos);
+        editor.putInt("practiceNumPlayed", numPlayed);
+        editor.putInt("practiceSolved", numSolved);
+
         editor.commit();
     }
-
 
     protected void loadPuzzles() {
         SharedPreferences prefs = getPrefs();
 
         currentPos = prefs.getInt("practicePos", 0);
+        numPlayed = prefs.getInt("practiceNumPlayed", 0);
+        numSolved = prefs.getInt("practiceSolved", 0);
         cursor = managedQuery(MyPuzzleProvider.CONTENT_URI_PRACTICES, MyPuzzleProvider.COLUMNS, null, null, "");
 
         if (cursor != null) {
@@ -180,7 +170,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         int pgnIndex = cursor.getColumnIndex(MyPuzzleProvider.COL_PGN);
         String sPGN = pgnIndex >= 0 ? cursor.getString(pgnIndex) : "";
 
-        Log.i(TAG, "init: " + sPGN);
+        Log.i(TAG, "Start puzzle init: " + sPGN);
 
         lastMoveFrom = -1;
         lastMoveTo = -1;
@@ -190,7 +180,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         myTurn = jni.getTurn();
         numMoved = 0;
 
-        Log.i(TAG, gameApi.getPGNSize() + " moves from " + sPGN + " turn " + jni.getTurn());
+        Log.i(TAG, " turn " + jni.getTurn() + ": " + numPlayed + ", " + numSolved);
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
@@ -247,6 +237,11 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             }, 1000);
         }
         if (jni.isEnded() != 0) {
+            Log.d(TAG, "Solved ");
+
+            numPlayed++;
+            numSolved++;
+
             animateCorrect();
         }
     }
@@ -267,6 +262,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             setMessage(sMove + getString(R.string.puzzle_not_correct_move));
             imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
             numMoved--;
+
+            numPlayed++;
         }
     }
     @Override
