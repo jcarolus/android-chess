@@ -38,9 +38,9 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
-    private TextView tvPracticeMove;
+    private TextView tvPracticeMove, tvPercentage;
     private ImageButton buttonNext;
-    private int totalPuzzles, currentPos;
+    private int totalPuzzles, currentPos, nextPos;
     private Cursor cursor;
     private Timer timer;
 
@@ -85,14 +85,15 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         layoutTurn = findViewById(R.id.LayoutTurn);
         layoutTop = findViewById(R.id.LayoutTop);
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
+        tvPercentage = findViewById(R.id.TextViewPercentage);
         switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
         imgStatus = (ImageView) findViewById(R.id.ImageStatus);
         buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
 
         buttonNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                if (currentPos + 1 < totalPuzzles) {
-                    currentPos++;
+                if (nextPos < totalPuzzles) {
+                    currentPos = nextPos;
                     startPuzzle();
                 } else {
                     // completed
@@ -166,6 +167,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     protected void startPuzzle() {
         cursor.moveToPosition(currentPos);
+        nextPos = currentPos + 1;
 
         int pgnIndex = cursor.getColumnIndex(MyPuzzleProvider.COL_PGN);
         String sPGN = pgnIndex >= 0 ? cursor.getString(pgnIndex) : "";
@@ -179,6 +181,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         gameApi.jumpToBoardNum(0);
         myTurn = jni.getTurn();
         numMoved = 0;
+
+        updateScore();
 
         Log.i(TAG, " turn " + jni.getTurn() + ": " + numPlayed + ", " + numSolved);
 
@@ -211,10 +215,22 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     public void animateCorrect() {
         imgStatus.setImageResource(R.drawable.ic_check);
         pulseAnimation(imgStatus);
+        updateScore();
     }
 
-    private String formatTime(int sec) {
-        return String.format("%d:%02d", (int) (Math.floor(sec / 60)), sec % 60);
+    public void animateWrong(String message) {
+        setMessage(message);
+        imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
+        pulseAnimation(imgStatus);
+        updateScore();
+    }
+
+    public void updateScore() {
+        tvPercentage.setText(formatPercentage());
+    }
+
+    private String formatPercentage() {
+        return String.format("%d / %d = %.1f %%", numSolved, numPlayed, numPlayed > 0 ? ((float)numSolved / numPlayed) * 100 : 0.0f);
     }
 
     @Override
@@ -241,7 +257,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
             numPlayed++;
             numSolved++;
-
+            currentPos = nextPos;
             animateCorrect();
         }
     }
@@ -259,11 +275,11 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             if (moveIndex >= 0) {
                 sMove = gameApi.getPGNEntries().get(moveIndex)._sMove + " ";
             }
-            setMessage(sMove + getString(R.string.puzzle_not_correct_move));
-            imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
-            numMoved--;
 
+            numMoved--;
             numPlayed++;
+            currentPos = nextPos;
+            animateWrong(sMove + getString(R.string.puzzle_not_correct_move));
         }
     }
     @Override
