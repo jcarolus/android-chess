@@ -73,7 +73,7 @@ public class GameApi {
 
         final int move = jni.getMyMove();
 
-        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", move, -1);
+        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", move, -1);
 
         dispatchMove(move);
 
@@ -90,7 +90,7 @@ public class GameApi {
         }
         final int move = jni.getMyMove();
 
-        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), "", move, -1);
+        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", move, -1);
 
         dispatchMove(move);
 
@@ -132,27 +132,29 @@ public class GameApi {
     }
 
     public void nextMove() {
-        jumptoMove(jni.getNumBoard());
+        jumpToBoardNum(jni.getNumBoard() + 1);
     }
 
-    public void jumptoMove(int ply) {
-        Log.d(TAG, "jumptoMove " + ply);
 
-        if (ply <= _arrPGN.size() && ply >= 0) {
-            int boardPly = jni.getNumBoard();
-            if (ply >= boardPly) {
-                while (ply >= boardPly) {
-                    jni.move(_arrPGN.get(boardPly - 1)._move);
-                    Log.d(TAG, "duck at " + _arrPGN.get(boardPly - 1)._duckMove);
-                    if (_arrPGN.get(boardPly - 1)._duckMove != -1) {
-                        jni.requestDuckMove(_arrPGN.get(boardPly - 1)._duckMove);
+    public void jumpToBoardNum(int toNumBoard) {
+        Log.d(TAG, "jumptoMove " + toNumBoard + ", " + _arrPGN.size());
+
+        if (toNumBoard <= _arrPGN.size() && toNumBoard >= 0) {
+            int currentNumBoard = jni.getNumBoard();
+            if (toNumBoard > currentNumBoard) {
+                while (toNumBoard > currentNumBoard) {
+                    int res = jni.move(_arrPGN.get(currentNumBoard)._move);
+                    Log.d(TAG, "jni.move " + res);
+                    Log.d(TAG, "duck at " + _arrPGN.get(currentNumBoard)._duckMove);
+                    if (_arrPGN.get(currentNumBoard)._duckMove != -1) {
+                        jni.requestDuckMove(_arrPGN.get(currentNumBoard)._duckMove);
                     }
-                    boardPly++;
+                    currentNumBoard++;
                 }
             } else {
-                while (ply < boardPly) {
+                while (toNumBoard < currentNumBoard) {
                     jni.undo();
-                    boardPly--;
+                    currentNumBoard--;
                 }
             }
             dispatchState();
@@ -294,7 +296,7 @@ public class GameApi {
         if (jni.move(move) == 0) {
             return false;
         }
-        addPGNEntry(jni.getNumBoard() - 1, jni.getMyMoveToString(), sAnnotation, jni.getMyMove(), -1);
+        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), sAnnotation, jni.getMyMove(), -1);
 
         return true;
     }
@@ -304,7 +306,7 @@ public class GameApi {
             return false;
         }
 
-        int index = jni.getNumBoard() - 2;
+        int index = jni.getNumBoard() - 1;
         if (index >= 0 && index < _arrPGN.size()) {
             Log.d(TAG, " set duckmove " + index + " " + Pos.toString(duckMove));
             _arrPGN.get(index)._duckMove = duckMove;
@@ -330,7 +332,7 @@ public class GameApi {
                 }
                 if (bMatch) {
                     if (move(move, "", false)) {
-                        int numBoard = jni.getNumBoard() - 3;
+                        int numBoard = jni.getNumBoard() - 2;
                         if (numBoard >= 0) {
                             setAnnotation(numBoard, sAnnotation);
                         }
@@ -433,7 +435,7 @@ public class GameApi {
                 if (bMatch) {
 
                     if (move(move, "", false)) {
-                        int numBoard = jni.getNumBoard() - 3;
+                        int numBoard = jni.getNumBoard() - 2;
                         if (numBoard >= 0) {
                             setAnnotation(numBoard, sAnnotation);
                         }
@@ -680,7 +682,7 @@ public class GameApi {
             }
 
             if (sAnnotation.length() != 0) {
-                setAnnotation(jni.getNumBoard() - 2, sAnnotation);
+                setAnnotation(jni.getNumBoard() - 1, sAnnotation);
             }
 
         } catch (Exception e) {
@@ -699,15 +701,6 @@ public class GameApi {
             _arrPGN.remove(_arrPGN.size() - 1);
         }
         _arrPGN.add(new PGNEntry(sMove, sAnnotation, move, duckMove));
-    }
-
-    public int getFromOfNextMove() {
-        int ply = jni.getNumBoard();
-        if (_arrPGN.size() >= ply && ply > 0) {
-            PGNEntry p = _arrPGN.get(ply - 1);
-            return Move.getFrom(p._move);
-        }
-        return -1;
     }
 
     public void setAnnotation(int i, String sAnno) {

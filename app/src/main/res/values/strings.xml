@@ -18,7 +18,6 @@
     <string name="start_practice">Practice</string>
     <string name="start_puzzles">Puzzles</string>
     <string name="start_hotspotboard">Hotspot board (experimental)</string>
-    <string name="start_about">About</string>
     <string name="start_pgn">Advanced</string>
     <string name="start_ics">Play online</string>
     <string name="start_boardpreferences">Chess board settings</string>
@@ -49,6 +48,8 @@
     <string name="pref_eco_desc">Show ECO opening info when available</string>
     <string name="pref_extrahighlight">Extra highlight</string>
     <string name="pref_extrahighlight_desc">Make move highlighting extra visible</string>
+    <string name="pref_fullscreen">Enable full screen</string>
+    <string name="pref_fullscreen_desc">Recommended for small screens and landscape view; elements may fall off the screen otherwise</string>
     <string name="pref_onLoadJumpToLastMove">Jump to last move</string>
     <string name="pref_onLoadJumpToLastMove_desc">When resuming the App, jump to the last move</string>
     <string name="pref_uci">UCI Engine</string>
@@ -424,7 +425,7 @@
     <string name="ics_gamenumber">Game #</string>
     <string name="ics_quit">Quit?</string>
 
-    <string name="practice_help">Find the Check-Mate (can be more than one move)\nYour time and average time per position is shown next to the board.\nPress the \'Show\' button for the solution.\nPress the \'>\' button to go to the next position.\nSometimes multiple solutions can be found, but the application only accepts one.</string>
+    <string name="practice_help">Find the Check-Mate (can be more than one move).</string>
     <string name="puzzle_help">These are tough Mate in two puzzles.\nThe goal is to find the first move that leads to a forced mate within two moves.\nIn other words, after you make the correct move, the opponent can not prevent a mate on your next move.\nAfter this first move, the puzzle is solved.\nPress the \'Show\' button for the solution.\nSource: EL ARTE DEL MATE EN DOS by Eduardo Sadier</string>
     <string name="advanced_help">
          <![CDATA[

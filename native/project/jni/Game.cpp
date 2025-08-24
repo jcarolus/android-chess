@@ -586,7 +586,7 @@ int Game::searchDB() {
     if (DB_SIZE == 0 || DB_FP == NULL) {
         return 0;
     }
-    if (m_board->getNumBoard() > Game::DB_DEPTH) {
+    if (m_board->getNumBoard() >= Game::DB_DEPTH) {
         DEBUG_PRINT("Too many plies for database search\n", 0);
         return 0;
     }

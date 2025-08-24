@@ -3,8 +3,7 @@
     android:id="@+id/ICSPlay"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="4dip">
+    android:layout_height="fill_parent">
 
     <TableLayout
         android:id="@+id/LayoutBoardTop"
@@ -12,7 +11,7 @@
         android:layout_height="wrap_content"
         android:shrinkColumns="0,1,2,3"
         android:stretchColumns="4"
-        android:layout_marginBottom="2dip">
+        android:layout_marginBottom="1dip">
 
         <TableRow android:gravity="center_vertical">
             <ViewSwitcher
@@ -74,12 +73,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-
     <TableLayout
         android:id="@+id/LayoutBoardBottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dip"
+        android:layout_marginTop="1dip"
         android:shrinkColumns="0,1,2,3"
         android:stretchColumns="4">
 
@@ -165,7 +163,7 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dip">
+                android:layout_marginTop="1dip">
 
                 <ImageButton
                     android:id="@+id/ButtonICSExamineBackward"
@@ -188,27 +186,27 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dip">
+                android:layout_marginTop="1dip">
 
                 <Button android:id="@+id/ButtonResign"
                     android:text="@string/ics_menu_resign"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_margin="2dip"
+                    android:layout_margin="1dip"
                     style="@style/ChessButton"
                     />
                 <Button android:id="@+id/ButtonDraw"
                     android:text="@string/ics_menu_draw"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_margin="2dip"
+                    android:layout_margin="1dip"
                     style="@style/ChessButton"
                     />
                 <Button android:id="@+id/ButtonFlag"
                     android:text="@string/ics_menu_flag"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_margin="2dip"
+                    android:layout_margin="1dip"
                     style="@style/ChessButton"
                     />
             </LinearLayout>
@@ -229,7 +227,7 @@
             <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:text="@string/pref_sound"
                 android:checked="true"
                 ></com.google.android.material.switchmaterial.SwitchMaterial>

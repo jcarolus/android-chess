@@ -17,7 +17,6 @@
     <string name="start_lessons">Clases</string>
     <string name="start_practice">Practica</string>
     <string name="start_puzzles">Rompecabezas</string>
-    <string name="start_about">Acerca de nosotros</string>
     <string name="start_pgn">Avanzado</string>
     <string name="start_ics">Juega en línea</string>
     <string name="start_boardpreferences">Configuración del tablero de ajedrez</string>
@@ -45,6 +44,8 @@
     <string name="pref_eco_desc">Muestra la apertura ECO cuando disponible</string>
     <string name="pref_extrahighlight">Más destacado</string>
     <string name="pref_extrahighlight_desc">Haz el movimiento destacado aún más visible</string>
+    <string name="pref_fullscreen">Permite pantalla completa</string>
+    <string name="pref_fullscreen_desc">Recomendado para pantallas pequeñas y vista apaisada; si no algunos elementos pueden caer fuera de la pantalla</string>
     <string name="pref_onLoadJumpToLastMove">Salta al ultimo movimiento</string>
     <string name="pref_onLoadJumpToLastMove_desc">Al reanudar la aplicación, saltar al último movimiento</string>
     <string name="pref_uci">Motor UCI</string>
@@ -402,7 +403,7 @@
     <string name="ics_match">Partido</string>
     <string name="ics_gamenumber">Juego #</string>
 
-    <string name="practice_help">Encuentra el Check-Mate (puede ser más de un movimiento).\nSu tiempo y el tiempo promedio por posición se muestran al lado del tablero.\nPresione el botón "Mostre" para la solución.\nPulse el botón \'>\' para pasar a la siguiente posición.\nA veces se pueden encontrar múltiples soluciones, pero la aplicación sólo acepta una..</string>
+    <string name="practice_help">Encuentra el jaque mate (puede ser más de un movimiento).</string>
     <string name="puzzle_help">Estos son duros rompecabezas de Mate en dos\nEl objectivo es encontrar el primer movimiento que conduce a un mate forzado dentro de dos movimientos.\nEn otras palabras, después de realizar el movimiento correcto, el oponente no puede evitar un mate en su siguiente movimiento.\nDespués de este primer movimiento, el rompecabezas se resuelve.\nPresione el botón "Mostrar" para la solución.\nFuente: EL ARTE DEL MATE EN DOS de Eduardo Sadier</string>
     <string name="advanced_help"><![CDATA[
 <h3>Avanzado</h3>

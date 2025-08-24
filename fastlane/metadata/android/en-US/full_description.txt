@@ -1,0 +1,4 @@
+Play chess against your Android or online (FICS). Featuring practice
+positions, puzzles, Duck chess, Chess 960 and more. It's also
+possible to set up a position on the board, save and edit games, navigate
+through history and import/export via e-mail or clipboard.

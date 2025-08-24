@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -59,6 +61,14 @@ public class StartBaseActivity  extends AppCompatActivity {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         }
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            try {
+                PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                actionBar.setSubtitle(pInfo.versionName);
+            } catch (PackageManager.NameNotFoundException e) {}
+        }
+
         setContentView(layoutResource);
 
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
@@ -87,8 +97,6 @@ public class StartBaseActivity  extends AppCompatActivity {
                         i.setClass(StartBaseActivity.this, HotspotBoardActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_about))) {
-                        showAbout();
                     } else if (requestedItem.equals(getString(R.string.start_ics))) {
                         i.setClass(StartBaseActivity.this, ICSClient.class);
                         startActivity(i);
@@ -112,19 +120,5 @@ public class StartBaseActivity  extends AppCompatActivity {
         });
 
         _list.requestFocus();
-    }
-
-    public void showAbout() {
-        try {
-            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            String version = pInfo.versionName;
-
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.version_number, version))
-                    .setPositiveButton(android.R.string.ok, null)
-                    .setCancelable(false)
-                    .setIcon(R.drawable.ic_logo)
-                    .show();
-        } catch (Exception ex) {}
     }
 }

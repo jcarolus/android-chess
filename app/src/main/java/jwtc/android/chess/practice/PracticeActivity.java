@@ -1,16 +1,20 @@
 package jwtc.android.chess.practice;
 
+import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -21,6 +25,9 @@ import java.util.TimerTask;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.engine.EngineApi;
+import jwtc.android.chess.engine.EngineListener;
+import jwtc.android.chess.engine.LocalEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.tools.ImportActivity;
@@ -28,61 +35,39 @@ import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
-public class PracticeActivity extends ChessBoardActivity {
+public class PracticeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PracticeActivity";
-
-    private TextView tvPracticeMove, tvPracticeTime, tvPracticeAvgTime;
-    private Button buttonShow;
+    private EngineApi myEngine;
+    private TextView tvPracticeMove, tvPercentage;
     private ImageButton buttonNext;
-    private int totalPuzzles, currentPos;
+    private int totalPuzzles, currentPos, nextPos;
     private Cursor cursor;
     private Timer timer;
-    private int ticks, playTicks;
+
     private ViewSwitcher switchTurn;
     private ImageView imgStatus;
-    private boolean isPlaying;
+
     private TableLayout layoutTurn;
-
-    protected Handler m_timerHandler = new Handler() {
-        /** Gets called on every message that is received */
-        // @Override
-        public void handleMessage(Message msg) {
-            tvPracticeTime.setText(formatTime(msg.getData().getInt("ticks")));
-        }
-
-    };
-
-
+    private RelativeLayout layoutTop;
+    private int myTurn, numMoved, numPlayed, numSolved;
 
     @Override
     public boolean requestMove(final int from, final int to) {
-        if (gameApi.getPGNSize() <= jni.getNumBoard() - 1) {
+        if (jni.isEnded() != 0) {
             setMessage("Finished position");
             rebuildBoard();
             return false;
         }
-        int move = gameApi.getPGNEntries().get(jni.getNumBoard() - 1)._move;
-        int theMove = Move.makeMove(from, to);
 
-        if (Move.equalPositions(move, theMove)) {
-            gameApi.jumptoMove(jni.getNumBoard());
-
-            if (gameApi.getPGNSize() == jni.getNumBoard() - 1) {
-                //play();
-                imgStatus.setImageResource(R.drawable.ic_check);
-                setMessage("Correct!");
-                isPlaying = false;
-                buttonNext.setEnabled(true);
-            } else {
-                gameApi.jumptoMove(jni.getNumBoard());
-            }
-
-            return true;
-        } else {
-            imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
-            setMessage(Move.toDbgString(theMove) + (gameApi.isLegalMove(from, to) ? " is not expected" : " is an illegal move"));
+        if (jni.getTurn() != myTurn) {
             rebuildBoard();
+            return false;
         }
+
+        if (super.requestMove(from, to)) {
+            return true;
+        }
+        rebuildBoard();
         return false;
     }
 
@@ -98,35 +83,17 @@ public class PracticeActivity extends ChessBoardActivity {
         afterCreate();
 
         layoutTurn = findViewById(R.id.LayoutTurn);
-        isPlaying = false;
-
+        layoutTop = findViewById(R.id.LayoutTop);
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
-        tvPracticeTime = (TextView) findViewById(R.id.TextViewPracticeTime);
-        tvPracticeAvgTime = (TextView) findViewById(R.id.TextViewPracticeAvgTime);
-
+        tvPercentage = findViewById(R.id.TextViewPercentage);
         switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
-
         imgStatus = (ImageView) findViewById(R.id.ImageStatus);
-
-        buttonShow = (Button) findViewById(R.id.ButtonPracticeShow);
         buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
-
-        buttonShow.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-
-                gameApi.jumptoMove(jni.getNumBoard());
-
-                if (gameApi.getPGNSize() == jni.getNumBoard() - 1) {
-                    buttonNext.setEnabled(true);
-                }
-            }
-        });
 
         buttonNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                buttonNext.setEnabled(false);
-                if (currentPos + 1 < totalPuzzles) {
-                    currentPos++;
+                if (nextPos < totalPuzzles) {
+                    currentPos = nextPos;
                     startPuzzle();
                 } else {
                     // completed
@@ -135,7 +102,7 @@ public class PracticeActivity extends ChessBoardActivity {
             }
         });
 
-        chessBoardView.setNextFocusRightId(R.id.ButtonPracticeShow);
+        chessBoardView.setNextFocusRightId(R.id.ButtonPracticeNext);
     }
 
     @Override
@@ -144,12 +111,15 @@ public class PracticeActivity extends ChessBoardActivity {
 
         Log.i(TAG, "onResume");
 
-        layoutTurn.setBackgroundColor(ColorSchemes.getDark());
-        tvPracticeTime.setTextColor(ColorSchemes.getHightlightColor());
-        tvPracticeMove.setTextColor(ColorSchemes.getHightlightColor());
+        myEngine = new LocalEngine();
+        myEngine.setQuiescentSearchOn(false);
+        myEngine.addListener(this);
 
-        isPlaying = false;
-        scheduleTimer();
+        layoutTurn.setBackgroundColor(ColorSchemes.getDark());
+        if (layoutTop != null) {
+            layoutTop.setBackgroundColor(ColorSchemes.getDark());
+        }
+        tvPracticeMove.setTextColor(ColorSchemes.getHightlightColor());
 
         loadPuzzles();
     }
@@ -162,22 +132,20 @@ public class PracticeActivity extends ChessBoardActivity {
         if (timer != null)
             timer.cancel();
         timer = null;
-        isPlaying = false;
 
         editor.putInt("practicePos", currentPos);
-        editor.putInt("practiceTicks", ticks);
+        editor.putInt("practiceNumPlayed", numPlayed);
+        editor.putInt("practiceSolved", numSolved);
+
         editor.commit();
     }
-
 
     protected void loadPuzzles() {
         SharedPreferences prefs = getPrefs();
 
-        ticks = prefs.getInt("practiceTicks", 0);
-        playTicks = 0;
-
         currentPos = prefs.getInt("practicePos", 0);
-
+        numPlayed = prefs.getInt("practiceNumPlayed", 0);
+        numSolved = prefs.getInt("practiceSolved", 0);
         cursor = managedQuery(MyPuzzleProvider.CONTENT_URI_PRACTICES, MyPuzzleProvider.COLUMNS, null, null, "");
 
         if (cursor != null) {
@@ -199,34 +167,36 @@ public class PracticeActivity extends ChessBoardActivity {
 
     protected void startPuzzle() {
         cursor.moveToPosition(currentPos);
-        isPlaying = true;
-        playTicks = 0;
+        nextPos = currentPos + 1;
 
-        String sPGN = cursor.getString(cursor.getColumnIndex(MyPuzzleProvider.COL_PGN));
+        int pgnIndex = cursor.getColumnIndex(MyPuzzleProvider.COL_PGN);
+        String sPGN = pgnIndex >= 0 ? cursor.getString(pgnIndex) : "";
 
-        Log.i(TAG, "init: " + sPGN);
+        Log.i(TAG, "Start puzzle init: " + sPGN);
 
+        lastMoveFrom = -1;
+        lastMoveTo = -1;
         gameApi.loadPGN(sPGN);
 
-        gameApi.jumptoMove(0);
+        gameApi.jumpToBoardNum(0);
+        myTurn = jni.getTurn();
+        numMoved = 0;
 
-        Log.i(TAG, gameApi.getPGNSize() + " moves from " + sPGN + " turn " + jni.getTurn());
+        updateScore();
 
-        final int turn = jni.getTurn();
-        chessBoardView.setRotated(turn == BoardConstants.BLACK);
+        Log.i(TAG, " turn " + jni.getTurn() + ": " + numPlayed + ", " + numSolved);
+
+        chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
         tvPracticeMove.setText("# " + (currentPos + 1));
 
-        if (turn == BoardConstants.BLACK) {
+        if (myTurn == BoardConstants.BLACK) {
             switchTurn.setDisplayedChild(0);
         } else {
             switchTurn.setDisplayedChild(1);
         }
 
         imgStatus.setImageResource(R.drawable.ic_check_none);
-
-        Float f = (float) (ticks) / (currentPos + 1);
-        tvPracticeAvgTime.setText(String.format("%.1f", f));
     }
 
     public void setMessage(String sMsg) {
@@ -237,30 +207,87 @@ public class PracticeActivity extends ChessBoardActivity {
         tvPracticeMove.setText(res);
     }
 
-    protected void scheduleTimer() {
-        timer = new Timer(true);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
+    protected void startEngine() {
+        myEngine.setPly(4 - numMoved);
+        myEngine.play();
+    }
 
-                if (false == isPlaying) {
-                    return;
+    public void animateCorrect() {
+        imgStatus.setImageResource(R.drawable.ic_check);
+        pulseAnimation(imgStatus);
+        updateScore();
+    }
+
+    public void animateWrong(String message) {
+        setMessage(message);
+        imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
+        pulseAnimation(imgStatus);
+        updateScore();
+    }
+
+    public void updateScore() {
+        tvPercentage.setText(formatPercentage());
+    }
+
+    private String formatPercentage() {
+        return String.format("%d / %d = %.1f %%", numSolved, numPlayed, numPlayed > 0 ? ((float)numSolved / numPlayed) * 100 : 0.0f);
+    }
+
+    @Override
+    public void OnMove(int move) {
+        super.OnMove(move);
+
+        lastMoveFrom = Move.getFrom(move);
+        lastMoveTo = Move.getTo(move);
+
+        numMoved++;
+
+        updateSelectedSquares();
+
+        if (jni.isEnded() == 0 && jni.getTurn() != myTurn) {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startEngine();
                 }
-                ticks++;
-                playTicks++;
+            }, 1000);
+        }
+        if (jni.isEnded() != 0) {
+            Log.d(TAG, "Solved ");
 
-                Message msg = new Message();
-                msg.what = 1;
-                Bundle bun = new Bundle();
-                bun.putInt("ticks", playTicks);
-                msg.setData(bun);
-                m_timerHandler.sendMessage(msg);
+            numPlayed++;
+            numSolved++;
+            currentPos = nextPos;
+            animateCorrect();
+        }
+    }
 
+    @Override
+    public void OnEngineMove(int move, int duckMove, int value) {
+        Log.d(TAG, "OnEngineMove " + value);
+        boolean isMyTurn = myTurn == jni.getTurn();
+        if (value == BoardConstants.VALUATION_MATE * (isMyTurn ? 1 : -1)) {
+            gameApi.move(move, duckMove);
+            animateCorrect();
+        } else {
+            int moveIndex = gameApi.getPGNSize() - 1;
+            String sMove = "";
+            if (moveIndex >= 0) {
+                sMove = gameApi.getPGNEntries().get(moveIndex)._sMove + " ";
             }
-        }, 1000, 1000);
-    }
 
-    private String formatTime(int sec) {
-        return String.format("%d:%02d", (int) (Math.floor(sec / 60)), sec % 60);
+            numMoved--;
+            numPlayed++;
+            currentPos = nextPos;
+            animateWrong(sMove + getString(R.string.puzzle_not_correct_move));
+        }
     }
+    @Override
+    public void OnEngineInfo(String message) {}
+    @Override
+    public void OnEngineStarted() {}
+    @Override
+    public void OnEngineAborted() {}
+    @Override
+    public void OnEngineError() {}
 }

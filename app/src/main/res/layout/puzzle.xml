@@ -7,12 +7,26 @@
     android:orientation="vertical"
     android:id="@+id/LayoutMain">
 
+    <RelativeLayout
+        android:id="@+id/LayoutTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/ImageStatus"
+            android:src="@drawable/ic_check_none"
+            android:layout_height="40dip"
+            android:layout_width="40dip"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="8dip"
+            android:paddingRight="8dip" />
+    </RelativeLayout>
+
     <include
         layout="@layout/chessboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dip"
-        android:layout_marginBottom="2dip"
+        android:layout_marginTop="1dip"
+        android:layout_marginBottom="1dip"
         android:id="@+id/includeboard" />
 
     <TableLayout
@@ -47,51 +61,48 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 style="@style/MyTextStyle" />
-
-            <ImageView
-                android:id="@+id/ImageStatus"
-                android:src="@drawable/ic_check_none"
-                android:layout_height="40dip"
-                android:layout_width="40dip"
-                android:paddingLeft="8dip"
-                android:paddingRight="8dip" />
         </TableRow>
     </TableLayout>
 
-    <TableLayout
+    <LinearLayout
         android:id="@+id/LayoutButtons"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="4dip"
-        android:paddingBottom="4dip"
-        android:stretchColumns="1">
-
-        <TableRow android:gravity="center_vertical">
+        android:paddingBottom="4dip">
 
             <ImageButton
                 android:id="@+id/ButtonPuzzlePrevious"
                 android:src="@drawable/ic_chevron_left"
                 style="@style/ChessImageButton" />
 
-            <SeekBar
-                android:id="@+id/SeekBarPuzzle"
-                android:min="0"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip" />
+            <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+            <Button android:id="@+id/ButtonPuzzleShow"
+                android:text="@string/puzzle_show"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton"/>
+
+            <ImageButton
+                android:id="@+id/ButtonPuzzleRetry"
+                android:src="@drawable/ic_arrow_clockwise"
+                style="@style/ChessImageButton" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/ButtonPuzzleNext"
                 android:src="@drawable/ic_chevron_right"
                 style="@style/ChessImageButton" />
 
-            <Button android:id="@+id/ButtonPuzzleShow"
-                android:text="@string/puzzle_show"
-                android:layout_width="wrap_content"
-                style="@style/ChessButton"/>
-        </TableRow>
-    </TableLayout>
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"

@@ -1456,7 +1456,7 @@ int ChessBoard::queenValueExtension(const int turn) {
     BITBOARD bbPiece = m_bitbPieces[turn][QUEEN];
     if (bbPiece != 0) {
         // TODO this assumes a default game and other pieces
-        if (m_numBoard < 12) {
+        if (m_numBoard < 11) {
             const BITBOARD bbRows = ROW_BITS[ROW_TURN[turn][0]];
             if ((bbRows & bbPiece) == 0) {  // Queen not on first row
                 return VALUATION_EARLY_QUEEN;
@@ -1639,7 +1639,7 @@ int ChessBoard::getAvailableCol(int colNum) {
 // king positions are e1 and e8, but bitboards are emptied
 void ChessBoard::reset() {
     m_variant = VARIANT_DEFAULT;
-    m_numBoard = 1;
+    m_numBoard = 0;
     m_parent = NULL;
     m_myMove = 0;
     m_duckPos = -1;

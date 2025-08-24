@@ -17,7 +17,6 @@
     <string name="start_lessons"> lecții</string>
     <string name="start_practice">Antrenament</string>
     <string name="start_puzzles">Puzzle-uri</string>
-    <string name="start_about">Despre aplicație</string>
     <string name="start_pgn">Extins</string>
     <string name="start_ics">Joc online</string>
     <string name="start_boardpreferences">Preferințe tablă de şah</string>
@@ -45,6 +44,8 @@
     <string name="pref_eco_desc">Afișează informațiile ECO inițiale, dacă există</string>
     <string name="pref_extrahighlight">Evidențiere suplimentară</string>
     <string name="pref_extrahighlight_desc">Face evidențierea mutărilor și mai vizibilă</string>
+    <string name="pref_fullscreen">Mod pe tot ecranul</string>
+    <string name="pref_fullscreen_desc">Recomandat pentru ecrane mici și orientare pe orizontală; în caz contrar, elementele ar putea ieși în afara ecranului</string>
     <string name="pref_onLoadJumpToLastMove">Trecere la ultima mutare</string>
     <string name="pref_onLoadJumpToLastMove_desc">Trecere la ultima mutare la reluarea aplicației</string>
     <string name="pref_uci">Motor UCI</string>
@@ -402,7 +403,7 @@
     <string name="ics_match">Meci</string>
     <string name="ics_gamenumber">Joc #</string>
 
-    <string name="practice_help"> Găsiți combinația de mat (pot exista mai multe mutări).\nTimpul dumneavoastră și timpul mediu pentru fiecare poziție sunt indicate lângă tablă.\nApăsați butonul \'Afișează\' pentru soluție.\nApăsați butonul \'>\' pentru a trece la următoarea poziție.\nUneori pot fi găsite mai multe soluții, dar aplicația acceptă doar una dintre ele.</string>
+    <string name="practice_help">Găsește șahul mat (poate fi mai mult de o mutare).</string>
     <string name="puzzle_help">Acestea sunt puzzle-uri dificile, conținând mat în două mutări.\nScopul este să găsiți prima mutare care va duce la un mat forțat în două mutări.\nCu alte cuvinte, după ce faceți mutarea corectă, adversarul nu va putea evita matul la următoarea mutare.\nDupă aceasta, puzzle-ul este considerat rezolvat.\nApăsați butonul \'Afișează\' pentru soluție.\nSursă: ARTA MATEI ÎN DOUĂ MUTĂRI, Eduardo Sadier</string>
     <string name="advanced_help"><![CDATA[
  <h3>Extins</h3>

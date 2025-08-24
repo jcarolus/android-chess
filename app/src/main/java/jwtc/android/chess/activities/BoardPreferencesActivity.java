@@ -17,7 +17,7 @@ import jwtc.android.chess.services.GameApi;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxSound, checkBoxNightMode;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxNightMode;
     private Spinner spinnerPieceSet, spinnerColorScheme, spinnerTileSet;
 
     @Override
@@ -34,6 +34,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxCoordinates = findViewById(R.id.CheckBoxCoordinates);
         checkBoxShowMoves = findViewById(R.id.CheckBoxShowMoves);
         checkBoxWakeLock = findViewById(R.id.CheckBoxUseWakeLock);
+        checkBoxFullscreen = findViewById(R.id.CheckBoxFullscreen);
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
 
@@ -96,6 +97,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxCoordinates.setChecked(prefs.getBoolean("showCoords", false));
         checkBoxShowMoves.setChecked(prefs.getBoolean("showMoves", true));
         checkBoxWakeLock.setChecked(prefs.getBoolean("wakeLock", false));
+        checkBoxFullscreen.setChecked(prefs.getBoolean("fullScreen", false));
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
 
@@ -120,6 +122,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("showCoords", checkBoxCoordinates.isChecked());
         editor.putBoolean("showMoves", checkBoxShowMoves.isChecked());
         editor.putBoolean("wakeLock", checkBoxWakeLock.isChecked());
+        editor.putBoolean("fullScreen", checkBoxFullscreen.isChecked());
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
 

@@ -60,15 +60,10 @@ public class ChessPiecesStackView extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
         int numChilds = getId() == R.id.duckStack ? 1 : 5; // hack, an attr is another solution
 
-        int height = width / numChilds;
-        if (height > heightSize) {
-            height = heightSize;
-        }
-
-        setMeasuredDimension(width , height);
+        setMeasuredDimension(height * numChilds , height);
     }
 
     public void layoutChild(View child, int index, int height) {

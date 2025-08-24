@@ -2,7 +2,6 @@ package jwtc.android.chess.play;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -54,7 +53,7 @@ public class PGNDialog extends Dialog {
             item.put("nr", i % 2 == 0 ? ((i/2 + 1) + ". ") : " ");
             item.put("move", sMove);
             item.put("annotation", pgnEntries.get(i)._sAnnotation);
-            item.put("turn", Integer.toString(jni.getNumBoard() - 2 == i ? R.drawable.turnblack : 0));
+            item.put("turn", Integer.toString(jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0));
 
             mapMoves.add(item);
         }
@@ -65,10 +64,10 @@ public class PGNDialog extends Dialog {
         contentLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (jni.getNumBoard() - 1 > position) {
+                if (jni.getNumBoard() > position) {
                     position++;
                 }
-                gameApi.jumptoMove(position + 1);
+                gameApi.jumpToBoardNum(position);
                 dismiss();
             }
         });

@@ -17,7 +17,6 @@
     <string name="start_lessons">Уроки</string>
     <string name="start_practice">Тренировка</string>
     <string name="start_puzzles">Головоломки</string>
-    <string name="start_about">О приложении</string>
     <string name="start_pgn">Расширенные</string>
     <string name="start_ics">Игра онлайн</string>
     <string name="start_boardpreferences">Настройки шахматной доски</string>
@@ -45,6 +44,8 @@
     <string name="pref_eco_desc">Показывать начальную информацию ECO при наличии</string>
     <string name="pref_extrahighlight">Дополнительное выделение</string>
     <string name="pref_extrahighlight_desc">Сделать выделение ходов ещё более заметным</string>
+    <string name="pref_fullscreen">Полноэкранный режим</string>
+    <string name="pref_fullscreen_desc">Рекомендуется для маленьких экранов и горизонтальной ориентации; иначе элементы могут выпадать за пределы экрана</string>
     <string name="pref_onLoadJumpToLastMove">Переход к последнему ходу</string>
     <string name="pref_onLoadJumpToLastMove_desc">Переходить к последнему ходу при возобновлении приложения</string>
     <string name="pref_uci">Движок UCI</string>
@@ -402,7 +403,7 @@
     <string name="ics_match">Матч</string>
     <string name="ics_gamenumber">Игра #</string>
 
-    <string name="practice_help"> Найдите матовую комбинацию (может быть более одного хода).\nВаше время и среднее время для каждой позиции указано рядом с доской.\nНажмите кнопку \'Показать\' для решения.\nНажмите кнопку \'>\', чтобы перейти к следующей позиции.\nИногда может быть найдено несколько решений, но приложение принимает только одно из них.</string>
+    <string name="practice_help">Найдите мат (можно сделать несколько ходов).</string>
     <string name="puzzle_help">Это трудные головоломки, содержащие мат в два хода.\nЦель - найти первый ход, который приведёт к вынужденному мату в течение двух ходов.\nДругими словами, после того, как вы сделаете правильный ход, противник не сможет избежатьмата при вашем следующем ходе.\nПосле этого первого хода головоломка считается решённой.\nНажмите кнопку \'Показать\' для решения.\nИсточник: ИСКУССТВО МАТА В ДВА ХОДА, Эдуардо Садьер</string>
     <string name="advanced_help"><![CDATA[
  <h3>Расширенные</h3>

@@ -17,7 +17,6 @@
     <string name="start_lessons">Leçon</string>
     <string name="start_practice">Entrainement</string>
     <string name="start_puzzles">Puzzles</string>
-    <string name="start_about">A propos</string>
     <string name="start_pgn">Paramètres avancés</string>
     <string name="start_ics">Partie en ligne</string>
 
@@ -47,6 +46,8 @@
     <string name="pref_eco_desc">Affichage de l\'ECO des ouvertures lorsque cela est possible</string>
     <string name="pref_extrahighlight">Mise en évidence</string>
     <string name="pref_extrahighlight_desc">Mettre en évidence le coup</string>
+    <string name="pref_fullscreen">Activer le plein écran</string>
+    <string name="pref_fullscreen_desc">Recommandé pour les petits écrans ou l\'affichage en paysage, sinon des éléments peuvent disparaitre</string>
     <string name="pref_onLoadJumpToLastMove">Aller au dernier coup</string>
     <string name="pref_onLoadJumpToLastMove_desc">Lorsque l\'application se met en veille, aller au dernier coup</string>
     <string name="pref_uci">Moteur UCI</string>
@@ -423,7 +424,7 @@ Recherche de "Quiescence" désactivée</string>
     <string name="ics_gamenumber">Partie #</string>
     <string name="ics_quit">Quitter ?</string>
 
-    <string name="practice_help">Trouvez le Check-Mate (peut être plus d\'un coup)\nVotre temps et votre temps moyen par position sont affichés à côté du tableau.\nAppuyez sur le bouton \'Afficher\' pour la solution.\nAppuyez sur le bouton \'>\' pour passer à la position suivante.\nParfois, plusieurs solutions peuvent être trouvées, mais l\'application n\'en accepte qu\'une seule.</string>
+    <string name="practice_help">Trouver l\'échec et mat (peut être plus d\'un coup).</string>
     <string name="puzzle_help">Ce sont des mats difficiles dans deux puzzles.\nLe but est de trouver le premier coup qui mène à un mat forcé en deux coups.\nEn d\'autres termes, après avoir fait le bon coup, l\'adversaire peut ne pas empêcher un compagnon lors de votre prochain coup.\nAprès ce premier coup, le puzzle est résolu.\nAppuyez sur le bouton \'Afficher\' pour la solution.\nSource : EL ARTE DEL MATE EN DOS par Eduardo Sadier</string>
     <string name="advanced_help">
          <![CDATA[

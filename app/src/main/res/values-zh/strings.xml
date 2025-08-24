@@ -17,7 +17,6 @@
     <string name="start_lessons">经验</string>
     <string name="start_practice">练习</string>
     <string name="start_puzzles">题局</string>
-    <string name="start_about">关于</string>
     <string name="start_pgn">高级</string>
     <string name="start_ics">在线对局</string>
     <string name="start_boardpreferences">棋盘设置</string>
@@ -45,6 +44,8 @@
     <string name="pref_eco_desc">空闲时显示ECO 开放信息</string>
     <string name="pref_extrahighlight">特别高亮</string>
     <string name="pref_extrahighlight_desc">让这一步特别高亮的显示</string>
+    <string name="pref_fullscreen">全屏显示</string>
+    <string name="pref_fullscreen_desc">推荐小屏和横屏显示设备使用; 防止有些部分不能显示出来</string>
     <string name="pref_onLoadJumpToLastMove">退至上一步</string>
     <string name="pref_onLoadJumpToLastMove_desc">当重启应用时, 退至上一步</string>
     <string name="pref_uci">通用国际象棋界面引擎</string>
@@ -402,7 +403,7 @@
     <string name="ics_match">匹配</string>
     <string name="ics_gamenumber">对局编号#</string>
 
-    <string name="practice_help">找到胜利的步骤 (可能不只一步).\n你的用时和平均每步用时会在棋盘边显示.\n点击\'显示Show\' 按钮, 查看正确的步骤和下法.\n点击 \'下一步 > \' 按钮来查看下一步正确的步骤.\n有时候存在多种制胜方法和步骤, 但本软件只保存和认可其中的一种.</string>
+    <string name="practice_help">找到将死（可以不止一步）.</string>
     <string name="puzzle_help">这些对局(题局)有 两步内必胜的将军 方法.\n目标是 找到关键的第一步 , 这一步导致在两步内取得一个必能将死对方的方法.\n或者说, 如果你走对了这一正确的一步, 对方将无法躲开你的下一步将军.\n在这第一步后, 题局就被成功解答.\n点击\'显示Show\' 按钮来获得答案.\n来源: EL ARTE DEL MATE EN DOS 作者 Eduardo Sadier</string>
     <string name="advanced_help"><![CDATA[
 <h3>高级</h3>

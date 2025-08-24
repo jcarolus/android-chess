@@ -124,9 +124,9 @@ public class LocalEngine extends EngineApi {
                 }
 
                 int move = jni.getMove();
-                sendMoveMessageFromThread(move, jni.getDuckMove());
-
                 int value = jni.peekSearchBestValue();
+                sendMoveMessageFromThread(move, jni.getDuckMove(), value);
+
                 float fValue = (float) value / 100.0F;
                 int evalCnt = jni.getEvalCount();
 

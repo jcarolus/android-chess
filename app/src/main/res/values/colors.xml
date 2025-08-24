@@ -10,4 +10,5 @@
     <color name="textOnBackgroundColor">#000000</color>
     <color name="surfaceColor">#eeeeee</color>
     <color name="surfaceTextColor">#000000</color>
+    <color name="primaryColorDisabled">#888888</color>
 </resources>
