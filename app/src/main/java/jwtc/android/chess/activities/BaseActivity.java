@@ -106,6 +106,12 @@ public class BaseActivity extends AppCompatActivity {
         t.show();
     }
 
+    public void doToastShort(final String text) {
+        Toast t = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+        t.setGravity(Gravity.BOTTOM, 0, 0);
+        t.show();
+    }
+
     public void shareString(String s) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);

@@ -34,6 +34,7 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
+import jwtc.android.chess.constants.Piece;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;
@@ -144,6 +145,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         if (textToSpeech != null) {
             textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
+        } else {
+            doToastShort(TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move));
         }
     }
 
@@ -170,6 +173,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         chessBoardView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                Log.d(TAG, "onFocusChange " + hasFocus);
                 dpadFocus(hasFocus);
             }
         });
@@ -178,8 +182,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    Log.d(TAG, "onKey " + keyCode);
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
                             return dpadSelect();
                         case KeyEvent.KEYCODE_DPAD_DOWN:
                             return dpadDown();
@@ -348,6 +354,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 squareView.setMove(moveToPositions.contains(i));
                 int piece = jni.pieceAt(jni.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
+
+                String s = "";
+                int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
+                int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
+                if (whitePiece != BoardConstants.FIELD) {
+                    s += "White " + Piece.toString(whitePiece);
+                    s += " at ";
+                } else if (blackPiece != BoardConstants.FIELD) {
+                    s += "Black " + Piece.toString(blackPiece);
+                    s += " at ";
+                }
+                s += Pos.toString(i);
+                squareView.setContentDescription(s);
             }
         }
     }
@@ -507,6 +526,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         @Override
         public void onClick(View view) {
             if (view instanceof ChessSquareView) {
+                Log.d(TAG, "onClick");
                 if (hasPremoved()) {
                     resetPremove();
                 } else {

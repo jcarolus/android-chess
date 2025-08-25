@@ -136,9 +136,4 @@ public class ChessBoardView extends ViewGroup {
             }
         }
     }
-
-    private int dpToPx(float dp) {
-        float density = getResources().getDisplayMetrics().density; // e.g. 2.75 on some devices
-        return Math.round(dp * density);
-    }
 }

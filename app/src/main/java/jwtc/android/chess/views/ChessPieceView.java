@@ -80,4 +80,10 @@ public class ChessPieceView extends AppCompatImageView {
             setImageResource(android.R.color.transparent);
         }
     }
+
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return false;
+    }
 }
