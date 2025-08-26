@@ -145,7 +145,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         if (textToSpeech != null) {
             textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
-        } else {
+        } else if (isScreenReaderOn()) {
             doToastShort(TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move));
         }
     }
@@ -777,18 +777,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void selectPosition(int pos) {
-        Log.d(TAG, "selectPosition " + pos);
+        Log.d(TAG, "selectPosition " + pos + ", " + selectedPosition);
         if (pos == -1) {
             selectedPosition = pos;
+            updateSelectedSquares();
         } else {
             if (selectedPosition == -1) {
                 selectedPosition = pos;
                 setMoveToPositions(pos);
+                updateSelectedSquares();
             } else if (selectedPosition != pos){
                 handleMove(pos);
             } else {
                 selectedPosition = -1;
                 moveToPositions.clear();
+                updateSelectedSquares();
             }
         }
     }

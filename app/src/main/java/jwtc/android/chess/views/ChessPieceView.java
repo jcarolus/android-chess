@@ -19,6 +19,8 @@ public class ChessPieceView extends AppCompatImageView {
     public ChessPieceView(Context context, int color, int piece, int pos) {
         super(context);
 
+        this.setFocusable(false);
+        this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         this.pos = pos;
         this.piece = piece;
         this.color = color;

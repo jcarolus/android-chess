@@ -36,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="50dip"
                 android:text="00:00"
+                android:importantForAccessibility="no"
                 style="@style/MyNormalTextStyle" />
 
             <TextView
@@ -45,7 +46,8 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 style="@style/MyNormalTextStyle"
-                android:text="Title..." />
+                android:text="Title..."
+                android:importantForAccessibility="no"/>
 
             <jwtc.android.chess.views.ChessPiecesStackView
                 android:layout_width="wrap_content"
@@ -94,6 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="50dip"
                 android:text="00:00"
+                android:importantForAccessibility="no"
                 style="@style/MyNormalTextStyle" />
 
             <TextView
@@ -103,7 +106,8 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 style="@style/MyNormalTextStyle"
-                android:text="Title..." />
+                android:text="Title..."
+                android:importantForAccessibility="no"/>
 
             <jwtc.android.chess.views.ChessPiecesStackView
                 android:layout_width="wrap_content"

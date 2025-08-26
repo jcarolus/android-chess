@@ -11,6 +11,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
@@ -26,7 +27,7 @@ import jwtc.android.chess.R;
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     private OnBackInvokedCallback backCallback;
-    public static final int NO_RESULT = 0;
+    private AccessibilityManager am;
 
 
     protected float fVolume = 1.0f;
@@ -34,6 +35,8 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             backCallback = new OnBackInvokedCallback() {
@@ -90,6 +93,11 @@ public class BaseActivity extends AppCompatActivity {
         } else {
             finish();
         }
+    }
+
+
+    public boolean isScreenReaderOn() {
+        return am.isEnabled() && am.isTouchExplorationEnabled();
     }
 
     public boolean needExitConfirmationDialog() {
