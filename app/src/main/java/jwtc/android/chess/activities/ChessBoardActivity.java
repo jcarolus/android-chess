@@ -354,19 +354,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 squareView.setMove(moveToPositions.contains(i));
                 int piece = jni.pieceAt(jni.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
-
-                String s = "";
-                int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
-                int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
-                if (whitePiece != BoardConstants.FIELD) {
-                    s += "White " + Piece.toString(whitePiece);
-                    s += " at ";
-                } else if (blackPiece != BoardConstants.FIELD) {
-                    s += "Black " + Piece.toString(blackPiece);
-                    s += " at ";
-                }
-                s += Pos.toString(i);
-                squareView.setContentDescription(s);
+                squareView.setContentDescription(getFieldDescription(pos));
             }
         }
     }
@@ -519,6 +507,23 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
         }
         return null;
+    }
+
+    protected String getFieldDescription(int pos) {
+        int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
+        int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
+        if (whitePiece != BoardConstants.FIELD) {
+            return getString(R.string.square_with_piece_description, getString(R.string.piece_white), getString(Piece.toResource(whitePiece)), Pos.toString(pos));
+        } else if (blackPiece != BoardConstants.FIELD) {
+            return getString(R.string.square_with_piece_description, getString(R.string.piece_black), getString(Piece.toResource(blackPiece)), Pos.toString(pos));
+        }
+        return getString(R.string.square_description, Pos.toString(pos));
+    }
+
+    protected void showAccessibilityForSelectedPosition(int pos) {
+        if (isScreenReaderOn()) {
+            doToastShort(getString(R.string.square_selected_description, Pos.toString(pos)));
+        }
     }
 
     private final class MyClickListener implements View.OnClickListener {
@@ -784,6 +789,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             if (selectedPosition == -1) {
                 selectedPosition = pos;
+                showAccessibilityForSelectedPosition(pos);
                 setMoveToPositions(pos);
                 updateSelectedSquares();
             } else if (selectedPosition != pos){

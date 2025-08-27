@@ -2,62 +2,69 @@
 <resources>
 
     <string name="app_name">Șah</string>
-    <string name="app_name_play">Joc</string>
-    <string name="app_name_playonline">Joc online</string>
-    <string name="app_name_setup">Aranjare</string>
+    <string name="app_name_play">Joacă</string>
+    <string name="app_name_playonline">Joacă online</string>
+    <string name="app_name_setup">Configurare</string>
     <string name="app_name_help">Ajutor</string>
-    <string name="app_name_import">Import</string>
-    <string name="app_name_pgntools">Extins</string>
-    <string name="app_name_save_games">Jocuri salvate</string>
+    <string name="app_name_import">Importă</string>
+    <string name="app_name_pgntools">Avansat</string>
+    <string name="app_name_save_games">Partide salvate</string>
 
-    <string name="start_play">Joc</string>
+    <string name="start_play">Joacă</string>
     <string name="start_practice">Antrenament</string>
-    <string name="start_puzzles">Puzzle-uri</string>
-    <string name="start_pgn">Extins</string>
-    <string name="start_ics">Joc online</string>
-    <string name="start_boardpreferences">Preferințe tablă de şah</string>
+    <string name="start_puzzles">Probleme</string>
+    <string name="start_hotspotboard">Tablă hotspot (experimental)</string>
+    <string name="start_pgn">Avansat</string>
+    <string name="start_ics">Joacă online</string>
+    <string name="start_boardpreferences">Setări tablă de șah</string>
 
-    <string name="globalpreferences">Preferințe globale</string>
-    <string name="playpreferences">Preferințe joc</string>
-    <string name="playonlinepreferences">Preferințe joc online</string>
-    <string name="preferences">Preferințe</string>
-    <string name="pref_wakelock">Folosește blocarea în modul activ</string>
-    <string name="pref_wakelock_desc">Nu permite telefonului să intre în modul de repaus</string>
+    <string name="globalpreferences">Setări globale</string>
+    <string name="playpreferences">Setări joc</string>
+    <string name="playonlinepreferences">Setări online</string>
+    <string name="boardprerences">Setări tablă</string>
+    <string name="gamepreferences">Setări partidă</string>
+    <string name="preferences">Setări</string>
+    <string name="pref_wakelock">Menține ecranul aprins</string>
+    <string name="pref_wakelock_desc">Previne intrarea dispozitivului în repaus</string>
     <string name="pref_showCoords">Coordonate</string>
     <string name="pref_sound">Sunet</string>
-    <string name="pref_sound_desc">Activare la mutarea adversarului</string>
+    <string name="pref_sound_desc">Redat când adversarul mută</string>
     <string name="pref_speech">Vorbire</string>
     <string name="pref_speech_desc">Anunță mutarea efectuată</string>
-    <string name="pref_eco">Informații ECO</string>
-    <string name="pref_eco_desc">Afișează informațiile ECO inițiale, dacă există</string>
-    <string name="pref_fullscreen">Mod pe tot ecranul</string>
-    <string name="pref_fullscreen_desc">Recomandat pentru ecrane mici și orientare pe orizontală; în caz contrar, elementele ar putea ieși în afara ecranului</string>
-    <string name="pref_tileset">Model pătrat</string>
+    <string name="pref_eco">Info ECO</string>
+    <string name="pref_eco_desc">Arată informații ECO despre deschidere când sunt disponibile</string>
+    <string name="pref_fullscreen">Activează ecran complet</string>
+    <string name="pref_fullscreen_desc">Recomandat pentru ecrane mici și mod peisaj; altfel unele elemente pot fi decupate</string>
+    <string name="pref_tileset">Model căsuțe</string>
     <string name="pref_icscustomcommand">Comenzi personalizate</string>
-    <string name="pref_icscustomcommand_desc">Creează propriile comenzi personalizate</string>
-    <string name="pref_icsconsolecharactersize">Dimensiunea caracterelor CONSOLE</string>
-    <string name="pref_icsconsolecharactersize_desc">Reglează dimensiunea caracterelor în CONSOLE</string>
+    <string name="pref_icscustomcommand_desc">Creează-ți propriile comenzi</string>
+    <string name="pref_icsconsolecharactersize">Dimensiune caractere CONSOLE</string>
+    <string name="pref_icsconsolecharactersize_desc">Ajustează dimensiunea caracterelor în consolă</string>
     <string name="pref_icsautosought">Căutare automată</string>
-    <string name="pref_icsautosought_desc">Actualizează automat ecranul apelurilor</string>
-    <string name="pref_icstimewarning">Avertisment privind timpul</string>
-    <string name="pref_icstimewarning_desc">Sunetul de ticăit notifică că timpul se apropie de final</string>
-    <string name="pref_icstimewarningsecs">Timp pentru avertizare (sec)</string>
-    <string name="pref_icstimewarningsecs_desc">Numărul de secunde înainte de a începe avertizarea privind finalul timpului</string>
-    <string name="prefs_icsendgamedialog">Dialog la finalul jocului</string>
-    <string name="prefs_icsendgamesummary">Este necesar un dialog pentru salvare la sfârșitul jocului?</string>
-    <string name="pref_icsnotification">Notificare despre un joc nou</string>
-    <string name="prefs_icsnotificationsummary">Permiteți notificarea despre începutul jocului cu ajutorul unei icone</string>
-    <string name="pref_night_mode">Mod de noapte</string>
-    <string name="pref_night_mode_desc">Activare mod noapte pentru aplicație</string>
+    <string name="pref_icsautosought_desc">Reîmprospătează automat ecranul de provocări</string>
+    <string name="pref_icstimewarning">Avertizare timp scăzut</string>
+    <string name="pref_icstimewarning_desc">Un sunet de tic-tac te avertizează când timpul e aproape expirat</string>
+    <string name="pref_icstimewarningsecs">Limită avertizare (secunde)</string>
+    <string name="pref_icstimewarningsecs_desc">Câte secunde înainte să înceapă avertizarea?</string>
+    <string name="prefs_icsendgamedialog">Dialog sfârșit partidă</string>
+    <string name="prefs_icsendgamesummary">La final, vrei să apară un dialog pentru salvare?</string>
+    <string name="pref_icsnotification">Notificare joc nou</string>
+    <string name="prefs_icsnotificationsummary">Te anunță începutul unui joc cu o pictogramă</string>
+    <string name="pref_vs_cpu">contra CPU</string>
+    <string name="pref_vs_cpu_desc">Joacă împotriva CPU/Motor</string>
+    <string name="pref_turn">Parte</string>
+    <string name="pref_turn_desc">Ce parte a tablei joci</string>
+    <string name="pref_night_mode">Mod noapte</string>
+    <string name="pref_night_mode_desc">Forțează aplicația în mod noapte</string>
 
     <string name="button_ok">OK</string>
-    <string name="button_cancel">Închide</string>
+    <string name="button_cancel">Anulează</string>
     <string name="button_login">Autentificare</string>
     <string name="button_register">Înregistrare</string>
     <string name="button_close">Închide</string>
     <string name="button_save">Salvează</string>
     <string name="button_save_copy">Salvează copie</string>
-    <string name="puzzle_show">Afișează</string>
+    <string name="puzzle_show">Arată</string>
 
     <string name="alert_yes">Da</string>
     <string name="alert_no">Nu</string>
@@ -65,45 +72,47 @@
 
     <string name="title_challenge">Provocare</string>
     <string name="title_error">Eroare</string>
-    <string name="title_offers_abort">Refuză cererea</string>
-    <string name="title_offers_takeback">Cerere de anulare a mutării</string>
+    <string name="title_offers_abort">Cerere de anulare</string>
+    <string name="title_offers_takeback">Cerere de retragere mutare</string>
     <string name="title_offers_draw">Cerere de remiză</string>
-    <string name="title_offers_adjourn">Cerere de amânare a jocului</string>
-    <string name="title_pick_level">Alegeți nivelul de joc</string>
+    <string name="title_offers_adjourn">Cerere de amânare</string>
+    <string name="title_pick_level">Alege nivelul</string>
     <string name="title_menu">Meniu</string>
-    <string name="title_save_game">Salvează jocul</string>
-    <string name="title_delete_game">Șterge jocul</string>
-    <string name="title_pick_promo">Alege figură pentru promovare</string>
-    <string name="title_castle">Roque?</string>
-    <string name="title_pick_en_passant">Pătratul pentru captură en passant</string>
-    <string name="title_create_new_line">Creează o nouă variantă?</string>
-    <string name="title_chess960_manual_random">Șah-960 :: Numărul poziției manual sau aleator?</string>
+    <string name="title_save_game">Salvează partida</string>
+    <string name="title_delete_game">Șterge partida</string>
+    <string name="title_pick_promo">Alege piesa de promovare</string>
+    <string name="title_castle">Rocadă?</string>
+    <string name="title_pick_en_passant">Căsuță en passant</string>
+    <string name="title_create_new_line">Creezi o variantă nouă?</string>
+    <string name="title_chess960_manual_random">Chess960: poziție manuală sau aleatorie?</string>
     <string name="title_edit_or_delete">Editează sau șterge?</string>
     <string name="title_edit_command">Editează comanda</string>
 
     <string name="menu_help">Ajutor</string>
-    <string name="menu_new">Joc nou</string>
-    <string name="menu_new_duck">Rață nouă (experimental)</string>
-    <string name="menu_clip_pgn">Joc în clipboard</string>
-    <string name="menu_fromclip">Joc din clipboard</string>
-    <string name="menu_save_game">Salvează jocul</string>
-    <string name="menu_load_game">Încarcă jocul</string>
-    <string name="menu_flip">roti</string>
-    <string name="menu_setup">Aranjare tablă</string>
+    <string name="menu_new">Partidă nouă</string>
+    <string name="menu_new_duck">Partidă Duck (experimental)</string>
+    <string name="menu_clip_pgn">Partida în clipboard</string>
+    <string name="menu_fromclip">Partida din clipboard</string>
+    <string name="menu_save_game">Salvează partida</string>
+    <string name="menu_load_game">Încarcă partida</string>
+    <string name="menu_flip">Rotește</string>
+    <string name="menu_setup">Configurează tabla</string>
     <string name="menu_new_command">Comandă nouă</string>
-    <string name="menu_new_command_message">scrieți \u003cNR\u003e la sfârșitul comenzii pentru a nu întoarce\nexemplu: tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_set_clock">Setați timpul</string>
-    <string name="menu_prefs">Preferințe</string>
+    <string name="menu_new_command_message">scrie \u003cNR\u003e la finalul comenzii pentru fără retur\nexemplu: tell ChessMaster \u003cNR\u003e\n</string>
+    <string name="menu_set_clock">Setează ceas</string>
+    <string name="menu_prefs">Setări</string>
+    <string name="menu_game_settings">Setări partidă</string>
+    <string name="menu_new_960">Nou Fischer aleator / 960</string>
 
-    <string name="pref_show_blindfold">Mod orb</string>
+    <string name="pref_show_blindfold">Cu ochii închiși</string>
 
-    <string name="options_play_human">Om împotriva Om</string>
-    <string name="options_play_android">Om împotriva Android</string>
-    <string name="options_play_white">Albe</string>
-    <string name="options_play_black">Negre</string>
-    <string name="options_quiescent_on">Cautare „Quiescence”</string>
-    <string name="options_quiescent_off">caută „Quiescence”</string>
-    <string name="pref_show_possible_moves">Afișează mutările</string>
+    <string name="options_play_human">Om vs Om</string>
+    <string name="options_play_android">Om vs Android</string>
+    <string name="options_play_white">Albele</string>
+    <string name="options_play_black">Negrele</string>
+    <string name="options_quiescent_on">Căutare liniște activă</string>
+    <string name="options_quiescent_off">Căutare liniște inactivă</string>
+    <string name="pref_show_possible_moves">Arată mutări</string>
     <string name="options_level_time">Nivel (timp)</string>
     <string name="options_level_ply">Nivel (semi-mutare)</string>
 
@@ -111,31 +120,45 @@
     <string name="state_draw_material">remiză (material)</string>
     <string name="state_draw_50">remiză (regula celor 50 de mutări)</string>
     <string name="state_draw_stalemate">remiză (pat)</string>
-    <string name="state_draw_repeat">remiză (repetare de trei ori)</string>
-    <string name="state_mate">dat mat</string>
+    <string name="state_draw_repeat">remiză (repetare triplă)</string>
+    <string name="state_mate">șah mat</string>
     <string name="state_check">șah</string>
+    <string name="state_black_forfeits_time">negrele pierd la timp</string>
+    <string name="state_white_forfeits_time">albele pierd la timp</string>
+    <string name="state_black_resigned">negrele au renunțat</string>
+    <string name="state_white_resigned">albele au renunțat</string>
+    <string name="state_draw_agreement">remiză prin acord</string>
 
-    <string name="choice_level_1">1 sec</string>
-    <string name="choice_level_2">2 sec</string>
-    <string name="choice_level_3">4 sec</string>
-    <string name="choice_level_4">8 sec (medii)</string>
-    <string name="choice_level_5">10 sec</string>
-    <string name="choice_level_6">20 sec</string>
-    <string name="choice_level_7">30 sec (experți)</string>
+    <string name="choice_level_1">1 secundă</string>
+    <string name="choice_level_2">2 secunde</string>
+    <string name="choice_level_3">4 secunde</string>
+    <string name="choice_level_4">8 secunde (mediu)</string>
+    <string name="choice_level_5">10 secunde</string>
+    <string name="choice_level_6">20 secunde</string>
+    <string name="choice_level_7">30 secunde (experimentat)</string>
     <string name="choice_level_8">1 minut</string>
     <string name="choice_level_9">5 minute</string>
     <string name="choice_level_10">15 minute</string>
-    <string name="choice_queen">Regină</string>
-    <string name="choice_rook">Turn</string>
-    <string name="choice_bishop">Nebun</string>
-    <string name="choice_knight">Cal</string>
+
+    <string name="square_description">Căsuță %1$s</string>
+    <string name="square_with_piece_description">%1$s %2$s la %3$s</string>
+    <string name="square_selected_description">%1$s selectat</string>
+
+    <string name="piece_white">Albe</string>
+    <string name="piece_black">Negre</string>
+    <string name="piece_king">Rege</string>
+    <string name="piece_queen">Regină</string>
+    <string name="piece_rook">Turn</string>
+    <string name="piece_bishop">Nebun</string>
+    <string name="piece_knight">Cal</string>
+    <string name="piece_pawn">Pion</string>
     <string name="choice_manually">Manual</string>
     <string name="choice_random">Aleator</string>
     <string name="choice_edit">Editează</string>
     <string name="choice_delete">Șterge</string>
 
-    <string name="puzzle_already_solved">(Poziția a fost deja rezolvată)</string>
-    <string name="puzzle_not_correct_move">nu este o mutare validă</string>
+    <string name="puzzle_already_solved">(poziția deja rezolvată)</string>
+    <string name="puzzle_not_correct_move"> nu este mutarea așteptată</string>
 
     <string name="savegame_event">Eveniment</string>
     <string name="savegame_event_question">Eveniment?</string>
@@ -143,166 +166,166 @@
     <string name="savegame_white_question">Albe?</string>
     <string name="savegame_black">Negre</string>
     <string name="savegame_black_question">Negre?</string>
-    <string name="savegame_date">Dată</string>
+    <string name="savegame_date">Data</string>
 
     <string name="gameslist_stars">Stele</string>
-    <string name="gameslist_date">Dată</string>
+    <string name="gameslist_date">Data</string>
     <string name="gameslist_event">Eveniment</string>
-    <string name="gameslist_id">Număr</string>
+    <string name="gameslist_id">ID</string>
     <string name="games_list_white_pieces">Piese albe</string>
     <string name="gameslist_black_pieces">Piese negre</string>
 
-    <string name="msg_setup_turn">Mutare</string>
+    <string name="msg_setup_turn">Tură</string>
     <string name="msg_setup_turn_white">albe</string>
     <string name="msg_setup_turn_black">negre</string>
-    <string name="msg_setup_enpassant">Pătratul pentru captură en passant</string>
+    <string name="msg_setup_enpassant">Căsuță en passant</string>
     <string name="msg_setup_castle_white">Albe</string>
     <string name="msg_setup_castle_black">Negre</string>
-    <string name="msg_ics_enter_handle">Vă rugăm să introduceți apelul dumneavoastră</string>
-    <string name="msg_ics_enter_password">Vă rugăm să introduceți parola</string>
+    <string name="msg_ics_enter_handle">Introdu numele de utilizator</string>
+    <string name="msg_ics_enter_password">Introdu parola</string>
 
-    <string name="err_chess960_position_range">Poziție invalidă, introduceți un număr de la 0 la 960</string>
-    <string name="err_chess960_position_format">Poziție invalidă, introduceți un număr</string>
+    <string name="err_chess960_position_range">Poziție invalidă, introdu un număr între 0 și 960</string>
+    <string name="err_chess960_position_format">Poziție invalidă, introdu un număr</string>
 
-    <string name="pgntool_export_explanation">Exportă baza de date a jocului</string>
-    <string name="pgntool_import_explanation">Importă jocuri în baza de date a jocului</string>
-    <string name="pgntool_delete_explanation">Șterge toate jocurile din baza de date a jocului</string>
-    <string name="pgntool_create_db_explanation">Creează baza de date a deschiderilor</string>
-    <string name="pgntool_point_db_explanation">Setează baza de date a deschiderilor</string>
-    <string name="pgntool_unset_uci_engine">Șterge motorul UCI</string>
-    <string name="pgntool_unset_uci_database">Șterge baza de date UCI</string>
+    <string name="pgntool_export_explanation">Exportă baza de date cu partide</string>
+    <string name="pgntool_import_explanation">Importă partide în baza de date</string>
+    <string name="pgntool_delete_explanation">Șterge toate partidele din baza de date</string>
+    <string name="pgntool_create_db_explanation">Creează baza de deschideri</string>
+    <string name="pgntool_point_db_explanation">Setează baza de deschideri</string>
+    <string name="pgntool_unset_uci_engine">Dezinstalează motorul UCI</string>
+    <string name="pgntool_unset_uci_database">Dezinstalează baza UCI</string>
     <string name="pgntool_help">Ajutor</string>
-    <string name="pgntool_confirm_delete">Sunteți sigur?</string>
-    <string name="pgntool_deleted">Toate jocurile au fost șterse</string>
-    <string name="pgntool_import_practice">Importă un set de antrenament</string>
-    <string name="pgntool_reset_practice">Resetare antrenament - începe de la început</string>
-    <string name="pgntool_confirm_practice_reset">Sunteți sigur că doriți să faceți resetarea?</string>
-    <string name="pgntool_import_puzzle">Importă puzzle-uri</string>
-    <string name="pgntool_import_opening">Utilizat de dezvoltator</string>
+    <string name="pgntool_confirm_delete">Ești sigur?</string>
+    <string name="pgntool_deleted">Toate partidele au fost șterse</string>
+    <string name="pgntool_import_practice">Importă set de antrenament</string>
+    <string name="pgntool_reset_practice">Resetează antrenamentul - ia-o de la capăt</string>
+    <string name="pgntool_confirm_practice_reset">Sigur vrei să resetezi?</string>
+    <string name="pgntool_import_puzzle">Importă probleme</string>
+    <string name="pgntool_import_opening">Folosit de dezvoltator</string>
 
     <string name="practice_set_reset">Setul de antrenament a fost resetat</string>
 
-    <string name="ics_client_handle">Alias</string>
+    <string name="ics_client_handle">Utilizator</string>
     <string name="ics_client_password">Parolă</string>
     <string name="ics_client_server">Server</string>
 
     <string name="ics_menu_players">Jucători</string>
-    <string name="ics_menu_games">Jocuri</string>
+    <string name="ics_menu_games">Partide</string>
     <string name="ics_menu_stored">Salvate</string>
     <string name="ics_menu_challenges">Provocări</string>
     <string name="ics_menu_seek">Căutare</string>
-    <string name="menu_abort">Întrerupe</string>
+    <string name="menu_abort">Anulează</string>
     <string name="ics_menu_draw">Remiză</string>
-    <string name="ics_menu_flag">Steag</string>
-    <string name="ics_menu_resign">Predă</string>
+    <string name="ics_menu_flag">Revendică timpul</string>
+    <string name="ics_menu_resign">Abandonează</string>
     <string name="ics_menu_console">Consolă</string>
     <string name="ics_menu_top_blitz">Top Blitz</string>
     <string name="ics_menu_top_standard">Top Standard</string>
+    <string name="ics_menu_puzzlebot_mate">Puzzlebot mat</string>
+    <string name="ics_menu_puzzlebot_tactics">Puzzlebot tactici</string>
+    <string name="ics_menu_puzzlebot_study">Puzzlebot studiu</string>
 
     <string name="ics_playertwo">Jucător 2</string>
     <string name="ics_playerone">Jucător 1</string>
-    <string name="ics_offers_abort">Adversarul dumneavoastră dorește să întrerupă jocul.\nSunteți de acord?</string>
-    <string name="ics_offers_draw">Adversarul dumneavoastră propune o remiză.\nSunteți de acord?</string>
-    <string name="ics_offers_adjourn">Adversarul dumneavoastră dorește să amâne jocul.\nSunteți de acord?</string>
-    <string name="ics_offers_takeback">Adversarul dumneavoastră dorește să anuleze mutarea sa.\nSunteți de acord?</string>
-    <string name="ics_request_sent">Cererea a fost trimisă</string>
-    <string name="ics_game_over">Jocul s-a încheiat</string>
+    <string name="ics_offers_abort">Adversarul dorește să anuleze partida.\nAccepți?</string>
+    <string name="ics_offers_draw">Adversarul oferă remiză.\nAccepți?</string>
+    <string name="ics_offers_adjourn">Adversarul dorește să amâne partida.\nAccepți?</string>
+    <string name="ics_offers_takeback">Adversarul dorește să retragă o mutare.\nAccepți?</string>
+    <string name="ics_request_sent">Cerere trimisă</string>
+    <string name="ics_game_over">Partida s-a terminat</string>
 
-    <string name="copied_clipboard_success">Jocul a fost salvat cu succes în clipboard</string>
-    <string name="ics_offer_rematch">Propuneți o REREVANȘĂ</string>
+    <string name="copied_clipboard_success">Partida copiată în clipboard</string>
+    <string name="ics_offer_rematch">Oferă REVANȘĂ</string>
     <string name="ics_examine">Examinează</string>
 
-    <string name="ics_lost_connection">Conexiunea la server a fost pierdută.</string>
+    <string name="ics_lost_connection">Conexiunea cu serverul a fost pierdută.</string>
+    <string name="ics_error">A apărut o eroare. Încearcă din nou mai târziu.</string>
 
-    <string name="ics_notification_title">Șah Jeroen</string>
-    <string name="ics_notification_text">Faceți clic pentru a juca</string>
+    <string name="ics_notification_title">Șah de Jeroen</string>
+    <string name="ics_notification_text">Atinge pentru a juca</string>
 
     <string name="ics_seekseek">Caută</string>
     <string name="ics_seekchallenge">Provocare</string>
     <string name="ics_seekplayer">Jucător</string>
     <string name="ics_seektime">Timp (min)</string>
-    <string name="ics_seektimeinc">Increment de timp (sec)</string>
+    <string name="ics_seektimeinc">Increment (sec)</string>
     <string name="ics_seekvariant">Variantă</string>
     <string name="ics_seekcolor">Culoare</string>
-    <string name="ics_seekrangemin">Ordonați după rating MIN</string>
-    <string name="ics_seekrangemax">Ordonați după rating MAX</string>
-    <string name="ics_seekrated">Jocuri cu rating</string>
-    <string name="ics_seekmanual">Acceptați manual</string>
+    <string name="ics_seekrangemin">Clasament MIN</string>
+    <string name="ics_seekrangemax">Clasament MAX</string>
+    <string name="ics_seekrated">Partidă clasată</string>
+    <string name="ics_seekmanual">Acceptare manuală</string>
     <string name="ics_seekformula">Formulă</string>
 
-    <string name="ics_historygamenumber">Numărul jocului în Istorie</string>
-    <string name="ics_typegamenumber">Introduceți numărul jocului</string>
-    <string name="ics_history">Istorie</string>
-    <string name="ics_finger">Rezultate</string>
-    <string name="ics_follow">Abonați-vă</string>
-    <string name="ics_unfollow">Dezabonați-vă</string>
+    <string name="ics_historygamenumber">Număr partidă istoric</string>
+    <string name="ics_typegamenumber">Introdu numărul partidei de</string>
+    <string name="ics_history">Istoric</string>
+    <string name="ics_finger">Rezumat</string>
+    <string name="ics_follow">Urmărește</string>
+    <string name="ics_unfollow">Nu mai urmări</string>
     <string name="ics_match">Meci</string>
-    <string name="ics_gamenumber">Joc #</string>
+    <string name="ics_gamenumber">Partida #</string>
+    <string name="ics_quit">Ieși?</string>
 
-    <string name="practice_help">Găsește șahul mat (poate fi mai mult de o mutare).</string>
-    <string name="puzzle_help">Acestea sunt puzzle-uri dificile, conținând mat în două mutări.\nScopul este să găsiți prima mutare care va duce la un mat forțat în două mutări.\nCu alte cuvinte, după ce faceți mutarea corectă, adversarul nu va putea evita matul la următoarea mutare.\nDupă aceasta, puzzle-ul este considerat rezolvat.\nApăsați butonul \'Afișează\' pentru soluție.\nSursă: ARTA MATEI ÎN DOUĂ MUTĂRI, Eduardo Sadier</string>
+    <string name="practice_help">Găsește șah-matul (poate dura mai multe mutări).</string>
+    <string name="puzzle_help">Acestea sunt probleme dificile de mat în două.\nScopul este să găsești prima mutare care duce la un mat forțat în două mutări.\nAdică, după mutarea corectă, adversarul nu mai poate evita matul la următoarea ta mutare.\nDupă acest prim pas, problema e rezolvată.\nApasă „Arată” pentru soluție.\nSursă: EL ARTE DEL MATE EN DOS de Eduardo Sadier</string>
+
     <string name="advanced_help"><![CDATA[
- <h3>Extins</h3>
-    <p>Creează sau importă propriile materiale.</p>
+<h3>Avansat</h3>
+<p>Creează sau importă conținut propriu aici.</p>
 
-    <h4>Exportați baza de date a jocului pe card SD</h4>
-    <p>Tocmai toate jocurile din baza de date a jocului pot fi exportate într-un singur fișier PGN pe cardul SD. Acest
-        fișier va fi numit chess.pgn, iar fișierul deja existent va fi suprascris.</p>
+<h4>Exportă baza de date</h4>
+<p>Toate partidele pot fi exportate într-un fișier PGN unic numit chess.pgn.</p>
 
-    <h4>Importați jocuri în baza de date a jocului</h4>
-    <p>Folosiți această opțiune pentru a adăuga jocuri în baza de date a jocului. Aceasta vă permite să mergeți la
-        fișier PGN. Selectați-l pe cel dorit și evidențiați-l pentru import.</p>
+<h4>Importă partide</h4>
+<p>Adaugă partide alegând un fișier PGN.</p>
 
-    <h4>Ștergeți toate jocurile din baza de date a jocului</h4>
-    <p>Folosiți această opțiune dacă doriți să curățați baza de date a jocului. Asigurați-vă că ați făcut
-        o copie de rezervă pe cardul SD, această acțiune nu poate fi anulată.</p>
+<h4>Șterge toate partidele</h4>
+<p>Golește baza de date. Fă backup înainte, acțiunea e ireversibilă.</p>
 
-    <h4>Crearea bazei de date a deschiderilor</h4>
-    <p>Duceți la fișierul PGN pe cardul SD, și acesta va fi convertit într-o bază de date a deschiderilor cu același
-        nume, dar cu extensia .bin. În prezent, toate jocurile din fișierul PGN sunt procesate până la
-        a 17-a mutare.</p>
+<h4>Creează baza de deschideri</h4>
+<p>Convertește un fișier PGN într-un fișier .bin (până la 17 semi-mutări).</p>
 
-    <h4>Setați baza de date a deschiderilor</h4>
-    <p>Du-te la fișierul .bin creat recent pentru a permite Șahului
-        să-l folosească.</p>
+<h4>Setează baza de deschideri</h4>
+<p>Selectează fișierul .bin creat.</p>
 
-    <h4>Ștergeți motorul UCI</h4>
-    <p>Ștergeți motorul UCI instalat.</p>
+<h4>Dezinstalează motor UCI</h4>
+<p>Elimină motorul UCI instalat.</p>
 
-    <h4>Creează un set de antrenament</h4>
-    <p>Pozitiile de antrenament sunt generate din jocurile care se termină cu mat. Duceți la fișier pentru
-        procesare. Înregistrările nevalide apar de obicei pentru jocurile care nu se termină în mat sau
-        care sunt duplicate ale jocurilor deja existente.</p>
+<h4>Creează set de antrenament</h4>
+<p>Creează exerciții din partide care se termină în mat. Eșecurile vin din duplicate sau partide fără mat.</p>
 
-    <h4>Resetați setul de antrenament</h4>
-    <p>Vreți să începeți antrenamentul de la început? Acesta va reseta, de asemenea, contorul timpului mediu.</p>
-     ]]></string>
-    <string name="online_help"> <![CDATA[
-<p>
-        <strong>FICS: Serviciul de Șah pe Internet Gratuit</strong> permite jucarea cu mii de jucători de șah online.<br/>
-        Atenție: dacă dispozitivul dvs. trece de la un hotspot la altul,
-        conexiunea poate fi întreruptă. Timeseal nu este folosit. <br/>
-    </p>
-    <h4>Meniu</h4>
-    <strong>Provocări</strong><br/>
-    Cine caută joc. Faceți clic pe jucătorul din listă pentru a accepta provocarea.<br/>
-    <strong>Căutare</strong><br/>
-    Faceți o provocare personalizată. Dacă inserați aliasul unui jucător cunoscut, se va face o provocare specificată.<br/>
-    <strong>Jocuri</strong><br/>
-    Vizionați jocuri în curs de desfășurare online. Marele maestru poate fi definit prin prefixul GM în
-    numele utilizatorului.<br/>
-    <strong>Jucători</strong><br/>
-    Afișează jucători disponibili nespecificați.
-    ]]></string>
+<h4>Resetează setul de antrenament</h4>
+<p>Vrei să începi din nou? Și contorul mediu va fi resetat.</p>
+]]></string>
 
-    <!-- Toast strings -->
-    <string name="toast_could_not_start_activity">Nu s-a putut începe activitatea</string>
-    <string name="toast_challenge_posted">Provocarea a fost publicată</string>
+    <string name="online_help"><![CDATA[
+<p><strong>FICS: Free Internet Chess Server</strong> îți permite să joci online cu mii de jucători.<br/>
+Atenție: dacă dispozitivul schimbă rețeaua, conexiunea se poate întrerupe.<br/>
+</p>
+<h4>Meniu</h4>
+<strong>Provocări</strong><br/>Arată jucători care caută meci. Apasă pe unul pentru a accepta.<br/>
+<strong>Căutare</strong><br/>Creează propria provocare. Dacă introduci un utilizator, va fi directă.<br/>
+<strong>Partide</strong><br/>Privește partide online. Marii maeștri au prefix GM.<br/>
+<strong>Jucători</strong><br/>Arată jucători inactivi cu rating.<br/>
+]]></string>
 
-    <!-- array items -->
+    <!-- Toast -->
+    <string name="toast_could_not_start_activity">Nu s-a putut porni activitatea</string>
+    <string name="toast_challenge_posted">Provocare postată</string>
+
+    <string name="pieceset_alpha">Alpha</string>
+    <string name="pieceset_merida">Merida</string>
+    <string name="pieceset_leipzig">Leipzig</string>
+    <string name="pieceset_california">California</string>
+    <string name="pieceset_companion">Companion</string>
+    <string name="pieceset_chessnut">Chessnut</string>
+    <string name="pieceset_kosal">Kosal</string>
+    <string name="pieceset_staunty">Staunty</string>
+
     <string name="tile_none">niciunul</string>
-    <string name="tile_double_shade">umbră dublă</string>
-    <string name="tile_single_shade">umbră simplă</string>
+    <string name="tile_double_shade">umbrire dublă</string>
+    <string name="tile_single_shade">umbrire simplă</string>
 
     <string name="color_scheme_yellow">Galben</string>
     <string name="color_scheme_blue">Albastru</string>

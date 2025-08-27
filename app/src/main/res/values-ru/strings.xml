@@ -2,58 +2,65 @@
 <resources>
 
     <string name="app_name">Шахматы</string>
-    <string name="app_name_play">Игра</string>
-    <string name="app_name_playonline">Игра онлайн</string>
-    <string name="app_name_setup">Расстановка</string>
-    <string name="app_name_help">Помощь</string>
+    <string name="app_name_play">Играть</string>
+    <string name="app_name_playonline">Играть онлайн</string>
+    <string name="app_name_setup">Настройки</string>
+    <string name="app_name_help">Справка</string>
     <string name="app_name_import">Импорт</string>
-    <string name="app_name_pgntools">Расширенные</string>
-    <string name="app_name_save_games">Сохранённые игры</string>
+    <string name="app_name_pgntools">Дополнительно</string>
+    <string name="app_name_save_games">Сохранённые партии</string>
 
-    <string name="start_play">Игра</string>
+    <string name="start_play">Играть</string>
     <string name="start_practice">Тренировка</string>
-    <string name="start_puzzles">Головоломки</string>
-    <string name="start_pgn">Расширенные</string>
-    <string name="start_ics">Игра онлайн</string>
+    <string name="start_puzzles">Задачи</string>
+    <string name="start_hotspotboard">Hotspot-доска (экспериментально)</string>
+    <string name="start_pgn">Дополнительно</string>
+    <string name="start_ics">Играть онлайн</string>
     <string name="start_boardpreferences">Настройки шахматной доски</string>
 
     <string name="globalpreferences">Глобальные настройки</string>
     <string name="playpreferences">Настройки игры</string>
     <string name="playonlinepreferences">Настройки онлайн-игры</string>
+    <string name="boardprerences">Настройки доски</string>
+    <string name="gamepreferences">Настройки партии</string>
     <string name="preferences">Настройки</string>
-    <string name="pref_wakelock">Использовать удержание в режиме бодрствования</string>
-    <string name="pref_wakelock_desc">Не давать телефону перейти в спящий режим</string>
+    <string name="pref_wakelock">Не выключать экран</string>
+    <string name="pref_wakelock_desc">Предотвращает переход устройства в спящий режим</string>
     <string name="pref_showCoords">Координаты</string>
     <string name="pref_sound">Звук</string>
-    <string name="pref_sound_desc">Включать при ходе противника</string>
-    <string name="pref_speech">Речь</string>
-    <string name="pref_speech_desc">Проговаривать сделанный ход</string>
-    <string name="pref_eco">Информация ECO</string>
-    <string name="pref_eco_desc">Показывать начальную информацию ECO при наличии</string>
+    <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
+    <string name="pref_speech">Озвучка</string>
+    <string name="pref_speech_desc">Озвучивает сделанный ход</string>
+    <string name="pref_eco">Инфо ECO</string>
+    <string name="pref_eco_desc">Показывать информацию об открытии ECO, если доступно</string>
     <string name="pref_fullscreen">Полноэкранный режим</string>
-    <string name="pref_fullscreen_desc">Рекомендуется для маленьких экранов и горизонтальной ориентации; иначе элементы могут выпадать за пределы экрана</string>
-    <string name="pref_tileset">Узор квадрата</string>
+    <string name="pref_fullscreen_desc">Рекомендуется для маленьких экранов и альбомного вида; иначе элементы могут не помещаться</string>
+    <string name="pref_tileset">Узор клеток</string>
     <string name="pref_icscustomcommand">Пользовательские команды</string>
-    <string name="pref_icscustomcommand_desc">Создайте собственные пользовательские команды</string>
+    <string name="pref_icscustomcommand_desc">Создайте свои команды</string>
     <string name="pref_icsconsolecharactersize">Размер символов КОНСОЛИ</string>
-    <string name="pref_icsconsolecharactersize_desc">Регулировка размера символов в КОНСОЛИ</string>
+    <string name="pref_icsconsolecharactersize_desc">Настройка размера символов в консоли</string>
     <string name="pref_icsautosought">Автопоиск</string>
     <string name="pref_icsautosought_desc">Автоматически обновлять экран вызовов</string>
-    <string name="pref_icstimewarning">Предупреждать об окончании времени</string>
-    <string name="pref_icstimewarning_desc">Тикающий звук уведомляет, что время подходит к концу</string>
-    <string name="pref_icstimewarningsecs">Время для предупреждения (сек)</string>
-    <string name="pref_icstimewarningsecs_desc">Количество секунд до начала предупреждения об окончании времени</string>
-    <string name="prefs_icsendgamedialog">Диалог в конце игры</string>
-    <string name="prefs_icsendgamesummary">Нужен ли диалог для сохранения в конце игры?</string>
-    <string name="pref_icsnotification">Уведомление о новой игре</string>
-    <string name="prefs_icsnotificationsummary">Позволяет узнать о начале игры с помощью иконки</string>
+    <string name="pref_icstimewarning">Предупреждение о времени</string>
+    <string name="pref_icstimewarning_desc">Тиканье предупреждает, если времени осталось мало</string>
+    <string name="pref_icstimewarningsecs">Порог времени (сек)</string>
+    <string name="pref_icstimewarningsecs_desc">За сколько секунд начинать предупреждение?</string>
+    <string name="prefs_icsendgamedialog">Диалог окончания партии</string>
+    <string name="prefs_icsendgamesummary">В конце партии показывать диалог сохранения?</string>
+    <string name="pref_icsnotification">Уведомление о новой партии</string>
+    <string name="prefs_icsnotificationsummary">Сообщает о начале партии значком</string>
+    <string name="pref_vs_cpu">против CPU</string>
+    <string name="pref_vs_cpu_desc">Играть против процессора/движка</string>
+    <string name="pref_turn">Сторона</string>
+    <string name="pref_turn_desc">За какую сторону вы играете</string>
     <string name="pref_night_mode">Ночной режим</string>
-    <string name="pref_night_mode_desc">Переведите приложение в ночной режим</string>
+    <string name="pref_night_mode_desc">Включить приложение в ночном режиме</string>
 
     <string name="button_ok">OK</string>
-    <string name="button_cancel">Закрыть</string>
-    <string name="button_login">Войти</string>
-    <string name="button_register">Зарегистрироваться</string>
+    <string name="button_cancel">Отмена</string>
+    <string name="button_login">Вход</string>
+    <string name="button_register">Регистрация</string>
     <string name="button_close">Закрыть</string>
     <string name="button_save">Сохранить</string>
     <string name="button_save_copy">Сохранить копию</string>
@@ -65,77 +72,93 @@
 
     <string name="title_challenge">Вызов</string>
     <string name="title_error">Ошибка</string>
-    <string name="title_offers_abort">Отклонить просьбу</string>
-    <string name="title_offers_takeback">Запрос отмены хода</string>
+    <string name="title_offers_abort">Запрос отмены</string>
+    <string name="title_offers_takeback">Запрос отменить ход</string>
     <string name="title_offers_draw">Запрос на ничью</string>
-    <string name="title_offers_adjourn">Запрос отложить игру</string>
-    <string name="title_pick_level">Выбрать уровень игры</string>
+    <string name="title_offers_adjourn">Запрос на перенос</string>
+    <string name="title_pick_level">Выберите уровень игры</string>
     <string name="title_menu">Меню</string>
-    <string name="title_save_game">Сохранить игру</string>
-    <string name="title_delete_game">Удалить игру</string>
-    <string name="title_pick_promo">Выбрать фигуру для превращения</string>
-    <string name="title_castle">Рокировать?</string>
-    <string name="title_pick_en_passant">Файл взятия на проходе</string>
-    <string name="title_create_new_line">Создать новый вариант?</string>
-    <string name="title_chess960_manual_random">Шахматы-960 :: Номер позиции вручную или произвольно?</string>
-    <string name="title_edit_or_delete">Редактировать или удалить?</string>
-    <string name="title_edit_command">Редактировать команду</string>
+    <string name="title_save_game">Сохранить партию</string>
+    <string name="title_delete_game">Удалить партию</string>
+    <string name="title_pick_promo">Выберите фигуру для превращения</string>
+    <string name="title_castle">Рокировка?</string>
+    <string name="title_pick_en_passant">Поле en passant</string>
+    <string name="title_create_new_line">Создать новую линию?</string>
+    <string name="title_chess960_manual_random">Chess960: вручную или случайно?</string>
+    <string name="title_edit_or_delete">Изменить или удалить?</string>
+    <string name="title_edit_command">Изменить команду</string>
 
-    <string name="menu_help">Помощь</string>
-    <string name="menu_new">Новая игра</string>
-    <string name="menu_new_duck">Новая утка (экспериментальная)</string>
-    <string name="menu_clip_pgn">Игру в буфер обмена</string>
-    <string name="menu_fromclip">Игра из буфера обмена</string>
-    <string name="menu_save_game">Сохранить игру</string>
-    <string name="menu_load_game">Загрузить игру</string>
-    <string name="menu_flip">вращать</string>
-    <string name="menu_setup">Расстановка доски</string>
+    <string name="menu_help">Справка</string>
+    <string name="menu_new">Новая партия</string>
+    <string name="menu_new_duck">Новая Duck (экспериментально)</string>
+    <string name="menu_clip_pgn">Партия в буфер обмена</string>
+    <string name="menu_fromclip">Партия из буфера обмена</string>
+    <string name="menu_save_game">Сохранить партию</string>
+    <string name="menu_load_game">Загрузить партию</string>
+    <string name="menu_flip">Повернуть</string>
+    <string name="menu_setup">Настроить доску</string>
     <string name="menu_new_command">Новая команда</string>
-    <string name="menu_new_command_message">напечатайте \u003cNR\u003e в конце команды для невозврата\nпример:  tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_set_clock">Установить время</string>
+    <string name="menu_new_command_message">напишите \u003cNR\u003e в конце команды без возврата\nпример: tell ChessMaster \u003cNR\u003e\n</string>
+    <string name="menu_set_clock">Установить часы</string>
     <string name="menu_prefs">Настройки</string>
+    <string name="menu_game_settings">Настройки партии</string>
+    <string name="menu_new_960">Новый случайный Фишер / 960</string>
 
-    <string name="pref_show_blindfold">Слепой режим</string>
+    <string name="pref_show_blindfold">Слепые шахматы</string>
 
     <string name="options_play_human">Человек против Человека</string>
     <string name="options_play_android">Человек против Android</string>
     <string name="options_play_white">Белые</string>
     <string name="options_play_black">Чёрные</string>
-    <string name="options_quiescent_on">Поиск по "Quiescence"</string>
-    <string name="options_quiescent_off">искать "Quiescence"</string>
+    <string name="options_quiescent_on">Поиск тишины включён</string>
+    <string name="options_quiescent_off">Поиск тишины выключён</string>
     <string name="pref_show_possible_moves">Показывать ходы</string>
     <string name="options_level_time">Уровень (время)</string>
-    <string name="options_level_ply">Уровень (полуход)</string>
+    <string name="options_level_ply">Уровень (плай)</string>
 
     <string name="state_play">в игре</string>
     <string name="state_draw_material">ничья (материал)</string>
     <string name="state_draw_50">ничья (правило 50 ходов)</string>
     <string name="state_draw_stalemate">ничья (пат)</string>
-    <string name="state_draw_repeat">ничья (трёхкратное повторение)</string>
-    <string name="state_mate">поставлен мат</string>
+    <string name="state_draw_repeat">ничья (тройное повторение)</string>
+    <string name="state_mate">мат</string>
     <string name="state_check">шах</string>
+    <string name="state_black_forfeits_time">чёрные проиграли по времени</string>
+    <string name="state_white_forfeits_time">белые проиграли по времени</string>
+    <string name="state_black_resigned">чёрные сдались</string>
+    <string name="state_white_resigned">белые сдались</string>
+    <string name="state_draw_agreement">ничья по соглашению</string>
 
-    <string name="choice_level_1">1 сек</string>
-    <string name="choice_level_2">2 сек </string>
-    <string name="choice_level_3">4 сек</string>
-    <string name="choice_level_4">8 сек (средние) </string>
-    <string name="choice_level_5">10 сек</string>
-    <string name="choice_level_6">20 сек</string>
-    <string name="choice_level_7">30 сек (опытные) </string>
+    <string name="choice_level_1">1 секунда</string>
+    <string name="choice_level_2">2 секунды</string>
+    <string name="choice_level_3">4 секунды</string>
+    <string name="choice_level_4">8 секунд (средний)</string>
+    <string name="choice_level_5">10 секунд</string>
+    <string name="choice_level_6">20 секунд</string>
+    <string name="choice_level_7">30 секунд (опытный)</string>
     <string name="choice_level_8">1 минута</string>
     <string name="choice_level_9">5 минут</string>
     <string name="choice_level_10">15 минут</string>
-    <string name="choice_queen">Ферзь</string>
-    <string name="choice_rook">Ладья</string>
-    <string name="choice_bishop">Слон</string>
-    <string name="choice_knight">Конь</string>
+
+    <string name="square_description">Клетка %1$s</string>
+    <string name="square_with_piece_description">%1$s %2$s на %3$s</string>
+    <string name="square_selected_description">%1$s выбрана</string>
+
+    <string name="piece_white">Белые</string>
+    <string name="piece_black">Чёрные</string>
+    <string name="piece_king">Король</string>
+    <string name="piece_queen">Ферзь</string>
+    <string name="piece_rook">Ладья</string>
+    <string name="piece_bishop">Слон</string>
+    <string name="piece_knight">Конь</string>
+    <string name="piece_pawn">Пешка</string>
     <string name="choice_manually">Вручную</string>
-    <string name="choice_random">Произвольно</string>
+    <string name="choice_random">Случайно</string>
     <string name="choice_edit">Редактировать</string>
     <string name="choice_delete">Удалить</string>
 
-    <string name="puzzle_already_solved">(Позиция уже решена)</string>
-    <string name="puzzle_not_correct_move"> не предполагается</string>
+    <string name="puzzle_already_solved">(позиция уже решена)</string>
+    <string name="puzzle_not_correct_move"> не является ожидаемым ходом</string>
 
     <string name="savegame_event">Событие</string>
     <string name="savegame_event_question">Событие?</string>
@@ -148,163 +171,161 @@
     <string name="gameslist_stars">Звёзды</string>
     <string name="gameslist_date">Дата</string>
     <string name="gameslist_event">Событие</string>
-    <string name="gameslist_id">Номер</string>
+    <string name="gameslist_id">ID</string>
     <string name="games_list_white_pieces">Белые фигуры</string>
     <string name="gameslist_black_pieces">Чёрные фигуры</string>
 
     <string name="msg_setup_turn">Ход</string>
     <string name="msg_setup_turn_white">белые</string>
     <string name="msg_setup_turn_black">чёрные</string>
-    <string name="msg_setup_enpassant">Квадрат для взятия на проходе</string>
+    <string name="msg_setup_enpassant">Поле en passant</string>
     <string name="msg_setup_castle_white">Белые</string>
     <string name="msg_setup_castle_black">Чёрные</string>
-    <string name="msg_ics_enter_handle">Пожалуйста, введите свой ник</string>
-    <string name="msg_ics_enter_password">Пожалуйста, введите пароль</string>
+    <string name="msg_ics_enter_handle">Введите имя пользователя</string>
+    <string name="msg_ics_enter_password">Введите пароль</string>
 
     <string name="err_chess960_position_range">Недопустимая позиция, введите число от 0 до 960</string>
     <string name="err_chess960_position_format">Недопустимая позиция, введите число</string>
 
-    <string name="pgntool_export_explanation">Экспорт игровой базы данных</string>
-    <string name="pgntool_import_explanation">Импорт игр в игровую базу данных</string>
-    <string name="pgntool_delete_explanation">Удалить все игры из игровой базы данных</string>
-    <string name="pgntool_create_db_explanation">Создать базу данных дебютов</string>
-    <string name="pgntool_point_db_explanation">Установить базу данных дебютов</string>
+    <string name="pgntool_export_explanation">Экспорт базы партий</string>
+    <string name="pgntool_import_explanation">Импорт партий в базу</string>
+    <string name="pgntool_delete_explanation">Удалить все партии из базы</string>
+    <string name="pgntool_create_db_explanation">Создать базу дебютов</string>
+    <string name="pgntool_point_db_explanation">Установить базу дебютов</string>
     <string name="pgntool_unset_uci_engine">Удалить движок UCI</string>
-    <string name="pgntool_unset_uci_database">Удалить базу данных UCI</string>
-    <string name="pgntool_help">Помощь</string>
+    <string name="pgntool_unset_uci_database">Удалить базу UCI</string>
+    <string name="pgntool_help">Справка</string>
     <string name="pgntool_confirm_delete">Вы уверены?</string>
-    <string name="pgntool_deleted">Все игры удалены</string>
-    <string name="pgntool_import_practice">Импортировать тренировочный набор</string>
-    <string name="pgntool_reset_practice">Сбросить тренировку - начать сначала</string>
-    <string name="pgntool_confirm_practice_reset">Вы уверены, что хотите сделать сброс?</string>
-    <string name="pgntool_import_puzzle">Импортировать головоломки</string>
+    <string name="pgntool_deleted">Все партии удалены</string>
+    <string name="pgntool_import_practice">Импорт тренировочного набора</string>
+    <string name="pgntool_reset_practice">Сбросить тренировку – начать заново</string>
+    <string name="pgntool_confirm_practice_reset">Вы уверены, что хотите сбросить?</string>
+    <string name="pgntool_import_puzzle">Импорт задач</string>
     <string name="pgntool_import_opening">Используется разработчиком</string>
 
     <string name="practice_set_reset">Тренировочный набор сброшен</string>
 
-    <string name="ics_client_handle">Ник</string>
+    <string name="ics_client_handle">Имя пользователя</string>
     <string name="ics_client_password">Пароль</string>
     <string name="ics_client_server">Сервер</string>
 
     <string name="ics_menu_players">Игроки</string>
-    <string name="ics_menu_games">Игры</string>
+    <string name="ics_menu_games">Партии</string>
     <string name="ics_menu_stored">Сохранённые</string>
     <string name="ics_menu_challenges">Вызовы</string>
     <string name="ics_menu_seek">Поиск</string>
-    <string name="menu_abort">Прервать</string>
+    <string name="menu_abort">Отменить</string>
     <string name="ics_menu_draw">Ничья</string>
-    <string name="ics_menu_flag">Флажок</string>
+    <string name="ics_menu_flag">Заявить время</string>
     <string name="ics_menu_resign">Сдаться</string>
     <string name="ics_menu_console">Консоль</string>
-    <string name="ics_menu_top_blitz">Топ Блиц</string>
-    <string name="ics_menu_top_standard">Топ Стандарт</string>
+    <string name="ics_menu_top_blitz">Лучшие блиц</string>
+    <string name="ics_menu_top_standard">Лучшие стандарт</string>
+    <string name="ics_menu_puzzlebot_mate">Puzzlebot мат</string>
+    <string name="ics_menu_puzzlebot_tactics">Puzzlebot тактика</string>
+    <string name="ics_menu_puzzlebot_study">Puzzlebot обучение</string>
 
     <string name="ics_playertwo">Игрок 2</string>
     <string name="ics_playerone">Игрок 1</string>
-    <string name="ics_offers_abort">Ваш противник хочет прервать игру.\nВы согласны?</string>
-    <string name="ics_offers_draw">Ваш противник предлагает ничью.\nВы согласны?</string>
-    <string name="ics_offers_adjourn">Ваш противник хочет отложить игру.\nВы согласны?</string>
-    <string name="ics_offers_takeback">Ваш противник хочет отменить свой ход.\nВы согласны?</string>
+    <string name="ics_offers_abort">Ваш соперник хочет отменить партию.\nПринять?</string>
+    <string name="ics_offers_draw">Ваш соперник предлагает ничью.\nПринять?</string>
+    <string name="ics_offers_adjourn">Ваш соперник хочет отложить партию.\nПринять?</string>
+    <string name="ics_offers_takeback">Ваш соперник хочет отменить ход.\nПринять?</string>
     <string name="ics_request_sent">Запрос отправлен</string>
-    <string name="ics_game_over">Игра закончена</string>
+    <string name="ics_game_over">Игра окончена</string>
 
-    <string name="copied_clipboard_success">Игра успешно сохранена в буфер обмена</string>
-    <string name="ics_offer_rematch">Предложить МАТЧ-РЕВАНШ</string>
-    <string name="ics_examine">Исследовать</string>
+    <string name="copied_clipboard_success">Партия успешно скопирована в буфер</string>
+    <string name="ics_offer_rematch">Предложить РЕВАНШ</string>
+    <string name="ics_examine">Анализ</string>
 
-    <string name="ics_lost_connection">Подключение к серверу оборвано.</string>
+    <string name="ics_lost_connection">Соединение с сервером потеряно.</string>
+    <string name="ics_error">Произошла ошибка. Попробуйте позже.</string>
 
-    <string name="ics_notification_title">Шахматы Йероен</string>
+    <string name="ics_notification_title">Шахматы от Jeroen</string>
     <string name="ics_notification_text">Нажмите, чтобы играть</string>
 
-    <string name="ics_seekseek">Искать</string>
+    <string name="ics_seekseek">Поиск</string>
     <string name="ics_seekchallenge">Вызов</string>
     <string name="ics_seekplayer">Игрок</string>
     <string name="ics_seektime">Время (мин)</string>
-    <string name="ics_seektimeinc">Приращение времени (сек)</string>
+    <string name="ics_seektimeinc">Прибавка (сек)</string>
     <string name="ics_seekvariant">Вариант</string>
     <string name="ics_seekcolor">Цвет</string>
-    <string name="ics_seekrangemin">Упорядочить по рейтингу MIN</string>
-    <string name="ics_seekrangemax">Упорядочить по рейтингу MAX</string>
-    <string name="ics_seekrated">Игры с рейтингом</string>
-    <string name="ics_seekmanual">Принять вручную</string>
+    <string name="ics_seekrangemin">Рейтинг MIN</string>
+    <string name="ics_seekrangemax">Рейтинг MAX</string>
+    <string name="ics_seekrated">Рейтинговая партия</string>
+    <string name="ics_seekmanual">Принятие вручную</string>
     <string name="ics_seekformula">Формула</string>
 
-    <string name="ics_historygamenumber">Номер игры в Истории</string>
-    <string name="ics_typegamenumber">Введите номер игры</string>
+    <string name="ics_historygamenumber">Номер партии в истории</string>
+    <string name="ics_typegamenumber">Введите номер партии из</string>
     <string name="ics_history">История</string>
-    <string name="ics_finger">Итог</string>
-    <string name="ics_follow">Подписаться</string>
-    <string name="ics_unfollow">Отписаться</string>
+    <string name="ics_finger">Сводка</string>
+    <string name="ics_follow">Следить</string>
+    <string name="ics_unfollow">Не следить</string>
     <string name="ics_match">Матч</string>
-    <string name="ics_gamenumber">Игра #</string>
+    <string name="ics_gamenumber">Партия #</string>
+    <string name="ics_quit">Выйти?</string>
 
-    <string name="practice_help">Найдите мат (можно сделать несколько ходов).</string>
-    <string name="puzzle_help">Это трудные головоломки, содержащие мат в два хода.\nЦель - найти первый ход, который приведёт к вынужденному мату в течение двух ходов.\nДругими словами, после того, как вы сделаете правильный ход, противник не сможет избежатьмата при вашем следующем ходе.\nПосле этого первого хода головоломка считается решённой.\nНажмите кнопку \'Показать\' для решения.\nИсточник: ИСКУССТВО МАТА В ДВА ХОДА, Эдуардо Садьер</string>
+    <string name="practice_help">Найди мат (может требоваться несколько ходов).</string>
+    <string name="puzzle_help">Это сложные задачи мат в два.\nЦель — найти первый ход, ведущий к форсированному мату за два хода.\nПосле правильного хода соперник не сможет избежать мата.\nПосле этого задача считается решённой.\nНажмите «Показать» для решения.\nИсточник: EL ARTE DEL MATE EN DOS, Eduardo Sadier</string>
+
     <string name="advanced_help"><![CDATA[
- <h3>Расширенные</h3>
-    <p>Создавайте или импортируйте собственные материалы.</p>
+<h3>Дополнительно</h3>
+<p>Создавайте или импортируйте свои материалы здесь.</p>
 
-    <h4>Экспорт игровой базы данных на SD-карту</h4>
-    <p>Все игры в игровой базе данных могут быть экспортированы в единый PGN-файл на SD-карту. Этот
-        файл будет назван chess.pgn, а уже существующий файл будет перезаписан.</p>
+<h4>Экспорт базы партий</h4>
+<p>Все партии могут быть экспортированы в один файл PGN (chess.pgn).</p>
 
-    <h4>Импорт игр в игровую базу данных</h4>
-    <p>Используйте эту опцию для добавления игр в игровую базу данных. Она позволяет перейти к
-        PGN-файлу. Выберите нужный и выделите его для импорта.</p>
+<h4>Импорт партий</h4>
+<p>Добавьте партии, выбрав PGN файл.</p>
 
-    <h4>Удалить все игры из игровой базы данных</h4>
-    <p>Используйте эту опцию, если хотите очистить игровую базу данных. Убедитесь, что вы сделали
-        резервную копию на SD-карте, это действие не может быть отменено.</p>
+<h4>Удаление всех партий</h4>
+<p>Очистка базы данных. Сделайте резервную копию, действие необратимо.</p>
 
-    <h4>Создать базу данных дебютов</h4>
-    <p>Перейдите к PGN-файлу на SD-карте, и он будет сконвертирован в базу данных дебютов с тем же
-        именем, но с расширением .bin. В настоящее время все игры в PGN-файле обрабатываются до
-        17-го полухода.</p>
+<h4>Создание базы дебютов</h4>
+<p>Конвертирует PGN в файл .bin (до 17 полуходов).</p>
 
-    <h4>Установить базу данных дебютов</h4>
-    <p>Перейдите к только что созданному .bin-файлу базы данных дебютов, чтобы разрешить Шахматам
-        использовать его.</p>
+<h4>Выбор базы дебютов</h4>
+<p>Выберите созданный файл .bin.</p>
 
-    <h4>Удалить движок UCI</h4>
-    <p>Удалить установленный движок UCI.</p>
+<h4>Удаление движка UCI</h4>
+<p>Удаляет установленный движок UCI.</p>
 
-    <h4>Создать тренировочный набор</h4>
-    <p>Создаются тренировочные позиции из игр, заканчивающихся матом. Перейдите к файлу для
-        обработки. Неудачные записи обычно происходят для игр, которые не заканчиваются матом или
-        которые дублируют уже имеющиеся игры.</p>
+<h4>Создание тренировочного набора</h4>
+<p>Создаёт упражнения из партий, закончившихся матом. Ошибки бывают из-за дубликатов или партий без мата.</p>
 
-    <h4>Сбросить тренировочный набор</h4>
-    <p>Хотите начать тренировку сначала? Это также сбросит счётчик вашего среднего времени.</p>
-     ]]></string>
-    <string name="online_help"> <![CDATA[
-<p>
-        <strong>FICS: Free Internet Chess Server</strong> позволяет играть с тысячами шахматных
-        игроков онлайн.<br/>
-        Предупреждение: если ваше устройство переключается с одной точки доступа на другую,
-        соединение может оборваться. Timeseal не используется.<br/>
-    </p>
-    <h4>Меню</h4>
-    <strong>Вызовы</strong><br/>
-    Кто ищет матч. Нажмите на игрока в списке, чтобы принять вызов.<br/>
-    <strong>Искать</strong><br/>
-    Сделайте собственный вызов. Если вы вставите ник знакомого игрока, будет сделан конкретный
-    вызов.<br/>
-    <strong>Игры</strong><br/>
-    Смотрите игры, проходящие в онлайн-режиме. Гроссмейстер может быть определён по префиксу GM в
-    имени пользователя.<br/>
-    <strong>Игроки</strong><br/>
-    Показывает незанятых игроков с рейтингом.
-    ]]></string>
+<h4>Сброс тренировочного набора</h4>
+<p>Хотите начать заново? Средний счётчик тоже сбросится.</p>
+]]></string>
 
-    <!-- Toast strings -->
-    <string name="toast_could_not_start_activity">Не удалось начать действие</string>
+    <string name="online_help"><![CDATA[
+<p><strong>FICS: Free Internet Chess Server</strong> позволяет играть с тысячами игроков.<br/>
+Внимание: если устройство переключит сеть, соединение может оборваться.<br/>
+</p>
+<h4>Меню</h4>
+<strong>Вызовы</strong><br/>Показаны игроки, ищущие матч. Нажмите, чтобы принять.<br/>
+<strong>Поиск</strong><br/>Создайте свой вызов. Если ввести имя игрока, вызов будет прямым.<br/>
+<strong>Партии</strong><br/>Наблюдайте за играми онлайн. Гроссмейстеры отмечены префиксом GM.<br/>
+<strong>Игроки</strong><br/>Показывает неактивных игроков с рейтингом.<br/>
+]]></string>
+
+    <!-- Toast -->
+    <string name="toast_could_not_start_activity">Не удалось запустить активность</string>
     <string name="toast_challenge_posted">Вызов опубликован</string>
 
-    <!-- array items -->
-    <string name="tile_none">none</string>
-    <string name="tile_double_shade">double shade</string>
-    <string name="tile_single_shade">single shade</string>
+    <string name="pieceset_alpha">Alpha</string>
+    <string name="pieceset_merida">Merida</string>
+    <string name="pieceset_leipzig">Leipzig</string>
+    <string name="pieceset_california">Калифорния</string>
+    <string name="pieceset_companion">Компаньон</string>
+    <string name="pieceset_chessnut">Chessnut</string>
+    <string name="pieceset_kosal">Kosal</string>
+    <string name="pieceset_staunty">Staunty</string>
+
+    <string name="tile_none">нет</string>
+    <string name="tile_double_shade">двойная тень</string>
+    <string name="tile_single_shade">одинарная тень</string>
 
     <string name="color_scheme_yellow">Жёлтый</string>
     <string name="color_scheme_blue">Синий</string>
@@ -312,11 +333,11 @@
     <string name="color_scheme_grey">Серый</string>
     <string name="color_scheme_brown">Коричневый</string>
     <string name="color_scheme_red">Красный</string>
-    <string name="color_scheme_orange">Oранжевый</string>
+    <string name="color_scheme_orange">Оранжевый</string>
     <string name="color_scheme_pink">Розовый</string>
-    <string name="color_scheme_purple">Пурпурный</string>
+    <string name="color_scheme_purple">Фиолетовый</string>
 
-    <string name="match_option_color_random">Произвольно</string>
+    <string name="match_option_color_random">Случайно</string>
     <string name="match_option_color_white">Белые</string>
     <string name="match_option_color_black">Чёрные</string>
 

@@ -3,7 +3,7 @@
 
     <string name="app_name">Satranç</string>
     <string name="app_name_play">Oyna</string>
-    <string name="app_name_playonline">Çevrim içi oyna</string>
+    <string name="app_name_playonline">Çevrimiçi oyna</string>
     <string name="app_name_setup">Kurulum</string>
     <string name="app_name_help">Yardım</string>
     <string name="app_name_import">İçe aktar</string>
@@ -12,145 +12,155 @@
 
     <string name="start_play">Oyna</string>
     <string name="start_practice">Alıştırma</string>
-    <string name="start_puzzles">Bulmacalar</string>
+    <string name="start_puzzles">Problemler</string>
+    <string name="start_hotspotboard">Hotspot tahtası (deneysel)</string>
     <string name="start_pgn">Gelişmiş</string>
-    <string name="start_ics">Çevrim içi oyna</string>
+    <string name="start_ics">Çevrimiçi oyna</string>
     <string name="start_boardpreferences">Satranç tahtası ayarları</string>
 
     <string name="globalpreferences">Genel ayarlar</string>
-    <string name="playpreferences">Oynama ayarları</string>
-    <string name="playonlinepreferences">Çevrim içi oynama ayarları</string>
+    <string name="playpreferences">Oyun ayarları</string>
+    <string name="playonlinepreferences">Çevrimiçi oyun ayarları</string>
     <string name="boardprerences">Tahta ayarları</string>
-    <string name="gamepreferences">Oyun ayarları</string>
+    <string name="gamepreferences">Parti ayarları</string>
     <string name="preferences">Ayarlar</string>
-    <string name="pref_wakelock">Uyandırma kilidini kullan</string>
-    <string name="pref_wakelock_desc">Bu, telefonunuzun uykuya geçmesini önleyecektir</string>
+    <string name="pref_wakelock">Ekranı açık tut</string>
+    <string name="pref_wakelock_desc">Cihazın uyku moduna geçmesini engeller</string>
     <string name="pref_showCoords">Koordinatlar</string>
     <string name="pref_sound">Ses</string>
-    <string name="pref_sound_desc">Rakibiniz hamle yaptığında çalınır</string>
-    <string name="pref_speech">Konuşma</string>
-    <string name="pref_speech_desc">Yapılan hamleyi anlatır</string>
+    <string name="pref_sound_desc">Rakip hamle yaptığında çalınır</string>
+    <string name="pref_speech">Sesli okuma</string>
+    <string name="pref_speech_desc">Yapılan hamleyi söyler</string>
     <string name="pref_eco">ECO bilgisi</string>
-    <string name="pref_eco_desc">Varsa ECO açılış bilgilerini göster</string>
+    <string name="pref_eco_desc">Mümkün olduğunda ECO açılış bilgilerini göster</string>
     <string name="pref_fullscreen">Tam ekranı etkinleştir</string>
-    <string name="pref_fullscreen_desc">Küçük ekranlar ve yatay görünüm için tavsiye edilir; diğer durumlarda ögeler ekranın dışına taşabilir</string>
+    <string name="pref_fullscreen_desc">Küçük ekranlar ve yatay mod için önerilir; aksi halde bazı öğeler ekrandan taşabilir</string>
     <string name="pref_tileset">Kare deseni</string>
     <string name="pref_icscustomcommand">Özel komutlar</string>
-    <string name="pref_icscustomcommand_desc">Kendi özel komutlarınızı oluşturun</string>
+    <string name="pref_icscustomcommand_desc">Kendi özel komutlarını oluştur</string>
     <string name="pref_icsconsolecharactersize">KONSOL karakter boyutu</string>
-    <string name="pref_icsconsolecharactersize_desc">KONSOL karakterlerinin boyutunu ayarlayın</string>
+    <string name="pref_icsconsolecharactersize_desc">Konsoldaki karakter boyutunu ayarla</string>
     <string name="pref_icsautosought">Otomatik arama</string>
-    <string name="pref_icsautosought_desc">Karşılaşmalar ekranını otomatik yenile</string>
-    <string name="pref_icstimewarning">Süre Azaldı Uyarısı</string>
-    <string name="pref_icstimewarning_desc">Uyarı eşiğinin altında süreniz kaldığında bir tik tak sesi sizi uyarır</string>
-    <string name="pref_icstimewarningsecs">Süre Uyarı Eşiği (saniye)</string>
-    <string name="pref_icstimewarningsecs_desc">Süre uyarısının başlamasına kaç saniye kaldı?</string>
-    <string name="prefs_icsendgamedialog">Oyun Sonu İletişim Kutusu</string>
-    <string name="prefs_icsendgamesummary">Bir oyunun sonunda, bir kaydetme iletişim kutusunun açılmasını ister misiniz?</string>
-    <string name="pref_icsnotification">Yeni Oyun Bildirimi</string>
-    <string name="prefs_icsnotificationsummary">Oyunun başladığını bir simge ile bildirir</string>
-    <string name="pref_vs_cpu">CPU\'ya karşı</string>
-    <string name="pref_vs_cpu_desc">CPU/Motora karşı oynayın</string>
+    <string name="pref_icsautosought_desc">Meydan okuma ekranını otomatik yeniler</string>
+    <string name="pref_icstimewarning">Zaman uyarısı</string>
+    <string name="pref_icstimewarning_desc">Zaman belirtilen eşiğe düştüğünde tik-tak sesi uyarır</string>
+    <string name="pref_icstimewarningsecs">Uyarı süresi (sn)</string>
+    <string name="pref_icstimewarningsecs_desc">Uyarı kaç saniye kala başlasın?</string>
+    <string name="prefs_icsendgamedialog">Oyun sonu penceresi</string>
+    <string name="prefs_icsendgamesummary">Oyunun sonunda kaydetme penceresi açılsın mı?</string>
+    <string name="pref_icsnotification">Yeni oyun bildirimi</string>
+    <string name="prefs_icsnotificationsummary">Oyunun başladığını simgeyle bildirir</string>
+    <string name="pref_vs_cpu">CPU’ya karşı</string>
+    <string name="pref_vs_cpu_desc">CPU/Motor’a karşı oyna</string>
     <string name="pref_turn">Taraf</string>
-    <string name="pref_turn_desc">Tahtanın hangi tarafında oynarsınız</string>
+    <string name="pref_turn_desc">Hangi tarafta oynayacağın</string>
     <string name="pref_night_mode">Gece modu</string>
-    <string name="pref_night_mode_desc">Uygulamayı gece moduna zorlayın</string>
+    <string name="pref_night_mode_desc">Uygulamayı gece modunda zorla</string>
 
     <string name="button_ok">Tamam</string>
     <string name="button_cancel">İptal</string>
-    <string name="button_login">Oturum aç</string>
-    <string name="button_register">Kaydol</string>
+    <string name="button_login">Giriş</string>
+    <string name="button_register">Kayıt ol</string>
     <string name="button_close">Kapat</string>
     <string name="button_save">Kaydet</string>
-    <string name="button_save_copy">Kopyasını kaydet</string>
+    <string name="button_save_copy">Kopya kaydet</string>
     <string name="puzzle_show">Göster</string>
 
     <string name="alert_yes">Evet</string>
     <string name="alert_no">Hayır</string>
     <string name="alert_ok">Tamam</string>
 
-    <string name="title_challenge">Karşılaşma</string>
+    <string name="title_challenge">Meydan okuma</string>
     <string name="title_error">Hata</string>
-    <string name="title_offers_abort">İsteği iptal et</string>
-    <string name="title_offers_takeback">İsteği geri al</string>
-    <string name="title_offers_draw">İstek oluştur</string>
-    <string name="title_offers_adjourn">İsteği ertele</string>
-    <string name="title_pick_level">Oyun seviyesini seç</string>
+    <string name="title_offers_abort">İptal isteği</string>
+    <string name="title_offers_takeback">Geri alma isteği</string>
+    <string name="title_offers_draw">Beraberlik isteği</string>
+    <string name="title_offers_adjourn">Erteleme isteği</string>
+    <string name="title_pick_level">Oyun seviyesi seç</string>
     <string name="title_menu">Menü</string>
     <string name="title_save_game">Oyunu kaydet</string>
     <string name="title_delete_game">Oyunu sil</string>
-    <string name="title_pick_promo">Terfi ettirilecek taşı seçin</string>
-    <string name="title_castle">Rok?</string>
-    <string name="title_pick_en_passant">Geçerken alma sütunu</string>
-    <string name="title_create_new_line">Yeni bir hat oluşturulsun mu?</string>
-    <string name="title_chess960_manual_random">Satranç 960 :: Elle konum numarası mı yoksa rastgele mi?</string>
+    <string name="title_pick_promo">Terfi piyesi seç</string>
+    <string name="title_castle">Rok mu?</string>
+    <string name="title_pick_en_passant">En passant karesi</string>
+    <string name="title_create_new_line">Yeni varyant oluşturulsun mu?</string>
+    <string name="title_chess960_manual_random">Chess960: Manuel mi rastgele mi?</string>
     <string name="title_edit_or_delete">Düzenle veya sil?</string>
-    <string name="title_edit_command">Düzenleme komutu</string>
+    <string name="title_edit_command">Komutu düzenle</string>
 
     <string name="menu_help">Yardım</string>
-    <string name="menu_new">Yeni Oyun</string>
-    <string name="menu_new_duck">Yeni Ördek (deneysel)</string>
-    <string name="menu_clip_pgn">Panoya oyun</string>
-    <string name="menu_fromclip">Panodan oyun</string>
+    <string name="menu_new">Yeni oyun</string>
+    <string name="menu_new_duck">Yeni Duck (deneysel)</string>
+    <string name="menu_clip_pgn">Oyun panoya kopyala</string>
+    <string name="menu_fromclip">Panodan oyun al</string>
     <string name="menu_save_game">Oyunu kaydet</string>
-    <string name="menu_load_game">Oyunu yükle</string>
+    <string name="menu_load_game">Oyun yükle</string>
     <string name="menu_flip">Döndür</string>
     <string name="menu_setup">Tahtayı ayarla</string>
-    <string name="menu_new_command">Yeni Komut</string>
-    <string name="menu_new_command_message">Geri dönüş olmaması için komutun sonuna \u003cNR\u003e ekleyin\nörnek:  tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_set_clock">Saati ayarla</string>
+    <string name="menu_new_command">Yeni komut</string>
+    <string name="menu_new_command_message">sonuna \u003cNR\u003e yaz komut dönüşsüz olsun\nörnek: tell ChessMaster \u003cNR\u003e\n</string>
+    <string name="menu_set_clock">Süreyi ayarla</string>
     <string name="menu_prefs">Ayarlar</string>
-    <string name="menu_game_settings">Oyun Ayarları</string>
+    <string name="menu_game_settings">Oyun ayarları</string>
     <string name="menu_new_960">Yeni rastgele Fischer / 960</string>
 
-    <string name="pref_show_blindfold">Kör</string>
+    <string name="pref_show_blindfold">Gözbağı</string>
 
-    <string name="options_play_human">İnsana Karşı İnsan</string>
-    <string name="options_play_android">İnsana Karşı Android</string>
+    <string name="options_play_human">İnsan vs İnsan</string>
+    <string name="options_play_android">İnsan vs Android</string>
     <string name="options_play_white">Beyaz</string>
     <string name="options_play_black">Siyah</string>
-    <string name="options_quiescent_on">Quiescence arama açık</string>
-    <string name="options_quiescent_off">Quiescence arama kapalı</string>
+    <string name="options_quiescent_on">Sessizlik araması açık</string>
+    <string name="options_quiescent_off">Sessizlik araması kapalı</string>
     <string name="pref_show_possible_moves">Hamleleri göster</string>
-    <string name="options_level_time">Seviye (süre)</string>
-    <string name="options_level_ply">Seviye (oyun)</string>
+    <string name="options_level_time">Seviye (zaman)</string>
+    <string name="options_level_ply">Seviye (yarım hamle)</string>
 
     <string name="state_play">oyunda</string>
-    <string name="state_draw_material">berabere (malzeme)</string>
-    <string name="state_draw_50">berabere (50 hamle kuralı)</string>
-    <string name="state_draw_stalemate">berabere (pat)</string>
-    <string name="state_draw_repeat">berabere (üçlü tekrar)</string>
-    <string name="state_mate">şah mat</string>
+    <string name="state_draw_material">beraberlik (malzeme)</string>
+    <string name="state_draw_50">beraberlik (50 hamle kuralı)</string>
+    <string name="state_draw_stalemate">beraberlik (pat)</string>
+    <string name="state_draw_repeat">beraberlik (3 tekrar)</string>
+    <string name="state_mate">mat</string>
     <string name="state_check">şah</string>
-    <string name="state_black_forfeits_time">siyah süreden kaybetti</string>
-    <string name="state_white_forfeits_time">beyaz süreden kaybetti</string>
-    <string name="state_black_resigned">siyah çekildi</string>
-    <string name="state_white_resigned">beyaz çekildi</string>
-    <string name="state_draw_agreement">anlaşmalı berabere</string>
+    <string name="state_black_forfeits_time">siyah süreyi kaybetti</string>
+    <string name="state_white_forfeits_time">beyaz süreyi kaybetti</string>
+    <string name="state_black_resigned">siyah terk etti</string>
+    <string name="state_white_resigned">beyaz terk etti</string>
+    <string name="state_draw_agreement">anlaşmalı beraberlik</string>
 
     <string name="choice_level_1">1 saniye</string>
-    <string name="choice_level_2">2 saniye </string>
+    <string name="choice_level_2">2 saniye</string>
     <string name="choice_level_3">4 saniye</string>
-    <string name="choice_level_4">8 saniye (ortalama) </string>
+    <string name="choice_level_4">8 saniye (orta)</string>
     <string name="choice_level_5">10 saniye</string>
     <string name="choice_level_6">20 saniye</string>
-    <string name="choice_level_7">30 saniye (deneysel) </string>
+    <string name="choice_level_7">30 saniye (deneyimli)</string>
     <string name="choice_level_8">1 dakika</string>
     <string name="choice_level_9">5 dakika</string>
     <string name="choice_level_10">15 dakika</string>
-    <string name="choice_queen">Vezir</string>
-    <string name="choice_rook">Kale</string>
-    <string name="choice_bishop">Fil</string>
-    <string name="choice_knight">At</string>
-    <string name="choice_manually">Elle</string>
+
+    <string name="square_description">Kare %1$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s karesinde</string>
+    <string name="square_selected_description">%1$s seçildi</string>
+
+    <string name="piece_white">Beyaz</string>
+    <string name="piece_black">Siyah</string>
+    <string name="piece_king">Şah</string>
+    <string name="piece_queen">Vezir</string>
+    <string name="piece_rook">Kale</string>
+    <string name="piece_bishop">Fil</string>
+    <string name="piece_knight">At</string>
+    <string name="piece_pawn">Piyon</string>
+    <string name="choice_manually">Manuel</string>
     <string name="choice_random">Rastgele</string>
     <string name="choice_edit">Düzenle</string>
     <string name="choice_delete">Sil</string>
 
-    <string name="puzzle_already_solved">(konum zaten çözüldü)</string>
+    <string name="puzzle_already_solved">(pozisyon zaten çözüldü)</string>
     <string name="puzzle_not_correct_move"> beklenen hamle değil</string>
 
-    <string name="savegame_event">Etkinlik?</string>
+    <string name="savegame_event">Etkinlik</string>
     <string name="savegame_event_question">Etkinlik?</string>
     <string name="savegame_white">Beyaz</string>
     <string name="savegame_white_question">Beyaz?</string>
@@ -161,173 +171,155 @@
     <string name="gameslist_stars">Yıldızlar</string>
     <string name="gameslist_date">Tarih</string>
     <string name="gameslist_event">Etkinlik</string>
-    <string name="gameslist_id">Kimlik</string>
+    <string name="gameslist_id">ID</string>
     <string name="games_list_white_pieces">Beyaz taşlar</string>
     <string name="gameslist_black_pieces">Siyah taşlar</string>
 
     <string name="msg_setup_turn">Sıra</string>
     <string name="msg_setup_turn_white">beyaz</string>
     <string name="msg_setup_turn_black">siyah</string>
-    <string name="msg_setup_enpassant">Geçerken alma karesi</string>
+    <string name="msg_setup_enpassant">En passant karesi</string>
     <string name="msg_setup_castle_white">Beyaz</string>
     <string name="msg_setup_castle_black">Siyah</string>
     <string name="msg_ics_enter_handle">Lütfen kullanıcı adınızı girin</string>
-    <string name="msg_ics_enter_password">Lütfen parolanızı girin</string>
+    <string name="msg_ics_enter_password">Lütfen şifrenizi girin</string>
 
-    <string name="err_chess960_position_range">Geçersiz konum, 0 ile 960 arasında bir sayı girin</string>
-    <string name="err_chess960_position_format">Geçersiz konum, bir sayı girin</string>
+    <string name="err_chess960_position_range">Geçersiz pozisyon, 0 ile 960 arasında bir sayı girin</string>
+    <string name="err_chess960_position_format">Geçersiz pozisyon, bir sayı girin</string>
 
-    <string name="pgntool_export_explanation">Oyun veri tabanını dışa aktar</string>
-    <string name="pgntool_import_explanation">Oyunları oyun veri tabanına aktar</string>
-    <string name="pgntool_delete_explanation">Oyun veri tabanındaki tüm oyunları sil</string>
-    <string name="pgntool_create_db_explanation">Açılış veri tabanı oluştur</string>
-    <string name="pgntool_point_db_explanation">Açılış veri tabanını ayarla</string>
+    <string name="pgntool_export_explanation">Oyun veritabanını dışa aktar</string>
+    <string name="pgntool_import_explanation">Oyunları veritabanına aktar</string>
+    <string name="pgntool_delete_explanation">Veritabanındaki tüm oyunları sil</string>
+    <string name="pgntool_create_db_explanation">Açılış veritabanı oluştur</string>
+    <string name="pgntool_point_db_explanation">Açılış veritabanını ayarla</string>
     <string name="pgntool_unset_uci_engine">UCI motorunu kaldır</string>
-    <string name="pgntool_unset_uci_database">UCI veri tabanını kaldır</string>
+    <string name="pgntool_unset_uci_database">UCI veritabanını kaldır</string>
     <string name="pgntool_help">Yardım</string>
     <string name="pgntool_confirm_delete">Emin misiniz?</string>
     <string name="pgntool_deleted">Tüm oyunlar silindi</string>
-    <string name="pgntool_import_practice">Alıştırma takımı içe aktar</string>
-    <string name="pgntool_reset_practice">Alıştırmayı sıfırla - baştan başla</string>
-    <string name="pgntool_confirm_practice_reset">Sıfırlamak istediğinizden emin misiniz?</string>
-    <string name="pgntool_import_puzzle">Bulmacaları içe aktar</string>
+    <string name="pgntool_import_practice">Alıştırma seti içe aktar</string>
+    <string name="pgntool_reset_practice">Alıştırmayı sıfırla - yeniden başla</string>
+    <string name="pgntool_confirm_practice_reset">Sıfırlamak istediğinize emin misiniz?</string>
+    <string name="pgntool_import_puzzle">Problemleri içe aktar</string>
     <string name="pgntool_import_opening">Geliştirici tarafından kullanılır</string>
 
-    <string name="practice_set_reset">Alıştırma takımı sıfırlandı</string>
+    <string name="practice_set_reset">Alıştırma seti sıfırlandı</string>
 
-    <string name="ics_client_handle">Kullanıcı adı</string>
-    <string name="ics_client_password">Parola</string>
+    <string name="ics_client_handle">Kullanıcı</string>
+    <string name="ics_client_password">Şifre</string>
     <string name="ics_client_server">Sunucu</string>
 
     <string name="ics_menu_players">Oyuncular</string>
     <string name="ics_menu_games">Oyunlar</string>
-    <string name="ics_menu_stored">Kaydedildi</string>
-    <string name="ics_menu_challenges">Karşılaşmalar</string>
+    <string name="ics_menu_stored">Kayıtlı</string>
+    <string name="ics_menu_challenges">Meydan okumalar</string>
     <string name="ics_menu_seek">Ara</string>
-    <string name="menu_abort">İptal et</string>
-    <string name="ics_menu_draw">Oluştur</string>
-    <string name="ics_menu_flag">İşaretle</string>
-    <string name="ics_menu_resign">Çekil</string>
+    <string name="menu_abort">İptal</string>
+    <string name="ics_menu_draw">Beraberlik</string>
+    <string name="ics_menu_flag">Süreyi talep et</string>
+    <string name="ics_menu_resign">Terk et</string>
     <string name="ics_menu_console">Konsol</string>
-    <string name="ics_menu_top_blitz">En İyi Blitz</string>
-    <string name="ics_menu_top_standard">En İyi Standart</string>
+    <string name="ics_menu_top_blitz">En iyi Blitz</string>
+    <string name="ics_menu_top_standard">En iyi Standart</string>
     <string name="ics_menu_puzzlebot_mate">Puzzlebot mat</string>
-    <string name="ics_menu_puzzlebot_tactics">Puzzlebot taktikleri</string>
-    <string name="ics_menu_puzzlebot_study">Puzzlebot eğitimi</string>
+    <string name="ics_menu_puzzlebot_tactics">Puzzlebot taktik</string>
+    <string name="ics_menu_puzzlebot_study">Puzzlebot çalışma</string>
 
     <string name="ics_playertwo">Oyuncu 2</string>
     <string name="ics_playerone">Oyuncu 1</string>
-    <string name="ics_offers_abort">Rakibiniz oyunu iptal etmek istiyor.\nKabul etmek istiyor musunuz?</string>
-    <string name="ics_offers_draw">Rakibiniz size beraberlik teklif ediyor.\nKabul etmek istiyor musunuz?</string>
-    <string name="ics_offers_adjourn">Rakibiniz oyunu ertelemek istiyor.\nKabul etmek istiyor musunuz?</string>
-    <string name="ics_offers_takeback">Rakibiniz bir hamleyi geri almak istiyor.\nKabul etmek istiyor musunuz?</string>
+    <string name="ics_offers_abort">Rakibiniz oyunu iptal etmek istiyor.\nKabul ediyor musunuz?</string>
+    <string name="ics_offers_draw">Rakibiniz size beraberlik teklif ediyor.\nKabul ediyor musunuz?</string>
+    <string name="ics_offers_adjourn">Rakibiniz oyunu ertelemek istiyor.\nKabul ediyor musunuz?</string>
+    <string name="ics_offers_takeback">Rakibiniz hamleyi geri almak istiyor.\nKabul ediyor musunuz?</string>
     <string name="ics_request_sent">İstek gönderildi</string>
-    <string name="ics_game_over">Oyun Bitti</string>
+    <string name="ics_game_over">Oyun bitti</string>
 
-    <string name="copied_clipboard_success">Oyun panoya başarıyla kopyalandı</string>
-    <string name="ics_offer_rematch">YENİDEN OYNAMA Teklif Et</string>
+    <string name="copied_clipboard_success">Oyun panoya kopyalandı</string>
+    <string name="ics_offer_rematch">RÖVANŞ teklif et</string>
     <string name="ics_examine">İncele</string>
 
-    <string name="ics_lost_connection">Sunucu ile bağlantı kesildi.</string>
+    <string name="ics_lost_connection">Sunucu bağlantısı koptu.</string>
     <string name="ics_error">Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</string>
 
-    <string name="ics_notification_title">Jeroen tarafından Satranç</string>
-    <string name="ics_notification_text">Oynamak için dokunun</string>
+    <string name="ics_notification_title">Jeroen’dan Satranç</string>
+    <string name="ics_notification_text">Oynamak için dokun</string>
 
     <string name="ics_seekseek">Ara</string>
-    <string name="ics_seekchallenge">Karşılaşma</string>
+    <string name="ics_seekchallenge">Meydan okuma</string>
     <string name="ics_seekplayer">Oyuncu</string>
-    <string name="ics_seektime">Süre (dakika)</string>
-    <string name="ics_seektimeinc">Süre artışı (saniye)</string>
-    <string name="ics_seekvariant">Çeşit</string>
+    <string name="ics_seektime">Süre (dak)</string>
+    <string name="ics_seektimeinc">Artış (sn)</string>
+    <string name="ics_seekvariant">Varyant</string>
     <string name="ics_seekcolor">Renk</string>
-    <string name="ics_seekrangemin">Puan Aralığı EN DÜŞÜK</string>
-    <string name="ics_seekrangemax">Puan Aralığı EN YÜKSEK</string>
-    <string name="ics_seekrated">Puanlı Oyun</string>
-    <string name="ics_seekmanual">Elle Kabul Et</string>
+    <string name="ics_seekrangemin">Elo Minimum</string>
+    <string name="ics_seekrangemax">Elo Maksimum</string>
+    <string name="ics_seekrated">Dereceli oyun</string>
+    <string name="ics_seekmanual">Manuel kabul</string>
     <string name="ics_seekformula">Formül</string>
 
-    <string name="ics_historygamenumber">Geçmiş Oyun Numarası</string>
-    <string name="ics_typegamenumber">Oyun numarasını girin</string>
+    <string name="ics_historygamenumber">Geçmiş oyun numarası</string>
+    <string name="ics_typegamenumber">Oyun numarasını gir</string>
     <string name="ics_history">Geçmiş</string>
     <string name="ics_finger">Özet</string>
     <string name="ics_follow">Takip et</string>
-    <string name="ics_unfollow">Takip etmeyi bırak</string>
-    <string name="ics_match">Eşleş</string>
+    <string name="ics_unfollow">Takibi bırak</string>
+    <string name="ics_match">Maç</string>
     <string name="ics_gamenumber">Oyun #</string>
-    <string name="ics_quit">Çıkılsın mı?</string>
+    <string name="ics_quit">Çık?</string>
 
-    <string name="practice_help">Şah Matı Bul (birden fazla hamle olabilir).</string>
-    <string name="puzzle_help">Bunlar iki hamlede sıkı Mat bulmacalarıdır.\nAmaç, iki hamle içinde zorunlu bir mat ile sonuçlanan ilk hamleyi bulmaktır.\nBaşka bir deyişle, siz doğru hamleyi yaptıktan sonra, rakip bir sonraki hamlenizde mat olmasını engelleyemez.\nBu ilk hamleden sonra bulmaca çözülür.\nÇözüm için \'Göster\' düğmesine basın.\nKaynak: EL ARTE DEL MATE EN DOS, Eduardo Sadier</string>
-    <string name="advanced_help">
-         <![CDATA[
+    <string name="practice_help">Mati bul (birden fazla hamle olabilir).</string>
+    <string name="puzzle_help">Bunlar zor iki hamlede mat problemleridir.\nAmaç, iki hamlede zorunlu mata götüren ilk hamleyi bulmaktır.\nDoğru hamleden sonra rakip, bir sonraki hamlede matı engelleyemez.\nBu ilk hamleden sonra problem çözülmüş olur.\nÇözüm için “Göster” düğmesine bas.\nKaynak: EL ARTE DEL MATE EN DOS - Eduardo Sadier</string>
+
+    <string name="advanced_help"><![CDATA[
 <h3>Gelişmiş</h3>
-    <p>Kendi şeylerinizi burada oluşturun veya içe aktarın.</p>
+<p>Kendi içeriklerinizi burada oluşturun veya içe aktarın.</p>
 
-    <h4>Oyun veri tabanını sd karta aktarın</h4>
-    <p>Oyun veri tabanındaki tüm oyunlar sd karttaki tek bir PGN dosyasına aktarılabilir. Bu
-        dosyanın adı chess.pgn olacak ve aynı adda bir dosya varsa üzerine yazılacaktır.</p>
+<h4>Oyun veritabanını dışa aktar</h4>
+<p>Tüm oyunlar chess.pgn dosyasında dışa aktarılır. Önceki dosya üzerine yazılır.</p>
 
-    <h4>Oyunları oyun veri tabanına aktarın</h4>
-    <p>Oyun veri tabanına oyun eklemek için bu seçeneği kullanın. Bir PGN dosyasını bulmanıza izin
-         verir. Seçin ve içe aktarın.</p>
+<h4>Oyunları içe aktar</h4>
+<p>PGN dosyasını seçerek oyunları içe aktarabilirsiniz.</p>
 
-    <h4>Oyun veri tabanındaki tüm oyunları silin</h4>
-    <p>Oyun veri tabanını temizlemek istiyorsanız bu seçeneği kullanın. Önce sd karta bir yedekleme
-        yaptığınızdan emin olun, bu işlem geri alınamaz.</p>
+<h4>Tüm oyunları sil</h4>
+<p>Veritabanını temizler. Önce yedek alın, işlem geri alınamaz.</p>
 
-    <h4>Açılış veri tabanı oluşturun</h4>
-    <p>SD karttaki bir PGN dosyasını bulun ve bu aynı ada sahip ancak dosya adı uzantısı .bin olan
-        bir açılış veri tabanına dönüştürülecektir. Şu anda PGN dosyasındaki tüm oyunlar 17 oyuna
-        kadar ayrıştırılacaktır.</p>
+<h4>Açılış veritabanı oluştur</h4>
+<p>PGN dosyasını .bin veritabanına dönüştürür (17 yarım hamleye kadar).</p>
 
-    <h4>Açılış veri tabanını ayarlayın</h4>
-    <p>Satranç tarafından kullanılması için yeni oluşturulan .bin açılış veri tabanı dosyasını bulun.</p>
+<h4>Açılış veritabanı ayarla</h4>
+<p>Yeni oluşturulan .bin dosyasını seçin.</p>
 
-    <h4>UCI motorunu kaldırın</h4>
-    <p>Kurulu UCI motorunu kaldırın.</p>
+<h4>UCI motorunu kaldır</h4>
+<p>Kurulu motoru kaldırır.</p>
 
-    <h4>Alıştırma takımı oluşturun</h4>
-    <p>Şah mat ile biten oyunlardan alıştırma takımları oluşturur. İşlenecek dosyayı
-        bulun. Başarısız girdiler genellikle şah-mat ile bitmeyen oyunlar veya yinelenen
-        girdilerdir.</p>
+<h4>Alıştırma seti oluştur</h4>
+<p>Mat ile biten oyunlardan pozisyonlar üretir. Başarısızlık genellikle mat olmayan oyunlardan veya kopyalardan kaynaklanır.</p>
 
-    <h4>Alıştırma takımını sıfırlayın</h4>
-    <p>Alıştırmaya baştan başlamak mı istiyorsunuz? Bu aynı zamanda ortalama süre sayacınızı da sıfırlayacaktır.</p>
+<h4>Alıştırma setini sıfırla</h4>
+<p>Baştan başlamak ister misiniz? Ortalama sayaç da sıfırlanır.</p>
+]]></string>
 
-        ]]>
-    </string>
-    <string name="online_help">
-        <![CDATA[
-        <p>
-        <strong>FICS: Free Internet Chess Server</strong> binlerce satranç oyuncusuyla
-        çevrim içi oynamanızı sağlar.<br/>
-        Uyarı: Aygıtınız bir internet erişim noktasından diğerine geçerse bağlantı kopabilir.
-        Zaman ayarı yoktur.<br/>
-    </p>
-    <h4>Menü</h4>
-    <strong>Karşılaşmalar</strong><br/>
-    Bu, eşleşme arayan oyuncuları gösterir. Bir karşılaşmayı kabul etmek için listedeki oyuncuya tıklayın.<br/>
-    <strong>Ara</strong><br/>
-    Kendi karşılaşmanızı oluşturun. Tanıdığınız bir oyuncunun kullanıcı adını girerseniz, doğrudan
-    bir karşılaşma oluşturacaktır.<br/>
-    <strong>Oyunlar</strong><br/>
-    Çevrim içi oynanan oyunları izleyin. Bir satranç ustası (grandmaster), kullanıcı adındaki GM ön eki ile tanınabilir.<br/>
-    <strong>Oyuncular</strong><br/>
-    Boştaki oyuncuları puanlarıyla birlikte gösterir.<br/>
-         ]]>
-    </string>
+    <string name="online_help"><![CDATA[
+<p><strong>FICS: Free Internet Chess Server</strong> binlerce oyuncu ile çevrimiçi oynama imkanı sağlar.<br/>
+Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
+</p>
+<h4>Menü</h4>
+<strong>Meydan okumalar</strong><br/>Oyun arayan oyuncuları gösterir. Kabul etmek için dokun.<br/>
+<strong>Ara</strong><br/>Kendi meydan okumanı oluştur. Kullanıcı adı girersen doğrudan olur.<br/>
+<strong>Oyunlar</strong><br/>Çevrimiçi oyunları izle. GM öneki büyük ustaları gösterir.<br/>
+<strong>Oyuncular</strong><br/>Elo puanı olan boşta oyuncuları gösterir.<br/>
+]]></string>
 
-    <!-- Toast strings -->
+    <!-- Toast -->
     <string name="toast_could_not_start_activity">Etkinlik başlatılamadı</string>
-    <string name="toast_challenge_posted">Karşılaşma gönderildi</string>
+    <string name="toast_challenge_posted">Meydan okuma gönderildi</string>
 
-    <string name="pieceset_alpha">Alfa</string>
+    <string name="pieceset_alpha">Alpha</string>
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_leipzig">Leipzig</string>
-    <string name="pieceset_california">Kaliforniya</string>
+    <string name="pieceset_california">California</string>
     <string name="pieceset_companion">Arkadaş</string>
-    <string name="pieceset_chessnut">Kestane</string>
+    <string name="pieceset_chessnut">Chessnut</string>
     <string name="pieceset_kosal">Kosal</string>
     <string name="pieceset_staunty">Staunty</string>
 

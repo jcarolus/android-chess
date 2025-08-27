@@ -47,10 +47,10 @@
         <item>@string/choice_level_10</item>
     </string-array>
     <string-array name="promotionpieces">
-        <item>@string/choice_queen</item>
-        <item>@string/choice_rook</item>
-        <item>@string/choice_bishop</item>
-        <item>@string/choice_knight</item>
+        <item>@string/piece_queen</item>
+        <item>@string/piece_rook</item>
+        <item>@string/piece_bishop</item>
+        <item>@string/piece_knight</item>
     </string-array>
     <string-array name="colorschemes">
         <item>@string/color_scheme_yellow</item>

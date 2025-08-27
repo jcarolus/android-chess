@@ -139,10 +139,19 @@
     <string name="choice_level_8">1 minute</string>
     <string name="choice_level_9">5 minutes</string>
     <string name="choice_level_10">15 minutes</string>
-    <string name="choice_queen">Queen</string>
-    <string name="choice_rook">Rook</string>
-    <string name="choice_bishop">Bishop</string>
-    <string name="choice_knight">Knight</string>
+
+    <string name="square_description">Square %1$s</string>
+    <string name="square_with_piece_description">%1$s %2$s at %3$s</string>
+    <string name="square_selected_description">Selected %1$s</string>
+
+    <string name="piece_white">White</string>
+    <string name="piece_black">Black</string>
+    <string name="piece_king">King</string>
+    <string name="piece_queen">Queen</string>
+    <string name="piece_rook">Rook</string>
+    <string name="piece_bishop">Bishop</string>
+    <string name="piece_knight">Knight</string>
+    <string name="piece_pawn">Pawn</string>
     <string name="choice_manually">Manually</string>
     <string name="choice_random">Random</string>
     <string name="choice_edit">Edit</string>
