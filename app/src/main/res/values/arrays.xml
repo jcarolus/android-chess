@@ -107,10 +107,6 @@
         <item>40</item>
         <item>60</item>
     </string-array>
-    <string-array name="match_rated">
-        <item>@string/choice_match_unrated</item>
-        <item>@string/choice_match_rated</item>
-    </string-array>
     <string-array name="match_variant">
         <item>Standard</item>
         <item>Chess 960 (experimental)</item>
@@ -151,12 +147,6 @@
         <item>25</item>
         <item>45</item>
         <item>60</item>
-    </string-array>
-    <string-array name="gamestartsound">
-        <item>@string/game_start_sound_none</item>
-        <item>@string/game_start_sound_sound_and_vibration</item>
-        <item>@string/game_start_sound_sound_only</item>
-        <item>@string/game_start_sound_vibration</item>
     </string-array>
     <string-array name="gamestartsound_values">
         <item>0</item>
