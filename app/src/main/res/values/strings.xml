@@ -9,12 +9,8 @@
     <string name="app_name_import">Import</string>
     <string name="app_name_pgntools">Advanced</string>
     <string name="app_name_save_games">Saved games</string>
-    <string name="version_number">Version: %1$s</string>
-
-    <string name="language">en</string>
 
     <string name="start_play">Play</string>
-    <string name="start_lessons">Lessons</string>
     <string name="start_practice">Practice</string>
     <string name="start_puzzles">Puzzles</string>
     <string name="start_hotspotboard">Hotspot board (experimental)</string>
@@ -23,43 +19,23 @@
     <string name="start_boardpreferences">Chess board settings</string>
 
     <string name="globalpreferences">Global settings</string>
-    <string name="puzzlepreferences">Puzzle settings</string>
     <string name="playpreferences">Play settings</string>
     <string name="playonlinepreferences">Play online settings</string>
-    <string name="enginepreferences">Engine settings</string>
     <string name="boardprerences">Board settings</string>
     <string name="gamepreferences">Game settings</string>
     <string name="preferences">Settings</string>
     <string name="pref_wakelock">Use wake lock</string>
     <string name="pref_wakelock_desc">This will prevent your phone going to sleep</string>
-    <string name="pref_colorscheme">Color scheme</string>
-    <string name="pref_colorscheme_desc">Colors for the board tiles</string>
     <string name="pref_showCoords">Coordinates</string>
-    <string name="pref_showCoords_desc">Show board coordinates</string>
-    <string name="pref_showLastMove">Show last move</string>
-    <string name="pref_showLastMove_desc">Shows the last move with highlighted squares</string>
     <string name="pref_sound">Sound</string>
     <string name="pref_sound_desc">Played when your opponent moves</string>
     <string name="pref_speech">Speech</string>
     <string name="pref_speech_desc">Tells the move that was made</string>
-    <string name="pref_move_sound_on">Move sound</string>
-    <string name="pref_move_sound_on_desc">Plays sound when a move was made</string>
     <string name="pref_eco">ECO info</string>
     <string name="pref_eco_desc">Show ECO opening info when available</string>
-    <string name="pref_extrahighlight">Extra highlight</string>
-    <string name="pref_extrahighlight_desc">Make move highlighting extra visible</string>
     <string name="pref_fullscreen">Enable full screen</string>
     <string name="pref_fullscreen_desc">Recommended for small screens and landscape view; elements may fall off the screen otherwise</string>
-    <string name="pref_onLoadJumpToLastMove">Jump to last move</string>
-    <string name="pref_onLoadJumpToLastMove_desc">When resuming the App, jump to the last move</string>
-    <string name="pref_uci">UCI Engine</string>
-    <string name="pref_uci_desc">Select the chess engine to use</string>
-    <string name="pref_pieceset">Piece set</string>
-    <string name="pref_pieceset_desc">The kind of piece set to display</string>
     <string name="pref_tileset">Square pattern</string>
-    <string name="pref_tileset_desc">Pattern used on a board square</string>
-    <string name="pref_icsconfirmmove">Confirm move</string>
-    <string name="pref_icsconfirmmove_desc">Manually confirm a move. If unchecked, a long press on the destination square will show the confirm dialog.</string>
     <string name="pref_icscustomcommand">Custom commands</string>
     <string name="pref_icscustomcommand_desc">Create your own custom commands</string>
     <string name="pref_icsconsolecharactersize">CONSOLE character size</string>
@@ -72,19 +48,8 @@
     <string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
     <string name="prefs_icsendgamedialog">EndGame Dialog</string>
     <string name="prefs_icsendgamesummary">At the end of a game, do you want a save dialog to popup?</string>
-    <string name="prefs_icsshowclock">Show Clock Times in PGN</string>
-    <string name="pref_icsgamestartsound">Game Start Sound</string>
-    <string name="pref_icsgamestartsound_desc">Play sound when game starts or loss of connection</string>
     <string name="pref_icsnotification">Notification of New Game</string>
     <string name="prefs_icsnotificationsummary">Lets you know the start of a game with an icon</string>
-    <string name="pref_puzzle_show_seekbar">Show seek bar</string>
-    <string name="pref_puzzle_show_seekbar_desc">Quickly navigate through puzzles with seek bar</string>
-    <string name="pref_localelanguage">Set The Language</string>
-    <string name="pref_localelanguage_desc">Choose the language you would like to use</string>
-    <string name="pref_skipreturn">Skip carriage return</string>
-    <string name="pref_skipreturn_desc">For USB board, a carriage return will be skipped so it does not close the app</string>
-    <string name="pref_engine_seconds">Engine time limit</string>
-    <string name="pref_engine_seconds_desc">The number of seconds the engine will take before it has to make a move</string>
     <string name="pref_vs_cpu">vs CPU</string>
     <string name="pref_vs_cpu_desc">Play versus the CPU/Engine</string>
     <string name="pref_turn">Side</string>
@@ -92,98 +57,62 @@
     <string name="pref_night_mode">Night mode</string>
     <string name="pref_night_mode_desc">Force the app into night mode</string>
 
-    <string name="button_play">Play</string>
-    <string name="button_undo">Undo</string>
     <string name="button_ok">OK</string>
-    <string name="button_menu">Menu</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_login">Login</string>
     <string name="button_register">Register</string>
     <string name="button_close">Close</string>
     <string name="button_save">Save</string>
     <string name="button_save_copy">Save copy</string>
-    <string name="button_new">New</string>
     <string name="puzzle_show">Show</string>
-    <string name="puzzle_jump_to">Jump to #</string>
+
+    <string name="button_engine_play_description">Engine play</string>
+    <string name="button_previous_move_description">Previous move</string>
+    <string name="button_next_move_description">Next move</string>
+    <string name="button_menu_description">Menu</string>
+    <string name="button_show_pgn_description">Show PGN</string>
+    <string name="button_next_position">Next position</string>
+    <string name="button_previous_position">Previous position</string>
+    <string name="button_reset_position">Reset position</string>
 
     <string name="alert_yes">Yes</string>
     <string name="alert_no">No</string>
-    <string name="alert_cancel">Cancel</string>
     <string name="alert_ok">OK</string>
-    <string name="alert_confirm">Confirm</string>
 
     <string name="title_challenge">Challenge</string>
-    <string name="title_loading">Loading&#8230;</string>
     <string name="title_error">Error</string>
     <string name="title_offers_abort">Abort request</string>
     <string name="title_offers_takeback">Take back request</string>
     <string name="title_offers_draw">Draw request</string>
     <string name="title_offers_adjourn">Adjourn request</string>
     <string name="title_pick_level">Pick playing level</string>
-    <string name="title_pick_wakelock">Pick wake lock option</string>
-    <string name="title_info">Info</string>
     <string name="title_menu">Menu</string>
-    <string name="title_welcome">Welcome</string>
-    <string name="title_annotate">Annotate</string>
     <string name="title_save_game">Save game</string>
-    <string name="title_options">Options</string>
     <string name="title_delete_game">Delete game</string>
-    <string name="title_notice">Notice</string>
     <string name="title_pick_promo">Pick promotion piece</string>
     <string name="title_castle">Castle?</string>
     <string name="title_pick_en_passant">En-passant file</string>
-    <string name="title_pick_colorscheme">Choose color</string>
-    <string name="title_pick_playmode">Choose play mode</string>
     <string name="title_create_new_line">Create new line?</string>
     <string name="title_chess960_manual_random">Chess 960 :: Manual position nr or random?</string>
     <string name="title_edit_or_delete">Edit or delete?</string>
     <string name="title_edit_command">Edit command</string>
-    <string name="title_ics_mode_idle">Idle</string>
-    <string name="title_ics_mode_play">Play</string>
-    <string name="title_ics_mode_watch">Watch</string>
-    <string name="title_ics_mode_examine">Examine</string>
-    <string name="title_ics_mode_puzzle">Puzzle</string>
-    <string name="title_ics_mode_endgame">Endgame</string>
-    <string name="title_installing">Installing</string>
-    <string name="title_puzzle_jump">Jump to puzzle number</string>
 
     <string name="menu_help">Help</string>
     <string name="menu_new">New Game</string>
     <string name="menu_new_duck">New Duck (experimental)</string>
-    <string name="menu_clear">Clear</string>
-    <string name="menu_options">Options</string>
-    <string name="menu_email_game">E-mail game</string>
     <string name="menu_clip_pgn">Game to clip board</string>
     <string name="menu_fromclip">Game from clip board</string>
     <string name="menu_save_game">Save game</string>
     <string name="menu_load_game">Load game</string>
-    <string name="menu_random_fischer">Chess 960</string>
-    <string name="menu_puzzles">Puzzles</string>
-    <string name="menu_practice">Practice</string>
-    <string name="menu_pgn_tool">PGN tool</string>
-    <string name="menu_about">About</string>
-    <string name="menu_exit">Exit</string>
     <string name="menu_flip">Rotate</string>
-    <string name="menu_more">More…</string>
     <string name="menu_setup">Setup board</string>
-    <string name="menu_from_qrcode">From QR-code</string>
-    <string name="menu_to_qrcode">To QR-code</string>
     <string name="menu_new_command">New Command</string>
     <string name="menu_new_command_message">type \u003cNR\u003e at end of command for no return\nexample:  tell ChessMaster \u003cNR\u003e\n</string>
     <string name="menu_set_clock">Set clock</string>
-    <string name="menu_start">Start</string>
-    <string name="menu_stop">Stop</string>
     <string name="menu_prefs">Settings</string>
     <string name="menu_game_settings">Game Settings</string>
     <string name="menu_new_960">New random Fischer / 960</string>
 
-    <string name="menu_subview_title">Choose sub controls</string>
-    <string name="pref_show_engine_info">Engine info</string>
-    <string name="pref_show_moves">Move history</string>
-    <string name="pref_show_seek">Move seek bar</string>
-    <string name="pref_show_captured">Captured pieces</string>
-    <string name="pref_show_annotate">Annotate move</string>
-    <string name="menu_subview_guess">Guess the move</string>
     <string name="pref_show_blindfold">Blindfold</string>
 
     <string name="options_play_human">Human vs Human</string>
@@ -192,18 +121,11 @@
     <string name="options_play_black">Black</string>
     <string name="options_quiescent_on">Quiescence search on</string>
     <string name="options_quiescent_off">Quiescence search off</string>
-    <string name="options_default">Standard Chess</string>
-    <string name="options_960">Chess 960 - Fischer Random</string>
-    <string name="options_load_database">Load openings database</string>
-    <string name="options_auto_flip">Auto flip board</string>
-    <string name="options_flip">Flip board</string>
-    <string name="options_setup">Setup board</string>
     <string name="pref_show_possible_moves">Show moves</string>
     <string name="options_level_time">Level (time)</string>
     <string name="options_level_ply">Level (ply)</string>
 
     <string name="state_play">in play</string>
-    <string name="state_draw">draw</string>
     <string name="state_draw_material">draw (material)</string>
     <string name="state_draw_50">draw (50 move rule)</string>
     <string name="state_draw_stalemate">draw (stalemate)</string>
@@ -215,12 +137,7 @@
     <string name="state_black_resigned">black resigned</string>
     <string name="state_white_resigned">white resigned</string>
     <string name="state_draw_agreement">draw by agreement</string>
-    <string name="state_time">forfeits on time</string>
-    <string name="state_resigned">resigned</string>
-    <string name="state_aborted">aborted</string>
-    <string name="state_adjourned">adjourned</string>
 
-    <string name="level_format">Level: %s</string>
     <string name="choice_level_1">1 sec</string>
     <string name="choice_level_2">2 sec </string>
     <string name="choice_level_3">4 sec</string>
@@ -231,29 +148,26 @@
     <string name="choice_level_8">1 minute</string>
     <string name="choice_level_9">5 minutes</string>
     <string name="choice_level_10">15 minutes</string>
-    <string name="choice_queen">Queen</string>
-    <string name="choice_rook">Rook</string>
-    <string name="choice_bishop">Bishop</string>
-    <string name="choice_knight">Knight</string>
-    <string name="choice_match_rated">Rated</string>
-    <string name="choice_match_unrated">Unrated</string>
-    <string name="choice_clock_num_minutes">%d minutes</string>
+
+    <string name="square_description">Square %1$s</string>
+    <string name="square_with_piece_description">%1$s %2$s at %3$s</string>
+    <string name="square_selected_description">Selected %1$s</string>
+
+    <string name="piece_white">White</string>
+    <string name="piece_black">Black</string>
+    <string name="piece_king">King</string>
+    <string name="piece_queen">Queen</string>
+    <string name="piece_rook">Rook</string>
+    <string name="piece_bishop">Bishop</string>
+    <string name="piece_knight">Knight</string>
+    <string name="piece_pawn">Pawn</string>
     <string name="choice_manually">Manually</string>
     <string name="choice_random">Random</string>
     <string name="choice_edit">Edit</string>
     <string name="choice_delete">Delete</string>
 
-    <string name="puzzle_error_install">An error occurred during install</string>
     <string name="puzzle_already_solved">(position already solved)</string>
     <string name="puzzle_not_correct_move"> is not the expected move</string>
-    <string name="puzzle_invalid_move"> is an invalid move</string>
-    <string name="puzzle_all_completed">You completed all puzzles!!!</string>
-    <string name="puzzle_pick_promotion">Pick promotion piece</string>
-
-    <string name="color_picker_brightness">Brightness</string>
-    <string name="color_picker_light">Light</string>
-    <string name="color_picker_dark">Dark</string>
-    <string name="color_picker_selected">Selected</string>
 
     <string name="savegame_event">Event</string>
     <string name="savegame_event_question">Event?</string>
@@ -262,7 +176,6 @@
     <string name="savegame_black">Black</string>
     <string name="savegame_black_question">Black?</string>
     <string name="savegame_date">Date</string>
-    <string name="savegame_date_question">Date?</string>
 
     <string name="gameslist_stars">Stars</string>
     <string name="gameslist_date">Date</string>
@@ -271,58 +184,28 @@
     <string name="games_list_white_pieces">White pieces</string>
     <string name="gameslist_black_pieces">Black pieces</string>
 
-    <string name="msg_illegal_move">Illegal move</string>
-    <string name="msg_state_format">%1$s</string>
-    <string name="msg_thinking">Thinking&#8230;</string>
-    <string name="msg_wait">Please wait&#8230;</string>
-    <string name="msg_calc_format">Move %1$s\tEvaluations %2$s</string>
-    <string name="msg_calc_summary_format">Engine summary: %1$s</string>
     <string name="msg_setup_turn">Turn</string>
     <string name="msg_setup_turn_white">white</string>
     <string name="msg_setup_turn_black">black</string>
     <string name="msg_setup_enpassant">En-passant square</string>
     <string name="msg_setup_castle_white">White</string>
     <string name="msg_setup_castle_black">Black</string>
-    <string name="msg_setup_extra">Press menu for setup options</string>
-    <string name="msg_qr_code_on_clipboard">Link to QR code is on your clipboard&#8230;</string>
-    <string name="chess960_position_nr">"Chess 960 position nr %d"</string>
     <string name="msg_ics_enter_handle">Please enter your handle</string>
     <string name="msg_ics_enter_password">Please enter your password</string>
-    <string name="msg_progress">Progress:</string>
 
-    <string name="err_sd_not_mounted">In order to process your request, your SD-card needs to be mounted.</string>
-    <string name="err_send_email">E-mail could not be created.</string>
-    <string name="err_load_fen">FEN chess position could not be loaded</string>
-    <string name="err_load_pgn">PGN chess history could not be loaded</string>
-    <string name="err_no_clip_text">There is no text on the clip board</string>
-    <string name="err_install_barcode_scanner">Please install Barcode scanner (ZXing)</string>
     <string name="err_chess960_position_range">Invalid position, enter a number between 0 and 960</string>
     <string name="err_chess960_position_format">Invalid position, enter a number</string>
-    <string name="err_puzzle_jump">Invalid puzzle number</string>
-    <string name="err_saving_game">Error saving game to chessgamesonline.pgn</string>
-    <string name="err_copy_clipboard">Error during copy to ClipBoard</string>
 
     <string name="pgntool_export_explanation">Export game database</string>
     <string name="pgntool_import_explanation">Import games into the game database</string>
     <string name="pgntool_delete_explanation">Delete all games in the game database</string>
-    <string name="pgntool_add_db_explanation">Add games to openingdatabase</string>
     <string name="pgntool_create_db_explanation">Create openingdatabase</string>
     <string name="pgntool_point_db_explanation">Set openingdatabase</string>
-    <string name="pgntool_install_uci_engine">Install UCI engine</string>
-    <string name="pgntool_point_uci_engine">Manually install UCI engine</string>
-    <string name="pgntool_uci_engines_not_found">No UCI engines found</string>
-    <string name="pgntool_uci_engine_success">UCI engine %s installed</string>
-    <string name="pgntool_uci_engine_error">An error occurred, could not install UCI engine</string>
     <string name="pgntool_unset_uci_engine">Uninstall UCI engine</string>
-    <string name="pgntool_install_uci_database">Install UCI database</string>
-    <string name="pgntool_uci_database_success">UCI database %s installed</string>
-    <string name="pgntool_uci_database_error">An error occurred, could not install UCI database</string>
     <string name="pgntool_unset_uci_database">Uninstall UCI database</string>
     <string name="pgntool_help">Help</string>
-    <string name="pgntool_numexport">Exported %1$d games to chess.pgn</string>
     <string name="pgntool_confirm_delete">Are you sure?</string>
     <string name="pgntool_deleted">All games deleted</string>
-    <string name="pgntool_create_practice_explanation">Create practice set</string>
     <string name="pgntool_import_practice">Import practice set</string>
     <string name="pgntool_reset_practice">Reset practice - start over</string>
     <string name="pgntool_confirm_practice_reset">Are you sure you want to reset?</string>
@@ -333,7 +216,6 @@
 
     <string name="ics_client_handle">Handle</string>
     <string name="ics_client_password">Password</string>
-    <string name="ics_client_presets">Presets</string>
     <string name="ics_client_server">Server</string>
 
     <string name="ics_menu_players">Players</string>
@@ -341,23 +223,11 @@
     <string name="ics_menu_stored">Stored</string>
     <string name="ics_menu_challenges">Challenges</string>
     <string name="ics_menu_seek">Seek</string>
-    <string name="ics_menu_resume">Resume</string>
-    <string name="ics_menu_board">Board</string>
-    <string name="ics_menu_help">Help</string>
     <string name="menu_abort">Abort</string>
-    <string name="ics_menu_adjourn">Adjourn</string>
     <string name="ics_menu_draw">Draw</string>
     <string name="ics_menu_flag">Flag</string>
     <string name="ics_menu_resign">Resign</string>
-    <string name="ics_menu_refresh">Refresh</string>
-    <string name="ics_menu_welcome">Welcome</string>
-    <string name="ics_menu_chat">Chat</string>
-    <string name="ics_menu_quit">Exit</string>
-    <string name="ics_menu_takeback">Take back move</string>
-    <string name="ics_menu_closeboard">Close board</string>
     <string name="ics_menu_console">Console</string>
-    <string name="ics_menu_unobserve">Stop observing</string>
-    <string name="ics_menu_stop_puzzle">Stop puzzle</string>
     <string name="ics_menu_top_blitz">Top Blitz</string>
     <string name="ics_menu_top_standard">Top Standard</string>
     <string name="ics_menu_puzzlebot_mate">Puzzlebot mate</string>
@@ -366,39 +236,22 @@
 
     <string name="ics_playertwo">Player 2</string>
     <string name="ics_playerone">Player 1</string>
-    <string name="ics_progress_title_login">Log in</string>
-    <string name="ics_progress_msg_login">Logging you in&#8230;</string>
-    <string name="ics_available_players">available (IDLE) players</string>
     <string name="ics_offers_abort">Your opponent would like to abort the game.\nDo you wish to accept?</string>
     <string name="ics_offers_draw">Your opponent offers you a draw.\nDo you wish to accept?</string>
     <string name="ics_offers_adjourn">Your opponent would like to adjourn the game.\nDo you wish to accept?</string>
     <string name="ics_offers_takeback">Your opponent would like to take back a move.\nDo you wish to accept?</string>
     <string name="ics_request_sent">Request sent</string>
     <string name="ics_game_over">Game Over</string>
-    <string name="ics_game_over_format">Game Over: %1$s</string>
-    <string name="ics_tells_you">%1$s tells you: %2$s</string>
 
-    <string name="ics_save_game">Successfully saved to chessgamesonline.pgn</string>
     <string name="copied_clipboard_success">Game copied to clipboard successfully</string>
-    <string name="ics_messages">Send Messages to opponent</string>
-    <string name="ics_good_game">Good Game</string>
     <string name="ics_offer_rematch">Offer REMATCH</string>
-    <string name="ics_game">Game</string>
     <string name="ics_examine">Examine</string>
-    <string name="ics_send_app">Send to APPLICATION</string>
-    <string name="copied_clipboard_success_text">Copy to CLIPBOARD</string>
 
-    <string name="ics_error_connection">Could not connect to server. Make sure you have your internet connection enabled</string>
     <string name="ics_lost_connection">Connection to server is broken.</string>
     <string name="ics_error">An error occurred. Please try again later.</string>
 
     <string name="ics_notification_title">Chess by Jeroen</string>
     <string name="ics_notification_text">Tap to play</string>
-    <string name="ics_welcome_format">Welcome <b>%1$s</b></string>
-    <string name="ics_start_text">(password empty to login as guest)</string>
-    <string name="ics_disconnected">DISCONNECTED from FICS</string>
-    <string name="ics_not_connected">Not connected</string>
-    <string name="ics_connect">Connect</string>
 
     <string name="ics_seekseek">Seek</string>
     <string name="ics_seekchallenge">Challenge</string>
@@ -413,8 +266,6 @@
     <string name="ics_seekmanual">Manually Accept</string>
     <string name="ics_seekformula">Formula</string>
 
-    <string name="ics_playerchat">Type here to chat with</string>
-    <string name="ics_you">You</string>
     <string name="ics_historygamenumber">History Game Number</string>
     <string name="ics_typegamenumber">Enter game number of</string>
     <string name="ics_history">History</string>
@@ -489,7 +340,6 @@
     <!-- Toast strings -->
     <string name="toast_could_not_start_activity">Could not start the activity</string>
     <string name="toast_challenge_posted">Challenge posted</string>
-    <string name="prefs_icsshowclocksummary">In the PGN, show the clock times on each move</string>
 
     <string name="pieceset_alpha">Alpha</string>
     <string name="pieceset_merida">Merida</string>
@@ -524,8 +374,4 @@
     <string name="time_warning_45">45 seconds</string>
     <string name="time_warning_60">1 minute</string>
 
-    <string name="game_start_sound_none">None</string>
-    <string name="game_start_sound_sound_and_vibration">sound and vibration</string>
-    <string name="game_start_sound_sound_only">sound only</string>
-    <string name="game_start_sound_vibration">vibration only</string>
 </resources>

@@ -158,4 +158,10 @@ public class ChessSquareView extends View {
             canvas.drawCircle(getWidth() / 2, getHeight() / 2, belowPiece ? getHeight() / 2 - strokeWidth : getHeight() / 8, highlightPaint);
         }
     }
+
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
 }

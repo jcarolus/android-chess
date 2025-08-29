@@ -427,7 +427,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         new AlertDialog.Builder(ICSClient.this)
             .setTitle(resource)
 //            .setMessage(resource)
-            .setPositiveButton(R.string.alert_ok,
+            .setPositiveButton(R.string.alert_yes,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
@@ -928,7 +928,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnSessionEnded() {
         doToast(getString(R.string.ics_lost_connection));
-        setLoginView();
+        finish();
     }
 
     @Override

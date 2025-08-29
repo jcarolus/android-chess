@@ -2,461 +2,330 @@
 <resources>
 
     <string name="app_name">国际象棋</string>
-    <string name="app_name_play">对局</string>
-    <string name="app_name_playonline">在线对局</string>
+    <string name="app_name_play">对弈</string>
+    <string name="app_name_playonline">在线对弈</string>
     <string name="app_name_setup">设置</string>
     <string name="app_name_help">帮助</string>
-    <string name="app_name_import">导出</string>
+    <string name="app_name_import">导入</string>
     <string name="app_name_pgntools">高级</string>
-    <string name="app_name_save_games">保存游戏</string>
-    <string name="version_number">版: %1$s</string>
+    <string name="app_name_save_games">已保存对局</string>
 
-    <string name="language">zh</string>
-
-    <string name="start_play">对局</string>
-    <string name="start_lessons">经验</string>
+    <string name="start_play">开始</string>
     <string name="start_practice">练习</string>
-    <string name="start_puzzles">题局</string>
+    <string name="start_puzzles">习题</string>
+    <string name="start_hotspotboard">热点棋盘 (实验性)</string>
     <string name="start_pgn">高级</string>
-    <string name="start_ics">在线对局</string>
+    <string name="start_ics">在线对弈</string>
     <string name="start_boardpreferences">棋盘设置</string>
 
-    <string name="globalpreferences">通用设置</string>
-    <string name="puzzlepreferences">配置拼图</string>
-    <string name="playpreferences">游戏配置</string>
-    <string name="playonlinepreferences">在线游戏配置</string>
+    <string name="globalpreferences">全局设置</string>
+    <string name="playpreferences">游戏设置</string>
+    <string name="playonlinepreferences">在线设置</string>
+    <string name="boardprerences">棋盘设置</string>
+    <string name="gamepreferences">对局设置</string>
     <string name="preferences">设置</string>
-    <string name="pref_wakelock">禁止休眠</string>
-    <string name="pref_wakelock_desc">此设置可以防止手机在对局时进入休眠</string>
-    <string name="pref_colorscheme">颜色和图案</string>
-    <string name="pref_colorscheme_desc">棋盘的颜色和图案</string>
+    <string name="pref_wakelock">保持屏幕常亮</string>
+    <string name="pref_wakelock_desc">防止设备进入休眠</string>
     <string name="pref_showCoords">坐标</string>
-    <string name="pref_showCoords_desc">显示棋盘坐标</string>
-    <string name="pref_showLastMove">显示上一步棋</string>
-    <string name="pref_showLastMove_desc">显示上一步棋并亮显所在位置</string>
     <string name="pref_sound">声音</string>
-    <string name="pref_sound_desc">对手下棋时播放声音</string>
-    <string name="pref_speech">语音</string>
-    <string name="pref_speech_desc">语音提示刚刚进行的一步棋</string>
-    <string name="pref_move_sound_on">移动声音</string>
-    <string name="pref_move_sound_on_desc">移动时播放声音</string>
+    <string name="pref_sound_desc">当对手走棋时播放</string>
+    <string name="pref_speech">语音播报</string>
+    <string name="pref_speech_desc">播报走棋</string>
     <string name="pref_eco">ECO 信息</string>
-    <string name="pref_eco_desc">空闲时显示ECO 开放信息</string>
-    <string name="pref_extrahighlight">特别高亮</string>
-    <string name="pref_extrahighlight_desc">让这一步特别高亮的显示</string>
-    <string name="pref_fullscreen">全屏显示</string>
-    <string name="pref_fullscreen_desc">推荐小屏和横屏显示设备使用; 防止有些部分不能显示出来</string>
-    <string name="pref_onLoadJumpToLastMove">退至上一步</string>
-    <string name="pref_onLoadJumpToLastMove_desc">当重启应用时, 退至上一步</string>
-    <string name="pref_uci">通用国际象棋界面引擎</string>
-    <string name="pref_uci_desc">选择国际象棋引擎</string>
-    <string name="pref_pieceset">棋子类型</string>
-    <string name="pref_pieceset_desc">选择要显示的棋子类型</string>
-    <string name="pref_tileset">棋盘图案</string>
-    <string name="pref_tileset_desc">要应用在棋盘上的图案</string>
-    <string name="pref_icsconfirmmove">确定这步棋</string>
-    <string name="pref_icsconfirmmove_desc">手动确定一步棋, 如果不能被检查, 则可以长按目的格子, 以弹出对话框.</string>
+    <string name="pref_eco_desc">显示开局 ECO 信息（若可用）</string>
+    <string name="pref_fullscreen">启用全屏</string>
+    <string name="pref_fullscreen_desc">推荐小屏幕和横屏使用，否则部分元素可能被裁剪</string>
+    <string name="pref_tileset">棋格样式</string>
     <string name="pref_icscustomcommand">自定义命令</string>
     <string name="pref_icscustomcommand_desc">创建自定义命令</string>
-    <string name="pref_icsconsolecharactersize">文本大小设置</string>
-    <string name="pref_icsconsolecharactersize_desc">在控制台调整文本和字符大小</string>
+    <string name="pref_icsconsolecharactersize">控制台字符大小</string>
+    <string name="pref_icsconsolecharactersize_desc">调整控制台中字符大小</string>
     <string name="pref_icsautosought">自动搜索</string>
-    <string name="pref_icsautosought_desc">自动刷新挑战者清单</string>
-    <string name="pref_icstimewarning">到时预警</string>
-    <string name="pref_icstimewarning_desc">临近时限或已经用完时限时,发出滴答声</string>
-    <string name="pref_icstimewarningsecs">预警时限 (秒)</string>
-    <string name="pref_icstimewarningsecs_desc">多少秒后响起预警?</string>
-    <string name="prefs_icsendgamedialog">对局结束对话框</string>
-    <string name="prefs_icsendgamesummary">在对局结束时,可以弹出保存对话框么?</string>
-    <string name="prefs_icsshowclock">在PGN文件内显示时钟</string>
-    <string name="prefs_icsshowclocksummary">在PGN文件内,显示每一步的时钟</string>
-    <string name="pref_icsgamestartsound">对局开始提示音</string>
-    <string name="pref_icsgamestartsound_desc">在对局开始或断开连接时播放提示音</string>
-    <string name="pref_icsnotification">新游戏的通知</string>
-    <string name="prefs_icsnotificationsummary">让你知道一个游戏的开始带有一个图标</string>
-    <string name="pref_puzzle_show_seekbar">显示寻找进度条</string>
-    <string name="pref_puzzle_show_seekbar_desc">能用进度条和快进快退按钮快速游览题局库</string>
-    <string name="pref_localelanguage">语言设置</string>
-    <string name="pref_localelanguage_desc">选择要使用的语言</string>
-    <string name="pref_skipreturn">忽略回车键</string>
-    <string name="pref_skipreturn_desc">使用USB键盘时, 忽略回车键以避免关闭应用</string>
+    <string name="pref_icsautosought_desc">自动刷新挑战界面</string>
+    <string name="pref_icstimewarning">时间警告</string>
+    <string name="pref_icstimewarning_desc">当时间低于设定阈值时发出滴答声</string>
+    <string name="pref_icstimewarningsecs">警告时间 (秒)</string>
+    <string name="pref_icstimewarningsecs_desc">提前多少秒开始提示？</string>
+    <string name="prefs_icsendgamedialog">结束对话框</string>
+    <string name="prefs_icsendgamesummary">对局结束时是否显示保存对话框？</string>
+    <string name="pref_icsnotification">新对局通知</string>
+    <string name="prefs_icsnotificationsummary">通过图标提示新对局开始</string>
+    <string name="pref_vs_cpu">对战 CPU</string>
+    <string name="pref_vs_cpu_desc">与 CPU/引擎对弈</string>
+    <string name="pref_turn">方</string>
+    <string name="pref_turn_desc">你执哪方</string>
     <string name="pref_night_mode">夜间模式</string>
-    <string name="pref_night_mode_desc">强制应用进入夜间模式</string>
+    <string name="pref_night_mode_desc">强制应用夜间模式</string>
 
-    <string name="button_play">对局</string>
-    <string name="button_undo">撤消</string>
     <string name="button_ok">确定</string>
-    <string name="button_menu">菜单</string>
     <string name="button_cancel">取消</string>
-    <string name="button_login">登陆</string>
+    <string name="button_login">登录</string>
     <string name="button_register">注册</string>
     <string name="button_close">关闭</string>
     <string name="button_save">保存</string>
-    <string name="button_save_copy">复制并保存</string>
-    <string name="button_new">新建</string>
+    <string name="button_save_copy">保存副本</string>
     <string name="puzzle_show">显示</string>
-    <string name="puzzle_jump_to">跳到 #</string>
 
     <string name="alert_yes">是</string>
     <string name="alert_no">否</string>
-    <string name="alert_cancel">取消</string>
     <string name="alert_ok">确定</string>
-    <string name="alert_confirm">确认</string>
 
     <string name="title_challenge">挑战</string>
-    <string name="title_loading">载入中&#8230;</string>
     <string name="title_error">错误</string>
-    <string name="title_offers_abort">终止请求</string>
-    <string name="title_offers_takeback">撤回请求</string>
-    <string name="title_offers_draw">请求平局</string>
-    <string name="title_offers_adjourn">请求延时</string>
-    <string name="title_pick_level">选择对局等级</string>
-    <string name="title_pick_wakelock">选择休眠设置</string>
-    <string name="title_info">信息</string>
+    <string name="title_offers_abort">取消请求</string>
+    <string name="title_offers_takeback">悔棋请求</string>
+    <string name="title_offers_draw">求和请求</string>
+    <string name="title_offers_adjourn">暂停请求</string>
+    <string name="title_pick_level">选择难度</string>
     <string name="title_menu">菜单</string>
-    <string name="title_welcome">欢迎</string>
-    <string name="title_annotate">捐赠</string>
-    <string name="title_save_game">保存游戏</string>
-    <string name="title_options">选项</string>
-    <string name="title_delete_game">删除游戏</string>
-    <string name="title_notice">注意</string>
-    <string name="title_pick_promo">选择升变的棋子</string>
-    <string name="title_castle">车?</string>
-    <string name="title_pick_en_passant">向前进</string>
-    <string name="title_pick_colorscheme">选择颜色</string>
-    <string name="title_pick_playmode">选择对局模式</string>
-    <string name="title_create_new_line">新建一行?</string>
-    <string name="title_chess960_manual_random">Chess 960 :: 手动布局或是随机?</string>
-    <string name="title_edit_or_delete">编辑或删除?</string>
+    <string name="title_save_game">保存对局</string>
+    <string name="title_delete_game">删除对局</string>
+    <string name="title_pick_promo">选择升变棋子</string>
+    <string name="title_castle">王车易位？</string>
+    <string name="title_pick_en_passant">吃过路兵格</string>
+    <string name="title_create_new_line">创建新变体？</string>
+    <string name="title_chess960_manual_random">Chess960: 手动或随机？</string>
+    <string name="title_edit_or_delete">编辑还是删除？</string>
     <string name="title_edit_command">编辑命令</string>
-    <string name="title_ics_mode_idle">空闲</string>
-    <string name="title_ics_mode_play">对局</string>
-    <string name="title_ics_mode_watch">观看</string>
-    <string name="title_ics_mode_examine">测验</string>
-    <string name="title_ics_mode_puzzle">题局</string>
-    <string name="title_ics_mode_endgame">残局</string>
-    <string name="title_installing">安装</string>
-    <string name="title_puzzle_jump">转向题局编号</string>
 
     <string name="menu_help">帮助</string>
-    <string name="menu_new">新的游戏</string>
-    <string name="menu_new_duck">新鸭子（实验</string>
-    <string name="menu_clear">清除</string>
-    <string name="menu_options">选项</string>
-    <string name="menu_email_game">电子邮件发送对局</string>
-    <string name="menu_clip_pgn">复制对局到剪切板</string>
-    <string name="menu_fromclip">从剪切板粘贴对局</string>
-    <string name="menu_save_game">保存游戏</string>
-    <string name="menu_load_game">载入游戏</string>
-    <string name="menu_random_fischer">国际象棋Chess 960</string>
-    <string name="menu_puzzles">题局</string>
-    <string name="menu_practice">练习</string>
-    <string name="menu_pgn_tool">PGN 工具</string>
-    <string name="menu_about">关于</string>
-    <string name="menu_exit">退出</string>
-    <string name="menu_flip">旋转</string>
-    <string name="menu_more">更多…</string>
-    <string name="menu_setup">棋盘设置</string>
-    <string name="menu_from_qrcode">来自二维码</string>
-    <string name="menu_to_qrcode">生成二维码</string>
+    <string name="menu_new">新对局</string>
+    <string name="menu_new_duck">新 Duck (实验性)</string>
+    <string name="menu_clip_pgn">对局复制到剪贴板</string>
+    <string name="menu_fromclip">从剪贴板导入对局</string>
+    <string name="menu_save_game">保存对局</string>
+    <string name="menu_load_game">加载对局</string>
+    <string name="menu_flip">翻转</string>
+    <string name="menu_setup">设置棋盘</string>
     <string name="menu_new_command">新命令</string>
-    <string name="menu_new_command_message">不回车情况下在命令的结尾输入 \u003cNR\u003e\n 如:  tell ChessMaster \u003cNR\u003e\n</string>
+    <string name="menu_new_command_message">在命令末尾输入 \u003cNR\u003e 表示无返回\n示例: tell ChessMaster \u003cNR\u003e\n</string>
     <string name="menu_set_clock">设置时钟</string>
-    <string name="menu_start">开始</string>
-    <string name="menu_stop">停止</string>
     <string name="menu_prefs">设置</string>
+    <string name="menu_game_settings">对局设置</string>
+    <string name="menu_new_960">新随机费舍尔/960</string>
 
-    <string name="menu_subview_title">选择一个下层控制命令</string>
-    <string name="pref_show_engine_info">引擎信息</string>
-    <string name="pref_show_moves">历史步骤</string>
-    <string name="pref_show_seek">步骤进度条</string>
-    <string name="pref_show_captured">吃掉的子</string>
-    <string name="pref_show_annotate">步骤解说</string>
-    <string name="menu_subview_guess">猜测下一步</string>
-    <string name="pref_show_blindfold">盲人模式</string>
+    <string name="pref_show_blindfold">盲棋</string>
 
-    <string name="options_play_human">人 vs 人</string>
-    <string name="options_play_android">人 vs 安卓机器人</string>
-    <string name="options_play_white">白色</string>
-    <string name="options_play_black">黑色</string>
-    <string name="options_quiescent_on">搜 Quiescence 索</string>
-    <string name="options_quiescent_off">搜 Quiescence 索</string>
-    <string name="options_960">Chess 960 - 费舍尔随机模型</string>
-    <string name="options_load_database">载入开放式数据库</string>
-    <string name="options_auto_flip">自动旋转棋盘</string>
-    <string name="options_flip">旋转棋盘</string>
-    <string name="options_setup">设置棋盘</string>
-    <string name="pref_show_possible_moves">显示步骤</string>
-    <string name="options_level_time">等级 (时间)</string>
-    <string name="options_level_ply">级别 (级别)</string>
+    <string name="options_play_human">人人对战</string>
+    <string name="options_play_android">人机对战</string>
+    <string name="options_play_white">白方</string>
+    <string name="options_play_black">黑方</string>
+    <string name="options_quiescent_on">安静搜索 开</string>
+    <string name="options_quiescent_off">安静搜索 关</string>
+    <string name="pref_show_possible_moves">显示可能走法</string>
+    <string name="options_level_time">难度 (时间)</string>
+    <string name="options_level_ply">难度 (步数)</string>
 
-    <string name="state_play">对局中</string>
-    <string name="state_draw">和棋</string>
-    <string name="state_draw_material">和棋 (物质上的)</string>
-    <string name="state_draw_50">和棋 (50 步规则下)</string>
-    <string name="state_draw_stalemate">和棋 (僵局)</string>
-    <string name="state_draw_repeat">和棋 (重复3次)</string>
-    <string name="state_mate">制胜</string>
+    <string name="state_play">进行中</string>
+    <string name="state_draw_material">和棋 (子力不足)</string>
+    <string name="state_draw_50">和棋 (50步规则)</string>
+    <string name="state_draw_stalemate">和棋 (逼和)</string>
+    <string name="state_draw_repeat">和棋 (三次重复)</string>
+    <string name="state_mate">将死</string>
     <string name="state_check">将军</string>
-    <string name="state_time">罚时</string>
-    <string name="state_resigned">放弃</string>
-    <string name="state_aborted">中止</string>
-    <string name="state_adjourned">延后</string>
+    <string name="state_black_forfeits_time">黑方超时判负</string>
+    <string name="state_white_forfeits_time">白方超时判负</string>
+    <string name="state_black_resigned">黑方认输</string>
+    <string name="state_white_resigned">白方认输</string>
+    <string name="state_draw_agreement">和棋 (协议)</string>
 
-    <string name="level_format">等级: %s</string>
-    <string name="choice_level_1">1 sec</string>
-    <string name="choice_level_2">2 sec </string>
-    <string name="choice_level_3">4 sec</string>
-    <string name="choice_level_4">8 sec (普通) </string>
-    <string name="choice_level_5">10 sec</string>
-    <string name="choice_level_6">20 sec</string>
-    <string name="choice_level_7">30 sec (专家) </string>
+    <string name="choice_level_1">1 秒</string>
+    <string name="choice_level_2">2 秒</string>
+    <string name="choice_level_3">4 秒</string>
+    <string name="choice_level_4">8 秒 (中等)</string>
+    <string name="choice_level_5">10 秒</string>
+    <string name="choice_level_6">20 秒</string>
+    <string name="choice_level_7">30 秒 (熟练)</string>
     <string name="choice_level_8">1 分钟</string>
     <string name="choice_level_9">5 分钟</string>
     <string name="choice_level_10">15 分钟</string>
-    <string name="choice_queen">王后</string>
-    <string name="choice_rook">车</string>
-    <string name="choice_bishop">相</string>
-    <string name="choice_knight">马</string>
-    <string name="choice_match_rated">有级别</string>
-    <string name="choice_match_unrated">无级别</string>
-    <string name="choice_clock_num_minutes">%d 分钟</string>
+
+    <string name="square_description">格子 %1$s</string>
+    <string name="square_with_piece_description">%1$s %2$s 在 %3$s</string>
+    <string name="square_selected_description">%1$s 已选中</string>
+
+    <string name="piece_white">白方</string>
+    <string name="piece_black">黑方</string>
+    <string name="piece_king">王</string>
+    <string name="piece_queen">后</string>
+    <string name="piece_rook">车</string>
+    <string name="piece_bishop">象</string>
+    <string name="piece_knight">马</string>
+    <string name="piece_pawn">兵</string>
     <string name="choice_manually">手动</string>
     <string name="choice_random">随机</string>
     <string name="choice_edit">编辑</string>
     <string name="choice_delete">删除</string>
 
-    <string name="puzzle_error_install">错误发生在安装过程中</string>
-    <string name="puzzle_already_solved">（位置已经解决）</string>
-    <string name="puzzle_not_correct_move"> 不是预期的动</string>
-    <string name="puzzle_invalid_move"> 是一个无效的举动</string>
-    <string name="puzzle_all_completed">你完成了所有的谜题！</string>
-    <string name="puzzle_pick_promotion">挑选一件促销</string>
+    <string name="puzzle_already_solved">(局面已解决)</string>
+    <string name="puzzle_not_correct_move"> 不是预期的走法</string>
 
-    <string name="color_picker_brightness">亮度</string>
-    <string name="color_picker_light">浅</string>
-    <string name="color_picker_dark">深</string>
-    <string name="color_picker_selected">选</string>
-
-    <string name="savegame_event">事件</string>
-    <string name="savegame_event_question">事件?</string>
-    <string name="savegame_white">白色</string>
-    <string name="savegame_white_question">白色?</string>
-    <string name="savegame_black">黑色</string>
-    <string name="savegame_black_question">黑色?</string>
+    <string name="savegame_event">赛事</string>
+    <string name="savegame_event_question">赛事?</string>
+    <string name="savegame_white">白方</string>
+    <string name="savegame_white_question">白方?</string>
+    <string name="savegame_black">黑方</string>
+    <string name="savegame_black_question">黑方?</string>
     <string name="savegame_date">日期</string>
-    <string name="savegame_date_question">日期?</string>
 
     <string name="gameslist_stars">星级</string>
     <string name="gameslist_date">日期</string>
-    <string name="gameslist_event">事件</string>
-    <string name="gameslist_id">编号</string>
+    <string name="gameslist_event">赛事</string>
+    <string name="gameslist_id">ID</string>
     <string name="games_list_white_pieces">白棋</string>
     <string name="gameslist_black_pieces">黑棋</string>
 
-    <string name="msg_illegal_move">合法的移动</string>
-    <string name="msg_state_format">%1$s</string>
-    <string name="msg_thinking">思考中&#8230;</string>
-    <string name="msg_wait">请等待&#8230;</string>
-    <string name="msg_calc_format">移动 %1$s\tEvaluations %2$s</string>
-    <string name="msg_calc_summary_format">引擎汇总: %1$s</string>
-    <string name="msg_setup_turn">回合</string>
-    <string name="msg_setup_turn_white">白色</string>
-    <string name="msg_setup_turn_black">黑色</string>
-    <string name="msg_setup_enpassant">向前直走</string>
-    <string name="msg_setup_castle_white">白色</string>
-    <string name="msg_setup_castle_black">黑色</string>
-    <string name="msg_setup_extra">点击菜单设置各选项</string>
-    <string name="msg_qr_code_on_clipboard">连向剪贴板中的二维码&#8230;</string>
-    <string name="chess960_position_nr">"Chess 960 落子标准 %d"</string>
-    <string name="msg_ics_enter_handle">请输入你的句柄</string>
-    <string name="msg_ics_enter_password">请输入你的密码</string>
-    <string name="msg_progress">进程:</string>
+    <string name="msg_setup_turn">轮到</string>
+    <string name="msg_setup_turn_white">白方</string>
+    <string name="msg_setup_turn_black">黑方</string>
+    <string name="msg_setup_enpassant">吃过路兵格</string>
+    <string name="msg_setup_castle_white">白方</string>
+    <string name="msg_setup_castle_black">黑方</string>
+    <string name="msg_ics_enter_handle">请输入用户名</string>
+    <string name="msg_ics_enter_password">请输入密码</string>
 
-    <string name="err_sd_not_mounted">要继续你的请求, 必须安装SD卡.</string>
-    <string name="err_send_email">不能创建电子邮件.</string>
-    <string name="err_load_fen">无法载入FEN 国际象棋位置</string>
-    <string name="err_load_pgn">无法载入PGN 国际象棋历史记录</string>
-    <string name="err_no_clip_text">剪贴板上没有任何文本</string>
-    <string name="err_install_barcode_scanner">请安装条码扫描器(ZXing)</string>
-    <string name="err_chess960_position_range">无效的位置, 请输入0到960之间的数字</string>
-    <string name="err_chess960_position_format">无效的位置, 请输入一个数目</string>
-    <string name="err_puzzle_jump">无效的题局编号</string>
-    <string name="err_saving_game">保存到chessgamesonline.pgn时错误</string>
-    <string name="err_copy_clipboard">复制到剪贴板时错误</string>
+    <string name="err_chess960_position_range">无效位置，请输入 0 到 960 之间的数字</string>
+    <string name="err_chess960_position_format">无效位置，请输入数字</string>
 
-    <string name="pgntool_export_explanation">导出对局数据</string>
-    <string name="pgntool_import_explanation">导入对局到游戏数据库</string>
-    <string name="pgntool_delete_explanation">删除游戏数据库内所有对局</string>
-    <string name="pgntool_add_db_explanation">增加对局到开放式数据库</string>
-    <string name="pgntool_create_db_explanation">创建开放式数据库</string>
-    <string name="pgntool_point_db_explanation">设置开放式数据库</string>
-    <string name="pgntool_install_uci_engine">安装 UCI 引擎</string>
-    <string name="pgntool_point_uci_engine">手动安装UCI 引擎</string>
-    <string name="pgntool_uci_engines_not_found">没有找到UCI引擎</string>
-    <string name="pgntool_uci_engine_success">UCI 引擎 %s 安装完毕</string>
-    <string name="pgntool_uci_engine_error">一个错误导致无法安装UCI引擎</string>
-    <string name="pgntool_unset_uci_engine">卸载UCI引擎</string>
-    <string name="pgntool_install_uci_database">安装UCI数据库</string>
-    <string name="pgntool_uci_database_success">UCI数据库X已安装</string>
-    <string name="pgntool_uci_database_error">一个错误阻止了安装UCI数据库</string>
-    <string name="pgntool_unset_uci_database">卸载UCI数据库</string>
+    <string name="pgntool_export_explanation">导出对局数据库</string>
+    <string name="pgntool_import_explanation">导入对局到数据库</string>
+    <string name="pgntool_delete_explanation">删除数据库中所有对局</string>
+    <string name="pgntool_create_db_explanation">创建开局数据库</string>
+    <string name="pgntool_point_db_explanation">设置开局数据库</string>
+    <string name="pgntool_unset_uci_engine">卸载 UCI 引擎</string>
+    <string name="pgntool_unset_uci_database">卸载 UCI 数据库</string>
     <string name="pgntool_help">帮助</string>
-    <string name="pgntool_numexport">导出 %1$d 给到国际象棋chess.pgn</string>
-    <string name="pgntool_confirm_delete">你确定么?</string>
-    <string name="pgntool_deleted">所有对局已被删除</string>
-    <string name="pgntool_create_practice_explanation">创建练习集</string>
+    <string name="pgntool_confirm_delete">你确定吗？</string>
+    <string name="pgntool_deleted">所有对局已删除</string>
     <string name="pgntool_import_practice">导入练习集</string>
-    <string name="pgntool_reset_practice">复原练习- 重新开始</string>
-    <string name="pgntool_confirm_practice_reset">你确定要复原么?</string>
-    <string name="pgntool_import_puzzle">导入迷局</string>
+    <string name="pgntool_reset_practice">重置练习 - 重新开始</string>
+    <string name="pgntool_confirm_practice_reset">确定要重置吗？</string>
+    <string name="pgntool_import_puzzle">导入习题</string>
     <string name="pgntool_import_opening">开发者使用</string>
 
-    <string name="practice_set_reset">练习集已被复原</string>
+    <string name="practice_set_reset">练习集已重置</string>
 
-    <string name="ics_client_handle">操作</string>
+    <string name="ics_client_handle">用户名</string>
     <string name="ics_client_password">密码</string>
-    <string name="ics_client_presets">预置</string>
     <string name="ics_client_server">服务器</string>
 
     <string name="ics_menu_players">玩家</string>
     <string name="ics_menu_games">对局</string>
-    <string name="ics_menu_stored">存储</string>
+    <string name="ics_menu_stored">已保存</string>
     <string name="ics_menu_challenges">挑战</string>
-    <string name="ics_menu_seek">寻战</string>
-    <string name="ics_menu_resume">恢复</string>
-    <string name="ics_menu_board">棋盘</string>
-    <string name="ics_menu_help">帮助</string>
+    <string name="ics_menu_seek">搜索</string>
     <string name="menu_abort">中止</string>
-    <string name="ics_menu_adjourn">延后</string>
     <string name="ics_menu_draw">和棋</string>
-    <string name="ics_menu_flag">标记</string>
-    <string name="ics_menu_resign">放弃</string>
-    <string name="ics_menu_refresh">刷新</string>
-    <string name="ics_menu_welcome">欢迎</string>
-    <string name="ics_menu_chat">聊天</string>
-    <string name="ics_menu_quit">退出</string>
-    <string name="ics_menu_takeback">撤回上一步</string>
-    <string name="ics_menu_closeboard">关闭棋盘</string>
+    <string name="ics_menu_flag">判负时间</string>
+    <string name="ics_menu_resign">认输</string>
     <string name="ics_menu_console">控制台</string>
-    <string name="ics_menu_unobserve">停止观看</string>
-    <string name="ics_menu_stop_puzzle">停止解题</string>
-    <string name="ics_menu_top_blitz">顶级快棋</string>
-    <string name="ics_menu_top_standard">顶级标准</string>
+    <string name="ics_menu_top_blitz">闪电战排行</string>
+    <string name="ics_menu_top_standard">标准排行</string>
+    <string name="ics_menu_puzzlebot_mate">Puzzlebot 将死</string>
+    <string name="ics_menu_puzzlebot_tactics">Puzzlebot 战术</string>
+    <string name="ics_menu_puzzlebot_study">Puzzlebot 学习</string>
 
     <string name="ics_playertwo">玩家 2</string>
     <string name="ics_playerone">玩家 1</string>
-    <string name="ics_progress_title_login">登入</string>
-    <string name="ics_progress_msg_login">登入&#8230;</string>
-    <string name="ics_available_players">有空的玩家</string>
-    <string name="ics_offers_abort">对方想中止对局.\n你同意么?</string>
-    <string name="ics_offers_draw">Your opponent offers you a draw.\nDo you wish to accept?</string>
-    <string name="ics_offers_adjourn">对方想推迟对局.\n你同意么?</string>
-    <string name="ics_offers_takeback">对方想撤消上一步棋.\n你同意么?</string>
+    <string name="ics_offers_abort">你的对手想要中止对局。\n你是否同意？</string>
+    <string name="ics_offers_draw">你的对手请求和棋。\n你是否同意？</string>
+    <string name="ics_offers_adjourn">你的对手想要暂停对局。\n你是否同意？</string>
+    <string name="ics_offers_takeback">你的对手想要悔棋。\n你是否同意？</string>
     <string name="ics_request_sent">请求已发送</string>
-    <string name="ics_game_over">游戏结束</string>
-    <string name="ics_game_over_format">游戏结束: %1$s</string>
-    <string name="ics_tells_you">%1$s 告诉你: %2$s</string>
+    <string name="ics_game_over">对局结束</string>
 
-    <string name="ics_save_game">成功地保存到chessgamesonline.pgn</string>
-    <string name="copied_clipboard_success">对局已成功复制到剪贴板</string>
-    <string name="ics_messages">给对手发送消息</string>
-    <string name="ics_good_game">精彩的对局</string>
-    <string name="ics_offer_rematch">进行复赛</string>
-    <string name="ics_game">对局</string>
-    <string name="ics_examine">测验</string>
-    <string name="ics_send_app">发送给应用</string>
-    <string name="copied_clipboard_success_text">复制到剪贴板</string>
+    <string name="copied_clipboard_success">对局已复制到剪贴板</string>
+    <string name="ics_offer_rematch">请求重赛</string>
+    <string name="ics_examine">分析</string>
 
-    <string name="ics_error_connection">无法连接服务器. 请检查你有可用的网络连接</string>
-    <string name="ics_lost_connection">连接服务器存在问题.</string>
+    <string name="ics_lost_connection">与服务器的连接丢失。</string>
+    <string name="ics_error">发生错误。请稍后再试。</string>
 
-    <string name="ics_notification_title">国际象棋由吉荣</string>
-    <string name="ics_notification_text">轻按即可播放</string>
-    <string name="ics_welcome_format">欢迎 <b>%1$s</b></string>
-    <string name="ics_start_text">(空置密码以游客身份登陆)</string>
-    <string name="ics_disconnected">从 FICS服务器断开</string>
-    <string name="ics_not_connected">没有连接</string>
-    <string name="ics_connect">连接</string>
+    <string name="ics_notification_title">Jeroen 的国际象棋</string>
+    <string name="ics_notification_text">点击开始游戏</string>
 
-    <string name="ics_seekseek">寻找</string>
+    <string name="ics_seekseek">搜索</string>
     <string name="ics_seekchallenge">挑战</string>
     <string name="ics_seekplayer">玩家</string>
-    <string name="ics_seektime">时间 (分钟)</string>
-    <string name="ics_seektimeinc">时间增量 (秒)</string>
-    <string name="ics_seekvariant">变量</string>
+    <string name="ics_seektime">时间 (分)</string>
+    <string name="ics_seektimeinc">增量 (秒)</string>
+    <string name="ics_seekvariant">变体</string>
     <string name="ics_seekcolor">颜色</string>
-    <string name="ics_seekrangemin">最小级别</string>
-    <string name="ics_seekrangemax">最大级别</string>
-    <string name="ics_seekrated">定级对局</string>
+    <string name="ics_seekrangemin">最低等级分</string>
+    <string name="ics_seekrangemax">最高等级分</string>
+    <string name="ics_seekrated">等级分对局</string>
     <string name="ics_seekmanual">手动接受</string>
-    <string name="ics_seekformula">准则</string>
+    <string name="ics_seekformula">公式</string>
 
-    <string name="ics_playerchat">在这输入与其聊天</string>
-    <string name="ics_you">你</string>
     <string name="ics_historygamenumber">历史对局编号</string>
-    <string name="ics_typegamenumber">输入其对局编号</string>
-    <string name="ics_history">历史记录</string>
-    <string name="ics_finger">汇总</string>
+    <string name="ics_typegamenumber">输入对局编号</string>
+    <string name="ics_history">历史</string>
+    <string name="ics_finger">摘要</string>
     <string name="ics_follow">关注</string>
     <string name="ics_unfollow">取消关注</string>
-    <string name="ics_match">匹配</string>
-    <string name="ics_gamenumber">对局编号#</string>
+    <string name="ics_match">比赛</string>
+    <string name="ics_gamenumber">对局 #</string>
+    <string name="ics_quit">退出？</string>
 
-    <string name="practice_help">找到将死（可以不止一步）.</string>
-    <string name="puzzle_help">这些对局(题局)有 两步内必胜的将军 方法.\n目标是 找到关键的第一步 , 这一步导致在两步内取得一个必能将死对方的方法.\n或者说, 如果你走对了这一正确的一步, 对方将无法躲开你的下一步将军.\n在这第一步后, 题局就被成功解答.\n点击\'显示Show\' 按钮来获得答案.\n来源: EL ARTE DEL MATE EN DOS 作者 Eduardo Sadier</string>
+    <string name="practice_help">找出将死 (可能需要多步)。</string>
+    <string name="puzzle_help">这些是困难的“两步将死”习题。\n目标是找到第一步，保证在两步之内必然将死。\n即在你走出正确的第一步后，对手无法避免下一步将死。\n之后习题即算解决。\n点击“显示”查看答案。\n来源: Eduardo Sadier 《EL ARTE DEL MATE EN DOS》</string>
+
     <string name="advanced_help"><![CDATA[
 <h3>高级</h3>
-    <p>创建或导入自定义棋局.</p>
+<p>在这里创建或导入自定义内容。</p>
 
-    <h4>将对局资料导出到SD卡</h4>
-    <p>所有的对局都可以以PGN文件的形式导出到SD卡. 这个文件名为 chess.pgn, 当新一局保存时旧的对局文件会被替换覆盖.</p>
+<h4>导出数据库</h4>
+<p>所有对局会导出到一个名为 chess.pgn 的 PGN 文件，覆盖已有文件。</p>
 
-    <h4>导入游戏</h4>
-    <p>使用"add games"的选项可以新建一局游戏. 可以让你游览各PGN文件, 从中选择要导入的对局.</p>
+<h4>导入对局</h4>
+<p>选择一个 PGN 文件并导入。</p>
 
-    <h4>删除数据库中所有对局资料</h4>
-    <p>在这一菜单下, 你可以清空所有对局资料. 请先备份好数据, 被清空资料将不可以被恢复.</p>
+<h4>删除所有对局</h4>
+<p>清空数据库。请先备份，此操作不可撤销。</p>
 
-    <h4>创建开放数据库</h4>
-    <p>浏览SD卡内的PGN文件, 该文件将被转换为一个开放式数据库但文件名有.BIN作为后缀. 该文件内所有对局将被提取, 最多17层.</p>
+<h4>创建开局数据库</h4>
+<p>将 PGN 文件转换为 .bin 开局库 (最多 17 步)。</p>
 
-    <h4>设置开放数据库</h4>
-    <p>游览刚刚创建的开放数据库, 并让国际象棋使用它.</p>
+<h4>设置开局数据库</h4>
+<p>选择已生成的 .bin 文件。</p>
 
-    <h4>卸载通用国际象棋界面引擎(UCI)</h4>
-    <p>卸载通用国际象棋界面引擎(UCI)</p>
+<h4>卸载 UCI 引擎</h4>
+<p>移除已安装的 UCI 引擎。</p>
 
-    <h4>创建对局练习集</h4>
-    <p>创建一个必胜残局. 打开文件继续此残局. 如果最终不能获胜或只能重复相同的步骤, 则说明之前走子错误</p>
+<h4>创建练习集</h4>
+<p>从将死结局的对局生成练习。错误多来自无将死或重复对局。</p>
 
-    <h4>对局练习复原</h4>
-    <p>想重新恢复对局练习? 这同时也会重置你的计时器.</p>
-     ]]></string>
-    <string name="online_help"> <![CDATA[
-<p>
-        <strong>FICS: 免费的国际象棋网络服务器</strong> 让你与数千位国际象棋爱好者同时在线竞技.<br/>
-        警告: 如果你的设备从一个网络接入点转换到另一个接入点时, 网络连接可能会断开. 此时下棋计时器会中断.<br/>
-    </p>
-    <h4>菜单</h4>
-    <strong>挑战</strong><br/>
-    用于寻找对手对局. 点击列表中的选手来发起挑战.<br/>
-    <strong>寻战</strong><br/>
-    设置你要挑战的选手. 如果你填写你知道的一个选手的名字,将会直接发起挑战.<br/>
-    <strong>观战</strong><br/>
-    在线观看选手对局. 高段位选手的对局会被系统标识出来.<br/>
-    <strong>选手清单</strong><br/>
-    可以显示空闲中的选手及其等级.<br/>
-    ]]></string>
+<h4>重置练习集</h4>
+<p>是否重新开始？平均计数器也会重置。</p>
+]]></string>
 
-    <!-- Toast strings -->
-    <string name="toast_could_not_start_activity">无法进行这些操作</string>
-    <string name="toast_challenge_posted">发布挑战</string>
+    <string name="online_help"><![CDATA[
+<p><strong>FICS: 免费互联网国际象棋服务器</strong> 让你与成千上万的玩家对弈。<br/>
+注意: 如果设备切换网络，连接可能会中断。<br/>
+</p>
+<h4>菜单</h4>
+<strong>挑战</strong><br/>显示正在寻找对局的玩家。点击接受。<br/>
+<strong>搜索</strong><br/>创建自定义挑战。如果输入用户名，将成为直接挑战。<br/>
+<strong>对局</strong><br/>观看正在进行的对局。GM 前缀代表特级大师。<br/>
+<strong>玩家</strong><br/>显示空闲玩家及其等级分。<br/>
+]]></string>
 
-    <!-- array items -->
-    <string name="tile_none">none</string>
-    <string name="tile_double_shade">double shade</string>
-    <string name="tile_single_shade">single shade</string>
+    <!-- Toast -->
+    <string name="toast_could_not_start_activity">无法启动活动</string>
+    <string name="toast_challenge_posted">挑战已发布</string>
+
+    <string name="pieceset_alpha">Alpha</string>
+    <string name="pieceset_merida">Merida</string>
+    <string name="pieceset_leipzig">Leipzig</string>
+    <string name="pieceset_california">加州</string>
+    <string name="pieceset_companion">伙伴</string>
+    <string name="pieceset_chessnut">Chessnut</string>
+    <string name="pieceset_kosal">Kosal</string>
+    <string name="pieceset_staunty">Staunty</string>
+
+    <string name="tile_none">无</string>
+    <string name="tile_double_shade">双阴影</string>
+    <string name="tile_single_shade">单阴影</string>
 
     <string name="color_scheme_yellow">黄色</string>
     <string name="color_scheme_blue">蓝色</string>
@@ -464,13 +333,13 @@
     <string name="color_scheme_grey">灰色</string>
     <string name="color_scheme_brown">棕色</string>
     <string name="color_scheme_red">红色</string>
-    <string name="color_scheme_orange">橙</string>
-    <string name="color_scheme_pink">粉色的</string>
-    <string name="color_scheme_purple">紫色的</string>
+    <string name="color_scheme_orange">橙色</string>
+    <string name="color_scheme_pink">粉色</string>
+    <string name="color_scheme_purple">紫色</string>
 
     <string name="match_option_color_random">随机</string>
-    <string name="match_option_color_white">白色</string>
-    <string name="match_option_color_black">黑色</string>
+    <string name="match_option_color_white">白方</string>
+    <string name="match_option_color_black">黑方</string>
 
     <string name="time_warning_5">5 秒</string>
     <string name="time_warning_10">10 秒</string>
@@ -478,8 +347,4 @@
     <string name="time_warning_45">45 秒</string>
     <string name="time_warning_60">1 分钟</string>
 
-    <string name="game_start_sound_none">无声音</string>
-    <string name="game_start_sound_sound_and_vibration">响声加振动</string>
-    <string name="game_start_sound_sound_only">只有声音</string>
-    <string name="game_start_sound_vibration">只有振动</string>
 </resources>

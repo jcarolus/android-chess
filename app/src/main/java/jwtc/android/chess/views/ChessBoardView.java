@@ -16,10 +16,14 @@ public class ChessBoardView extends ViewGroup {
 
     public ChessBoardView(Context context) {
         super(context);
+
+        this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
     }
 
     public ChessBoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
     }
 
     public void removePieces() {
@@ -135,10 +139,5 @@ public class ChessBoardView extends ViewGroup {
                 layoutChild(child);
             }
         }
-    }
-
-    private int dpToPx(float dp) {
-        float density = getResources().getDisplayMetrics().density; // e.g. 2.75 on some devices
-        return Math.round(dp * density);
     }
 }

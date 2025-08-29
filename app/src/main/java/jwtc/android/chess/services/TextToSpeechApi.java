@@ -2,10 +2,12 @@ package jwtc.android.chess.services;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 
 import jwtc.chess.Move;
 
 public class TextToSpeechApi extends TextToSpeech {
+    private static final String TAG = "TextToSpeechApi";
     public TextToSpeechApi(Context context, OnInitListener listener) {
         super(context, listener);
     }
@@ -15,8 +17,7 @@ public class TextToSpeechApi extends TextToSpeech {
         setPitch(0.85F);
     }
 
-    public void moveToSpeech(String sMove, int move) {
-
+    public static String moveToSpeechString(String sMove, int move) {
         String sMoveSpeech = sMove;
         if (sMoveSpeech.length() > 3 && !sMoveSpeech.equals("O-O-O")) {
             // assures space to separate which Rook and which Knight to move
@@ -31,9 +32,8 @@ public class TextToSpeechApi extends TextToSpeech {
         }
 
         // Pronunciation - the "long A", @see http://stackoverflow.com/questions/9716851/android-tts-doesnt-pronounce-single-letter
-        sMoveSpeech = sMoveSpeech.replace("a", "ay ");
-
-        sMoveSpeech = sMoveSpeech.replace("b", "bee ");
+//        sMoveSpeech = sMoveSpeech.replace("a", "ay ");
+//        sMoveSpeech = sMoveSpeech.replace("b", "bee ");
         ///////////////////////////////////
 
         sMoveSpeech = sMoveSpeech.replace("x", " takes ");
@@ -53,9 +53,16 @@ public class TextToSpeechApi extends TextToSpeech {
         sMoveSpeech = sMoveSpeech.replace("#", " checkmate");
 
         if (Move.isEP(move)) {
-            sMoveSpeech = sMoveSpeech + " On Pesawnt";  // En Passant
+            sMoveSpeech = sMoveSpeech + " En Passant";  // On Pesawnt
         }
 
+        Log.d(TAG, "TTS " + sMove + " => " + sMoveSpeech);
+
+        return sMoveSpeech;
+    }
+
+    public void moveToSpeech(String sMove, int move) {
+        String sMoveSpeech = moveToSpeechString(sMove, move);
         speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, sMove);
     }
 

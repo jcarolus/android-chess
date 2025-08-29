@@ -34,6 +34,7 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
+import jwtc.android.chess.constants.Piece;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;
@@ -144,6 +145,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         if (textToSpeech != null) {
             textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
+        } else if (isScreenReaderOn()) {
+            doToastShort(TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move));
         }
     }
 
@@ -170,6 +173,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         chessBoardView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                Log.d(TAG, "onFocusChange " + hasFocus);
                 dpadFocus(hasFocus);
             }
         });
@@ -178,8 +182,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    Log.d(TAG, "onKey " + keyCode);
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
                             return dpadSelect();
                         case KeyEvent.KEYCODE_DPAD_DOWN:
                             return dpadDown();
@@ -348,6 +354,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 squareView.setMove(moveToPositions.contains(i));
                 int piece = jni.pieceAt(jni.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
+                String nextDescription = getFieldDescription(pos);
+                CharSequence currentDescription = squareView.getContentDescription();
+                if (currentDescription == null || !nextDescription.contentEquals(currentDescription)) {
+                    squareView.setContentDescription(nextDescription);
+                }
             }
         }
     }
@@ -502,11 +513,29 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return null;
     }
 
+    protected String getFieldDescription(int pos) {
+        int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
+        int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
+        if (whitePiece != BoardConstants.FIELD) {
+            return getString(R.string.square_with_piece_description, getString(R.string.piece_white), getString(Piece.toResource(whitePiece)), Pos.toString(pos));
+        } else if (blackPiece != BoardConstants.FIELD) {
+            return getString(R.string.square_with_piece_description, getString(R.string.piece_black), getString(Piece.toResource(blackPiece)), Pos.toString(pos));
+        }
+        return getString(R.string.square_description, Pos.toString(pos));
+    }
+
+    protected void showAccessibilityForSelectedPosition(int pos) {
+        if (isScreenReaderOn()) {
+            doToastShort(getString(R.string.square_selected_description, Pos.toString(pos)));
+        }
+    }
+
     private final class MyClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
             if (view instanceof ChessSquareView) {
+                Log.d(TAG, "onClick");
                 if (hasPremoved()) {
                     resetPremove();
                 } else {
@@ -757,18 +786,22 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void selectPosition(int pos) {
-        Log.d(TAG, "selectPosition " + pos);
+        Log.d(TAG, "selectPosition " + pos + ", " + selectedPosition);
         if (pos == -1) {
             selectedPosition = pos;
+            updateSelectedSquares();
         } else {
             if (selectedPosition == -1) {
                 selectedPosition = pos;
+                showAccessibilityForSelectedPosition(pos);
                 setMoveToPositions(pos);
+                updateSelectedSquares();
             } else if (selectedPosition != pos){
                 handleMove(pos);
             } else {
                 selectedPosition = -1;
                 moveToPositions.clear();
+                updateSelectedSquares();
             }
         }
     }

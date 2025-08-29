@@ -47,10 +47,10 @@
         <item>@string/choice_level_10</item>
     </string-array>
     <string-array name="promotionpieces">
-        <item>@string/choice_queen</item>
-        <item>@string/choice_rook</item>
-        <item>@string/choice_bishop</item>
-        <item>@string/choice_knight</item>
+        <item>@string/piece_queen</item>
+        <item>@string/piece_rook</item>
+        <item>@string/piece_bishop</item>
+        <item>@string/piece_knight</item>
     </string-array>
     <string-array name="colorschemes">
         <item>@string/color_scheme_yellow</item>
@@ -107,10 +107,6 @@
         <item>40</item>
         <item>60</item>
     </string-array>
-    <string-array name="match_rated">
-        <item>@string/choice_match_unrated</item>
-        <item>@string/choice_match_rated</item>
-    </string-array>
     <string-array name="match_variant">
         <item>Standard</item>
         <item>Chess 960 (experimental)</item>
@@ -151,12 +147,6 @@
         <item>25</item>
         <item>45</item>
         <item>60</item>
-    </string-array>
-    <string-array name="gamestartsound">
-        <item>@string/game_start_sound_none</item>
-        <item>@string/game_start_sound_sound_and_vibration</item>
-        <item>@string/game_start_sound_sound_only</item>
-        <item>@string/game_start_sound_vibration</item>
     </string-array>
     <string-array name="gamestartsound_values">
         <item>0</item>

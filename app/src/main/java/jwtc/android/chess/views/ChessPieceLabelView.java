@@ -15,6 +15,9 @@ public class ChessPieceLabelView extends AppCompatTextView {
     public ChessPieceLabelView(Context context, int position, int color, String label) {
         super(context);
 
+        this.setFocusable(false);
+        this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+
         this.position = position;
 
         setWillNotDraw(false);

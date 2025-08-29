@@ -45,6 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_width="50dip"
                     android:text="00:00"
+                    android:importantForAccessibility="no"
                     style="@style/MyNormalTextStyle" />
 
                 <TextView
@@ -54,13 +55,16 @@
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     style="@style/MyNormalTextStyle"
-                    android:text="Title..." />
+                    android:text="Title..."
+                    android:importantForAccessibility="no"
+                    />
 
                 <jwtc.android.chess.views.ChessPiecesStackView
                     android:layout_width="wrap_content"
                     android:layout_height="24dip"
                     android:layout_weight="2"
                     android:layout_marginRight="1dip"
+                    android:importantForAccessibility="no"
                     android:id="@+id/topPieces" />
             </TableRow>
         </TableLayout>
@@ -95,6 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_width="50dip"
                     android:text="00:00"
+                    android:importantForAccessibility="no"
                     style="@style/MyNormalTextStyle" />
 
                 <TextView
@@ -104,12 +109,15 @@
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     style="@style/MyNormalTextStyle"
-                    android:text="Title..." />
+                    android:text="Title..."
+                    android:importantForAccessibility="no"
+                    />
 
                 <jwtc.android.chess.views.ChessPiecesStackView
                     android:layout_width="wrap_content"
                     android:layout_height="24dip"
                     android:layout_weight="2"
+                    android:importantForAccessibility="no"
                     android:id="@+id/bottomPieces" />
             </TableRow>
 
@@ -144,6 +152,7 @@
                             <ImageButton
                                 android:id="@+id/ButtonPlay"
                                 android:src="@drawable/ic_icon_play"
+                                android:contentDescription="@string/button_engine_play_description"
                                 style="@style/ChessImageButton"
                                 android:nextFocusLeft="@id/includeboard"/>
 
@@ -171,6 +180,7 @@
 
                         <ImageButton android:id="@+id/ButtonMenu"
                             android:src="@drawable/ic_three_dots_vertical"
+                            android:contentDescription="@string/button_menu_description"
                             style="@style/ChessImageButton"/>
 
                     </TableRow>
@@ -187,6 +197,7 @@
                         <ImageButton
                             android:id="@+id/ButtonPrevious"
                             android:src="@drawable/ic_chevron_left"
+                            android:contentDescription="@string/button_previous_move_description"
                             style="@style/ChessImageButton"
                             android:nextFocusLeft="@id/includeboard"
                             android:nextFocusDown="@id/SwitchBlindfold" />
@@ -200,12 +211,14 @@
                         <ImageButton
                             android:id="@+id/ButtonNext"
                             android:src="@drawable/ic_chevron_right"
+                            android:contentDescription="@string/button_next_move_description"
                             style="@style/ChessImageButton"
                             android:nextFocusDown="@id/SwitchSound"/>
 
                         <ImageButton
                             android:id="@+id/ButtonPGN"
                             android:src="@drawable/ic_list_ul"
+                            android:contentDescription="@string/button_show_pgn_description"
                             style="@style/ChessImageButton" />
                     </TableRow>
                 </TableLayout>

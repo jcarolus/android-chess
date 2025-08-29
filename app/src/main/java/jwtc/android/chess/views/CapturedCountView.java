@@ -13,6 +13,8 @@ public class CapturedCountView extends AppCompatTextView {
     public CapturedCountView(Context context, int count, int piece) {
         super(context);
 
+        this.setFocusable(false);
+        this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         this.piece = piece;
 
         setWillNotDraw(false);
