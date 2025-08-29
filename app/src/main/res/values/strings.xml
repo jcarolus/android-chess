@@ -66,6 +66,15 @@
     <string name="button_save_copy">Save copy</string>
     <string name="puzzle_show">Show</string>
 
+    <string name="button_engine_play_description">Engine play</string>
+    <string name="button_previous_move_description">Previous move</string>
+    <string name="button_next_move_description">Next move</string>
+    <string name="button_menu_description">Menu</string>
+    <string name="button_show_pgn_description">Show PGN</string>
+    <string name="button_next_position">Next position</string>
+    <string name="button_previous_position">Previous position</string>
+    <string name="button_reset_position">Reset position</string>
+
     <string name="alert_yes">Yes</string>
     <string name="alert_no">No</string>
     <string name="alert_ok">OK</string>

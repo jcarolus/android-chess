@@ -928,7 +928,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnSessionEnded() {
         doToast(getString(R.string.ics_lost_connection));
-        setLoginView();
+        finish();
     }
 
     @Override

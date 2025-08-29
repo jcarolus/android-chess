@@ -87,6 +87,7 @@
         <ImageButton
             android:id="@+id/ButtonPracticeNext"
             android:src="@drawable/ic_chevron_right"
+            android:contentDescription="@string/button_next_position"
             android:layout_alignParentRight="true"
             style="@style/ChessImageButton" />
     </RelativeLayout>

@@ -75,6 +75,7 @@
             <ImageButton
                 android:id="@+id/ButtonPuzzlePrevious"
                 android:src="@drawable/ic_chevron_left"
+                android:contentDescription="@string/button_previous_position"
                 style="@style/ChessImageButton" />
 
             <View
@@ -90,6 +91,7 @@
             <ImageButton
                 android:id="@+id/ButtonPuzzleRetry"
                 android:src="@drawable/ic_arrow_clockwise"
+                android:contentDescription="@string/button_reset_position"
                 style="@style/ChessImageButton" />
 
             <View
@@ -100,6 +102,7 @@
             <ImageButton
                 android:id="@+id/ButtonPuzzleNext"
                 android:src="@drawable/ic_chevron_right"
+                android:contentDescription="@string/button_next_position"
                 style="@style/ChessImageButton" />
 
     </LinearLayout>
