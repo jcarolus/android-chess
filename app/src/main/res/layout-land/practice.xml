@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -31,16 +32,6 @@
                 android:layout_centerVertical="true"
                 android:paddingLeft="8dip"
                 android:paddingRight="8dip" />
-
-            <TextView
-                android:id="@+id/TextViewPercentage"
-                android:text="0%"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/ImageStatus"
-                android:layout_centerVertical="true"
-                style="@style/MyHeaderTextStyle" />
-
         </RelativeLayout>
         <TableLayout
             android:id="@+id/LayoutTurn"
@@ -91,6 +82,27 @@
                     android:layout_alignParentRight="true"
                     style="@style/ChessImageButton" />
 
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/percentBar"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:layout_toLeftOf="@id/TextViewPercentage"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                app:trackThickness="12dp"
+                app:indicatorColor="@color/secondaryColor"
+                app:trackColor="@color/wrongColor" />
+
+            <TextView
+                android:id="@+id/TextViewPercentage"
+                android:text="0%"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/ButtonPracticeNext"
+                android:layout_centerVertical="true"
+                style="@style/MyHeaderTextStyle" />
         </RelativeLayout>
 
         <ScrollView
