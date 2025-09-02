@@ -39,8 +39,6 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     private ImageButton butPrev, butNext, butRetry;
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles, myTurn, numMoved = 0;
-    private TableLayout layoutTurn;
-    private RelativeLayout layoutTop;
     private Button butShow;
 
 
@@ -75,9 +73,6 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         gameApi = new PuzzleApi();
 
         afterCreate();
-
-        layoutTurn = findViewById(R.id.LayoutTurn);
-        layoutTop = findViewById(R.id.LayoutTop);
 
         currentPosition = 0;
         totalPuzzles = 0;
@@ -139,12 +134,6 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         myEngine = new LocalEngine();
         myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
-
-        layoutTurn.setBackgroundColor(ColorSchemes.getDark());
-        if (layoutTop != null) {
-            layoutTop.setBackgroundColor(ColorSchemes.getDark());
-        }
-        tvPuzzleText.setTextColor(ColorSchemes.getHightlightColor());
 
         loadPuzzles();
     }

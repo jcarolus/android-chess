@@ -5,13 +5,13 @@
     android:id="@+id/root_layout"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="4dip">
+    android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/LayoutBoardTop"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@color/paneBackgroundColor"
         android:gravity="center_vertical"
         android:padding="4dip">
         <ViewSwitcher
@@ -50,6 +50,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@color/paneBackgroundColor"
         android:gravity="center_vertical"
         android:padding="4dip">
         <ViewSwitcher

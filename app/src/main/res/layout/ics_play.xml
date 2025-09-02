@@ -9,6 +9,7 @@
         android:id="@+id/LayoutBoardTop"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@color/paneBackgroundColor"
         android:shrinkColumns="0,1,2,3"
         android:stretchColumns="4"
         android:layout_marginBottom="1dip">
@@ -77,6 +78,7 @@
         android:id="@+id/LayoutBoardBottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@color/paneBackgroundColor"
         android:layout_marginTop="1dip"
         android:shrinkColumns="0,1,2,3"
         android:stretchColumns="4">

@@ -49,8 +49,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private ViewSwitcher switchTurn;
     private ImageView imgStatus;
 
-    private TableLayout layoutTurn;
-    private RelativeLayout layoutTop;
     private int myTurn, numMoved, numPlayed, numSolved;
     private LinearProgressIndicator percentBar;
 
@@ -85,8 +83,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         afterCreate();
 
-        layoutTurn = findViewById(R.id.LayoutTurn);
-        layoutTop = findViewById(R.id.LayoutTop);
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
         tvPercentage = findViewById(R.id.TextViewPercentage);
         switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
@@ -119,12 +115,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         myEngine = new LocalEngine();
         myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
-
-        layoutTurn.setBackgroundColor(ColorSchemes.getDark());
-        if (layoutTop != null) {
-            layoutTop.setBackgroundColor(ColorSchemes.getDark());
-        }
-        tvPracticeMove.setTextColor(ColorSchemes.getHightlightColor());
 
         loadPuzzles();
     }
