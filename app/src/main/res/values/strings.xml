@@ -221,6 +221,7 @@
     <string name="ics_menu_players">Players</string>
     <string name="ics_menu_games">Games</string>
     <string name="ics_menu_stored">Stored</string>
+    <string name="ics_menu_resume">Resume</string>
     <string name="ics_menu_challenges">Challenges</string>
     <string name="ics_menu_seek">Seek</string>
     <string name="menu_abort">Abort</string>

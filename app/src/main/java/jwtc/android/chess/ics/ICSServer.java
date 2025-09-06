@@ -57,11 +57,11 @@ public class ICSServer extends Service {
         notificationsOn = on;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Received start id " + startId + ": " + intent);
-        return START_STICKY;
-    }
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//        Log.i(TAG, "Received start id " + startId + ": " + intent);
+//        return START_STICKY;
+//    }
 
     @Override
     public void onDestroy() {

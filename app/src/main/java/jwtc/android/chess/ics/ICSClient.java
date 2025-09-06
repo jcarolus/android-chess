@@ -241,6 +241,14 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             }
         });
 
+        Button buttonClose = findViewById(R.id.ButtonClose);
+        buttonClose.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showExitConfirmationDialog();
+            }
+        });
+
         ImageButton buttonRevert = findViewById(R.id.ButtonICSExamineRevert);
         buttonRevert.setOnClickListener(new OnClickListener() {
             @Override
@@ -677,6 +685,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     showHelp(R.string.online_help);
                 } else if (selected.equals(getString(R.string.ics_menu_stored))) {
                     loadStored();
+                } else if (selected.equals(getString(R.string.ics_menu_resume))) {
+                    sendString("resume");
                 } else {
                     // assume a custom command
                     sendString(selected);
@@ -710,6 +720,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         if (!icsServer.isGuest()) {
             mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_stored)); }}) ;
+            mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_resume)); }}) ;
         }
 
         try {

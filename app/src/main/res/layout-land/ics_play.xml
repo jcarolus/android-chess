@@ -218,6 +218,12 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:text="@string/button_close"
+                    android:id="@+id/ButtonClose"
+                    style="@style/ChessButton"
+                    />
                 <ImageButton
                     android:id="@+id/ButtonTakeBack"
                     android:src="@drawable/ic_backspace"
@@ -235,7 +241,7 @@
                 android:text="@string/pref_sound"
                 android:checked="true"
                 android:nextFocusLeft="@id/includeboard"
-                ></com.google.android.material.switchmaterial.SwitchMaterial>
+                />
         </LinearLayout>
 
     </RelativeLayout>
