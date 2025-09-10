@@ -12,5 +12,6 @@ LOCAL_SRC_FILES := chess-jni.cpp\
 		Game.cpp
 
 LOCAL_LDLIBS := -llog
+LOCAL_CPPFLAGS += -fno-sized-deallocation
 
 include $(BUILD_SHARED_LIBRARY)

@@ -713,6 +713,10 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 R.string.menu_help,
         };
 
+        if (!icsServer.isGuest()) {
+            mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_resume)); }}) ;
+        }
+
         for (int i = 0; i < resources.length; i++) {
             final int index = i;
             mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(resources[index])); }}) ;
@@ -720,7 +724,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         if (!icsServer.isGuest()) {
             mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_stored)); }}) ;
-            mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_resume)); }}) ;
         }
 
         try {
