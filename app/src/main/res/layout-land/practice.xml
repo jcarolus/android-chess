@@ -80,6 +80,7 @@
                     android:src="@drawable/ic_chevron_right"
                     android:contentDescription="@string/button_next_position"
                     android:layout_alignParentRight="true"
+                    android:nextFocusLeft="@id/includeboard"
                     style="@style/ChessImageButton" />
 
             <com.google.android.material.progressindicator.LinearProgressIndicator

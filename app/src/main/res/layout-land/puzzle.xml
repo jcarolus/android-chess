@@ -74,6 +74,7 @@
                 android:id="@+id/ButtonPuzzlePrevious"
                 android:src="@drawable/ic_chevron_left"
                 android:contentDescription="@string/button_previous_position"
+                android:nextFocusLeft="@id/includeboard"
                 style="@style/ChessImageButton" />
 
             <View

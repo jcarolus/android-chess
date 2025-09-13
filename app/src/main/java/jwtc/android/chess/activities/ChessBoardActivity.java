@@ -396,7 +396,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         //View v = getWindow().getCurrentFocus();
-        //Log.i("main", "current focus " + (v == null ? "NULL" : v.toString()));
         int c = (event.getUnicodeChar());
         Log.i(TAG, "onKeyDown " + keyCode + " = " + (char) c);
         if (keyCode == KeyEvent.KEYCODE_MENU) {

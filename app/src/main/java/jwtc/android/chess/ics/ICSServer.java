@@ -556,8 +556,6 @@ public class ICSServer extends Service {
                 while (_socket != null && _socket.isConnected()) {
                     String buffer = _socket.readString();
 
-                    // Log.i(TAG, "Buffer " + buffer == null ? "NULL" : buffer);
-
                     if (buffer != null && buffer.length() > 0) {
                         Message message = new Message();
                         message.what = ICSThreadMessageHandler.MSG_PARSE;
