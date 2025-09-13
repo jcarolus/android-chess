@@ -5,6 +5,9 @@ import android.graphics.Canvas;
 import android.util.TypedValue;
 import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
+
+import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 
 public class CapturedCountView extends AppCompatTextView {
@@ -19,7 +22,7 @@ public class CapturedCountView extends AppCompatTextView {
 
         setWillNotDraw(false);
 
-        setTextColor(ColorSchemes.getHightlightColor());
+        setTextColor(ContextCompat.getColor(context, R.color.surfaceTextColor));
 
         if (count > 0) {
             setText("" + count);

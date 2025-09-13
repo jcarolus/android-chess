@@ -11,4 +11,6 @@
     <color name="surfaceColor">#eeeeee</color>
     <color name="surfaceTextColor">#000000</color>
     <color name="primaryColorDisabled">#888888</color>
+    <color name="wrongColor">#D96227</color>
+    <color name="paneBackgroundColor">#879FB6</color>
 </resources>

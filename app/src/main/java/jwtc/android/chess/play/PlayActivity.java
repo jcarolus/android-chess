@@ -77,7 +77,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEcoValue;
-    private TableLayout layoutBoardTop, layoutBoardBottom;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip;
 
     @Override
@@ -195,9 +194,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         textViewOpponentClock = findViewById(R.id.TextViewClockTimeOpp);
         textViewMyClock = findViewById(R.id.TextViewClockTimeMe);
 
-        layoutBoardTop = findViewById(R.id.LayoutBoardTop);
-        layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
-
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
         textViewEcoValue = findViewById(R.id.TextViewEcoValue);
 
@@ -266,14 +262,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         }
 
         myEngine.addListener(this);
-
-        layoutBoardTop.setBackgroundColor(ColorSchemes.getDark());
-        layoutBoardBottom.setBackgroundColor(ColorSchemes.getDark());
-
-        textViewOpponent.setTextColor(ColorSchemes.getHightlightColor());
-        textViewMe.setTextColor(ColorSchemes.getHightlightColor());
-        textViewOpponentClock.setTextColor(ColorSchemes.getHightlightColor());
-        textViewMyClock.setTextColor(ColorSchemes.getHightlightColor());
 
         updateClockByPrefs();
 

@@ -49,7 +49,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private LinearLayout layoutGameButtons, layoutNewGameButtons;
     private TextView textPlayer, textOpponent;
     private TextView textStatus;
-    private LinearLayout layoutBoardTop, layoutBoardBottom;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private Handler statusHandler = new Handler(Looper.getMainLooper());
     private int overrideGameState = 0;
@@ -280,8 +279,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         switchTurnOpp = findViewById(R.id.ImageTurnOpp);
         textPlayer = findViewById(R.id.TextPlayer);
         textOpponent = findViewById(R.id.TextOpponent);
-        layoutBoardTop = findViewById(R.id.LayoutBoardTop);
-        layoutBoardBottom = findViewById(R.id.LayoutBoardBottom);
         layoutConnect = findViewById(R.id.LayoutConnect);
         layoutGameButtons = findViewById(R.id.LayoutGameButtons);
         layoutNewGameButtons = findViewById(R.id.LayoutNewGame);
@@ -356,12 +353,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         SharedPreferences prefs = getPrefs();
 
         Log.d(TAG, "messengerFromService " + (messengerFromService == null));
-
-
-        layoutBoardTop.setBackgroundColor(ColorSchemes.getDark());
-        layoutBoardBottom.setBackgroundColor(ColorSchemes.getDark());
-        textPlayer.setTextColor(ColorSchemes.getHightlightColor());
-        textOpponent.setTextColor(ColorSchemes.getHightlightColor());
 
         String sName = prefs.getString("hotspotboardName", "");
         editName.setText(sName);

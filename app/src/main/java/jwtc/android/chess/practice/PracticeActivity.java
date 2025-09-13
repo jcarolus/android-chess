@@ -19,6 +19,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,9 +49,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private ViewSwitcher switchTurn;
     private ImageView imgStatus;
 
-    private TableLayout layoutTurn;
-    private RelativeLayout layoutTop;
     private int myTurn, numMoved, numPlayed, numSolved;
+    private LinearProgressIndicator percentBar;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -82,8 +83,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         afterCreate();
 
-        layoutTurn = findViewById(R.id.LayoutTurn);
-        layoutTop = findViewById(R.id.LayoutTop);
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
         tvPercentage = findViewById(R.id.TextViewPercentage);
         switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
@@ -102,6 +101,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             }
         });
 
+        percentBar = findViewById(R.id.percentBar);
+
         chessBoardView.setNextFocusRightId(R.id.ButtonPracticeNext);
     }
 
@@ -114,12 +115,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         myEngine = new LocalEngine();
         myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
-
-        layoutTurn.setBackgroundColor(ColorSchemes.getDark());
-        if (layoutTop != null) {
-            layoutTop.setBackgroundColor(ColorSchemes.getDark());
-        }
-        tvPracticeMove.setTextColor(ColorSchemes.getHightlightColor());
 
         loadPuzzles();
     }
@@ -227,6 +222,9 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     public void updateScore() {
         tvPercentage.setText(formatPercentage());
+        int percentage = numPlayed > 0 ? (int)((float)numSolved / numPlayed * 100) : 0;
+        Log.d(TAG, "Set per " + percentage);
+        percentBar.setProgressCompat(percentage, /*animated=*/true);
     }
 
     private String formatPercentage() {

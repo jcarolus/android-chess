@@ -11,6 +11,7 @@
     </style>
 
     <style name="ChessButton" parent="android:Widget.Material.Button">
+        <item name="android:textColor">@color/surfaceTextColor</item>
         <item name="android:layout_height">@dimen/imageButtonSize</item>
         <item name="android:backgroundTint">@color/imagebutton_background</item>
     </style>

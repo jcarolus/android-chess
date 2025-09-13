@@ -57,11 +57,11 @@ public class ICSServer extends Service {
         notificationsOn = on;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Received start id " + startId + ": " + intent);
-        return START_STICKY;
-    }
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//        Log.i(TAG, "Received start id " + startId + ": " + intent);
+//        return START_STICKY;
+//    }
 
     @Override
     public void onDestroy() {
@@ -555,8 +555,6 @@ public class ICSServer extends Service {
             try {
                 while (_socket != null && _socket.isConnected()) {
                     String buffer = _socket.readString();
-
-                    // Log.i(TAG, "Buffer " + buffer == null ? "NULL" : buffer);
 
                     if (buffer != null && buffer.length() > 0) {
                         Message message = new Message();

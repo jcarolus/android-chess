@@ -6,16 +6,21 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="2dip">
-    <LinearLayout
+    android:padding="4dip">
+    <include
+        android:id="@+id/includeboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/chessboard" />
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
         <LinearLayout
             android:id="@+id/LayoutBoardTop"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:background="@color/paneBackgroundColor"
             android:gravity="center_vertical"
             android:padding="4dip">
             <ViewSwitcher
@@ -41,19 +46,128 @@
                 android:textSize="18sp"/>
         </LinearLayout>
 
-        <include
-            android:id="@+id/includeboard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dip"
-            android:layout_marginBottom="1dip"
-            layout="@layout/chessboard" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/LayoutBoardTop"
+            android:layout_above="@id/LayoutBoardBottom"
+            android:padding="8dip">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/TextStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/LayoutConnect"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dip"
+                        android:text="Host"
+                        android:checked="true"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dip"
+                        android:lines="2"
+                        android:minLines="2"
+                        android:maxLines="10"
+                        android:scrollHorizontally="false"
+                        android:ellipsize="none"
+                        android:text="Toggle `host` on if you are running the WiFi Hotspot."
+                        />
+                    <EditText
+                        android:id="@+id/EditName"
+                        android:hint="Your name"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dip"/>
+                    <Button android:id="@+id/ButtonConnect"
+                        android:text="Connect"
+                        android:layout_width="wrap_content"
+                        android:layout_margin="8dip"
+                        style="@style/ChessButton"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LayoutGameButtons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <Button android:id="@+id/ButtonResign"
+                        android:text="Resign"
+                        android:layout_width="wrap_content"
+                        style="@style/ChessButton"/>
+
+                    <Button android:id="@+id/ButtonDraw"
+                        android:text="Draw"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        style="@style/ChessButton"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LayoutNewGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dip"
+                    android:orientation="horizontal">
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/colorToggleGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:singleSelection="true"
+                        app:selectionRequired="true"
+                        >
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonWhite"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="♔ White" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonBlack"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="♚ Black" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                    <Button android:id="@+id/ButtonNew"
+                        android:text="New"
+                        android:layout_width="wrap_content"
+                        style="@style/ChessButton"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </ScrollView>
+
 
         <LinearLayout
             android:id="@+id/LayoutBoardBottom"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/paneBackgroundColor"
             android:gravity="center_vertical"
             android:padding="4dip">
             <ViewSwitcher
@@ -78,118 +192,6 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"/>
         </LinearLayout>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/TextStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp"
-        android:visibility="gone"/>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dip">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/LayoutConnect"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
-                    android:text="Host"
-                    android:checked="true"
-                    />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
-                    android:lines="2"
-                    android:minLines="2"
-                    android:maxLines="10"
-                    android:scrollHorizontally="false"
-                    android:ellipsize="none"
-                    android:text="Toggle `host` on if you are running the WiFi Hotspot."
-                    />
-                <EditText
-                    android:id="@+id/EditName"
-                    android:hint="Your name"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dip"/>
-                <Button android:id="@+id/ButtonConnect"
-                    android:text="Connect"
-                    android:layout_width="wrap_content"
-                    android:layout_margin="8dip"
-                    style="@style/ChessButton"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/LayoutGameButtons"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-                <Button android:id="@+id/ButtonResign"
-                    android:text="Resign"
-                    android:layout_width="wrap_content"
-                    style="@style/ChessButton"/>
-
-                <Button android:id="@+id/ButtonDraw"
-                    android:text="Draw"
-                    android:layout_width="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    style="@style/ChessButton"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/LayoutNewGame"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dip"
-                android:orientation="horizontal">
-                <com.google.android.material.button.MaterialButtonToggleGroup
-                    android:id="@+id/colorToggleGroup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:singleSelection="true"
-                    app:selectionRequired="true"
-                    >
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonWhite"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="♔ White" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonBlack"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="♚ Black" />
-                </com.google.android.material.button.MaterialButtonToggleGroup>
-                <Button android:id="@+id/ButtonNew"
-                    android:text="New"
-                    android:layout_width="wrap_content"
-                    style="@style/ChessButton"/>
-            </LinearLayout>
-        </LinearLayout>
-
-    </ScrollView>
+    </RelativeLayout>
 
 </LinearLayout>
