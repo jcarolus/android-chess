@@ -31,7 +31,8 @@ android {
         }
     }
 
-    ndkVersion "29.0.14033849"
+    // not yet forcing; @TODO
+    // ndkVersion "29.0.14033849"
 
     externalNativeBuild {
         ndkBuild {
