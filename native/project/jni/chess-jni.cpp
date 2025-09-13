@@ -262,7 +262,7 @@ static JNINativeMethod sMethods[] = {
     {"setEvalPropertyValue", "(II)V", (void*) Java_jwtc_chess_JNI_setEvalPropertyValue}};
 
 extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-    JNIEnv* env = NULL;
+    JNIEnv* env = nullptr;
     jint result = -1;
 
     DEBUG_PRINT("JNI_OnLoad called\n", 0);
@@ -289,7 +289,7 @@ int jniRegisterNativeMethods(JNIEnv* env, const char* className, const JNINative
 
     DEBUG_PRINT("Registering %s natives\n", className);
     clazz = env->FindClass(className);
-    if (clazz == NULL) {
+    if (clazz == nullptr) {
         DEBUG_PRINT("Native registration unable to find class '%s'\n", className);
         return -1;
     }
