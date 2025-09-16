@@ -16,10 +16,6 @@
         <item name="android:backgroundTint">@color/imagebutton_background</item>
     </style>
 
-    <style name="ChessTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:typeface">sans</item>
-    </style>
-
     <style name="ChessTextAppearance" parent="@android:style/TextAppearance">
         <item name="android:typeface">sans</item>
     </style>

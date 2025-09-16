@@ -11,7 +11,7 @@
                   v1z"
       android:fillColor="@color/surfaceTextColor"
       android:strokeColor="@color/surfaceTextColor"
-      android:strokeWidth="1"/>
+      android:strokeWidth="0.5"/>
   <path
       android:pathData="M8,5.466
                   V1.534
@@ -23,5 +23,5 @@
                   z"
       android:fillColor="@color/surfaceTextColor"
       android:strokeColor="@color/surfaceTextColor"
-      android:strokeWidth="1"/>
+      android:strokeWidth="0.5"/>
 </vector>
