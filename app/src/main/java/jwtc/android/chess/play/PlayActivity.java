@@ -9,9 +9,12 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -23,6 +26,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.Calendar;
@@ -63,6 +69,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     public static final int REQUEST_MENU = 5;
     public static final int REQUEST_CLOCK = 6;
     public static final int REQUEST_SAVE_GAME = 7;
+    public static final int REQUEST_ECO = 8;
 
     private LocalClockApi localClock = new LocalClockApi();
     private EngineApi myEngine;
@@ -76,7 +83,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEcoValue;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue;
+    private Button buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
@@ -193,7 +201,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         textViewMyClock = findViewById(R.id.TextViewClockTimeMe);
 
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
-        textViewEcoValue = findViewById(R.id.TextViewEcoValue);
+        buttonEco = findViewById(R.id.ButtonEco);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -336,7 +344,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
 
-        moveAdapter.update();
+        new Handler(Looper.getMainLooper()).postDelayed(
+                this::updateGUI,
+            2000
+        );
     }
 
 
@@ -505,8 +516,27 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateEco() {
-        String sEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard());
-        textViewEcoValue.setText( sEco != null ? sEco : "");
+        JSONObject jEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard());
+        if (jEco == null) {
+            buttonEco.setVisibility(View.INVISIBLE);
+        } else {
+            buttonEco.setVisibility(View.VISIBLE);
+            buttonEco.setText(ecoService.getName(jEco));
+
+            JSONArray arrMoves = ecoService.getArray(jEco);
+            if (arrMoves != null && arrMoves.length() > 0) {
+                buttonEco.setEnabled(true);
+                buttonEco.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EcoDialog dialog = new EcoDialog(PlayActivity.this, PlayActivity.this, REQUEST_ECO, ecoService, jEco);
+                        dialog.show();
+                    }
+                });
+            } else {
+                buttonEco.setEnabled(false);
+            }
+        }
     }
 
     protected void updateCapturedPieces() {
@@ -667,6 +697,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
             case REQUEST_SAVE_GAME:
                 saveGameFromDialog(data);
+                break;
+            case REQUEST_ECO:
+                item = data.getString("item");
+                gameApi.requestMove(item);
                 break;
         }
     }

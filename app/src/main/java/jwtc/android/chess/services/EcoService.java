@@ -13,6 +13,34 @@ import java.util.ArrayList;
 
 import jwtc.chess.PGNEntry;
 
+/*
+ECO.json
+
+n = name
+v = variant
+m = move
+a = array
+
+Example:
+[
+  {
+    "n": "Polish (Sokolsky) opening",
+    "v": "",
+    "e": "A00",
+    "m": "b4",
+    "a": [
+      {
+        "n": "Polish",
+        "v": "Tuebingen Variation ",
+        "e": "A00",
+        "m": "Nh6",
+        "a": []
+      }
+    ]
+  }
+]
+
+ */
 public class EcoService {
     private static final String TAG = "EcoService";
     private JSONArray _jArrayECO = null;
@@ -50,50 +78,68 @@ public class EcoService {
         }
     }
 
-    public String getEco(final ArrayList<PGNEntry> _arrPGN, int maxLevel) {
-        if (_jArrayECO != null) {
-            String sECO = getECOInfo(0, _arrPGN, _jArrayECO, maxLevel);
-            Log.i(TAG, sECO == null ? "No ECO" : sECO);
-            if (sECO != null) {
-                if (sECO != null && sECO.trim().length() > 0) {
-                    return sECO;
-                }
-            }
-        }
-        return null;
+    public JSONObject getEco(final ArrayList<PGNEntry> _arrPGN, int maxLevel) {
+        return getECOInfo(0, _arrPGN, _jArrayECO, maxLevel);
     }
 
-    private String getECOInfo(int level, final ArrayList<PGNEntry> _arrPGN, final JSONArray jArray, int maxLevel) {
-        if (level < _arrPGN.size() && level < maxLevel) {
+    public String getMove(JSONObject jObj) {
+        return getStringProperty(jObj, "m");
+    }
+
+    public String getName(JSONObject jObj) {
+        String name = getStringProperty(jObj, "n");
+        if (name.isEmpty()) {
+            return getStringProperty(jObj,"v");
+        }
+        return name;
+    }
+
+    public JSONArray getArray(JSONObject jObj) {
+        try {
+            JSONArray jArray = jObj.getJSONArray("a");
+            JSONArray jResult = new JSONArray();
+            for (int i = 0; i < jArray.length(); i++) {
+                JSONObject obj = jArray.getJSONObject(i);
+                if (!getName(obj).isEmpty() && !getMove(jObj).isEmpty()) {
+                    jResult.put(obj);
+                }
+            }
+            return jResult;
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    public String getStringProperty(JSONObject jObj, String key) {
+        try {
+            return jObj.getString(key);
+        } catch (Exception ignore) {
+            return "";
+        }
+    }
+
+    private JSONObject getECOInfo(int level, final ArrayList<PGNEntry> _arrPGN, final JSONArray jArray, int maxLevel) {
+        if (level < _arrPGN.size() && level < maxLevel && jArray != null) {
             PGNEntry entry = _arrPGN.get(level);
             try {
                 for (int i = 0; i < jArray.length(); i++) {
                     JSONObject jObj = (JSONObject) jArray.get(i);
-                    if (jObj.get("m").equals(entry._sMove)) {
-
-                        String sCurrent = "";
-                        if (jObj.has("e")) {
-                            sCurrent = jObj.getString("e") + ": " + jObj.getString("n");
-                            if (jObj.has("v")) {
-                                sCurrent += (jObj.getString("v").length() > 0 ? ", " + jObj.getString("v") : "");
-                            }
-                        }
-
+                    if (getMove(jObj).equals(entry._sMove)) {
                         if (level + 1 < maxLevel) {
-                            String sNext = null;
-
-                            if (jObj.has("a") && level + 1 < maxLevel) {
-                                sNext = getECOInfo(level + 1, _arrPGN, jObj.getJSONArray("a"), maxLevel);
-                            }
-
-                            if (sNext == null) {
+                            JSONObject jRet = getECOInfo(level + 1, _arrPGN, getArray(jObj), maxLevel);
+                            if (jRet != null) {
+                                String sMove = getMove(jRet);
+                                String sName = getName(jRet);
+                                if (sMove != null && !sMove.isEmpty() && !sName.isEmpty()) {
+                                    return jRet;
+                                } else {
+                                    return null;
+                                }
+                            } else {
                                 return null;
                             }
-
-                            return sNext.length() != 0 ? sNext : sCurrent;
                         }
-                        return sCurrent;
-
+                        return jObj;
                     }
                 }
             } catch (Exception ex) {}

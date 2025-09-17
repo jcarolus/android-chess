@@ -267,6 +267,30 @@ public class GameApi {
         return false;
     }
 
+    public boolean requestMove(String sMove) {
+        Matcher matchToken = _patMove.matcher(sMove);
+        String sAnnotation = "";
+        if (matchToken.matches()) {
+            Log.d(TAG, "requestMove MATCHES " + sMove);
+            if (requestMove(sMove, matchToken, null, sAnnotation)) {
+                final int move = jni.getMyMove();
+                dispatchMove(move);
+                return true;
+            }
+        } else {
+            matchToken = _patCastling.matcher(sMove);
+            if (matchToken.matches()) {
+                if (requestMove(sMove, matchToken, matchToken.group(1), sAnnotation)) {
+                    final int move = jni.getMyMove();
+                    dispatchMove(move);
+                    return true;
+                }
+            }
+        }
+        Log.d(TAG, "requestMove " + sMove);
+        return false;
+    }
+
     protected void dispatchMove(final int move) {
 //        Log.d(TAG, "dispatchMove " + move);
 

@@ -214,6 +214,21 @@
 
                 </TableRow>
             </TableLayout>
+
+            <Button android:id="@+id/ButtonEco"
+                android:text="--"
+                android:layout_width="fill_parent"
+                android:layout_margin="1dip"
+                style="@style/ChessButton"
+            />
+
+            <TextView
+                android:id="@+id/TextViewEcoValue"
+                style="@style/MyNormalTextStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dip" />
+
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -241,14 +256,6 @@
                         />
                 </TableRow>
             </TableLayout>
-
-            <TextView
-                android:id="@+id/TextViewEcoValue"
-                style="@style/MyNormalTextStyle"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:padding="4dip" />
-
         </LinearLayout>
 
     </ScrollView>
