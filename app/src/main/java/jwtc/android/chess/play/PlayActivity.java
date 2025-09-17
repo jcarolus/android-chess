@@ -16,8 +16,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -38,7 +36,6 @@ import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.activities.GlobalPreferencesActivity;
-import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
@@ -157,10 +154,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                 menuDialog.show();
             }
         });
-
-//        seekBar = findViewById(R.id.SeekBarMain);
-//        seekBar.setOnSeekBarChangeListener(this);
-//        seekBar.setMax(0);
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
@@ -502,13 +495,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateSeekBar() {
-//        seekBar.setMax(this.gameApi.getPGNSize());
-//        seekBar.setProgress(jni.getNumBoard());
-////        seekBar.invalidate();
-        Log.d(TAG, "updateSeekBar " + jni.getNumBoard());
-
         moveAdapter.update();
-        historyRecyclerView.smoothScrollToPosition(jni.getNumBoard() - 1);
+        historyRecyclerView.scrollToPosition(jni.getNumBoard() - 1);
     }
 
     protected void updatePlayers() {

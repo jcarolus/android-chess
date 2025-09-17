@@ -185,7 +185,8 @@
                 android:stretchColumns="1">
                 <TableRow
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    style="@style/MyRowStyle">
                     <ImageButton
                         android:id="@+id/ButtonPrevious"
                         android:src="@drawable/ic_chevron_left"
@@ -196,6 +197,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginLeft="8dip"
+                        android:layout_marginRight="8dip"
                         android:orientation="horizontal"
                         android:overScrollMode="never"/>
                     <ImageButton
