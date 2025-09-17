@@ -21,6 +21,9 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.io.InputStream;
@@ -30,6 +33,7 @@ import java.util.Date;
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
+import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -53,7 +57,7 @@ import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
 
-public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, EngineListener, ResultDialogListener, ClockListener {
+public class PlayActivity extends ChessBoardActivity implements EngineListener, ResultDialogListener, ClockListener, MoveRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;
@@ -67,7 +71,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private EngineApi myEngine;
     private EcoService ecoService = new EcoService();
     private long lGameID;
-    private SeekBar seekBar;
     private ProgressBar progressBarEngine;
     private ImageButton playButton;
     private boolean vsCPU = true;
@@ -78,6 +81,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEcoValue;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip;
+    private MoveRecyclerAdapter moveAdapter;
+    private RecyclerView historyRecyclerView;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -153,9 +158,9 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             }
         });
 
-        seekBar = findViewById(R.id.SeekBarMain);
-        seekBar.setOnSeekBarChangeListener(this);
-        seekBar.setMax(0);
+//        seekBar = findViewById(R.id.SeekBarMain);
+//        seekBar.setOnSeekBarChangeListener(this);
+//        seekBar.setMax(0);
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
@@ -231,6 +236,16 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             }
         });
 
+        historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
+
+        // Horizontal layout manager
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        historyRecyclerView.setLayoutManager(layoutManager);
+
+        // Set adapter
+        moveAdapter = new MoveRecyclerAdapter(this, gameApi, this);
+        historyRecyclerView.setAdapter(moveAdapter);
     }
 
     @Override
@@ -327,6 +342,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
+
+        moveAdapter.update();
     }
 
 
@@ -466,20 +483,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) {
-            this.gameApi.jumpToBoardNum(progress);
-        }
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
+    public void onMoveItemClick(int pos) {
+        this.gameApi.jumpToBoardNum(pos + 1);
     }
 
     protected void updateGUI() {
@@ -497,10 +502,13 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     protected void updateSeekBar() {
-        seekBar.setMax(this.gameApi.getPGNSize());
-        seekBar.setProgress(jni.getNumBoard());
-//        seekBar.invalidate();
-        Log.d(TAG, "updateSeekBar " + seekBar.getMax() + " - " + seekBar.getProgress());
+//        seekBar.setMax(this.gameApi.getPGNSize());
+//        seekBar.setProgress(jni.getNumBoard());
+////        seekBar.invalidate();
+        Log.d(TAG, "updateSeekBar " + jni.getNumBoard());
+
+        moveAdapter.update();
+        historyRecyclerView.smoothScrollToPosition(jni.getNumBoard() - 1);
     }
 
     protected void updatePlayers() {

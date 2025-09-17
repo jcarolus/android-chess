@@ -191,12 +191,13 @@
                         android:src="@drawable/ic_chevron_left"
                         android:contentDescription="@string/button_previous_move_description"
                         style="@style/ChessImageButton" />
-                    <SeekBar
-                        android:id="@+id/SeekBarMain"
-                        android:layout_marginLeft="8dip"
-                        android:layout_marginRight="8dip"
-                        android:layout_width="fill_parent"
-                        android:layout_height="48dip" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/HistoryRecyclerView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:overScrollMode="never"/>
                     <ImageButton
                         android:id="@+id/ButtonNext"
                         android:src="@drawable/ic_chevron_right"
