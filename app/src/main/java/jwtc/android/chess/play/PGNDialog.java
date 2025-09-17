@@ -2,6 +2,7 @@ package jwtc.android.chess.play;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import androidx.annotation.NonNull;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.Clipboard;
+import jwtc.android.chess.helpers.MoveAdapter;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
@@ -34,32 +36,14 @@ public class PGNDialog extends Dialog {
 
         final JNI jni = JNI.getInstance();
 
-        ArrayList<HashMap<String, String>> mapMoves = new ArrayList<HashMap<String, String>>();
-        SimpleAdapter adapterMoves = new SimpleAdapter(context, mapMoves, R.layout.pgn_item,
-                new String[]{"turn", "nr", "move", "annotation"}, new int[]{R.id.ImageTurn, R.id.TextViewNumMove, R.id.TextViewMove, R.id.TextViewAnnotation});
+        MoveAdapter moveAdapter = new MoveAdapter(context, gameApi);
 
         GridView contentLayout = findViewById(R.id.LayoutContent);
 
-        contentLayout.setAdapter(adapterMoves);
+        contentLayout.setAdapter(moveAdapter.getAdapter());
 
-        ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
-
-        for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove =  pgnEntries.get(i)._sMove;
-            if (pgnEntries.get(i)._duckMove != -1) {
-                sMove += "@" + Pos.toString(pgnEntries.get(i)._duckMove);
-            }
-            HashMap<String, String> item = new HashMap<String, String>();
-            item.put("nr", i % 2 == 0 ? ((i/2 + 1) + ". ") : " ");
-            item.put("move", sMove);
-            item.put("annotation", pgnEntries.get(i)._sAnnotation);
-            item.put("turn", Integer.toString(jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0));
-
-            mapMoves.add(item);
-        }
-
-        adapterMoves.notifyDataSetChanged();
-        contentLayout.smoothScrollToPosition(adapterMoves.getCount());
+        moveAdapter.update();
+        contentLayout.smoothScrollToPosition(moveAdapter.getAdapter().getCount());
 
         contentLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
