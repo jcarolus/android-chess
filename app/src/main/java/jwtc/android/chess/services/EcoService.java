@@ -1,16 +1,23 @@
 package jwtc.android.chess.services;
 
+import android.content.Context;
 import android.content.res.AssetManager;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
 
 /*
@@ -44,6 +51,7 @@ Example:
 public class EcoService {
     private static final String TAG = "EcoService";
     private JSONArray _jArrayECO = null;
+    private HMap hashMap;
 
     public void load(final AssetManager assetManager) {
 
@@ -55,6 +63,9 @@ public class EcoService {
                         Thread.sleep(1000);
 
                         long start = System.currentTimeMillis();
+
+                        hashMap = HMap.read(assetManager, "hashmap.bin");
+                        /*
                         InputStream in = assetManager.open("ECO.json");
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
@@ -69,13 +80,23 @@ public class EcoService {
 
                         _jArrayECO = new JSONArray(sb.toString());
                         Log.i(TAG, "ECO jArray - size " + _jArrayECO.length() + " load " + (System.currentTimeMillis() - start));
-
+                        */
                     } catch (Exception e) {
-
+                        Log.d(TAG, "Could not read the opening database");
                     }
                 }
             })).start();
         }
+    }
+
+    public String getEcoNameByHash(long hash) {
+        if (hashMap != null) {
+            return hashMap.get(hash);
+        } else {
+            Log.d(TAG, "getEcoNameByHash - no hash map ");
+        }
+        Log.d(TAG, "getEcoNameByHash - no hash for " + hash);
+        return null;
     }
 
     public JSONObject getEco(final ArrayList<PGNEntry> _arrPGN, int maxLevel) {
@@ -117,6 +138,7 @@ public class EcoService {
             return "";
         }
     }
+
 
     private JSONObject getECOInfo(int level, final ArrayList<PGNEntry> _arrPGN, final JSONArray jArray, int maxLevel) {
         if (level < _arrPGN.size() && level < maxLevel && jArray != null) {

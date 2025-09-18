@@ -169,7 +169,6 @@
         <item>@string/pgntool_export_explanation</item>
         <item>@string/pgntool_import_explanation</item>
         <item>@string/pgntool_delete_explanation</item>
-        <!-- <item>@string/pgntool_add_db_explanation</item> -->
         <item>@string/pgntool_create_db_explanation</item>
         <item>@string/pgntool_point_db_explanation</item>
         <item>@string/pgntool_unset_uci_engine</item>
@@ -177,7 +176,8 @@
          <item>@string/pgntool_import_practice</item>
         <item>@string/pgntool_reset_practice</item>
         <item>@string/pgntool_import_puzzle</item>
-<!--        <item>@string/pgntool_import_opening</item>-->
+        <item>@string/pgntool_import_opening</item>
+        <item>test</item>
         <item>@string/pgntool_help</item>
     </string-array>
     <string-array name="tileKeyArray">

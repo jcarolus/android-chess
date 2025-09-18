@@ -1,16 +1,23 @@
 package jwtc.android.chess.tools;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.app.Service;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
@@ -23,9 +30,15 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.HMap;
+import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
 
 
@@ -41,8 +54,12 @@ public class ImportService extends Service {
     public static final int DB_POINT = 9;
     public static final int EXPORT_GAME_DATABASE = 10;
 
+    public static final int PICK_JSON_FILE = 11;
+    public static final int PICK_BINARY = 12;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
+    protected static ArrayList<HMap.Pair> hashMap = null;
+
     private PuzzleImportProcessor puzzleImportProcessor = null;
     private GameImportProcessor gameImportProcessor = null;
     private PracticeImportProcessor practiceImportProcessor = null;
@@ -73,7 +90,8 @@ public class ImportService extends Service {
         return START_STICKY;
     }
 
-    public void startImport(final Uri uri, final int mode) {
+    public void startImport(final Intent intent, final int mode) {
+        Uri uri = intent.getData();
         Log.d(TAG, "mode " + mode);
         if (uri != null) {
             Log.d(TAG, "uri " + uri.toString());
@@ -212,6 +230,48 @@ public class ImportService extends Service {
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
                 }
                 break;
+            case PICK_JSON_FILE:
+                try {
+                    InputStream is = getContentResolver().openInputStream(uri);
+
+                    // Read stream into a String
+                    java.util.Scanner scanner = new java.util.Scanner(is).useDelimiter("\\A");
+                    String jsonStr = scanner.hasNext() ? scanner.next() : "";
+                    is.close();
+
+                    // Convert to JSONObject
+                    JSONArray jArray = new JSONArray(jsonStr);
+                    processJSONArray(jArray);
+
+                    dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to read " + e.getMessage());
+                    e.printStackTrace();
+                }
+                break;
+            case PICK_BINARY:
+                if (hashMap != null) {
+
+                    Log.d(TAG, "Pick binary " + hashMap.size());
+
+                    int flags = intent.getFlags()
+                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    try {
+                        getContentResolver().takePersistableUriPermission(uri, flags);
+
+                        writeHMapToDownloads(uri, hashMap);
+
+                    } catch (SecurityException ex) {
+                        Log.d(TAG, "Could not get the flags " + ex.getMessage());
+                    }
+                } else {
+                    Log.d(TAG, "No hashmap");
+                }
+
+                dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
+
+                break;
         }
     }
 
@@ -308,6 +368,42 @@ public class ImportService extends Service {
         return s;
     }
 
+    public void processJSONArray(JSONArray jArray) {
+        JNI jni = JNI.getInstance();
+        hashMap = new ArrayList<>();
+        int numProcessed = 0;
+        for (int i = 0; i < jArray.length(); i++) {
+            try {
+                JSONObject jObj = jArray.getJSONObject(i);
+                String fen = jObj.getString("fen");
+                String name = jObj.getString("name");
+
+                if (jni.initFEN(fen)) {
+                    long hash = jni.getHashKey();
+
+                    int n = hashMap.size();
+                    boolean duplicate = false;
+                    for (int j = 0; j < n; j++) {
+                        HMap.Pair p = hashMap.get(j);
+                        if (j > 0 && p.hash == hash) {
+                            duplicate = true;
+                            break;
+                        }
+                    }
+                    if (!duplicate) {
+                        hashMap.add(new HMap.Pair(hash, name));
+                        Log.d(TAG, "From FEN " + fen + " :: " + name + " => " + hash);
+                        numProcessed++;
+                    } else {
+                        Log.d(TAG, "Duplicate hash");
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        Log.d(TAG, "Done..." + numProcessed);
+    }
+
 //    protected TreeSet<Long> _arrKeys;
 //    protected String _outFile;
 //
@@ -340,6 +436,16 @@ public class ImportService extends Service {
 //        }
 //
 //    }
+
+    public void writeHMapToDownloads(Uri uri, ArrayList<HMap.Pair> list) {
+        Log.d(TAG, "write Hashmap");
+
+        try  {
+            HMap.write(this, uri, list);
+        } catch (Exception e) {
+            Log.d(TAG, "An error during writing of hash map " + e.getMessage());
+        }
+    }
 
     private class ThreadMessageHandler extends Handler {
         private WeakReference<ImportService> serverWeakReference;

@@ -516,6 +516,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateEco() {
+        Log.d(TAG, "eco by hash " + ecoService.getEcoNameByHash(jni.getHashKey()));
         JSONObject jEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard());
         if (jEco == null) {
             buttonEco.setVisibility(View.INVISIBLE);
