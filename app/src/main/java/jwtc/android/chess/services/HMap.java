@@ -224,7 +224,7 @@ public final class HMap {
     /** Binary search; returns null if not found. */
     public String get(long hash) {
         int lo = 0, hi = entries.length - 1;
-        Log.d(TAG, "entries " + entries.length + " " + hash);
+        // Log.d(TAG, "entries " + entries.length + " " + hash);
         while (lo <= hi) {
             int mid = (lo + hi) >>> 1;
             long mh = entries[mid].hash;
@@ -236,13 +236,10 @@ public final class HMap {
             }
         }
         return null;
+    }
 
-//        for (Entry entry : entries) {
-//            if (entry.hash == hash) {
-//               return new String(blob, entry.offset, entry.len, StandardCharsets.UTF_8);
-//            }
-//        }
-//        return null;
+    public int getSize() {
+        return entries.length;
     }
 
     /* ============================

@@ -516,21 +516,22 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateEco() {
-        Log.d(TAG, "eco by hash " + ecoService.getEcoNameByHash(jni.getHashKey()));
-        JSONObject jEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard());
-        if (jEco == null) {
+        String ecoName = ecoService.getEcoNameByHash(jni.getHashKey());
+        Log.d(TAG, "eco by hash " + ecoName);
+
+        if (ecoName == null) {
             buttonEco.setVisibility(View.INVISIBLE);
         } else {
             buttonEco.setVisibility(View.VISIBLE);
-            buttonEco.setText(ecoService.getName(jEco));
+            buttonEco.setText(ecoName);
 
-            JSONArray arrMoves = ecoService.getArray(jEco);
-            if (arrMoves != null && arrMoves.length() > 0) {
+            JSONArray jArray = ecoService.getAvailable();
+            if (jArray != null && jArray.length() > 0) {
                 buttonEco.setEnabled(true);
                 buttonEco.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EcoDialog dialog = new EcoDialog(PlayActivity.this, PlayActivity.this, REQUEST_ECO, ecoService, jEco);
+                        EcoDialog dialog = new EcoDialog(PlayActivity.this, PlayActivity.this, REQUEST_ECO, ecoService, jArray);
                         dialog.show();
                     }
                 });
