@@ -113,9 +113,4 @@ public class PracticeImportProcessor extends PGNProcessor {
         }
         return false;
     }
-
-    @Override
-    public String getString() {
-        return null;
-    }
 }

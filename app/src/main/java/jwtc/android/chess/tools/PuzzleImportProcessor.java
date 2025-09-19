@@ -34,11 +34,4 @@ public class PuzzleImportProcessor extends PGNProcessor {
         }
         return false;
     }
-
-    @Override
-    public String getString() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

@@ -58,7 +58,6 @@ public class ImportService extends Service {
     public static final int PICK_BINARY = 12;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
-    protected static ArrayList<HMap.Pair> hashMap = null;
 
     private PuzzleImportProcessor puzzleImportProcessor = null;
     private GameImportProcessor gameImportProcessor = null;
@@ -251,6 +250,7 @@ public class ImportService extends Service {
                 }
                 break;
             case PICK_BINARY:
+                ArrayList<HMap.Pair> hashMap = importApi.getHashMap();
                 if (hashMap != null) {
 
                     Log.d(TAG, "Pick binary " + hashMap.size());
@@ -261,6 +261,8 @@ public class ImportService extends Service {
                         getContentResolver().takePersistableUriPermission(uri, flags);
 
                         writeHMapToDownloads(uri, hashMap);
+
+                        Log.d(TAG, "Wrote hashMap");
 
                     } catch (SecurityException ex) {
                         Log.d(TAG, "Could not get the flags " + ex.getMessage());
@@ -370,7 +372,43 @@ public class ImportService extends Service {
 
     public void processJSONArray(JSONArray jArray) {
         JNI jni = JNI.getInstance();
-        hashMap = new ArrayList<>();
+
+        importApi.resetHashMap();
+        int numProcessed = 0;
+        for (int i = 0; i < jArray.length(); i++) {
+            try {
+                JSONObject jObj = jArray.getJSONObject(i);
+                String moves = jObj.getString("moves");
+                String name = jObj.getString("name");
+
+                StringBuilder PGN = new StringBuilder("");
+                PGN.append("[Event \"Event\"]\n");
+                PGN.append("[White \"white\"]\n");
+                PGN.append("[Black \"black\"]\n");
+                PGN.append(moves + "\n\n");
+
+                String pgn = PGN.toString();
+
+                if (importApi.loadPGN(pgn)) {
+                    long hash = jni.getHashKey();
+
+                    if (importApi.addToHashMap(hash, name)) {
+                        // Log.d(TAG, "From pgn " + pgn + " :: " + name + " => " + hash);
+                        numProcessed++;
+                    } else {
+                        Log.d(TAG, "Duplicate hash");
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        Log.d(TAG, "Done..." + numProcessed);
+    }
+
+    public void processJSONArrayFEN(JSONArray jArray) {
+        JNI jni = JNI.getInstance();
+
+        importApi.resetHashMap();
         int numProcessed = 0;
         for (int i = 0; i < jArray.length(); i++) {
             try {
@@ -381,17 +419,7 @@ public class ImportService extends Service {
                 if (jni.initFEN(fen)) {
                     long hash = jni.getHashKey();
 
-                    int n = hashMap.size();
-                    boolean duplicate = false;
-                    for (int j = 0; j < n; j++) {
-                        HMap.Pair p = hashMap.get(j);
-                        if (j > 0 && p.hash == hash) {
-                            duplicate = true;
-                            break;
-                        }
-                    }
-                    if (!duplicate) {
-                        hashMap.add(new HMap.Pair(hash, name));
+                    if (importApi.addToHashMap(hash, name)) {
                         Log.d(TAG, "From FEN " + fen + " :: " + name + " => " + hash);
                         numProcessed++;
                     } else {
@@ -438,7 +466,7 @@ public class ImportService extends Service {
 //    }
 
     public void writeHMapToDownloads(Uri uri, ArrayList<HMap.Pair> list) {
-        Log.d(TAG, "write Hashmap");
+        Log.d(TAG, "write Hashmap with size:" + list.size());
 
         try  {
             HMap.write(this, uri, list);
@@ -464,5 +492,5 @@ public class ImportService extends Service {
         }
     }
 
-    private class ImportApi extends GameApi {}
+
 }

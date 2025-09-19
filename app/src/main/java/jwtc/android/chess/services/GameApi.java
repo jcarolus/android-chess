@@ -720,7 +720,7 @@ public class GameApi {
 
 
     public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, int duckMove) {
-        Log.d(TAG, "addPGNEntry " + ply + ": " + sMove + " @ " + Pos.toString(duckMove) + " = " + duckMove);
+        // Log.d(TAG, "addPGNEntry " + ply + ": " + sMove + " @ " + Pos.toString(duckMove) + " = " + duckMove);
         while (ply >= 0 && _arrPGN.size() >= ply) {
             _arrPGN.remove(_arrPGN.size() - 1);
         }

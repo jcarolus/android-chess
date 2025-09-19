@@ -143,6 +143,4 @@ public abstract class PGNProcessor {
     }
 
     public abstract boolean processPGN(final String sPGN);
-
-    public abstract String getString();
 }
