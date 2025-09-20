@@ -16,37 +16,6 @@ public class LocalEngine extends EngineApi {
     private Thread enginePeekThread = null;
     private Thread engineSearchThread = null;
 
-    public void setOpeningDb(String sFileName) {
-        Log.d(TAG, "setOpeningDb " + sFileName);
-        JNI jni = JNI.getInstance();
-        jni.loadDB(sFileName, 17); // todo - number of plies
-    }
-
-    public void installDb(final InputStream in, final String outFilename) {
-        Log.d(TAG, "installDb " + outFilename);
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    OutputStream out = new FileOutputStream(outFilename);
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-
-                    out.close();
-                    in.close();
-
-                    setOpeningDb(outFilename);
-
-                } catch (Exception e) {
-                    Log.d(TAG, "installDb exception: " + e.getMessage());
-                }
-            }
-        }).start();
-    }
-
     @Override
     public void play() {
         Log.d(TAG, "play " + msecs + ", " + ply);

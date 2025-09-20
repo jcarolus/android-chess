@@ -51,9 +51,7 @@ public class ImportService extends Service {
     public static final int IMPORT_OPENINGS = 4;
     public static final int IMPORT_DATABASE = 5;
     public static final int PRACTICE_RESET = 8;
-    public static final int DB_POINT = 9;
     public static final int EXPORT_GAME_DATABASE = 10;
-
     public static final int PICK_JSON_FILE = 11;
     public static final int PICK_BINARY = 12;
 
@@ -193,21 +191,6 @@ public class ImportService extends Service {
 
                     dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
 
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                    dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
-                }
-                break;
-            case DB_POINT:
-                try {
-                    if (uri != null) {
-                        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
-
-                        editor.putString("OpeningDb", uri.toString());
-                        editor.commit();
-
-                        dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
-                    }
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);

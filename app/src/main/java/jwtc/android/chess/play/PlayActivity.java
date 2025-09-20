@@ -31,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -79,6 +80,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ImageButton playButton;
     private boolean vsCPU = true;
     private boolean flipBoard = false;
+    private boolean showEco = true;
     private int myTurn = 1, requestMoveFrom = -1, requestMoveTo = -1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
@@ -128,7 +130,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 if (jni.isEnded() == 0) {
-                    if (jni.getNumBoard() <= gameApi.getPGNSize()) {
+                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this)
                             .setTitle(getString(R.string.title_create_new_line))
                             .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
@@ -247,6 +249,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         // Set adapter
         moveAdapter = new MoveRecyclerAdapter(this, gameApi, this);
         historyRecyclerView.setAdapter(moveAdapter);
+
+        ecoService.load(getAssets());
     }
 
     @Override
@@ -263,20 +267,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         Uri uri = intent.getData();
 
         myEngine = new LocalEngine();
-
-        // opening database path
-        String sOpeningDb = prefs.getString("OpeningDb", null);
-        if (sOpeningDb == null) {
-            try {
-                ((LocalEngine) myEngine).installDb(getAssets().open("db.bin"), "/data/data/jwtc.android.chess/db.bin");
-            } catch (Exception e) {
-                Log.d(TAG, "Exception installing db " + e.getMessage());
-            }
-        } else {
-            Uri uriDb = Uri.parse(sOpeningDb);
-            ((LocalEngine) myEngine).setOpeningDb(uriDb.getPath());
-        }
-
         myEngine.addListener(this);
 
         updateClockByPrefs();
@@ -337,12 +327,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
         updateGameSettingsByPrefs();
 
-        if (prefs.getBoolean("showECO", true)) {
-            ecoService.load(getAssets());
-        }
+        showEco = prefs.getBoolean("showECO", true);
 
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
+
+        buttonEco.setVisibility(View.INVISIBLE);
 
         new Handler(Looper.getMainLooper()).postDelayed(
                 this::updateGUI,
@@ -516,6 +506,9 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateEco() {
+        if (!showEco) {
+            return;
+        }
         String ecoName = ecoService.getEcoNameByHash(jni.getHashKey());
         Log.d(TAG, "eco by hash " + ecoName);
 
@@ -880,7 +873,16 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     protected void playIfEngineCanMove() {
         Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
         if (myEngine.isReady() && jni.isEnded() == 0 && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
-            myEngine.play();
+            ArrayList<Integer> moves = ecoService.getAvailableMoves();
+
+            if (moves.size() > 0) {
+                int r = (int) (Math.random() * moves.size());
+                Log.d(TAG, "Eco moves " + moves.size() + ", " + r);
+                gameApi.move(moves.get(r), -1);
+                textViewEngineValue.setText("From opening book");
+            } else {
+                myEngine.play();
+            }
         }
     }
 }

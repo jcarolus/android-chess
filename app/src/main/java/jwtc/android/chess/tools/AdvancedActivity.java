@@ -70,12 +70,6 @@ public class AdvancedActivity extends BaseActivity {
                     i.setType("*/*");
                     startActivityForResult(i, ImportService.IMPORT_DATABASE);
 
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_point_db_explanation))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    startActivityForResult(i, ImportService.DB_POINT);
-
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
                     builder.setTitle(getString(R.string.pgntool_confirm_delete));
