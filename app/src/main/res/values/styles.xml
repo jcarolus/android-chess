@@ -96,6 +96,10 @@
     </style>
 
     <style name="ChessDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:windowMinWidthMajor">0%</item>
+        <item name="android:windowMinWidthMinor">0%</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>

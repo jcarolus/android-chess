@@ -1,27 +1,19 @@
 package jwtc.android.chess.tools;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.app.Service;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,14 +23,10 @@ import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
-import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.HMap;
-import jwtc.chess.JNI;
+
 import jwtc.chess.PGNColumns;
 
 
@@ -52,8 +40,7 @@ public class ImportService extends Service {
     public static final int IMPORT_DATABASE = 5;
     public static final int PRACTICE_RESET = 8;
     public static final int EXPORT_GAME_DATABASE = 10;
-    public static final int PICK_JSON_FILE = 11;
-    public static final int PICK_BINARY = 12;
+        public static final int PICK_BINARY = 12;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
 
@@ -98,6 +85,7 @@ public class ImportService extends Service {
 
         switch (mode) {
             case IMPORT_PUZZLES:
+                Log.d(TAG, "IMPORT_PUZZLES");
                 if (puzzleImportProcessor == null) {
                     puzzleImportProcessor = new PuzzleImportProcessor(mode, updateHandler, importApi, getContentResolver());
                 }
@@ -116,6 +104,7 @@ public class ImportService extends Service {
                 break;
 
             case IMPORT_GAMES:
+                Log.d(TAG, "IMPORT_GAMES");
                 if (uri != null) {
                     if (gameImportProcessor == null) {
                         gameImportProcessor = new GameImportProcessor(mode, updateHandler, importApi, getContentResolver());
@@ -134,6 +123,7 @@ public class ImportService extends Service {
                 }
                 break;
             case IMPORT_PRACTICE:
+                Log.d(TAG, "IMPORT_PRACTICE");
                 if (practiceImportProcessor == null) {
                     practiceImportProcessor = new PracticeImportProcessor(mode, updateHandler, importApi, getContentResolver());
                 }
@@ -150,6 +140,7 @@ public class ImportService extends Service {
                 }
                 break;
             case IMPORT_OPENINGS:
+                Log.d(TAG, "IMPORT_OPENINGS " + uri);
                 if (uri != null) {
                     if (openingImportProcessor == null) {
                         openingImportProcessor = new OpeningImportProcessor(mode, updateHandler, importApi);
@@ -165,6 +156,7 @@ public class ImportService extends Service {
                 }
                 break;
             case IMPORT_DATABASE:
+                Log.d(TAG, "IMPORT_DATABASE");
                 if (uri != null) {
                     if (pgnDbProcessor == null) {
                         pgnDbProcessor = new PGNDbProcessor(mode, updateHandler, importApi);
@@ -180,6 +172,7 @@ public class ImportService extends Service {
                 }
                 break;
             case PRACTICE_RESET:
+                Log.d(TAG, "PRACTICE_RESET");
                 try {
                     SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
@@ -197,6 +190,7 @@ public class ImportService extends Service {
                 }
                 break;
             case EXPORT_GAME_DATABASE:
+                Log.d(TAG, "EXPORT_GAME_DATABASE");
                 try {
                     if (uri != null) {
                         OutputStream fos = getContentResolver().openOutputStream(uri);
@@ -212,27 +206,8 @@ public class ImportService extends Service {
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
                 }
                 break;
-            case PICK_JSON_FILE:
-                try {
-                    InputStream is = getContentResolver().openInputStream(uri);
-
-                    // Read stream into a String
-                    java.util.Scanner scanner = new java.util.Scanner(is).useDelimiter("\\A");
-                    String jsonStr = scanner.hasNext() ? scanner.next() : "";
-                    is.close();
-
-                    // Convert to JSONObject
-                    JSONArray jArray = new JSONArray(jsonStr);
-                    processJSONArray(jArray);
-
-                    dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to read " + e.getMessage());
-                    e.printStackTrace();
-                }
-                break;
             case PICK_BINARY:
+                Log.d(TAG, "PICK_BINARY");
                 ArrayList<HMap.Pair> hashMap = importApi.getHashMap();
                 if (hashMap != null) {
 
@@ -353,100 +328,7 @@ public class ImportService extends Service {
         return s;
     }
 
-    public void processJSONArray(JSONArray jArray) {
-        JNI jni = JNI.getInstance();
 
-        importApi.resetHashMap();
-        int numProcessed = 0;
-        for (int i = 0; i < jArray.length(); i++) {
-            try {
-                JSONObject jObj = jArray.getJSONObject(i);
-                String moves = jObj.getString("moves");
-                String name = jObj.getString("name");
-
-                StringBuilder PGN = new StringBuilder("");
-                PGN.append("[Event \"Event\"]\n");
-                PGN.append("[White \"white\"]\n");
-                PGN.append("[Black \"black\"]\n");
-                PGN.append(moves + "\n\n");
-
-                String pgn = PGN.toString();
-
-                if (importApi.loadPGN(pgn)) {
-                    long hash = jni.getHashKey();
-
-                    if (importApi.addToHashMap(hash, name)) {
-                        // Log.d(TAG, "From pgn " + pgn + " :: " + name + " => " + hash);
-                        numProcessed++;
-                    } else {
-                        Log.d(TAG, "Duplicate hash");
-                    }
-                }
-            } catch (Exception ignored) {}
-        }
-
-        Log.d(TAG, "Done..." + numProcessed);
-    }
-
-    public void processJSONArrayFEN(JSONArray jArray) {
-        JNI jni = JNI.getInstance();
-
-        importApi.resetHashMap();
-        int numProcessed = 0;
-        for (int i = 0; i < jArray.length(); i++) {
-            try {
-                JSONObject jObj = jArray.getJSONObject(i);
-                String fen = jObj.getString("fen");
-                String name = jObj.getString("name");
-
-                if (jni.initFEN(fen)) {
-                    long hash = jni.getHashKey();
-
-                    if (importApi.addToHashMap(hash, name)) {
-                        Log.d(TAG, "From FEN " + fen + " :: " + name + " => " + hash);
-                        numProcessed++;
-                    } else {
-                        Log.d(TAG, "Duplicate hash");
-                    }
-                }
-            } catch (Exception ignored) {}
-        }
-
-        Log.d(TAG, "Done..." + numProcessed);
-    }
-
-//    protected TreeSet<Long> _arrKeys;
-//    protected String _outFile;
-//
-//    public void readDB(InputStream isDB) {
-//        Log.i("import", "readDB executing");
-//        _arrKeys.clear();
-//        long l;
-//        int len;
-//        byte[] bytes = new byte[8];
-//        try {
-//            while ((len = isDB.read(bytes, 0, bytes.length)) != -1) {
-//                l = 0L;
-//                l |= (long) bytes[0] << 56;
-//                l |= (long) bytes[1] << 48;
-//                l |= (long) bytes[2] << 40;
-//                l |= (long) bytes[3] << 32;
-//                l |= (long) bytes[4] << 24;
-//                l |= (long) bytes[5] << 16;
-//                l |= (long) bytes[6] << 8;
-//                l |= (long) bytes[7];
-//
-//                // assume file keys are allready unique
-//
-//                _arrKeys.add(l);
-//            }
-//        } catch (IOException e) {
-//            Log.e("import", "readDB: " + e.toString());
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//
-//    }
 
     public void writeHMapToDownloads(Uri uri, ArrayList<HMap.Pair> list) {
         Log.d(TAG, "write Hashmap with size:" + list.size());

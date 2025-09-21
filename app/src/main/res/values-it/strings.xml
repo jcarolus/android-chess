@@ -272,31 +272,23 @@
 
     <string name="advanced_help"><![CDATA[
 <h3>Avanzato</h3>
-<p>Crea o importa i tuoi contenuti qui.</p>
+<p>Crea o importa qui i tuoi contenuti.</p>
 
-<h4>Esporta database</h4>
-<p>Tutte le partite possono essere esportate in un file PGN unico (chess.pgn).</p>
+<h4>Esporta il database delle partite sulla scheda SD</h4>
+<p>Tutte le partite nel database possono essere esportate in un unico file PGN sulla scheda SD. Questo file si chiamerà chess.pgn e un eventuale file esistente verrà sovrascritto.</p>
 
-<h4>Importa partite</h4>
-<p>Aggiungi partite selezionando un file PGN.</p>
+<h4>Importa partite nel database</h4>
+<p>Usa questa opzione per aggiungere partite al database. Ti permette di sfogliare fino a un file PGN. Selezionalo e scegli di importarlo.</p>
 
-<h4>Elimina tutte le partite</h4>
-<p>Svuota il database. Salva prima una copia, l’azione è irreversibile.</p>
+<h4>Elimina tutte le partite nel database</h4>
+<p>Usa questa opzione se vuoi ripulire il database. Assicurati prima di creare un backup sulla scheda SD; questa azione non può essere annullata.</p>
 
-<h4>Crea database aperture</h4>
-<p>Converte un PGN in file .bin (fino a 17 mezze mosse).</p>
+<h4>Crea set di esercizi</h4>
+<p>Crea posizioni di allenamento dalle partite che finiscono con scacco matto. Seleziona il file da elaborare. Le voci non riuscite sono di solito partite che non finiscono con scacco matto o duplicati.</p>
 
-<h4>Imposta database aperture</h4>
-<p>Seleziona il file .bin creato.</p>
+<h4>Reimposta set di esercizi</h4>
+<p>Vuoi ricominciare ad allenarti? Questo reimposterà anche il tuo contatore del tempo medio.</p>
 
-<h4>Disinstalla motore UCI</h4>
-<p>Rimuove il motore UCI installato.</p>
-
-<h4>Crea set di allenamento</h4>
-<p>Crea esercizi da partite terminate con matto. Errori da partite duplicate o senza matto.</p>
-
-<h4>Reimposta set di allenamento</h4>
-<p>Vuoi ricominciare? Anche il contatore medio verrà azzerato.</p>
 ]]></string>
 
     <string name="online_help"><![CDATA[

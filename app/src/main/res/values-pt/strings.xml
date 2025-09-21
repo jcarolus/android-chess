@@ -272,31 +272,23 @@
 
     <string name="advanced_help"><![CDATA[
 <h3>Avançado</h3>
-<p>Crie ou importe seus próprios conteúdos aqui.</p>
+<p>Crie ou importe seu próprio conteúdo aqui.</p>
 
-<h4>Exportar banco de dados</h4>
-<p>Todas as partidas podem ser exportadas em um único arquivo PGN chamado chess.pgn.</p>
+<h4>Exportar banco de dados de partidas para o cartão SD</h4>
+<p>Todas as partidas do banco de dados podem ser exportadas para um único arquivo PGN no cartão SD. Esse arquivo se chamará chess.pgn e, se já existir, será sobrescrito.</p>
 
-<h4>Importar partidas</h4>
-<p>Adicione partidas selecionando um arquivo PGN.</p>
+<h4>Importar partidas para o banco de dados</h4>
+<p>Use esta opção para adicionar partidas ao banco de dados. Ela permite navegar até um arquivo PGN. Selecione-o e escolha importar.</p>
 
-<h4>Excluir todas as partidas</h4>
-<p>Esvazia o banco de dados. Faça backup antes, a ação é irreversível.</p>
+<h4>Excluir todas as partidas do banco de dados</h4>
+<p>Use esta opção se quiser limpar o banco de dados. Certifique-se de fazer primeiro um backup no cartão SD; esta ação não pode ser desfeita.</p>
 
-<h4>Criar banco de aberturas</h4>
-<p>Converte um arquivo PGN em .bin (até 17 meios-lances).</p>
+<h4>Criar conjunto de prática</h4>
+<p>Cria posições de prática a partir de partidas que terminam em xeque-mate. Navegue até o arquivo a ser processado. As entradas com falha geralmente são partidas que não terminaram em xeque-mate ou são duplicadas.</p>
 
-<h4>Definir banco de aberturas</h4>
-<p>Selecione o arquivo .bin criado.</p>
+<h4>Redefinir conjunto de prática</h4>
+<p>Quer recomeçar os treinos? Isso também redefinirá seu contador de tempo médio.</p>
 
-<h4>Desinstalar motor UCI</h4>
-<p>Remove o motor UCI instalado.</p>
-
-<h4>Criar conjunto de treino</h4>
-<p>Cria exercícios a partir de partidas que terminam em mate. Erros vêm de duplicadas ou sem mate.</p>
-
-<h4>Reiniciar conjunto de treino</h4>
-<p>Deseja recomeçar? Também zera seu contador médio.</p>
 ]]></string>
 
     <string name="online_help"><![CDATA[

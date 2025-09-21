@@ -43,12 +43,59 @@ public class EcoService {
         } else {
             Log.d(TAG, "getEcoNameByHash - no hash map ");
         }
-        Log.d(TAG, "getEcoNameByHash - no hash for " + hash);
+        Log.d(TAG, "getEcoNameByHash - no hashMap for " + hash);
         return null;
     }
 
 
     public ArrayList<Integer> getAvailableMoves() {
+        ArrayList<Integer> moveToPositions = getAllMoves();
+        ArrayList<Integer> retPositions = new ArrayList<Integer>();
+        int move;
+        for (Integer m : moveToPositions) {
+            if (jni.move(m) != 0) {
+                long hash = jni.getHashKey();
+                String sEco = hashMap.get(hash);
+                if (sEco != null) {
+                    retPositions.add(m);
+                }
+
+                jni.undo();
+            }
+        }
+        return retPositions;
+    }
+
+    public JSONArray getAvailable() {
+        ArrayList<Integer> moveToPositions = getAllMoves();
+        JSONArray jRet = new JSONArray();
+
+        if (hashMap != null) {
+            for (Integer m : moveToPositions) {
+                if (jni.move(m) != 0) {
+                    long hash = jni.getHashKey();
+                    String sEco = hashMap.get(hash);
+                    if (sEco != null) {
+                        String sMove = jni.getMyMoveToString();
+                        try {
+                            JSONObject jObj = new JSONObject();
+                            jObj.put("name", sEco);
+                            jObj.put("move", sMove);
+
+                            jRet.put(jObj);
+                        } catch (Exception ignored) {
+                        }
+                    }
+
+                    jni.undo();
+                }
+            }
+        }
+
+        return jRet;
+    }
+
+    private ArrayList<Integer> getAllMoves() {
         int size = jni.getMoveArraySize();
         ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
         int move;
@@ -58,31 +105,5 @@ public class EcoService {
             moveToPositions.add(move);
         }
         return moveToPositions;
-    }
-
-    public JSONArray getAvailable() {
-        ArrayList<Integer> moveToPositions = getAvailableMoves();
-        JSONArray jRet = new JSONArray();
-
-        for (Integer m : moveToPositions) {
-            if (jni.move(m) != 0) {
-                long hash = jni.getHashKey();
-                String sEco = hashMap.get(hash);
-                if (sEco != null) {
-                    String sMove = jni.getMyMoveToString();
-                    try {
-                        JSONObject jObj = new JSONObject();
-                        jObj.put("name", sEco);
-                        jObj.put("move", sMove);
-
-                        jRet.put(jObj);
-                    } catch (Exception ignored) {}
-                }
-
-                jni.undo();
-            }
-        }
-
-        return jRet;
     }
 }

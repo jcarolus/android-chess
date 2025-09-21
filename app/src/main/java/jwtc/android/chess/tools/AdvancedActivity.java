@@ -68,7 +68,7 @@ public class AdvancedActivity extends BaseActivity {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, ImportService.IMPORT_DATABASE);
+                    startActivityForResult(i, ImportService.IMPORT_OPENINGS);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
@@ -166,19 +166,13 @@ public class AdvancedActivity extends BaseActivity {
                     i.setType("*/*");
                     startActivityForResult(i, ImportService.IMPORT_PUZZLES);
 
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_import_opening))) {
-                    Intent newIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    newIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                    newIntent.setType("application/json"); // filter to JSON files
-                    startActivityForResult(newIntent, ImportService.PICK_JSON_FILE);
-                } else {
+                } else if (arrString[arg2].equals(getString(R.string.pgntool_point_db_explanation))) {
                     Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                     intent.setType("application/octet-stream");
                     intent.putExtra(Intent.EXTRA_TITLE, "hashmap.bin");
                     startActivityForResult(intent, ImportService.PICK_BINARY);
                 }
-                //
             }
         });
     }

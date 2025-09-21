@@ -20,12 +20,12 @@ import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.services.EcoService;
 
-public class EcoDialog  extends ResultDialog {
+public class EcoDialog extends ResultDialog {
     private static final String TAG = "EcoDialog";
-    public EcoDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, EcoService ecoService, JSONArray jArray) {
+    public EcoDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, String title, JSONArray jArray) {
         super(context, listener, requestCode);
 
-        //setTitle(ecoService.getName(jObj));
+        setTitle(title);
         setContentView(R.layout.eco_menu);
 
         ListView list = findViewById(R.id.EcoMenu);

@@ -85,8 +85,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue;
-    private Button buttonEco;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco;
+    private ImageButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
@@ -204,6 +204,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
         buttonEco = findViewById(R.id.ButtonEco);
+        textViewEco = findViewById(R.id.TextViewEco);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -510,21 +511,27 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             return;
         }
         String ecoName = ecoService.getEcoNameByHash(jni.getHashKey());
-        Log.d(TAG, "eco by hash " + ecoName);
+        JSONArray jArray = ecoService.getAvailable();
+        Log.d(TAG, "eco by hash " + ecoName + " :: " + jArray.length());
+
+        if (ecoName == null && jArray.length() > 0) {
+            ecoName = "ECO Openings";
+        }
 
         if (ecoName == null) {
             buttonEco.setVisibility(View.INVISIBLE);
+            textViewEco.setText("");
         } else {
             buttonEco.setVisibility(View.VISIBLE);
-            buttonEco.setText(ecoName);
+            textViewEco.setText(ecoName);
 
-            JSONArray jArray = ecoService.getAvailable();
             if (jArray != null && jArray.length() > 0) {
+                final String title = ecoName;
                 buttonEco.setEnabled(true);
                 buttonEco.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EcoDialog dialog = new EcoDialog(PlayActivity.this, PlayActivity.this, REQUEST_ECO, ecoService, jArray);
+                        EcoDialog dialog = new EcoDialog(PlayActivity.this, PlayActivity.this, REQUEST_ECO, title, jArray);
                         dialog.show();
                     }
                 });

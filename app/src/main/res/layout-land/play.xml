@@ -229,12 +229,24 @@
                     </TableRow>
                 </TableLayout>
 
-                <Button android:id="@+id/ButtonEco"
-                    android:text="@string/ics_menu_flag"
-                    android:layout_width="fill_parent"
-                    android:layout_margin="1dip"
-                    style="@style/ChessButton"
-                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="start">
+                    <ImageButton
+                        android:id="@+id/ButtonEco"
+                        android:src="@drawable/ic_signpost_split"
+                        android:contentDescription="ECO openings"
+                        style="@style/ChessImageButton" />
+                    <TextView
+                        android:id="@+id/TextViewEco"
+                        android:text="--"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="1dip"
+                        />
+                </LinearLayout>
 
                 <TableLayout
                     android:layout_width="match_parent"

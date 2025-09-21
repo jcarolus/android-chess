@@ -49,7 +49,6 @@ public final class HMap {
         this.blob = blob;
     }
 
-    /** Single entry in the on-disk table (kept in-memory as well). */
     public static final class Entry {
         public final long hash;
         public final int offset;
@@ -61,10 +60,6 @@ public final class HMap {
             this.len = len;
         }
     }
-
-    /* ============================
-     *            READ
-     * ============================ */
 
     public static HMap read(Context context, Uri uri) throws IOException {
         ContentResolver cr = context.getContentResolver();
@@ -82,7 +77,6 @@ public final class HMap {
                     return readFromBoundedChannel(ch, start, start + length);
                 } else {
                     // Fallback when provider doesn't report length: buffer to memory once.
-                    // (Large files: if this worries you, stream into a temp file in cache and map from there.)
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     // Position the channel to start
                     ch.position(start);
@@ -102,7 +96,6 @@ public final class HMap {
 
     public static HMap read(AssetManager assets, String assetPath) throws IOException {
         try (InputStream is = assets.open(assetPath, AssetManager.ACCESS_BUFFER)) {
-            // Read the whole asset (works even if it's compressed in the APK)
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buf = new byte[64 * 1024];
             int r;
@@ -110,7 +103,7 @@ public final class HMap {
                 baos.write(buf, 0, r);
             }
             byte[] all = baos.toByteArray();
-            return readFromByteArray(all); // uses the helper you already have
+            return readFromByteArray(all);
         }
     }
 
@@ -221,10 +214,8 @@ public final class HMap {
         return new HMap(entries, blob);
     }
 
-    /** Binary search; returns null if not found. */
     public String get(long hash) {
         int lo = 0, hi = entries.length - 1;
-        // Log.d(TAG, "entries " + entries.length + " " + hash);
         while (lo <= hi) {
             int mid = (lo + hi) >>> 1;
             long mh = entries[mid].hash;
@@ -242,11 +233,6 @@ public final class HMap {
         return entries.length;
     }
 
-    /* ============================
-     *           WRITE
-     * ============================ */
-
-    /** Convenience pair for writing. */
     public static final class Pair {
         public final long hash;
         public final String value;
@@ -312,11 +298,9 @@ public final class HMap {
             os.write(entriesBytes);
             os.write(blob);
             os.flush();
-            // (No atomic rename available for arbitrary content providers.)
         }
     }
 
-    // ADD: convenience to write from Map<Long,String> on Android 11+
     public static void writeFromMap(Context context, Uri uri, Map<Long, String> map) throws IOException {
         ArrayList<Pair> pairs = new ArrayList<>(map.size());
         for (Map.Entry<Long, String> e : map.entrySet()) {
@@ -324,10 +308,6 @@ public final class HMap {
         }
         write(context, uri, pairs);
     }
-
-    /* ============================
-     *         UTILITIES
-     * ============================ */
 
     private static void readFully(FileChannel ch, ByteBuffer dst) throws IOException {
         while (dst.hasRemaining()) {

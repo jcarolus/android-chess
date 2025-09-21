@@ -272,31 +272,23 @@
     <string name="advanced_help">
          <![CDATA[
 <h3>Avanzado</h3>
-    <p>Crea o importa tus propios contenidos aquí.</p>
+<p>Crea o importa tu propio contenido aquí.</p>
 
-    <h4>Exportar base de datos a tarjeta SD</h4>
-    <p>Todas las partidas se pueden exportar a un archivo PGN único en la tarjeta SD llamado chess.pgn, sobrescribiendo el existente.</p>
+<h4>Exportar la base de datos de partidas a la tarjeta SD</h4>
+<p>Todas las partidas de la base de datos pueden exportarse a un único archivo PGN en la tarjeta SD. Este archivo se llamará chess.pgn y, si existe, se sobrescribirá.</p>
 
-    <h4>Importar partidas</h4>
-    <p>Agrega partidas a la base de datos seleccionando un archivo PGN.</p>
+<h4>Importar partidas a la base de datos</h4>
+<p>Usa esta opción para añadir partidas a la base de datos. Te permite buscar un archivo PGN. Selecciónalo y elige importar.</p>
 
-    <h4>Eliminar todas las partidas</h4>
-    <p>Vacía la base de datos. Haz copia de seguridad antes, esta acción no se puede deshacer.</p>
+<h4>Eliminar todas las partidas de la base de datos</h4>
+<p>Usa esta opción si quieres limpiar la base de datos. Asegúrate primero de hacer una copia de seguridad en la tarjeta SD; esta acción no se puede deshacer.</p>
 
-    <h4>Crear base de datos de aperturas</h4>
-    <p>Convierte un PGN en una base .bin de aperturas (hasta 17 medios movimientos).</p>
+<h4>Crear conjunto de práctica</h4>
+<p>Crea posiciones de práctica a partir de partidas que terminan en jaque mate. Navega hasta el archivo que deseas procesar. Las entradas fallidas suelen ser partidas que no terminaron en jaque mate o que están duplicadas.</p>
 
-    <h4>Establecer base de datos de aperturas</h4>
-    <p>Selecciona el archivo .bin creado para usarlo.</p>
+<h4>Restablecer conjunto de práctica</h4>
+<p>¿Quieres volver a empezar a practicar? Esto también restablecerá tu contador de tiempo promedio.</p>
 
-    <h4>Desinstalar motor UCI</h4>
-    <p>Elimina el motor UCI instalado.</p>
-
-    <h4>Crear conjunto de práctica</h4>
-    <p>Crea ejercicios de partidas que terminan en mate. Errores son partidas sin mate o duplicadas.</p>
-
-    <h4>Reiniciar conjunto de práctica</h4>
-    <p>¿Quieres empezar de nuevo? También reinicia tu contador de promedio.</p>
 
         ]]>
     </string>
