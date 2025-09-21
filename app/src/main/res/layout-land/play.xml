@@ -233,7 +233,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_gravity="start">
+                    android:gravity="center_vertical">
                     <ImageButton
                         android:id="@+id/ButtonEco"
                         android:src="@drawable/ic_signpost_split"

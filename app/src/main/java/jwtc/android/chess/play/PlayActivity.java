@@ -337,7 +337,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
         new Handler(Looper.getMainLooper()).postDelayed(
                 this::updateGUI,
-            2000
+            1000
         );
     }
 
