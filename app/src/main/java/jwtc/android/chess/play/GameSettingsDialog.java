@@ -41,13 +41,13 @@ public class GameSettingsDialog extends ResultDialog {
         final Spinner spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
         final ToggleButton toggleQuiescent = findViewById(R.id.ToggleQuiescent);
 
-        ArrayAdapter<CharSequence> adapterTime = ArrayAdapter.createFromResource(context, R.array.levels_time, android.R.layout.simple_spinner_item);
-        adapterTime.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapterTime = ArrayAdapter.createFromResource(context, R.array.levels_time, R.layout.spinner_item);
+        adapterTime.setDropDownViewResource(R.layout.spinner_item);
         spinnerLevelTime.setPrompt(context.getString(R.string.title_pick_level));
         spinnerLevelTime.setAdapter(adapterTime);
 
-        ArrayAdapter<CharSequence> adapterPly = ArrayAdapter.createFromResource(context, R.array.levels_ply, android.R.layout.simple_spinner_item);
-        adapterPly.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapterPly = ArrayAdapter.createFromResource(context, R.array.levels_ply, R.layout.spinner_item);
+        adapterPly.setDropDownViewResource(R.layout.spinner_item);
         spinnerLevelPly.setPrompt(context.getString(R.string.title_pick_level));
         spinnerLevelPly.setAdapter(adapterPly);
 

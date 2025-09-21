@@ -94,19 +94,4 @@
         <item name="android:layout_marginBottom">1dp</item>
         <item name="android:gravity">center_vertical</item>
     </style>
-
-    <style name="ChessDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:windowMinWidthMajor">0%</item>
-        <item name="android:windowMinWidthMinor">0%</item>
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
-        <item name="colorOnPrimary">@color/primaryTextColor</item>
-        <item name="colorSecondary">@color/secondaryColor</item>
-        <item name="colorSecondaryVariant">@color/secondaryVariantColor</item>
-        <item name="colorOnSecondary">@color/secondaryTextColor</item>
-        <item name="colorOnSurface">@color/surfaceTextColor</item>
-        <item name="colorSurface">@color/surfaceColor</item>
-    </style>
 </resources>

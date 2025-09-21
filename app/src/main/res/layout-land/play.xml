@@ -203,7 +203,7 @@
                             android:contentDescription="@string/button_previous_move_description"
                             style="@style/ChessImageButton"
                             android:nextFocusLeft="@id/includeboard"
-                            android:nextFocusDown="@id/SwitchBlindfold" />
+                            android:nextFocusDown="@id/ButtonEco" />
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/HistoryRecyclerView"
                             android:layout_width="0dp"
@@ -238,7 +238,9 @@
                         android:id="@+id/ButtonEco"
                         android:src="@drawable/ic_signpost_split"
                         android:contentDescription="ECO openings"
-                        style="@style/ChessImageButton" />
+                        style="@style/ChessImageButton"
+                        android:nextFocusLeft="@id/includeboard"
+                        android:nextFocusDown="@id/SwitchBlindfold"/>
                     <TextView
                         android:id="@+id/TextViewEco"
                         android:text="--"

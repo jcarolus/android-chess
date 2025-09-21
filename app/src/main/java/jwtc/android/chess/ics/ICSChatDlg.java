@@ -20,7 +20,7 @@ public class ICSChatDlg extends Dialog {
     private EditText _editChat;
 
     public ICSChatDlg(Context context) {
-        super(context);
+        super(context, R.style.ChessDialogTheme);
 
         _parent = (ICSClient) context;
 

@@ -28,7 +28,7 @@ public class PGNDialog extends Dialog {
     private static final String TAG = "PGNDialog";
 
     public PGNDialog(@NonNull final Context context, final GameApi gameApi) {
-        super(context);
+        super(context, R.style.ChessDialogTheme);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
