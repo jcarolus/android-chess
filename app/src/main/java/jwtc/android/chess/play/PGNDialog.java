@@ -17,6 +17,7 @@ import java.util.HashMap;
 import androidx.annotation.NonNull;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.Clipboard;
+import jwtc.android.chess.play.MoveItem;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
@@ -34,9 +35,8 @@ public class PGNDialog extends Dialog {
 
         final JNI jni = JNI.getInstance();
 
-        ArrayList<HashMap<String, String>> mapMoves = new ArrayList<HashMap<String, String>>();
-        SimpleAdapter adapterMoves = new SimpleAdapter(context, mapMoves, R.layout.pgn_item,
-                new String[]{"turn", "nr", "move", "annotation"}, new int[]{R.id.ImageTurn, R.id.TextViewNumMove, R.id.TextViewMove, R.id.TextViewAnnotation});
+        ArrayList<MoveItem> mapMoves = new ArrayList<MoveItem>();
+        MoveItemAdapter adapterMoves = new MoveItemAdapter(context, mapMoves);
 
         GridView contentLayout = findViewById(R.id.LayoutContent);
 
@@ -49,13 +49,12 @@ public class PGNDialog extends Dialog {
             if (pgnEntries.get(i)._duckMove != -1) {
                 sMove += "@" + Pos.toString(pgnEntries.get(i)._duckMove);
             }
-            HashMap<String, String> item = new HashMap<String, String>();
-            item.put("nr", i % 2 == 0 ? ((i/2 + 1) + ". ") : " ");
-            item.put("move", sMove);
-            item.put("annotation", pgnEntries.get(i)._sAnnotation);
-            item.put("turn", Integer.toString(jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0));
+            String nr = i % 2 == 0 ? ((i/2+1) + ". ") : " ";
+            String annotation = pgnEntries.get(i)._sAnnotation;
+            int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
 
-            mapMoves.add(item);
+            mapMoves.add(new MoveItem(nr, sMove, annotation, turn));
+
         }
 
         adapterMoves.notifyDataSetChanged();
