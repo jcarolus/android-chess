@@ -6,14 +6,20 @@
     android:layout_margin="8dip"
     android:layout_gravity="center">
 
-    <TableLayout
-        android:id="@+id/TableOptions"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TableRow style="@style/MyRowStyle"
-            android:layout_marginBottom="16dip">
-            <RadioGroup>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="300dip"
+            android:layout_height="wrap_content"
+            android:padding="8dip"
+            android:layout_marginBottom="8dp"
+            >
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -28,11 +34,16 @@
                     android:id="@+id/radioHuman"
                     style="@style/MyRowTextStyle" />
             </RadioGroup>
-        </TableRow>
-
-        <TableRow style="@style/MyRowStyle"
-            android:layout_marginBottom="16dip">
-            <RadioGroup>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="300dip"
+            android:layout_height="wrap_content"
+            android:padding="8dip"
+            android:layout_marginBottom="8dp"
+            >
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -47,64 +58,75 @@
                     android:id="@+id/radioBlack"
                     style="@style/MyRowTextStyle" />
             </RadioGroup>
-        </TableRow>
-
-        <TableRow style="@style/MyRowStyle">
-            <RadioButton
-                android:id="@+id/RadioOptionsTime"
-                android:text="@string/options_level_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/MyRowTextStyle" />
-            <Spinner
-                android:id="@+id/SpinnerOptionsLevelTime"
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="300dip"
+            android:layout_height="wrap_content"
+            android:padding="8dip"
+            android:layout_marginBottom="8dp">
+            <TableLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-        </TableRow>
+                android:layout_height="wrap_content">
 
-        <TableRow style="@style/MyRowStyle">
-            <RadioButton
-                android:id="@+id/RadioOptionsPly"
-                android:text="@string/options_level_ply"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/MyRowTextStyle" />
-            <Spinner
-                android:id="@+id/SpinnerOptionsLevelPly"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-        </TableRow>
+                <TableRow style="@style/MyRowStyle">
+                    <RadioButton
+                        android:id="@+id/RadioOptionsTime"
+                        android:text="@string/options_level_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        style="@style/MyRowTextStyle" />
+                    <Spinner
+                        android:id="@+id/SpinnerOptionsLevelTime"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+                </TableRow>
+                <TableRow style="@style/MyRowStyle">
+                    <RadioButton
+                        android:id="@+id/RadioOptionsPly"
+                        android:text="@string/options_level_ply"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        style="@style/MyRowTextStyle" />
+                    <Spinner
+                        android:id="@+id/SpinnerOptionsLevelPly"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+                </TableRow>
 
-        <TableRow style="@style/MyRowStyle"
-            android:layout_marginBottom="16dip">
-            <ToggleButton
-                android:id="@+id/ToggleQuiescent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:textOn="@string/options_quiescent_on"
-                android:textOff="@string/options_quiescent_off"/>
-        </TableRow>
-
-        <TableRow>
-
+                <TableRow style="@style/MyRowStyle">
+                    <ToggleButton
+                        android:id="@+id/ToggleQuiescent"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="4dip"
+                        android:checked="true"
+                        android:textOn="@string/options_quiescent_on"
+                        android:textOff="@string/options_quiescent_off"/>
+                </TableRow>
+                </TableLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <LinearLayout
+            android:layout_width="300dip"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
             <Button
                 android:id="@+id/ButtonCancel"
                 android:text="@string/button_cancel"
-                android:minWidth="100dp"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_margin="2dip"
                 style="@style/ChessButton"/>
 
             <Button
                 android:id="@+id/ButtonOk"
                 android:text="@string/button_ok"
-                android:minWidth="100dp"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_margin="2dip"
                 style="@style/ChessButton"/>
-        </TableRow>
-
-    </TableLayout>
-
+        </LinearLayout>
+    </LinearLayout>
 </ScrollView>
