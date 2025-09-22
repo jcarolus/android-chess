@@ -233,6 +233,7 @@ public class JNI {
     public native void destroy();
 
     public native void setVariant(int variant);
+    public native int getVariant();
 
     public native int requestMove(int from, int to);
 

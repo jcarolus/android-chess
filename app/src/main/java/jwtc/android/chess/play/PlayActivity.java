@@ -250,6 +250,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         // Set adapter
         moveAdapter = new MoveRecyclerAdapter(this, gameApi, this);
         historyRecyclerView.setAdapter(moveAdapter);
+        historyRecyclerView.setHorizontalScrollBarEnabled(true);
 
         ecoService.load(getAssets());
     }
@@ -880,9 +881,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     protected void playIfEngineCanMove() {
         Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
         if (myEngine.isReady() && jni.isEnded() == 0 && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 
-            if (moves.size() > 0) {
+            if (jni.getVariant() != BoardConstants.VARIANT_DUCK && moves.size() > 0) {
                 int r = (int) (Math.random() * moves.size());
                 Log.d(TAG, "Eco moves " + moves.size() + ", " + r);
                 gameApi.move(moves.get(r), -1);
