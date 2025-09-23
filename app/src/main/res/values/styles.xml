@@ -16,10 +16,6 @@
         <item name="android:backgroundTint">@color/imagebutton_background</item>
     </style>
 
-    <style name="ChessTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:typeface">sans</item>
-    </style>
-
     <style name="ChessTextAppearance" parent="@android:style/TextAppearance">
         <item name="android:typeface">sans</item>
     </style>
@@ -97,16 +93,5 @@
     <style name="MyRowStyle">
         <item name="android:layout_marginBottom">1dp</item>
         <item name="android:gravity">center_vertical</item>
-    </style>
-
-    <style name="ChessDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
-        <item name="colorOnPrimary">@color/primaryTextColor</item>
-        <item name="colorSecondary">@color/secondaryColor</item>
-        <item name="colorSecondaryVariant">@color/secondaryVariantColor</item>
-        <item name="colorOnSecondary">@color/secondaryTextColor</item>
-        <item name="colorOnSurface">@color/surfaceTextColor</item>
-        <item name="colorSurface">@color/surfaceColor</item>
     </style>
 </resources>

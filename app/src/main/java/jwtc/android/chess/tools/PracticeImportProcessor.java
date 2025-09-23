@@ -33,7 +33,7 @@ public class PracticeImportProcessor extends PGNProcessor {
 
     @Override
     public boolean processPGN(String sPGN) {
-        //Log.i("processPGN", sPGN);
+        // Log.d(TAG, "processPGN " + sPGN);
         if (gameApi.loadPGN(sPGN)) {
 
             if (jni.getState() == ChessBoard.MATE) {
@@ -79,9 +79,6 @@ public class PracticeImportProcessor extends PGNProcessor {
 
                             // save when it's our move
                             if (plies % 2 == 0) {
-                                if (plies == 4) {
-                                    Log.i(TAG, "YESS");
-                                }
                                 s = "[FEN \"" + sFEN + "\"]\n" + arrMoves[moves];
                             }
                             moves++;
@@ -112,10 +109,5 @@ public class PracticeImportProcessor extends PGNProcessor {
             }
         }
         return false;
-    }
-
-    @Override
-    public String getString() {
-        return null;
     }
 }

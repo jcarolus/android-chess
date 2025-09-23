@@ -68,13 +68,7 @@ public class AdvancedActivity extends BaseActivity {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
-                    startActivityForResult(i, ImportService.IMPORT_DATABASE);
-
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_point_db_explanation))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    startActivityForResult(i, ImportService.DB_POINT);
+                    startActivityForResult(i, ImportService.IMPORT_OPENINGS);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
@@ -160,8 +154,6 @@ public class AdvancedActivity extends BaseActivity {
 
                     AlertDialog alert = builder.create();
                     alert.show();
-
-
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_practice))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -174,13 +166,13 @@ public class AdvancedActivity extends BaseActivity {
                     i.setType("*/*");
                     startActivityForResult(i, ImportService.IMPORT_PUZZLES);
 
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_import_opening))) {
-//                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//                    i.addCategory(Intent.CATEGORY_OPENABLE);
-//                    i.setType("*/*");
-//                    startActivityForResult(i, ImportService.);
+                } else if (arrString[arg2].equals(getString(R.string.pgntool_point_db_explanation))) {
+                    Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("application/octet-stream");
+                    intent.putExtra(Intent.EXTRA_TITLE, "hashmap.bin");
+                    startActivityForResult(intent, ImportService.PICK_BINARY);
                 }
-                //
             }
         });
     }
@@ -199,6 +191,7 @@ public class AdvancedActivity extends BaseActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        // super.onActivityResult(requestCode, resultCode, resultData);
         Log.d(TAG, "result" + requestCode + "  " + resultCode);
         if (resultCode == Activity.RESULT_OK) {
             Uri uri = null;

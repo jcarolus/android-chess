@@ -296,17 +296,6 @@
     <p>Use this option if you want to clean up the game database. Make sure you first make a backup
         to sd-card, this action can not be undone.</p>
 
-    <h4>Create openingdatabase</h4>
-    <p>Browse to a PGN file on sd-card and it will be converted into an openingdatabase with the
-        same name but with file name extension .bin. Currently all games in the PGN file will be
-        parsed until 17 ply.</p>
-
-    <h4>Set openingdatabase</h4>
-    <p>Browse to the newly created .bin openingdatabase file to let Chess use it.</p>
-
-    <h4>Uninstall UCI engine</h4>
-    <p>Remove the installed UCI engine.</p>
-
     <h4>Create practice set</h4>
     <p>Creates practice positions from games that end in a check-mate. Browse to the file to
         process. Failed entries are usually games that did not end in a check-mate or are a

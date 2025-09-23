@@ -272,31 +272,23 @@
 
     <string name="advanced_help"><![CDATA[
 <h3>Avansat</h3>
-<p>Creează sau importă conținut propriu aici.</p>
+<p>Creați sau importați aici conținutul dvs.</p>
 
-<h4>Exportă baza de date</h4>
-<p>Toate partidele pot fi exportate într-un fișier PGN unic numit chess.pgn.</p>
+<h4>Exportați baza de date de partide pe cardul SD</h4>
+<p>Toate partidele din baza de date pot fi exportate într-un singur fișier PGN pe cardul SD. Acest fișier se va numi chess.pgn, iar un fișier existent va fi suprascris.</p>
 
-<h4>Importă partide</h4>
-<p>Adaugă partide alegând un fișier PGN.</p>
+<h4>Importați partide în baza de date</h4>
+<p>Folosiți această opțiune pentru a adăuga partide în baza de date. Vă permite să navigați la un fișier PGN. Selectați-l și alegeți importul.</p>
 
-<h4>Șterge toate partidele</h4>
-<p>Golește baza de date. Fă backup înainte, acțiunea e ireversibilă.</p>
+<h4>Ștergeți toate partidele din baza de date</h4>
+<p>Folosiți această opțiune dacă doriți să curățați baza de date. Asigurați-vă că mai întâi faceți o copie de siguranță pe cardul SD; această acțiune nu poate fi anulată.</p>
 
-<h4>Creează baza de deschideri</h4>
-<p>Convertește un fișier PGN într-un fișier .bin (până la 17 semi-mutări).</p>
+<h4>Creați set de antrenament</h4>
+<p>Creează poziții de antrenament din partide care se termină cu șah mat. Selectați fișierul de procesat. Intrările eșuate sunt de obicei partide care nu s-au încheiat cu șah mat sau sunt duplicate.</p>
 
-<h4>Setează baza de deschideri</h4>
-<p>Selectează fișierul .bin creat.</p>
+<h4>Resetați setul de antrenament</h4>
+<p>Doriți să începeți antrenamentul de la zero? Aceasta va reseta și contorul mediei timpului.</p>
 
-<h4>Dezinstalează motor UCI</h4>
-<p>Elimină motorul UCI instalat.</p>
-
-<h4>Creează set de antrenament</h4>
-<p>Creează exerciții din partide care se termină în mat. Eșecurile vin din duplicate sau partide fără mat.</p>
-
-<h4>Resetează setul de antrenament</h4>
-<p>Vrei să începi din nou? Și contorul mediu va fi resetat.</p>
 ]]></string>
 
     <string name="online_help"><![CDATA[

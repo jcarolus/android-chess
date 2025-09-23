@@ -272,32 +272,23 @@
     <string name="advanced_help">
          <![CDATA[
 <h3>Erweitert</h3>
-    <p>Erstelle oder importiere hier deine eigenen Inhalte.</p>
+<p>Erstellen oder importieren Sie hier Ihre eigenen Inhalte.</p>
 
-    <h4>Partiendatenbank auf SD-Karte exportieren</h4>
-    <p>Alle Partien in der Datenbank können in eine einzelne PGN-Datei auf der SD-Karte exportiert werden. Diese Datei
-        heißt chess.pgn und überschreibt eine vorhandene Datei.</p>
+<h4>Spieldatenbank auf SD-Karte exportieren</h4>
+<p>Alle Partien in der Spieldatenbank können in eine einzige PGN-Datei auf die SD-Karte exportiert werden. Diese Datei heißt chess.pgn; eine vorhandene Datei wird überschrieben.</p>
 
-    <h4>Partien in die Datenbank importieren</h4>
-    <p>Mit dieser Option kannst du Partien zur Datenbank hinzufügen. Wähle eine PGN-Datei und importiere sie.</p>
+<h4>Partien in die Spieldatenbank importieren</h4>
+<p>Verwenden Sie diese Option, um Partien zur Spieldatenbank hinzuzufügen. Sie können zu einer PGN-Datei navigieren, sie auswählen und importieren.</p>
 
-    <h4>Alle Partien löschen</h4>
-    <p>Mit dieser Option kannst du die Datenbank leeren. Sichere vorher auf SD-Karte, da dieser Vorgang nicht rückgängig gemacht werden kann.</p>
+<h4>Alle Partien in der Spieldatenbank löschen</h4>
+<p>Verwenden Sie diese Option, wenn Sie die Spieldatenbank bereinigen möchten. Erstellen Sie vorher unbedingt ein Backup auf die SD-Karte; dieser Vorgang kann nicht rückgängig gemacht werden.</p>
 
-    <h4>Eröffnungsdatenbank erstellen</h4>
-    <p>Wähle eine PGN-Datei auf SD-Karte, sie wird in eine .bin-Eröffnungsdatenbank konvertiert. Alle Partien werden bis 17 Halbzüge analysiert.</p>
+<h4>Übungssatz erstellen</h4>
+<p>Erstellt Übungsstellungen aus Partien, die mit Schachmatt enden. Navigieren Sie zur zu verarbeitenden Datei. Fehlgeschlagene Einträge sind normalerweise Partien, die nicht mit Schachmatt endeten oder Duplikate sind.</p>
 
-    <h4>Eröffnungsdatenbank setzen</h4>
-    <p>Wähle die erstellte .bin-Datei, damit Schach sie verwendet.</p>
+<h4>Übungssatz zurücksetzen</h4>
+<p>Möchten Sie das Üben von vorne beginnen? Dadurch wird auch Ihr durchschnittlicher Zeitmesser zurückgesetzt.</p>
 
-    <h4>UCI-Engine deinstallieren</h4>
-    <p>Entferne die installierte UCI-Engine.</p>
-
-    <h4>Übungsset erstellen</h4>
-    <p>Erstellt Übungsstellungen aus Partien, die mit Matt enden. Fehlerhafte Einträge sind meist Partien ohne Matt oder Duplikate.</p>
-
-    <h4>Übungsset zurücksetzen</h4>
-    <p>Willst du von vorn beginnen? Dadurch wird auch dein Durchschnittszähler zurückgesetzt.</p>
 
         ]]>
     </string>

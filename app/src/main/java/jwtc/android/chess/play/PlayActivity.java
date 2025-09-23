@@ -9,32 +9,40 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
+import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.activities.GlobalPreferencesActivity;
-import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
@@ -53,7 +61,7 @@ import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
 
-public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBarChangeListener, EngineListener, ResultDialogListener, ClockListener {
+public class PlayActivity extends ChessBoardActivity implements EngineListener, ResultDialogListener, ClockListener, MoveRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;
@@ -62,22 +70,26 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     public static final int REQUEST_MENU = 5;
     public static final int REQUEST_CLOCK = 6;
     public static final int REQUEST_SAVE_GAME = 7;
+    public static final int REQUEST_ECO = 8;
 
     private LocalClockApi localClock = new LocalClockApi();
     private EngineApi myEngine;
     private EcoService ecoService = new EcoService();
     private long lGameID;
-    private SeekBar seekBar;
     private ProgressBar progressBarEngine;
     private ImageButton playButton;
     private boolean vsCPU = true;
     private boolean flipBoard = false;
+    private boolean showEco = true;
     private int myTurn = 1, requestMoveFrom = -1, requestMoveTo = -1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEcoValue;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco;
+    private ImageButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip;
+    private MoveRecyclerAdapter moveAdapter;
+    private RecyclerView historyRecyclerView;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -118,7 +130,7 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 if (jni.isEnded() == 0) {
-                    if (jni.getNumBoard() <= gameApi.getPGNSize()) {
+                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this)
                             .setTitle(getString(R.string.title_create_new_line))
                             .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
@@ -152,10 +164,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
                 menuDialog.show();
             }
         });
-
-        seekBar = findViewById(R.id.SeekBarMain);
-        seekBar.setOnSeekBarChangeListener(this);
-        seekBar.setMax(0);
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
@@ -195,7 +203,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         textViewMyClock = findViewById(R.id.TextViewClockTimeMe);
 
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
-        textViewEcoValue = findViewById(R.id.TextViewEcoValue);
+        buttonEco = findViewById(R.id.ButtonEco);
+        textViewEco = findViewById(R.id.TextViewEco);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -231,6 +240,19 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
             }
         });
 
+        historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
+
+        // Horizontal layout manager
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        historyRecyclerView.setLayoutManager(layoutManager);
+
+        // Set adapter
+        moveAdapter = new MoveRecyclerAdapter(this, gameApi, this);
+        historyRecyclerView.setAdapter(moveAdapter);
+        historyRecyclerView.setHorizontalScrollBarEnabled(true);
+
+        ecoService.load(getAssets());
     }
 
     @Override
@@ -247,20 +269,6 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
         Uri uri = intent.getData();
 
         myEngine = new LocalEngine();
-
-        // opening database path
-        String sOpeningDb = prefs.getString("OpeningDb", null);
-        if (sOpeningDb == null) {
-            try {
-                ((LocalEngine) myEngine).installDb(getAssets().open("db.bin"), "/data/data/jwtc.android.chess/db.bin");
-            } catch (Exception e) {
-                Log.d(TAG, "Exception installing db " + e.getMessage());
-            }
-        } else {
-            Uri uriDb = Uri.parse(sOpeningDb);
-            ((LocalEngine) myEngine).setOpeningDb(uriDb.getPath());
-        }
-
         myEngine.addListener(this);
 
         updateClockByPrefs();
@@ -321,12 +329,17 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
         updateGameSettingsByPrefs();
 
-        if (prefs.getBoolean("showECO", true)) {
-            ecoService.load(getAssets());
-        }
+        showEco = prefs.getBoolean("showECO", true);
 
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
+
+        buttonEco.setVisibility(View.INVISIBLE);
+
+        new Handler(Looper.getMainLooper()).postDelayed(
+                this::updateGUI,
+            1000
+        );
     }
 
 
@@ -466,20 +479,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (fromUser) {
-            this.gameApi.jumpToBoardNum(progress);
-        }
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        // TODO Auto-generated method stub
+    public void onMoveItemClick(int pos) {
+        this.gameApi.jumpToBoardNum(pos + 1);
     }
 
     protected void updateGUI() {
@@ -497,10 +498,8 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     protected void updateSeekBar() {
-        seekBar.setMax(this.gameApi.getPGNSize());
-        seekBar.setProgress(jni.getNumBoard());
-//        seekBar.invalidate();
-        Log.d(TAG, "updateSeekBar " + seekBar.getMax() + " - " + seekBar.getProgress());
+        moveAdapter.update();
+        historyRecyclerView.scrollToPosition(jni.getNumBoard() - 1);
     }
 
     protected void updatePlayers() {
@@ -509,8 +508,38 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     }
 
     protected void updateEco() {
-        String sEco = ecoService.getEco(gameApi.getPGNEntries(), jni.getNumBoard());
-        textViewEcoValue.setText( sEco != null ? sEco : "");
+        if (!showEco) {
+            return;
+        }
+        String ecoName = ecoService.getEcoNameByHash(jni.getHashKey());
+        JSONArray jArray = ecoService.getAvailable();
+        Log.d(TAG, "eco by hash " + ecoName + " :: " + jArray.length());
+
+        if (ecoName == null && jArray.length() > 0) {
+            ecoName = "ECO Openings";
+        }
+
+        if (ecoName == null) {
+            buttonEco.setVisibility(View.INVISIBLE);
+            textViewEco.setText("");
+        } else {
+            buttonEco.setVisibility(View.VISIBLE);
+            textViewEco.setText(ecoName);
+
+            if (jArray != null && jArray.length() > 0) {
+                final String title = ecoName;
+                buttonEco.setEnabled(true);
+                buttonEco.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EcoDialog dialog = new EcoDialog(PlayActivity.this, PlayActivity.this, REQUEST_ECO, title, jArray);
+                        dialog.show();
+                    }
+                });
+            } else {
+                buttonEco.setEnabled(false);
+            }
+        }
     }
 
     protected void updateCapturedPieces() {
@@ -671,6 +700,10 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
 
             case REQUEST_SAVE_GAME:
                 saveGameFromDialog(data);
+                break;
+            case REQUEST_ECO:
+                item = data.getString("item");
+                gameApi.requestMove(item);
                 break;
         }
     }
@@ -848,7 +881,17 @@ public class PlayActivity extends ChessBoardActivity implements SeekBar.OnSeekBa
     protected void playIfEngineCanMove() {
         Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
         if (myEngine.isReady() && jni.isEnded() == 0 && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
-            myEngine.play();
+
+            ArrayList<Integer> moves = ecoService.getAvailableMoves();
+
+            if (jni.getVariant() != BoardConstants.VARIANT_DUCK && moves.size() > 0) {
+                int r = (int) (Math.random() * moves.size());
+                Log.d(TAG, "Eco moves " + moves.size() + ", " + r);
+                gameApi.move(moves.get(r), -1);
+                textViewEngineValue.setText("From opening book");
+            } else {
+                myEngine.play();
+            }
         }
     }
 }

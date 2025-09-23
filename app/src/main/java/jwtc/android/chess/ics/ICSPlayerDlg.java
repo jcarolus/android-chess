@@ -25,7 +25,7 @@ public class ICSPlayerDlg extends Dialog {
     private TextView _tvOpponentName;
 
     public ICSPlayerDlg(Context context) {
-        super(context);
+        super(context, R.style.ChessDialogTheme);
 
         _parent = (ICSClient) context;
 

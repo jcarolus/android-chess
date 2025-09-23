@@ -22,7 +22,7 @@ public class ICSGameOverDlg extends Dialog {
 
 
     public ICSGameOverDlg(Context context) {
-        super(context);
+        super(context, R.style.ChessDialogTheme);
 
         _parent = (ICSClient) context;
 
