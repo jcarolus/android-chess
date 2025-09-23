@@ -294,11 +294,11 @@ boolean ChessBoard::isEnded() {
     // DRAW by repetition, no need to check with noHitcount < 4, because repetition needs at least 4
     // sequential moves
     //  that can lead to the same position
-    if (m_50RuleCount > 3 && m_parent != NULL) {
+    if (m_50RuleCount > 3 && m_parent != nullptr) {
         // start at parent
         ChessBoard* tmpBoard = m_parent;
         int repeatCount = 0;
-        while (tmpBoard != NULL) {
+        while (tmpBoard != nullptr) {
             if (tmpBoard->m_hashKey == m_hashKey) {
                 repeatCount++;
             }
@@ -323,11 +323,11 @@ boolean ChessBoard::checkEnded() {
         m_state = DRAW_50;
         return true;
     }
-    if (m_50RuleCount > 3 && m_parent != NULL) {
+    if (m_50RuleCount > 3 && m_parent != nullptr) {
         // start at parent
         ChessBoard* tmpBoard = m_parent->m_parent;
         int repeatCount = 0;
-        while (tmpBoard != NULL) {
+        while (tmpBoard != nullptr) {
             if (tmpBoard->m_hashKey == m_hashKey) {
                 repeatCount++;
             }
@@ -352,8 +352,8 @@ boolean ChessBoard::checkEnded() {
 // return 0 when move is not ambigious, otherwise the ambigious move.
 // ambigous when pieces of the same kind move to the same destination
 int ChessBoard::ambigiousMove() {
-    if (m_parent != NULL) {
-        ChessBoard* tmpBoard = new ChessBoard();
+    if (m_parent != nullptr) {
+        auto* tmpBoard = new ChessBoard();
         m_parent->duplicate(tmpBoard);
 
         tmpBoard->m_indexMoves = 0;
@@ -380,7 +380,7 @@ int ChessBoard::ambigiousMove() {
 // returns true if the move is a valid move - the move will be made when valid
 boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece) {
     // if duckPos was not set, the previous turn was not completed, so no valid piece move
-    if (m_variant == VARIANT_DUCK && m_duckPos == -1 && m_parent != NULL) {
+    if (m_variant == VARIANT_DUCK && m_duckPos == -1 && m_parent != nullptr) {
         DEBUG_PRINT("requestMove duck with duckPos -1", 0);
         return false;
     }
@@ -415,7 +415,7 @@ boolean ChessBoard::requestDuckMove(int newDuckPos) {
             return false;
         }
         // old duck pos
-        if (m_parent != NULL && m_parent->m_duckPos == newDuckPos) {
+        if (m_parent != nullptr && m_parent->m_duckPos == newDuckPos) {
             DEBUG_PRINT("requestDuckMove has parent and same duckPos %d, %d", m_parent->m_duckPos, newDuckPos);
             return false;
         }
@@ -1309,7 +1309,7 @@ String ChessBoard::getHistoryDebug()
         ChessBoard* tmpBoard;
         String sz = "";
         tmpBoard = this;
-        while(tmpBoard != NULL)
+        while(tmpBoard != nullptr)
         {
                 sz = Move::toDbgString(tmpBoard->m_myMove) + " " + sz;
                 tmpBoard = tmpBoard->m_parent;
@@ -1640,7 +1640,7 @@ int ChessBoard::getAvailableCol(int colNum) {
 void ChessBoard::reset() {
     m_variant = VARIANT_DEFAULT;
     m_numBoard = 0;
-    m_parent = NULL;
+    m_parent = nullptr;
     m_myMove = 0;
     m_duckPos = -1;
     m_sizeMoves = 0;
@@ -1688,7 +1688,7 @@ void ChessBoard::duplicate(ChessBoard* ret) {
 // convinient method to return pointer to first board
 ChessBoard* ChessBoard::getFirstBoard() {
     ChessBoard* ret = this;
-    while (ret->m_parent != NULL) {
+    while (ret->m_parent != nullptr) {
         ret = ret->m_parent;
     }
     return ret;
@@ -1709,7 +1709,7 @@ int ChessBoard::getNoHitCount() {
     return m_50RuleCount;
 }
 int ChessBoard::getTurn() {
-    if (m_variant == VARIANT_DUCK && m_parent != NULL && m_duckPos == -1) {
+    if (m_variant == VARIANT_DUCK && m_parent != nullptr && m_duckPos == -1) {
         // the move was made, but not the duck move
         return m_o_turn;
     }
@@ -1793,7 +1793,7 @@ int ChessBoard::getDuckPos() {
     if (m_duckPos != -1) {
         return m_duckPos;
     }
-    if (m_parent != NULL) {
+    if (m_parent != nullptr) {
         return m_parent->m_duckPos;
     }
     return -1;
@@ -1911,33 +1911,33 @@ boolean ChessBoard::parseFEN(char* sFEN) {
         memcpy(sRest, &sFEN[i], restLen);
         sRest[restLen] = '\0';
         char* token = strtok(sRest, " ");
-        if (token != NULL) {
+        if (token != nullptr) {
             if (strcmp(token, "w") == 0) {
                 turn = WHITE;
             } else {
                 turn = BLACK;
             }
-            token = strtok(NULL, " ");
+            token = strtok(nullptr, " ");
             if (token != 0) {
-                if (strstr(token, "k") != NULL) {
+                if (strstr(token, "k") != nullptr) {
                     bccs = 1;
                 }
-                if (strstr(token, "q") != NULL) {
+                if (strstr(token, "q") != nullptr) {
                     bccl = 1;
                 }
-                if (strstr(token, "K") != NULL) {
+                if (strstr(token, "K") != nullptr) {
                     wccs = 1;
                 }
-                if (strstr(token, "Q") != NULL) {
+                if (strstr(token, "Q") != nullptr) {
                     wccl = 1;
                 }
-                token = strtok(NULL, " ");
-                if (token != NULL) {
+                token = strtok(nullptr, " ");
+                if (token != nullptr) {
                     if (strcmp(token, "-") != 0) {
                         ep = Pos::fromString(token);
                     }
-                    token = strtok(NULL, " ");
-                    if (token != NULL) {
+                    token = strtok(nullptr, " ");
+                    if (token != nullptr) {
                         r50 = atoi(token);
                     }
                 }
@@ -1999,7 +1999,7 @@ void ChessBoard::toFEN(char* s) {
     int cnt = 0;
     ChessBoard* tmpBoard;
     tmpBoard = this;
-    while (tmpBoard->m_parent != NULL) {
+    while (tmpBoard->m_parent != nullptr) {
         cnt++;
         tmpBoard = tmpBoard->m_parent;
     }
@@ -2083,7 +2083,7 @@ int ChessBoard::getNumCaptured(int turn, int piece) {
     ChessBoard* tmpBoard = this;
     int cnt = ChessBoard::bitCount(m_bitbPieces[turn][piece]);
 
-    while (tmpBoard->m_parent != NULL) {
+    while (tmpBoard->m_parent != nullptr) {
         tmpBoard = tmpBoard->m_parent;
     }
     return ChessBoard::bitCount(tmpBoard->m_bitbPieces[turn][piece]) - cnt;
@@ -4163,14 +4163,14 @@ void ChessBoard::printB(char* s) {
     strcat(s, buf);
 
     ChessBoard *bP = m_parent;
-    while(bP != NULL)
+    while(bP != nullptr)
     {
             strcat(s, "\n");
             Move::toDbgString(bP->m_myMove, buf);
             strcat(s, buf);
             bP = bP->m_parent;
     }
-    if(m_parent != NULL)
+    if(m_parent != nullptr)
     {
             //s += ("Parent ep square: " + m_parent->m_ep + "\n");
             strcat(s, "\nParent moves:\n");

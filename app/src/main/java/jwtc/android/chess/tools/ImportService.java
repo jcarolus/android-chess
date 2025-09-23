@@ -14,7 +14,6 @@ import android.os.Message;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,9 +22,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
+
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
-import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.HMap;
+
 import jwtc.chess.PGNColumns;
 
 
@@ -38,11 +39,11 @@ public class ImportService extends Service {
     public static final int IMPORT_OPENINGS = 4;
     public static final int IMPORT_DATABASE = 5;
     public static final int PRACTICE_RESET = 8;
-    public static final int DB_POINT = 9;
     public static final int EXPORT_GAME_DATABASE = 10;
-
+        public static final int PICK_BINARY = 12;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
+
     private PuzzleImportProcessor puzzleImportProcessor = null;
     private GameImportProcessor gameImportProcessor = null;
     private PracticeImportProcessor practiceImportProcessor = null;
@@ -73,7 +74,8 @@ public class ImportService extends Service {
         return START_STICKY;
     }
 
-    public void startImport(final Uri uri, final int mode) {
+    public void startImport(final Intent intent, final int mode) {
+        Uri uri = intent.getData();
         Log.d(TAG, "mode " + mode);
         if (uri != null) {
             Log.d(TAG, "uri " + uri.toString());
@@ -83,6 +85,7 @@ public class ImportService extends Service {
 
         switch (mode) {
             case IMPORT_PUZZLES:
+                Log.d(TAG, "IMPORT_PUZZLES");
                 if (puzzleImportProcessor == null) {
                     puzzleImportProcessor = new PuzzleImportProcessor(mode, updateHandler, importApi, getContentResolver());
                 }
@@ -101,6 +104,7 @@ public class ImportService extends Service {
                 break;
 
             case IMPORT_GAMES:
+                Log.d(TAG, "IMPORT_GAMES");
                 if (uri != null) {
                     if (gameImportProcessor == null) {
                         gameImportProcessor = new GameImportProcessor(mode, updateHandler, importApi, getContentResolver());
@@ -119,6 +123,7 @@ public class ImportService extends Service {
                 }
                 break;
             case IMPORT_PRACTICE:
+                Log.d(TAG, "IMPORT_PRACTICE");
                 if (practiceImportProcessor == null) {
                     practiceImportProcessor = new PracticeImportProcessor(mode, updateHandler, importApi, getContentResolver());
                 }
@@ -135,6 +140,7 @@ public class ImportService extends Service {
                 }
                 break;
             case IMPORT_OPENINGS:
+                Log.d(TAG, "IMPORT_OPENINGS " + uri);
                 if (uri != null) {
                     if (openingImportProcessor == null) {
                         openingImportProcessor = new OpeningImportProcessor(mode, updateHandler, importApi);
@@ -150,6 +156,7 @@ public class ImportService extends Service {
                 }
                 break;
             case IMPORT_DATABASE:
+                Log.d(TAG, "IMPORT_DATABASE");
                 if (uri != null) {
                     if (pgnDbProcessor == null) {
                         pgnDbProcessor = new PGNDbProcessor(mode, updateHandler, importApi);
@@ -165,6 +172,7 @@ public class ImportService extends Service {
                 }
                 break;
             case PRACTICE_RESET:
+                Log.d(TAG, "PRACTICE_RESET");
                 try {
                     SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
@@ -181,22 +189,8 @@ public class ImportService extends Service {
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
                 }
                 break;
-            case DB_POINT:
-                try {
-                    if (uri != null) {
-                        SharedPreferences.Editor editor = getSharedPreferences("ChessPlayer", MODE_PRIVATE).edit();
-
-                        editor.putString("OpeningDb", uri.toString());
-                        editor.commit();
-
-                        dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                    dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
-                }
-                break;
             case EXPORT_GAME_DATABASE:
+                Log.d(TAG, "EXPORT_GAME_DATABASE");
                 try {
                     if (uri != null) {
                         OutputStream fos = getContentResolver().openOutputStream(uri);
@@ -211,6 +205,32 @@ public class ImportService extends Service {
                     Log.e(TAG, e.toString());
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
                 }
+                break;
+            case PICK_BINARY:
+                Log.d(TAG, "PICK_BINARY");
+                ArrayList<HMap.Pair> hashMap = importApi.getHashMap();
+                if (hashMap != null) {
+
+                    Log.d(TAG, "Pick binary " + hashMap.size());
+
+                    int flags = intent.getFlags()
+                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    try {
+                        getContentResolver().takePersistableUriPermission(uri, flags);
+
+                        writeHMapToDownloads(uri, hashMap);
+
+                        Log.d(TAG, "Wrote hashMap");
+
+                    } catch (SecurityException ex) {
+                        Log.d(TAG, "Could not get the flags " + ex.getMessage());
+                    }
+                } else {
+                    Log.d(TAG, "No hashmap");
+                }
+
+                dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
+
                 break;
         }
     }
@@ -308,38 +328,17 @@ public class ImportService extends Service {
         return s;
     }
 
-//    protected TreeSet<Long> _arrKeys;
-//    protected String _outFile;
-//
-//    public void readDB(InputStream isDB) {
-//        Log.i("import", "readDB executing");
-//        _arrKeys.clear();
-//        long l;
-//        int len;
-//        byte[] bytes = new byte[8];
-//        try {
-//            while ((len = isDB.read(bytes, 0, bytes.length)) != -1) {
-//                l = 0L;
-//                l |= (long) bytes[0] << 56;
-//                l |= (long) bytes[1] << 48;
-//                l |= (long) bytes[2] << 40;
-//                l |= (long) bytes[3] << 32;
-//                l |= (long) bytes[4] << 24;
-//                l |= (long) bytes[5] << 16;
-//                l |= (long) bytes[6] << 8;
-//                l |= (long) bytes[7];
-//
-//                // assume file keys are allready unique
-//
-//                _arrKeys.add(l);
-//            }
-//        } catch (IOException e) {
-//            Log.e("import", "readDB: " + e.toString());
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//
-//    }
+
+
+    public void writeHMapToDownloads(Uri uri, ArrayList<HMap.Pair> list) {
+        Log.d(TAG, "write Hashmap with size:" + list.size());
+
+        try  {
+            HMap.write(this, uri, list);
+        } catch (Exception e) {
+            Log.d(TAG, "An error during writing of hash map " + e.getMessage());
+        }
+    }
 
     private class ThreadMessageHandler extends Handler {
         private WeakReference<ImportService> serverWeakReference;
@@ -358,5 +357,5 @@ public class ImportService extends Service {
         }
     }
 
-    private class ImportApi extends GameApi {}
+
 }

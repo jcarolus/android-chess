@@ -2,7 +2,7 @@
 
 void ChessTest::startSearchThread() {
     pthread_t tid;
-    pthread_create(&tid, NULL, &Game::search_wrapper, NULL);
+    pthread_create(&tid, nullptr, &Game::search_wrapper, nullptr);
 }
 
 bool ChessTest::expectEqualInt(int a, int b, char *message) {

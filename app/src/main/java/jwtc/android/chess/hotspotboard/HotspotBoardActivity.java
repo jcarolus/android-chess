@@ -24,7 +24,6 @@ import android.widget.ViewSwitcher;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.R;

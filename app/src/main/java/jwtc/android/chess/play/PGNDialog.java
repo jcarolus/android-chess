@@ -2,6 +2,7 @@ package jwtc.android.chess.play;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -27,7 +28,7 @@ public class PGNDialog extends Dialog {
     private static final String TAG = "PGNDialog";
 
     public PGNDialog(@NonNull final Context context, final GameApi gameApi) {
-        super(context);
+        super(context, R.style.ChessDialogTheme);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -40,7 +41,7 @@ public class PGNDialog extends Dialog {
 
         GridView contentLayout = findViewById(R.id.LayoutContent);
 
-        contentLayout.setAdapter(adapterMoves);
+        contentLayout.setAdapter(moveAdapter.getAdapter());
 
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
 

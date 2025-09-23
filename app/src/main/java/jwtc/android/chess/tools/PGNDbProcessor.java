@@ -52,12 +52,6 @@ public class PGNDbProcessor extends PGNProcessor {
         return false;
     }
 
-    @Override
-    public String getString() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public void writeHashKeysToFile(String outFile) {
         FileOutputStream fos;
         try {

@@ -3,11 +3,11 @@
 <resources>
     <dimen name="imageButtonSize">48dp</dimen>
 
-    <dimen name="normalTextSize">12sp</dimen>
+    <dimen name="normalTextSize">16sp</dimen>
     <dimen name="normalPaddingX">8dp</dimen>
     <dimen name="normalPaddingY">1dp</dimen>
 
-    <dimen name="headerTextSize">12sp</dimen>
+    <dimen name="headerTextSize">16sp</dimen>
     <dimen name="headerPaddingX">8dp</dimen>
     <dimen name="headerPaddingY">4dp</dimen>
 

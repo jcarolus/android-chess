@@ -25,7 +25,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail;
     private ProgressBar _progress;
     private int _mode = 0;
-    private Uri uri;
+    private Intent _intent;
 
     protected boolean _processing;
 
@@ -36,7 +36,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
             Log.i(TAG, "onServiceConnected");
             importService = ((ImportService.LocalBinder)service).getService();
             importService.addListener(ImportActivity.this);
-            importService.startImport(uri, _mode);
+            importService.startImport(_intent, _mode);
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -114,10 +114,9 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         super.onResume();
 
         if (_processing == false) {
-            final Intent intent = getIntent();
-            uri = intent.getData();
+            _intent = getIntent();
 
-            Bundle extras = intent.getExtras();
+            Bundle extras = _intent.getExtras();
             if (extras != null) {
                 _mode = extras.getInt("mode");
             } else {

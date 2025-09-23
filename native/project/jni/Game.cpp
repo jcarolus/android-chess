@@ -1,9 +1,9 @@
 #include "Game.h"
 
 int Game::DB_SIZE = 0;
-FILE *Game::DB_FP = NULL;
+FILE *Game::DB_FP = nullptr;
 int Game::DB_DEPTH = 5;
-Game *Game::game = NULL;
+Game *Game::game = nullptr;
 
 Game::Game(void) {
     m_board = new ChessBoard();
@@ -22,13 +22,13 @@ Game::Game(void) {
 Game::~Game(void) {
     if (DB_FP) {
         fclose(DB_FP);
-        DB_FP = NULL;
+        DB_FP = nullptr;
     }
     DB_SIZE = 0;
 
     // clean up history
     ChessBoard *cb, *tmp;
-    while ((cb = m_board->undoMove()) != NULL) {
+    while ((cb = m_board->undoMove()) != nullptr) {
         tmp = m_board;
         m_board = cb;
         delete tmp;
@@ -46,7 +46,7 @@ Game::~Game(void) {
 
 // the non thread safe solution; assumption is that getInsance is called before any threads are created
 Game *Game::getInstance() {
-    if (Game::game == NULL) {
+    if (Game::game == nullptr) {
         ChessBoard::initStatics();
         Game::game = new Game();
     }
@@ -54,9 +54,9 @@ Game *Game::getInstance() {
 }
 
 void Game::deleteInstance() {
-    if (Game::game != NULL) {
+    if (Game::game != nullptr) {
         delete Game::game;
-        Game::game = NULL;
+        Game::game = nullptr;
     }
 }
 
@@ -68,7 +68,7 @@ void *Game::search_wrapper(void *arg) {
 void Game::reset() {
     // clean up history
     ChessBoard *cb, *tmp;
-    while ((cb = m_board->undoMove()) != NULL) {
+    while ((cb = m_board->undoMove()) != nullptr) {
         tmp = m_board;
         m_board = cb;
         delete tmp;
@@ -172,7 +172,7 @@ boolean Game::move(int move) {
 void Game::undo() {
     ChessBoard *tmp = m_board;
     ChessBoard *cb = m_board->undoMove();
-    if (cb != NULL) {
+    if (cb != nullptr) {
         m_board = cb;
         delete tmp;
     }
@@ -583,7 +583,7 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
 
 // search the hashkey database, randomly choose a move
 int Game::searchDB() {
-    if (DB_SIZE == 0 || DB_FP == NULL) {
+    if (DB_SIZE == 0 || DB_FP == nullptr) {
         return 0;
     }
     if (m_board->getNumBoard() >= Game::DB_DEPTH) {
@@ -619,7 +619,7 @@ int Game::searchDB() {
     // DEBUG_PRINT("Choosing from %d moves\n", iCnt);
 
     timeval time;
-    gettimeofday(&time, NULL);
+    gettimeofday(&time, nullptr);
     srand((unsigned int) time.tv_usec);
     int i = rand() % iCnt;
     return moveArr[i];
@@ -651,15 +651,15 @@ boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowA
 #pragma region Database methods
 
 void Game::loadDB(const char *sFile, int depth) {
-    if (DB_FP != NULL) {
+    if (DB_FP != nullptr) {
         fclose(DB_FP);
-        DB_FP = NULL;
+        DB_FP = nullptr;
         DEBUG_PRINT("Closing database...\n", 0);
     }
     DB_DEPTH = depth;
     DB_SIZE = 0;
     DB_FP = fopen(sFile, "rb");
-    if (DB_FP != NULL) {
+    if (DB_FP != nullptr) {
         fseek(DB_FP, 0, SEEK_END);
         DB_SIZE = ftell(DB_FP) / 8;
         rewind(DB_FP);
@@ -757,7 +757,7 @@ boolean Game::readDBAt(int iPos, BITBOARD &bb) {
 
 void Game::startTime() {
     timeval time;
-    gettimeofday(&time, NULL);
+    gettimeofday(&time, nullptr);
     m_millies = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 }
 
@@ -766,20 +766,20 @@ boolean Game::timeUp() {
         return false;
     }
     timeval time;
-    gettimeofday(&time, NULL);
+    gettimeofday(&time, nullptr);
     return (m_milliesGiven < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies));
 }
 
 // return true if we consumed more than x'd of tme
 boolean Game::usedTime() {
     timeval time;
-    gettimeofday(&time, NULL);
+    gettimeofday(&time, nullptr);
     return ((m_milliesGiven / 3) < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies));
 }
 
 long Game::timePassed() {
     timeval time;
-    gettimeofday(&time, NULL);
+    gettimeofday(&time, nullptr);
     return ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies);
 }
 

@@ -10,6 +10,10 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setVariant(JNIEnv* env, jobject thiz,
     ChessBoard* board = Game::getInstance()->getBoard();
     board->setVariant(variant);
 }
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getVariant(JNIEnv* env, jobject thiz) {
+    ChessBoard* board = Game::getInstance()->getBoard();
+    return board->getVariant();
+}
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_requestMove(JNIEnv* env, jobject thiz, jint from, jint to) {
     return (int) Game::getInstance()->requestMove(from, to);
 }
@@ -214,6 +218,7 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setEvalPropertyValue(JNIEnv* env, job
 static JNINativeMethod sMethods[] = {
     {"destroy", "()V", (void*) Java_jwtc_chess_JNI_destroy},
     {"setVariant", "(I)V", (void*) Java_jwtc_chess_JNI_setVariant},
+    {"getVariant", "()I", (void*) Java_jwtc_chess_JNI_getVariant},
     {"requestMove", "(II)I", (void*) Java_jwtc_chess_JNI_requestMove},
     {"move", "(I)I", (void*) Java_jwtc_chess_JNI_move},
     {"requestDuckMove", "(I)I", (void*) Java_jwtc_chess_JNI_requestDuckMove},
@@ -262,7 +267,7 @@ static JNINativeMethod sMethods[] = {
     {"setEvalPropertyValue", "(II)V", (void*) Java_jwtc_chess_JNI_setEvalPropertyValue}};
 
 extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-    JNIEnv* env = NULL;
+    JNIEnv* env = nullptr;
     jint result = -1;
 
     DEBUG_PRINT("JNI_OnLoad called\n", 0);
@@ -289,7 +294,7 @@ int jniRegisterNativeMethods(JNIEnv* env, const char* className, const JNINative
 
     DEBUG_PRINT("Registering %s natives\n", className);
     clazz = env->FindClass(className);
-    if (clazz == NULL) {
+    if (clazz == nullptr) {
         DEBUG_PRINT("Native registration unable to find class '%s'\n", className);
         return -1;
     }

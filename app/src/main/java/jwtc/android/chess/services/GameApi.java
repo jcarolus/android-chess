@@ -267,6 +267,30 @@ public class GameApi {
         return false;
     }
 
+    public boolean requestMove(String sMove) {
+        Matcher matchToken = _patMove.matcher(sMove);
+        String sAnnotation = "";
+        if (matchToken.matches()) {
+            Log.d(TAG, "requestMove MATCHES " + sMove);
+            if (requestMove(sMove, matchToken, null, sAnnotation)) {
+                final int move = jni.getMyMove();
+                dispatchMove(move);
+                return true;
+            }
+        } else {
+            matchToken = _patCastling.matcher(sMove);
+            if (matchToken.matches()) {
+                if (requestMove(sMove, matchToken, matchToken.group(1), sAnnotation)) {
+                    final int move = jni.getMyMove();
+                    dispatchMove(move);
+                    return true;
+                }
+            }
+        }
+        Log.d(TAG, "requestMove " + sMove);
+        return false;
+    }
+
     protected void dispatchMove(final int move) {
 //        Log.d(TAG, "dispatchMove " + move);
 
@@ -696,7 +720,7 @@ public class GameApi {
 
 
     public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, int duckMove) {
-        Log.d(TAG, "addPGNEntry " + ply + ": " + sMove + " @ " + Pos.toString(duckMove) + " = " + duckMove);
+        // Log.d(TAG, "addPGNEntry " + ply + ": " + sMove + " @ " + Pos.toString(duckMove) + " = " + duckMove);
         while (ply >= 0 && _arrPGN.size() >= ply) {
             _arrPGN.remove(_arrPGN.size() - 1);
         }

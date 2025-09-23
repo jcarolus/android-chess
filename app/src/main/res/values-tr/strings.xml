@@ -272,31 +272,23 @@
 
     <string name="advanced_help"><![CDATA[
 <h3>Gelişmiş</h3>
-<p>Kendi içeriklerinizi burada oluşturun veya içe aktarın.</p>
+<p>Burada kendi içeriklerinizi oluşturun veya içe aktarın.</p>
 
-<h4>Oyun veritabanını dışa aktar</h4>
-<p>Tüm oyunlar chess.pgn dosyasında dışa aktarılır. Önceki dosya üzerine yazılır.</p>
+<h4>Oyun veritabanını SD karta aktar</h4>
+<p>Oyun veritabanındaki tüm oyunlar SD kartta tek bir PGN dosyasına aktarılabilir. Bu dosyanın adı chess.pgn olacaktır ve mevcut bir dosyanın üzerine yazılır.</p>
 
-<h4>Oyunları içe aktar</h4>
-<p>PGN dosyasını seçerek oyunları içe aktarabilirsiniz.</p>
+<h4>Oyunları oyun veritabanına içe aktar</h4>
+<p>Bu seçeneği, oyun veritabanına oyun eklemek için kullanın. Bir PGN dosyasına göz atmanıza olanak tanır. Seçin ve içe aktarmayı başlatın.</p>
 
-<h4>Tüm oyunları sil</h4>
-<p>Veritabanını temizler. Önce yedek alın, işlem geri alınamaz.</p>
-
-<h4>Açılış veritabanı oluştur</h4>
-<p>PGN dosyasını .bin veritabanına dönüştürür (17 yarım hamleye kadar).</p>
-
-<h4>Açılış veritabanı ayarla</h4>
-<p>Yeni oluşturulan .bin dosyasını seçin.</p>
-
-<h4>UCI motorunu kaldır</h4>
-<p>Kurulu motoru kaldırır.</p>
+<h4>Oyun veritabanındaki tüm oyunları sil</h4>
+<p>Veritabanını temizlemek istiyorsanız bu seçeneği kullanın. Önce SD karta bir yedek aldığınızdan emin olun; bu işlem geri alınamaz.</p>
 
 <h4>Alıştırma seti oluştur</h4>
-<p>Mat ile biten oyunlardan pozisyonlar üretir. Başarısızlık genellikle mat olmayan oyunlardan veya kopyalardan kaynaklanır.</p>
+<p>Şah matla biten oyunlardan alıştırma konumları oluşturur. İşlenecek dosyayı seçin. Başarısız girişler genellikle şah matla bitmeyen ya da yinelenen oyunlardır.</p>
 
 <h4>Alıştırma setini sıfırla</h4>
-<p>Baştan başlamak ister misiniz? Ortalama sayaç da sıfırlanır.</p>
+<p>Alıştırmalara baştan başlamak ister misiniz? Bu, ortalama süre sayacınızı da sıfırlar.</p>
+
 ]]></string>
 
     <string name="online_help"><![CDATA[

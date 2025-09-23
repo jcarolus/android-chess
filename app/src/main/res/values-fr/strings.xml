@@ -271,31 +271,23 @@
     <string name="puzzle_help">Ce sont des problèmes difficiles de mat en deux.\nLe but est de trouver le premier coup menant à un mat forcé en deux coups.\nAutrement dit, après votre bon coup, l’adversaire ne peut pas éviter le mat suivant.\nAprès ce premier coup, le problème est résolu.\nAppuyez sur « Montrer » pour la solution.\nSource : EL ARTE DEL MATE EN DOS par Eduardo Sadier</string>
     <string name="advanced_help"><![CDATA[
 <h3>Avancé</h3>
-<p>Créez ou importez vos propres contenus ici.</p>
+<p>Créez ou importez ici votre propre contenu.</p>
 
-<h4>Exporter la base de données</h4>
-<p>Toutes les parties peuvent être exportées dans un fichier PGN unique nommé chess.pgn.</p>
+<h4>Exporter la base de données de parties vers la carte SD</h4>
+<p>Toutes les parties de la base de données peuvent être exportées dans un seul fichier PGN sur la carte SD. Ce fichier sera nommé chess.pgn et tout fichier existant sera écrasé.</p>
 
-<h4>Importer des parties</h4>
-<p>Ajoutez des parties en sélectionnant un fichier PGN.</p>
+<h4>Importer des parties dans la base de données</h4>
+<p>Utilisez cette option pour ajouter des parties à la base de données. Elle vous permet de parcourir jusqu’à un fichier PGN. Sélectionnez-le et choisissez d’importer.</p>
 
-<h4>Supprimer toutes les parties</h4>
-<p>Vide la base de données. Sauvegardez avant, l’action est irréversible.</p>
-
-<h4>Créer une base d’ouvertures</h4>
-<p>Convertit un fichier PGN en .bin (jusqu’à 17 demi-coups).</p>
-
-<h4>Définir la base d’ouvertures</h4>
-<p>Sélectionnez le fichier .bin créé.</p>
-
-<h4>Désinstaller moteur UCI</h4>
-<p>Supprime le moteur UCI installé.</p>
+<h4>Supprimer toutes les parties de la base de données</h4>
+<p>Utilisez cette option si vous souhaitez nettoyer la base de données. Assurez-vous d’abord de faire une sauvegarde sur la carte SD ; cette action est irréversible.</p>
 
 <h4>Créer un ensemble d’entraînement</h4>
-<p>Crée des exercices à partir de parties finissant par mat. Les échecs viennent des doublons ou parties sans mat.</p>
+<p>Crée des positions d’entraînement à partir des parties se terminant par un échec et mat. Parcourez jusqu’au fichier à traiter. Les entrées échouées proviennent généralement de parties qui ne se terminent pas par un échec et mat ou de doublons.</p>
 
 <h4>Réinitialiser l’ensemble d’entraînement</h4>
-<p>Repartir de zéro réinitialise aussi votre compteur moyen.</p>
+<p>Vous voulez recommencer l’entraînement ? Cela réinitialisera également votre compteur de temps moyen.</p>
+
 ]]></string>
 
     <string name="online_help"><![CDATA[

@@ -2,115 +2,139 @@ package jwtc.android.chess.tools;
 
 import android.content.ContentResolver;
 import android.os.Handler;
+import android.util.Log;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.io.InputStream;
 
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.PGNEntry;
+import jwtc.chess.JNI;
 
 public class OpeningImportProcessor extends PGNProcessor {
-    private GameApi gameApi;
+    private static final String TAG = "OpeningImportProcessor";
+    private ImportApi importApi;
     private ContentResolver contentResolver;
-    private JSONArray _jArray;
-    private ArrayList<PGNEntry> _arrMoves;
-    private String _sECO;
-    private String _sName;
-    private String _sVariation;
+    private JNI jni;
 
-    OpeningImportProcessor(int mode, Handler updateHandler, GameApi gameApi) {
+    OpeningImportProcessor(int mode, Handler updateHandler, ImportApi gameApi) {
         super(mode, updateHandler);
 
-        this.gameApi = gameApi;
+        this.importApi = gameApi;
+        this.successCount = 0;
+        this.failCount = 0;
 
-        _jArray = new JSONArray();
+        jni = JNI.getInstance();
+    }
+
+    @Override
+    public void processPGNFile(final InputStream is) {
+        Log.d(TAG, "processPGNFile");
+
+        new Thread(new Runnable() {
+            public void run() {
+                sendMessage(MSG_STARTED);
+                try {
+
+                    java.util.Scanner scanner = new java.util.Scanner(is).useDelimiter("\\A");
+                    String jsonStr = scanner.hasNext() ? scanner.next() : "";
+                    is.close();
+
+                    JSONArray jArray = new JSONArray(jsonStr);
+                    processJSONArray(jArray);
+
+                    sendMessage(MSG_FINISHED);
+
+                } catch (Exception e) {
+                    sendMessage(MSG_FATAL_ERROR);
+
+                    Log.e(TAG, e.toString());
+                }
+            }
+        }).start();
     }
 
     @Override
     public boolean processPGN(String sPGN) {
-        if (gameApi.loadPGN(sPGN)) {
-            _sECO = gameApi.getPGNHeadProperty("Event");
-            _sName = gameApi.getPGNHeadProperty("White");
-            _sVariation = gameApi.getPGNHeadProperty("Black");
-            if (_sVariation.equals("black ?")) {
-                _sVariation = "";
+        return true;
+    }
+
+    public boolean processPGN(String sPGN, String name) {
+        if (importApi.loadPGN(sPGN)) {
+            if (jni.getNumBoard() > 0) {
+                long hash = jni.getHashKey();
+
+                if (importApi.addToHashMap(hash, name)) {
+                    // Log.d(TAG, "From pgn " + pgn + " :: " + name + " => " + hash);
+                    return true;
+                } else {
+                    Log.d(TAG, "Duplicate hash");
+                }
             }
-            _arrMoves = gameApi.getPGNEntries();
-
-            findOrInsertEntry(_jArray, _arrMoves.remove(0));
-
-            return true;
         }
         return false;
     }
 
+    public void processJSONArray(JSONArray jArray) {
+        JNI jni = JNI.getInstance();
 
-    // m = move
-// a = array
-// e = ECO
-// v = variation
-    protected void findOrInsertEntry(JSONArray curArray, PGNEntry entry) {
-        boolean bFound = false;
-        for (int i = 0; i < curArray.length(); i++) {
+        importApi.resetHashMap();
+        int numProcessed = 0;
+        for (int i = 0; i < jArray.length(); i++) {
             try {
-                JSONObject jObj = (JSONObject) curArray.get(i);
+                JSONObject jObj = jArray.getJSONObject(i);
+                String moves = jObj.getString("moves");
+                String name = jObj.getString("name");
 
-                if (jObj.getString("m").equals(entry._sMove)) {
+                StringBuilder PGN = new StringBuilder("");
+                PGN.append("[Event \"Event\"]\n");
+                PGN.append("[White \"white\"]\n");
+                PGN.append("[Black \"black\"]\n");
+                PGN.append(moves + "\n\n");
 
-                    bFound = true;
-                    JSONArray newArray;
-                    if (jObj.has("a")) {
-                        newArray = (JSONArray) jObj.get("a");
-                    } else {
-                        newArray = new JSONArray();
-                        jObj.put("a", newArray);
-                    }
+                String pgn = PGN.toString();
 
-                    if (_arrMoves.size() == 0) {
-                        jObj.put("e", _sECO);
-                        jObj.put("n", _sName);
-                        jObj.put("v", _sVariation);
-                    } else {
-                        findOrInsertEntry(newArray, _arrMoves.remove(0));
-                    }
-
+                if (processPGN(pgn, name)) {
+                    successCount++;
+                    sendMessage(MSG_PROCESSED_PGN);
+                } else {
+                    failCount++;
+                    sendMessage(MSG_FAILED_PGN);
                 }
 
-            } catch (JSONException e) {
-
-            }
-
+            } catch (Exception ignored) {}
         }
-        if (false == bFound) {
-            JSONObject newObject = new JSONObject();
-            try {
-                JSONArray newArray = new JSONArray();
 
-                newObject.put("m", entry._sMove);
-                newObject.put("a", newArray);
-
-                if (_arrMoves.size() == 0) {
-                    newObject.put("e", _sECO);
-                    newObject.put("n", _sName);
-                    newObject.put("v", _sVariation);
-                }
-
-                curArray.put(newObject);
-
-                if (_arrMoves.size() > 0) {
-                    findOrInsertEntry(newArray, _arrMoves.remove(0));
-                }
-
-            } catch (JSONException e) {
-            }
-        }
+        Log.d(TAG, "Done..." + numProcessed);
     }
 
-    @Override
-    public String getString() {
-        return _jArray.toString();
+    // old FEN method
+    public void processJSONArrayFEN(JSONArray jArray) {
+        JNI jni = JNI.getInstance();
+
+        importApi.resetHashMap();
+        int numProcessed = 0;
+        for (int i = 0; i < jArray.length(); i++) {
+            try {
+                JSONObject jObj = jArray.getJSONObject(i);
+                String fen = jObj.getString("fen");
+                String name = jObj.getString("name");
+
+                if (jni.initFEN(fen)) {
+                    long hash = jni.getHashKey();
+
+                    if (importApi.addToHashMap(hash, name)) {
+                        Log.d(TAG, "From FEN " + fen + " :: " + name + " => " + hash);
+                        numProcessed++;
+                    } else {
+                        Log.d(TAG, "Duplicate hash");
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        Log.d(TAG, "Done..." + numProcessed);
     }
+
 }
