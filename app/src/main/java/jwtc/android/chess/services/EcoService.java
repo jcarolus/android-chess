@@ -51,16 +51,17 @@ public class EcoService {
     public ArrayList<Integer> getAvailableMoves() {
         ArrayList<Integer> moveToPositions = getAllMoves();
         ArrayList<Integer> retPositions = new ArrayList<Integer>();
-        int move;
-        for (Integer m : moveToPositions) {
-            if (jni.move(m) != 0) {
-                long hash = jni.getHashKey();
-                String sEco = hashMap.get(hash);
-                if (sEco != null) {
-                    retPositions.add(m);
-                }
+        if (hashMap != null) {
+            for (Integer m : moveToPositions) {
+                if (jni.move(m) != 0) {
+                    long hash = jni.getHashKey();
+                    String sEco = hashMap.get(hash);
+                    if (sEco != null) {
+                        retPositions.add(m);
+                    }
 
-                jni.undo();
+                    jni.undo();
+                }
             }
         }
         return retPositions;

@@ -212,7 +212,9 @@
                             android:layout_marginLeft="8dip"
                             android:layout_marginRight="8dip"
                             android:orientation="horizontal"
-                            android:overScrollMode="never"
+                            android:scrollbars="horizontal"
+                            android:fadeScrollbars="false"
+                            android:scrollbarAlwaysDrawHorizontalTrack="true"
                             android:nextFocusDown="@id/SwitchBlindfold"/>
                         <ImageButton
                             android:id="@+id/ButtonNext"

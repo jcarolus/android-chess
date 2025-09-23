@@ -1,5 +1,4 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Focused (DPAD highlight) -->
     <item android:state_focused="true">
         <shape android:shape="rectangle">
             <solid android:color="@color/primaryColor"/>
