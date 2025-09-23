@@ -377,6 +377,14 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         chessBoardView.setNextFocusRightId(R.id.SwitchSound);
 
         localClockApi.addListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart");
+        super.onStart();
+
+        addListeners();
 
         startService(new Intent(ICSClient.this, ICSServer.class));
         bindService(new Intent(ICSClient.this, ICSServer.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -523,7 +531,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         notificationsOn = prefs.getBoolean("ICSGameStartBringToFront", true);
 
-        addListeners();
         showLoginIfNotConnected();
     }
 
@@ -587,16 +594,14 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         Log.i(TAG, "onStop");
         super.onStop();
 
+        removeListeners();
+
+        unbindService(mConnection);
     }
 
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
-
-        removeListeners();
-
-        unbindService(mConnection);
-
         super.onDestroy();
     }
 
