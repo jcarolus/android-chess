@@ -194,7 +194,6 @@
                 android:layout_weight="1"
                 android:text="@string/button_ok"
                 android:id="@+id/ButtonMatchOk"
-                android:layout_weight="1"
                 android:layout_margin="2dip"/>
         </LinearLayout>
     </LinearLayout>
