@@ -393,7 +393,7 @@ class ChessBoard {
     int getMoveAt(const int i);
     int getNumMoves();
     void removeMoveElementAt();
-    void addMoveElement(const int move);
+    boolean addMoveElement(const int move);
     int remainingMoves();
     void myMoveToString(char* s);
     void calcQuality();

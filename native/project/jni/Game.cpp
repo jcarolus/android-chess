@@ -27,9 +27,9 @@ Game::~Game(void) {
     delete m_boardRefurbish;
 
     // somehow boardFactory seems to cause segmentation
-    //    for (int i = 0; i < MAX_DEPTH; i++) {
-    //        delete m_boardFactory[i];
-    //    }
+//        for (int i = 0; i < MAX_DEPTH; i++) {
+//            delete m_boardFactory[i];
+//        }
 }
 
 // the non thread safe solution; assumption is that getInsance is called before any threads are created
@@ -224,14 +224,16 @@ void Game::search() {
         m_arrBestMoves[i] = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     }
 
+    ChessBoard* searchBoard = m_boardFactory[0];
+    m_board->duplicate(searchBoard);
     if (m_milliesGiven > 0) {
         DEBUG_PRINT("Search with millies given %ld", m_milliesGiven);
 
         for (m_searchDepth = 1; m_searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); m_searchDepth++) {
             if (variant == ChessBoard::VARIANT_DEFAULT) {
-                alphaBeta(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+                alphaBeta(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
             } else {
-                alphaBetaDuck(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+                alphaBetaDuck(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
             }
 
             DEBUG_PRINT("Searched at depth %d - value: %d - move: %d - num moves: %d\n",
@@ -268,9 +270,9 @@ void Game::search() {
         DEBUG_PRINT("Search with limit given: %d\n", m_searchLimit);
         m_searchDepth = m_searchLimit;
         if (variant == ChessBoard::VARIANT_DEFAULT) {
-            alphaBeta(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+            alphaBeta(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
         } else {
-            alphaBetaDuck(m_board, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+            alphaBetaDuck(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
         }
 
         m_bestMoveAndValue = m_arrBestMoves[0];
