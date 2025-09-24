@@ -185,11 +185,6 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_removePiece(JNIEnv* env, jobject thiz
 JNIEXPORT BITBOARD JNICALL Java_jwtc_chess_JNI_getHashKey(JNIEnv* env, jobject thiz) {
     return Game::getInstance()->getBoard()->getHashKey();
 }
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_loadDB(JNIEnv* env, jobject thiz, jstring sFile, jint depth) {
-    const char* nativeString = env->GetStringUTFChars(sFile, 0);
-    Game::getInstance()->loadDB(nativeString, depth);
-    env->ReleaseStringUTFChars(sFile, nativeString);
-}
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_interrupt(JNIEnv* env, jobject thiz) {
     Game::getInstance()->m_bInterrupted = true;
 }
@@ -258,7 +253,6 @@ static JNINativeMethod sMethods[] = {
     {"toFEN", "()Ljava/lang/String;", (void*) Java_jwtc_chess_JNI_toFEN},
     {"removePiece", "(II)V", (void*) Java_jwtc_chess_JNI_removePiece},
     {"getHashKey", "()J", (void*) Java_jwtc_chess_JNI_getHashKey},
-    {"loadDB", "(Ljava/lang/String;I)V", (void*) Java_jwtc_chess_JNI_loadDB},
     {"interrupt", "()V", (void*) Java_jwtc_chess_JNI_interrupt},
     {"getNumCaptured", "(II)I", (void*) Java_jwtc_chess_JNI_getNumCaptured},
     {"getEvalPropertyName", "(I)Ljava/lang/String;", (void*) Java_jwtc_chess_JNI_getEvalPropertyName},

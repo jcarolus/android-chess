@@ -1,8 +1,5 @@
 #include "Game.h"
 
-int Game::DB_SIZE = 0;
-FILE *Game::DB_FP = nullptr;
-int Game::DB_DEPTH = 5;
 Game *Game::game = nullptr;
 
 Game::Game(void) {
@@ -12,20 +9,11 @@ Game::Game(void) {
         m_boardFactory[i] = new ChessBoard();
     }
     m_boardRefurbish = new ChessBoard();
-
-    DB_SIZE = 0;
-
     m_bSearching = false;
     reset();
 }
 
 Game::~Game(void) {
-    if (DB_FP) {
-        fclose(DB_FP);
-        DB_FP = nullptr;
-    }
-    DB_SIZE = 0;
-
     // clean up history
     ChessBoard *cb, *tmp;
     while ((cb = m_board->undoMove()) != nullptr) {
@@ -224,15 +212,6 @@ void Game::search() {
     }
 
     int variant = m_board->getVariant();
-    // DB search only makes sens for the default chess variant
-    if (variant == ChessBoard::VARIANT_DEFAULT) {
-        int move = searchDB();
-        if (move != 0) {
-            m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = move, .duckMove = -1};
-            m_bSearching = false;
-            return;
-        }
-    }
 
     m_evalCount++;  // at least one so Nps is valid for non DB move
 
@@ -581,49 +560,6 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
     return best.value;
 }
 
-// search the hashkey database, randomly choose a move
-int Game::searchDB() {
-    if (DB_SIZE == 0 || DB_FP == nullptr) {
-        return 0;
-    }
-    if (m_board->getNumBoard() >= Game::DB_DEPTH) {
-        DEBUG_PRINT("Too many plies for database search\n", 0);
-        return 0;
-    }
-    if (m_board->getFirstBoard()->getHashKey() != DEFAULT_START_HASH) {
-        DEBUG_PRINT("Game not from default starting position (database search)\n", 0);
-        return 0;
-    }
-    ChessBoard *tmpBoard = new ChessBoard();
-
-    int moveArr[100], iCnt = 0, move;
-    //
-    m_board->getMoves();
-    while (m_board->hasMoreMoves() && iCnt < 100) {
-        move = m_board->getNextMove();
-        m_board->makeMove(move, tmpBoard);
-        const BITBOARD bb = tmpBoard->getHashKey();
-
-        if (findDBKey(bb) < DB_SIZE) {
-            moveArr[iCnt++] = move;
-        }
-    }
-
-    delete tmpBoard;
-
-    if (iCnt == 0) {
-        // DEBUG_PRINT("No move found in openingsdatabase\n", 0);
-        return 0;
-    }
-
-    // DEBUG_PRINT("Choosing from %d moves\n", iCnt);
-
-    timeval time;
-    gettimeofday(&time, nullptr);
-    srand((unsigned int) time.tv_usec);
-    int i = rand() % iCnt;
-    return moveArr[i];
-}
 
 // House variant search
 // allowAttack as for putPieceHouse
@@ -643,111 +579,6 @@ boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowA
         return true;
     }
     delete nextBoard;
-    return false;
-}
-
-#pragma endregion
-
-#pragma region Database methods
-
-void Game::loadDB(const char *sFile, int depth) {
-    if (DB_FP != nullptr) {
-        fclose(DB_FP);
-        DB_FP = nullptr;
-        DEBUG_PRINT("Closing database...\n", 0);
-    }
-    DB_DEPTH = depth;
-    DB_SIZE = 0;
-    DB_FP = fopen(sFile, "rb");
-    if (DB_FP != nullptr) {
-        fseek(DB_FP, 0, SEEK_END);
-        DB_SIZE = ftell(DB_FP) / 8;
-        rewind(DB_FP);
-
-        /*
-        BITBOARD bb, bbPrev = 0;
-        for(int i = 0; i < DB_SIZE; i++){
-
-            if(readDBAt(i, bb)){
-                if(bb > bbPrev)
-                    DEBUG_PRINT("DB %d = %lld bigger\n", i, bb);
-                else
-                    DEBUG_PRINT("DB %d = %lld SMALLER\n", i, bb);
-
-                bbPrev = bb;
-            }
-        }
-
-        long pos = findDBKey(bb);
-        if(pos){
-
-            DEBUG_PRINT("FOUND KEY %lld...%ld\n", bb, pos);
-        }
-        */
-        // DEBUG_PRINT("Set filepointer ok, filesize %ld...\n", DB_SIZE);
-
-    } else {
-        DEBUG_PRINT("Could not open file %s\n", sFile);
-    }
-}
-
-// Binary search returns leftmost entry or size of db
-long Game::findDBKey(BITBOARD bbKey) {
-    int left, right, mid;
-    BITBOARD bb;
-
-    left = 0;
-    right = DB_SIZE - 1;
-
-    while (left < right) {
-        mid = (left + right) / 2;
-
-        if (readDBAt(mid, bb)) {
-            // DEBUG_PRINT("Binary search %d-%d = %lld\n", left, right, bb);
-
-            if (bbKey <= bb) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        } else {
-            return DB_SIZE;
-        }
-    }
-
-    if (readDBAt(left, bb)) {
-        return (bb == bbKey) ? left : DB_SIZE;
-    } else {
-        return DB_SIZE;
-    }
-}
-
-boolean Game::readDBAt(int iPos, BITBOARD &bb) {
-    if (iPos < DB_SIZE && fseek(DB_FP, iPos * 8, SEEK_SET) == 0) {
-        static char buf[8];
-        int cnt = fread(buf, 1, 8, DB_FP);
-
-        if (cnt != 8) {
-            DEBUG_PRINT("Could not read database at %d\n", iPos);
-            return false;
-        }
-
-        // memcpy(&bb, buf, 8);
-        bb = 0;
-        bb |= ((BITBOARD) buf[0] & 0xFF) << 56;
-        bb |= ((BITBOARD) buf[1] & 0xFF) << 48;
-        bb |= ((BITBOARD) buf[2] & 0xFF) << 40;
-        bb |= ((BITBOARD) buf[3] & 0xFF) << 32;
-        bb |= ((BITBOARD) buf[4] & 0xFF) << 24;
-        bb |= ((BITBOARD) buf[5] & 0xFF) << 16;
-        bb |= ((BITBOARD) buf[6] & 0xFF) << 8;
-        bb |= ((BITBOARD) buf[7] & 0xFF);
-
-        return true;
-        // sprintf(s, "===\n %lld {%d %d %d %d %d %d %d %d}\n", bb, buf[0], buf[1], buf[2], buf[3],
-        // buf[4], buf[5], buf[6], buf[7]); DEBUG_PRINT(s);
-    }
-    DEBUG_PRINT("Position not found\n", 0);
     return false;
 }
 

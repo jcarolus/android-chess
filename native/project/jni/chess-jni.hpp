@@ -68,7 +68,6 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_doCastleMove(JNIEnv* env, jobject thi
 JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_toFEN(JNIEnv* env, jobject thiz);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_removePiece(JNIEnv* env, jobject thiz, jint turn, jint pos);
 JNIEXPORT BITBOARD JNICALL Java_jwtc_chess_JNI_getHashKey(JNIEnv* env, jobject thiz);
-JNIEXPORT void JNICALL Java_jwtc_chess_JNI_loadDB(JNIEnv* env, jobject thiz, jstring sFile, jint depth);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_interrupt(JNIEnv* env, jobject thiz);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumCaptured(JNIEnv* env, jobject thiz, jint turn, jint piece);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_resetHouse(JNIEnv* env, jobject thiz);
