@@ -41,7 +41,7 @@ public class PGNDialog extends Dialog {
 
         GridView contentLayout = findViewById(R.id.LayoutContent);
 
-        contentLayout.setAdapter(moveAdapter.getAdapter());
+        contentLayout.setAdapter(adapterMoves);
 
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
 
