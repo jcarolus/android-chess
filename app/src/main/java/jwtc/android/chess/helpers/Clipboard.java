@@ -18,7 +18,7 @@ public class Clipboard {
     public static String getStringFromClipboard(Context context) {
         initClipboardManager(context);
         ClipData pData = clipboardManager.getPrimaryClip();
-        if (pData != null) {
+        if (pData != null && pData.getItemCount() > 0) {
             ClipData.Item item = pData.getItemAt(0);
             return item.getText().toString();
         }
