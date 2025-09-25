@@ -41,10 +41,8 @@ class Game {
     int alphaBetaDuck(ChessBoard* board, const int depth, int alpha, const int beta);
     // @TODO actual performance testing inline vs regular
     inline int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);
-    int searchDB();
     int searchHouse();
     boolean putPieceHouse(const int pos, const int piece, const boolean allowAttack);
-    void loadDB(const char* sFile, int depth);
     boolean usedTime();
     boolean timeUp();
     long timePassed();
@@ -58,19 +56,12 @@ class Game {
     boolean m_quiescentSearchOn;
 
    protected:
-    long findDBKey(BITBOARD bbKey);
-    boolean readDBAt(int iPos, BITBOARD& bb);
-
     MoveAndValue m_bestMoveAndValue;
     long m_millies, m_milliesGiven;
 
     static Game* game;
     static const int MAX_DEPTH = 20;
     static const int QUIESCE_DEPTH = 5;  // makes effective max depth 15
-
-    static int DB_SIZE;
-    static FILE* DB_FP;
-    static int DB_DEPTH;
 
     static const BITBOARD DEFAULT_START_HASH = -8567268772865283918LL;
     ChessBoard* m_boardFactory[MAX_DEPTH];

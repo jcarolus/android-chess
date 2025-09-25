@@ -4,9 +4,7 @@
 ## Objectives
 - User friendly
 - Free
-- NO ads
-- Published on the Google Play store https://play.google.com/store/apps/details?id=jwtc.android.chess
-- Published on F-droid https://f-droid.org/packages/jwtc.android.chess/
+- No ads
 - Demo video https://youtu.be/kW9PjHXEEnU
 
 ## Special features
@@ -17,6 +15,9 @@
 - Cast the board via Chromecast
 - ECO opening explorer
 
+## Install
+- Published on "F-droid" https://f-droid.org/packages/jwtc.android.chess/
+- Published on the Google Play store https://play.google.com/store/apps/details?id=jwtc.android.chess
 
 ## Roadmap
 - Take items from the feature-request list (GitHub issue list)

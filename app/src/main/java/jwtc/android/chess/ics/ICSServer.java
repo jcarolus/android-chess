@@ -70,6 +70,7 @@ public class ICSServer extends Service {
     }
 
     public void tearDown() {
+        Log.i(TAG, "tearDown " +(_socket != null ? "socket" : "no socket"));
         if (_socket != null) {
             try {
                 _socket.close();
@@ -522,6 +523,17 @@ public class ICSServer extends Service {
         return mBinder;
     }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "onUnbind");
+        return true;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.d(TAG, "onRebind");
+        super.onRebind(intent);
+    }
 
     public class LocalBinder extends Binder {
         ICSServer getService() {

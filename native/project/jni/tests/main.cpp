@@ -12,7 +12,6 @@ void miniTest();
 void startThread();
 bool testGame();
 void speedTest();
-bool testDB();
 bool testSetupNewGame();
 bool testSetupMate();
 bool testInCheck();
@@ -34,7 +33,6 @@ int main(int argc, char **argv) {
                             testInCheck,
                             testInSelfCheck,
                             testSetupPieces,
-                            testDB,
                             testDuck,
                             testEngine,
                             testSequence,
@@ -109,28 +107,6 @@ bool testSetupMate() {
                                         "3r1K2/8/5k2/8/8/8/8/8 w - - 0 1",
                                         ChessBoard::MATE,
                                         "State should equal MATE");
-}
-
-bool testDB() {
-    Game::getInstance()->loadDB("db.bin", 3);
-
-    newGame();
-
-    int move = Game::getInstance()->searchDB();
-    if (move == 0) {
-        return false;
-    }
-    // ChessTest::printMove(move);
-
-    Game::getInstance()->move(move);
-
-    move = Game::getInstance()->searchDB();
-
-    if (move == 0) {
-        return false;
-    }
-
-    return true;
 }
 
 bool testSetupPieces() {

@@ -199,8 +199,8 @@
     <string name="pgntool_export_explanation">Export game database</string>
     <string name="pgntool_import_explanation">Import games into the game database</string>
     <string name="pgntool_delete_explanation">Delete all games in the game database</string>
-    <string name="pgntool_create_db_explanation">Create openingdatabase</string>
-    <string name="pgntool_point_db_explanation">Set openingdatabase</string>
+    <string name="pgntool_create_db_explanation">Create opening database</string>
+    <string name="pgntool_point_db_explanation">Set opening database</string>
     <string name="pgntool_unset_uci_engine">Uninstall UCI engine</string>
     <string name="pgntool_unset_uci_database">Uninstall UCI database</string>
     <string name="pgntool_help">Help</string>

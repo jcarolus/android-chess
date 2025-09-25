@@ -314,8 +314,6 @@ public class JNI {
 
     public native long getHashKey();
 
-    public native void loadDB(String sFile, int depth);
-
     public native void interrupt();
 
     public native int getNumCaptured(int turn, int piece);

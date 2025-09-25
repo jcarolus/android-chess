@@ -18,8 +18,11 @@ public class Clipboard {
     public static String getStringFromClipboard(Context context) {
         initClipboardManager(context);
         ClipData pData = clipboardManager.getPrimaryClip();
-        ClipData.Item item = pData.getItemAt(0);
-        return item.getText().toString();
+        if (pData != null && pData.getItemCount() > 0) {
+            ClipData.Item item = pData.getItemAt(0);
+            return item.getText().toString();
+        }
+        return "";
     }
 
     private static void initClipboardManager(Context context) {

@@ -2243,14 +2243,21 @@ int ChessBoard::getNumMoves() {
 // the current element and decreasing size
 // used for removing illegal moves
 void ChessBoard::removeMoveElementAt() {
-    m_indexMoves--;
-    m_sizeMoves--;
-    m_arrMoves[m_indexMoves] = m_arrMoves[m_sizeMoves];
+    if (m_indexMoves > 0) {
+        m_indexMoves--;
+        m_sizeMoves--;
+        m_arrMoves[m_indexMoves] = m_arrMoves[m_sizeMoves];
+    }
 }
 
-void ChessBoard::addMoveElement(const int move) {
-    m_arrMoves[m_sizeMoves++] = move;
+boolean ChessBoard::addMoveElement(const int move) {
+    if (m_sizeMoves + 1 < MAX_MOVES) {
+        m_arrMoves[m_sizeMoves++] = move;
+        return true;
+    }
+    return false;
 }
+
 int ChessBoard::remainingMoves() {
     return m_sizeMoves - m_indexMoves;
 }
