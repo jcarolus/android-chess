@@ -1,12 +1,16 @@
 package jwtc.android.chess.play;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+
 import java.util.List;
 import jwtc.android.chess.R;
 
@@ -42,16 +46,16 @@ public class MoveItemAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.pgn_item, parent, false);
         }
 
-        ImageView imageTurn = convertView.findViewById(R.id.ImageTurn);
         TextView textNr = convertView.findViewById(R.id.TextViewNumMove);
         TextView textMove = convertView.findViewById(R.id.TextViewMove);
         TextView textAnnotation = convertView.findViewById(R.id.TextViewAnnotation);
 
         if (move.turn != 0) {
-            imageTurn.setImageResource(move.turn);
-            imageTurn.setVisibility(View.VISIBLE);
+            textMove.setPaintFlags(textMove.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            textMove.setTextColor(ContextCompat.getColor(context, R.color.primaryColor));
         } else {
-            imageTurn.setVisibility(View.GONE);
+            textMove.setTextColor(ContextCompat.getColor(context, R.color.surfaceTextColor));
+            textMove.setPaintFlags(textMove.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
         }
 
         textNr.setText(move.nr);
