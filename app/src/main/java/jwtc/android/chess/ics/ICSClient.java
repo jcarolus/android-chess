@@ -61,7 +61,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private TextView _tvConsole;
 
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private ImageButton buttonMenu, buttonRefresh, buttonTakeBack;
+    private ImageButton buttonRefresh, buttonTakeBack;
+    private Button buttonMenu;
     private EditText _editHandle, _editPwd, _editConsole;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
@@ -294,7 +295,14 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         buttonMenu.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setMenuView();
+                int menuChild = viewAnimatorSub.getDisplayedChild();
+                if (menuChild == VIEW_MENU || menuChild == VIEW_LOADING) {
+                    stopSession(R.string.ics_quit);
+                } else if (menuChild == VIEW_LOGIN) {
+                    finish();
+                } else {
+                    setMenuView();
+                }
             }
         });
 
@@ -424,10 +432,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 }
                 setMenuView();
             }
-        } else if (isConnected()) {
-            stopSession(R.string.ics_quit);
         } else {
-            finish();
+            stopSession(R.string.ics_quit);
         }
     }
 
@@ -436,19 +442,23 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         if (isFinishing()) {
             return;
         }
-        new AlertDialog.Builder(ICSClient.this)
-            .setTitle(resource)
+        if (isConnected()) {
+            new AlertDialog.Builder(ICSClient.this)
+                    .setTitle(resource)
 //            .setMessage(resource)
-            .setPositiveButton(R.string.alert_yes,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                        stopService(new Intent(ICSClient.this, ICSServer.class));
-                        finish();
-                    }
-                })
-            .setNegativeButton(getString(R.string.alert_no), null)
-            .show();
+                    .setPositiveButton(R.string.alert_yes,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                    stopService(new Intent(ICSClient.this, ICSServer.class));
+                                    finish();
+                                }
+                            })
+                    .setNegativeButton(getString(R.string.alert_no), null)
+                    .show();
+        } else {
+            finish();
+        }
     }
 
     @Override
@@ -749,36 +759,30 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         hideBoardView();
         viewAnimatorSub.setDisplayedChild(VIEW_MENU);
-        buttonMenu.setVisibility(View.GONE);
-
         textViewTitle.setText(icsServer != null ? icsServer.getHandle() : "--");
     }
 
     public void setLoadingView() {
         hideBoardView();
         viewAnimatorSub.setDisplayedChild(VIEW_LOADING);
-        buttonMenu.setVisibility(View.GONE);
         textViewTitle.setText("");
     }
 
     public void setPlayerView() {
         hideBoardView();
         viewAnimatorSub.setDisplayedChild(VIEW_PLAYERS);
-        buttonMenu.setVisibility(View.VISIBLE);
         textViewTitle.setText(R.string.ics_menu_players);
     }
 
     public void setGamesView() {
         hideBoardView();
         viewAnimatorSub.setDisplayedChild(VIEW_GAMES);
-        buttonMenu.setVisibility(View.VISIBLE);
         textViewTitle.setText(R.string.ics_menu_games);
     }
 
     public void setChallengeView() {
         hideBoardView();
         viewAnimatorSub.setDisplayedChild(VIEW_CHALLENGES);
-        buttonMenu.setVisibility(View.VISIBLE);
         textViewTitle.setText(R.string.ics_menu_challenges);
     }
 
@@ -786,7 +790,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         if (viewAnimatorRoot.getDisplayedChild() != VIEW_BOARD) {
             viewAnimatorRoot.setDisplayedChild(VIEW_BOARD);
         }
-        buttonMenu.setVisibility(View.GONE);
         textViewTitle.setText("");
     }
 
@@ -799,21 +802,18 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void setLoginView() {
         hideBoardView();
         viewAnimatorSub.setDisplayedChild(VIEW_LOGIN);
-        buttonMenu.setVisibility(View.GONE);
         textViewTitle.setText("");
     }
 
     public void setConsoleView() {
         hideBoardView();
         viewAnimatorSub.setDisplayedChild(VIEW_CONSOLE);
-        buttonMenu.setVisibility(View.VISIBLE);
         textViewTitle.setText("");
     }
 
     public void setStoredView() {
         hideBoardView();
         viewAnimatorSub.setDisplayedChild(VIEW_STORED);
-        buttonMenu.setVisibility(View.VISIBLE);
         textViewTitle.setText("");
     }
 
