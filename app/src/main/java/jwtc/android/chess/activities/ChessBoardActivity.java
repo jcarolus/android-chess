@@ -75,6 +75,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.title_pick_promo);
+            builder.setCancelable(false);
             builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
                     dialog.dismiss();
@@ -162,6 +163,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void OnState() {
         this.moveToPositions.clear();
+
+        Log.d(TAG, "OnState");
         rebuildBoard();
     }
 
@@ -560,9 +563,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     case DragEvent.ACTION_DRAG_EXITED:
                         view.setSelected(false);
                         break;
+                    case DragEvent.ACTION_DRAG_STARTED:
+                       // all listeners allow drag started
+                       break;
+                    case DragEvent.ACTION_DRAG_LOCATION:
+                        break;
                     case DragEvent.ACTION_DROP: {
                         View fromView = (View) event.getLocalState();
                         if (fromView != null) {
+                            fromView.setVisibility(View.VISIBLE);
+
                             if (fromView instanceof ChessPieceView) {
                                 ChessPieceView pieceViewFrom = (ChessPieceView) fromView;
                                 final int toPos = ((ChessSquareView) view).getPos();
@@ -579,7 +589,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                                 }
                                 ChessBoardActivity.this.updateSelectedSquares();
                             }
-                            fromView.setVisibility(View.VISIBLE);
                         }
 
                         break;
@@ -607,10 +616,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected class MyTouchListener implements View.OnTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
+            int action = motionEvent.getAction();
             if (hasPremoved()) {
                 resetPremove();
             } else if (view instanceof ChessPieceView) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                if (action == MotionEvent.ACTION_DOWN) {
                     final ChessPieceView pieceView = (ChessPieceView) view;
                     int from = pieceView.getPos();
                     if (selectedPosition != from) {
@@ -623,7 +633,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     view.startDrag(data, shadowBuilder, view, 0);
                     view.setVisibility(View.INVISIBLE);
                     return true;
-                } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     view.setVisibility(View.VISIBLE);
                     view.invalidate();
                     return true;
