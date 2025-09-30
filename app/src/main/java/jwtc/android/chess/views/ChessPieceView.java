@@ -5,9 +5,12 @@ import android.util.Log;
 import android.view.View;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import jwtc.android.chess.R;
+import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.constants.PieceSets;
+import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 public class ChessPieceView extends AppCompatImageView {
@@ -87,5 +90,11 @@ public class ChessPieceView extends AppCompatImageView {
     public boolean performClick() {
         super.performClick();
         return false;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "ChessPieceView " + Piece.toString(this.piece) + " " + Pos.toString(this.pos);
     }
 }

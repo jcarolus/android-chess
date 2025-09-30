@@ -111,10 +111,11 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
         HashMap<String, String> item = mapMoves.get(position);
 
         if ("yes".equals(item.get("turn"))) {
-            // holder.textViewMove.setPaintFlags(holder.textViewMove.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            holder.textViewMove.setPaintFlags(holder.textViewMove.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             holder.textViewMove.setTextColor(ContextCompat.getColor(context, R.color.primaryColor));
         } else {
             holder.textViewMove.setTextColor(ContextCompat.getColor(context, R.color.surfaceTextColor));
+            holder.textViewMove.setPaintFlags(holder.textViewMove.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
         }
         holder.textViewNumMove.setText(item.get("nr"));
         holder.textViewMove.setText(item.get("move"));

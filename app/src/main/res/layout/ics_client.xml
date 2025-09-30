@@ -17,8 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="4dip"
-            android:stretchColumns="0">
+            android:stretchColumns="1">
             <TableRow>
+                <Button android:id="@+id/ButtonMenu"
+                    android:text="@string/button_close"
+                    android:layout_width="wrap_content"
+                    style="@style/ChessButton"
+                    />
                 <TextView android:id="@+id/TextViewTitle"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -26,10 +31,7 @@
                     android:layout_margin="2dip"
                     android:text=""
                     />
-                <ImageButton android:id="@+id/ButtonMenu"
-                    android:src="@drawable/ic_three_dots_vertical"
-                    android:layout_width="48dip"
-                    android:layout_height="48dip" />
+
             </TableRow>
         </TableLayout>
 
