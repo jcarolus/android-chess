@@ -35,8 +35,7 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                gameApi.newGameRandomFischer(progress);
-                textViewSeed.setText("" + (progress + 1));
+                onUpdateProgress(progress);
             }
 
             @Override
@@ -104,8 +103,12 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
         SharedPreferences prefs = getPrefs();
 
         final int seed = prefs.getInt("randomFischerSeed", 0);
-        seekBar.setProgress(seed);
 
+        if (seekBar.getProgress() == seed) {
+            onUpdateProgress(seed);
+        } else {
+            seekBar.setProgress(seed);
+        }
         super.onResume();
     }
 
@@ -128,5 +131,10 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
         editor.commit();
 
         finish();
+    }
+
+    protected void onUpdateProgress(int progress) {
+        gameApi.newGameRandomFischer(progress);
+        textViewSeed.setText("" + (progress + 1));
     }
 }
