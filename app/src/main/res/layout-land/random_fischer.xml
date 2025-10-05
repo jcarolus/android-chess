@@ -14,19 +14,20 @@
         android:id="@+id/includeboard" />
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="4dip">
 
             <TableLayout
-                android:id="@+id/LayoutEngineInfo"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:stretchColumns="1">
+                android:stretchColumns="1"
+                android:layout_marginTop="4dip">
                 <TableRow
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -55,13 +56,14 @@
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dip"
                 android:stretchColumns="*">
                 <TableRow style="@style/MyRowStyle">
                     <Button
                         android:id="@+id/ButtonSetupOptionsCancel"
                         android:text="@string/button_cancel"
                         android:layout_width="wrap_content"
-                        android:layout_margin="2dip"
+                        android:layout_marginRight="2dip"
                         style="@style/ChessButton"/>
 
                     <Button
@@ -75,7 +77,7 @@
                         android:id="@+id/ButtonSetupOptionsOk"
                         android:text="@string/button_ok"
                         android:layout_width="wrap_content"
-                        android:layout_margin="2dip"
+                        android:layout_marginLeft="2dip"
                         style="@style/ChessButton"/>
                 </TableRow>
 
@@ -83,5 +85,4 @@
 
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>
