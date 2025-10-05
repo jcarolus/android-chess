@@ -12,6 +12,9 @@ import android.widget.TextView;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.views.ChessSquareView;
+import jwtc.chess.JNI;
+
 
 public class SetupRandomFischerActivity extends ChessBoardActivity {
     private static final String TAG = "SetupRandomFischer";
@@ -39,14 +42,10 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // Called when the user starts touching the SeekBar
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // Called when the user stops touching the SeekBar
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
         ImageButton butNext = findViewById(R.id.ButtonNext);
@@ -110,6 +109,21 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
             seekBar.setProgress(seed);
         }
         super.onResume();
+    }
+
+    @Override
+    public void afterCreate() {
+        Log.d(TAG, " afterCreate");
+
+        jni = JNI.getInstance();
+        chessBoardView = findViewById(R.id.includeboard);
+
+        for (int i = 0; i < 64; i++) {
+            ChessSquareView csv = new ChessSquareView(this, i);
+            chessBoardView.addView(csv);
+        }
+
+        gameApi.addListener(this);
     }
 
     @Override
