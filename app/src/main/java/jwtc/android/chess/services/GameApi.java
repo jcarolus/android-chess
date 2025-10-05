@@ -26,6 +26,7 @@ public class GameApi {
     private static Pattern _patAnnot;
     private static Pattern _patMove;
     private static Pattern _patCastling;
+    private static Pattern _patGameResult;
 
     static {
         try {
@@ -33,6 +34,8 @@ public class GameApi {
             _patAnnot = Pattern.compile("\\{([^\\{]*)\\}");
             _patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
             _patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?");
+            _patGameResult = Pattern.compile("((\\*)|(1-0)|(0-1)|(1/2-1/2))");
+
         } catch (Exception e) {}
     }
 

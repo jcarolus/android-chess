@@ -95,28 +95,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return true;
         } else if (jni.isAmbiguousCastle(from, to) != 0) { // in case of Fischer
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.title_castle);
-            builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    dialog.dismiss();
-                    gameApi.requestMoveCastle(from, to);
-                }
-            });
-            builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    dialog.dismiss();
-                    if (from != to) {
-                        gameApi.requestMove(from, to);
-                    }
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
-
-//            if (_vibrator != null) {
-//                _vibrator.vibrate(40L);
-//            }
+            handleAmbiguousCastle(from, to);
 
             return true; // done, return from method!
         }
@@ -794,6 +773,27 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return false;
     }
 
+    protected void handleAmbiguousCastle(int from, int to) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.title_castle);
+        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                gameApi.requestMoveCastle(from, to);
+            }
+        });
+        builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (from != to) {
+                    gameApi.requestMove(from, to);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     protected void selectPosition(int pos) {
         Log.d(TAG, "selectPosition " + pos + ", " + selectedPosition);
         if (pos == -1) {
@@ -808,6 +808,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             } else if (selectedPosition != pos){
                 handleMove(pos);
             } else {
+                if (jni.isAmbiguousCastle(selectedPosition, pos) != 0) {
+                    handleAmbiguousCastle(selectedPosition, pos);
+                }
                 selectedPosition = -1;
                 moveToPositions.clear();
                 updateSelectedSquares();
