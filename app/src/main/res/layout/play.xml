@@ -11,7 +11,7 @@
         android:id="@+id/LayoutBoardTop"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/paneBackgroundColor"
+        android:background="@color/primaryColor"
         android:padding="4dip">
         <TableRow android:gravity="center_vertical">
             <ViewSwitcher
@@ -71,7 +71,7 @@
         android:id="@+id/LayoutBoardBottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/paneBackgroundColor"
+        android:background="@color/primaryColor"
         android:padding="4dip">
 
         <TableRow android:gravity="center_vertical">

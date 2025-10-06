@@ -12,7 +12,7 @@
         android:id="@+id/LayoutTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/paneBackgroundColor">
+        android:background="@color/primaryColor">
         <ImageView
             android:id="@+id/ImageStatus"
             android:src="@drawable/ic_check_none"
@@ -36,7 +36,7 @@
         android:id="@+id/LayoutTurn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/paneBackgroundColor"
+        android:background="@color/primaryColor"
         android:stretchColumns="1">
 
         <TableRow android:gravity="center_vertical">

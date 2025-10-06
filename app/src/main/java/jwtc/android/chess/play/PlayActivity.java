@@ -335,7 +335,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
 
-        buttonEco.setVisibility(View.INVISIBLE);
+        buttonEco.setEnabled(false);
 
         new Handler(Looper.getMainLooper()).postDelayed(
                 this::updateGUI,
@@ -521,10 +521,9 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         }
 
         if (ecoName == null) {
-            buttonEco.setVisibility(View.INVISIBLE);
+            buttonEco.setEnabled(false);
             textViewEco.setText("");
         } else {
-            buttonEco.setVisibility(View.VISIBLE);
             textViewEco.setText(ecoName);
 
             if (jArray != null && jArray.length() > 0) {
