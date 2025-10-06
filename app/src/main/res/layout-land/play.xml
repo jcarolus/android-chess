@@ -153,7 +153,7 @@
                             >
                             <ImageButton
                                 android:id="@+id/ButtonPlay"
-                                android:src="@drawable/ic_icon_play"
+                                android:src="@drawable/ic_robot"
                                 android:contentDescription="@string/button_engine_play_description"
                                 style="@style/ChessImageButton" />
 
