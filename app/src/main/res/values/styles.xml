@@ -12,8 +12,10 @@
 
     <style name="ChessButton" parent="android:Widget.Material.Button">
         <item name="android:textColor">@color/surfaceTextColor</item>
-        <item name="android:layout_height">@dimen/imageButtonSize</item>
+        <item name="android:tint">@color/primaryTextColor</item>
         <item name="android:backgroundTint">@color/imagebutton_background</item>
+        <item name="rippleColor">@color/secondaryVariantColor</item>
+        <item name="android:layout_height">@dimen/imageButtonSize</item>
     </style>
 
     <style name="ChessTextAppearance" parent="@android:style/TextAppearance">
