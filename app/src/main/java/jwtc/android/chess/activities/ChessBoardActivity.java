@@ -351,6 +351,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         selectPosition(-1);
         premoveFrom = -1;
         premoveTo = -1;
+        lastMoveTo = -1;
+        lastMoveFrom = -1;
 
         highlightedPositions.clear();
         moveToPositions.clear();

@@ -260,6 +260,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     protected void onResume() {
         super.onResume();
 
+        Log.d(TAG, "onResume");
+
         SharedPreferences prefs = getPrefs();
 
         String sPGN = "";
@@ -388,7 +390,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        Log.i(TAG, "onActivityResult");
+        Log.i(TAG, "onActivityResult " + requestCode + ", " + resultCode);
 
         if (requestCode == REQUEST_OPEN) {
             if (resultCode == RESULT_OK) {
@@ -697,6 +699,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateForNewGame() {
+        Log.d(TAG, "updateForNewGame");
+
         SharedPreferences prefs = getPrefs();
         long increment = prefs.getLong("clockIncrement", 0);
         long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
