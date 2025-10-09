@@ -20,7 +20,7 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/paneBackgroundColor"
+            android:background="@color/primaryColor"
             android:gravity="center_vertical"
             android:padding="4dip">
             <ViewSwitcher
@@ -167,7 +167,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/paneBackgroundColor"
+            android:background="@color/primaryColor"
             android:gravity="center_vertical"
             android:padding="4dip">
             <ViewSwitcher

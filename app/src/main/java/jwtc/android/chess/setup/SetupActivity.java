@@ -18,6 +18,7 @@ import android.app.AlertDialog;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
@@ -361,8 +362,9 @@ public class SetupActivity extends ChessBoardActivity {
                     Log.i(TAG, "onTouch DOWN " + pos);
 
                     ClipData data = ClipData.newPlainText("", "");
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                    View.DragShadowBuilder shadowBuilder = new MagnifyingDragShadowBuilder(view);
                     view.startDrag(data, shadowBuilder, view, 0);
+
                     view.setVisibility(View.INVISIBLE);
                     return true;
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {

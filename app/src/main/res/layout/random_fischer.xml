@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="4dip"
+    android:id="@+id/LayoutMain">
+
+    <include
+        layout="@layout/chessboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/includeboard" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dip">
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1"
+                android:layout_marginTop="4dip">
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+                    <ImageButton
+                        android:id="@+id/ButtonPrevious"
+                        android:src="@drawable/ic_chevron_left"
+                        style="@style/ChessImageButton" />
+                    <SeekBar
+                        android:id="@+id/seekbar"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:max="959" />
+                    <ImageButton
+                        android:id="@+id/ButtonNext"
+                        android:src="@drawable/ic_chevron_right"
+                        style="@style/ChessImageButton" />
+                    <TextView
+                        android:id="@+id/TextViewSeed"
+                        android:layout_width="48dip"
+                        android:layout_height="wrap_content"
+                        style="@style/MyHeaderTextStyle">
+                    </TextView>
+                </TableRow>
+            </TableLayout>
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dip"
+                android:stretchColumns="*">
+                <TableRow style="@style/MyRowStyle">
+                    <Button
+                        android:id="@+id/ButtonSetupOptionsCancel"
+                        android:text="@string/button_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_marginRight="2dip"
+                        style="@style/ChessButton"/>
+
+                    <Button
+                        android:id="@+id/ButtonSetupOptionsRandom"
+                        android:text="@string/choice_random"
+                        android:layout_width="wrap_content"
+                        android:layout_margin="2dip"
+                        style="@style/ChessButton"/>
+
+                    <Button
+                        android:id="@+id/ButtonSetupOptionsOk"
+                        android:text="@string/button_ok"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="2dip"
+                        style="@style/ChessButton"/>
+                </TableRow>
+
+            </TableLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

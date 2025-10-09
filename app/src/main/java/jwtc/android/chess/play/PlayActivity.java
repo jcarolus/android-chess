@@ -71,6 +71,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     public static final int REQUEST_CLOCK = 6;
     public static final int REQUEST_SAVE_GAME = 7;
     public static final int REQUEST_ECO = 8;
+    public static final int REQUEST_RANDOM_FISCHER = 9;
 
     private LocalClockApi localClock = new LocalClockApi();
     private EngineApi myEngine;
@@ -184,14 +185,14 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             }
         });
 
-        ImageButton butPgn = findViewById(R.id.ButtonPGN);
-        butPgn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PGNDialog dialog = new PGNDialog(PlayActivity.this, gameApi);
-                dialog.show();
-            }
-        });
+//        ImageButton butPgn = findViewById(R.id.ButtonPGN);
+//        butPgn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                PGNDialog dialog = new PGNDialog(PlayActivity.this, gameApi);
+//                dialog.show();
+//            }
+//        });
 
         switchTurnMe = findViewById(R.id.ImageTurnMe);
         switchTurnOpp = findViewById(R.id.ImageTurnOpp);
@@ -258,6 +259,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     @Override
     protected void onResume() {
         super.onResume();
+
+        Log.d(TAG, "onResume");
 
         SharedPreferences prefs = getPrefs();
 
@@ -334,7 +337,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
 
-        buttonEco.setVisibility(View.INVISIBLE);
+        buttonEco.setEnabled(false);
 
         new Handler(Looper.getMainLooper()).postDelayed(
                 this::updateGUI,
@@ -387,7 +390,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        Log.i(TAG, "onActivityResult");
+        Log.i(TAG, "onActivityResult " + requestCode + ", " + resultCode);
 
         if (requestCode == REQUEST_OPEN) {
             if (resultCode == RESULT_OK) {
@@ -520,10 +523,9 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         }
 
         if (ecoName == null) {
-            buttonEco.setVisibility(View.INVISIBLE);
+            buttonEco.setEnabled(false);
             textViewEco.setText("");
         } else {
-            buttonEco.setVisibility(View.VISIBLE);
             textViewEco.setText(ecoName);
 
             if (jArray != null && jArray.length() > 0) {
@@ -598,43 +600,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         }
     }
 
-    protected void showChess960Dialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this);
-        builder.setTitle(getString(R.string.title_chess960_manual_random));
-        final EditText input = new EditText(PlayActivity.this);
-        input.setInputType(InputType.TYPE_CLASS_PHONE);
-        builder.setView(input);
-        builder.setPositiveButton(getString(R.string.choice_manually), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            try {
-                int seed = Integer.parseInt(input.getText().toString());
-
-                if (seed >= 0 && seed <= 960) {
-                    gameApi.newGameRandomFischer(seed);
-                    lGameID = 0;
-                    updateForNewGame();
-                } else {
-                    doToast(getString(R.string.err_chess960_position_range));
-                }
-            } catch (Exception ex) {
-                doToast(getString(R.string.err_chess960_position_format));
-            }
-            }
-        });
-        builder.setNegativeButton(getString(R.string.choice_random), new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-            int seed = -1;
-            gameApi.newGameRandomFischer(seed);
-            lGameID = 0;
-            updateForNewGame();
-            }
-        });
-
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     @Override
     public void OnDialogResult(int requestCode, Bundle data) {
         switch (requestCode) {
@@ -654,7 +619,9 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                     lGameID = 0;
                     updateForNewGame();
                 } else if (item.equals(getString(R.string.menu_new_960))) {
-                    showChess960Dialog();
+                    intent = new Intent();
+                    intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupRandomFischerActivity.class);
+                    startActivityForResult(intent, REQUEST_RANDOM_FISCHER);
                 } else if (item.equals(getString(R.string.menu_setup))) {
                     intent = new Intent();
                     intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
@@ -732,6 +699,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateForNewGame() {
+        Log.d(TAG, "updateForNewGame");
+
         SharedPreferences prefs = getPrefs();
         long increment = prefs.getLong("clockIncrement", 0);
         long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);

@@ -22,7 +22,8 @@
             android:id="@+id/LayoutTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="1dip">
+            android:layout_marginBottom="1dip"
+            android:background="@color/primaryColor">
             <ImageView
                 android:id="@+id/ImageStatus"
                 android:src="@drawable/ic_check_none"

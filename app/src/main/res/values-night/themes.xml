@@ -10,6 +10,8 @@
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
         <item name="colorSurface">@color/surfaceColor</item>
         <item name="colorOnSurface">@color/surfaceTextColor</item>
+        <item name="colorControlHighlight">@color/secondaryColor</item>
+        <item name="rippleColor">@color/secondaryColor</item>
     </style>
 
     <style name="ChessStart" parent="Theme.MaterialComponents.DayNight">
@@ -20,5 +22,32 @@
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryVariantColor</item>
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorOnSurface">@color/surfaceTextColor</item>
+        <item name="colorControlHighlight">@color/secondaryColor</item>
+        <item name="rippleColor">@color/secondaryColor</item>
+        <item name="actionBarStyle">@style/Widget.MyApp.ActionBar</item>
+    </style>
+
+    <style name="Widget.MyApp.ActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="background">@color/primaryColor</item>
+    </style>
+
+    <style name="ChessDialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:windowMinWidthMajor">0%</item>
+        <item name="android:windowMinWidthMinor">0%</item>
+        <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryVariantColor</item>
+        <item name="colorOnSecondary">@color/secondaryTextColor</item>
+        <item name="colorOnSurface">@color/surfaceTextColor</item>
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorControlHighlight">@color/secondaryColor</item>
+        <item name="rippleColor">@color/secondaryColor</item>
     </style>
 </resources>

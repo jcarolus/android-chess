@@ -19,7 +19,7 @@
             android:id="@+id/LayoutBoardTop"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/paneBackgroundColor"
+            android:background="@color/primaryColor"
             android:layout_alignParentTop="true"
             android:padding="4dip">
             <TableRow android:gravity="center_vertical">
@@ -74,7 +74,7 @@
             android:id="@+id/LayoutBoardBottom"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/paneBackgroundColor"
+            android:background="@color/primaryColor"
             android:layout_alignParentBottom="true"
             android:padding="4dip">
             <TableRow android:gravity="center_vertical">
@@ -137,7 +137,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-
                 <TableLayout
                     android:id="@+id/LayoutEngineInfo"
                     android:layout_width="fill_parent"
@@ -145,7 +144,8 @@
                     android:stretchColumns="1">
                     <TableRow
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        style="@style/MyRowStyle">
                         <RelativeLayout
                             android:id="@+id/LayoutPlayButton"
                             android:layout_width="wrap_content"
@@ -153,10 +153,9 @@
                             >
                             <ImageButton
                                 android:id="@+id/ButtonPlay"
-                                android:src="@drawable/ic_icon_play"
+                                android:src="@drawable/ic_robot"
                                 android:contentDescription="@string/button_engine_play_description"
-                                style="@style/ChessImageButton"
-                                android:nextFocusLeft="@id/includeboard"/>
+                                style="@style/ChessImageButton" />
 
                             <ProgressBar
                                 android:id="@+id/ProgressBarPlay"
@@ -166,10 +165,9 @@
                                 android:visibility="gone" />
                         </RelativeLayout>
 
-
                         <TextView
                             android:id="@+id/TextViewEngineValue"
-                            style="@style/MyNormalTextStyle"
+                            style="@style/MySmallTextStyle"
                             android:layout_width="0dp"
                             android:layout_weight="2"
                             android:layout_height="wrap_content"
@@ -178,7 +176,11 @@
                             android:minLines="2"
                             android:maxLines="2"
                             android:ellipsize="end"
-                            android:padding="4dip" />
+                            android:paddingLeft="4dip"
+                            android:paddingRight="4dip"
+                            android:layout_marginLeft="8dip"
+                            android:layout_marginRight="8dip"
+                            android:background="@color/paneBackgroundColor"/>
 
                         <ImageButton android:id="@+id/ButtonMenu"
                             android:src="@drawable/ic_three_dots_vertical"
@@ -186,13 +188,6 @@
                             style="@style/ChessImageButton"/>
 
                     </TableRow>
-                </TableLayout>
-
-                <TableLayout
-                    android:id="@+id/LayoutHistoryControls"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:stretchColumns="1">
                     <TableRow
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -201,9 +196,7 @@
                             android:id="@+id/ButtonPrevious"
                             android:src="@drawable/ic_chevron_left"
                             android:contentDescription="@string/button_previous_move_description"
-                            style="@style/ChessImageButton"
-                            android:nextFocusLeft="@id/includeboard"
-                            android:nextFocusDown="@id/ButtonEco" />
+                            style="@style/ChessImageButton" />
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/HistoryRecyclerView"
                             android:layout_width="0dp"
@@ -214,23 +207,15 @@
                             android:orientation="horizontal"
                             android:scrollbars="horizontal"
                             android:fadeScrollbars="false"
-                            android:scrollbarAlwaysDrawHorizontalTrack="true"
-                            android:nextFocusDown="@id/SwitchBlindfold"/>
+                            android:background="@color/paneBackgroundColor"
+                            android:scrollbarAlwaysDrawHorizontalTrack="true"/>
                         <ImageButton
                             android:id="@+id/ButtonNext"
                             android:src="@drawable/ic_chevron_right"
                             android:contentDescription="@string/button_next_move_description"
-                            style="@style/ChessImageButton"
-                            android:nextFocusDown="@id/SwitchSound"/>
-
-                        <ImageButton
-                            android:id="@+id/ButtonPGN"
-                            android:src="@drawable/ic_list_ul"
-                            android:contentDescription="@string/button_show_pgn_description"
                             style="@style/ChessImageButton" />
                     </TableRow>
                 </TableLayout>
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -247,8 +232,11 @@
                         android:id="@+id/TextViewEco"
                         android:text="--"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dip"
+                        android:layout_height="38dip"
+                        android:layout_marginLeft="8dip"
+                        android:layout_marginRight="8dip"
+                        android:padding="4dip"
+                        android:background="@color/paneBackgroundColor"
                         />
                 </LinearLayout>
 

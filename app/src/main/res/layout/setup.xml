@@ -24,18 +24,19 @@
             <jwtc.android.chess.views.ChessPiecesStackView
                 android:layout_width="wrap_content"
                 android:layout_height="48dip"
-                android:layout_margin="4dip"
+                android:layout_marginTop="4dip"
                 android:id="@+id/blackPieces" />
 
             <jwtc.android.chess.views.ChessPiecesStackView
                 android:layout_width="wrap_content"
                 android:layout_height="48dip"
-                android:layout_margin="4dip"
+                android:layout_marginTop="4dip"
                 android:id="@+id/whitePieces" />
 
             <TableLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dip">
                 <TableRow  style="@style/MyRowStyle">
                     <TextView
                         android:id="@+id/TextViewSetupTurn"

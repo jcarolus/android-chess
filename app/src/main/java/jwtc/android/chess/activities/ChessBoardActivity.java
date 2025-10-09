@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
@@ -95,28 +96,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return true;
         } else if (jni.isAmbiguousCastle(from, to) != 0) { // in case of Fischer
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.title_castle);
-            builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    dialog.dismiss();
-                    gameApi.requestMoveCastle(from, to);
-                }
-            });
-            builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    dialog.dismiss();
-                    if (from != to) {
-                        gameApi.requestMove(from, to);
-                    }
-                }
-            });
-            AlertDialog alert = builder.create();
-            alert.show();
-
-//            if (_vibrator != null) {
-//                _vibrator.vibrate(40L);
-//            }
+            handleAmbiguousCastle(from, to);
 
             return true; // done, return from method!
         }
@@ -371,6 +351,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         selectPosition(-1);
         premoveFrom = -1;
         premoveTo = -1;
+        lastMoveTo = -1;
+        lastMoveFrom = -1;
 
         highlightedPositions.clear();
         moveToPositions.clear();
@@ -642,54 +624,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return false;
         }
 
-        protected class MagnifyingDragShadowBuilder extends View.DragShadowBuilder {
-            private static final float BITMAP_FACTOR = 1.25f;
-            private static final float CIRCLE_FACTOR = 2.25f; // must be greater than BITMAP_FACTOR
-            private final Bitmap scaledBitmap;
-            private final int circleSize;
-            private final int bitmapSize;
 
-            private final Point touchPoint = new Point(0, 0); // Store touch point for use in onDrawShadow()
-
-            public MagnifyingDragShadowBuilder(View view) {
-                super(view);
-
-                int originalSize = view.getWidth();
-
-                bitmapSize = (int) (originalSize * BITMAP_FACTOR);
-                circleSize = (int) (originalSize * CIRCLE_FACTOR);
-
-                Bitmap bitmap = Bitmap.createBitmap(originalSize, originalSize, Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
-                view.draw(canvas);
-
-                scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmapSize, bitmapSize, true);
-            }
-
-            @Override
-            public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
-                int shadowHeight = circleSize + bitmapSize;
-                shadowSize.set(circleSize, shadowHeight);
-                shadowTouchPoint.set(circleSize / 2, circleSize);
-
-                touchPoint.set(shadowTouchPoint.x, shadowTouchPoint.y);
-            }
-
-            @Override
-            public void onDrawShadow(Canvas canvas) {
-                canvas.drawBitmap(scaledBitmap, (int)((circleSize - bitmapSize) / 2), (int)((circleSize - bitmapSize) / 2), null);
-
-                int radius = circleSize / 2;
-
-                Paint paint = new Paint();
-                paint.setAntiAlias(true);
-                paint.setColor(Color.BLACK);
-                paint.setStyle(Paint.Style.FILL);
-                paint.setAlpha(128);
-
-                canvas.drawCircle(touchPoint.x, touchPoint.y, radius, paint);
-            }
-        }
     }
 
     public static int chessStateToR(int s) {
@@ -794,6 +729,27 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return false;
     }
 
+    protected void handleAmbiguousCastle(int from, int to) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.title_castle);
+        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                gameApi.requestMoveCastle(from, to);
+            }
+        });
+        builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (from != to) {
+                    gameApi.requestMove(from, to);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     protected void selectPosition(int pos) {
         Log.d(TAG, "selectPosition " + pos + ", " + selectedPosition);
         if (pos == -1) {
@@ -808,6 +764,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             } else if (selectedPosition != pos){
                 handleMove(pos);
             } else {
+                if (jni.isAmbiguousCastle(selectedPosition, pos) != 0) {
+                    handleAmbiguousCastle(selectedPosition, pos);
+                }
                 selectedPosition = -1;
                 moveToPositions.clear();
                 updateSelectedSquares();
