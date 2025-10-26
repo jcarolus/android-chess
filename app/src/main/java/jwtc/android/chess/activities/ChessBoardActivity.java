@@ -148,6 +148,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         jni = JNI.getInstance();
         chessBoardView = findViewById(R.id.includeboard);
+        chessBoardView.setNextFocusRightId(R.id.ButtonPlay);
 
         initDirectionalPad();
 

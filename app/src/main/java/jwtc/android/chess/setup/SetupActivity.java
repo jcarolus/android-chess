@@ -210,7 +210,10 @@ public class SetupActivity extends ChessBoardActivity {
 
         initDirectionalPad();
 
+        chessBoardView.setNextFocusRightId(R.id.blackPieces);
+
         whitePieces.setFocusable(true);
+        whitePieces.setNextFocusLeftId(R.id.ChessBoardLayout);
         whitePieces.setOnFocusChangeListener(new View.OnFocusChangeListener() {
              @Override
              public void onFocusChange(View v, boolean hasFocus) {
@@ -229,6 +232,7 @@ public class SetupActivity extends ChessBoardActivity {
         });
 
         blackPieces.setFocusable(true);
+        blackPieces.setNextFocusLeftId(R.id.ChessBoardLayout);
         blackPieces.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -240,6 +244,34 @@ public class SetupActivity extends ChessBoardActivity {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     return dpadPieceKeyDown(keyCode, BoardConstants.BLACK);
+                }
+                return false;
+            }
+        });
+
+        duckStack.setFocusable(true);
+        duckStack.setNextFocusLeftId(R.id.RadioGroupSetup);
+        duckStack.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                updateSelectedSquares();
+            }
+        });
+        duckStack.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+                        if (selectedPiece == BoardConstants.DUCK) {
+                            selectedColor = -1;
+                            selectedPiece = -1;
+                        } else {
+                            selectedColor = BoardConstants.BLACK;
+                            selectedPiece = BoardConstants.DUCK;
+                        }
+                        updateSelectedSquares();
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -289,6 +321,7 @@ public class SetupActivity extends ChessBoardActivity {
 
         ChessSquareView squareForDuck = new ChessSquareView(this, 0);
         squareForDuck.setOnDragListener(myDragListener);
+        squareForDuck.setOnClickListener(myClickListener);
         duckStack.addView(squareForDuck);
 
         ChessPieceView duckView = new ChessPieceView(this, BoardConstants.WHITE, BoardConstants.DUCK, 0);
@@ -407,6 +440,10 @@ public class SetupActivity extends ChessBoardActivity {
                 ((ChessSquareView) child).setFocussed(((ChessSquareView) child).getPos() == dpadPosBlackPieces);
             }
         }
+
+        ChessSquareView duckSquare = (ChessSquareView)duckStack.getChildAt(0);
+        duckSquare.setFocussed(duckStack.hasFocus());
+        duckSquare.setSelected(selectedPiece == BoardConstants.DUCK);
     }
 
     protected void commitFEN() {
@@ -425,7 +462,6 @@ public class SetupActivity extends ChessBoardActivity {
     }
 
     protected void dpadPieceFocus(boolean hasFocus, int color) {
-        Log.d(TAG, "foxu " + hasFocus + " " + color);
         if (hasFocus) {
             dpadPosBlackPieces = color == BoardConstants.BLACK ? 0 : -1;
             dpadPosWhitePieces = color == BoardConstants.WHITE ? 0 : -1;
@@ -443,27 +479,42 @@ public class SetupActivity extends ChessBoardActivity {
             case KeyEvent.KEYCODE_ENTER:
                 selectPieceInStack(color, color == BoardConstants.WHITE ? dpadPosWhitePieces : dpadPosBlackPieces);
                 return true;
-
             case KeyEvent.KEYCODE_DPAD_LEFT:
                 if (color == BoardConstants.WHITE && dpadPosWhitePieces > 0) {
                     dpadPosWhitePieces--;
+                    updateSelectedSquares();
+                    return true;
                 }
                 if (color == BoardConstants.BLACK && dpadPosBlackPieces > 0) {
                     dpadPosBlackPieces--;
+                    updateSelectedSquares();
+                    return true;
                 }
-                updateSelectedSquares();
-                return true;
+                return false;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
                 if (color == BoardConstants.WHITE && dpadPosWhitePieces < 5) {
                     dpadPosWhitePieces++;
+                    updateSelectedSquares();
+                    return true;
                 }
                 if (color == BoardConstants.BLACK && dpadPosBlackPieces < 5) {
                     dpadPosBlackPieces++;
+                    updateSelectedSquares();
+                    return true;
                 }
-                updateSelectedSquares();
-                return true;
+                return false;
         }
         return false;
+    }
+
+    protected void selectPieceInStackByViews(ChessPieceView pieceView) {
+        if (pieceView.getParent() == whitePieces) {
+            selectPieceInStack(BoardConstants.WHITE, pieceView.getPiece());
+        } else if (pieceView.getParent() == blackPieces) {
+            selectPieceInStack(BoardConstants.BLACK, pieceView.getPiece());
+        } else if (pieceView.getParent() == duckStack) {
+            selectPieceInStack(BoardConstants.BLACK, pieceView.getPiece());
+        }
     }
 
     protected void selectPieceInStack(int color, int piece) {
@@ -512,13 +563,13 @@ public class SetupActivity extends ChessBoardActivity {
                                 if (onChessBoard) {
                                     selectPosition(toPos);
                                 } else {
-                                    selectPieceInStack(fromView.getParent() == whitePieces ? BoardConstants.WHITE : BoardConstants.BLACK, pieceView.getPiece());
+                                    selectPieceInStackByViews(pieceView);
                                 }
                             }
                             else if (onChessBoard) {
                                 // drop on board
                                 if (fromPieceStack) {
-                                    selectPieceInStack(fromView.getParent() == whitePieces ? BoardConstants.WHITE : BoardConstants.BLACK, pieceView.getPiece());
+                                    selectPieceInStackByViews(pieceView);
                                     addPieceFromStack(toPos);
                                 } else {
                                     movePiece(fromPos, toPos);
@@ -528,7 +579,7 @@ public class SetupActivity extends ChessBoardActivity {
                                 if (pieceView.getParent() instanceof ChessBoardView) {
                                     removePiece(fromPos);
                                 } else {
-                                    selectPieceInStack(droppedOnSquare.getParent() == whitePieces ? BoardConstants.WHITE : BoardConstants.BLACK, pieceView.getPiece());
+                                    selectPieceInStackByViews(pieceView);
                                 }
                             }
 
