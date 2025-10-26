@@ -22,6 +22,7 @@
 ## Roadmap
 - Take items from the feature-request list (GitHub issue list)
 - Translation improvements (some translations are old or inconsistent).
+- Improve user interaction via screen readers
 - Contributions are welcome
 
 

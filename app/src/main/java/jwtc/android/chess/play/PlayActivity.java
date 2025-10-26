@@ -506,8 +506,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updatePlayers() {
-        textViewOpponent.setText(gameApi.getOpponentPlayerName(myTurn));
-        textViewMe.setText(gameApi.getMyPlayerName(myTurn));
+        String opponent = chessBoardView.isRotated() ? gameApi.getMyPlayerName(myTurn) : gameApi.getOpponentPlayerName(myTurn);
+        String me = chessBoardView.isRotated() ?  gameApi.getOpponentPlayerName(myTurn) : gameApi.getMyPlayerName(myTurn);
+        textViewOpponent.setText(opponent);
+        textViewMe.setText(me);
     }
 
     protected void updateEco() {
@@ -677,8 +679,13 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
     @Override
     public void OnClockTime() {
-        textViewOpponentClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
-        textViewMyClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+        if (chessBoardView.isRotated()) {
+            textViewMyClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+            textViewOpponentClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+        } else {
+            textViewOpponentClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+            textViewMyClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+        }
 
 //        long remaining = myTurn == BoardConstants.WHITE ? localClock.getWhiteRemaining() : localClock.getBlackRemaining();
 //        if (remaining < _TimeWarning * 1000) {
@@ -720,6 +727,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
     protected void updateBoardRotation() {
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK && !flipBoard || myTurn == BoardConstants.WHITE && flipBoard);
+        updatePlayers();
     }
 
     protected void updateGameSettingsByPrefs() {

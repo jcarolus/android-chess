@@ -4,11 +4,6 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.speech.tts.TextToSpeech;
@@ -153,45 +148,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         jni = JNI.getInstance();
         chessBoardView = findViewById(R.id.includeboard);
-        chessBoardView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                Log.d(TAG, "onFocusChange " + hasFocus);
-                dpadFocus(hasFocus);
-            }
-        });
 
-        chessBoardView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    Log.d(TAG, "onKey " + keyCode);
-                    switch (keyCode) {
-                        case KeyEvent.KEYCODE_DPAD_CENTER:
-                        case KeyEvent.KEYCODE_ENTER:
-                            return dpadSelect();
-                        case KeyEvent.KEYCODE_DPAD_DOWN:
-                            return dpadDown();
-                        case KeyEvent.KEYCODE_DPAD_LEFT:
-                            return dpadLeft();
-                        case KeyEvent.KEYCODE_DPAD_RIGHT:
-                            return dpadRight();
-                        case KeyEvent.KEYCODE_DPAD_UP:
-                            return dpadUp();
-                    }
-                }
-                return false;
-            }
-        });
+        initDirectionalPad();
 
         myDragListener = new MyDragListener();
         myTouchListener = new MyTouchListener();
         myClickListener = new MyClickListener();
-//        LayoutTransition lt = new LayoutTransition();
-//        lt.disableTransitionType(LayoutTransition.DISAPPEARING);
-//        lt.setDuration(200);
-//        chessBoardView.setLayoutTransition(lt);
-
 
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);
@@ -429,6 +391,39 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    protected void initDirectionalPad() {
+        chessBoardView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d(TAG, "onFocusChange " + hasFocus);
+                dpadFocus(hasFocus);
+            }
+        });
+
+        chessBoardView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    Log.d(TAG, "onKey " + keyCode);
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            return dpadSelect();
+                        case KeyEvent.KEYCODE_DPAD_DOWN:
+                            return chessBoardView.isRotated() ? dpadUp() : dpadDown();
+                        case KeyEvent.KEYCODE_DPAD_LEFT:
+                            return chessBoardView.isRotated() ? dpadRight() : dpadLeft();
+                        case KeyEvent.KEYCODE_DPAD_RIGHT:
+                            return chessBoardView.isRotated() ? dpadLeft() : dpadRight();
+                        case KeyEvent.KEYCODE_DPAD_UP:
+                            return chessBoardView.isRotated() ? dpadDown() : dpadUp();
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
     protected void setPremove(int from, int to) {
         Log.d(TAG, "setPremove");
         this.premoveFrom = from;
@@ -514,7 +509,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    private final class MyClickListener implements View.OnClickListener {
+    protected class MyClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {

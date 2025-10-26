@@ -1,8 +1,8 @@
 package jwtc.android.chess.views;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,14 +16,19 @@ public class ChessBoardView extends ViewGroup {
 
     public ChessBoardView(Context context) {
         super(context);
-
-        this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
+        init();
     }
 
     public ChessBoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+        init();
+    }
 
+    public void init() {
         this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setDefaultFocusHighlightEnabled(false);
+        }
     }
 
     public void removePieces() {
@@ -65,6 +70,10 @@ public class ChessBoardView extends ViewGroup {
 
             requestLayout();
         }
+    }
+
+    public boolean isRotated() {
+        return this.rotated;
     }
 
     public void invalidatePieces() {
