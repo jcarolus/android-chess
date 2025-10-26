@@ -151,6 +151,7 @@
 
     <string name="square_description">Square %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s at %3$s</string>
+    <string name="square_with_duck_description">%1$s at %2$s</string>
     <string name="square_selected_description">Selected %1$s</string>
 
     <string name="piece_white">White</string>
@@ -161,6 +162,7 @@
     <string name="piece_bishop">Bishop</string>
     <string name="piece_knight">Knight</string>
     <string name="piece_pawn">Pawn</string>
+    <string name="piece_duck">Duck</string>
     <string name="choice_manually">Manually</string>
     <string name="choice_random">Random</string>
     <string name="choice_edit">Edit</string>

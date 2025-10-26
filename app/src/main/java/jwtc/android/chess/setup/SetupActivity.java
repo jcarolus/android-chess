@@ -322,6 +322,7 @@ public class SetupActivity extends ChessBoardActivity {
         ChessSquareView squareForDuck = new ChessSquareView(this, 0);
         squareForDuck.setOnDragListener(myDragListener);
         squareForDuck.setOnClickListener(myClickListener);
+        squareForDuck.setContentDescription(getPieceDescription(BoardConstants.DUCK, BoardConstants.WHITE));
         duckStack.addView(squareForDuck);
 
         ChessPieceView duckView = new ChessPieceView(this, BoardConstants.WHITE, BoardConstants.DUCK, 0);
@@ -350,7 +351,9 @@ public class SetupActivity extends ChessBoardActivity {
     }
 
     public void removePiece(final int pos) {
+        Log.d(TAG, "removePiece " + pos);
         if (jni.getDuckPos() == pos) {
+            Log.d(TAG, "set VARIANT_DEFAULT");
             jni.setVariant(BoardConstants.VARIANT_DEFAULT);
         } else {
             final int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
@@ -458,6 +461,9 @@ public class SetupActivity extends ChessBoardActivity {
     }
 
     protected String getPieceDescription(int piece, int color) {
+        if (piece == BoardConstants.DUCK) {
+            return getString(Piece.toResource(piece));
+        }
         return getString(color == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black) + " " + getString(Piece.toResource(piece));
     }
 
@@ -578,6 +584,7 @@ public class SetupActivity extends ChessBoardActivity {
                                 // dropped back
                                 if (pieceView.getParent() instanceof ChessBoardView) {
                                     removePiece(fromPos);
+                                    rebuildBoard();
                                 } else {
                                     selectPieceInStackByViews(pieceView);
                                 }
@@ -646,7 +653,11 @@ public class SetupActivity extends ChessBoardActivity {
                 if (view.getParent() instanceof ChessBoardView) {
                     selectPosition(toPos);
                 } else {
-                    selectPieceInStack(view.getParent() == whitePieces ? BoardConstants.WHITE : BoardConstants.BLACK, ((ChessSquareView) view).getPos());
+                    if (view.getParent() == duckStack) {
+                        selectPieceInStack(BoardConstants.BLACK, BoardConstants.DUCK);
+                    } else {
+                        selectPieceInStack(view.getParent() == whitePieces ? BoardConstants.WHITE : BoardConstants.BLACK, ((ChessSquareView) view).getPos());
+                    }
                 }
             }
         }

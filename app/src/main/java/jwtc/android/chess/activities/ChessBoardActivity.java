@@ -496,10 +496,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getFieldDescription(int pos) {
         int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
         int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
+        int duckPos = jni.getDuckPos();
         if (whitePiece != BoardConstants.FIELD) {
             return getString(R.string.square_with_piece_description, getString(R.string.piece_white), getString(Piece.toResource(whitePiece)), Pos.toString(pos));
         } else if (blackPiece != BoardConstants.FIELD) {
             return getString(R.string.square_with_piece_description, getString(R.string.piece_black), getString(Piece.toResource(blackPiece)), Pos.toString(pos));
+        } else if (duckPos != -1) {
+            return getString(R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos));
         }
         return getString(R.string.square_description, Pos.toString(pos));
     }
