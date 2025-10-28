@@ -411,8 +411,6 @@ public class SetupActivity extends ChessBoardActivity {
         if (!isPosOfKing(to) && selectedPiece != -1 && selectedColor != -1) {
             removePiece(to);
             addPiece(to, selectedPiece, selectedColor);
-            selectedPiece = -1;
-            selectedColor = -1;
             selectedPosition = -1;
 
             rebuildBoard();

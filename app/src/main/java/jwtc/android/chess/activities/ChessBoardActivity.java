@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.speech.tts.TextToSpeech;
@@ -51,7 +52,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
     protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
-    protected boolean skipReturn = true, showMoves = false, flipBoard = false;
+    protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false;
     private String keyboardBuffer = "";
 
     public boolean requestMove(final int from, final int to) {
@@ -218,6 +219,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         super.onPause();
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            float x = ev.getRawX();
+            float y = ev.getRawY();
+            Rect rect = new Rect();
+
+            chessBoardView.getGlobalVisibleRect(rect);
+            isBackGestureBlocked = rect.contains((int) x, (int) y);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
     public void rebuildBoard() {
 
         chessBoardView.removePieces();
@@ -348,6 +362,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         Log.i(TAG, "onKeyDown " + keyCode + " = " + (char) c);
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             //showMenu();
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (!isBackGestureBlocked) {
+                showExitConfirmationDialog();
+            }
             return true;
         }
 
@@ -494,15 +515,17 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected String getFieldDescription(int pos) {
-        int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
-        int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
-        int duckPos = jni.getDuckPos();
-        if (whitePiece != BoardConstants.FIELD) {
-            return getString(R.string.square_with_piece_description, getString(R.string.piece_white), getString(Piece.toResource(whitePiece)), Pos.toString(pos));
-        } else if (blackPiece != BoardConstants.FIELD) {
-            return getString(R.string.square_with_piece_description, getString(R.string.piece_black), getString(Piece.toResource(blackPiece)), Pos.toString(pos));
-        } else if (duckPos != -1) {
-            return getString(R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos));
+        if (PieceSets.selectedBlindfoldMode != PieceSets.BLINDFOLD_HIDE_PIECES) {
+            int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
+            int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
+            int duckPos = jni.getDuckPos();
+            if (whitePiece != BoardConstants.FIELD) {
+                return getString(R.string.square_with_piece_description, getString(R.string.piece_white), getString(Piece.toResource(whitePiece)), Pos.toString(pos));
+            } else if (blackPiece != BoardConstants.FIELD) {
+                return getString(R.string.square_with_piece_description, getString(R.string.piece_black), getString(Piece.toResource(blackPiece)), Pos.toString(pos));
+            } else if (duckPos != -1) {
+                return getString(R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos));
+            }
         }
         return getString(R.string.square_description, Pos.toString(pos));
     }
@@ -622,8 +645,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
             return false;
         }
-
-
     }
 
     public static int chessStateToR(int s) {

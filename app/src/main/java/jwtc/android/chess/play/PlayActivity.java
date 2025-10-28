@@ -11,12 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -219,12 +215,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (switchBlindfold.isChecked()) {
                     PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
-                    chessBoardView.invalidatePieces();
+                    rebuildBoard();
                     topPieces.setVisibility(View.INVISIBLE);
                     bottomPieces.setVisibility(View.INVISIBLE);
                 } else {
                     PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
-                    chessBoardView.invalidatePieces();
+                    rebuildBoard();
                     topPieces.setVisibility(View.VISIBLE);
                     bottomPieces.setVisibility(View.VISIBLE);
                     topPieces.invalidatePieces();
