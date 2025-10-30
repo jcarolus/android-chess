@@ -39,6 +39,8 @@ public class Piece {
                 return R.string.piece_queen;
             case BoardConstants.KING:
                 return R.string.piece_king;
+            case BoardConstants.DUCK:
+                return R.string.piece_duck;
             default:
                 return 0;
         }

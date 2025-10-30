@@ -18,7 +18,6 @@ import android.window.OnBackInvokedDispatcher;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowInsetsControllerCompat;
 
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
@@ -26,7 +25,6 @@ import jwtc.android.chess.R;
 
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
-    private OnBackInvokedCallback backCallback;
     private AccessibilityManager am;
 
 
@@ -37,26 +35,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         this.am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            backCallback = new OnBackInvokedCallback() {
-                @Override
-                public void onBackInvoked() {
-                    showExitConfirmationDialog();
-                }
-            };
-            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                    OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-                    backCallback
-            );
-        } else {
-            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-                @Override
-                public void handleOnBackPressed() {
-                    showExitConfirmationDialog();
-                }
-            });
-        }
     }
 
     @Override
@@ -75,14 +53,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && backCallback != null) {
-            getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
-        }
-    }
-
     public void showExitConfirmationDialog() {
         if (needExitConfirmationDialog()) {
             new AlertDialog.Builder(this)
@@ -94,7 +64,6 @@ public class BaseActivity extends AppCompatActivity {
             finish();
         }
     }
-
 
     public boolean isScreenReaderOn() {
         return am.isEnabled() && am.isTouchExplorationEnabled();

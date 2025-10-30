@@ -117,6 +117,7 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
 
         jni = JNI.getInstance();
         chessBoardView = findViewById(R.id.includeboard);
+        chessBoardView.setFocusable(false);
 
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);

@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.constants.PieceSets;
@@ -17,6 +18,7 @@ public class ChessPieceView extends AppCompatImageView {
     private int color;
     private int piece;
     private int pos;
+    private static final String TAG = "ChessPieceView";
 
 
     public ChessPieceView(Context context, int color, int piece, int pos) {

@@ -26,6 +26,7 @@ public class ChessSquareView extends View {
 
     public ChessSquareView(Context context, int pos) {
         super(context);
+        this.setFocusable(false);
         this.pos = pos;
         selected = false;
         highlighted = false;

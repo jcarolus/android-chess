@@ -1,6 +1,7 @@
 package jwtc.android.chess.views;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,10 @@ public class ChessPiecesStackView extends ViewGroup {
 
     public ChessPiecesStackView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setDefaultFocusHighlightEnabled(false);
+        }
     }
 
     public void invalidatePieces() {
