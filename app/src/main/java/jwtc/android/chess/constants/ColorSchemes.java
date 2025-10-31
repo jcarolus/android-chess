@@ -10,10 +10,10 @@ public class ColorSchemes {
     public static int selectedPattern = 0;
     
     static {
-        colorScheme[0][0] = 0xffdeac5d;
-        colorScheme[0][1] = 0xffE9D3B0;
-        colorScheme[0][2] = 0xff8A5A0C;
-        colorScheme[0][3] = 0xff8A5A0C;
+        colorScheme[0][0] = 0xffFAAE2F;
+        colorScheme[0][1] = 0xffFFCC78;
+        colorScheme[0][2] = 0xffFA9C00;
+        colorScheme[0][3] = 0xffFA9C00;
 
         colorScheme[1][0] = 0xff6e98da;
         colorScheme[1][1] = 0xffa8e8ff;
