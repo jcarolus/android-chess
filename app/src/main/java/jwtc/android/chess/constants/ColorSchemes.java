@@ -15,10 +15,10 @@ public class ColorSchemes {
         colorScheme[0][2] = 0xffFA9C00;
         colorScheme[0][3] = 0xffFA9C00;
 
-        colorScheme[1][0] = 0xff6e98da;
-        colorScheme[1][1] = 0xffa8e8ff;
-        colorScheme[1][2] = 0xffcdedf7;
-        colorScheme[1][3] = 0xffcccccc;
+        colorScheme[1][0] = 0xff629EFC;
+        colorScheme[1][1] = 0xff93BBFA;
+        colorScheme[1][2] = 0xffCDEDF7;
+        colorScheme[1][3] = 0xffCDEDF7;
 
         colorScheme[2][0] = 0xff769655;
         colorScheme[2][1] = 0xffeeeed2;
