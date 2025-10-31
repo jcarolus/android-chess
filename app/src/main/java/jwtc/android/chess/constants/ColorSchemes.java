@@ -20,35 +20,35 @@ public class ColorSchemes {
         colorScheme[1][2] = 0xffCDEDF7;
         colorScheme[1][3] = 0xffCDEDF7;
 
-        colorScheme[2][0] = 0xff769655;
-        colorScheme[2][1] = 0xffeeeed2;
-        colorScheme[2][2] = 0xff98e5ab;
-        colorScheme[2][3] = 0xffcccccc;
+        colorScheme[2][0] = 0xff488C1D;
+        colorScheme[2][1] = 0xff71B04A;
+        colorScheme[2][2] = 0xff2E7501;
+        colorScheme[2][3] = 0xff2E7501;
 
         colorScheme[3][0] = 0xffc0c0c0;
-        colorScheme[3][1] = 0xffffffff;
-        colorScheme[3][2] = 0xfff3ed4b;
-        colorScheme[3][3] = 0xffcccccc;
+        colorScheme[3][1] = 0xffEEEEEE;
+        colorScheme[3][2] = 0xff333333;
+        colorScheme[3][3] = 0xff333333;
 
-        colorScheme[4][0] = 0xffab6e41;
-        colorScheme[4][1] = 0xffd6a47e;
-        colorScheme[4][2] = 0xfff3ed4b;
-        colorScheme[4][3] = 0xffcccccc;
+        colorScheme[4][0] = 0xffAD5F2F;
+        colorScheme[4][1] = 0xffBD8562;
+        colorScheme[4][2] = 0xff873501;
+        colorScheme[4][3] = 0xff873501;
 
-        colorScheme[5][0] = 0xfffc4e4e;
-        colorScheme[5][1] = 0xfffca9a9;
-        colorScheme[5][2] = 0xfff3ed4b;
-        colorScheme[5][3] = 0xffcccccc;
+        colorScheme[5][0] = 0xffE3543B;
+        colorScheme[5][1] = 0xffF77159;
+        colorScheme[5][2] = 0xffBA2004;
+        colorScheme[5][3] = 0xffBA2004;
 
         colorScheme[6][0] = 0xfffc9432;
         colorScheme[6][1] = 0xfffab778;
         colorScheme[6][2] = 0xfff3ed4b;
         colorScheme[6][3] = 0xffcccccc;
 
-        colorScheme[7][0] = 0xfff55fe3;
-        colorScheme[7][1] = 0xfffc9ff1;
-        colorScheme[7][2] = 0xfff3ed4b;
-        colorScheme[7][3] = 0xffcccccc;
+        colorScheme[7][0] = 0xffF55FE3;
+        colorScheme[7][1] = 0xffFA7FEB;
+        colorScheme[7][2] = 0xffBA00A3;
+        colorScheme[7][3] = 0xffBA00A3;
 
         colorScheme[8][0] = 0xff805ad5;
         colorScheme[8][1] = 0xffac8eed;
