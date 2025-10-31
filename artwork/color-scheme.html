@@ -6,8 +6,8 @@
   <title>Editable Color Grid (4 × 10 with LocalStorage)</title>
   <style>
     :root {
-      --gap: 10px;
-      --radius: 12px;
+      --gap: 0px;
+      --radius: 0;
       --card-shadow: 0 6px 20px rgba(0,0,0,.08);
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
@@ -63,8 +63,7 @@
       font-weight: 700;
       letter-spacing: .5px;
       position: relative;
-      box-shadow: var(--card-shadow);
-      transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
+      margin-bottom: 8px;
     }
     .cell:hover { filter: saturate(1.15); }
     .cell:active { transform: translateY(1px) scale(.995); }
@@ -193,7 +192,17 @@
         rows.push(hexValues.slice(i * GRID_COLS, (i + 1) * GRID_COLS));
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
-      alert('Grid colors saved to localStorage under key "colorGrid"!');
+
+      generateCode(rows);
+    }
+
+    function generateCode(rows) {
+        const res = rows.map((row, i) => {
+            return row.map((color, j) => {
+                return `colorScheme[${i}][${j}] = 0xff${color.replace('#', '')};`;
+            }).join('\n')
+        }).join('\n\n');
+        console.log(res);
     }
 
     saveBtn.addEventListener('click', saveGridToLocalStorage);
