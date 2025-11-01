@@ -35,7 +35,7 @@ public class ColorSchemes {
         colorScheme[4][2] = 0xffFFC5A1;
         colorScheme[4][3] = 0xffFFC5A1;
 
-        colorScheme[5][0] = 0xeeE3543B;
+        colorScheme[5][0] = 0xeeEB573D;
         colorScheme[5][1] = 0xeeF77159;
         colorScheme[5][2] = 0xffFFAB9C;
         colorScheme[5][3] = 0xffFFAB9C;
