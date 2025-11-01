@@ -199,7 +199,7 @@
     function generateCode(rows) {
         const res = rows.map((row, i) => {
             return row.map((color, j) => {
-                return `colorScheme[${i}][${j}] = 0xff${color.replace('#', '')};`;
+                return `colorScheme[${i}][${j}] = 0x${j < 2 ? 'ee' : 'ff'}${color.replace('#', '')};`;
             }).join('\n')
         }).join('\n\n');
         console.log(res);

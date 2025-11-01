@@ -187,6 +187,7 @@
         <item>@string/tile_none</item>
         <item>@string/tile_single_shade</item>
         <item>@string/tile_double_shade</item>
+        <item>@string/tile_diagonal_stripes</item>
     </string-array>
     <string-array name="piecesetarray">
         <item>@string/pieceset_alpha</item>

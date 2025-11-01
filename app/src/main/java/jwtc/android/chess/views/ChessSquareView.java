@@ -102,10 +102,12 @@ public class ChessSquareView extends View {
 
         int patternDrawable = ColorSchemes.getSelectedPatternDrawable();
         if (patternDrawable > 0) {
-            Drawable d = getResources().getDrawable(patternDrawable, null);
-            d.setTint(ColorSchemes.getSelectedColor());
-            d.setBounds(0, 0, getWidth(), getHeight());
-            d.draw(canvas);
+            if (fieldColor == ChessBoard.BLACK && patternDrawable == R.drawable.diagonal_stripes || patternDrawable != R.drawable.diagonal_stripes) {
+                Drawable d = getResources().getDrawable(patternDrawable, null);
+                d.setTint(patternDrawable == R.drawable.diagonal_stripes ? ColorSchemes.getLight() : ColorSchemes.getSelectedColor());
+                d.setBounds(0, 0, getWidth(), getHeight());
+                d.draw(canvas);
+            }
         }
 
         if (focussed) {
