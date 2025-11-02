@@ -369,6 +369,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (!isBackGestureBlocked) {
                 showExitConfirmationDialog();
             }
+            isBackGestureBlocked = false;
             return true;
         }
 

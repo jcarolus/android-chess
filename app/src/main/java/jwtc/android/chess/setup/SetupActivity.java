@@ -416,6 +416,11 @@ public class SetupActivity extends ChessBoardActivity {
             rebuildBoard();
         } else {
             Log.d(TAG, "can not addPieceFromStack " + to + " " + selectedPiece + " " + selectedColor);
+            selectedPiece = -1;
+            selectedColor = -1;
+            selectedPosition = to;
+
+            updateSelectedSquares();
         }
     }
 
