@@ -66,4 +66,9 @@ public class TextToSpeechApi extends TextToSpeech {
         speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, sMove);
     }
 
+    public void defaultSpeak(String text) {
+        Log.d(TAG, "say " + text);
+        speak(text, TextToSpeech.QUEUE_FLUSH, null, text);
+    }
+
 }

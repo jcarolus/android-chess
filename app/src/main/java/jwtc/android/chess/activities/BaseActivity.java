@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,12 +30,14 @@ public class BaseActivity extends AppCompatActivity {
 
 
     protected float fVolume = 1.0f;
+    protected Vibrator vibrator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
@@ -99,8 +102,8 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(shareIntent);
     }
 
-    // @TODO
-    public void vibration(int seq) {
+
+    public void vibrateSequence(int seq) {
         try {
             int v1, v2;
             if (seq == 1) {
@@ -111,8 +114,22 @@ public class BaseActivity extends AppCompatActivity {
                 v2 = 200;
             }
             long[] pattern = {500, v1, 100, v2};
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(pattern, -1);
+            vibrator.vibrate(pattern, -1);
+        } catch (Exception e) {
+            Log.e(TAG, "vibrator process error", e);
+        }
+
+    }
+
+    public void vibrate(long ms) {
+        try {
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    vibrator.vibrate(ms);
+                }
+            }
         } catch (Exception e) {
             Log.e(TAG, "vibrator process error", e);
         }

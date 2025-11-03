@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
@@ -23,10 +24,28 @@ public class ChessSquareView extends View {
 
     private static Paint paint = new Paint();
     private static Paint highlightPaint = new Paint();
+    private static final String TAG = "ChessSquareView";
 
     public ChessSquareView(Context context, int pos) {
         super(context);
         this.setFocusable(false);
+        this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
+        this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+
+        this.setContentDescription(null);
+        this.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void sendAccessibilityEvent(View host, int eventType) {
+                Log.d(TAG, "sendAccessibilityEvent");
+                // swallow events that would trigger speech
+                if (eventType == AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED ||
+                        eventType == AccessibilityEvent.TYPE_VIEW_SELECTED) {
+                    return;
+                }
+                super.sendAccessibilityEvent(host, eventType);
+            }
+        });
+
         this.pos = pos;
         selected = false;
         highlighted = false;
