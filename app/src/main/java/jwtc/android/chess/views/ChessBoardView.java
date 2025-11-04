@@ -33,7 +33,6 @@ public class ChessBoardView extends ViewGroup {
         this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
         this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setDefaultFocusHighlightEnabled(false);
         }

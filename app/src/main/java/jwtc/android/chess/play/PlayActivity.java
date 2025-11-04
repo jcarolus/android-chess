@@ -380,6 +380,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         editor.putLong("clockStartTime", localClock.getLastMeasureTime());
 
         editor.putBoolean("flipBoard", flipBoard);
+        editor.putBoolean("moveToSpeech", moveToSpeech);
 //         if (_uriNotification == null)
 //            editor.putString("NotificationUri", null);
 //        else

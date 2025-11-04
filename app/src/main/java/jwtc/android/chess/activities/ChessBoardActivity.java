@@ -123,8 +123,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
         }
 
-
-        if (textToSpeech != null && moveToSpeech) {
+        if (isScreenReaderOn()) {
+            doToastShort(TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move));
+        } else if (textToSpeech != null && moveToSpeech) {
             textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
         }
     }
@@ -225,20 +226,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-               isBackGestureBlocked = chessBoardView.findPieceViewAt(ev.getX(), ev.getY()) != null;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                ChessPieceView pv = chessBoardView.findPieceViewAt(ev.getX() - chessBoardView.getX(), ev.getY() - chessBoardView.getY());
-                updateCurrentPieceView(pv);
-
-                if (currentChessPieceView == null) {
-                    ChessSquareView cv = chessBoardView.findSquareViewAt(ev.getX() - chessBoardView.getX(), ev.getY() - chessBoardView.getY());
-                    updateCurrentSquareView(cv);
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-
+                isBackGestureBlocked = chessBoardView.findPieceViewAt(ev.getX(), ev.getY()) != null;
                 break;
         }
         return super.dispatchTouchEvent(ev);
@@ -326,11 +314,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 squareView.setMove(moveToPositions.contains(i));
                 int piece = jni.pieceAt(jni.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
-//                String nextDescription = getFieldDescription(pos);
-//                CharSequence currentDescription = squareView.getContentDescription();
-//                if (currentDescription == null || !nextDescription.contentEquals(currentDescription)) {
-//                    squareView.setContentDescription(nextDescription);
-//                }
+                String nextDescription = getFieldDescription(pos);
+                CharSequence currentDescription = squareView.getContentDescription();
+                if (currentDescription == null || !nextDescription.contentEquals(currentDescription)) {
+                    squareView.setContentDescription(nextDescription);
+                }
             }
         }
     }
@@ -575,7 +563,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DRAG_ENTERED:
                         view.setSelected(true);
-                        updateCurrentSquareView((ChessSquareView)view);
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
                         view.setSelected(false);
@@ -649,18 +636,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     View.DragShadowBuilder shadowBuilder = new MagnifyingDragShadowBuilder(view);
                     view.startDrag(data, shadowBuilder, view, 0);
                     view.setVisibility(View.INVISIBLE);
-
-                    updateCurrentPieceView(pieceView);
-
                     return true;
                 } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     view.setVisibility(View.VISIBLE);
                     view.invalidate();
                     return true;
                 }
-            } else if (view instanceof ChessSquareView) {
-//                Log.d(TAG, "onTouch " + ((ChessSquareView) view).getPos() + " " + action);
-//                return true;
             }
             return false;
         }
@@ -823,32 +804,5 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         requestMove(selectedPosition, pos);
         selectedPosition = -1;
         ChessBoardActivity.this.updateSelectedSquares();
-    }
-
-    protected void updateCurrentPieceView(ChessPieceView pv) {
-        if (pv != currentChessPieceView) {
-            currentChessPieceView = pv;
-            if (currentChessPieceView != null) {
-                vibrate(10);
-
-                Log.d(TAG, "current pv " + currentChessPieceView.getPos());
-                if (textToSpeech != null && moveToSpeech) {
-                    textToSpeech.defaultSpeak(getFieldDescription(currentChessPieceView.getPos()));
-                }
-            }
-        }
-    }
-
-    protected void updateCurrentSquareView(ChessSquareView cv) {
-        if (currentChessSquareView != cv) {
-            currentChessSquareView = cv;
-            if (currentChessSquareView != null) {
-                vibrate(10);
-                Log.d(TAG, chessBoardView.getY() + " current cv " + currentChessSquareView.getPos());
-                if (textToSpeech != null && moveToSpeech) {
-                    textToSpeech.defaultSpeak(Pos.toString(currentChessSquareView.getPos()));
-                }
-            }
-        }
     }
 }

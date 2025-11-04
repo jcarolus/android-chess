@@ -21,7 +21,6 @@ public class ChessPieceView extends AppCompatImageView {
     private int pos;
     private static final String TAG = "ChessPieceView";
 
-
     public ChessPieceView(Context context, int color, int piece, int pos) {
         super(context);
 
