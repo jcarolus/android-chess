@@ -54,7 +54,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
     protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
-    protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false;
+    protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false, moveToSpeech = false;
     private String keyboardBuffer = "";
 
     public boolean requestMove(final int from, final int to) {
@@ -122,11 +122,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
             }
         }
-        if (textToSpeech != null) {
+
+
+        if (textToSpeech != null && moveToSpeech) {
             textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
-        } /* else if (isScreenReaderOn()) {
-            doToastShort(TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move));
-        } */
+        }
     }
 
     @Override
@@ -192,11 +192,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
 
-        if (prefs.getBoolean("moveToSpeech", false) || isScreenReaderOn()) {
-            textToSpeech = new TextToSpeechApi(this, this);
-        } else {
-            textToSpeech = null;
-        }
+        moveToSpeech = prefs.getBoolean("moveToSpeech", false);
+        textToSpeech = new TextToSpeechApi(this, this);
 
         showMoves = prefs.getBoolean("showMoves", false);
 
@@ -414,7 +411,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
-
             int result = textToSpeech.setLanguage(Locale.US);
 
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -836,7 +832,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 vibrate(10);
 
                 Log.d(TAG, "current pv " + currentChessPieceView.getPos());
-                if (textToSpeech != null) {
+                if (textToSpeech != null && moveToSpeech) {
                     textToSpeech.defaultSpeak(getFieldDescription(currentChessPieceView.getPos()));
                 }
             }
@@ -849,7 +845,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (currentChessSquareView != null) {
                 vibrate(10);
                 Log.d(TAG, chessBoardView.getY() + " current cv " + currentChessSquareView.getPos());
-                if (textToSpeech != null) {
+                if (textToSpeech != null && moveToSpeech) {
                     textToSpeech.defaultSpeak(Pos.toString(currentChessSquareView.getPos()));
                 }
             }

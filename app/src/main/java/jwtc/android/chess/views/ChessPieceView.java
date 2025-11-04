@@ -27,20 +27,7 @@ public class ChessPieceView extends AppCompatImageView {
 
         this.setFocusable(false);
         this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
-        //this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-
-        this.setContentDescription(null);
-        this.setAccessibilityDelegate(new View.AccessibilityDelegate() {
-            @Override
-            public void sendAccessibilityEvent(View host, int eventType) {
-                // swallow events that would trigger speech
-                if (eventType == AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED ||
-                        eventType == AccessibilityEvent.TYPE_VIEW_SELECTED) {
-                    return;
-                }
-                super.sendAccessibilityEvent(host, eventType);
-            }
-        });
+        this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
 
         this.pos = pos;
         this.piece = piece;

@@ -84,7 +84,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco;
     private ImageButton buttonEco;
-    private SwitchMaterial switchSound, switchBlindfold, switchFlip;
+    private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
 
@@ -234,6 +234,13 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 flipBoard = switchFlip.isChecked();
                 updateBoardRotation();
+            }
+        });
+
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
+        switchMoveToSpeech.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                moveToSpeech = switchMoveToSpeech.isChecked();
             }
         });
 
@@ -749,12 +756,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         flipBoard = prefs.getBoolean("flipBoard", false);
 
         switchFlip.setChecked(flipBoard);
+        switchMoveToSpeech.setChecked(moveToSpeech);
 
         updateBoardRotation();
 
         playIfEngineMove();
     }
-
 
     public void saveGame() {
         String sEvent = gameApi.getPGNHeadProperty("Event");

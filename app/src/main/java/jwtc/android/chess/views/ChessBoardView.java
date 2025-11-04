@@ -31,47 +31,8 @@ public class ChessBoardView extends ViewGroup {
 
     public void init() {
         this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
-        this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
 
-        this.setContentDescription("board");
-        this.setAccessibilityDelegate(new View.AccessibilityDelegate() {
-            @Override
-            public void sendAccessibilityEvent(View host, int eventType) {
-                Log.d(TAG, "sendAccessibilityEvent " + eventType);
-                // swallow events that would trigger speech
-                return;
-//                if (eventType == AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED ||
-//                        eventType == AccessibilityEvent.TYPE_VIEW_SELECTED) {
-//                    return;
-//                }
-//                super.sendAccessibilityEvent(host, eventType);
-            }
-
-//            @Override
-//            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
-//                // Let the default implementation populate the info.
-//                // super.onInitializeAccessibilityNodeInfo(host, info);
-//
-//                info.setEnabled(true);
-//            }
-
-            @Override
-            public boolean performAccessibilityAction(View host, int action, Bundle args) {
-                if (action == AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS) {
-                    Log.d(TAG, "performAccessibilityAction " + action);
-                    // Handle direct touch here
-
-                    return true;
-                }
-                return super.performAccessibilityAction(host, action, args);
-            }
-
-            @Override
-            public boolean onRequestSendAccessibilityEvent(ViewGroup host, View child, AccessibilityEvent event) {
-                Log.d(TAG, "onRequestSendAccessibilityEvent " + event);
-                return false;
-            }
-        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setDefaultFocusHighlightEnabled(false);
