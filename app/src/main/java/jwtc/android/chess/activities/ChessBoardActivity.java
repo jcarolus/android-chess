@@ -226,7 +226,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                isBackGestureBlocked = chessBoardView.findPieceViewAt(ev.getX(), ev.getY()) != null;
+                isBackGestureBlocked = chessBoardView.findPieceViewAt(ev.getX() - chessBoardView.getX(), ev.getY() - chessBoardView.getY()) != null;
                 break;
         }
         return super.dispatchTouchEvent(ev);
