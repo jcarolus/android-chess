@@ -38,7 +38,6 @@ import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.activities.GlobalPreferencesActivity;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
@@ -77,14 +76,13 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ImageButton playButton;
     private boolean vsCPU = true;
     private boolean flipBoard = false;
-    private boolean showEco = true;
     private int myTurn = 1, requestMoveFrom = -1, requestMoveTo = -1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ViewSwitcher switchTurnMe, switchTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco;
     private ImageButton buttonEco;
-    private SwitchMaterial switchSound, switchBlindfold, switchFlip;
+    private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
 
@@ -237,6 +235,13 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             }
         });
 
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
+        switchMoveToSpeech.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                moveToSpeech = switchMoveToSpeech.isChecked();
+            }
+        });
+
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
 
         // Horizontal layout manager
@@ -328,8 +333,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
         updateGameSettingsByPrefs();
 
-        showEco = prefs.getBoolean("showECO", true);
-
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
 
@@ -373,6 +376,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         editor.putLong("clockStartTime", localClock.getLastMeasureTime());
 
         editor.putBoolean("flipBoard", flipBoard);
+        editor.putBoolean("moveToSpeech", moveToSpeech);
 //         if (_uriNotification == null)
 //            editor.putString("NotificationUri", null);
 //        else
@@ -509,9 +513,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateEco() {
-        if (!showEco) {
-            return;
-        }
         String ecoName = ecoService.getEcoNameByHash(jni.getHashKey());
         JSONArray jArray = ecoService.getAvailable();
         Log.d(TAG, "eco by hash " + ecoName + " :: " + jArray.length());
@@ -630,10 +631,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                     intent = new Intent();
                     intent.setClass(PlayActivity.this, GamesListActivity.class);
                     startActivityForResult(intent, PlayActivity.REQUEST_OPEN);
-                } else if (item.equals(getString(R.string.menu_prefs))) {
-                    intent = new Intent();
-                    intent.setClass(PlayActivity.this, GlobalPreferencesActivity.class);
-                    startActivity(intent);
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
                     final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
                     menuDialog.show();
@@ -749,12 +746,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         flipBoard = prefs.getBoolean("flipBoard", false);
 
         switchFlip.setChecked(flipBoard);
+        switchMoveToSpeech.setChecked(moveToSpeech);
 
         updateBoardRotation();
 
         playIfEngineMove();
     }
-
 
     public void saveGame() {
         String sEvent = gameApi.getPGNHeadProperty("Event");

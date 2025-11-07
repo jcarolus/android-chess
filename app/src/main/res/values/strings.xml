@@ -345,6 +345,7 @@
     <string name="tile_none">none</string>
     <string name="tile_double_shade">double shade</string>
     <string name="tile_single_shade">single shade</string>
+    <string name="tile_diagonal_stripes">diagonal sripes</string>
 
     <string name="color_scheme_yellow">Yellow</string>
     <string name="color_scheme_blue">Blue</string>

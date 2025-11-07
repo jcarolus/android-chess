@@ -2,10 +2,14 @@ package jwtc.android.chess.views;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.board.BoardConstants;
@@ -27,6 +31,8 @@ public class ChessBoardView extends ViewGroup {
 
     public void init() {
         this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
+        this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setDefaultFocusHighlightEnabled(false);
         }
@@ -97,6 +103,26 @@ public class ChessBoardView extends ViewGroup {
         }
     }
 
+    public ChessSquareView findSquareViewAt(float x, float y) {
+        for (int i = getChildCount() - 1; i >= 0; i--) {
+            View child = getChildAt(i);
+            if (child instanceof ChessSquareView && isPointInsideView(x, y, child)) {
+                return (ChessSquareView)child;
+            }
+        }
+        return null;
+    }
+
+    public ChessPieceView findPieceViewAt(float x, float y) {
+        for (int i = getChildCount() - 1; i >= 0; i--) {
+            View child = getChildAt(i);
+            if (child instanceof ChessPieceView && isPointInsideView(x, y, child)) {
+                return (ChessPieceView)child;
+            }
+        }
+        return null;
+    }
+
     /**
      * Any layout manager that doesn't scroll will want this.
      */
@@ -149,5 +175,12 @@ public class ChessBoardView extends ViewGroup {
                 layoutChild(child);
             }
         }
+    }
+
+    private boolean isPointInsideView(float x, float y, View view) {
+        float tx = view.getTranslationX();
+        float ty = view.getTranslationY();
+        return x >= view.getLeft() + tx && x <= view.getRight() + tx &&
+                y >= view.getTop() + ty && y <= view.getBottom() + ty;
     }
 }

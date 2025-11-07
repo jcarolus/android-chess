@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="234"
-    android:versionName="9.9.11">
+    android:versionCode="235"
+    android:versionName="9.9.12">
 
     <application
         android:name="android.app.Application"
@@ -37,15 +37,6 @@
             android:label="@string/app_name_help"
             android:configChanges="orientation"
             android:exported="true"/>
-        <activity
-            android:name=".activities.GlobalPreferencesActivity"
-            android:label="@string/globalpreferences"
-            android:configChanges="orientation"
-            android:exported="true">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".start" />
-        </activity>
         <activity
             android:name=".activities.BoardPreferencesActivity"
             android:label="@string/globalpreferences"

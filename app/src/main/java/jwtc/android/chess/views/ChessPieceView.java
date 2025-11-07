@@ -3,6 +3,7 @@ package jwtc.android.chess.views;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 
 
 import androidx.annotation.NonNull;
@@ -20,12 +21,13 @@ public class ChessPieceView extends AppCompatImageView {
     private int pos;
     private static final String TAG = "ChessPieceView";
 
-
     public ChessPieceView(Context context, int color, int piece, int pos) {
         super(context);
 
         this.setFocusable(false);
+        this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
         this.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+
         this.pos = pos;
         this.piece = piece;
         this.color = color;

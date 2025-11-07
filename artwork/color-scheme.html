@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Editable Color Grid (4 × 10 with LocalStorage)</title>
+  <style>
+    :root {
+      --gap: 0px;
+      --radius: 0;
+      --card-shadow: 0 6px 20px rgba(0,0,0,.08);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: #0f172a;
+      color: #e5e7eb;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .wrap { width: min(1100px, 96vw); }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: clamp(18px, 2.4vw, 26px);
+      margin: 0;
+      font-weight: 700;
+    }
+    button {
+      appearance: none;
+      border: none;
+      background: #3b82f6;
+      color: #f9fafb;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--card-shadow);
+      transition: transform .06s ease, filter .2s ease;
+    }
+    button:hover { filter: brightness(1.1); }
+    button:active { transform: translateY(1px); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--gap);
+    }
+
+    .cell {
+      border-radius: var(--radius);
+      min-height: clamp(80px, 12vh, 140px);
+      display: grid;
+      place-items: center;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 700;
+      letter-spacing: .5px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .cell:active { transform: translateY(1px) scale(.995); }
+
+    .code {
+      font-size: clamp(14px, 2vw, 18px);
+      padding: 8px 10px;
+      background: rgba(0,0,0,.18);
+      border-radius: 8px;
+      backdrop-filter: blur(2px);
+    }
+    input.code {
+      border: none;
+      outline: none;
+      text-align: center;
+      width: 100px;
+      background: rgba(0,0,0,.3);
+      border-radius: 8px;
+      color: inherit;
+      font: inherit;
+      padding: 8px 10px;
+    }
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Editable Color Grid — Stored to LocalStorage</h1>
+      <button id="saveBtn">Save to Local Storage</button>
+    </header>
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <script>
+    const GRID_COLS = 4;
+    const GRID_ROWS = 10;
+    const TOTAL = GRID_COLS * GRID_ROWS;
+    const grid = document.getElementById('grid');
+    const saveBtn = document.getElementById('saveBtn');
+    const STORAGE_KEY = 'colorGrid';
+    const INITIAL =  [["#FAAE2F","#FFCC78","#FFE1B0","#FFE1B0"],["#629EFC","#93BBFA","#CDEDF7","#CDEDF7"],["#488C1D","#71B04A","#B0E092","#B0E092"],["#444444","#777777","#CCCCCC","#CCCCCC"],["#AD5F2F","#BD8562","#FFC5A1","#FFC5A1"],["#EB573D","#F77159","#FFAB9C","#FFAB9C"],["#FC9432","#FCB26D","#FFC894","#FFC894"],["#F55FE3","#FA7FEB","#FFB3F6","#FFB3F6"],["#805ad5","#ac8eed","#FCD2F7","#FCD2F7"],["#444444","#777777","#AAAAAA","#CCCCCC"]];
+
+    function randomHex() {
+      return '#' + Math.floor(Math.random() * 0xFFFFFF)
+        .toString(16)
+        .padStart(6, '0')
+        .toUpperCase();
+    }
+
+    function hexToRgb(hex) {
+      hex = hex.startsWith('#') ? hex.slice(1) : hex;
+      const n = parseInt(hex, 16);
+      return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function idealTextColor(hex) {
+      const { r, g, b } = hexToRgb(hex);
+      const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+      return yiq >= 128 ? '#111827' : '#F9FAFB';
+    }
+
+    function isValidHex(str) {
+      return /^#?[0-9A-Fa-f]{6}$/.test(str);
+    }
+
+    function createCell(hex) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.style.background = hex;
+      cell.style.color = idealTextColor(hex);
+
+      const codeEl = document.createElement('div');
+      codeEl.className = 'code';
+      codeEl.textContent = hex;
+      cell.appendChild(codeEl);
+
+      cell.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.className = 'code';
+        input.value = hex;
+        cell.replaceChild(input, codeEl);
+        input.focus();
+        input.select();
+
+        const commit = () => {
+          let val = input.value.trim();
+          if (!val.startsWith('#')) val = '#' + val;
+          if (isValidHex(val)) {
+            hex = val.toUpperCase();
+            cell.style.background = hex;
+            cell.style.color = idealTextColor(hex);
+          }
+          codeEl.textContent = hex;
+          if (cell.contains(input)) cell.replaceChild(codeEl, input);
+        };
+
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') commit();
+          if (e.key === 'Escape') cell.replaceChild(codeEl, input);
+        });
+      });
+
+      return cell;
+    }
+
+    function populateGrid(fromStorage = false) {
+      grid.innerHTML = '';
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)) || INITIAL;
+      for (let r = 0; r < GRID_ROWS; r++) {
+        for (let c = 0; c < GRID_COLS; c++) {
+          const hex = fromStorage && stored?.[r]?.[c] ? stored[r][c] : randomHex();
+          grid.appendChild(createCell(hex));
+        }
+      }
+    }
+
+    function saveGridToLocalStorage() {
+      const cells = [...grid.querySelectorAll('.cell .code')];
+      const hexValues = cells.map(el => el.textContent.trim());
+      const rows = [];
+      for (let i = 0; i < GRID_ROWS; i++) {
+        rows.push(hexValues.slice(i * GRID_COLS, (i + 1) * GRID_COLS));
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+
+      generateCode(rows);
+    }
+
+    function generateCode(rows) {
+        const res = rows.map((row, i) => {
+            return row.map((color, j) => {
+                return `colorScheme[${i}][${j}] = 0x${j < 2 ? 'ee' : 'ff'}${color.replace('#', '')};`;
+            }).join('\n')
+        }).join('\n\n');
+        console.log(res);
+    }
+
+    saveBtn.addEventListener('click', saveGridToLocalStorage);
+
+    // Initialize grid: load from localStorage if available
+    populateGrid(true);
+  </script>
+</body>
+</html>

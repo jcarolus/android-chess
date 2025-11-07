@@ -46,13 +46,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected MyClickListener myClickListener;
     protected JNI jni;
     protected ChessBoardView chessBoardView;
+    protected ChessSquareView currentChessSquareView = null;
+    protected ChessPieceView currentChessPieceView = null;
     protected SoundPool spSound = null;
     protected TextToSpeechApi textToSpeech = null;
     protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1, lastMoveFrom = -1, lastMoveTo = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
     protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
-    protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false;
+    protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false, moveToSpeech = false;
     private String keyboardBuffer = "";
 
     public boolean requestMove(final int from, final int to) {
@@ -120,10 +122,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
             }
         }
-        if (textToSpeech != null) {
-            textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
-        } else if (isScreenReaderOn()) {
+
+        if (isScreenReaderOn()) {
             doToastShort(TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move));
+        } else if (textToSpeech != null && moveToSpeech) {
+            textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
         }
     }
 
@@ -160,6 +163,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);
             csv.setOnDragListener(myDragListener);
+            csv.setOnTouchListener(myTouchListener);
             csv.setOnClickListener(myClickListener);
             chessBoardView.addView(csv);
         }
@@ -189,11 +193,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
 
-        if (prefs.getBoolean("moveToSpeech", false)) {
-            textToSpeech = new TextToSpeechApi(this, this);
-        } else {
-            textToSpeech = null;
-        }
+        moveToSpeech = prefs.getBoolean("moveToSpeech", false);
+        textToSpeech = new TextToSpeechApi(this, this);
 
         showMoves = prefs.getBoolean("showMoves", false);
 
@@ -221,13 +222,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            float x = ev.getRawX();
-            float y = ev.getRawY();
-            Rect rect = new Rect();
+        int action = ev.getActionMasked();
 
-            chessBoardView.getGlobalVisibleRect(rect);
-            isBackGestureBlocked = rect.contains((int) x, (int) y);
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                isBackGestureBlocked = chessBoardView.findPieceViewAt(ev.getX() - chessBoardView.getX(), ev.getY() - chessBoardView.getY()) != null;
+                break;
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -369,6 +369,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (!isBackGestureBlocked) {
                 showExitConfirmationDialog();
             }
+            isBackGestureBlocked = false;
             return true;
         }
 
@@ -398,7 +399,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
-
             int result = textToSpeech.setLanguage(Locale.US);
 
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {

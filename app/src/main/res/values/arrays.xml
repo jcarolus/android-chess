@@ -17,7 +17,6 @@
         <item>@string/menu_setup</item>
         <item>@string/menu_save_game</item>
         <item>@string/menu_load_game</item>
-        <item>@string/menu_prefs</item>
         <item>@string/menu_set_clock</item>
         <item>@string/menu_fromclip</item>
         <item>@string/menu_clip_pgn</item>
@@ -187,6 +186,7 @@
         <item>@string/tile_none</item>
         <item>@string/tile_single_shade</item>
         <item>@string/tile_double_shade</item>
+        <item>@string/tile_diagonal_stripes</item>
     </string-array>
     <string-array name="piecesetarray">
         <item>@string/pieceset_alpha</item>

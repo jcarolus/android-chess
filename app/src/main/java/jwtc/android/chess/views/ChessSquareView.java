@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
@@ -23,10 +24,13 @@ public class ChessSquareView extends View {
 
     private static Paint paint = new Paint();
     private static Paint highlightPaint = new Paint();
+    private static final String TAG = "ChessSquareView";
 
     public ChessSquareView(Context context, int pos) {
         super(context);
         this.setFocusable(false);
+        this.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
+
         this.pos = pos;
         selected = false;
         highlighted = false;
@@ -102,10 +106,12 @@ public class ChessSquareView extends View {
 
         int patternDrawable = ColorSchemes.getSelectedPatternDrawable();
         if (patternDrawable > 0) {
-            Drawable d = getResources().getDrawable(patternDrawable, null);
-            d.setTint(ColorSchemes.getSelectedColor());
-            d.setBounds(0, 0, getWidth(), getHeight());
-            d.draw(canvas);
+            if (fieldColor == ChessBoard.BLACK && patternDrawable == R.drawable.diagonal_stripes || patternDrawable != R.drawable.diagonal_stripes) {
+                Drawable d = getResources().getDrawable(patternDrawable, null);
+                d.setTint(patternDrawable == R.drawable.diagonal_stripes ? ColorSchemes.getLight() : ColorSchemes.getSelectedColor());
+                d.setBounds(0, 0, getWidth(), getHeight());
+                d.draw(canvas);
+            }
         }
 
         if (focussed) {
