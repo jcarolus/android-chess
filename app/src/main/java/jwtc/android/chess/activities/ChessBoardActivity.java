@@ -123,10 +123,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
         }
 
+        String sMove = getLastMoveAndTurnDescription();
+        Log.d(TAG, "last move " + sMove);
         if (isScreenReaderOn()) {
-            doToastShort(TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move));
+            //doToastShort(sMove);
         } else if (textToSpeech != null && moveToSpeech) {
-            textToSpeech.moveToSpeech(jni.getMyMoveToString(), move);
+            textToSpeech.moveToSpeech(sMove);
         }
     }
 
@@ -528,6 +530,17 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
         }
         return getString(R.string.square_description, Pos.toString(pos));
+    }
+
+    protected String getLastMoveAndTurnDescription() {
+        int move = jni.getMyMove();
+        if (move != 0) {
+            String sMove = TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move);
+            return jni.getTurn() == BoardConstants.BLACK
+                    ? getString(R.string.last_white_move_description, sMove)
+                    : getString(R.string.last_black_move_description, sMove);
+        }
+        return "";
     }
 
     protected void showAccessibilityForSelectedPosition(int pos) {

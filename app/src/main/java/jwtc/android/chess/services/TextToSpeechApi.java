@@ -61,9 +61,8 @@ public class TextToSpeechApi extends TextToSpeech {
         return sMoveSpeech;
     }
 
-    public void moveToSpeech(String sMove, int move) {
-        String sMoveSpeech = moveToSpeechString(sMove, move);
-        speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, sMove);
+    public void moveToSpeech(String sMoveSpeech) {
+        speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, sMoveSpeech);
     }
 
     public void defaultSpeak(String text) {
