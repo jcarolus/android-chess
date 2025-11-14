@@ -1,5 +1,5 @@
 package jwtc.android.chess.constants;
-
+import androidx.core.graphics.ColorUtils;
 import jwtc.android.chess.R;
 
 public class ColorSchemes {
@@ -8,6 +8,7 @@ public class ColorSchemes {
     public static boolean showCoords = false;
     public static boolean isRotated = false; // not ideal
     public static int selectedPattern = 0;
+    public static float saturationFactor = 1.0f;
     
     static {
         colorScheme[0][0] = 0xeeFAAE2F;
@@ -57,11 +58,11 @@ public class ColorSchemes {
     }
 
     public static int getLight() {
-        return colorScheme[selectedColorScheme][1];
+        return desaturateColor(colorScheme[selectedColorScheme][1], ColorSchemes.saturationFactor);
     }
 
     public static int getDark() {
-        return colorScheme[selectedColorScheme][0];
+        return desaturateColor(colorScheme[selectedColorScheme][0], ColorSchemes.saturationFactor);
     }
 
     public static int getHightlightColor() {
@@ -80,5 +81,15 @@ public class ColorSchemes {
         }
 
         return 0;
+    }
+
+    public static int desaturateColor(int color, float factor) {
+        float[] hsl = new float[3];
+        ColorUtils.colorToHSL(color, hsl);
+
+        // Reduce saturation
+        hsl[1] = hsl[1] * factor;
+
+        return ColorUtils.HSLToColor(hsl);
     }
 }
