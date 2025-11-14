@@ -161,7 +161,8 @@
                             android:paddingRight="4dip"
                             android:layout_marginLeft="8dip"
                             android:layout_marginRight="8dip"
-                            android:background="@color/paneBackgroundColor"/>
+                            android:background="@color/paneBackgroundColor"
+                            android:accessibilityLiveRegion="assertive"/>
 
                         <ImageButton android:id="@+id/ButtonMenu"
                             android:src="@drawable/ic_three_dots_vertical"
