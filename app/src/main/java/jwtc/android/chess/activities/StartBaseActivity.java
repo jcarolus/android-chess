@@ -15,16 +15,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
-
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import jwtc.android.chess.R;
+import jwtc.android.chess.lichess.LichessActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
 import jwtc.android.chess.ics.ICSClient;
@@ -106,6 +103,9 @@ public class StartBaseActivity  extends AppCompatActivity {
                         startActivity(i);
                     } else if (requestedItem.equals(getString(R.string.start_boardpreferences))) {
                         i.setClass(StartBaseActivity.this, BoardPreferencesActivity.class);
+                        startActivity(i);
+                    } else if (requestedItem.equals(getString(R.string.start_lichess))) {
+                        i.setClass(StartBaseActivity.this, LichessActivity.class);
                         startActivity(i);
                     } else {
                         Log.d(TAG, "Nothing to start");

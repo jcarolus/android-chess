@@ -219,6 +219,19 @@
                 <data android:mimeType="application/x-chess-pgn" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".lichess.LichessActivity"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="jwtc.android.chess"
+                    android:host="oauth2redirect"/>
+            </intent-filter>
+        </activity>
         <provider
             android:name=".helpers.MyPGNProvider"
             android:authorities="jwtc.android.chess.helpers.MyPGNProvider"

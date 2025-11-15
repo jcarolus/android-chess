@@ -8,6 +8,7 @@
         <item>@string/start_hotspotboard</item>
         <item>@string/start_boardpreferences</item>
         <item>@string/start_pgn</item>
+        <item>@string/start_lichess</item>
     </string-array>
     <string-array name="play_menu">
         <item>@string/menu_game_settings</item>
