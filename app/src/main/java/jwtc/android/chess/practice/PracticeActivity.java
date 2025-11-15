@@ -41,7 +41,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
     private TextView tvPracticeMove, tvPercentage;
-    private ImageButton buttonNext;
+    private ImageButton buttonNext, buttonRetry;
     private int totalPuzzles, currentPos, nextPos;
     private Cursor cursor;
     private Timer timer;
@@ -50,6 +50,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private ImageView imgStatus;
 
     private int myTurn, numMoved, numPlayed, numSolved;
+    private boolean isRetry = false;
     private LinearProgressIndicator percentBar;
 
     @Override
@@ -93,6 +94,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             public void onClick(View arg0) {
                 if (nextPos < totalPuzzles) {
                     currentPos = nextPos;
+                    buttonRetry.setEnabled(false);
                     startPuzzle();
                 } else {
                     // completed
@@ -100,6 +102,16 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
                 }
             }
         });
+
+        buttonRetry = findViewById(R.id.ButtonPracticeRetry);
+        buttonRetry.setOnClickListener(new View.OnClickListener() {
+              public void onClick(View arg0) {
+                  isRetry = true;
+                  buttonRetry.setEnabled(false);
+                  startPuzzle();
+              }
+          });
+        buttonRetry.setEnabled(false);
 
         percentBar = findViewById(R.id.percentBar);
 
@@ -162,7 +174,9 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     protected void startPuzzle() {
         cursor.moveToPosition(currentPos);
-        nextPos = currentPos + 1;
+        if (!isRetry) {
+            nextPos = currentPos + 1;
+        }
 
         int pgnIndex = cursor.getColumnIndex(MyPuzzleProvider.COL_PGN);
         String sPGN = pgnIndex >= 0 ? cursor.getString(pgnIndex) : "";
@@ -256,6 +270,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             numPlayed++;
             numSolved++;
             currentPos = nextPos;
+            buttonRetry.setEnabled(false);
             animateCorrect();
         }
     }
@@ -274,8 +289,10 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
                 sMove = gameApi.getPGNEntries().get(moveIndex)._sMove + " ";
             }
 
+            buttonRetry.setEnabled(true);
             numMoved--;
             numPlayed++;
+
             currentPos = nextPos;
             animateWrong(sMove + getString(R.string.puzzle_not_correct_move));
         }

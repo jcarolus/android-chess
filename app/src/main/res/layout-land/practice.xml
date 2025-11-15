@@ -76,13 +76,19 @@
             android:paddingTop="4dip"
             android:paddingBottom="4dip">
 
-                <ImageButton
-                    android:id="@+id/ButtonPracticeNext"
-                    android:src="@drawable/ic_chevron_right"
-                    android:contentDescription="@string/button_next_position"
-                    android:layout_alignParentRight="true"
-                    android:nextFocusLeft="@id/includeboard"
-                    style="@style/ChessImageButton" />
+            <ImageButton
+                android:id="@+id/ButtonPracticeNext"
+                android:src="@drawable/ic_chevron_right"
+                android:contentDescription="@string/button_next_position"
+                android:layout_alignParentRight="true"
+                style="@style/ChessImageButton" />
+
+            <ImageButton
+                android:id="@+id/ButtonPracticeRetry"
+                android:src="@drawable/ic_arrow_clockwise"
+                android:contentDescription="@string/button_reset_position"
+                android:layout_toLeftOf="@id/ButtonPracticeNext"
+                style="@style/ChessImageButton" />
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/percentBar"
@@ -102,7 +108,7 @@
                 android:text="0%"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/ButtonPracticeNext"
+                android:layout_toLeftOf="@id/ButtonPracticeRetry"
                 android:layout_centerVertical="true"
                 style="@style/MyHeaderTextStyle" />
         </RelativeLayout>
