@@ -15,9 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,7 +79,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private int myTurn = 1, requestMoveFrom = -1, requestMoveTo = -1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
-    private ViewSwitcher switchTurnMe, switchTurnOpp;
+    private ImageView imageTurnMe, imageTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco;
     private ImageButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
@@ -188,8 +188,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 //            }
 //        });
 
-        switchTurnMe = findViewById(R.id.ImageTurnMe);
-        switchTurnOpp = findViewById(R.id.ImageTurnOpp);
+        imageTurnMe = findViewById(R.id.ImageTurnMe);
+        imageTurnOpp = findViewById(R.id.ImageTurnOpp);
 
         textViewOpponent = findViewById(R.id.TextViewOpponent);
         textViewMe = findViewById(R.id.TextViewMe);
@@ -197,7 +197,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         textViewOpponentClock = findViewById(R.id.TextViewClockTimeOpp);
         textViewMyClock = findViewById(R.id.TextViewClockTimeMe);
 
-        textViewEngineValue = findViewById(R.id.TextViewEngineValue);
+        textViewEngineValue = findViewById(R.id.TextViewLastMove);
         buttonEco = findViewById(R.id.ButtonEco);
         textViewEco = findViewById(R.id.TextViewEco);
 
@@ -261,11 +261,9 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     protected void onResume() {
         super.onResume();
 
-        Log.d(TAG, "onResume");
-
         SharedPreferences prefs = getPrefs();
 
-        String sPGN = "";
+        String sPGN = prefs.getString("game_pgn", null);
         String sFEN = prefs.getString("FEN", null);
         final Intent intent = getIntent();
         String action = intent.getAction();
@@ -276,6 +274,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         myEngine.addListener(this);
 
         updateClockByPrefs();
+
+        lGameID = prefs.getLong("game_id", 0);
+
+        Log.d(TAG, "onResume => " + lGameID + " " + (sPGN != null ? "PGN " : " ") + (sFEN != null ? "FEN" : ""));
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             lGameID = 0;
@@ -308,26 +310,22 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             } catch (Exception e) {
                 Log.e("onResume", "Failed " + e.toString());
             }
-        } else if (sFEN != null) {
-            // default, from prefs
-            Log.i("onResume", "Loading FEN " + sFEN);
-            lGameID = 0;
-            gameApi.initFEN(sFEN, true);
-            updateForNewGame();
         } else {
-            lGameID = prefs.getLong("game_id", 0);
             if (lGameID > 0) {
                 Log.i("onResume", "loading saved game " + lGameID);
                 loadGame();
-            } else {
-                sPGN = prefs.getString("game_pgn", null);
+            } else if (sPGN != null) {
                 Log.i("onResume", "pgn: " + sPGN);
-                if (sPGN != null) {
-                    gameApi.loadPGN(sPGN);
-                } else {
-                    gameApi.newGame();
-                    updateForNewGame();
-                }
+                gameApi.loadPGN(sPGN);
+            } else if (sFEN != null) {
+                // default, from prefs
+                Log.i("onResume", "FEN: " + sFEN);
+                lGameID = 0;
+                gameApi.initFEN(sFEN, true);
+                updateForNewGame();
+            } else {
+                gameApi.newGame();
+                updateForNewGame();
             }
         }
 
@@ -354,6 +352,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
         localClock.stopClock();
 
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+
         if (lGameID > 0) {
             ContentValues values = new ContentValues();
 
@@ -366,10 +366,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
             saveGame(values, false);
         }
-        SharedPreferences.Editor editor = this.getPrefs().edit();
+
         editor.putLong("game_id", lGameID);
         editor.putString("game_pgn", gameApi.exportFullPGN());
-        editor.putString("FEN", null); //
+        editor.putString("FEN", jni.toFEN());
 
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
@@ -455,7 +455,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
     @Override
     public void OnEngineInfo(String message) {
-        textViewEngineValue.setText(message);
+        // textViewEngineValue.setText(message);
     }
 
     @Override
@@ -471,7 +471,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     @Override
     public void OnEngineError() {
         toggleEngineProgress(false);
-        textViewEngineValue.setText("Engine error!");
+        // textViewEngineValue.setText("Engine error!");
     }
 
     @Override
@@ -497,7 +497,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         updateSeekBar();
         updateTurnSwitchers();
         updatePlayers();
+        updateLastMove();
         updateEco();
+    }
+
+    protected void updateLastMove() {
+        textViewEngineValue.setText(getLastMoveAndTurnDescription());
     }
 
     protected void updateSeekBar() {
@@ -579,12 +584,21 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
     protected void updateTurnSwitchers() {
         final int currentTurn = jni.getTurn();
+        final boolean isMyTurn = currentTurn == myTurn;
 
-        switchTurnOpp.setVisibility(currentTurn == BoardConstants.BLACK && myTurn == BoardConstants.WHITE || currentTurn == BoardConstants.WHITE && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
-        switchTurnOpp.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
+        imageTurnOpp.setImageResource(isMyTurn
+                ? R.drawable.turnempty
+                : currentTurn == BoardConstants.BLACK
+                    ? R.drawable.turnblack
+                    : R.drawable.turnwhite
+        );
 
-        switchTurnMe.setVisibility(currentTurn == BoardConstants.WHITE && myTurn == BoardConstants.WHITE || currentTurn == BoardConstants.BLACK && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
-        switchTurnMe.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
+        imageTurnMe.setImageResource(isMyTurn
+                ? currentTurn == BoardConstants.BLACK
+                            ? R.drawable.turnblack
+                            : R.drawable.turnwhite
+                : R.drawable.turnempty
+        );
     }
 
 
@@ -716,6 +730,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         }
 
         resetSelectedSquares();
+        updateLastMove();
     }
 
     protected void updateBoardRotation() {
@@ -749,6 +764,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         switchMoveToSpeech.setChecked(moveToSpeech);
 
         updateBoardRotation();
+        updateLastMove();
 
         playIfEngineMove();
     }
@@ -858,7 +874,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                 int r = (int) (Math.random() * moves.size());
                 Log.d(TAG, "Eco moves " + moves.size() + ", " + r);
                 gameApi.move(moves.get(r), -1);
-                textViewEngineValue.setText("From opening book");
+                // textViewEngineValue.setText("From opening book");
             } else {
                 myEngine.play();
             }

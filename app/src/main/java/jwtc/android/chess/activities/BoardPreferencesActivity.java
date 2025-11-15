@@ -9,6 +9,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 
+import com.google.android.material.slider.Slider;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
@@ -19,6 +21,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
     private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxNightMode;
     private Spinner spinnerPieceSet, spinnerColorScheme, spinnerTileSet;
+    private Slider sliderSaturation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxFullscreen = findViewById(R.id.CheckBoxFullscreen);
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
+        sliderSaturation = findViewById(R.id.SliderSaturation);
 
         spinnerPieceSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -81,6 +85,11 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
            }
        });
 
+        sliderSaturation.addOnChangeListener((s, value, fromUser) -> {
+            ColorSchemes.saturationFactor = value;
+            chessBoardView.invalidateSquares();
+        });
+
         gameApi = new GameApi();
 
         afterCreate();
@@ -105,6 +114,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         spinnerColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
         spinnerTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
 
+        sliderSaturation.setValue(prefs.getFloat("squareSaturation", 1.0f));
+
         rebuildBoard();
 
         spinnerPieceSet.requestFocus();
@@ -125,6 +136,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("fullScreen", checkBoxFullscreen.isChecked());
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
+        editor.putFloat("squareSaturation", sliderSaturation.getValue());
 
         editor.commit();
     }

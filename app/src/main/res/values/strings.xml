@@ -153,6 +153,8 @@
     <string name="square_with_piece_description">%1$s %2$s at %3$s</string>
     <string name="square_with_duck_description">%1$s at %2$s</string>
     <string name="square_selected_description">Selected %1$s</string>
+    <string name="last_white_move_description">%1$s. Black\'s turn</string>
+    <string name="last_black_move_description">%1$s. White\'s turn</string>
 
     <string name="piece_white">White</string>
     <string name="piece_black">Black</string>

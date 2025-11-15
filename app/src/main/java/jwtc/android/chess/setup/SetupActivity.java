@@ -115,6 +115,8 @@ public class SetupActivity extends ChessBoardActivity {
         selectedColor = -1;
         selectedPiece = -1;
 
+        rebuildBoard();
+
         super.onResume();
     }
 
@@ -335,8 +337,6 @@ public class SetupActivity extends ChessBoardActivity {
 
         jni.putPiece(BoardConstants.e1, BoardConstants.KING, BoardConstants.WHITE);
         jni.putPiece(BoardConstants.e8, BoardConstants.KING, BoardConstants.BLACK);
-
-        rebuildBoard();
     }
 
     public void addPiece(final int pos, final int piece, final int turn) {
@@ -457,7 +457,7 @@ public class SetupActivity extends ChessBoardActivity {
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.putString("FEN", jni.toFEN());
-        editor.putString("game_pgn", "");
+        editor.putString("game_pgn", null);
         editor.putInt("boardNum", 0);
         editor.putLong("game_id", 0);
         editor.commit();

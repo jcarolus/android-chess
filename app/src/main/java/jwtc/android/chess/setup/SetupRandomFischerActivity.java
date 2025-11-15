@@ -137,7 +137,7 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.putString("FEN", jni.toFEN());
-        editor.putString("game_pgn", "");
+        editor.putString("game_pgn", null);
         editor.putInt("boardNum", 0);
         editor.putLong("game_id", 0);
 
