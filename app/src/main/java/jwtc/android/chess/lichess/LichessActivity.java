@@ -17,7 +17,7 @@ import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 
 
-public class LichessActivity  extends ChessBoardActivity implements LichessApi.LichessApiListener {
+public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener {
     private static final String TAG = "LichessActivity";
     private static final int VIEW_WAITING = 0, VIEW_LOGIN = 1, VIEW_LOBBY = 2, VIEW_CHALLENGE = 3, VIEW_PLAY = 4;
 
@@ -28,14 +28,16 @@ public class LichessActivity  extends ChessBoardActivity implements LichessApi.L
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TAG, "onServiceConnected");
             LichessService lichessService = ((LichessService.LocalBinder)service).getService();
-            lichessService.setLichessServiceListener(lichessApi);
-            lichessApi.setService(lichessService, LichessActivity.this);
+            lichessApi.setAuth(lichessService.getAuth());
+            lichessApi.setApiListener(LichessActivity.this);
+
+            lichessApi.resume();
         }
 
         public void onServiceDisconnected(ComponentName className) {
 
             Log.i(TAG, "onServiceDisconnected");
-            lichessApi.setService(null, LichessActivity.this);
+            lichessApi.setAuth(null);
         }
     };
 

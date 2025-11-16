@@ -9,6 +9,8 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -46,6 +48,12 @@ public class Auth {
         public String id;
         public String username;
         public Map<String, Object> perfs;
+    }
+
+    public interface AuthResponseHandler {
+        void onResponse(JsonObject jsonObject);
+        void onError();
+        void onClose();
     }
 
     public Auth(Context context) {
@@ -113,7 +121,7 @@ public class Auth {
         });
     }
 
-    public void challenge() {
+    public void challenge(AuthResponseHandler responseHandler) {
 
         String username = "maia1";
 
@@ -126,26 +134,55 @@ public class Auth {
 
         openStream("/api/challenge/" + username, payload, new NdJsonStream.Handler() {
             @Override
-            public void onLine(Object jsonObject) {
-                mainHandler.post(() -> {
-                    Log.d(TAG, "Received: " + jsonObject.toString());
-                    //  {id=3c0lBlW9, url=https://lichess.org/3c0lBlW9, status=created, challenger={name=jcarolus, id=jcarolus, rating=1500.0, provisional=true}, destUser={name=maia1, title=BOT, id=maia1, rating=1603.0, online=true}, variant={key=standard, name=Standard, short=Std}, rated=false, speed=rapid, timeControl={type=clock, limit=360.0, increment=5.0, show=6+5}, color=random, finalColor=black, perf={icon=, name=Rapid}, direction=out}
+            public void onResponse(JsonObject jsonObject) {
 
+                Log.d(TAG, "Received: " + jsonObject.toString());
+
+                mainHandler.post(() -> {
+                    responseHandler.onResponse(jsonObject);
                 });
             }
 
             @Override
             public void onClose() {
-                mainHandler.post(() -> {
-
-                });
+                mainHandler.post(responseHandler::onClose);
             }
         });
+    }
 
-//        stream = auth.openStream("/api/tv/channels", jsonObj -> {
-//            // Each NDJSON line arrives here as a parsed Object (usually a Map)
-//            Log.d(TAG, "Received: " + jsonObj.toString());
-//        });
+    public void game(String gameId, AuthResponseHandler responseHandler) {
+        openStream("api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
+            @Override
+            public void onResponse(JsonObject jsonObject) {
+                String type = jsonObject.get("type").getAsString();
+                if (type.equals("gameFull") || type.equals("gameState")) {
+                    mainHandler.post(() -> {
+                        responseHandler.onResponse(jsonObject);
+                    });
+                }
+            }
+
+            @Override
+            public void onClose() {
+                mainHandler.post(responseHandler::onClose);
+            }
+        });
+    }
+
+    public void move(String gameId, String move, AuthResponseHandler responseHandler) {
+        openStream("api/board/game/stream/" + gameId + "/move/" + move, null, new NdJsonStream.Handler() {
+            @Override
+            public void onResponse(JsonObject jsonObject) {
+                mainHandler.post(() -> {
+                    responseHandler.onResponse(jsonObject);
+                });
+            }
+
+            @Override
+            public void onClose() {
+                mainHandler.post(responseHandler::onClose);
+            }
+        });
     }
 
     public boolean hasAccessToken() {
@@ -212,20 +249,21 @@ public class Auth {
         }
     }
 
-    public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<Object> callback) {
-        String json = new Gson().toJson(jsonBody);
-        RequestBody body = RequestBody.create(
-                json,
-                MediaType.get("application/json; charset=utf-8")
-        );
-
-        Request req = new Request.Builder()
+    public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject> callback) {
+        Request.Builder reqBuilder =  new Request.Builder()
                 .url(LICHESS_HOST + path)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .post(body)
-                .build();
+                .addHeader("Authorization", "Bearer " + accessToken);
 
-        httpClient.newCall(req).enqueue(new Callback() {
+        if (jsonBody != null) {
+            String json = new Gson().toJson(jsonBody);
+            RequestBody body = RequestBody.create(
+                    json,
+                    MediaType.get("application/json; charset=utf-8")
+            );
+            reqBuilder.post(body);
+        }
+
+        httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 mainHandler.post(() -> {
@@ -241,15 +279,15 @@ public class Auth {
                     });
                     return;
                 }
-                Object result = new Gson().fromJson(response.body().string(), Object.class);
+                JsonObject jsonObject = JsonParser.parseString(response.body().string()).getAsJsonObject();
                 mainHandler.post(() -> {
-                    callback.onSuccess(result);
+                    callback.onSuccess(jsonObject);
                 });
             }
         });
     }
 
-    public NdJsonStream.Stream openStream(String path, Map<String, Object> jsonBody, NdJsonStream.Handler handler) {
+    public void openStream(String path, Map<String, Object> jsonBody, NdJsonStream.Handler handler) {
         Log.d(TAG, "openStream " + path);
         Request.Builder reqBuilder =  new Request.Builder()
                 .url(LICHESS_HOST + path)
@@ -266,6 +304,6 @@ public class Auth {
 
         Request request = reqBuilder.build();
 
-        return NdJsonStream.readStream("STREAM " + path, httpClient, request, handler);
+        NdJsonStream.readStream("STREAM " + path, httpClient, request, handler);
     }
 }

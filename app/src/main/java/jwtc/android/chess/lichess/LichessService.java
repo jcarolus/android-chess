@@ -1,6 +1,5 @@
 package jwtc.android.chess.lichess;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -16,68 +15,8 @@ public class LichessService extends Service {
     private Auth auth;
     private final IBinder mBinder = new LichessService.LocalBinder();
 
-
-    public interface LichessServiceListener {
-        void onAuthenticate(boolean authenticated);
-
-    }
-
-    private LichessServiceListener lichessServiceListener;
-
-    public void setLichessServiceListener(LichessServiceListener listener) {
-        Log.d(TAG, "setLichessServiceListener");
-        this.lichessServiceListener = listener;
-
-        auth.restoreTokens();
-
-        if (auth.hasAccessToken()) {
-            Log.d(TAG, "hasAccessToken()");
-            auth.authenticateWithToken(new OAuth2AuthCodePKCE.Callback<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    Log.d(TAG, "Logged in with token");
-
-                    onAuthenticate(true);
-                    // lichessApi.challenge();
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.d(TAG, "Auth failed: " + e.getMessage());
-                    onAuthenticate(false);
-                }
-            });
-        }
-    }
-
-    public void login(Activity activity) {
-        auth.login(activity);
-    }
-
-    public void handleLoginData(Intent data) {
-        auth.handleLoginResponse(data, new OAuth2AuthCodePKCE.Callback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "Logged in!");
-                onAuthenticate(true);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.d(TAG, "Auth failed: " + e.getMessage());
-                onAuthenticate(false);
-            }
-        });
-    }
-
-    public void challenge() {
-        this.auth.challenge();
-    }
-
-    private void onAuthenticate(boolean authenticated) {
-        if (lichessServiceListener != null) {
-            lichessServiceListener.onAuthenticate(true);
-        }
+    public Auth getAuth() {
+        return auth;
     }
 
     @Override

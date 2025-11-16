@@ -4,6 +4,8 @@ package jwtc.android.chess.lichess;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +25,7 @@ public class NdJsonStream {
     private static final String TAG = "lichess.NdJsonStream";
 
     public interface Handler {
-        void onLine(Object jsonObject);
+        void onResponse(JsonObject jsonObject);
         void onClose();
     }
 
@@ -71,9 +73,9 @@ public class NdJsonStream {
                     line = line.trim();
                     if (!line.isEmpty()) {
                         try {
-                            Object obj = gson.fromJson(line, Object.class);
+                            JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
                             Log.d(TAG, name + line);
-                            handler.onLine(obj);
+                            handler.onResponse(jsonObject);
                         } catch (Exception e) {
                             Log.w(TAG, name + "Invalid JSON: " + line, e);
                         }
