@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -11,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -34,6 +37,7 @@ public class Auth {
     private final Context context;
     private final OAuth2AuthCodePKCE oauth;
     private final OkHttpClient httpClient = new OkHttpClient();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private String accessToken, refreshToken;
     Long expiresAt;
     private Me me;
@@ -68,13 +72,17 @@ public class Auth {
             @Override
             public void onSuccess(Void result) {
                 Log.d("Auth", "Restored session for " + me.username);
-                callback.onSuccess(null);
+                mainHandler.post(() -> {
+                    callback.onSuccess(null);
+                });
             }
 
             @Override
             public void onError(Exception e) {
                 Log.w("Auth", "Failed to restore session", e);
-                callback.onError(e);
+                mainHandler.post(() -> {
+                    callback.onError(e);
+                });
             }
         });
     }
@@ -98,9 +106,46 @@ public class Auth {
 
             @Override
             public void onError(Exception e) {
-                callback.onError(e);
+                mainHandler.post(() -> {
+                    callback.onError(e);
+                });
             }
         });
+    }
+
+    public void challenge() {
+
+        String username = "maia1";
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("username", username);
+        payload.put("rated", false);
+        payload.put("clock.limit", 360);
+        payload.put("clock.increment", 5);
+        payload.put("keepAliveStream", true);
+
+        openStream("/api/challenge/" + username, payload, new NdJsonStream.Handler() {
+            @Override
+            public void onLine(Object jsonObject) {
+                mainHandler.post(() -> {
+                    Log.d(TAG, "Received: " + jsonObject.toString());
+                    //  {id=3c0lBlW9, url=https://lichess.org/3c0lBlW9, status=created, challenger={name=jcarolus, id=jcarolus, rating=1500.0, provisional=true}, destUser={name=maia1, title=BOT, id=maia1, rating=1603.0, online=true}, variant={key=standard, name=Standard, short=Std}, rated=false, speed=rapid, timeControl={type=clock, limit=360.0, increment=5.0, show=6+5}, color=random, finalColor=black, perf={icon=, name=Rapid}, direction=out}
+
+                });
+            }
+
+            @Override
+            public void onClose() {
+                mainHandler.post(() -> {
+
+                });
+            }
+        });
+
+//        stream = auth.openStream("/api/tv/channels", jsonObj -> {
+//            // Each NDJSON line arrives here as a parsed Object (usually a Map)
+//            Log.d(TAG, "Received: " + jsonObj.toString());
+//        });
     }
 
     public boolean hasAccessToken() {
@@ -116,20 +161,28 @@ public class Auth {
         httpClient.newCall(req).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.onError(e);
+                mainHandler.post(() -> {
+                    callback.onError(e);
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    callback.onError(new IOException("HTTP " + response.code()));
+                    mainHandler.post(() -> {
+                        callback.onError(new IOException("HTTP " + response.code()));
+                    });
                     return;
                 }
 
                 String json = response.body().string();
-                Type type = new TypeToken<Me>() {}.getType();
+                Type type = new TypeToken<Me>() {
+                }.getType();
                 me = new Gson().fromJson(json, type);
-                callback.onSuccess(null);
+                mainHandler.post(() -> {
+                    callback.onSuccess(null);
+                });
+
             }
         });
     }
@@ -175,34 +228,44 @@ public class Auth {
         httpClient.newCall(req).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.onError(e);
+                mainHandler.post(() -> {
+                    callback.onError(e);
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    callback.onError(new IOException("HTTP " + response.code()));
+                    mainHandler.post(() -> {
+                        callback.onError(new IOException("HTTP " + response.code()));
+                    });
                     return;
                 }
                 Object result = new Gson().fromJson(response.body().string(), Object.class);
-                callback.onSuccess(result);
+                mainHandler.post(() -> {
+                    callback.onSuccess(result);
+                });
             }
         });
     }
 
-    public NdJsonStream.Stream openStream(String path, NdJsonStream.Handler handler) {
+    public NdJsonStream.Stream openStream(String path, Map<String, Object> jsonBody, NdJsonStream.Handler handler) {
         Log.d(TAG, "openStream " + path);
-        Request request = new Request.Builder()
+        Request.Builder reqBuilder =  new Request.Builder()
                 .url(LICHESS_HOST + path)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .build();
+                .addHeader("Authorization", "Bearer " + accessToken);
 
-        NdJsonStream.Stream stream = NdJsonStream.readStream("STREAM " + path, httpClient, request, handler);
+        if (jsonBody != null) {
+            String json = new Gson().toJson(jsonBody);
+            RequestBody body = RequestBody.create(
+                    json,
+                    MediaType.get("application/json; charset=utf-8")
+            );
+            reqBuilder.post(body);
+        }
 
-        stream.getClosePromise().thenRun(() -> {
-            Log.d(TAG, "Stream closed for path: " + path);
-        });
+        Request request = reqBuilder.build();
 
-        return stream;
+        return NdJsonStream.readStream("STREAM " + path, httpClient, request, handler);
     }
 }

@@ -24,6 +24,7 @@ public class NdJsonStream {
 
     public interface Handler {
         void onLine(Object jsonObject);
+        void onClose();
     }
 
     public static class Stream {
@@ -85,6 +86,11 @@ public class NdJsonStream {
                     stream.getClosePromise().completeExceptionally(e);
                 }
             }
+        });
+
+        stream.getClosePromise().thenRun(() -> {
+            Log.d(TAG, "Stream closed");
+            handler.onClose();
         });
 
         return stream;

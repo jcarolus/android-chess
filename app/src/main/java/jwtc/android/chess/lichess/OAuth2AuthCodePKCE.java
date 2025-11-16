@@ -14,7 +14,6 @@ import net.openid.appauth.TokenRequest;
 import net.openid.appauth.TokenResponse;
 
 public class OAuth2AuthCodePKCE {
-    private final Context context;
     private final String authorizationUrl;
     private final String tokenUrl;
     private final String clientId;
@@ -31,7 +30,6 @@ public class OAuth2AuthCodePKCE {
                               String clientId,
                               String redirectUri,
                               String[] scopes) {
-        this.context = context;
         this.authorizationUrl = authorizationUrl;
         this.tokenUrl = tokenUrl;
         this.clientId = clientId;

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="8dip">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <TableRow>
+                <TextView
+                    android:text="@string/ics_seekplayer"
+                    android:gravity="fill"
+                    style="@style/MyHeaderTextStyle"
+                    android:id="@+id/tvMatchPlayerName" />
+
+                <EditText
+                    android:id="@+id/EditTextMatchOpponent"
+                    android:gravity="fill"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:text="@string/ics_seektime"
+                    android:gravity="fill"
+                    style="@style/MyHeaderTextStyle" />
+
+                <Spinner
+                    android:id="@+id/SpinnerMatchTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:text="@string/ics_seektimeinc"
+                    android:gravity="fill"
+                    style="@style/MyHeaderTextStyle" />
+
+                <Spinner
+                    android:id="@+id/SpinnerMatchTimeIncrement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:text="@string/ics_seekvariant"
+                    android:gravity="fill"
+                    style="@style/MyHeaderTextStyle" />
+
+                <Spinner
+                    android:id="@+id/SpinnerMatchVariant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:text="@string/ics_seekcolor"
+                    android:layout_gravity="fill"
+                    style="@style/MyHeaderTextStyle" />
+
+                <Spinner
+                    android:id="@+id/SpinnerMatchColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:text="@string/ics_seekrangemin"
+                    android:layout_gravity="fill"
+                    style="@style/MyHeaderTextStyle"
+                    android:id="@+id/tvMatchRatingMIN" />
+
+                <EditText
+                    android:id="@+id/EditTextMatchRatingRangeMIN"
+                    android:hint="0"
+                    android:layout_weight="1"
+                    android:maxLength="4"
+                    android:imeOptions="actionNext" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:text="@string/ics_seekrangemax"
+                    android:layout_gravity="fill"
+                    style="@style/MyHeaderTextStyle"
+                    android:id="@+id/tvMatchRatingMAX" />
+
+                <EditText
+                    android:id="@+id/EditTextMatchRatingRangeMAX"
+                    android:hint="9999"
+                    android:layout_weight="1"
+                    android:maxLength="4"
+                    android:imeOptions="actionDone" />
+            </TableRow>
+
+            <TableRow>
+                <TextView
+                    android:text="@string/ics_seekrated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/MyHeaderTextStyle" />
+
+                <CheckBox
+                    android:id="@+id/CheckBoxSeekRated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+        </TableLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_cancel"
+                android:id="@+id/ButtonMatchCancel"
+                android:layout_margin="2dip"/>
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_ok"
+                android:id="@+id/ButtonMatchOk"
+                android:layout_margin="2dip"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

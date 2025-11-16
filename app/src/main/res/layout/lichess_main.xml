@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewAnimator
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ViewAnimatorRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <!-- 0 -->
+    <include layout="@layout/lichess_waiting"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+
+    <!-- 1 -->
+    <include layout="@layout/lichess_login"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+
+    <!-- 2 -->
+    <include layout="@layout/lichess_lobby"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+
+    <!-- 3 -->
+    <include layout="@layout/lichess_challenge"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+
+    <!-- 4 -->
+    <include layout="@layout/lichess_play"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+</ViewAnimator>

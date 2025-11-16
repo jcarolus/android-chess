@@ -1,67 +1,83 @@
 package jwtc.android.chess.lichess;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
-
-import java.util.HashMap;
-import java.util.Map;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ViewAnimator;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 
-public class LichessActivity  extends ChessBoardActivity {
+
+public class LichessActivity  extends ChessBoardActivity implements LichessApi.LichessApiListener {
     private static final String TAG = "LichessActivity";
-    private Auth auth;
-    private NdJsonStream.Stream stream;
+    private static final int VIEW_WAITING = 0, VIEW_LOGIN = 1, VIEW_LOBBY = 2, VIEW_CHALLENGE = 3, VIEW_PLAY = 4;
+
     private LichessApi lichessApi;
+    private ViewAnimator viewAnimator;
+
+    private final ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.i(TAG, "onServiceConnected");
+            LichessService lichessService = ((LichessService.LocalBinder)service).getService();
+            lichessService.setLichessServiceListener(lichessApi);
+            lichessApi.setService(lichessService, LichessActivity.this);
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+
+            Log.i(TAG, "onServiceDisconnected");
+            lichessApi.setService(null, LichessActivity.this);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.puzzle);
+        Log.d(TAG, "onCreate");
 
-        ActivityHelper.fixPaddings(this, findViewById(R.id.LayoutMain));
+        setContentView(R.layout.lichess_main);
 
-        auth = new Auth(this);
-        gameApi = new LichessApi(auth);
+        ActivityHelper.fixPaddings(this, findViewById(R.id.ViewAnimatorRoot));
+
+        gameApi = new LichessApi();
         lichessApi = (LichessApi)gameApi;
+
+        Button buttonLogin = findViewById(R.id.ButtonLogin);
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lichessApi.login(LichessActivity.this);
+            }
+        });
+
+        Button buttonChallenge = findViewById(R.id.ButtonChallenge);
+        buttonChallenge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lichessApi.challenge();
+            }
+        });
+
+        viewAnimator = findViewById(R.id.ViewAnimatorRoot);
 
         afterCreate();
     }
-
-
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume");
 
-        auth.restoreTokens();
-
-        if (auth.hasAccessToken()) {
-            Log.d(TAG, "hasAccessToken()");
-            auth.authenticateWithToken(new OAuth2AuthCodePKCE.Callback<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    Log.d(TAG, "Logged in with token");
-
-                    lichessApi.challenge();
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.d(TAG, "Auth failed: " + e.getMessage());
-                }
-            });
-        } else {
-
-            auth.login(this);
-        }
     }
 
     @Override
@@ -70,10 +86,6 @@ public class LichessActivity  extends ChessBoardActivity {
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.commit();
-
-        if (stream != null) {
-            stream.close();
-        }
     }
 
     @Override
@@ -82,19 +94,35 @@ public class LichessActivity  extends ChessBoardActivity {
 
         Log.d(TAG, "onActivityResult " + requestCode);
         if (requestCode == 1001) {
-            auth.handleLoginResponse(data, new OAuth2AuthCodePKCE.Callback<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    Log.d(TAG, "Logged in!");
+            lichessApi.handleLoginData(data);
+        }
+    }
 
-                    lichessApi.challenge();
-                }
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart");
+        super.onStart();
 
-                @Override
-                public void onError(Exception e) {
-                    Log.d(TAG, "Auth failed: " + e.getMessage());
-                }
-            });
+        startService(new Intent(LichessActivity.this, LichessService.class));
+        bindService(new Intent(LichessActivity.this, LichessService.class), mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i(TAG, "onStop");
+        super.onStop();
+
+        unbindService(mConnection);
+    }
+
+    @Override
+    public void onAuthenticate(boolean authenticated) {
+        Log.d(TAG, "onAuthenticate " + authenticated);
+
+        if (authenticated) {
+            viewAnimator.setDisplayedChild(VIEW_LOBBY);
+        } else {
+            viewAnimator.setDisplayedChild(VIEW_LOGIN);
         }
     }
 }

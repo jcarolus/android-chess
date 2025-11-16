@@ -180,6 +180,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         SharedPreferences prefs = getPrefs();
 
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
+        ColorSchemes.saturationFactor = prefs.getFloat("squareSaturation", 1.0f);
 
         skipReturn = prefs.getBoolean("skipReturn", true);
         keyboardBuffer = "";
