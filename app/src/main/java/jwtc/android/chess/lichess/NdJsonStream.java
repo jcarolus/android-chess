@@ -53,17 +53,11 @@ public class NdJsonStream {
         Call call = client.newCall(request);
         Stream stream = new Stream(call);
 
-        Log.d(TAG, "readStream " + name);
-
         executor.submit(() -> {
-            Log.d(TAG, "executer.submit()");
-
             try (Response response = call.execute()) {
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 }
-
-                Log.d(TAG, "Response ");
 
                 InputStream inputStream = response.body().byteStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -72,12 +66,12 @@ public class NdJsonStream {
                 while ((line = reader.readLine()) != null) {
                     line = line.trim();
                     if (!line.isEmpty()) {
+                        Log.d(TAG, "line: " + line);
                         try {
                             JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
-                            Log.d(TAG, name + line);
                             handler.onResponse(jsonObject);
                         } catch (Exception e) {
-                            Log.w(TAG, name + "Invalid JSON: " + line, e);
+                            Log.d(TAG, name + "Invalid JSON: " + line + " " + e);
                         }
                     }
                 }

@@ -70,6 +70,14 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             }
         });
 
+        Button buttonLogout = findViewById(R.id.ButtonLogout);
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lichessApi.logout();
+            }
+        });
+
         viewAnimator = findViewById(R.id.ViewAnimatorRoot);
 
         afterCreate();
@@ -126,5 +134,22 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         } else {
             viewAnimator.setDisplayedChild(VIEW_LOGIN);
         }
+    }
+
+    @Override
+    public boolean requestMove(int from, int to) {
+        lastMoveFrom = from;
+        lastMoveTo = to;
+
+        lichessApi.move(from, to);
+
+        return true;
+    }
+
+    @Override
+    public void OnState() {
+        super.OnState();
+
+        viewAnimator.setDisplayedChild(VIEW_PLAY);
     }
 }

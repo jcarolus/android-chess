@@ -41,6 +41,12 @@
                 android:id="@+id/ButtonChallenge"
                 android:layout_width="fill_parent"
                 style="@style/ChessButton"/>
+
+            <Button
+                android:text="Logout"
+                android:id="@+id/ButtonLogout"
+                android:layout_width="fill_parent"
+                style="@style/ChessButton"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

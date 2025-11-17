@@ -20,6 +20,7 @@ import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,7 +30,7 @@ import okhttp3.Response;
 public class Auth {
     private static final String TAG = "lichess.Auth";
     private static final String LICHESS_HOST = "https://lichess.org";
-    private static final String CLIENT_ID = "lichess-android-client";
+    private static final String CLIENT_ID = "lichess-api-demo"; // "lichess-android-client";
     private static final String[] SCOPES = new String[]{"board:play"};
     private static final String PREFS_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
@@ -52,7 +53,7 @@ public class Auth {
 
     public interface AuthResponseHandler {
         void onResponse(JsonObject jsonObject);
-        void onError();
+        void onError(); // @TODO needed?
         void onClose();
     }
 
@@ -72,6 +73,11 @@ public class Auth {
     public void login(Activity activity) {
         Log.d(TAG, "login");
         oauth.startAuth(activity);
+    }
+
+    public void logout() {
+        // /api/token`, { method: 'DELETE' });
+        clearTokens();
     }
 
     public void authenticateWithToken(OAuth2AuthCodePKCE.Callback<Void> callback) {
@@ -121,7 +127,7 @@ public class Auth {
         });
     }
 
-    public void challenge(AuthResponseHandler responseHandler) {
+    public void challenge(OAuth2AuthCodePKCE.Callback<JsonObject> callback) {
 
         String username = "maia1";
 
@@ -132,12 +138,13 @@ public class Auth {
         payload.put("clock.increment", 5);
         payload.put("keepAliveStream", true);
 
-        openStream("/api/challenge/" + username, payload, new NdJsonStream.Handler() {
+        post("/api/challenge/" + username, payload, callback);
+    }
+
+    public void event(AuthResponseHandler responseHandler) {
+        openStream("/api/stream/event", null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
-
-                Log.d(TAG, "Received: " + jsonObject.toString());
-
                 mainHandler.post(() -> {
                     responseHandler.onResponse(jsonObject);
                 });
@@ -151,7 +158,7 @@ public class Auth {
     }
 
     public void game(String gameId, AuthResponseHandler responseHandler) {
-        openStream("api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
+        openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 String type = jsonObject.get("type").getAsString();
@@ -169,21 +176,11 @@ public class Auth {
         });
     }
 
-    public void move(String gameId, String move, AuthResponseHandler responseHandler) {
-        openStream("api/board/game/stream/" + gameId + "/move/" + move, null, new NdJsonStream.Handler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                mainHandler.post(() -> {
-                    responseHandler.onResponse(jsonObject);
-                });
-            }
-
-            @Override
-            public void onClose() {
-                mainHandler.post(responseHandler::onClose);
-            }
-        });
+    public void move(String gameId, String move, OAuth2AuthCodePKCE.Callback<JsonObject> callback) {
+        post("/api/board/game/" + gameId + "/move/" + move, null, callback);
     }
+
+    // api/board/game/.../resign
 
     public boolean hasAccessToken() {
         return accessToken != null;
@@ -213,8 +210,8 @@ public class Auth {
                 }
 
                 String json = response.body().string();
-                Type type = new TypeToken<Me>() {
-                }.getType();
+                Log.d(TAG, json);
+                Type type = new TypeToken<Me>() {}.getType();
                 me = new Gson().fromJson(json, type);
                 mainHandler.post(() -> {
                     callback.onSuccess(null);
@@ -250,9 +247,11 @@ public class Auth {
     }
 
     public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject> callback) {
+        Log.d(TAG, "post " + path);
         Request.Builder reqBuilder =  new Request.Builder()
                 .url(LICHESS_HOST + path)
-                .addHeader("Authorization", "Bearer " + accessToken);
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Accept", "*/*");
 
         if (jsonBody != null) {
             String json = new Gson().toJson(jsonBody);
@@ -261,6 +260,8 @@ public class Auth {
                     MediaType.get("application/json; charset=utf-8")
             );
             reqBuilder.post(body);
+        } else {
+            reqBuilder.post(RequestBody.create(new byte[0]));
         }
 
         httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
@@ -274,15 +275,39 @@ public class Auth {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
+
+//                    Headers headers = response.headers();
+//                    for (int i = 0; i < headers.size(); i++) {
+//                        Log.d(TAG, headers.name(i) + ": " + headers.value(i));
+//                    }
+
+                    String responseBody = response.body().string();
                     mainHandler.post(() -> {
                         callback.onError(new IOException("HTTP " + response.code()));
+                        Log.d(TAG, "responseBody " + responseBody);
                     });
                     return;
                 }
-                JsonObject jsonObject = JsonParser.parseString(response.body().string()).getAsJsonObject();
-                mainHandler.post(() -> {
-                    callback.onSuccess(jsonObject);
-                });
+                String responseBody = response.body().string();
+                Log.d(TAG, "responseBody " + responseBody);
+                try {
+                    String[] lines = responseBody.split("\r?\n");
+                    for (String line : lines) {
+                        if (line == null || line.trim().isEmpty()) {
+                            continue;
+                        }
+
+                        JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
+                        mainHandler.post(() -> {
+                            callback.onSuccess(jsonObject);
+                        });
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "Caught " + ex);
+                    mainHandler.post(() -> {
+                        callback.onError(ex);
+                    });
+                }
             }
         });
     }
