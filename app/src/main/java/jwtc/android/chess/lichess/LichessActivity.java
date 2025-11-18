@@ -10,19 +10,33 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.lichess.models.Game;
+import jwtc.android.chess.lichess.models.GameFull;
+import jwtc.android.chess.services.ClockListener;
+import jwtc.android.chess.services.LocalClockApi;
+import jwtc.chess.board.BoardConstants;
 
 
-public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener {
+public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener, ClockListener {
     private static final String TAG = "LichessActivity";
-    private static final int VIEW_WAITING = 0, VIEW_LOGIN = 1, VIEW_LOBBY = 2, VIEW_CHALLENGE = 3, VIEW_PLAY = 4;
+    private static final int VIEW_ROOT_WAITING = 0, VIEW_ROOT_LOGIN = 1, VIEW_ROOT_SUB = 2;
+    private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_CHALLENGE = 1, VIEW_SUB_PLAY = 2;
 
     private LichessApi lichessApi;
-    private ViewAnimator viewAnimator;
+    private LocalClockApi localClockApi = new LocalClockApi();
+    private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
+
+    private ImageView imageTurnOpp, imageTurnMe;
+    private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
+    private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
+    private TextView textViewLastMove;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -66,7 +80,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonChallenge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lichessApi.challenge();
+                displayCreateChallenge();
             }
         });
 
@@ -78,7 +92,38 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             }
         });
 
-        viewAnimator = findViewById(R.id.ViewAnimatorRoot);
+        Button buttonChallengeOk = findViewById(R.id.ButtonChallengeOk);
+        buttonChallengeOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lichessApi.challenge();
+            }
+        });
+
+        Button buttonResign = findViewById(R.id.ButtonResign);
+        buttonResign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lichessApi.resign();
+            }
+        });
+
+        //
+
+        viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
+        viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
+
+        imageTurnOpp = findViewById(R.id.ImageTurnOpp);
+        textViewClockOpp = findViewById(R.id.TextViewClockOpp);
+        textViewPlayerOpp = findViewById(R.id.TextViewPlayerOpp);
+        textViewRatingOpp = findViewById(R.id.TextViewRatingOpp);
+
+        imageTurnMe = findViewById(R.id.ImageTurnMe);
+        textViewClockMe = findViewById(R.id.TextViewClockMe);
+        textViewPlayerMe = findViewById(R.id.TextViewPlayerMe);
+        textViewRatingMe = findViewById(R.id.TextViewRatingMe);
+
+        textViewLastMove = findViewById(R.id.TextViewLastMove);
 
         afterCreate();
     }
@@ -130,10 +175,43 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         Log.d(TAG, "onAuthenticate " + authenticated);
 
         if (authenticated) {
-            viewAnimator.setDisplayedChild(VIEW_LOBBY);
+            displayLobby();
         } else {
-            viewAnimator.setDisplayedChild(VIEW_LOGIN);
+            displayLogin();
         }
+    }
+
+    @Override
+    public void onGameInit(Game game) {
+
+    }
+
+    @Override
+    public void onGameUpdate(GameFull gameFull) {
+        Log.d(TAG, "black " + gameFull.black.name);
+
+        int myTurn = lichessApi.getMyTurn();
+        int turn = lichessApi.getTurn();
+        boolean isMyTurn = myTurn == turn;
+        boolean playAsWhite = myTurn == BoardConstants.WHITE;
+        textViewPlayerOpp.setText(playAsWhite ? gameFull.black.name : gameFull.white.name);
+        textViewPlayerMe.setText(playAsWhite ? gameFull.white.name : gameFull.black.name);
+
+        textViewRatingOpp.setText(""  + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
+        textViewRatingMe.setText("" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
+
+        localClockApi.startClock(gameFull.clock.increment, gameFull.state.wtime, gameFull.state.btime, 0, System.currentTimeMillis());
+
+    }
+
+    @Override
+    public void onGameFinish() {
+        localClockApi.stopClock();
+    }
+
+    @Override
+    public void onInvalidMove(String reason) {
+        textViewLastMove.setText(reason);
     }
 
     @Override
@@ -150,6 +228,52 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     public void OnState() {
         super.OnState();
 
-        viewAnimator.setDisplayedChild(VIEW_PLAY);
+        displayPlay();
+
+        int myTurn = lichessApi.getMyTurn();
+        int turn = lichessApi.getTurn();
+        boolean isMyTurn = myTurn == turn;
+        imageTurnOpp.setImageResource(isMyTurn
+                ? R.drawable.turnempty
+                : turn == BoardConstants.BLACK
+                ? R.drawable.turnblack
+                : R.drawable.turnwhite
+        );
+
+        imageTurnMe.setImageResource(isMyTurn
+                ? turn == BoardConstants.BLACK
+                ? R.drawable.turnblack
+                : R.drawable.turnwhite
+                : R.drawable.turnempty
+        );
+    }
+
+    protected void displayLogin() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_LOGIN);
+    }
+    protected void displayLobby() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
+        viewAnimatorSub.setDisplayedChild(VIEW_SUB_LOBBY);
+    }
+
+    protected void displayCreateChallenge() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
+        viewAnimatorSub.setDisplayedChild(VIEW_SUB_CHALLENGE);
+    }
+    protected void displayPlay() {
+        viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
+        viewAnimatorSub.setDisplayedChild(VIEW_SUB_PLAY);
+    }
+
+    @Override
+    public void OnClockTime() {
+        int myTurn = lichessApi.getMyTurn();
+
+        boolean playAsWhite = myTurn == BoardConstants.WHITE;
+        String blackRemaining = localClockApi.getBlackRemainingTime();
+        String whiteRemaining = localClockApi.getWhiteRemainingTime();
+
+        textViewClockOpp.setText(playAsWhite ? blackRemaining : whiteRemaining);
+        textViewClockMe.setText(playAsWhite ? whiteRemaining : blackRemaining);
     }
 }

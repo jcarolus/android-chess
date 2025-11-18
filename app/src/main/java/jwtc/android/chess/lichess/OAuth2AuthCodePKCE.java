@@ -57,7 +57,7 @@ public class OAuth2AuthCodePKCE {
         activity.startActivityForResult(authIntent, 1001);
     }
 
-    public void handleAuthResponse(Intent intent, Callback<TokenResponse> callback) {
+    public void handleAuthResponse(Intent intent, Callback<TokenResponse, Exception> callback) {
         AuthorizationResponse resp = AuthorizationResponse.fromIntent(intent);
         AuthorizationException ex = AuthorizationException.fromIntent(intent);
         if (resp != null) {
@@ -94,8 +94,8 @@ public class OAuth2AuthCodePKCE {
 //        });
 //    }
 
-    public interface Callback<T> {
+    public interface Callback<T, E> {
         void onSuccess(T result);
-        void onError(Exception e);
+        void onError(E e);
     }
 }

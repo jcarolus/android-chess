@@ -17,6 +17,6 @@ public class GameFull {
 
     public String type;  // will be "gameFull"
 
-    public State state;
+    public GameState state;
 }
 

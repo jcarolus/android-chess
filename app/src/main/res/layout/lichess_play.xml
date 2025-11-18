@@ -11,29 +11,19 @@
         android:layout_height="wrap_content"
         android:background="@color/primaryColor"
         android:shrinkColumns="0,1,2,3"
-        android:stretchColumns="4"
+        android:stretchColumns="2"
         android:layout_marginBottom="1dip">
 
         <TableRow android:gravity="center_vertical">
-            <ViewSwitcher
+            <ImageView
                 android:id="@+id/ImageTurnOpp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+                android:src="@drawable/turnempty"
+                android:layout_height="12dip"
+                android:layout_width="12dip"
                 android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip">
-
-                <ImageView
-                    android:src="@drawable/turnblack"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-
-                <ImageView
-                    android:src="@drawable/turnwhite"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-            </ViewSwitcher>
+                android:layout_marginRight="8dip"/>
             <TextView
-                android:id="@+id/TextViewClockTop"
+                android:id="@+id/TextViewClockOpp"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:text="00:00"
@@ -43,27 +33,18 @@
 
             <TextView
                 android:text="@string/ics_playertwo"
-                android:id="@+id/TextViewTop"
+                android:id="@+id/TextViewPlayerOpp"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 style="@style/MyHeaderTextStyle" />
 
             <TextView
                 android:text="----"
-                android:id="@+id/TextViewICSTwoRating"
+                android:id="@+id/TextViewRatingOpp"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 style="@style/MyHeaderTextStyle"
                 android:layout_marginLeft="3dip" />
-
-            <TextView
-                android:id="@+id/TextViewICSBoardNum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="# 0"
-                android:layout_marginRight="5dp"
-                style="@style/MyHeaderTextStyle"
-                android:gravity="right|center_vertical" />
         </TableRow>
 
     </TableLayout>
@@ -80,29 +61,19 @@
         android:layout_height="wrap_content"
         android:background="@color/primaryColor"
         android:layout_marginTop="1dip"
-        android:shrinkColumns="0,1,2,3"
-        android:stretchColumns="4">
+        android:shrinkColumns="0,1,3"
+        android:stretchColumns="2">
 
         <TableRow android:gravity="center_vertical">
-            <ViewSwitcher
+            <ImageView
                 android:id="@+id/ImageTurnMe"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+                android:src="@drawable/turnempty"
+                android:layout_height="12dip"
+                android:layout_width="12dip"
                 android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip">
-
-                <ImageView
-                    android:src="@drawable/turnblack"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-
-                <ImageView
-                    android:src="@drawable/turnwhite"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-            </ViewSwitcher>
+                android:layout_marginRight="8dip"/>
             <TextView
-                android:id="@+id/TextViewClockBottom"
+                android:id="@+id/TextViewClockMe"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:text="00:00"
@@ -112,45 +83,18 @@
 
             <TextView
                 android:text="@string/ics_playerone"
-                android:id="@+id/TextViewBottom"
+                android:id="@+id/TextViewPlayerMe"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 style="@style/MyHeaderTextStyle" />
 
             <TextView
                 android:text="----"
-                android:id="@+id/TextViewICSOneRating"
+                android:id="@+id/TextViewRatingMe"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 style="@style/MyHeaderTextStyle"
                 android:layout_marginLeft="3dip" />
-
-            <TextView
-                android:id="@+id/TextViewMoveNumber"
-                android:text="-"
-                style="@style/MyNormalTextStyle"
-                android:gravity="right|center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_marginRight="5dp" />
-
-            <TextView
-                android:id="@+id/TextViewICSTimePerMove"
-                android:text="(0:00)"
-                style="@style/MyNormalTextStyle"
-                android:gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_marginRight="5dp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/TextViewICSBoardLastMove"
-                android:text="---"
-                style="@style/MyNormalTextStyle"
-                android:gravity="center_vertical"
-                android:layout_width="50dp"
-                android:layout_height="20dp" />
         </TableRow>
     </TableLayout>
     <ScrollView
@@ -198,7 +142,6 @@
                     android:layout_margin="1dip"
                     style="@style/ChessButton"
                     />
-
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

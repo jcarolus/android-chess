@@ -16,17 +16,23 @@
         android:layout_height="fill_parent" />
 
     <!-- 2 -->
-    <include layout="@layout/lichess_lobby"
+    <ViewAnimator
+        android:id="@+id/ViewAnimatorSub"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent">
+        <!-- 0 -->
+        <include layout="@layout/lichess_lobby"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
 
-    <!-- 3 -->
-    <include layout="@layout/lichess_challenge"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent" />
+        <!-- 1 -->
+        <include layout="@layout/lichess_challenge"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
 
-    <!-- 4 -->
-    <include layout="@layout/lichess_play"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent" />
+        <!-- 2 -->
+        <include layout="@layout/lichess_play"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
+    </ViewAnimator>
 </ViewAnimator>

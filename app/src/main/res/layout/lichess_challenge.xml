@@ -8,6 +8,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dip"
+            android:layout_marginBottom="16dip"
+            android:lines="2"
+            android:minLines="2"
+            android:maxLines="10"
+            android:scrollHorizontally="false"
+            android:ellipsize="none"
+            android:text="Create a challenge for a game"
+            />
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -129,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/button_cancel"
-                android:id="@+id/ButtonMatchCancel"
+                android:id="@+id/ButtonChallengeCancel"
                 android:layout_margin="2dip"/>
 
             <Button
@@ -137,7 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/button_ok"
-                android:id="@+id/ButtonMatchOk"
+                android:id="@+id/ButtonChallengeOk"
                 android:layout_margin="2dip"/>
         </LinearLayout>
     </LinearLayout>

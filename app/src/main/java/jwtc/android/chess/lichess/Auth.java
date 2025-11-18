@@ -41,6 +41,7 @@ public class Auth {
     private final OAuth2AuthCodePKCE oauth;
     private final OkHttpClient httpClient = new OkHttpClient();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    NdJsonStream.Stream eventStream, gameStream;
     private String accessToken, refreshToken;
     Long expiresAt;
     private Me me;
@@ -80,9 +81,9 @@ public class Auth {
         clearTokens();
     }
 
-    public void authenticateWithToken(OAuth2AuthCodePKCE.Callback<Void> callback) {
+    public void authenticateWithToken(OAuth2AuthCodePKCE.Callback<Void, Exception> callback) {
         // Already logged in, authenticate silently
-        authenticate(new OAuth2AuthCodePKCE.Callback<Void>() {
+        authenticate(new OAuth2AuthCodePKCE.Callback<Void, Exception>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d("Auth", "Restored session for " + me.username);
@@ -101,10 +102,10 @@ public class Auth {
         });
     }
 
-    public void handleLoginResponse(Intent data, OAuth2AuthCodePKCE.Callback<Void> callback) {
+    public void handleLoginResponse(Intent data, OAuth2AuthCodePKCE.Callback<Void, Exception> callback) {
         Log.d(TAG, "handleLoginResponse");
 
-        oauth.handleAuthResponse(data, new OAuth2AuthCodePKCE.Callback<net.openid.appauth.TokenResponse>() {
+        oauth.handleAuthResponse(data, new OAuth2AuthCodePKCE.Callback<net.openid.appauth.TokenResponse, Exception>() {
             @Override
             public void onSuccess(net.openid.appauth.TokenResponse result) {
                 Log.d(TAG, "handleLoginResponse.onSuccess");
@@ -127,7 +128,7 @@ public class Auth {
         });
     }
 
-    public void challenge(OAuth2AuthCodePKCE.Callback<JsonObject> callback) {
+    public void challenge(OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
 
         String username = "maia1";
 
@@ -142,7 +143,7 @@ public class Auth {
     }
 
     public void event(AuthResponseHandler responseHandler) {
-        openStream("/api/stream/event", null, new NdJsonStream.Handler() {
+        eventStream = openStream("/api/stream/event", null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 mainHandler.post(() -> {
@@ -158,7 +159,7 @@ public class Auth {
     }
 
     public void game(String gameId, AuthResponseHandler responseHandler) {
-        openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
+        gameStream = openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 String type = jsonObject.get("type").getAsString();
@@ -176,17 +177,27 @@ public class Auth {
         });
     }
 
-    public void move(String gameId, String move, OAuth2AuthCodePKCE.Callback<JsonObject> callback) {
+    public void move(String gameId, String move, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         post("/api/board/game/" + gameId + "/move/" + move, null, callback);
     }
 
-    // api/board/game/.../resign
+    public void resign(String gameId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        post("/api/board/game/" + gameId + "/resign", null, callback);
+    }
+
+    public void abort(String gameId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        post("/api/board/game/" + gameId + "/abort", null, callback);
+    }
+
+    public void draw(String gameId, String accept /* yes|no*/, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        post("/api/board/game/" + gameId + "/draw/" + accept, null, callback);
+    }
 
     public boolean hasAccessToken() {
         return accessToken != null;
     }
 
-    public void authenticate(OAuth2AuthCodePKCE.Callback<Void> callback) {
+    public void authenticate(OAuth2AuthCodePKCE.Callback<Void, Exception> callback) {
         Request req = new Request.Builder()
                 .url(LICHESS_HOST + "/api/account")
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -246,7 +257,7 @@ public class Auth {
         }
     }
 
-    public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject> callback) {
+    public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         Log.d(TAG, "post " + path);
         Request.Builder reqBuilder =  new Request.Builder()
                 .url(LICHESS_HOST + path)
@@ -268,23 +279,18 @@ public class Auth {
             @Override
             public void onFailure(Call call, IOException e) {
                 mainHandler.post(() -> {
-                    callback.onError(e);
+                    //callback.onError(e);
+                    // @TODO general error
                 });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
-
-//                    Headers headers = response.headers();
-//                    for (int i = 0; i < headers.size(); i++) {
-//                        Log.d(TAG, headers.name(i) + ": " + headers.value(i));
-//                    }
-
                     String responseBody = response.body().string();
+                    JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
                     mainHandler.post(() -> {
-                        callback.onError(new IOException("HTTP " + response.code()));
-                        Log.d(TAG, "responseBody " + responseBody);
+                        callback.onError(jsonObject);
                     });
                     return;
                 }
@@ -305,14 +311,15 @@ public class Auth {
                 } catch (Exception ex) {
                     Log.d(TAG, "Caught " + ex);
                     mainHandler.post(() -> {
-                        callback.onError(ex);
+                        // callback.onError(ex);
+                        // @TODO another general error
                     });
                 }
             }
         });
     }
 
-    public void openStream(String path, Map<String, Object> jsonBody, NdJsonStream.Handler handler) {
+    public NdJsonStream.Stream openStream(String path, Map<String, Object> jsonBody, NdJsonStream.Handler handler) {
         Log.d(TAG, "openStream " + path);
         Request.Builder reqBuilder =  new Request.Builder()
                 .url(LICHESS_HOST + path)
@@ -329,6 +336,6 @@ public class Auth {
 
         Request request = reqBuilder.build();
 
-        NdJsonStream.readStream("STREAM " + path, httpClient, request, handler);
+        return NdJsonStream.readStream("STREAM " + path, httpClient, request, handler);
     }
 }
