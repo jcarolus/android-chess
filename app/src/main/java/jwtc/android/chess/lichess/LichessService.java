@@ -36,13 +36,19 @@ public class LichessService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         Log.d(TAG, "onUnbind");
-        return true;
+        return false;
     }
 
     @Override
     public void onRebind(Intent intent) {
         Log.d(TAG, "onRebind");
         super.onRebind(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "onDestroy");
+        super.onDestroy();
     }
 
     public class LocalBinder extends Binder {

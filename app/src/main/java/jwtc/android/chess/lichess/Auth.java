@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,6 +40,11 @@ public class Auth {
     private final Context context;
     private final OAuth2AuthCodePKCE oauth;
     private final OkHttpClient httpClient = new OkHttpClient();
+    private final OkHttpClient httpStreamClient = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(0, TimeUnit.MILLISECONDS) // infinite timeout
+            .build();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     NdJsonStream.Stream eventStream, gameStream;
     private String accessToken, refreshToken;
@@ -60,7 +65,7 @@ public class Auth {
 
     public Auth(Context context) {
         this.context = context;
-        String redirectUri = "jwtc.android.chess:/oauth2redirect"; // match your Android manifest intent filter
+        String redirectUri = "jwtc.android.chess:/oauth2redirect"; // match Android manifest intent filter
         this.oauth = new OAuth2AuthCodePKCE(
                 context,
                 LICHESS_HOST + "/oauth",
@@ -137,7 +142,7 @@ public class Auth {
         payload.put("rated", false);
         payload.put("clock.limit", 360);
         payload.put("clock.increment", 5);
-        payload.put("keepAliveStream", true);
+        // payload.put("keepAliveStream", true); // if set, then nd-json
 
         post("/api/challenge/" + username, payload, callback);
     }
@@ -257,6 +262,16 @@ public class Auth {
         }
     }
 
+    public void closeStreams() {
+        Log.d(TAG, "closeStreams");
+        if (gameStream != null) {
+            gameStream.close();
+        }
+        if (eventStream != null) {
+            eventStream.close();
+        }
+    }
+
     public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         Log.d(TAG, "post " + path);
         Request.Builder reqBuilder =  new Request.Builder()
@@ -278,6 +293,7 @@ public class Auth {
         httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure " + e);
                 mainHandler.post(() -> {
                     //callback.onError(e);
                     // @TODO general error
@@ -294,6 +310,7 @@ public class Auth {
                     });
                     return;
                 }
+                Log.d(TAG, "wating for response...");
                 String responseBody = response.body().string();
                 Log.d(TAG, "responseBody " + responseBody);
                 try {
@@ -336,6 +353,6 @@ public class Auth {
 
         Request request = reqBuilder.build();
 
-        return NdJsonStream.readStream("STREAM " + path, httpClient, request, handler);
+        return NdJsonStream.readStream("STREAM " + path, httpStreamClient, request, handler);
     }
 }

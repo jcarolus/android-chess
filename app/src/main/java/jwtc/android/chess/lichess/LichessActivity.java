@@ -216,12 +216,15 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public boolean requestMove(int from, int to) {
-        lastMoveFrom = from;
-        lastMoveTo = to;
+        if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
+            lastMoveFrom = from;
+            lastMoveTo = to;
 
-        lichessApi.move(from, to);
+            lichessApi.move(from, to);
 
-        return true;
+            return true;
+        }
+        return false;
     }
 
     @Override

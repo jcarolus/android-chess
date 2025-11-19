@@ -11,7 +11,6 @@ import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.GameState;
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
@@ -157,6 +156,7 @@ public class LichessApi extends GameApi {
                 public void onError(JsonObject result) {
                     Log.d(TAG, "moved " + result);
                     // {"error":"Piece on h2 cannot move to h5"}
+                    // @TODO
                     jni.undo();
                     dispatchState();
                     apiListener.onInvalidMove(result.get("error").getAsString());
