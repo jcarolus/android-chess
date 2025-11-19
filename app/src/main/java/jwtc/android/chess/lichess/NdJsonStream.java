@@ -30,15 +30,10 @@ public class NdJsonStream {
     }
 
     public static class Stream {
-        private final CompletableFuture<Void> closePromise = new CompletableFuture<>();
         private final Call call;
 
         Stream(Call call) {
             this.call = call;
-        }
-
-        public CompletableFuture<Void> getClosePromise() {
-            return closePromise;
         }
 
         public void close() {
@@ -75,18 +70,11 @@ public class NdJsonStream {
                         }
                     }
                 }
-                stream.getClosePromise().complete(null);
+                handler.onClose();
             } catch (IOException e) {
                 Log.d(TAG, "Exception " + e);
-                if (!call.isCanceled()) {
-                    stream.getClosePromise().completeExceptionally(e);
-                }
+                handler.onClose();
             }
-        });
-
-        stream.getClosePromise().thenRun(() -> {
-            Log.d(TAG, "Stream closed");
-            handler.onClose();
         });
 
         return stream;
