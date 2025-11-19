@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LayoutBoardBottom"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/primaryColor"
+    android:gravity="center_vertical"
+    android:padding="4dip">
+    <ViewSwitcher
+        android:id="@+id/ImageTurnMe"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="8dip"
+        android:layout_marginRight="8dip">
+        <ImageView
+            android:src="@drawable/turnblack"
+            android:layout_height="12dip"
+            android:layout_width="12dip" />
+
+        <ImageView
+            android:src="@drawable/turnwhite"
+            android:layout_height="12dip"
+            android:layout_width="12dip" />
+    </ViewSwitcher>
+    <TextView
+        android:id="@+id/TextPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"/>
+</LinearLayout>

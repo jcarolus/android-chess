@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/LayoutExamineButtons"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dip">
+
+            <ImageButton
+                android:id="@+id/ButtonICSExamineBackward"
+                android:src="@drawable/ic_chevron_left"
+                style="@style/ChessImageButton" />
+
+            <ImageButton
+                android:id="@+id/ButtonICSExamineForward"
+                android:src="@drawable/ic_chevron_right"
+                style="@style/ChessImageButton" />
+
+            <ImageButton
+                android:id="@+id/ButtonICSExamineRevert"
+                android:src="@drawable/ic_backspace"
+                style="@style/ChessImageButton"
+                android:layout_marginRight="30dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/LayoutPlayButtons"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dip">
+
+            <Button android:id="@+id/ButtonResign"
+                android:text="@string/ics_menu_resign"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="1dip"
+                style="@style/ChessButton"
+                />
+            <Button android:id="@+id/ButtonDraw"
+                android:text="@string/ics_menu_draw"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="1dip"
+                style="@style/ChessButton"
+                />
+            <Button android:id="@+id/ButtonFlag"
+                android:text="@string/ics_menu_flag"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="1dip"
+                style="@style/ChessButton"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="wrap_content"
+                android:text="@string/button_close"
+                android:id="@+id/ButtonClose"
+                style="@style/ChessButton"
+                />
+            <ImageButton
+                android:id="@+id/ButtonTakeBack"
+                android:src="@drawable/ic_backspace"
+                style="@style/ChessImageButton" />
+            <ImageButton
+                android:id="@+id/ButtonRefresh"
+                android:src="@drawable/ic_arrow_clockwise"
+                style="@style/ChessImageButton" />
+        </LinearLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:text="@string/pref_sound"
+            android:checked="true"
+            />
+    </LinearLayout>
+</ScrollView>
