@@ -49,13 +49,7 @@ public class Auth {
     NdJsonStream.Stream eventStream, gameStream;
     private String accessToken, refreshToken;
     Long expiresAt;
-    private Me me;
 
-    public static class Me {
-        public String id;
-        public String username;
-        public Map<String, Object> perfs;
-    }
 
     public interface AuthResponseHandler {
         void onResponse(JsonObject jsonObject);
@@ -86,14 +80,14 @@ public class Auth {
         clearTokens();
     }
 
-    public void authenticateWithToken(OAuth2AuthCodePKCE.Callback<Void, Exception> callback) {
+    public void authenticateWithToken(OAuth2AuthCodePKCE.Callback<String, Exception> callback) {
         // Already logged in, authenticate silently
-        authenticate(new OAuth2AuthCodePKCE.Callback<Void, Exception>() {
+        authenticate(new OAuth2AuthCodePKCE.Callback<String, Exception>() {
             @Override
-            public void onSuccess(Void result) {
-                Log.d("Auth", "Restored session for " + me.username);
+            public void onSuccess(String result) {
+                Log.d("Auth", "Restored session for " + result);
                 mainHandler.post(() -> {
-                    callback.onSuccess(null);
+                    callback.onSuccess(result);
                 });
             }
 
@@ -107,7 +101,7 @@ public class Auth {
         });
     }
 
-    public void handleLoginResponse(Intent data, OAuth2AuthCodePKCE.Callback<Void, Exception> callback) {
+    public void handleLoginResponse(Intent data, OAuth2AuthCodePKCE.Callback<String, Exception> callback) {
         Log.d(TAG, "handleLoginResponse");
 
         oauth.handleAuthResponse(data, new OAuth2AuthCodePKCE.Callback<net.openid.appauth.TokenResponse, Exception>() {
@@ -131,6 +125,10 @@ public class Auth {
                 });
             }
         });
+    }
+
+    public void playing(OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        get("/api/account/playing?nd=5", callback);
     }
 
     public void challenge(OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
@@ -157,7 +155,7 @@ public class Auth {
             }
 
             @Override
-            public void onClose() {
+            public void onClose(boolean success) {
                 mainHandler.post(responseHandler::onClose);
             }
         });
@@ -176,7 +174,7 @@ public class Auth {
             }
 
             @Override
-            public void onClose() {
+            public void onClose(boolean close) {
                 mainHandler.post(responseHandler::onClose);
             }
         });
@@ -202,7 +200,7 @@ public class Auth {
         return accessToken != null;
     }
 
-    public void authenticate(OAuth2AuthCodePKCE.Callback<Void, Exception> callback) {
+    public void authenticate(OAuth2AuthCodePKCE.Callback<String, Exception> callback) {
         Request req = new Request.Builder()
                 .url(LICHESS_HOST + "/api/account")
                 .addHeader("Authorization", "Bearer " + accessToken)
@@ -226,11 +224,10 @@ public class Auth {
                 }
 
                 String json = response.body().string();
+                JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
                 Log.d(TAG, json);
-                Type type = new TypeToken<Me>() {}.getType();
-                me = new Gson().fromJson(json, type);
                 mainHandler.post(() -> {
-                    callback.onSuccess(null);
+                    callback.onSuccess(jsonObject.get("username").getAsString());
                 });
 
             }
@@ -304,10 +301,72 @@ public class Auth {
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     String responseBody = response.body().string();
-                    JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
+                    try {
+                        JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
+                        mainHandler.post(() -> {
+                            callback.onError(jsonObject);
+                        });
+                    } catch (Exception ex) {
+                        Log.d(TAG, "could not parse " + response.code() + " => " + responseBody);
+                    }
+                    return;
+                }
+                Log.d(TAG, "wating for response...");
+                String responseBody = response.body().string();
+                Log.d(TAG, "responseBody " + responseBody);
+                try {
+                    String[] lines = responseBody.split("\r?\n");
+                    for (String line : lines) {
+                        if (line == null || line.trim().isEmpty()) {
+                            continue;
+                        }
+
+                        JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
+                        mainHandler.post(() -> {
+                            callback.onSuccess(jsonObject);
+                        });
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "Caught " + ex);
                     mainHandler.post(() -> {
-                        callback.onError(jsonObject);
+                        // callback.onError(ex);
+                        // @TODO another general error
                     });
+                }
+            }
+        });
+    }
+
+    public void get(String path, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        Log.d(TAG, "get " + path);
+        Request.Builder reqBuilder =  new Request.Builder()
+                .url(LICHESS_HOST + path)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Accept", "*/*")
+                .get();
+
+        httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure " + e);
+                mainHandler.post(() -> {
+                    //callback.onError(e);
+                    // @TODO general error
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    try {
+                        JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
+                        mainHandler.post(() -> {
+                            callback.onError(jsonObject);
+                        });
+                    } catch (Exception ex) {
+                        Log.d(TAG, "could not parse " + response.code() + " => " + responseBody);
+                    }
                     return;
                 }
                 Log.d(TAG, "wating for response...");

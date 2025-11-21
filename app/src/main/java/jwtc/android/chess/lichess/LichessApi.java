@@ -5,7 +5,12 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
@@ -18,12 +23,14 @@ public class LichessApi extends GameApi {
     private static final String TAG = "LichessApi";
 
     public interface LichessApiListener {
-        void onAuthenticate(boolean authenticated);
+        void onAuthenticate(String user);
         void onGameInit(Game game);
         void onGameUpdate(GameFull gameFull);
         // void onDrawAccepted(boolean accepted);
         void onGameFinish();
         void onInvalidMove(String reason);
+        // void onChallenge();
+        void onNowPlaying(List<Game> games);
     }
 
     protected int myTurn = 0, turn = 0;
@@ -53,21 +60,21 @@ public class LichessApi extends GameApi {
         if (auth.hasAccessToken()) {
             Log.d(TAG, "hasAccessToken");
 
-            auth.authenticateWithToken(new OAuth2AuthCodePKCE.Callback<Void, Exception>() {
+            auth.authenticateWithToken(new OAuth2AuthCodePKCE.Callback<String, Exception>() {
                 @Override
-                public void onSuccess(Void result) {
+                public void onSuccess(String result) {
                     Log.d(TAG, "Logged in with token");
-                    onAuthenticate(true);
+                    onAuthenticate(result);
                 }
 
                 @Override
                 public void onError(Exception e) {
                     Log.d(TAG, "Auth failed: " + e.getMessage());
-                    onAuthenticate(false);
+                    onAuthenticate(null);
                 }
             });
         } else {
-            onAuthenticate(false);
+            onAuthenticate(null);
         }
     }
 
@@ -80,17 +87,17 @@ public class LichessApi extends GameApi {
     }
 
     public void handleLoginData(Intent data) {
-        auth.handleLoginResponse(data, new OAuth2AuthCodePKCE.Callback<Void, Exception>() {
+        auth.handleLoginResponse(data, new OAuth2AuthCodePKCE.Callback<String, Exception>() {
             @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "Logged in!");
-                onAuthenticate(true);
+            public void onSuccess(String result) {
+                Log.d(TAG, "Logged in!" + result);
+                onAuthenticate(result);
             }
 
             @Override
             public void onError(Exception e) {
                 Log.d(TAG, "Auth failed: " + e.getMessage());
-                onAuthenticate(false);
+                onAuthenticate(null);
             }
         });
     }
@@ -108,7 +115,9 @@ public class LichessApi extends GameApi {
                     ongoingGame = (new Gson()).fromJson(jsonObject.get("game").getAsJsonObject(), Game.class);
 
                     myTurn = ongoingGame.color.equals("white") ? BoardConstants.WHITE : BoardConstants.BLACK;
-                    apiListener.onGameInit(ongoingGame);
+                    if (apiListener != null) {
+                        apiListener.onGameInit(ongoingGame);
+                    }
 
                     game(ongoingGame.gameId);
                 } else if (type.equals("gameFinish")) {
@@ -126,6 +135,30 @@ public class LichessApi extends GameApi {
             @Override
             public void onClose() {
                 Log.d(TAG, "event closed");
+            }
+        });
+    }
+
+    public void playing() {
+        this.auth.playing(new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "playing");
+                List<Game> gameList = new ArrayList<Game>();
+
+                JsonArray jsonArray = result.getAsJsonArray("nowPlaying");
+                for (JsonElement jsonElement : jsonArray) {
+                    JsonObject jsonObject = jsonElement.getAsJsonObject();
+                    gameList.add((new Gson()).fromJson(jsonObject, Game.class));
+                }
+                if (apiListener != null) {
+                    apiListener.onNowPlaying(gameList);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "playing " + e);
             }
         });
     }
@@ -155,11 +188,10 @@ public class LichessApi extends GameApi {
                 @Override
                 public void onError(JsonObject result) {
                     Log.d(TAG, "moved " + result);
-                    // {"error":"Piece on h2 cannot move to h5"}
-                    // @TODO
-                    jni.undo();
                     dispatchState();
-                    apiListener.onInvalidMove(result.get("error").getAsString());
+                    if (apiListener != null) {
+                        apiListener.onInvalidMove(result.get("error").getAsString());
+                    }
                 }
             });
         } else {
@@ -207,9 +239,15 @@ public class LichessApi extends GameApi {
         return jni.getTurn();
     }
 
-    private void onAuthenticate(boolean authenticated) {
-        apiListener.onAuthenticate(authenticated);
-        event();
+    private void onAuthenticate(String user) {
+        if (apiListener != null) {
+            apiListener.onAuthenticate(user);
+        }
+        if (user != null) {
+            // auth.closeStreams() ?
+            playing();
+            event();
+        }
     }
 
     private void game(String gameId) {
@@ -287,6 +325,8 @@ public class LichessApi extends GameApi {
                     Log.d(TAG, "Invalid move length " + sMove);
                 }
             }
+
+            dispatchMove(jni.getMyMove());
 
             dispatchState();
 

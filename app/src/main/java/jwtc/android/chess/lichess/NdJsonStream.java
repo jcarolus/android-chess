@@ -26,7 +26,7 @@ public class NdJsonStream {
 
     public interface Handler {
         void onResponse(JsonObject jsonObject);
-        void onClose();
+        void onClose(boolean success);
     }
 
     public static class Stream {
@@ -70,10 +70,10 @@ public class NdJsonStream {
                         }
                     }
                 }
-                handler.onClose();
+                handler.onClose(true);
             } catch (IOException e) {
                 Log.d(TAG, "Exception " + e);
-                handler.onClose();
+                handler.onClose(false);
             }
         });
 

@@ -14,9 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import java.util.List;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.services.ClockListener;
@@ -24,10 +27,10 @@ import jwtc.android.chess.services.LocalClockApi;
 import jwtc.chess.board.BoardConstants;
 
 
-public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener, ClockListener {
+public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener, ClockListener, ResultDialogListener {
     private static final String TAG = "LichessActivity";
     private static final int VIEW_ROOT_WAITING = 0, VIEW_ROOT_LOGIN = 1, VIEW_ROOT_SUB = 2;
-    private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_CHALLENGE = 1, VIEW_SUB_PLAY = 2;
+    private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1;
 
     private LichessApi lichessApi;
     private LocalClockApi localClockApi = new LocalClockApi();
@@ -36,7 +39,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private ImageView imageTurnOpp, imageTurnMe;
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
     private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
-    private TextView textViewLastMove;
+    private TextView textViewLastMove, textViewStatus;
+    private TextView textViewHandle;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -51,7 +55,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         public void onServiceDisconnected(ComponentName className) {
 
             Log.i(TAG, "onServiceDisconnected");
-            lichessApi.setAuth(null);
+            // lichessApi.setAuth(null);
+            lichessApi.setApiListener(null);
         }
     };
 
@@ -84,22 +89,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             }
         });
 
-        Button buttonLogout = findViewById(R.id.ButtonLogout);
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lichessApi.logout();
-            }
-        });
-
-        Button buttonChallengeOk = findViewById(R.id.ButtonChallengeOk);
-        buttonChallengeOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lichessApi.challenge();
-            }
-        });
-
         Button buttonResign = findViewById(R.id.ButtonResign);
         buttonResign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,6 +113,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewRatingMe = findViewById(R.id.TextViewRatingMe);
 
         textViewLastMove = findViewById(R.id.TextViewLastMove);
+        textViewStatus = findViewById(R.id.TextViewStatus);
+
+        textViewHandle = findViewById(R.id.TextViewHandle);
 
         afterCreate();
     }
@@ -171,10 +163,11 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
-    public void onAuthenticate(boolean authenticated) {
-        Log.d(TAG, "onAuthenticate " + authenticated);
+    public void onAuthenticate(String user) {
+        Log.d(TAG, "onAuthenticate " + user);
 
-        if (authenticated) {
+        if (user != null) {
+            textViewHandle.setText(user);
             displayLobby();
         } else {
             displayLogin();
@@ -183,13 +176,11 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onGameInit(Game game) {
-
+        displayPlay();
     }
 
     @Override
     public void onGameUpdate(GameFull gameFull) {
-        Log.d(TAG, "black " + gameFull.black.name);
-
         int myTurn = lichessApi.getMyTurn();
         int turn = lichessApi.getTurn();
         boolean isMyTurn = myTurn == turn;
@@ -202,6 +193,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         localClockApi.startClock(gameFull.clock.increment, gameFull.state.wtime, gameFull.state.btime, 0, System.currentTimeMillis());
 
+        textViewStatus.setText(gameFull.state.status + " " + gameFull.state.winner);
     }
 
     @Override
@@ -211,7 +203,12 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onInvalidMove(String reason) {
-        textViewLastMove.setText(reason);
+        textViewStatus.setText(reason);
+    }
+
+    @Override
+    public void onNowPlaying(List<Game> games) {
+        Log.d(TAG, "onNowPlaying " + games.size());
     }
 
     @Override
@@ -222,7 +219,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
             lichessApi.move(from, to);
 
-            return true;
+            // return true;
         }
         return false;
     }
@@ -230,8 +227,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void OnState() {
         super.OnState();
-
-        displayPlay();
 
         int myTurn = lichessApi.getMyTurn();
         int turn = lichessApi.getTurn();
@@ -249,6 +244,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
                 : R.drawable.turnwhite
                 : R.drawable.turnempty
         );
+
+        chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
+
+        textViewLastMove.setText(getLastMoveAndTurnDescription());
     }
 
     protected void displayLogin() {
@@ -261,7 +260,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     protected void displayCreateChallenge() {
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
-        viewAnimatorSub.setDisplayedChild(VIEW_SUB_CHALLENGE);
+        ChallengeDialog dlg = new ChallengeDialog(this, this, 10, getPrefs());
+        dlg.show();
     }
     protected void displayPlay() {
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
@@ -278,5 +278,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         textViewClockOpp.setText(playAsWhite ? blackRemaining : whiteRemaining);
         textViewClockMe.setText(playAsWhite ? whiteRemaining : blackRemaining);
+    }
+
+    @Override
+    public void OnDialogResult(int requestCode, Bundle data) {
+
     }
 }

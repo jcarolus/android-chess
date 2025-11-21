@@ -213,7 +213,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     @Override
     protected void onPause() {
-        Log.i(TAG, "onPause");
+        Log.d(TAG, "onPause");
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.putBoolean("moveSounds", fVolume == 1.0f);
@@ -221,6 +221,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         editor.commit();
 
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+
+        gameApi.removeListener(this);
+        super.onDestroy();
     }
 
     @Override

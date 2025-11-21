@@ -18,4 +18,5 @@ public class GameState {
     public boolean btakeback;
 
     public String status;
+    public String winner;
 }

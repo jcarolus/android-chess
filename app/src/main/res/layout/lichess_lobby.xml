@@ -1,52 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
-    android:padding="8dip">
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="320dip"
+    android:orientation="vertical">
+    <TableLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="8dip"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+        android:background="@color/primaryColor"
+        android:shrinkColumns="1"
+        android:stretchColumns="0"
+        android:layout_marginBottom="1dip">
+        <TableRow android:gravity="center_vertical">
+            <TextView
+                android:text="handle"
+                android:id="@+id/TextViewHandle"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyHeaderTextStyle" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="32dip"
+                android:layout_height="32dip"
                 android:src="@drawable/lichess"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dip"
-                android:layout_marginBottom="16dip"
-                />
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
                 android:layout_margin="8dip"
-                android:lines="2"
-                android:minLines="2"
-                android:maxLines="10"
-                android:scrollHorizontally="false"
-                android:ellipsize="none"
-                android:text="You are connected to Lichess"
                 />
+        </TableRow>
+    </TableLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="8dip">
 
-            <Button
-                android:text="Challenge"
-                android:id="@+id/ButtonChallenge"
-                android:layout_width="fill_parent"
-                style="@style/ChessButton"/>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lines="2"
+            android:minLines="2"
+            android:maxLines="10"
+            android:scrollHorizontally="false"
+            android:ellipsize="none"
+            android:text="You are connected to Lichess"
+            />
 
-            <Button
-                android:text="Logout"
-                android:id="@+id/ButtonLogout"
+        <Button
+            android:text="Challenge"
+            android:id="@+id/ButtonChallenge"
+            android:layout_width="wrap_content"
+            style="@style/ChessButton"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
+            <ListView
+                android:id="@+id/ListViewChallenges"
                 android:layout_width="fill_parent"
-                style="@style/ChessButton"/>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-</RelativeLayout>
+                android:layout_height="wrap_content" />
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>
