@@ -13,6 +13,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
@@ -21,7 +24,7 @@ public class ChallengeDialog extends ResultDialog {
 
     public static final String TAG = "Lichess.ChallengeDialog";
 
-    public ChallengeDialog(Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs) {
+    public ChallengeDialog(Context context, ResultDialogListener<Map<String, Object>> listener, int requestCode, final SharedPreferences prefs) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.lichess_challenge);
@@ -75,10 +78,19 @@ public class ChallengeDialog extends ResultDialog {
 //                editor.putString("editRatingRangeMAX", _editRatingRangeMAX.getText().toString());
 //                editor.putBoolean("checkRated", _checkRated.isChecked());
                 editor.apply();
-//                Bundle data = new Bundle();
-//                data.putCharSequence("challenge", s);
-//
-//                setResult(data);
+
+                Map<String, Object> data = new HashMap<>();
+
+
+                String username = editTextPlayer.getText().toString();
+                if (!username.isEmpty()) {
+                    data.put("username", username);
+                }
+                data.put("rated", checkBoxRated.isChecked());
+                data.put("clock.limit", 360);
+                data.put("clock.increment", 5);
+
+                setResult(data);
 
             }
         });

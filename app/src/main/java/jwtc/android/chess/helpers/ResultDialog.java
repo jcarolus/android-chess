@@ -2,14 +2,13 @@ package jwtc.android.chess.helpers;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import jwtc.android.chess.R;
 
-public class ResultDialog extends Dialog {
+public class ResultDialog<T> extends Dialog {
     protected int requestCode;
-    protected ResultDialogListener listener;
+    protected ResultDialogListener<T> listener;
 
     public ResultDialog(@NonNull Context context, ResultDialogListener listener, int requestCode) {
         super(context, R.style.ChessDialogTheme);
@@ -19,7 +18,7 @@ public class ResultDialog extends Dialog {
 
     }
 
-    protected void setResult(Bundle data) {
+    protected void setResult(T data) {
         listener.OnDialogResult(requestCode, data);
     }
 

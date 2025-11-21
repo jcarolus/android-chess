@@ -44,7 +44,7 @@ import jwtc.chess.PGNColumns;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
-public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener, AdapterView.OnItemClickListener, ClockListener {
+public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener<Bundle>, AdapterView.OnItemClickListener, ClockListener {
     public static final String TAG = "ICSClient";
 
     public static final int REQUEST_SAVE_GAME = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3;

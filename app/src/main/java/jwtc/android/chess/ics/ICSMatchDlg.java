@@ -33,7 +33,7 @@ public class ICSMatchDlg extends ResultDialog {
     private Button _butOk, _butCancel;
     private CheckBox _checkRated, _checkManual, _checkFormula;
 
-    public ICSMatchDlg(Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs) {
+    public ICSMatchDlg(Context context, ResultDialogListener<Bundle> listener, int requestCode, final SharedPreferences prefs) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.ics_match);

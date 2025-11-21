@@ -56,7 +56,7 @@ import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
 
-public class PlayActivity extends ChessBoardActivity implements EngineListener, ResultDialogListener, ClockListener, MoveRecyclerAdapter.OnItemClickListener {
+public class PlayActivity extends ChessBoardActivity implements EngineListener, ResultDialogListener<Bundle>, ClockListener, MoveRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;

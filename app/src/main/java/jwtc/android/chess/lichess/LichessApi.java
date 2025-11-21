@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
@@ -163,8 +164,8 @@ public class LichessApi extends GameApi {
         });
     }
 
-    public void challenge() {
-        this.auth.challenge(new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+    public void challenge(Map<String, Object> payload) {
+        this.auth.challenge(payload, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
             @Override
             public void onSuccess(JsonObject result) {
                 Log.d(TAG, "challenge posted");

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import java.util.List;
+import java.util.Map;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -27,7 +28,7 @@ import jwtc.android.chess.services.LocalClockApi;
 import jwtc.chess.board.BoardConstants;
 
 
-public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener, ClockListener, ResultDialogListener {
+public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener, ClockListener, ResultDialogListener<Map<String, Object>> {
     private static final String TAG = "LichessActivity";
     private static final int VIEW_ROOT_WAITING = 0, VIEW_ROOT_LOGIN = 1, VIEW_ROOT_SUB = 2;
     private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1;
@@ -281,7 +282,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
-    public void OnDialogResult(int requestCode, Bundle data) {
-
+    public void OnDialogResult(int requestCode, Map<String, Object> data) {
+        lichessApi.challenge(data);
     }
 }

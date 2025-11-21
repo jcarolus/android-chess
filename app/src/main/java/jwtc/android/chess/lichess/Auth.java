@@ -131,17 +131,9 @@ public class Auth {
         get("/api/account/playing?nd=5", callback);
     }
 
-    public void challenge(OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
-
-        String username = "maia1";
-
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("username", username);
-        payload.put("rated", false);
-        payload.put("clock.limit", 360);
-        payload.put("clock.increment", 5);
-        // payload.put("keepAliveStream", true); // if set, then nd-json
-
+    public void challenge(Map<String, Object> payload, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        String username = (String) payload.get("username");
+        payload.remove("username");
         post("/api/challenge/" + username, payload, callback);
     }
 
