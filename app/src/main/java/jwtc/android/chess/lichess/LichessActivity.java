@@ -131,6 +131,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
                 new String[]{"text_time", "text_opponent"}, new int[]{R.id.text_time, R.id.text_opponent});
 
         listViewGames = findViewById(R.id.ListViewGames);
+        listViewGames.setAdapter(adapterGames);
         listViewGames.setOnItemClickListener(this);
 
         afterCreate();
@@ -211,6 +212,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         localClockApi.startClock(gameFull.clock.increment, gameFull.state.wtime, gameFull.state.btime, 0, System.currentTimeMillis());
 
         textViewStatus.setText(gameFull.state.status + " " + gameFull.state.winner);
+
+        // @TODO offers draw
+        // gameFull.state.wdraw
     }
 
     @Override
@@ -335,8 +339,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (view == listViewGames) {
-            if (nowPlayingGames.size()  > position) {
+        Log.d(TAG, "onItemClick");
+        if (parent == listViewGames) {
+            Log.d(TAG, "listViewGames " + nowPlayingGames.size() + " " + position);
+            if (nowPlayingGames.size() > position) {
                 Game game = nowPlayingGames.get(position);
                 lichessApi.game(game.gameId);
                 displayPlay();

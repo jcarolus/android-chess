@@ -42,7 +42,6 @@
             android:background="@color/paneBackgroundColor"
             android:accessibilityLiveRegion="polite"/>
         <LinearLayout
-            android:id="@+id/LayoutPlayButtons"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

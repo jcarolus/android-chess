@@ -137,6 +137,9 @@ public class Auth {
     }
 
     public void event(AuthResponseHandler responseHandler) {
+        if (eventStream != null) {
+            eventStream.close();
+        }
         eventStream = openStream("/api/stream/event", null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
@@ -149,12 +152,16 @@ public class Auth {
             public void onClose(boolean success) {
                 mainHandler.post(() -> {
                     responseHandler.onClose(success);
+                    eventStream = null;
                 });
             }
         });
     }
 
     public void game(String gameId, AuthResponseHandler responseHandler) {
+        if (gameStream != null) {
+            gameStream.close();
+        }
         gameStream = openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
@@ -170,6 +177,7 @@ public class Auth {
             public void onClose(boolean sucess) {
                 mainHandler.post(() -> {
                     responseHandler.onClose(sucess);
+                    gameStream = null;
                 });
             }
         });
