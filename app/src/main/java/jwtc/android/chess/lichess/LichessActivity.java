@@ -193,8 +193,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
-    public void onGameInit(Game game) {
-        openGame(game.gameId);
+    public void onGameInit(String gameId) {
+        openGame(gameId);
     }
 
     @Override

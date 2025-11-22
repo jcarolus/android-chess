@@ -25,7 +25,7 @@ public class LichessApi extends GameApi {
 
     public interface LichessApiListener {
         void onAuthenticate(String user);
-        void onGameInit(Game game);
+        void onGameInit(String gameId);
         void onGameUpdate(GameFull gameFull);
         // void onDrawAccepted(boolean accepted);
         void onGameFinish();
@@ -37,8 +37,9 @@ public class LichessApi extends GameApi {
     protected int turn = 0;
     private Auth auth;
     private LichessApiListener apiListener;
-    private Game ongoingGame;
+
     private GameFull ongoingGameFull;
+    private String user;
 
     public LichessApi() {
         super();
@@ -113,10 +114,10 @@ public class LichessApi extends GameApi {
 
                     // @TODO close game stream / keep track of multiple games
 
-                    ongoingGame = (new Gson()).fromJson(jsonObject.get("game").getAsJsonObject(), Game.class);
+                    Game ongoingGame = (new Gson()).fromJson(jsonObject.get("game").getAsJsonObject(), Game.class);
 
                     if (apiListener != null) {
-                        apiListener.onGameInit(ongoingGame);
+                        apiListener.onGameInit(ongoingGame.gameId);
                     }
                 } else if (type.equals("gameFinish")) {
                     //
@@ -172,8 +173,8 @@ public class LichessApi extends GameApi {
     }
 
     public void move(int from, int to) {
-        if (ongoingGame != null) {
-            this.auth.move(ongoingGame.gameId, Pos.toString(from) + Pos.toString(to), new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+        if (ongoingGameFull != null) {
+            this.auth.move(ongoingGameFull.id, Pos.toString(from) + Pos.toString(to), new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
                 @Override
                 public void onSuccess(JsonObject result) {
                     Log.d(TAG, "moved");
@@ -194,8 +195,8 @@ public class LichessApi extends GameApi {
     }
 
     public void resign() {
-        if (ongoingGame != null) {
-            this.auth.resign(ongoingGame.gameId, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+        if (ongoingGameFull != null) {
+            this.auth.resign(ongoingGameFull.id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
                 @Override
                 public void onSuccess(JsonObject result) {
 
@@ -210,8 +211,8 @@ public class LichessApi extends GameApi {
     }
 
     public void draw(boolean accept) {
-        if (ongoingGame != null) {
-            this.auth.draw(ongoingGame.gameId, accept ? "yes" : "no", new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+        if (ongoingGameFull != null) {
+            this.auth.draw(ongoingGameFull.id, accept ? "yes" : "no", new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
                 @Override
                 public void onSuccess(JsonObject result) {
 
@@ -247,14 +248,15 @@ public class LichessApi extends GameApi {
     }
 
     public int getMyTurn() {
-        return ongoingGame.color.equals("white") ? BoardConstants.WHITE : BoardConstants.BLACK;
+        return ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK;
     }
 
     public int getTurn() {
         return jni.getTurn();
     }
 
-    private void onAuthenticate(String user) {
+    private void onAuthenticate(String result) {
+        user = result;
         if (apiListener != null) {
             apiListener.onAuthenticate(user);
         }
@@ -271,7 +273,7 @@ public class LichessApi extends GameApi {
     }
     private void processGameState() {
         Log.d(TAG, "processGameState");
-        if (ongoingGame != null) {
+        if (ongoingGameFull != null) {
             // jni.initFEN(ongoingGame.fen);
             if (ongoingGameFull.initialFen.equals("startpos")) {
                 jni.newGame();
