@@ -9,11 +9,16 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +26,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.services.ClockListener;
@@ -28,7 +34,7 @@ import jwtc.android.chess.services.LocalClockApi;
 import jwtc.chess.board.BoardConstants;
 
 
-public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener, ClockListener, ResultDialogListener<Map<String, Object>> {
+public class LichessActivity extends ChessBoardActivity implements LichessApi.LichessApiListener, ClockListener, ResultDialogListener<Map<String, Object>>, AdapterView.OnItemClickListener {
     private static final String TAG = "LichessActivity";
     private static final int VIEW_ROOT_WAITING = 0, VIEW_ROOT_LOGIN = 1, VIEW_ROOT_SUB = 2;
     private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1;
@@ -42,14 +48,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
     private TextView textViewLastMove, textViewStatus;
     private TextView textViewHandle;
+    private ListView listViewGames;
+    private SimpleAdapter adapterGames;
+
+    private ArrayList<HashMap<String, String>> mapGames = new ArrayList<HashMap<String, String>>();
+    private List<Game> nowPlayingGames;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TAG, "onServiceConnected");
             LichessService lichessService = ((LichessService.LocalBinder)service).getService();
             lichessApi.setAuth(lichessService.getAuth());
-            lichessApi.setApiListener(LichessActivity.this);
-
             lichessApi.resume();
         }
 
@@ -118,6 +127,12 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         textViewHandle = findViewById(R.id.TextViewHandle);
 
+        adapterGames = new SimpleAdapter(LichessActivity.this, mapGames, R.layout.lichess_game_row,
+                new String[]{"text_time", "text_opponent"}, new int[]{R.id.text_time, R.id.text_opponent});
+
+        listViewGames = findViewById(R.id.ListViewGames);
+        listViewGames.setOnItemClickListener(this);
+
         afterCreate();
     }
 
@@ -125,7 +140,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume");
-
+        lichessApi.setApiListener(LichessActivity.this);
     }
 
     @Override
@@ -170,6 +185,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         if (user != null) {
             textViewHandle.setText(user);
             displayLobby();
+            lichessApi.event();
         } else {
             displayLogin();
         }
@@ -177,7 +193,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onGameInit(Game game) {
-        displayPlay();
+        openGame(game.gameId);
     }
 
     @Override
@@ -210,6 +226,16 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onNowPlaying(List<Game> games) {
         Log.d(TAG, "onNowPlaying " + games.size());
+        nowPlayingGames = games;
+        mapGames.clear();
+        for (int i = 0; i < games.size(); i++) {
+            Game game = games.get(i);
+            HashMap<String, String> gameMap = new HashMap<>();
+            gameMap.put("text_rating", "" + game.opponent.rating);
+            gameMap.put("text_opponent", game.opponent.username);
+            mapGames.add(gameMap);
+        }
+        adapterGames.notifyDataSetChanged();
     }
 
     @Override
@@ -255,6 +281,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_LOGIN);
     }
     protected void displayLobby() {
+        lichessApi.playing();
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_LOBBY);
     }
@@ -265,8 +292,28 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         dlg.show();
     }
     protected void displayPlay() {
+        // @TOD reset info?
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_PLAY);
+    }
+
+    protected void openGame(String gameId) {
+        lichessApi.game(gameId);
+        displayPlay();
+    }
+
+    @Override
+    public boolean needExitConfirmationDialog() {
+        return true;
+    }
+
+    @Override
+    public void showExitConfirmationDialog() {
+        if (viewAnimatorRoot.getDisplayedChild() == VIEW_ROOT_SUB && viewAnimatorSub.getDisplayedChild() == VIEW_SUB_PLAY) {
+            displayLobby();
+        } else {
+            finish();
+        }
     }
 
     @Override
@@ -284,5 +331,16 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void OnDialogResult(int requestCode, Map<String, Object> data) {
         lichessApi.challenge(data);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (view == listViewGames) {
+            if (nowPlayingGames.size()  > position) {
+                Game game = nowPlayingGames.get(position);
+                lichessApi.game(game.gameId);
+                displayPlay();
+            }
+        }
     }
 }

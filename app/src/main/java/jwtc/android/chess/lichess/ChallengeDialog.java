@@ -29,6 +29,7 @@ public class ChallengeDialog extends ResultDialog {
 
         setContentView(R.layout.lichess_challenge);
 
+        // @TODO requestCode determines seek or challenge (hide player text)
         setTitle("Seek or Challenge");
 
         final EditText editTextPlayer = (EditText) findViewById(R.id.EditTextMatchOpponent);

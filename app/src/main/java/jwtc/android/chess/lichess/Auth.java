@@ -53,8 +53,7 @@ public class Auth {
 
     public interface AuthResponseHandler {
         void onResponse(JsonObject jsonObject);
-        void onError(); // @TODO needed?
-        void onClose();
+        void onClose(boolean success);
     }
 
     public Auth(Context context) {
@@ -148,7 +147,9 @@ public class Auth {
 
             @Override
             public void onClose(boolean success) {
-                mainHandler.post(responseHandler::onClose);
+                mainHandler.post(() -> {
+                    responseHandler.onClose(success);
+                });
             }
         });
     }
@@ -166,8 +167,10 @@ public class Auth {
             }
 
             @Override
-            public void onClose(boolean close) {
-                mainHandler.post(responseHandler::onClose);
+            public void onClose(boolean sucess) {
+                mainHandler.post(() -> {
+                    responseHandler.onClose(sucess);
+                });
             }
         });
     }

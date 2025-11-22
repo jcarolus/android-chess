@@ -34,7 +34,7 @@ public class LichessApi extends GameApi {
         void onNowPlaying(List<Game> games);
     }
 
-    protected int myTurn = 0, turn = 0;
+    protected int turn = 0;
     private Auth auth;
     private LichessApiListener apiListener;
     private Game ongoingGame;
@@ -115,13 +115,11 @@ public class LichessApi extends GameApi {
 
                     ongoingGame = (new Gson()).fromJson(jsonObject.get("game").getAsJsonObject(), Game.class);
 
-                    myTurn = ongoingGame.color.equals("white") ? BoardConstants.WHITE : BoardConstants.BLACK;
                     if (apiListener != null) {
                         apiListener.onGameInit(ongoingGame);
                     }
-
-                    game(ongoingGame.gameId);
                 } else if (type.equals("gameFinish")) {
+                    //
                     onGameFinish();
                 } else if (type.equals("challenge")) {
                     onChallenge();
@@ -129,13 +127,8 @@ public class LichessApi extends GameApi {
             }
 
             @Override
-            public void onError() {
-
-            }
-
-            @Override
-            public void onClose() {
-                Log.d(TAG, "event closed");
+            public void onClose(boolean success) {
+                Log.d(TAG, "event closed " + success);
             }
         });
     }
@@ -232,26 +225,7 @@ public class LichessApi extends GameApi {
         }
     }
 
-    public int getMyTurn() {
-        return myTurn;
-    }
-
-    public int getTurn() {
-        return jni.getTurn();
-    }
-
-    private void onAuthenticate(String user) {
-        if (apiListener != null) {
-            apiListener.onAuthenticate(user);
-        }
-        if (user != null) {
-            // auth.closeStreams() ?
-            playing();
-            event();
-        }
-    }
-
-    private void game(String gameId) {
+    public void game(String gameId) {
         this.auth.game(gameId, new Auth.AuthResponseHandler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
@@ -266,15 +240,24 @@ public class LichessApi extends GameApi {
             }
 
             @Override
-            public void onError() {
-
-            }
-
-            @Override
-            public void onClose() {
-
+            public void onClose(boolean success) {
+                Log.d(TAG, "game closed " + success);
             }
         });
+    }
+
+    public int getMyTurn() {
+        return ongoingGame.color.equals("white") ? BoardConstants.WHITE : BoardConstants.BLACK;
+    }
+
+    public int getTurn() {
+        return jni.getTurn();
+    }
+
+    private void onAuthenticate(String user) {
+        if (apiListener != null) {
+            apiListener.onAuthenticate(user);
+        }
     }
 
     private void onGameFinish() {
