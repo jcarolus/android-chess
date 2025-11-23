@@ -2,23 +2,54 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="4dip"
+    android:layout_margin="8dip"
     android:gravity="center">
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="1">
+        android:stretchColumns="2">
         <TableRow
-            android:padding="8dip">
+            android:paddingTop="8dip"
+            android:paddingBottom="4dip"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/image_turn_white"
+                android:src="@drawable/turnempty"
+                android:layout_height="12dip"
+                android:layout_width="12dip"/>
             <TextView
-                android:id="@+id/text_time"
+                android:id="@+id/text_time_white"
                 android:textSize="16sp"
                 android:text="00:00"
                 android:layout_width="64dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dip"/>
 
             <TextView
-                android:id="@+id/text_opponent"
+                android:id="@+id/text_white"
+                android:textSize="16sp"
+                android:text="opponent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+        <TableRow
+            android:paddingTop="4dip"
+            android:paddingBottom="8dip"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/image_turn_black"
+                android:src="@drawable/turnempty"
+                android:layout_height="12dip"
+                android:layout_width="12dip"/>
+            <TextView
+                android:id="@+id/text_time_black"
+                android:textSize="16sp"
+                android:text="00:00"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dip"/>
+            <TextView
+                android:id="@+id/text_black"
                 android:textSize="16sp"
                 android:text="opponent"
                 android:layout_width="wrap_content"

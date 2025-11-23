@@ -67,7 +67,8 @@
                 <TextView
                     android:text="@string/ics_seekvariant"
                     android:gravity="fill"
-                    style="@style/MyHeaderTextStyle" />
+                    style="@style/MyHeaderTextStyle"
+                    android:id="@+id/tvVariant"/>
 
                 <Spinner
                     android:id="@+id/SpinnerMatchVariant"
@@ -80,7 +81,8 @@
                 <TextView
                     android:text="@string/ics_seekcolor"
                     android:layout_gravity="fill"
-                    style="@style/MyHeaderTextStyle" />
+                    style="@style/MyHeaderTextStyle"
+                    android:id="@+id/tvColor"/>
 
                 <Spinner
                     android:id="@+id/SpinnerMatchColor"

@@ -2,6 +2,7 @@ package jwtc.android.chess.lichess;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -20,7 +21,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 
-public class ChallengeDialog extends ResultDialog {
+public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
     public static final String TAG = "Lichess.ChallengeDialog";
 
@@ -40,28 +41,38 @@ public class ChallengeDialog extends ResultDialog {
         adapterTime.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTime.setAdapter(adapterTime);
 
-        final Spinner spinIncrement = (Spinner) findViewById(R.id.SpinnerMatchTimeIncrement);
+        final Spinner spinnerIncrement = (Spinner) findViewById(R.id.SpinnerMatchTimeIncrement);
         final ArrayAdapter<CharSequence> adapterIncrement = ArrayAdapter.createFromResource(context, R.array.match_time_increments, android.R.layout.simple_spinner_item);
         adapterIncrement.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinIncrement.setAdapter(adapterIncrement);
+        spinnerIncrement.setAdapter(adapterIncrement);
 
+        final TextView textViewVariant = findViewById(R.id.tvVariant);
         final Spinner spinnerVariant = (Spinner) findViewById(R.id.SpinnerMatchVariant);
         final ArrayAdapter<CharSequence> adapterVariant = ArrayAdapter.createFromResource(context, R.array.match_variant, android.R.layout.simple_spinner_item);
         adapterVariant.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerVariant.setAdapter(adapterVariant);
+        spinnerVariant.setVisibility(View.GONE);
+        textViewVariant.setVisibility(View.GONE);
 
+        final TextView textViewVColor = findViewById(R.id.tvColor);
         final Spinner spinnerColor = (Spinner) findViewById(R.id.SpinnerMatchColor);
         final ArrayAdapter<CharSequence> adapterColor = ArrayAdapter.createFromResource(context, R.array.match_color, android.R.layout.simple_spinner_item);
         adapterColor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerColor.setAdapter(adapterColor);
+        spinnerColor.setVisibility(View.GONE);
+        textViewVColor.setVisibility(View.GONE);
 
         final EditText editRatingRangeMIN = (EditText) findViewById(R.id.EditTextMatchRatingRangeMIN);
         final TextView textViewRatingRangeMIN = (TextView) findViewById(R.id.tvMatchRatingMIN);
         editRatingRangeMIN.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editRatingRangeMIN.setVisibility(View.GONE);
+        textViewRatingRangeMIN.setVisibility(View.GONE);
 
         final EditText editTextRatingRangeMAX = (EditText) findViewById(R.id.EditTextMatchRatingRangeMAX);
         final TextView textViewRatingRangeMAX = (TextView) findViewById(R.id.tvMatchRatingMAX);
         editTextRatingRangeMAX.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextRatingRangeMAX.setVisibility(View.GONE);
+        textViewRatingRangeMAX.setVisibility(View.GONE);
 
         final CheckBox checkBoxRated = (CheckBox) findViewById(R.id.CheckBoxSeekRated);
 
@@ -82,17 +93,21 @@ public class ChallengeDialog extends ResultDialog {
 
                 Map<String, Object> data = new HashMap<>();
 
-
                 String username = editTextPlayer.getText().toString();
                 if (!username.isEmpty()) {
                     data.put("username", username);
                 }
                 data.put("rated", checkBoxRated.isChecked());
-                data.put("clock.limit", 360);
-                data.put("clock.increment", 5);
+
+                int minutes = spinnerTime.getSelectedItemPosition() * 60;
+                int seconds = spinnerIncrement.getSelectedItemPosition() * 60;
+
+                if (minutes > 0) {
+                    data.put("clock.limit", minutes);
+                    data.put("clock.increment", seconds);
+                }
 
                 setResult(data);
-
             }
         });
         final Button buttonCancel = (Button) findViewById(R.id.ButtonChallengeCancel);

@@ -230,7 +230,7 @@ public class Auth {
                 JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
                 Log.d(TAG, json);
                 mainHandler.post(() -> {
-                    callback.onSuccess(jsonObject.get("username").getAsString());
+                    callback.onSuccess(jsonObject.get("id").getAsString());
                 });
 
             }

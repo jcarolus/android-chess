@@ -31,7 +31,7 @@ public class LichessApi extends GameApi {
         void onGameFinish();
         void onInvalidMove(String reason);
         // void onChallenge();
-        void onNowPlaying(List<Game> games);
+        void onNowPlaying(List<Game> games, String me);
     }
 
     protected int turn = 0;
@@ -147,7 +147,7 @@ public class LichessApi extends GameApi {
                     gameList.add((new Gson()).fromJson(jsonObject, Game.class));
                 }
                 if (apiListener != null) {
-                    apiListener.onNowPlaying(gameList);
+                    apiListener.onNowPlaying(gameList, user);
                 }
             }
 

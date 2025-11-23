@@ -107,7 +107,15 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             }
         });
 
-        //
+        Button buttonDraw = findViewById(R.id.ButtonDraw);
+        buttonDraw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lichessApi.draw(true);
+            }
+        });
+
+        localClockApi.addListener(this);
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
@@ -128,7 +136,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewHandle = findViewById(R.id.TextViewHandle);
 
         adapterGames = new SimpleAdapter(LichessActivity.this, mapGames, R.layout.lichess_game_row,
-                new String[]{"text_time", "text_opponent"}, new int[]{R.id.text_time, R.id.text_opponent});
+                new String[]{"image_turn_white", "text_white", "image_turn_black", "text_black"},
+                new int[]{R.id.image_turn_white, R.id.text_white, R.id.image_turn_black, R.id.text_black});
 
         listViewGames = findViewById(R.id.ListViewGames);
         listViewGames.setAdapter(adapterGames);
@@ -209,9 +218,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewRatingOpp.setText(""  + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
         textViewRatingMe.setText("" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
 
-        localClockApi.startClock(gameFull.clock.increment, gameFull.state.wtime, gameFull.state.btime, 0, System.currentTimeMillis());
-
-        textViewStatus.setText(gameFull.state.status + " " + gameFull.state.winner);
+        if (gameFull.clock != null) {
+            localClockApi.startClock(gameFull.clock.increment, gameFull.state.wtime, gameFull.state.btime, turn, System.currentTimeMillis());
+        }
+        textViewStatus.setText(gameFull.state.status + " " + (gameFull.state.winner != null ? gameFull.state.winner : ""));
 
         // @TODO offers draw
         // gameFull.state.wdraw
@@ -228,15 +238,22 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
-    public void onNowPlaying(List<Game> games) {
+    public void onNowPlaying(List<Game> games, String me) {
         Log.d(TAG, "onNowPlaying " + games.size());
         nowPlayingGames = games;
         mapGames.clear();
         for (int i = 0; i < games.size(); i++) {
             Game game = games.get(i);
             HashMap<String, String> gameMap = new HashMap<>();
-            gameMap.put("text_rating", "" + game.opponent.rating);
-            gameMap.put("text_opponent", game.opponent.username);
+            if (game.color.equals("white")) {
+                gameMap.put("image_turn_white", "" + (game.isMyTurn ? R.drawable.turnwhite : R.drawable.turnempty));
+                gameMap.put("text_white", me);
+                gameMap.put("text_black", game.opponent.username);
+            } else {
+                gameMap.put("image_turn_white", "" + (game.isMyTurn ? R.drawable.turnempty : R.drawable.turnwhite));
+                gameMap.put("text_white", game.opponent.username);
+                gameMap.put("text_black", me);
+            }
             mapGames.add(gameMap);
         }
         adapterGames.notifyDataSetChanged();
@@ -250,8 +267,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
             lichessApi.move(from, to);
 
-            // return true;
+            return false;
         }
+        rebuildBoard();
         return false;
     }
 
