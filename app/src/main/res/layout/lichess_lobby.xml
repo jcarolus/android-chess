@@ -33,13 +33,9 @@
         android:layout_margin="8dip">
 
         <TextView
+            style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:lines="2"
-            android:minLines="2"
-            android:maxLines="10"
-            android:scrollHorizontally="false"
-            android:ellipsize="none"
             android:text="You are connected to Lichess"
             />
 

@@ -17,6 +17,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +48,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private ImageView imageTurnOpp, imageTurnMe;
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
     private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
-    private TextView textViewLastMove, textViewStatus;
+    private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private TextView textViewHandle;
     private ListView listViewGames;
     private SimpleAdapter adapterGames;
@@ -132,6 +134,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         textViewLastMove = findViewById(R.id.TextViewLastMove);
         textViewStatus = findViewById(R.id.TextViewStatus);
+        textViewOfferDraw = findViewById(R.id.TextViewOfferDraw);
 
         textViewHandle = findViewById(R.id.TextViewHandle);
 
@@ -221,10 +224,16 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         if (gameFull.clock != null) {
             localClockApi.startClock(gameFull.clock.increment, gameFull.state.wtime, gameFull.state.btime, turn, System.currentTimeMillis());
         }
-        textViewStatus.setText(gameFull.state.status + " " + (gameFull.state.winner != null ? gameFull.state.winner : ""));
+        textViewStatus.setText(gameFull.state.status + " " + (gameFull.state.winner != null ? "Winner: " + gameFull.state.winner : ""));
 
-        // @TODO offers draw
-        // gameFull.state.wdraw
+        boolean isDrawOffer = playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw;
+        if (isDrawOffer) {
+            textViewOfferDraw.setText("Your opponent offers a draw. Tap Draw to accept");
+            textViewOfferDraw.setBackgroundColor(ContextCompat.getColor(this, R.color.secondaryColor));
+        } else {
+            textViewOfferDraw.setText("");
+            textViewOfferDraw.setBackgroundColor(ContextCompat.getColor(this, R.color.primaryColor));
+        }
     }
 
     @Override

@@ -139,9 +139,9 @@ public class ChessBoardView extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        // take the full width in portrait
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize =  MeasureSpec.getSize(heightMeasureSpec);
+        // determine portrait vs landscape - take the smallest
         int size = widthSize < heightSize ? widthSize : heightSize;
         setMeasuredDimension(size, size);
     }

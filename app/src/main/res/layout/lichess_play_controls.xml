@@ -9,37 +9,30 @@
         android:orientation="vertical">
         <TextView
             android:id="@+id/TextViewLastMove"
-            style="@style/MySmallTextStyle"
+            style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:scrollHorizontally="false"
-            android:singleLine="false"
-            android:minLines="2"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:paddingLeft="4dip"
-            android:paddingRight="4dip"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:background="@color/paneBackgroundColor"
             android:accessibilityLiveRegion="assertive"/>
         <TextView
             android:id="@+id/TextViewStatus"
-            style="@style/MySmallTextStyle"
+            style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:scrollHorizontally="false"
-            android:singleLine="false"
-            android:minLines="2"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:paddingLeft="4dip"
-            android:paddingRight="4dip"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:background="@color/paneBackgroundColor"
+            android:accessibilityLiveRegion="polite"/>
+        <TextView
+            android:id="@+id/TextViewOfferDraw"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
             android:accessibilityLiveRegion="polite"/>
         <LinearLayout
             android:orientation="horizontal"

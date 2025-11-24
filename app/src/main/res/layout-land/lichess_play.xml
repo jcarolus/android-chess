@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ICSPlay"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <include
-        android:id="@+id/includeboard"
-        layout="@layout/chessboard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <RelativeLayout
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <jwtc.android.chess.views.ChessBoardContainerView
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent">
-        <include layout="@layout/lichess_board_top"/>
-        <include layout="@layout/lichess_board_bottom"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            />
+        android:layout_height="match_parent">
 
+        <include layout="@layout/lichess_board_top"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+
+        <include
+            android:id="@+id/includeboard"
+            layout="@layout/chessboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <include
+            layout="@layout/lichess_board_bottom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+
+    </jwtc.android.chess.views.ChessBoardContainerView>
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
         <include layout="@layout/lichess_play_controls"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_below="@id/LayoutBoardTop"
-            android:layout_above="@id/LayoutBoardBottom"
             />
     </RelativeLayout>
 </LinearLayout>
