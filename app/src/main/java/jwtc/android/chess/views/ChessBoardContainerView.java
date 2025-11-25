@@ -42,6 +42,22 @@ public class ChessBoardContainerView extends ViewGroup {
         Log.d(TAG, "init " + top + " " + board + " " + bottom);
     }
 
+    @Override public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(getContext(), attrs);
+    }
+
+    @Override protected LayoutParams generateDefaultLayoutParams() {
+        return new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    }
+
+    @Override protected LayoutParams generateLayoutParams(LayoutParams lp) {
+        return new MarginLayoutParams(lp);
+    }
+
+    @Override protected boolean checkLayoutParams(LayoutParams lp) {
+        return lp instanceof MarginLayoutParams;
+    }
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         int curTop = 0;
@@ -79,9 +95,6 @@ public class ChessBoardContainerView extends ViewGroup {
 
         int topHeight = top.getMeasuredHeight();
         int bottomHeight = bottom.getMeasuredHeight();
-
-        Log.d(TAG, "onMeasure " + widthSize + " " + heightSize + " => " + bottom.getMeasuredWidth());
-
         int boardSize = minSize - (topHeight + bottomHeight);
 
         int boardWidthSpec = getChildMeasureSpec(widthMeasureSpec, 0, boardSize);
@@ -93,8 +106,6 @@ public class ChessBoardContainerView extends ViewGroup {
 
         int width = resolveSize(boardSize, widthMeasureSpec);
         int height = resolveSize(minSize, heightMeasureSpec);
-
-        Log.d(TAG, "returning " + width);
 
         setMeasuredDimension(width, height);
     }

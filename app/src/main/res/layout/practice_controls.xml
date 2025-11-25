@@ -11,10 +11,7 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dip"
-            android:paddingTop="4dip"
-            android:paddingBottom="4dip">
-
+            android:gravity="center">
             <ImageButton
                 android:id="@+id/ButtonPracticeRetry"
                 android:src="@drawable/ic_arrow_clockwise"

@@ -4,7 +4,6 @@
     android:id="@+id/LayoutBoardBottom"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primaryColor"
     android:layout_marginTop="1dip"
     android:shrinkColumns="0,1,3"
     android:stretchColumns="2">
@@ -23,7 +22,7 @@
             android:layout_width="wrap_content"
             android:text="00:00"
             android:gravity="center_vertical"
-            style="@style/MyNormalTextStyle"
+            style="@style/MyHeaderTextStyle"
             android:layout_marginLeft="8dip" />
 
         <TextView
@@ -31,6 +30,7 @@
             android:id="@+id/TextViewPlayerMe"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:ellipsize="end"
             style="@style/MyHeaderTextStyle" />
 
         <TextView

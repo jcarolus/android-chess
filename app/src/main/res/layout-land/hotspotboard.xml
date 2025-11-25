@@ -5,27 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dip">
-    <include
-        android:id="@+id/includeboard"
+    <jwtc.android.chess.views.ChessBoardContainerView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/chessboard" />
-    <RelativeLayout
-        android:layout_width="match_parent"
         android:layout_height="match_parent">
         <include layout="@layout/hotspotboard_board_top"/>
-
-        <include layout="@layout/hotspotboard_controls"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/LayoutBoardTop"
-            android:layout_above="@id/LayoutBoardBottom"
-            />
-
+        <include
+            android:id="@+id/includeboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/chessboard" />
         <include layout="@layout/hotspotboard_board_bottom"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"/>
-    </RelativeLayout>
-
+    </jwtc.android.chess.views.ChessBoardContainerView>
+    <include layout="@layout/hotspotboard_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dip"
+        android:layout_marginLeft="32dip"
+    />
 </LinearLayout>

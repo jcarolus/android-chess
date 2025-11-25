@@ -5,18 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dip">
-    <include
-        android:id="@+id/includeboard"
+    <jwtc.android.chess.views.ChessBoardContainerView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <include layout="@layout/practice_board_top"/>
+        <include
+            android:id="@+id/includeboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/chessboard"/>
+        <include layout="@layout/practice_board_bottom"/>
+    </jwtc.android.chess.views.ChessBoardContainerView>
+    <include layout="@layout/practice_controls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/chessboard"/>
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="4dip">
-        <include layout="@layout/practice_board_top"/>
-        <include layout="@layout/practice_controls"/>
-        <include layout="@layout/practice_board_bottom"/>
-    </LinearLayout>
+        android:layout_marginTop="32dip"
+        android:layout_marginLeft="32dip"/>
 </LinearLayout>

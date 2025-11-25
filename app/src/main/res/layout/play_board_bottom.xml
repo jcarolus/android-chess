@@ -4,11 +4,9 @@
     android:id="@+id/LayoutBoardBottom"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primaryColor"
     android:padding="4dip">
 
     <TableRow android:gravity="center_vertical">
-
         <ImageView
             android:id="@+id/ImageTurnMe"
             android:src="@drawable/turnempty"
@@ -20,10 +18,10 @@
         <TextView
             android:id="@+id/TextViewClockTimeMe"
             android:layout_height="wrap_content"
-            android:layout_width="50dip"
+            android:layout_width="60dip"
             android:text="00:00"
             android:importantForAccessibility="no"
-            style="@style/MyNormalTextStyle" />
+            style="@style/MyHeaderTextStyle" />
 
         <TextView
             android:id="@+id/TextViewMe"
@@ -31,13 +29,15 @@
             android:layout_weight="2"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            style="@style/MyNormalTextStyle"
+            android:ellipsize="end"
+            style="@style/MyHeaderTextStyle"
             android:text="Title..."
             android:importantForAccessibility="no"/>
 
         <jwtc.android.chess.views.ChessPiecesStackView
             android:layout_width="wrap_content"
             android:layout_height="24dip"
+            android:layout_marginRight="1dip"
             android:id="@+id/bottomPieces" />
     </TableRow>
 </TableLayout>

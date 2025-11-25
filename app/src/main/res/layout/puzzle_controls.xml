@@ -11,16 +11,12 @@
             android:id="@+id/LayoutButtons"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="4dip"
-            android:paddingBottom="4dip">
-
+            android:layout_height="wrap_content">
             <ImageButton
                 android:id="@+id/ButtonPuzzlePrevious"
                 android:src="@drawable/ic_chevron_left"
                 android:contentDescription="@string/button_previous_position"
                 style="@style/ChessImageButton" />
-
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"

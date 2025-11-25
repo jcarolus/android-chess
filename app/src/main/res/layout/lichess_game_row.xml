@@ -7,10 +7,12 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="2">
+        android:stretchColumns="2"
+        android:background="@color/paneBackgroundColor">
         <TableRow
             android:paddingTop="8dip"
             android:paddingBottom="4dip"
+            android:paddingLeft="4dip"
             android:gravity="center">
             <ImageView
                 android:id="@+id/image_turn_white"
@@ -35,6 +37,7 @@
         <TableRow
             android:paddingTop="4dip"
             android:paddingBottom="8dip"
+            android:paddingLeft="4dip"
             android:gravity="center">
             <ImageView
                 android:id="@+id/image_turn_black"

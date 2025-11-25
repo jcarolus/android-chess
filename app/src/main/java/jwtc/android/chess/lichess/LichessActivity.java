@@ -1,5 +1,7 @@
 package jwtc.android.chess.lichess;
 
+import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +52,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
     private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private TextView textViewHandle;
+    private Button buttonDraw;
     private ListView listViewGames;
     private SimpleAdapter adapterGames;
 
@@ -109,7 +112,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             }
         });
 
-        Button buttonDraw = findViewById(R.id.ButtonDraw);
+        buttonDraw = findViewById(R.id.ButtonDraw);
         buttonDraw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,10 +232,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         boolean isDrawOffer = playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw;
         if (isDrawOffer) {
             textViewOfferDraw.setText("Your opponent offers a draw. Tap Draw to accept");
-            textViewOfferDraw.setBackgroundColor(ContextCompat.getColor(this, R.color.secondaryColor));
+            pulseAnimation(textViewOfferDraw, 1.2f, 1);
         } else {
             textViewOfferDraw.setText("");
-            textViewOfferDraw.setBackgroundColor(ContextCompat.getColor(this, R.color.primaryColor));
         }
     }
 
@@ -256,10 +258,12 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             HashMap<String, String> gameMap = new HashMap<>();
             if (game.color.equals("white")) {
                 gameMap.put("image_turn_white", "" + (game.isMyTurn ? R.drawable.turnwhite : R.drawable.turnempty));
+                gameMap.put("image_turn_black", "" + (game.isMyTurn ? R.drawable.turnempty : R.drawable.turnblack));
                 gameMap.put("text_white", me);
                 gameMap.put("text_black", game.opponent.username);
             } else {
                 gameMap.put("image_turn_white", "" + (game.isMyTurn ? R.drawable.turnempty : R.drawable.turnwhite));
+                gameMap.put("image_turn_black", "" + (game.isMyTurn ? R.drawable.turnblack : R.drawable.turnempty));
                 gameMap.put("text_white", game.opponent.username);
                 gameMap.put("text_black", me);
             }

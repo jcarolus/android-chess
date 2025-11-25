@@ -4,8 +4,7 @@
     android:id="@+id/ICSPlay"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center">
+    android:layout_height="match_parent">
     <jwtc.android.chess.views.ChessBoardContainerView
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
@@ -26,13 +25,12 @@
             android:layout_height="wrap_content"/>
 
     </jwtc.android.chess.views.ChessBoardContainerView>
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="1">
-        <include layout="@layout/lichess_play_controls"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            />
-    </RelativeLayout>
+
+    <include layout="@layout/lichess_play_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dip"
+        android:layout_marginLeft="32dip"
+        />
+
 </LinearLayout>

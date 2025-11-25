@@ -51,6 +51,7 @@ import jwtc.android.chess.services.LocalClockApi;
 import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
+import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.Move;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
@@ -555,6 +556,13 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         int piece, turnAt;
         for (turnAt = 0; turnAt < 2; turnAt++) {
             for (piece = 0; piece < 5; piece++) {
+                ChessSquareView square = new ChessSquareView(this, piece);
+                if (turnAt == BoardConstants.WHITE) {
+                    topPieces.addView(square);
+                } else {
+                    bottomPieces.addView(square);
+                }
+
                 int numCaptured = jni.getNumCaptured(turnAt, piece);
 //                Log.d(TAG, "numCaptured for " + turnAt + " " + piece + " " + numCaptured);
                 if (numCaptured > 0) {

@@ -4,7 +4,6 @@
     android:id="@+id/LayoutBoardBottom"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primaryColor"
     android:layout_marginTop="1dip"
     android:shrinkColumns="0,1,2,3"
     android:stretchColumns="4">

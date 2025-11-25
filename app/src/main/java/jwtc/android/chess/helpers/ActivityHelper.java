@@ -60,15 +60,19 @@ public class ActivityHelper {
     }
 
     public static void pulseAnimation(View v) {
+        pulseAnimation(v, 2f, 1);
+    }
+
+    public static void pulseAnimation(View v, float factor, int repeatCount) {
         ScaleAnimation pulse = new ScaleAnimation(
-                1f, 2f,          // fromX, toX
-                1f, 2f,          // fromY, toY
+                1f, factor,          // fromX, toX
+                1f, factor,          // fromY, toY
                 Animation.RELATIVE_TO_SELF, 0.5f, // pivotX (center)
                 Animation.RELATIVE_TO_SELF, 0.5f  // pivotY (center)
         );
         pulse.setDuration(300);                     // time for grow phase
         pulse.setRepeatMode(Animation.REVERSE);     // reverse back to original
-        pulse.setRepeatCount(1);                    // do the shrink once
+        pulse.setRepeatCount(repeatCount);                    // do the shrink once
         pulse.setFillAfter(false);                  // end at original scale
         pulse.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
 
