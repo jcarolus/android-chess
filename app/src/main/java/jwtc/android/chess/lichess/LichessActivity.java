@@ -285,17 +285,25 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onChallenge(Challenge challenge) {
-        String message = challenge.challenger.name + " \n" + challenge.variant.name;
-        new AlertDialog.Builder(LichessActivity.this)
-            .setTitle("Challenge")
-            .setMessage(message)
-            .setPositiveButton("Accept", (dialog, which) -> {
-                lichessApi.acceptChallenge(challenge);
-            })
-            .setNegativeButton("Decline", (dialog, which) -> {
-                lichessApi.declineChallenge(challenge);
-            })
-            .show();
+        // no challenge disruption while playing
+        if (viewAnimatorSub.getDisplayedChild() != VIEW_SUB_PLAY) {
+            String message = challenge.challenger.name + " \n" +
+                    "Variant: " + challenge.variant.name + "\n" +
+                    "Time control: " + challenge.timeControl.type +
+                    (challenge.timeControl.limit > 0 ? " " + challenge.timeControl.limit + "+" + challenge.timeControl.increment : "") + "\n" +
+                    (challenge.rated ? "Rated" : "Unrated");
+
+            new AlertDialog.Builder(LichessActivity.this)
+                    .setTitle("Challenge")
+                    .setMessage(message)
+                    .setPositiveButton("Accept", (dialog, which) -> {
+                        lichessApi.acceptChallenge(challenge);
+                    })
+                    .setNegativeButton("Decline", (dialog, which) -> {
+                        lichessApi.declineChallenge(challenge);
+                    })
+                    .show();
+        }
     }
 
     @Override
