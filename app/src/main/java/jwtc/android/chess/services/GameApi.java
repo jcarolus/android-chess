@@ -270,8 +270,12 @@ public class GameApi {
         return false;
     }
 
+    public Matcher getMoveMatcher(String sMove) {
+        return _patMove.matcher(sMove);
+    }
+
     public boolean requestMove(String sMove) {
-        Matcher matchToken = _patMove.matcher(sMove);
+        Matcher matchToken = getMoveMatcher(sMove);
         String sAnnotation = "";
         if (matchToken.matches()) {
             Log.d(TAG, "requestMove MATCHES " + sMove);
@@ -292,6 +296,84 @@ public class GameApi {
         }
         Log.d(TAG, "requestMove " + sMove);
         return false;
+    }
+
+    public String moveToSpeechString(String sMove, int move) {
+        String sMoveSpeech = "";
+
+        // check regular move
+        Matcher matchToken = getMoveMatcher(sMove);
+        if (matchToken.matches()) {
+            // 1            2                 3                 4   5                6                7             8             9       10
+            // (K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*")
+            Log.d(TAG, sMove + "matcher " + matchToken.group(1) + " " + matchToken.group(2));
+            String piece = matchToken.group(1);
+            if (piece != null) {
+                piece = getPieceName(piece);
+            } else {
+                piece = "Pawn ";
+            }
+            sMoveSpeech += piece;
+            String sFile = matchToken.group(2);
+            if (sFile != null) {
+                sMoveSpeech += sFile.toUpperCase() + " ";
+            }
+            String sRow = matchToken.group(3);
+            if (sRow != null) {
+                sMoveSpeech += sRow + " ";
+            }
+            if (matchToken.group(4) != null) {
+                sMoveSpeech += "takes ";
+            }
+            sFile = matchToken.group(5);
+            sRow = matchToken.group(6);
+            if (sFile != null && sRow != null) {
+                sMoveSpeech += sFile.toUpperCase() + sRow + " ";
+            }
+            if (Move.isEP(move)) {
+                sMoveSpeech += "(en Passant) ";
+            }
+
+            String sPromote = matchToken.group(7);
+            if (sPromote != null) {
+                sMoveSpeech += "promotes to " + getPieceName(sPromote.substring(1));
+            }
+            // ignore Duck for now
+
+            String sSpecial = matchToken.group(9);
+            if (sSpecial != null) {
+                if (sSpecial.equals("+")) {
+                    sMoveSpeech += "check ";
+                } else if(sSpecial.equals("#")) {
+                    sMoveSpeech += "checkmate ";
+                }
+            }
+        } else if (sMove.contains("0-0-0")) {
+            sMoveSpeech += "Castle long ";
+        } else if (sMove.contains("0-0")) {
+            sMoveSpeech += "Castle short ";
+        }
+
+        Log.d(TAG, "TTS " + sMove + " => " + sMoveSpeech);
+
+        return sMoveSpeech;
+    }
+
+    protected String getPieceName(String piece) {
+        switch (piece) {
+            case "K":
+                return "King ";
+            case "Q":
+                return "Queen ";
+            case "R":
+                return "Rook ";
+            case "B":
+                return "Bishop ";
+            case "N":
+                return "Knight ";
+            default:
+                return "";
+        }
     }
 
     protected void dispatchMove(final int move) {

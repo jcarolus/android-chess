@@ -6,10 +6,10 @@
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primaryColor"
-        android:shrinkColumns="1"
+        android:background="@color/paneBackgroundColor"
         android:stretchColumns="0"
-        android:layout_marginBottom="1dip">
+        android:layout_marginBottom="1dip"
+        android:padding="8dip">
         <TableRow android:gravity="center_vertical">
             <TextView
                 android:text="handle"
@@ -22,7 +22,6 @@
                 android:layout_width="32dip"
                 android:layout_height="32dip"
                 android:src="@drawable/lichess"
-                android:layout_margin="8dip"
                 />
         </TableRow>
     </TableLayout>
@@ -36,6 +35,7 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dip"
             android:text="You are connected to Lichess"
             />
 
@@ -43,7 +43,16 @@
             android:text="Challenge"
             android:id="@+id/ButtonChallenge"
             android:layout_width="wrap_content"
+            android:layout_marginTop="8dip"
             style="@style/ChessButton"/>
+
+        <TextView
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:text="Ongoing games"
+            />
 
         <ScrollView
             android:layout_width="match_parent"

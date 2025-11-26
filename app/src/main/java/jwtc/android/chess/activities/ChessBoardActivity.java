@@ -544,7 +544,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getLastMoveAndTurnDescription() {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move);
+            String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
             return jni.getTurn() == BoardConstants.BLACK
                     ? getString(R.string.last_white_move_description, sMove)
                     : getString(R.string.last_black_move_description, sMove);
