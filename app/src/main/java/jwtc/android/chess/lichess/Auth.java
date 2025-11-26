@@ -136,6 +136,14 @@ public class Auth {
         post("/api/challenge/" + username, payload, callback);
     }
 
+    public void acceptChallenge(String challengeId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        post("/api/challenge/" + challengeId + "/accept", null, callback);
+    }
+
+    public void declineChallenge(String challengeId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        post("/api/challenge/" + challengeId + "/decline", null, callback);
+    }
+
     public void event(AuthResponseHandler responseHandler) {
         if (eventStream != null) {
             eventStream.close();

@@ -306,7 +306,6 @@ public class GameApi {
         if (matchToken.matches()) {
             // 1            2                 3                 4   5                6                7             8             9       10
             // (K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*")
-            Log.d(TAG, sMove + "matcher " + matchToken.group(1) + " " + matchToken.group(2));
             String piece = matchToken.group(1);
             if (piece != null) {
                 piece = getPieceName(piece);
@@ -335,7 +334,7 @@ public class GameApi {
             }
 
             String sPromote = matchToken.group(7);
-            if (sPromote != null) {
+            if (sPromote != null && sPromote.length() > 1) {
                 sMoveSpeech += "promotes to " + getPieceName(sPromote.substring(1));
             }
             // ignore Duck for now

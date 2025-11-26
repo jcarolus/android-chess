@@ -39,12 +39,24 @@
             android:text="You are connected to Lichess"
             />
 
-        <Button
-            android:text="Challenge"
-            android:id="@+id/ButtonChallenge"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="8dip"
-            style="@style/ChessButton"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:text="Challenge"
+                android:id="@+id/ButtonChallenge"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="8dip"
+                style="@style/ChessButton"/>
+
+            <Button
+                android:text="Logout"
+                android:id="@+id/ButtonLogout"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="8dip"
+                style="@style/ChessButton"/>
+        </LinearLayout>
 
         <TextView
             style="@style/MyPaneTextStyle"

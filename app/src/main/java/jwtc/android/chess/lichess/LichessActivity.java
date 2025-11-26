@@ -2,6 +2,7 @@ package jwtc.android.chess.lichess;
 
 import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.ics.ICSClient;
+import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.services.ClockListener;
@@ -109,6 +111,15 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             @Override
             public void onClick(View v) {
                 lichessApi.resign();
+            }
+        });
+
+        Button buttonLogout = findViewById(R.id.ButtonLogout);
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lichessApi.logout();
+                finish();
             }
         });
 
@@ -270,6 +281,31 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             mapGames.add(gameMap);
         }
         adapterGames.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onChallenge(Challenge challenge) {
+        String message = challenge.challenger.name + " \n" + challenge.variant.name;
+        new AlertDialog.Builder(LichessActivity.this)
+            .setTitle("Challenge")
+            .setMessage(message)
+            .setPositiveButton("Accept", (dialog, which) -> {
+                lichessApi.acceptChallenge(challenge);
+            })
+            .setNegativeButton("Decline", (dialog, which) -> {
+                lichessApi.declineChallenge(challenge);
+            })
+            .show();
+    }
+
+    @Override
+    public void onChallengeCancelled(Challenge challenge) {
+        doToastShort("Challenge by " + challenge.challenger.name + " cancelled");
+    }
+
+    @Override
+    public void onChallengeDeclined(Challenge challenge) {
+        doToastShort("Challenge declined by " + challenge.challenger.name);
     }
 
     @Override

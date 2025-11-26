@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.GameState;
@@ -30,8 +31,10 @@ public class LichessApi extends GameApi {
         // void onDrawAccepted(boolean accepted);
         void onGameFinish();
         void onInvalidMove(String reason);
-        // void onChallenge();
         void onNowPlaying(List<Game> games, String me);
+        void onChallenge(Challenge challenge);
+        void onChallengeCancelled(Challenge challenge);
+        void onChallengeDeclined(Challenge challenge);
     }
 
     protected int turn = 0;
@@ -123,7 +126,21 @@ public class LichessApi extends GameApi {
                     //
                     onGameFinish();
                 } else if (type.equals("challenge")) {
-                    onChallenge();
+                    Challenge challenge = (new Gson()).fromJson(jsonObject.get("challenge").getAsJsonObject(), Challenge.class);
+                    if (apiListener != null && !user.equals(challenge.challenger.id)) {
+                        // ignore own challenge
+                        apiListener.onChallenge(challenge);
+                    }
+                } else if (type.equals("challengeCanceled")) {
+                    Challenge challenge = (new Gson()).fromJson(jsonObject.get("challenge").getAsJsonObject(), Challenge.class);
+                    if (apiListener != null) {
+                        apiListener.onChallengeCancelled(challenge);
+                    }
+                } else if (type.equals("challengeDeclined")) {
+                    Challenge challenge = (new Gson()).fromJson(jsonObject.get("challenge").getAsJsonObject(), Challenge.class);
+                    if (apiListener != null) {
+                        apiListener.onChallengeDeclined(challenge);
+                    }
                 }
             }
 
@@ -163,6 +180,34 @@ public class LichessApi extends GameApi {
             @Override
             public void onSuccess(JsonObject result) {
                 Log.d(TAG, "challenge posted");
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "challenge " + e);
+            }
+        });
+    }
+
+    public void acceptChallenge(Challenge challenge) {
+        this.auth.acceptChallenge(challenge.id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "challenge accepted");
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "challenge " + e);
+            }
+        });
+    }
+
+    public void declineChallenge(Challenge challenge) {
+        this.auth.declineChallenge(challenge.id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "challenge accepted");
             }
 
             @Override
@@ -268,9 +313,6 @@ public class LichessApi extends GameApi {
         }
     }
 
-    private void onChallenge() {
-
-    }
     private void processGameState() {
         Log.d(TAG, "processGameState");
         if (ongoingGameFull != null) {
