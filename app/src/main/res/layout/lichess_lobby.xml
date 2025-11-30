@@ -51,6 +51,13 @@
                 style="@style/ChessButton"/>
 
             <Button
+                android:text="Seek"
+                android:id="@+id/ButtonSeek"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="8dip"
+                style="@style/ChessButton"/>
+
+            <Button
                 android:text="Logout"
                 android:id="@+id/ButtonLogout"
                 android:layout_width="wrap_content"

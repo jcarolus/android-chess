@@ -20,8 +20,6 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import androidx.core.content.ContextCompat;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +29,6 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
-import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
@@ -54,7 +51,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
     private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private TextView textViewHandle;
-    private Button buttonDraw;
+    private Button buttonDraw, buttonSeek, buttonChallenge;
     private ListView listViewGames;
     private SimpleAdapter adapterGames;
 
@@ -98,11 +95,18 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             }
         });
 
-        Button buttonChallenge = findViewById(R.id.ButtonChallenge);
+        buttonChallenge = findViewById(R.id.ButtonChallenge);
         buttonChallenge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                displayCreateChallenge();
+                openChallengeDialog(ChallengeDialog.REQUEST_CHALLENGE);
+            }
+        });
+        buttonSeek = findViewById(R.id.ButtonSeek);
+        buttonSeek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openChallengeDialog(ChallengeDialog.REQUEST_SEEK);
             }
         });
 
@@ -308,12 +312,24 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onChallengeCancelled(Challenge challenge) {
-        doToastShort("Challenge by " + challenge.challenger.name + " cancelled");
+        textViewStatus.setText("Challenge by " + challenge.challenger.name + " cancelled");
     }
 
     @Override
     public void onChallengeDeclined(Challenge challenge) {
-        doToastShort("Challenge declined by " + challenge.challenger.name);
+        textViewStatus.setText("Challenge declined by " + challenge.challenger.name);
+    }
+
+    @Override
+    public void onMyChallengeCancelled() {
+        buttonChallenge.setEnabled(true);
+        textViewStatus.setText("Challenge closed");
+    }
+
+    @Override
+    public void onMySeekCancelled() {
+        buttonSeek.setEnabled(true);
+        textViewStatus.setText("Seek closed");
     }
 
     @Override
@@ -365,15 +381,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_LOBBY);
     }
 
-    protected void displayCreateChallenge() {
-        viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
-        ChallengeDialog dlg = new ChallengeDialog(this, this, 10, getPrefs());
-        dlg.show();
-    }
     protected void displayPlay() {
         // @TOD reset info?
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_PLAY);
+    }
+
+    protected void openChallengeDialog(int requestCode) {
+        buttonChallenge.setEnabled(false);
+        buttonSeek.setEnabled(false);
+        ChallengeDialog dlg = new ChallengeDialog(this, this, requestCode, getPrefs());
+        dlg.show();
     }
 
     protected void openGame(String gameId) {
@@ -409,7 +427,18 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void OnDialogResult(int requestCode, Map<String, Object> data) {
-        lichessApi.challenge(data);
+        if (data == null) {
+            Log.d(TAG, "Dialog cancelled");
+            buttonChallenge.setEnabled(true);
+            buttonSeek.setEnabled(true);
+        }
+        else if (requestCode == ChallengeDialog.REQUEST_CHALLENGE) {
+            textViewStatus.setText("Posted challenge");
+            lichessApi.challenge(data);
+        } else {
+            textViewStatus.setText("Posted seek");
+            lichessApi.seek(data);
+        }
     }
 
     @Override

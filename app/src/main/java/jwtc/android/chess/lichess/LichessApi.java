@@ -35,6 +35,8 @@ public class LichessApi extends GameApi {
         void onChallenge(Challenge challenge);
         void onChallengeCancelled(Challenge challenge);
         void onChallengeDeclined(Challenge challenge);
+        void onMyChallengeCancelled();
+        void onMySeekCancelled();
     }
 
     protected int turn = 0;
@@ -127,8 +129,8 @@ public class LichessApi extends GameApi {
                     onGameFinish();
                 } else if (type.equals("challenge")) {
                     Challenge challenge = (new Gson()).fromJson(jsonObject.get("challenge").getAsJsonObject(), Challenge.class);
-                    if (apiListener != null && !user.equals(challenge.challenger.id)) {
-                        // ignore own challenge
+                    if (apiListener != null && !user.equals(challenge.challenger.id) && (challenge.variant.key.equals("standard") || challenge.variant.key.equals("chess960"))) {
+                        // ignore own challenge and variants we do not support
                         apiListener.onChallenge(challenge);
                     }
                 } else if (type.equals("challengeCanceled")) {
@@ -176,17 +178,45 @@ public class LichessApi extends GameApi {
     }
 
     public void challenge(Map<String, Object> payload) {
-        this.auth.challenge(payload, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+        this.auth.challenge(payload, new Auth.AuthResponseHandler() {
             @Override
-            public void onSuccess(JsonObject result) {
-                Log.d(TAG, "challenge posted");
+            public void onResponse(JsonObject result) {
+                Log.d(TAG, "challenge response");
             }
 
             @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "challenge " + e);
+            public void onClose(boolean success) {
+                Log.d(TAG, "challenge closed " + success);
+                if (apiListener != null) {
+                    apiListener.onMyChallengeCancelled();
+                }
             }
         });
+    }
+
+    public void seek(Map<String, Object> payload) {
+        this.auth.seek(payload, new Auth.AuthResponseHandler() {
+            @Override
+            public void onResponse(JsonObject result) {
+                Log.d(TAG, "seek response");
+            }
+
+            @Override
+            public void onClose(boolean success) {
+                Log.d(TAG, "seek closed " + success);
+                if (apiListener != null) {
+                    apiListener.onMySeekCancelled();
+                }
+            }
+        });
+    }
+
+    public void cancelChallenge() {
+        this.auth.cancelChallenge();
+    }
+
+    public void cancelSeek() {
+        this.auth.cancelSeek();
     }
 
     public void acceptChallenge(Challenge challenge) {

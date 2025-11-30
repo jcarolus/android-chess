@@ -106,4 +106,14 @@
         <item name="android:layout_marginBottom">1dp</item>
         <item name="android:gravity">center_vertical</item>
     </style>
+
+    <style name="MyFormLayout">
+        <item name="android:layout_width">300dip</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="MyFormCardView" parent="MyFormLayout">
+        <item name="android:padding">8dip</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
 </resources>

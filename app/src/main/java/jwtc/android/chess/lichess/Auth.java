@@ -46,7 +46,7 @@ public class Auth {
             .readTimeout(0, TimeUnit.MILLISECONDS) // infinite timeout
             .build();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    NdJsonStream.Stream eventStream, gameStream;
+    NdJsonStream.Stream eventStream, gameStream, challengeStream, seekStream;
     private String accessToken, refreshToken;
     Long expiresAt;
 
@@ -130,10 +130,66 @@ public class Auth {
         get("/api/account/playing?nd=5", callback);
     }
 
-    public void challenge(Map<String, Object> payload, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+    public void challenge(Map<String, Object> payload, AuthResponseHandler responseHandler) {
         String username = (String) payload.get("username");
         payload.remove("username");
-        post("/api/challenge/" + username, payload, callback);
+        payload.put("keepAliveStream", true);
+
+        if (challengeStream != null) {
+            challengeStream.close();
+        }
+        challengeStream = openStream("/api/challenge/" + username, payload, new NdJsonStream.Handler() {
+            @Override
+            public void onResponse(JsonObject jsonObject) {
+                mainHandler.post(() -> {
+                    responseHandler.onResponse(jsonObject);
+                });
+            }
+
+            @Override
+            public void onClose(boolean success) {
+                mainHandler.post(() -> {
+                    responseHandler.onClose(success);
+                    challengeStream = null;
+                });
+            }
+        });
+    }
+
+    public void seek(Map<String, Object> payload, AuthResponseHandler responseHandler) {
+        if (seekStream != null) {
+            seekStream.close();
+        }
+        seekStream = openStream("/api/board/seek", payload, new NdJsonStream.Handler() {
+            @Override
+            public void onResponse(JsonObject jsonObject) {
+                mainHandler.post(() -> {
+                    responseHandler.onResponse(jsonObject);
+                });
+            }
+
+            @Override
+            public void onClose(boolean success) {
+                mainHandler.post(() -> {
+                    responseHandler.onClose(success);
+                    seekStream = null;
+                });
+            }
+        });
+    }
+
+    public void cancelChallenge() {
+        if (challengeStream != null) {
+            challengeStream.close();
+            challengeStream = null;
+        }
+    }
+
+    public void cancelSeek() {
+        if (seekStream != null) {
+            seekStream.close();
+            seekStream = null;
+        }
     }
 
     public void acceptChallenge(String challengeId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
@@ -410,10 +466,12 @@ public class Auth {
         Log.d(TAG, "openStream " + path);
         Request.Builder reqBuilder =  new Request.Builder()
                 .url(LICHESS_HOST + path)
-                .addHeader("Authorization", "Bearer " + accessToken);
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .addHeader("Accept", "*/*");
 
         if (jsonBody != null) {
             String json = new Gson().toJson(jsonBody);
+            Log.d(TAG, "post body " + json);
             RequestBody body = RequestBody.create(
                     json,
                     MediaType.get("application/json; charset=utf-8")

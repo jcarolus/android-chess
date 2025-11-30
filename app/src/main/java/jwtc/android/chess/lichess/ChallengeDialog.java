@@ -11,8 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,98 +26,148 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 
 public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
-    public static final String TAG = "Lichess.ChallengeDialog";
+    private static final String TAG = "Lichess.ChallengeDialog";
+    public static final int REQUEST_CHALLENGE = 1;
+    public static final int REQUEST_SEEK = 2;
 
     public ChallengeDialog(Context context, ResultDialogListener<Map<String, Object>> listener, int requestCode, final SharedPreferences prefs) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.lichess_challenge);
 
-        // @TODO requestCode determines seek or challenge (hide player text)
-        setTitle("Seek or Challenge");
+        setTitle(requestCode == REQUEST_CHALLENGE ? "Challenge" : "Seek");
 
-        final EditText editTextPlayer = (EditText) findViewById(R.id.EditTextMatchOpponent);
-        final TextView textViewPlayerName = (TextView) findViewById(R.id.tvMatchPlayerName);
+        final MaterialCardView playerView = findViewById(R.id.CardViewPlayer);
+        playerView.setVisibility(requestCode == REQUEST_CHALLENGE ? View.VISIBLE : View.GONE);
 
-        final Spinner spinnerTime = (Spinner) findViewById(R.id.SpinnerMatchTime);
-        final ArrayAdapter<CharSequence> adapterTime = ArrayAdapter.createFromResource(context, R.array.match_time_minutes, android.R.layout.simple_spinner_item);
-        adapterTime.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTime.setAdapter(adapterTime);
+        final EditText editTextPlayer = findViewById(R.id.EditTextMatchOpponent);
+        final TextView textViewPlayerName = findViewById(R.id.tvMatchPlayerName);
 
-        final Spinner spinnerIncrement = (Spinner) findViewById(R.id.SpinnerMatchTimeIncrement);
-        final ArrayAdapter<CharSequence> adapterIncrement = ArrayAdapter.createFromResource(context, R.array.match_time_increments, android.R.layout.simple_spinner_item);
-        adapterIncrement.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerIncrement.setAdapter(adapterIncrement);
+        final RadioButton radioButtonUnlimitedTime = findViewById(R.id.RadioButtonUnlimitedTime);
+        final RadioButton radioButtonTimeControl = findViewById(R.id.RadioButtonTimeControl);
 
-        final TextView textViewVariant = findViewById(R.id.tvVariant);
-        final Spinner spinnerVariant = (Spinner) findViewById(R.id.SpinnerMatchVariant);
-        final ArrayAdapter<CharSequence> adapterVariant = ArrayAdapter.createFromResource(context, R.array.match_variant, android.R.layout.simple_spinner_item);
-        adapterVariant.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerVariant.setAdapter(adapterVariant);
-        spinnerVariant.setVisibility(View.GONE);
-        textViewVariant.setVisibility(View.GONE);
+        final EditText editTextTime = findViewById(R.id.EditTextMinutes);
+        final EditText editTextIncrement = findViewById(R.id.EditTextIncrement);
 
-        final TextView textViewVColor = findViewById(R.id.tvColor);
-        final Spinner spinnerColor = (Spinner) findViewById(R.id.SpinnerMatchColor);
-        final ArrayAdapter<CharSequence> adapterColor = ArrayAdapter.createFromResource(context, R.array.match_color, android.R.layout.simple_spinner_item);
-        adapterColor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerColor.setAdapter(adapterColor);
-        spinnerColor.setVisibility(View.GONE);
-        textViewVColor.setVisibility(View.GONE);
+        final RadioButton radioButtonVariantDefault = findViewById(R.id.RadioButtonStandard);
+        final RadioButton radioButtonVariantChess960 = findViewById(R.id.RadioButtonChess960);
 
-        final EditText editRatingRangeMIN = (EditText) findViewById(R.id.EditTextMatchRatingRangeMIN);
-        final TextView textViewRatingRangeMIN = (TextView) findViewById(R.id.tvMatchRatingMIN);
-        editRatingRangeMIN.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editRatingRangeMIN.setVisibility(View.GONE);
-        textViewRatingRangeMIN.setVisibility(View.GONE);
+        final RadioButton radioButtonRandom = findViewById(R.id.RadioButtonRandom);
+        final RadioButton radioButtonWhite = findViewById(R.id.RadioButtonWhite);
+        final RadioButton radioButtonBlack = findViewById(R.id.RadioButtonBlack);
 
-        final EditText editTextRatingRangeMAX = (EditText) findViewById(R.id.EditTextMatchRatingRangeMAX);
-        final TextView textViewRatingRangeMAX = (TextView) findViewById(R.id.tvMatchRatingMAX);
-        editTextRatingRangeMAX.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editTextRatingRangeMAX.setVisibility(View.GONE);
-        textViewRatingRangeMAX.setVisibility(View.GONE);
+        final CheckBox checkBoxRated = findViewById(R.id.CheckBoxSeekRated);
 
-        final CheckBox checkBoxRated = (CheckBox) findViewById(R.id.CheckBoxSeekRated);
+        // initial values
+        editTextPlayer.setText(prefs.getString("lichess_challenge_name", ""));
+        int minutes = prefs.getInt("lichess_challenge_minutes", 5);
+        editTextTime.setText("" + minutes);
+        editTextIncrement.setText("" + prefs.getInt("lichess_challenge_increment", 10));
 
-        final Button bututonOk = (Button) findViewById(R.id.ButtonChallengeOk);
-        bututonOk.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ChallengeDialog.this.dismiss();
+        if (minutes > 0) {
+            radioButtonTimeControl.setChecked(true);
+            radioButtonUnlimitedTime.setChecked(false);
+            editTextTime.setEnabled(true);
+            editTextIncrement.setEnabled(true);
+        } else {
+            radioButtonTimeControl.setChecked(false);
+            radioButtonUnlimitedTime.setChecked(true);
+            editTextTime.setEnabled(false);
+            editTextIncrement.setEnabled(false);
+        }
 
-                SharedPreferences.Editor editor = prefs.edit();
-//                editor.putString("spinTime", String.valueOf(_spinTime.getSelectedItemPosition()));
-//                editor.putString("spinIncrement", String.valueOf(_spinIncrement.getSelectedItemPosition()));
-//                editor.putString("spinVariant", String.valueOf(_spinVariant.getSelectedItemPosition()));
-//                editor.putString("spinColor", String.valueOf(_spinColor.getSelectedItemPosition()));
-//                editor.putString("editRatingRangeMIN", _editRatingRangeMIN.getText().toString());
-//                editor.putString("editRatingRangeMAX", _editRatingRangeMAX.getText().toString());
-//                editor.putBoolean("checkRated", _checkRated.isChecked());
-                editor.apply();
+        String variant = prefs.getString("lichess_challenge_variant", "standard");
+        radioButtonVariantDefault.setChecked(variant.equals("default"));
+        radioButtonVariantChess960.setChecked(!radioButtonVariantDefault.isChecked());
 
-                Map<String, Object> data = new HashMap<>();
+        String color = prefs.getString("lichess_challenge_color", "random");
+        radioButtonRandom.setChecked(color.equals("random"));
+        radioButtonWhite.setChecked(color.equals("white"));
+        radioButtonBlack.setChecked(color.equals("black"));
 
+        checkBoxRated.setChecked(prefs.getBoolean("lichess_challenge_rated", false));
+
+        // radio group behaviour
+        radioButtonUnlimitedTime.setOnClickListener(v -> {
+            radioButtonTimeControl.setChecked(!radioButtonUnlimitedTime.isChecked());
+            editTextTime.setEnabled(false);
+            editTextIncrement.setEnabled(false);
+        });
+        radioButtonTimeControl.setOnClickListener(v -> {
+            radioButtonUnlimitedTime.setChecked(!radioButtonTimeControl.isChecked());
+            editTextTime.setEnabled(true);
+            editTextIncrement.setEnabled(true);
+        });
+
+        radioButtonVariantDefault.setOnClickListener(v -> radioButtonVariantChess960.setChecked(!radioButtonVariantDefault.isChecked()));
+        radioButtonVariantChess960.setOnClickListener(v -> radioButtonVariantDefault.setChecked(!radioButtonVariantChess960.isChecked()));
+
+        radioButtonRandom.setOnClickListener(v -> {
+            radioButtonWhite.setChecked(!radioButtonRandom.isChecked());
+            radioButtonBlack.setChecked(!radioButtonRandom.isChecked());
+        });
+        radioButtonWhite.setOnClickListener(v -> {
+            radioButtonRandom.setChecked(!radioButtonWhite.isChecked());
+            radioButtonBlack.setChecked(!radioButtonWhite.isChecked());
+        });
+        radioButtonBlack.setOnClickListener(v -> {
+            radioButtonWhite.setChecked(!radioButtonBlack.isChecked());
+            radioButtonRandom.setChecked(!radioButtonBlack.isChecked());
+        });
+
+        final Button buttonOk = findViewById(R.id.ButtonChallengeOk);
+        buttonOk.setOnClickListener(v -> {
+            ChallengeDialog.this.dismiss();
+
+            SharedPreferences.Editor editor = prefs.edit();
+            Map<String, Object> data = new HashMap<>();
+
+            // username
+            if (requestCode == REQUEST_CHALLENGE) {
                 String username = editTextPlayer.getText().toString();
                 if (!username.isEmpty()) {
                     data.put("username", username);
+                    editor.putString("lichess_challenge_name", username);
                 }
-                data.put("rated", checkBoxRated.isChecked());
-
-                int minutes = spinnerTime.getSelectedItemPosition() * 60;
-                int seconds = spinnerIncrement.getSelectedItemPosition() * 60;
-
-                if (minutes > 0) {
-                    data.put("clock.limit", minutes);
-                    data.put("clock.increment", seconds);
-                }
-
-                setResult(data);
             }
+
+            // timecontrol
+            if (radioButtonTimeControl.isChecked()) {
+
+                int editMinutes = Integer.parseInt(editTextTime.getText().toString());
+                int increment = Integer.parseInt(editTextIncrement.getText().toString());
+
+                editor.putInt("lichess_challenge_minutes", editMinutes);
+                editor.putInt("lichess_challenge_increment", increment);
+
+                if (editMinutes > 0) {
+                    data.put("clock.limit", editMinutes * 60);
+                    data.put("clock.increment", increment);
+                }
+            }
+
+            // variant
+            String editVariant = radioButtonVariantDefault.isChecked() ? "standard" : "chess960";
+            editor.putString("lichess_challenge_variant", editVariant);
+            data.put("variant", editVariant);
+
+            // color
+            String editColor = radioButtonRandom.isChecked()
+                    ? "random" : radioButtonWhite.isChecked() ? "white" : "black";
+
+            editor.putString("lichess_challenge_color", editColor);
+            data.put("color", editColor);
+
+            editor.putBoolean("lichess_challenge_rated", checkBoxRated.isChecked());
+            data.put("rated", checkBoxRated.isChecked());
+
+            editor.apply();
+            setResult(data);
         });
-        final Button buttonCancel = (Button) findViewById(R.id.ButtonChallengeCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ChallengeDialog.this.dismiss();
-            }
+        final Button buttonCancel = findViewById(R.id.ButtonChallengeCancel);
+        buttonCancel.setOnClickListener(v -> {
+            ChallengeDialog.this.dismiss();
+            setResult(null);
         });
     }
 }
