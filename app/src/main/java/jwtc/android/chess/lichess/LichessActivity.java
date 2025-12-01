@@ -50,6 +50,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
     private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
     private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
+    private TextView textViewLobbyStatus;
     private TextView textViewHandle;
     private Button buttonDraw, buttonSeek, buttonChallenge;
     private ListView listViewGames;
@@ -155,6 +156,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewOfferDraw = findViewById(R.id.TextViewOfferDraw);
 
         textViewHandle = findViewById(R.id.TextViewHandle);
+        textViewLobbyStatus = findViewById(R.id.TextViewLobbyStatus);
 
         adapterGames = new SimpleAdapter(LichessActivity.this, mapGames, R.layout.lichess_game_row,
                 new String[]{"image_turn_white", "text_white", "image_turn_black", "text_black"},
@@ -312,24 +314,24 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onChallengeCancelled(Challenge challenge) {
-        textViewStatus.setText("Challenge by " + challenge.challenger.name + " cancelled");
+        textViewLobbyStatus.setText("Challenge by " + challenge.challenger.name + " cancelled");
     }
 
     @Override
     public void onChallengeDeclined(Challenge challenge) {
-        textViewStatus.setText("Challenge declined by " + challenge.challenger.name);
+        textViewLobbyStatus.setText("Challenge declined by " + challenge.challenger.name);
     }
 
     @Override
     public void onMyChallengeCancelled() {
         buttonChallenge.setEnabled(true);
-        textViewStatus.setText("Challenge closed");
+        textViewLobbyStatus.setText("Challenge closed");
     }
 
     @Override
     public void onMySeekCancelled() {
         buttonSeek.setEnabled(true);
-        textViewStatus.setText("Seek closed");
+        textViewLobbyStatus.setText("Seek closed");
     }
 
     @Override
@@ -388,8 +390,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     protected void openChallengeDialog(int requestCode) {
-        buttonChallenge.setEnabled(false);
-        buttonSeek.setEnabled(false);
         ChallengeDialog dlg = new ChallengeDialog(this, this, requestCode, getPrefs());
         dlg.show();
     }
@@ -429,14 +429,14 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     public void OnDialogResult(int requestCode, Map<String, Object> data) {
         if (data == null) {
             Log.d(TAG, "Dialog cancelled");
-            buttonChallenge.setEnabled(true);
             buttonSeek.setEnabled(true);
         }
         else if (requestCode == ChallengeDialog.REQUEST_CHALLENGE) {
-            textViewStatus.setText("Posted challenge");
+            textViewLobbyStatus.setText("Posted challenge");
             lichessApi.challenge(data);
         } else {
-            textViewStatus.setText("Posted seek");
+            buttonSeek.setEnabled(false);
+            textViewLobbyStatus.setText("Posted seek");
             lichessApi.seek(data);
         }
     }

@@ -32,11 +32,13 @@
         android:layout_margin="8dip">
 
         <TextView
+            android:id="@+id/TextViewLobbyStatus"
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dip"
             android:text="You are connected to Lichess"
+            android:accessibilityLiveRegion="polite"
             />
 
         <LinearLayout

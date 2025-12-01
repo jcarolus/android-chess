@@ -35,32 +35,34 @@
         <com.google.android.material.card.MaterialCardView
             style="@style/MyFormCardView">
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
-                <RadioButton
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="Unlimited time"
-                    android:id="@+id/RadioButtonUnlimitedTime"
-                    style="@style/MyRowTextStyle" />
+                    android:text="Time"
+                    style="@style/MyHeaderTextStyle"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Unlimited time"
+                        android:id="@+id/RadioButtonUnlimitedTime"
+                        style="@style/MyRowTextStyle" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="Time control"
-                    android:id="@+id/RadioButtonTimeControl"
-                    style="@style/MyRowTextStyle" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyFormCardView">
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Time control"
+                        android:id="@+id/RadioButtonTimeControl"
+                        style="@style/MyRowTextStyle" />
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -106,54 +108,74 @@
         <com.google.android.material.card.MaterialCardView
             style="@style/MyFormCardView">
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="Standard chess"
-                        android:id="@+id/RadioButtonStandard"
-                        style="@style/MyRowTextStyle" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Variant"
+                style="@style/MyHeaderTextStyle"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="Standard chess"
+                            android:id="@+id/RadioButtonStandard"
+                            style="@style/MyRowTextStyle" />
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="Chess 960"
-                        android:id="@+id/RadioButtonChess960"
-                        style="@style/MyRowTextStyle" />
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text="Chess 960"
+                            android:id="@+id/RadioButtonChess960"
+                            style="@style/MyRowTextStyle" />
+                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
             style="@style/MyFormCardView">
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="Random"
-                    android:id="@+id/RadioButtonRandom"
-                    style="@style/MyRowTextStyle" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Color"
+                style="@style/MyHeaderTextStyle"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Random"
+                        android:id="@+id/RadioButtonRandom"
+                        style="@style/MyRowTextStyle" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="White"
-                    android:id="@+id/RadioButtonWhite"
-                    style="@style/MyRowTextStyle" />
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="Black"
-                    android:id="@+id/RadioButtonBlack"
-                    style="@style/MyRowTextStyle" />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="White"
+                        android:id="@+id/RadioButtonWhite"
+                        style="@style/MyRowTextStyle" />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Black"
+                        android:id="@+id/RadioButtonBlack"
+                        style="@style/MyRowTextStyle" />
+                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
