@@ -5,6 +5,7 @@ import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -340,8 +341,23 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             lastMoveFrom = from;
             lastMoveTo = to;
 
-            lichessApi.move(from, to);
+            if (lichessApi.isPromotionMove(from, to)) {
+                final String[] items = getResources().getStringArray(R.array.promotionpieces);
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.title_pick_promo);
+                builder.setCancelable(false);
+                builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
+                    dialog.dismiss();
+                    lichessApi.setPromotionPiece(4 - item);
+                    lichessApi.move(from, to);
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+
+                return true;
+            }
+            lichessApi.move(from, to);
             return false;
         }
         rebuildBoard();

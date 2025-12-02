@@ -60,15 +60,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public boolean requestMove(final int from, final int to) {
         if (jni.getDuckPos() == from) {
             return gameApi.requestDuckMove(to);
-        } else if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
-                jni.getTurn() == BoardConstants.WHITE
-                ||
-                jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
-                        jni.getTurn() == BoardConstants.BLACK) {
+        } else if (gameApi.isPromotionMove(from, to)) {
 
             final String[] items = getResources().getStringArray(R.array.promotionpieces);
 

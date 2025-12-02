@@ -77,8 +77,10 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         }
 
         String variant = prefs.getString("lichess_challenge_variant", "standard");
-        radioButtonVariantDefault.setChecked(variant.equals("default"));
+        radioButtonVariantDefault.setChecked(variant.equals("standard"));
         radioButtonVariantChess960.setChecked(!radioButtonVariantDefault.isChecked());
+        radioButtonVariantDefault.setEnabled(false); // @TODO until castling is fixed
+        radioButtonVariantChess960.setEnabled(false);
 
         String color = prefs.getString("lichess_challenge_color", "random");
         radioButtonRandom.setChecked(color.equals("random"));

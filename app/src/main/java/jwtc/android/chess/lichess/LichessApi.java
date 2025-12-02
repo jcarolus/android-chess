@@ -2,6 +2,7 @@ package jwtc.android.chess.lichess;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
@@ -40,6 +42,7 @@ public class LichessApi extends GameApi {
     }
 
     protected int turn = 0;
+    private int promotionPiece = BoardConstants.QUEEN;
     private Auth auth;
     private LichessApiListener apiListener;
 
@@ -249,7 +252,11 @@ public class LichessApi extends GameApi {
 
     public void move(int from, int to) {
         if (ongoingGameFull != null) {
-            this.auth.move(ongoingGameFull.id, Pos.toString(from) + Pos.toString(to), new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            String uciMove = Pos.toString(from) + Pos.toString(to);
+            if (isPromotionMove(from, to)) {
+                uciMove += Piece.toPromoUCI(promotionPiece);
+            }
+            this.auth.move(ongoingGameFull.id, uciMove, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
                 @Override
                 public void onSuccess(JsonObject result) {
                     Log.d(TAG, "moved");
@@ -267,6 +274,10 @@ public class LichessApi extends GameApi {
         } else {
             Log.d(TAG, "Unexpected state; move without ongoing game");
         }
+    }
+
+    public void setPromotionPiece(int piece) {
+        promotionPiece = piece;
     }
 
     public void resign() {
@@ -369,9 +380,10 @@ public class LichessApi extends GameApi {
 
                         if (sMove.length() == 5) {
                             String promo = sMove.substring(4, 5).toLowerCase();
-                            // jni.setPromo(4 - item);
+                            jni.setPromo(Piece.fromUCIPromo(promo));
                         }
 
+                        // @TODO Chess960 castling
                         if (jni.requestMove(from, to) == 0) {
                             Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
                         }

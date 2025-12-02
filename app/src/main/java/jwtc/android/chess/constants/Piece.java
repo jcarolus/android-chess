@@ -45,4 +45,30 @@ public class Piece {
                 return 0;
         }
     }
+
+    public static String toPromoUCI(int piece) {
+        switch (piece) {
+            case BoardConstants.KNIGHT:
+                return "n";
+            case BoardConstants.BISHOP:
+                return "b";
+            case BoardConstants.ROOK:
+                return "r";
+            case BoardConstants.QUEEN:
+                return "q";
+            default:
+                return "";
+        }
+    }
+
+    public static int fromUCIPromo(String piece) {
+        if (piece.equals("n")) {
+            return BoardConstants.KNIGHT;
+        } else if (piece.equals("b")) {
+            return BoardConstants.BISHOP;
+        } else if (piece.equals("r")) {
+            return BoardConstants.ROOK;
+        }
+        return BoardConstants.QUEEN;
+    }
 }
