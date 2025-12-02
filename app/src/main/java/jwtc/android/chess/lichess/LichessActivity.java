@@ -400,7 +400,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     protected void displayPlay() {
-        // @TOD reset info?
+        // reset info
+        textViewLastMove.setText("");
+        textViewStatus.setText("");
+        textViewOfferDraw.setText("");
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_PLAY);
     }

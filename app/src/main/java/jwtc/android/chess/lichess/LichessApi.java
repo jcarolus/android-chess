@@ -313,12 +313,14 @@ public class LichessApi extends GameApi {
     }
 
     public void game(String gameId) {
+        jni.reset();
+        dispatchState();
         this.auth.game(gameId, new Auth.AuthResponseHandler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 String type = jsonObject.get("type").getAsString();
                 Log.d(TAG, "game " + jsonObject.get("type").getAsString());
-                if (type.equals("gameState")) {
+                if (type.equals("gameState") && ongoingGameFull != null) {
                     ongoingGameFull.state = (new Gson()).fromJson(jsonObject, GameState.class);;
                 } else if (type.equals("gameFull")) {
                     ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
@@ -334,7 +336,9 @@ public class LichessApi extends GameApi {
     }
 
     public int getMyTurn() {
-        return ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK;
+        return ongoingGameFull != null
+                ? ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK
+                : BoardConstants.WHITE;
     }
 
     public int getTurn() {
@@ -349,6 +353,7 @@ public class LichessApi extends GameApi {
     }
 
     private void onGameFinish() {
+        Log.d(TAG, exportFullPGN());
         if (apiListener != null) {
             apiListener.onGameFinish();
         }
@@ -363,6 +368,8 @@ public class LichessApi extends GameApi {
             } else {
                 jni.initFEN(ongoingGameFull.initialFen);
             }
+
+            resetForPGN();
 
             String moves = ongoingGameFull.state.moves;
 
@@ -386,6 +393,9 @@ public class LichessApi extends GameApi {
                         // @TODO Chess960 castling
                         if (jni.requestMove(from, to) == 0) {
                             Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
+                            break;
+                        } else {
+                            addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
                         }
 
                     } catch (Exception e) {
@@ -404,5 +414,20 @@ public class LichessApi extends GameApi {
                 apiListener.onGameUpdate(ongoingGameFull);
             }
         }
+    }
+
+    private void resetForPGN() {
+        _mapPGNHead.clear();
+        _mapPGNHead.put("Event", "Lichess " + (ongoingGameFull.rated ? "rated" : "unrated"));
+        _mapPGNHead.put("White", ongoingGameFull.white.name);
+        _mapPGNHead.put("Black", ongoingGameFull.black.name);
+
+        if (ongoingGameFull.variant.key.equals("chess960")) {
+            _mapPGNHead.put("Variant", "Fischerandom");
+            _mapPGNHead.put("Setup", "1");
+            _mapPGNHead.put("FEN", jni.toFEN());
+        }
+
+        _arrPGN.clear();
     }
 }
