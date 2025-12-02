@@ -32,8 +32,10 @@ public class LichessApi extends GameApi {
         void onGameUpdate(GameFull gameFull);
         // void onDrawAccepted(boolean accepted);
         void onGameFinish();
+        void onGameDisconnected();
         void onInvalidMove(String reason);
         void onNowPlaying(List<Game> games, String me);
+        void onNowPlayingError();
         void onChallenge(Challenge challenge);
         void onChallengeCancelled(Challenge challenge);
         void onChallengeDeclined(Challenge challenge);
@@ -176,6 +178,9 @@ public class LichessApi extends GameApi {
             @Override
             public void onError(JsonObject e) {
                 Log.d(TAG, "playing " + e);
+                if (apiListener != null) {
+                    apiListener.onNowPlayingError();
+                }
             }
         });
     }
@@ -331,6 +336,9 @@ public class LichessApi extends GameApi {
             @Override
             public void onClose(boolean success) {
                 Log.d(TAG, "game closed " + success);
+                if (apiListener != null && !success) {
+                    apiListener.onGameDisconnected();
+                }
             }
         });
     }

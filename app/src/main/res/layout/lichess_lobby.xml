@@ -33,7 +33,7 @@
 
         <TextView
             android:id="@+id/TextViewLobbyStatus"
-            style="@style/MyPaneTextStyle"
+            style="@style/MyPaneTextStyle2Lines"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dip"

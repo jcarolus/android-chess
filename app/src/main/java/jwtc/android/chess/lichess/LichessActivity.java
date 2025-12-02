@@ -262,6 +262,12 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
+    public void onGameDisconnected() {
+        textViewLobbyStatus.setText("Game disconnected. Check your internet connection and try again");
+        displayLobby();
+    }
+
+    @Override
     public void onInvalidMove(String reason) {
         textViewStatus.setText(reason);
     }
@@ -288,6 +294,11 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             mapGames.add(gameMap);
         }
         adapterGames.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onNowPlayingError() {
+        textViewLobbyStatus.setText("Could not get your games. Check your internet connection and try again");
     }
 
     @Override
