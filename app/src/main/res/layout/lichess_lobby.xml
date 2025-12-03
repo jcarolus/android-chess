@@ -7,22 +7,27 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/paneBackgroundColor"
-        android:stretchColumns="0"
+        android:stretchColumns="1"
         android:layout_marginBottom="1dip"
         android:padding="8dip">
         <TableRow android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="32dip"
+                android:layout_height="32dip"
+                android:src="@drawable/lichess"
+                />
             <TextView
                 android:text="handle"
                 android:id="@+id/TextViewHandle"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 style="@style/MyHeaderTextStyle" />
+            <Button
+                android:text="Logout"
+                android:id="@+id/ButtonLogout"
+                android:layout_width="wrap_content"
 
-            <ImageView
-                android:layout_width="32dip"
-                android:layout_height="32dip"
-                android:src="@drawable/lichess"
-                />
+                style="@style/ChessButton"/>
         </TableRow>
     </TableLayout>
     <LinearLayout
@@ -59,12 +64,7 @@
                 android:layout_marginTop="8dip"
                 style="@style/ChessButton"/>
 
-            <Button
-                android:text="Logout"
-                android:id="@+id/ButtonLogout"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="8dip"
-                style="@style/ChessButton"/>
+
         </LinearLayout>
 
         <TextView

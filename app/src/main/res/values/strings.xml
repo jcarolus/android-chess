@@ -15,7 +15,7 @@
     <string name="start_puzzles">Puzzles</string>
     <string name="start_hotspotboard">Hotspot board (experimental)</string>
     <string name="start_pgn">Advanced</string>
-    <string name="start_ics">Play online</string>
+    <string name="start_ics">Play on Freechess</string>
     <string name="start_boardpreferences">Chess board settings</string>
     <string name="start_lichess">Play on Lichess (experimental)</string>
 

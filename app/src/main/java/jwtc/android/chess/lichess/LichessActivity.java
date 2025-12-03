@@ -5,7 +5,6 @@ import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -69,9 +68,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         }
 
         public void onServiceDisconnected(ComponentName className) {
-
             Log.i(TAG, "onServiceDisconnected");
-            // lichessApi.setAuth(null);
             lichessApi.setApiListener(null);
         }
     };
@@ -218,8 +215,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         if (user != null) {
             textViewHandle.setText(user);
-            displayLobby();
             lichessApi.event();
+            displayLobby();
         } else {
             displayLogin();
         }
@@ -275,6 +272,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onNowPlaying(List<Game> games, String me) {
         Log.d(TAG, "onNowPlaying " + games.size());
+        textViewLobbyStatus.setText("Connected to Lichess");
         nowPlayingGames = games;
         mapGames.clear();
         for (int i = 0; i < games.size(); i++) {
@@ -297,8 +295,18 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
-    public void onNowPlayingError() {
-        textViewLobbyStatus.setText("Could not get your games. Check your internet connection and try again");
+    public void onConnectionError() {
+        textViewLobbyStatus.setText("Could not get your games. Trying to reconnect in 5 seconds");
+        new java.util.Timer().schedule(
+            new java.util.TimerTask() {
+                @Override
+                public void run() {
+                    textViewLobbyStatus.setText("Reconnecting...");
+                    lichessApi.event();
+                    lichessApi.playing();
+                }
+            }, 5000
+        );
     }
 
     @Override

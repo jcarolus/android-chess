@@ -1,19 +1,20 @@
 # Chess game for Android
 
-
 ## Objectives
 - User friendly
 - Free
 - No ads
 - Demo video https://youtu.be/2HwjQDV1P8g
 
-## Special features
+## Features
 - Chess 960
 - Duck chess (experimental)
 - Setup board
+- Play online on Lichess
 - Play online on the Free Internet Chess Server (FICS)
 - Cast the board via Chromecast
 - ECO opening explorer
+- Accessibility support for screen readers
 
 ## Install
 - Published on "F-droid" https://f-droid.org/packages/jwtc.android.chess/
@@ -25,11 +26,8 @@
 - Improve user interaction via screen readers
 - Contributions are welcome
 
-
-
 ### UCI engines
 - support for UCI engines was dropped due to `security-related restrictions on W^X violations`
-
 
 ### License
 - MIT licensed (see License.md)

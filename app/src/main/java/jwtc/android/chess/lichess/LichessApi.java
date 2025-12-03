@@ -2,7 +2,6 @@ package jwtc.android.chess.lichess;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -35,7 +34,7 @@ public class LichessApi extends GameApi {
         void onGameDisconnected();
         void onInvalidMove(String reason);
         void onNowPlaying(List<Game> games, String me);
-        void onNowPlayingError();
+        void onConnectionError();
         void onChallenge(Challenge challenge);
         void onChallengeCancelled(Challenge challenge);
         void onChallengeDeclined(Challenge challenge);
@@ -154,6 +153,9 @@ public class LichessApi extends GameApi {
             @Override
             public void onClose(boolean success) {
                 Log.d(TAG, "event closed " + success);
+                if (apiListener != null && !success) {
+                    apiListener.onConnectionError();
+                }
             }
         });
     }
@@ -179,7 +181,7 @@ public class LichessApi extends GameApi {
             public void onError(JsonObject e) {
                 Log.d(TAG, "playing " + e);
                 if (apiListener != null) {
-                    apiListener.onNowPlayingError();
+                    apiListener.onConnectionError();
                 }
             }
         });
