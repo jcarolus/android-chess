@@ -18,7 +18,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:text="@string/ics_seekplayer"
+                    android:text="@string/lichess_create_challenge_player"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
@@ -41,7 +41,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Time"
+                    android:text="@string/lichess_create_challenge_time"
                     style="@style/MyHeaderTextStyle"/>
                 <LinearLayout
                     android:orientation="horizontal"
@@ -51,7 +51,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Unlimited time"
+                        android:text="@string/lichess_create_challenge_time_unlimited"
                         android:id="@+id/RadioButtonUnlimitedTime"
                         style="@style/MyRowTextStyle" />
 
@@ -59,7 +59,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Time control"
+                        android:text="@string/lichess_create_challenge_time_control"
                         android:id="@+id/RadioButtonTimeControl"
                         style="@style/MyRowTextStyle" />
                 </LinearLayout>
@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
-                        android:text="Minutes"
+                        android:text="@string/lichess_create_challenge_time_minutes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
-                        android:text="Increment"
+                        android:text="@string/lichess_create_challenge_time_increment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -114,7 +114,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Variant"
+                android:text="@string/lichess_create_challenge_variant"
                 style="@style/MyHeaderTextStyle"/>
                 <LinearLayout
                     android:orientation="horizontal"
@@ -124,7 +124,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="2"
-                            android:text="Standard chess"
+                            android:text="@string/lichess_create_challenge_variant_standard"
                             android:id="@+id/RadioButtonStandard"
                             style="@style/MyRowTextStyle" />
 
@@ -132,7 +132,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="2"
-                            android:text="Chess 960"
+                            android:text="@string/lichess_create_challenge_variant_chess960"
                             android:id="@+id/RadioButtonChess960"
                             style="@style/MyRowTextStyle" />
                 </LinearLayout>
@@ -147,7 +147,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Color"
+                android:text="@string/lichess_create_challenge_color"
                 style="@style/MyHeaderTextStyle"/>
                 <LinearLayout
                     android:orientation="horizontal"
@@ -157,7 +157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Random"
+                        android:text="@string/lichess_create_challenge_color_random"
                         android:id="@+id/RadioButtonRandom"
                         style="@style/MyRowTextStyle" />
 
@@ -165,14 +165,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="White"
+                        android:text="@string/lichess_create_challenge_color_white"
                         android:id="@+id/RadioButtonWhite"
                         style="@style/MyRowTextStyle" />
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Black"
+                        android:text="@string/lichess_create_challenge_color_black"
                         android:id="@+id/RadioButtonBlack"
                         style="@style/MyRowTextStyle" />
                 </LinearLayout>
@@ -190,7 +190,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:text="@string/ics_seekrated"
+                        android:text="@string/lichess_create_challenge_rated"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"

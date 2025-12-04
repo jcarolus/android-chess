@@ -348,7 +348,7 @@
     <string name="tile_none">none</string>
     <string name="tile_double_shade">double shade</string>
     <string name="tile_single_shade">single shade</string>
-    <string name="tile_diagonal_stripes">diagonal sripes</string>
+    <string name="tile_diagonal_stripes">diagonal stripes</string>
 
     <string name="color_scheme_yellow">Yellow</string>
     <string name="color_scheme_blue">Blue</string>
@@ -369,5 +369,60 @@
     <string name="time_warning_25">25 seconds</string>
     <string name="time_warning_45">45 seconds</string>
     <string name="time_warning_60">1 minute</string>
+
+    <string name="lichess_games_connection_error_retry">"Could not get your games. Trying to reconnect in 5 seconds"</string>
+    <string name="lichess_challenge_dialog_title">Challenge</string>
+    <string name="lichess_challenge_dialog_button_accept">Accept</string>
+    <string name="lichess_challenge_dialog_button_decline">Decline</string>
+    <string name="lichess_challenge_dialog_message_variant">Variant: %1$s</string>
+    <string name="lichess_challenge_dialog_message_time_control">Time control: %1$s</string>
+    <string name="lichess_challenge_dialog_message_rated">Rated</string>
+    <string name="lichess_challenge_dialog_message_unrated">Unrated</string>
+
+    <string name="lichess_create_challenge_title">Create challenge</string>
+    <string name="lichess_create_seek_title">Create seek</string>
+    <string name="lichess_create_challenge_player">Opponent</string>
+    <string name="lichess_create_challenge_time">Time</string>
+    <string name="lichess_create_challenge_time_unlimited">Unlimited</string>
+    <string name="lichess_create_challenge_time_control">Time control</string>
+    <string name="lichess_create_challenge_time_minutes">Minutes</string>
+    <string name="lichess_create_challenge_time_increment">Increment (s)</string>
+    <string name="lichess_create_challenge_variant">Variant</string>
+    <string name="lichess_create_challenge_variant_standard">Standard</string>
+    <string name="lichess_create_challenge_variant_chess960">Chess 960</string>
+    <string name="lichess_create_challenge_color">Color</string>
+    <string name="lichess_create_challenge_color_white">White</string>
+    <string name="lichess_create_challenge_color_black">Black</string>
+    <string name="lichess_create_challenge_color_random">Random</string>
+    <string name="lichess_create_challenge_rated">Rated</string>
+
+
+    <string name="lichess_challenge_by_cancelled">Challenge by %1$s cancelled"</string>
+    <string name="lichess_challenge_by_declined">Challenge declined by %1$s</string>
+    <string name="lichess_my_challenge_closed">Challenge closed</string>
+    <string name="lichess_my_seek_closed">Seek closed</string>
+
+    <string name="lichess_challenge_posted">Posted challenge</string>
+    <string name="lichess_seek_posted">Posted seek</string>
+
+    <string name="lichess_opponent_offers_draw">Your opponent offers a draw. Tap Draw to accept</string>
+    <string name="lichess_game_winner">Winner: %1$s</string>
+    <string name="lichess_game_state_created">Game created</string>
+    <string name="lichess_game_state_started">Game started</string>
+    <string name="lichess_game_state_aborted">Game aborted</string>
+    <string name="lichess_game_state_mate">Game ended in a check-mate</string>
+    <string name="lichess_game_state_resigned">Game ended by resignation</string>
+    <string name="lichess_game_disconnected">Game disconnected. Check your internet connection and try again</string>
+
+    <string name="lichess_lobby_connected">You are connected to Lichess</string>
+    <string name="lichess_lobby_button_challenge">Challenge</string>
+    <string name="lichess_lobby_button_seek">Seek</string>
+    <string name="lichess_lobby_button_logout">Logout</string>
+    <string name="lichess_lobby_ongoing_games">Ongoing games</string>
+
+    <string name="lichess_login_intro">When you choose Login, you will be redirected to Lichess to login</string>
+    <string name="lichess_starting">Starting...</string>
+    <string name="lichess_play_button_resign">Resign</string>
+    <string name="lichess_play_button_draw">Draw</string>
 
 </resources>

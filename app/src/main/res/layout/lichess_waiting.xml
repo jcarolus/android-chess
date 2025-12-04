@@ -33,7 +33,7 @@
                 android:maxLines="10"
                 android:scrollHorizontally="false"
                 android:ellipsize="none"
-                android:text="Starting..."
+                android:text="@string/lichess_starting"
                 />
 
             <ProgressBar

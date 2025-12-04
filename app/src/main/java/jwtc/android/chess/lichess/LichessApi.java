@@ -120,16 +120,12 @@ public class LichessApi extends GameApi {
                 String type = jsonObject.get("type").getAsString();
                 Log.d(TAG, "event " + jsonObject.get("type").getAsString());
                 if (type.equals("gameStart")) {
-
-                    // @TODO close game stream / keep track of multiple games
-
                     Game ongoingGame = (new Gson()).fromJson(jsonObject.get("game").getAsJsonObject(), Game.class);
 
                     if (apiListener != null) {
                         apiListener.onGameInit(ongoingGame.gameId);
                     }
                 } else if (type.equals("gameFinish")) {
-                    //
                     onGameFinish();
                 } else if (type.equals("challenge")) {
                     Challenge challenge = (new Gson()).fromJson(jsonObject.get("challenge").getAsJsonObject(), Challenge.class);

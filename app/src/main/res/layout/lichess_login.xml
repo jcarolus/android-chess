@@ -33,7 +33,7 @@
                 android:maxLines="10"
                 android:scrollHorizontally="false"
                 android:ellipsize="none"
-                android:text="When you choose Login, you will be redirected to Lichess to login"
+                android:text="@string/lichess_login_intro"
                 />
 
             <Button

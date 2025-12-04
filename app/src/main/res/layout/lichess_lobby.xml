@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 style="@style/MyHeaderTextStyle" />
             <Button
-                android:text="Logout"
+                android:text="@string/lichess_lobby_button_logout"
                 android:id="@+id/ButtonLogout"
                 android:layout_width="wrap_content"
 
@@ -42,7 +42,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dip"
-            android:text="You are connected to Lichess"
+            android:text="@string/lichess_lobby_connected"
             android:accessibilityLiveRegion="polite"
             />
 
@@ -51,14 +51,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <Button
-                android:text="Challenge"
+                android:text="@string/lichess_lobby_button_challenge"
                 android:id="@+id/ButtonChallenge"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="8dip"
                 style="@style/ChessButton"/>
 
             <Button
-                android:text="Seek"
+                android:text="@string/lichess_lobby_button_seek"
                 android:id="@+id/ButtonSeek"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="8dip"
@@ -72,7 +72,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:text="Ongoing games"
+            android:text="@string/lichess_lobby_ongoing_games"
             />
 
         <ScrollView

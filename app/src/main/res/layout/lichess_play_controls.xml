@@ -41,14 +41,14 @@
             android:layout_marginTop="1dip">
 
             <Button android:id="@+id/ButtonResign"
-                android:text="@string/ics_menu_resign"
+                android:text="@string/lichess_play_button_resign"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
                 style="@style/ChessButton"
                 />
             <Button android:id="@+id/ButtonDraw"
-                android:text="@string/ics_menu_draw"
+                android:text="@string/lichess_play_button_draw"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"

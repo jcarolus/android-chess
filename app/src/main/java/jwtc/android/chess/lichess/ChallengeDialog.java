@@ -35,7 +35,7 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
         setContentView(R.layout.lichess_challenge);
 
-        setTitle(requestCode == REQUEST_CHALLENGE ? "Challenge" : "Seek");
+        setTitle(requestCode == REQUEST_CHALLENGE ? R.string.lichess_create_challenge_title : R.string.lichess_create_seek_title);
 
         final MaterialCardView playerView = findViewById(R.id.CardViewPlayer);
         playerView.setVisibility(requestCode == REQUEST_CHALLENGE ? View.VISIBLE : View.GONE);

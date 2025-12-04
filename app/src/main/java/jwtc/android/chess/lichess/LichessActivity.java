@@ -239,14 +239,19 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewRatingOpp.setText(""  + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
         textViewRatingMe.setText("" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
 
-        if (gameFull.clock != null) {
+        if (gameFull.clock != null && gameFull.state.status.equals("started")) {
             localClockApi.startClock(gameFull.clock.increment, gameFull.state.wtime, gameFull.state.btime, turn, System.currentTimeMillis());
         }
-        textViewStatus.setText(gameFull.state.status + " " + (gameFull.state.winner != null ? "Winner: " + gameFull.state.winner : ""));
+
+        String stateMessage = gameStateToTranslated(gameFull.state.status);
+        if (gameFull.state.winner != null){
+            stateMessage += ". " + getString(R.string.lichess_game_winner, gameFull.state.winner);
+        }
+        textViewStatus.setText(stateMessage);
 
         boolean isDrawOffer = playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw;
         if (isDrawOffer) {
-            textViewOfferDraw.setText("Your opponent offers a draw. Tap Draw to accept");
+            textViewOfferDraw.setText(R.string.lichess_opponent_offers_draw);
             pulseAnimation(textViewOfferDraw, 1.2f, 1);
         } else {
             textViewOfferDraw.setText("");
@@ -260,7 +265,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onGameDisconnected() {
-        textViewLobbyStatus.setText("Game disconnected. Check your internet connection and try again");
+        textViewLobbyStatus.setText(R.string.lichess_game_disconnected);
         displayLobby();
     }
 
@@ -272,7 +277,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onNowPlaying(List<Game> games, String me) {
         Log.d(TAG, "onNowPlaying " + games.size());
-        textViewLobbyStatus.setText("Connected to Lichess");
+        textViewLobbyStatus.setText(R.string.lichess_lobby_connected);
         nowPlayingGames = games;
         mapGames.clear();
         for (int i = 0; i < games.size(); i++) {
@@ -296,12 +301,12 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onConnectionError() {
-        textViewLobbyStatus.setText("Could not get your games. Trying to reconnect in 5 seconds");
+        textViewLobbyStatus.setText(R.string.lichess_games_connection_error_retry);
         new java.util.Timer().schedule(
             new java.util.TimerTask() {
                 @Override
                 public void run() {
-                    textViewLobbyStatus.setText("Reconnecting...");
+                    textViewLobbyStatus.setText("");
                     lichessApi.event();
                     lichessApi.playing();
                 }
@@ -313,19 +318,21 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     public void onChallenge(Challenge challenge) {
         // no challenge disruption while playing
         if (viewAnimatorSub.getDisplayedChild() != VIEW_SUB_PLAY) {
+            int minutes = challenge.timeControl.limit / 60;
+
             String message = challenge.challenger.name + " \n" +
-                    "Variant: " + challenge.variant.name + "\n" +
-                    "Time control: " + challenge.timeControl.type +
-                    (challenge.timeControl.limit > 0 ? " " + challenge.timeControl.limit + "+" + challenge.timeControl.increment : "") + "\n" +
-                    (challenge.rated ? "Rated" : "Unrated");
+                    getString(R.string.lichess_challenge_dialog_message_variant, challenge.variant.name) + "\n" +
+                    getString(R.string.lichess_challenge_dialog_message_time_control, challenge.timeControl.type) + "\n" +
+                    (challenge.timeControl.limit > 0 ? " " + minutes + "+" + challenge.timeControl.increment : "") + "\n" +
+                    (challenge.rated ? getString(R.string.lichess_challenge_dialog_message_rated) : getString(R.string.lichess_challenge_dialog_message_unrated));
 
             new AlertDialog.Builder(LichessActivity.this)
-                    .setTitle("Challenge")
+                    .setTitle(R.string.lichess_challenge_dialog_title)
                     .setMessage(message)
-                    .setPositiveButton("Accept", (dialog, which) -> {
+                    .setPositiveButton(R.string.lichess_challenge_dialog_button_accept, (dialog, which) -> {
                         lichessApi.acceptChallenge(challenge);
                     })
-                    .setNegativeButton("Decline", (dialog, which) -> {
+                    .setNegativeButton(R.string.lichess_challenge_dialog_button_decline, (dialog, which) -> {
                         lichessApi.declineChallenge(challenge);
                     })
                     .show();
@@ -334,24 +341,24 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onChallengeCancelled(Challenge challenge) {
-        textViewLobbyStatus.setText("Challenge by " + challenge.challenger.name + " cancelled");
+        textViewLobbyStatus.setText(getString(R.string.lichess_challenge_by_cancelled, challenge.challenger.name));
     }
 
     @Override
     public void onChallengeDeclined(Challenge challenge) {
-        textViewLobbyStatus.setText("Challenge declined by " + challenge.challenger.name);
+        textViewLobbyStatus.setText(getString(R.string.lichess_challenge_by_declined, challenge.challenger.name));
     }
 
     @Override
     public void onMyChallengeCancelled() {
         buttonChallenge.setEnabled(true);
-        textViewLobbyStatus.setText("Challenge closed");
+        textViewLobbyStatus.setText(R.string.lichess_my_challenge_closed);
     }
 
     @Override
     public void onMySeekCancelled() {
         buttonSeek.setEnabled(true);
-        textViewLobbyStatus.setText("Seek closed");
+        textViewLobbyStatus.setText(R.string.lichess_my_seek_closed);
     }
 
     @Override
@@ -437,6 +444,22 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         displayPlay();
     }
 
+    protected String gameStateToTranslated(String state) {
+        if (state.equals("created")) {
+            return getString(R.string.lichess_game_state_created);
+        } else if (state.equals("started")) {
+            return getString(R.string.lichess_game_state_started);
+        } else if (state.equals("aborted")) {
+            return getString(R.string.lichess_game_state_aborted);
+        } else if (state.equals("mate")) {
+            return getString(R.string.lichess_game_state_mate);
+        } else if (state.equals("resign")) {
+            return getString(R.string.lichess_game_state_resigned);
+        }
+
+        return "";
+    }
+
     @Override
     public boolean needExitConfirmationDialog() {
         return true;
@@ -466,29 +489,24 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void OnDialogResult(int requestCode, Map<String, Object> data) {
         if (data == null) {
-            Log.d(TAG, "Dialog cancelled");
             buttonSeek.setEnabled(true);
         }
         else if (requestCode == ChallengeDialog.REQUEST_CHALLENGE) {
-            textViewLobbyStatus.setText("Posted challenge");
+            textViewLobbyStatus.setText(R.string.lichess_challenge_posted);
             lichessApi.challenge(data);
         } else {
             buttonSeek.setEnabled(false);
-            textViewLobbyStatus.setText("Posted seek");
+            textViewLobbyStatus.setText(R.string.lichess_seek_posted);
             lichessApi.seek(data);
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d(TAG, "onItemClick");
-        if (parent == listViewGames) {
-            Log.d(TAG, "listViewGames " + nowPlayingGames.size() + " " + position);
-            if (nowPlayingGames.size() > position) {
-                Game game = nowPlayingGames.get(position);
-                lichessApi.game(game.gameId);
-                displayPlay();
-            }
+        if (parent == listViewGames && nowPlayingGames.size() > position) {
+            Game game = nowPlayingGames.get(position);
+            lichessApi.game(game.gameId);
+            displayPlay();
         }
     }
 }
