@@ -119,7 +119,6 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
         final Button buttonOk = findViewById(R.id.ButtonChallengeOk);
         buttonOk.setOnClickListener(v -> {
-            ChallengeDialog.this.dismiss();
 
             SharedPreferences.Editor editor = prefs.edit();
             Map<String, Object> data = new HashMap<>();
@@ -142,9 +141,19 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
                 editor.putInt("lichess_challenge_minutes", editMinutes);
                 editor.putInt("lichess_challenge_increment", increment);
 
-                if (editMinutes > 0) {
-                    data.put("clock.limit", editMinutes * 60);
-                    data.put("clock.increment", increment);
+                if (editMinutes >= 3) {
+                    editTextTime.setError(null);
+
+                    if (requestCode == REQUEST_CHALLENGE) {
+                        data.put("clock.limit", editMinutes * 60);
+                        data.put("clock.increment", increment);
+                    } else {
+                        data.put("time", editMinutes);
+                        data.put("increment", increment);
+                    }
+                } else {
+                    editTextTime.setError("Number must be greater than 2");
+                    return;
                 }
             }
 
@@ -164,6 +173,8 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
             data.put("rated", checkBoxRated.isChecked());
 
             editor.apply();
+
+            ChallengeDialog.this.dismiss();
             setResult(data);
         });
         final Button buttonCancel = findViewById(R.id.ButtonChallengeCancel);
