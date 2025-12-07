@@ -8,25 +8,18 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
@@ -46,7 +39,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private Cursor cursor;
     private Timer timer;
 
-    private ViewSwitcher switchTurn;
+    private ImageView imageTurn;
     private ImageView imgStatus;
 
     private int myTurn, numMoved, numPlayed, numSolved;
@@ -86,7 +79,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
         tvPercentage = findViewById(R.id.TextViewPercentage);
-        switchTurn = (ViewSwitcher) findViewById(R.id.ImageTurn);
+        imageTurn = (ImageView) findViewById(R.id.ImageTurn);
         imgStatus = (ImageView) findViewById(R.id.ImageStatus);
         buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
 
@@ -199,11 +192,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         tvPracticeMove.setText("# " + (currentPos + 1));
 
-        if (myTurn == BoardConstants.BLACK) {
-            switchTurn.setDisplayedChild(0);
-        } else {
-            switchTurn.setDisplayedChild(1);
-        }
+        imageTurn.setImageResource(myTurn == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
 
         imgStatus.setImageResource(R.drawable.ic_check_none);
     }

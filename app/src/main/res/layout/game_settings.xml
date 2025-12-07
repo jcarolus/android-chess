@@ -12,11 +12,7 @@
         android:orientation="vertical">
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="300dip"
-            android:layout_height="wrap_content"
-            android:padding="8dip"
-            android:layout_marginBottom="8dp"
-            >
+            style="@style/MyFormCardView">
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -36,11 +32,7 @@
             </RadioGroup>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="300dip"
-            android:layout_height="wrap_content"
-            android:padding="8dip"
-            android:layout_marginBottom="8dp"
-            >
+            style="@style/MyFormCardView">
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -60,10 +52,7 @@
             </RadioGroup>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="300dip"
-            android:layout_height="wrap_content"
-            android:padding="8dip"
-            android:layout_marginBottom="8dp">
+            style="@style/MyFormCardView">
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">

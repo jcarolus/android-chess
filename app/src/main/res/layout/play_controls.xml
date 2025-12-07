@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="4dip"
+    android:paddingRight="4dip">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:id="@+id/LayoutEngineInfo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/MyRowStyle">
+                <RelativeLayout
+                    android:id="@+id/LayoutPlayButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+                    <ImageButton
+                        android:id="@+id/ButtonPlay"
+                        android:src="@drawable/ic_robot"
+                        android:contentDescription="@string/button_engine_play_description"
+                        style="@style/ChessImageButton" />
+
+                    <ProgressBar
+                        android:id="@+id/ProgressBarPlay"
+                        android:layout_width="40dip"
+                        android:layout_height="40dip"
+                        style="?android:attr/progressBarStyleLarge"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/TextViewLastMove"
+                    style="@style/MyPaneTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="8dip"
+                    android:accessibilityLiveRegion="assertive"/>
+
+                <ImageButton android:id="@+id/ButtonMenu"
+                    android:src="@drawable/ic_three_dots_vertical"
+                    android:contentDescription="@string/button_menu_description"
+                    style="@style/ChessImageButton"/>
+
+            </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/MyRowStyle">
+                <ImageButton
+                    android:id="@+id/ButtonPrevious"
+                    android:src="@drawable/ic_chevron_left"
+                    android:contentDescription="@string/button_previous_move_description"
+                    style="@style/ChessImageButton" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/HistoryRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="8dip"
+                    android:orientation="horizontal"
+                    android:scrollbars="horizontal"
+                    android:fadeScrollbars="false"
+                    android:background="@color/paneBackgroundColor"
+                    android:scrollbarAlwaysDrawHorizontalTrack="true"/>
+                <ImageButton
+                    android:id="@+id/ButtonNext"
+                    android:src="@drawable/ic_chevron_right"
+                    android:contentDescription="@string/button_next_move_description"
+                    style="@style/ChessImageButton" />
+            </TableRow>
+        </TableLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <ImageButton
+                android:id="@+id/ButtonEco"
+                android:src="@drawable/ic_signpost_split"
+                android:contentDescription="ECO openings"
+                style="@style/ChessImageButton" />
+            <TextView
+                android:id="@+id/TextViewEco"
+                style="@style/MyPaneTextStyle2Lines"
+                android:text="--"
+                android:layout_width="fill_parent"
+                android:layout_height="38dip"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip"
+                />
+        </LinearLayout>
+        <com.google.android.flexbox.FlexboxLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="center">
+            <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchBlindfold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/pref_show_blindfold"
+                android:checked="true"
+                />
+            <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/pref_sound"
+                android:checked="true"
+                />
+            <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchFlip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/menu_flip"
+                android:checked="true"
+                />
+            <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSpeech"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/pref_speech"
+                android:checked="true"
+                />
+        </com.google.android.flexbox.FlexboxLayout>
+    </LinearLayout>
+</ScrollView>

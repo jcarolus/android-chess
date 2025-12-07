@@ -60,15 +60,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public boolean requestMove(final int from, final int to) {
         if (jni.getDuckPos() == from) {
             return gameApi.requestDuckMove(to);
-        } else if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
-                jni.getTurn() == BoardConstants.WHITE
-                ||
-                jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
-                        jni.getTurn() == BoardConstants.BLACK) {
+        } else if (gameApi.isPromotionMove(from, to)) {
 
             final String[] items = getResources().getStringArray(R.array.promotionpieces);
 
@@ -180,6 +172,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         SharedPreferences prefs = getPrefs();
 
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
+        ColorSchemes.saturationFactor = prefs.getFloat("squareSaturation", 1.0f);
 
         skipReturn = prefs.getBoolean("skipReturn", true);
         keyboardBuffer = "";
@@ -212,7 +205,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     @Override
     protected void onPause() {
-        Log.i(TAG, "onPause");
+        Log.d(TAG, "onPause");
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
         editor.putBoolean("moveSounds", fVolume == 1.0f);
@@ -220,6 +213,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         editor.commit();
 
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+
+        gameApi.removeListener(this);
+        super.onDestroy();
     }
 
     @Override
@@ -535,7 +536,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getLastMoveAndTurnDescription() {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = TextToSpeechApi.moveToSpeechString(jni.getMyMoveToString(), move);
+            String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
             return jni.getTurn() == BoardConstants.BLACK
                     ? getString(R.string.last_white_move_description, sMove)
                     : getString(R.string.last_black_move_description, sMove);

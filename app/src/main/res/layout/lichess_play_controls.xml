@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/TextViewLastMove"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="assertive"/>
+        <TextView
+            android:id="@+id/TextViewStatus"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="polite"/>
+        <TextView
+            android:id="@+id/TextViewOfferDraw"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="polite"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dip">
+
+            <Button android:id="@+id/ButtonResign"
+                android:text="@string/lichess_play_button_resign"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="1dip"
+                style="@style/ChessButton"
+                />
+            <Button android:id="@+id/ButtonDraw"
+                android:text="@string/lichess_play_button_draw"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="1dip"
+                style="@style/ChessButton"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

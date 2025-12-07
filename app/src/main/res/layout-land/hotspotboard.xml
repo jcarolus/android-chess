@@ -1,197 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dip">
-    <include
-        android:id="@+id/includeboard"
+    <jwtc.android.chess.views.ChessBoardContainerView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <include layout="@layout/hotspotboard_board_top"/>
+        <include
+            android:id="@+id/includeboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/chessboard" />
+        <include layout="@layout/hotspotboard_board_bottom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"/>
+    </jwtc.android.chess.views.ChessBoardContainerView>
+    <include layout="@layout/hotspotboard_controls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        layout="@layout/chessboard" />
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/LayoutBoardTop"
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primaryColor"
-            android:gravity="center_vertical"
-            android:padding="4dip">
-            <ViewSwitcher
-                android:id="@+id/ImageTurnOpp"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip">
-                <ImageView
-                    android:src="@drawable/turnblack"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-
-                <ImageView
-                    android:src="@drawable/turnwhite"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-            </ViewSwitcher>
-            <TextView
-                android:id="@+id/TextOpponent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"/>
-        </LinearLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/LayoutBoardTop"
-            android:layout_above="@id/LayoutBoardBottom"
-            android:padding="8dip">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/TextStatus"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textSize="16sp"
-                    android:layout_marginTop="4dp"
-                    android:visibility="gone"/>
-
-                <LinearLayout
-                    android:id="@+id/LayoutConnect"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"
-                        android:text="Host"
-                        android:checked="true"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"
-                        android:lines="2"
-                        android:minLines="2"
-                        android:maxLines="10"
-                        android:scrollHorizontally="false"
-                        android:ellipsize="none"
-                        android:text="Toggle `host` on if you are running the WiFi Hotspot."
-                        />
-                    <EditText
-                        android:id="@+id/EditName"
-                        android:hint="Your name"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dip"/>
-                    <Button android:id="@+id/ButtonConnect"
-                        android:text="Connect"
-                        android:layout_width="wrap_content"
-                        android:layout_margin="8dip"
-                        style="@style/ChessButton"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/LayoutGameButtons"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <Button android:id="@+id/ButtonResign"
-                        android:text="Resign"
-                        android:layout_width="wrap_content"
-                        style="@style/ChessButton"/>
-
-                    <Button android:id="@+id/ButtonDraw"
-                        android:text="Draw"
-                        android:layout_width="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        style="@style/ChessButton"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/LayoutNewGame"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dip"
-                    android:orientation="horizontal">
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/colorToggleGroup"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        app:singleSelection="true"
-                        app:selectionRequired="true"
-                        >
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/buttonWhite"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="♔ White" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/buttonBlack"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="♚ Black" />
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
-                    <Button android:id="@+id/ButtonNew"
-                        android:text="New"
-                        android:layout_width="wrap_content"
-                        style="@style/ChessButton"/>
-                </LinearLayout>
-            </LinearLayout>
-
-        </ScrollView>
-
-
-        <LinearLayout
-            android:id="@+id/LayoutBoardBottom"
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/primaryColor"
-            android:gravity="center_vertical"
-            android:padding="4dip">
-            <ViewSwitcher
-                android:id="@+id/ImageTurnMe"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip">
-                <ImageView
-                    android:src="@drawable/turnblack"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-
-                <ImageView
-                    android:src="@drawable/turnwhite"
-                    android:layout_height="12dip"
-                    android:layout_width="12dip" />
-            </ViewSwitcher>
-            <TextView
-                android:id="@+id/TextPlayer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"/>
-        </LinearLayout>
-    </RelativeLayout>
-
+        android:layout_marginTop="32dip"
+        android:layout_marginLeft="32dip"
+    />
 </LinearLayout>

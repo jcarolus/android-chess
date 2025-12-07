@@ -17,6 +17,7 @@ import jwtc.chess.Move;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
+import jwtc.chess.board.BoardMembers;
 
 public class GameApi {
     private static final String TAG = "GameApi";
@@ -109,6 +110,21 @@ public class GameApi {
         dispatchDuckMove(duckPos);
 
         return true;
+    }
+
+    public boolean isPromotionMove(int from, int to) {
+        if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
+                BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
+                BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
+                jni.getTurn() == BoardConstants.WHITE
+                ||
+                jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
+                        BoardMembers.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
+                        BoardMembers.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
+                        jni.getTurn() == BoardConstants.BLACK) {
+            return true;
+        }
+        return false;
     }
 
     public void move(int move, int duckMove) {
@@ -270,8 +286,12 @@ public class GameApi {
         return false;
     }
 
+    public Matcher getMoveMatcher(String sMove) {
+        return _patMove.matcher(sMove);
+    }
+
     public boolean requestMove(String sMove) {
-        Matcher matchToken = _patMove.matcher(sMove);
+        Matcher matchToken = getMoveMatcher(sMove);
         String sAnnotation = "";
         if (matchToken.matches()) {
             Log.d(TAG, "requestMove MATCHES " + sMove);
@@ -292,6 +312,85 @@ public class GameApi {
         }
         Log.d(TAG, "requestMove " + sMove);
         return false;
+    }
+
+    public String moveToSpeechString(String sMove, int move) {
+        String sMoveSpeech = "";
+
+        // check regular move
+        Matcher matchToken = getMoveMatcher(sMove);
+        if (matchToken.matches()) {
+            // 1            2                 3                 4   5                6                7             8             9       10
+            // (K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*")
+            String piece = matchToken.group(1);
+            if (piece != null) {
+                piece = getPieceName(piece);
+            } else {
+                piece = "Pawn ";
+            }
+            sMoveSpeech += piece;
+            String sFile = matchToken.group(2);
+            if (sFile != null) {
+                sMoveSpeech += sFile.toUpperCase() + " ";
+            }
+            String sRow = matchToken.group(3);
+            if (sRow != null) {
+                sMoveSpeech += sRow + " ";
+            }
+            if (matchToken.group(4) != null) {
+                sMoveSpeech += "takes ";
+            }
+            sFile = matchToken.group(5);
+            sRow = matchToken.group(6);
+            if (sFile != null && sRow != null) {
+                sMoveSpeech += sFile.toUpperCase() + sRow + " ";
+            }
+            if (Move.isEP(move)) {
+                sMoveSpeech += "(en Passant) ";
+            }
+
+            String sPromote = matchToken.group(7);
+            if (sPromote != null && sPromote.length() > 1) {
+                sMoveSpeech += "promotes to " + getPieceName(sPromote.substring(1));
+            }
+            // ignore Duck for now
+
+            String sSpecial = matchToken.group(9);
+            if (sSpecial != null) {
+                if (sSpecial.equals("+")) {
+                    sMoveSpeech += "check ";
+                } else if(sSpecial.equals("#")) {
+                    sMoveSpeech += "checkmate ";
+                }
+            }
+        } else if (sMove.contains("O-O-O")) {
+            sMoveSpeech += "Castle long ";
+        } else if (sMove.contains("O-O")) {
+            sMoveSpeech += "Castle short ";
+        } else {
+            Log.d(TAG, "Did not parse move " + sMove);
+        }
+
+        Log.d(TAG, "TTS " + sMove + " => " + sMoveSpeech);
+
+        return sMoveSpeech;
+    }
+
+    protected String getPieceName(String piece) {
+        switch (piece) {
+            case "K":
+                return "King ";
+            case "Q":
+                return "Queen ";
+            case "R":
+                return "Rook ";
+            case "B":
+                return "Bishop ";
+            case "N":
+                return "Knight ";
+            default:
+                return "";
+        }
     }
 
     protected void dispatchMove(final int move) {

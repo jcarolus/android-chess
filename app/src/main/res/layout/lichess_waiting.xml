@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:padding="8dip">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="320dip"
+        android:layout_height="wrap_content"
+        android:padding="8dip"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/lichess"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dip"
+                android:layout_marginBottom="16dip"
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="8dip"
+                android:lines="2"
+                android:minLines="2"
+                android:maxLines="10"
+                android:scrollHorizontally="false"
+                android:ellipsize="none"
+                android:text="@string/lichess_starting"
+                />
+
+            <ProgressBar
+                android:layout_width="fill_parent"
+                android:layout_height="4dip"
+                android:layout_marginLeft="8dip"
+                android:layout_marginRight="8dip"
+                android:layout_marginBottom="8dip"
+                style="?android:attr/progressBarStyleHorizontal"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</RelativeLayout>

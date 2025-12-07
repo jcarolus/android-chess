@@ -67,11 +67,21 @@
     </style>
 
     <style name="MySmallTextStyle">
-        <item name="android:paddingTop">1dp</item>
-        <item name="android:paddingBottom">1dp</item>
-        <item name="android:paddingLeft">2dp</item>
-        <item name="android:paddingRight">2dp</item>
+        <item name="android:padding">2dip</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="MyPaneTextStyle" parent="@style/MySmallTextStyle">
+        <item name="android:padding">4dip</item>
+        <item name="android:background">@color/paneBackgroundColor</item>
+        <item name="android:scrollHorizontally">false</item>
+    </style>
+
+    <style name="MyPaneTextStyle2Lines" parent="@style/MyPaneTextStyle">
+        <item name="android:singleLine">false</item>
+        <item name="android:minLines">2</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="CaptureImageStyle">
@@ -95,5 +105,15 @@
     <style name="MyRowStyle">
         <item name="android:layout_marginBottom">1dp</item>
         <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="MyFormLayout">
+        <item name="android:layout_width">300dip</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="MyFormCardView" parent="MyFormLayout">
+        <item name="android:padding">8dip</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
     </style>
 </resources>

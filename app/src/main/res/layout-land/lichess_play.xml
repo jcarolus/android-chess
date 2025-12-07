@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ICSPlay"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <jwtc.android.chess.views.ChessBoardContainerView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/lichess_board_top"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+
+        <include
+            android:id="@+id/includeboard"
+            layout="@layout/chessboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <include
+            layout="@layout/lichess_board_bottom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+
+    </jwtc.android.chess.views.ChessBoardContainerView>
+
+    <include layout="@layout/lichess_play_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dip"
+        android:layout_marginLeft="32dip"
+        />
+
+</LinearLayout>

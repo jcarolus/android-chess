@@ -25,7 +25,7 @@ public class CapturedCountView extends AppCompatTextView {
         setTextColor(ContextCompat.getColor(context, R.color.surfaceTextColor));
 
         if (count > 0) {
-            setText("" + count);
+            setText(" " + count);
         } else {
             setText("");
         }

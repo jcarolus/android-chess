@@ -13,14 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
@@ -35,7 +31,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     private EngineApi myEngine;
     private Cursor cursor = null;
     private TextView tvPuzzleText;
-    private ViewSwitcher switchTurn;
+    private ImageView imageTurn;
     private ImageButton butPrev, butNext, butRetry;
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles, myTurn, numMoved = 0;
@@ -78,7 +74,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         totalPuzzles = 0;
 
         tvPuzzleText = findViewById(R.id.TextViewPuzzleText);
-        switchTurn = findViewById(R.id.ImageTurn);
+        imageTurn = findViewById(R.id.ImageTurn);
 
         imgStatus = findViewById(R.id.ImageStatus);
 
@@ -205,11 +201,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         imgStatus.setImageResource(R.drawable.ic_check_none);
         butShow.setEnabled(true);
 
-        if (myTurn == BoardConstants.BLACK) {
-            switchTurn.setDisplayedChild(0);
-        } else {
-            switchTurn.setDisplayedChild(1);
-        }
+        imageTurn.setImageResource(myTurn == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
 
         String sWhite = gameApi.getWhite();
         if (sWhite == null) {

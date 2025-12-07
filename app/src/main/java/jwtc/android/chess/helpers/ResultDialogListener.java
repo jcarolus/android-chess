@@ -1,8 +1,6 @@
 package jwtc.android.chess.helpers;
 
-import android.os.Bundle;
+public interface ResultDialogListener<T> {
 
-public interface ResultDialogListener {
-
-    public void OnDialogResult(int requestCode, Bundle data);
+    public void OnDialogResult(int requestCode, T data);
 }
