@@ -78,20 +78,16 @@ public class SetupActivity extends ChessBoardActivity {
         spinnerEPFile.setAdapter(adapter);
 
         Button buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSave();
-            }
-        });
+        buttonOk.setOnClickListener(v -> onSave());
 
         Button buttonCancel = findViewById(R.id.ButtonSetupOptionsCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        buttonCancel.setOnClickListener(v -> finish());
+
+        Button buttonReset = findViewById(R.id.ButtonSetupOptionsReset);
+        buttonReset.setOnClickListener(v -> initBoard());
+
+        Button buttonClear = findViewById(R.id.ButtonSetupOptionsClear);
+        buttonClear.setOnClickListener(v -> resetBoard());
 
         afterCreate();
         buildPieces();
@@ -337,6 +333,12 @@ public class SetupActivity extends ChessBoardActivity {
 
         jni.putPiece(BoardConstants.e1, BoardConstants.KING, BoardConstants.WHITE);
         jni.putPiece(BoardConstants.e8, BoardConstants.KING, BoardConstants.BLACK);
+        rebuildBoard();
+    }
+
+    public void initBoard() {
+        jni.newGame();
+        rebuildBoard();
     }
 
     public void addPiece(final int pos, final int piece, final int turn) {

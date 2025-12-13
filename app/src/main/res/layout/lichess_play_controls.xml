@@ -24,7 +24,7 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="polite"/>
+            android:accessibilityLiveRegion="assertive"/>
         <TextView
             android:id="@+id/TextViewOfferDraw"
             style="@style/MyPaneTextStyle"
@@ -33,7 +33,7 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="polite"/>
+            android:accessibilityLiveRegion="assertive"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -55,5 +55,23 @@
                 style="@style/ChessButton"
                 />
         </LinearLayout>
+        <TextView
+            android:id="@+id/TextViewWhitePieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="polite"/>
+        <TextView
+            android:id="@+id/TextViewBlackPieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="polite"/>
     </LinearLayout>
 </ScrollView>

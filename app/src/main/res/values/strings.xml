@@ -195,6 +195,8 @@
     <string name="msg_setup_enpassant">En-passant square</string>
     <string name="msg_setup_castle_white">White</string>
     <string name="msg_setup_castle_black">Black</string>
+    <string name="msg_setup_reset">Reset</string>
+    <string name="msg_setup_clear">Clear</string>
     <string name="msg_ics_enter_handle">Please enter your handle</string>
     <string name="msg_ics_enter_password">Please enter your password</string>
 
@@ -283,7 +285,7 @@
     <string name="ics_quit">Quit?</string>
 
     <string name="practice_help">Find the Check-Mate (can be more than one move).</string>
-    <string name="puzzle_help">These are tough Mate in two puzzles.\nThe goal is to find the first move that leads to a forced mate within two moves.\nIn other words, after you make the correct move, the opponent can not prevent a mate on your next move.\nAfter this first move, the puzzle is solved.\nPress the \'Show\' button for the solution.\nSource: EL ARTE DEL MATE EN DOS by Eduardo Sadier</string>
+    <string name="puzzle_help">Find the mate in two.\nSource: EL ARTE DEL MATE EN DOS by Eduardo Sadier</string>
     <string name="advanced_help">
          <![CDATA[
 <h3>Advanced</h3>
@@ -383,10 +385,11 @@
     <string name="lichess_create_seek_title">Create seek</string>
     <string name="lichess_create_challenge_player">Opponent</string>
     <string name="lichess_create_challenge_time">Time</string>
-    <string name="lichess_create_challenge_time_unlimited">Unlimited</string>
+    <string name="lichess_create_challenge_time_correspondence">Correspondence</string>
     <string name="lichess_create_challenge_time_control">Time control</string>
     <string name="lichess_create_challenge_time_minutes">Minutes</string>
     <string name="lichess_create_challenge_time_increment">Increment (s)</string>
+    <string name="lichess_create_challenge_time_days">Days per move</string>
     <string name="lichess_create_challenge_variant">Variant</string>
     <string name="lichess_create_challenge_variant_standard">Standard</string>
     <string name="lichess_create_challenge_variant_chess960">Chess 960</string>

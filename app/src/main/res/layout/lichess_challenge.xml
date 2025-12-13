@@ -51,7 +51,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="@string/lichess_create_challenge_time_unlimited"
+                        android:text="@string/lichess_create_challenge_time_correspondence"
                         android:id="@+id/RadioButtonUnlimitedTime"
                         style="@style/MyRowTextStyle" />
 
@@ -64,11 +64,33 @@
                         style="@style/MyRowTextStyle" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/LayoutDays"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
-                        android:text="@string/lichess_create_challenge_time_minutes"
+                        android:text="@string/lichess_create_challenge_time_days"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        style="@style/MyHeaderTextStyle" />
+                    <EditText
+                        android:id="@+id/EditTextDays"
+                        android:hint="1"
+                        android:inputType="number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:maxLength="2"
+                        android:imeOptions="actionDone" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/LayoutMinutes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                         android:text="@string/lichess_create_challenge_time_minutes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -80,10 +102,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:maxLength="4"
+                        android:maxLength="3"
                         android:imeOptions="actionDone" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/LayoutIncrement"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -100,7 +123,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:maxLength="4"
+                        android:maxLength="2"
                         android:imeOptions="actionDone" />
                 </LinearLayout>
             </LinearLayout>
