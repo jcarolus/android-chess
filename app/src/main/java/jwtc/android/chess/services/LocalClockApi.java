@@ -1,5 +1,6 @@
 package jwtc.android.chess.services;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -14,7 +15,7 @@ public class LocalClockApi extends ClockApi {
 
     private Thread clockThread = null;
 
-    protected Handler updateHandler = new Handler() {
+    protected Handler updateHandler = new Handler(Looper.getMainLooper()) {
         // @Override
         public void handleMessage(Message msg) {
             dispatchClockTime();
@@ -40,15 +41,9 @@ public class LocalClockApi extends ClockApi {
 
     public void stopClock() {
         if (clockThread != null) {
-            try {
-                synchronized (this) {
-                    clockThread.interrupt();
-                }
-                clockThread.join();
-            } catch (InterruptedException e) {
-                Log.d(TAG, "stopClock interrupted");
+            synchronized (this) {
+                clockThread.interrupt();
             }
-
             clockThread = null;
         }
     }
@@ -100,7 +95,7 @@ public class LocalClockApi extends ClockApi {
         @Override
         public void run() {
             try {
-                while (true) {
+                while (!Thread.currentThread().isInterrupted()) {
                     Message m = new Message();
                     m.what = 0;
                     updateHandler.sendMessage(m);

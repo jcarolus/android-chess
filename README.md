@@ -4,6 +4,7 @@
 - User friendly
 - Free
 - No ads
+- Small size
 - Demo video https://youtu.be/2HwjQDV1P8g
 
 ## Features
