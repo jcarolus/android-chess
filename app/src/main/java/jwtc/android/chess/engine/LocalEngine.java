@@ -49,16 +49,9 @@ public class LocalEngine extends EngineApi {
         if (engineSearchThread != null) {
             Log.d(TAG, "abort");
 
-            try {
-                synchronized (this) {
-                    engineSearchThread.interrupt();
-                    JNI.getInstance().interrupt();
-                }
-                engineSearchThread.join();
-
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            synchronized (this) {
+                engineSearchThread.interrupt();
+                JNI.getInstance().interrupt();
             }
 
             for (EngineListener listener: listeners) {
@@ -131,7 +124,7 @@ public class LocalEngine extends EngineApi {
                 int move, value, ply = 1, j, iSleep = 1000, duckMove;
                 String s;
                 float fValue;
-                while (jni.peekSearchDone() == 0) {
+                while (jni.peekSearchDone() == 0 && !Thread.currentThread().isInterrupted()) {
                     ply = jni.peekSearchDepth();
 
                     value = jni.peekSearchBestValue();
@@ -170,15 +163,8 @@ public class LocalEngine extends EngineApi {
 
     private void abortPeek() {
         if (enginePeekThread != null) {
-            try {
-                synchronized (this) {
-                    enginePeekThread.interrupt();
-                }
-                enginePeekThread.join();
-
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            synchronized (this) {
+                enginePeekThread.interrupt();
             }
         }
     }
