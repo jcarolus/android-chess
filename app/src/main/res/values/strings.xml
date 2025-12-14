@@ -173,6 +173,7 @@
 
     <string name="puzzle_already_solved">(position already solved)</string>
     <string name="puzzle_not_correct_move"> is not the expected move</string>
+    <string name="puzzle_correct_move">That is the correct move</string>
 
     <string name="savegame_event">Event</string>
     <string name="savegame_event_question">Event?</string>

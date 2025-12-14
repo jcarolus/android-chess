@@ -33,9 +33,9 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
-    private TextView tvPracticeMove, tvPercentage;
+    private TextView tvPracticeMove, tvPercentage, textViewSolution;
     private ImageButton buttonNext, buttonRetry;
-    private int totalPuzzles, currentPos, nextPos;
+    private int totalPuzzles, currentPos;
     private Cursor cursor;
     private Timer timer;
 
@@ -43,7 +43,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private ImageView imgStatus;
 
     private int myTurn, numMoved, numPlayed, numSolved;
-    private boolean isRetry = false;
+
     private LinearProgressIndicator percentBar;
 
     @Override
@@ -79,14 +79,15 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
         tvPercentage = findViewById(R.id.TextViewPercentage);
+        textViewSolution = findViewById(R.id.TextViewSolution);
         imageTurn = (ImageView) findViewById(R.id.ImageTurn);
         imgStatus = (ImageView) findViewById(R.id.ImageStatus);
         buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
 
         buttonNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                if (nextPos < totalPuzzles) {
-                    currentPos = nextPos;
+                if (currentPos + 1 < totalPuzzles) {
+                    currentPos++;
                     buttonRetry.setEnabled(false);
                     startPuzzle();
                 } else {
@@ -99,7 +100,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         buttonRetry = findViewById(R.id.ButtonPracticeRetry);
         buttonRetry.setOnClickListener(new View.OnClickListener() {
               public void onClick(View arg0) {
-                  isRetry = true;
                   buttonRetry.setEnabled(false);
                   startPuzzle();
               }
@@ -132,6 +132,11 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         if (timer != null)
             timer.cancel();
         timer = null;
+
+        // ended with correct solution, advance position
+        if (jni.isEnded() != 0) {
+            currentPos++;
+        }
 
         editor.putInt("practicePos", currentPos);
         editor.putInt("practiceNumPlayed", numPlayed);
@@ -167,9 +172,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     protected void startPuzzle() {
         cursor.moveToPosition(currentPos);
-        if (!isRetry) {
-            nextPos = currentPos + 1;
-        }
 
         int pgnIndex = cursor.getColumnIndex(MyPuzzleProvider.COL_PGN);
         String sPGN = pgnIndex >= 0 ? cursor.getString(pgnIndex) : "";
@@ -191,6 +193,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
         tvPracticeMove.setText("# " + (currentPos + 1));
+        textViewSolution.setText("");
 
         imageTurn.setImageResource(myTurn == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
 
@@ -198,7 +201,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     }
 
     public void setMessage(String sMsg) {
-        tvPracticeMove.setText(sMsg);
+        textViewSolution.setText(sMsg);
     }
 
     public void setMessage(int res) {
@@ -211,6 +214,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     }
 
     public void animateCorrect() {
+        setMessage(getString(R.string.puzzle_correct_move));
         imgStatus.setImageResource(R.drawable.ic_check);
         pulseAnimation(imgStatus);
         updateScore();
@@ -258,7 +262,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
             numPlayed++;
             numSolved++;
-            currentPos = nextPos;
             buttonRetry.setEnabled(false);
             animateCorrect();
         }
@@ -282,7 +285,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             numMoved--;
             numPlayed++;
 
-            currentPos = nextPos;
             animateWrong(sMove + getString(R.string.puzzle_not_correct_move));
         }
     }

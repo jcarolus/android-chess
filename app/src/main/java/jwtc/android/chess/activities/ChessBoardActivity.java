@@ -538,6 +538,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         int move = jni.getMyMove();
         if (move != 0) {
             String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
+            if (jni.isEnded() != 0) {
+                return sMove;
+            }
             return jni.getTurn() == BoardConstants.BLACK
                     ? getString(R.string.last_white_move_description, sMove)
                     : getString(R.string.last_black_move_description, sMove);
@@ -571,7 +574,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 + ". ";
             }
         }
-        return ret;
+        return getString(turn == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black) + ": " + ret;
     }
 
     protected class MyClickListener implements View.OnClickListener {

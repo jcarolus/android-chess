@@ -49,6 +49,15 @@
                 style="@style/MyHeaderTextStyle" />
         </RelativeLayout>
         <TextView
+            android:id="@+id/TextViewSolution"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dip"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:accessibilityLiveRegion="assertive"/>
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dip"
