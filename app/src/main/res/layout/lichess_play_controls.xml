@@ -63,7 +63,7 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="polite"/>
+            android:accessibilityLiveRegion="none"/>
         <TextView
             android:id="@+id/TextViewBlackPieces"
             style="@style/MyPaneTextStyle"
@@ -72,6 +72,6 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="polite"/>
+            android:accessibilityLiveRegion="none"/>
     </LinearLayout>
 </ScrollView>
