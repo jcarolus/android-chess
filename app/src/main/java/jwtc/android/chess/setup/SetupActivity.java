@@ -78,20 +78,16 @@ public class SetupActivity extends ChessBoardActivity {
         spinnerEPFile.setAdapter(adapter);
 
         Button buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSave();
-            }
-        });
+        buttonOk.setOnClickListener(v -> onSave());
 
         Button buttonCancel = findViewById(R.id.ButtonSetupOptionsCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        buttonCancel.setOnClickListener(v -> finish());
+
+        Button buttonReset = findViewById(R.id.ButtonSetupOptionsReset);
+        buttonReset.setOnClickListener(v -> initBoard());
+
+        Button buttonClear = findViewById(R.id.ButtonSetupOptionsClear);
+        buttonClear.setOnClickListener(v -> resetBoard());
 
         afterCreate();
         buildPieces();
@@ -337,6 +333,12 @@ public class SetupActivity extends ChessBoardActivity {
 
         jni.putPiece(BoardConstants.e1, BoardConstants.KING, BoardConstants.WHITE);
         jni.putPiece(BoardConstants.e8, BoardConstants.KING, BoardConstants.BLACK);
+        rebuildBoard();
+    }
+
+    public void initBoard() {
+        jni.newGame();
+        rebuildBoard();
     }
 
     public void addPiece(final int pos, final int piece, final int turn) {
@@ -563,37 +565,38 @@ public class SetupActivity extends ChessBoardActivity {
                         Log.i(TAG, "onDrag DROP " + toPos);
                         // Dropped, reassign View to ViewGroup
                         View fromView = (View) event.getLocalState();
-                        boolean fromPieceStack = fromView.getParent() instanceof ChessPiecesStackView;
-                        if (fromView instanceof ChessPieceView) {
-                            final ChessPieceView pieceView = (ChessPieceView) fromView;
-                            final int fromPos = pieceView.getPos();
+                        if (fromView != null) {
+                            boolean fromPieceStack = fromView.getParent() instanceof ChessPiecesStackView;
+                            if (fromView instanceof ChessPieceView) {
+                                final ChessPieceView pieceView = (ChessPieceView) fromView;
+                                final int fromPos = pieceView.getPos();
 
-                            if (toPos == fromPos) {
-                                if (onChessBoard) {
-                                    selectPosition(toPos);
+                                if (toPos == fromPos) {
+                                    if (onChessBoard) {
+                                        selectPosition(toPos);
+                                    } else {
+                                        selectPieceInStackByViews(pieceView);
+                                    }
+                                } else if (onChessBoard) {
+                                    // drop on board
+                                    if (fromPieceStack) {
+                                        selectPieceInStackByViews(pieceView);
+                                        addPieceFromStack(toPos);
+                                    } else {
+                                        movePiece(fromPos, toPos);
+                                    }
                                 } else {
-                                    selectPieceInStackByViews(pieceView);
+                                    // dropped back
+                                    if (pieceView.getParent() instanceof ChessBoardView) {
+                                        removePiece(fromPos);
+                                        rebuildBoard();
+                                    } else {
+                                        selectPieceInStackByViews(pieceView);
+                                    }
                                 }
-                            }
-                            else if (onChessBoard) {
-                                // drop on board
-                                if (fromPieceStack) {
-                                    selectPieceInStackByViews(pieceView);
-                                    addPieceFromStack(toPos);
-                                } else {
-                                    movePiece(fromPos, toPos);
-                                }
-                            } else {
-                                // dropped back
-                                if (pieceView.getParent() instanceof ChessBoardView) {
-                                    removePiece(fromPos);
-                                    rebuildBoard();
-                                } else {
-                                    selectPieceInStackByViews(pieceView);
-                                }
-                            }
 
-                            pieceView.setVisibility(View.VISIBLE);
+                                pieceView.setVisibility(View.VISIBLE);
+                            }
                         }
 
                         break;

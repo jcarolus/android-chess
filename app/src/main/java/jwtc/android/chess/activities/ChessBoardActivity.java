@@ -17,6 +17,7 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
@@ -96,7 +97,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void OnMove(int move) {
         Log.d(TAG, "OnMove " + Move.toDbgString(move));
-        selectPosition(-1);
+        // selectPosition(-1);
 
         moveToPositions.clear();
         highlightedPositions.clear();
@@ -530,13 +531,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 return getString(R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos));
             }
         }
-        return getString(R.string.square_description, Pos.toString(pos));
+        return Pos.toString(pos);
     }
 
     protected String getLastMoveAndTurnDescription() {
         int move = jni.getMyMove();
         if (move != 0) {
             String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
+            if (jni.isEnded() != 0) {
+                return sMove;
+            }
             return jni.getTurn() == BoardConstants.BLACK
                     ? getString(R.string.last_white_move_description, sMove)
                     : getString(R.string.last_black_move_description, sMove);
@@ -548,6 +552,29 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (isScreenReaderOn()) {
             doToastShort(getString(R.string.square_selected_description, Pos.toString(pos)));
         }
+    }
+
+    protected String getPiecesDescription(final int turn) {
+        String ret = "";
+        ArrayList<Integer> positions = new ArrayList<Integer>();
+        for (int i = 0; i < 6; i++) {
+            positions.clear();
+            for (int pos = 0; pos < 64; pos++) {
+                int piece = jni.pieceAt(turn, pos);
+                if (piece == i) {
+                    positions.add(pos);
+                }
+            }
+            if (positions.size() > 0) {
+                ret += Piece.toString(i)
+                        + " " + positions
+                        .stream()
+                        .map(Pos::toString)
+                        .collect(Collectors.joining(", "))
+                + ". ";
+            }
+        }
+        return getString(turn == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black) + ": " + ret;
     }
 
     protected class MyClickListener implements View.OnClickListener {

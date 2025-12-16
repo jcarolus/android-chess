@@ -503,7 +503,13 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateLastMove() {
-        textViewEngineValue.setText(getLastMoveAndTurnDescription());
+        final int state = chessStateToR(jni.getState());
+        String sState = "";
+        // in play or mate are clear from last move.
+        if (state != R.string.state_play && state != R.string.state_mate) {
+            sState = ". " + getString(state);
+        }
+        textViewEngineValue.setText(getLastMoveAndTurnDescription() + sState);
     }
 
     protected void updateSeekBar() {

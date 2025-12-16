@@ -30,11 +30,12 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     private static final String TAG = "PuzzleActivity";
     private EngineApi myEngine;
     private Cursor cursor = null;
-    private TextView tvPuzzleText;
+    private TextView tvPuzzleText, textViewSolution;
     private ImageView imageTurn;
     private ImageButton butPrev, butNext, butRetry;
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles, myTurn, numMoved = 0;
+    private boolean showMove = false;
     private Button butShow;
 
 
@@ -74,6 +75,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         totalPuzzles = 0;
 
         tvPuzzleText = findViewById(R.id.TextViewPuzzleText);
+        textViewSolution = findViewById(R.id.TextViewSolution);
         imageTurn = findViewById(R.id.ImageTurn);
 
         imgStatus = findViewById(R.id.ImageStatus);
@@ -108,6 +110,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         butShow = findViewById(R.id.ButtonPuzzleShow);
         butShow.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                showMove = true;
                 gameApi.jumpToBoardNum(numMoved);
                 //rebuildBoard();
                 if (jni.isEnded() == 0) {
@@ -189,6 +192,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
 
         Log.d(TAG, "startPuzzle " + sPGN);
 
+        showMove = false;
         lastMoveFrom = -1;
         lastMoveTo = -1;
 
@@ -209,19 +213,9 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         } else {
             sWhite = sWhite.replace("?", "");
         }
-//        String sDate = gameApi.getDate();
-//        if (sDate == null) {
-//            sDate = "";
-//        } else {
-//            sDate = sDate.replace("????", "");
-//            sDate = sDate.replace(".??.??", "");
-//        }
-
-//        if (sWhite.length() > 0 && sDate.length() > 0) {
-//            sWhite += ", ";
-//        }
 
         tvPuzzleText.setText("# " + (currentPosition + 1) + " - " + sWhite /*+ sDate*/); // + "\n\n" + _mapPGNHead.get("Event") + ", " + _mapPGNHead.get("Date").replace(".??.??", ""));
+        textViewSolution.setText("");
     }
 
     protected void startEngine() {
@@ -232,10 +226,19 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     public void animateCorrect() {
         imgStatus.setImageResource(R.drawable.ic_check);
         pulseAnimation(imgStatus);
+        solutionMessage();
     }
 
     public void setMessage(String sMsg) {
-        tvPuzzleText.setText(sMsg);
+        textViewSolution.setText(sMsg);
+    }
+
+    public void solutionMessage() {
+        int move = jni.getMyMove();
+        if (move != 0) {
+            String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
+            textViewSolution.setText(sMove);
+        }
     }
 
     @Override
@@ -249,7 +252,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
 
         updateSelectedSquares();
 
-        if (jni.isEnded() == 0 && jni.getTurn() != myTurn) {
+        if (jni.isEnded() == 0 && jni.getTurn() != myTurn && !showMove) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {

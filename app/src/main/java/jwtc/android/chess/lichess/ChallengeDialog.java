@@ -2,17 +2,12 @@ package jwtc.android.chess.lichess;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.opengl.Visibility;
-import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -23,6 +18,7 @@ import java.util.Map;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.helpers.Utils;
 
 public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
@@ -46,6 +42,10 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         final RadioButton radioButtonUnlimitedTime = findViewById(R.id.RadioButtonUnlimitedTime);
         final RadioButton radioButtonTimeControl = findViewById(R.id.RadioButtonTimeControl);
 
+        final LinearLayout layoutDays = findViewById(R.id.LayoutDays);
+        final LinearLayout layoutMinutes = findViewById(R.id.LayoutMinutes);
+        final LinearLayout layoutIncrement = findViewById(R.id.LayoutIncrement);
+        final EditText editTextDays = findViewById(R.id.EditTextDays);
         final EditText editTextTime = findViewById(R.id.EditTextMinutes);
         final EditText editTextIncrement = findViewById(R.id.EditTextIncrement);
 
@@ -60,20 +60,25 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
         // initial values
         editTextPlayer.setText(prefs.getString("lichess_challenge_name", ""));
+        boolean withTimeControl = prefs.getBoolean("lichess_challenge_timetcontrol", true);
+        int days = prefs.getInt("lichess_challenge_days", 1);
+        editTextDays.setText("" + days);
         int minutes = prefs.getInt("lichess_challenge_minutes", 5);
         editTextTime.setText("" + minutes);
         editTextIncrement.setText("" + prefs.getInt("lichess_challenge_increment", 10));
 
-        if (minutes > 0) {
+        if (withTimeControl) {
+            layoutDays.setVisibility(View.GONE);
+            layoutMinutes.setVisibility(View.VISIBLE);
+            layoutIncrement.setVisibility(View.VISIBLE);
             radioButtonTimeControl.setChecked(true);
             radioButtonUnlimitedTime.setChecked(false);
-            editTextTime.setEnabled(true);
-            editTextIncrement.setEnabled(true);
         } else {
+            layoutDays.setVisibility(View.VISIBLE);
+            layoutMinutes.setVisibility(View.INVISIBLE);
+            layoutIncrement.setVisibility(View.GONE);
             radioButtonTimeControl.setChecked(false);
             radioButtonUnlimitedTime.setChecked(true);
-            editTextTime.setEnabled(false);
-            editTextIncrement.setEnabled(false);
         }
 
         String variant = prefs.getString("lichess_challenge_variant", "standard");
@@ -92,13 +97,15 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         // radio group behaviour
         radioButtonUnlimitedTime.setOnClickListener(v -> {
             radioButtonTimeControl.setChecked(!radioButtonUnlimitedTime.isChecked());
-            editTextTime.setEnabled(false);
-            editTextIncrement.setEnabled(false);
+            layoutDays.setVisibility(View.VISIBLE);
+            layoutMinutes.setVisibility(View.INVISIBLE);
+            layoutIncrement.setVisibility(View.GONE);
         });
         radioButtonTimeControl.setOnClickListener(v -> {
             radioButtonUnlimitedTime.setChecked(!radioButtonTimeControl.isChecked());
-            editTextTime.setEnabled(true);
-            editTextIncrement.setEnabled(true);
+            layoutDays.setVisibility(View.GONE);
+            layoutMinutes.setVisibility(View.VISIBLE);
+            layoutIncrement.setVisibility(View.VISIBLE);
         });
 
         radioButtonVariantDefault.setOnClickListener(v -> radioButtonVariantChess960.setChecked(!radioButtonVariantDefault.isChecked()));
@@ -135,9 +142,10 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
             // timecontrol
             if (radioButtonTimeControl.isChecked()) {
 
-                int editMinutes = Integer.parseInt(editTextTime.getText().toString());
-                int increment = Integer.parseInt(editTextIncrement.getText().toString());
+                int editMinutes = Utils.parseInt(editTextTime.getText().toString(), 5);
+                int increment = Utils.parseInt(editTextIncrement.getText().toString(), 0);
 
+                editor.putBoolean("lichess_challenge_timetcontrol", true);
                 editor.putInt("lichess_challenge_minutes", editMinutes);
                 editor.putInt("lichess_challenge_increment", increment);
 
@@ -155,6 +163,11 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
                     editTextTime.setError("Number must be greater than 2");
                     return;
                 }
+            } else {
+                int editDays = Utils.parseInt(editTextDays.getText().toString(), 1);
+                editor.putBoolean("lichess_challenge_timetcontrol", false);
+                editor.putInt("lichess_challenge_days", editDays);
+                data.put("days", editDays);
             }
 
             // variant
