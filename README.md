@@ -15,7 +15,7 @@
 - Play online on the Free Internet Chess Server (FICS)
 - Cast the board via Chromecast
 - ECO opening explorer
-- Accessibility support for screen readers
+- Accessibility support for screen readers like Talkback
 
 ## Install
 - Published on "F-droid" https://f-droid.org/packages/jwtc.android.chess/

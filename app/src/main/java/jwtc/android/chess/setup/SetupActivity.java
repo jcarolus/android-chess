@@ -565,37 +565,38 @@ public class SetupActivity extends ChessBoardActivity {
                         Log.i(TAG, "onDrag DROP " + toPos);
                         // Dropped, reassign View to ViewGroup
                         View fromView = (View) event.getLocalState();
-                        boolean fromPieceStack = fromView.getParent() instanceof ChessPiecesStackView;
-                        if (fromView instanceof ChessPieceView) {
-                            final ChessPieceView pieceView = (ChessPieceView) fromView;
-                            final int fromPos = pieceView.getPos();
+                        if (fromView != null) {
+                            boolean fromPieceStack = fromView.getParent() instanceof ChessPiecesStackView;
+                            if (fromView instanceof ChessPieceView) {
+                                final ChessPieceView pieceView = (ChessPieceView) fromView;
+                                final int fromPos = pieceView.getPos();
 
-                            if (toPos == fromPos) {
-                                if (onChessBoard) {
-                                    selectPosition(toPos);
+                                if (toPos == fromPos) {
+                                    if (onChessBoard) {
+                                        selectPosition(toPos);
+                                    } else {
+                                        selectPieceInStackByViews(pieceView);
+                                    }
+                                } else if (onChessBoard) {
+                                    // drop on board
+                                    if (fromPieceStack) {
+                                        selectPieceInStackByViews(pieceView);
+                                        addPieceFromStack(toPos);
+                                    } else {
+                                        movePiece(fromPos, toPos);
+                                    }
                                 } else {
-                                    selectPieceInStackByViews(pieceView);
+                                    // dropped back
+                                    if (pieceView.getParent() instanceof ChessBoardView) {
+                                        removePiece(fromPos);
+                                        rebuildBoard();
+                                    } else {
+                                        selectPieceInStackByViews(pieceView);
+                                    }
                                 }
-                            }
-                            else if (onChessBoard) {
-                                // drop on board
-                                if (fromPieceStack) {
-                                    selectPieceInStackByViews(pieceView);
-                                    addPieceFromStack(toPos);
-                                } else {
-                                    movePiece(fromPos, toPos);
-                                }
-                            } else {
-                                // dropped back
-                                if (pieceView.getParent() instanceof ChessBoardView) {
-                                    removePiece(fromPos);
-                                    rebuildBoard();
-                                } else {
-                                    selectPieceInStackByViews(pieceView);
-                                }
-                            }
 
-                            pieceView.setVisibility(View.VISIBLE);
+                                pieceView.setVisibility(View.VISIBLE);
+                            }
                         }
 
                         break;

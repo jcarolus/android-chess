@@ -2,18 +2,12 @@ package jwtc.android.chess.lichess;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.opengl.Visibility;
-import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -24,6 +18,7 @@ import java.util.Map;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.helpers.Utils;
 
 public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
@@ -147,8 +142,8 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
             // timecontrol
             if (radioButtonTimeControl.isChecked()) {
 
-                int editMinutes = Integer.parseInt(editTextTime.getText().toString());
-                int increment = Integer.parseInt(editTextIncrement.getText().toString());
+                int editMinutes = Utils.parseInt(editTextTime.getText().toString(), 5);
+                int increment = Utils.parseInt(editTextIncrement.getText().toString(), 0);
 
                 editor.putBoolean("lichess_challenge_timetcontrol", true);
                 editor.putInt("lichess_challenge_minutes", editMinutes);
@@ -169,7 +164,7 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
                     return;
                 }
             } else {
-                int editDays = Integer.parseInt(editTextDays.getText().toString());
+                int editDays = Utils.parseInt(editTextDays.getText().toString(), 1);
                 editor.putBoolean("lichess_challenge_timetcontrol", false);
                 editor.putInt("lichess_challenge_days", editDays);
                 data.put("days", editDays);
