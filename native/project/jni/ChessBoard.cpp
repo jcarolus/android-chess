@@ -2015,8 +2015,12 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
     m_50RuleCount = r50;
     COL_AROOK = 0;
     COL_HROOK = 7;
+
+    m_castlings[BLACK] = 0;
+    m_castlings[WHITE] = 0;
+
     if (wccl) {
-        int posRook = m_kingPositions[m_turn] - 1;
+        int posRook = m_kingPositions[WHITE] - 1;
         while (posRook >= a1) {
             if ((m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
                 COL_AROOK = COL[posRook];
@@ -2027,7 +2031,7 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
         m_castlings[WHITE] |= MASK_AROOK;
     }
     if (wccs) {
-        int posRook = m_kingPositions[m_turn] + 1;
+        int posRook = m_kingPositions[WHITE] + 1;
         while (posRook <= h1) {
             if ((m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
                 COL_HROOK = COL[posRook];
@@ -2043,7 +2047,7 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
     }
 
     if (bccl) {
-        int posRook = m_kingPositions[m_o_turn] - 1;
+        int posRook = m_kingPositions[BLACK] - 1;
         while (posRook >= a8) {
             if ((m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
                 COL_AROOK = COL[posRook];
@@ -2054,7 +2058,7 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
         m_castlings[BLACK] |= MASK_AROOK;
     }
     if (bccs) {
-        int posRook = m_kingPositions[m_o_turn] + 1;
+        int posRook = m_kingPositions[BLACK] + 1;
         while (posRook <= h8) {
             if ((m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
                 COL_HROOK = COL[posRook];
@@ -2068,6 +2072,30 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
     if (!bccl && !bccs) {
         m_castlings[BLACK] |= MASK_KING;
     }
+}
+
+boolean ChessBoard::getWhiteCanCastleLong() {
+    return (m_castlings[WHITE] & MASK_HROOK) == 0;
+}
+
+boolean ChessBoard::getWhiteCanCastleShort() {
+    return (m_castlings[WHITE] & MASK_AROOK) == 0;
+}
+
+boolean ChessBoard::getBlackCanCastleLong() {
+    return (m_castlings[BLACK] & MASK_HROOK) == 0;
+}
+
+boolean ChessBoard::getBlackCanCastleShort(){
+    return (m_castlings[BLACK] & MASK_AROOK) == 0;
+}
+
+int ChessBoard::getEnpassantPosition() {
+    return m_ep;
+}
+
+int ChessBoard::get50MoveCount() {
+    return m_50RuleCount;
 }
 
 // change variables so that side to move is turn

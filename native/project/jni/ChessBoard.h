@@ -348,6 +348,13 @@ class ChessBoard {
     void toFENBoard(char* s);
     boolean parseFEN(char* sFEN);
     void setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, boolean bccs, int ep, int r50);
+    boolean getWhiteCanCastleLong();
+    boolean getWhiteCanCastleShort();
+    boolean getBlackCanCastleLong();
+    boolean getBlackCanCastleShort();
+    int getEnpassantPosition();
+    int get50MoveCount();
+
     void setTurn(const int turn);
     int getNumCaptured(int turn, int piece);
     int getNumBoard();

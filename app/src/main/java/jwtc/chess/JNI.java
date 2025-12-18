@@ -279,6 +279,13 @@ public class JNI {
 
     public native void setCastlingsEPAnd50(int wccl, int wccs, int bccl, int bccs, int ep, int r50);
 
+    public native int getWhiteCanCastleLong();
+    public native int getWhiteCanCastleShort();
+    public native int getBlackCanCastleLong();
+    public native int getBlackCanCastleShort();
+    public native int getEnpassantPosition();
+    public native int get50MoveCount();
+
     public native int getNumBoard();
 
     public native int getTurn();

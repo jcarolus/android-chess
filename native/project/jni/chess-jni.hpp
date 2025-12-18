@@ -50,6 +50,12 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setCastlingsEPAnd50(JNIEnv* env,
                                                                jint bccs,
                                                                jint ep,
                                                                jint r50);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getWhiteCanCastleLong(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getWhiteCanCastleShort(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getBlackCanCastleLong(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getBlackCanCastleShort(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEnpassantPosition(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_get50MoveCount(JNIEnv* env, jobject thiz);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumBoard(JNIEnv* env, jobject thiz);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_commitBoard(JNIEnv* env, jobject thiz);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setTurn(JNIEnv* env, jobject thiz, jint turn);

@@ -69,9 +69,9 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     public static final int REQUEST_ECO = 8;
     public static final int REQUEST_RANDOM_FISCHER = 9;
 
-    private LocalClockApi localClock = new LocalClockApi();
+    private final LocalClockApi localClock = new LocalClockApi();
     private EngineApi myEngine;
-    private EcoService ecoService = new EcoService();
+    private final EcoService ecoService = new EcoService();
     private long lGameID;
     private ProgressBar progressBarEngine;
     private ImageButton playButton;
