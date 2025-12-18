@@ -103,8 +103,12 @@
     <string name="menu_new_duck">New Duck (experimental)</string>
     <string name="menu_clip_pgn">Game to clip board</string>
     <string name="menu_fromclip">Game from clip board</string>
-    <string name="menu_save_game">Save game</string>
+    <string name="menu_save_game">Save game to database</string>
+    <string name="menu_save_game_to_file">Save game to file</string>
+    <string name="menu_save_position_to_file">Save position to file</string>
+    <string name="menu_open_position_file">Open position file</string>
     <string name="menu_load_game">Load game</string>
+    <string name="menu_open_game">Open game file</string>
     <string name="menu_flip">Rotate</string>
     <string name="menu_setup">Setup board</string>
     <string name="menu_new_command">New Command</string>

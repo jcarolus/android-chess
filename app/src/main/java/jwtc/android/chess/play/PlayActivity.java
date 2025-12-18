@@ -68,6 +68,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     public static final int REQUEST_SAVE_GAME = 7;
     public static final int REQUEST_ECO = 8;
     public static final int REQUEST_RANDOM_FISCHER = 9;
+    public static final int REQUEST_SAVE_GAME_TO_FILE = 10;
+    public static final int REQUEST_SAVE_POSITION_TO_FILE = 11;
+    public static final int REQUEST_OPEN_POSITION_FILE = 12;
+    public static final int REQUEST_OPEN_GAME_FILE = 13;
 
     private final LocalClockApi localClock = new LocalClockApi();
     private EngineApi myEngine;
@@ -390,12 +394,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         Log.i(TAG, "onActivityResult " + requestCode + ", " + resultCode);
 
         if (requestCode == REQUEST_OPEN) {
             if (resultCode == RESULT_OK) {
-
                 Uri uri = data.getData();
                 try {
                     lGameID = Long.parseLong(uri.getLastPathSegment());
@@ -406,7 +408,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                 editor.putLong("game_id", lGameID);
                 editor.putInt("boardNum", 0);
                 editor.putString("FEN", null);
-                editor.putBoolean("playAsBlack", false);
                 editor.commit();
             }
         } else if (requestCode == REQUEST_FROM_QR_CODE) {
@@ -418,9 +419,36 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                 editor.putLong("game_id", 0);
                 editor.putInt("boardNum", 0);
                 editor.putString("FEN", contents);
+                editor.putString("game_pgn", null);
                 editor.commit();
             }
+        } else if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
+            saveToFile(data.getData(), gameApi.exportFullPGN());
+        } else if (requestCode == REQUEST_SAVE_POSITION_TO_FILE) {
+            saveToFile(data.getData(), gameApi.getFEN());
+        } else if (requestCode == REQUEST_OPEN_POSITION_FILE) {
+            String sFEN = readInputStream(data.getData(), 1000);
+            Log.d(TAG, "got FEN " + sFEN);
+
+            SharedPreferences.Editor editor = this.getPrefs().edit();
+            editor.putLong("game_id", 0);
+            editor.putInt("boardNum", 0);
+            editor.putString("FEN", sFEN);
+            editor.putString("game_pgn", null);
+            editor.commit();
+        } else if (requestCode == REQUEST_OPEN_GAME_FILE) {
+            String sPGN = readInputStream(data.getData(), 100000);
+            Log.d(TAG, "got PGN " + sPGN);
+
+            SharedPreferences.Editor editor = this.getPrefs().edit();
+            editor.putLong("game_id", 0);
+            editor.putInt("boardNum", 0);
+            editor.putString("FEN", null);
+            editor.putString("game_pgn", sPGN);
+            editor.commit();
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -675,6 +703,20 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                     }
                 } else if (item.equals(getString(R.string.menu_clip_pgn))) {
                     Clipboard.stringToClipboard(this, gameApi.exportFullPGN(), getString(R.string.copied_clipboard_success));
+                } else if (item.equals(getString(R.string.menu_save_game_to_file))) {
+                    startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
+                } else if (item.equals(getString(R.string.menu_save_position_to_file))) {
+                    startIntentForSaveDocument("application/x-chess-fen", "position.fen", REQUEST_SAVE_POSITION_TO_FILE);
+                } else if (item.equals(getString(R.string.menu_open_position_file))){
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, REQUEST_OPEN_POSITION_FILE);
+                } else if (item.equals(getString(R.string.menu_open_game))) {
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    startActivityForResult(i, REQUEST_OPEN_GAME_FILE);
                 }
 
                 break;
