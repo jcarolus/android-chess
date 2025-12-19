@@ -85,7 +85,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ImageView imageTurnMe, imageTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco, textViewWhitePieces, textViewBlackPieces;;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco, textViewWhitePieces, textViewBlackPieces;
     private ImageButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
     private MoveRecyclerAdapter moveAdapter;
@@ -530,7 +530,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         final int state = chessStateToR(jni.getState());
         String sState = "";
         // in play or mate are clear from last move.
-        if (state != R.string.state_play && state != R.string.state_mate) {
+        if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
             sState = ". " + getString(state);
         }
         textViewEngineValue.setText(getLastMoveAndTurnDescription() + sState);
