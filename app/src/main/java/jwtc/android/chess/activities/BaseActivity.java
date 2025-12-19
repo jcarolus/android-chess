@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -14,11 +15,14 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
-import android.window.OnBackInvokedCallback;
-import android.window.OnBackInvokedDispatcher;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
@@ -141,5 +145,60 @@ public class BaseActivity extends AppCompatActivity {
         i.setClass(this, HtmlActivity.class);
         i.putExtra(HtmlActivity.HELP_STRING_RESOURCE, resource);
         startActivity(i);
+    }
+
+    public void startIntentForSaveDocument(String mimeType, String fileName, int resultCode) {
+        Log.d(TAG, "start save document " + mimeType + ", " + fileName + " " + resultCode);
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType(mimeType);
+        intent.putExtra(Intent.EXTRA_TITLE, fileName);
+
+        startActivityForResult(intent, resultCode);
+    }
+
+    public boolean saveToFile(Uri uri, String contents) {
+        Log.d(TAG, "Saving to file " + uri.toString() + " " + contents.length());
+        try {
+            OutputStream fos = getContentResolver().openOutputStream(uri);
+            if (fos != null) {
+                fos.write(contents.getBytes());
+                fos.flush();
+                fos.close();
+                return true;
+            }
+        } catch (Exception ex) {
+            Log.d(TAG, "exception while writing to file " + uri + " " + ex.getMessage());
+        }
+        return false;
+    }
+
+    public String readInputStream(Uri uri, int maxChars) {
+        Log.d(TAG, "readInputString " + uri);
+        try {
+            String s = "";
+            InputStream is = getContentResolver().openInputStream(uri);
+
+            try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                StringBuilder sb = new StringBuilder();
+                char[] buffer = new char[4096];
+                int total = 0;
+                int read;
+
+                while ((read = reader.read(buffer)) != -1) {
+                    total += read;
+                    if (total > maxChars) {
+                        return null;
+                    }
+                    sb.append(buffer, 0, read);
+                }
+
+                is.close();
+                return sb.toString();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Could not read from uri " + uri.toString());
+        }
+        return null;
     }
 }

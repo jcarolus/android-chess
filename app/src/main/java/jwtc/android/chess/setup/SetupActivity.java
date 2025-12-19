@@ -105,6 +105,12 @@ public class SetupActivity extends ChessBoardActivity {
             jni.initFEN(sFEN);
             radioTurnWhite.setChecked(jni.getTurn() == BoardConstants.WHITE);
             radioTurnBlack.setChecked(jni.getTurn() == BoardConstants.BLACK);
+            checkWhiteCastleLong.setChecked(jni.getWhiteCanCastleLong() != 0);
+            checkWhiteCastleShort.setChecked(jni.getWhiteCanCastleShort() != 0);
+            checkBlackCastleLong.setChecked(jni.getBlackCanCastleLong() != 0);
+            checkBlackCastleShort.setChecked(jni.getBlackCanCastleShort() != 0);
+
+            setEpPosition(jni.getEnpassantPosition());
         }
 
         selectedPosition = -1;
@@ -122,35 +128,7 @@ public class SetupActivity extends ChessBoardActivity {
 
         jni.setTurn(turn);
 
-        int iEP = -1;
-        switch (spinnerEPFile.getSelectedItemPosition()) {
-            case 1:
-                iEP = turn == 1 ? 16 : 40;
-                break;
-            case 2:
-                iEP = turn == 1 ? 17 : 41;
-                break;
-            case 3:
-                iEP = turn == 1 ? 18 : 42;
-                break;
-            case 4:
-                iEP = turn == 1 ? 19 : 43;
-                break;
-            case 5:
-                iEP = turn == 1 ? 20 : 44;
-                break;
-            case 6:
-                iEP = turn == 1 ? 21 : 45;
-                break;
-            case 7:
-                iEP = turn == 1 ? 22 : 46;
-                break;
-            case 8:
-                iEP = turn == 1 ? 23 : 47;
-                break;
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////
+        int iEP = getEpSquare(turn);
 
         jni.setCastlingsEPAnd50(
                 checkWhiteCastleLong.isChecked() ? 1 : 0,
@@ -548,6 +526,77 @@ public class SetupActivity extends ChessBoardActivity {
 
     protected boolean isPosOfKing(int toPos) {
         return jni.pieceAt(BoardConstants.WHITE, toPos) == BoardConstants.KING || jni.pieceAt(BoardConstants.BLACK, toPos) == BoardConstants.KING;
+    }
+
+    protected int getEpSquare(int turn) {
+        int iEP = -1;
+        switch (spinnerEPFile.getSelectedItemPosition()) {
+            case 1:
+                iEP = turn == 1 ? 16 : 40;
+                break;
+            case 2:
+                iEP = turn == 1 ? 17 : 41;
+                break;
+            case 3:
+                iEP = turn == 1 ? 18 : 42;
+                break;
+            case 4:
+                iEP = turn == 1 ? 19 : 43;
+                break;
+            case 5:
+                iEP = turn == 1 ? 20 : 44;
+                break;
+            case 6:
+                iEP = turn == 1 ? 21 : 45;
+                break;
+            case 7:
+                iEP = turn == 1 ? 22 : 46;
+                break;
+            case 8:
+                iEP = turn == 1 ? 23 : 47;
+                break;
+        }
+        return iEP;
+    }
+
+    protected void setEpPosition(int ep) {
+        Log.d(TAG, "ep " + ep);
+        int position = 0;
+        switch(ep) {
+            case 16:
+            case 40:
+                position = 1;
+                break;
+            case 17:
+            case 41:
+                position = 2;
+                break;
+            case 18:
+            case 42:
+                position = 3;
+                break;
+            case 19:
+            case 43:
+                position = 4;
+                break;
+            case 20:
+            case 44:
+                position = 5;
+                break;
+            case 21:
+            case 45:
+                position = 6;
+                break;
+            case 22:
+            case 46:
+                position = 7;
+                break;
+            case 23:
+            case 47:
+                position = 8;
+                break;
+        }
+        spinnerEPFile.setSelection(position);
     }
 
     protected class MyDragListener extends ChessBoardActivity.MyDragListener {

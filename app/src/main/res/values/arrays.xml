@@ -18,6 +18,10 @@
         <item>@string/menu_setup</item>
         <item>@string/menu_save_game</item>
         <item>@string/menu_load_game</item>
+        <item>@string/menu_save_game_to_file</item>
+        <item>@string/menu_open_game</item>
+        <item>@string/menu_save_position_to_file</item>
+        <item>@string/menu_open_position_file</item>
         <item>@string/menu_set_clock</item>
         <item>@string/menu_fromclip</item>
         <item>@string/menu_clip_pgn</item>

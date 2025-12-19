@@ -365,8 +365,20 @@ public class GameApi {
             }
         } else if (sMove.contains("O-O-O")) {
             sMoveSpeech += "Castle long ";
+            if (sMove.contains("+")) {
+                sMoveSpeech += "check ";
+            }
+            if (sMove.contains("#")) {
+                sMoveSpeech += "checkmate ";
+            }
         } else if (sMove.contains("O-O")) {
             sMoveSpeech += "Castle short ";
+            if (sMove.contains("+")) {
+                sMoveSpeech += "check ";
+            }
+            if (sMove.contains("#")) {
+                sMoveSpeech += "checkmate ";
+            }
         } else {
             Log.d(TAG, "Did not parse move " + sMove);
         }

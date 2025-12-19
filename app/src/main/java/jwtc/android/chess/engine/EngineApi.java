@@ -2,6 +2,7 @@ package jwtc.android.chess.engine;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -25,7 +26,7 @@ public abstract class EngineApi {
 
     protected ArrayList<EngineListener> listeners = new ArrayList<>();
 
-    protected Handler updateHandler = new Handler() {
+    protected Handler updateHandler = new Handler(Looper.getMainLooper()) {
         // @Override
         public void handleMessage(Message msg) {
             if (msg.what == MSG_MOVE) {

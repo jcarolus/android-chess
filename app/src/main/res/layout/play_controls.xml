@@ -106,7 +106,6 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             app:flexDirection="row"
             app:flexWrap="wrap"
             app:justifyContent="flex_start"
@@ -114,31 +113,49 @@
             <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchBlindfold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:text="@string/pref_show_blindfold"
                 android:checked="true"
                 />
             <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:text="@string/pref_sound"
                 android:checked="true"
                 />
             <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchFlip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:text="@string/menu_flip"
                 android:checked="true"
                 />
             <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchSpeech"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="4dp"
                 android:text="@string/pref_speech"
                 android:checked="true"
                 />
         </com.google.android.flexbox.FlexboxLayout>
+        <TextView
+            android:id="@+id/TextViewWhitePieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="none"/>
+        <TextView
+            android:id="@+id/TextViewBlackPieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="none"/>
     </LinearLayout>
 </ScrollView>

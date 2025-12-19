@@ -24,6 +24,7 @@ bool testSequence();
 bool testNonSequence();
 bool testEngineRunUntilState();
 bool testMoves();
+bool testStates();
 void newGame();
 void newGameDuck();
 
@@ -33,12 +34,12 @@ int main(int argc, char **argv) {
                             testInCheck,
                             testInSelfCheck,
                             testSetupPieces,
+                            testStates,
                             testDuck,
                             testEngine,
                             testSequence,
                             testEngineRunUntilState,
-                            testMoves,
-                            /*,
+                            testMoves/*,
                             testNonSequence*/};
 
     int testCount = sizeof(tests) / sizeof(TestFunction);
@@ -363,6 +364,22 @@ bool testMoves() {
         }
     }
 
+    return bRet;
+}
+
+bool testStates() {
+    StateForFEN scenarios[1] = {{.game = Game::getInstance(),
+                                .sInFEN = "2k5/8/8/8/8/8/8/4KB2 w - - 0 1",
+                                .expectedState = ChessBoard::DRAW_MATERIAL,
+                                .message = "Test draw material"
+    }};
+    bool bRet = true;
+
+    for (int i = 0; i < 1; i++) {
+        if (!ChessTest::expectStateForFEN(scenarios[i].game, scenarios[i].sInFEN, scenarios[i].expectedState, scenarios[i].message)) {
+            bRet = false;
+        }
+    }
     return bRet;
 }
 

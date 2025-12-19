@@ -52,13 +52,7 @@ public class AdvancedActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
                 if (arrString[arg2].equals(getString(R.string.pgntool_export_explanation))) {
-                    Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("application/x-chess-pgn");
-                    intent.putExtra(Intent.EXTRA_TITLE, "chess.pgn");
-
-                    startActivityForResult(intent, ImportService.EXPORT_GAME_DATABASE);
-
+                    startIntentForSaveDocument("application/x-chess-pgn", "chess.pgn", ImportService.EXPORT_GAME_DATABASE);
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_explanation))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);

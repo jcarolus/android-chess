@@ -115,6 +115,26 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setCastlingsEPAnd50(JNIEnv* env,
                                                                jint r50) {
     Game::getInstance()->getBoard()->setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
 }
+
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getWhiteCanCastleLong(JNIEnv* env, jobject thiz) {
+    return Game::getInstance()->getBoard()->getWhiteCanCastleLong();
+}
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getWhiteCanCastleShort(JNIEnv* env, jobject thiz) {
+    return Game::getInstance()->getBoard()->getWhiteCanCastleShort();
+}
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getBlackCanCastleLong(JNIEnv* env, jobject thiz) {
+    return Game::getInstance()->getBoard()->getBlackCanCastleLong();
+}
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getBlackCanCastleShort(JNIEnv* env, jobject thiz) {
+    return Game::getInstance()->getBoard()->getBlackCanCastleShort();
+}
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEnpassantPosition(JNIEnv* env, jobject thiz) {
+    return Game::getInstance()->getBoard()->getEnpassantPosition();
+}
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_get50MoveCount(JNIEnv* env, jobject thiz) {
+    return Game::getInstance()->getBoard()->get50MoveCount();
+}
+
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumBoard(JNIEnv* env, jobject thiz) {
     return Game::getInstance()->getBoard()->getNumBoard();
 }
@@ -236,6 +256,12 @@ static JNINativeMethod sMethods[] = {
     {"getState", "()I", (void*) Java_jwtc_chess_JNI_getState},
     {"isEnded", "()I", (void*) Java_jwtc_chess_JNI_isEnded},
     {"setCastlingsEPAnd50", "(IIIIII)V", (void*) Java_jwtc_chess_JNI_setCastlingsEPAnd50},
+    {"getWhiteCanCastleLong", "()I", (void*) Java_jwtc_chess_JNI_getWhiteCanCastleLong},
+    {"getWhiteCanCastleShort", "()I", (void*) Java_jwtc_chess_JNI_getWhiteCanCastleShort},
+    {"getBlackCanCastleLong", "()I", (void*) Java_jwtc_chess_JNI_getBlackCanCastleLong},
+    {"getBlackCanCastleShort", "()I", (void*) Java_jwtc_chess_JNI_getBlackCanCastleShort},
+    {"getEnpassantPosition", "()I", (void*) Java_jwtc_chess_JNI_getEnpassantPosition},
+    {"get50MoveCount", "()I", (void*) Java_jwtc_chess_JNI_get50MoveCount},
     {"getNumBoard", "()I", (void*) Java_jwtc_chess_JNI_getNumBoard},
     {"getTurn", "()I", (void*) Java_jwtc_chess_JNI_getTurn},
     {"commitBoard", "()V", (void*) Java_jwtc_chess_JNI_commitBoard},

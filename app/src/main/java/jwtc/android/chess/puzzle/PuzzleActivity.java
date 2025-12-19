@@ -30,7 +30,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     private static final String TAG = "PuzzleActivity";
     private EngineApi myEngine;
     private Cursor cursor = null;
-    private TextView tvPuzzleText, textViewSolution;
+    private TextView tvPuzzleText, textViewSolution, textViewWhitePieces, textViewBlackPieces;
     private ImageView imageTurn;
     private ImageButton butPrev, butNext, butRetry;
     private ImageView imgStatus;
@@ -76,6 +76,8 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
 
         tvPuzzleText = findViewById(R.id.TextViewPuzzleText);
         textViewSolution = findViewById(R.id.TextViewSolution);
+        textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
+        textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
         imageTurn = findViewById(R.id.ImageTurn);
 
         imgStatus = findViewById(R.id.ImageStatus);
@@ -241,6 +243,11 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         }
     }
 
+    public void updatePieces() {
+        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
+        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
+    }
+
     @Override
     public void OnMove(int move) {
         super.OnMove(move);
@@ -251,6 +258,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         numMoved++;
 
         updateSelectedSquares();
+        updatePieces();
 
         if (jni.isEnded() == 0 && jni.getTurn() != myTurn && !showMove) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -264,6 +272,13 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
             animateCorrect();
             butShow.setEnabled(false);
         }
+    }
+
+    @Override
+    public void OnState() {
+        super.OnState();
+
+        updatePieces();
     }
 
     @Override

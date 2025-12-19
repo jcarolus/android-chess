@@ -2,8 +2,6 @@ package jwtc.android.chess.play;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -19,15 +17,12 @@ public class MenuDialog extends ResultDialog {
         setContentView(R.layout.play_menu);
 
         ListView list = findViewById(R.id.ListMenu);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
-                Bundle data = new Bundle();
-                data.putCharSequence("item", item);
-                setResult(data);
-                dismiss();
-            }
+        list.setOnItemClickListener((parent, view, position, id) -> {
+            String item = parent.getItemAtPosition(position).toString();
+            Bundle data = new Bundle();
+            data.putCharSequence("item", item);
+            setResult(data);
+            dismiss();
         });
     }
 }

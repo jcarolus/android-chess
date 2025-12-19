@@ -33,7 +33,7 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
-    private TextView tvPracticeMove, tvPercentage, textViewSolution;
+    private TextView tvPracticeMove, tvPercentage, textViewSolution, textViewWhitePieces, textViewBlackPieces;
     private ImageButton buttonNext, buttonRetry;
     private int totalPuzzles, currentPos;
     private Cursor cursor;
@@ -80,6 +80,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
         tvPercentage = findViewById(R.id.TextViewPercentage);
         textViewSolution = findViewById(R.id.TextViewSolution);
+        textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
+        textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
         imageTurn = (ImageView) findViewById(R.id.ImageTurn);
         imgStatus = (ImageView) findViewById(R.id.ImageStatus);
         buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
@@ -234,6 +236,11 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         percentBar.setProgressCompat(percentage, /*animated=*/true);
     }
 
+    public void updatePieces() {
+        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
+        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
+    }
+
     private String formatPercentage() {
         return String.format("%d / %d = %.1f %%", numSolved, numPlayed, numPlayed > 0 ? ((float)numSolved / numPlayed) * 100 : 0.0f);
     }
@@ -248,6 +255,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         numMoved++;
 
         updateSelectedSquares();
+        updatePieces();
 
         if (jni.isEnded() == 0 && jni.getTurn() != myTurn) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -265,6 +273,13 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             buttonRetry.setEnabled(false);
             animateCorrect();
         }
+    }
+
+    @Override
+    public void OnState() {
+        super.OnState();
+
+        updatePieces();
     }
 
     @Override

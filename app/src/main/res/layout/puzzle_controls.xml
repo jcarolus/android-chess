@@ -59,5 +59,23 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dip"
             android:text="@string/puzzle_help"/>
+        <TextView
+            android:id="@+id/TextViewWhitePieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="none"/>
+        <TextView
+            android:id="@+id/TextViewBlackPieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="none"/>
     </LinearLayout>
 </ScrollView>

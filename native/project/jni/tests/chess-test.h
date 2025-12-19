@@ -53,6 +53,13 @@ typedef struct {
     bool all;
 } MovesForFEN;
 
+typedef struct {
+    Game *game;
+    char *sInFEN;
+    int expectedState;
+    char *message;
+} StateForFEN;
+
 class ChessTest {
    public:
     ChessTest(void);
