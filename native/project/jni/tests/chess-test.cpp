@@ -105,7 +105,7 @@ bool ChessTest::expectNonSequence(NonSequenceInFEN scenario) {
 bool ChessTest::expectStateForFEN(Game *game, char *sFEN, int state, char *message) {
     game->newGameFromFEN(sFEN);
 
-    return ChessTest::expectEqualInt(game->getBoard()->getState(), state, message);
+    return ChessTest::expectEqualInt(state, game->getBoard()->getState(), message);
 }
 
 bool ChessTest::expectInFENIsOutFEN(Game *game, char *sFEN, char *message) {

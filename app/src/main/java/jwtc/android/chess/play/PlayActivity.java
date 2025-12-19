@@ -85,7 +85,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ImageView imageTurnMe, imageTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco, textViewWhitePieces, textViewBlackPieces;;
     private ImageButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
     private MoveRecyclerAdapter moveAdapter;
@@ -158,30 +158,24 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU);
 
         ImageButton buttonMenu = findViewById(R.id.ButtonMenu);
-        buttonMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuDialog.show();
-            }
-        });
+        buttonMenu.setOnClickListener(v -> menuDialog.show());
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
 
         ImageButton butNext = findViewById(R.id.ButtonNext);
-        butNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameApi.nextMove();
-            }
+        butNext.setOnClickListener(v -> gameApi.nextMove());
+        butNext.setOnLongClickListener(v -> {
+            gameApi.jumpToBoardNum(gameApi.getPGNSize());
+            return true;
         });
 
         ImageButton butPrev = findViewById(R.id.ButtonPrevious);
-        butPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameApi.undoMove();
-            }
+        butPrev.setOnClickListener(v -> gameApi.undoMove());
+
+        butPrev.setOnLongClickListener(v -> {
+            gameApi.jumpToBoardNum(1);
+            return true;
         });
 
 //        ImageButton butPgn = findViewById(R.id.ButtonPGN);
@@ -205,6 +199,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         textViewEngineValue = findViewById(R.id.TextViewLastMove);
         buttonEco = findViewById(R.id.ButtonEco);
         textViewEco = findViewById(R.id.TextViewEco);
+        textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
+        textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -538,6 +534,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             sState = ". " + getString(state);
         }
         textViewEngineValue.setText(getLastMoveAndTurnDescription() + sState);
+        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
+        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
     }
 
     protected void updateSeekBar() {

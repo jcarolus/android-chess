@@ -264,23 +264,19 @@ boolean ChessBoard::isEnded() {
     //  ASSUME: value of knight or bishop is never twice as big as the other
     if (m_bitbPieces[m_turn][PAWN] == 0 && m_bitbPieces[m_o_turn][PAWN] == 0 && m_bitbPieces[m_turn][ROOK] == 0 &&
         m_bitbPieces[m_o_turn][ROOK] == 0 && m_bitbPieces[m_turn][QUEEN] == 0 && m_bitbPieces[m_o_turn][QUEEN] == 0) {
-        // KNk or KBk is draw
-        if (m_qualities[m_o_turn] == 0 && (m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-                                           m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
+        // check for min material
+        if (m_qualities[m_o_turn] == 0 && m_qualities[m_turn] <= ChessBoard::MIN_MATERIAL_VALUE) {
             m_state = ChessBoard::DRAW_MATERIAL;
             return true;
         }
-        if (m_qualities[m_turn] == 0 && (m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-                                         m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
+        if (m_qualities[m_turn] == 0 && m_qualities[m_o_turn] <= ChessBoard::MIN_MATERIAL_VALUE) {
             m_state = ChessBoard::DRAW_MATERIAL;
             return true;
         }
         // also KNkn and KBkb, KBkn are almost always draw; theoretical mates only with king in
         // corner (and own piece next to it)
-        if ((m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-             m_qualities[m_o_turn] <= ChessBoard::PIECE_VALUES[BISHOP]) &&
-            (m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[KNIGHT] ||
-             m_qualities[m_turn] <= ChessBoard::PIECE_VALUES[BISHOP])) {
+        if (m_qualities[m_o_turn] <= ChessBoard::MIN_MATERIAL_VALUE &&
+            m_qualities[m_turn] <= ChessBoard::MIN_MATERIAL_VALUE) {
             // test for either king NOT in a corner
             if (!(m_kingPositions[m_o_turn] == a8 || m_kingPositions[m_o_turn] == h8 ||
                   m_kingPositions[m_o_turn] == a1 || m_kingPositions[m_o_turn] == h1 || m_kingPositions[m_turn] == a8 ||

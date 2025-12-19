@@ -40,6 +40,7 @@ class ChessBoard {
     static const int INDEX_VALUATION_DRAW_REPEAT = 6;
 
     static const int PIECE_VALUES[6];
+    static const int MIN_MATERIAL_VALUE =  50340; // equal to KING+BISHOP/KNIGHT in PIECE_VALUES
     static const int VALUATION_MATE = 100000;  // save max int value
     // zero sum based game, so a draw relates to 0
     static const int VALUATION_DRAW = 0;
