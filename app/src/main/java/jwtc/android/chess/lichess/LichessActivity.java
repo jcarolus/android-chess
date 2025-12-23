@@ -58,17 +58,26 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     private ArrayList<HashMap<String, String>> mapGames = new ArrayList<HashMap<String, String>>();
     private List<Game> nowPlayingGames;
+    private Intent pendingData;
+    private boolean serviceConnected = false;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TAG, "onServiceConnected");
+            serviceConnected = true;
             LichessService lichessService = ((LichessService.LocalBinder)service).getService();
             lichessApi.setAuth(lichessService.getAuth());
-            lichessApi.resume();
+
+            if (pendingData != null) {
+                handleActivityResult(pendingData);
+            } else {
+                lichessApi.resume();
+            }
         }
 
         public void onServiceDisconnected(ComponentName className) {
             Log.i(TAG, "onServiceDisconnected");
+            serviceConnected = false;
             lichessApi.setApiListener(null);
         }
     };
@@ -190,7 +199,11 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         Log.d(TAG, "onActivityResult " + requestCode);
         if (requestCode == 1001) {
-            lichessApi.handleLoginData(data);
+            if (serviceConnected) {
+                handleActivityResult(data);
+            } else {
+                pendingData = data;
+            }
         }
     }
 
@@ -462,6 +475,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         }
 
         return "";
+    }
+
+    protected void handleActivityResult(Intent data) {
+        lichessApi.handleLoginData(data);
     }
 
     @Override
