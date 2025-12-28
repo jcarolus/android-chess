@@ -385,6 +385,7 @@
     <string name="lichess_challenge_dialog_message_time_control">Time control: %1$s</string>
     <string name="lichess_challenge_dialog_message_rated">Rated</string>
     <string name="lichess_challenge_dialog_message_unrated">Unrated</string>
+    <string name="lichess_challenge_dialog_message_rating">with rating %1$s</string>
 
     <string name="lichess_create_challenge_title">Create challenge</string>
     <string name="lichess_create_seek_title">Create seek</string>
@@ -414,6 +415,8 @@
     <string name="lichess_seek_posted">Posted seek</string>
 
     <string name="lichess_opponent_offers_draw">Your opponent offers a draw. Tap Draw to accept</string>
+    <string name="lichess_confirm_offer_draw">Confirm you want to offer a draw</string>
+    <string name="lichess_confirm_resign">Confirm you want to resign</string>
     <string name="lichess_game_winner">Winner: %1$s</string>
     <string name="lichess_game_state_created">Game created</string>
     <string name="lichess_game_state_started">Game started</string>
@@ -421,6 +424,10 @@
     <string name="lichess_game_state_mate">Game ended in a check-mate</string>
     <string name="lichess_game_state_resigned">Game ended by resignation</string>
     <string name="lichess_game_disconnected">Game disconnected. Check your internet connection and try again</string>
+    <string name="lichess_game_confirm_moves">Confirm moves</string>
+    <string name="lichess_game_confirm_move">Confirm %1$s</string>
+    <string name="lichess_game_cancel_move">Cancel move</string>
+    <string name="lichess_game_message_confirm_resign">Cancel move</string>
 
     <string name="lichess_lobby_connected">You are connected to Lichess</string>
     <string name="lichess_lobby_button_challenge">Challenge</string>
