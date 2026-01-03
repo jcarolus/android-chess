@@ -344,7 +344,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             new java.util.TimerTask() {
                 @Override
                 public void run() {
-                    textViewLobbyStatus.setText("");
+                    textViewLobbyStatus.post(() -> {
+                        textViewLobbyStatus.setText("");
+                    });
                     lichessApi.event();
                     lichessApi.playing();
                 }
