@@ -14,9 +14,9 @@ public class start extends StartBaseActivity {
 
         super.onCreate(savedInstanceState);
 
-        ListView listView = findViewById(R.id.ListStart);
-        String[] menuItems = getResources().getStringArray(R.array.start_menu);
-        StartMenuAdapter adapter = new StartMenuAdapter(this, menuItems);
-        listView.setAdapter(adapter);
+        //ListView listView = findViewById(R.id.ListStart);
+        //String[] menuItems = getResources().getStringArray(R.array.start_menu);
+        //StartMenuAdapter adapter = new StartMenuAdapter(this, menuItems);
+        //listView.setAdapter(adapter);
     }
 }

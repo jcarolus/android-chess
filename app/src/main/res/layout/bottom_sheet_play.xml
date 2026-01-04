@@ -21,10 +21,14 @@
         layout="@layout/start_list_single"/>
 
     <include
+        android:id="@+id/row_play_lichess"
+        layout="@layout/start_list_single"/>
+
+    <include
         android:id="@+id/row_play_freechess"
         layout="@layout/start_list_single"/>
 
     <include
-        android:id="@+id/row_play_lichess"
+        android:id="@+id/row_play_hotspot_board"
         layout="@layout/start_list_single"/>
 </LinearLayout>

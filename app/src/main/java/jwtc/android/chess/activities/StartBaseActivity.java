@@ -23,6 +23,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import jwtc.android.chess.R;
@@ -40,6 +41,7 @@ public class StartBaseActivity  extends AppCompatActivity {
     public static final String TAG = "StartBaseActivity";
     protected ListView _list;
     protected int layoutResource = R.layout.start;
+    BottomNavigationView bottomMenuNavigation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,8 @@ public class StartBaseActivity  extends AppCompatActivity {
         Resources resources = getResources();
         Configuration configuration = resources.getConfiguration();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        bottomMenuNavigation = findViewById(R.id.bottom_nav);
+
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
             getApplicationContext().createConfigurationContext(configuration);
@@ -73,90 +77,100 @@ public class StartBaseActivity  extends AppCompatActivity {
 
         setContentView(layoutResource);
 
-        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
+        //ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
-        _list = findViewById(R.id.ListStart);
-        _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String requestedItem = parent.getItemAtPosition(position).toString();
-                try {
-                    Intent i = new Intent();
-                    Log.i(TAG, requestedItem);
-                    if (requestedItem.equals(getString(R.string.start_play))) {
-                        showPlayModeSheet();
-                        //i.setClass(StartBaseActivity.this, PlayActivity.class);
-                        //i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        //startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_practice))) {
-                        i.setClass(StartBaseActivity.this, PracticeActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_puzzles))) {
-                        i.setClass(StartBaseActivity.this, PuzzleActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_hotspotboard))) {
-                        i.setClass(StartBaseActivity.this, HotspotBoardActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_ics))) {
-                        i.setClass(StartBaseActivity.this, ICSClient.class);
-                        startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_pgn))) {
-                        i.setClass(StartBaseActivity.this, AdvancedActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_boardpreferences))) {
-                        i.setClass(StartBaseActivity.this, BoardPreferencesActivity.class);
-                        startActivity(i);
-                    } else if (requestedItem.equals(getString(R.string.start_lichess))) {
-                        i.setClass(StartBaseActivity.this, LichessActivity.class);
-                        startActivity(i);
-                    } else {
-                        Log.d(TAG, "Nothing to start");
-                    }
-                } catch (Exception ex) {
-                    Log.d(TAG, "Exception " + (ex != null ? ex.getMessage() : " no ex"));
-                    Toast t = Toast.makeText(StartBaseActivity.this, R.string.toast_could_not_start_activity, Toast.LENGTH_LONG);
-                    t.setGravity(Gravity.BOTTOM, 0, 0);
-                    t.show();
-                }
-            }
-        });
-
-        _list.requestFocus();
+//        _list = findViewById(R.id.ListStart);
+//        _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String requestedItem = parent.getItemAtPosition(position).toString();
+//                try {
+//                    Intent i = new Intent();
+//                    Log.i(TAG, requestedItem);
+//                    if (requestedItem.equals(getString(R.string.start_play))) {
+//                        showPlayModeSheet(i);
+//                    } else if (requestedItem.equals(getString(R.string.start_practice))) {
+//                        i.setClass(StartBaseActivity.this, PracticeActivity.class);
+//                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                        startActivity(i);
+//                    } else if (requestedItem.equals(getString(R.string.start_puzzles))) {
+//                        i.setClass(StartBaseActivity.this, PuzzleActivity.class);
+//                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                        startActivity(i);
+//                    } else if (requestedItem.equals(getString(R.string.start_pgn))) {
+//                        i.setClass(StartBaseActivity.this, AdvancedActivity.class);
+//                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                        startActivity(i);
+//                    } else if (requestedItem.equals(getString(R.string.start_boardpreferences))) {
+//                        i.setClass(StartBaseActivity.this, BoardPreferencesActivity.class);
+//                        startActivity(i);
+//                    } else {
+//                        Log.d(TAG, "Nothing to start");
+//                    }
+//                } catch (Exception ex) {
+//                    Log.d(TAG, "Exception " + (ex != null ? ex.getMessage() : " no ex"));
+//                    Toast t = Toast.makeText(StartBaseActivity.this, R.string.toast_could_not_start_activity, Toast.LENGTH_LONG);
+//                    t.setGravity(Gravity.BOTTOM, 0, 0);
+//                    t.show();
+//                }
+//            }
+//        });
+//
+//        _list.requestFocus();
     }
-    private void showPlayModeSheet() {
+    private void showPlayModeSheet(Intent intent) {
 
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_play, null);
 
         // Local
-        //startLocalGame();
         setupRow(
                 sheet.findViewById(R.id.row_play_local),
                 "Play Local",
                 R.drawable.ic_icon_play,
-                dialog::dismiss
+                () -> {
+                    intent.setClass(StartBaseActivity.this, PlayActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+                    dialog.dismiss();
+                }
+
         );
 
         // FreeChess
-        //openFreeChess();
         setupRow(
                 sheet.findViewById(R.id.row_play_freechess),
                 "Play on FreeChess",
                 R.drawable.ic_icon_play,
-                dialog::dismiss
+                () -> {
+                    intent.setClass(StartBaseActivity.this, ICSClient.class);
+                    startActivity(intent);
+                    dialog.dismiss();
+                }
         );
 
         // Lichess
-        //openLichess();
         setupRow(
                 sheet.findViewById(R.id.row_play_lichess),
                 "Play on Lichess",
                 R.drawable.ic_icon_play,
-                dialog::dismiss
+                () -> {
+                    intent.setClass(StartBaseActivity.this, LichessActivity.class);
+                    startActivity(intent);
+                    dialog.dismiss();
+                }
+        );
+        // Hotspot Board
+        setupRow(
+                sheet.findViewById(R.id.row_play_hotspot_board),
+                "Play on Hotspot Board",
+                R.drawable.ic_icon_play,
+                () -> {
+                    intent.setClass(StartBaseActivity.this, HotspotBoardActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+                    dialog.dismiss();
+                }
         );
 
         dialog.setContentView(sheet);
@@ -172,6 +186,7 @@ public class StartBaseActivity  extends AppCompatActivity {
         row.setClickable(true);
         row.setOnClickListener(v -> action.run());
     }
+
 
 
 }
