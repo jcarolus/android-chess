@@ -22,18 +22,23 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import jwtc.android.chess.R;
+import jwtc.android.chess.academy.AcademyFragment;
 import jwtc.android.chess.lichess.LichessActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
 import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.play.PlayActivity;
+import jwtc.android.chess.play.PlayFragment;
 import jwtc.android.chess.practice.PracticeActivity;
+import jwtc.android.chess.practice.PracticeFragment;
 import jwtc.android.chess.puzzle.PuzzleActivity;
+import jwtc.android.chess.settings.SettingsFragment;
 import jwtc.android.chess.tools.AdvancedActivity;
 
 
@@ -42,6 +47,12 @@ public class StartBaseActivity  extends AppCompatActivity {
     protected ListView _list;
     protected int layoutResource = R.layout.start;
     BottomNavigationView bottomMenuNavigation;
+
+    // Fragment creation cache
+    private final Fragment playFragment = new PlayFragment();
+    private final Fragment practiceFragment = new PracticeFragment();
+    private final Fragment academyFragment = new AcademyFragment();
+    private final Fragment settingsFragment = new SettingsFragment();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +63,6 @@ public class StartBaseActivity  extends AppCompatActivity {
         Resources resources = getResources();
         Configuration configuration = resources.getConfiguration();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        bottomMenuNavigation = findViewById(R.id.bottom_nav);
 
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
@@ -76,6 +86,26 @@ public class StartBaseActivity  extends AppCompatActivity {
         }
 
         setContentView(layoutResource);
+
+        // Handling of bottom navigation
+        bottomMenuNavigation = findViewById(R.id.bottom_nav);
+        bottomMenuNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if( id == item.getItemId()) {
+                showFragment(playFragment);
+                return true;
+            } else if (id == R.id.nav_play) {
+                showFragment(practiceFragment);
+                return true;
+            } else if (id == R.id.nav_academy) {
+                showFragment(academyFragment);
+                return true;
+            } else if (id == R.id.nav_settings) {
+                showFragment(settingsFragment);
+                return true;
+            }
+            return false;
+        });
 
         //ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
@@ -118,6 +148,10 @@ public class StartBaseActivity  extends AppCompatActivity {
 //
 //        _list.requestFocus();
     }
+
+    private void showPlayModeSheet2() {
+    }
+
     private void showPlayModeSheet(Intent intent) {
 
         BottomSheetDialog dialog = new BottomSheetDialog(this);
@@ -186,7 +220,15 @@ public class StartBaseActivity  extends AppCompatActivity {
         row.setClickable(true);
         row.setOnClickListener(v -> action.run());
     }
-
-
+    private void showFragment(Fragment fragment){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                )
+                .replace(R.id.content_container, fragment)
+                .commit();
+    }
 
 }

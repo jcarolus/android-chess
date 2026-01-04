@@ -3,22 +3,22 @@
 
     <item
         android:id="@+id/nav_play"
-        android:icon="@drawable/ic_plus"
+        android:icon="@drawable/ic_pieces_alpha_bp"
         android:title="Play"/>
 
     <item
         android:id="@+id/nav_practice"
-        android:icon="@drawable/ic_plus"
+        android:icon="@drawable/ic_duck"
         android:title="Practice"/>
 
     <item
         android:id="@+id/nav_academy"
-        android:icon="@drawable/ic_plus"
+        android:icon="@drawable/ic_clipboard"
         android:title="Academy"/>
 
     <item
         android:id="@+id/nav_settings"
-        android:icon="@drawable/ic_plus"
+        android:icon="@drawable/outline_settings_24"
         android:title="Settings"/>
 
 </menu>

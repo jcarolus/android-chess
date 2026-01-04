@@ -1,0 +1,15 @@
+<LinearLayout android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="3dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:text="Settings"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_height="12dp"
+        android:layout_width="12dp"/>
+
+    <!-- submenu items -->
+</LinearLayout>
