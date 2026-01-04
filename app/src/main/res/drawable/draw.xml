@@ -1,0 +1,37 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+
+    <!-- "1" (numerator) -->
+    <path
+        android:fillColor="@color/surfaceTextColor"
+        android:pathData="M4,1 L5.5,1 L5.5,7 L4,7 Z" />
+
+    <!-- diagonal slash -->
+    <path
+        android:fillColor="@color/surfaceTextColor"
+        android:pathData="M6,8 L7,8 L11,2 L10,2 Z" />
+
+    <!-- "2" (denominator) -->
+    <path
+        android:fillColor="@color/surfaceTextColor"
+        android:pathData="
+            M8.5,9
+            C8.5,8.2 9.2,7.5 10.2,7.5
+            H12
+            C13,7.5 13.7,8.2 13.7,9
+            C13.7,9.7 13.3,10.2 12.6,10.7
+            L10.3,12.5
+            H13.7
+            V14
+            H8.5
+            V12.7
+            L11.7,10.5
+            C12.2,10.1 12.5,9.8 12.5,9.4
+            C12.5,9 12.2,8.7 11.8,8.7
+            H10.2
+            C9.8,8.7 9.5,9 9.5,9.4
+            Z" />
+</vector>

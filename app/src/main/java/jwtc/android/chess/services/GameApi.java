@@ -669,11 +669,9 @@ public class GameApi {
     }
 
     private void removeDoubleSpaces(StringBuffer sb) {
-        int iSpace = sb.indexOf("  ");
-        while (iSpace >= 0) {
-            sb.delete(iSpace, iSpace + 1);
-            iSpace = sb.indexOf("  ");
-        }
+        String replaced = sb.toString().replaceAll(" {2,}", " ");
+        sb.setLength(0);
+        sb.append(replaced);
     }
 
     private boolean loadPGNMoves(String s) {

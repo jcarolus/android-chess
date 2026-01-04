@@ -304,12 +304,12 @@ public class LichessApi extends GameApi {
             this.auth.draw(ongoingGameFull.id, accept ? "yes" : "no", new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
                 @Override
                 public void onSuccess(JsonObject result) {
-
+                    Log.d(TAG, "Draw success " + result);
                 }
 
                 @Override
                 public void onError(JsonObject e) {
-
+                    Log.d(TAG, "Draw error " + e);
                 }
             });
         }

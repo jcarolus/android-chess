@@ -432,16 +432,19 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             editor.putString("FEN", sFEN);
             editor.putString("game_pgn", null);
             editor.commit();
-        } else if (requestCode == REQUEST_OPEN_GAME_FILE) {
-            String sPGN = readInputStream(data.getData(), 100000);
-            Log.d(TAG, "got PGN " + sPGN);
+        } else if (requestCode == REQUEST_OPEN_GAME_FILE && data != null) {
+            Uri uri = data.getData();
+            if (uri != null) {
+                String sPGN = readInputStream(uri, 100000);
+                Log.d(TAG, "got PGN " + sPGN);
 
-            SharedPreferences.Editor editor = this.getPrefs().edit();
-            editor.putLong("game_id", 0);
-            editor.putInt("boardNum", 0);
-            editor.putString("FEN", null);
-            editor.putString("game_pgn", sPGN);
-            editor.commit();
+                SharedPreferences.Editor editor = this.getPrefs().edit();
+                editor.putLong("game_id", 0);
+                editor.putInt("boardNum", 0);
+                editor.putString("FEN", null);
+                editor.putString("game_pgn", sPGN);
+                editor.commit();
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);

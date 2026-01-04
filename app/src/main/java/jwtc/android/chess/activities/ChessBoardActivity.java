@@ -276,10 +276,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         for (int i = 0; i < 64; i++) {
-            int color = ChessBoard.BLACK;
+            int color = turn == ChessBoard.BLACK ? ChessBoard.WHITE : ChessBoard.BLACK;
             int piece = i == duckPos ? BoardConstants.DUCK : jni.pieceAt(color, i);
             if (piece == BoardConstants.FIELD) {
-                color = ChessBoard.WHITE;
+                color = turn;
                 piece = jni.pieceAt(color, i);
             }
 
