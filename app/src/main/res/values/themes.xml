@@ -50,4 +50,11 @@
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
     </style>
+
+    <!-- Preparing for Material 3 theming (modern UI) -->
+    <style name="Theme.ModernThemeChess" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+    </style>
+
 </resources>
