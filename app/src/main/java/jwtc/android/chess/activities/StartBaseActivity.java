@@ -1,7 +1,6 @@
 package jwtc.android.chess.activities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -10,14 +9,10 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,21 +20,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.academy.AcademyFragment;
-import jwtc.android.chess.lichess.LichessActivity;
-import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
-import jwtc.android.chess.ics.ICSClient;
-import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.play.PlayFragment;
-import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.practice.PracticeFragment;
-import jwtc.android.chess.puzzle.PuzzleActivity;
 import jwtc.android.chess.settings.SettingsFragment;
-import jwtc.android.chess.tools.AdvancedActivity;
 
 
 public class StartBaseActivity  extends AppCompatActivity {
@@ -106,68 +92,12 @@ public class StartBaseActivity  extends AppCompatActivity {
             }
             return false;
         });
-    }
 
-    private void showPlayModeSheet2() {
-    }
-
-    private void showPlayModeSheet(Intent intent) {
-
-        BottomSheetDialog dialog = new BottomSheetDialog(this);
-        View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_play, null);
-
-        // Local
-        setupRow(
-                sheet.findViewById(R.id.row_play_local),
-                "Play Local",
-                R.drawable.ic_icon_play,
-                () -> {
-                    intent.setClass(StartBaseActivity.this, PlayActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
-                    dialog.dismiss();
-                }
-
-        );
-
-        // FreeChess
-        setupRow(
-                sheet.findViewById(R.id.row_play_freechess),
-                "Play on FreeChess",
-                R.drawable.ic_icon_play,
-                () -> {
-                    intent.setClass(StartBaseActivity.this, ICSClient.class);
-                    startActivity(intent);
-                    dialog.dismiss();
-                }
-        );
-
-        // Lichess
-        setupRow(
-                sheet.findViewById(R.id.row_play_lichess),
-                "Play on Lichess",
-                R.drawable.ic_icon_play,
-                () -> {
-                    intent.setClass(StartBaseActivity.this, LichessActivity.class);
-                    startActivity(intent);
-                    dialog.dismiss();
-                }
-        );
-        // Hotspot Board
-        setupRow(
-                sheet.findViewById(R.id.row_play_hotspot_board),
-                "Play on Hotspot Board",
-                R.drawable.ic_icon_play,
-                () -> {
-                    intent.setClass(StartBaseActivity.this, HotspotBoardActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
-                    dialog.dismiss();
-                }
-        );
-
-        dialog.setContentView(sheet);
-        dialog.show();
+        // Load default play fragment on launch
+        if (savedInstanceState == null){
+            showFragment(playFragment);
+            bottomMenuNavigation.setSelectedItemId(R.id.nav_play);
+        }
     }
     private void setupRow(View row, String title, int iconRes, Runnable action) {
         TextView txt = row.findViewById(R.id.txt);

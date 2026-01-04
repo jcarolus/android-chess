@@ -10,5 +10,6 @@ public class start extends StartBaseActivity {
         layoutResource = R.layout.start;
 
         super.onCreate(savedInstanceState);
+
     }
 }

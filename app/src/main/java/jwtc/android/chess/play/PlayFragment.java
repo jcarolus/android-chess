@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,9 +35,19 @@ public class PlayFragment extends Fragment {
         RecyclerView grid = root.findViewById(R.id.playGrid);
         grid.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
+        ImageButton shareBtn = root.findViewById(R.id.btnShare);
+        shareBtn.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, "Come play chess with me!");
+                    startActivity(Intent.createChooser(shareIntent, "Share with..."));
+                });
+
+
+
         List<PlayMode> modes = Arrays.asList(
-                new PlayMode("Play Solo", R.drawable.ic_pieces_chessnut_wp, true),
-                new PlayMode("FreeChess", R.drawable.ic_pieces_alpha_wp, true),
+                new PlayMode("Play Solo", R.drawable.ic_pieces_alpha_wq, true),
+                new PlayMode("FreeChess", R.drawable.ic_pieces_alpha_wk, true),
                 new PlayMode("Lichess", R.drawable.lichess, true),
                 new PlayMode("Hotspot", R.drawable.ic_pieces_elisa_wn, true)
         );
