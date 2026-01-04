@@ -13,4 +13,5 @@
     <color name="primaryColorDisabled">#888888</color>
     <color name="wrongColor">#D96227</color>
     <color name="paneBackgroundColor">#20879FB6</color>
+    <color name="transparent">@android:color/transparent</color>
 </resources>
