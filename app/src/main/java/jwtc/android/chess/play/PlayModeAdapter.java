@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
+
 import java.util.List;
 
 import jwtc.android.chess.R;
@@ -38,9 +40,21 @@ public class PlayModeAdapter extends RecyclerView.Adapter<PlayModeAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
         PlayMode m = items.get(pos);
+
         h.title.setText(m.title);
         h.icon.setImageResource(m.icon);
-        h.itemView.setOnClickListener(v -> listener.onClick(m));
+
+        if (m.isFeatureAvailable){
+            h.disabledOverlay.setVisibility(View.GONE);
+            h.card.setAlpha(1f);
+            h.card.setClickable(true);
+            h.itemView.setOnClickListener(v -> listener.onClick(m));
+        } else {
+            h.disabledOverlay.setVisibility(View.VISIBLE);
+            h.card.setAlpha(0.7f);
+            h.card.setClickable(false);
+            h.itemView.setOnClickListener(null);
+        }
     }
 
     @Override
@@ -49,11 +63,15 @@ public class PlayModeAdapter extends RecyclerView.Adapter<PlayModeAdapter.VH> {
     }
 
     static class VH extends RecyclerView.ViewHolder {
+        MaterialCardView card;
         ImageView icon;
         TextView title;
+        View disabledOverlay;
 
         VH(View v) {
             super(v);
+            card = v.findViewById(R.id.card);
+            disabledOverlay = v.findViewById(R.id.disabledOverlay);
             icon = v.findViewById(R.id.icon);
             title = v.findViewById(R.id.title);
         }

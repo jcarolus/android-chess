@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="120dp"
     android:layout_margin="8dp"
@@ -10,6 +11,10 @@
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
     app:strokeColor="?attr/colorOnSurface">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <View
         android:layout_width="match_parent"
@@ -41,6 +46,28 @@
             android:textColor="?attr/colorOnSurface"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
+
     </LinearLayout>
 
+        <!-- DISABLED OVERLAY FOR NEW FEATURES NOT IMPLEMENTED YET -->
+        <LinearLayout
+            android:id="@+id/disabledOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="#99000000"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_marginTop="1dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:text="@string/coming_soon"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textSize="24sp"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+    </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

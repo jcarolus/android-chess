@@ -440,5 +440,6 @@
     <string name="lichess_starting">Starting...</string>
     <string name="lichess_play_button_resign">Resign</string>
     <string name="lichess_play_button_draw">Draw</string>
+    <string name="coming_soon">Coming Soon</string>
 
 </resources>

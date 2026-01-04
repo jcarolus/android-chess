@@ -16,6 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import jwtc.android.chess.R;
+import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
+import jwtc.android.chess.ics.ICSClient;
+import jwtc.android.chess.lichess.LichessActivity;
 
 public class PlayFragment extends Fragment {
 
@@ -32,10 +35,10 @@ public class PlayFragment extends Fragment {
         grid.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         List<PlayMode> modes = Arrays.asList(
-                new PlayMode("Play Solo", R.drawable.ic_pieces_chessnut_wp),
-                new PlayMode("FreeChess", R.drawable.ic_pieces_alpha_wp),
-                new PlayMode("Lichess", R.drawable.lichess),
-                new PlayMode("Hotspot", R.drawable.ic_pieces_elisa_wn)
+                new PlayMode("Play Solo", R.drawable.ic_pieces_chessnut_wp, true),
+                new PlayMode("FreeChess", R.drawable.ic_pieces_alpha_wp, true),
+                new PlayMode("Lichess", R.drawable.lichess, true),
+                new PlayMode("Hotspot", R.drawable.ic_pieces_elisa_wn, true)
         );
 
         grid.setAdapter(new PlayModeAdapter(modes, this::onModeSelected));
@@ -46,11 +49,20 @@ public class PlayFragment extends Fragment {
     private void onModeSelected(PlayMode mode) {
         Intent intent = new Intent();
         if (mode.title.equals("Play Solo")) {
+            intent.setClass(requireContext(), PlayActivity.class);
+            startMode(intent);
+        } else if (mode.title.equals("FreeChess")) {
+            intent.setClass(requireContext(), ICSClient.class);
+            startMode(intent);
+        } else if (mode.title.equals("Lichess")) {
+            intent.setClass(requireContext(), LichessActivity.class);
+            startMode(intent);
+        } else if (mode.title.equals("Hotspot")) {
+            intent.setClass(requireContext(), HotspotBoardActivity.class);
             startMode(intent);
         }
     }
     private void startMode(Intent intent) {
-                    intent.setClass(requireContext(), PlayActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
     }

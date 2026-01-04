@@ -91,10 +91,10 @@ public class StartBaseActivity  extends AppCompatActivity {
         bottomMenuNavigation = findViewById(R.id.bottom_nav);
         bottomMenuNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-            if( id == item.getItemId()) {
+            if( id == R.id.nav_play) {
                 showFragment(playFragment);
                 return true;
-            } else if (id == R.id.nav_play) {
+            } else if (id == R.id.nav_practice) {
                 showFragment(practiceFragment);
                 return true;
             } else if (id == R.id.nav_academy) {
@@ -106,47 +106,6 @@ public class StartBaseActivity  extends AppCompatActivity {
             }
             return false;
         });
-
-        //ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
-
-//        _list = findViewById(R.id.ListStart);
-//        _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                String requestedItem = parent.getItemAtPosition(position).toString();
-//                try {
-//                    Intent i = new Intent();
-//                    Log.i(TAG, requestedItem);
-//                    if (requestedItem.equals(getString(R.string.start_play))) {
-//                        showPlayModeSheet(i);
-//                    } else if (requestedItem.equals(getString(R.string.start_practice))) {
-//                        i.setClass(StartBaseActivity.this, PracticeActivity.class);
-//                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                        startActivity(i);
-//                    } else if (requestedItem.equals(getString(R.string.start_puzzles))) {
-//                        i.setClass(StartBaseActivity.this, PuzzleActivity.class);
-//                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                        startActivity(i);
-//                    } else if (requestedItem.equals(getString(R.string.start_pgn))) {
-//                        i.setClass(StartBaseActivity.this, AdvancedActivity.class);
-//                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                        startActivity(i);
-//                    } else if (requestedItem.equals(getString(R.string.start_boardpreferences))) {
-//                        i.setClass(StartBaseActivity.this, BoardPreferencesActivity.class);
-//                        startActivity(i);
-//                    } else {
-//                        Log.d(TAG, "Nothing to start");
-//                    }
-//                } catch (Exception ex) {
-//                    Log.d(TAG, "Exception " + (ex != null ? ex.getMessage() : " no ex"));
-//                    Toast t = Toast.makeText(StartBaseActivity.this, R.string.toast_could_not_start_activity, Toast.LENGTH_LONG);
-//                    t.setGravity(Gravity.BOTTOM, 0, 0);
-//                    t.show();
-//                }
-//            }
-//        });
-//
-//        _list.requestFocus();
     }
 
     private void showPlayModeSheet2() {
