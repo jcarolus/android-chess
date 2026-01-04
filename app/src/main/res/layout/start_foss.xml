@@ -5,8 +5,14 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
->
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:title="Chess"
+        android:titleTextColor="?attr/colorOnPrimary"/>
 
     <ListView
         android:id="@+id/ListStart"
@@ -14,7 +20,6 @@
         android:layout_height="match_parent"
         android:divider="@color/transparent"
         android:dividerHeight="8dp"
-        android:paddingTop="64dp"
         android:drawSelectorOnTop="false"
         android:entries="@array/start_menu" />
 

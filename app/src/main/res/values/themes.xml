@@ -14,7 +14,7 @@
         <item name="rippleColor">@color/secondaryColor</item>
     </style>
 
-    <style name="ChessStart" parent="Theme.MaterialComponents.DayNight">
+    <style name="ChessStart" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
@@ -26,11 +26,6 @@
         <item name="colorOnSurface">@color/surfaceTextColor</item>
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
-        <item name="actionBarStyle">@style/Widget.MyApp.ActionBar</item>
-    </style>
-
-    <style name="Widget.MyApp.ActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="background">@color/primaryColor</item>
     </style>
 
     <style name="ChessDialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
