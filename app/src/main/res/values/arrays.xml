@@ -2,11 +2,8 @@
 <resources>
     <string-array name="start_menu">
         <item>@string/start_play</item>
-        <item>@string/start_ics</item>
-        <item>@string/start_lichess</item>
         <item>@string/start_practice</item>
         <item>@string/start_puzzles</item>
-        <item>@string/start_hotspotboard</item>
         <item>@string/start_boardpreferences</item>
         <item>@string/start_pgn</item>
     </string-array>

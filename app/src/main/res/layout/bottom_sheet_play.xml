@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:text="Choose Play Mode"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="12dp"
+        android:textColor="?attr/colorOnSurface"
+        android:layout_height="1dp"
+        android:layout_width="1dp"/>
+
+    <!-- Reuse your cool card row layout -->
+    <include
+        android:id="@+id/row_play_local"
+        layout="@layout/start_list_single"/>
+
+    <include
+        android:id="@+id/row_play_freechess"
+        layout="@layout/start_list_single"/>
+
+    <include
+        android:id="@+id/row_play_lichess"
+        layout="@layout/start_list_single"/>
+</LinearLayout>

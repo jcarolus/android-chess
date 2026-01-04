@@ -14,12 +14,17 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.lichess.LichessActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -79,9 +84,10 @@ public class StartBaseActivity  extends AppCompatActivity {
                     Intent i = new Intent();
                     Log.i(TAG, requestedItem);
                     if (requestedItem.equals(getString(R.string.start_play))) {
-                        i.setClass(StartBaseActivity.this, PlayActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(i);
+                        showPlayModeSheet();
+                        //i.setClass(StartBaseActivity.this, PlayActivity.class);
+                        //i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        //startActivity(i);
                     } else if (requestedItem.equals(getString(R.string.start_practice))) {
                         i.setClass(StartBaseActivity.this, PracticeActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -121,4 +127,51 @@ public class StartBaseActivity  extends AppCompatActivity {
 
         _list.requestFocus();
     }
+    private void showPlayModeSheet() {
+
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View sheet = getLayoutInflater().inflate(R.layout.bottom_sheet_play, null);
+
+        // Local
+        //startLocalGame();
+        setupRow(
+                sheet.findViewById(R.id.row_play_local),
+                "Play Local",
+                R.drawable.ic_icon_play,
+                dialog::dismiss
+        );
+
+        // FreeChess
+        //openFreeChess();
+        setupRow(
+                sheet.findViewById(R.id.row_play_freechess),
+                "Play on FreeChess",
+                R.drawable.ic_icon_play,
+                dialog::dismiss
+        );
+
+        // Lichess
+        //openLichess();
+        setupRow(
+                sheet.findViewById(R.id.row_play_lichess),
+                "Play on Lichess",
+                R.drawable.ic_icon_play,
+                dialog::dismiss
+        );
+
+        dialog.setContentView(sheet);
+        dialog.show();
+    }
+    private void setupRow(View row, String title, int iconRes, Runnable action) {
+        TextView txt = row.findViewById(R.id.txt);
+        ImageView img = row.findViewById(R.id.img);
+
+        txt.setText(title);
+        img.setImageResource(iconRes);
+
+        row.setClickable(true);
+        row.setOnClickListener(v -> action.run());
+    }
+
+
 }
