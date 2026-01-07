@@ -13,7 +13,7 @@
     <string name="start_play">Играть</string>
     <string name="start_practice">Тренировка</string>
     <string name="start_puzzles">Задачи</string>
-    <string name="start_hotspotboard">Hotspot-доска (экспериментально)</string>
+    <string name="start_hotspotboard">Hotspot-доска</string>
     <string name="start_pgn">Дополнительно</string>
     <string name="start_ics">Играть онлайн</string>
     <string name="start_boardpreferences">Настройки шахматной доски</string>

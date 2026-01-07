@@ -13,7 +13,7 @@
     <string name="start_play">Jogar</string>
     <string name="start_practice">Treinar</string>
     <string name="start_puzzles">Problemas</string>
-    <string name="start_hotspotboard">Tabuleiro hotspot (experimental)</string>
+    <string name="start_hotspotboard">Tabuleiro hotspot</string>
     <string name="start_pgn">Avançado</string>
     <string name="start_ics">Jogar online</string>
     <string name="start_boardpreferences">Configurações do tabuleiro</string>

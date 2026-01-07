@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_share"
+        android:title="Share"
+        android:icon="@drawable/ic_share_fill"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/media_route_menu_item"
         android:title="Cast"
         app:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"

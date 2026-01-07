@@ -8,28 +8,10 @@
     android:fitsSystemWindows="true"
     tools:context=".start">
 
-    <TableLayout
-        android:id="@+id/BottomTable"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/startItemsRecycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-        <TableRow android:gravity="center_vertical">
-            <Button
-                android:id="@+id/ButtonShare"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                style="@style/ChessButton"
-                android:text="Share"
-                android:drawableLeft="@drawable/ic_share_fill"/>
-        </TableRow>
-    </TableLayout>
-    <ListView
-        android:id="@+id/ListStart"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="64dip"
-        android:layout_above="@id/BottomTable"
-        android:drawSelectorOnTop="false"
-        android:entries="@array/start_menu"/>
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="16dp" />
 </RelativeLayout>

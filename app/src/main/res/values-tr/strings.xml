@@ -13,7 +13,7 @@
     <string name="start_play">Oyna</string>
     <string name="start_practice">Alıştırma</string>
     <string name="start_puzzles">Problemler</string>
-    <string name="start_hotspotboard">Hotspot tahtası (deneysel)</string>
+    <string name="start_hotspotboard">Hotspot tahtası</string>
     <string name="start_pgn">Gelişmiş</string>
     <string name="start_ics">Çevrimiçi oyna</string>
     <string name="start_boardpreferences">Satranç tahtası ayarları</string>

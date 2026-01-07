@@ -13,11 +13,11 @@
     <string name="start_play">Play</string>
     <string name="start_practice">Practice</string>
     <string name="start_puzzles">Puzzles</string>
-    <string name="start_hotspotboard">Hotspot board (experimental)</string>
+    <string name="start_hotspotboard">Hotspot board</string>
     <string name="start_pgn">Advanced</string>
-    <string name="start_ics">Play on Freechess</string>
-    <string name="start_boardpreferences">Chess board settings</string>
-    <string name="start_lichess">Play on Lichess (experimental)</string>
+    <string name="start_ics">Freechess</string>
+    <string name="start_boardpreferences">Board settings</string>
+    <string name="start_lichess">Lichess (beta)</string>
 
     <string name="globalpreferences">Global settings</string>
     <string name="playpreferences">Play settings</string>

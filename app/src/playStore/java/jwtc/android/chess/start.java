@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.view.MenuItemCompat;
 
 import android.util.Log;
@@ -80,22 +81,6 @@ public class start extends StartBaseActivity {
         mMediaRouteSelector = new MediaRouteSelector.Builder()
                 .addControlCategory(CastMediaControlIntent.categoryForCast("05EB93C6")).build();
         mMediaRouterCallback = new MyMediaRouterCallback();
-
-        final String packageName = "jwtc.android.chess";
-
-        Button buttonShare = findViewById(R.id.ButtonShare);
-        if (buttonShare != null) {
-            buttonShare.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(Intent.ACTION_SEND);
-                    i.setType("text/plain");
-                    i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
-                    i.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + packageName);
-                    startActivity(Intent.createChooser(i, "Share"));
-                }
-            });
-        }
     }
 
     @Override
@@ -131,6 +116,20 @@ public class start extends StartBaseActivity {
         // Set the MediaRouteActionProvider selector for device discovery.
         mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_share) {
+            final String packageName = "jwtc.android.chess";
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+            i.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=" + packageName);
+            startActivity(Intent.createChooser(i, "Share"));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

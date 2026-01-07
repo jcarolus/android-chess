@@ -13,7 +13,7 @@
     <string name="start_play">Jouer</string>
     <string name="start_practice">Entraînement</string>
     <string name="start_puzzles">Problèmes</string>
-    <string name="start_hotspotboard">Plateau hotspot (expérimental)</string>
+    <string name="start_hotspotboard">Plateau hotspot</string>
     <string name="start_pgn">Avancé</string>
     <string name="start_ics">Jouer en ligne</string>
     <string name="start_boardpreferences">Paramètres de l’échiquier</string>
