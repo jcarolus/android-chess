@@ -60,6 +60,7 @@ import jwtc.chess.board.BoardConstants;
 public class PlayActivity extends ChessBoardActivity implements EngineListener, ResultDialogListener<Bundle>, ClockListener, MoveRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
+    private static final String PREF_CLOCK_DISABLED = "clockDisabledByTimeUp";
     public static final int REQUEST_OPEN = 2;
     public static final int REQUEST_GAME_SETTINGS = 3;
     public static final int REQUEST_FROM_QR_CODE = 4;
@@ -73,11 +74,14 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     public static final int REQUEST_OPEN_POSITION_FILE = 12;
     public static final int REQUEST_OPEN_GAME_FILE = 13;
 
+    private boolean clockActive = false;
+
     private final LocalClockApi localClock = new LocalClockApi();
     private EngineApi myEngine;
     private final EcoService ecoService = new EcoService();
     private long lGameID;
     private ProgressBar progressBarEngine;
+    private boolean timeUpDialogShown = false;
     private ImageButton playButton;
     private boolean vsCPU = true;
     private boolean flipBoard = false;
@@ -111,6 +115,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         rebuildBoard();
         return false;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -372,9 +377,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         editor.putString("game_pgn", gameApi.exportFullPGN());
         editor.putString("FEN", jni.toFEN());
 
-        editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
-        editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
-        editor.putLong("clockStartTime", localClock.getLastMeasureTime());
+        // Prevent saving dead clocks
+        if (!getPrefs().getBoolean(PREF_CLOCK_DISABLED, false)) {
+            editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
+            editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
+            editor.putLong("clockStartTime", localClock.getLastMeasureTime());
+        }
 
         editor.putBoolean("flipBoard", flipBoard);
         editor.putBoolean("moveToSpeech", moveToSpeech);
@@ -722,6 +730,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
                 break;
             case REQUEST_CLOCK:
+
+                // Clear the flag when a new clock is set
+                SharedPreferences.Editor e = getPrefs().edit();
+                e.putBoolean(PREF_CLOCK_DISABLED, false);
+                e.apply();
+
                 updateClockByPrefs();
                 updateGUI();
                 break;
@@ -743,29 +757,121 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
     @Override
     public void OnClockTime() {
-        if (chessBoardView.isRotated()) {
-            textViewMyClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
-            textViewOpponentClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
-        } else {
-            textViewOpponentClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
-            textViewMyClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
+
+        if (!clockActive) {
+            return; // clock not started yet, so just return
         }
 
-//        long remaining = myTurn == BoardConstants.WHITE ? localClock.getWhiteRemaining() : localClock.getBlackRemaining();
-//        if (remaining < _TimeWarning * 1000) {
-//            textViewMyClock.setBackgroundColor(0xCCFF0000);
-//            // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
-//        } else {
-//            textViewMyClock.setBackgroundColor(Color.TRANSPARENT);
-//        }
+        long white = localClock.getWhiteRemaining();
+        long black = localClock.getBlackRemaining();
+
+        // Time-up detection (run once)
+        if (!timeUpDialogShown && (white <= 0 || black <= 0)) {
+            timeUpDialogShown = true;
+
+            int loser = (white <= 0)
+                    ? BoardConstants.WHITE
+                    : BoardConstants.BLACK;
+
+            runOnUiThread(() -> showTimeUpDialog(loser));
+            return;
+        }
+
+        // Normal clock UI updates
+        if (chessBoardView.isRotated()) {
+            textViewMyClock.setText(
+                    myTurn == BoardConstants.WHITE
+                            ? localClock.getBlackRemainingTime()
+                            : localClock.getWhiteRemainingTime()
+            );
+            textViewOpponentClock.setText(
+                    myTurn == BoardConstants.BLACK
+                            ? localClock.getBlackRemainingTime()
+                            : localClock.getWhiteRemainingTime()
+            );
+        } else {
+            textViewOpponentClock.setText(
+                    myTurn == BoardConstants.WHITE
+                            ? localClock.getBlackRemainingTime()
+                            : localClock.getWhiteRemainingTime()
+            );
+            textViewMyClock.setText(
+                    myTurn == BoardConstants.BLACK
+                            ? localClock.getBlackRemainingTime()
+                            : localClock.getWhiteRemainingTime()
+            );
+        }
     }
+
+    private void showTimeUpDialog(int loserColor) {
+        String loser = loserColor == BoardConstants.WHITE
+                ? getString(R.string.piece_white)
+                : getString(R.string.piece_black);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Time’s Up!")
+                .setMessage(loser + " ran out of time.\n\nContinue playing without the clock?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (d, w) -> {
+                    // Continue without clock
+                    clockActive = false;
+                    d.dismiss();
+                })
+                .setNegativeButton("No", (d, w) -> {
+                    d.dismiss();
+                    resetAfterTimeUp();
+                })
+                .show();
+    }
+    private void resetAfterTimeUp() {
+
+        // stop clock completely
+        localClock.stopClock();
+
+        // reset guards
+        timeUpDialogShown = false;
+        clockActive = false;
+
+        // clear persisted clock state
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putBoolean(PREF_CLOCK_DISABLED, true);
+        editor.putLong("clockWhiteMillies", 0);
+        editor.putLong("clockBlackMillies", 0);
+        editor.putLong("clockStartTime", 0);
+        editor.apply();
+
+        // start fresh game
+        gameApi.newGame();
+        lGameID = 0;
+
+        updateForNewGame();
+        updateGUI();
+    }
+
+
 
     protected void updateClockByPrefs() {
         SharedPreferences prefs = getPrefs();
+
+        // If clock is disabled, do not start clock
+        if (prefs.getBoolean(PREF_CLOCK_DISABLED, false)) {
+            clockActive = false;
+            localClock.stopClock();
+            return;
+        }
+
         long increment = prefs.getLong("clockIncrement", 0);
         long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
         long blackRemaining = prefs.getLong("clockBlackMillies", 0);
         long startTime = prefs.getLong("clockStartTime", 0);
+
+        // Do not start clock if no time is configured
+        if (whiteRemaining <= 0 && blackRemaining <= 0) {
+            clockActive = false;
+            return;
+        }
+
+        clockActive = true;
         localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
     }
 
@@ -777,10 +883,15 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
         long blackRemaining = prefs.getLong("clockBlackMillies", 0);
         long startTime = prefs.getLong("clockStartTime", 0);
-        if (startTime > 0) {
-            startTime = System.currentTimeMillis();
+        if (whiteRemaining <= 0 && blackRemaining <= 0) {
+            clockActive = false;
+        } else {
+            clockActive = true;
+            if (startTime > 0) {
+                startTime = System.currentTimeMillis();
+            }
+            localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
         }
-        localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
 
         if (spSound != null) {
             spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);

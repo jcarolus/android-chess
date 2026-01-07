@@ -12,6 +12,7 @@ public class LocalClockApi extends ClockApi {
     protected long increment = 0;
     protected long lastMeasureTime = 0;
     protected int currentTurn = 1;
+    private boolean isTimeUp = false;
 
     private Thread clockThread = null;
 
@@ -32,12 +33,24 @@ public class LocalClockApi extends ClockApi {
         this.currentTurn = turn;
 
         this.lastMeasureTime = startTime;
+        this.isTimeUp = false;
 
         if (startTime > 0 && clockThread == null) {
             clockThread = new Thread(new RunnableImp());
             clockThread.start();
         }
     }
+
+    private void checkTimeExpired(long whiteRemaining, long blackRemaining) {
+        if (isTimeUp) return;
+
+        if (whiteRemaining <= 0 || blackRemaining <= 0) {
+            isTimeUp = true;
+            stopClock(); // hard stopping clock
+            dispatchClockTime(); // final UI update
+        }
+    }
+
 
     public void stopClock() {
         if (clockThread != null) {
@@ -95,17 +108,23 @@ public class LocalClockApi extends ClockApi {
         @Override
         public void run() {
             try {
-                while (!Thread.currentThread().isInterrupted()) {
+                while (!Thread.currentThread().isInterrupted() && !isTimeUp) {
+
+                    long w = getWhiteRemaining();
+                    long b = getBlackRemaining();
+
+                    checkTimeExpired(w, b);
+
                     Message m = new Message();
                     m.what = 0;
                     updateHandler.sendMessage(m);
 
                     Thread.sleep(500);
                 }
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 Log.d(TAG, "Runnable interrupted");
             }
         }
+
     }
 }
