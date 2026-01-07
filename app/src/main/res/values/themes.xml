@@ -12,6 +12,7 @@
         <item name="colorOnSurface">@color/surfaceTextColor</item>
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
+        <item name="switchStyle">@style/MySwitchStyle</item>
     </style>
 
     <style name="ChessStart" parent="Theme.Material3.DayNight">
@@ -49,5 +50,9 @@
         <item name="colorSurface">@color/surfaceColor</item>
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
+    </style>
+
+    <style name="MySwitchStyle" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@color/switch_thumb_color</item>
     </style>
 </resources>
