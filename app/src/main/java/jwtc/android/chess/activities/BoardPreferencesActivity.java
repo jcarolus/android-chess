@@ -21,7 +21,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
     private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxNightMode;
     private Spinner spinnerPieceSet, spinnerColorScheme, spinnerTileSet;
-    private Slider sliderSaturation;
+    private Slider sliderSaturation, sliderSpeechRate, sliderSpeechPitch;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +41,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
         sliderSaturation = findViewById(R.id.SliderSaturation);
+        sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
+        sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
 
         spinnerPieceSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -115,6 +117,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         spinnerTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
 
         sliderSaturation.setValue(prefs.getFloat("squareSaturation", 1.0f));
+        sliderSpeechRate.setValue(prefs.getFloat("speechRate", 1.0f));
+        sliderSpeechPitch.setValue(prefs.getFloat("speechPitch", 1.0f));
 
         rebuildBoard();
 
@@ -137,6 +141,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
         editor.putFloat("squareSaturation", sliderSaturation.getValue());
+        editor.putFloat("speechRate", sliderSpeechRate.getValue());
+        editor.putFloat("speechPitch", sliderSpeechPitch.getValue());
 
         editor.commit();
     }

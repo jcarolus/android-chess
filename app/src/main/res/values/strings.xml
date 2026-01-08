@@ -57,6 +57,8 @@
     <string name="pref_turn_desc">Which side of the board you play</string>
     <string name="pref_night_mode">Night mode</string>
     <string name="pref_night_mode_desc">Force the app into night mode</string>
+    <string name="pref_speech_rate_desc">Speech rate</string>
+    <string name="pref_speech_pitch_desc">Speech pitch</string>
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>

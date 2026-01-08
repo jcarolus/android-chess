@@ -603,41 +603,21 @@ public class GameApi {
 
 
     private void loadPGNHead(String s) {
-
         s = s.replaceAll("[\\r\\n]+", " ");
         s = s.replaceAll("  ", " ");
         s = s.trim();
         s = s + " "; // for last token
 
-        Matcher matchToken;
-        String token;
-        Pattern patTag = Pattern.compile("\\[(\\w+) \"(.*)\"\\]");
+        Pattern patTag = Pattern.compile("\\[(\\w+) \\\"([^\\]]*)\\\"\\]");
+        Matcher matcher = patTag.matcher(s);
 
-        int i = 0, pos;
-        while (i < s.length()) {
-            pos = s.indexOf(" ", i);
-
-            if (pos > 0) {
-
-                if (s.charAt(i) == '[') {
-                    pos = s.indexOf("]", i);
-                    if (pos == -1)
-                        break;
-                    pos++;
-                }
-            } else {
-                break;
-            }
-
-            token = s.substring(i, pos);
-
-            i = pos + 1;
-
-            matchToken = patTag.matcher(token);
-            if (matchToken.matches()) {
-                _mapPGNHead.put(matchToken.group(1), matchToken.group(2));
-                if (matchToken.group(1).equals("FEN")) {
-                    initFEN(matchToken.group(2), false);
+        while (matcher.find()) {
+            String name = matcher.group(1);
+            String value = matcher.group(2);
+            if (name != null && value != null) {
+                _mapPGNHead.put(name, value);
+                if (name.equals("FEN")) {
+                    initFEN(value, false);
                 }
             }
         }

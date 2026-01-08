@@ -403,13 +403,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS && textToSpeech != null) {
-            int result = textToSpeech.setLanguage(Locale.US);
+            int result = textToSpeech.setDefaults(getPrefs());
 
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 doToast("Speech does not support US locale");
                 textToSpeech = null;
             } else {
-                textToSpeech.setDefaults();
+
             }
         } else {
             doToast("Speech not supported");

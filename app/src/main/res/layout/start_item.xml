@@ -21,7 +21,8 @@
         <ImageView
             android:id="@+id/start_item_icon"
             android:layout_width="32dp"
-            android:layout_height="32dp" />
+            android:layout_height="32dp"
+            android:accessibilityLiveRegion="none"/>
 
         <TextView
             android:id="@+id/start_item_title"

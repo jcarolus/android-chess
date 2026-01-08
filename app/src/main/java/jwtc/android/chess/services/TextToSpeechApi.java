@@ -1,31 +1,26 @@
 package jwtc.android.chess.services;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import java.util.regex.Matcher;
+import java.util.Locale;
 
-import jwtc.chess.Move;
-
-public class TextToSpeechApi extends TextToSpeech {
+public class TextToSpeechApi {
     private static final String TAG = "TextToSpeechApi";
-    public TextToSpeechApi(Context context, OnInitListener listener) {
-        super(context, listener);
+    private final TextToSpeech textToSpeech;
+    public TextToSpeechApi(Context context, TextToSpeech.OnInitListener listener) {
+        textToSpeech = new TextToSpeech(context, listener);
     }
 
-    public void setDefaults() {
-        setSpeechRate(0.80F);
-        setPitch(0.85F);
+    public int setDefaults(SharedPreferences prefs) {
+        textToSpeech.setSpeechRate(prefs.getFloat("speechRate", 1.0F));
+        textToSpeech.setPitch(prefs.getFloat("speechPitch", 1.0F));
+        return textToSpeech.setLanguage(Locale.US);
     }
 
     public void moveToSpeech(String sMoveSpeech) {
-        speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, sMoveSpeech);
+        this.textToSpeech.speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, sMoveSpeech);
     }
-
-    public void defaultSpeak(String text) {
-        Log.d(TAG, "say " + text);
-        speak(text, TextToSpeech.QUEUE_FLUSH, null, text);
-    }
-
 }
