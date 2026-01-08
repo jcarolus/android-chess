@@ -288,6 +288,7 @@ public class GameApi {
             Log.d(TAG, "PGN larger than max " + s.length());
             return false;
         }
+        // Log.d(TAG, "loadPGN " + s);
         loadPGNHead(s);
 
         if(loadPGNMoves(s)) {
@@ -482,7 +483,7 @@ public class GameApi {
                 if (bMatch) {
                     if (move(move, "", false)) {
                         int numBoard = jni.getNumBoard() - 2;
-                        if (numBoard >= 0) {
+                        if (numBoard >= 0 && sAnnotation != null) {
                             setAnnotation(numBoard, sAnnotation);
                         }
 
@@ -585,7 +586,7 @@ public class GameApi {
 
                     if (move(move, "", false)) {
                         int numBoard = jni.getNumBoard() - 2;
-                        if (numBoard >= 0) {
+                        if (numBoard >= 0 && sAnnotation != null) {
                             setAnnotation(numBoard, sAnnotation);
                         }
 
@@ -673,11 +674,11 @@ public class GameApi {
         Matcher matchCastling = patCastling.matcher(s);
         Matcher matchMoveDots = patMoveDots.matcher(s);
 
-        NextMatch nextMoveNumber = new NextMatch("moveNumber", matchMoveNumber);
-        NextMatch nextAnnotation = new NextMatch("annotation", matchAnnotation);
-        NextMatch nextMove = new NextMatch("move", matchMove);
-        NextMatch nextCastling = new NextMatch("castling", matchCastling);
-        NextMatch nextMoveDots = new NextMatch("moveDots", matchMoveDots);
+        NextMatch nextMoveNumber = new NextMatch(matchMoveNumber);
+        NextMatch nextAnnotation = new NextMatch(matchAnnotation);
+        NextMatch nextMove = new NextMatch(matchMove);
+        NextMatch nextCastling = new NextMatch(matchCastling);
+        NextMatch nextMoveDots = new NextMatch(matchMoveDots);
 
         NextMatch best;
         do {
@@ -705,16 +706,15 @@ public class GameApi {
             }
 
             if (best != null) {
-                // Log.d(TAG, "best match " + best.type + " " + best.matcher.group(0));
-                if (best.type.equals("annotation")) {
+                if (best == nextAnnotation) {
                     String sAnnotation = best.matcher.group(1);
                     if (sAnnotation != null && !sAnnotation.isEmpty()) {
                         setAnnotation(jni.getNumBoard() - 1, sAnnotation);
                     }
-                } else if (best.type.equals("move")) {
-                    requestMove(best.matcher, null, "");
-                } else if (best.type.equals("castling")) {
-                    requestMove(best.matcher, best.matcher.group(1), "");
+                } else if (best == nextMove) {
+                    requestMove(best.matcher, null, null);
+                } else if (best == nextCastling) {
+                    requestMove(best.matcher, best.matcher.group(1), null);
                 }
                 cursor = best.end;
             }
@@ -735,6 +735,7 @@ public class GameApi {
 
     public void setAnnotation(int i, String sAnno) {
         if (_arrPGN.size() > i)
+            // Log.d(TAG, "set annotation " + sAnno);
             _arrPGN.get(i)._sAnnotation = sAnno;
     }
 
@@ -756,6 +757,9 @@ public class GameApi {
 
         s += exportMovesPGN();
         s += "\n";
+
+        // Log.d(TAG, "exportFullPGN " + s);
+
         return s;
     }
 
@@ -825,14 +829,12 @@ public class GameApi {
     }
 
     private static class NextMatch {
-        final String type;
         final Matcher matcher;
         int start = -1;
         int end = -1;
         boolean has = false;
 
-        NextMatch(String type, Matcher matcher) {
-            this.type = type;
+        NextMatch(Matcher matcher) {
             this.matcher = matcher;
         }
 
