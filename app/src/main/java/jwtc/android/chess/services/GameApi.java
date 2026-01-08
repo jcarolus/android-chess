@@ -23,19 +23,26 @@ public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
     protected JNI jni;
-    private static Pattern _patNum;
-    private static Pattern _patAnnot;
-    private static Pattern _patMove;
-    private static Pattern _patCastling;
-    private static Pattern _patGameResult;
+    private static Pattern patMoveNum;
+    private static Pattern patMoveDots;
+    private static Pattern patAnnotation;
+    private static Pattern patMove;
+    private static Pattern patCastling;
+    private static Pattern patGameResult;
+    private static Pattern patTag;
+    private static final String regexPgnTag = "\\[(\\w+) \\\"([^\\]]*)\\\"\\]";
+
+    public static final int MAX_PGN_SIZE = 500000;
 
     static {
         try {
-            _patNum = Pattern.compile("(\\d+)\\.");
-            _patAnnot = Pattern.compile("\\{([^\\{]*)\\}");
-            _patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
-            _patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?");
-            _patGameResult = Pattern.compile("((\\*)|(1-0)|(0-1)|(1/2-1/2))");
+            patMoveNum = Pattern.compile("(\\d+)\\.");
+            patAnnotation = Pattern.compile("\\{([^\\{]*)\\}");
+            patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
+            patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?");
+            patGameResult = Pattern.compile("((\\*)|(1-0)|(0-1)|(1/2-1/2))");
+            patTag = Pattern.compile(regexPgnTag);
+            patMoveDots = Pattern.compile("\\.\\.");
 
         } catch (Exception e) {}
     }
@@ -277,6 +284,10 @@ public class GameApi {
     public boolean loadPGN(String s) {
         jni.newGame();
 
+        if (s.length() > MAX_PGN_SIZE) {
+            Log.d(TAG, "PGN larger than max " + s.length());
+            return false;
+        }
         loadPGNHead(s);
 
         if(loadPGNMoves(s)) {
@@ -287,7 +298,7 @@ public class GameApi {
     }
 
     public Matcher getMoveMatcher(String sMove) {
-        return _patMove.matcher(sMove);
+        return patMove.matcher(sMove);
     }
 
     public boolean requestMove(String sMove) {
@@ -295,15 +306,15 @@ public class GameApi {
         String sAnnotation = "";
         if (matchToken.matches()) {
             Log.d(TAG, "requestMove MATCHES " + sMove);
-            if (requestMove(sMove, matchToken, null, sAnnotation)) {
+            if (requestMove(matchToken, null, sAnnotation)) {
                 final int move = jni.getMyMove();
                 dispatchMove(move);
                 return true;
             }
         } else {
-            matchToken = _patCastling.matcher(sMove);
+            matchToken = patCastling.matcher(sMove);
             if (matchToken.matches()) {
-                if (requestMove(sMove, matchToken, matchToken.group(1), sAnnotation)) {
+                if (requestMove(matchToken, matchToken.group(1), sAnnotation)) {
                     final int move = jni.getMyMove();
                     dispatchMove(move);
                     return true;
@@ -452,7 +463,7 @@ public class GameApi {
         return true;
     }
 
-    private synchronized final boolean requestMove(final String token, final Matcher matchToken, final String sCastle, final String sAnnotation) {
+    private synchronized final boolean requestMove(final Matcher matchToken, final String sCastle, final String sAnnotation) {
 
         boolean bMatch = false;
         int size = jni.getMoveArraySize();
@@ -603,12 +614,7 @@ public class GameApi {
 
 
     private void loadPGNHead(String s) {
-        s = s.replaceAll("[\\r\\n]+", " ");
-        s = s.replaceAll("  ", " ");
-        s = s.trim();
-        s = s + " "; // for last token
-
-        Pattern patTag = Pattern.compile("\\[(\\w+) \\\"([^\\]]*)\\\"\\]");
+        s = cleanPgnString(s);
         Matcher matcher = patTag.matcher(s);
 
         while (matcher.find()) {
@@ -648,164 +654,72 @@ public class GameApi {
         return false;
     }
 
-    private void removeDoubleSpaces(StringBuffer sb) {
-        String replaced = sb.toString().replaceAll(" {2,}", " ");
-        sb.setLength(0);
-        sb.append(replaced);
+    private String cleanPgnString(String s) {
+        return s.replaceAll("[\\r\\n\\t]+", " ").replaceAll(" {2,}", " ").trim();
     }
 
     private boolean loadPGNMoves(String s) {
         _arrPGN.clear();
 
-        s = s.replaceAll("[\\r\\n\\t]+", " ");
-        //s = s.replaceAll("\\{[^\\}]*\\}", ""); // remove comments
+        s = s.replaceAll(regexPgnTag, "");
+        s = cleanPgnString(s);
 
-        StringBuffer sb = new StringBuffer(s);
+        // Log.d(TAG, "loadPgnMoves " + s);
 
-        removeDoubleSpaces(sb);
+        int cursor = 0;
+        Matcher matchMoveNumber = patMoveNum.matcher(s);
+        Matcher matchAnnotation = patAnnotation.matcher(s);
+        Matcher matchMove = patMove.matcher(s);
+        Matcher matchCastling = patCastling.matcher(s);
+        Matcher matchMoveDots = patMoveDots.matcher(s);
 
-        //Log.i("loadPGNMoves", sb.toString());
+        NextMatch nextMoveNumber = new NextMatch("moveNumber", matchMoveNumber);
+        NextMatch nextAnnotation = new NextMatch("annotation", matchAnnotation);
+        NextMatch nextMove = new NextMatch("move", matchMove);
+        NextMatch nextCastling = new NextMatch("castling", matchCastling);
+        NextMatch nextMoveDots = new NextMatch("moveDots", matchMoveDots);
 
-        try {
-            while (removeComment(sb)) {
-                ;
+        NextMatch best;
+        do {
+            best = null;
+            nextMoveNumber.seek(cursor);
+            nextAnnotation.seek(cursor);
+            nextMove.seek(cursor);
+            nextCastling.seek(cursor);
+            nextMoveDots.seek(cursor);
+
+            if (nextMoveNumber.has) {
+                best = nextMoveNumber;
             }
-        } catch (Exception e) {
-            Log.w("loadPGNMoves", "Exception: " + e);
-            Log.i("loadPGNMoves", sb.toString());
-            return false;
-        }
-
-        removeDoubleSpaces(sb);
-
-        s = sb.toString();
-
-        //Log.i("loadPGNMoves", s);
-
-		/*
-		// the ( alternative ( move ) )
-		Pattern pat = Pattern.compile("(\\([^\\)\\(]*\\))?");
-		int i = 0, cnt = 0;
-		while(s.indexOf("(") >= 0 && cnt < 200){
-			cnt++;
-			Matcher m = pat.matcher(s);
-			if(m.find())
-				s = m.replaceAll("");
-			else {
-				Log.w("PGN Moves", "Could not find parentheses");
-				return false;
-			}
-		}
-		if(s.indexOf(")") >= 0){
-			Log.w("PGN Moves", "Still parentheses");
-			return false;
-		}
-		*/
-
-        int i;
-        s = s.replaceAll("\\$\\d+", ""); // the $x
-        //s = s.replaceAll("  ", " ");
-        s = s.trim();
-        s = s + " "; // for last token
-        try {
-
-            int pos, numMove = 1, tmp, posDot;
-            i = 0;
-
-            Matcher matchToken;
-            String token, sAnnotation;
-            sAnnotation = "";
-            while (i < s.length()) {
-                pos = s.indexOf(" ", i);
-                posDot = s.indexOf(".", i);
-
-                token = "";
-                if (pos > 0) {
-                    if (s.charAt(i) == '[') {
-                        pos = s.indexOf("]", i);
-                        if (pos == -1)
-                            break;
-                        pos++;
-                        token = s.substring(i, pos);
-
-                        i = pos + 1;
-                    } else if (s.charAt(i) == '{') {
-                        pos = s.indexOf("}", i);
-                        if (pos == -1)
-                            break;
-                        pos++;
-                        token = s.substring(i, pos);
-
-                        i = pos + 1;
-                    } else if (posDot > 0 && posDot < pos) {
-                        if (s.length() > posDot + 3 && s.substring(posDot, posDot + 3).equals("...")) {
-                            i = posDot + 3;
-                            continue;
-                        } else {
-                            posDot++;
-                            token = s.substring(i, posDot);
-                            i = posDot;
-                        }
-                    } else {
-                        token = s.substring(i, pos);
-                        i = pos + 1;
-                    }
-                } else {
-                    break;
-                }
-                if (token.equals("..")) {
-                    continue;
-                }
-
-                matchToken = _patNum.matcher(token);
-                if (matchToken.matches()) {
-                    tmp = Integer.parseInt(matchToken.group(1));
-                    if (tmp == numMove)
-                        numMove++;
-                    else {
-                        break;
-                    }
-                } else {
-                    matchToken = _patAnnot.matcher(token);
-                    if (matchToken.matches()) {
-                        sAnnotation = matchToken.group(1);
-                    } else {
-
-                        matchToken = _patMove.matcher(token);
-                        if (matchToken.matches()) {
-
-                            if (requestMove(token, matchToken, null, sAnnotation)) {
-                                sAnnotation = "";
-                            } else {
-                                break;
-                            }
-                        } else {
-
-                            matchToken = _patCastling.matcher(token);
-                            if (matchToken.matches()) {
-
-                                if (requestMove(token, matchToken, matchToken.group(1), sAnnotation)) {
-                                    sAnnotation = "";
-                                } else {
-                                    break;
-                                }
-                            } else {
-                                continue;
-                            }
-                        }
-                    }
-                }
+            if (nextAnnotation.has && (best == null || nextAnnotation.start < best.start)) {
+                best = nextAnnotation;
+            }
+            if (nextMove.has && (best == null || nextMove.start < best.start)) {
+                best = nextMove;
+            }
+            if (nextCastling.has && (best == null || nextCastling.start < best.start)) {
+                best = nextCastling;
+            }
+            if (nextMoveDots.has && (best == null || nextMoveDots.start < best.start)) {
+                best = nextMoveDots;
             }
 
-            if (sAnnotation.length() != 0) {
-                setAnnotation(jni.getNumBoard() - 1, sAnnotation);
+            if (best != null) {
+                // Log.d(TAG, "best match " + best.type + " " + best.matcher.group(0));
+                if (best.type.equals("annotation")) {
+                    String sAnnotation = best.matcher.group(1);
+                    if (sAnnotation != null && !sAnnotation.isEmpty()) {
+                        setAnnotation(jni.getNumBoard() - 1, sAnnotation);
+                    }
+                } else if (best.type.equals("move")) {
+                    requestMove(best.matcher, null, "");
+                } else if (best.type.equals("castling")) {
+                    requestMove(best.matcher, best.matcher.group(1), "");
+                }
+                cursor = best.end;
             }
 
-        } catch (Exception e) {
-            Log.d(TAG, "Error loading PGN");
-            //System.out.println("@" + e);
-            return false;
-        }
+        } while(best != null);
 
         return true;
     }
@@ -825,14 +739,19 @@ public class GameApi {
     }
 
     public String exportFullPGN() {
-        String[] arrHead = {"Event", "Site", "Date", "Round", "White", "Black", "Result", "EventDate",
-                "Variant", "Setup", "FEN", "PlyCount"};
+        // to make sure the order of the `Seven Tag Roster`
+        String[] arrHead = {
+                "Event", "Site", "Date", "Round", "White", "Black", "Result",
+                // and the others we support
+                "EventDate", "Variant", "Setup", "FEN", "PlyCount", "TimeControl", "Time"};
 
         String s = "", key;
         for (int i = 0; i < arrHead.length; i++) {
             key = arrHead[i];
-            if (_mapPGNHead.containsKey(key))
-                s += "[" + key + " \"" + _mapPGNHead.get(key) + "\"]\n";
+            if (_mapPGNHead.containsKey(key)) {
+                String value = _mapPGNHead.get(key).replace("\"", "\\\"");
+                s += "[" + key + " \"" + value + "\"]\n";
+            }
         }
 
         s += exportMovesPGN();
@@ -903,6 +822,35 @@ public class GameApi {
     public Date getDate() {
         String s = getPGNHeadProperty("Date");
         return PGNHelper.getDate(s);
+    }
+
+    private static class NextMatch {
+        final String type;
+        final Matcher matcher;
+        int start = -1;
+        int end = -1;
+        boolean has = false;
+
+        NextMatch(String type, Matcher matcher) {
+            this.type = type;
+            this.matcher = matcher;
+        }
+
+        // Ensure this match candidate is positioned at/after cursor.
+        void seek(int cursor) {
+            // If we already have a cached match but it's behind the cursor, advance.
+            while (has && start < cursor) {
+                has = matcher.find();
+                if (has) { start = matcher.start(); end = matcher.end(); }
+            }
+
+            // If we don't have a cached match yet, find the first one at/after cursor.
+            if (!has) {
+                matcher.region(cursor, matcher.regionEnd());
+                has = matcher.find();
+                if (has) { start = matcher.start(); end = matcher.end(); }
+            }
+        }
     }
 
 }

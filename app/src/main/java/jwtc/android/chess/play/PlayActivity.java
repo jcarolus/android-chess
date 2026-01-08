@@ -286,7 +286,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             if ("application/x-chess-pgn".equals(type)) {
                 sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
                 if (sPGN != null) {
-                    sPGN = sPGN.trim();
                     gameApi.loadPGN(sPGN);
                     updateForNewGame();
                 }
@@ -435,7 +434,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         } else if (requestCode == REQUEST_OPEN_GAME_FILE && data != null) {
             Uri uri = data.getData();
             if (uri != null) {
-                String sPGN = readInputStream(uri, 100000);
+                String sPGN = readInputStream(uri, GameApi.MAX_PGN_SIZE);
                 Log.d(TAG, "got PGN " + sPGN);
 
                 SharedPreferences.Editor editor = this.getPrefs().edit();
