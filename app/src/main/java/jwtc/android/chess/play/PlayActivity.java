@@ -746,6 +746,16 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             textViewMyClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
         }
 
+        long white = localClock.getWhiteRemaining();
+        long black = localClock.getBlackRemaining();
+        if (white <= 0 || black <= 0) {
+            localClock.stopClock();
+            if (white <= 0) {
+                gameApi.setFinalState(BoardConstants.WHITE_FORFEIT_TIME);
+            } else {
+                gameApi.setFinalState(BoardConstants.BLACK_FORFEIT_TIME);
+            }
+        }
 //        long remaining = myTurn == BoardConstants.WHITE ? localClock.getWhiteRemaining() : localClock.getBlackRemaining();
 //        if (remaining < _TimeWarning * 1000) {
 //            textViewMyClock.setBackgroundColor(0xCCFF0000);

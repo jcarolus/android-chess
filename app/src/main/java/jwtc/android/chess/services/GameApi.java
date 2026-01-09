@@ -91,16 +91,18 @@ public class GameApi {
     }
 
     public int getFinalState() {
-        if (jni.getNumBoard() == pgnMoves.size()) {
-            return pgnMoves.get(pgnMoves.size() -1).finalState;
+        int size = pgnMoves.size();
+        if (size > 0 && jni.getNumBoard() == size) {
+            return pgnMoves.get(size - 1).finalState;
         }
         return -1;
     }
 
     public boolean setFinalState(int state) {
         int size = pgnMoves.size();
-        if (jni.getNumBoard() == size) {
+        if (size > 0 && jni.getNumBoard() == size) {
             pgnMoves.get(size -1).finalState = state;
+            dispatchState();
             return true;
         }
         return false;
@@ -543,8 +545,6 @@ public class GameApi {
                 }
             }
         } else {
-
-
             String sPiece = matchToken.group(1);
             String sDistFile = matchToken.group(2);
             String sDistRank = matchToken.group(3);
