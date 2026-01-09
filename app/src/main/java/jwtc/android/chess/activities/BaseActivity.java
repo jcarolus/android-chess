@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.lichess.LichessActivity;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -58,13 +59,26 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    protected void openConfirmDialog(String message, String positiveText, String negativeText, Runnable onPositive, Runnable onNegative) {
+        new AlertDialog.Builder(BaseActivity.this)
+                .setMessage(message)
+                .setPositiveButton(positiveText, (dialog, which) -> {
+                    dialog.dismiss();
+                    onPositive.run();
+                })
+                .setNegativeButton(negativeText, (dialog, which) -> {
+                    dialog.dismiss();
+                    if (onNegative != null) {
+                        onNegative.run();
+                    }
+                })
+                .show();
+    }
+
+
     public void showExitConfirmationDialog() {
         if (needExitConfirmationDialog()) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.menu_abort))
-                    .setPositiveButton(getString(R.string.alert_yes), (dialog, which) -> finish())
-                    .setNegativeButton(getString(R.string.alert_no), null)
-                    .show();
+            openConfirmDialog(getString(R.string.menu_abort), getString(R.string.alert_yes), getString(R.string.alert_no), this::finish, null);
         } else {
             finish();
         }

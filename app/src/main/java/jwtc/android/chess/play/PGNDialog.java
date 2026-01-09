@@ -2,23 +2,19 @@ package jwtc.android.chess.play;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.SimpleAdapter;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.Clipboard;
-import jwtc.android.chess.play.MoveItem;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
@@ -46,12 +42,12 @@ public class PGNDialog extends Dialog {
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
 
         for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove =  pgnEntries.get(i)._sMove;
-            if (pgnEntries.get(i)._duckMove != -1) {
-                sMove += "@" + Pos.toString(pgnEntries.get(i)._duckMove);
+            String sMove =  pgnEntries.get(i).sMove;
+            if (pgnEntries.get(i).duckMove != -1) {
+                sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
             }
             String nr = i % 2 == 0 ? ((i/2+1) + ". ") : " ";
-            String annotation = pgnEntries.get(i)._sAnnotation;
+            String annotation = pgnEntries.get(i).sAnnotation;
             int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
 
             mapMoves.add(new MoveItem(nr, sMove, annotation, turn));

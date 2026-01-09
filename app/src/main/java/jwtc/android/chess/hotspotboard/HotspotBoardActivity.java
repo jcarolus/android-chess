@@ -443,7 +443,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     public void rebuildBoard() {
         super.rebuildBoard();
 
-        final int state = jni.getState();
+        final int state = gameApi.getState();
         int turn = jni.getTurn();
         boolean amIWhite = ((HotspotBoardApi)gameApi).isPlayingAsWhite();
         chessBoardView.setRotated(!amIWhite);

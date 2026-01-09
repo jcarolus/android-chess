@@ -293,7 +293,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             int moveIndex = gameApi.getPGNSize() - 1;
             String sMove = "";
             if (moveIndex >= 0) {
-                sMove = gameApi.getPGNEntries().get(moveIndex)._sMove + " ";
+                sMove = gameApi.getPGNEntries().get(moveIndex).sMove + " ";
             }
 
             buttonRetry.setEnabled(true);

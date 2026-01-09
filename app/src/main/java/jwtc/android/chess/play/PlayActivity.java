@@ -81,11 +81,11 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ImageButton playButton;
     private boolean vsCPU = true;
     private boolean flipBoard = false;
-    private int myTurn = 1, requestMoveFrom = -1, requestMoveTo = -1;
+    private int myTurn = 1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
     private ImageView imageTurnMe, imageTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewEngineValue, textViewEco, textViewWhitePieces, textViewBlackPieces;
+    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewLastMove, textViewEco, textViewWhitePieces, textViewBlackPieces;
     private ImageButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
     private MoveRecyclerAdapter moveAdapter;
@@ -93,20 +93,22 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
     @Override
     public boolean requestMove(final int from, final int to) {
-        if (jni.getTurn() == myTurn || vsCPU == false) {
+        if (!gameApi.isEnded() && (jni.getTurn() == myTurn || vsCPU == false)) {
+            // @TODO check if override new line
+
+            /*
+            openConfirmDialog(
+                            getString(R.string.title_create_new_line),
+                            getString(R.string.alert_yes),
+                            getString(R.string.alert_no),
+                            this::playIfEngineCanMove,
+                            null
+                    );
+             */
 
             if (super.requestMove(from, to)) {
                 return true;
             }
-        } else {
-//            if (requestMoveFrom != -1 && requestMoveTo != -1) {
-//                highlightedPositions.clear();
-//            } else {
-//                requestMoveFrom = from;
-//                requestMoveTo = to;
-//                highlightedPositions.add(from);
-//                highlightedPositions.add(to);
-//            }
         }
         rebuildBoard();
         return false;
@@ -127,28 +129,18 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         afterCreate();
 
         playButton = findViewById(R.id.ButtonPlay);
-        playButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (!gameApi.isEnded()) {
-                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this)
-                            .setTitle(getString(R.string.title_create_new_line))
-                            .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                playIfEngineCanMove();
-                            }
-                        });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                    } else {
-                        playIfEngineCanMove();
-                    }
+        playButton.setOnClickListener(arg0 -> {
+            if (!gameApi.isEnded()) {
+                if (jni.getNumBoard() < gameApi.getPGNSize()) {
+                    openConfirmDialog(
+                            getString(R.string.title_create_new_line),
+                            getString(R.string.alert_yes),
+                            getString(R.string.alert_no),
+                            this::playIfEngineCanMove,
+                            null
+                    );
+                } else {
+                    playIfEngineCanMove();
                 }
             }
         });
@@ -196,7 +188,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         textViewOpponentClock = findViewById(R.id.TextViewClockTimeOpp);
         textViewMyClock = findViewById(R.id.TextViewClockTimeMe);
 
-        textViewEngineValue = findViewById(R.id.TextViewLastMove);
+        textViewLastMove = findViewById(R.id.TextViewLastMove);
         buttonEco = findViewById(R.id.ButtonEco);
         textViewEco = findViewById(R.id.TextViewEco);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
@@ -533,13 +525,13 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     protected void updateLastMove() {
-        final int state = chessStateToR(jni.getState());
+        final int state = chessStateToR(gameApi.getState());
         String sState = "";
         // in play or mate are clear from last move.
         if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
             sState = ". " + getString(state);
         }
-        textViewEngineValue.setText(getLastMoveAndTurnDescription() + sState);
+        textViewLastMove.setText(getLastMoveAndTurnDescription() + sState);
         textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
         textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
     }

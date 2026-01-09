@@ -45,9 +45,9 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
 
         for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove =  pgnEntries.get(i)._sMove;
-            if (pgnEntries.get(i)._duckMove != -1) {
-                sMove += "@" + Pos.toString(pgnEntries.get(i)._duckMove);
+            String sMove =  pgnEntries.get(i).sMove;
+            if (pgnEntries.get(i).duckMove != -1) {
+                sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
             }
             HashMap<String, String> item = new HashMap<String, String>();
             item.put("nr", i % 2 == 0 ? ((i/2 + 1) + ". ") : " ");

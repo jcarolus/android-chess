@@ -292,7 +292,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
             int moveIndex = gameApi.getPGNSize() - 1;
             String sMove = "";
             if (moveIndex >= 0) {
-                sMove = gameApi.getPGNEntries().get(moveIndex)._sMove + " ";
+                sMove = gameApi.getPGNEntries().get(moveIndex).sMove + " ";
             }
             setMessage(sMove + getString(R.string.puzzle_not_correct_move));
             imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);

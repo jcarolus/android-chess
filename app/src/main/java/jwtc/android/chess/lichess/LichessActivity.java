@@ -513,22 +513,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         lichessApi.handleLoginData(data);
     }
 
-    protected void openConfirmDialog(String message, String positiveText, String negativeText, Runnable onPositive, Runnable onNegative) {
-        new AlertDialog.Builder(LichessActivity.this)
-                .setMessage(message)
-                .setPositiveButton(positiveText, (dialog, which) -> {
-                    dialog.dismiss();
-                    onPositive.run();
-                })
-                .setNegativeButton(negativeText, (dialog, which) -> {
-                    dialog.dismiss();
-                    if (onNegative != null) {
-                        onNegative.run();
-                    }
-                })
-                .show();
-    }
-
     @Override
     public boolean needExitConfirmationDialog() {
         return true;

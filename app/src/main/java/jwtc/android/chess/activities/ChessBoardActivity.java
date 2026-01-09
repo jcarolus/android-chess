@@ -231,7 +231,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         chessBoardView.removePieces();
         chessBoardView.removeLabels();
 
-        final int state = jni.getState();
+        final int state = gameApi.getState();
         final int turn = jni.getTurn();
         final int duckPos = jni.getDuckPos();
 

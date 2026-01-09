@@ -79,8 +79,31 @@ public class GameApi {
     }
 
     public boolean isEnded() {
-        // @TODO for time/human ended games
-        return jni.isEnded() != 0;
+        return getFinalState() != -1 || jni.isEnded() != 0;
+    }
+
+    public int getState() {
+        int finalState = getFinalState();
+        if (finalState != -1) {
+            return finalState;
+        }
+        return jni.getState();
+    }
+
+    public int getFinalState() {
+        if (jni.getNumBoard() == pgnMoves.size()) {
+            return pgnMoves.get(pgnMoves.size() -1).finalState;
+        }
+        return -1;
+    }
+
+    public boolean setFinalState(int state) {
+        int size = pgnMoves.size();
+        if (jni.getNumBoard() == size) {
+            pgnMoves.get(size -1).finalState = state;
+            return true;
+        }
+        return false;
     }
 
     public boolean requestMove(int from, int to) {
@@ -162,7 +185,6 @@ public class GameApi {
 
     public void undoMove() {
 //        Log.d(TAG, "undoMove");
-
         jni.undo();
         dispatchState();
     }
@@ -179,11 +201,11 @@ public class GameApi {
             int currentNumBoard = jni.getNumBoard();
             if (toNumBoard > currentNumBoard) {
                 while (toNumBoard > currentNumBoard) {
-                    int res = jni.move(pgnMoves.get(currentNumBoard)._move);
+                    int res = jni.move(pgnMoves.get(currentNumBoard).move);
                     Log.d(TAG, "jni.move " + res);
-                    Log.d(TAG, "duck at " + pgnMoves.get(currentNumBoard)._duckMove);
-                    if (pgnMoves.get(currentNumBoard)._duckMove != -1) {
-                        jni.requestDuckMove(pgnMoves.get(currentNumBoard)._duckMove);
+                    Log.d(TAG, "duck at " + pgnMoves.get(currentNumBoard).duckMove);
+                    if (pgnMoves.get(currentNumBoard).duckMove != -1) {
+                        jni.requestDuckMove(pgnMoves.get(currentNumBoard).duckMove);
                     }
                     currentNumBoard++;
                 }
@@ -298,10 +320,14 @@ public class GameApi {
             Log.d(TAG, "PGN larger than max " + s.length());
             return false;
         }
-        // Log.d(TAG, "loadPGN " + s);
-        loadPGNHead(s);
+
+        int finalState = loadPGNHead(s);
 
         if(loadPGNMoves(s)) {
+            int size = pgnMoves.size();
+            if (size > 0) {
+                pgnMoves.get(size -1).finalState = finalState;
+            }
             dispatchState();
             return true;
         }
@@ -469,7 +495,7 @@ public class GameApi {
         int index = jni.getNumBoard() - 1;
         if (index >= 0 && index < pgnMoves.size()) {
             Log.d(TAG, " set duckmove " + index + " " + Pos.toString(duckMove));
-            pgnMoves.get(index)._duckMove = duckMove;
+            pgnMoves.get(index).duckMove = duckMove;
         }
         return true;
     }
@@ -624,10 +650,11 @@ public class GameApi {
     }
 
 
-    private void loadPGNHead(String s) {
+    private int loadPGNHead(String s) {
         s = cleanPgnString(s);
         Matcher matcher = patTag.matcher(s);
 
+        int finalState = -1;
         while (matcher.find()) {
             String name = matcher.group(1);
             String value = matcher.group(2);
@@ -636,8 +663,27 @@ public class GameApi {
                 if (name.equals("FEN")) {
                     initFEN(value, false);
                 }
+                if (name.equals("Result") && jni.isEnded() == 0) {
+                    Matcher match = patGameResult.matcher(value);
+                    if (match.matches()) {
+                        String result = match.group(1);
+                        if (result != null) {
+                            if (result.equals("1/2-1/2")) {
+                                finalState = BoardConstants.DRAW_AGREEMENT;
+                            } else if(result.equals("1-0")) {
+                                // @TODO once we can sum the move durations, we can also forfeit on time.
+                                finalState = BoardConstants.BLACK_RESIGNED;
+                            } else if(result.equals("0-1")) {
+                                finalState = BoardConstants.WHITE_RESIGNED;
+                            }
+                            Log.d(TAG, "Overriding game state " + result + " => " + finalState);
+                        }
+                    }
+                }
             }
         }
+
+        return finalState;
     }
 
     private boolean removeComment(StringBuffer s) throws Exception {
@@ -746,10 +792,36 @@ public class GameApi {
     public void setAnnotation(int i, String sAnno) {
         if (pgnMoves.size() > i)
             // Log.d(TAG, "set annotation " + sAnno);
-            pgnMoves.get(i)._sAnnotation = sAnno;
+            pgnMoves.get(i).sAnnotation = sAnno;
     }
 
     public String exportFullPGN() {
+
+        String result = "*";
+        int turn = jni.getTurn();
+        int state = getState();
+        switch (state) {
+            case BoardConstants.DRAW_50:
+            case BoardConstants.DRAW_AGREEMENT:
+            case BoardConstants.DRAW_MATERIAL:
+            case BoardConstants.DRAW_REPEAT:
+                result = "1/2-1/2";
+                break;
+            case BoardConstants.MATE:
+                result = turn == BoardConstants.WHITE ? "0-1" : "1-0";
+                break;
+            case BoardConstants.BLACK_RESIGNED:
+            case BoardConstants.BLACK_FORFEIT_TIME:
+                result = "1-0";
+                break;
+            case BoardConstants.WHITE_RESIGNED:
+            case BoardConstants.WHITE_FORFEIT_TIME:
+                result = "0-1";
+                break;
+        }
+        pgnTags.put("Result", result);
+        pgnTags.put("PlyCount", Integer.toString(pgnMoves.size()));
+
         // to make sure the order of the `Seven Tag Roster`
         String[] arrHead = {
                 "Event", "Site", "Date", "Round", "White", "Black", "Result",
@@ -768,7 +840,7 @@ public class GameApi {
         s += exportMovesPGN();
         s += "\n";
 
-        // Log.d(TAG, "exportFullPGN " + s);
+        Log.d(TAG, "exportFullPGN " + s);
 
         return s;
     }
@@ -790,15 +862,15 @@ public class GameApi {
             if ((i - iPly) % 2 == 0) {
                 s += ((i - iPly) / 2 + 1) + ". ";
             }
-            s += pgnMoves.get(i)._sMove;
-            if (pgnMoves.get(i)._duckMove != -1) {
-                s += "@" + Pos.toString(pgnMoves.get(i)._duckMove);
+            s += pgnMoves.get(i).sMove;
+            if (pgnMoves.get(i).duckMove != -1) {
+                s += "@" + Pos.toString(pgnMoves.get(i).duckMove);
             }
             s += " ";
 
             // TODO this was commented? bug?
-            if (pgnMoves.get(i)._sAnnotation.length() > 0) {
-                s += " {" + pgnMoves.get(i)._sAnnotation + "}\n ";
+            if (pgnMoves.get(i).sAnnotation.length() > 0) {
+                s += " {" + pgnMoves.get(i).sAnnotation + "}\n ";
             }
         }
 
