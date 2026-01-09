@@ -2,10 +2,7 @@ package jwtc.android.chess.engine;
 
 import android.util.Log;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-
+import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
@@ -13,15 +10,19 @@ import jwtc.chess.Pos;
 public class LocalEngine extends EngineApi {
     private static final String TAG = "LocalEngine";
 
+    private final GameApi gameApi;
     private Thread enginePeekThread = null;
     private Thread engineSearchThread = null;
+
+    public LocalEngine(GameApi gameApi) {
+        this.gameApi = gameApi;
+    }
 
     @Override
     public void play() {
         Log.d(TAG, "play " + msecs + ", " + ply);
 
-        JNI jni = JNI.getInstance();
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             Log.d(TAG, "ended!");
             return;
         }
@@ -71,7 +72,7 @@ public class LocalEngine extends EngineApi {
         public void run() {
             try {
                 JNI jni = JNI.getInstance();
-                if (jni.isEnded() != 0) {
+                if (gameApi.isEnded()) {
                     Log.d(TAG, "search called while game was ended");
                     return;
                 }

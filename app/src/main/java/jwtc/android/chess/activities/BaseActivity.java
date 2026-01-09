@@ -32,8 +32,6 @@ public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     private AccessibilityManager am;
 
-
-    protected float fVolume = 1.0f;
     protected Vibrator vibrator;
 
     @Override

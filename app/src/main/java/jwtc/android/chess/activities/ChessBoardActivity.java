@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
+import jwtc.android.chess.helpers.Sounds;
 import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
@@ -49,12 +50,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ChessBoardView chessBoardView;
     protected ChessSquareView currentChessSquareView = null;
     protected ChessPieceView currentChessPieceView = null;
-    protected SoundPool spSound = null;
+    protected Sounds sounds = null;
+
     protected TextToSpeechApi textToSpeech = null;
     protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1, lastMoveFrom = -1, lastMoveTo = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
-    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
+
     protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false, moveToSpeech = false;
     private String keyboardBuffer = "";
 
@@ -106,13 +108,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         rebuildBoard();
 
-        if (spSound != null) {
+        if (sounds != null) {
             if (Move.isCheck(move)) {
-                spSound.play(soundCheck, fVolume, fVolume, 2, 0, 1);
+                sounds.playCheck();
             } else if (Move.isHIT(move)) {
-                spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);
+                sounds.playCapture();
             } else {
-                spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
+                sounds.playMove();
             }
         }
 
@@ -194,25 +196,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         showMoves = prefs.getBoolean("showMoves", false);
 
-        fVolume = prefs.getBoolean("moveSounds", false) ? 1.0f : 0.0f;
-
-        spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
-        soundTickTock = spSound.load(this, R.raw.ticktock, 1);
-        soundCheck = spSound.load(this, R.raw.smallneigh, 2);
-        soundMove = spSound.load(this, R.raw.move, 1);
-        soundCapture = spSound.load(this, R.raw.capture, 1);
-        soundNewGame = spSound.load(this, R.raw.chesspiecesfall, 1);
+        sounds = new Sounds(this);
+        sounds.initPrefs(prefs);
     }
 
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
-
-        SharedPreferences.Editor editor = this.getPrefs().edit();
-        editor.putBoolean("moveSounds", fVolume == 1.0f);
-
-        editor.commit();
-
         super.onPause();
     }
 
@@ -538,7 +528,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         int move = jni.getMyMove();
         if (move != 0) {
             String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
-            if (jni.isEnded() != 0) {
+            if (gameApi.isEnded()) {
                 return sMove;
             }
             return jni.getTurn() == BoardConstants.BLACK

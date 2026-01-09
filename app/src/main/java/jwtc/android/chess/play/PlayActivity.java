@@ -129,7 +129,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         playButton = findViewById(R.id.ButtonPlay);
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                if (jni.isEnded() == 0) {
+                if (!gameApi.isEnded()) {
                     if (jni.getNumBoard() < gameApi.getPGNSize()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(PlayActivity.this)
                             .setTitle(getString(R.string.title_create_new_line))
@@ -205,7 +205,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               fVolume = switchSound.isChecked() ? 1.0f : 0.0f;
+               sounds.setEnabled(switchSound.isChecked());
             }
         });
 
@@ -271,7 +271,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         String type = intent.getType();
         Uri uri = intent.getData();
 
-        myEngine = new LocalEngine();
+        myEngine = new LocalEngine(gameApi);
         myEngine.addListener(this);
 
         updateClockByPrefs();
@@ -377,6 +377,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
         editor.putBoolean("flipBoard", flipBoard);
         editor.putBoolean("moveToSpeech", moveToSpeech);
+
+        editor.putBoolean("moveSounds", sounds.getEnabled());
+
+
 //         if (_uriNotification == null)
 //            editor.putString("NotificationUri", null);
 //        else
@@ -781,8 +785,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         }
         localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
 
-        if (spSound != null) {
-            spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
+        if (sounds != null) {
+            sounds.playNewGame();
         }
 
         resetSelectedSquares();
@@ -922,7 +926,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
     protected void playIfEngineCanMove() {
         Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
-        if (myEngine.isReady() && jni.isEnded() == 0 && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+        if (myEngine.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 

@@ -41,7 +41,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
 
     @Override
     public boolean requestMove(int from, int to) {
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             setMessage(getString(R.string.puzzle_already_solved));
             rebuildBoard();
             return false;
@@ -115,7 +115,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
                 showMove = true;
                 gameApi.jumpToBoardNum(numMoved);
                 //rebuildBoard();
-                if (jni.isEnded() == 0) {
+                if (!gameApi.isEnded()) {
                     Log.d(TAG, "show " + numMoved);
                     myEngine.setPly(4 - numMoved);
                     myEngine.play();
@@ -132,7 +132,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         super.onResume();
         Log.i(TAG, "onResume");
 
-        myEngine = new LocalEngine();
+        myEngine = new LocalEngine(gameApi);
         myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
 
@@ -260,7 +260,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         updateSelectedSquares();
         updatePieces();
 
-        if (jni.isEnded() == 0 && jni.getTurn() != myTurn && !showMove) {
+        if (!gameApi.isEnded() && jni.getTurn() != myTurn && !showMove) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -268,7 +268,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
                 }
             }, 1000);
         }
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             animateCorrect();
             butShow.setEnabled(false);
         }

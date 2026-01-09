@@ -48,7 +48,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     @Override
     public boolean requestMove(final int from, final int to) {
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             setMessage("Finished position");
             rebuildBoard();
             return false;
@@ -119,7 +119,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         Log.i(TAG, "onResume");
 
-        myEngine = new LocalEngine();
+        myEngine = new LocalEngine(gameApi);
         myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
 
@@ -136,7 +136,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         timer = null;
 
         // ended with correct solution, advance position
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             currentPos++;
         }
 
@@ -257,7 +257,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         updateSelectedSquares();
         updatePieces();
 
-        if (jni.isEnded() == 0 && jni.getTurn() != myTurn) {
+        if (!gameApi.isEnded() && jni.getTurn() != myTurn) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -265,7 +265,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
                 }
             }, 1000);
         }
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             Log.d(TAG, "Solved ");
 
             numPlayed++;

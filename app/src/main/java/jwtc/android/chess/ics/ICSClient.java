@@ -277,7 +277,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                fVolume = switchSound.isChecked() ? 1.0f : 0.0f;
+                sounds.setEnabled(switchSound.isChecked());
             }
         });
 
@@ -968,13 +968,13 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         examineButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_EXAMINE ? View.VISIBLE : View.GONE);
 
         String lastMove = icsApi.getLastMove();
-        if (spSound != null) {
+        if (sounds != null) {
             if (lastMove.contains("+") || lastMove.contains("#")) {
-                spSound.play(soundCheck, fVolume, fVolume, 1, 0, 1);
+                sounds.playCheck();
             } else if (lastMove.contains("x")) {
-                spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);
+                sounds.playCapture();
             } else {
-                spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
+                sounds.playMove();
             }
         }
     }
@@ -1027,8 +1027,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         resetSelectedSquares();
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
-                if (spSound != null) {
-                    spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
+                if (sounds != null) {
+                    sounds.playNewGame();
                 }
             }
         }
@@ -1248,8 +1248,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
             }
 
-            if (_bTimeWarning && needWarning && spSound != null) {
-                spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
+            if (_bTimeWarning && needWarning && sounds != null) {
+                sounds.playTickTock();
             }
         } else {
             _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);

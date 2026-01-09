@@ -19,6 +19,11 @@ import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardMembers;
 
+/*
+Wraps the JNI Java Native Interface
+Implements PGN functionality
+Deals with some parts of move notation
+ */
 public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
@@ -47,14 +52,14 @@ public class GameApi {
         } catch (Exception e) {}
     }
 
-    protected HashMap<String, String> _mapPGNHead; //
-    protected ArrayList<PGNEntry> _arrPGN;
+    protected HashMap<String, String> pgnTags; //
+    protected ArrayList<PGNEntry> pgnMoves;
 
     public GameApi() {
         jni = JNI.getInstance();
         jni.reset();
-        _mapPGNHead = new HashMap<String, String>();
-        _arrPGN = new ArrayList<PGNEntry>();
+        pgnTags = new HashMap<String, String>();
+        pgnMoves = new ArrayList<PGNEntry>();
     }
 
     public void addListener(GameListener listener) {
@@ -73,9 +78,14 @@ public class GameApi {
         return getPGNHeadProperty(myTurn == BoardConstants.WHITE ? "White" : "Black");
     }
 
+    public boolean isEnded() {
+        // @TODO for time/human ended games
+        return jni.isEnded() != 0;
+    }
+
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
-        if (jni.isEnded() != 0)
+        if (isEnded())
             return false;
 
         if (jni.requestMove(from, to) == 0) {
@@ -92,7 +102,7 @@ public class GameApi {
     }
 
     public boolean requestMoveCastle(int from, int to) {
-        if (jni.isEnded() != 0) {
+        if (isEnded()) {
             return false;
         }
 
@@ -163,17 +173,17 @@ public class GameApi {
 
 
     public void jumpToBoardNum(int toNumBoard) {
-        Log.d(TAG, "jumptoMove " + toNumBoard + ", " + _arrPGN.size());
+        Log.d(TAG, "jumptoMove " + toNumBoard + ", " + pgnMoves.size());
 
-        if (toNumBoard <= _arrPGN.size() && toNumBoard >= 0) {
+        if (toNumBoard <= pgnMoves.size() && toNumBoard >= 0) {
             int currentNumBoard = jni.getNumBoard();
             if (toNumBoard > currentNumBoard) {
                 while (toNumBoard > currentNumBoard) {
-                    int res = jni.move(_arrPGN.get(currentNumBoard)._move);
+                    int res = jni.move(pgnMoves.get(currentNumBoard)._move);
                     Log.d(TAG, "jni.move " + res);
-                    Log.d(TAG, "duck at " + _arrPGN.get(currentNumBoard)._duckMove);
-                    if (_arrPGN.get(currentNumBoard)._duckMove != -1) {
-                        jni.requestDuckMove(_arrPGN.get(currentNumBoard)._duckMove);
+                    Log.d(TAG, "duck at " + pgnMoves.get(currentNumBoard)._duckMove);
+                    if (pgnMoves.get(currentNumBoard)._duckMove != -1) {
+                        jni.requestDuckMove(pgnMoves.get(currentNumBoard)._duckMove);
                     }
                     currentNumBoard++;
                 }
@@ -188,7 +198,7 @@ public class GameApi {
     }
 
     public int getPGNSize() {
-        return _arrPGN.size();
+        return pgnMoves.size();
     }
 
     public synchronized boolean isLegalMove(int from, int to) {
@@ -212,21 +222,21 @@ public class GameApi {
         Date d = Calendar.getInstance().getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
 
-        _mapPGNHead.clear();
-        _mapPGNHead.put("Event", "?");
-        _mapPGNHead.put("Site", "?");
-        _mapPGNHead.put("Round", "?");
-        _mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
-        _mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
-        _mapPGNHead.put("Date", formatter.format(d));
+        pgnTags.clear();
+        pgnTags.put("Event", "?");
+        pgnTags.put("Site", "?");
+        pgnTags.put("Round", "?");
+        pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.put("Date", formatter.format(d));
 
-        _arrPGN.clear();
+        pgnMoves.clear();
 
         jni.newGame(variant);
 
         if (variant == BoardConstants.VARIANT_DUCK) {
-            _mapPGNHead.put("Setup", "1");
-            _mapPGNHead.put("FEN", jni.toFEN());
+            pgnTags.put("Setup", "1");
+            pgnTags.put("FEN", jni.toFEN());
         }
 
         dispatchState();
@@ -238,17 +248,17 @@ public class GameApi {
         if (jni.initFEN(sFEN)) {
 
             if (resetHead) {
-                _mapPGNHead.clear();
-                _mapPGNHead.put("Event", "?");
-                _mapPGNHead.put("Site", "?");
-                _mapPGNHead.put("Round", "?");
-                _mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
-                _mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
+                pgnTags.clear();
+                pgnTags.put("Event", "?");
+                pgnTags.put("Site", "?");
+                pgnTags.put("Round", "?");
+                pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+                pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
             }
-            _mapPGNHead.put("Setup", "1");
-            _mapPGNHead.put("FEN", sFEN);
+            pgnTags.put("Setup", "1");
+            pgnTags.put("FEN", sFEN);
 
-            _arrPGN.clear();
+            pgnMoves.clear();
 
             dispatchState();
             return true;
@@ -264,18 +274,18 @@ public class GameApi {
 
         int ret = jni.initRandomFisher(seed);
 
-        _mapPGNHead.clear();
-        _mapPGNHead.put("Event", "?");
-        _mapPGNHead.put("Site", "?");
-        _mapPGNHead.put("Round", "?");
-        _mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
-        _mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.clear();
+        pgnTags.put("Event", "?");
+        pgnTags.put("Site", "?");
+        pgnTags.put("Round", "?");
+        pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
 
-        _mapPGNHead.put("Variant", "Fischerandom");
-        _mapPGNHead.put("Setup", "1");
-        _mapPGNHead.put("FEN", jni.toFEN());
+        pgnTags.put("Variant", "Fischerandom");
+        pgnTags.put("Setup", "1");
+        pgnTags.put("FEN", jni.toFEN());
 
-        _arrPGN.clear();
+        pgnMoves.clear();
 
         dispatchState();
         return ret;
@@ -457,9 +467,9 @@ public class GameApi {
         }
 
         int index = jni.getNumBoard() - 1;
-        if (index >= 0 && index < _arrPGN.size()) {
+        if (index >= 0 && index < pgnMoves.size()) {
             Log.d(TAG, " set duckmove " + index + " " + Pos.toString(duckMove));
-            _arrPGN.get(index)._duckMove = duckMove;
+            pgnMoves.get(index)._duckMove = duckMove;
         }
         return true;
     }
@@ -622,7 +632,7 @@ public class GameApi {
             String name = matcher.group(1);
             String value = matcher.group(2);
             if (name != null && value != null) {
-                _mapPGNHead.put(name, value);
+                pgnTags.put(name, value);
                 if (name.equals("FEN")) {
                     initFEN(value, false);
                 }
@@ -660,7 +670,7 @@ public class GameApi {
     }
 
     private boolean loadPGNMoves(String s) {
-        _arrPGN.clear();
+        pgnMoves.clear();
 
         s = s.replaceAll(regexPgnTag, "");
         s = cleanPgnString(s);
@@ -727,16 +737,16 @@ public class GameApi {
 
     public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, int duckMove) {
         // Log.d(TAG, "addPGNEntry " + ply + ": " + sMove + " @ " + Pos.toString(duckMove) + " = " + duckMove);
-        while (ply >= 0 && _arrPGN.size() >= ply) {
-            _arrPGN.remove(_arrPGN.size() - 1);
+        while (ply >= 0 && pgnMoves.size() >= ply) {
+            pgnMoves.remove(pgnMoves.size() - 1);
         }
-        _arrPGN.add(new PGNEntry(sMove, sAnnotation, move, duckMove));
+        pgnMoves.add(new PGNEntry(sMove, sAnnotation, move, duckMove));
     }
 
     public void setAnnotation(int i, String sAnno) {
-        if (_arrPGN.size() > i)
+        if (pgnMoves.size() > i)
             // Log.d(TAG, "set annotation " + sAnno);
-            _arrPGN.get(i)._sAnnotation = sAnno;
+            pgnMoves.get(i)._sAnnotation = sAnno;
     }
 
     public String exportFullPGN() {
@@ -749,8 +759,8 @@ public class GameApi {
         String s = "", key;
         for (int i = 0; i < arrHead.length; i++) {
             key = arrHead[i];
-            if (_mapPGNHead.containsKey(key)) {
-                String value = _mapPGNHead.get(key).replace("\"", "\\\"");
+            if (pgnTags.containsKey(key)) {
+                String value = pgnTags.get(key).replace("\"", "\\\"");
                 s += "[" + key + " \"" + value + "\"]\n";
             }
         }
@@ -776,19 +786,19 @@ public class GameApi {
             iPly = 0;
         }
 
-        for (int i = iPly; i < _arrPGN.size(); i++) {
+        for (int i = iPly; i < pgnMoves.size(); i++) {
             if ((i - iPly) % 2 == 0) {
                 s += ((i - iPly) / 2 + 1) + ". ";
             }
-            s += _arrPGN.get(i)._sMove;
-            if (_arrPGN.get(i)._duckMove != -1) {
-                s += "@" + Pos.toString(_arrPGN.get(i)._duckMove);
+            s += pgnMoves.get(i)._sMove;
+            if (pgnMoves.get(i)._duckMove != -1) {
+                s += "@" + Pos.toString(pgnMoves.get(i)._duckMove);
             }
             s += " ";
 
             // TODO this was commented? bug?
-            if (_arrPGN.get(i)._sAnnotation.length() > 0) {
-                s += " {" + _arrPGN.get(i)._sAnnotation + "}\n ";
+            if (pgnMoves.get(i)._sAnnotation.length() > 0) {
+                s += " {" + pgnMoves.get(i)._sAnnotation + "}\n ";
             }
         }
 
@@ -796,11 +806,11 @@ public class GameApi {
     }
 
     public ArrayList<PGNEntry> getPGNEntries() {
-        return _arrPGN;
+        return pgnMoves;
     }
 
     public void setPGNHeadProperty(String sProp, String sValue) {
-        _mapPGNHead.put(sProp, sValue);
+        pgnTags.put(sProp, sValue);
     }
 
     public void setDateLong(long lTime) {
@@ -812,7 +822,7 @@ public class GameApi {
     }
 
     public String getPGNHeadProperty(String sProp) {
-        return _mapPGNHead.get(sProp);
+        return pgnTags.get(sProp);
     }
 
     public String getWhite() {

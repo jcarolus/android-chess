@@ -423,17 +423,17 @@ public class LichessApi extends GameApi {
     }
 
     private void resetForPGN() {
-        _mapPGNHead.clear();
-        _mapPGNHead.put("Event", "Lichess " + (ongoingGameFull.rated ? "rated" : "unrated"));
-        _mapPGNHead.put("White", ongoingGameFull.white.name);
-        _mapPGNHead.put("Black", ongoingGameFull.black.name);
+        pgnTags.clear();
+        pgnTags.put("Event", "Lichess " + (ongoingGameFull.rated ? "rated" : "unrated"));
+        pgnTags.put("White", ongoingGameFull.white.name);
+        pgnTags.put("Black", ongoingGameFull.black.name);
 
         if (ongoingGameFull.variant.key.equals("chess960")) {
-            _mapPGNHead.put("Variant", "Fischerandom");
-            _mapPGNHead.put("Setup", "1");
-            _mapPGNHead.put("FEN", jni.toFEN());
+            pgnTags.put("Variant", "Fischerandom");
+            pgnTags.put("Setup", "1");
+            pgnTags.put("FEN", jni.toFEN());
         }
 
-        _arrPGN.clear();
+        pgnMoves.clear();
     }
 }
