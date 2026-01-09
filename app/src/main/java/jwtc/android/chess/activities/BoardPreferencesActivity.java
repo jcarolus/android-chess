@@ -92,6 +92,16 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
             chessBoardView.invalidateSquares();
         });
 
+        sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
+            textToSpeech.setSpeechRate(value);
+            textToSpeech.moveToSpeech("Bishop takes G7 check");
+        });
+
+        sliderSpeechPitch.addOnChangeListener((s, value, fromUser) -> {
+            textToSpeech.setSpeechPitch(value);
+            textToSpeech.moveToSpeech("Bishop takes G7 check");
+        });
+
         gameApi = new GameApi();
 
         afterCreate();
