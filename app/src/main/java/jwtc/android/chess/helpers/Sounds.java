@@ -36,7 +36,8 @@ public class Sounds {
 
     public void playCheck() {
         if (enabled && soundPool != null) {
-            soundPool.play(soundCheck, fVolume, fVolume, 2, 0, 1);
+            float factor = 0.5f;
+            soundPool.play(soundCheck, fVolume * factor, fVolume * factor, 2, 0, 1);
         }
     }
 

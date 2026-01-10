@@ -40,9 +40,10 @@ public abstract class EngineApi {
 
             } else if (msg.what == MSG_INFO) {
                 String message = msg.getData().getString("message");
+                float value = msg.getData().getFloat("value");
                 // Log.d(TAG, "handleMessage INFO " + message);
                 for (EngineListener listener: listeners) {
-                    listener.OnEngineInfo(message);
+                    listener.OnEngineInfo(message, value);
                 }
             } else if (msg.what == MSG_ERROR) {
                 for (EngineListener listener: listeners) {
@@ -53,11 +54,12 @@ public abstract class EngineApi {
         }
     };
 
-    public void sendMessageFromThread(String sText) {
+    public void sendMessageFromThread(String sText, float value) {
         Message m = new Message();
         Bundle b = new Bundle();
         m.what = MSG_INFO;
         b.putString("message", sText);
+        b.putFloat("value", value);
         m.setData(b);
         updateHandler.sendMessage(m);
     }

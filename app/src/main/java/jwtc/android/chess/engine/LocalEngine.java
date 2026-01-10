@@ -107,7 +107,7 @@ public class LocalEngine extends EngineApi {
                     }
                     s += "\n\t" + String.format("%.2f", fValue);
                 }
-                sendMessageFromThread(s);
+                sendMessageFromThread(s, fValue);
 
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
@@ -148,9 +148,7 @@ public class LocalEngine extends EngineApi {
                         }
                     }
 
-                    s = s + "\t\t" + String.format("%.2f", fValue) /*+ "\t@ " + ply*/;
-
-                    sendMessageFromThread(s);
+                    sendMessageFromThread(s, fValue);
 
                     Thread.sleep(iSleep);
                 }

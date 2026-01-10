@@ -300,7 +300,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         }
     }
     @Override
-    public void OnEngineInfo(String message) {}
+    public void OnEngineInfo(String message, float value) {}
     @Override
     public void OnEngineStarted() {}
     @Override

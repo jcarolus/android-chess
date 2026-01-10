@@ -20,7 +20,7 @@ public abstract class ClockApi {
     }
 
     public long getRemaining(int turn) {
-        return turn == BoardConstants.WHITE ? whiteRemaining : blackRemaining;
+        return turn == BoardConstants.WHITE ? getWhiteRemaining() : getBlackRemaining();
     }
 
     public abstract long getBlackRemaining();
@@ -28,11 +28,11 @@ public abstract class ClockApi {
     public abstract long getWhiteRemaining();
 
     public String getBlackRemainingTime() {
-        return timeToString(getBlackRemaining());
+        return timeToString(getRemaining(BoardConstants.BLACK));
     }
 
     public String getWhiteRemainingTime() {
-        return timeToString(getWhiteRemaining());
+        return timeToString(getRemaining(BoardConstants.WHITE));
     }
 
     protected String timeToString(final long millies) {

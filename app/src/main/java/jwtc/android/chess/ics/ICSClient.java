@@ -1240,7 +1240,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _tvClockBottom.setText(myTurn == BoardConstants.BLACK ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
 
         if (((ICSApi)gameApi).getViewMode() == ICSApi.VIEW_PLAY) {
-            long remaining = myTurn == BoardConstants.WHITE ? localClockApi.getWhiteRemaining() : localClockApi.getBlackRemaining();
+            long remaining = localClockApi.getRemaining(myTurn);
             boolean needWarning = remaining < _TimeWarning * 1000 && remaining > 0;
             if (needWarning) {
                 _tvClockBottom.setBackgroundColor(0xCCFF0000);

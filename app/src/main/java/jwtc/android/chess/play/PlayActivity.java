@@ -12,10 +12,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -86,10 +90,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private ChessPiecesStackView bottomPieces;
     private ImageView imageTurnMe, imageTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewLastMove, textViewEco, textViewWhitePieces, textViewBlackPieces;
+    private TextView textViewInfoBalloon, textViewEngineValue;
     private ImageButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
+    private PopupWindow popupWindowInfoBalloon;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -193,6 +199,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         textViewEco = findViewById(R.id.TextViewEco);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
+        textViewEngineValue = findViewById(R.id.TextViewEngineValue);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -266,8 +273,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         myEngine = new LocalEngine(gameApi);
         myEngine.addListener(this);
 
-        updateClockByPrefs();
-
+        updateClockByPrefs(false);
         lGameID = prefs.getLong("game_id", 0);
 
         Log.d(TAG, "onResume => " + lGameID + " " + (sPGN != null ? "PGN " : " ") + (sFEN != null ? "FEN" : ""));
@@ -365,7 +371,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
-        editor.putLong("clockStartTime", localClock.getLastMeasureTime());
+        editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : localClock.getLastMeasureTime());
 
         editor.putBoolean("flipBoard", flipBoard);
         editor.putBoolean("moveToSpeech", moveToSpeech);
@@ -467,6 +473,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     @Override
     public void OnEngineMove(int move, int duckMove, int value) {
         toggleEngineProgress(false);
+        hideInfoBalloon();
 
         gameApi.move(move, duckMove);
         lastMoveFrom = Move.getFrom(move);
@@ -477,23 +484,30 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     }
 
     @Override
-    public void OnEngineInfo(String message) {
-        // textViewEngineValue.setText(message);
+    public void OnEngineInfo(String message, float value) {
+        textViewEngineValue.setText(String.format("%.1f", value));
+        if (textViewInfoBalloon != null && textViewInfoBalloon.getParent() != null) {
+            textViewInfoBalloon.setText(message);
+        }
     }
 
     @Override
     public void OnEngineStarted() {
         toggleEngineProgress(true);
+        Log.d(TAG, "on engine started");
+        // showInfoBalloon(textViewEngineValue);
     }
 
     @Override
     public void OnEngineAborted() {
         toggleEngineProgress(false);
+        // hideInfoBalloon();
     }
 
     @Override
     public void OnEngineError() {
         toggleEngineProgress(false);
+        // hideInfoBalloon();
         // textViewEngineValue.setText("Engine error!");
     }
 
@@ -717,7 +731,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
                 break;
             case REQUEST_CLOCK:
-                updateClockByPrefs();
+                updateClockByPrefs(false);
                 updateGUI();
                 break;
 
@@ -756,6 +770,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                 gameApi.setFinalState(BoardConstants.BLACK_FORFEIT_TIME);
             }
         }
+
 //        long remaining = myTurn == BoardConstants.WHITE ? localClock.getWhiteRemaining() : localClock.getBlackRemaining();
 //        if (remaining < _TimeWarning * 1000) {
 //            textViewMyClock.setBackgroundColor(0xCCFF0000);
@@ -765,27 +780,27 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 //        }
     }
 
-    protected void updateClockByPrefs() {
+    protected void updateClockByPrefs(boolean newGame) {
         SharedPreferences prefs = getPrefs();
         long increment = prefs.getLong("clockIncrement", 0);
         long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
         long blackRemaining = prefs.getLong("clockBlackMillies", 0);
+        if (newGame) {
+            long initialMillis = prefs.getLong("clockInitialMillies", 0);
+            whiteRemaining = initialMillis;
+            blackRemaining = initialMillis;
+        }
         long startTime = prefs.getLong("clockStartTime", 0);
+        if (startTime > 0 && newGame) {
+            startTime = System.currentTimeMillis();
+        }
         localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
     }
 
     protected void updateForNewGame() {
         Log.d(TAG, "updateForNewGame");
 
-        SharedPreferences prefs = getPrefs();
-        long increment = prefs.getLong("clockIncrement", 0);
-        long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
-        long blackRemaining = prefs.getLong("clockBlackMillies", 0);
-        long startTime = prefs.getLong("clockStartTime", 0);
-        if (startTime > 0) {
-            startTime = System.currentTimeMillis();
-        }
-        localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
+        updateClockByPrefs(true);
 
         if (sounds != null) {
             sounds.playNewGame();
@@ -940,6 +955,47 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             } else {
                 myEngine.play();
             }
+        }
+    }
+
+    protected void showInfoBalloon(View anchor) {
+        View viewInfoBalloon = LayoutInflater.from(anchor.getContext()).inflate(R.layout.info_balloon, null);
+
+        textViewInfoBalloon = viewInfoBalloon.findViewById(R.id.TextViewInfo);
+        textViewInfoBalloon.setText("");
+
+        popupWindowInfoBalloon = new PopupWindow(
+                viewInfoBalloon,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                false
+        );
+
+        popupWindowInfoBalloon.setOutsideTouchable(false);
+        //popupWindowInfoBalloon.setElevation(10f);
+        popupWindowInfoBalloon.setTouchable(false);
+        popupWindowInfoBalloon.setClippingEnabled(false);
+        popupWindowInfoBalloon.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
+
+        // Calculate anchor position
+        int[] location = new int[2];
+        anchor.getLocationOnScreen(location);
+
+        viewInfoBalloon.measure(
+                View.MeasureSpec.UNSPECIFIED,
+                View.MeasureSpec.UNSPECIFIED
+        );
+
+        int x = location[0] + anchor.getWidth();
+        int y = location[1] /*+ (anchor.getHeight() / 2)
+                - (viewInfoBalloon.getMeasuredHeight() / 2)*/;
+
+        popupWindowInfoBalloon.showAtLocation(anchor, Gravity.NO_GRAVITY, x, y);
+    }
+
+    protected void hideInfoBalloon() {
+        if (popupWindowInfoBalloon != null && popupWindowInfoBalloon.isShowing()) {
+            popupWindowInfoBalloon.dismiss();
         }
     }
 }

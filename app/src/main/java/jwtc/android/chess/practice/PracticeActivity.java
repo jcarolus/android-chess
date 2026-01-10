@@ -304,7 +304,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         }
     }
     @Override
-    public void OnEngineInfo(String message) {}
+    public void OnEngineInfo(String message, float value) {}
     @Override
     public void OnEngineStarted() {}
     @Override

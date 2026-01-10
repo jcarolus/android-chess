@@ -38,6 +38,7 @@ public class ClockDialog extends ResultDialog {
                     long totalMillies = (long)Integer.parseInt(editMinutes.getText().toString()) * 60000;
                     long increment = (long)Integer.parseInt(editIncrement.getText().toString()) * 1000;
 
+                    editor.putLong("clockInitialMillies", totalMillies);
                     editor.putLong("clockWhiteMillies", totalMillies);
                     editor.putLong("clockBlackMillies", totalMillies);
                     editor.putLong("clockIncrement", increment);
