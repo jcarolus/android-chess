@@ -245,6 +245,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 labelForWhiteKing = turn == BoardConstants.BLACK ? "✓" : "#";
                 labelForBlackKing = turn == BoardConstants.WHITE ? "✓" : "#";
                 break;
+            case BoardConstants.BLACK_RESIGNED:
+            case BoardConstants.BLACK_FORFEIT_TIME:
+                labelForWhiteKing = "✓";
+                labelForBlackKing = "⚑";
+                break;
+            case BoardConstants.WHITE_RESIGNED:
+            case BoardConstants.WHITE_FORFEIT_TIME:
+                labelForWhiteKing = "⚑";
+                labelForBlackKing = "✓";
+                break;
             case ChessBoard.DRAW_MATERIAL:
             case ChessBoard.DRAW_REPEAT:
             case ChessBoard.DRAW_AGREEMENT:

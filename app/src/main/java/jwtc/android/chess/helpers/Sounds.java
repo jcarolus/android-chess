@@ -36,8 +36,8 @@ public class Sounds {
 
     public void playCheck() {
         if (enabled && soundPool != null) {
-            float factor = 0.5f;
-            soundPool.play(soundCheck, fVolume * factor, fVolume * factor, 2, 0, 1);
+            float factor = 1f;
+            soundPool.play(soundCheck, fVolume * factor, fVolume * factor, 1, 0, 1);
         }
     }
 
@@ -78,7 +78,7 @@ public class Sounds {
                     .build();
 
             soundTickTock = soundPool.load(context, R.raw.ticktock, 1);
-            soundCheck = soundPool.load(context, R.raw.sword, 2);
+            soundCheck = soundPool.load(context, R.raw.impact, 2);
             soundMove = soundPool.load(context, R.raw.move, 1);
             soundCapture = soundPool.load(context, R.raw.capture, 1);
             soundNewGame = soundPool.load(context, R.raw.chesspiecesfall, 1);
