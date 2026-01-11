@@ -3,7 +3,8 @@
     android:id="@+id/root_layout"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:padding="2dip">
 
     <TableLayout
         android:layout_width="fill_parent"

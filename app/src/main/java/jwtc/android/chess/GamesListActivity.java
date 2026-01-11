@@ -135,8 +135,8 @@ public class GamesListActivity extends ListActivity implements OnItemClickListen
 
         Cursor cursor = managedQuery(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, null, null, _sortBy + " " + _sortOrder);
         _adapter = new AlternatingSimpleCursorAdapter(this, R.layout.game_row, cursor,
-                new String[]{PGNColumns._ID, PGNColumns.WHITE, PGNColumns.BLACK, PGNColumns.DATE, PGNColumns.EVENT, PGNColumns.RATING},
-                new int[]{R.id.text_id, R.id.text_name1, R.id.text_name2, R.id.text_date, R.id.text_event, R.id.rating}) {
+                new String[]{PGNColumns._ID, PGNColumns.WHITE, PGNColumns.BLACK, PGNColumns.DATE, PGNColumns.EVENT, PGNColumns.RATING, PGNColumns.RESULT},
+                new int[]{R.id.text_id, R.id.text_name1, R.id.text_name2, R.id.text_date, R.id.text_event, R.id.rating, R.id.text_result}) {
             @Override
             public void setViewText(TextView v, String text) {
                 super.setViewText(v, convText(v, text));
@@ -164,20 +164,19 @@ public class GamesListActivity extends ListActivity implements OnItemClickListen
 			 
 		 });
 		 */
-        _adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+        _adapter.setViewBinder((view, cursor1, columnIndex) -> {
 
-            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-
-                int nImageIndex = cursor.getColumnIndex(PGNColumns.RATING);
-                if (nImageIndex == columnIndex) {
-                    float fR = cursor.getFloat(cursor.getColumnIndex(PGNColumns.RATING));
+            int nImageIndex = cursor1.getColumnIndex(PGNColumns.RATING);
+            if (nImageIndex == columnIndex) {
+                int floatIndex = cursor1.getColumnIndex(PGNColumns.RATING);
+                if (floatIndex >= 0) {
+                    float fR = cursor1.getFloat(floatIndex);
                     ((RatingBar) view).setRating(fR);
-                    //((RatingBar)view).setRating(0.4F);
-                    return true;
                 }
-                return false;
+                //((RatingBar)view).setRating(0.4F);
+                return true;
             }
-
+            return false;
         });
 
         // ListViewGamesList

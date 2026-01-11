@@ -44,10 +44,10 @@
     <TableLayout
         android:layout_below="@id/TableFirstRow"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:stretchColumns="1,2">
 
         <TableRow android:layout_marginBottom="5dip">
-
             <TextView
                 android:id="@+id/text_id"
                 android:text="id"
@@ -67,6 +67,13 @@
                 android:text="black"
                 style="@style/MyNormalTextStyle"
                 android:layout_weight="3"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/text_result"
+                android:text="*"
+                style="@style/MyNormalTextStyle"
+                android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </TableRow>
     </TableLayout>

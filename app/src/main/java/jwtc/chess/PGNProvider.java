@@ -18,6 +18,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import jwtc.android.chess.services.GameApi;
+
 public class PGNProvider extends ContentProvider {
 
     public static String AUTHORITY = "jwtc.chess";
@@ -26,10 +28,10 @@ public class PGNProvider extends ContentProvider {
     private static final String TAG = "PGNProvider";
 
     private static final String DATABASE_NAME = "chess_pgn.db";
-    private static final int DATABASE_VERSION = 3; // DO NOT EDIT {3}
+    private static final int DATABASE_VERSION = 4;
     private static final String GAMES_TABLE_NAME = "games";
 
-    private static HashMap<String, String> sGamesProjectionMap;
+    private static final HashMap<String, String> sGamesProjectionMap;
 
     protected static final int GAMES = 1;
     protected static final int GAMES_ID = 2;
@@ -67,10 +69,53 @@ public class PGNProvider extends ContentProvider {
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + GAMES_TABLE_NAME);
-            onCreate(db);
+            Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
+
+            db.beginTransaction();
+            Cursor c = null;
+
+            try {
+                db.execSQL("ALTER TABLE " + GAMES_TABLE_NAME + " ADD COLUMN " + PGNColumns.RESULT + " TEXT");
+
+                c = db.query(
+                        GAMES_TABLE_NAME,
+                        new String[]{PGNColumns._ID, PGNColumns.PGN},
+                        null, null, null, null,
+                        null
+                );
+
+                final int idIdx = c.getColumnIndexOrThrow(PGNColumns._ID);
+                final int pgnIdx = c.getColumnIndexOrThrow(PGNColumns.PGN);
+
+                HashMap<String, String> pgnTags = new HashMap<>();
+                ContentValues cv = new ContentValues();
+
+                while (c.moveToNext()) {
+                    long id = c.getLong(idIdx);
+
+                    String sPGN = c.isNull(pgnIdx) ? null : c.getString(pgnIdx);
+
+                    GameApi.loadPGNHead(sPGN, pgnTags);
+                    String result = pgnTags.get("Result");
+
+                    cv.clear();
+                    cv.put(PGNColumns.RESULT, result);
+
+                    db.update(GAMES_TABLE_NAME, cv,"_id=?",new String[]{Long.toString(id)});
+                }
+
+                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_result  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.RESULT + ")");
+                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_black  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.BLACK + ")");
+                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_white  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.WHITE + ")");
+                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_event  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.EVENT + ")");
+
+                db.setTransactionSuccessful();
+
+                Log.d(TAG, "Upgrade database successfully");
+            } finally {
+                if (c != null) c.close();
+                db.endTransaction();
+            }
         }
     }
 
@@ -231,8 +276,6 @@ public class PGNProvider extends ContentProvider {
     }
 
     static {
-
-
         sGamesProjectionMap = new HashMap<String, String>();
         sGamesProjectionMap.put(PGNColumns._ID, PGNColumns._ID);
         sGamesProjectionMap.put(PGNColumns.WHITE, PGNColumns.WHITE);
@@ -241,5 +284,6 @@ public class PGNProvider extends ContentProvider {
         sGamesProjectionMap.put(PGNColumns.DATE, PGNColumns.DATE);
         sGamesProjectionMap.put(PGNColumns.RATING, PGNColumns.RATING);
         sGamesProjectionMap.put(PGNColumns.EVENT, PGNColumns.EVENT);
+        sGamesProjectionMap.put(PGNColumns.RESULT, PGNColumns.RESULT);
     }
 }

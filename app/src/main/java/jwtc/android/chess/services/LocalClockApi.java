@@ -24,7 +24,7 @@ public class LocalClockApi extends ClockApi {
     };
 
     public void startClock(long increment, long whiteRemaining, long blackRemaining, int turn, long startTime) {
-        Log.d(TAG, "startClock " + increment + " " + whiteRemaining + " " + blackRemaining + " " + turn);
+        Log.d(TAG, "startClock " + increment + " " + whiteRemaining + " " + blackRemaining + " " + turn + " " + startTime);
 
         this.increment = increment;
         this.whiteRemaining = whiteRemaining;

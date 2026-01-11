@@ -18,6 +18,7 @@ public final class PGNColumns implements BaseColumns {
     public static final String DATE = "date";
     public static final String RATING = "rating";
     public static final String EVENT = "event";
+    public static final String RESULT = "result";
 
     public static final String[] COLUMNS = {PGNColumns._ID,
             PGNColumns.WHITE,
@@ -25,5 +26,7 @@ public final class PGNColumns implements BaseColumns {
             PGNColumns.PGN,
             PGNColumns.DATE,
             PGNColumns.RATING,
-            PGNColumns.EVENT};
+            PGNColumns.EVENT,
+            PGNColumns.RESULT
+    };
 }

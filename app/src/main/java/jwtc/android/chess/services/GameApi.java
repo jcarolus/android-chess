@@ -323,9 +323,38 @@ public class GameApi {
             return false;
         }
 
-        int finalState = loadPGNHead(s);
+        int finalState = -1;
+        loadPGNHead(s, pgnTags);
+
+        if (pgnTags.containsKey("FEN")) {
+            String sFEN = pgnTags.get("FEN");
+            if (sFEN != null) {
+                initFEN(sFEN, false);
+            }
+        }
 
         if(loadPGNMoves(s)) {
+            if (pgnTags.containsKey("Result")) {
+                String value = pgnTags.get("Result");
+                if (value != null && jni.isEnded() == 0) {
+                    Matcher match = patGameResult.matcher(value);
+                    if (match.matches()) {
+                        String result = match.group(1);
+                        if (result != null) {
+                            if (result.equals("1/2-1/2")) {
+                                finalState = BoardConstants.DRAW_AGREEMENT;
+                            } else if (result.equals("1-0")) {
+                                // @TODO once we can sum the move durations, we can also forfeit on time.
+                                finalState = BoardConstants.BLACK_RESIGNED;
+                            } else if (result.equals("0-1")) {
+                                finalState = BoardConstants.WHITE_RESIGNED;
+                            }
+                            Log.d(TAG, "Overriding game state " + result + " => " + finalState);
+                        }
+                    }
+                }
+            }
+
             int size = pgnMoves.size();
             if (size > 0) {
                 pgnMoves.get(size -1).finalState = finalState;
@@ -650,40 +679,18 @@ public class GameApi {
     }
 
 
-    private int loadPGNHead(String s) {
+    public static void loadPGNHead(String s, HashMap<String, String> tagsMap) {
         s = cleanPgnString(s);
         Matcher matcher = patTag.matcher(s);
 
-        int finalState = -1;
+        tagsMap.clear();
         while (matcher.find()) {
             String name = matcher.group(1);
             String value = matcher.group(2);
             if (name != null && value != null) {
-                pgnTags.put(name, value);
-                if (name.equals("FEN")) {
-                    initFEN(value, false);
-                }
-                if (name.equals("Result") && jni.isEnded() == 0) {
-                    Matcher match = patGameResult.matcher(value);
-                    if (match.matches()) {
-                        String result = match.group(1);
-                        if (result != null) {
-                            if (result.equals("1/2-1/2")) {
-                                finalState = BoardConstants.DRAW_AGREEMENT;
-                            } else if(result.equals("1-0")) {
-                                // @TODO once we can sum the move durations, we can also forfeit on time.
-                                finalState = BoardConstants.BLACK_RESIGNED;
-                            } else if(result.equals("0-1")) {
-                                finalState = BoardConstants.WHITE_RESIGNED;
-                            }
-                            Log.d(TAG, "Overriding game state " + result + " => " + finalState);
-                        }
-                    }
-                }
+                tagsMap.put(name, value);
             }
         }
-
-        return finalState;
     }
 
     private boolean removeComment(StringBuffer s) throws Exception {
@@ -711,7 +718,7 @@ public class GameApi {
         return false;
     }
 
-    private String cleanPgnString(String s) {
+    private static String cleanPgnString(String s) {
         return s.replaceAll("[\\r\\n\\t]+", " ").replaceAll(" {2,}", " ").trim();
     }
 

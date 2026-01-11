@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -883,6 +884,11 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         values.put(PGNColumns.PGN, data.getString(PGNColumns.PGN));
         values.put(PGNColumns.RATING, data.getFloat(PGNColumns.RATING));
         values.put(PGNColumns.EVENT, data.getString(PGNColumns.EVENT));
+
+        HashMap<String, String> pgnTags = new HashMap<>();
+        GameApi.loadPGNHead(data.getString(PGNColumns.PGN), pgnTags);
+
+        values.put(PGNColumns.RESULT, pgnTags.get("Result"));
 
         saveGame(values, bCopy);
     }
