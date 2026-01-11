@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingLeft="4dip"
     android:paddingRight="4dip">
     <LinearLayout
@@ -26,13 +26,16 @@
                         android:id="@+id/ButtonPlay"
                         android:src="@drawable/ic_robot"
                         android:contentDescription="@string/button_engine_play_description"
-                        style="@style/ChessImageButton"/>
-                    <ProgressBar
+                        android:layout_alignParentTop="true"
+                        style="@style/ChessImageButton" />
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/ProgressBarPlay"
                         android:layout_width="@dimen/imageButtonSize"
-                        android:layout_height="@dimen/imageButtonSize"
-                        style="?android:attr/progressBarStyleLarge"
-                        android:visibility="gone"/>
+                        android:layout_height="4dip"
+                        app:trackColor="@color/primaryColor"
+                        android:indeterminate="true"
+                        android:visibility="invisible"
+                        android:layout_alignParentBottom="true"/>
                 </RelativeLayout>
                 <TextView
                     android:id="@+id/TextViewEngineValue"

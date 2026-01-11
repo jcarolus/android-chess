@@ -26,6 +26,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.json.JSONArray;
@@ -81,7 +82,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     private EngineApi myEngine;
     private final EcoService ecoService = new EcoService();
     private long lGameID;
-    private ProgressBar progressBarEngine;
+    private LinearProgressIndicator progressBarEngine;
     private ImageButton playButton;
     private boolean vsCPU = true;
     private boolean flipBoard = false;
@@ -657,11 +658,13 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     protected void toggleEngineProgress(boolean showProgress) {
         Log.d(TAG, "toggleEngineProgress " + showProgress);
         if (showProgress) {
-            playButton.setVisibility(View.GONE);
+            playButton.setImageResource(R.drawable.box_arrow_up_right);
+            //playButton.setVisibility(View.GONE);
             progressBarEngine.setVisibility(View.VISIBLE);
         } else {
-            progressBarEngine.setVisibility(View.GONE);
-            playButton.setVisibility(View.VISIBLE);
+            playButton.setImageResource(R.drawable.ic_robot);
+            progressBarEngine.setVisibility(View.INVISIBLE);
+            //playButton.setVisibility(View.VISIBLE);
         }
     }
 
