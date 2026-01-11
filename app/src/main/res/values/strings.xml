@@ -18,6 +18,7 @@
     <string name="start_ics">Freechess</string>
     <string name="start_boardpreferences">Board settings</string>
     <string name="start_lichess">Lichess (beta)</string>
+    <string name="start_database">Local database</string>
 
     <string name="globalpreferences">Global settings</string>
     <string name="playpreferences">Play settings</string>

@@ -1,35 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:padding="2dip">
+    <include
+        android:id="@+id/includeboard"
+        layout="@layout/chessboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="0,2"
+        android:stretchColumns="0,1"
+        android:layout_margin="4dip">
+
+        <TableRow android:gravity="center_vertical">
+            <TextView
+                android:text="White"
+                android:id="@+id/TextViewPlayerWhite"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:ellipsize="end"
+                style="@style/MyHeaderTextStyle" />
+            <TextView
+                android:text="black"
+                android:id="@+id/TextViewPlayerBlack"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:ellipsize="end"
+                style="@style/MyHeaderTextStyle" />
+
+            <TextView
+                android:text="1-0"
+                android:id="@+id/TextViewResult"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                style="@style/MyHeaderTextStyle"
+                android:layout_marginLeft="3dip" />
+        </TableRow>
+    </TableLayout>
 
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="1">
+        android:layout_margin="4dip"
+        android:stretchColumns="0">
 
         <TableRow android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_search" />
 
             <EditText
                 android:id="@+id/EditTextGamesList"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true" />
+            <ImageButton
+                android:src="@drawable/sliders"
+                android:contentDescription="Filters"
+                style="@style/ChessImageButton"
+                />
         </TableRow>
     </TableLayout>
 
     <TableLayout
         android:id="@+id/TableFirstRow"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -62,7 +102,8 @@
     <TableLayout
         style="@style/MyRowStyle"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <TableRow
             android:layout_width="fill_parent"
@@ -91,14 +132,44 @@
                 android:layout_height="30dip" />
         </TableRow>
     </TableLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_margin="4dip">
+        <SeekBar
+            android:id="@+id/SeekBarGames"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        />
+    </LinearLayout>
 
-
-    <ListView
-        android:id="@android:id/list"
+    <LinearLayout
+        android:id="@+id/LayoutResignDraw"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"
-        android:entries="@array/levels_ply" />
+        android:layout_marginTop="8dip">
+        <Button android:id="@+id/ButtonDelete"
+            android:text="Delete"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_margin="1dip"
+            style="@style/ChessButton"
+            />
+        <Button android:id="@+id/ButtonEdit"
+            android:text="Edit"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_margin="1dip"
+            style="@style/ChessButton"
+            />
+        <Button android:id="@+id/ButtonOpen"
+            android:text="Open"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_margin="1dip"
+            style="@style/ChessButton"
+            />
+    </LinearLayout>
 
 </LinearLayout>
