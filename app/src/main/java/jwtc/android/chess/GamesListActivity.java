@@ -3,32 +3,34 @@ package jwtc.android.chess;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
-import jwtc.android.chess.puzzle.MyPuzzleProvider;
+import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;
-import jwtc.chess.PGNProvider;
 
 public class GamesListActivity extends ChessBoardActivity {
     private static final String TAG = "GamesListActivity";
 
-    //LayoutInflater _inflater;
-    private EditText editTextSearch;
+    private EditText editTextSearch, editTextPlayerWhite, editTextPlayerBlack;
     private String sortOrder, sortBy;
     private View _viewSortRating, _viewSortWhite, _viewSortBlack, _viewSortId, _viewSortDate, _viewSortEvent;
-    private TextView textViewPlayerWhite, textViewPlayerBlack, textViewResult;
+    private TextView textViewResult, textViewTotal;
     private SeekBar seekBarGames;
     private Cursor cursor;
 
@@ -121,9 +123,10 @@ public class GamesListActivity extends ChessBoardActivity {
             }
         });
 
-        textViewPlayerWhite = findViewById(R.id.TextViewPlayerWhite);
-        textViewPlayerBlack = findViewById(R.id.TextViewPlayerBlack);
+        editTextPlayerWhite = findViewById(R.id.EditTextPlayerWhite);
+        editTextPlayerBlack = findViewById(R.id.EditTextPlayerBlack);
         textViewResult = findViewById(R.id.TextViewResult);
+        textViewTotal = findViewById(R.id.TextViewTotal);
 
         seekBarGames = findViewById(R.id.SeekBarGames);
         seekBarGames.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -138,31 +141,33 @@ public class GamesListActivity extends ChessBoardActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-        //_inflater = (LayoutInflater)getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+        ImageButton butPrev = findViewById(R.id.ButtonPrevious);
+        butPrev.setOnClickListener(v -> {
+            int progress = seekBarGames.getProgress();
+            if (progress > 0) {
+                seekBarGames.setProgress(progress - 1);
+            }
+        });
+
+        ImageButton butNext = findViewById(R.id.ButtonNext);
+        butNext.setOnClickListener(v -> {
+            int progress = seekBarGames.getProgress();
+            if (progress + 1 < cursor.getCount()) {
+                seekBarGames.setProgress(progress + 1);
+            }
+        });
+
+        Button buttonOpen = findViewById(R.id.ButtonOpen);
+        buttonOpen.setOnClickListener(v -> openGame());
 
         // DEBUG
         //getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
         /////////////////////////////////////////////////////////////////////////////////////
 
-        // cursor = managedQuery(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, null, null, _sortBy + " " + _sortOrder);
-//        _adapter = new AlternatingSimpleCursorAdapter(this, R.layout.game_row, cursor,
-//                new String[]{PGNColumns._ID, PGNColumns.WHITE, PGNColumns.BLACK, PGNColumns.DATE, PGNColumns.EVENT, PGNColumns.RATING, PGNColumns.RESULT},
-//                new int[]{R.id.text_id, R.id.text_name1, R.id.text_name2, R.id.text_date, R.id.text_event, R.id.rating, R.id.text_result}) {
-//            @Override
-//            public void setViewText(TextView v, String text) {
-//                super.setViewText(v, convText(v, text));
-//            }
-//
-//            @Override
-//            public View getView(int position, View convertView, ViewGroup parent) {
-//                View view = super.getView(position, convertView, parent);
-//                //view.setBackgroundColor(position % 2 == 0 ? 0x55888888 : 0x55666666);
-//                return view;
-//            }
-//        };
 
 		 /*
-		 _adapter.setFilterQueryProvider(new FilterQueryProvider(){
+		 new FilterQueryProvider(){
 
 			public Cursor runQuery(CharSequence constraint) {
 				String s = constraint.toString().replace("'", "''");
@@ -174,23 +179,7 @@ public class GamesListActivity extends ChessBoardActivity {
 			}
 			 
 		 });
-		 */
-//        _adapter.setViewBinder((view, cursor1, columnIndex) -> {
-//
-//            int nImageIndex = cursor1.getColumnIndex(PGNColumns.RATING);
-//            if (nImageIndex == columnIndex) {
-//                int floatIndex = cursor1.getColumnIndex(PGNColumns.RATING);
-//                if (floatIndex >= 0) {
-//                    float fR = cursor1.getFloat(floatIndex);
-//                    ((RatingBar) view).setRating(fR);
-//                }
-//                //((RatingBar)view).setRating(0.4F);
-//                return true;
-//            }
-//            return false;
-//        });
-
-        // ListViewGamesList
+        */
 
         afterCreate();
     }
@@ -206,36 +195,52 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private void onQueryUpdated() {
         seekBarGames.setProgress(0);
-        seekBarGames.setMax(cursor.getCount());
+        int count = cursor.getCount();
+        seekBarGames.setMax(count > 0 ? count - 1 : 0);
+        seekBarGames.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void loadGame() {
+        updateProgressTotal();
         int position = seekBarGames.getProgress();
         if (cursor == null || cursor.getCount() < position) {
             return;
         }
         cursor.moveToPosition(position);
-        int index = cursor.getColumnIndex(PGNColumns.PGN);
-        if (index < 0) {
-            Log.d(TAG, "Could not load without PGN index " + index);
-            return;
+
+        gameApi.loadPGN(getColumnString(PGNColumns.PGN));
+
+        editTextPlayerWhite.setText(getColumnString(PGNColumns.WHITE));
+        editTextPlayerBlack.setText(getColumnString(PGNColumns.BLACK));
+
+        String result = getColumnString(PGNColumns.RESULT);
+        if (result.equals("1/2-1/2")) {
+            result = "½-½";
         }
-        String sPGN = cursor.getString(index);
-        gameApi.loadPGN(sPGN);
+        textViewResult.setText(result);
+    }
 
-        index = cursor.getColumnIndex(PGNColumns.WHITE);
-        textViewPlayerWhite.setText(cursor.getString(index));
+    private void openGame() {
+        long id = cursor.getLong(cursor.getColumnIndex(PGNColumns._ID));
 
-        index = cursor.getColumnIndex(PGNColumns.BLACK);
-        textViewPlayerBlack.setText(cursor.getString(index));
+        Log.d(TAG, "openGame " + id);
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putLong("game_id", id);
+        editor.commit();
 
-        index = cursor.getColumnIndex(PGNColumns.RESULT);
-        textViewResult.setText(cursor.getString(index));
+        Intent i = new Intent();
+        i.setClass(this, PlayActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        startActivity(i);
+    }
+
+    private void updateProgressTotal() {
+        int count =  cursor.getCount();
+        textViewTotal.setText("" + (seekBarGames.getProgress() + (count == 0 ? 0 : 1)) + "/" + count);
     }
 
     private void doFilterSort() {
-        //_adapter.getFilter().filter(_editFilter.getText().toString());
-        //_listGames.invalidate();
         String s = "%" + editTextSearch.getText().toString() + "%";
         String sWhere = PGNColumns.WHITE + " LIKE ? OR " +
                 PGNColumns.BLACK + " LIKE ? OR " +
@@ -245,8 +250,8 @@ public class GamesListActivity extends ChessBoardActivity {
         };
         Log.i("runQuery", sWhere + " BY " + sortOrder);
 
-        cursor = managedQuery(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, sWhere, selectionArgs, sortBy + " " + sortOrder);
-
+        cursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, sWhere, selectionArgs, sortBy + " " + sortOrder);
+        onQueryUpdated();
     }
 
     private void flipSortOrder() {
@@ -264,4 +269,18 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
 
+    private String getColumnString(String column) {
+        int index = cursor.getColumnIndex(column);
+        if (index >= 0 && index < cursor.getColumnCount()) {
+            try {
+                String value = cursor.getString(index);
+                return value == null ? "" : value;
+            } catch (Exception ex) {
+                Log.d(TAG, "Caught getString exception for " + column);
+                return "";
+            }
+        }
+        Log.d(TAG, "invalid index " + index + " for " + column);
+        return "";
+    }
 }

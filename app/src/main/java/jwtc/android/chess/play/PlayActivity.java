@@ -700,7 +700,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                 } else if (item.equals(getString(R.string.menu_load_game))) {
                     intent = new Intent();
                     intent.setClass(PlayActivity.this, GamesListActivity.class);
-                    startActivityForResult(intent, PlayActivity.REQUEST_OPEN);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
                     final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
                     menuDialog.show();
@@ -896,22 +897,31 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     protected void loadGame() {
         if (lGameID > 0) {
             Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
-            Cursor c = managedQuery(uri, PGNColumns.COLUMNS, null, null, null);
-            if (c != null && c.getCount() == 1) {
+            try {
+                Cursor c = getContentResolver().query(uri, PGNColumns.COLUMNS, null, null, null);
+                if (c != null && c.getCount() == 1) {
 
-                c.moveToFirst();
+                    c.moveToFirst();
 
-                lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
-                String sPGN = c.getString(c.getColumnIndex(PGNColumns.PGN));
-                gameApi.loadPGN(sPGN);
+                    lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
+                    String sPGN = c.getString(c.getColumnIndex(PGNColumns.PGN));
 
-                gameApi.setPGNHeadProperty("Event", c.getString(c.getColumnIndex(PGNColumns.EVENT)));
-                gameApi.setPGNHeadProperty("White", c.getString(c.getColumnIndex(PGNColumns.WHITE)));
-                gameApi.setPGNHeadProperty("Black", c.getString(c.getColumnIndex(PGNColumns.BLACK)));
-                gameApi.setDateLong(c.getLong(c.getColumnIndex(PGNColumns.DATE)));
+                    c.close();
 
-            } else {
-                lGameID = 0; // probably deleted
+                    gameApi.loadPGN(sPGN);
+
+                    gameApi.setPGNHeadProperty("Event", c.getString(c.getColumnIndex(PGNColumns.EVENT)));
+                    gameApi.setPGNHeadProperty("White", c.getString(c.getColumnIndex(PGNColumns.WHITE)));
+                    gameApi.setPGNHeadProperty("Black", c.getString(c.getColumnIndex(PGNColumns.BLACK)));
+                    gameApi.setDateLong(c.getLong(c.getColumnIndex(PGNColumns.DATE)));
+
+                } else {
+                    Log.d(TAG, "Game not found: " + lGameID);
+                    lGameID = 0; // probably deleted
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "Caught exception loading game: " + lGameID + " " + e.getMessage());
+                lGameID = 0;
             }
         } else {
             lGameID = 0;
