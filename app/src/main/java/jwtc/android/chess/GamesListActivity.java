@@ -1,27 +1,42 @@
 package jwtc.android.chess;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
+import android.app.DatePickerDialog;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.views.ChessSquareView;
+import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
 
 public class GamesListActivity extends ChessBoardActivity {
@@ -30,7 +45,10 @@ public class GamesListActivity extends ChessBoardActivity {
     private EditText editTextSearch, editTextPlayerWhite, editTextPlayerBlack;
     private String sortOrder, sortBy;
     private View _viewSortRating, _viewSortWhite, _viewSortBlack, _viewSortId, _viewSortDate, _viewSortEvent;
-    private TextView textViewResult, textViewTotal;
+    private TextView textViewResult, textViewTotal, textViewFilterInfo;
+    private Button buttonFilterDateAfter, buttonDate;
+    private SwitchMaterial switchDateAfter;
+    private AutoCompleteTextView autoCompleteResult;
     private SeekBar seekBarGames;
     private Cursor cursor;
 
@@ -47,86 +65,26 @@ public class GamesListActivity extends ChessBoardActivity {
         sortBy = PGNColumns.DATE;
         sortOrder = "ASC";
 
-        _viewSortRating = (View) findViewById(R.id.sort_rating);
-        _viewSortRating.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-
-                if (sortBy.equals(PGNColumns.RATING))
-                    flipSortOrder();
-
-                sortBy = PGNColumns.RATING;
-                doFilterSort();
-            }
-        });
-        _viewSortWhite = (View) findViewById(R.id.sort_text_name1);
-        _viewSortWhite.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (sortBy.equals(PGNColumns.WHITE))
-                    flipSortOrder();
-
-                sortBy = PGNColumns.WHITE;
-                doFilterSort();
-            }
-        });
-        _viewSortBlack = (View) findViewById(R.id.sort_text_name2);
-        _viewSortBlack.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (sortBy.equals(PGNColumns.BLACK))
-                    flipSortOrder();
-
-                sortBy = PGNColumns.BLACK;
-                doFilterSort();
-            }
-        });
-        _viewSortId = (View) findViewById(R.id.sort_text_id);
-        _viewSortId.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (sortBy.equals(PGNColumns._ID))
-                    flipSortOrder();
-
-                sortBy = PGNColumns._ID;
-                doFilterSort();
-            }
-        });
-        _viewSortEvent = (View) findViewById(R.id.sort_text_event);
-        _viewSortEvent.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (sortBy.equals(PGNColumns.EVENT))
-                    flipSortOrder();
-
-                sortBy = PGNColumns.EVENT;
-                doFilterSort();
-            }
-        });
-        _viewSortDate = (View) findViewById(R.id.sort_text_date);
-        _viewSortDate.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (sortBy.equals(PGNColumns.DATE))
-                    flipSortOrder();
-
-                sortBy = PGNColumns.DATE;
-                doFilterSort();
-            }
-        });
-
-        editTextSearch = (EditText) findViewById(R.id.EditTextGamesList);
-        editTextSearch.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-                doFilterSort();
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
+//        editTextSearch = (EditText) findViewById(R.id.EditTextGamesList);
+//        editTextSearch.addTextChangedListener(new TextWatcher() {
+//
+//            public void afterTextChanged(Editable s) {
+//                doFilterSort();
+//            }
+//
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            }
+//
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//            }
+//        });
+        final ViewAnimator viewAnimator = findViewById(R.id.root_layout);
 
         editTextPlayerWhite = findViewById(R.id.EditTextPlayerWhite);
         editTextPlayerBlack = findViewById(R.id.EditTextPlayerBlack);
         textViewResult = findViewById(R.id.TextViewResult);
         textViewTotal = findViewById(R.id.TextViewTotal);
+        textViewFilterInfo = findViewById(R.id.TextViewFilterInfo);
 
         seekBarGames = findViewById(R.id.SeekBarGames);
         seekBarGames.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -161,27 +119,76 @@ public class GamesListActivity extends ChessBoardActivity {
         Button buttonOpen = findViewById(R.id.ButtonOpen);
         buttonOpen.setOnClickListener(v -> openGame());
 
+        Button buttonDelete = findViewById(R.id.ButtonDelete);
+        buttonDelete.setOnClickListener(v -> deleteGame());
+
+        buttonDate = findViewById(R.id.ButtonDate);
+
+        ImageButton buttonOpenFilters = findViewById(R.id.ButtonOpenFilters);
+        buttonOpenFilters.setOnClickListener(v -> viewAnimator.setDisplayedChild(1));
+
+        Button buttonFilterClose = findViewById(R.id.ButtonFilterClose);
+        buttonFilterClose.setOnClickListener(v -> viewAnimator.setDisplayedChild(0));
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this);
+
+        switchDateAfter = findViewById(R.id.SwitchFilterDateAfter);
+        switchDateAfter.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
+        // PGNHelper.getDate(s);
+        buttonFilterDateAfter = findViewById(R.id.ButtonFilterDateAfter);
+        buttonFilterDateAfter.setOnClickListener(v -> {
+            datePickerDialog.setOnDateSetListener((view, year, monthOfYear, dayOfMonth) -> {
+                monthOfYear++;
+                buttonFilterDateAfter.setText("" + year + "." + monthOfYear + "." + dayOfMonth);
+                doFilterSort();
+            });
+
+            datePickerDialog.show();
+        });
+        //
+
+        String[] resultOptions = {"1-0", "0-1", "1/2-1/2", "*", ""};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, resultOptions);
+        autoCompleteResult = findViewById(R.id.AutoCompleteResult);
+        autoCompleteResult.setAdapter(adapter);
+
+        autoCompleteResult.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                doFilterSort();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+        });
         // DEBUG
         //getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
         /////////////////////////////////////////////////////////////////////////////////////
 
-
-		 /*
-		 new FilterQueryProvider(){
-
-			public Cursor runQuery(CharSequence constraint) {
-				String s = constraint.toString().replace("'", "''");
-				String sWhere = PGNColumns.WHITE + " LIKE('%" + s + "%') OR " +
-								PGNColumns.BLACK + " LIKE('%" + s + "%') OR " +
-								PGNColumns.EVENT + " LIKE('%" + s + "%')";
-				Log.i("runQuery", sWhere + " BY " + _sortOrder);
-				return managedQuery(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, sWhere, null, _sortOrder);
-			}
-			 
-		 });
-        */
-
         afterCreate();
+    }
+
+    @Override
+    public void afterCreate() {
+        Log.d(TAG, " afterCreate");
+
+        jni = JNI.getInstance();
+        chessBoardView = findViewById(R.id.includeboard);
+        chessBoardView.setFocusable(false);
+
+        for (int i = 0; i < 64; i++) {
+            ChessSquareView csv = new ChessSquareView(this, i);
+            chessBoardView.addView(csv);
+        }
+
+        gameApi.addListener(this);
     }
 
     @Override
@@ -190,7 +197,7 @@ public class GamesListActivity extends ChessBoardActivity {
 
         cursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, null, null, sortBy + " " + sortOrder);
 
-        onQueryUpdated();
+        doFilterSort();
     }
 
     private void onQueryUpdated() {
@@ -212,6 +219,7 @@ public class GamesListActivity extends ChessBoardActivity {
 
         editTextPlayerWhite.setText(getColumnString(PGNColumns.WHITE));
         editTextPlayerBlack.setText(getColumnString(PGNColumns.BLACK));
+        buttonDate.setText(formatDate(getColumnDate(PGNColumns.DATE)));
 
         String result = getColumnString(PGNColumns.RESULT);
         if (result.equals("1/2-1/2")) {
@@ -235,22 +243,48 @@ public class GamesListActivity extends ChessBoardActivity {
         startActivity(i);
     }
 
+    private void deleteGame() {
+        final long id = cursor.getLong(cursor.getColumnIndex(PGNColumns._ID));
+
+        openConfirmDialog(getString(R.string.title_delete_game), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
+            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, id);
+            getContentResolver().delete(uri, null, null);
+            doFilterSort();
+        }, null);
+    }
+
     private void updateProgressTotal() {
         int count =  cursor.getCount();
         textViewTotal.setText("" + (seekBarGames.getProgress() + (count == 0 ? 0 : 1)) + "/" + count);
+        textViewFilterInfo.setText("Results: " + count);
     }
 
     private void doFilterSort() {
-        String s = "%" + editTextSearch.getText().toString() + "%";
-        String sWhere = PGNColumns.WHITE + " LIKE ? OR " +
-                PGNColumns.BLACK + " LIKE ? OR " +
-                PGNColumns.EVENT + " LIKE ?";
-        String[] selectionArgs = new String[] {
-            s, s, s
-        };
-        Log.i("runQuery", sWhere + " BY " + sortOrder);
+        List<String> whereParts = new ArrayList<>();
+        List<String> args = new ArrayList<>();
 
-        cursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, sWhere, selectionArgs, sortBy + " " + sortOrder);
+        String result =  getTrimmedOrNull(autoCompleteResult.getText());
+        if (result != null) {
+            whereParts.add(PGNColumns.RESULT + " = ?");
+            args.add(result);
+        }
+        String dateAfter = getTrimmedOrNull(buttonFilterDateAfter.getText());
+        if (dateAfter != null && switchDateAfter.isChecked()) {
+            Date d = PGNHelper.getDate(dateAfter);
+            Log.d(TAG, "dateAfter " + dateAfter + " => " + d);
+            if (d != null) {
+                whereParts.add(PGNColumns.DATE + " >= ? ");
+                args.add(String.valueOf(d.getTime()));
+            }
+        }
+
+        String selection = whereParts.isEmpty() ? null : TextUtils.join(" AND ", whereParts);
+        String[] selectionArgs = args.isEmpty() ? null : args.toArray(new String[0]);
+
+        String dbgArgs = selectionArgs == null ? "" : TextUtils.join("|", selectionArgs);
+        Log.i(TAG, "runQuery " + selection + " " + dbgArgs + " BY " + sortOrder);
+
+        cursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, selection, selectionArgs, sortBy + " " + sortOrder);
         onQueryUpdated();
     }
 
@@ -258,16 +292,22 @@ public class GamesListActivity extends ChessBoardActivity {
         sortOrder = sortOrder.equals("DESC") ? "ASC" : "DESC";
     }
 
-    private String convText(TextView v, String text) {
-        if (v.getId() == R.id.text_date) {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(Long.parseLong(text));
-            return formatter.format(c.getTime());
+    private Date parseTextToDate(String text) {
+        if (text.equals("YYYY.mm.dd")) {
+            return null;
         }
-        return text;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
+        try {
+            return formatter.parse(text);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
+    private String formatDate(Date d) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
+        return formatter.format(d);
+    }
 
     private String getColumnString(String column) {
         int index = cursor.getColumnIndex(column);
@@ -282,5 +322,25 @@ public class GamesListActivity extends ChessBoardActivity {
         }
         Log.d(TAG, "invalid index " + index + " for " + column);
         return "";
+    }
+
+    private Date getColumnDate(String column) {
+        int index = cursor.getColumnIndex(column);
+        if (index >= 0 && index < cursor.getColumnCount()) {
+            try {
+                return new Date(cursor.getLong(index));
+            } catch (Exception ex) {
+                Log.d(TAG, "Caught exception for " + column + " " + ex.getMessage());
+                return null;
+            }
+        }
+        Log.d(TAG, "invalid index " + index + " for " + column);
+        return null;
+    }
+
+    private static String getTrimmedOrNull(CharSequence cs) {
+        if (cs == null) return null;
+        String s = cs.toString().trim();
+        return s.isEmpty() ? null : s;
     }
 }

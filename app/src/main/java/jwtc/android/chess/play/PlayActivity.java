@@ -1,9 +1,7 @@
 package jwtc.android.chess.play;
 
-import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -20,7 +18,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -910,9 +907,9 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
 
                     gameApi.loadPGN(sPGN);
 
-                    gameApi.setPGNHeadProperty("Event", c.getString(c.getColumnIndex(PGNColumns.EVENT)));
-                    gameApi.setPGNHeadProperty("White", c.getString(c.getColumnIndex(PGNColumns.WHITE)));
-                    gameApi.setPGNHeadProperty("Black", c.getString(c.getColumnIndex(PGNColumns.BLACK)));
+                    gameApi.setPGNTag("Event", c.getString(c.getColumnIndex(PGNColumns.EVENT)));
+                    gameApi.setPGNTag("White", c.getString(c.getColumnIndex(PGNColumns.WHITE)));
+                    gameApi.setPGNTag("Black", c.getString(c.getColumnIndex(PGNColumns.BLACK)));
                     gameApi.setDateLong(c.getLong(c.getColumnIndex(PGNColumns.DATE)));
 
                 } else {
@@ -934,9 +931,9 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         editor.putString("FEN", null);
         editor.commit();
 
-        gameApi.setPGNHeadProperty("Event", (String) values.get(PGNColumns.EVENT));
-        gameApi.setPGNHeadProperty("White", (String) values.get(PGNColumns.WHITE));
-        gameApi.setPGNHeadProperty("Black", (String) values.get(PGNColumns.BLACK));
+        gameApi.setPGNTag("Event", (String) values.get(PGNColumns.EVENT));
+        gameApi.setPGNTag("White", (String) values.get(PGNColumns.WHITE));
+        gameApi.setPGNTag("Black", (String) values.get(PGNColumns.BLACK));
         gameApi.setDateLong((Long) values.get(PGNColumns.DATE));
 
         if (lGameID > 0 && (bCopy == false)) {
@@ -945,10 +942,16 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         } else {
             Uri uri = MyPGNProvider.CONTENT_URI;
             Uri uriInsert = getContentResolver().insert(uri, values);
-            Cursor c = managedQuery(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
-            if (c != null && c.getCount() == 1) {
-                c.moveToFirst();
-                lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
+            if (uriInsert != null) {
+                try {
+                    Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+                    if (c != null && c.getCount() == 1) {
+                        c.moveToFirst();
+                        lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "Could not insert game " + ex.getMessage());
+                }
             }
         }
     }

@@ -888,7 +888,7 @@ public class GameApi {
         return pgnMoves;
     }
 
-    public void setPGNHeadProperty(String sProp, String sValue) {
+    public void setPGNTag(String sProp, String sValue) {
         pgnTags.put(sProp, sValue);
     }
 
@@ -897,7 +897,7 @@ public class GameApi {
         cal.setTimeInMillis(lTime);
         Date d = cal.getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-        setPGNHeadProperty("Date", formatter.format(d));
+        setPGNTag("Date", formatter.format(d));
     }
 
     public String getPGNHeadProperty(String sProp) {
