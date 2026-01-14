@@ -23,20 +23,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <EditText
+            <TextView
                 android:text="White"
-                android:id="@+id/EditTextPlayerWhite"
+                android:id="@+id/TextViewPlayerWhite"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="8"
-                android:singleLine="true"/>
-            <EditText
+                android:singleLine="true"
+                style="@style/MyHeaderTextStyle"/>
+            <TextView
                 android:text="Black"
-                android:id="@+id/EditTextPlayerBlack"
+                android:id="@+id/TextViewPlayerBlack"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="8"
-                android:singleLine="true" />
+                android:singleLine="true"
+                style="@style/MyHeaderTextStyle"/>
             <TextView
                 android:text="1-0"
                 android:id="@+id/TextViewResult"
@@ -50,13 +52,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <EditText
+            <TextView
                 android:text="Event"
                 android:id="@+id/EditTextEvent"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="8"
-                android:singleLine="true" />
+                android:singleLine="true"
+                style="@style/MyHeaderTextStyle"/>
 
             <Button android:id="@+id/ButtonDate"
                 android:text="YYYY.MM.DD"
@@ -87,8 +90,8 @@
                 android:layout_margin="1dip"
                 style="@style/ChessButton"
                 />
-            <Button android:id="@+id/ButtonSave"
-                android:text="Save"
+            <Button android:id="@+id/ButtonEdit"
+                android:text="Edit"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"

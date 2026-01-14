@@ -74,7 +74,7 @@ public class StartBaseActivity  extends AppCompatActivity {
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         List<StartItem> startItemList = List.of(
-                new StartItem(R.drawable.ic_logo, R.string.start_play, PlayActivity.class),
+                new StartItem(R.drawable.start_play, R.string.start_play, PlayActivity.class),
                 new StartItem(R.drawable.lichess, R.string.start_lichess, LichessActivity.class),
                 new StartItem(R.drawable.fics, R.string.start_ics, ICSClient.class),
                 new StartItem(R.drawable.percent, R.string.start_practice, PracticeActivity.class),

@@ -42,10 +42,9 @@ import jwtc.chess.PGNColumns;
 public class GamesListActivity extends ChessBoardActivity {
     private static final String TAG = "GamesListActivity";
 
-    private EditText editTextSearch, editTextPlayerWhite, editTextPlayerBlack;
     private String sortOrder, sortBy;
     private View _viewSortRating, _viewSortWhite, _viewSortBlack, _viewSortId, _viewSortDate, _viewSortEvent;
-    private TextView textViewResult, textViewTotal, textViewFilterInfo;
+    private TextView textViewResult, textViewTotal, textViewFilterInf, textViewPlayerWhite, textViewPlayerBlack, textViewEvent, textViewFilterInfo;
     private Button buttonFilterDateAfter, buttonDate;
     private SwitchMaterial switchDateAfter;
     private AutoCompleteTextView autoCompleteResult;
@@ -80,8 +79,8 @@ public class GamesListActivity extends ChessBoardActivity {
 //        });
         final ViewAnimator viewAnimator = findViewById(R.id.root_layout);
 
-        editTextPlayerWhite = findViewById(R.id.EditTextPlayerWhite);
-        editTextPlayerBlack = findViewById(R.id.EditTextPlayerBlack);
+        textViewPlayerWhite = findViewById(R.id.TextViewPlayerWhite);
+        textViewPlayerBlack = findViewById(R.id.TextViewPlayerBlack);
         textViewResult = findViewById(R.id.TextViewResult);
         textViewTotal = findViewById(R.id.TextViewTotal);
         textViewFilterInfo = findViewById(R.id.TextViewFilterInfo);
@@ -217,8 +216,8 @@ public class GamesListActivity extends ChessBoardActivity {
 
         gameApi.loadPGN(getColumnString(PGNColumns.PGN));
 
-        editTextPlayerWhite.setText(getColumnString(PGNColumns.WHITE));
-        editTextPlayerBlack.setText(getColumnString(PGNColumns.BLACK));
+        textViewPlayerWhite.setText(getColumnString(PGNColumns.WHITE));
+        textViewPlayerBlack.setText(getColumnString(PGNColumns.BLACK));
         buttonDate.setText(formatDate(getColumnDate(PGNColumns.DATE)));
 
         String result = getColumnString(PGNColumns.RESULT);
@@ -306,7 +305,7 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private String formatDate(Date d) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-        return formatter.format(d);
+        return d == null ? "YYYY.MM.DD" : formatter.format(d);
     }
 
     private String getColumnString(String column) {
