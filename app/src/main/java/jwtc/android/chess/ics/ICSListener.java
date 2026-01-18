@@ -2,6 +2,7 @@ package jwtc.android.chess.ics;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 public interface ICSListener {
@@ -39,5 +40,5 @@ public interface ICSListener {
     void OnStoredListResult(ArrayList<HashMap<String, String>> games);
     void OnGameEndedResult(int state);
     void OnConsoleOutput(String buffer);
-    void OnGameHistory(String sEvent, String sWhite, String sBlack, Calendar cal, String PGN);
+    void OnGameHistory(String sEvent, String sWhite, String sBlack, Date date, String PGN);
 }

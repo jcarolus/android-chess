@@ -331,9 +331,6 @@ public class ICSServer extends Service {
                 dd = Calendar.getInstance().getTime();
             }
 
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(dd);
-
             StringBuilder PGN = new StringBuilder("");
             PGN.append("[Event \"" + sEvent + "\"]\n");
             PGN.append("[Date \"" + sDate + "\"]\n");
@@ -348,7 +345,7 @@ public class ICSServer extends Service {
 
             String fullPGN = PGN.toString();
 
-            for (ICSListener listener: listeners) {listener.OnGameHistory(sEvent, sWhite, sBlack, cal, fullPGN);}
+            for (ICSListener listener: listeners) {listener.OnGameHistory(sEvent, sWhite, sBlack, dd, fullPGN);}
             //
             return;
         }

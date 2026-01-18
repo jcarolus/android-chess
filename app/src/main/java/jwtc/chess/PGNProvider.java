@@ -28,7 +28,7 @@ public class PGNProvider extends ContentProvider {
     private static final String TAG = "PGNProvider";
 
     private static final String DATABASE_NAME = "chess_pgn.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String GAMES_TABLE_NAME = "games";
 
     private static final HashMap<String, String> sGamesProjectionMap;
@@ -45,9 +45,24 @@ public class PGNProvider extends ContentProvider {
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            Log.d(TAG, "DatabaseHelper constructor");
+
+            SQLiteDatabase db = getReadableDatabase();
+            try (Cursor c = db.rawQuery("PRAGMA user_version", null)) {
+                int i = c.moveToFirst() ? c.getInt(0) : 0;
+                Log.d(TAG, "Database version " + i);
+            }
+
+//            SQLiteDatabase db = getWritableDatabase();
+//            db.execSQL("PRAGMA user_version = " + 1);
+
+
         }
 
+        @Override
         public void onCreate(SQLiteDatabase db) {
+            Log.d(TAG, "DatabaseHelper.onCreate");
+
             db.execSQL("CREATE TABLE " + GAMES_TABLE_NAME + " ("
                     + PGNColumns._ID + " INTEGER PRIMARY KEY,"
                     + PGNColumns.WHITE + " TEXT,"
@@ -68,8 +83,16 @@ public class PGNProvider extends ContentProvider {
                     + " VALUES ('Donald Byrne', 'Robert James Fischer', '" + sPGN + "', " + sDate + ", 5.0, 'Great game');");
         }
 
+        @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
+            Log.d(TAG, "DatabaseHelper.onUpgrade old version " + oldVersion + " to " + newVersion);
+
+            if (oldVersion >= DATABASE_VERSION) {
+                Log.d(TAG, "Nothing to upgrade " + oldVersion);
+                return;
+            }
+
+            // We have only one upgrade currently:
 
             db.beginTransaction();
             Cursor c = null;
@@ -93,15 +116,19 @@ public class PGNProvider extends ContentProvider {
                 while (c.moveToNext()) {
                     long id = c.getLong(idIdx);
 
-                    String sPGN = c.isNull(pgnIdx) ? null : c.getString(pgnIdx);
+                    try {
+                        String sPGN = c.isNull(pgnIdx) ? null : c.getString(pgnIdx);
 
-                    GameApi.loadPGNHead(sPGN, pgnTags);
-                    String result = pgnTags.get("Result");
+                        GameApi.loadPGNHead(sPGN, pgnTags);
+                        String result = pgnTags.get("Result");
 
-                    cv.clear();
-                    cv.put(PGNColumns.RESULT, result);
+                        cv.clear();
+                        cv.put(PGNColumns.RESULT, result);
 
-                    db.update(GAMES_TABLE_NAME, cv,"_id=?",new String[]{Long.toString(id)});
+                        db.update(GAMES_TABLE_NAME, cv, "_id=?", new String[]{Long.toString(id)});
+                    } catch (Exception ex) {
+                        Log.d(TAG, "Failed to update row for result " + ex.getMessage());
+                    }
                 }
 
                 db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_result  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.RESULT + ")");
@@ -113,7 +140,10 @@ public class PGNProvider extends ContentProvider {
 
                 Log.d(TAG, "Upgrade database successfully");
             } finally {
-                if (c != null) c.close();
+                Log.d(TAG, "Ending transaction");
+                if (c != null) {
+                    c.close();
+                }
                 db.endTransaction();
             }
         }
@@ -125,12 +155,17 @@ public class PGNProvider extends ContentProvider {
     public boolean onCreate() {
         mOpenHelper = new DatabaseHelper(getContext());
 
-        Log.i("onCreate PGNProvider", CONTENT_URI.toString());
+        Log.i(TAG, "onCreate " + CONTENT_URI.toString());
 
         return true;
     }
 
+    @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Log.d(TAG, "query " + uri);
+
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         switch (sUriMatcher.match(uri)) {
@@ -157,8 +192,6 @@ public class PGNProvider extends ContentProvider {
             orderBy = sortOrder;
         }
 
-        // Get the database and run the query
-        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
 
         // Tell the cursor what uri to watch, so it knows when its source data changes
@@ -180,6 +213,7 @@ public class PGNProvider extends ContentProvider {
         }
     }
 
+    @Override
     public Uri insert(Uri uri, ContentValues initialValues) {
         // Validate the requested uri
         if (sUriMatcher.match(uri) != GAMES) {

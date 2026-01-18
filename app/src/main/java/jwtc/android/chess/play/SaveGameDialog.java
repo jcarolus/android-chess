@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import jwtc.android.chess.R;
@@ -25,7 +26,7 @@ public class SaveGameDialog extends ResultDialog<Bundle> {
     private String _sPGN;
     private int _year, _month, _day;
 
-    public SaveGameDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, String sEvent, String sWhite, String sBlack, Calendar cal, String sPGN, boolean bCopy) {
+    public SaveGameDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, String sEvent, String sWhite, String sBlack, Date date, String sPGN, boolean bCopy) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.savegame);
@@ -73,9 +74,11 @@ public class SaveGameDialog extends ResultDialog<Bundle> {
         editTextWhite.setText(sWhite);
         editTextBlack.setText(sBlack);
 
-        _year = cal.get(Calendar.YEAR);
-        _month = cal.get(Calendar.MONTH) + 1;
-        _day = cal.get(Calendar.DAY_OF_MONTH);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        _year = calendar.get(Calendar.YEAR);
+        _month = calendar.get(Calendar.MONTH) + 1;
+        _day = calendar.get(Calendar.DAY_OF_MONTH);
 
         _butDate.setText(_year + "." + _month + "." + _day);
 

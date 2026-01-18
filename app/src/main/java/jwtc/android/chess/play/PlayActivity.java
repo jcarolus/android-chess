@@ -860,13 +860,10 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             sBlack = getString(R.string.savegame_black_question);
 
         Date dd = gameApi.getDate();
-        if (dd == null)
+        if (dd == null) {
             dd = Calendar.getInstance().getTime();
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dd);
-
-        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, cal, gameApi.exportFullPGN(), lGameID > 0);
+        }
+        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, dd, gameApi.exportFullPGN(), lGameID > 0);
         saveDialog.show();
     }
 
@@ -948,6 +945,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                     if (c != null && c.getCount() == 1) {
                         c.moveToFirst();
                         lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
+                        c.close();
                     }
                 } catch (Exception ex) {
                     Log.d(TAG, "Could not insert game " + ex.getMessage());

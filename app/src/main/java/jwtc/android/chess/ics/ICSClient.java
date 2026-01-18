@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
@@ -854,7 +856,12 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         Uri uri = MyPGNProvider.CONTENT_URI;
         Uri uriInsert = getContentResolver().insert(uri, values);
-        managedQuery(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+        if (uriInsert != null) {
+            Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
     @Override
@@ -1074,9 +1081,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
-    public void OnGameHistory(String sEvent, String sWhite, String sBlack, Calendar cal, String PGN) {
+    public void OnGameHistory(String sEvent, String sWhite, String sBlack, Date date, String PGN) {
         Log.d(TAG, "OnGameHistory " + PGN);
-        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, cal, PGN, false);
+        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, date, PGN, false);
         saveDialog.show();
     }
 

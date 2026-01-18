@@ -20,7 +20,7 @@
                 android:layout_weight="1"
                 style="@style/MyHeaderTextStyle" />
             <EditText
-                android:text="White"
+                android:text=""
                 android:id="@+id/EditTextFilterWhite"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
@@ -39,7 +39,7 @@
                 android:layout_weight="1"
                 style="@style/MyHeaderTextStyle" />
             <EditText
-                android:text="Black"
+                android:text=""
                 android:id="@+id/EditTextFilterBlack"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
@@ -58,7 +58,7 @@
                 android:layout_weight="1"
                 style="@style/MyHeaderTextStyle" />
             <EditText
-                android:text="Event"
+                android:text=""
                 android:id="@+id/EditTextFilterEvent"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
@@ -117,8 +117,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_weight="2"
-                android:layout_height="wrap_content"
-                android:hint="Result">
+                android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
                     android:id="@+id/AutoCompleteResult"

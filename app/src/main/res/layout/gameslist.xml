@@ -54,19 +54,19 @@
             android:orientation="horizontal">
             <TextView
                 android:text="Event"
-                android:id="@+id/EditTextEvent"
+                android:id="@+id/TextViewEvent"
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:layout_weight="8"
                 android:singleLine="true"
                 style="@style/MyHeaderTextStyle"/>
 
-            <Button android:id="@+id/ButtonDate"
+            <TextView android:id="@+id/TextViewDate"
                 android:text="YYYY.MM.DD"
                 android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="8"
-                android:layout_margin="1dip"
-                style="@style/ChessButton"
+                style="@style/MyHeaderTextStyle"
                 />
 
             <TextView
