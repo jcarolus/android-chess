@@ -87,64 +87,63 @@ public class PGNProvider extends ContentProvider {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.d(TAG, "DatabaseHelper.onUpgrade old version " + oldVersion + " to " + newVersion);
 
-            if (oldVersion >= DATABASE_VERSION) {
-                Log.d(TAG, "Nothing to upgrade " + oldVersion);
-                return;
-            }
-
             // We have only one upgrade currently:
+            if (oldVersion < DATABASE_VERSION) {
 
-            db.beginTransaction();
-            Cursor c = null;
+                db.beginTransaction();
+                Cursor c = null;
 
-            try {
-                db.execSQL("ALTER TABLE " + GAMES_TABLE_NAME + " ADD COLUMN " + PGNColumns.RESULT + " TEXT");
+                try {
+                    db.execSQL("ALTER TABLE " + GAMES_TABLE_NAME + " ADD COLUMN " + PGNColumns.RESULT + " TEXT");
 
-                c = db.query(
-                        GAMES_TABLE_NAME,
-                        new String[]{PGNColumns._ID, PGNColumns.PGN},
-                        null, null, null, null,
-                        null
-                );
+                    c = db.query(
+                            GAMES_TABLE_NAME,
+                            new String[]{PGNColumns._ID, PGNColumns.PGN},
+                            null, null, null, null,
+                            null
+                    );
 
-                final int idIdx = c.getColumnIndexOrThrow(PGNColumns._ID);
-                final int pgnIdx = c.getColumnIndexOrThrow(PGNColumns.PGN);
+                    final int idIdx = c.getColumnIndexOrThrow(PGNColumns._ID);
+                    final int pgnIdx = c.getColumnIndexOrThrow(PGNColumns.PGN);
 
-                HashMap<String, String> pgnTags = new HashMap<>();
-                ContentValues cv = new ContentValues();
+                    HashMap<String, String> pgnTags = new HashMap<>();
+                    ContentValues cv = new ContentValues();
 
-                while (c.moveToNext()) {
-                    long id = c.getLong(idIdx);
+                    while (c.moveToNext()) {
+                        long id = c.getLong(idIdx);
 
-                    try {
-                        String sPGN = c.isNull(pgnIdx) ? null : c.getString(pgnIdx);
+                        try {
+                            String sPGN = c.isNull(pgnIdx) ? null : c.getString(pgnIdx);
 
-                        GameApi.loadPGNHead(sPGN, pgnTags);
-                        String result = pgnTags.get("Result");
+                            GameApi.loadPGNHead(sPGN, pgnTags);
+                            String result = pgnTags.get("Result");
 
-                        cv.clear();
-                        cv.put(PGNColumns.RESULT, result);
+                            cv.clear();
+                            cv.put(PGNColumns.RESULT, result);
 
-                        db.update(GAMES_TABLE_NAME, cv, "_id=?", new String[]{Long.toString(id)});
-                    } catch (Exception ex) {
-                        Log.d(TAG, "Failed to update row for result " + ex.getMessage());
+                            db.update(GAMES_TABLE_NAME, cv, "_id=?", new String[]{Long.toString(id)});
+                        } catch (Exception ex) {
+                            Log.d(TAG, "Failed to update row for result " + ex.getMessage());
+                        }
                     }
+
+                    db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_result  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.RESULT + ")");
+                    db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_black  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.BLACK + ")");
+                    db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_white  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.WHITE + ")");
+                    db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_event  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.EVENT + ")");
+
+                    db.setTransactionSuccessful();
+
+                    Log.d(TAG, "Upgrade database successfully");
+                } catch (Exception ex) {
+                    Log.d(TAG, "Upgrade got an exception " + ex.getMessage());
+                } finally {
+                    Log.d(TAG, "Ending transaction");
+                    if (c != null) {
+                        c.close();
+                    }
+                    db.endTransaction();
                 }
-
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_result  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.RESULT + ")");
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_black  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.BLACK + ")");
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_white  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.WHITE + ")");
-                db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_event  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.EVENT + ")");
-
-                db.setTransactionSuccessful();
-
-                Log.d(TAG, "Upgrade database successfully");
-            } finally {
-                Log.d(TAG, "Ending transaction");
-                if (c != null) {
-                    c.close();
-                }
-                db.endTransaction();
             }
         }
     }

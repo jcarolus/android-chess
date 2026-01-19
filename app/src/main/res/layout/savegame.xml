@@ -14,84 +14,63 @@
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="120dp"
             android:isIndicator="false"
             android:max="5"
             android:rating="2.5"
             android:numStars="5"
             android:id="@+id/RatingBarSave" />
 
-        <TableLayout
-            android:id="@+id/TableSaveOptions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="120dp"
+            android:hint="@string/savegame_event">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextSaveEvent"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="120dp"
+            android:hint="@string/savegame_white"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextSaveWhite"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/savegame_event"
-                    style="@style/MyLabelTextStyle" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="120dp"
+            android:hint="@string/savegame_black">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextSaveBlack"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/EditTextSaveEvent"
-                    android:layout_width="wrap_content"
-                    android:layout_weight="4"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/savegame_white"
-                    style="@style/MyLabelTextStyle" />
-
-                <EditText
-                    android:id="@+id/EditTextSaveWhite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/savegame_black"
-                    style="@style/MyLabelTextStyle" />
-
-                <EditText
-                    android:id="@+id/EditTextSaveBlack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/savegame_date"
-                    style="@style/MyLabelTextStyle" />
-
-                <Button
-                    android:id="@+id/ButtonSaveDate"
-                    android:text="YYYY.MM.DD"
-                    android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                    style="@style/ChessButton"/>
-            </TableRow>
-        </TableLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="120dp"
+            android:hint="@string/savegame_date">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/TextInputDate"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:focusable="false"
+                android:clickable="true"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

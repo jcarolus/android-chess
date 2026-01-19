@@ -6,119 +6,114 @@
     android:gravity="center"
     android:padding="4dip">
     <TableLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFilterWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:text="White"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                style="@style/MyHeaderTextStyle" />
-            <EditText
-                android:text=""
-                android:id="@+id/EditTextFilterWhite"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:singleLine="true"/>
+                android:minWidth="120dp"
+                android:hint="@string/savegame_white">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/EditTextFilterWhite"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
         </TableRow>
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFilterBlack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:text="Black"
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                style="@style/MyHeaderTextStyle" />
-            <EditText
-                android:text=""
-                android:id="@+id/EditTextFilterBlack"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:singleLine="true" />
+                android:minWidth="120dp"
+                android:hint="@string/savegame_black">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/EditTextFilterBlack"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
         </TableRow>
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFilterEvent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:text="Event"
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                style="@style/MyHeaderTextStyle" />
-            <EditText
-                android:text=""
-                android:id="@+id/EditTextFilterEvent"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:singleLine="true" />
+                android:minWidth="120dp"
+                android:hint="@string/savegame_event">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/EditTextFilterEvent"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </TableRow>
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFilterDateAfter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:text="Date after"
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                style="@style/MyHeaderTextStyle" />
-            <Button android:id="@+id/ButtonFilterDateAfter"
-                android:text="YYYY.MM.DD"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                style="@style/ChessButton"
-                />
+                android:minWidth="120dp"
+                android:hint="Date after">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ButtonFilterDateAfter"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
         </TableRow>
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFilterDateBefore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:text="Date before"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                style="@style/MyHeaderTextStyle" />
-            <Button android:id="@+id/ButtonFilterDateBefore"
-                android:text="YYYY.MM.DD"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                style="@style/ChessButton"
-                />
+                android:minWidth="120dp"
+                android:hint="Date before">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/ButtonFilterDateBefore"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
         </TableRow>
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFilterResult"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:text="Result"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                style="@style/MyHeaderTextStyle" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="wrap_content">
-
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minWidth="120dp"
+                android:hint="Result">
                 <AutoCompleteTextView
                     android:id="@+id/AutoCompleteResult"
                     android:layout_width="match_parent"
@@ -127,7 +122,7 @@
         </TableRow>
     </TableLayout>
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="right">
