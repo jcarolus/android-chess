@@ -23,6 +23,14 @@ public class Utils {
         return s.isEmpty() ? null : s;
     }
 
+    public static String getTrimmedOrDefault(CharSequence cs, String sDefault) {
+        if (cs == null) {
+            return sDefault;
+        }
+        String s = cs.toString().trim();
+        return s.isEmpty() ? sDefault : s;
+    }
+
     public static String formatDate(Date d) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
         return d == null ? "YYYY.MM.DD" : formatter.format(d);

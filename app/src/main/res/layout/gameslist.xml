@@ -19,64 +19,58 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <LinearLayout
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:text="White"
-                android:id="@+id/TextViewPlayerWhite"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="8"
-                android:singleLine="true"
-                style="@style/MyHeaderTextStyle"/>
-            <TextView
-                android:text="Black"
-                android:id="@+id/TextViewPlayerBlack"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="8"
-                android:singleLine="true"
-                style="@style/MyHeaderTextStyle"/>
-            <TextView
-                android:text="1-0"
-                android:id="@+id/TextViewResult"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                style="@style/MyHeaderTextStyle" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:text="Event"
-                android:id="@+id/TextViewEvent"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="8"
-                android:singleLine="true"
-                style="@style/MyHeaderTextStyle"/>
+            android:stretchColumns="0,1,*">
+            <TableRow android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="White"
+                    android:id="@+id/TextViewPlayerWhite"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:singleLine="true"
+                    style="@style/MyHeaderTextStyle"/>
+                <TextView
+                    android:text="Black"
+                    android:id="@+id/TextViewPlayerBlack"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:singleLine="true"
+                    style="@style/MyHeaderTextStyle"/>
+                <TextView
+                    android:text="1-0"
+                    android:id="@+id/TextViewResult"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                     android:singleLine="true"
+                    style="@style/MyHeaderTextStyle" />
+            </TableRow>
+            <TableRow android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="Event"
+                    android:id="@+id/TextViewEvent"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:singleLine="true"
+                    style="@style/MyHeaderTextStyle"/>
 
-            <TextView android:id="@+id/TextViewDate"
-                android:text="YYYY.MM.DD"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="8"
-                style="@style/MyHeaderTextStyle"
-                />
-
-            <TextView
-                android:text="3.5"
-                android:id="@+id/TextViewRating"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                style="@style/MyHeaderTextStyle" />
-        </LinearLayout>
+                <TextView android:id="@+id/TextViewDate"
+                    android:text="YYYY.MM.DD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/MyHeaderTextStyle"
+                    />
+                <TextView
+                    android:text="3.5"
+                    android:id="@+id/TextViewRating"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    style="@style/MyHeaderTextStyle" />
+            </TableRow>
+        </TableLayout>
         <LinearLayout
             android:id="@+id/LayoutResignDraw"
             android:orientation="horizontal"
@@ -142,7 +136,4 @@
         </TableLayout>
     </LinearLayout>
     </ScrollView>
-    <include layout="@layout/gameslist_filters"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 </ViewAnimator>

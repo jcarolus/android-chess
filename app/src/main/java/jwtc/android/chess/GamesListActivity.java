@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -27,6 +29,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -40,6 +44,7 @@ import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.ChessSquareView;
+import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
 
@@ -48,11 +53,13 @@ public class GamesListActivity extends ChessBoardActivity implements ResultDialo
     protected static final int REQUEST_SAVE_GAME = 1;
 
     private String sortOrder, sortBy;
-    private TextView textViewResult, textViewTotal, textViewFilterInf, textViewPlayerWhite, textViewPlayerBlack, textViewEvent, textViewFilterInfo, textViewDate;
+    private TextView textViewResult, textViewTotal, textViewFilterInf, textViewPlayerWhite, textViewPlayerBlack, textViewEvent, textViewDate, textViewFilterInfo;
     private TextInputEditText editTextFilterWhite, editTextFilterBlack, editTextFilterEvent;
     private TextInputEditText editTextFilterDateAfter, editTextFilterDateBefore;
     private SwitchMaterial switchFilterWhite, switchFilterBlack, switchFilterDateAfter, switchFilterDateBefore, switchFilterEvent, switchFilterResult;
-    private AutoCompleteTextView autoCompleteResult;
+    private AutoCompleteTextView autoCompleteResult, autoCompleteOrderBy, autoCompleteOrderDirection;
+    private FixedDropdownView dropdownView;
+
     private SeekBar seekBarGames;
     private Cursor cursor;
 
@@ -69,26 +76,12 @@ public class GamesListActivity extends ChessBoardActivity implements ResultDialo
         sortBy = PGNColumns.DATE;
         sortOrder = "ASC";
 
-        final TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                doFilterSort();
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        };
-
         final ViewAnimator viewAnimator = findViewById(R.id.root_layout);
 
         textViewPlayerWhite = findViewById(R.id.TextViewPlayerWhite);
         textViewPlayerBlack = findViewById(R.id.TextViewPlayerBlack);
         textViewResult = findViewById(R.id.TextViewResult);
         textViewTotal = findViewById(R.id.TextViewTotal);
-        textViewFilterInfo = findViewById(R.id.TextViewFilterInfo);
 
         seekBarGames = findViewById(R.id.SeekBarGames);
         seekBarGames.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -132,64 +125,12 @@ public class GamesListActivity extends ChessBoardActivity implements ResultDialo
         textViewDate = findViewById(R.id.TextViewDate);
         textViewEvent = findViewById(R.id.TextViewEvent);
 
+        FilterDialog filterDialog = new FilterDialog(this);
+
         ImageButton buttonOpenFilters = findViewById(R.id.ButtonOpenFilters);
-        buttonOpenFilters.setOnClickListener(v -> viewAnimator.setDisplayedChild(1));
+        buttonOpenFilters.setOnClickListener(v -> filterDialog.show());
 
-        Button buttonFilterClose = findViewById(R.id.ButtonFilterClose);
-        buttonFilterClose.setOnClickListener(v -> viewAnimator.setDisplayedChild(0));
 
-        editTextFilterWhite = findViewById(R.id.EditTextFilterWhite);
-        editTextFilterWhite.addTextChangedListener(textWatcher);
-
-        editTextFilterBlack = findViewById(R.id.EditTextFilterBlack);
-        editTextFilterBlack.addTextChangedListener(textWatcher);
-
-        editTextFilterEvent = findViewById(R.id.EditTextFilterEvent);
-        editTextFilterEvent.addTextChangedListener(textWatcher);
-
-        // TextInputEditText t =
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this);
-
-        // PGNHelper.getDate(s);
-        editTextFilterDateAfter = findViewById(R.id.ButtonFilterDateAfter);
-        editTextFilterDateAfter.setOnClickListener(v -> {
-            datePickerDialog.setOnDateSetListener((view, year, monthOfYear, dayOfMonth) -> {
-                monthOfYear++;
-                editTextFilterDateAfter.setText("" + year + "." + monthOfYear + "." + dayOfMonth);
-                doFilterSort();
-            });
-
-            datePickerDialog.show();
-        });
-
-        editTextFilterDateBefore = findViewById(R.id.ButtonFilterDateBefore);
-        // @TODO
-
-        switchFilterWhite = findViewById(R.id.SwitchFilterWhite);
-        switchFilterWhite.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
-
-        switchFilterBlack = findViewById(R.id.SwitchFilterBlack);
-        switchFilterBlack.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
-
-        switchFilterEvent = findViewById(R.id.SwitchFilterEvent);
-        switchFilterEvent.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
-
-        switchFilterDateAfter = findViewById(R.id.SwitchFilterDateAfter);
-        switchFilterDateAfter.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
-
-        switchFilterDateBefore = findViewById(R.id.SwitchFilterDateBefore);
-        switchFilterDateBefore.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
-
-        switchFilterResult = findViewById(R.id.SwitchFilterResult);
-        switchFilterResult.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
-
-        String[] resultOptions = {"1-0", "0-1", "1/2-1/2", "*", ""};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, resultOptions);
-        autoCompleteResult = findViewById(R.id.AutoCompleteResult);
-        autoCompleteResult.setAdapter(adapter);
-
-        autoCompleteResult.addTextChangedListener(textWatcher);
         // DEBUG
         //getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
         /////////////////////////////////////////////////////////////////////////////////////
@@ -217,10 +158,21 @@ public class GamesListActivity extends ChessBoardActivity implements ResultDialo
     protected void onResume() {
         super.onResume();
 
-        cursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, null, null, sortBy + " " + sortOrder);
-
         doFilterSort();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+
+        editor.putString("gameslist_filter_white", Utils.getTrimmedOrDefault(editTextFilterWhite.getText(), ""));
+        editor.putString("gameslist_filter_black", Utils.getTrimmedOrDefault(editTextFilterBlack.getText(), ""));
+
+        editor.commit();
+    }
+
 
     private void onQueryUpdated() {
         int count = cursor.getCount();
@@ -330,9 +282,15 @@ public class GamesListActivity extends ChessBoardActivity implements ResultDialo
         String selection = whereParts.isEmpty() ? null : TextUtils.join(" AND ", whereParts);
         String[] selectionArgs = args.isEmpty() ? null : args.toArray(new String[0]);
 
-        String dbgArgs = selectionArgs == null ? "" : TextUtils.join("|", selectionArgs);
-        Log.i(TAG, "runQuery " + selection + " " + dbgArgs + " BY " + sortOrder);
+        sortBy = Utils.getTrimmedOrDefault(autoCompleteOrderBy.getText(), PGNColumns.DATE);
+        sortOrder = Utils.getTrimmedOrDefault(autoCompleteOrderDirection.getText(), "DESC");
 
+        String dbgArgs = selectionArgs == null ? "" : TextUtils.join("|", selectionArgs);
+        Log.i(TAG, "runQuery " + selection + " " + dbgArgs + " BY " + sortBy + " " + sortOrder);
+
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
         cursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, selection, selectionArgs, sortBy + " " + sortOrder);
         onQueryUpdated();
     }
@@ -377,5 +335,115 @@ public class GamesListActivity extends ChessBoardActivity implements ResultDialo
         Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
             getContentResolver().update(uri, values, null, null);
          */
+    }
+
+    private class FilterDialog extends Dialog {
+        public FilterDialog(@NonNull Context context) {
+            super(context, R.style.ChessDialogTheme);
+
+            setContentView(R.layout.gameslist_filters);
+
+            SharedPreferences prefs = getPrefs();
+
+            final TextWatcher textWatcher = new TextWatcher() {
+                @Override
+                public void afterTextChanged(Editable s) {
+                    doFilterSort();
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            };
+
+            Button buttonFilterClose = findViewById(R.id.ButtonFilterClose);
+            buttonFilterClose.setOnClickListener(v -> dismiss());
+
+            textViewFilterInfo = findViewById(R.id.TextViewFilterInfo);
+
+            editTextFilterWhite = findViewById(R.id.EditTextFilterWhite);
+            editTextFilterWhite.setText(prefs.getString("gameslist_filter_white", ""));
+            editTextFilterWhite.addTextChangedListener(textWatcher);
+
+            editTextFilterBlack = findViewById(R.id.EditTextFilterBlack);
+            editTextFilterBlack.setText(prefs.getString("gameslist_filter_black", ""));
+            editTextFilterBlack.addTextChangedListener(textWatcher);
+
+            editTextFilterEvent = findViewById(R.id.EditTextFilterEvent);
+            editTextFilterEvent.addTextChangedListener(textWatcher);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(context);
+
+            // PGNHelper.getDate(s);
+            editTextFilterDateAfter = findViewById(R.id.ButtonFilterDateAfter);
+            editTextFilterDateAfter.setOnClickListener(v -> {
+                datePickerDialog.setOnDateSetListener((view, year, monthOfYear, dayOfMonth) -> {
+                    monthOfYear++;
+                    editTextFilterDateAfter.setText("" + year + "." + monthOfYear + "." + dayOfMonth);
+                    doFilterSort();
+                });
+
+                datePickerDialog.show();
+            });
+
+            editTextFilterDateBefore = findViewById(R.id.ButtonFilterDateBefore);
+            // @TODO
+
+            switchFilterWhite = findViewById(R.id.SwitchFilterWhite);
+            switchFilterWhite.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
+
+            switchFilterBlack = findViewById(R.id.SwitchFilterBlack);
+            switchFilterBlack.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
+
+            switchFilterEvent = findViewById(R.id.SwitchFilterEvent);
+            switchFilterEvent.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
+
+            switchFilterDateAfter = findViewById(R.id.SwitchFilterDateAfter);
+            switchFilterDateAfter.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
+
+            switchFilterDateBefore = findViewById(R.id.SwitchFilterDateBefore);
+            switchFilterDateBefore.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
+
+            switchFilterResult = findViewById(R.id.SwitchFilterResult);
+            switchFilterResult.setOnCheckedChangeListener((v, isChecked) -> doFilterSort());
+
+            String[] resultOptions = {"1-0", "0-1", "1/2-1/2", "*"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.select_dialog_item, resultOptions);
+            autoCompleteResult = findViewById(R.id.AutoCompleteResult);
+            autoCompleteResult.setAdapter(adapter);
+            autoCompleteResult.addTextChangedListener(textWatcher);
+
+            String[] orderByOptions = {PGNColumns.DATE, PGNColumns.WHITE, PGNColumns.BLACK, PGNColumns.EVENT, PGNColumns.RESULT};
+            ArrayAdapter<String> adapterOrderBy = new ArrayAdapter<String>(context, android.R.layout.select_dialog_item, orderByOptions);
+            autoCompleteOrderBy = findViewById(R.id.AutoCompleteOrderBy);
+            autoCompleteOrderBy.setAdapter(adapterOrderBy);
+            autoCompleteOrderBy.setText(PGNColumns.DATE);
+            autoCompleteOrderBy.addTextChangedListener(textWatcher);
+            autoCompleteOrderBy.setOnClickListener(v -> {
+                CharSequence current = autoCompleteOrderBy.getText();
+                autoCompleteOrderBy.setText("", true);
+                autoCompleteOrderBy.showDropDown();
+                autoCompleteOrderBy.setText(current, false); // restore
+            });
+
+            String[] orderDirectionOptions = {"ASC", "DESC"};
+            ArrayAdapter<String> adapterOrderDirection = new ArrayAdapter<String>(context, android.R.layout.select_dialog_item, orderDirectionOptions);
+            autoCompleteOrderDirection = findViewById(R.id.AutoCompleteOrderDirection);
+            autoCompleteOrderDirection.setAdapter(adapterOrderDirection);
+            autoCompleteOrderDirection.setText("DESC");
+            autoCompleteOrderDirection.addTextChangedListener(textWatcher);
+
+            dropdownView = findViewById(R.id.ExposedDropdownView);
+            dropdownView.setHint("Order");
+            dropdownView.setSelectionText("ASC");
+            dropdownView.setItems(orderDirectionOptions);
+            dropdownView.setOnItemClickListener((parent, view, position, id) -> {
+                 String selected = (String) parent.getItemAtPosition(position);
+                 Log.d(TAG, "sel " + selected);
+                // do something with selected
+            });
+        }
     }
 }
