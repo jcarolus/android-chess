@@ -58,19 +58,10 @@
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <jwtc.android.chess.views.PGNDateView
+            android:id="@+id/DateView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minWidth="120dp"
-            android:hint="@string/savegame_date">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/TextInputDate"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:focusable="false"
-                android:clickable="true"
-                android:inputType="none" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="wrap_content"

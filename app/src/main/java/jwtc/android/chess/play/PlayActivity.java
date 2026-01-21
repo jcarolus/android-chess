@@ -734,7 +734,7 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                 break;
             case REQUEST_CLOCK:
                 updateClockByPrefs(false);
-                updateGUI();
+                gameApi.resetForfeitTime();
                 break;
 
             case REQUEST_GAME_SETTINGS:

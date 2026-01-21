@@ -16,12 +16,13 @@ import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
     private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxNightMode;
-    private Spinner spinnerPieceSet, spinnerColorScheme, spinnerTileSet;
     private Slider sliderSaturation, sliderSpeechRate, sliderSpeechPitch;
+    private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,9 +32,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         ActivityHelper.fixPaddings(this, findViewById(R.id.LayoutMain));
 
-        spinnerPieceSet = findViewById(R.id.SpinnerPieceSet);
-        spinnerColorScheme = findViewById(R.id.SpinnerColorScheme);
-        spinnerTileSet = findViewById(R.id.SpinnerTileSet);
+        dropDownPieces = findViewById(R.id.DropdownPieceSet);
+        dropDownColorScheme = findViewById(R.id.DropdownColorScheme);
+        dropDownTileSet = findViewById(R.id.DropdownTileSet);
         checkBoxCoordinates = findViewById(R.id.CheckBoxCoordinates);
         checkBoxShowMoves = findViewById(R.id.CheckBoxShowMoves);
         checkBoxWakeLock = findViewById(R.id.CheckBoxUseWakeLock);
@@ -44,40 +45,25 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
         sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
 
-        spinnerPieceSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                PieceSets.selectedSet = pos;
-                rebuildBoard();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-
+        dropDownPieces.setItems(getResources().getStringArray(R.array.piecesetarray));
+        dropDownPieces.setHint("Piece set");
+        dropDownPieces.setOnItemClickListener((parent, view, position, id) -> {
+            PieceSets.selectedSet = position;
+            rebuildBoard();
         });
 
-        spinnerColorScheme.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                ColorSchemes.selectedColorScheme = pos;
-                chessBoardView.invalidateSquares();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-
+        dropDownColorScheme.setItems(getResources().getStringArray(R.array.colorschemes));
+        dropDownColorScheme.setHint("Color scheme");
+        dropDownColorScheme.setOnItemClickListener((parent, view, position, id) -> {
+            ColorSchemes.selectedColorScheme = position;
+            chessBoardView.invalidateSquares();
         });
 
-        spinnerTileSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                ColorSchemes.selectedPattern = pos;
-                chessBoardView.invalidateSquares();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-
+        dropDownTileSet.setItems(getResources().getStringArray(R.array.tileArray));
+        dropDownTileSet.setHint(getString(R.string.pref_tileset));
+        dropDownTileSet.setOnItemClickListener((parent, view, position, id) -> {
+            ColorSchemes.selectedPattern = position;
+            chessBoardView.invalidateSquares();
         });
 
         checkBoxCoordinates.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -122,17 +108,15 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
 
-        spinnerPieceSet.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
-        spinnerColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
-        spinnerTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
+        dropDownPieces.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
+        dropDownColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
+        dropDownTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
 
         sliderSaturation.setValue(prefs.getFloat("squareSaturation", 1.0f));
         sliderSpeechRate.setValue(prefs.getFloat("speechRate", 1.0f));
         sliderSpeechPitch.setValue(prefs.getFloat("speechPitch", 1.0f));
 
         rebuildBoard();
-
-        spinnerPieceSet.requestFocus();
     }
 
     @Override
@@ -141,9 +125,11 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        editor.putString("pieceset", "" + spinnerPieceSet.getSelectedItemPosition());
-        editor.putString("colorscheme", "" + spinnerColorScheme.getSelectedItemPosition());
-        editor.putString("squarePattern", "" + spinnerTileSet.getSelectedItemPosition());
+        Log.d(TAG, "onPause " + dropDownPieces.getSelectedItemPosition());
+
+        editor.putString("pieceset", "" + dropDownPieces.getSelectedItemPosition());
+        editor.putString("colorscheme", "" + dropDownColorScheme.getSelectedItemPosition());
+        editor.putString("squarePattern", "" + dropDownTileSet.getSelectedItemPosition());
         editor.putBoolean("showCoords", checkBoxCoordinates.isChecked());
         editor.putBoolean("showMoves", checkBoxShowMoves.isChecked());
         editor.putBoolean("wakeLock", checkBoxWakeLock.isChecked());

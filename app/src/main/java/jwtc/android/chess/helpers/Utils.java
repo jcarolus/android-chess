@@ -33,7 +33,7 @@ public class Utils {
 
     public static String formatDate(Date d) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-        return d == null ? "YYYY.MM.DD" : formatter.format(d);
+        return d == null ? "" : formatter.format(d);
     }
 
     public static String getColumnString(Cursor cursor, String column) {

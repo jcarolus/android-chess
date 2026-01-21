@@ -60,7 +60,6 @@
                     android:layout_width="match_parent"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
-
         </TableRow>
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -68,39 +67,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.google.android.material.textfield.TextInputLayout
+            <jwtc.android.chess.views.PGNDateView
+                android:id="@+id/PGNDateAfter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minWidth="220dp"
-                android:hint="Date after">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ButtonFilterDateAfter"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:inputType="none" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:minWidth="220dp" />
+
         </TableRow>
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFilterDateBefore"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <com.google.android.material.textfield.TextInputLayout
+
+            <jwtc.android.chess.views.PGNDateView
+                android:id="@+id/PGNDateBefore"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minWidth="220dp"
-                android:hint="Date before">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/ButtonFilterDateBefore"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:inputType="none" />
-            </com.google.android.material.textfield.TextInputLayout>
-
+                android:minWidth="220dp" />
         </TableRow>
         <TableRow>
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -108,52 +92,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            <jwtc.android.chess.views.FixedDropdownView
+                android:id="@+id/DropdownResult"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minWidth="220dp"
-                android:hint="Result">
-                <AutoCompleteTextView
-                    android:id="@+id/AutoCompleteResult"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:minWidth="220dp"/>
         </TableRow>
     </TableLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="right">
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:orientation="horizontal">
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownOrderBy"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginRight="8dip"
-            android:hint="Order by">
-            <AutoCompleteTextView
-                android:id="@+id/AutoCompleteOrderBy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_marginRight="8dip"/>
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownOrderDirection"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Direction">
-            <AutoCompleteTextView
-                android:id="@+id/AutoCompleteOrderDirection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_weight="1"/>
     </LinearLayout>
-    <jwtc.android.chess.views.FixedDropdownView
-        android:id="@+id/ExposedDropdownView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

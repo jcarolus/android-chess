@@ -52,8 +52,8 @@ public class GameApi {
         } catch (Exception e) {}
     }
 
-    protected HashMap<String, String> pgnTags; //
-    protected ArrayList<PGNEntry> pgnMoves;
+    protected final HashMap<String, String> pgnTags; //
+    protected final ArrayList<PGNEntry> pgnMoves;
 
     public GameApi() {
         jni = JNI.getInstance();
@@ -391,6 +391,17 @@ public class GameApi {
         }
         Log.d(TAG, "requestMove " + sMove);
         return false;
+    }
+
+    public void resetForfeitTime() {
+        int size = pgnMoves.size();
+        if (size > 0) {
+            int finalState = pgnMoves.get(size -1).finalState;
+            if (finalState == BoardConstants.WHITE_FORFEIT_TIME || finalState == BoardConstants.BLACK_FORFEIT_TIME) {
+                pgnMoves.get(size -1).finalState = -1;
+                dispatchState();
+            }
+        }
     }
 
     public String moveToSpeechString(String sMove, int move) {
@@ -824,6 +835,9 @@ public class GameApi {
             case BoardConstants.WHITE_RESIGNED:
             case BoardConstants.WHITE_FORFEIT_TIME:
                 result = "0-1";
+                break;
+            case BoardConstants.PLAY:
+                result = "*";
                 break;
         }
         pgnTags.put("Result", result);

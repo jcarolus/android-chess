@@ -6,19 +6,17 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Spinner
-            android:id="@+id/SpinnerPieceSet"
+        android:layout_height="wrap_content"
+        android:padding="8dip">
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownPieceSet"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:entries="@array/piecesetarray"/>
-        <Spinner
-            android:id="@+id/SpinnerColorScheme"
+            android:layout_height="wrap_content"/>
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownColorScheme"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:entries="@array/colorschemes"/>
+            android:layout_height="wrap_content"/>
+
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSaturation"
             android:layout_width="match_parent"
@@ -27,22 +25,14 @@
             android:valueFrom="0.5"
             android:valueTo="1.0"
             android:stepSize="0.05"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp" />
-        <TextView
-            android:text="@string/pref_tileset"
-            style="@style/MyLabelTextStyle"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp" />
+
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownTileSet"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
-        <Spinner
-            android:id="@+id/SpinnerTileSet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:entries="@array/tileArray"/>
+            android:layout_height="wrap_content"/>
+
         <CheckBox
             android:id="@+id/CheckBoxCoordinates"
             android:layout_width="match_parent"

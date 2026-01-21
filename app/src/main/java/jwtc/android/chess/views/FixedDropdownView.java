@@ -1,7 +1,9 @@
 package jwtc.android.chess.views;
 
 import android.content.Context;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,12 +19,14 @@ import java.util.List;
 import jwtc.android.chess.R;
 
 public class FixedDropdownView extends LinearLayout {
-
+    private static final String TAG = "FixedDropdownView";
     private TextInputLayout textInputLayout;
     private MaterialAutoCompleteTextView autoCompleteTextView;
 
     private ArrayAdapter<String> adapter;
+    private int selectedPosition = -1;
     private final List<String> items = new ArrayList<>();
+    private AdapterView.OnItemClickListener externalItemClickListener;
 
     public FixedDropdownView(Context context) {
         super(context);
@@ -43,8 +47,8 @@ public class FixedDropdownView extends LinearLayout {
         setOrientation(VERTICAL);
         LayoutInflater.from(context).inflate(R.layout.fixed_dropdown, this, true);
 
-        textInputLayout = findViewById(R.id.til);
-        autoCompleteTextView = findViewById(R.id.actv);
+        textInputLayout = findViewById(R.id.TextInputLayout);
+        autoCompleteTextView = findViewById(R.id.AutoCompleteTextView);
 
         adapter = new ArrayAdapter<>(context, R.layout.dropdown_menu_item, items);
         autoCompleteTextView.setAdapter(adapter);
@@ -61,7 +65,13 @@ public class FixedDropdownView extends LinearLayout {
             autoCompleteTextView.showDropDown();
         });
 
+        autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
+            selectedPosition = position;
 
+            if (externalItemClickListener != null) {
+                externalItemClickListener.onItemClick(parent, view, position, id);
+            }
+        });
 //        if (attrs != null) {
 //
 //        }
@@ -87,6 +97,24 @@ public class FixedDropdownView extends LinearLayout {
 
     public void setSelectionText(CharSequence text) {
         autoCompleteTextView.setText(text, false);
+        // Try to resolve position from adapter
+        selectedPosition = -1;
+        if (text != null) {
+            for (int i = 0; i < adapter.getCount(); i++) {
+                String item = adapter.getItem(i);
+                if (text.equals(item)) {
+                    selectedPosition = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void setSelection(int position) {
+        if (position >= 0 && position < items.size()) {
+            selectedPosition = position;
+            autoCompleteTextView.setText(items.get(position), false);
+        }
     }
 
     public String getSelectionText() {
@@ -94,8 +122,16 @@ public class FixedDropdownView extends LinearLayout {
         return t == null ? "" : t.toString();
     }
 
+    public int getSelectedItemPosition() {
+        return selectedPosition;
+    }
+
     public void setOnItemClickListener(AdapterView.OnItemClickListener listener) {
-        autoCompleteTextView.setOnItemClickListener(listener);
+        externalItemClickListener = listener;
+    }
+
+    public void addOnTextChangedListener(TextWatcher watcher) {
+        autoCompleteTextView.addTextChangedListener(watcher);
     }
 
     public TextInputLayout getTextInputLayout() {
