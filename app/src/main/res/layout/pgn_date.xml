@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minWidth="220dp"
-    android:hint="PGN date"
-    app:errorEnabled="true">
+    android:hint="PGN date">
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/TextInputEditText"
         android:layout_height="wrap_content"

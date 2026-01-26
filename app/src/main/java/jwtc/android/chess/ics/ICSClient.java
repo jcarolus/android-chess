@@ -24,9 +24,7 @@ import android.content.SharedPreferences;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
@@ -35,7 +33,6 @@ import org.json.JSONException;
 
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.ResultDialogListener;
@@ -46,7 +43,11 @@ import jwtc.chess.PGNColumns;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
-public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener<Bundle>, AdapterView.OnItemClickListener, ClockListener {
+public class ICSClient extends ChessBoardActivity implements
+        ICSListener,
+        ResultDialogListener<Bundle>,
+        AdapterView.OnItemClickListener,
+        ClockListener {
     public static final String TAG = "ICSClient";
 
     public static final int REQUEST_SAVE_GAME = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3;
@@ -844,15 +845,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         sendString("stored");
     }
 
-    public void saveGameFromBundle(Bundle data) {
-        ContentValues values = new ContentValues();
-
-        values.put(PGNColumns.DATE, data.getLong(PGNColumns.DATE));
-        values.put(PGNColumns.WHITE, data.getString(PGNColumns.WHITE));
-        values.put(PGNColumns.BLACK, data.getString(PGNColumns.BLACK));
-        values.put(PGNColumns.PGN, data.getString(PGNColumns.PGN));
-        values.put(PGNColumns.RATING, data.getFloat(PGNColumns.RATING));
-        values.put(PGNColumns.EVENT, data.getString(PGNColumns.EVENT));
+    public void saveGameFromResult(SaveGameDialog.SaveGameResult result) {
+        ContentValues values = result.getContentValues();
 
         Uri uri = MyPGNProvider.CONTENT_URI;
         Uri uriInsert = getContentResolver().insert(uri, values);
@@ -873,9 +867,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     sendString(challenge);
                     doToast(getString(R.string.toast_challenge_posted));
                 }
-                break;
-            case REQUEST_SAVE_GAME:
-                saveGameFromBundle(data);
                 break;
             case REQUEST_CONFIRM:
                 sendString(data.getString("data"));
@@ -1081,9 +1072,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
-    public void OnGameHistory(String sEvent, String sWhite, String sBlack, Date date, String PGN) {
-        Log.d(TAG, "OnGameHistory " + PGN);
-        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, date, PGN, false);
+    public void OnGameHistory(String fullPGN) {
+        Log.d(TAG, "OnGameHistory " + fullPGN);
+        final SaveGameDialog saveDialog = new SaveGameDialog(this, fullPGN, 0, this::saveGameFromResult);
         saveDialog.show();
     }
 

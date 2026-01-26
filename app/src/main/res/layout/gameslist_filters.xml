@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -12,7 +15,7 @@
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFilterWhite"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,6 +74,7 @@
                 android:id="@+id/PGNDateAfter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Date after"
                 android:minWidth="220dp" />
 
         </TableRow>
@@ -84,6 +88,7 @@
                 android:id="@+id/PGNDateBefore"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Date before"
                 android:minWidth="220dp" />
         </TableRow>
         <TableRow>
@@ -96,6 +101,7 @@
                 android:id="@+id/DropdownResult"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Result"
                 android:minWidth="220dp"/>
         </TableRow>
     </TableLayout>
@@ -108,12 +114,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginRight="8dip"/>
+            android:layout_marginRight="8dip"
+            android:hint="Order by"/>
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropdownOrderDirection"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:hint="Order direction"/>
     </LinearLayout>
 
     <LinearLayout
@@ -135,3 +143,4 @@
             />
     </LinearLayout>
 </LinearLayout>
+</ScrollView>

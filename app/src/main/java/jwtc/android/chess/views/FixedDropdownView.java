@@ -1,6 +1,7 @@
 package jwtc.android.chess.views;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -54,9 +55,9 @@ public class FixedDropdownView extends LinearLayout {
         autoCompleteTextView.setAdapter(adapter);
 
         autoCompleteTextView.setOnClickListener(v -> autoCompleteTextView.showDropDown());
-        autoCompleteTextView.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) autoCompleteTextView.showDropDown();
-        });
+//        autoCompleteTextView.setOnFocusChangeListener((v, hasFocus) -> {
+//            if (hasFocus) autoCompleteTextView.showDropDown();
+//        });
 
         textInputLayout.setEndIconOnClickListener(v -> {
             // Clear any filtering by resetting text
@@ -72,9 +73,16 @@ public class FixedDropdownView extends LinearLayout {
                 externalItemClickListener.onItemClick(parent, view, position, id);
             }
         });
-//        if (attrs != null) {
-//
-//        }
+
+        if (attrs != null) {
+            TypedArray a = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.hint});
+            CharSequence hint = a.getText(0);
+            a.recycle();
+
+            if (hint != null) {
+                textInputLayout.setHint(hint);
+            }
+        }
     }
 
     public void setItems(List<String> newItems) {
@@ -89,10 +97,6 @@ public class FixedDropdownView extends LinearLayout {
             for (String s : newItems) items.add(s);
         }
         adapter.notifyDataSetChanged();
-    }
-
-    public void setHint(CharSequence hint) {
-        textInputLayout.setHint(hint);
     }
 
     public void setSelectionText(CharSequence text) {

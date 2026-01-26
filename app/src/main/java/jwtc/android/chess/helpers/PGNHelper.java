@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 public class PGNHelper {
 
 
+    public static final String regexPgnTag = "\\[(\\w+) \\\"([^\\]]*)\\\"\\]";
+
     public static String getPGNFromInputStream(InputStream is) throws Exception {
         String sPGN = "";
 
@@ -32,8 +34,7 @@ public class PGNHelper {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
                     Date utilDate = formatter.parse(s);
                     return utilDate;
-                } catch (Exception ex) {
-                }
+                } catch (Exception ignored) {}
             } else {
 
                 // in case it's a YYYY.mm.?? format, we make it fst of the month
@@ -57,12 +58,15 @@ public class PGNHelper {
                             SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
                             Date utilDate = formatter.parse(s);
                             return utilDate;
-                        } catch (Exception ex) {
-                        }
+                        } catch (Exception ignored) {}
                     }
                 }
             }
         }
         return null;
+    }
+
+    public static String cleanPgnString(String s) {
+        return s.replaceAll("[\\r\\n\\t]+", " ").replaceAll(" {2,}", " ").trim();
     }
 }

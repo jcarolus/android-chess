@@ -12,7 +12,6 @@
         <item name="colorOnSurface">@color/surfaceTextColor</item>
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
-        <item name="switchStyle">@style/MySwitchStyle</item>
     </style>
 
     <style name="ChessStart" parent="Theme.Material3.DayNight">
@@ -28,6 +27,8 @@
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
         <item name="actionBarStyle">@style/Widget.MyApp.ActionBar</item>
+        <item name="switchStyle">@style/MySwitchStyle</item>
+
     </style>
 
     <style name="Widget.MyApp.ActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
@@ -50,6 +51,7 @@
         <item name="colorSurface">@color/surfaceColor</item>
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
+        <item name="switchStyle">@style/MySwitchStyle</item>
     </style>
 
     <style name="MySwitchStyle" parent="Widget.MaterialComponents.CompoundButton.Switch">

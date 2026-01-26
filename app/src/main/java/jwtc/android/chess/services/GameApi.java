@@ -35,7 +35,6 @@ public class GameApi {
     private static Pattern patCastling;
     private static Pattern patGameResult;
     private static Pattern patTag;
-    private static final String regexPgnTag = "\\[(\\w+) \\\"([^\\]]*)\\\"\\]";
 
     public static final int MAX_PGN_SIZE = 500000;
 
@@ -46,13 +45,13 @@ public class GameApi {
             patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
             patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?");
             patGameResult = Pattern.compile("((\\*)|(1-0)|(0-1)|(1/2-1/2))");
-            patTag = Pattern.compile(regexPgnTag);
+            patTag = Pattern.compile(PGNHelper.regexPgnTag);
             patMoveDots = Pattern.compile("\\.\\.");
 
         } catch (Exception e) {}
     }
 
-    protected final HashMap<String, String> pgnTags; //
+    public final HashMap<String, String> pgnTags; //
     protected final ArrayList<PGNEntry> pgnMoves;
 
     public GameApi() {
@@ -691,7 +690,7 @@ public class GameApi {
 
 
     public static void loadPGNHead(String s, HashMap<String, String> tagsMap) {
-        s = cleanPgnString(s);
+        s = PGNHelper.cleanPgnString(s);
         Matcher matcher = patTag.matcher(s);
 
         tagsMap.clear();
@@ -728,16 +727,11 @@ public class GameApi {
         }
         return false;
     }
-
-    private static String cleanPgnString(String s) {
-        return s.replaceAll("[\\r\\n\\t]+", " ").replaceAll(" {2,}", " ").trim();
-    }
-
     private boolean loadPGNMoves(String s) {
         pgnMoves.clear();
 
-        s = s.replaceAll(regexPgnTag, "");
-        s = cleanPgnString(s);
+        s = s.replaceAll(PGNHelper.regexPgnTag, "");
+        s = PGNHelper.cleanPgnString(s);
 
         // Log.d(TAG, "loadPgnMoves " + s);
 
@@ -866,7 +860,7 @@ public class GameApi {
         return s;
     }
 
-    protected String exportMovesPGN() {
+    public String exportMovesPGN() {
         return exportMovesPGNFromPly(1);
     }
 

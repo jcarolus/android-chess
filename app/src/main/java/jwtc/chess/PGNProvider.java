@@ -103,25 +103,25 @@ public class PGNProvider extends ContentProvider {
                             null
                     );
 
-                    final int idIdx = c.getColumnIndexOrThrow(PGNColumns._ID);
-                    final int pgnIdx = c.getColumnIndexOrThrow(PGNColumns.PGN);
+                    final int idIndex = c.getColumnIndexOrThrow(PGNColumns._ID);
+                    final int pgnIndex = c.getColumnIndexOrThrow(PGNColumns.PGN);
 
                     HashMap<String, String> pgnTags = new HashMap<>();
-                    ContentValues cv = new ContentValues();
+                    ContentValues contentValues = new ContentValues();
 
                     while (c.moveToNext()) {
-                        long id = c.getLong(idIdx);
+                        long id = c.getLong(idIndex);
 
                         try {
-                            String sPGN = c.isNull(pgnIdx) ? null : c.getString(pgnIdx);
+                            String sPGN = c.isNull(pgnIndex) ? null : c.getString(pgnIndex);
 
                             GameApi.loadPGNHead(sPGN, pgnTags);
                             String result = pgnTags.get("Result");
 
-                            cv.clear();
-                            cv.put(PGNColumns.RESULT, result);
+                            contentValues.clear();
+                            contentValues.put(PGNColumns.RESULT, result);
 
-                            db.update(GAMES_TABLE_NAME, cv, "_id=?", new String[]{Long.toString(id)});
+                            db.update(GAMES_TABLE_NAME, contentValues, PGNColumns._ID + " = ?", new String[]{Long.toString(id)});
                         } catch (Exception ex) {
                             Log.d(TAG, "Failed to update row for result " + ex.getMessage());
                         }

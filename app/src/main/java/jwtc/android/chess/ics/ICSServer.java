@@ -345,7 +345,7 @@ public class ICSServer extends Service {
 
             String fullPGN = PGN.toString();
 
-            for (ICSListener listener: listeners) {listener.OnGameHistory(sEvent, sWhite, sBlack, dd, fullPGN);}
+            for (ICSListener listener: listeners) {listener.OnGameHistory(fullPGN);}
             //
             return;
         }

@@ -2,9 +2,12 @@ package jwtc.android.chess.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,7 +34,10 @@ import java.nio.charset.StandardCharsets;
 
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.lichess.LichessActivity;
+import jwtc.android.chess.play.SaveGameDialog;
+import jwtc.chess.PGNColumns;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -111,6 +117,38 @@ public class BaseActivity extends AppCompatActivity {
         Toast t = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         t.setGravity(Gravity.BOTTOM, 0, 0);
         t.show();
+    }
+
+    protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
+        saveGame(result.getContentValues(), result.createCopy, result.lGameID);
+    }
+
+    protected void saveGame(ContentValues values, boolean bCopy, long lGameID) {
+
+        // @TODO this is probably only needed for the PlayActivity
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+        editor.putString("FEN", null);
+        editor.commit();
+
+        if (lGameID > 0 && (bCopy == false)) {
+            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
+            getContentResolver().update(uri, values, null, null);
+        } else {
+            Uri uri = MyPGNProvider.CONTENT_URI;
+            Uri uriInsert = getContentResolver().insert(uri, values);
+            if (uriInsert != null) {
+                try {
+                    Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+                    if (c != null && c.getCount() == 1) {
+                        c.moveToFirst();
+                        lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
+                        c.close();
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "Could not insert game " + ex.getMessage());
+                }
+            }
+        }
     }
 
     public void shareString(String s) {

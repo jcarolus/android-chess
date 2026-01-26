@@ -1,36 +1,62 @@
 package jwtc.android.chess.play;
 
+import static jwtc.android.chess.helpers.PGNHelper.cleanPgnString;
+import static jwtc.android.chess.helpers.PGNHelper.regexPgnTag;
+
+import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
-import android.os.Bundle;
 import android.widget.Button;
 import android.widget.RatingBar;
 
-import java.util.Date;
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import jwtc.android.chess.R;
-import jwtc.android.chess.helpers.ResultDialog;
-import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.helpers.PGNHelper;
+import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.PGNColumns;
 
-public class SaveGameDialog extends ResultDialog<Bundle> {
+public class SaveGameDialog extends Dialog {
 
-    private final TextInputEditText editTextWhite, editTextBlack, editTextEvent;
-    private final RatingBar ratingBarRating;
-    private final String _sPGN;
-    private final PGNDateView dateView;
+    private TextInputEditText editTextWhite, editTextBlack, editTextEvent;
+    private RatingBar ratingBarRating;
+    private PGNDateView dateView;
+    private SaveGameResult result;
+    private OnResultListener onResultListener;
 
-    public SaveGameDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, String sEvent, String sWhite, String sBlack, Date date, String sPGN, boolean bCopy) {
-        super(context, listener, requestCode);
+    public SaveGameDialog(@NonNull Context context, String fullPGN, long lGameID, OnResultListener onResult) {
+        super(context, R.style.ChessDialogTheme);
 
+        result = new SaveGameResult();
+        result.pgnTags = new HashMap<String, String>();
+        GameApi.loadPGNHead(fullPGN, result.pgnTags);
+        result.pgnMoves = cleanPgnString(fullPGN.replaceAll(regexPgnTag, ""));
+
+        init(lGameID, onResult);
+    }
+
+    public SaveGameDialog(@NonNull Context context, String pgnMoves, HashMap<String, String> pgnTags, long lGameID, OnResultListener onResult) {
+        super(context, R.style.ChessDialogTheme);
+
+        result = new SaveGameResult();
+        result.pgnTags = pgnTags;
+        result.pgnMoves = pgnMoves;
+
+        init(lGameID, onResult);
+    }
+
+    protected void init(long lGameID, OnResultListener onResult) {
         setContentView(R.layout.savegame);
-
         setTitle(R.string.title_save_game);
 
+        result.lGameID = lGameID;
+        this.onResultListener = onResult;
         ratingBarRating = findViewById(R.id.RatingBarSave);
 
         editTextEvent = findViewById(R.id.EditTextSaveEvent);
@@ -55,27 +81,51 @@ public class SaveGameDialog extends ResultDialog<Bundle> {
         _butCancel.setOnClickListener(arg0 -> dismiss());
 
         ratingBarRating.setRating(3.0F);
-        editTextEvent.setText(sEvent);
-        editTextWhite.setText(sWhite);
-        editTextBlack.setText(sBlack);
-        dateView.setDate(date);
+        editTextEvent.setText(result.pgnTags.get("Event"));
+        editTextWhite.setText(result.pgnTags.get("White"));
+        editTextBlack.setText(result.pgnTags.get("Black"));
 
-        _sPGN = sPGN;
+        dateView.setDate(PGNHelper.getDate(result.pgnTags.get("Event")));
 
-        _butSaveCopy.setEnabled(bCopy);
+        _butSaveCopy.setEnabled(lGameID != 0);
     }
 
+
     protected void save(boolean bCopy) {
-        Bundle data = new Bundle();
+        result.pgnTags.put("Event", Utils.getTrimmedOrDefault(editTextEvent.getText(), "Event?"));
+        result.pgnTags.put("White", Utils.getTrimmedOrDefault(editTextWhite.getText(), "White?"));
+        result.pgnTags.put("Black", Utils.getTrimmedOrDefault(editTextBlack.getText(), "Black?"));
+        result.pgnTags.put("Date", Utils.formatDate(dateView.getDate()));
+        result.rating = ratingBarRating.getRating();
+        result.createCopy = bCopy;
 
-        data.putLong(PGNColumns.DATE, dateView.getDate().getTime());
-        data.putCharSequence(PGNColumns.WHITE, editTextWhite.getText().toString());
-        data.putCharSequence(PGNColumns.BLACK, editTextBlack.getText().toString());
-        data.putCharSequence(PGNColumns.PGN, _sPGN);
-        data.putFloat(PGNColumns.RATING, ratingBarRating.getRating());
-        data.putCharSequence(PGNColumns.EVENT, editTextEvent.getText().toString());
-        data.putBoolean("copy", bCopy);
+        this.onResultListener.onResult(result);
+    }
 
-        setResult(data);
+    public class SaveGameResult {
+        public HashMap<String, String> pgnTags;
+        public String pgnMoves;
+        public float rating = 0f;
+        public long lGameID;
+        public boolean createCopy = false;
+
+        public ContentValues getContentValues() {
+
+            ContentValues values = new ContentValues();
+
+            values.put(PGNColumns.EVENT, result.pgnTags.get("Event"));
+            values.put(PGNColumns.WHITE, result.pgnTags.get("White"));
+            values.put(PGNColumns.BLACK, result.pgnTags.get("Black"));
+            values.put(PGNColumns.DATE, PGNHelper.getDate(result.pgnTags.get("Date")).getTime());
+            values.put(PGNColumns.RESULT, result.pgnTags.get("Result"));
+            values.put(PGNColumns.RATING, result.rating);
+            values.put(PGNColumns.PGN, result.pgnMoves);
+
+            return values;
+        }
+    }
+
+    public interface OnResultListener {
+        public void onResult(SaveGameResult result);
     }
 }

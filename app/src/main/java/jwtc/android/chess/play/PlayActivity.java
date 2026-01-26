@@ -60,7 +60,10 @@ import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
 
-public class PlayActivity extends ChessBoardActivity implements EngineListener, ResultDialogListener<Bundle>, ClockListener, MoveRecyclerAdapter.OnItemClickListener {
+public class PlayActivity extends ChessBoardActivity implements
+        EngineListener,
+        ResultDialogListener<Bundle>,
+        ClockListener, MoveRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;
@@ -68,13 +71,12 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
     public static final int REQUEST_FROM_QR_CODE = 4;
     public static final int REQUEST_MENU = 5;
     public static final int REQUEST_CLOCK = 6;
-    public static final int REQUEST_SAVE_GAME = 7;
-    public static final int REQUEST_ECO = 8;
-    public static final int REQUEST_RANDOM_FISCHER = 9;
-    public static final int REQUEST_SAVE_GAME_TO_FILE = 10;
-    public static final int REQUEST_SAVE_POSITION_TO_FILE = 11;
-    public static final int REQUEST_OPEN_POSITION_FILE = 12;
-    public static final int REQUEST_OPEN_GAME_FILE = 13;
+    public static final int REQUEST_ECO = 7;
+    public static final int REQUEST_RANDOM_FISCHER = 8;
+    public static final int REQUEST_SAVE_GAME_TO_FILE = 9;
+    public static final int REQUEST_SAVE_POSITION_TO_FILE = 10;
+    public static final int REQUEST_OPEN_POSITION_FILE = 11;
+    public static final int REQUEST_OPEN_GAME_FILE = 12;
 
     private final LocalClockApi localClock = new LocalClockApi();
     private EngineApi myEngine;
@@ -354,14 +356,14 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         if (lGameID > 0) {
             ContentValues values = new ContentValues();
 
+            // @TODO
             values.put(PGNColumns.DATE, gameApi.getDate().getTime());
             values.put(PGNColumns.WHITE, gameApi.getWhite());
             values.put(PGNColumns.BLACK, gameApi.getBlack());
             values.put(PGNColumns.PGN, gameApi.exportFullPGN());
-//            values.put(PGNColumns.RATING, _fGameRating);
             values.put(PGNColumns.EVENT, gameApi.getPGNHeadProperty("Event"));
 
-            saveGame(values, false);
+            saveGame(values, false, lGameID);
         }
 
         editor.putLong("game_id", lGameID);
@@ -742,9 +744,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
                 updateGUI();
                 break;
 
-            case REQUEST_SAVE_GAME:
-                saveGameFromDialog(data);
-                break;
             case REQUEST_ECO:
                 item = data.getString("item");
                 gameApi.requestMove(item);
@@ -863,29 +862,8 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
         if (dd == null) {
             dd = Calendar.getInstance().getTime();
         }
-        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, dd, gameApi.exportFullPGN(), lGameID > 0);
+        SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi.exportMovesPGN(), gameApi.pgnTags, lGameID, this::saveGameFromDialog);
         saveDialog.show();
-    }
-
-
-    protected void saveGameFromDialog(Bundle data) {
-
-        ContentValues values = new ContentValues();
-        boolean bCopy = data.getBoolean("copy");
-
-        values.put(PGNColumns.DATE, data.getLong(PGNColumns.DATE));
-        values.put(PGNColumns.WHITE, data.getString(PGNColumns.WHITE));
-        values.put(PGNColumns.BLACK, data.getString(PGNColumns.BLACK));
-        values.put(PGNColumns.PGN, data.getString(PGNColumns.PGN));
-        values.put(PGNColumns.RATING, data.getFloat(PGNColumns.RATING));
-        values.put(PGNColumns.EVENT, data.getString(PGNColumns.EVENT));
-
-        HashMap<String, String> pgnTags = new HashMap<>();
-        GameApi.loadPGNHead(data.getString(PGNColumns.PGN), pgnTags);
-
-        values.put(PGNColumns.RESULT, pgnTags.get("Result"));
-
-        saveGame(values, bCopy);
     }
 
     protected void loadGame() {
@@ -919,38 +897,6 @@ public class PlayActivity extends ChessBoardActivity implements EngineListener, 
             }
         } else {
             lGameID = 0;
-        }
-    }
-
-    protected void saveGame(ContentValues values, boolean bCopy) {
-
-        SharedPreferences.Editor editor = this.getPrefs().edit();
-        editor.putString("FEN", null);
-        editor.commit();
-
-        gameApi.setPGNTag("Event", (String) values.get(PGNColumns.EVENT));
-        gameApi.setPGNTag("White", (String) values.get(PGNColumns.WHITE));
-        gameApi.setPGNTag("Black", (String) values.get(PGNColumns.BLACK));
-        gameApi.setDateLong((Long) values.get(PGNColumns.DATE));
-
-        if (lGameID > 0 && (bCopy == false)) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
-            getContentResolver().update(uri, values, null, null);
-        } else {
-            Uri uri = MyPGNProvider.CONTENT_URI;
-            Uri uriInsert = getContentResolver().insert(uri, values);
-            if (uriInsert != null) {
-                try {
-                    Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
-                    if (c != null && c.getCount() == 1) {
-                        c.moveToFirst();
-                        lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
-                        c.close();
-                    }
-                } catch (Exception ex) {
-                    Log.d(TAG, "Could not insert game " + ex.getMessage());
-                }
-            }
         }
     }
 

@@ -72,4 +72,12 @@ public class Utils {
         Log.d(TAG, "invalid index " + index + " for " + column);
         return null;
     }
+
+    public static float getColumnFloat(Cursor cursor, String column) {
+        int index = cursor.getColumnIndex(column);
+        if (index >= 0 && index < cursor.getColumnCount()) {
+            return cursor.getFloat(index);
+        }
+        return 0;
+    }
 }

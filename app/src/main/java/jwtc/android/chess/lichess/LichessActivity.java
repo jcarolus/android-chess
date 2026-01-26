@@ -103,12 +103,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         lichessApi = (LichessApi)gameApi;
 
         Button buttonLogin = findViewById(R.id.ButtonLogin);
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lichessApi.login(LichessActivity.this);
-            }
-        });
+        buttonLogin.setOnClickListener(v -> lichessApi.login(LichessActivity.this));
 
         buttonChallenge = findViewById(R.id.ButtonChallenge);
         buttonChallenge.setOnClickListener(v -> openChallengeDialog(ChallengeDialog.REQUEST_CHALLENGE));

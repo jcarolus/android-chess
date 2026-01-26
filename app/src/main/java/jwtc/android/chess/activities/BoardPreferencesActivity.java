@@ -46,21 +46,18 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
 
         dropDownPieces.setItems(getResources().getStringArray(R.array.piecesetarray));
-        dropDownPieces.setHint("Piece set");
         dropDownPieces.setOnItemClickListener((parent, view, position, id) -> {
             PieceSets.selectedSet = position;
             rebuildBoard();
         });
 
         dropDownColorScheme.setItems(getResources().getStringArray(R.array.colorschemes));
-        dropDownColorScheme.setHint("Color scheme");
         dropDownColorScheme.setOnItemClickListener((parent, view, position, id) -> {
             ColorSchemes.selectedColorScheme = position;
             chessBoardView.invalidateSquares();
         });
 
         dropDownTileSet.setItems(getResources().getStringArray(R.array.tileArray));
-        dropDownTileSet.setHint(getString(R.string.pref_tileset));
         dropDownTileSet.setOnItemClickListener((parent, view, position, id) -> {
             ColorSchemes.selectedPattern = position;
             chessBoardView.invalidateSquares();

@@ -2,6 +2,7 @@ package jwtc.android.chess.views;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -66,14 +67,14 @@ public class PGNDateView extends LinearLayout {
                 Log.d(TAG, textInputLayout == null ? "null" : "not null");
 
                 if (input.isEmpty()) {
-                    textInputLayout.setError(null);
+                    textInputEditText.setError(null);
                     return;
                 }
 
                 if (PGNHelper.getDate(input) == null) {
-                    textInputLayout.setError("Invalid date");
+                    textInputEditText.setError("Invalid date");
                 } else {
-                    textInputLayout.setError(null);
+                    textInputEditText.setError(null);
                 }
             }
         });
@@ -85,26 +86,28 @@ public class PGNDateView extends LinearLayout {
             updateText();
         });
 
-        textInputEditText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) datePickerDialog.show();;
-        });
-
         textInputEditText.setOnClickListener(v -> {
             datePickerDialog.show();
         });
 
-//        if (attrs != null) {
-//
-//        }
+        if (attrs != null) {
+            TypedArray a = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.hint});
+            CharSequence hint = a.getText(0);
+            a.recycle();
+
+            if (hint != null) {
+                textInputLayout.setHint(hint);
+            }
+        }
     }
 
     public void setDate(Date date) {
-        calendar.setTime(date);
+        if (date != null) {
+            calendar.setTime(date);
+        } else {
+            calendar.setTime(Calendar.getInstance().getTime());
+        }
         updateText();
-    }
-
-    public void setHint(CharSequence hint) {
-        textInputLayout.setHint(hint);
     }
 
     public Date getDate() {
