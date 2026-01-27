@@ -12,16 +12,16 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center">
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPracticeRetry"
-                android:src="@drawable/ic_arrow_clockwise"
+                app:icon="@drawable/ic_arrow_clockwise"
                 android:contentDescription="@string/button_reset_position"
                 android:layout_alignParentLeft="true"
                 style="@style/ChessImageButton" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPracticeNext"
-                android:src="@drawable/ic_chevron_right"
+                app:icon="@drawable/ic_chevron_right"
                 android:contentDescription="@string/button_next_position"
                 android:layout_alignParentRight="true"
                 style="@style/ChessImageButton" />

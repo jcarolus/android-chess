@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
         <GridView
             android:id="@+id/LayoutContent"
@@ -15,13 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TableRow style="@style/MyRowStyle" android:gravity="right">
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonClip"
                 style="@style/ChessImageButton"
-                android:src="@drawable/ic_clipboard"
+                app:icon="@drawable/ic_clipboard"
                 />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:text="@string/button_close"
                 android:id="@+id/ButtonClose"

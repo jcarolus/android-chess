@@ -8,7 +8,6 @@ import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -65,24 +64,11 @@ public class AdvancedActivity extends BaseActivity {
                     startActivityForResult(i, ImportService.IMPORT_OPENINGS);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
-                    builder.setTitle(getString(R.string.pgntool_confirm_delete));
 
-                    builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            AdvancedActivity.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
-                            doToast(getString(R.string.pgntool_deleted));
-                        }
-                    });
-                    builder.setNegativeButton(getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    openConfirmDialog(getString(R.string.pgntool_confirm_delete), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
+                        AdvancedActivity.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
+                        doToast(getString(R.string.pgntool_deleted));
+                    }, null);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_help))) {
                     showHelp(R.string.advanced_help);
@@ -122,32 +108,17 @@ public class AdvancedActivity extends BaseActivity {
                     }
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedActivity.this);
-                    builder.setTitle(getString(R.string.pgntool_confirm_practice_reset));
+                    openConfirmDialog(getString(R.string.pgntool_confirm_practice_reset), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
+                        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putInt("practicePos", 0);
+                        editor.putInt("practiceNumPlayed", 0);
+                        editor.putInt("practiceSolved", 0);
+                        editor.commit();
 
-                    builder.setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                        doToast(getString(R.string.practice_set_reset));
+                    }, null );
 
-                            SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putInt("practicePos", 0);
-                            editor.putInt("practiceNumPlayed", 0);
-                            editor.putInt("practiceSolved", 0);
-                            editor.commit();
-
-                            doToast(getString(R.string.practice_set_reset));
-
-                        }
-                    });
-                    builder.setNegativeButton(getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                    AlertDialog alert = builder.create();
-                    alert.show();
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_practice))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);

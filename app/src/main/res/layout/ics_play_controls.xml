@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,19 +14,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dip">
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonICSExamineBackward"
-                android:src="@drawable/ic_chevron_left"
+                app:icon="@drawable/ic_chevron_left"
                 style="@style/ChessImageButton" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonICSExamineForward"
-                android:src="@drawable/ic_chevron_right"
+                app:icon="@drawable/ic_chevron_right"
                 style="@style/ChessImageButton" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonICSExamineRevert"
-                android:src="@drawable/ic_backspace"
+                app:icon="@drawable/ic_backspace"
                 style="@style/ChessImageButton"
                 android:layout_marginRight="30dp" />
         </LinearLayout>
@@ -37,21 +37,24 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dip">
 
-            <Button android:id="@+id/ButtonResign"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonResign"
                 android:text="@string/ics_menu_resign"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
                 style="@style/ChessButton"
                 />
-            <Button android:id="@+id/ButtonDraw"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonDraw"
                 android:text="@string/ics_menu_draw"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
                 style="@style/ChessButton"
                 />
-            <Button android:id="@+id/ButtonFlag"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonFlag"
                 android:text="@string/ics_menu_flag"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -63,19 +66,19 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:text="@string/button_close"
                 android:id="@+id/ButtonClose"
                 style="@style/ChessButton"
                 />
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonTakeBack"
-                android:src="@drawable/ic_backspace"
+                app:icon="@drawable/ic_backspace"
                 style="@style/ChessImageButton" />
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonRefresh"
-                android:src="@drawable/ic_arrow_clockwise"
+                app:icon="@drawable/ic_arrow_clockwise"
                 style="@style/ChessImageButton" />
         </LinearLayout>
 

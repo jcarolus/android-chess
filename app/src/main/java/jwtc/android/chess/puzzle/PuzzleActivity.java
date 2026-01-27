@@ -9,11 +9,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.material.button.MaterialButton;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -32,11 +31,10 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     private Cursor cursor = null;
     private TextView tvPuzzleText, textViewSolution, textViewWhitePieces, textViewBlackPieces;
     private ImageView imageTurn;
-    private ImageButton butPrev, butNext, butRetry;
+    private MaterialButton butPrev, butNext, butRetry, butShow;
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles, myTurn, numMoved = 0;
     private boolean showMove = false;
-    private Button butShow;
 
 
     @Override
@@ -82,47 +80,36 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
 
         imgStatus = findViewById(R.id.ImageStatus);
 
-        butPrev = (ImageButton) findViewById(R.id.ButtonPuzzlePrevious);
-        butPrev.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (currentPosition > 0) {
-                    currentPosition--;
-                }
-                startPuzzle();
+        butPrev = findViewById(R.id.ButtonPuzzlePrevious);
+        butPrev.setOnClickListener(arg0 -> {
+            if (currentPosition > 0) {
+                currentPosition--;
             }
+            startPuzzle();
         });
 
-        butNext = (ImageButton) findViewById(R.id.ButtonPuzzleNext);
-        butNext.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (currentPosition + 1 < totalPuzzles) {
-                    currentPosition++;
-                    startPuzzle();
-                }
+        butNext = findViewById(R.id.ButtonPuzzleNext);
+        butNext.setOnClickListener(arg0 -> {
+            if (currentPosition + 1 < totalPuzzles) {
+                currentPosition++;
+                startPuzzle();
             }
         });
 
         butRetry = findViewById(R.id.ButtonPuzzleRetry);
-        butRetry.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                startPuzzle();
-            }
-        });
+        butRetry.setOnClickListener(arg0 -> startPuzzle());
 
         butShow = findViewById(R.id.ButtonPuzzleShow);
-        butShow.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                showMove = true;
-                gameApi.jumpToBoardNum(numMoved);
-                //rebuildBoard();
-                if (!gameApi.isEnded()) {
-                    Log.d(TAG, "show " + numMoved);
-                    myEngine.setPly(4 - numMoved);
-                    myEngine.play();
-                }
+        butShow.setOnClickListener(arg0 -> {
+            showMove = true;
+            gameApi.jumpToBoardNum(numMoved);
+            //rebuildBoard();
+            if (!gameApi.isEnded()) {
+                Log.d(TAG, "show " + numMoved);
+                myEngine.setPly(4 - numMoved);
+                myEngine.play();
             }
         });
-
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
     }

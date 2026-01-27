@@ -2,17 +2,15 @@ package jwtc.android.chess.play;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
-
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+
+import com.google.android.material.button.MaterialButton;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.services.GameApi;
@@ -57,32 +55,21 @@ public class PGNDialog extends Dialog {
         adapterMoves.notifyDataSetChanged();
         contentLayout.smoothScrollToPosition(adapterMoves.getCount());
 
-        contentLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (jni.getNumBoard() > position) {
-                    position++;
-                }
-                gameApi.jumpToBoardNum(position);
-                dismiss();
+        contentLayout.setOnItemClickListener((parent, view, position, id) -> {
+            if (jni.getNumBoard() > position) {
+                position++;
             }
+            gameApi.jumpToBoardNum(position);
+            dismiss();
         });
 
-        ImageButton buttonClip = findViewById(R.id.ButtonClip);
-        buttonClip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Clipboard.stringToClipboard(context, gameApi.exportFullPGN(), context.getString(R.string.copied_clipboard_success));
-                dismiss();
-            }
+        MaterialButton buttonClip = findViewById(R.id.ButtonClip);
+        buttonClip.setOnClickListener(view -> {
+            Clipboard.stringToClipboard(context, gameApi.exportFullPGN(), context.getString(R.string.copied_clipboard_success));
+            dismiss();
         });
 
-        Button buttonClose = findViewById(R.id.ButtonClose);
-        buttonClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
+        MaterialButton buttonClose = findViewById(R.id.ButtonClose);
+        buttonClose.setOnClickListener(view -> dismiss());
     }
 }

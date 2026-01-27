@@ -14,21 +14,18 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import androidx.appcompat.app.AlertDialog;
-
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
@@ -40,11 +37,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private Messenger messengerFromService;
     private SwitchMaterial switchHost;
     private MaterialButtonToggleGroup colorToggleGroup;
-    private Button buttonConnect;
+    private MaterialButton buttonConnect;
     private LinearLayout layoutConnect;
     private EditText editName;
     private boolean isHost = true, isPlayAsWhite = true;
-    private Button buttonResign, buttonDraw, buttonNew;
+    private MaterialButton buttonResign, buttonDraw, buttonNew;
     private LinearLayout layoutGameButtons, layoutNewGameButtons;
     private TextView textPlayer, textOpponent;
     private TextView textStatus;
@@ -195,15 +192,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 showGameResult("Victory!", ((HotspotBoardApi) gameApi).getOpponentName() + " has resigned.");
                                 break;
                             case GameMessage.TYPE_DRAW_OFFER:
-                                new AlertDialog.Builder(HotspotBoardActivity.this)
-                                        .setTitle("Draw Offer")
-                                        .setMessage(((HotspotBoardApi) gameApi).getOpponentName() + " offers a draw. Do you accept?")
-                                        .setPositiveButton("Accept", (dialog, which) -> {
-                                            sendGameMessage(GameMessage.TYPE_DRAW_ACCEPT, 0);
-                                            showGameResult("Game Over", "The game is a draw.");
-                                        })
-                                        .setNegativeButton("Decline", (dialog, which) -> sendGameMessage(GameMessage.TYPE_DRAW_DECLINE, 0))
-                                        .show();
+                                openConfirmDialog("Draw Offer", "Accept", "Decline", () -> {
+                                    sendGameMessage(GameMessage.TYPE_DRAW_ACCEPT, 0);
+                                    showGameResult("Game Over", "The game is a draw.");
+                                }, () -> {
+                                    sendGameMessage(GameMessage.TYPE_DRAW_DECLINE, 0);
+                                });
                                 break;
                             case GameMessage.TYPE_DRAW_ACCEPT:
                                 overrideGameState = BoardConstants.DRAW_AGREEMENT;
@@ -286,61 +280,39 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonNew = findViewById(R.id.ButtonNew);
         textStatus = findViewById(R.id.TextStatus);
 
-        buttonNew.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                newGame();
-            }
-        });
+        buttonNew.setOnClickListener(v -> newGame());
 
         switchHost = findViewById(R.id.SwitchHost);
         switchHost.setChecked(true);
-        switchHost.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isHost = switchHost.isChecked();
-            }
-        });
+        switchHost.setOnCheckedChangeListener((buttonView, isChecked) -> isHost = switchHost.isChecked());
 
         buttonConnect = findViewById(R.id.ButtonConnect);
-        buttonConnect.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                String name = editName.getText().toString();
-                Log.d(TAG, "buttonConnect " + name);
-                if (!name.isEmpty()) {
-                    ((HotspotBoardApi)gameApi).setMyName(name);
-                    textPlayer.setText(name);
-                    startSession();
+        buttonConnect.setOnClickListener(arg0 -> {
+            String name = editName.getText().toString();
+            Log.d(TAG, "buttonConnect " + name);
+            if (!name.isEmpty()) {
+                ((HotspotBoardApi)gameApi).setMyName(name);
+                textPlayer.setText(name);
+                startSession();
+            }
+        });
+
+        buttonResign.setOnClickListener(v -> {
+            openConfirmDialog("Are you sure you want to resign?", "Yes", "No", () -> {
+                sendGameMessage(GameMessage.TYPE_RESIGN, 0);
+                if (((HotspotBoardApi) gameApi).isPlayingAsWhite()) {
+                    overrideGameState = BoardConstants.WHITE_RESIGNED;
+                } else {
+                    overrideGameState = BoardConstants.BLACK_RESIGNED;
                 }
-            }
+                showGameResult("Defeat", "You resigned.");
+            }, null);
         });
 
-        buttonResign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(HotspotBoardActivity.this)
-                        .setTitle("Resign")
-                        .setMessage("Are you sure you want to resign?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            sendGameMessage(GameMessage.TYPE_RESIGN, 0);
-                            if (((HotspotBoardApi) gameApi).isPlayingAsWhite()) {
-                                overrideGameState = BoardConstants.WHITE_RESIGNED;
-                            } else {
-                                overrideGameState = BoardConstants.BLACK_RESIGNED;
-                            }
-                            showGameResult("Defeat", "You resigned.");
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-            }
-        });
-
-        buttonDraw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendGameMessage(GameMessage.TYPE_DRAW_OFFER, 0);
-                updateStatus("Draw offer sent.");
-                buttonDraw.setEnabled(false);
-            }
+        buttonDraw.setOnClickListener(v -> {
+            sendGameMessage(GameMessage.TYPE_DRAW_OFFER, 0);
+            updateStatus("Draw offer sent.");
+            buttonDraw.setEnabled(false);
         });
 
         editName = findViewById(R.id.EditName);
@@ -427,7 +399,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             return;
         }
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {

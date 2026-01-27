@@ -1,12 +1,7 @@
 package jwtc.android.chess.activities;
 
-import android.app.AlertDialog;
 import android.content.ClipData;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.DragEvent;
@@ -15,8 +10,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import jwtc.android.chess.constants.ColorSchemes;
@@ -36,7 +32,6 @@ import jwtc.chess.Move;
 import jwtc.android.chess.constants.Piece;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
-import jwtc.chess.board.BoardMembers;
 import jwtc.chess.board.ChessBoard;
 
 abstract public class ChessBoardActivity extends BaseActivity implements GameListener, OnInitListener {
@@ -67,20 +62,17 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
             final String[] items = getResources().getStringArray(R.array.promotionpieces);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setTitle(R.string.title_pick_promo);
             builder.setCancelable(false);
-            builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    dialog.dismiss();
-                    jni.setPromo(4 - item);
-                    if (!gameApi.requestMove(from, to)) {
-                        rebuildBoard();
-                    }
+            builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
+                dialog.dismiss();
+                jni.setPromo(4 - item);
+                if (!gameApi.requestMove(from, to)) {
+                    rebuildBoard();
                 }
             });
-            AlertDialog alert = builder.create();
-            alert.show();
+            builder.create().show();
 
 //            if (_vibrator != null) {
 //                _vibrator.vibrate(40L);
@@ -791,24 +783,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void handleAmbiguousCastle(int from, int to) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.title_castle);
-        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                gameApi.requestMoveCastle(from, to);
+        openConfirmDialog(getString(R.string.title_castle), getString(R.string.alert_yes), getString(R.string.alert_no), () -> {
+            gameApi.requestMoveCastle(from, to);
+        }, () -> {
+            if (from != to) {
+                gameApi.requestMove(from, to);
             }
         });
-        builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                if (from != to) {
-                    gameApi.requestMove(from, to);
-                }
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
     protected void selectPosition(int pos) {

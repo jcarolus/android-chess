@@ -40,7 +40,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dip">
-            <Button android:id="@+id/ButtonResign"
+            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonResign"
                 app:icon="@drawable/flag"
                 android:text="@string/lichess_play_button_resign"
                 android:layout_width="0dp"
@@ -48,7 +48,7 @@
                 android:layout_margin="1dip"
                 style="@style/ChessButton"
                 />
-            <Button android:id="@+id/ButtonDraw"
+            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonDraw"
                 app:icon="@drawable/draw"
                 android:text="@string/lichess_play_button_draw"
                 android:layout_width="0dp"
@@ -63,7 +63,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dip">
-            <Button android:id="@+id/ButtonCancelMove"
+            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonCancelMove"
                 app:icon="@drawable/x"
                 android:text="@string/lichess_game_cancel_move"
                 android:layout_width="0dp"
@@ -71,7 +71,7 @@
                 android:layout_margin="1dip"
                 style="@style/ChessButton"
                 />
-            <Button android:id="@+id/ButtonConfirmMove"
+            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonConfirmMove"
                 app:icon="@drawable/ic_check"
                 android:text=""
                 android:layout_width="0dp"

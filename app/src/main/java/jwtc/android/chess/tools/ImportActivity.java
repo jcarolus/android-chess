@@ -55,10 +55,10 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
         _processing = false;
 
-        _tvWork = (TextView) findViewById(R.id.TextViewDoImport);
-        _tvWorkCnt = (TextView) findViewById(R.id.TextViewDoImportCnt);
-        _tvWorkCntFail = (TextView) findViewById(R.id.TextViewDoImportCntFail);
-        _progress = (ProgressBar) findViewById(R.id.ProgressDoImport);
+        _tvWork = findViewById(R.id.TextViewDoImport);
+        _tvWorkCnt = findViewById(R.id.TextViewDoImportCnt);
+        _tvWorkCntFail = findViewById(R.id.TextViewDoImportCntFail);
+        _progress = findViewById(R.id.ProgressDoImport);
 
         _progress.setVisibility(View.INVISIBLE);
     }
@@ -84,7 +84,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
         if (importService == null) {
             if (!bindService(new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
-                doToast("Could not import practice set");
+                doToast("Could not start import");
             }
         }
     }
@@ -122,6 +122,8 @@ public class ImportActivity extends BaseActivity implements ImportListener {
             } else {
                 _mode = ImportService.IMPORT_GAMES;
             }
+            // @TODO based on the _mode, set a description
+            // _tvWork
         }
     }
 

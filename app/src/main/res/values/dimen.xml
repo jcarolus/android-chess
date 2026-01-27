@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
     <dimen name="imageButtonSize">48dp</dimen>
 
@@ -12,5 +11,4 @@
     <dimen name="headerPaddingY">4dp</dimen>
 
     <dimen name="titleTextSize">30sp</dimen>
-
 </resources>

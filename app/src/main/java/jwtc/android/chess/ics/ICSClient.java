@@ -12,15 +12,28 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewAnimator;
+import android.widget.ViewSwitcher;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -50,7 +63,7 @@ public class ICSClient extends ChessBoardActivity implements
         ClockListener {
     public static final String TAG = "ICSClient";
 
-    public static final int REQUEST_SAVE_GAME = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3;
+    public static final int REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3;
 
     private ICSServer icsServer = null;
     private LocalClockApi localClockApi = new LocalClockApi();
@@ -64,8 +77,7 @@ public class ICSClient extends ChessBoardActivity implements
     private TextView _tvConsole;
 
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private ImageButton buttonRefresh, buttonTakeBack;
-    private Button buttonMenu;
+    private MaterialButton buttonRefresh, buttonTakeBack, buttonMenu;
     private EditText _editHandle, _editPwd, _editConsole;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
@@ -175,114 +187,62 @@ public class ICSClient extends ChessBoardActivity implements
         _editHandle = findViewById(R.id.EditICSHandle);
         _editPwd = findViewById(R.id.EditICSPwd);
 
-        Button buttonLogin = findViewById(R.id.ButICSLogin);
-        buttonLogin.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        MaterialButton buttonLogin = findViewById(R.id.ButICSLogin);
+        buttonLogin.setOnClickListener(v -> {
 
 
-                final String handle = _editHandle.getText().toString();
-                final String pwd = _editPwd.getText().toString();
+            final String handle = _editHandle.getText().toString();
+            final String pwd = _editPwd.getText().toString();
 
-                /*
-                defaultHost = chessclub.com
-                hosts = chessclub.com queen.chessclub.com
-                ports = 5000 23
-                id = icc
-                 */
+            /*
+            defaultHost = chessclub.com
+            hosts = chessclub.com queen.chessclub.com
+            ports = 5000 23
+            id = icc
+             */
 
-                if (handle != "" && pwd != "") {
-                    setLoadingView();
-                    icsServer.startSession("freechess.org", 23, handle, pwd, "fics% ");
-                } else {
-                    if (handle == "") {
-                        globalToast(getString(R.string.msg_ics_enter_handle));
-                    }
-                    if (handle != "guest" && pwd == "") {
-                        globalToast(getString(R.string.msg_ics_enter_password));
-                    }
+            if (handle != "" && pwd != "") {
+                setLoadingView();
+                icsServer.startSession("freechess.org", 23, handle, pwd, "fics% ");
+            } else {
+                if (handle == "") {
+                    globalToast(getString(R.string.msg_ics_enter_handle));
+                }
+                if (handle != "guest" && pwd == "") {
+                    globalToast(getString(R.string.msg_ics_enter_password));
                 }
             }
         });
 
-        Button buttonResign = findViewById(R.id.ButtonResign);
-        buttonResign.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("resign");
-            }
-        });
+        MaterialButton buttonResign = findViewById(R.id.ButtonResign);
+        buttonResign.setOnClickListener(v -> sendString("resign"));
 
-        Button buttonDraw = findViewById(R.id.ButtonDraw);
-        buttonDraw.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("draw");
-            }
-        });
+        MaterialButton buttonDraw = findViewById(R.id.ButtonDraw);
+        buttonDraw.setOnClickListener(v -> sendString("draw"));
 
-        Button buttonFlag = findViewById(R.id.ButtonFlag);
-        buttonFlag.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("flag");
-            }
-        });
+        MaterialButton buttonFlag = findViewById(R.id.ButtonFlag);
+        buttonFlag.setOnClickListener(v -> sendString("flag"));
 
         buttonTakeBack = findViewById(R.id.ButtonTakeBack);
-        buttonTakeBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("takeback");
-            }
-        });
+        buttonTakeBack.setOnClickListener(v -> sendString("takeback"));
 
         buttonRefresh = findViewById(R.id.ButtonRefresh);
-        buttonRefresh.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("refresh");
-            }
-        });
+        buttonRefresh.setOnClickListener(v -> sendString("refresh"));
 
-        Button buttonClose = findViewById(R.id.ButtonClose);
-        buttonClose.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showExitConfirmationDialog();
-            }
-        });
+        MaterialButton buttonClose = findViewById(R.id.ButtonClose);
+        buttonClose.setOnClickListener(v -> showExitConfirmationDialog());
 
-        ImageButton buttonRevert = findViewById(R.id.ButtonICSExamineRevert);
-        buttonRevert.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("revert");
-            }
-        });
+        MaterialButton buttonRevert = findViewById(R.id.ButtonICSExamineRevert);
+        buttonRevert.setOnClickListener((OnClickListener) v -> sendString("revert"));
 
-        ImageButton buttonBackward = findViewById(R.id.ButtonICSExamineBackward);
-        buttonBackward.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("backward");
-            }
-        });
+        MaterialButton buttonBackward = findViewById(R.id.ButtonICSExamineBackward);
+        buttonBackward.setOnClickListener((OnClickListener) v -> sendString("backward"));
 
-        ImageButton buttonForward = findViewById(R.id.ButtonICSExamineForward);
-        buttonForward.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("forward");
-            }
-        });
+        MaterialButton buttonForward = findViewById(R.id.ButtonICSExamineForward);
+        buttonForward.setOnClickListener((OnClickListener) v -> sendString("forward"));
 
         switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                sounds.setEnabled(switchSound.isChecked());
-            }
-        });
+        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> sounds.setEnabled(switchSound.isChecked()));
 
         textViewTitle = findViewById(R.id.TextViewTitle);
 
@@ -367,19 +327,17 @@ public class ICSClient extends ChessBoardActivity implements
 
         _scrollConsole = findViewById(R.id.ScrollICSConsole);
 
-        Button butReg = findViewById(R.id.ButICSRegister);
+        MaterialButton butReg = findViewById(R.id.ButICSRegister);
         if (butReg != null) {
-            butReg.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View arg0) {
-                    try {
-                        Intent i = new Intent();
-                        i.setAction(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse("http://www.freechess.org/Register/index.html"));
-                        startActivity(i);
-                    } catch (Exception ex) {
+            butReg.setOnClickListener(arg0 -> {
+                try {
+                    Intent i = new Intent();
+                    i.setAction(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse("http://www.freechess.org/Register/index.html"));
+                    startActivity(i);
+                } catch (Exception ex) {
 
-                        doToast("Could not go to registration page");
-                    }
+                    doToast("Could not go to registration page");
                 }
             });
         }
@@ -410,20 +368,9 @@ public class ICSClient extends ChessBoardActivity implements
             int viewMode = icsApi.getViewMode();
 
             if (viewMode == ICSApi.VIEW_PLAY) {
-                new AlertDialog.Builder(ICSClient.this)
-                    .setTitle(ICSClient.this.getString(R.string.menu_abort))
-                    .setPositiveButton(getString(R.string.alert_yes),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                    sendString("abort");
-                                }
-                            })
-                    .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.dismiss();
-                        }
-                    }).show();
+                openConfirmDialog(getString(R.string.menu_abort), getString(R.string.alert_yes), getString(R.string.alert_no), () -> {
+                    sendString("abort");
+                }, null);
             } else {
                 switch (viewMode) {
                     case ICSApi.VIEW_OBSERVE:

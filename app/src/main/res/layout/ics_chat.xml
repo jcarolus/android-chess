@@ -29,13 +29,13 @@
 
         <TableRow style="@style/MyRowStyle">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonChatCancel"
                 android:text="@string/button_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonChatOk"
                 android:text="@string/button_ok"
                 android:layout_width="wrap_content"

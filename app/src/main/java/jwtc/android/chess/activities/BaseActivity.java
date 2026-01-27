@@ -1,7 +1,6 @@
 package jwtc.android.chess.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,16 +14,13 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,7 +31,6 @@ import java.nio.charset.StandardCharsets;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.MyPGNProvider;
-import jwtc.android.chess.lichess.LichessActivity;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.chess.PGNColumns;
 
@@ -71,7 +66,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void openConfirmDialog(String message, String positiveText, String negativeText, Runnable onPositive, Runnable onNegative) {
-        new AlertDialog.Builder(BaseActivity.this)
+        new MaterialAlertDialogBuilder(BaseActivity.this)
                 .setMessage(message)
                 .setPositiveButton(positiveText, (dialog, which) -> {
                     dialog.dismiss();

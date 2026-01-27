@@ -22,7 +22,7 @@
 
         <TableRow>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"
@@ -30,7 +30,7 @@
                 android:id="@+id/ButHistory"
                 android:text="@string/ics_history" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"
@@ -41,7 +41,7 @@
         </TableRow>
 
         <TableRow>
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"
@@ -49,7 +49,7 @@
                 android:id="@+id/ButUnFollow"
                 android:text="@string/ics_unfollow" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"
@@ -61,7 +61,7 @@
 
         <TableRow>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"
@@ -69,7 +69,7 @@
                 android:id="@+id/ButMatch"
                 android:text="@string/ics_match" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"

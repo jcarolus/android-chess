@@ -3,11 +3,7 @@ package jwtc.android.chess.activities;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.Spinner;
 
 import com.google.android.material.slider.Slider;
 
@@ -63,12 +59,10 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
             chessBoardView.invalidateSquares();
         });
 
-        checkBoxCoordinates.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               ColorSchemes.showCoords = isChecked;
-               chessBoardView.invalidateSquares();
-           }
-       });
+        checkBoxCoordinates.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            ColorSchemes.showCoords = isChecked;
+            chessBoardView.invalidateSquares();
+        });
 
         sliderSaturation.addOnChangeListener((s, value, fromUser) -> {
             ColorSchemes.saturationFactor = value;

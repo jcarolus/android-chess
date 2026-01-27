@@ -1,7 +1,6 @@
 package jwtc.android.chess.setup;
 
 import android.content.ClipData;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,11 +9,11 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.Spinner;
-import android.app.AlertDialog;
+
+import com.google.android.material.button.MaterialButton;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -77,16 +76,16 @@ public class SetupActivity extends ChessBoardActivity {
         spinnerEPFile.setPrompt(getString(R.string.title_pick_en_passant));
         spinnerEPFile.setAdapter(adapter);
 
-        Button buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
+        MaterialButton buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
         buttonOk.setOnClickListener(v -> onSave());
 
-        Button buttonCancel = findViewById(R.id.ButtonSetupOptionsCancel);
+        MaterialButton buttonCancel = findViewById(R.id.ButtonSetupOptionsCancel);
         buttonCancel.setOnClickListener(v -> finish());
 
-        Button buttonReset = findViewById(R.id.ButtonSetupOptionsReset);
+        MaterialButton buttonReset = findViewById(R.id.ButtonSetupOptionsReset);
         buttonReset.setOnClickListener(v -> initBoard());
 
-        Button buttonClear = findViewById(R.id.ButtonSetupOptionsClear);
+        MaterialButton buttonClear = findViewById(R.id.ButtonSetupOptionsClear);
         buttonClear.setOnClickListener(v -> resetBoard());
 
         afterCreate();
@@ -139,23 +138,10 @@ public class SetupActivity extends ChessBoardActivity {
         jni.commitBoard();
 
         if (jni.isLegalPosition() == 0) {
-            new AlertDialog.Builder(this)
-                .setTitle("Use illegal position?")
-                .setPositiveButton(getString(R.string.alert_yes),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-
-                                commitFEN();
-                                SetupActivity.this.finish();
-                            }
-                        })
-                .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+            openConfirmDialog("Use illegal position?", getString(R.string.alert_yes),getString(R.string.alert_no), () -> {
+                commitFEN();
+                SetupActivity.this.finish();
+            }, null);
         } else {
             commitFEN();
             finish();

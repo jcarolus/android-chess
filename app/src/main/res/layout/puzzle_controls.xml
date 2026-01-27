@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,9 +21,9 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzlePrevious"
-                android:src="@drawable/ic_chevron_left"
+                app:icon="@drawable/ic_chevron_left"
                 android:contentDescription="@string/button_previous_position"
                 style="@style/ChessImageButton" />
             <View
@@ -31,14 +31,14 @@
                 android:layout_height="1dp"
                 android:layout_weight="1"/>
 
-            <Button android:id="@+id/ButtonPuzzleShow"
+            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonPuzzleShow"
                 android:text="@string/puzzle_show"
                 android:layout_width="wrap_content"
                 style="@style/ChessButton"/>
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleRetry"
-                android:src="@drawable/ic_arrow_clockwise"
+                app:icon="@drawable/ic_arrow_clockwise"
                 android:contentDescription="@string/button_reset_position"
                 style="@style/ChessImageButton" />
 
@@ -47,9 +47,9 @@
                 android:layout_height="1dp"
                 android:layout_weight="1"/>
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleNext"
-                android:src="@drawable/ic_chevron_right"
+                app:icon="@drawable/ic_chevron_right"
                 android:contentDescription="@string/button_next_position"
                 style="@style/ChessImageButton" />
 

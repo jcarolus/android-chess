@@ -19,7 +19,7 @@
             android:layout_marginBottom="15dp"
             android:textSize="15sp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:text="@string/ics_offer_rematch"
             android:id="@+id/ButtonGameRematch"
@@ -28,7 +28,7 @@
             style="@style/ChessButton"/>
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:text="@string/ics_examine"
             android:id="@+id/ButtonGameExamine"
@@ -36,7 +36,7 @@
             android:layout_marginTop="10dp"
             style="@style/ChessButton"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:text="@string/button_save"
             android:id="@+id/ButtonGameSave"
@@ -45,7 +45,7 @@
             android:layout_marginBottom="20dp"
             style="@style/ChessButton"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

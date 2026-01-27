@@ -19,21 +19,18 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
-import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.play.SaveGameDialog;
@@ -50,7 +47,7 @@ public class GamesListActivity extends ChessBoardActivity {
     private String sortOrder, sortBy;
     private TextView textViewResult, textViewTotal, textViewPlayerWhite, textViewPlayerBlack, textViewEvent, textViewDate, textViewFilterInfo, textViewRating;
     private TextInputEditText editTextFilterWhite, editTextFilterBlack, editTextFilterEvent;
-    private Button buttonFilters;
+    private MaterialButton buttonFilters;
     private PGNDateView pgnDateAfter, pgnDateBefore;
     private SwitchMaterial switchFilterWhite, switchFilterBlack, switchFilterDateAfter, switchFilterDateBefore, switchFilterEvent, switchFilterResult;
     private FixedDropdownView dropDownResult, dropDownOrderBy, dropDownOrderDirection;
@@ -93,7 +90,7 @@ public class GamesListActivity extends ChessBoardActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        ImageButton butPrev = findViewById(R.id.ButtonPrevious);
+        MaterialButton butPrev = findViewById(R.id.ButtonPrevious);
         butPrev.setOnClickListener(v -> {
             int progress = seekBarGames.getProgress();
             if (progress > 0) {
@@ -101,7 +98,7 @@ public class GamesListActivity extends ChessBoardActivity {
             }
         });
 
-        ImageButton butNext = findViewById(R.id.ButtonNext);
+        MaterialButton butNext = findViewById(R.id.ButtonNext);
         butNext.setOnClickListener(v -> {
             int progress = seekBarGames.getProgress();
             if (progress + 1 < cursor.getCount()) {
@@ -109,13 +106,13 @@ public class GamesListActivity extends ChessBoardActivity {
             }
         });
 
-        Button buttonOpen = findViewById(R.id.ButtonOpen);
+        MaterialButton buttonOpen = findViewById(R.id.ButtonOpen);
         buttonOpen.setOnClickListener(v -> openGame());
 
-        Button buttonEdit = findViewById(R.id.ButtonEdit);
+        MaterialButton buttonEdit = findViewById(R.id.ButtonEdit);
         buttonEdit.setOnClickListener(v -> editGame());
 
-        Button buttonDelete = findViewById(R.id.ButtonDelete);
+        MaterialButton buttonDelete = findViewById(R.id.ButtonDelete);
         buttonDelete.setOnClickListener(v -> deleteGame());
 
         textViewDate = findViewById(R.id.TextViewDate);
@@ -335,7 +332,8 @@ public class GamesListActivity extends ChessBoardActivity {
         String dbgArgs = selectionArgs == null ? "" : TextUtils.join("|", selectionArgs);
         Log.i(TAG, "runQuery " + selection + " " + dbgArgs + " BY " + sortBy + " " + sortOrder);
 
-        buttonFilters.setText("Filters" + (selectionArgs == null ? "" : " (" + selectionArgs.length + ")"));
+        //buttonFilters.setText("Filters" + (selectionArgs == null ? "" : " (" + selectionArgs.length + ")"));
+        buttonFilters.setChecked(selectionArgs != null && selectionArgs.length > 0);
 
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
@@ -396,7 +394,7 @@ public class GamesListActivity extends ChessBoardActivity {
                 public void onTextChanged(CharSequence s, int start, int before, int count) {}
             };
 
-            Button buttonFilterClose = findViewById(R.id.ButtonFilterClose);
+            MaterialButton buttonFilterClose = findViewById(R.id.ButtonFilterClose);
             buttonFilterClose.setOnClickListener(v -> dismiss());
 
             textViewFilterInfo = findViewById(R.id.TextViewFilterInfo);

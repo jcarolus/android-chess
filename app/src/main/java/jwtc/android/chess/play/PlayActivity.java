@@ -14,8 +14,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -23,6 +21,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -32,7 +31,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -83,7 +81,7 @@ public class PlayActivity extends ChessBoardActivity implements
     private final EcoService ecoService = new EcoService();
     private long lGameID;
     private LinearProgressIndicator progressBarEngine;
-    private ImageButton playButton;
+    private MaterialButton playButton;
     private boolean vsCPU = true;
     private boolean flipBoard = false;
     private int myTurn = 1;
@@ -92,7 +90,7 @@ public class PlayActivity extends ChessBoardActivity implements
     private ImageView imageTurnMe, imageTurnOpp;
     private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewLastMove, textViewEco, textViewWhitePieces, textViewBlackPieces;
     private TextView textViewInfoBalloon, textViewEngineValue;
-    private ImageButton buttonEco;
+    private MaterialButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
@@ -156,20 +154,20 @@ public class PlayActivity extends ChessBoardActivity implements
 
         final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU);
 
-        ImageButton buttonMenu = findViewById(R.id.ButtonMenu);
+        MaterialButton buttonMenu = findViewById(R.id.ButtonMenu);
         buttonMenu.setOnClickListener(v -> menuDialog.show());
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
 
-        ImageButton butNext = findViewById(R.id.ButtonNext);
+        MaterialButton butNext = findViewById(R.id.ButtonNext);
         butNext.setOnClickListener(v -> gameApi.nextMove());
         butNext.setOnLongClickListener(v -> {
             gameApi.jumpToBoardNum(gameApi.getPGNSize());
             return true;
         });
 
-        ImageButton butPrev = findViewById(R.id.ButtonPrevious);
+        MaterialButton butPrev = findViewById(R.id.ButtonPrevious);
         butPrev.setOnClickListener(v -> gameApi.undoMove());
 
         butPrev.setOnLongClickListener(v -> {
@@ -203,45 +201,33 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
 
         switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               sounds.setEnabled(switchSound.isChecked());
-            }
-        });
+        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> sounds.setEnabled(switchSound.isChecked()));
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
-        switchBlindfold.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (switchBlindfold.isChecked()) {
-                    PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
-                    rebuildBoard();
-                    topPieces.setVisibility(View.INVISIBLE);
-                    bottomPieces.setVisibility(View.INVISIBLE);
-                } else {
-                    PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
-                    rebuildBoard();
-                    topPieces.setVisibility(View.VISIBLE);
-                    bottomPieces.setVisibility(View.VISIBLE);
-                    topPieces.invalidatePieces();
-                    bottomPieces.invalidatePieces();
-                }
-           }
-       });
+        switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
+             if (switchBlindfold.isChecked()) {
+                 PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
+                 rebuildBoard();
+                 topPieces.setVisibility(View.INVISIBLE);
+                 bottomPieces.setVisibility(View.INVISIBLE);
+             } else {
+                 PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
+                 rebuildBoard();
+                 topPieces.setVisibility(View.VISIBLE);
+                 bottomPieces.setVisibility(View.VISIBLE);
+                 topPieces.invalidatePieces();
+                 bottomPieces.invalidatePieces();
+             }
+        });
 
         switchFlip = findViewById(R.id.SwitchFlip);
-        switchFlip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                flipBoard = switchFlip.isChecked();
-                updateBoardRotation();
-            }
+        switchFlip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            flipBoard = switchFlip.isChecked();
+            updateBoardRotation();
         });
 
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
-        switchMoveToSpeech.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                moveToSpeech = switchMoveToSpeech.isChecked();
-            }
-        });
+        switchMoveToSpeech.setOnCheckedChangeListener((buttonView, isChecked) -> moveToSpeech = switchMoveToSpeech.isChecked());
 
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
 
@@ -658,11 +644,11 @@ public class PlayActivity extends ChessBoardActivity implements
     protected void toggleEngineProgress(boolean showProgress) {
         Log.d(TAG, "toggleEngineProgress " + showProgress);
         if (showProgress) {
-            playButton.setImageResource(R.drawable.box_arrow_up_right);
+            playButton.setIconResource(R.drawable.box_arrow_up_right);
             //playButton.setVisibility(View.GONE);
             progressBarEngine.setVisibility(View.VISIBLE);
         } else {
-            playButton.setImageResource(R.drawable.ic_robot);
+            playButton.setIconResource(R.drawable.ic_robot);
             progressBarEngine.setVisibility(View.INVISIBLE);
             //playButton.setVisibility(View.VISIBLE);
         }

@@ -6,13 +6,13 @@ import static jwtc.android.chess.helpers.PGNHelper.regexPgnTag;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.widget.Button;
 import android.widget.RatingBar;
 
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import jwtc.android.chess.R;
@@ -65,19 +65,19 @@ public class SaveGameDialog extends Dialog {
 
         dateView = findViewById(R.id.DateView);
 
-        Button _butSave = findViewById(R.id.ButtonSaveSave);
+        MaterialButton _butSave = findViewById(R.id.ButtonSaveSave);
         _butSave.setOnClickListener(arg0 -> {
             dismiss();
             save(false);
         });
 
-        Button _butSaveCopy = findViewById(R.id.ButtonSaveCopy);
+        MaterialButton _butSaveCopy = findViewById(R.id.ButtonSaveCopy);
         _butSaveCopy.setOnClickListener(arg0 -> {
             dismiss();
             save(true);
         });
 
-        Button _butCancel = findViewById(R.id.ButtonSaveCancel);
+        MaterialButton _butCancel = findViewById(R.id.ButtonSaveCancel);
         _butCancel.setOnClickListener(arg0 -> dismiss());
 
         ratingBarRating.setRating(3.0F);

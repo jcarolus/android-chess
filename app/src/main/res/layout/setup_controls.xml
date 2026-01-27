@@ -125,22 +125,22 @@
             android:layout_height="wrap_content"
             android:stretchColumns="*">
             <TableRow style="@style/MyRowStyle">
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonSetupOptionsCancel"
                     android:text="@string/button_cancel"
                     android:layout_width="wrap_content"
                     style="@style/ChessButton"/>
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonSetupOptionsReset"
                     android:text="@string/msg_setup_reset"
                     android:layout_width="wrap_content"
                     style="@style/ChessButton"/>
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonSetupOptionsClear"
                     android:text="@string/msg_setup_clear"
                     android:layout_width="wrap_content"
                     style="@style/ChessButton"/>
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonSetupOptionsOk"
                     android:text="@string/button_ok"
                     android:layout_width="wrap_content"

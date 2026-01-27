@@ -2,7 +2,6 @@ package jwtc.android.chess.lichess;
 
 import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -21,6 +19,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -37,7 +37,6 @@ import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
-import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
@@ -59,7 +58,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewLastMove, textViewStatus, textViewOfferDraw, textViewWhitePieces, textViewBlackPieces;
     private TextView textViewLobbyStatus;
     private TextView textViewHandle;
-    private Button buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove;
+    private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove;
     private ListView listViewGames;
     private SimpleAdapter adapterGames;
 
@@ -102,7 +101,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         gameApi = new LichessApi();
         lichessApi = (LichessApi)gameApi;
 
-        Button buttonLogin = findViewById(R.id.ButtonLogin);
+        MaterialButton buttonLogin = findViewById(R.id.ButtonLogin);
         buttonLogin.setOnClickListener(v -> lichessApi.login(LichessActivity.this));
 
         buttonChallenge = findViewById(R.id.ButtonChallenge);
@@ -119,16 +118,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         });
 
-        Button buttonLogout = findViewById(R.id.ButtonLogout);
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lichessApi.logout();
-                finish();
-            }
+        MaterialButton buttonLogout = findViewById(R.id.ButtonLogout);
+        buttonLogout.setOnClickListener(v -> {
+            lichessApi.logout();
+            finish();
         });
 
-        Button buttonCancelMove = findViewById(R.id.ButtonCancelMove);
+        MaterialButton buttonCancelMove = findViewById(R.id.ButtonCancelMove);
         buttonCancelMove.setOnClickListener(v -> {
             layoutConfirm.setVisibility(View.GONE);
             layoutResignDraw.setVisibility(View.VISIBLE);
@@ -401,7 +397,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             if (lichessApi.isPromotionMove(from, to)) {
                 final String[] items = getResources().getStringArray(R.array.promotionpieces);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                 builder.setTitle(R.string.title_pick_promo);
                 builder.setCancelable(false);
                 builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
@@ -409,8 +405,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
                     lichessApi.setPromotionPiece(4 - item);
                     lichessApi.move(from, to);
                 });
-                AlertDialog alert = builder.create();
-                alert.show();
+                builder.create().show();
 
                 return true;
             } else if (switchConfirmMoves.isChecked()) {

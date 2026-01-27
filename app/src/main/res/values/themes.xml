@@ -12,6 +12,9 @@
         <item name="colorOnSurface">@color/surfaceTextColor</item>
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
+        <item name="switchStyle">@style/MySwitchStyle</item>
+        <item name="materialButtonStyle">@style/ChessButton</item>
+        <item name="materialAlertDialogTheme">@style/ChessAlertDialogTheme</item>
     </style>
 
     <style name="ChessStart" parent="Theme.Material3.DayNight">
@@ -28,7 +31,8 @@
         <item name="rippleColor">@color/secondaryColor</item>
         <item name="actionBarStyle">@style/Widget.MyApp.ActionBar</item>
         <item name="switchStyle">@style/MySwitchStyle</item>
-
+        <item name="materialButtonStyle">@style/ChessButton</item>
+        <item name="materialAlertDialogTheme">@style/ChessAlertDialogTheme</item>
     </style>
 
     <style name="Widget.MyApp.ActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
@@ -52,9 +56,12 @@
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
         <item name="switchStyle">@style/MySwitchStyle</item>
+        <item name="materialButtonStyle">@style/ChessButton</item>
     </style>
 
-    <style name="MySwitchStyle" parent="Widget.MaterialComponents.CompoundButton.Switch">
-        <item name="thumbTint">@color/switch_thumb_color</item>
+    <style name="ChessAlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/ChessButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/ChessButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/ChessButton</item>
     </style>
 </resources>

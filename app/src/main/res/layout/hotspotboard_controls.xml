@@ -46,7 +46,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"/>
-            <Button android:id="@+id/ButtonConnect"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonConnect"
                 android:text="Connect"
                 android:layout_width="wrap_content"
                 android:layout_margin="8dip"
@@ -59,12 +60,14 @@
             android:orientation="horizontal"
             android:gravity="center">
 
-            <Button android:id="@+id/ButtonResign"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonResign"
                 android:text="Resign"
                 android:layout_width="wrap_content"
                 style="@style/ChessButton"/>
 
-            <Button android:id="@+id/ButtonDraw"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonDraw"
                 android:text="Draw"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -86,19 +89,19 @@
                 >
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonWhite"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="♔ White" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonBlack"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="♚ Black" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
-            <Button android:id="@+id/ButtonNew"
+            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonNew"
                 android:text="New"
                 android:layout_width="wrap_content"
                 style="@style/ChessButton"/>

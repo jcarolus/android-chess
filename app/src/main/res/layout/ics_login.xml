@@ -80,14 +80,14 @@
             style="@style/MyRowStyle"
             android:minHeight="50dip">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:text="@string/button_register"
                 android:id="@+id/ButICSRegister"
                 android:layout_width="0dip"
                 android:layout_marginRight="2dip"
                 style="@style/ChessButton"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:text="@string/button_login"
                 android:id="@+id/ButICSLogin"
                 android:layout_width="0dip"

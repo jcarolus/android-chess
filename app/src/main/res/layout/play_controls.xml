@@ -22,9 +22,9 @@
                     android:id="@+id/LayoutPlayButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-                    <ImageButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonPlay"
-                        android:src="@drawable/ic_robot"
+                        app:icon="@drawable/ic_robot"
                         android:contentDescription="@string/button_engine_play_description"
                         android:layout_alignParentTop="true"
                         style="@style/ChessImageButton" />
@@ -56,8 +56,8 @@
                     android:layout_marginRight="8dip"
                     android:accessibilityLiveRegion="assertive"/>
 
-                <ImageButton android:id="@+id/ButtonMenu"
-                    android:src="@drawable/ic_three_dots_vertical"
+                <com.google.android.material.button.MaterialButton android:id="@+id/ButtonMenu"
+                    app:icon="@drawable/ic_three_dots_vertical"
                     android:contentDescription="@string/button_menu_description"
                     style="@style/ChessImageButton"/>
 
@@ -71,9 +71,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 style="@style/MyRowStyle">
-                <ImageButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonPrevious"
-                    android:src="@drawable/ic_chevron_left"
+                    app:icon="@drawable/ic_chevron_left"
                     android:contentDescription="@string/button_previous_move_description"
                     style="@style/ChessImageButton" />
                 <androidx.recyclerview.widget.RecyclerView
@@ -88,9 +88,9 @@
                     android:fadeScrollbars="false"
                     android:background="@color/paneBackgroundColor"
                     android:scrollbarAlwaysDrawHorizontalTrack="true"/>
-                <ImageButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonNext"
-                    android:src="@drawable/ic_chevron_right"
+                    app:icon="@drawable/ic_chevron_right"
                     android:contentDescription="@string/button_next_move_description"
                     style="@style/ChessImageButton" />
             </TableRow>
@@ -100,9 +100,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEco"
-                android:src="@drawable/ic_signpost_split"
+                app:icon="@drawable/ic_signpost_split"
                 android:contentDescription="ECO openings"
                 style="@style/ChessImageButton" />
             <TextView

@@ -9,11 +9,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.Timer;
@@ -34,7 +33,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
     private TextView tvPracticeMove, tvPercentage, textViewSolution, textViewWhitePieces, textViewBlackPieces;
-    private ImageButton buttonNext, buttonRetry;
+    private MaterialButton buttonNext, buttonRetry;
     private int totalPuzzles, currentPos;
     private Cursor cursor;
     private Timer timer;
@@ -77,35 +76,31 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         afterCreate();
 
-        tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
+        tvPracticeMove = findViewById(R.id.TextViewPracticeMove);
         tvPercentage = findViewById(R.id.TextViewPercentage);
         textViewSolution = findViewById(R.id.TextViewSolution);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
-        imageTurn = (ImageView) findViewById(R.id.ImageTurn);
-        imgStatus = (ImageView) findViewById(R.id.ImageStatus);
-        buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
+        imageTurn = findViewById(R.id.ImageTurn);
+        imgStatus = findViewById(R.id.ImageStatus);
+        buttonNext = findViewById(R.id.ButtonPracticeNext);
 
-        buttonNext.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (currentPos + 1 < totalPuzzles) {
-                    currentPos++;
-                    buttonRetry.setEnabled(false);
-                    startPuzzle();
-                } else {
-                    // completed
-                    setMessage("You completed all puzzles!!!");
-                }
+        buttonNext.setOnClickListener(arg0 -> {
+            if (currentPos + 1 < totalPuzzles) {
+                currentPos++;
+                buttonRetry.setEnabled(false);
+                startPuzzle();
+            } else {
+                // completed
+                setMessage("You completed all puzzles!!!");
             }
         });
 
         buttonRetry = findViewById(R.id.ButtonPracticeRetry);
-        buttonRetry.setOnClickListener(new View.OnClickListener() {
-              public void onClick(View arg0) {
-                  buttonRetry.setEnabled(false);
-                  startPuzzle();
-              }
-          });
+        buttonRetry.setOnClickListener(arg0 -> {
+            buttonRetry.setEnabled(false);
+            startPuzzle();
+        });
         buttonRetry.setEnabled(false);
 
         percentBar = findViewById(R.id.percentBar);

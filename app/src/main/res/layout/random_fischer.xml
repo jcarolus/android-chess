@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -32,18 +33,18 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center">
-                    <ImageButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonPrevious"
-                        android:src="@drawable/ic_chevron_left"
+                        app:icon="@drawable/ic_chevron_left"
                         style="@style/ChessImageButton" />
                     <SeekBar
                         android:id="@+id/seekbar"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:max="959" />
-                    <ImageButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonNext"
-                        android:src="@drawable/ic_chevron_right"
+                        app:icon="@drawable/ic_chevron_right"
                         style="@style/ChessImageButton" />
                     <TextView
                         android:id="@+id/TextViewSeed"
@@ -59,21 +60,21 @@
                 android:layout_marginTop="4dip"
                 android:stretchColumns="*">
                 <TableRow style="@style/MyRowStyle">
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsCancel"
                         android:text="@string/button_cancel"
                         android:layout_width="wrap_content"
                         android:layout_marginRight="2dip"
                         style="@style/ChessButton"/>
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsRandom"
                         android:text="@string/choice_random"
                         android:layout_width="wrap_content"
                         android:layout_margin="2dip"
                         style="@style/ChessButton"/>
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsOk"
                         android:text="@string/button_ok"
                         android:layout_width="wrap_content"

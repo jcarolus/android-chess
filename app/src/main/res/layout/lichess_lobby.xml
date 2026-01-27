@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 style="@style/MyHeaderTextStyle" />
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_logout"
                 android:id="@+id/ButtonLogout"
                 android:layout_width="wrap_content"
@@ -50,20 +50,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_challenge"
                 android:id="@+id/ButtonChallenge"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="8dip"
                 style="@style/ChessButton"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_seek"
                 android:id="@+id/ButtonSeek"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="8dip"
                 style="@style/ChessButton"/>
-
 
         </LinearLayout>
 
