@@ -41,9 +41,9 @@ public class GameImportProcessor extends PGNProcessor {
 
             // todo date goes wrong #################################
             Date dd = gameApi.getDate();
-            if (dd == null)
+            if (dd == null) {
                 dd = Calendar.getInstance().getTime();
-
+            }
             values.put(PGNColumns.DATE, dd.getTime());
 
             Uri uri = Uri.parse("content://jwtc.android.chess.helpers.MyPGNProvider/games");
