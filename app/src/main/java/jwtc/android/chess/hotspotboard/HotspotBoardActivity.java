@@ -259,12 +259,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         // Set default selection to White
         colorToggleGroup.check(R.id.buttonWhite);
-        colorToggleGroup.addOnButtonCheckedListener(new MaterialButtonToggleGroup.OnButtonCheckedListener() {
-            @Override
-            public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-                if (isChecked) {
-                    isPlayAsWhite = checkedId == R.id.buttonWhite;
-                }
+        colorToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                isPlayAsWhite = checkedId == R.id.buttonWhite;
             }
         });
 

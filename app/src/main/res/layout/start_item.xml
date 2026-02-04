@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:padding="16dp">
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/start_item_icon"
@@ -25,7 +25,7 @@
 
         <TextView
             android:id="@+id/start_item_title"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:textSize="16sp"
             android:textAlignment="center"
             android:gravity="center"

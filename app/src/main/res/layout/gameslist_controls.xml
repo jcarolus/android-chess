@@ -87,41 +87,5 @@
                 style="@style/ChessButton"
                 />
         </LinearLayout>
-        <TableLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_margin="4dip"
-            android:stretchColumns="1">
-            <TableRow android:gravity="center">
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/ButtonPrevious"
-                    app:icon="@drawable/ic_chevron_left"
-                    android:contentDescription="Previous game"
-                    style="@style/ChessImageButton"/>
-                <SeekBar
-                    android:id="@+id/SeekBarGames"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-                <TextView
-                    android:id="@+id/TextViewTotal"
-                    android:text="0/0"
-                    style="@style/MyNormalTextStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/ButtonNext"
-                    app:icon="@drawable/ic_chevron_right"
-                    android:contentDescription="Next game"
-                    style="@style/ChessImageButton" />
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/ButtonOpenFilters"
-                    app:icon="@drawable/sliders"
-                    android:checkable="true"
-                    android:text="Filters"
-                    style="@style/ChessButton"
-                    />
-            </TableRow>
-        </TableLayout>
     </LinearLayout>
 </ScrollView>

@@ -1,6 +1,5 @@
 package jwtc.android.chess;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,12 +18,16 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -32,6 +35,8 @@ import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.play.MoveItem;
+import jwtc.android.chess.play.MoveItemAdapter;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.GameApi;
@@ -40,6 +45,8 @@ import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.PGNEntry;
+import jwtc.chess.Pos;
 
 public class GamesListActivity extends ChessBoardActivity {
     private static final String TAG = "GamesListActivity";
@@ -51,7 +58,10 @@ public class GamesListActivity extends ChessBoardActivity {
     private PGNDateView pgnDateAfter, pgnDateBefore;
     private SwitchMaterial switchFilterWhite, switchFilterBlack, switchFilterDateAfter, switchFilterDateBefore, switchFilterEvent, switchFilterResult;
     private FixedDropdownView dropDownResult, dropDownOrderBy, dropDownOrderDirection;
-
+    private MaterialButtonToggleGroup buttonToggleGroup;
+    private GridView gridLayoutPgn;
+    private final ArrayList<MoveItem> mapMoves = new ArrayList<MoveItem>();
+    private MoveItemAdapter adapterMoves;
     private FilterDialog filterDialog;
     private SeekBar seekBarGames;
     private Cursor cursor;
@@ -124,9 +134,24 @@ public class GamesListActivity extends ChessBoardActivity {
         buttonFilters.setOnClickListener(v -> filterDialog.show());
 
 
-        // DEBUG
-        //getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
-        /////////////////////////////////////////////////////////////////////////////////////
+        buttonToggleGroup = findViewById(R.id.ButtonToggleGroupView);
+
+        buttonToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == R.id.ButtonToggleBoard) {
+                    showBoardView();
+                } else if (checkedId == R.id.ButtonTogglePgn) {
+                    showPgnView();
+                } else if (checkedId == R.id.ButtonToggleList) {
+                    showListView();
+                }
+            }
+        });
+
+        gridLayoutPgn = findViewById(R.id.GridLayoutPgn);
+
+        adapterMoves = new MoveItemAdapter(this, mapMoves);
+        gridLayoutPgn.setAdapter(adapterMoves);
 
         afterCreate();
     }
@@ -155,6 +180,9 @@ public class GamesListActivity extends ChessBoardActivity {
         currentGameId = prefs.getLong("gameslist_current_game_id", 0);
 
         filterDialog.init();
+
+        // Set default selection
+        buttonToggleGroup.check(R.id.ButtonToggleBoard);
 
         doFilterSort();
     }
@@ -243,6 +271,27 @@ public class GamesListActivity extends ChessBoardActivity {
         gameApi.pgnTags.put("Black", black);
         gameApi.pgnTags.put("Date", date);
         gameApi.pgnTags.put("Result", result);
+
+        // pgn view
+
+        ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
+
+        mapMoves.clear();
+        for (int i = 0; i < pgnEntries.size(); i++) {
+            String sMove =  pgnEntries.get(i).sMove;
+            if (pgnEntries.get(i).duckMove != -1) {
+                sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
+            }
+            String nr = i % 2 == 0 ? ((i/2+1) + ". ") : " ";
+            String annotation = pgnEntries.get(i).sAnnotation;
+            int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
+
+            mapMoves.add(new MoveItem(nr, sMove, annotation, turn));
+
+        }
+
+        adapterMoves.notifyDataSetChanged();
+        gridLayoutPgn.smoothScrollToPosition(adapterMoves.getCount());
     }
 
     private void openGame() {
@@ -355,20 +404,19 @@ public class GamesListActivity extends ChessBoardActivity {
         return 0;
     }
 
-    private void flipSortOrder() {
-        sortOrder = sortOrder.equals("DESC") ? "ASC" : "DESC";
+    private void showBoardView() {
+        chessBoardView.setVisibility(View.VISIBLE);
+        gridLayoutPgn.setVisibility(View.INVISIBLE);
     }
 
-    private Date parseTextToDate(String text) {
-        if (text.equals("YYYY.mm.dd")) {
-            return null;
-        }
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-        try {
-            return formatter.parse(text);
-        } catch (Exception ex) {
-            return null;
-        }
+    private void showPgnView() {
+        chessBoardView.setVisibility(View.INVISIBLE);
+        gridLayoutPgn.setVisibility(View.VISIBLE);
+    }
+
+    private void showListView() {
+        chessBoardView.setVisibility(View.INVISIBLE);
+        gridLayoutPgn.setVisibility(View.INVISIBLE);
     }
 
     private class FilterDialog extends Dialog {
