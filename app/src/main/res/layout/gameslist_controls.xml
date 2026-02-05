@@ -87,5 +87,25 @@
                 style="@style/ChessButton"
                 />
         </LinearLayout>
+        <TextView
+            android:id="@+id/TextViewWhitePieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:minLines="2"
+            android:accessibilityLiveRegion="none"/>
+        <TextView
+            android:id="@+id/TextViewBlackPieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:minLines="2"
+            android:accessibilityLiveRegion="none"/>
     </LinearLayout>
 </ScrollView>

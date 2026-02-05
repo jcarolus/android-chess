@@ -364,7 +364,7 @@ public class GameApi {
         return false;
     }
 
-    public Matcher getMoveMatcher(String sMove) {
+    public static Matcher getMoveMatcher(String sMove) {
         return patMove.matcher(sMove);
     }
 
@@ -403,7 +403,7 @@ public class GameApi {
         }
     }
 
-    public String moveToSpeechString(String sMove, int move) {
+    public static String moveToSpeechString(String sMove, int move) {
         String sMoveSpeech = "";
 
         // check regular move
@@ -477,7 +477,7 @@ public class GameApi {
         return sMoveSpeech;
     }
 
-    protected String getPieceName(String piece) {
+    protected static String getPieceName(String piece) {
         switch (piece) {
             case "K":
                 return "King ";

@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     android:padding="2dip">
 
+    <ListView
+        android:id="@+id/ListView"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/LayoutMenu"
+        />
+
     <include
         android:id="@+id/includeboard"
         layout="@layout/chessboard"
@@ -25,10 +34,11 @@
         app:layout_constraintEnd_toEndOf="@id/includeboard"/>
 
     <ScrollView
+        android:id="@+id/ScrollView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/LayoutMenu"
         app:layout_constraintStart_toEndOf="@id/includeboard"
         app:layout_constraintEnd_toEndOf="parent"
         >
@@ -49,13 +59,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
-
-            <include
-                android:id="@+id/LayoutMenu"
-                layout="@layout/gameslist_menu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
         </LinearLayout>
     </ScrollView>
+
+    <include
+        android:id="@+id/LayoutMenu"
+        layout="@layout/gameslist_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

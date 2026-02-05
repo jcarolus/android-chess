@@ -19,9 +19,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,12 +49,14 @@ import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
+import jwtc.chess.board.BoardConstants;
 
 public class GamesListActivity extends ChessBoardActivity {
     private static final String TAG = "GamesListActivity";
+    private static final int VIEW_BOARD = 1, VIEW_PGN = 2, VIEW_LIST = 3;
 
     private String sortOrder, sortBy;
-    private TextView textViewResult, textViewTotal, textViewPlayerWhite, textViewPlayerBlack, textViewEvent, textViewDate, textViewFilterInfo, textViewRating;
+    private TextView textViewResult, textViewTotal, textViewPlayerWhite, textViewPlayerBlack, textViewEvent, textViewDate, textViewFilterInfo, textViewRating, textViewWhitePieces, textViewBlackPieces;
     private TextInputEditText editTextFilterWhite, editTextFilterBlack, editTextFilterEvent;
     private MaterialButton buttonFilters;
     private PGNDateView pgnDateAfter, pgnDateBefore;
@@ -60,8 +64,11 @@ public class GamesListActivity extends ChessBoardActivity {
     private FixedDropdownView dropDownResult, dropDownOrderBy, dropDownOrderDirection;
     private MaterialButtonToggleGroup buttonToggleGroup;
     private GridView gridLayoutPgn;
+    private ListView listView;
+    private ScrollView scrollView;
     private final ArrayList<MoveItem> mapMoves = new ArrayList<MoveItem>();
     private MoveItemAdapter adapterMoves;
+    private SimpleCursorAdapter adapterGames;
     private FilterDialog filterDialog;
     private SeekBar seekBarGames;
     private Cursor cursor;
@@ -85,6 +92,8 @@ public class GamesListActivity extends ChessBoardActivity {
         textViewRating = findViewById(R.id.TextViewRating);
         textViewResult = findViewById(R.id.TextViewResult);
         textViewTotal = findViewById(R.id.TextViewTotal);
+        textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
+        textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
 
         seekBarGames = findViewById(R.id.SeekBarGames);
         seekBarGames.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -149,9 +158,55 @@ public class GamesListActivity extends ChessBoardActivity {
         });
 
         gridLayoutPgn = findViewById(R.id.GridLayoutPgn);
+        gridLayoutPgn.setOnItemClickListener(null);
+        gridLayoutPgn.setOnItemSelectedListener(null);
+        gridLayoutPgn.setClickable(false);
+        gridLayoutPgn.setLongClickable(false);
 
         adapterMoves = new MoveItemAdapter(this, mapMoves);
         gridLayoutPgn.setAdapter(adapterMoves);
+
+        adapterGames = new SimpleCursorAdapter(this, R.layout.game_row, null,
+                new String[]{PGNColumns._ID, PGNColumns.WHITE, PGNColumns.BLACK, PGNColumns.DATE, PGNColumns.EVENT, PGNColumns.RATING, PGNColumns.RESULT},
+                new int[]{R.id.text_id, R.id.text_name1, R.id.text_name2, R.id.text_date, R.id.text_event, R.id.rating, R.id.text_result});
+
+        adapterGames.setViewBinder((view, cursor, columnIndex) -> {
+
+            int nImageIndex = cursor.getColumnIndex(PGNColumns.RATING);
+            if (nImageIndex == columnIndex) {
+                float fR = Utils.getColumnFloat(cursor, PGNColumns.RATING);
+                ((RatingBar) view).setRating(fR);
+                //((RatingBar)view).setRating(0.4F);
+                return true;
+            }
+            int nDateIndex = cursor.getColumnIndex(PGNColumns.DATE);
+            if (nDateIndex == columnIndex) {
+                ((TextView) view).setText(Utils.formatDate(Utils.getColumnDate(cursor, PGNColumns.DATE)));
+                return true;
+            }
+            int nResultIndex = cursor.getColumnIndex(PGNColumns.RESULT);
+            if (nResultIndex == columnIndex) {
+                String result = Utils.getColumnString(cursor, PGNColumns.RESULT);
+                ((TextView) view).setText(result.equals("1/2-1/2") ?  "½-½" : result);
+                return true;
+            }
+
+            return false;
+        });
+
+        listView = findViewById(R.id.ListView);
+        listView.setAdapter(adapterGames);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            cursor.moveToPosition(position);
+            openGame();
+        });
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            cursor.moveToPosition(position);
+            deleteGame();
+            return true;
+        });
+
+        scrollView = findViewById(R.id.ScrollView);
 
         afterCreate();
     }
@@ -181,8 +236,23 @@ public class GamesListActivity extends ChessBoardActivity {
 
         filterDialog.init();
 
-        // Set default selection
-        buttonToggleGroup.check(R.id.ButtonToggleBoard);
+        int view = prefs.getInt("gameslist_current_view", VIEW_BOARD);
+        Log.d(TAG, "View " + view);
+        switch (view) {
+            case VIEW_PGN:
+                buttonToggleGroup.check(R.id.ButtonTogglePgn);
+                showPgnView();
+                break;
+            case VIEW_LIST:
+                buttonToggleGroup.check(R.id.ButtonToggleList);
+                showListView();
+                break;
+            default:
+                buttonToggleGroup.check(R.id.ButtonToggleBoard);
+                showBoardView();
+                break;
+        }
+
 
         doFilterSort();
     }
@@ -212,6 +282,15 @@ public class GamesListActivity extends ChessBoardActivity {
 
         editor.putLong("gameslist_current_game_id", currentGameId);
 
+        int currentView = VIEW_BOARD;
+        int buttonToggleId = buttonToggleGroup.getCheckedButtonId();
+        if (buttonToggleId == R.id.ButtonTogglePgn) {
+            currentView = VIEW_PGN;
+        } else if (buttonToggleId == R.id.ButtonToggleList) {
+            currentView = VIEW_LIST;
+        }
+        editor.putInt("gameslist_current_view", currentView);
+
         editor.commit();
     }
 
@@ -234,6 +313,8 @@ public class GamesListActivity extends ChessBoardActivity {
         } else {
             // @TODO
         }
+
+        adapterGames.swapCursor(cursor);
     }
 
     private void loadGame() {
@@ -272,6 +353,10 @@ public class GamesListActivity extends ChessBoardActivity {
         gameApi.pgnTags.put("Date", date);
         gameApi.pgnTags.put("Result", result);
 
+
+        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
+        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
+
         // pgn view
 
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
@@ -286,7 +371,7 @@ public class GamesListActivity extends ChessBoardActivity {
             String annotation = pgnEntries.get(i).sAnnotation;
             int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
 
-            mapMoves.add(new MoveItem(nr, sMove, annotation, turn));
+            mapMoves.add(new MoveItem(nr, sMove, pgnEntries.get(i).move, annotation, turn));
 
         }
 
@@ -407,16 +492,22 @@ public class GamesListActivity extends ChessBoardActivity {
     private void showBoardView() {
         chessBoardView.setVisibility(View.VISIBLE);
         gridLayoutPgn.setVisibility(View.INVISIBLE);
+        listView.setVisibility(View.GONE);
+        scrollView.setVisibility(View.VISIBLE);
     }
 
     private void showPgnView() {
         chessBoardView.setVisibility(View.INVISIBLE);
         gridLayoutPgn.setVisibility(View.VISIBLE);
+        listView.setVisibility(View.GONE);
+        scrollView.setVisibility(View.VISIBLE);
     }
 
     private void showListView() {
         chessBoardView.setVisibility(View.INVISIBLE);
         gridLayoutPgn.setVisibility(View.INVISIBLE);
+        listView.setVisibility(View.VISIBLE);
+        scrollView.setVisibility(View.GONE);
     }
 
     private class FilterDialog extends Dialog {

@@ -48,7 +48,7 @@ public class PGNDialog extends Dialog {
             String annotation = pgnEntries.get(i).sAnnotation;
             int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
 
-            mapMoves.add(new MoveItem(nr, sMove, annotation, turn));
+            mapMoves.add(new MoveItem(nr, sMove, pgnEntries.get(i).move, annotation, turn));
 
         }
 
