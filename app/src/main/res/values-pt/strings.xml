@@ -343,4 +343,10 @@ Atenção: se o dispositivo mudar de rede, a conexão pode cair.<br/>
 
     <string name="hotspot_new">Novo</string>
 
+    <string name="lichess_challenge_days_hint">1</string>
+
+    <string name="lichess_challenge_minutes_hint">5</string>
+
+    <string name="lichess_challenge_increment_hint">10</string>
+
 </resources>

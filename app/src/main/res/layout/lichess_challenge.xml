@@ -76,7 +76,7 @@
                         style="@style/MyHeaderTextStyle" />
                     <EditText
                         android:id="@+id/EditTextDays"
-                        android:hint="1"
+                        android:hint="@string/lichess_challenge_days_hint"
                         android:inputType="number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
                         style="@style/MyHeaderTextStyle" />
                     <EditText
                         android:id="@+id/EditTextMinutes"
-                        android:hint="5"
+                        android:hint="@string/lichess_challenge_minutes_hint"
                         android:inputType="number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                         style="@style/MyHeaderTextStyle" />
                     <EditText
                         android:id="@+id/EditTextIncrement"
-                        android:hint="10"
+                        android:hint="@string/lichess_challenge_increment_hint"
                         android:inputType="number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

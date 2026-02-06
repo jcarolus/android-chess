@@ -342,4 +342,10 @@ Attention : si votre appareil change de connexion, la partie peut être interrom
 
     <string name="hotspot_new">Nouveau</string>
 
+    <string name="lichess_challenge_days_hint">1</string>
+
+    <string name="lichess_challenge_minutes_hint">5</string>
+
+    <string name="lichess_challenge_increment_hint">10</string>
+
 </resources>

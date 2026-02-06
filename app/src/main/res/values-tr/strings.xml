@@ -343,4 +343,10 @@ Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
 
     <string name="hotspot_new">Yeni</string>
 
+    <string name="lichess_challenge_days_hint">1</string>
+
+    <string name="lichess_challenge_minutes_hint">5</string>
+
+    <string name="lichess_challenge_increment_hint">10</string>
+
 </resources>
