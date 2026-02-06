@@ -17,7 +17,7 @@
                 android:src="@drawable/lichess"
                 />
             <TextView
-                android:text="handle"
+                android:text="@string/lichess_lobby_handle"
                 android:id="@+id/TextViewHandle"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"

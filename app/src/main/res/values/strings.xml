@@ -452,4 +452,6 @@
 
     <string name="lichess_challenge_increment_hint">10</string>
 
+    <string name="lichess_lobby_handle">handle</string>
+
 </resources>

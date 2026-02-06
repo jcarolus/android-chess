@@ -348,4 +348,6 @@ Attention : si votre appareil change de connexion, la partie peut être interrom
 
     <string name="lichess_challenge_increment_hint">10</string>
 
+    <string name="lichess_lobby_handle">pseudo</string>
+
 </resources>

@@ -349,4 +349,6 @@ Atenção: se o dispositivo mudar de rede, a conexão pode cair.<br/>
 
     <string name="lichess_challenge_increment_hint">10</string>
 
+    <string name="lichess_lobby_handle">usuário</string>
+
 </resources>

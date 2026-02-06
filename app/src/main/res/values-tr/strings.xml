@@ -349,4 +349,6 @@ Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
 
     <string name="lichess_challenge_increment_hint">10</string>
 
+    <string name="lichess_lobby_handle">kullanıcı</string>
+
 </resources>
