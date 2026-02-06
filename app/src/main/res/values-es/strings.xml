@@ -359,4 +359,162 @@
 
     <string name="lichess_lobby_handle">usuario</string>
 
+    <string name="button_engine_play_description">Jugar con motor</string>
+
+    <string name="button_menu_description">Menú</string>
+
+    <string name="button_next_move_description">Siguiente movimiento</string>
+
+    <string name="button_next_position">Siguiente posición</string>
+
+    <string name="button_previous_move_description">Movimiento anterior</string>
+
+    <string name="button_previous_position">Posición anterior</string>
+
+    <string name="button_reset_position">Restablecer posición</string>
+
+    <string name="ics_menu_resume">Reanudar</string>
+
+    <string name="last_black_move_description">%1$s. Turno de las blancas</string>
+
+    <string name="last_white_move_description">%1$s. Turno de las negras</string>
+
+    <string name="lichess_challenge_by_cancelled">Desafío de %1$s cancelado</string>
+
+    <string name="lichess_challenge_by_declined">Desafío rechazado por %1$s</string>
+
+    <string name="lichess_challenge_dialog_button_accept">Aceptar</string>
+
+    <string name="lichess_challenge_dialog_button_decline">Rechazar</string>
+
+    <string name="lichess_challenge_dialog_message_rated">Puntuada</string>
+
+    <string name="lichess_challenge_dialog_message_rating">con rating %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_time_control">Control de tiempo: %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_unrated">Sin rating</string>
+
+    <string name="lichess_challenge_dialog_message_variant">Variante: %1$s</string>
+
+    <string name="lichess_challenge_posted">Desafío publicado</string>
+
+    <string name="lichess_confirm_offer_draw">Confirma que deseas ofrecer tablas</string>
+
+    <string name="lichess_confirm_resign">Confirma que deseas rendirte</string>
+
+    <string name="lichess_create_challenge_color">Color</string>
+
+    <string name="lichess_create_challenge_color_black">Negras</string>
+
+    <string name="lichess_create_challenge_color_random">Aleatorio</string>
+
+    <string name="lichess_create_challenge_color_white">Blancas</string>
+
+    <string name="lichess_create_challenge_player">Oponente</string>
+
+    <string name="lichess_create_challenge_rated">Puntuada</string>
+
+    <string name="lichess_create_challenge_time">Tiempo</string>
+
+    <string name="lichess_create_challenge_time_control">Control de tiempo</string>
+
+    <string name="lichess_create_challenge_time_correspondence">Correspondencia</string>
+
+    <string name="lichess_create_challenge_time_days">Días por jugada</string>
+
+    <string name="lichess_create_challenge_time_increment">Incremento (s)</string>
+
+    <string name="lichess_create_challenge_time_minutes">Minutos</string>
+
+    <string name="lichess_create_challenge_title">Crear desafío</string>
+
+    <string name="lichess_create_challenge_variant">Variante</string>
+
+    <string name="lichess_create_challenge_variant_chess960">Ajedrez 960</string>
+
+    <string name="lichess_create_challenge_variant_standard">Estándar</string>
+
+    <string name="lichess_create_seek_title">Crear búsqueda</string>
+
+    <string name="lichess_game_cancel_move">Cancelar movimiento</string>
+
+    <string name="lichess_game_confirm_move">Confirmar %1$s</string>
+
+    <string name="lichess_game_confirm_moves">Confirmar movimientos</string>
+
+    <string name="lichess_game_disconnected">Partida desconectada. Comprueba tu conexión a internet e inténtalo de nuevo</string>
+
+    <string name="lichess_game_state_aborted">Partida abortada</string>
+
+    <string name="lichess_game_state_created">Partida creada</string>
+
+    <string name="lichess_game_state_mate">Partida terminó en jaque mate</string>
+
+    <string name="lichess_game_state_resigned">Partida terminó por rendición</string>
+
+    <string name="lichess_game_state_started">Partida iniciada</string>
+
+    <string name="lichess_game_winner">Ganador: %1$s</string>
+
+    <string name="lichess_games_connection_error_retry">No se pudieron obtener tus partidas. Reintentando en 5 segundos</string>
+
+    <string name="lichess_lobby_button_challenge">Desafío</string>
+
+    <string name="lichess_lobby_button_logout">Cerrar sesión</string>
+
+    <string name="lichess_lobby_button_seek">Buscar</string>
+
+    <string name="lichess_lobby_connected">Estás conectado a Lichess</string>
+
+    <string name="lichess_lobby_ongoing_games">Partidas en curso</string>
+
+    <string name="lichess_login_intro">Cuando elijas Iniciar sesión, serás redirigido a Lichess para iniciar sesión</string>
+
+    <string name="lichess_my_challenge_closed">Desafío cerrado</string>
+
+    <string name="lichess_my_seek_closed">Búsqueda cerrada</string>
+
+    <string name="lichess_opponent_offers_draw">Tu oponente ofrece tablas. Toca Tablas para aceptar</string>
+
+    <string name="lichess_play_button_draw">Tablas</string>
+
+    <string name="lichess_play_button_resign">Rendirse</string>
+
+    <string name="lichess_seek_posted">Búsqueda publicada</string>
+
+    <string name="lichess_starting">Iniciando...</string>
+
+    <string name="menu_open_game">Abrir archivo de partida</string>
+
+    <string name="menu_open_position_file">Abrir archivo de posición</string>
+
+    <string name="menu_save_game_to_file">Guardar partida en archivo</string>
+
+    <string name="menu_save_position_to_file">Guardar posición en archivo</string>
+
+    <string name="msg_setup_clear">Limpiar</string>
+
+    <string name="msg_setup_reset">Restablecer</string>
+
+    <string name="piece_duck">Pato</string>
+
+    <string name="pref_speech_pitch_desc">Tono de voz</string>
+
+    <string name="pref_speech_rate_desc">Velocidad de voz</string>
+
+    <string name="puzzle_correct_move">Ese es el movimiento correcto</string>
+
+    <string name="square_selected_with_duck_description">Seleccionado %1$s en %2$s</string>
+
+    <string name="square_selected_with_piece_description">Seleccionado %1$s %2$s en %3$s</string>
+
+    <string name="square_with_duck_description">%1$s en %2$s</string>
+
+    <string name="start_database">Base de datos de partidas</string>
+
+    <string name="start_lichess">Lichess (beta)</string>
+
+    <string name="tile_diagonal_stripes">rayas diagonales</string>
+
 </resources>

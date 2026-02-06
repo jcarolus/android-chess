@@ -351,4 +351,162 @@ Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
 
     <string name="lichess_lobby_handle">kullanıcı</string>
 
+    <string name="button_engine_play_description">Motorla oyna</string>
+
+    <string name="button_menu_description">Menü</string>
+
+    <string name="button_next_move_description">Sonraki hamle</string>
+
+    <string name="button_next_position">Sonraki konum</string>
+
+    <string name="button_previous_move_description">Önceki hamle</string>
+
+    <string name="button_previous_position">Önceki konum</string>
+
+    <string name="button_reset_position">Konumu sıfırla</string>
+
+    <string name="ics_menu_resume">Devam et</string>
+
+    <string name="last_black_move_description">%1$s. Beyazın sırası</string>
+
+    <string name="last_white_move_description">%1$s. Siyahın sırası</string>
+
+    <string name="lichess_challenge_by_cancelled">%1$s tarafından gönderilen meydan okuma iptal edildi</string>
+
+    <string name="lichess_challenge_by_declined">%1$s tarafından gönderilen meydan okuma reddedildi</string>
+
+    <string name="lichess_challenge_dialog_button_accept">Kabul et</string>
+
+    <string name="lichess_challenge_dialog_button_decline">Reddet</string>
+
+    <string name="lichess_challenge_dialog_message_rated">Dereceli</string>
+
+    <string name="lichess_challenge_dialog_message_rating">%1$s dereceli</string>
+
+    <string name="lichess_challenge_dialog_message_time_control">Zaman kontrolü: %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_unrated">Derecesiz</string>
+
+    <string name="lichess_challenge_dialog_message_variant">Varyant: %1$s</string>
+
+    <string name="lichess_challenge_posted">Meydan okuma gönderildi</string>
+
+    <string name="lichess_confirm_offer_draw">Berabere teklif etmek istediğinizi onaylayın</string>
+
+    <string name="lichess_confirm_resign">Pes etmek istediğinizi onaylayın</string>
+
+    <string name="lichess_create_challenge_color">Renk</string>
+
+    <string name="lichess_create_challenge_color_black">Siyah</string>
+
+    <string name="lichess_create_challenge_color_random">Rastgele</string>
+
+    <string name="lichess_create_challenge_color_white">Beyaz</string>
+
+    <string name="lichess_create_challenge_player">Rakip</string>
+
+    <string name="lichess_create_challenge_rated">Dereceli</string>
+
+    <string name="lichess_create_challenge_time">Zaman</string>
+
+    <string name="lichess_create_challenge_time_control">Zaman kontrolü</string>
+
+    <string name="lichess_create_challenge_time_correspondence">Yazışmalı</string>
+
+    <string name="lichess_create_challenge_time_days">Hamle başına gün</string>
+
+    <string name="lichess_create_challenge_time_increment">Ek süre (s)</string>
+
+    <string name="lichess_create_challenge_time_minutes">Dakika</string>
+
+    <string name="lichess_create_challenge_title">Meydan okuma oluştur</string>
+
+    <string name="lichess_create_challenge_variant">Varyant</string>
+
+    <string name="lichess_create_challenge_variant_chess960">Satranç 960</string>
+
+    <string name="lichess_create_challenge_variant_standard">Standart</string>
+
+    <string name="lichess_create_seek_title">Arama oluştur</string>
+
+    <string name="lichess_game_cancel_move">Hamleyi iptal et</string>
+
+    <string name="lichess_game_confirm_move">%1$s onayla</string>
+
+    <string name="lichess_game_confirm_moves">Hamleleri onayla</string>
+
+    <string name="lichess_game_disconnected">Oyun bağlantısı kesildi. İnternet bağlantınızı kontrol edin ve tekrar deneyin</string>
+
+    <string name="lichess_game_state_aborted">Oyun iptal edildi</string>
+
+    <string name="lichess_game_state_created">Oyun oluşturuldu</string>
+
+    <string name="lichess_game_state_mate">Oyun şah mat ile bitti</string>
+
+    <string name="lichess_game_state_resigned">Oyun pes edilerek bitti</string>
+
+    <string name="lichess_game_state_started">Oyun başladı</string>
+
+    <string name="lichess_game_winner">Kazanan: %1$s</string>
+
+    <string name="lichess_games_connection_error_retry">Oyunlarınız alınamadı. 5 saniye içinde yeniden bağlanılıyor</string>
+
+    <string name="lichess_lobby_button_challenge">Meydan okuma</string>
+
+    <string name="lichess_lobby_button_logout">Çıkış</string>
+
+    <string name="lichess_lobby_button_seek">Arama</string>
+
+    <string name="lichess_lobby_connected">Lichess\'e bağlandınız</string>
+
+    <string name="lichess_lobby_ongoing_games">Devam eden oyunlar</string>
+
+    <string name="lichess_login_intro">Giriş\'i seçtiğinizde, giriş yapmak için Lichess\'e yönlendirileceksiniz</string>
+
+    <string name="lichess_my_challenge_closed">Meydan okuma kapatıldı</string>
+
+    <string name="lichess_my_seek_closed">Arama kapatıldı</string>
+
+    <string name="lichess_opponent_offers_draw">Rakibiniz beraberlik teklif ediyor. Kabul etmek için Berabere\'ye dokunun</string>
+
+    <string name="lichess_play_button_draw">Berabere</string>
+
+    <string name="lichess_play_button_resign">Pes et</string>
+
+    <string name="lichess_seek_posted">Arama gönderildi</string>
+
+    <string name="lichess_starting">Başlıyor...</string>
+
+    <string name="menu_open_game">Oyun dosyasını aç</string>
+
+    <string name="menu_open_position_file">Pozisyon dosyasını aç</string>
+
+    <string name="menu_save_game_to_file">Oyunu dosyaya kaydet</string>
+
+    <string name="menu_save_position_to_file">Pozisyonu dosyaya kaydet</string>
+
+    <string name="msg_setup_clear">Temizle</string>
+
+    <string name="msg_setup_reset">Sıfırla</string>
+
+    <string name="piece_duck">Ördek</string>
+
+    <string name="pref_speech_pitch_desc">Ses perdesi</string>
+
+    <string name="pref_speech_rate_desc">Konuşma hızı</string>
+
+    <string name="puzzle_correct_move">Bu doğru hamle</string>
+
+    <string name="square_selected_with_duck_description">%2$s konumunda %1$s seçildi</string>
+
+    <string name="square_selected_with_piece_description">%3$s konumunda %1$s %2$s seçildi</string>
+
+    <string name="square_with_duck_description">%2$s konumunda %1$s</string>
+
+    <string name="start_database">Oyun veritabanı</string>
+
+    <string name="start_lichess">Lichess (beta)</string>
+
+    <string name="tile_diagonal_stripes">diyagonal çizgiler</string>
+
 </resources>

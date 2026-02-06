@@ -351,4 +351,162 @@ Atenție: dacă dispozitivul schimbă rețeaua, conexiunea se poate întrerupe.<
 
     <string name="lichess_lobby_handle">utilizator</string>
 
+    <string name="button_engine_play_description">Joacă cu motorul</string>
+
+    <string name="button_menu_description">Meniu</string>
+
+    <string name="button_next_move_description">Mutare următoare</string>
+
+    <string name="button_next_position">Poziție următoare</string>
+
+    <string name="button_previous_move_description">Mutare anterioară</string>
+
+    <string name="button_previous_position">Poziție anterioară</string>
+
+    <string name="button_reset_position">Resetează poziția</string>
+
+    <string name="ics_menu_resume">Reia</string>
+
+    <string name="last_black_move_description">%1$s. Rândul albului</string>
+
+    <string name="last_white_move_description">%1$s. Rândul negrului</string>
+
+    <string name="lichess_challenge_by_cancelled">Provocarea lui %1$s a fost anulată</string>
+
+    <string name="lichess_challenge_by_declined">Provocarea a fost refuzată de %1$s</string>
+
+    <string name="lichess_challenge_dialog_button_accept">Acceptă</string>
+
+    <string name="lichess_challenge_dialog_button_decline">Refuză</string>
+
+    <string name="lichess_challenge_dialog_message_rated">Cotată</string>
+
+    <string name="lichess_challenge_dialog_message_rating">cu rating %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_time_control">Control timp: %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_unrated">Necotată</string>
+
+    <string name="lichess_challenge_dialog_message_variant">Variantă: %1$s</string>
+
+    <string name="lichess_challenge_posted">Provocare publicată</string>
+
+    <string name="lichess_confirm_offer_draw">Confirmă că vrei să oferi remiză</string>
+
+    <string name="lichess_confirm_resign">Confirmă că vrei să renunți</string>
+
+    <string name="lichess_create_challenge_color">Culoare</string>
+
+    <string name="lichess_create_challenge_color_black">Negru</string>
+
+    <string name="lichess_create_challenge_color_random">Aleator</string>
+
+    <string name="lichess_create_challenge_color_white">Alb</string>
+
+    <string name="lichess_create_challenge_player">Adversar</string>
+
+    <string name="lichess_create_challenge_rated">Cotată</string>
+
+    <string name="lichess_create_challenge_time">Timp</string>
+
+    <string name="lichess_create_challenge_time_control">Control timp</string>
+
+    <string name="lichess_create_challenge_time_correspondence">Corespondență</string>
+
+    <string name="lichess_create_challenge_time_days">Zile per mutare</string>
+
+    <string name="lichess_create_challenge_time_increment">Increment (s)</string>
+
+    <string name="lichess_create_challenge_time_minutes">Minute</string>
+
+    <string name="lichess_create_challenge_title">Creează provocare</string>
+
+    <string name="lichess_create_challenge_variant">Variantă</string>
+
+    <string name="lichess_create_challenge_variant_chess960">Șah 960</string>
+
+    <string name="lichess_create_challenge_variant_standard">Standard</string>
+
+    <string name="lichess_create_seek_title">Creează căutare</string>
+
+    <string name="lichess_game_cancel_move">Anulează mutarea</string>
+
+    <string name="lichess_game_confirm_move">Confirmă %1$s</string>
+
+    <string name="lichess_game_confirm_moves">Confirmă mutările</string>
+
+    <string name="lichess_game_disconnected">Partida s-a deconectat. Verifică conexiunea la internet și încearcă din nou</string>
+
+    <string name="lichess_game_state_aborted">Partida anulată</string>
+
+    <string name="lichess_game_state_created">Partida creată</string>
+
+    <string name="lichess_game_state_mate">Partida s-a încheiat prin șah mat</string>
+
+    <string name="lichess_game_state_resigned">Partida s-a încheiat prin renunțare</string>
+
+    <string name="lichess_game_state_started">Partida a început</string>
+
+    <string name="lichess_game_winner">Câștigător: %1$s</string>
+
+    <string name="lichess_games_connection_error_retry">Nu am putut obține partidele tale. Încerc reconectarea în 5 secunde</string>
+
+    <string name="lichess_lobby_button_challenge">Provocare</string>
+
+    <string name="lichess_lobby_button_logout">Deconectare</string>
+
+    <string name="lichess_lobby_button_seek">Caută</string>
+
+    <string name="lichess_lobby_connected">Ești conectat la Lichess</string>
+
+    <string name="lichess_lobby_ongoing_games">Partide în desfășurare</string>
+
+    <string name="lichess_login_intro">Când alegi Autentificare, vei fi redirecționat către Lichess pentru autentificare</string>
+
+    <string name="lichess_my_challenge_closed">Provocare închisă</string>
+
+    <string name="lichess_my_seek_closed">Căutare închisă</string>
+
+    <string name="lichess_opponent_offers_draw">Adversarul oferă remiză. Apasă Remiză pentru a accepta</string>
+
+    <string name="lichess_play_button_draw">Remiză</string>
+
+    <string name="lichess_play_button_resign">Renunță</string>
+
+    <string name="lichess_seek_posted">Căutare publicată</string>
+
+    <string name="lichess_starting">Pornire...</string>
+
+    <string name="menu_open_game">Deschide fișierul de partidă</string>
+
+    <string name="menu_open_position_file">Deschide fișierul de poziție</string>
+
+    <string name="menu_save_game_to_file">Salvează partida în fișier</string>
+
+    <string name="menu_save_position_to_file">Salvează poziția în fișier</string>
+
+    <string name="msg_setup_clear">Curăță</string>
+
+    <string name="msg_setup_reset">Resetează</string>
+
+    <string name="piece_duck">Rață</string>
+
+    <string name="pref_speech_pitch_desc">Înălțime voce</string>
+
+    <string name="pref_speech_rate_desc">Viteză vorbire</string>
+
+    <string name="puzzle_correct_move">Aceasta este mutarea corectă</string>
+
+    <string name="square_selected_with_duck_description">Selectat %1$s la %2$s</string>
+
+    <string name="square_selected_with_piece_description">Selectat %1$s %2$s la %3$s</string>
+
+    <string name="square_with_duck_description">%1$s la %2$s</string>
+
+    <string name="start_database">Baza de date a partidelor</string>
+
+    <string name="start_lichess">Lichess (beta)</string>
+
+    <string name="tile_diagonal_stripes">dungi diagonale</string>
+
 </resources>

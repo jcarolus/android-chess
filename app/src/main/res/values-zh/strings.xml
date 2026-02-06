@@ -351,4 +351,162 @@
 
     <string name="lichess_lobby_handle">用户名</string>
 
+    <string name="button_engine_play_description">引擎对弈</string>
+
+    <string name="button_menu_description">菜单</string>
+
+    <string name="button_next_move_description">下一步</string>
+
+    <string name="button_next_position">下一位置</string>
+
+    <string name="button_previous_move_description">上一步</string>
+
+    <string name="button_previous_position">上一位置</string>
+
+    <string name="button_reset_position">重置位置</string>
+
+    <string name="ics_menu_resume">继续</string>
+
+    <string name="last_black_move_description">%1$s。白方行棋</string>
+
+    <string name="last_white_move_description">%1$s。黑方行棋</string>
+
+    <string name="lichess_challenge_by_cancelled">%1$s 的挑战已取消</string>
+
+    <string name="lichess_challenge_by_declined">%1$s 拒绝了挑战</string>
+
+    <string name="lichess_challenge_dialog_button_accept">接受</string>
+
+    <string name="lichess_challenge_dialog_button_decline">拒绝</string>
+
+    <string name="lichess_challenge_dialog_message_rated">有评级</string>
+
+    <string name="lichess_challenge_dialog_message_rating">评级 %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_time_control">用时: %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_unrated">无评级</string>
+
+    <string name="lichess_challenge_dialog_message_variant">变体: %1$s</string>
+
+    <string name="lichess_challenge_posted">已发布挑战</string>
+
+    <string name="lichess_confirm_offer_draw">确认要提和</string>
+
+    <string name="lichess_confirm_resign">确认要认输</string>
+
+    <string name="lichess_create_challenge_color">颜色</string>
+
+    <string name="lichess_create_challenge_color_black">黑方</string>
+
+    <string name="lichess_create_challenge_color_random">随机</string>
+
+    <string name="lichess_create_challenge_color_white">白方</string>
+
+    <string name="lichess_create_challenge_player">对手</string>
+
+    <string name="lichess_create_challenge_rated">有评级</string>
+
+    <string name="lichess_create_challenge_time">时间</string>
+
+    <string name="lichess_create_challenge_time_control">用时</string>
+
+    <string name="lichess_create_challenge_time_correspondence">通信</string>
+
+    <string name="lichess_create_challenge_time_days">每步天数</string>
+
+    <string name="lichess_create_challenge_time_increment">增量(秒)</string>
+
+    <string name="lichess_create_challenge_time_minutes">分钟</string>
+
+    <string name="lichess_create_challenge_title">创建挑战</string>
+
+    <string name="lichess_create_challenge_variant">变体</string>
+
+    <string name="lichess_create_challenge_variant_chess960">国际象棋960</string>
+
+    <string name="lichess_create_challenge_variant_standard">标准</string>
+
+    <string name="lichess_create_seek_title">创建匹配</string>
+
+    <string name="lichess_game_cancel_move">取消走子</string>
+
+    <string name="lichess_game_confirm_move">确认 %1$s</string>
+
+    <string name="lichess_game_confirm_moves">确认走子</string>
+
+    <string name="lichess_game_disconnected">对局已断开。请检查网络连接并重试</string>
+
+    <string name="lichess_game_state_aborted">对局已中止</string>
+
+    <string name="lichess_game_state_created">对局已创建</string>
+
+    <string name="lichess_game_state_mate">对局以将死结束</string>
+
+    <string name="lichess_game_state_resigned">对局因认输结束</string>
+
+    <string name="lichess_game_state_started">对局已开始</string>
+
+    <string name="lichess_game_winner">胜者: %1$s</string>
+
+    <string name="lichess_games_connection_error_retry">无法获取你的对局。5 秒后尝试重新连接</string>
+
+    <string name="lichess_lobby_button_challenge">挑战</string>
+
+    <string name="lichess_lobby_button_logout">退出登录</string>
+
+    <string name="lichess_lobby_button_seek">匹配</string>
+
+    <string name="lichess_lobby_connected">你已连接到 Lichess</string>
+
+    <string name="lichess_lobby_ongoing_games">进行中的对局</string>
+
+    <string name="lichess_login_intro">当你选择登录时，将跳转到 Lichess 进行登录</string>
+
+    <string name="lichess_my_challenge_closed">挑战已关闭</string>
+
+    <string name="lichess_my_seek_closed">匹配已关闭</string>
+
+    <string name="lichess_opponent_offers_draw">对手提和。点击“和棋”接受</string>
+
+    <string name="lichess_play_button_draw">和棋</string>
+
+    <string name="lichess_play_button_resign">认输</string>
+
+    <string name="lichess_seek_posted">已发布匹配</string>
+
+    <string name="lichess_starting">正在开始...</string>
+
+    <string name="menu_open_game">打开对局文件</string>
+
+    <string name="menu_open_position_file">打开局面文件</string>
+
+    <string name="menu_save_game_to_file">保存对局到文件</string>
+
+    <string name="menu_save_position_to_file">保存局面到文件</string>
+
+    <string name="msg_setup_clear">清除</string>
+
+    <string name="msg_setup_reset">重置</string>
+
+    <string name="piece_duck">鸭子</string>
+
+    <string name="pref_speech_pitch_desc">语音音调</string>
+
+    <string name="pref_speech_rate_desc">语速</string>
+
+    <string name="puzzle_correct_move">这是正确的走法</string>
+
+    <string name="square_selected_with_duck_description">已选择 %1$s 在 %2$s</string>
+
+    <string name="square_selected_with_piece_description">已选择 %1$s %2$s 在 %3$s</string>
+
+    <string name="square_with_duck_description">%1$s 在 %2$s</string>
+
+    <string name="start_database">对局数据库</string>
+
+    <string name="start_lichess">Lichess（测试版）</string>
+
+    <string name="tile_diagonal_stripes">对角条纹</string>
+
 </resources>

@@ -351,4 +351,162 @@
 
     <string name="lichess_lobby_handle">ник</string>
 
+    <string name="button_engine_play_description">Игра с движком</string>
+
+    <string name="button_menu_description">Меню</string>
+
+    <string name="button_next_move_description">Следующий ход</string>
+
+    <string name="button_next_position">Следующая позиция</string>
+
+    <string name="button_previous_move_description">Предыдущий ход</string>
+
+    <string name="button_previous_position">Предыдущая позиция</string>
+
+    <string name="button_reset_position">Сбросить позицию</string>
+
+    <string name="ics_menu_resume">Продолжить</string>
+
+    <string name="last_black_move_description">%1$s. Ход белых</string>
+
+    <string name="last_white_move_description">%1$s. Ход черных</string>
+
+    <string name="lichess_challenge_by_cancelled">Вызов от %1$s отменен</string>
+
+    <string name="lichess_challenge_by_declined">Вызов отклонен %1$s</string>
+
+    <string name="lichess_challenge_dialog_button_accept">Принять</string>
+
+    <string name="lichess_challenge_dialog_button_decline">Отклонить</string>
+
+    <string name="lichess_challenge_dialog_message_rated">Рейтинговая</string>
+
+    <string name="lichess_challenge_dialog_message_rating">с рейтингом %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_time_control">Контроль времени: %1$s</string>
+
+    <string name="lichess_challenge_dialog_message_unrated">Нерейтинговая</string>
+
+    <string name="lichess_challenge_dialog_message_variant">Вариант: %1$s</string>
+
+    <string name="lichess_challenge_posted">Вызов отправлен</string>
+
+    <string name="lichess_confirm_offer_draw">Подтвердите предложение ничьей</string>
+
+    <string name="lichess_confirm_resign">Подтвердите сдачу</string>
+
+    <string name="lichess_create_challenge_color">Цвет</string>
+
+    <string name="lichess_create_challenge_color_black">Черные</string>
+
+    <string name="lichess_create_challenge_color_random">Случайно</string>
+
+    <string name="lichess_create_challenge_color_white">Белые</string>
+
+    <string name="lichess_create_challenge_player">Соперник</string>
+
+    <string name="lichess_create_challenge_rated">Рейтинговая</string>
+
+    <string name="lichess_create_challenge_time">Время</string>
+
+    <string name="lichess_create_challenge_time_control">Контроль времени</string>
+
+    <string name="lichess_create_challenge_time_correspondence">Переписка</string>
+
+    <string name="lichess_create_challenge_time_days">Дней на ход</string>
+
+    <string name="lichess_create_challenge_time_increment">Добавление (с)</string>
+
+    <string name="lichess_create_challenge_time_minutes">Минуты</string>
+
+    <string name="lichess_create_challenge_title">Создать вызов</string>
+
+    <string name="lichess_create_challenge_variant">Вариант</string>
+
+    <string name="lichess_create_challenge_variant_chess960">Шахматы 960</string>
+
+    <string name="lichess_create_challenge_variant_standard">Стандарт</string>
+
+    <string name="lichess_create_seek_title">Создать поиск</string>
+
+    <string name="lichess_game_cancel_move">Отменить ход</string>
+
+    <string name="lichess_game_confirm_move">Подтвердить %1$s</string>
+
+    <string name="lichess_game_confirm_moves">Подтвердить ходы</string>
+
+    <string name="lichess_game_disconnected">Игра отключена. Проверьте интернет-соединение и попробуйте снова</string>
+
+    <string name="lichess_game_state_aborted">Игра прервана</string>
+
+    <string name="lichess_game_state_created">Игра создана</string>
+
+    <string name="lichess_game_state_mate">Игра завершилась матом</string>
+
+    <string name="lichess_game_state_resigned">Игра завершилась сдачей</string>
+
+    <string name="lichess_game_state_started">Игра началась</string>
+
+    <string name="lichess_game_winner">Победитель: %1$s</string>
+
+    <string name="lichess_games_connection_error_retry">Не удалось получить ваши игры. Повторное подключение через 5 секунд</string>
+
+    <string name="lichess_lobby_button_challenge">Вызов</string>
+
+    <string name="lichess_lobby_button_logout">Выйти</string>
+
+    <string name="lichess_lobby_button_seek">Поиск</string>
+
+    <string name="lichess_lobby_connected">Вы подключены к Lichess</string>
+
+    <string name="lichess_lobby_ongoing_games">Текущие игры</string>
+
+    <string name="lichess_login_intro">Когда вы выбираете Войти, вы будете перенаправлены на Lichess для входа</string>
+
+    <string name="lichess_my_challenge_closed">Вызов закрыт</string>
+
+    <string name="lichess_my_seek_closed">Поиск закрыт</string>
+
+    <string name="lichess_opponent_offers_draw">Соперник предлагает ничью. Нажмите Ничья, чтобы принять</string>
+
+    <string name="lichess_play_button_draw">Ничья</string>
+
+    <string name="lichess_play_button_resign">Сдаться</string>
+
+    <string name="lichess_seek_posted">Поиск опубликован</string>
+
+    <string name="lichess_starting">Запуск...</string>
+
+    <string name="menu_open_game">Открыть файл партии</string>
+
+    <string name="menu_open_position_file">Открыть файл позиции</string>
+
+    <string name="menu_save_game_to_file">Сохранить партию в файл</string>
+
+    <string name="menu_save_position_to_file">Сохранить позицию в файл</string>
+
+    <string name="msg_setup_clear">Очистить</string>
+
+    <string name="msg_setup_reset">Сбросить</string>
+
+    <string name="piece_duck">Утка</string>
+
+    <string name="pref_speech_pitch_desc">Высота голоса</string>
+
+    <string name="pref_speech_rate_desc">Скорость речи</string>
+
+    <string name="puzzle_correct_move">Это правильный ход</string>
+
+    <string name="square_selected_with_duck_description">Выбрано %1$s на %2$s</string>
+
+    <string name="square_selected_with_piece_description">Выбрано %1$s %2$s на %3$s</string>
+
+    <string name="square_with_duck_description">%1$s на %2$s</string>
+
+    <string name="start_database">База партий</string>
+
+    <string name="start_lichess">Lichess (beta)</string>
+
+    <string name="tile_diagonal_stripes">диагональные полосы</string>
+
 </resources>
