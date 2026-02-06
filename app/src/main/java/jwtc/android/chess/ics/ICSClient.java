@@ -34,6 +34,7 @@ import android.widget.ViewAnimator;
 import android.widget.ViewSwitcher;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -393,16 +394,14 @@ public class ICSClient extends ChessBoardActivity implements
             return;
         }
         if (isConnected()) {
-            new AlertDialog.Builder(ICSClient.this)
+            new MaterialAlertDialogBuilder(ICSClient.this)
                     .setTitle(resource)
 //            .setMessage(resource)
                     .setPositiveButton(R.string.alert_yes,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                    stopService(new Intent(ICSClient.this, ICSServer.class));
-                                    finish();
-                                }
+                            (dialog, whichButton) -> {
+                                dialog.dismiss();
+                                stopService(new Intent(ICSClient.this, ICSServer.class));
+                                finish();
                             })
                     .setNegativeButton(getString(R.string.alert_no), null)
                     .show();
@@ -568,7 +567,7 @@ public class ICSClient extends ChessBoardActivity implements
     public void sendString(String s) {
         if (icsServer != null && !icsServer.sendString(s)) {
             try {
-                new AlertDialog.Builder(ICSClient.this)
+                new MaterialAlertDialogBuilder(ICSClient.this)
                         .setTitle(R.string.title_error)
                         .setMessage(getString(R.string.ics_lost_connection))
                         .setPositiveButton(getString(R.string.alert_ok),
@@ -875,7 +874,7 @@ public class ICSClient extends ChessBoardActivity implements
     @Override
     public void OnError() {
         Log.i(TAG, "OnError");
-        new AlertDialog.Builder(ICSClient.this)
+        new MaterialAlertDialogBuilder(ICSClient.this)
             .setTitle(ICSClient.this.getString(R.string.ics_error))
             .setPositiveButton(getString(R.string.alert_ok),
                     new DialogInterface.OnClickListener() {
@@ -926,7 +925,7 @@ public class ICSClient extends ChessBoardActivity implements
 
     @Override
     public void OnChallenged(HashMap<String, String> challenge) {
-        new AlertDialog.Builder(ICSClient.this)
+        new MaterialAlertDialogBuilder(ICSClient.this)
             .setTitle(ICSClient.this.getString(R.string.title_challenge))
             .setMessage(challenge.get("opponent") +
                     " [" + challenge.get("rating") + "]\n " +

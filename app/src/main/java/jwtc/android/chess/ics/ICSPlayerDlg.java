@@ -1,6 +1,5 @@
 package jwtc.android.chess.ics;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.InputFilter;
@@ -10,7 +9,10 @@ import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import jwtc.android.chess.R;
 
@@ -69,7 +71,7 @@ public class ICSPlayerDlg extends Dialog {
 
         _butSmoves = findViewById(R.id.ButSmoves);
         _butSmoves.setOnClickListener(v -> {
-            final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create(); //Read Update
+            final AlertDialog alertDialog = new MaterialAlertDialogBuilder(getContext()).create(); //Read Update
             alertDialog.setTitle(R.string.ics_historygamenumber);
             alertDialog.setMessage(getContext().getResources().getString(R.string.ics_typegamenumber) + " " + _opponentName);
 
