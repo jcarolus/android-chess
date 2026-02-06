@@ -1,129 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="advanced_help"><![CDATA[
+    <h3>Дополнительно</h3>
+    <p>Создавайте или импортируйте здесь собственные материалы.</p>
+    
+    <h4>Экспорт базы игр на карту SD</h4>
+    <p>Все партии из базы можно экспортировать в один файл PGN на карту SD. Этот файл будет называться chess.pgn; существующий файл будет перезаписан.</p>
+    
+    <h4>Импорт партий в базу</h4>
+    <p>Используйте эту опцию, чтобы добавить партии в базу. Можно выбрать файл PGN и импортировать его.</p>
+    
+    <h4>Удалить все партии из базы</h4>
+    <p>Используйте эту опцию, если хотите очистить базу. Сначала обязательно сделайте резервную копию на карту SD; это действие нельзя отменить.</p>
+    
+    <h4>Создать набор для тренировки</h4>
+    <p>Создаёт учебные позиции из партий, которые закончились матом. Укажите файл для обработки. Неудачные записи — это обычно партии, которые не закончились матом, либо дубликаты.</p>
+    
+    <h4>Сбросить набор для тренировки</h4>
+    <p>Хотите начать тренировки заново? Это также сбросит счётчик среднего времени.</p>
+    
+    ]]></string>
+    <string name="alert_no">Нет</string>
+    <string name="alert_ok">OK</string>
+    <string name="alert_yes">Да</string>
     <string name="app_name">Шахматы</string>
-    <string name="app_name_play">Играть</string>
-    <string name="app_name_playonline">Играть онлайн</string>
-    <string name="app_name_setup">Настройки</string>
     <string name="app_name_help">Справка</string>
     <string name="app_name_import">Импорт</string>
     <string name="app_name_pgntools">Дополнительно</string>
+    <string name="app_name_play">Играть</string>
+    <string name="app_name_playonline">Играть онлайн</string>
     <string name="app_name_save_games">Сохранённые партии</string>
-
-    <string name="start_play">Играть</string>
-    <string name="start_practice">Тренировка</string>
-    <string name="start_puzzles">Задачи</string>
-    <string name="start_hotspotboard">Hotspot-доска</string>
-    <string name="start_pgn">Дополнительно</string>
-    <string name="start_ics">Играть онлайн</string>
-    <string name="start_boardpreferences">Настройки шахматной доски</string>
-
-    <string name="globalpreferences">Глобальные настройки</string>
-    <string name="playpreferences">Настройки игры</string>
-    <string name="playonlinepreferences">Настройки онлайн-игры</string>
-    <string name="gamepreferences">Настройки партии</string>
-    <string name="preferences">Настройки</string>
-    <string name="pref_wakelock">Не выключать экран</string>
-    <string name="pref_wakelock_desc">Предотвращает переход устройства в спящий режим</string>
-    <string name="pref_showCoords">Координаты</string>
-    <string name="pref_sound">Звук</string>
-    <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
-    <string name="pref_speech">Озвучка</string>
-    <string name="pref_fullscreen">Полноэкранный режим</string>
-    <string name="pref_fullscreen_desc">Рекомендуется для маленьких экранов и альбомного вида; иначе элементы могут не помещаться</string>
-    <string name="pref_icscustomcommand">Пользовательские команды</string>
-    <string name="pref_icscustomcommand_desc">Создайте свои команды</string>
-    <string name="pref_icsconsolecharactersize">Размер символов КОНСОЛИ</string>
-    <string name="pref_icsconsolecharactersize_desc">Настройка размера символов в консоли</string>
-    <string name="pref_icsautosought">Автопоиск</string>
-    <string name="pref_icsautosought_desc">Автоматически обновлять экран вызовов</string>
-    <string name="pref_icstimewarning">Предупреждение о времени</string>
-    <string name="pref_icstimewarning_desc">Тиканье предупреждает, если времени осталось мало</string>
-    <string name="pref_icstimewarningsecs">Порог времени (сек)</string>
-    <string name="pref_icstimewarningsecs_desc">За сколько секунд начинать предупреждение?</string>
-    <string name="prefs_icsendgamedialog">Диалог окончания партии</string>
-    <string name="prefs_icsendgamesummary">В конце партии показывать диалог сохранения?</string>
-    <string name="pref_icsnotification">Уведомление о новой партии</string>
-    <string name="prefs_icsnotificationsummary">Сообщает о начале партии значком</string>
-    <string name="pref_vs_cpu">против CPU</string>
-    <string name="pref_vs_cpu_desc">Играть против процессора/движка</string>
-    <string name="pref_turn">Сторона</string>
-    <string name="pref_turn_desc">За какую сторону вы играете</string>
-    <string name="pref_night_mode">Ночной режим</string>
-    <string name="pref_night_mode_desc">Включить приложение в ночном режиме</string>
-
-    <string name="button_ok">OK</string>
+    <string name="app_name_setup">Настройки</string>
     <string name="button_cancel">Отмена</string>
-    <string name="button_login">Вход</string>
-    <string name="button_register">Регистрация</string>
     <string name="button_close">Закрыть</string>
+    <string name="button_engine_play_description">Игра с движком</string>
+    <string name="button_login">Вход</string>
+    <string name="button_menu_description">Меню</string>
+    <string name="button_next_move_description">Следующий ход</string>
+    <string name="button_next_position">Следующая позиция</string>
+    <string name="button_ok">OK</string>
+    <string name="button_previous_move_description">Предыдущий ход</string>
+    <string name="button_previous_position">Предыдущая позиция</string>
+    <string name="button_register">Регистрация</string>
+    <string name="button_reset_position">Сбросить позицию</string>
     <string name="button_save">Сохранить</string>
     <string name="button_save_copy">Сохранить копию</string>
-    <string name="puzzle_show">Показать</string>
-
-    <string name="alert_yes">Да</string>
-    <string name="alert_no">Нет</string>
-    <string name="alert_ok">OK</string>
-
-    <string name="title_challenge">Вызов</string>
-    <string name="title_error">Ошибка</string>
-    <string name="title_offers_abort">Запрос отмены</string>
-    <string name="title_offers_takeback">Запрос отменить ход</string>
-    <string name="title_offers_draw">Запрос на ничью</string>
-    <string name="title_offers_adjourn">Запрос на перенос</string>
-    <string name="title_pick_level">Выберите уровень игры</string>
-    <string name="title_menu">Меню</string>
-    <string name="title_save_game">Сохранить партию</string>
-    <string name="title_delete_game">Удалить партию</string>
-    <string name="title_pick_promo">Выберите фигуру для превращения</string>
-    <string name="title_castle">Рокировка?</string>
-    <string name="title_pick_en_passant">Поле en passant</string>
-    <string name="title_create_new_line">Создать новую линию?</string>
-    <string name="title_edit_or_delete">Изменить или удалить?</string>
-    <string name="title_edit_command">Изменить команду</string>
-
-    <string name="menu_help">Справка</string>
-    <string name="menu_new">Новая партия</string>
-    <string name="menu_new_duck">Новая Duck (экспериментально)</string>
-    <string name="menu_clip_pgn">Партия в буфер обмена</string>
-    <string name="menu_fromclip">Партия из буфера обмена</string>
-    <string name="menu_save_game">Сохранить партию</string>
-    <string name="menu_load_game">Загрузить партию</string>
-    <string name="menu_flip">Повернуть</string>
-    <string name="menu_setup">Настроить доску</string>
-    <string name="menu_new_command">Новая команда</string>
-    <string name="menu_new_command_message">напишите \u003cNR\u003e в конце команды без возврата\nпример: tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_set_clock">Установить часы</string>
-    <string name="menu_prefs">Настройки</string>
-    <string name="menu_game_settings">Настройки партии</string>
-    <string name="menu_new_960">Новый случайный Фишер / 960</string>
-
-    <string name="pref_show_blindfold">Слепые шахматы</string>
-
-    <string name="options_play_human">Человек против Человека</string>
-    <string name="options_play_android">Человек против Android</string>
-    <string name="options_play_white">Белые</string>
-    <string name="options_play_black">Чёрные</string>
-    <string name="options_quiescent_on">Поиск тишины включён</string>
-    <string name="options_quiescent_off">Поиск тишины выключён</string>
-    <string name="pref_show_possible_moves">Показывать ходы</string>
-    <string name="options_level_time">Уровень (время)</string>
-    <string name="options_level_ply">Уровень (плай)</string>
-
-    <string name="state_play">в игре</string>
-    <string name="state_draw_material">ничья (материал)</string>
-    <string name="state_draw_50">ничья (правило 50 ходов)</string>
-    <string name="state_draw_stalemate">ничья (пат)</string>
-    <string name="state_draw_repeat">ничья (тройное повторение)</string>
-    <string name="state_mate">мат</string>
-    <string name="state_check">шах</string>
-    <string name="state_black_forfeits_time">чёрные проиграли по времени</string>
-    <string name="state_white_forfeits_time">белые проиграли по времени</string>
-    <string name="state_black_resigned">чёрные сдались</string>
-    <string name="state_white_resigned">белые сдались</string>
-    <string name="state_draw_agreement">ничья по соглашению</string>
-
+    <string name="chessboard_hint_color_scheme">Цветовая схема</string>
+    <string name="chessboard_hint_piece_set">Набор фигур</string>
+    <string name="chessboard_hint_tile_effect">Эффект клеток</string>
+    <string name="choice_delete">Удалить</string>
+    <string name="choice_edit">Редактировать</string>
     <string name="choice_level_1">1 секунда</string>
+    <string name="choice_level_10">15 минут</string>
     <string name="choice_level_2">2 секунды</string>
     <string name="choice_level_3">4 секунды</string>
     <string name="choice_level_4">8 секунд (средний)</string>
@@ -132,381 +60,319 @@
     <string name="choice_level_7">30 секунд (опытный)</string>
     <string name="choice_level_8">1 минута</string>
     <string name="choice_level_9">5 минут</string>
-    <string name="choice_level_10">15 минут</string>
-
-    <string name="square_with_piece_description">%1$s %2$s на %3$s</string>
-
-    <string name="piece_white">Белые</string>
-    <string name="piece_black">Чёрные</string>
-    <string name="piece_king">Король</string>
-    <string name="piece_queen">Ферзь</string>
-    <string name="piece_rook">Ладья</string>
+    <string name="choice_random">Случайно</string>
+    <string name="color_scheme_blue">Синий</string>
+    <string name="color_scheme_brown">Коричневый</string>
+    <string name="color_scheme_green">Зелёный</string>
+    <string name="color_scheme_grey">Серый</string>
+    <string name="color_scheme_orange">Оранжевый</string>
+    <string name="color_scheme_pink">Розовый</string>
+    <string name="color_scheme_purple">Фиолетовый</string>
+    <string name="color_scheme_red">Красный</string>
+    <string name="color_scheme_yellow">Жёлтый</string>
+    <string name="copied_clipboard_success">Партия успешно скопирована в буфер</string>
+    <string name="gamepreferences">Настройки партии</string>
+    <string name="globalpreferences">Глобальные настройки</string>
+    <string name="hotspot_black">♚ Черные</string>
+    <string name="hotspot_connect">Подключиться</string>
+    <string name="hotspot_draw">Ничья</string>
+    <string name="hotspot_host">Хост</string>
+    <string name="hotspot_host_help">Включите `хост`, если вы используете Wi‑Fi‑точку доступа.</string>
+    <string name="hotspot_name_hint">Ваше имя</string>
+    <string name="hotspot_new">Новая</string>
+    <string name="hotspot_resign">Сдаться</string>
+    <string name="hotspot_white">♔ Белые</string>
+    <string name="ics_client_handle">Имя пользователя</string>
+    <string name="ics_client_password">Пароль</string>
+    <string name="ics_client_server">Сервер</string>
+    <string name="ics_error">Произошла ошибка. Попробуйте позже.</string>
+    <string name="ics_examine">Анализ</string>
+    <string name="ics_finger">Сводка</string>
+    <string name="ics_follow">Следить</string>
+    <string name="ics_game_over">Игра окончена</string>
+    <string name="ics_gamenumber">Партия #</string>
+    <string name="ics_history">История</string>
+    <string name="ics_historygamenumber">Номер партии в истории</string>
+    <string name="ics_lost_connection">Соединение с сервером потеряно.</string>
+    <string name="ics_match">Матч</string>
+    <string name="ics_menu_challenges">Вызовы</string>
+    <string name="ics_menu_console">Консоль</string>
+    <string name="ics_menu_draw">Ничья</string>
+    <string name="ics_menu_flag">Заявить время</string>
+    <string name="ics_menu_games">Партии</string>
+    <string name="ics_menu_players">Игроки</string>
+    <string name="ics_menu_puzzlebot_mate">Puzzlebot мат</string>
+    <string name="ics_menu_puzzlebot_study">Puzzlebot обучение</string>
+    <string name="ics_menu_puzzlebot_tactics">Puzzlebot тактика</string>
+    <string name="ics_menu_resign">Сдаться</string>
+    <string name="ics_menu_resume">Продолжить</string>
+    <string name="ics_menu_seek">Поиск</string>
+    <string name="ics_menu_stored">Сохранённые</string>
+    <string name="ics_menu_top_blitz">Лучшие блиц</string>
+    <string name="ics_menu_top_standard">Лучшие стандарт</string>
+    <string name="ics_notification_text">Нажмите, чтобы играть</string>
+    <string name="ics_notification_title">Шахматы от Jeroen</string>
+    <string name="ics_offer_rematch">Предложить РЕВАНШ</string>
+    <string name="ics_offers_abort">Ваш соперник хочет отменить партию.\nПринять?</string>
+    <string name="ics_offers_adjourn">Ваш соперник хочет отложить партию.\nПринять?</string>
+    <string name="ics_offers_draw">Ваш соперник предлагает ничью.\nПринять?</string>
+    <string name="ics_offers_takeback">Ваш соперник хочет отменить ход.\nПринять?</string>
+    <string name="ics_playerone">Игрок 1</string>
+    <string name="ics_playertwo">Игрок 2</string>
+    <string name="ics_quit">Выйти?</string>
+    <string name="ics_request_sent">Запрос отправлен</string>
+    <string name="ics_seekchallenge">Вызов</string>
+    <string name="ics_seekcolor">Цвет</string>
+    <string name="ics_seekformula">Формула</string>
+    <string name="ics_seekmanual">Принятие вручную</string>
+    <string name="ics_seekplayer">Игрок</string>
+    <string name="ics_seekrangemax">Рейтинг MAX</string>
+    <string name="ics_seekrangemin">Рейтинг MIN</string>
+    <string name="ics_seekrated">Рейтинговая партия</string>
+    <string name="ics_seekseek">Поиск</string>
+    <string name="ics_seektime">Время (мин)</string>
+    <string name="ics_seektimeinc">Прибавка (сек)</string>
+    <string name="ics_seekvariant">Вариант</string>
+    <string name="ics_typegamenumber">Введите номер партии из</string>
+    <string name="ics_unfollow">Не следить</string>
+    <string name="last_black_move_description">%1$s. Ход белых</string>
+    <string name="last_white_move_description">%1$s. Ход черных</string>
+    <string name="lichess_challenge_by_cancelled">Вызов от %1$s отменен</string>
+    <string name="lichess_challenge_by_declined">Вызов отклонен %1$s</string>
+    <string name="lichess_challenge_days_hint">1</string>
+    <string name="lichess_challenge_dialog_button_accept">Принять</string>
+    <string name="lichess_challenge_dialog_button_decline">Отклонить</string>
+    <string name="lichess_challenge_dialog_message_rated">Рейтинговая</string>
+    <string name="lichess_challenge_dialog_message_rating">с рейтингом %1$s</string>
+    <string name="lichess_challenge_dialog_message_time_control">Контроль времени: %1$s</string>
+    <string name="lichess_challenge_dialog_message_unrated">Нерейтинговая</string>
+    <string name="lichess_challenge_dialog_message_variant">Вариант: %1$s</string>
+    <string name="lichess_challenge_increment_hint">10</string>
+    <string name="lichess_challenge_minutes_hint">5</string>
+    <string name="lichess_challenge_posted">Вызов отправлен</string>
+    <string name="lichess_confirm_offer_draw">Подтвердите предложение ничьей</string>
+    <string name="lichess_confirm_resign">Подтвердите сдачу</string>
+    <string name="lichess_create_challenge_color">Цвет</string>
+    <string name="lichess_create_challenge_color_black">Черные</string>
+    <string name="lichess_create_challenge_color_random">Случайно</string>
+    <string name="lichess_create_challenge_color_white">Белые</string>
+    <string name="lichess_create_challenge_player">Соперник</string>
+    <string name="lichess_create_challenge_rated">Рейтинговая</string>
+    <string name="lichess_create_challenge_time">Время</string>
+    <string name="lichess_create_challenge_time_control">Контроль времени</string>
+    <string name="lichess_create_challenge_time_correspondence">Переписка</string>
+    <string name="lichess_create_challenge_time_days">Дней на ход</string>
+    <string name="lichess_create_challenge_time_increment">Добавление (с)</string>
+    <string name="lichess_create_challenge_time_minutes">Минуты</string>
+    <string name="lichess_create_challenge_title">Создать вызов</string>
+    <string name="lichess_create_challenge_variant">Вариант</string>
+    <string name="lichess_create_challenge_variant_chess960">Шахматы 960</string>
+    <string name="lichess_create_challenge_variant_standard">Стандарт</string>
+    <string name="lichess_create_seek_title">Создать поиск</string>
+    <string name="lichess_game_cancel_move">Отменить ход</string>
+    <string name="lichess_game_confirm_move">Подтвердить %1$s</string>
+    <string name="lichess_game_confirm_moves">Подтвердить ходы</string>
+    <string name="lichess_game_disconnected">Игра отключена. Проверьте интернет-соединение и попробуйте снова</string>
+    <string name="lichess_game_state_aborted">Игра прервана</string>
+    <string name="lichess_game_state_created">Игра создана</string>
+    <string name="lichess_game_state_mate">Игра завершилась матом</string>
+    <string name="lichess_game_state_resigned">Игра завершилась сдачей</string>
+    <string name="lichess_game_state_started">Игра началась</string>
+    <string name="lichess_game_winner">Победитель: %1$s</string>
+    <string name="lichess_games_connection_error_retry">Не удалось получить ваши игры. Повторное подключение через 5 секунд</string>
+    <string name="lichess_lobby_button_challenge">Вызов</string>
+    <string name="lichess_lobby_button_logout">Выйти</string>
+    <string name="lichess_lobby_button_seek">Поиск</string>
+    <string name="lichess_lobby_connected">Вы подключены к Lichess</string>
+    <string name="lichess_lobby_handle">ник</string>
+    <string name="lichess_lobby_ongoing_games">Текущие игры</string>
+    <string name="lichess_login_intro">Когда вы выбираете Войти, вы будете перенаправлены на Lichess для входа</string>
+    <string name="lichess_my_challenge_closed">Вызов закрыт</string>
+    <string name="lichess_my_seek_closed">Поиск закрыт</string>
+    <string name="lichess_opponent_offers_draw">Соперник предлагает ничью. Нажмите Ничья, чтобы принять</string>
+    <string name="lichess_play_button_draw">Ничья</string>
+    <string name="lichess_play_button_resign">Сдаться</string>
+    <string name="lichess_seek_posted">Поиск опубликован</string>
+    <string name="lichess_starting">Запуск...</string>
+    <string name="match_option_color_black">Чёрные</string>
+    <string name="match_option_color_random">Случайно</string>
+    <string name="match_option_color_white">Белые</string>
+    <string name="menu_abort">Отменить</string>
+    <string name="menu_clip_pgn">Партия в буфер обмена</string>
+    <string name="menu_flip">Повернуть</string>
+    <string name="menu_fromclip">Партия из буфера обмена</string>
+    <string name="menu_game_settings">Настройки партии</string>
+    <string name="menu_help">Справка</string>
+    <string name="menu_load_game">Загрузить партию</string>
+    <string name="menu_new">Новая партия</string>
+    <string name="menu_new_960">Новый случайный Фишер / 960</string>
+    <string name="menu_new_command">Новая команда</string>
+    <string name="menu_new_command_message">напишите \u003cNR\u003e в конце команды без возврата\nпример: tell ChessMaster \u003cNR\u003e\n</string>
+    <string name="menu_new_duck">Новая Duck (экспериментально)</string>
+    <string name="menu_open_game">Открыть файл партии</string>
+    <string name="menu_open_position_file">Открыть файл позиции</string>
+    <string name="menu_prefs">Настройки</string>
+    <string name="menu_save_game">Сохранить партию</string>
+    <string name="menu_save_game_to_file">Сохранить партию в файл</string>
+    <string name="menu_save_position_to_file">Сохранить позицию в файл</string>
+    <string name="menu_set_clock">Установить часы</string>
+    <string name="menu_setup">Настроить доску</string>
+    <string name="msg_ics_enter_handle">Введите имя пользователя</string>
+    <string name="msg_ics_enter_password">Введите пароль</string>
+    <string name="msg_setup_castle_black">Чёрные</string>
+    <string name="msg_setup_castle_white">Белые</string>
+    <string name="msg_setup_clear">Очистить</string>
+    <string name="msg_setup_enpassant">Поле en passant</string>
+    <string name="msg_setup_reset">Сбросить</string>
+    <string name="msg_setup_turn">Ход</string>
+    <string name="msg_setup_turn_black">чёрные</string>
+    <string name="msg_setup_turn_white">белые</string>
+    <string name="online_help"><![CDATA[
+    <p><strong>FICS: Free Internet Chess Server</strong> позволяет играть с тысячами игроков.<br/>
+    Внимание: если устройство переключит сеть, соединение может оборваться.<br/>
+    </p>
+    <h4>Меню</h4>
+    <strong>Вызовы</strong><br/>Показаны игроки, ищущие матч. Нажмите, чтобы принять.<br/>
+    <strong>Поиск</strong><br/>Создайте свой вызов. Если ввести имя игрока, вызов будет прямым.<br/>
+    <strong>Партии</strong><br/>Наблюдайте за играми онлайн. Гроссмейстеры отмечены префиксом GM.<br/>
+    <strong>Игроки</strong><br/>Показывает неактивных игроков с рейтингом.<br/>
+    ]]></string>
+    <string name="options_level_ply">Уровень (плай)</string>
+    <string name="options_level_time">Уровень (время)</string>
+    <string name="options_play_android">Человек против Android</string>
+    <string name="options_play_black">Чёрные</string>
+    <string name="options_play_human">Человек против Человека</string>
+    <string name="options_play_white">Белые</string>
+    <string name="options_quiescent_off">Поиск тишины выключён</string>
+    <string name="options_quiescent_on">Поиск тишины включён</string>
+    <string name="pgntool_confirm_delete">Вы уверены?</string>
+    <string name="pgntool_confirm_practice_reset">Вы уверены, что хотите сбросить?</string>
+    <string name="pgntool_create_db_explanation">Создать базу дебютов</string>
+    <string name="pgntool_delete_explanation">Удалить все партии из базы</string>
+    <string name="pgntool_deleted">Все партии удалены</string>
+    <string name="pgntool_export_explanation">Экспорт базы партий</string>
+    <string name="pgntool_help">Справка</string>
+    <string name="pgntool_import_explanation">Импорт партий в базу</string>
+    <string name="pgntool_import_practice">Импорт тренировочного набора</string>
+    <string name="pgntool_import_puzzle">Импорт задач</string>
+    <string name="pgntool_point_db_explanation">Установить базу дебютов</string>
+    <string name="pgntool_reset_practice">Сбросить тренировку – начать заново</string>
+    <string name="pgntool_unset_uci_database">Удалить базу UCI</string>
+    <string name="pgntool_unset_uci_engine">Удалить движок UCI</string>
     <string name="piece_bishop">Слон</string>
+    <string name="piece_black">Чёрные</string>
+    <string name="piece_duck">Утка</string>
+    <string name="piece_king">Король</string>
     <string name="piece_knight">Конь</string>
     <string name="piece_pawn">Пешка</string>
-    <string name="choice_random">Случайно</string>
-    <string name="choice_edit">Редактировать</string>
-    <string name="choice_delete">Удалить</string>
-
+    <string name="piece_queen">Ферзь</string>
+    <string name="piece_rook">Ладья</string>
+    <string name="piece_white">Белые</string>
+    <string name="pieceset_alpha">Alpha</string>
+    <string name="pieceset_california">Калифорния</string>
+    <string name="pieceset_chessnut">Chessnut</string>
+    <string name="pieceset_companion">Компаньон</string>
+    <string name="pieceset_kosal">Kosal</string>
+    <string name="pieceset_leipzig">Leipzig</string>
+    <string name="pieceset_merida">Merida</string>
+    <string name="pieceset_staunty">Staunty</string>
+    <string name="playonlinepreferences">Настройки онлайн-игры</string>
+    <string name="playpreferences">Настройки игры</string>
+    <string name="practice_help">Найди мат (может требоваться несколько ходов).</string>
+    <string name="practice_set_reset">Тренировочный набор сброшен</string>
+    <string name="pref_fullscreen">Полноэкранный режим</string>
+    <string name="pref_fullscreen_desc">Рекомендуется для маленьких экранов и альбомного вида; иначе элементы могут не помещаться</string>
+    <string name="pref_icsautosought">Автопоиск</string>
+    <string name="pref_icsautosought_desc">Автоматически обновлять экран вызовов</string>
+    <string name="pref_icsconsolecharactersize">Размер символов КОНСОЛИ</string>
+    <string name="pref_icsconsolecharactersize_desc">Настройка размера символов в консоли</string>
+    <string name="pref_icscustomcommand">Пользовательские команды</string>
+    <string name="pref_icscustomcommand_desc">Создайте свои команды</string>
+    <string name="pref_icsnotification">Уведомление о новой партии</string>
+    <string name="pref_icstimewarning">Предупреждение о времени</string>
+    <string name="pref_icstimewarning_desc">Тиканье предупреждает, если времени осталось мало</string>
+    <string name="pref_icstimewarningsecs">Порог времени (сек)</string>
+    <string name="pref_icstimewarningsecs_desc">За сколько секунд начинать предупреждение?</string>
+    <string name="pref_night_mode">Ночной режим</string>
+    <string name="pref_night_mode_desc">Включить приложение в ночном режиме</string>
+    <string name="pref_showCoords">Координаты</string>
+    <string name="pref_show_blindfold">Слепые шахматы</string>
+    <string name="pref_show_possible_moves">Показывать ходы</string>
+    <string name="pref_sound">Звук</string>
+    <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
+    <string name="pref_speech">Озвучка</string>
+    <string name="pref_speech_pitch_desc">Высота голоса</string>
+    <string name="pref_speech_rate_desc">Скорость речи</string>
+    <string name="pref_turn">Сторона</string>
+    <string name="pref_turn_desc">За какую сторону вы играете</string>
+    <string name="pref_vs_cpu">против CPU</string>
+    <string name="pref_vs_cpu_desc">Играть против процессора/движка</string>
+    <string name="pref_wakelock">Не выключать экран</string>
+    <string name="pref_wakelock_desc">Предотвращает переход устройства в спящий режим</string>
+    <string name="preferences">Настройки</string>
+    <string name="prefs_icsendgamedialog">Диалог окончания партии</string>
+    <string name="prefs_icsendgamesummary">В конце партии показывать диалог сохранения?</string>
+    <string name="prefs_icsnotificationsummary">Сообщает о начале партии значком</string>
     <string name="puzzle_already_solved">(позиция уже решена)</string>
+    <string name="puzzle_correct_move">Это правильный ход</string>
+    <string name="puzzle_help">Это сложные задачи мат в два.\nЦель — найти первый ход, ведущий к форсированному мату за два хода.\nПосле правильного хода соперник не сможет избежать мата.\nПосле этого задача считается решённой.\nНажмите «Показать» для решения.\nИсточник: EL ARTE DEL MATE EN DOS, Eduardo Sadier</string>
     <string name="puzzle_not_correct_move"> не является ожидаемым ходом</string>
-
+    <string name="puzzle_show">Показать</string>
+    <string name="savegame_black">Чёрные</string>
+    <string name="savegame_black_question">Чёрные?</string>
     <string name="savegame_event">Событие</string>
     <string name="savegame_event_question">Событие?</string>
     <string name="savegame_white">Белые</string>
     <string name="savegame_white_question">Белые?</string>
-    <string name="savegame_black">Чёрные</string>
-    <string name="savegame_black_question">Чёрные?</string>
-
-
-    <string name="msg_setup_turn">Ход</string>
-    <string name="msg_setup_turn_white">белые</string>
-    <string name="msg_setup_turn_black">чёрные</string>
-    <string name="msg_setup_enpassant">Поле en passant</string>
-    <string name="msg_setup_castle_white">Белые</string>
-    <string name="msg_setup_castle_black">Чёрные</string>
-    <string name="msg_ics_enter_handle">Введите имя пользователя</string>
-    <string name="msg_ics_enter_password">Введите пароль</string>
-
-
-    <string name="pgntool_export_explanation">Экспорт базы партий</string>
-    <string name="pgntool_import_explanation">Импорт партий в базу</string>
-    <string name="pgntool_delete_explanation">Удалить все партии из базы</string>
-    <string name="pgntool_create_db_explanation">Создать базу дебютов</string>
-    <string name="pgntool_point_db_explanation">Установить базу дебютов</string>
-    <string name="pgntool_unset_uci_engine">Удалить движок UCI</string>
-    <string name="pgntool_unset_uci_database">Удалить базу UCI</string>
-    <string name="pgntool_help">Справка</string>
-    <string name="pgntool_confirm_delete">Вы уверены?</string>
-    <string name="pgntool_deleted">Все партии удалены</string>
-    <string name="pgntool_import_practice">Импорт тренировочного набора</string>
-    <string name="pgntool_reset_practice">Сбросить тренировку – начать заново</string>
-    <string name="pgntool_confirm_practice_reset">Вы уверены, что хотите сбросить?</string>
-    <string name="pgntool_import_puzzle">Импорт задач</string>
-
-    <string name="practice_set_reset">Тренировочный набор сброшен</string>
-
-    <string name="ics_client_handle">Имя пользователя</string>
-    <string name="ics_client_password">Пароль</string>
-    <string name="ics_client_server">Сервер</string>
-
-    <string name="ics_menu_players">Игроки</string>
-    <string name="ics_menu_games">Партии</string>
-    <string name="ics_menu_stored">Сохранённые</string>
-    <string name="ics_menu_challenges">Вызовы</string>
-    <string name="ics_menu_seek">Поиск</string>
-    <string name="menu_abort">Отменить</string>
-    <string name="ics_menu_draw">Ничья</string>
-    <string name="ics_menu_flag">Заявить время</string>
-    <string name="ics_menu_resign">Сдаться</string>
-    <string name="ics_menu_console">Консоль</string>
-    <string name="ics_menu_top_blitz">Лучшие блиц</string>
-    <string name="ics_menu_top_standard">Лучшие стандарт</string>
-    <string name="ics_menu_puzzlebot_mate">Puzzlebot мат</string>
-    <string name="ics_menu_puzzlebot_tactics">Puzzlebot тактика</string>
-    <string name="ics_menu_puzzlebot_study">Puzzlebot обучение</string>
-
-    <string name="ics_playertwo">Игрок 2</string>
-    <string name="ics_playerone">Игрок 1</string>
-    <string name="ics_offers_abort">Ваш соперник хочет отменить партию.\nПринять?</string>
-    <string name="ics_offers_draw">Ваш соперник предлагает ничью.\nПринять?</string>
-    <string name="ics_offers_adjourn">Ваш соперник хочет отложить партию.\nПринять?</string>
-    <string name="ics_offers_takeback">Ваш соперник хочет отменить ход.\nПринять?</string>
-    <string name="ics_request_sent">Запрос отправлен</string>
-    <string name="ics_game_over">Игра окончена</string>
-
-    <string name="copied_clipboard_success">Партия успешно скопирована в буфер</string>
-    <string name="ics_offer_rematch">Предложить РЕВАНШ</string>
-    <string name="ics_examine">Анализ</string>
-
-    <string name="ics_lost_connection">Соединение с сервером потеряно.</string>
-    <string name="ics_error">Произошла ошибка. Попробуйте позже.</string>
-
-    <string name="ics_notification_title">Шахматы от Jeroen</string>
-    <string name="ics_notification_text">Нажмите, чтобы играть</string>
-
-    <string name="ics_seekseek">Поиск</string>
-    <string name="ics_seekchallenge">Вызов</string>
-    <string name="ics_seekplayer">Игрок</string>
-    <string name="ics_seektime">Время (мин)</string>
-    <string name="ics_seektimeinc">Прибавка (сек)</string>
-    <string name="ics_seekvariant">Вариант</string>
-    <string name="ics_seekcolor">Цвет</string>
-    <string name="ics_seekrangemin">Рейтинг MIN</string>
-    <string name="ics_seekrangemax">Рейтинг MAX</string>
-    <string name="ics_seekrated">Рейтинговая партия</string>
-    <string name="ics_seekmanual">Принятие вручную</string>
-    <string name="ics_seekformula">Формула</string>
-
-    <string name="ics_historygamenumber">Номер партии в истории</string>
-    <string name="ics_typegamenumber">Введите номер партии из</string>
-    <string name="ics_history">История</string>
-    <string name="ics_finger">Сводка</string>
-    <string name="ics_follow">Следить</string>
-    <string name="ics_unfollow">Не следить</string>
-    <string name="ics_match">Матч</string>
-    <string name="ics_gamenumber">Партия #</string>
-    <string name="ics_quit">Выйти?</string>
-
-    <string name="practice_help">Найди мат (может требоваться несколько ходов).</string>
-    <string name="puzzle_help">Это сложные задачи мат в два.\nЦель — найти первый ход, ведущий к форсированному мату за два хода.\nПосле правильного хода соперник не сможет избежать мата.\nПосле этого задача считается решённой.\nНажмите «Показать» для решения.\nИсточник: EL ARTE DEL MATE EN DOS, Eduardo Sadier</string>
-
-    <string name="advanced_help"><![CDATA[
-<h3>Дополнительно</h3>
-<p>Создавайте или импортируйте здесь собственные материалы.</p>
-
-<h4>Экспорт базы игр на карту SD</h4>
-<p>Все партии из базы можно экспортировать в один файл PGN на карту SD. Этот файл будет называться chess.pgn; существующий файл будет перезаписан.</p>
-
-<h4>Импорт партий в базу</h4>
-<p>Используйте эту опцию, чтобы добавить партии в базу. Можно выбрать файл PGN и импортировать его.</p>
-
-<h4>Удалить все партии из базы</h4>
-<p>Используйте эту опцию, если хотите очистить базу. Сначала обязательно сделайте резервную копию на карту SD; это действие нельзя отменить.</p>
-
-<h4>Создать набор для тренировки</h4>
-<p>Создаёт учебные позиции из партий, которые закончились матом. Укажите файл для обработки. Неудачные записи — это обычно партии, которые не закончились матом, либо дубликаты.</p>
-
-<h4>Сбросить набор для тренировки</h4>
-<p>Хотите начать тренировки заново? Это также сбросит счётчик среднего времени.</p>
-
-]]></string>
-
-    <string name="online_help"><![CDATA[
-<p><strong>FICS: Free Internet Chess Server</strong> позволяет играть с тысячами игроков.<br/>
-Внимание: если устройство переключит сеть, соединение может оборваться.<br/>
-</p>
-<h4>Меню</h4>
-<strong>Вызовы</strong><br/>Показаны игроки, ищущие матч. Нажмите, чтобы принять.<br/>
-<strong>Поиск</strong><br/>Создайте свой вызов. Если ввести имя игрока, вызов будет прямым.<br/>
-<strong>Партии</strong><br/>Наблюдайте за играми онлайн. Гроссмейстеры отмечены префиксом GM.<br/>
-<strong>Игроки</strong><br/>Показывает неактивных игроков с рейтингом.<br/>
-]]></string>
-
-    <!-- Toast -->
-    <string name="toast_challenge_posted">Вызов опубликован</string>
-
-    <string name="pieceset_alpha">Alpha</string>
-    <string name="pieceset_merida">Merida</string>
-    <string name="pieceset_leipzig">Leipzig</string>
-    <string name="pieceset_california">Калифорния</string>
-    <string name="pieceset_companion">Компаньон</string>
-    <string name="pieceset_chessnut">Chessnut</string>
-    <string name="pieceset_kosal">Kosal</string>
-    <string name="pieceset_staunty">Staunty</string>
-
-    <string name="tile_none">нет</string>
+    <string name="square_selected_with_duck_description">Выбрано %1$s на %2$s</string>
+    <string name="square_selected_with_piece_description">Выбрано %1$s %2$s на %3$s</string>
+    <string name="square_with_duck_description">%1$s на %2$s</string>
+    <string name="square_with_piece_description">%1$s %2$s на %3$s</string>
+    <string name="start_boardpreferences">Настройки шахматной доски</string>
+    <string name="start_database">База партий</string>
+    <string name="start_hotspotboard">Hotspot-доска</string>
+    <string name="start_ics">Играть онлайн</string>
+    <string name="start_lichess">Lichess (beta)</string>
+    <string name="start_pgn">Дополнительно</string>
+    <string name="start_play">Играть</string>
+    <string name="start_practice">Тренировка</string>
+    <string name="start_puzzles">Задачи</string>
+    <string name="state_black_forfeits_time">чёрные проиграли по времени</string>
+    <string name="state_black_resigned">чёрные сдались</string>
+    <string name="state_check">шах</string>
+    <string name="state_draw_50">ничья (правило 50 ходов)</string>
+    <string name="state_draw_agreement">ничья по соглашению</string>
+    <string name="state_draw_material">ничья (материал)</string>
+    <string name="state_draw_repeat">ничья (тройное повторение)</string>
+    <string name="state_draw_stalemate">ничья (пат)</string>
+    <string name="state_mate">мат</string>
+    <string name="state_play">в игре</string>
+    <string name="state_white_forfeits_time">белые проиграли по времени</string>
+    <string name="state_white_resigned">белые сдались</string>
+    <string name="tile_diagonal_stripes">диагональные полосы</string>
     <string name="tile_double_shade">двойная тень</string>
+    <string name="tile_none">нет</string>
     <string name="tile_single_shade">одинарная тень</string>
-
-    <string name="color_scheme_yellow">Жёлтый</string>
-    <string name="color_scheme_blue">Синий</string>
-    <string name="color_scheme_green">Зелёный</string>
-    <string name="color_scheme_grey">Серый</string>
-    <string name="color_scheme_brown">Коричневый</string>
-    <string name="color_scheme_red">Красный</string>
-    <string name="color_scheme_orange">Оранжевый</string>
-    <string name="color_scheme_pink">Розовый</string>
-    <string name="color_scheme_purple">Фиолетовый</string>
-
-    <string name="match_option_color_random">Случайно</string>
-    <string name="match_option_color_white">Белые</string>
-    <string name="match_option_color_black">Чёрные</string>
-
-    <string name="time_warning_5">5 секунд</string>
     <string name="time_warning_10">10 секунд</string>
     <string name="time_warning_25">25 секунд</string>
     <string name="time_warning_45">45 секунд</string>
+    <string name="time_warning_5">5 секунд</string>
     <string name="time_warning_60">1 минута</string>
-
-    <string name="chessboard_hint_piece_set">Набор фигур</string>
-
-    <string name="chessboard_hint_color_scheme">Цветовая схема</string>
-
-    <string name="chessboard_hint_tile_effect">Эффект клеток</string>
-
-    <string name="hotspot_host">Хост</string>
-
-    <string name="hotspot_host_help">Включите `хост`, если вы используете Wi‑Fi‑точку доступа.</string>
-
-    <string name="hotspot_name_hint">Ваше имя</string>
-
-    <string name="hotspot_connect">Подключиться</string>
-
-    <string name="hotspot_resign">Сдаться</string>
-
-    <string name="hotspot_draw">Ничья</string>
-
-    <string name="hotspot_white">♔ Белые</string>
-
-    <string name="hotspot_black">♚ Черные</string>
-
-    <string name="hotspot_new">Новая</string>
-
-    <string name="lichess_challenge_days_hint">1</string>
-
-    <string name="lichess_challenge_minutes_hint">5</string>
-
-    <string name="lichess_challenge_increment_hint">10</string>
-
-    <string name="lichess_lobby_handle">ник</string>
-
-    <string name="button_engine_play_description">Игра с движком</string>
-
-    <string name="button_menu_description">Меню</string>
-
-    <string name="button_next_move_description">Следующий ход</string>
-
-    <string name="button_next_position">Следующая позиция</string>
-
-    <string name="button_previous_move_description">Предыдущий ход</string>
-
-    <string name="button_previous_position">Предыдущая позиция</string>
-
-    <string name="button_reset_position">Сбросить позицию</string>
-
-    <string name="ics_menu_resume">Продолжить</string>
-
-    <string name="last_black_move_description">%1$s. Ход белых</string>
-
-    <string name="last_white_move_description">%1$s. Ход черных</string>
-
-    <string name="lichess_challenge_by_cancelled">Вызов от %1$s отменен</string>
-
-    <string name="lichess_challenge_by_declined">Вызов отклонен %1$s</string>
-
-    <string name="lichess_challenge_dialog_button_accept">Принять</string>
-
-    <string name="lichess_challenge_dialog_button_decline">Отклонить</string>
-
-    <string name="lichess_challenge_dialog_message_rated">Рейтинговая</string>
-
-    <string name="lichess_challenge_dialog_message_rating">с рейтингом %1$s</string>
-
-    <string name="lichess_challenge_dialog_message_time_control">Контроль времени: %1$s</string>
-
-    <string name="lichess_challenge_dialog_message_unrated">Нерейтинговая</string>
-
-    <string name="lichess_challenge_dialog_message_variant">Вариант: %1$s</string>
-
-    <string name="lichess_challenge_posted">Вызов отправлен</string>
-
-    <string name="lichess_confirm_offer_draw">Подтвердите предложение ничьей</string>
-
-    <string name="lichess_confirm_resign">Подтвердите сдачу</string>
-
-    <string name="lichess_create_challenge_color">Цвет</string>
-
-    <string name="lichess_create_challenge_color_black">Черные</string>
-
-    <string name="lichess_create_challenge_color_random">Случайно</string>
-
-    <string name="lichess_create_challenge_color_white">Белые</string>
-
-    <string name="lichess_create_challenge_player">Соперник</string>
-
-    <string name="lichess_create_challenge_rated">Рейтинговая</string>
-
-    <string name="lichess_create_challenge_time">Время</string>
-
-    <string name="lichess_create_challenge_time_control">Контроль времени</string>
-
-    <string name="lichess_create_challenge_time_correspondence">Переписка</string>
-
-    <string name="lichess_create_challenge_time_days">Дней на ход</string>
-
-    <string name="lichess_create_challenge_time_increment">Добавление (с)</string>
-
-    <string name="lichess_create_challenge_time_minutes">Минуты</string>
-
-    <string name="lichess_create_challenge_title">Создать вызов</string>
-
-    <string name="lichess_create_challenge_variant">Вариант</string>
-
-    <string name="lichess_create_challenge_variant_chess960">Шахматы 960</string>
-
-    <string name="lichess_create_challenge_variant_standard">Стандарт</string>
-
-    <string name="lichess_create_seek_title">Создать поиск</string>
-
-    <string name="lichess_game_cancel_move">Отменить ход</string>
-
-    <string name="lichess_game_confirm_move">Подтвердить %1$s</string>
-
-    <string name="lichess_game_confirm_moves">Подтвердить ходы</string>
-
-    <string name="lichess_game_disconnected">Игра отключена. Проверьте интернет-соединение и попробуйте снова</string>
-
-    <string name="lichess_game_state_aborted">Игра прервана</string>
-
-    <string name="lichess_game_state_created">Игра создана</string>
-
-    <string name="lichess_game_state_mate">Игра завершилась матом</string>
-
-    <string name="lichess_game_state_resigned">Игра завершилась сдачей</string>
-
-    <string name="lichess_game_state_started">Игра началась</string>
-
-    <string name="lichess_game_winner">Победитель: %1$s</string>
-
-    <string name="lichess_games_connection_error_retry">Не удалось получить ваши игры. Повторное подключение через 5 секунд</string>
-
-    <string name="lichess_lobby_button_challenge">Вызов</string>
-
-    <string name="lichess_lobby_button_logout">Выйти</string>
-
-    <string name="lichess_lobby_button_seek">Поиск</string>
-
-    <string name="lichess_lobby_connected">Вы подключены к Lichess</string>
-
-    <string name="lichess_lobby_ongoing_games">Текущие игры</string>
-
-    <string name="lichess_login_intro">Когда вы выбираете Войти, вы будете перенаправлены на Lichess для входа</string>
-
-    <string name="lichess_my_challenge_closed">Вызов закрыт</string>
-
-    <string name="lichess_my_seek_closed">Поиск закрыт</string>
-
-    <string name="lichess_opponent_offers_draw">Соперник предлагает ничью. Нажмите Ничья, чтобы принять</string>
-
-    <string name="lichess_play_button_draw">Ничья</string>
-
-    <string name="lichess_play_button_resign">Сдаться</string>
-
-    <string name="lichess_seek_posted">Поиск опубликован</string>
-
-    <string name="lichess_starting">Запуск...</string>
-
-    <string name="menu_open_game">Открыть файл партии</string>
-
-    <string name="menu_open_position_file">Открыть файл позиции</string>
-
-    <string name="menu_save_game_to_file">Сохранить партию в файл</string>
-
-    <string name="menu_save_position_to_file">Сохранить позицию в файл</string>
-
-    <string name="msg_setup_clear">Очистить</string>
-
-    <string name="msg_setup_reset">Сбросить</string>
-
-    <string name="piece_duck">Утка</string>
-
-    <string name="pref_speech_pitch_desc">Высота голоса</string>
-
-    <string name="pref_speech_rate_desc">Скорость речи</string>
-
-    <string name="puzzle_correct_move">Это правильный ход</string>
-
-    <string name="square_selected_with_duck_description">Выбрано %1$s на %2$s</string>
-
-    <string name="square_selected_with_piece_description">Выбрано %1$s %2$s на %3$s</string>
-
-    <string name="square_with_duck_description">%1$s на %2$s</string>
-
-    <string name="start_database">База партий</string>
-
-    <string name="start_lichess">Lichess (beta)</string>
-
-    <string name="tile_diagonal_stripes">диагональные полосы</string>
-
+    <string name="title_castle">Рокировка?</string>
+    <string name="title_challenge">Вызов</string>
+    <string name="title_create_new_line">Создать новую линию?</string>
+    <string name="title_delete_game">Удалить партию</string>
+    <string name="title_edit_command">Изменить команду</string>
+    <string name="title_edit_or_delete">Изменить или удалить?</string>
+    <string name="title_error">Ошибка</string>
+    <string name="title_menu">Меню</string>
+    <string name="title_offers_abort">Запрос отмены</string>
+    <string name="title_offers_adjourn">Запрос на перенос</string>
+    <string name="title_offers_draw">Запрос на ничью</string>
+    <string name="title_offers_takeback">Запрос отменить ход</string>
+    <string name="title_pick_en_passant">Поле en passant</string>
+    <string name="title_pick_level">Выберите уровень игры</string>
+    <string name="title_pick_promo">Выберите фигуру для превращения</string>
+    <string name="title_save_game">Сохранить партию</string>
+    <string name="toast_challenge_posted">Вызов опубликован</string>
 </resources>
