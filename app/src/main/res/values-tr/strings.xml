@@ -21,7 +21,6 @@
     <string name="globalpreferences">Genel ayarlar</string>
     <string name="playpreferences">Oyun ayarları</string>
     <string name="playonlinepreferences">Çevrimiçi oyun ayarları</string>
-    <string name="boardprerences">Tahta ayarları</string>
     <string name="gamepreferences">Parti ayarları</string>
     <string name="preferences">Ayarlar</string>
     <string name="pref_wakelock">Ekranı açık tut</string>
@@ -30,12 +29,8 @@
     <string name="pref_sound">Ses</string>
     <string name="pref_sound_desc">Rakip hamle yaptığında çalınır</string>
     <string name="pref_speech">Sesli okuma</string>
-    <string name="pref_speech_desc">Yapılan hamleyi söyler</string>
-    <string name="pref_eco">ECO bilgisi</string>
-    <string name="pref_eco_desc">Mümkün olduğunda ECO açılış bilgilerini göster</string>
     <string name="pref_fullscreen">Tam ekranı etkinleştir</string>
     <string name="pref_fullscreen_desc">Küçük ekranlar ve yatay mod için önerilir; aksi halde bazı öğeler ekrandan taşabilir</string>
-    <string name="pref_tileset">Kare deseni</string>
     <string name="pref_icscustomcommand">Özel komutlar</string>
     <string name="pref_icscustomcommand_desc">Kendi özel komutlarını oluştur</string>
     <string name="pref_icsconsolecharactersize">KONSOL karakter boyutu</string>
@@ -84,7 +79,6 @@
     <string name="title_castle">Rok mu?</string>
     <string name="title_pick_en_passant">En passant karesi</string>
     <string name="title_create_new_line">Yeni varyant oluşturulsun mu?</string>
-    <string name="title_chess960_manual_random">Chess960: Manuel mi rastgele mi?</string>
     <string name="title_edit_or_delete">Düzenle veya sil?</string>
     <string name="title_edit_command">Komutu düzenle</string>
 
@@ -140,9 +134,7 @@
     <string name="choice_level_9">5 dakika</string>
     <string name="choice_level_10">15 dakika</string>
 
-    <string name="square_description">Kare %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s %3$s karesinde</string>
-    <string name="square_selected_description">%1$s seçildi</string>
 
     <string name="piece_white">Beyaz</string>
     <string name="piece_black">Siyah</string>
@@ -152,7 +144,6 @@
     <string name="piece_bishop">Fil</string>
     <string name="piece_knight">At</string>
     <string name="piece_pawn">Piyon</string>
-    <string name="choice_manually">Manuel</string>
     <string name="choice_random">Rastgele</string>
     <string name="choice_edit">Düzenle</string>
     <string name="choice_delete">Sil</string>
@@ -166,14 +157,7 @@
     <string name="savegame_white_question">Beyaz?</string>
     <string name="savegame_black">Siyah</string>
     <string name="savegame_black_question">Siyah?</string>
-    <string name="savegame_date">Tarih</string>
 
-    <string name="gameslist_stars">Yıldızlar</string>
-    <string name="gameslist_date">Tarih</string>
-    <string name="gameslist_event">Etkinlik</string>
-    <string name="gameslist_id">ID</string>
-    <string name="games_list_white_pieces">Beyaz taşlar</string>
-    <string name="gameslist_black_pieces">Siyah taşlar</string>
 
     <string name="msg_setup_turn">Sıra</string>
     <string name="msg_setup_turn_white">beyaz</string>
@@ -184,8 +168,6 @@
     <string name="msg_ics_enter_handle">Lütfen kullanıcı adınızı girin</string>
     <string name="msg_ics_enter_password">Lütfen şifrenizi girin</string>
 
-    <string name="err_chess960_position_range">Geçersiz pozisyon, 0 ile 960 arasında bir sayı girin</string>
-    <string name="err_chess960_position_format">Geçersiz pozisyon, bir sayı girin</string>
 
     <string name="pgntool_export_explanation">Oyun veritabanını dışa aktar</string>
     <string name="pgntool_import_explanation">Oyunları veritabanına aktar</string>
@@ -201,7 +183,6 @@
     <string name="pgntool_reset_practice">Alıştırmayı sıfırla - yeniden başla</string>
     <string name="pgntool_confirm_practice_reset">Sıfırlamak istediğinize emin misiniz?</string>
     <string name="pgntool_import_puzzle">Problemleri içe aktar</string>
-    <string name="pgntool_import_opening">Geliştirici tarafından kullanılır</string>
 
     <string name="practice_set_reset">Alıştırma seti sıfırlandı</string>
 
@@ -303,7 +284,6 @@ Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
 ]]></string>
 
     <!-- Toast -->
-    <string name="toast_could_not_start_activity">Etkinlik başlatılamadı</string>
     <string name="toast_challenge_posted">Meydan okuma gönderildi</string>
 
     <string name="pieceset_alpha">Alpha</string>

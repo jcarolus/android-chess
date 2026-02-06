@@ -21,7 +21,6 @@
     <string name="globalpreferences">Глобальные настройки</string>
     <string name="playpreferences">Настройки игры</string>
     <string name="playonlinepreferences">Настройки онлайн-игры</string>
-    <string name="boardprerences">Настройки доски</string>
     <string name="gamepreferences">Настройки партии</string>
     <string name="preferences">Настройки</string>
     <string name="pref_wakelock">Не выключать экран</string>
@@ -30,12 +29,8 @@
     <string name="pref_sound">Звук</string>
     <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
     <string name="pref_speech">Озвучка</string>
-    <string name="pref_speech_desc">Озвучивает сделанный ход</string>
-    <string name="pref_eco">Инфо ECO</string>
-    <string name="pref_eco_desc">Показывать информацию об открытии ECO, если доступно</string>
     <string name="pref_fullscreen">Полноэкранный режим</string>
     <string name="pref_fullscreen_desc">Рекомендуется для маленьких экранов и альбомного вида; иначе элементы могут не помещаться</string>
-    <string name="pref_tileset">Узор клеток</string>
     <string name="pref_icscustomcommand">Пользовательские команды</string>
     <string name="pref_icscustomcommand_desc">Создайте свои команды</string>
     <string name="pref_icsconsolecharactersize">Размер символов КОНСОЛИ</string>
@@ -84,7 +79,6 @@
     <string name="title_castle">Рокировка?</string>
     <string name="title_pick_en_passant">Поле en passant</string>
     <string name="title_create_new_line">Создать новую линию?</string>
-    <string name="title_chess960_manual_random">Chess960: вручную или случайно?</string>
     <string name="title_edit_or_delete">Изменить или удалить?</string>
     <string name="title_edit_command">Изменить команду</string>
 
@@ -140,9 +134,7 @@
     <string name="choice_level_9">5 минут</string>
     <string name="choice_level_10">15 минут</string>
 
-    <string name="square_description">Клетка %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s на %3$s</string>
-    <string name="square_selected_description">%1$s выбрана</string>
 
     <string name="piece_white">Белые</string>
     <string name="piece_black">Чёрные</string>
@@ -152,7 +144,6 @@
     <string name="piece_bishop">Слон</string>
     <string name="piece_knight">Конь</string>
     <string name="piece_pawn">Пешка</string>
-    <string name="choice_manually">Вручную</string>
     <string name="choice_random">Случайно</string>
     <string name="choice_edit">Редактировать</string>
     <string name="choice_delete">Удалить</string>
@@ -166,14 +157,7 @@
     <string name="savegame_white_question">Белые?</string>
     <string name="savegame_black">Чёрные</string>
     <string name="savegame_black_question">Чёрные?</string>
-    <string name="savegame_date">Дата</string>
 
-    <string name="gameslist_stars">Звёзды</string>
-    <string name="gameslist_date">Дата</string>
-    <string name="gameslist_event">Событие</string>
-    <string name="gameslist_id">ID</string>
-    <string name="games_list_white_pieces">Белые фигуры</string>
-    <string name="gameslist_black_pieces">Чёрные фигуры</string>
 
     <string name="msg_setup_turn">Ход</string>
     <string name="msg_setup_turn_white">белые</string>
@@ -184,8 +168,6 @@
     <string name="msg_ics_enter_handle">Введите имя пользователя</string>
     <string name="msg_ics_enter_password">Введите пароль</string>
 
-    <string name="err_chess960_position_range">Недопустимая позиция, введите число от 0 до 960</string>
-    <string name="err_chess960_position_format">Недопустимая позиция, введите число</string>
 
     <string name="pgntool_export_explanation">Экспорт базы партий</string>
     <string name="pgntool_import_explanation">Импорт партий в базу</string>
@@ -201,7 +183,6 @@
     <string name="pgntool_reset_practice">Сбросить тренировку – начать заново</string>
     <string name="pgntool_confirm_practice_reset">Вы уверены, что хотите сбросить?</string>
     <string name="pgntool_import_puzzle">Импорт задач</string>
-    <string name="pgntool_import_opening">Используется разработчиком</string>
 
     <string name="practice_set_reset">Тренировочный набор сброшен</string>
 
@@ -303,7 +284,6 @@
 ]]></string>
 
     <!-- Toast -->
-    <string name="toast_could_not_start_activity">Не удалось запустить активность</string>
     <string name="toast_challenge_posted">Вызов опубликован</string>
 
     <string name="pieceset_alpha">Alpha</string>

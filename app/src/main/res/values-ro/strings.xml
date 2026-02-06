@@ -21,7 +21,6 @@
     <string name="globalpreferences">Setări globale</string>
     <string name="playpreferences">Setări joc</string>
     <string name="playonlinepreferences">Setări online</string>
-    <string name="boardprerences">Setări tablă</string>
     <string name="gamepreferences">Setări partidă</string>
     <string name="preferences">Setări</string>
     <string name="pref_wakelock">Menține ecranul aprins</string>
@@ -30,12 +29,8 @@
     <string name="pref_sound">Sunet</string>
     <string name="pref_sound_desc">Redat când adversarul mută</string>
     <string name="pref_speech">Vorbire</string>
-    <string name="pref_speech_desc">Anunță mutarea efectuată</string>
-    <string name="pref_eco">Info ECO</string>
-    <string name="pref_eco_desc">Arată informații ECO despre deschidere când sunt disponibile</string>
     <string name="pref_fullscreen">Activează ecran complet</string>
     <string name="pref_fullscreen_desc">Recomandat pentru ecrane mici și mod peisaj; altfel unele elemente pot fi decupate</string>
-    <string name="pref_tileset">Model căsuțe</string>
     <string name="pref_icscustomcommand">Comenzi personalizate</string>
     <string name="pref_icscustomcommand_desc">Creează-ți propriile comenzi</string>
     <string name="pref_icsconsolecharactersize">Dimensiune caractere CONSOLE</string>
@@ -84,7 +79,6 @@
     <string name="title_castle">Rocadă?</string>
     <string name="title_pick_en_passant">Căsuță en passant</string>
     <string name="title_create_new_line">Creezi o variantă nouă?</string>
-    <string name="title_chess960_manual_random">Chess960: poziție manuală sau aleatorie?</string>
     <string name="title_edit_or_delete">Editează sau șterge?</string>
     <string name="title_edit_command">Editează comanda</string>
 
@@ -140,9 +134,7 @@
     <string name="choice_level_9">5 minute</string>
     <string name="choice_level_10">15 minute</string>
 
-    <string name="square_description">Căsuță %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s la %3$s</string>
-    <string name="square_selected_description">%1$s selectat</string>
 
     <string name="piece_white">Albe</string>
     <string name="piece_black">Negre</string>
@@ -152,7 +144,6 @@
     <string name="piece_bishop">Nebun</string>
     <string name="piece_knight">Cal</string>
     <string name="piece_pawn">Pion</string>
-    <string name="choice_manually">Manual</string>
     <string name="choice_random">Aleator</string>
     <string name="choice_edit">Editează</string>
     <string name="choice_delete">Șterge</string>
@@ -166,14 +157,7 @@
     <string name="savegame_white_question">Albe?</string>
     <string name="savegame_black">Negre</string>
     <string name="savegame_black_question">Negre?</string>
-    <string name="savegame_date">Data</string>
 
-    <string name="gameslist_stars">Stele</string>
-    <string name="gameslist_date">Data</string>
-    <string name="gameslist_event">Eveniment</string>
-    <string name="gameslist_id">ID</string>
-    <string name="games_list_white_pieces">Piese albe</string>
-    <string name="gameslist_black_pieces">Piese negre</string>
 
     <string name="msg_setup_turn">Tură</string>
     <string name="msg_setup_turn_white">albe</string>
@@ -184,8 +168,6 @@
     <string name="msg_ics_enter_handle">Introdu numele de utilizator</string>
     <string name="msg_ics_enter_password">Introdu parola</string>
 
-    <string name="err_chess960_position_range">Poziție invalidă, introdu un număr între 0 și 960</string>
-    <string name="err_chess960_position_format">Poziție invalidă, introdu un număr</string>
 
     <string name="pgntool_export_explanation">Exportă baza de date cu partide</string>
     <string name="pgntool_import_explanation">Importă partide în baza de date</string>
@@ -201,7 +183,6 @@
     <string name="pgntool_reset_practice">Resetează antrenamentul - ia-o de la capăt</string>
     <string name="pgntool_confirm_practice_reset">Sigur vrei să resetezi?</string>
     <string name="pgntool_import_puzzle">Importă probleme</string>
-    <string name="pgntool_import_opening">Folosit de dezvoltator</string>
 
     <string name="practice_set_reset">Setul de antrenament a fost resetat</string>
 
@@ -303,7 +284,6 @@ Atenție: dacă dispozitivul schimbă rețeaua, conexiunea se poate întrerupe.<
 ]]></string>
 
     <!-- Toast -->
-    <string name="toast_could_not_start_activity">Nu s-a putut porni activitatea</string>
     <string name="toast_challenge_posted">Provocare postată</string>
 
     <string name="pieceset_alpha">Alpha</string>

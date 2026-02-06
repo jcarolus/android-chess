@@ -21,7 +21,6 @@
     <string name="globalpreferences">Globale Einstellungen</string>
     <string name="playpreferences">Spiel-Einstellungen</string>
     <string name="playonlinepreferences">Online-Spiel-Einstellungen</string>
-    <string name="boardprerences">Brett-Einstellungen</string>
     <string name="gamepreferences">Partie-Einstellungen</string>
     <string name="preferences">Einstellungen</string>
     <string name="pref_wakelock">Bildschirm eingeschaltet lassen</string>
@@ -30,12 +29,8 @@
     <string name="pref_sound">Ton</string>
     <string name="pref_sound_desc">Wird abgespielt, wenn dein Gegner zieht</string>
     <string name="pref_speech">Sprachausgabe</string>
-    <string name="pref_speech_desc">Liest den gemachten Zug vor</string>
-    <string name="pref_eco">ECO-Info</string>
-    <string name="pref_eco_desc">Zeigt Eröffnungsinformationen an, falls verfügbar</string>
     <string name="pref_fullscreen">Vollbildmodus aktivieren</string>
     <string name="pref_fullscreen_desc">Empfohlen für kleine Bildschirme und Querformat; Elemente könnten sonst abgeschnitten werden</string>
-    <string name="pref_tileset">Feldmuster</string>
     <string name="pref_icscustomcommand">Benutzerdefinierte Befehle</string>
     <string name="pref_icscustomcommand_desc">Erstelle deine eigenen Befehle</string>
     <string name="pref_icsconsolecharactersize">KONSOLEN-Zeichengröße</string>
@@ -84,7 +79,6 @@
     <string name="title_castle">Rochieren?</string>
     <string name="title_pick_en_passant">En-passant-Feld</string>
     <string name="title_create_new_line">Neue Variante erstellen?</string>
-    <string name="title_chess960_manual_random">Chess960: Manuelle Position oder zufällig?</string>
     <string name="title_edit_or_delete">Bearbeiten oder löschen?</string>
     <string name="title_edit_command">Befehl bearbeiten</string>
 
@@ -140,9 +134,7 @@
     <string name="choice_level_9">5 Minuten</string>
     <string name="choice_level_10">15 Minuten</string>
 
-    <string name="square_description">Feld %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s auf %3$s</string>
-    <string name="square_selected_description">%1$s ausgewählt</string>
 
     <string name="piece_white">Weiß</string>
     <string name="piece_black">Schwarz</string>
@@ -152,7 +144,6 @@
     <string name="piece_bishop">Läufer</string>
     <string name="piece_knight">Springer</string>
     <string name="piece_pawn">Bauer</string>
-    <string name="choice_manually">Manuell</string>
     <string name="choice_random">Zufällig</string>
     <string name="choice_edit">Bearbeiten</string>
     <string name="choice_delete">Löschen</string>
@@ -166,14 +157,7 @@
     <string name="savegame_white_question">Weiß?</string>
     <string name="savegame_black">Schwarz</string>
     <string name="savegame_black_question">Schwarz?</string>
-    <string name="savegame_date">Datum</string>
 
-    <string name="gameslist_stars">Sterne</string>
-    <string name="gameslist_date">Datum</string>
-    <string name="gameslist_event">Ereignis</string>
-    <string name="gameslist_id">ID</string>
-    <string name="games_list_white_pieces">Weiße Figuren</string>
-    <string name="gameslist_black_pieces">Schwarze Figuren</string>
 
     <string name="msg_setup_turn">Am Zug</string>
     <string name="msg_setup_turn_white">Weiß</string>
@@ -184,8 +168,6 @@
     <string name="msg_ics_enter_handle">Bitte gib deinen Benutzernamen ein</string>
     <string name="msg_ics_enter_password">Bitte gib dein Passwort ein</string>
 
-    <string name="err_chess960_position_range">Ungültige Position, gib eine Zahl zwischen 0 und 960 ein</string>
-    <string name="err_chess960_position_format">Ungültige Position, gib eine Zahl ein</string>
 
     <string name="pgntool_export_explanation">Partiendatenbank exportieren</string>
     <string name="pgntool_import_explanation">Partien in die Datenbank importieren</string>
@@ -201,7 +183,6 @@
     <string name="pgntool_reset_practice">Übung zurücksetzen – neu beginnen</string>
     <string name="pgntool_confirm_practice_reset">Bist du sicher, dass du zurücksetzen willst?</string>
     <string name="pgntool_import_puzzle">Rätsel importieren</string>
-    <string name="pgntool_import_opening">Vom Entwickler verwendet</string>
 
     <string name="practice_set_reset">Übungsset wurde zurückgesetzt</string>
 
@@ -311,7 +292,6 @@
     </string>
 
     <!-- Toast strings -->
-    <string name="toast_could_not_start_activity">Aktivität konnte nicht gestartet werden</string>
     <string name="toast_challenge_posted">Herausforderung gepostet</string>
 
     <string name="pieceset_alpha">Alpha</string>

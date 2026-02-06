@@ -21,7 +21,6 @@
     <string name="globalpreferences">Configurações globais</string>
     <string name="playpreferences">Configurações de jogo</string>
     <string name="playonlinepreferences">Configurações online</string>
-    <string name="boardprerences">Configurações do tabuleiro</string>
     <string name="gamepreferences">Configurações da partida</string>
     <string name="preferences">Configurações</string>
     <string name="pref_wakelock">Manter tela ligada</string>
@@ -30,12 +29,8 @@
     <string name="pref_sound">Som</string>
     <string name="pref_sound_desc">Reproduzido quando o adversário joga</string>
     <string name="pref_speech">Voz</string>
-    <string name="pref_speech_desc">Informa a jogada realizada</string>
-    <string name="pref_eco">Info ECO</string>
-    <string name="pref_eco_desc">Mostra informação de abertura ECO quando disponível</string>
     <string name="pref_fullscreen">Ativar tela cheia</string>
     <string name="pref_fullscreen_desc">Recomendado para telas pequenas e modo paisagem; caso contrário, elementos podem ficar fora da tela</string>
-    <string name="pref_tileset">Padrão das casas</string>
     <string name="pref_icscustomcommand">Comandos personalizados</string>
     <string name="pref_icscustomcommand_desc">Crie seus próprios comandos</string>
     <string name="pref_icsconsolecharactersize">Tamanho de caracteres do CONSOLE</string>
@@ -84,7 +79,6 @@
     <string name="title_castle">Roque?</string>
     <string name="title_pick_en_passant">Casa en passant</string>
     <string name="title_create_new_line">Criar nova linha?</string>
-    <string name="title_chess960_manual_random">Chess960: posição manual ou aleatória?</string>
     <string name="title_edit_or_delete">Editar ou excluir?</string>
     <string name="title_edit_command">Editar comando</string>
 
@@ -140,9 +134,7 @@
     <string name="choice_level_9">5 minutos</string>
     <string name="choice_level_10">15 minutos</string>
 
-    <string name="square_description">Casa %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s em %3$s</string>
-    <string name="square_selected_description">%1$s selecionado</string>
 
     <string name="piece_white">Brancas</string>
     <string name="piece_black">Negras</string>
@@ -152,7 +144,6 @@
     <string name="piece_bishop">Bispo</string>
     <string name="piece_knight">Cavalo</string>
     <string name="piece_pawn">Peão</string>
-    <string name="choice_manually">Manual</string>
     <string name="choice_random">Aleatório</string>
     <string name="choice_edit">Editar</string>
     <string name="choice_delete">Excluir</string>
@@ -166,14 +157,7 @@
     <string name="savegame_white_question">Brancas?</string>
     <string name="savegame_black">Negras</string>
     <string name="savegame_black_question">Negras?</string>
-    <string name="savegame_date">Data</string>
 
-    <string name="gameslist_stars">Estrelas</string>
-    <string name="gameslist_date">Data</string>
-    <string name="gameslist_event">Evento</string>
-    <string name="gameslist_id">ID</string>
-    <string name="games_list_white_pieces">Peças brancas</string>
-    <string name="gameslist_black_pieces">Peças pretas</string>
 
     <string name="msg_setup_turn">Vez</string>
     <string name="msg_setup_turn_white">brancas</string>
@@ -184,8 +168,6 @@
     <string name="msg_ics_enter_handle">Digite seu usuário</string>
     <string name="msg_ics_enter_password">Digite sua senha</string>
 
-    <string name="err_chess960_position_range">Posição inválida, insira um número entre 0 e 960</string>
-    <string name="err_chess960_position_format">Posição inválida, insira um número</string>
 
     <string name="pgntool_export_explanation">Exportar banco de dados de partidas</string>
     <string name="pgntool_import_explanation">Importar partidas para o banco</string>
@@ -201,7 +183,6 @@
     <string name="pgntool_reset_practice">Reiniciar treino - começar de novo</string>
     <string name="pgntool_confirm_practice_reset">Tem certeza que deseja reiniciar?</string>
     <string name="pgntool_import_puzzle">Importar problemas</string>
-    <string name="pgntool_import_opening">Usado pelo desenvolvedor</string>
 
     <string name="practice_set_reset">O conjunto de treino foi reiniciado</string>
 
@@ -303,7 +284,6 @@ Atenção: se o dispositivo mudar de rede, a conexão pode cair.<br/>
 ]]></string>
 
     <!-- Toast -->
-    <string name="toast_could_not_start_activity">Não foi possível iniciar a atividade</string>
     <string name="toast_challenge_posted">Desafio publicado</string>
 
     <string name="pieceset_alpha">Alpha</string>

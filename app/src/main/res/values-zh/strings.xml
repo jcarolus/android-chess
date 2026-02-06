@@ -21,7 +21,6 @@
     <string name="globalpreferences">全局设置</string>
     <string name="playpreferences">游戏设置</string>
     <string name="playonlinepreferences">在线设置</string>
-    <string name="boardprerences">棋盘设置</string>
     <string name="gamepreferences">对局设置</string>
     <string name="preferences">设置</string>
     <string name="pref_wakelock">保持屏幕常亮</string>
@@ -30,12 +29,8 @@
     <string name="pref_sound">声音</string>
     <string name="pref_sound_desc">当对手走棋时播放</string>
     <string name="pref_speech">语音播报</string>
-    <string name="pref_speech_desc">播报走棋</string>
-    <string name="pref_eco">ECO 信息</string>
-    <string name="pref_eco_desc">显示开局 ECO 信息（若可用）</string>
     <string name="pref_fullscreen">启用全屏</string>
     <string name="pref_fullscreen_desc">推荐小屏幕和横屏使用，否则部分元素可能被裁剪</string>
-    <string name="pref_tileset">棋格样式</string>
     <string name="pref_icscustomcommand">自定义命令</string>
     <string name="pref_icscustomcommand_desc">创建自定义命令</string>
     <string name="pref_icsconsolecharactersize">控制台字符大小</string>
@@ -84,7 +79,6 @@
     <string name="title_castle">王车易位？</string>
     <string name="title_pick_en_passant">吃过路兵格</string>
     <string name="title_create_new_line">创建新变体？</string>
-    <string name="title_chess960_manual_random">Chess960: 手动或随机？</string>
     <string name="title_edit_or_delete">编辑还是删除？</string>
     <string name="title_edit_command">编辑命令</string>
 
@@ -140,9 +134,7 @@
     <string name="choice_level_9">5 分钟</string>
     <string name="choice_level_10">15 分钟</string>
 
-    <string name="square_description">格子 %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s 在 %3$s</string>
-    <string name="square_selected_description">%1$s 已选中</string>
 
     <string name="piece_white">白方</string>
     <string name="piece_black">黑方</string>
@@ -152,7 +144,6 @@
     <string name="piece_bishop">象</string>
     <string name="piece_knight">马</string>
     <string name="piece_pawn">兵</string>
-    <string name="choice_manually">手动</string>
     <string name="choice_random">随机</string>
     <string name="choice_edit">编辑</string>
     <string name="choice_delete">删除</string>
@@ -166,14 +157,7 @@
     <string name="savegame_white_question">白方?</string>
     <string name="savegame_black">黑方</string>
     <string name="savegame_black_question">黑方?</string>
-    <string name="savegame_date">日期</string>
 
-    <string name="gameslist_stars">星级</string>
-    <string name="gameslist_date">日期</string>
-    <string name="gameslist_event">赛事</string>
-    <string name="gameslist_id">ID</string>
-    <string name="games_list_white_pieces">白棋</string>
-    <string name="gameslist_black_pieces">黑棋</string>
 
     <string name="msg_setup_turn">轮到</string>
     <string name="msg_setup_turn_white">白方</string>
@@ -184,8 +168,6 @@
     <string name="msg_ics_enter_handle">请输入用户名</string>
     <string name="msg_ics_enter_password">请输入密码</string>
 
-    <string name="err_chess960_position_range">无效位置，请输入 0 到 960 之间的数字</string>
-    <string name="err_chess960_position_format">无效位置，请输入数字</string>
 
     <string name="pgntool_export_explanation">导出对局数据库</string>
     <string name="pgntool_import_explanation">导入对局到数据库</string>
@@ -201,7 +183,6 @@
     <string name="pgntool_reset_practice">重置练习 - 重新开始</string>
     <string name="pgntool_confirm_practice_reset">确定要重置吗？</string>
     <string name="pgntool_import_puzzle">导入习题</string>
-    <string name="pgntool_import_opening">开发者使用</string>
 
     <string name="practice_set_reset">练习集已重置</string>
 
@@ -303,7 +284,6 @@
 ]]></string>
 
     <!-- Toast -->
-    <string name="toast_could_not_start_activity">无法启动活动</string>
     <string name="toast_challenge_posted">挑战已发布</string>
 
     <string name="pieceset_alpha">Alpha</string>

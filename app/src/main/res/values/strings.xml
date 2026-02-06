@@ -23,7 +23,6 @@
     <string name="globalpreferences">Global settings</string>
     <string name="playpreferences">Play settings</string>
     <string name="playonlinepreferences">Play online settings</string>
-    <string name="boardprerences">Board settings</string>
     <string name="gamepreferences">Game settings</string>
     <string name="preferences">Settings</string>
     <string name="pref_wakelock">Use wake lock</string>
@@ -32,12 +31,8 @@
     <string name="pref_sound">Sound</string>
     <string name="pref_sound_desc">Played when your opponent moves</string>
     <string name="pref_speech">Speech</string>
-    <string name="pref_speech_desc">Tells the move that was made</string>
-    <string name="pref_eco">ECO info</string>
-    <string name="pref_eco_desc">Show ECO opening info when available</string>
     <string name="pref_fullscreen">Enable full screen</string>
     <string name="pref_fullscreen_desc">Recommended for small screens and landscape view; elements may fall off the screen otherwise</string>
-    <string name="pref_tileset">Square pattern</string>
     <string name="pref_icscustomcommand">Custom commands</string>
     <string name="pref_icscustomcommand_desc">Create your own custom commands</string>
     <string name="pref_icsconsolecharactersize">CONSOLE character size</string>
@@ -74,7 +69,6 @@
     <string name="button_previous_move_description">Previous move</string>
     <string name="button_next_move_description">Next move</string>
     <string name="button_menu_description">Menu</string>
-    <string name="button_show_pgn_description">Show PGN</string>
     <string name="button_next_position">Next position</string>
     <string name="button_previous_position">Previous position</string>
     <string name="button_reset_position">Reset position</string>
@@ -97,7 +91,6 @@
     <string name="title_castle">Castle?</string>
     <string name="title_pick_en_passant">En-passant file</string>
     <string name="title_create_new_line">Create new line?</string>
-    <string name="title_chess960_manual_random">Chess 960 :: Manual position nr or random?</string>
     <string name="title_edit_or_delete">Edit or delete?</string>
     <string name="title_edit_command">Edit command</string>
 
@@ -157,10 +150,8 @@
     <string name="choice_level_9">5 minutes</string>
     <string name="choice_level_10">15 minutes</string>
 
-    <string name="square_description">Square %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s at %3$s</string>
     <string name="square_with_duck_description">%1$s at %2$s</string>
-    <string name="square_selected_description">Selected %1$s</string>
     <string name="square_selected_with_piece_description">Selected %1$s %2$s at %3$s</string>
     <string name="square_selected_with_duck_description">Selected %1$s at %2$s</string>
     <string name="last_white_move_description">%1$s. Black\'s turn</string>
@@ -175,7 +166,6 @@
     <string name="piece_knight">Knight</string>
     <string name="piece_pawn">Pawn</string>
     <string name="piece_duck">Duck</string>
-    <string name="choice_manually">Manually</string>
     <string name="choice_random">Random</string>
     <string name="choice_edit">Edit</string>
     <string name="choice_delete">Delete</string>
@@ -190,14 +180,7 @@
     <string name="savegame_white_question">White?</string>
     <string name="savegame_black">Black</string>
     <string name="savegame_black_question">Black?</string>
-    <string name="savegame_date">Date</string>
 
-    <string name="gameslist_stars">Stars</string>
-    <string name="gameslist_date">Date</string>
-    <string name="gameslist_event">Event</string>
-    <string name="gameslist_id">ID</string>
-    <string name="games_list_white_pieces">White pieces</string>
-    <string name="gameslist_black_pieces">Black pieces</string>
 
     <string name="msg_setup_turn">Turn</string>
     <string name="msg_setup_turn_white">white</string>
@@ -210,8 +193,6 @@
     <string name="msg_ics_enter_handle">Please enter your handle</string>
     <string name="msg_ics_enter_password">Please enter your password</string>
 
-    <string name="err_chess960_position_range">Invalid position, enter a number between 0 and 960</string>
-    <string name="err_chess960_position_format">Invalid position, enter a number</string>
 
     <string name="pgntool_export_explanation">Export game database</string>
     <string name="pgntool_import_explanation">Import games into the game database</string>
@@ -227,7 +208,6 @@
     <string name="pgntool_reset_practice">Reset practice - start over</string>
     <string name="pgntool_confirm_practice_reset">Are you sure you want to reset?</string>
     <string name="pgntool_import_puzzle">Import puzzles</string>
-    <string name="pgntool_import_opening">Used by developer</string>
 
     <string name="practice_set_reset">Practice set has been reset</string>
 
@@ -345,7 +325,6 @@
     </string>
 
     <!-- Toast strings -->
-    <string name="toast_could_not_start_activity">Could not start the activity</string>
     <string name="toast_challenge_posted">Challenge posted</string>
 
     <string name="pieceset_alpha">Alpha</string>
@@ -383,7 +362,6 @@
     <string name="time_warning_60">1 minute</string>
 
     <string name="lichess_games_connection_error_retry">"Could not get your games. Trying to reconnect in 5 seconds"</string>
-    <string name="lichess_challenge_dialog_title">Challenge</string>
     <string name="lichess_challenge_dialog_button_accept">Accept</string>
     <string name="lichess_challenge_dialog_button_decline">Decline</string>
     <string name="lichess_challenge_dialog_message_variant">Variant: %1$s</string>
@@ -432,7 +410,6 @@
     <string name="lichess_game_confirm_moves">Confirm moves</string>
     <string name="lichess_game_confirm_move">Confirm %1$s</string>
     <string name="lichess_game_cancel_move">Cancel move</string>
-    <string name="lichess_game_message_confirm_resign">Cancel move</string>
 
     <string name="lichess_lobby_connected">You are connected to Lichess</string>
     <string name="lichess_lobby_button_challenge">Challenge</string>
