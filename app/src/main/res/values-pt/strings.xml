@@ -325,4 +325,22 @@ Atenção: se o dispositivo mudar de rede, a conexão pode cair.<br/>
 
     <string name="chessboard_hint_tile_effect">Efeito das casas</string>
 
+    <string name="hotspot_host">Host</string>
+
+    <string name="hotspot_host_help">Ative `host` se você estiver usando o hotspot Wi‑Fi.</string>
+
+    <string name="hotspot_name_hint">Seu nome</string>
+
+    <string name="hotspot_connect">Conectar</string>
+
+    <string name="hotspot_resign">Desistir</string>
+
+    <string name="hotspot_draw">Empate</string>
+
+    <string name="hotspot_white">♔ Brancas</string>
+
+    <string name="hotspot_black">♚ Pretas</string>
+
+    <string name="hotspot_new">Novo</string>
+
 </resources>

@@ -325,4 +325,22 @@ Attenzione: se il dispositivo cambia rete, la connessione può interrompersi.<br
 
     <string name="chessboard_hint_tile_effect">Effetto delle caselle</string>
 
+    <string name="hotspot_host">Host</string>
+
+    <string name="hotspot_host_help">Attiva `host` se stai usando l’hotspot Wi‑Fi.</string>
+
+    <string name="hotspot_name_hint">Il tuo nome</string>
+
+    <string name="hotspot_connect">Connetti</string>
+
+    <string name="hotspot_resign">Abbandona</string>
+
+    <string name="hotspot_draw">Patta</string>
+
+    <string name="hotspot_white">♔ Bianchi</string>
+
+    <string name="hotspot_black">♚ Neri</string>
+
+    <string name="hotspot_new">Nuova</string>
+
 </resources>

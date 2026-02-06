@@ -325,4 +325,22 @@ Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
 
     <string name="chessboard_hint_tile_effect">Kare efekti</string>
 
+    <string name="hotspot_host">Host</string>
+
+    <string name="hotspot_host_help">Wi‑Fi etkin noktayı kullanıyorsanız `host` seçeneğini açın.</string>
+
+    <string name="hotspot_name_hint">Adınız</string>
+
+    <string name="hotspot_connect">Bağlan</string>
+
+    <string name="hotspot_resign">Pes et</string>
+
+    <string name="hotspot_draw">Berabere</string>
+
+    <string name="hotspot_white">♔ Beyaz</string>
+
+    <string name="hotspot_black">♚ Siyah</string>
+
+    <string name="hotspot_new">Yeni</string>
+
 </resources>

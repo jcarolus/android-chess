@@ -325,4 +325,22 @@
 
     <string name="chessboard_hint_tile_effect">Эффект клеток</string>
 
+    <string name="hotspot_host">Хост</string>
+
+    <string name="hotspot_host_help">Включите `хост`, если вы используете Wi‑Fi‑точку доступа.</string>
+
+    <string name="hotspot_name_hint">Ваше имя</string>
+
+    <string name="hotspot_connect">Подключиться</string>
+
+    <string name="hotspot_resign">Сдаться</string>
+
+    <string name="hotspot_draw">Ничья</string>
+
+    <string name="hotspot_white">♔ Белые</string>
+
+    <string name="hotspot_black">♚ Черные</string>
+
+    <string name="hotspot_new">Новая</string>
+
 </resources>

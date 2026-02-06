@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"
-                android:text="Host"
+                android:text="@string/hotspot_host"
                 android:checked="true"
                 />
             <TextView
@@ -38,17 +38,17 @@
                 android:maxLines="10"
                 android:scrollHorizontally="false"
                 android:ellipsize="none"
-                android:text="Toggle `host` on if you are running the WiFi Hotspot."
+                android:text="@string/hotspot_host_help"
                 />
             <EditText
                 android:id="@+id/EditName"
-                android:hint="Your name"
+                android:hint="@string/hotspot_name_hint"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonConnect"
-                android:text="Connect"
+                android:text="@string/hotspot_connect"
                 android:layout_width="wrap_content"
                 android:layout_margin="8dip"
                 style="@style/ChessButton"/>
@@ -62,13 +62,13 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonResign"
-                android:text="Resign"
+                android:text="@string/hotspot_resign"
                 android:layout_width="wrap_content"
                 style="@style/ChessButton"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDraw"
-                android:text="Draw"
+                android:text="@string/hotspot_draw"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="16dp"
                 style="@style/ChessButton"/>
@@ -92,17 +92,17 @@
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="♔ White" />
+                    android:text="@string/hotspot_white" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonBlack"
                     style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="♚ Black" />
+                    android:text="@string/hotspot_black" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
             <com.google.android.material.button.MaterialButton android:id="@+id/ButtonNew"
-                android:text="New"
+                android:text="@string/hotspot_new"
                 android:layout_width="wrap_content"
                 style="@style/ChessButton"/>
         </LinearLayout>

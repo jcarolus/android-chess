@@ -333,4 +333,22 @@
 
     <string name="chessboard_hint_tile_effect">Efecto de casillas</string>
 
+    <string name="hotspot_host">Host</string>
+
+    <string name="hotspot_host_help">Activa `host` si estás usando el punto de acceso WiFi.</string>
+
+    <string name="hotspot_name_hint">Tu nombre</string>
+
+    <string name="hotspot_connect">Conectar</string>
+
+    <string name="hotspot_resign">Rendirse</string>
+
+    <string name="hotspot_draw">Tablas</string>
+
+    <string name="hotspot_white">♔ Blancas</string>
+
+    <string name="hotspot_black">♚ Negras</string>
+
+    <string name="hotspot_new">Nueva</string>
+
 </resources>

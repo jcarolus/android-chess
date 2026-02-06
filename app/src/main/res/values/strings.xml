@@ -428,4 +428,22 @@
 
     <string name="chessboard_hint_tile_effect">Tile effect</string>
 
+    <string name="hotspot_host">Host</string>
+
+    <string name="hotspot_host_help">Toggle `host` on if you are running the WiFi Hotspot.</string>
+
+    <string name="hotspot_name_hint">Your name</string>
+
+    <string name="hotspot_connect">Connect</string>
+
+    <string name="hotspot_resign">Resign</string>
+
+    <string name="hotspot_draw">Draw</string>
+
+    <string name="hotspot_white">♔ White</string>
+
+    <string name="hotspot_black">♚ Black</string>
+
+    <string name="hotspot_new">New</string>
+
 </resources>

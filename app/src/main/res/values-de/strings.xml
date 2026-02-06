@@ -333,4 +333,22 @@
 
     <string name="chessboard_hint_tile_effect">Feldeffekt</string>
 
+    <string name="hotspot_host">Host</string>
+
+    <string name="hotspot_host_help">Schalte `Host` ein, wenn du den WLAN-Hotspot betreibst.</string>
+
+    <string name="hotspot_name_hint">Dein Name</string>
+
+    <string name="hotspot_connect">Verbinden</string>
+
+    <string name="hotspot_resign">Aufgeben</string>
+
+    <string name="hotspot_draw">Remis</string>
+
+    <string name="hotspot_white">♔ Weiß</string>
+
+    <string name="hotspot_black">♚ Schwarz</string>
+
+    <string name="hotspot_new">Neu</string>
+
 </resources>

@@ -325,4 +325,22 @@
 
     <string name="chessboard_hint_tile_effect">格子效果</string>
 
+    <string name="hotspot_host">主机</string>
+
+    <string name="hotspot_host_help">如果你在使用 WiFi 热点，请打开 `主机`。</string>
+
+    <string name="hotspot_name_hint">你的名字</string>
+
+    <string name="hotspot_connect">连接</string>
+
+    <string name="hotspot_resign">认输</string>
+
+    <string name="hotspot_draw">和棋</string>
+
+    <string name="hotspot_white">♔ 白方</string>
+
+    <string name="hotspot_black">♚ 黑方</string>
+
+    <string name="hotspot_new">新局</string>
+
 </resources>

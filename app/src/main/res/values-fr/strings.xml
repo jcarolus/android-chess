@@ -324,4 +324,22 @@ Attention : si votre appareil change de connexion, la partie peut être interrom
 
     <string name="chessboard_hint_tile_effect">Effet des cases</string>
 
+    <string name="hotspot_host">Hôte</string>
+
+    <string name="hotspot_host_help">Active `hôte` si vous utilisez le point d’accès Wi‑Fi.</string>
+
+    <string name="hotspot_name_hint">Votre nom</string>
+
+    <string name="hotspot_connect">Se connecter</string>
+
+    <string name="hotspot_resign">Abandonner</string>
+
+    <string name="hotspot_draw">Nulle</string>
+
+    <string name="hotspot_white">♔ Blancs</string>
+
+    <string name="hotspot_black">♚ Noirs</string>
+
+    <string name="hotspot_new">Nouveau</string>
+
 </resources>

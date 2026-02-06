@@ -325,4 +325,22 @@ Atenție: dacă dispozitivul schimbă rețeaua, conexiunea se poate întrerupe.<
 
     <string name="chessboard_hint_tile_effect">Efectul câmpurilor</string>
 
+    <string name="hotspot_host">Gazdă</string>
+
+    <string name="hotspot_host_help">Activează `gazdă` dacă rulezi hotspotul Wi‑Fi.</string>
+
+    <string name="hotspot_name_hint">Numele tău</string>
+
+    <string name="hotspot_connect">Conectare</string>
+
+    <string name="hotspot_resign">Renunță</string>
+
+    <string name="hotspot_draw">Remiză</string>
+
+    <string name="hotspot_white">♔ Albe</string>
+
+    <string name="hotspot_black">♚ Negre</string>
+
+    <string name="hotspot_new">Nou</string>
+
 </resources>
