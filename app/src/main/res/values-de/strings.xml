@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="advanced_help">
-             <![CDATA[
-    <h3>Erweitert</h3>
-    <p>Erstellen oder importieren Sie hier Ihre eigenen Inhalte.</p>
-    
-    <h4>Spieldatenbank auf SD-Karte exportieren</h4>
-    <p>Alle Partien in der Spieldatenbank können in eine einzige PGN-Datei auf die SD-Karte exportiert werden. Diese Datei heißt chess.pgn; eine vorhandene Datei wird überschrieben.</p>
-    
-    <h4>Partien in die Spieldatenbank importieren</h4>
-    <p>Verwenden Sie diese Option, um Partien zur Spieldatenbank hinzuzufügen. Sie können zu einer PGN-Datei navigieren, sie auswählen und importieren.</p>
-    
-    <h4>Alle Partien in der Spieldatenbank löschen</h4>
-    <p>Verwenden Sie diese Option, wenn Sie die Spieldatenbank bereinigen möchten. Erstellen Sie vorher unbedingt ein Backup auf die SD-Karte; dieser Vorgang kann nicht rückgängig gemacht werden.</p>
-    
-    <h4>Übungssatz erstellen</h4>
-    <p>Erstellt Übungsstellungen aus Partien, die mit Schachmatt enden. Navigieren Sie zur zu verarbeitenden Datei. Fehlgeschlagene Einträge sind normalerweise Partien, die nicht mit Schachmatt endeten oder Duplikate sind.</p>
-    
-    <h4>Übungssatz zurücksetzen</h4>
-    <p>Möchten Sie das Üben von vorne beginnen? Dadurch wird auch Ihr durchschnittlicher Zeitmesser zurückgesetzt.</p>
-    
-    
-            ]]>
-        </string>
+                 <![CDATA[
+        <h3>Erweitert</h3>
+        <p>Erstellen oder importieren Sie hier Ihre eigenen Inhalte.</p>
+        
+        <h4>Spieldatenbank auf SD-Karte exportieren</h4>
+        <p>Alle Partien in der Spieldatenbank können in eine einzige PGN-Datei auf die SD-Karte exportiert werden. Diese Datei heißt chess.pgn; eine vorhandene Datei wird überschrieben.</p>
+        
+        <h4>Partien in die Spieldatenbank importieren</h4>
+        <p>Verwenden Sie diese Option, um Partien zur Spieldatenbank hinzuzufügen. Sie können zu einer PGN-Datei navigieren, sie auswählen und importieren.</p>
+        
+        <h4>Alle Partien in der Spieldatenbank löschen</h4>
+        <p>Verwenden Sie diese Option, wenn Sie die Spieldatenbank bereinigen möchten. Erstellen Sie vorher unbedingt ein Backup auf die SD-Karte; dieser Vorgang kann nicht rückgängig gemacht werden.</p>
+        
+        <h4>Übungssatz erstellen</h4>
+        <p>Erstellt Übungsstellungen aus Partien, die mit Schachmatt enden. Navigieren Sie zur zu verarbeitenden Datei. Fehlgeschlagene Einträge sind normalerweise Partien, die nicht mit Schachmatt endeten oder Duplikate sind.</p>
+        
+        <h4>Übungssatz zurücksetzen</h4>
+        <p>Möchten Sie das Üben von vorne beginnen? Dadurch wird auch Ihr durchschnittlicher Zeitmesser zurückgesetzt.</p>
+        
+        
+                ]]>
+            </string>
     <string name="alert_no">Nein</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Ja</string>
@@ -231,22 +231,22 @@
     <string name="msg_setup_turn_black">Schwarz</string>
     <string name="msg_setup_turn_white">Weiß</string>
     <string name="online_help">
-            <![CDATA[
-            <p>
-            <strong>FICS: Free Internet Chess Server</strong> lässt dich online mit tausenden Spielern spielen.<br/>
-            Hinweis: Wenn dein Gerät den Internetzugang wechselt, kann die Verbindung abbrechen. Es gibt kein timeseal.<br/>
-        </p>
-        <h4>Menü</h4>
-        <strong>Herausforderungen</strong><br/>
-        Zeigt Spieler, die eine Partie suchen. Tippe auf einen Spieler, um die Herausforderung anzunehmen.<br/>
-        <strong>Suchen</strong><br/>
-        Erstelle deine eigene Herausforderung. Wenn du den Benutzernamen eines Spielers angibst, wird eine direkte Herausforderung erstellt.<br/>
-        <strong>Partien</strong><br/>
-        Beobachte laufende Partien. Großmeister sind am „GM“-Präfix erkennbar.<br/>
-        <strong>Spieler</strong><br/>
-        Zeigt inaktive Spieler mit Wertungen.<br/>
-             ]]>
-        </string>
+                <![CDATA[
+                <p>
+                <strong>FICS: Free Internet Chess Server</strong> lässt dich online mit tausenden Spielern spielen.<br/>
+                Hinweis: Wenn dein Gerät den Internetzugang wechselt, kann die Verbindung abbrechen. Es gibt kein timeseal.<br/>
+            </p>
+            <h4>Menü</h4>
+            <strong>Herausforderungen</strong><br/>
+            Zeigt Spieler, die eine Partie suchen. Tippe auf einen Spieler, um die Herausforderung anzunehmen.<br/>
+            <strong>Suchen</strong><br/>
+            Erstelle deine eigene Herausforderung. Wenn du den Benutzernamen eines Spielers angibst, wird eine direkte Herausforderung erstellt.<br/>
+            <strong>Partien</strong><br/>
+            Beobachte laufende Partien. Großmeister sind am „GM“-Präfix erkennbar.<br/>
+            <strong>Spieler</strong><br/>
+            Zeigt inaktive Spieler mit Wertungen.<br/>
+                 ]]>
+            </string>
     <string name="options_level_ply">Stufe (Halbzüge)</string>
     <string name="options_level_time">Stufe (Zeit)</string>
     <string name="options_play_android">Mensch gegen Android</string>

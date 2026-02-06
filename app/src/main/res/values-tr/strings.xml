@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="advanced_help"><![CDATA[
-    <h3>Gelişmiş</h3>
-    <p>Burada kendi içeriklerinizi oluşturun veya içe aktarın.</p>
-    
-    <h4>Oyun veritabanını SD karta aktar</h4>
-    <p>Oyun veritabanındaki tüm oyunlar SD kartta tek bir PGN dosyasına aktarılabilir. Bu dosyanın adı chess.pgn olacaktır ve mevcut bir dosyanın üzerine yazılır.</p>
-    
-    <h4>Oyunları oyun veritabanına içe aktar</h4>
-    <p>Bu seçeneği, oyun veritabanına oyun eklemek için kullanın. Bir PGN dosyasına göz atmanıza olanak tanır. Seçin ve içe aktarmayı başlatın.</p>
-    
-    <h4>Oyun veritabanındaki tüm oyunları sil</h4>
-    <p>Veritabanını temizlemek istiyorsanız bu seçeneği kullanın. Önce SD karta bir yedek aldığınızdan emin olun; bu işlem geri alınamaz.</p>
-    
-    <h4>Alıştırma seti oluştur</h4>
-    <p>Şah matla biten oyunlardan alıştırma konumları oluşturur. İşlenecek dosyayı seçin. Başarısız girişler genellikle şah matla bitmeyen ya da yinelenen oyunlardır.</p>
-    
-    <h4>Alıştırma setini sıfırla</h4>
-    <p>Alıştırmalara baştan başlamak ister misiniz? Bu, ortalama süre sayacınızı da sıfırlar.</p>
-    
-    ]]></string>
+        <h3>Gelişmiş</h3>
+        <p>Burada kendi içeriklerinizi oluşturun veya içe aktarın.</p>
+        
+        <h4>Oyun veritabanını SD karta aktar</h4>
+        <p>Oyun veritabanındaki tüm oyunlar SD kartta tek bir PGN dosyasına aktarılabilir. Bu dosyanın adı chess.pgn olacaktır ve mevcut bir dosyanın üzerine yazılır.</p>
+        
+        <h4>Oyunları oyun veritabanına içe aktar</h4>
+        <p>Bu seçeneği, oyun veritabanına oyun eklemek için kullanın. Bir PGN dosyasına göz atmanıza olanak tanır. Seçin ve içe aktarmayı başlatın.</p>
+        
+        <h4>Oyun veritabanındaki tüm oyunları sil</h4>
+        <p>Veritabanını temizlemek istiyorsanız bu seçeneği kullanın. Önce SD karta bir yedek aldığınızdan emin olun; bu işlem geri alınamaz.</p>
+        
+        <h4>Alıştırma seti oluştur</h4>
+        <p>Şah matla biten oyunlardan alıştırma konumları oluşturur. İşlenecek dosyayı seçin. Başarısız girişler genellikle şah matla bitmeyen ya da yinelenen oyunlardır.</p>
+        
+        <h4>Alıştırma setini sıfırla</h4>
+        <p>Alıştırmalara baştan başlamak ister misiniz? Bu, ortalama süre sayacınızı da sıfırlar.</p>
+        
+        ]]></string>
     <string name="alert_no">Hayır</string>
     <string name="alert_ok">Tamam</string>
     <string name="alert_yes">Evet</string>
@@ -228,15 +228,15 @@
     <string name="msg_setup_turn_black">siyah</string>
     <string name="msg_setup_turn_white">beyaz</string>
     <string name="online_help"><![CDATA[
-    <p><strong>FICS: Free Internet Chess Server</strong> binlerce oyuncu ile çevrimiçi oynama imkanı sağlar.<br/>
-    Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
-    </p>
-    <h4>Menü</h4>
-    <strong>Meydan okumalar</strong><br/>Oyun arayan oyuncuları gösterir. Kabul etmek için dokun.<br/>
-    <strong>Ara</strong><br/>Kendi meydan okumanı oluştur. Kullanıcı adı girersen doğrudan olur.<br/>
-    <strong>Oyunlar</strong><br/>Çevrimiçi oyunları izle. GM öneki büyük ustaları gösterir.<br/>
-    <strong>Oyuncular</strong><br/>Elo puanı olan boşta oyuncuları gösterir.<br/>
-    ]]></string>
+        <p><strong>FICS: Free Internet Chess Server</strong> binlerce oyuncu ile çevrimiçi oynama imkanı sağlar.<br/>
+        Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
+        </p>
+        <h4>Menü</h4>
+        <strong>Meydan okumalar</strong><br/>Oyun arayan oyuncuları gösterir. Kabul etmek için dokun.<br/>
+        <strong>Ara</strong><br/>Kendi meydan okumanı oluştur. Kullanıcı adı girersen doğrudan olur.<br/>
+        <strong>Oyunlar</strong><br/>Çevrimiçi oyunları izle. GM öneki büyük ustaları gösterir.<br/>
+        <strong>Oyuncular</strong><br/>Elo puanı olan boşta oyuncuları gösterir.<br/>
+        ]]></string>
     <string name="options_level_ply">Seviye (yarım hamle)</string>
     <string name="options_level_time">Seviye (zaman)</string>
     <string name="options_play_android">İnsan vs Android</string>

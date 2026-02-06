@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="advanced_help"><![CDATA[
-    <h3>高级</h3>
-    <p>在这里创建或导入你自己的内容。</p>
-    
-    <h4>将棋局数据库导出到 SD 卡</h4>
-    <p>棋局数据库中的所有对局都可以导出到 SD 卡上的一个 PGN 文件。该文件名为 chess.pgn，若已存在将被覆盖。</p>
-    
-    <h4>将对局导入棋局数据库</h4>
-    <p>使用此选项向棋局数据库添加对局。它允许你浏览选择一个 PGN 文件，选中后进行导入。</p>
-    
-    <h4>删除棋局数据库中的所有对局</h4>
-    <p>如果你想清理棋局数据库，请使用此选项。请先在 SD 卡上做好备份；此操作无法撤销。</p>
-    
-    <h4>创建练习集</h4>
-    <p>从以将死结束的对局中生成练习局面。选择要处理的文件。失败的条目通常是未以将死结束或重复的对局。</p>
-    
-    <h4>重置练习集</h4>
-    <p>想重新开始练习吗？这也会重置你的平均用时计数器。</p>
-    
-    ]]></string>
+        <h3>高级</h3>
+        <p>在这里创建或导入你自己的内容。</p>
+        
+        <h4>将棋局数据库导出到 SD 卡</h4>
+        <p>棋局数据库中的所有对局都可以导出到 SD 卡上的一个 PGN 文件。该文件名为 chess.pgn，若已存在将被覆盖。</p>
+        
+        <h4>将对局导入棋局数据库</h4>
+        <p>使用此选项向棋局数据库添加对局。它允许你浏览选择一个 PGN 文件，选中后进行导入。</p>
+        
+        <h4>删除棋局数据库中的所有对局</h4>
+        <p>如果你想清理棋局数据库，请使用此选项。请先在 SD 卡上做好备份；此操作无法撤销。</p>
+        
+        <h4>创建练习集</h4>
+        <p>从以将死结束的对局中生成练习局面。选择要处理的文件。失败的条目通常是未以将死结束或重复的对局。</p>
+        
+        <h4>重置练习集</h4>
+        <p>想重新开始练习吗？这也会重置你的平均用时计数器。</p>
+        
+        ]]></string>
     <string name="alert_no">否</string>
     <string name="alert_ok">确定</string>
     <string name="alert_yes">是</string>
@@ -228,15 +228,15 @@
     <string name="msg_setup_turn_black">黑方</string>
     <string name="msg_setup_turn_white">白方</string>
     <string name="online_help"><![CDATA[
-    <p><strong>FICS: 免费互联网国际象棋服务器</strong> 让你与成千上万的玩家对弈。<br/>
-    注意: 如果设备切换网络，连接可能会中断。<br/>
-    </p>
-    <h4>菜单</h4>
-    <strong>挑战</strong><br/>显示正在寻找对局的玩家。点击接受。<br/>
-    <strong>搜索</strong><br/>创建自定义挑战。如果输入用户名，将成为直接挑战。<br/>
-    <strong>对局</strong><br/>观看正在进行的对局。GM 前缀代表特级大师。<br/>
-    <strong>玩家</strong><br/>显示空闲玩家及其等级分。<br/>
-    ]]></string>
+        <p><strong>FICS: 免费互联网国际象棋服务器</strong> 让你与成千上万的玩家对弈。<br/>
+        注意: 如果设备切换网络，连接可能会中断。<br/>
+        </p>
+        <h4>菜单</h4>
+        <strong>挑战</strong><br/>显示正在寻找对局的玩家。点击接受。<br/>
+        <strong>搜索</strong><br/>创建自定义挑战。如果输入用户名，将成为直接挑战。<br/>
+        <strong>对局</strong><br/>观看正在进行的对局。GM 前缀代表特级大师。<br/>
+        <strong>玩家</strong><br/>显示空闲玩家及其等级分。<br/>
+        ]]></string>
     <string name="options_level_ply">难度 (步数)</string>
     <string name="options_level_time">难度 (时间)</string>
     <string name="options_play_android">人机对战</string>

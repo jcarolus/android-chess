@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="advanced_help">
-             <![CDATA[
-    <h3>Avanzado</h3>
-    <p>Crea o importa tu propio contenido aquí.</p>
-    
-    <h4>Exportar la base de datos de partidas a la tarjeta SD</h4>
-    <p>Todas las partidas de la base de datos pueden exportarse a un único archivo PGN en la tarjeta SD. Este archivo se llamará chess.pgn y, si existe, se sobrescribirá.</p>
-    
-    <h4>Importar partidas a la base de datos</h4>
-    <p>Usa esta opción para añadir partidas a la base de datos. Te permite buscar un archivo PGN. Selecciónalo y elige importar.</p>
-    
-    <h4>Eliminar todas las partidas de la base de datos</h4>
-    <p>Usa esta opción si quieres limpiar la base de datos. Asegúrate primero de hacer una copia de seguridad en la tarjeta SD; esta acción no se puede deshacer.</p>
-    
-    <h4>Crear conjunto de práctica</h4>
-    <p>Crea posiciones de práctica a partir de partidas que terminan en jaque mate. Navega hasta el archivo que deseas procesar. Las entradas fallidas suelen ser partidas que no terminaron en jaque mate o que están duplicadas.</p>
-    
-    <h4>Restablecer conjunto de práctica</h4>
-    <p>¿Quieres volver a empezar a practicar? Esto también restablecerá tu contador de tiempo promedio.</p>
-    
-    
-            ]]>
-        </string>
+                 <![CDATA[
+        <h3>Avanzado</h3>
+        <p>Crea o importa tu propio contenido aquí.</p>
+        
+        <h4>Exportar la base de datos de partidas a la tarjeta SD</h4>
+        <p>Todas las partidas de la base de datos pueden exportarse a un único archivo PGN en la tarjeta SD. Este archivo se llamará chess.pgn y, si existe, se sobrescribirá.</p>
+        
+        <h4>Importar partidas a la base de datos</h4>
+        <p>Usa esta opción para añadir partidas a la base de datos. Te permite buscar un archivo PGN. Selecciónalo y elige importar.</p>
+        
+        <h4>Eliminar todas las partidas de la base de datos</h4>
+        <p>Usa esta opción si quieres limpiar la base de datos. Asegúrate primero de hacer una copia de seguridad en la tarjeta SD; esta acción no se puede deshacer.</p>
+        
+        <h4>Crear conjunto de práctica</h4>
+        <p>Crea posiciones de práctica a partir de partidas que terminan en jaque mate. Navega hasta el archivo que deseas procesar. Las entradas fallidas suelen ser partidas que no terminaron en jaque mate o que están duplicadas.</p>
+        
+        <h4>Restablecer conjunto de práctica</h4>
+        <p>¿Quieres volver a empezar a practicar? Esto también restablecerá tu contador de tiempo promedio.</p>
+        
+        
+                ]]>
+            </string>
     <string name="alert_no">No</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Sí</string>
@@ -231,22 +231,22 @@
     <string name="msg_setup_turn_black">negras</string>
     <string name="msg_setup_turn_white">blancas</string>
     <string name="online_help">
-            <![CDATA[
-            <p>
-            <strong>FICS: Free Internet Chess Server</strong> te permite jugar en línea con miles de jugadores.<br/>
-            Aviso: si tu dispositivo cambia de red, la conexión puede cortarse. No hay timeseal.<br/>
-        </p>
-        <h4>Menú</h4>
-        <strong>Desafíos</strong><br/>
-        Muestra jugadores que buscan partida. Pulsa sobre uno para aceptar.<br/>
-        <strong>Buscar</strong><br/>
-        Configura tu propio desafío. Si rellenas el usuario de alguien, será un reto directo.<br/>
-        <strong>Partidas</strong><br/>
-        Observa partidas en línea. Los grandes maestros se identifican con el prefijo GM.<br/>
-        <strong>Jugadores</strong><br/>
-        Muestra jugadores inactivos con puntuación.<br/>
-             ]]>
-        </string>
+                <![CDATA[
+                <p>
+                <strong>FICS: Free Internet Chess Server</strong> te permite jugar en línea con miles de jugadores.<br/>
+                Aviso: si tu dispositivo cambia de red, la conexión puede cortarse. No hay timeseal.<br/>
+            </p>
+            <h4>Menú</h4>
+            <strong>Desafíos</strong><br/>
+            Muestra jugadores que buscan partida. Pulsa sobre uno para aceptar.<br/>
+            <strong>Buscar</strong><br/>
+            Configura tu propio desafío. Si rellenas el usuario de alguien, será un reto directo.<br/>
+            <strong>Partidas</strong><br/>
+            Observa partidas en línea. Los grandes maestros se identifican con el prefijo GM.<br/>
+            <strong>Jugadores</strong><br/>
+            Muestra jugadores inactivos con puntuación.<br/>
+                 ]]>
+            </string>
     <string name="options_level_ply">Nivel (medio movimiento)</string>
     <string name="options_level_time">Nivel (tiempo)</string>
     <string name="options_play_android">Humano contra Android</string>

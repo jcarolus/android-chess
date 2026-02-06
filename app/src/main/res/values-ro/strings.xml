@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="advanced_help"><![CDATA[
-    <h3>Avansat</h3>
-    <p>Creați sau importați aici conținutul dvs.</p>
-    
-    <h4>Exportați baza de date de partide pe cardul SD</h4>
-    <p>Toate partidele din baza de date pot fi exportate într-un singur fișier PGN pe cardul SD. Acest fișier se va numi chess.pgn, iar un fișier existent va fi suprascris.</p>
-    
-    <h4>Importați partide în baza de date</h4>
-    <p>Folosiți această opțiune pentru a adăuga partide în baza de date. Vă permite să navigați la un fișier PGN. Selectați-l și alegeți importul.</p>
-    
-    <h4>Ștergeți toate partidele din baza de date</h4>
-    <p>Folosiți această opțiune dacă doriți să curățați baza de date. Asigurați-vă că mai întâi faceți o copie de siguranță pe cardul SD; această acțiune nu poate fi anulată.</p>
-    
-    <h4>Creați set de antrenament</h4>
-    <p>Creează poziții de antrenament din partide care se termină cu șah mat. Selectați fișierul de procesat. Intrările eșuate sunt de obicei partide care nu s-au încheiat cu șah mat sau sunt duplicate.</p>
-    
-    <h4>Resetați setul de antrenament</h4>
-    <p>Doriți să începeți antrenamentul de la zero? Aceasta va reseta și contorul mediei timpului.</p>
-    
-    ]]></string>
+        <h3>Avansat</h3>
+        <p>Creați sau importați aici conținutul dvs.</p>
+        
+        <h4>Exportați baza de date de partide pe cardul SD</h4>
+        <p>Toate partidele din baza de date pot fi exportate într-un singur fișier PGN pe cardul SD. Acest fișier se va numi chess.pgn, iar un fișier existent va fi suprascris.</p>
+        
+        <h4>Importați partide în baza de date</h4>
+        <p>Folosiți această opțiune pentru a adăuga partide în baza de date. Vă permite să navigați la un fișier PGN. Selectați-l și alegeți importul.</p>
+        
+        <h4>Ștergeți toate partidele din baza de date</h4>
+        <p>Folosiți această opțiune dacă doriți să curățați baza de date. Asigurați-vă că mai întâi faceți o copie de siguranță pe cardul SD; această acțiune nu poate fi anulată.</p>
+        
+        <h4>Creați set de antrenament</h4>
+        <p>Creează poziții de antrenament din partide care se termină cu șah mat. Selectați fișierul de procesat. Intrările eșuate sunt de obicei partide care nu s-au încheiat cu șah mat sau sunt duplicate.</p>
+        
+        <h4>Resetați setul de antrenament</h4>
+        <p>Doriți să începeți antrenamentul de la zero? Aceasta va reseta și contorul mediei timpului.</p>
+        
+        ]]></string>
     <string name="alert_no">Nu</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">Da</string>
@@ -228,15 +228,15 @@
     <string name="msg_setup_turn_black">negre</string>
     <string name="msg_setup_turn_white">albe</string>
     <string name="online_help"><![CDATA[
-    <p><strong>FICS: Free Internet Chess Server</strong> îți permite să joci online cu mii de jucători.<br/>
-    Atenție: dacă dispozitivul schimbă rețeaua, conexiunea se poate întrerupe.<br/>
-    </p>
-    <h4>Meniu</h4>
-    <strong>Provocări</strong><br/>Arată jucători care caută meci. Apasă pe unul pentru a accepta.<br/>
-    <strong>Căutare</strong><br/>Creează propria provocare. Dacă introduci un utilizator, va fi directă.<br/>
-    <strong>Partide</strong><br/>Privește partide online. Marii maeștri au prefix GM.<br/>
-    <strong>Jucători</strong><br/>Arată jucători inactivi cu rating.<br/>
-    ]]></string>
+        <p><strong>FICS: Free Internet Chess Server</strong> îți permite să joci online cu mii de jucători.<br/>
+        Atenție: dacă dispozitivul schimbă rețeaua, conexiunea se poate întrerupe.<br/>
+        </p>
+        <h4>Meniu</h4>
+        <strong>Provocări</strong><br/>Arată jucători care caută meci. Apasă pe unul pentru a accepta.<br/>
+        <strong>Căutare</strong><br/>Creează propria provocare. Dacă introduci un utilizator, va fi directă.<br/>
+        <strong>Partide</strong><br/>Privește partide online. Marii maeștri au prefix GM.<br/>
+        <strong>Jucători</strong><br/>Arată jucători inactivi cu rating.<br/>
+        ]]></string>
     <string name="options_level_ply">Nivel (semi-mutare)</string>
     <string name="options_level_time">Nivel (timp)</string>
     <string name="options_play_android">Om vs Android</string>
