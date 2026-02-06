@@ -319,4 +319,10 @@ Attenzione: se il dispositivo cambia rete, la connessione può interrompersi.<br
     <string name="time_warning_45">45 secondi</string>
     <string name="time_warning_60">1 minuto</string>
 
+    <string name="chessboard_hint_piece_set">Set di pezzi</string>
+
+    <string name="chessboard_hint_color_scheme">Schema colori</string>
+
+    <string name="chessboard_hint_tile_effect">Effetto delle caselle</string>
+
 </resources>

@@ -318,4 +318,10 @@ Attention : si votre appareil change de connexion, la partie peut être interrom
     <string name="time_warning_45">45 secondes</string>
     <string name="time_warning_60">1 minute</string>
 
+    <string name="chessboard_hint_piece_set">Jeu de pièces</string>
+
+    <string name="chessboard_hint_color_scheme">Schéma de couleurs</string>
+
+    <string name="chessboard_hint_tile_effect">Effet des cases</string>
+
 </resources>

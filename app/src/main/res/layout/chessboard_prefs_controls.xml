@@ -12,12 +12,12 @@
             android:id="@+id/DropdownPieceSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Piece set"/>
+            android:hint="@string/chessboard_hint_piece_set"/>
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropdownColorScheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Color scheme"/>
+            android:hint="@string/chessboard_hint_color_scheme"/>
 
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSaturation"
@@ -34,7 +34,7 @@
             android:id="@+id/DropdownTileSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tile effect"/>
+            android:hint="@string/chessboard_hint_tile_effect"/>
 
         <CheckBox
             android:id="@+id/CheckBoxCoordinates"

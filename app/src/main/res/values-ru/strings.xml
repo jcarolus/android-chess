@@ -319,4 +319,10 @@
     <string name="time_warning_45">45 секунд</string>
     <string name="time_warning_60">1 минута</string>
 
+    <string name="chessboard_hint_piece_set">Набор фигур</string>
+
+    <string name="chessboard_hint_color_scheme">Цветовая схема</string>
+
+    <string name="chessboard_hint_tile_effect">Эффект клеток</string>
+
 </resources>

@@ -422,4 +422,10 @@
     <string name="lichess_play_button_resign">Resign</string>
     <string name="lichess_play_button_draw">Draw</string>
 
+    <string name="chessboard_hint_piece_set">Piece set</string>
+
+    <string name="chessboard_hint_color_scheme">Color scheme</string>
+
+    <string name="chessboard_hint_tile_effect">Tile effect</string>
+
 </resources>

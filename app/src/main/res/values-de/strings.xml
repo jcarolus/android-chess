@@ -327,4 +327,10 @@
     <string name="time_warning_45">45 Sekunden</string>
     <string name="time_warning_60">1 Minute</string>
 
+    <string name="chessboard_hint_piece_set">Figurensatz</string>
+
+    <string name="chessboard_hint_color_scheme">Farbschema</string>
+
+    <string name="chessboard_hint_tile_effect">Feldeffekt</string>
+
 </resources>

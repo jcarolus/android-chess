@@ -319,4 +319,10 @@ Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>
     <string name="time_warning_45">45 saniye</string>
     <string name="time_warning_60">1 dakika</string>
 
+    <string name="chessboard_hint_piece_set">Taş seti</string>
+
+    <string name="chessboard_hint_color_scheme">Renk şeması</string>
+
+    <string name="chessboard_hint_tile_effect">Kare efekti</string>
+
 </resources>

@@ -319,4 +319,10 @@ Atenție: dacă dispozitivul schimbă rețeaua, conexiunea se poate întrerupe.<
     <string name="time_warning_45">45 secunde</string>
     <string name="time_warning_60">1 minut</string>
 
+    <string name="chessboard_hint_piece_set">Set de piese</string>
+
+    <string name="chessboard_hint_color_scheme">Schemă de culori</string>
+
+    <string name="chessboard_hint_tile_effect">Efectul câmpurilor</string>
+
 </resources>

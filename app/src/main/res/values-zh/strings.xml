@@ -319,4 +319,10 @@
     <string name="time_warning_45">45 秒</string>
     <string name="time_warning_60">1 分钟</string>
 
+    <string name="chessboard_hint_piece_set">棋子套装</string>
+
+    <string name="chessboard_hint_color_scheme">配色方案</string>
+
+    <string name="chessboard_hint_tile_effect">格子效果</string>
+
 </resources>
