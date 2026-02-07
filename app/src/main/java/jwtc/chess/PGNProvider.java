@@ -84,8 +84,8 @@ public class PGNProvider extends ContentProvider {
             String sDate = "" + c.getTimeInMillis();
             db.execSQL("INSERT INTO "
                     + GAMES_TABLE_NAME
-                    + " (" + PGNColumns.WHITE + ", " + PGNColumns.BLACK + ", " + PGNColumns.PGN + ", " + PGNColumns.DATE + ", " + PGNColumns.RATING + ", " + PGNColumns.EVENT + ")"
-                    + " VALUES ('Donald Byrne', 'Robert James Fischer', '" + sPGN + "', " + sDate + ", 5.0, 'Great game');");
+                    + " (" + PGNColumns.WHITE + ", " + PGNColumns.BLACK + ", " + PGNColumns.PGN + ", " + PGNColumns.DATE + ", " + PGNColumns.RATING + ", " + PGNColumns.EVENT + ", " + PGNColumns.RESULT + ")"
+                    + " VALUES ('Donald Byrne', 'Robert James Fischer', '" + sPGN + "', " + sDate + ", 5.0, 'Great game', '0-1');");
         }
 
         @Override
