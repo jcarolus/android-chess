@@ -15,6 +15,8 @@ import android.widget.Spinner;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.util.Random;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.Piece;
@@ -304,9 +306,67 @@ public class SetupActivity extends ChessBoardActivity {
     }
 
     public void randomBoard() {
+        final int turn = radioTurnWhite.isChecked() ? 1 : 0;
+        Random rng = new Random();
+        final int maxAttempts = 200;
+        boolean legal = false;
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            generateRandomBoardOnce(rng, turn);
+            if (jni.isLegalPosition() != 0 && jni.isEnded() == 0) {
+                legal = true;
+                break;
+            }
+        }
+        if (!legal) {
+            jni.reset();
+            jni.setTurn(turn);
+            jni.putPiece(BoardConstants.e1, BoardConstants.KING, BoardConstants.WHITE);
+            jni.putPiece(BoardConstants.e8, BoardConstants.KING, BoardConstants.BLACK);
+            jni.commitBoard();
+        }
+        rebuildBoard();
+    }
+
+    private void generateRandomBoardOnce(Random rng, int turn) {
         jni.reset();
 
-        rebuildBoard();
+        jni.setTurn(turn);
+
+        boolean[] occupied = new boolean[64];
+
+        int whiteKingPos = rng.nextInt(64);
+        int blackKingPos;
+        do {
+            blackKingPos = rng.nextInt(64);
+        } while (blackKingPos == whiteKingPos);
+
+        occupied[whiteKingPos] = true;
+        occupied[blackKingPos] = true;
+
+        jni.putPiece(whiteKingPos, BoardConstants.KING, BoardConstants.WHITE);
+        jni.putPiece(blackKingPos, BoardConstants.KING, BoardConstants.BLACK);
+
+        int piecesToAdd = 1 + rng.nextInt(20);
+        int[] pieceTypes = new int[] {
+                BoardConstants.PAWN,
+                BoardConstants.KNIGHT,
+                BoardConstants.BISHOP,
+                BoardConstants.ROOK,
+                BoardConstants.QUEEN
+        };
+
+        for (int i = 0; i < piecesToAdd; i++) {
+            int pos;
+            do {
+                pos = rng.nextInt(64);
+            } while (occupied[pos]);
+
+            occupied[pos] = true;
+            int piece = pieceTypes[rng.nextInt(pieceTypes.length)];
+            int color = rng.nextBoolean() ? BoardConstants.WHITE : BoardConstants.BLACK;
+            jni.putPiece(pos, piece, color);
+        }
+        jni.commitBoard();
     }
 
     public void initBoard() {
