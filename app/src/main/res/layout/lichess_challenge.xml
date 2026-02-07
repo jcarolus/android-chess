@@ -16,20 +16,20 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="@string/lichess_create_challenge_player"
-                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dip">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/InputMatchOpponent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    style="@style/MyHeaderTextStyle"
-                    android:id="@+id/tvMatchPlayerName" />
+                    android:hint="@string/lichess_create_challenge_player">
 
-                <EditText
-                    android:id="@+id/EditTextMatchOpponent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4" />
+                    <EditText
+                        android:id="@+id/EditTextMatchOpponent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@id/InputMatchOpponent" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
@@ -37,7 +37,8 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="4dip">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -68,63 +69,63 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
-                        android:text="@string/lichess_create_challenge_time_days"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/InputDays"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        style="@style/MyHeaderTextStyle" />
-                    <EditText
-                        android:id="@+id/EditTextDays"
-                        android:hint="@string/lichess_challenge_days_hint"
-                        android:inputType="number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="4"
-                        android:maxLength="2"
-                        android:imeOptions="actionDone" />
+                        android:hint="@string/lichess_create_challenge_time_days">
+
+                        <EditText
+                            android:id="@+id/EditTextDays"
+                            android:inputType="number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLength="2"
+                            android:labelFor="@id/InputDays"
+                            android:imeOptions="actionDone" />
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/LayoutMinutes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
-                         android:text="@string/lichess_create_challenge_time_minutes"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/InputMinutes"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        style="@style/MyHeaderTextStyle" />
-                    <EditText
-                        android:id="@+id/EditTextMinutes"
-                        android:hint="@string/lichess_challenge_minutes_hint"
-                        android:inputType="number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="4"
-                        android:maxLength="3"
-                        android:imeOptions="actionDone" />
+                        android:hint="@string/lichess_create_challenge_time_minutes">
+
+                        <EditText
+                            android:id="@+id/EditTextMinutes"
+                            android:inputType="number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLength="3"
+                            android:labelFor="@id/InputMinutes"
+                            android:imeOptions="actionDone" />
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/LayoutIncrement"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
-                        android:text="@string/lichess_create_challenge_time_increment"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/InputIncrement"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        style="@style/MyHeaderTextStyle" />
-                    <EditText
-                        android:id="@+id/EditTextIncrement"
-                        android:hint="@string/lichess_challenge_increment_hint"
-                        android:inputType="number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="4"
-                        android:maxLength="2"
-                        android:imeOptions="actionDone" />
+                        android:hint="@string/lichess_create_challenge_time_increment">
+
+                        <EditText
+                            android:id="@+id/EditTextIncrement"
+                            android:inputType="number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxLength="2"
+                            android:labelFor="@id/InputIncrement"
+                            android:imeOptions="actionDone" />
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
