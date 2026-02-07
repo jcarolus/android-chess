@@ -5,48 +5,59 @@
     android:orientation="vertical"
     android:layout_margin="8dip"
     android:layout_gravity="center">
-        <TableLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="320dip"
+        android:layout_height="wrap_content"
+        android:padding="8dip">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip">
-            <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Minutes"/>
+            android:orientation="vertical"
+            android:padding="8dip">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/InputMinutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Minutes">
                 <EditText
                     android:id="@+id/EditMinutes"
                     android:inputType="number"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
-            </TableRow>
-            <TableRow>
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Increment in seconds"/>
+                    android:labelFor="@id/InputMinutes"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/InputIncrement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Increment in seconds">
                 <EditText
                     android:id="@+id/EditIncrement"
                     android:inputType="number"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
-            </TableRow>
-            <TableRow>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/ButtonCancel"
-                    android:text="@string/button_cancel"
-                    android:layout_width="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_margin="2dip"/>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/ButtonOk"
-                    android:text="@string/button_ok"
-                    android:layout_width="wrap_content"
-                    android:minWidth="100dp"
-                    android:layout_margin="2dip"/>
-            </TableRow>
-        </TableLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@id/InputIncrement"/>
+            </com.google.android.material.textfield.TextInputLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TableRow>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/ButtonCancel"
+                        android:text="@string/button_cancel"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="2dip"/>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/ButtonOk"
+                        android:text="@string/button_ok"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="2dip"/>
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

@@ -23,6 +23,7 @@
                 android:src="@drawable/fics" />
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/InputICSHandle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/ics_client_handle">
@@ -35,10 +36,12 @@
                     android:minWidth="100dip"
                     android:singleLine="true"
                     android:inputType="text"
+                    android:labelFor="@id/InputICSHandle"
                     android:imeOptions="actionNext" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/InputICSPwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/ics_client_password">
@@ -51,6 +54,7 @@
                     android:singleLine="true"
                     android:inputType="textPassword"
                     android:layout_marginBottom="10dip"
+                    android:labelFor="@id/InputICSPwd"
                     android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
 
