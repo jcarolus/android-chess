@@ -7,9 +7,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.HashMap;
@@ -39,8 +40,7 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         final EditText editTextPlayer = findViewById(R.id.EditTextMatchOpponent);
         final TextView textViewPlayerName = findViewById(R.id.tvMatchPlayerName);
 
-        final RadioButton radioButtonUnlimitedTime = findViewById(R.id.RadioButtonUnlimitedTime);
-        final RadioButton radioButtonTimeControl = findViewById(R.id.RadioButtonTimeControl);
+        final MaterialButtonToggleGroup toggleTimeControl = findViewById(R.id.ToggleTimeControlGroup);
 
         final LinearLayout layoutDays = findViewById(R.id.LayoutDays);
         final LinearLayout layoutMinutes = findViewById(R.id.LayoutMinutes);
@@ -49,12 +49,11 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         final EditText editTextTime = findViewById(R.id.EditTextMinutes);
         final EditText editTextIncrement = findViewById(R.id.EditTextIncrement);
 
-        final RadioButton radioButtonVariantDefault = findViewById(R.id.RadioButtonStandard);
-        final RadioButton radioButtonVariantChess960 = findViewById(R.id.RadioButtonChess960);
+        final MaterialButtonToggleGroup toggleVariant = findViewById(R.id.ToggleVariantGroup);
+        final MaterialButton buttonVariantDefault = findViewById(R.id.RadioButtonStandard);
+        final MaterialButton buttonVariantChess960 = findViewById(R.id.RadioButtonChess960);
 
-        final RadioButton radioButtonRandom = findViewById(R.id.RadioButtonRandom);
-        final RadioButton radioButtonWhite = findViewById(R.id.RadioButtonWhite);
-        final RadioButton radioButtonBlack = findViewById(R.id.RadioButtonBlack);
+        final MaterialButtonToggleGroup toggleColor = findViewById(R.id.ToggleColorGroup);
 
         final CheckBox checkBoxRated = findViewById(R.id.CheckBoxSeekRated);
 
@@ -71,57 +70,46 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
             layoutDays.setVisibility(View.GONE);
             layoutMinutes.setVisibility(View.VISIBLE);
             layoutIncrement.setVisibility(View.VISIBLE);
-            radioButtonTimeControl.setChecked(true);
-            radioButtonUnlimitedTime.setChecked(false);
+            toggleTimeControl.check(R.id.RadioButtonTimeControl);
         } else {
             layoutDays.setVisibility(View.VISIBLE);
             layoutMinutes.setVisibility(View.INVISIBLE);
             layoutIncrement.setVisibility(View.GONE);
-            radioButtonTimeControl.setChecked(false);
-            radioButtonUnlimitedTime.setChecked(true);
+            toggleTimeControl.check(R.id.RadioButtonUnlimitedTime);
         }
 
         String variant = prefs.getString("lichess_challenge_variant", "standard");
-        radioButtonVariantDefault.setChecked(variant.equals("standard"));
-        radioButtonVariantChess960.setChecked(!radioButtonVariantDefault.isChecked());
-        radioButtonVariantDefault.setEnabled(false); // @TODO until castling is fixed
-        radioButtonVariantChess960.setEnabled(false);
+        toggleVariant.check(variant.equals("standard")
+                ? R.id.RadioButtonStandard
+                : R.id.RadioButtonChess960);
+        buttonVariantDefault.setEnabled(false); // @TODO until castling is fixed
+        buttonVariantChess960.setEnabled(false);
 
         String color = prefs.getString("lichess_challenge_color", "random");
-        radioButtonRandom.setChecked(color.equals("random"));
-        radioButtonWhite.setChecked(color.equals("white"));
-        radioButtonBlack.setChecked(color.equals("black"));
+        if (color.equals("white")) {
+            toggleColor.check(R.id.RadioButtonWhite);
+        } else if (color.equals("black")) {
+            toggleColor.check(R.id.RadioButtonBlack);
+        } else {
+            toggleColor.check(R.id.RadioButtonRandom);
+        }
 
         checkBoxRated.setChecked(prefs.getBoolean("lichess_challenge_rated", false));
 
-        // radio group behaviour
-        radioButtonUnlimitedTime.setOnClickListener(v -> {
-            radioButtonTimeControl.setChecked(!radioButtonUnlimitedTime.isChecked());
-            layoutDays.setVisibility(View.VISIBLE);
-            layoutMinutes.setVisibility(View.INVISIBLE);
-            layoutIncrement.setVisibility(View.GONE);
-        });
-        radioButtonTimeControl.setOnClickListener(v -> {
-            radioButtonUnlimitedTime.setChecked(!radioButtonTimeControl.isChecked());
-            layoutDays.setVisibility(View.GONE);
-            layoutMinutes.setVisibility(View.VISIBLE);
-            layoutIncrement.setVisibility(View.VISIBLE);
-        });
-
-        radioButtonVariantDefault.setOnClickListener(v -> radioButtonVariantChess960.setChecked(!radioButtonVariantDefault.isChecked()));
-        radioButtonVariantChess960.setOnClickListener(v -> radioButtonVariantDefault.setChecked(!radioButtonVariantChess960.isChecked()));
-
-        radioButtonRandom.setOnClickListener(v -> {
-            radioButtonWhite.setChecked(!radioButtonRandom.isChecked());
-            radioButtonBlack.setChecked(!radioButtonRandom.isChecked());
-        });
-        radioButtonWhite.setOnClickListener(v -> {
-            radioButtonRandom.setChecked(!radioButtonWhite.isChecked());
-            radioButtonBlack.setChecked(!radioButtonWhite.isChecked());
-        });
-        radioButtonBlack.setOnClickListener(v -> {
-            radioButtonWhite.setChecked(!radioButtonBlack.isChecked());
-            radioButtonRandom.setChecked(!radioButtonBlack.isChecked());
+        // toggle group behaviour
+        toggleTimeControl.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
+            }
+            if (checkedId == R.id.RadioButtonUnlimitedTime) {
+                layoutDays.setVisibility(View.VISIBLE);
+                layoutMinutes.setVisibility(View.INVISIBLE);
+                layoutIncrement.setVisibility(View.GONE);
+            } else if (checkedId == R.id.RadioButtonTimeControl) {
+                layoutDays.setVisibility(View.GONE);
+                layoutMinutes.setVisibility(View.VISIBLE);
+                layoutIncrement.setVisibility(View.VISIBLE);
+            }
         });
 
         final Button buttonOk = findViewById(R.id.ButtonChallengeOk);
@@ -140,7 +128,7 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
             }
 
             // timecontrol
-            if (radioButtonTimeControl.isChecked()) {
+            if (toggleTimeControl.getCheckedButtonId() == R.id.RadioButtonTimeControl) {
 
                 int editMinutes = Utils.parseInt(editTextTime.getText().toString(), 5);
                 int increment = Utils.parseInt(editTextIncrement.getText().toString(), 0);
@@ -171,13 +159,19 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
             }
 
             // variant
-            String editVariant = radioButtonVariantDefault.isChecked() ? "standard" : "chess960";
+            String editVariant = toggleVariant.getCheckedButtonId() == R.id.RadioButtonStandard
+                    ? "standard"
+                    : "chess960";
             editor.putString("lichess_challenge_variant", editVariant);
             data.put("variant", editVariant);
 
             // color
-            String editColor = radioButtonRandom.isChecked()
-                    ? "random" : radioButtonWhite.isChecked() ? "white" : "black";
+            int selectedColor = toggleColor.getCheckedButtonId();
+            String editColor = selectedColor == R.id.RadioButtonWhite
+                    ? "white"
+                    : selectedColor == R.id.RadioButtonBlack
+                        ? "black"
+                        : "random";
 
             editor.putString("lichess_challenge_color", editColor);
             data.put("color", editColor);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -44,26 +45,27 @@
                     android:layout_height="wrap_content"
                     android:text="@string/lichess_create_challenge_time"
                     style="@style/MyHeaderTextStyle"/>
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="@string/lichess_create_challenge_time_correspondence"
-                        android:id="@+id/RadioButtonUnlimitedTime"
-                        style="@style/MyRowTextStyle" />
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/ToggleTimeControlGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/RadioButtonUnlimitedTime"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="@string/lichess_create_challenge_time_control"
+                        android:layout_weight="1"
+                        android:text="@string/lichess_create_challenge_time_correspondence" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioButtonTimeControl"
-                        style="@style/MyRowTextStyle" />
-                </LinearLayout>
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/lichess_create_challenge_time_control" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
                 <LinearLayout
                     android:id="@+id/LayoutDays"
                     android:layout_width="match_parent"
@@ -134,32 +136,34 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="4dip">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lichess_create_challenge_variant"
                 style="@style/MyHeaderTextStyle"/>
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-                        <RadioButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:text="@string/lichess_create_challenge_variant_standard"
-                            android:id="@+id/RadioButtonStandard"
-                            style="@style/MyRowTextStyle" />
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/ToggleVariantGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
 
-                        <RadioButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:text="@string/lichess_create_challenge_variant_chess960"
-                            android:id="@+id/RadioButtonChess960"
-                            style="@style/MyRowTextStyle" />
-                </LinearLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/RadioButtonStandard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/lichess_create_challenge_variant_standard" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/RadioButtonChess960"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/lichess_create_challenge_variant_chess960" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
@@ -167,39 +171,41 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="4dip">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lichess_create_challenge_color"
                 style="@style/MyHeaderTextStyle"/>
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="@string/lichess_create_challenge_color_random"
-                        android:id="@+id/RadioButtonRandom"
-                        style="@style/MyRowTextStyle" />
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/ToggleColorGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/RadioButtonRandom"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="@string/lichess_create_challenge_color_white"
+                        android:layout_weight="1"
+                        android:text="@string/lichess_create_challenge_color_random" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioButtonWhite"
-                        style="@style/MyRowTextStyle" />
-                    <RadioButton
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="@string/lichess_create_challenge_color_black"
+                        android:layout_weight="1"
+                        android:text="@string/lichess_create_challenge_color_white" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioButtonBlack"
-                        style="@style/MyRowTextStyle" />
-                </LinearLayout>
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/lichess_create_challenge_color_black" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
