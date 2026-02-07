@@ -6,10 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ToggleButton;
-
 import androidx.annotation.NonNull;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.helpers.ResultDialog;
@@ -35,12 +34,15 @@ public class GameSettingsDialog extends ResultDialog {
         final MaterialButtonToggleGroup toggleLevelMode = findViewById(R.id.ToggleLevelModeGroup);
         final FixedDropdownView spinnerLevelTime = findViewById(R.id.SpinnerOptionsLevelTime);
         final FixedDropdownView spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
-        final ToggleButton toggleQuiescent = findViewById(R.id.ToggleQuiescent);
+        final SwitchMaterial toggleQuiescent = findViewById(R.id.ToggleQuiescent);
 
         spinnerLevelTime.setItems(context.getResources().getStringArray(R.array.levels_time));
         spinnerLevelPly.setItems(context.getResources().getStringArray(R.array.levels_ply));
 
         toggleQuiescent.setChecked(quiescentSearchOn);
+        toggleQuiescent.setText(quiescentSearchOn
+                ? R.string.options_quiescent_on
+                : R.string.options_quiescent_off);
 
         toggleOpponent.check(vsCPU ? R.id.radioAndroid : R.id.radioHuman);
 
@@ -59,6 +61,11 @@ public class GameSettingsDialog extends ResultDialog {
             spinnerLevelTime.setVisibility(isTime ? View.VISIBLE : View.GONE);
             spinnerLevelPly.setVisibility(isTime ? View.GONE : View.VISIBLE);
         });
+
+        toggleQuiescent.setOnCheckedChangeListener((buttonView, isChecked) ->
+                toggleQuiescent.setText(isChecked
+                        ? R.string.options_quiescent_on
+                        : R.string.options_quiescent_off));
 
         spinnerLevelTime.setSelection(levelTime - 1);
         spinnerLevelPly.setSelection(levelPly - 1);
