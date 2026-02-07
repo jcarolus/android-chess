@@ -372,6 +372,8 @@
     <string name="title_offers_takeback">Geri alma isteği</string>
     <string name="title_pick_en_passant">En passant karesi</string>
     <string name="title_pick_level">Oyun seviyesi seç</string>
+    <string name="title_pick_time">Zaman seviyesini seç</string>
+    <string name="title_pick_ply">Yarım hamle seviyesini seç</string>
     <string name="title_pick_promo">Terfi piyesi seç</string>
     <string name="title_save_game">Oyunu kaydet</string>
     <string name="toast_challenge_posted">Meydan okuma gönderildi</string>

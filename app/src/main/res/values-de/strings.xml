@@ -382,6 +382,8 @@
     <string name="title_offers_takeback">Zurücknahme-Anfrage</string>
     <string name="title_pick_en_passant">En-passant-Feld</string>
     <string name="title_pick_level">Spielstärke wählen</string>
+    <string name="title_pick_time">Zeitstufe wählen</string>
+    <string name="title_pick_ply">Ply-Stufe wählen</string>
     <string name="title_pick_promo">Umwandlungsfigur wählen</string>
     <string name="title_save_game">Partie speichern</string>
     <string name="toast_challenge_posted">Herausforderung gepostet</string>

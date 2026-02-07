@@ -372,6 +372,8 @@
     <string name="title_offers_takeback">悔棋请求</string>
     <string name="title_pick_en_passant">吃过路兵格</string>
     <string name="title_pick_level">选择难度</string>
+    <string name="title_pick_time">选择时间难度</string>
+    <string name="title_pick_ply">选择半回合难度</string>
     <string name="title_pick_promo">选择升变棋子</string>
     <string name="title_save_game">保存对局</string>
     <string name="toast_challenge_posted">挑战已发布</string>

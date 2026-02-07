@@ -372,6 +372,8 @@
     <string name="title_offers_takeback">Запрос отменить ход</string>
     <string name="title_pick_en_passant">Поле en passant</string>
     <string name="title_pick_level">Выберите уровень игры</string>
+    <string name="title_pick_time">Выберите уровень по времени</string>
+    <string name="title_pick_ply">Выберите уровень по полуходам</string>
     <string name="title_pick_promo">Выберите фигуру для превращения</string>
     <string name="title_save_game">Сохранить партию</string>
     <string name="toast_challenge_posted">Вызов опубликован</string>

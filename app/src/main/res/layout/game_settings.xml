@@ -82,16 +82,18 @@
                     </com.google.android.material.button.MaterialButtonToggleGroup>
                 </TableRow>
                 <TableRow style="@style/MyRowStyle">
-                    <Spinner
+                    <jwtc.android.chess.views.FixedDropdownView
                         android:id="@+id/SpinnerOptionsLevelTime"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"/>
-                    <Spinner
+                        android:layout_height="wrap_content"
+                        android:hint="@string/title_pick_time"/>
+                    <jwtc.android.chess.views.FixedDropdownView
                         android:id="@+id/SpinnerOptionsLevelPly"
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:hint="@string/title_pick_ply"/>
                 </TableRow>
 
                 <TableRow style="@style/MyRowStyle">

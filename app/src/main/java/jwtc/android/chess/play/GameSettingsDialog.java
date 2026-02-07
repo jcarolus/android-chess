@@ -5,9 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -16,6 +14,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.views.FixedDropdownView;
 
 public class GameSettingsDialog extends ResultDialog {
     public GameSettingsDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs) {
@@ -34,19 +33,12 @@ public class GameSettingsDialog extends ResultDialog {
         final MaterialButtonToggleGroup toggleOpponent = findViewById(R.id.ToggleOpponentGroup);
         final MaterialButtonToggleGroup toggleColor = findViewById(R.id.ToggleColorGroup);
         final MaterialButtonToggleGroup toggleLevelMode = findViewById(R.id.ToggleLevelModeGroup);
-        final Spinner spinnerLevelTime = findViewById(R.id.SpinnerOptionsLevelTime);
-        final Spinner spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
+        final FixedDropdownView spinnerLevelTime = findViewById(R.id.SpinnerOptionsLevelTime);
+        final FixedDropdownView spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
         final ToggleButton toggleQuiescent = findViewById(R.id.ToggleQuiescent);
 
-        ArrayAdapter<CharSequence> adapterTime = ArrayAdapter.createFromResource(context, R.array.levels_time, android.R.layout.simple_spinner_item);
-        adapterTime.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLevelTime.setPrompt(context.getString(R.string.title_pick_level));
-        spinnerLevelTime.setAdapter(adapterTime);
-
-        ArrayAdapter<CharSequence> adapterPly = ArrayAdapter.createFromResource(context, R.array.levels_ply, android.R.layout.simple_spinner_item);
-        adapterPly.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLevelPly.setPrompt(context.getString(R.string.title_pick_level));
-        spinnerLevelPly.setAdapter(adapterPly);
+        spinnerLevelTime.setItems(context.getResources().getStringArray(R.array.levels_time));
+        spinnerLevelPly.setItems(context.getResources().getStringArray(R.array.levels_ply));
 
         toggleQuiescent.setChecked(quiescentSearchOn);
 

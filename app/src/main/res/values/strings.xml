@@ -389,6 +389,8 @@
     <string name="title_offers_takeback">Take back request</string>
     <string name="title_pick_en_passant">En-passant file</string>
     <string name="title_pick_level">Pick playing level</string>
+    <string name="title_pick_time">Pick time level</string>
+    <string name="title_pick_ply">Pick ply level</string>
     <string name="title_pick_promo">Pick promotion piece</string>
     <string name="title_save_game">Save game</string>
     <string name="toast_challenge_posted">Challenge posted</string>

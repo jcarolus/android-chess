@@ -382,6 +382,8 @@
     <string name="title_offers_takeback">Solicitud de retracto</string>
     <string name="title_pick_en_passant">Casilla de captura al paso</string>
     <string name="title_pick_level">Elige nivel de juego</string>
+    <string name="title_pick_time">Elige nivel de tiempo</string>
+    <string name="title_pick_ply">Elige nivel de ply</string>
     <string name="title_pick_promo">Elige pieza de promoción</string>
     <string name="title_save_game">Guardar partida</string>
     <string name="toast_challenge_posted">Desafío publicado</string>

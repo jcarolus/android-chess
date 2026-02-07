@@ -372,6 +372,8 @@
     <string name="title_offers_takeback">Demande de retrait</string>
     <string name="title_pick_en_passant">Case en passant</string>
     <string name="title_pick_level">Choisir le niveau de jeu</string>
+    <string name="title_pick_time">Choisir le niveau de temps</string>
+    <string name="title_pick_ply">Choisir le niveau de ply</string>
     <string name="title_pick_promo">Choisir une pièce de promotion</string>
     <string name="title_save_game">Sauvegarder la partie</string>
     <string name="toast_challenge_posted">Défi publié</string>

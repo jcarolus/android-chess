@@ -372,6 +372,8 @@
     <string name="title_offers_takeback">Richiesta di rimessa</string>
     <string name="title_pick_en_passant">Casella en passant</string>
     <string name="title_pick_level">Scegli livello di gioco</string>
+    <string name="title_pick_time">Scegli livello di tempo</string>
+    <string name="title_pick_ply">Scegli livello di ply</string>
     <string name="title_pick_promo">Scegli pezzo di promozione</string>
     <string name="title_save_game">Salva partita</string>
     <string name="toast_challenge_posted">Sfida pubblicata</string>
