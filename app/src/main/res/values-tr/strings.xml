@@ -223,6 +223,7 @@
     <string name="msg_setup_castle_white">Beyaz</string>
     <string name="msg_setup_clear">Temizle</string>
     <string name="msg_setup_enpassant">En passant karesi</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">Sıfırla</string>
     <string name="msg_setup_turn">Sıra</string>
     <string name="msg_setup_turn_black">siyah</string>

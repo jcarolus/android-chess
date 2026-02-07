@@ -223,6 +223,7 @@
     <string name="msg_setup_castle_white">Белые</string>
     <string name="msg_setup_clear">Очистить</string>
     <string name="msg_setup_enpassant">Поле en passant</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">Сбросить</string>
     <string name="msg_setup_turn">Ход</string>
     <string name="msg_setup_turn_black">чёрные</string>

@@ -223,6 +223,7 @@
     <string name="msg_setup_castle_white">Blancs</string>
     <string name="msg_setup_clear">Effacer</string>
     <string name="msg_setup_enpassant">Case en passant</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">Réinitialiser</string>
     <string name="msg_setup_turn">Tour</string>
     <string name="msg_setup_turn_black">noirs</string>

@@ -230,6 +230,7 @@
     <string name="msg_setup_castle_white">White</string>
     <string name="msg_setup_clear">Clear</string>
     <string name="msg_setup_enpassant">En-passant square</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">Reset</string>
     <string name="msg_setup_turn">Turn</string>
     <string name="msg_setup_turn_black">black</string>

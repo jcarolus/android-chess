@@ -226,6 +226,7 @@
     <string name="msg_setup_castle_white">Blancas</string>
     <string name="msg_setup_clear">Limpiar</string>
     <string name="msg_setup_enpassant">Casilla de captura al paso</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">Restablecer</string>
     <string name="msg_setup_turn">Turno</string>
     <string name="msg_setup_turn_black">negras</string>

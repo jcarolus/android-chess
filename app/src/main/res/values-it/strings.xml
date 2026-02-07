@@ -223,6 +223,7 @@
     <string name="msg_setup_castle_white">Bianchi</string>
     <string name="msg_setup_clear">Cancella</string>
     <string name="msg_setup_enpassant">Casella en passant</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">Reimposta</string>
     <string name="msg_setup_turn">Turno</string>
     <string name="msg_setup_turn_black">neri</string>

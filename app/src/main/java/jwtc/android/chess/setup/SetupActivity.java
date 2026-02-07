@@ -88,6 +88,9 @@ public class SetupActivity extends ChessBoardActivity {
         MaterialButton buttonClear = findViewById(R.id.ButtonSetupOptionsClear);
         buttonClear.setOnClickListener(v -> resetBoard());
 
+        MaterialButton buttonRandom = findViewById(R.id.ButtonSetupOptionsRandom);
+        buttonRandom.setOnClickListener(v -> randomBoard());
+
         afterCreate();
         buildPieces();
     }
@@ -297,6 +300,12 @@ public class SetupActivity extends ChessBoardActivity {
 
         jni.putPiece(BoardConstants.e1, BoardConstants.KING, BoardConstants.WHITE);
         jni.putPiece(BoardConstants.e8, BoardConstants.KING, BoardConstants.BLACK);
+        rebuildBoard();
+    }
+
+    public void randomBoard() {
+        jni.reset();
+
         rebuildBoard();
     }
 

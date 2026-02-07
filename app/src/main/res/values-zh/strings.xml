@@ -223,6 +223,7 @@
     <string name="msg_setup_castle_white">白方</string>
     <string name="msg_setup_clear">清除</string>
     <string name="msg_setup_enpassant">吃过路兵格</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">重置</string>
     <string name="msg_setup_turn">轮到</string>
     <string name="msg_setup_turn_black">黑方</string>

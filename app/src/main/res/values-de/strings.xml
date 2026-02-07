@@ -226,6 +226,7 @@
     <string name="msg_setup_castle_white">Weiß</string>
     <string name="msg_setup_clear">Leeren</string>
     <string name="msg_setup_enpassant">En-passant-Feld</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">Zurücksetzen</string>
     <string name="msg_setup_turn">Am Zug</string>
     <string name="msg_setup_turn_black">Schwarz</string>

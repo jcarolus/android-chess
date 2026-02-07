@@ -223,6 +223,7 @@
     <string name="msg_setup_castle_white">Brancas</string>
     <string name="msg_setup_clear">Limpar</string>
     <string name="msg_setup_enpassant">Casa en passant</string>
+    <string name="msg_setup_random">Random</string>
     <string name="msg_setup_reset">Redefinir</string>
     <string name="msg_setup_turn">Vez</string>
     <string name="msg_setup_turn_black">pretas</string>

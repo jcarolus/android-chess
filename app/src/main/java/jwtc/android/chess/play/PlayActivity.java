@@ -346,7 +346,7 @@ public class PlayActivity extends ChessBoardActivity implements
         if (lGameID > 0) {
             ContentValues values = new ContentValues();
 
-            // @TODO
+            // @TODO - generic solution; +RESULT?
             values.put(PGNColumns.DATE, gameApi.getDate().getTime());
             values.put(PGNColumns.WHITE, gameApi.getWhite());
             values.put(PGNColumns.BLACK, gameApi.getBlack());
