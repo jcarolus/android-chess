@@ -201,7 +201,11 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
 
         switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> sounds.setEnabled(switchSound.isChecked()));
+        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (sounds != null) {
+                sounds.setEnabled(switchSound.isChecked());
+            }
+        });
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {

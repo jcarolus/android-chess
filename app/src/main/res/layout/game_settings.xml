@@ -14,20 +14,23 @@
             style="@style/MyFormCardView">
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/ToggleOpponentGroup"
-                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dip"
+                app:spacing="0dp"
                 app:selectionRequired="true"
                 app:singleSelection="true">
                 <com.google.android.material.button.MaterialButton
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:insetBottom="0dp"
                     android:text="@string/options_play_android"
                     android:id="@+id/radioAndroid" />
-
                 <com.google.android.material.button.MaterialButton
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:insetTop="0dp"
                     android:text="@string/options_play_human"
                     android:id="@+id/radioHuman" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
