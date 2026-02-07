@@ -46,9 +46,19 @@ public class GameSettingsDialog extends ResultDialog {
 
         toggleColor.check(playAsWhite ? R.id.radioWhite : R.id.radioBlack);
 
-        toggleLevelMode.check(levelMode == EngineApi.LEVEL_TIME
-                ? R.id.RadioOptionsTime
-                : R.id.RadioOptionsPly);
+        boolean useTimeLevel = levelMode == EngineApi.LEVEL_TIME;
+        toggleLevelMode.check(useTimeLevel ? R.id.RadioOptionsTime : R.id.RadioOptionsPly);
+        spinnerLevelTime.setVisibility(useTimeLevel ? View.VISIBLE : View.GONE);
+        spinnerLevelPly.setVisibility(useTimeLevel ? View.GONE : View.VISIBLE);
+
+        toggleLevelMode.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
+            }
+            boolean isTime = checkedId == R.id.RadioOptionsTime;
+            spinnerLevelTime.setVisibility(isTime ? View.VISIBLE : View.GONE);
+            spinnerLevelPly.setVisibility(isTime ? View.GONE : View.VISIBLE);
+        });
 
         spinnerLevelTime.setSelection(levelTime - 1);
         spinnerLevelPly.setSelection(levelPly - 1);

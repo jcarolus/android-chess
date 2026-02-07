@@ -42,13 +42,15 @@
                 app:selectionRequired="true"
                 app:singleSelection="true">
                 <com.google.android.material.button.MaterialButton
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/options_play_white"
                     android:id="@+id/radioWhite" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/options_play_black"
                     android:id="@+id/radioBlack" />
@@ -56,58 +58,51 @@
         </com.google.android.material.card.MaterialCardView>
         <com.google.android.material.card.MaterialCardView
             style="@style/MyFormCardView">
-            <TableLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:padding="4dip">
-                <TableRow style="@style/MyRowStyle">
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/ToggleLevelModeGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:selectionRequired="true"
-                        app:singleSelection="true">
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/RadioOptionsTime"
-                            android:text="@string/options_level_time"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/RadioOptionsPly"
-                            android:text="@string/options_level_ply"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
-                </TableRow>
-                <TableRow style="@style/MyRowStyle">
-                    <jwtc.android.chess.views.FixedDropdownView
-                        android:id="@+id/SpinnerOptionsLevelTime"
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/ToggleLevelModeGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/RadioOptionsTime"
+                        android:text="@string/options_level_time"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:hint="@string/title_pick_time"/>
-                    <jwtc.android.chess.views.FixedDropdownView
-                        android:id="@+id/SpinnerOptionsLevelPly"
+                        android:layout_weight="1" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/RadioOptionsPly"
+                        android:text="@string/options_level_ply"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:hint="@string/title_pick_ply"/>
-                </TableRow>
+                        android:layout_weight="1" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
 
-                <TableRow style="@style/MyRowStyle">
-                    <ToggleButton
-                        android:id="@+id/ToggleQuiescent"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_margin="4dip"
-                        android:checked="true"
-                        android:textOn="@string/options_quiescent_on"
-                        android:textOff="@string/options_quiescent_off"/>
-                </TableRow>
-                </TableLayout>
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/SpinnerOptionsLevelTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/title_pick_time"/>
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/SpinnerOptionsLevelPly"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/title_pick_ply"/>
+
+                <ToggleButton
+                    android:id="@+id/ToggleQuiescent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dip"
+                    android:checked="true"
+                    android:textOn="@string/options_quiescent_on"
+                    android:textOff="@string/options_quiescent_off"/>
+            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
         <LinearLayout
             android:layout_width="300dip"
