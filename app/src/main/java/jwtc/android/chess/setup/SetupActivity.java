@@ -8,11 +8,9 @@ import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
-import android.widget.Spinner;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Random;
@@ -26,6 +24,7 @@ import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
+import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.chess.JNI;
 import jwtc.chess.board.BoardConstants;
 
@@ -36,9 +35,8 @@ public class SetupActivity extends ChessBoardActivity {
     private ChessPiecesStackView whitePieces;
     private ChessPiecesStackView duckStack;
 
-    private Spinner spinnerEPFile;
-    private RadioButton radioTurnWhite;
-    private RadioButton radioTurnBlack;
+    private FixedDropdownView spinnerEPFile;
+    private MaterialButtonToggleGroup toggleTurnGroup;
 
     private CheckBox checkWhiteCastleShort;
     private CheckBox checkWhiteCastleLong;
@@ -64,19 +62,14 @@ public class SetupActivity extends ChessBoardActivity {
         blackPieces = findViewById(R.id.blackPieces);
         whitePieces = findViewById(R.id.whitePieces);
         duckStack = findViewById(R.id.duckStack);
-        radioTurnWhite = findViewById(R.id.RadioSetupTurnWhite);
-        radioTurnBlack = findViewById(R.id.RadioSetupTurnBlack);
+        toggleTurnGroup = findViewById(R.id.RadioGroupSetup);
         checkWhiteCastleShort = findViewById(R.id.CheckBoxSetupWhiteCastleShort);
         checkWhiteCastleLong = findViewById(R.id.CheckBoxSetupWhiteCastleLong);
         checkBlackCastleShort = findViewById(R.id.CheckBoxSetupBlackCastleShort);
         checkBlackCastleLong = findViewById(R.id.CheckBoxSetupBlackCastleLong);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.field_files, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinnerEPFile = findViewById(R.id.SpinnerOptionsEnPassant);
-        spinnerEPFile.setPrompt(getString(R.string.title_pick_en_passant));
-        spinnerEPFile.setAdapter(adapter);
+        spinnerEPFile.setItems(getResources().getStringArray(R.array.field_files));
 
         MaterialButton buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
         buttonOk.setOnClickListener(v -> onSave());
@@ -104,11 +97,12 @@ public class SetupActivity extends ChessBoardActivity {
         final String sFEN = prefs.getString("FEN", null);
         if (sFEN == null) {
             resetBoard();
-            radioTurnWhite.setChecked(true);
+            toggleTurnGroup.check(R.id.RadioSetupTurnWhite);
         } else {
             jni.initFEN(sFEN);
-            radioTurnWhite.setChecked(jni.getTurn() == BoardConstants.WHITE);
-            radioTurnBlack.setChecked(jni.getTurn() == BoardConstants.BLACK);
+            toggleTurnGroup.check(jni.getTurn() == BoardConstants.WHITE
+                    ? R.id.RadioSetupTurnWhite
+                    : R.id.RadioSetupTurnBlack);
             checkWhiteCastleLong.setChecked(jni.getWhiteCanCastleLong() != 0);
             checkWhiteCastleShort.setChecked(jni.getWhiteCanCastleShort() != 0);
             checkBlackCastleLong.setChecked(jni.getBlackCanCastleLong() != 0);
@@ -128,7 +122,7 @@ public class SetupActivity extends ChessBoardActivity {
 
     protected void onSave() {
 
-        final int turn = radioTurnWhite.isChecked() ? 1 : 0;
+        final int turn = toggleTurnGroup.getCheckedButtonId() == R.id.RadioSetupTurnWhite ? 1 : 0;
 
         jni.setTurn(turn);
 
@@ -306,7 +300,7 @@ public class SetupActivity extends ChessBoardActivity {
     }
 
     public void randomBoard() {
-        final int turn = radioTurnWhite.isChecked() ? 1 : 0;
+        final int turn = toggleTurnGroup.getCheckedButtonId() == R.id.RadioSetupTurnWhite ? 1 : 0;
         Random rng = new Random();
         final int maxAttempts = 200;
         boolean legal = false;

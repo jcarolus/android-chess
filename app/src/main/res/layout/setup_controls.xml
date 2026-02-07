@@ -9,11 +9,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <jwtc.android.chess.views.ChessPiecesStackView
-            android:layout_width="wrap_content"
-            android:layout_height="48dip"
-            android:layout_marginTop="4dip"
-            android:id="@+id/blackPieces" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <jwtc.android.chess.views.ChessPiecesStackView
+                android:layout_width="wrap_content"
+                android:layout_height="48dip"
+                android:layout_marginTop="4dip"
+                android:id="@+id/blackPieces" />
+
+            <jwtc.android.chess.views.ChessPiecesStackView
+                android:layout_width="wrap_content"
+                android:layout_height="48dip"
+                android:layout_marginTop="4dip"
+                android:layout_marginLeft="16dip"
+                android:layout_marginRight="4dip"
+                android:id="@+id/duckStack" />
+        </LinearLayout>
 
         <jwtc.android.chess.views.ChessPiecesStackView
             android:layout_width="wrap_content"
@@ -21,58 +34,41 @@
             android:layout_marginTop="4dip"
             android:id="@+id/whitePieces" />
 
-        <TableLayout
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dip">
-            <TableRow  style="@style/MyRowStyle">
-                <TextView
-                    android:id="@+id/TextViewSetupTurn"
-                    android:text="@string/msg_setup_turn"
-                    style="@style/MyLabelTextStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <RadioGroup
+            android:padding="4dip"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:alignItems="center">
+                <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/RadioGroupSetup"
                     android:orientation="horizontal"
                     style="@style/MyRowStyle"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-                    <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioSetupTurnWhite"
                         android:text="@string/msg_setup_turn_white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-                    <RadioButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioSetupTurnBlack"
                         android:text="@string/msg_setup_turn_black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-                </RadioGroup>
-                <jwtc.android.chess.views.ChessPiecesStackView
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dip"
-                    android:layout_marginLeft="16dip"
-                    android:layout_marginRight="4dip"
-                    android:id="@+id/duckStack" />
-            </TableRow>
-        </TableLayout>
-        <TableLayout
-            android:id="@+id/TableSetupEnPassant"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-            <TableRow style="@style/MyRowStyle">
-                <TextView
-                    android:text="@string/msg_setup_enpassant"
-                    style="@style/MyLabelTextStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Spinner
-                    android:id="@+id/SpinnerOptionsEnPassant"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-        </TableLayout>
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <jwtc.android.chess.views.FixedDropdownView
+                android:id="@+id/SpinnerOptionsEnPassant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dip"
+                android:hint="@string/msg_setup_enpassant" />
+        </com.google.android.flexbox.FlexboxLayout>
+
         <TableLayout
             android:id="@+id/TableSetupCastling"
             android:layout_width="fill_parent"
