@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.app.Dialog;
 import android.content.ContentUris;
@@ -13,6 +15,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -73,6 +77,9 @@ public class GamesListActivity extends ChessBoardActivity {
     private SeekBar seekBarGames;
     private Cursor cursor;
     private long currentGameId;
+    private final ExecutorService queryExecutor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private int queryGeneration = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -295,12 +302,24 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        queryExecutor.shutdownNow();
+    }
+
+    @Override
     protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
         super.saveGameFromDialog(result);
         loadGame();
     }
 
     private void onQueryUpdated() {
+        if (cursor == null) {
+            seekBarGames.setVisibility(View.INVISIBLE);
+            textViewFilterInfo.setText("Results: 0");
+            adapterGames.swapCursor(null);
+            return;
+        }
         int count = cursor.getCount();
 
         int position = findPositionById(cursor, currentGameId);
@@ -469,11 +488,26 @@ public class GamesListActivity extends ChessBoardActivity {
         //buttonFilters.setText("Filters" + (selectionArgs == null ? "" : " (" + selectionArgs.length + ")"));
         buttonFilters.setChecked(selectionArgs != null && selectionArgs.length > 0);
 
-        if (cursor != null && !cursor.isClosed()) {
-            cursor.close();
-        }
-        cursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, selection, selectionArgs, sortBy + " " + sortOrder);
-        onQueryUpdated();
+        final int generation = ++queryGeneration;
+        final String selectionFinal = selection;
+        final String[] selectionArgsFinal = selectionArgs;
+        final String sortFinal = sortBy + " " + sortOrder;
+        queryExecutor.execute(() -> {
+            Cursor newCursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, selectionFinal, selectionArgsFinal, sortFinal);
+            mainHandler.post(() -> {
+                if (generation != queryGeneration) {
+                    if (newCursor != null && !newCursor.isClosed()) {
+                        newCursor.close();
+                    }
+                    return;
+                }
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+                cursor = newCursor;
+                onQueryUpdated();
+            });
+        });
     }
 
     private int findPositionById(Cursor c, long id) {
