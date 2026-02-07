@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jwtc.chess.board.ChessBoard;
+import jwtc.chess.board.BoardConstants;
 
 public class ICSPatterns {
     private static final String TAG = "ICSPatterns";
@@ -284,26 +284,26 @@ public class ICSPatterns {
     public int gameState(String line) {
         if (line.indexOf("{Game " /*+ getGameNum()*/) >= 0) {
             if (line.contains(" resigns} ")) {
-                return line.contains("} 1-0") ? ChessBoard.BLACK_RESIGNED : ChessBoard.WHITE_RESIGNED;
+                return line.contains("} 1-0") ? BoardConstants.BLACK_RESIGNED : BoardConstants.WHITE_RESIGNED;
             } else if (line.contains("forfeits")) {
-                return line.contains("} 1-0") ? ChessBoard.BLACK_FORFEIT_TIME : ChessBoard.WHITE_FORFEIT_TIME;
+                return line.contains("} 1-0") ? BoardConstants.BLACK_FORFEIT_TIME : BoardConstants.WHITE_FORFEIT_TIME;
             } else if (line.contains("checkmated")) {
-                return ChessBoard.MATE;
+                return BoardConstants.MATE;
             }
         }
         if (line.contains("} 1/2-1/2")) {
             if (line.contains("Game drawn by mutual agreement}")) {
-                return ChessBoard.DRAW_AGREEMENT;
+                return BoardConstants.DRAW_AGREEMENT;
             } else if (line.contains("material}")) {
-                return ChessBoard.DRAW_MATERIAL;
+                return BoardConstants.DRAW_MATERIAL;
             } else if (line.contains("stalemate}")) {
-                return ChessBoard.STALEMATE;
+                return BoardConstants.STALEMATE;
             } else {
-                return ChessBoard.DRAW_50;
+                return BoardConstants.DRAW_50;
             }
         }
 
-        return ChessBoard.PLAY;
+        return BoardConstants.PLAY;
     }
 
     public boolean isAbortOrDrawOrAdjourneRequestSent(String line) {

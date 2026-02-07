@@ -3,7 +3,6 @@ package jwtc.chess;
 import android.util.Log;
 
 import jwtc.chess.board.BoardConstants;
-import jwtc.chess.board.ChessBoard;
 
 public class JNI {
     private static final String TAG = "JNI";
@@ -45,8 +44,8 @@ public class JNI {
     }
 
     protected boolean isPosFree(int pos) {
-        return (pieceAt(ChessBoard.BLACK, pos) == ChessBoard.FIELD &&
-                pieceAt(ChessBoard.WHITE, pos) == ChessBoard.FIELD);
+        return (pieceAt(BoardConstants.BLACK, pos) == BoardConstants.FIELD &&
+                pieceAt(BoardConstants.WHITE, pos) == BoardConstants.FIELD);
     }
 
     protected int getAvailableCol(int colNum) {
@@ -146,82 +145,82 @@ public class JNI {
         col = 1 + 2 * Bw;
         Log.i("Chess960", "Bw col " + col);
         pos = Pos.fromColAndRow(col, 0);
-        putPiece(pos, ChessBoard.BISHOP, ChessBoard.BLACK);
+        putPiece(pos, BoardConstants.BISHOP, BoardConstants.BLACK);
         pos = Pos.fromColAndRow(col, 7);
-        putPiece(pos, ChessBoard.BISHOP, ChessBoard.WHITE);
+        putPiece(pos, BoardConstants.BISHOP, BoardConstants.WHITE);
 
         // black-square bishop
         col = 2 * Bb;
         Log.i("Chess960", "Bb col " + col);
         pos = Pos.fromColAndRow(col, 0);
-        putPiece(pos, ChessBoard.BISHOP, ChessBoard.BLACK);
+        putPiece(pos, BoardConstants.BISHOP, BoardConstants.BLACK);
         pos = Pos.fromColAndRow(col, 7);
-        putPiece(pos, ChessBoard.BISHOP, ChessBoard.WHITE);
+        putPiece(pos, BoardConstants.BISHOP, BoardConstants.WHITE);
 
         // queen
         col = getAvailableCol(Q);
         Log.i("Chess960", "Q col " + col);
         pos = Pos.fromColAndRow(col, 0);
-        putPiece(pos, ChessBoard.QUEEN, ChessBoard.BLACK);
+        putPiece(pos, BoardConstants.QUEEN, BoardConstants.BLACK);
         pos = Pos.fromColAndRow(col, 7);
-        putPiece(pos, ChessBoard.QUEEN, ChessBoard.WHITE);
+        putPiece(pos, BoardConstants.QUEEN, BoardConstants.WHITE);
 
         // knight 1
         col = getAvailableCol(N1);
         col2 = getAvailableCol(N2);
         Log.i("Chess960", "N1 col " + col + " N2 " + col2);
         pos = Pos.fromColAndRow(col, 0);
-        putPiece(pos, ChessBoard.KNIGHT, ChessBoard.BLACK);
+        putPiece(pos, BoardConstants.KNIGHT, BoardConstants.BLACK);
         pos = Pos.fromColAndRow(col, 7);
-        putPiece(pos, ChessBoard.KNIGHT, ChessBoard.WHITE);
+        putPiece(pos, BoardConstants.KNIGHT, BoardConstants.WHITE);
 
         // knight 2
         pos = Pos.fromColAndRow(col2, 0);
-        putPiece(pos, ChessBoard.KNIGHT, ChessBoard.BLACK);
+        putPiece(pos, BoardConstants.KNIGHT, BoardConstants.BLACK);
         pos = Pos.fromColAndRow(col2, 7);
-        putPiece(pos, ChessBoard.KNIGHT, ChessBoard.WHITE);
+        putPiece(pos, BoardConstants.KNIGHT, BoardConstants.WHITE);
 
         // ROOK A
         col = getFirstAvailableCol();
         Log.i("Chess960", "R1 col " + col);
         pos = Pos.fromColAndRow(col, 0);
-        putPiece(pos, ChessBoard.ROOK, ChessBoard.BLACK);
+        putPiece(pos, BoardConstants.ROOK, BoardConstants.BLACK);
         pos = Pos.fromColAndRow(col, 7);
-        putPiece(pos, ChessBoard.ROOK, ChessBoard.WHITE);
+        putPiece(pos, BoardConstants.ROOK, BoardConstants.WHITE);
 
         // KING
         col = getFirstAvailableCol();
         Log.i("Chess960", "K col " + col);
         pos = Pos.fromColAndRow(col, 0);
-        putPiece(pos, ChessBoard.KING, ChessBoard.BLACK);
+        putPiece(pos, BoardConstants.KING, BoardConstants.BLACK);
         pos = Pos.fromColAndRow(col, 7);
-        putPiece(pos, ChessBoard.KING, ChessBoard.WHITE);
+        putPiece(pos, BoardConstants.KING, BoardConstants.WHITE);
         // ROOK H
         col = getFirstAvailableCol();
         Log.i("Chess960", "R2 col " + col);
         pos = Pos.fromColAndRow(col, 0);
-        putPiece(pos, ChessBoard.ROOK, ChessBoard.BLACK);
+        putPiece(pos, BoardConstants.ROOK, BoardConstants.BLACK);
         pos = Pos.fromColAndRow(col, 7);
-        putPiece(pos, ChessBoard.ROOK, ChessBoard.WHITE);
+        putPiece(pos, BoardConstants.ROOK, BoardConstants.WHITE);
 
         //
-        putPiece(ChessBoard.a7, ChessBoard.PAWN, ChessBoard.BLACK);
-        putPiece(ChessBoard.b7, ChessBoard.PAWN, ChessBoard.BLACK);
-        putPiece(ChessBoard.c7, ChessBoard.PAWN, ChessBoard.BLACK);
-        putPiece(ChessBoard.d7, ChessBoard.PAWN, ChessBoard.BLACK);
-        putPiece(ChessBoard.e7, ChessBoard.PAWN, ChessBoard.BLACK);
-        putPiece(ChessBoard.f7, ChessBoard.PAWN, ChessBoard.BLACK);
-        putPiece(ChessBoard.g7, ChessBoard.PAWN, ChessBoard.BLACK);
-        putPiece(ChessBoard.h7, ChessBoard.PAWN, ChessBoard.BLACK);
+        putPiece(BoardConstants.a7, BoardConstants.PAWN, BoardConstants.BLACK);
+        putPiece(BoardConstants.b7, BoardConstants.PAWN, BoardConstants.BLACK);
+        putPiece(BoardConstants.c7, BoardConstants.PAWN, BoardConstants.BLACK);
+        putPiece(BoardConstants.d7, BoardConstants.PAWN, BoardConstants.BLACK);
+        putPiece(BoardConstants.e7, BoardConstants.PAWN, BoardConstants.BLACK);
+        putPiece(BoardConstants.f7, BoardConstants.PAWN, BoardConstants.BLACK);
+        putPiece(BoardConstants.g7, BoardConstants.PAWN, BoardConstants.BLACK);
+        putPiece(BoardConstants.h7, BoardConstants.PAWN, BoardConstants.BLACK);
 
-        putPiece(ChessBoard.a2, ChessBoard.PAWN, ChessBoard.WHITE);
-        putPiece(ChessBoard.b2, ChessBoard.PAWN, ChessBoard.WHITE);
-        putPiece(ChessBoard.c2, ChessBoard.PAWN, ChessBoard.WHITE);
-        putPiece(ChessBoard.d2, ChessBoard.PAWN, ChessBoard.WHITE);
-        putPiece(ChessBoard.e2, ChessBoard.PAWN, ChessBoard.WHITE);
-        putPiece(ChessBoard.f2, ChessBoard.PAWN, ChessBoard.WHITE);
-        putPiece(ChessBoard.g2, ChessBoard.PAWN, ChessBoard.WHITE);
-        putPiece(ChessBoard.h2, ChessBoard.PAWN, ChessBoard.WHITE);
+        putPiece(BoardConstants.a2, BoardConstants.PAWN, BoardConstants.WHITE);
+        putPiece(BoardConstants.b2, BoardConstants.PAWN, BoardConstants.WHITE);
+        putPiece(BoardConstants.c2, BoardConstants.PAWN, BoardConstants.WHITE);
+        putPiece(BoardConstants.d2, BoardConstants.PAWN, BoardConstants.WHITE);
+        putPiece(BoardConstants.e2, BoardConstants.PAWN, BoardConstants.WHITE);
+        putPiece(BoardConstants.f2, BoardConstants.PAWN, BoardConstants.WHITE);
+        putPiece(BoardConstants.g2, BoardConstants.PAWN, BoardConstants.WHITE);
+        putPiece(BoardConstants.h2, BoardConstants.PAWN, BoardConstants.WHITE);
 
         setCastlingsEPAnd50(1, 1, 1, 1, -1, 0);
 

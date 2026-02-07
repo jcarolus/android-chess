@@ -32,7 +32,6 @@ import jwtc.chess.Move;
 import jwtc.android.chess.constants.Piece;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
-import jwtc.chess.board.ChessBoard;
 
 abstract public class ChessBoardActivity extends BaseActivity implements GameListener, OnInitListener {
     private static final String TAG = "ChessBoardActivity";
@@ -233,7 +232,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         String labelForWhiteKing = null;
         String labelForBlackKing = null;
         switch (state) {
-            case ChessBoard.MATE:
+            case BoardConstants.MATE:
                 labelForWhiteKing = turn == BoardConstants.BLACK ? "✓" : "#";
                 labelForBlackKing = turn == BoardConstants.WHITE ? "✓" : "#";
                 break;
@@ -247,19 +246,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 labelForWhiteKing = "⚑";
                 labelForBlackKing = "✓";
                 break;
-            case ChessBoard.DRAW_MATERIAL:
-            case ChessBoard.DRAW_REPEAT:
-            case ChessBoard.DRAW_AGREEMENT:
-            case ChessBoard.STALEMATE:
+            case BoardConstants.DRAW_MATERIAL:
+            case BoardConstants.DRAW_REPEAT:
+            case BoardConstants.DRAW_AGREEMENT:
+            case BoardConstants.STALEMATE:
                 labelForWhiteKing = "½";
                 labelForBlackKing = "½";
                 break;
-            case ChessBoard.DRAW_50:
+            case BoardConstants.DRAW_50:
                 labelForWhiteKing = "50";
                 labelForBlackKing = "50";
                 break;
-            case ChessBoard.CHECK:
-                if (turn == ChessBoard.WHITE) {
+            case BoardConstants.CHECK:
+                if (turn == BoardConstants.WHITE) {
                     labelForWhiteKing = "+";
                 } else {
                     labelForBlackKing = "+";
@@ -268,7 +267,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         for (int i = 0; i < 64; i++) {
-            int color = turn == ChessBoard.BLACK ? ChessBoard.WHITE : ChessBoard.BLACK;
+            int color = turn == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK;
             int piece = i == duckPos ? BoardConstants.DUCK : jni.pieceAt(color, i);
             if (piece == BoardConstants.FIELD) {
                 color = turn;
@@ -677,27 +676,27 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     public static int chessStateToR(int s) {
         switch (s) {
-            case ChessBoard.MATE:
+            case BoardConstants.MATE:
                 return R.string.state_mate;
-            case ChessBoard.DRAW_MATERIAL:
+            case BoardConstants.DRAW_MATERIAL:
                 return R.string.state_draw_material;
-            case ChessBoard.CHECK:
+            case BoardConstants.CHECK:
                 return R.string.state_check;
-            case ChessBoard.STALEMATE:
+            case BoardConstants.STALEMATE:
                 return R.string.state_draw_stalemate;
-            case ChessBoard.DRAW_50:
+            case BoardConstants.DRAW_50:
                 return R.string.state_draw_50;
-            case ChessBoard.DRAW_REPEAT:
+            case BoardConstants.DRAW_REPEAT:
                 return R.string.state_draw_repeat;
-            case ChessBoard.BLACK_FORFEIT_TIME:
+            case BoardConstants.BLACK_FORFEIT_TIME:
                 return R.string.state_black_forfeits_time;
-            case ChessBoard.WHITE_FORFEIT_TIME:
+            case BoardConstants.WHITE_FORFEIT_TIME:
                 return R.string.state_white_forfeits_time;
-            case ChessBoard.BLACK_RESIGNED:
+            case BoardConstants.BLACK_RESIGNED:
                 return R.string.state_black_resigned;
-            case ChessBoard.WHITE_RESIGNED:
+            case BoardConstants.WHITE_RESIGNED:
                 return R.string.state_white_resigned;
-            case ChessBoard.DRAW_AGREEMENT:
+            case BoardConstants.DRAW_AGREEMENT:
                 return R.string.state_draw_agreement;
             default:
                 return R.string.state_play;
@@ -706,7 +705,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected void dpadFocus(boolean hasFocus) {
         if (hasFocus) {
-            dpadPos = jni.getTurn() == ChessBoard.BLACK ? ChessBoard.e8 : ChessBoard.e1;
+            dpadPos = jni.getTurn() == BoardConstants.BLACK ? BoardConstants.e8 : BoardConstants.e1;
             updateSelectedSquares();
         } else {
             dpadPos = -1;

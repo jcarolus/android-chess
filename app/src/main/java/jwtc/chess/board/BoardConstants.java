@@ -1,7 +1,8 @@
 package jwtc.chess.board;
 
-import jwtc.chess.*;
 // "split" object for ChessBoard. contains the constants of the board object
+
+import jwtc.chess.Valuation;
 
 public class BoardConstants {
     public static Valuation m_valuation = new Valuation();

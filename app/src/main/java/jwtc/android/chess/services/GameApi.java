@@ -17,7 +17,6 @@ import jwtc.chess.Move;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
-import jwtc.chess.board.BoardMembers;
 
 /*
 Wraps the JNI Java Native Interface
@@ -155,13 +154,13 @@ public class GameApi {
 
     public boolean isPromotionMove(int from, int to) {
         if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
+                BoardConstants.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
+                BoardConstants.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
                 jni.getTurn() == BoardConstants.WHITE
                 ||
                 jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
+                        BoardConstants.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
+                        BoardConstants.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
                         jni.getTurn() == BoardConstants.BLACK) {
             return true;
         }

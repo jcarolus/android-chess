@@ -23,7 +23,7 @@ import java.util.regex.Matcher;
 
 import androidx.annotation.Nullable;
 import jwtc.android.chess.R;
-import jwtc.chess.board.ChessBoard;
+import jwtc.chess.board.BoardConstants;
 
 public class ICSServer extends Service {
     protected static final String TAG = "ICSServer";
@@ -436,7 +436,7 @@ public class ICSServer extends Service {
             }
 
             int result = icsPatterns.gameState(line);
-            if (result != ChessBoard.PLAY) {
+            if (result != BoardConstants.PLAY) {
                 for (ICSListener listener: listeners) {listener.OnGameEndedResult(result);}
                 continue;
             }

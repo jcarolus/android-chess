@@ -357,7 +357,7 @@ public class GamesListActivity extends ChessBoardActivity {
         String black = Utils.getColumnString(cursor, PGNColumns.BLACK);
         String date = Utils.formatDate(Utils.getColumnDate(cursor, PGNColumns.DATE));
         String result = Utils.getColumnString(cursor, PGNColumns.RESULT);
-        String rating = Float.toString(Utils.getColumnFloat(cursor, PGNColumns.RATING));
+        String rating = Float.toString(Utils.getColumnFloat(cursor, PGNColumns.RATING)) + "★";
 
         textViewEvent.setText(event);
         textViewPlayerWhite.setText(white);

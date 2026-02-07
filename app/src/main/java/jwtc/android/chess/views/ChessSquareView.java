@@ -7,12 +7,11 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
-import android.view.accessibility.AccessibilityEvent;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.Pos;
-import jwtc.chess.board.ChessBoard;
+import jwtc.chess.board.BoardConstants;
 
 public class ChessSquareView extends View {
     private int pos;
@@ -95,18 +94,18 @@ public class ChessSquareView extends View {
 
     public void onDraw(Canvas canvas) {
 
-        final int fieldColor = (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? ChessBoard.WHITE : ChessBoard.BLACK) : (((pos >> 3) & 1) == 0 ? ChessBoard.BLACK : ChessBoard.WHITE);
+        final int fieldColor = (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? BoardConstants.WHITE : BoardConstants.BLACK) : (((pos >> 3) & 1) == 0 ? BoardConstants.BLACK : BoardConstants.WHITE);
 
         if (this.selected) {
             paint.setColor(ColorSchemes.getSelectedColor());
         } else {
-            paint.setColor(fieldColor == ChessBoard.WHITE ? ColorSchemes.getLight() : ColorSchemes.getDark());
+            paint.setColor(fieldColor == BoardConstants.WHITE ? ColorSchemes.getLight() : ColorSchemes.getDark());
         }
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
 
         int patternDrawable = ColorSchemes.getSelectedPatternDrawable();
         if (patternDrawable > 0) {
-            if (fieldColor == ChessBoard.BLACK && patternDrawable == R.drawable.diagonal_stripes || patternDrawable != R.drawable.diagonal_stripes) {
+            if (fieldColor == BoardConstants.BLACK && patternDrawable == R.drawable.diagonal_stripes || patternDrawable != R.drawable.diagonal_stripes) {
                 Drawable d = getResources().getDrawable(patternDrawable, null);
                 d.setTint(patternDrawable == R.drawable.diagonal_stripes ? ColorSchemes.getLight() : ColorSchemes.getSelectedColor());
                 d.setBounds(0, 0, getWidth(), getHeight());
@@ -161,7 +160,7 @@ public class ChessSquareView extends View {
             int strokeWidth = getWidth() / 16;
             highlightPaint.setStyle(Paint.Style.FILL);
             highlightPaint.setStrokeWidth(belowPiece ? strokeWidth : 0);
-            highlightPaint.setColor(fieldColor == ChessBoard.WHITE ? ColorSchemes.getDark() : ColorSchemes.getLight());
+            highlightPaint.setColor(fieldColor == BoardConstants.WHITE ? ColorSchemes.getDark() : ColorSchemes.getLight());
             canvas.drawCircle(getWidth() / 2, getHeight() / 2, belowPiece ? getHeight() / 2 - strokeWidth : getHeight() / 8, highlightPaint);
         }
     }

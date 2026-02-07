@@ -13,7 +13,6 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
-import jwtc.chess.board.ChessBoard;
 
 public class PracticeImportProcessor extends PGNProcessor {
     private static final String TAG = "PracticeImportProcessor";
@@ -36,7 +35,7 @@ public class PracticeImportProcessor extends PGNProcessor {
         // Log.d(TAG, "processPGN " + sPGN);
         if (gameApi.loadPGN(sPGN)) {
 
-            if (jni.getState() == ChessBoard.MATE) {
+            if (jni.getState() == BoardConstants.MATE) {
 
                 long lKey = jni.getHashKey();
 
