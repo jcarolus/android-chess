@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButton;
@@ -42,6 +43,7 @@ public class SetupActivity extends ChessBoardActivity {
     private CheckBox checkWhiteCastleLong;
     private CheckBox checkBlackCastleShort;
     private CheckBox checkBlackCastleLong;
+    private TextView textViewWhitePieces, textViewBlackPieces;
 
     protected int selectedPiece = -1;
     protected int selectedColor = -1;
@@ -70,6 +72,9 @@ public class SetupActivity extends ChessBoardActivity {
 
         spinnerEPFile = findViewById(R.id.SpinnerOptionsEnPassant);
         spinnerEPFile.setItems(getResources().getStringArray(R.array.field_files));
+
+        textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
+        textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
 
         MaterialButton buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
         buttonOk.setOnClickListener(v -> onSave());
@@ -115,7 +120,7 @@ public class SetupActivity extends ChessBoardActivity {
         selectedColor = -1;
         selectedPiece = -1;
 
-        rebuildBoard();
+        rebuildAndDispatch();
 
         super.onResume();
     }
@@ -160,6 +165,9 @@ public class SetupActivity extends ChessBoardActivity {
     @Override
     public void OnState() {
         super.OnState();
+
+        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
+        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
     }
 
     @Override
@@ -296,7 +304,7 @@ public class SetupActivity extends ChessBoardActivity {
 
         jni.putPiece(BoardConstants.e1, BoardConstants.KING, BoardConstants.WHITE);
         jni.putPiece(BoardConstants.e8, BoardConstants.KING, BoardConstants.BLACK);
-        rebuildBoard();
+        rebuildAndDispatch();
     }
 
     public void randomBoard() {
@@ -318,7 +326,7 @@ public class SetupActivity extends ChessBoardActivity {
             jni.putPiece(BoardConstants.e8, BoardConstants.KING, BoardConstants.BLACK);
             jni.commitBoard();
         }
-        rebuildBoard();
+        rebuildAndDispatch();
     }
 
     private void generateRandomBoardOnce(Random rng, int turn) {
@@ -365,9 +373,13 @@ public class SetupActivity extends ChessBoardActivity {
 
     public void initBoard() {
         jni.newGame();
-        rebuildBoard();
+        rebuildAndDispatch();
     }
 
+    public void rebuildAndDispatch() {
+        rebuildBoard();
+        OnState();
+    }
     public void addPiece(final int pos, final int piece, final int turn) {
         Log.d(TAG, "addPiece " + pos + " " + piece + " " + turn);
         if (piece == BoardConstants.DUCK) {
@@ -430,7 +442,7 @@ public class SetupActivity extends ChessBoardActivity {
             }
 
             selectedPosition = -1;
-            rebuildBoard();
+            rebuildAndDispatch();
         } else {
             Log.d(TAG, "movePiece on king " + from + " " + to);
         }
@@ -442,7 +454,7 @@ public class SetupActivity extends ChessBoardActivity {
             addPiece(to, selectedPiece, selectedColor);
             selectedPosition = -1;
 
-            rebuildBoard();
+            rebuildAndDispatch();
         } else {
             Log.d(TAG, "can not addPieceFromStack " + to + " " + selectedPiece + " " + selectedColor);
             selectedPiece = -1;
@@ -569,7 +581,7 @@ public class SetupActivity extends ChessBoardActivity {
             selectedColor = color;
             selectedPiece = piece;
             selectedPosition = -1;
-            rebuildBoard();
+            rebuildAndDispatch();
         }
     }
 
@@ -687,7 +699,7 @@ public class SetupActivity extends ChessBoardActivity {
                                     // dropped back
                                     if (pieceView.getParent() instanceof ChessBoardView) {
                                         removePiece(fromPos);
-                                        rebuildBoard();
+                                        rebuildAndDispatch();
                                     } else {
                                         selectPieceInStackByViews(pieceView);
                                     }
