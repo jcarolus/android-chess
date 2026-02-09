@@ -1,0 +1,211 @@
+[Event "London"]
+[Site "London ENG"]
+[Date "1883.05.05"]
+[EventDate "1883.04.26"]
+[Round "6.1"]
+[Result "1-0"]
+[White "Johannes Zukertort"]
+[Black "Joseph Henry Blackburne"]
+[ECO "A13"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "65"]
+
+1. c4 e6 2. e3 Nf6 3. Nf3 b6 4. Be2 Bb7 5. O-O d5 6. d4 Bd6
+7. Nc3 O-O 8. b3 Nbd7 9. Bb2 Qe7 10. Nb5 Ne4 11. Nxd6 cxd6
+12. Nd2 Ndf6 13. f3 Nxd2 14. Qxd2 dxc4 15. Bxc4 d5 16. Bd3
+Rfc8 17. Rae1 Rc7 18. e4 Rac8 19. e5 Ne8 20. f4 g6 21. Re3 f5
+22. exf6 Nxf6 23. f5 Ne4 24. Bxe4 dxe4 25. fxg6 Rc2 26. gxh7+
+Kh8 27. d5+ e5 28. Qb4 R8c5 29. Rf8+ Kxh7 30. Qxe4+ Kg7
+31. Bxe5+ Kxf8 32. Bg7+ Kg8 33. Qxe7 1-0
+
+
+[Event "La Bourdonnais - McDonnell 4th Casual Match"]
+[Site "London ENG"]
+[Date "1834.??.??"]
+[EventDate "1834.04.04"]
+[Round "16"]
+[Result "0-1"]
+[White "Alexander McDonnell"]
+[Black "Louis Charles Mahe De La Bourdonnais"]
+[ECO "B32"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "74"]
+
+1.e4 c5 2.Nf3 Nc6 3.d4 cxd4 4.Nxd4 e5 5.Nxc6 bxc6 6.Bc4 Nf6 7.Bg5 Be7 8.Qe2
+d5 9.Bxf6 Bxf6 10.Bb3 O-O 11.O-O a5 12.exd5 cxd5 13.Rd1 d4 14.c4 Qb6 15.Bc2 Bb7
+16.Nd2 Rae8 17.Ne4 Bd8 18.c5 Qc6 19.f3 Be7 20.Rac1 f5 21.Qc4+ Kh8 22.Ba4 Qh6 23.Bxe8
+fxe4 24.c6 exf3 25.Rc2 Qe3+ 26.Kh1 Bc8 27.Bd7 f2 28.Rf1 d3 29.Rc3 Bxd7 30.cxd7 e4
+31.Qc8 Bd8 32.Qc4 Qe1 33.Rc1 d2 34.Qc5 Rg8 35.Rd1 e3 36.Qc3 Qxd1 37.Rxd1 e2 0-1
+
+
+[Event "Amsterdam"]
+[Site "Amsterdam NED"]
+[Date "1889.08.26"]
+[EventDate "1889.08.26"]
+[Round "1"]
+[Result "1-0"]
+[White "Emanuel Lasker"]
+[Black "Johann Hermann Bauer"]
+[ECO "A03"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "75"]
+
+1.f4 d5 2.e3 Nf6 3.b3 e6 4.Bb2 Be7 5.Bd3 b6 6.Nc3 Bb7 7.Nf3 Nbd7 8.O-O
+O-O 9.Ne2 c5 10.Ng3 Qc7 11.Ne5 Nxe5 12.Bxe5 Qc6 13.Qe2 a6 14.Nh5 Nxh5 15.Bxh7+ Kxh7
+16.Qxh5+ Kg8 17.Bxg7 Kxg7 18.Qg4+ Kh7 19.Rf3 e5 20.Rh3+ Qh6 21.Rxh6+ Kxh6 22.Qd7 Bf6 23.Qxb7
+Kg7 24.Rf1 Rab8 25.Qd7 Rfd8 26.Qg4+ Kf8 27.fxe5 Bg7 28.e6 Rb7 29.Qg6 f6 30.Rxf6+ Bxf6
+31.Qxf6+ Ke8 32.Qh8+ Ke7 33.Qg7+ Kxe6 34. Qxb7 Rd6 35. Qxa6 d4 36. exd4 cxd4
+37. h4 d3 38. Qxd3 1-0
+
+
+[Event "USSR Championship"]
+[Site "Leningrad URS"]
+[Date "1960.02.20"]
+[EventDate "1960.??.??"]
+[Round "16"]
+[Result "1-0"]
+[White "Boris Spassky"]
+[Black "David Bronstein"]
+[ECO "C36"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "45"]
+
+1. e4 e5 2. f4 exf4 3. Nf3 d5 4. exd5 Bd6 5. Nc3 Ne7
+6. d4 O-O 7. Bd3 Nd7 8. O-O h6 9. Ne4 Nxd5 10. c4 Ne3
+11. Bxe3 fxe3 12. c5 Be7 13. Bc2 Re8 14. Qd3 e2 15. Nd6 Nf8
+16. Nxf7 exf1=Q+ 17. Rxf1 Bf5 18. Qxf5 Qd7 19. Qf4 Bf6 20. N3e5 Qe7
+21. Bb3 Bxe5 22. Nxe5+ Kh7 23. Qe4+ 1-0
+
+
+[Event "Dortmund Sparkassen"]
+[Site "Dortmund GER"]
+[Date "1994.07.22"]
+[EventDate "1994.07.15"]
+[Round "7"]
+[Result "0-1"]
+[White "Anatoly Karpov"]
+[Black "Viktor Korchnoi"]
+[ECO "E12"]
+[WhiteElo "2780"]
+[BlackElo "2615"]
+[PlyCount "144"]
+
+1.d4 Nf6 2.c4 e6 3.Nf3 b6 4.a3 Bb7 5.Nc3 d5 6.Bg5 Be7 7.Qa4+ c6 8.Bxf6
+Bxf6 9.cxd5 exd5 10.g3 O-O 11.Bg2 Nd7 12.O-O Be7 13.Rfd1 f5 14.e3 Bd6 15.Ne2 Qe7
+16.Nf4 a5 17.Nd3 b5 18.Qc2 a4 19.Re1 Kh8 20.Rac1 Nb6 21.Nfe5 Nc4 22.f4 g5 23.Qe2
+Rg8 24.Kf2 Raf8 25.Nf3 h6 26.Nfe5 Kh7 27.Kg1 Qe8 28.Qc2 Kh8 29.Nf2 Rg7 30.Re2 Bc8
+31.Rce1 Rfg8 32.Nxc4 bxc4 33.Qxa4 Rb7 34.Nd1 h5 35.Kf2 Bd7 36.Qc2 Qg6 37.Kf1 h4 38.Rf2
+g4 39.Kg1 Rgb8 40.Qe2 h3 41.Bf1 Bc7 42.b4 cxb3 43.Nb2 Bd6 44.a4 Qe6 45.Rd1 Ra7
+46.Rd3 Kh7 47.Qd1 c5 48.Rxb3 Rxb3 49.Qxb3 c4 50.Qb6 Ra8 51.e4 fxe4 52.f5 Qe7 53.Nd1
+Rb8 54.Qa5 Bc6 55.f6 Qe6 56.Ne3 Rb3 57.Qa7+ Bb7 58.a5 Bf8 59.Rf4 Bh6 60.f7 Bxf4
+61.f8=Q Bxe3+ 62.Kh1 Bh6 63.Qf2 Bg7 64.a6 Rf3 65.Qe1 Bxa6 66.Be2 Rf7 67.Qc5 c3 68.Qcxc3
+Bxe2 69.Qxe2 Qf6 70.Qc1 Bh6 71.Qb1 Qf5 72.Kg1 Rc7 0-1
+
+
+[Event "18th RSFSR-ch"]
+[Site "Sochi URS"]
+[Date "1958.06.??"]
+[EventDate "1958.06.00"]
+[Round "?"]
+[Result "0-1"]
+[White "Lev Polugaevsky"]
+[Black "Rashid Gibiatovich Nezhmetdinov"]
+[ECO "A53"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "66"]
+
+1. d4 Nf6 2. c4 d6 3. Nc3 e5 4. e4 exd4 5. Qxd4 Nc6
+6. Qd2 g6 7. b3 Bg7 8. Bb2 O-O 9. Bd3 Ng4 10. Nge2 Qh4
+11. Ng3 Nge5 12. O-O f5 13. f3 Bh6 14. Qd1 f4 15. Nge2 g5
+16. Nd5 g4 17. g3 fxg3 18. hxg3 Qh3 19. f4 Be6 20. Bc2 Rf7
+21. Kf2 Qh2+ 22. Ke3 Bxd5 23. cxd5 Nb4 24. Rh1 Rxf4 25. Rxh2 Rf3+
+26. Kd4 Bg7 27. a4 c5+ 28. dxc6 bxc6 29. Bd3 Nexd3+ 30. Kc4 d5+
+31. exd5 cxd5+ 32. Kb5 Rb8+ 33. Ka5 Nc6+ 0-1
+
+
+[Event "Lodz"]
+[Site "Lodz RUE"]
+[Date "1907.12.26"]
+[EventDate "?"]
+[Round "6"]
+[Result "0-1"]
+[White "Georg Rotlewi"]
+[Black "Akiba Rubinstein"]
+[ECO "D32"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "50"]
+
+1.d4 d5 2.Nf3 e6 3.e3 c5 4.c4 Nc6 5.Nc3 Nf6 6.dxc5 Bxc5 7.a3 a6 8.b4
+Bd6 9.Bb2 O-O 10.Qd2 Qe7 11.Bd3 dxc4 12.Bxc4 b5 13.Bd3 Rd8 14.Qe2 Bb7 15.O-O Ne5
+16.Nxe5 Bxe5 17.f4 Bc7 18.e4 Rac8 19.e5 Bb6+ 20.Kh1 Ng4 21.Be4 Qh4 22.g3 Rxc3 23.gxh4
+Rd2 24.Qxd2 Bxe4+ 25.Qg2 Rh3 0-1
+
+
+[Event "Tilburg Interpolis"]
+[Site "Tilburg NED"]
+[Date "1991.10.21"]
+[EventDate "1991.10.17"]
+[Round "4"]
+[Result "1-0"]
+[White "Nigel Short"]
+[Black "Jan Timman"]
+[ECO "B04"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "67"]
+
+1.e4 Nf6 2.e5 Nd5 3.d4 d6 4.Nf3 g6 5.Bc4 Nb6 6.Bb3 Bg7 7.Qe2 Nc6 8.O-O
+O-O 9.h3 a5 10.a4 dxe5 11.dxe5 Nd4 12.Nxd4 Qxd4 13.Re1 e6 14.Nd2 Nd5 15.Nf3 Qc5
+16.Qe4 Qb4 17.Bc4 Nb6 18.b3 Nxc4 19.bxc4 Re8 20.Rd1 Qc5 21.Qh4 b6 22.Be3 Qc6 23.Bh6
+Bh8 24.Rd8 Bb7 25.Rad1 Bg7 26.R8d7 Rf8 27.Bxg7 Kxg7 28.R1d4 Rae8 29.Qf6+ Kg8 30.h4 h5
+31.Kh2 Rc8 32.Kg3 Rce8 33.Kf4 Bc8 34.Kg5 1-0
+
+
+[Event "Hastings"]
+[Site "Hastings ENG"]
+[Date "1895.08.17"]
+[EventDate "1895.08.05"]
+[Round "10"]
+[Result "1-0"]
+[White "Wilhelm Steinitz"]
+[Black "Curt von Bardeleben"]
+[ECO "C54"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "48"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4
+6. cxd4 Bb4+ 7. Nc3 d5 8. exd5 Nxd5 9. O-O Be6 10. Bg5 Be7
+11. Bxd5 Bxd5 12. Nxd5 Qxd5 13. Bxe7 Nxe7 14. Re1 f6 15. Qe2 Qd7
+16. Rac1 c6 17. d5 cxd5 18. Nd4 Kf7 19. Ne6 Rhc8 20. Qg4 g6
+21. Ng5+ Ke8 22. Rxe7+ Kf8 23. Rf7+ Kg8 24. Rg7+ Kh8 25. Rxh7+ 1-0
+
+
+[Event "1st American Chess Congress"]
+[Site "New York, NY USA"]
+[Date "1857.11.03"]
+[EventDate "1857.??.??"]
+[Round "4.6"]
+[Result "0-1"]
+[White "Louis Paulsen"]
+[Black "Paul Morphy"]
+[ECO "C48"]
+[WhiteElo "?"]
+[BlackElo "?"]
+[PlyCount "56"]
+[Source "The Book of the First American Chess Congress, Fiske, New York 1859, pp252-255"]
+
+1. e4 e5 2. Nf3 Nc6 3. Nc3 Nf6 4. Bb5 Bc5 5. O-O O-O
+6. Nxe5 Re8 7. Nxc6 dxc6 8. Bc4 b5 9. Be2 Nxe4 10. Nxe4 Rxe4
+11. Bf3 Re6 12. c3 Qd3 13. b4 Bb6 14. a4 bxa4 15. Qxa4 Bd7
+16. Ra2 Rae8 17. Qa6 Qxf3 18. gxf3 Rg6+ 19. Kh1 Bh3 20. Rd1 Bg2+
+21. Kg1 Bxf3+ 22. Kf1 Bg2+ 23. Kg1 Bh3+ 24. Kh1 Bxf2 25. Qf1 Bxf1
+26. Rxf1 Re2 27. Ra1 Rh6 28. d4 Be3 0-1
+
+
