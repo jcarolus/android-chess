@@ -362,6 +362,8 @@ public class PlayActivity extends ChessBoardActivity implements
             values.put(PGNColumns.EVENT, gameApi.getPGNHeadProperty("Event"));
 
             saveGame(values, false, lGameID);
+
+            editor.putString("FEN", null);
         }
 
         editor.putLong("game_id", lGameID);

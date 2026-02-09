@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.chess.PGNColumns;
 
@@ -118,12 +119,7 @@ public class BaseActivity extends AppCompatActivity {
         saveGame(result.getContentValues(), result.createCopy, result.lGameID);
     }
 
-    protected void saveGame(ContentValues values, boolean bCopy, long lGameID) {
-
-        // @TODO this is probably only needed for the PlayActivity
-        SharedPreferences.Editor editor = this.getPrefs().edit();
-        editor.putString("FEN", null);
-        editor.commit();
+    protected long saveGame(ContentValues values, boolean bCopy, long lGameID) {
 
         if (lGameID > 0 && (bCopy == false)) {
             Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
@@ -136,7 +132,7 @@ public class BaseActivity extends AppCompatActivity {
                     Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
                     if (c != null && c.getCount() == 1) {
                         c.moveToFirst();
-                        lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
+                        lGameID = Utils.getColumnLong(c, PGNColumns._ID);
                         c.close();
                     }
                 } catch (Exception ex) {
@@ -144,6 +140,7 @@ public class BaseActivity extends AppCompatActivity {
                 }
             }
         }
+        return lGameID;
     }
 
     public void shareString(String s) {
