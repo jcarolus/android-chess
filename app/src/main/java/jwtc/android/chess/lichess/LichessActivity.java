@@ -143,12 +143,12 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
 
-        imageTurnOpp = findViewById(R.id.ImageTurnOpp);
+        imageTurnOpp = findViewById(R.id.ImageTopTurn);
         textViewClockOpp = findViewById(R.id.TextViewClockOpp);
         textViewPlayerOpp = findViewById(R.id.TextViewPlayerOpp);
         textViewRatingOpp = findViewById(R.id.TextViewRatingOpp);
 
-        imageTurnMe = findViewById(R.id.ImageTurnMe);
+        imageTurnMe = findViewById(R.id.ImageBottomTurn);
         textViewClockMe = findViewById(R.id.TextViewClockMe);
         textViewPlayerMe = findViewById(R.id.TextViewPlayerMe);
         textViewRatingMe = findViewById(R.id.TextViewRatingMe);

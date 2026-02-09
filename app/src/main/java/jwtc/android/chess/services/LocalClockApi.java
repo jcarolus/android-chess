@@ -12,6 +12,7 @@ public class LocalClockApi extends ClockApi {
     protected long increment = 0;
     protected long lastMeasureTime = 0;
     protected int currentTurn = 1;
+    protected boolean clockIsConfigured = false;
 
     private Thread clockThread = null;
 
@@ -30,6 +31,7 @@ public class LocalClockApi extends ClockApi {
         this.whiteRemaining = whiteRemaining;
         this.blackRemaining = blackRemaining;
         this.currentTurn = turn;
+        this.clockIsConfigured = whiteRemaining > 0 && blackRemaining > 0;
 
         this.lastMeasureTime = startTime;
 
@@ -89,6 +91,10 @@ public class LocalClockApi extends ClockApi {
 
             lastMeasureTime = currentTime;
         }
+    }
+
+    public boolean isClockConfigured() {
+        return clockIsConfigured;
     }
 
     private class RunnableImp implements Runnable {

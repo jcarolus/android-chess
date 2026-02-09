@@ -395,7 +395,11 @@ public class GameApi {
         int size = pgnMoves.size();
         if (size > 0) {
             int finalState = pgnMoves.get(size -1).finalState;
-            if (finalState == BoardConstants.WHITE_FORFEIT_TIME || finalState == BoardConstants.BLACK_FORFEIT_TIME) {
+            // any forfeit or resigns can be reset here
+            if (finalState == BoardConstants.WHITE_FORFEIT_TIME ||
+                    finalState == BoardConstants.BLACK_FORFEIT_TIME ||
+                    finalState == BoardConstants.WHITE_RESIGNED ||
+                    finalState == BoardConstants.BLACK_RESIGNED ) {
                 pgnMoves.get(size -1).finalState = -1;
                 dispatchState();
             }

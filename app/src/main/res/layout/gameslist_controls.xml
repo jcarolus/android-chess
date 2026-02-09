@@ -66,8 +66,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip">
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonDelete"
-                android:text="Delete"
+                android:id="@+id/ButtonOpen"
+                android:text="Open"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 style="@style/ChessButton"
@@ -80,8 +80,8 @@
                 style="@style/ChessButton"
                 />
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonOpen"
-                android:text="Open"
+                android:id="@+id/ButtonDelete"
+                android:text="Delete"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 style="@style/ChessButton"

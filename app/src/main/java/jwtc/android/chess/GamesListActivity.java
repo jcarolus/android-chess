@@ -8,10 +8,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.app.Dialog;
+import android.app.UiModeManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -80,6 +82,7 @@ public class GamesListActivity extends ChessBoardActivity {
     private final ExecutorService queryExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private int queryGeneration = 0;
+    private boolean reloadAfterQuery = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -310,7 +313,8 @@ public class GamesListActivity extends ChessBoardActivity {
     @Override
     protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
         super.saveGameFromDialog(result);
-        loadGame();
+        reloadAfterQuery = true;
+        doFilterSort();
     }
 
     private void onQueryUpdated() {
@@ -334,6 +338,11 @@ public class GamesListActivity extends ChessBoardActivity {
         }
 
         adapterGames.swapCursor(cursor);
+
+        if (reloadAfterQuery) {
+            reloadAfterQuery = false;
+            loadGame();
+        }
     }
 
     private void loadGame() {
@@ -371,7 +380,6 @@ public class GamesListActivity extends ChessBoardActivity {
         gameApi.pgnTags.put("Black", black);
         gameApi.pgnTags.put("Date", date);
         gameApi.pgnTags.put("Result", result);
-
 
         textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
         textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));

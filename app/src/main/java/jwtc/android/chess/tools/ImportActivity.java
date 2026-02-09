@@ -19,11 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
 public class ImportActivity extends BaseActivity implements ImportListener {
 
     private ImportService importService = null;
     private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail;
-    private ProgressBar _progress;
+    private LinearProgressIndicator _progress;
     private int _mode = 0;
     private Intent _intent;
 

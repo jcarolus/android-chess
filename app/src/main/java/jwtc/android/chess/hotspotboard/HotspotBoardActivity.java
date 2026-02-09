@@ -265,8 +265,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             }
         });
 
-        switchTurnMe = findViewById(R.id.ImageTurnMe);
-        switchTurnOpp = findViewById(R.id.ImageTurnOpp);
+        switchTurnMe = findViewById(R.id.ImageBottomTurn);
+        switchTurnOpp = findViewById(R.id.ImageTopTurn);
         textPlayer = findViewById(R.id.TextPlayer);
         textOpponent = findViewById(R.id.TextOpponent);
         layoutConnect = findViewById(R.id.LayoutConnect);

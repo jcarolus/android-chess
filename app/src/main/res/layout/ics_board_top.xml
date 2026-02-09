@@ -9,7 +9,7 @@
     android:layout_marginBottom="1dip">
     <TableRow android:gravity="center_vertical">
         <ViewSwitcher
-            android:id="@+id/ImageTurnOpp"
+            android:id="@+id/ImageTopTurn"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginLeft="8dip"

@@ -45,6 +45,7 @@ import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
@@ -87,8 +88,9 @@ public class PlayActivity extends ChessBoardActivity implements
     private int myTurn = 1;
     private ChessPiecesStackView topPieces;
     private ChessPiecesStackView bottomPieces;
-    private ImageView imageTurnMe, imageTurnOpp;
-    private TextView textViewOpponent, textViewMe, textViewOpponentClock, textViewMyClock, textViewLastMove, textViewEco, textViewWhitePieces, textViewBlackPieces;
+    private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
+    private TextView textViewTopPlayer, textViewBottomPlayer, textViewTopClockTime, textViewBottomClockTime, textViewWhitePlayer, textViewBlackPlayer, textViewWhiteClockTIme, textViewBlackClockTime;
+    private TextView textViewLastMove, textViewEco, textViewWhitePieces, textViewBlackPieces;
     private TextView textViewInfoBalloon, textViewEngineValue;
     private MaterialButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
@@ -184,14 +186,20 @@ public class PlayActivity extends ChessBoardActivity implements
 //            }
 //        });
 
-        imageTurnMe = findViewById(R.id.ImageTurnMe);
-        imageTurnOpp = findViewById(R.id.ImageTurnOpp);
+        imageBottomTurn = findViewById(R.id.ImageBottomTurn);
+        imageTopTurn = findViewById(R.id.ImageTopTurn);
+        textViewTopPlayer = findViewById(R.id.TextViewTopPlayer);
+        textViewBottomPlayer = findViewById(R.id.TextViewBottomPlayer);
+        textViewTopClockTime = findViewById(R.id.TextViewTopClockTime);
+        textViewBottomClockTime = findViewById(R.id.TextViewBottomClockTime);
 
-        textViewOpponent = findViewById(R.id.TextViewOpponent);
-        textViewMe = findViewById(R.id.TextViewMe);
-
-        textViewOpponentClock = findViewById(R.id.TextViewClockTimeOpp);
-        textViewMyClock = findViewById(R.id.TextViewClockTimeMe);
+        // default rotation
+        imageTurnWhite = imageBottomTurn;
+        imageTurnBlack = imageTopTurn;
+        textViewWhitePlayer = textViewBottomPlayer;
+        textViewBlackPlayer = textViewTopPlayer;
+        textViewWhiteClockTIme = textViewBottomClockTime;
+        textViewBlackClockTime = textViewTopClockTime;
 
         textViewLastMove = findViewById(R.id.TextViewLastMove);
         buttonEco = findViewById(R.id.ButtonEco);
@@ -547,10 +555,8 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void updatePlayers() {
-        String opponent = chessBoardView.isRotated() ? gameApi.getMyPlayerName(myTurn) : gameApi.getOpponentPlayerName(myTurn);
-        String me = chessBoardView.isRotated() ?  gameApi.getOpponentPlayerName(myTurn) : gameApi.getMyPlayerName(myTurn);
-        textViewOpponent.setText(opponent);
-        textViewMe.setText(me);
+        textViewWhitePlayer.setText(gameApi.getWhite());
+        textViewBlackPlayer.setText(gameApi.getBlack());
     }
 
     protected void updateEco() {
@@ -627,20 +633,15 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected void updateTurnSwitchers() {
         final int currentTurn = jni.getTurn();
-        final boolean isMyTurn = currentTurn == myTurn;
 
-        imageTurnOpp.setImageResource(isMyTurn
-                ? R.drawable.turnempty
-                : currentTurn == BoardConstants.BLACK
-                    ? R.drawable.turnblack
-                    : R.drawable.turnwhite
+        imageTurnWhite.setImageResource(currentTurn == BoardConstants.WHITE
+            ? R.drawable.turnwhite
+            : R.drawable.turnempty
         );
 
-        imageTurnMe.setImageResource(isMyTurn
-                ? currentTurn == BoardConstants.BLACK
-                            ? R.drawable.turnblack
-                            : R.drawable.turnwhite
-                : R.drawable.turnempty
+        imageTurnBlack.setImageResource(currentTurn == BoardConstants.BLACK
+            ? R.drawable.turnblack
+            : R.drawable.turnempty
         );
     }
 
@@ -743,22 +744,19 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void OnClockTime() {
-        if (chessBoardView.isRotated()) {
-            textViewMyClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
-            textViewOpponentClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
-        } else {
-            textViewOpponentClock.setText(myTurn == BoardConstants.WHITE ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
-            textViewMyClock.setText(myTurn == BoardConstants.BLACK ? localClock.getBlackRemainingTime() : localClock.getWhiteRemainingTime());
-        }
+        textViewWhiteClockTIme.setText(localClock.getWhiteRemainingTime());
+        textViewBlackClockTime.setText(localClock.getBlackRemainingTime());
 
-        long white = localClock.getWhiteRemaining();
-        long black = localClock.getBlackRemaining();
-        if (white <= 0 || black <= 0) {
-            localClock.stopClock();
-            if (white <= 0) {
-                gameApi.setFinalState(BoardConstants.WHITE_FORFEIT_TIME);
-            } else {
-                gameApi.setFinalState(BoardConstants.BLACK_FORFEIT_TIME);
+        if (localClock.isClockConfigured()) {
+            long white = localClock.getWhiteRemaining();
+            long black = localClock.getBlackRemaining();
+            if (white <= 0 || black <= 0) {
+                localClock.stopClock();
+                if (white <= 0) {
+                    gameApi.setFinalState(BoardConstants.WHITE_FORFEIT_TIME);
+                } else {
+                    gameApi.setFinalState(BoardConstants.BLACK_FORFEIT_TIME);
+                }
             }
         }
 
@@ -802,8 +800,15 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void updateBoardRotation() {
-        chessBoardView.setRotated(myTurn == BoardConstants.BLACK && !flipBoard || myTurn == BoardConstants.WHITE && flipBoard);
-        updatePlayers();
+        boolean isRotated = flipBoard && myTurn == BoardConstants.WHITE || !flipBoard && myTurn == BoardConstants.BLACK;
+        chessBoardView.setRotated(isRotated);
+
+        imageTurnWhite =  isRotated ? imageTopTurn : imageBottomTurn;
+        imageTurnBlack =  isRotated ? imageBottomTurn : imageTopTurn;
+        textViewWhitePlayer = isRotated ? textViewTopPlayer : textViewBottomPlayer;
+        textViewBlackPlayer = isRotated ? textViewBottomPlayer : textViewTopPlayer;
+        textViewWhiteClockTIme = isRotated ? textViewTopClockTime : textViewBottomClockTime;
+        textViewBlackClockTime = isRotated ? textViewBottomClockTime : textViewTopClockTime;
     }
 
     protected void updateGameSettingsByPrefs() {
@@ -865,17 +870,17 @@ public class PlayActivity extends ChessBoardActivity implements
 
                     c.moveToFirst();
 
-                    lGameID = c.getLong(c.getColumnIndex(PGNColumns._ID));
-                    String sPGN = c.getString(c.getColumnIndex(PGNColumns.PGN));
-
-                    c.close();
+                    lGameID = Utils.getColumnLong(c, PGNColumns._ID);
+                    String sPGN = Utils.getColumnString(c, PGNColumns.PGN);
 
                     gameApi.loadPGN(sPGN);
 
-                    gameApi.setPGNTag("Event", c.getString(c.getColumnIndex(PGNColumns.EVENT)));
-                    gameApi.setPGNTag("White", c.getString(c.getColumnIndex(PGNColumns.WHITE)));
-                    gameApi.setPGNTag("Black", c.getString(c.getColumnIndex(PGNColumns.BLACK)));
-                    gameApi.setDateLong(c.getLong(c.getColumnIndex(PGNColumns.DATE)));
+                    gameApi.setPGNTag("Event", Utils.getColumnString(c, PGNColumns.EVENT));
+                    gameApi.setPGNTag("White", Utils.getColumnString(c, PGNColumns.WHITE));
+                    gameApi.setPGNTag("Black", Utils.getColumnString(c, PGNColumns.BLACK));
+                    gameApi.setDateLong(Utils.getColumnLong(c, PGNColumns.DATE));
+
+                    c.close();
 
                 } else {
                     Log.d(TAG, "Game not found: " + lGameID);

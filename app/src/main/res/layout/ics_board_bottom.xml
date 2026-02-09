@@ -10,7 +10,7 @@
 
     <TableRow android:gravity="center_vertical">
         <ViewSwitcher
-            android:id="@+id/ImageTurnMe"
+            android:id="@+id/ImageBottomTurn"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginLeft="8dip"

@@ -1,6 +1,5 @@
 package jwtc.android.chess.ics;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.ServiceConnection;
@@ -179,8 +178,8 @@ public class ICSClient extends ChessBoardActivity implements
         _tvTimePerMove = findViewById(R.id.TextViewICSTimePerMove);
         _tvMoveNumber = findViewById(R.id.TextViewMoveNumber);
 
-        switchTurnMe = findViewById(R.id.ImageTurnMe);
-        switchTurnOpp = findViewById(R.id.ImageTurnOpp);
+        switchTurnMe = findViewById(R.id.ImageBottomTurn);
+        switchTurnOpp = findViewById(R.id.ImageTopTurn);
 
         _tvConsole = findViewById(R.id.TextViewConsole);
         _tvConsole.setTypeface(Typeface.MONOSPACE);
