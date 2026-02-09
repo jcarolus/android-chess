@@ -6,7 +6,7 @@
 
     <application
         android:name="android.app.Application"
-        android:icon="@drawable/ic_logo"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/ChessTheme"
         android:banner="@drawable/ic_feature"
