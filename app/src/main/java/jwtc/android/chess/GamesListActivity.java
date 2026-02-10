@@ -435,7 +435,7 @@ public class GamesListActivity extends ChessBoardActivity {
     private void editGame() {
         final long id = Utils.getColumnLong(cursor, PGNColumns._ID);
         // the game is loaded via the GameApi
-        SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi.exportMovesPGN(), gameApi.pgnTags, id, this::saveGameFromDialog);
+        SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, id, this::saveGameFromDialog);
         saveDialog.show();
     }
 

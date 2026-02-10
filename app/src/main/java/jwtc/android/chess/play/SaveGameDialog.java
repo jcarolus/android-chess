@@ -24,29 +24,18 @@ import jwtc.chess.PGNColumns;
 
 public class SaveGameDialog extends Dialog {
 
+    private GameApi gameApi;
     private TextInputEditText editTextWhite, editTextBlack, editTextEvent;
     private RatingBar ratingBarRating;
     private PGNDateView dateView;
     private SaveGameResult result;
     private OnResultListener onResultListener;
 
-    public SaveGameDialog(@NonNull Context context, String fullPGN, long lGameID, OnResultListener onResult) {
+    public SaveGameDialog(@NonNull Context context, GameApi gameApi, long lGameID, OnResultListener onResult) {
         super(context, R.style.ChessDialogTheme);
 
+        this.gameApi = gameApi;
         result = new SaveGameResult();
-        result.pgnTags = new HashMap<String, String>();
-        GameApi.loadPGNHead(fullPGN, result.pgnTags);
-        result.pgnMoves = cleanPgnString(fullPGN.replaceAll(regexPgnTag, ""));
-
-        init(lGameID, onResult);
-    }
-
-    public SaveGameDialog(@NonNull Context context, String pgnMoves, HashMap<String, String> pgnTags, long lGameID, OnResultListener onResult) {
-        super(context, R.style.ChessDialogTheme);
-
-        result = new SaveGameResult();
-        result.pgnTags = pgnTags;
-        result.pgnMoves = pgnMoves;
 
         init(lGameID, onResult);
     }
@@ -81,21 +70,21 @@ public class SaveGameDialog extends Dialog {
         _butCancel.setOnClickListener(arg0 -> dismiss());
 
         ratingBarRating.setRating(3.0F);
-        editTextEvent.setText(result.pgnTags.get("Event"));
-        editTextWhite.setText(result.pgnTags.get("White"));
-        editTextBlack.setText(result.pgnTags.get("Black"));
+        editTextEvent.setText(gameApi.pgnTags.get("Event"));
+        editTextWhite.setText(gameApi.pgnTags.get("White"));
+        editTextBlack.setText(gameApi.pgnTags.get("Black"));
 
-        dateView.setDate(PGNHelper.getDate(result.pgnTags.get("Event")));
+        dateView.setDate(PGNHelper.getDate(gameApi.pgnTags.get("Event")));
 
         _butSaveCopy.setEnabled(lGameID != 0);
     }
 
 
     protected void save(boolean bCopy) {
-        result.pgnTags.put("Event", Utils.getTrimmedOrDefault(editTextEvent.getText(), "Event?"));
-        result.pgnTags.put("White", Utils.getTrimmedOrDefault(editTextWhite.getText(), "White?"));
-        result.pgnTags.put("Black", Utils.getTrimmedOrDefault(editTextBlack.getText(), "Black?"));
-        result.pgnTags.put("Date", Utils.formatDate(dateView.getDate()));
+        gameApi.pgnTags.put("Event", Utils.getTrimmedOrDefault(editTextEvent.getText(), "Event?"));
+        gameApi.pgnTags.put("White", Utils.getTrimmedOrDefault(editTextWhite.getText(), "White?"));
+        gameApi.pgnTags.put("Black", Utils.getTrimmedOrDefault(editTextBlack.getText(), "Black?"));
+        gameApi.pgnTags.put("Date", Utils.formatDate(dateView.getDate()));
         result.rating = ratingBarRating.getRating();
         result.createCopy = bCopy;
 
@@ -103,8 +92,6 @@ public class SaveGameDialog extends Dialog {
     }
 
     public class SaveGameResult {
-        public HashMap<String, String> pgnTags;
-        public String pgnMoves;
         public float rating = 0f;
         public long lGameID;
         public boolean createCopy = false;
@@ -113,13 +100,13 @@ public class SaveGameDialog extends Dialog {
 
             ContentValues values = new ContentValues();
 
-            values.put(PGNColumns.EVENT, result.pgnTags.get("Event"));
-            values.put(PGNColumns.WHITE, result.pgnTags.get("White"));
-            values.put(PGNColumns.BLACK, result.pgnTags.get("Black"));
-            values.put(PGNColumns.DATE, PGNHelper.getDate(result.pgnTags.get("Date")).getTime());
-            values.put(PGNColumns.RESULT, result.pgnTags.get("Result"));
+            values.put(PGNColumns.EVENT, gameApi.pgnTags.get("Event"));
+            values.put(PGNColumns.WHITE, gameApi.pgnTags.get("White"));
+            values.put(PGNColumns.BLACK, gameApi.pgnTags.get("Black"));
+            values.put(PGNColumns.DATE, PGNHelper.getDate(gameApi.pgnTags.get("Date")).getTime());
+            values.put(PGNColumns.RESULT, gameApi.pgnTags.get("Result"));
             values.put(PGNColumns.RATING, result.rating);
-            values.put(PGNColumns.PGN, result.pgnMoves);
+            values.put(PGNColumns.PGN, gameApi.exportFullPGN());
 
             return values;
         }

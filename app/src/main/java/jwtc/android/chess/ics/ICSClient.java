@@ -1019,7 +1019,8 @@ public class ICSClient extends ChessBoardActivity implements
     @Override
     public void OnGameHistory(String fullPGN) {
         Log.d(TAG, "OnGameHistory " + fullPGN);
-        final SaveGameDialog saveDialog = new SaveGameDialog(this, fullPGN, 0, this::saveGameFromResult);
+        gameApi.loadPGN(fullPGN);
+        final SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, 0, this::saveGameFromResult);
         saveDialog.show();
     }
 

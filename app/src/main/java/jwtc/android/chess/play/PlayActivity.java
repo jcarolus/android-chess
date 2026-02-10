@@ -845,22 +845,16 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     public void saveGame() {
-        String sEvent = gameApi.getPGNHeadProperty("Event");
-        if (sEvent == null)
-            sEvent = getString(R.string.savegame_event_question);
-        String sWhite = gameApi.getWhite();
-        if (sWhite == null)
-            sWhite = getString(R.string.savegame_white_question);
-        String sBlack = gameApi.getBlack();
-        if (sBlack == null)
-            sBlack = getString(R.string.savegame_black_question);
-
-        Date dd = gameApi.getDate();
-        if (dd == null) {
-            dd = Calendar.getInstance().getTime();
-        }
-        SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi.exportMovesPGN(), gameApi.pgnTags, lGameID, this::saveGameFromDialog);
+        SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, lGameID, this::saveGameFromDialog);
         saveDialog.show();
+    }
+
+    @Override
+    protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
+        super.saveGameFromDialog(result);
+        if (!result.createCopy) {
+            loadGame();
+        }
     }
 
     protected void loadGame() {
