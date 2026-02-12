@@ -117,7 +117,7 @@ public class AdvancedActivity extends BaseActivity {
                         editor.commit();
 
                         doToast(getString(R.string.practice_set_reset));
-                    }, null );
+                    }, null);
 
                 } else if (arrString[arg2].equals(getString(R.string.pgntool_import_practice))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);

@@ -82,7 +82,7 @@ public abstract class PGNProcessor {
 
         new Thread(new Runnable() {
             public void run() {
-            sendMessage(MSG_STARTED);
+                sendMessage(MSG_STARTED);
                 try {
 
                     StringBuffer sb = new StringBuffer();

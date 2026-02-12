@@ -4,31 +4,35 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-        <GridView
-            android:id="@+id/LayoutContent"
-            android:numColumns="2"
-            android:layout_width="match_parent" android:layout_height="0dp"
-            android:layout_weight="1">
 
-        </GridView>
+    <GridView
+        android:id="@+id/LayoutContent"
+        android:numColumns="2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </GridView>
 
     <TableLayout
         android:id="@+id/LayoutButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TableRow style="@style/MyRowStyle" android:gravity="right">
+
+        <TableRow
+            style="@style/MyRowStyle"
+            android:gravity="right">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonClip"
                 style="@style/ChessImageButton"
-                app:icon="@drawable/ic_clipboard"
-                />
+                app:icon="@drawable/ic_clipboard" />
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:text="@string/button_close"
                 android:id="@+id/ButtonClose"
-                style="@style/ChessButton"
-                />
+                style="@style/ChessButton" />
         </TableRow>
     </TableLayout>
 </LinearLayout>

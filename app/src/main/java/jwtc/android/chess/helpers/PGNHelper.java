@@ -1,6 +1,7 @@
 package jwtc.android.chess.helpers;
 
 import android.util.Log;
+
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,7 +35,8 @@ public class PGNHelper {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
                     Date utilDate = formatter.parse(s);
                     return utilDate;
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             } else {
 
                 // in case it's a YYYY.mm.?? format, we make it fst of the month
@@ -58,7 +60,8 @@ public class PGNHelper {
                             SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
                             Date utilDate = formatter.parse(s);
                             return utilDate;
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             }

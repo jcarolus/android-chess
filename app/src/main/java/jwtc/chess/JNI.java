@@ -8,7 +8,8 @@ public class JNI {
     private static final String TAG = "JNI";
     private static volatile JNI instance;
 
-    private JNI() {}
+    private JNI() {
+    }
 
     // guarantee singleton instance
     public static JNI getInstance() {
@@ -16,7 +17,7 @@ public class JNI {
         if (result != null) {
             return result;
         }
-        synchronized(JNI.class) {
+        synchronized (JNI.class) {
             if (instance == null) {
                 instance = new JNI();
             }
@@ -45,7 +46,7 @@ public class JNI {
 
     protected boolean isPosFree(int pos) {
         return (pieceAt(BoardConstants.BLACK, pos) == BoardConstants.FIELD &&
-                pieceAt(BoardConstants.WHITE, pos) == BoardConstants.FIELD);
+            pieceAt(BoardConstants.WHITE, pos) == BoardConstants.FIELD);
     }
 
     protected int getAvailableCol(int colNum) {
@@ -92,16 +93,16 @@ public class JNI {
         reset();
 
         int[][] NN = {
-                {0, 1},
-                {0, 2},
-                {0, 3},
-                {0, 4},
-                {1, 2},
-                {1, 3},
-                {1, 4},
-                {2, 3},
-                {2, 4},
-                {3, 4}
+            {0, 1},
+            {0, 2},
+            {0, 3},
+            {0, 4},
+            {1, 2},
+            {1, 3},
+            {1, 4},
+            {2, 3},
+            {2, 4},
+            {3, 4}
         };
 
         int Bw, Bb, Q, N1, N2;
@@ -232,6 +233,7 @@ public class JNI {
     public native void destroy();
 
     public native void setVariant(int variant);
+
     public native int getVariant();
 
     public native int requestMove(int from, int to);
@@ -279,10 +281,15 @@ public class JNI {
     public native void setCastlingsEPAnd50(int wccl, int wccs, int bccl, int bccs, int ep, int r50);
 
     public native int getWhiteCanCastleLong();
+
     public native int getWhiteCanCastleShort();
+
     public native int getBlackCanCastleLong();
+
     public native int getBlackCanCastleShort();
+
     public native int getEnpassantPosition();
+
     public native int get50MoveCount();
 
     public native int getNumBoard();

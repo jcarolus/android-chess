@@ -8,8 +8,8 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="320dip"
         android:layout_height="wrap_content"
-        android:padding="8dip"
-        >
+        android:padding="8dip">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,16 +61,18 @@
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TableRow
                     style="@style/MyRowStyle"
                     android:minHeight="50dip">
+
                     <com.google.android.material.button.MaterialButton
                         android:text="@string/button_register"
                         android:id="@+id/ButICSRegister"
                         android:layout_width="0dip"
                         android:layout_weight="1"
                         android:layout_marginRight="2dip"
-                        style="@style/ChessButton"/>
+                        style="@style/ChessButton" />
 
                     <com.google.android.material.button.MaterialButton
                         android:text="@string/button_login"
@@ -78,7 +80,7 @@
                         android:layout_width="0dip"
                         android:layout_weight="1"
                         android:layout_marginLeft="2dip"
-                        style="@style/ChessButton"/>
+                        style="@style/ChessButton" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>

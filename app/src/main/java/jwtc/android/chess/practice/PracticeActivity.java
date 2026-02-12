@@ -226,7 +226,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     public void updateScore() {
         tvPercentage.setText(formatPercentage());
-        int percentage = numPlayed > 0 ? (int)((float)numSolved / numPlayed * 100) : 0;
+        int percentage = numPlayed > 0 ? (int) ((float) numSolved / numPlayed * 100) : 0;
         Log.d(TAG, "Set per " + percentage);
         percentBar.setProgressCompat(percentage, /*animated=*/true);
     }
@@ -237,7 +237,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     }
 
     private String formatPercentage() {
-        return String.format("%d / %d = %.1f %%", numSolved, numPlayed, numPlayed > 0 ? ((float)numSolved / numPlayed) * 100 : 0.0f);
+        return String.format("%d / %d = %.1f %%", numSolved, numPlayed, numPlayed > 0 ? ((float) numSolved / numPlayed) * 100 : 0.0f);
     }
 
     @Override
@@ -298,12 +298,20 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             animateWrong(sMove + getString(R.string.puzzle_not_correct_move));
         }
     }
+
     @Override
-    public void OnEngineInfo(String message, float value) {}
+    public void OnEngineInfo(String message, float value) {
+    }
+
     @Override
-    public void OnEngineStarted() {}
+    public void OnEngineStarted() {
+    }
+
     @Override
-    public void OnEngineAborted() {}
+    public void OnEngineAborted() {
+    }
+
     @Override
-    public void OnEngineError() {}
+    public void OnEngineError() {
+    }
 }

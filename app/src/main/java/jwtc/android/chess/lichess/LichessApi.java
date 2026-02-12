@@ -27,18 +27,30 @@ public class LichessApi extends GameApi {
 
     public interface LichessApiListener {
         void onAuthenticate(String user);
+
         void onGameInit(String gameId);
+
         void onGameUpdate(GameFull gameFull);
+
         // void onDrawAccepted(boolean accepted);
         void onGameFinish();
+
         void onGameDisconnected();
+
         void onInvalidMove(String reason);
+
         void onNowPlaying(List<Game> games, String me);
+
         void onConnectionError();
+
         void onChallenge(Challenge challenge);
+
         void onChallengeCancelled(Challenge challenge);
+
         void onChallengeDeclined(Challenge challenge);
+
         void onMyChallengeCancelled();
+
         void onMySeekCancelled();
     }
 
@@ -324,7 +336,8 @@ public class LichessApi extends GameApi {
                 String type = jsonObject.get("type").getAsString();
                 Log.d(TAG, "game " + jsonObject.get("type").getAsString());
                 if (type.equals("gameState") && ongoingGameFull != null) {
-                    ongoingGameFull.state = (new Gson()).fromJson(jsonObject, GameState.class);;
+                    ongoingGameFull.state = (new Gson()).fromJson(jsonObject, GameState.class);
+                    ;
                 } else if (type.equals("gameFull")) {
                     ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
                 }
@@ -343,8 +356,8 @@ public class LichessApi extends GameApi {
 
     public int getMyTurn() {
         return ongoingGameFull != null
-                ? ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK
-                : BoardConstants.WHITE;
+            ? ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK
+            : BoardConstants.WHITE;
     }
 
     public int getTurn() {

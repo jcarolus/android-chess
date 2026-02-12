@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import jwtc.android.chess.R;
 
 public class FixedDropdownView extends LinearLayout {

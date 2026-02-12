@@ -8,8 +8,8 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="320dip"
         android:layout_height="wrap_content"
-        android:padding="8dip"
-        >
+        android:padding="8dip">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -21,8 +21,7 @@
                 android:src="@drawable/lichess"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dip"
-                android:layout_marginBottom="16dip"
-                />
+                android:layout_marginBottom="16dip" />
 
             <TextView
                 android:layout_width="fill_parent"
@@ -33,8 +32,7 @@
                 android:maxLines="10"
                 android:scrollHorizontally="false"
                 android:ellipsize="none"
-                android:text="@string/lichess_starting"
-                />
+                android:text="@string/lichess_starting" />
 
             <ProgressBar
                 android:layout_width="fill_parent"
@@ -42,7 +40,7 @@
                 android:layout_marginLeft="8dip"
                 android:layout_marginRight="8dip"
                 android:layout_marginBottom="8dip"
-                style="?android:attr/progressBarStyleHorizontal"/>
+                style="?android:attr/progressBarStyleHorizontal" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

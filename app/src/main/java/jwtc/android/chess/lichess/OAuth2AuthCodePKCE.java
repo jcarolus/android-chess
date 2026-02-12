@@ -40,18 +40,18 @@ public class OAuth2AuthCodePKCE {
 
     public void startAuth(Activity activity) {
         serviceConfig = new AuthorizationServiceConfiguration(
-                Uri.parse(authorizationUrl),
-                Uri.parse(tokenUrl)
+            Uri.parse(authorizationUrl),
+            Uri.parse(tokenUrl)
         );
 
         AuthorizationRequest authRequest = new AuthorizationRequest.Builder(
-                serviceConfig,
-                clientId,
-                "code",
-                Uri.parse(redirectUri)
+            serviceConfig,
+            clientId,
+            "code",
+            Uri.parse(redirectUri)
         )
-                .setScopes(scopes)
-                .build();
+            .setScopes(scopes)
+            .build();
 
         Intent authIntent = authService.getAuthorizationRequestIntent(authRequest);
         activity.startActivityForResult(authIntent, 1001);
@@ -62,13 +62,13 @@ public class OAuth2AuthCodePKCE {
         AuthorizationException ex = AuthorizationException.fromIntent(intent);
         if (resp != null) {
             authService.performTokenRequest(resp.createTokenExchangeRequest(),
-                    (response, ex2) -> {
-                        if (ex2 != null) callback.onError(ex2);
-                        else {
-                            tokenResponse = response;
-                            callback.onSuccess(response);
-                        }
-                    });
+                (response, ex2) -> {
+                    if (ex2 != null) callback.onError(ex2);
+                    else {
+                        tokenResponse = response;
+                        callback.onSuccess(response);
+                    }
+                });
         } else if (ex != null) {
             callback.onError(ex);
         }
@@ -96,6 +96,7 @@ public class OAuth2AuthCodePKCE {
 
     public interface Callback<T, E> {
         void onSuccess(T result);
+
         void onError(E e);
     }
 }

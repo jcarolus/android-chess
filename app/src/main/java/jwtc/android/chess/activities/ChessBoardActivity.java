@@ -274,7 +274,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 piece = jni.pieceAt(color, i);
             }
 
-            if (piece != BoardConstants.FIELD){
+            if (piece != BoardConstants.FIELD) {
                 ChessPieceView p = new ChessPieceView(this, color, piece, i);
                 p.setOnTouchListener(myTouchListener);
 
@@ -485,7 +485,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessPieceView) {
-                final ChessPieceView pieceView = (ChessPieceView)child;
+                final ChessPieceView pieceView = (ChessPieceView) child;
                 if (pieceView.getPos() == pos) {
                     return pieceView;
                 }
@@ -500,7 +500,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessSquareView) {
-                final ChessSquareView squareView = (ChessSquareView)child;
+                final ChessSquareView squareView = (ChessSquareView) child;
                 if (squareView.getPos() == pos) {
                     return squareView;
                 }
@@ -534,8 +534,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 return sMove;
             }
             return jni.getTurn() == BoardConstants.BLACK
-                    ? getString(R.string.last_white_move_description, sMove)
-                    : getString(R.string.last_black_move_description, sMove);
+                ? getString(R.string.last_white_move_description, sMove)
+                : getString(R.string.last_black_move_description, sMove);
         }
         return "";
     }
@@ -553,11 +553,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
             if (positions.size() > 0) {
                 ret += Piece.toString(i)
-                        + " " + positions
-                        .stream()
-                        .map(Pos::toString)
-                        .collect(Collectors.joining(", "))
-                + ". ";
+                    + " " + positions
+                    .stream()
+                    .map(Pos::toString)
+                    .collect(Collectors.joining(", "))
+                    + ". ";
             }
         }
         return getString(turn == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black) + ": " + ret;
@@ -595,8 +595,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         view.setSelected(false);
                         break;
                     case DragEvent.ACTION_DRAG_STARTED:
-                       // all listeners allow drag started
-                       break;
+                        // all listeners allow drag started
+                        break;
                     case DragEvent.ACTION_DRAG_LOCATION:
                         break;
                     case DragEvent.ACTION_DROP: {
@@ -627,7 +627,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     case DragEvent.ACTION_DRAG_ENDED: {
                         final View droppedView = (View) event.getLocalState();
                         if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
-                            droppedView.post(new Runnable(){
+                            droppedView.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     droppedView.setVisibility(View.VISIBLE);
@@ -796,7 +796,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 selectedPosition = pos;
                 setMoveToPositions(pos);
                 updateSelectedSquares();
-            } else if (selectedPosition != pos){
+            } else if (selectedPosition != pos) {
                 handleMove(pos);
             } else {
                 if (jni.isAmbiguousCastle(selectedPosition, pos) != 0) {

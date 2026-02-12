@@ -11,11 +11,11 @@ public class Pos {
     // when a position cannot be created a message is sent on console out (co).
     // used to initialize values, no speed needed
     public static int fromString(final String s) throws Exception {
-        if(s.length() != 2) {
+        if (s.length() != 2) {
             throw new Exception("Invalid position [" + s + "]");
         }
         char c = s.charAt(0);
-        if(c < 'a' || c > 'h') {
+        if (c < 'a' || c > 'h') {
             throw new Exception("Invalid file for position [" + s + "]");
         }
         int col, row = Integer.parseInt(s.substring(1));

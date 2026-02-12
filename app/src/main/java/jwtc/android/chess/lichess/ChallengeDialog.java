@@ -79,8 +79,8 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
         String variant = prefs.getString("lichess_challenge_variant", "standard");
         toggleVariant.check(variant.equals("standard")
-                ? R.id.RadioButtonStandard
-                : R.id.RadioButtonChess960);
+            ? R.id.RadioButtonStandard
+            : R.id.RadioButtonChess960);
         buttonVariantDefault.setEnabled(false); // @TODO until castling is fixed
         buttonVariantChess960.setEnabled(false);
 
@@ -159,18 +159,18 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
             // variant
             String editVariant = toggleVariant.getCheckedButtonId() == R.id.RadioButtonStandard
-                    ? "standard"
-                    : "chess960";
+                ? "standard"
+                : "chess960";
             editor.putString("lichess_challenge_variant", editVariant);
             data.put("variant", editVariant);
 
             // color
             int selectedColor = toggleColor.getCheckedButtonId();
             String editColor = selectedColor == R.id.RadioButtonWhite
-                    ? "white"
-                    : selectedColor == R.id.RadioButtonBlack
-                        ? "black"
-                        : "random";
+                ? "white"
+                : selectedColor == R.id.RadioButtonBlack
+                ? "black"
+                : "random";
 
             editor.putString("lichess_challenge_color", editColor);
             data.put("color", editColor);

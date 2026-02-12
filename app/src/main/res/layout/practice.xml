@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dip">
-    <include layout="@layout/practice_board_top"/>
+
+    <include layout="@layout/practice_board_top" />
+
     <include
         android:id="@+id/includeboard"
         android:layout_width="wrap_content"
@@ -13,6 +15,8 @@
         android:layout_marginTop="1dip"
         android:layout_marginBottom="1dip"
         layout="@layout/chessboard" />
-    <include layout="@layout/practice_board_bottom"/>
-    <include layout="@layout/practice_controls"/>
+
+    <include layout="@layout/practice_board_bottom" />
+
+    <include layout="@layout/practice_controls" />
 </LinearLayout>

@@ -60,9 +60,9 @@ import jwtc.chess.board.BoardConstants;
 
 
 public class PlayActivity extends ChessBoardActivity implements
-        EngineListener,
-        ResultDialogListener<Bundle>,
-        ClockListener, MoveRecyclerAdapter.OnItemClickListener {
+    EngineListener,
+    ResultDialogListener<Bundle>,
+    ClockListener, MoveRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;
@@ -140,11 +140,11 @@ public class PlayActivity extends ChessBoardActivity implements
             if (!gameApi.isEnded()) {
                 if (jni.getNumBoard() < gameApi.getPGNSize()) {
                     openConfirmDialog(
-                            getString(R.string.title_create_new_line),
-                            getString(R.string.alert_yes),
-                            getString(R.string.alert_no),
-                            this::playIfEngineCanMove,
-                            null
+                        getString(R.string.title_create_new_line),
+                        getString(R.string.alert_yes),
+                        getString(R.string.alert_no),
+                        this::playIfEngineCanMove,
+                        null
                     );
                 } else {
                     playIfEngineCanMove();
@@ -217,19 +217,19 @@ public class PlayActivity extends ChessBoardActivity implements
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
-             if (switchBlindfold.isChecked()) {
-                 PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
-                 rebuildBoard();
-                 topPieces.setVisibility(View.INVISIBLE);
-                 bottomPieces.setVisibility(View.INVISIBLE);
-             } else {
-                 PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
-                 rebuildBoard();
-                 topPieces.setVisibility(View.VISIBLE);
-                 bottomPieces.setVisibility(View.VISIBLE);
-                 topPieces.invalidatePieces();
-                 bottomPieces.invalidatePieces();
-             }
+            if (switchBlindfold.isChecked()) {
+                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
+                rebuildBoard();
+                topPieces.setVisibility(View.INVISIBLE);
+                bottomPieces.setVisibility(View.INVISIBLE);
+            } else {
+                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
+                rebuildBoard();
+                topPieces.setVisibility(View.VISIBLE);
+                bottomPieces.setVisibility(View.VISIBLE);
+                topPieces.invalidatePieces();
+                bottomPieces.invalidatePieces();
+            }
         });
 
         switchFlip = findViewById(R.id.SwitchFlip);
@@ -245,7 +245,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         // Horizontal layout manager
         LinearLayoutManager layoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         historyRecyclerView.setLayoutManager(layoutManager);
 
         // Set adapter
@@ -334,7 +334,7 @@ public class PlayActivity extends ChessBoardActivity implements
         buttonEco.setEnabled(false);
 
         new Handler(Looper.getMainLooper()).postDelayed(
-                this::updateGUI,
+            this::updateGUI,
             1000
         );
     }
@@ -404,7 +404,8 @@ public class PlayActivity extends ChessBoardActivity implements
                         if (lastSegment != null) {
                             try {
                                 lGameID = Long.parseLong(lastSegment);
-                            } catch (Exception ignored) {}
+                            } catch (Exception ignored) {
+                            }
                         }
                         SharedPreferences.Editor editor = this.getPrefs().edit();
                         editor.putLong("game_id", lGameID);
@@ -725,7 +726,7 @@ public class PlayActivity extends ChessBoardActivity implements
                     startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
                 } else if (item.equals(getString(R.string.menu_save_position_to_file))) {
                     startIntentForSaveDocument("application/x-chess-fen", "position.fen", REQUEST_SAVE_POSITION_TO_FILE);
-                } else if (item.equals(getString(R.string.menu_open_position_file))){
+                } else if (item.equals(getString(R.string.menu_open_position_file))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
                     i.setType("*/*");
@@ -816,8 +817,8 @@ public class PlayActivity extends ChessBoardActivity implements
         boolean isRotated = flipBoard && myTurn == BoardConstants.WHITE || !flipBoard && myTurn == BoardConstants.BLACK;
         chessBoardView.setRotated(isRotated);
 
-        imageTurnWhite =  isRotated ? imageTopTurn : imageBottomTurn;
-        imageTurnBlack =  isRotated ? imageBottomTurn : imageTopTurn;
+        imageTurnWhite = isRotated ? imageTopTurn : imageBottomTurn;
+        imageTurnBlack = isRotated ? imageBottomTurn : imageTopTurn;
         textViewWhitePlayer = isRotated ? textViewTopPlayer : textViewBottomPlayer;
         textViewBlackPlayer = isRotated ? textViewBottomPlayer : textViewTopPlayer;
         textViewWhiteClockTIme = isRotated ? textViewTopClockTime : textViewBottomClockTime;
@@ -933,10 +934,10 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewInfoBalloon.setText("");
 
         popupWindowInfoBalloon = new PopupWindow(
-                viewInfoBalloon,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                false
+            viewInfoBalloon,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            false
         );
 
         popupWindowInfoBalloon.setOutsideTouchable(false);
@@ -950,8 +951,8 @@ public class PlayActivity extends ChessBoardActivity implements
         anchor.getLocationOnScreen(location);
 
         viewInfoBalloon.measure(
-                View.MeasureSpec.UNSPECIFIED,
-                View.MeasureSpec.UNSPECIFIED
+            View.MeasureSpec.UNSPECIFIED,
+            View.MeasureSpec.UNSPECIFIED
         );
 
         int x = location[0] + anchor.getWidth();

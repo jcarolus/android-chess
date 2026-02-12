@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/TextViewLastMove"
             style="@style/MyPaneTextStyle"
@@ -15,7 +17,8 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="assertive"/>
+            android:accessibilityLiveRegion="assertive" />
+
         <TextView
             android:id="@+id/TextViewStatus"
             style="@style/MyPaneTextStyle"
@@ -24,7 +27,8 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="assertive"/>
+            android:accessibilityLiveRegion="assertive" />
+
         <TextView
             android:id="@+id/TextViewOfferDraw"
             style="@style/MyPaneTextStyle"
@@ -33,61 +37,68 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="assertive"/>
+            android:accessibilityLiveRegion="assertive" />
+
         <LinearLayout
             android:id="@+id/LayoutResignDraw"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dip">
-            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonResign"
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonResign"
                 app:icon="@drawable/flag"
                 android:text="@string/lichess_play_button_resign"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton"
-                />
-            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonDraw"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonDraw"
                 app:icon="@drawable/draw"
                 android:text="@string/lichess_play_button_draw"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton"
-                />
+                style="@style/ChessButton" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/LayoutConfirm"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dip">
-            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonCancelMove"
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonCancelMove"
                 app:icon="@drawable/x"
                 android:text="@string/lichess_game_cancel_move"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton"
-                />
-            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonConfirmMove"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonConfirmMove"
                 app:icon="@drawable/ic_check"
                 android:text=""
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton"
-                />
+                style="@style/ChessButton" />
         </LinearLayout>
+
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/SwitchConfirmMoves"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dip"
             android:text="@string/lichess_game_confirm_moves"
-            android:checked="true"
-            />
+            android:checked="true" />
+
         <TextView
             android:id="@+id/TextViewWhitePieces"
             style="@style/MyPaneTextStyle"
@@ -96,7 +107,8 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="none"/>
+            android:accessibilityLiveRegion="none" />
+
         <TextView
             android:id="@+id/TextViewBlackPieces"
             style="@style/MyPaneTextStyle"
@@ -105,6 +117,6 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="none"/>
+            android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

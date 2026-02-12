@@ -14,7 +14,7 @@ import jwtc.android.timeseal.streams.c;
 import android.util.Log;
 
 public class TimesealingSocket extends Socket
-        implements Runnable {
+    implements Runnable {
     private static final String jdField_int = "TIMESTAMP|FICS timeseal implementation by Alexander Maryanovsky|" + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + ", " + System.getProperty("os.name") + " " + System.getProperty("os.version") + "|";
     private volatile long jdField_for;
     private final c jdField_do = new c(10000);
@@ -22,7 +22,7 @@ public class TimesealingSocket extends Socket
     private volatile Thread a;
 
     private final void jdField_if()
-            throws IOException {
+        throws IOException {
         this.jdField_for = System.currentTimeMillis();
         this.jdField_if = new a(super.getOutputStream());
         a();
@@ -31,7 +31,7 @@ public class TimesealingSocket extends Socket
     }
 
     private final void a()
-            throws IOException {
+        throws IOException {
         OutputStream localOutputStream = getOutputStream();
         synchronized (localOutputStream) {
             localOutputStream.write(jdField_int.getBytes());
@@ -101,7 +101,7 @@ public class TimesealingSocket extends Socket
     }
 
     public OutputStream getOutputStream()
-            throws IOException {
+        throws IOException {
         return this.jdField_if;
     }
 
@@ -110,13 +110,13 @@ public class TimesealingSocket extends Socket
     }
 
     public void close()
-            throws IOException {
+        throws IOException {
         super.close();
         this.a = null;
     }
 
     public TimesealingSocket(InetAddress paramInetAddress, int paramInt)
-            throws IOException {
+        throws IOException {
         super(paramInetAddress, paramInt);
         jdField_if();
 
@@ -124,7 +124,7 @@ public class TimesealingSocket extends Socket
     }
 
     public TimesealingSocket(String paramString, int paramInt)
-            throws IOException {
+        throws IOException {
         super(paramString, paramInt);
         jdField_if();
     }
@@ -137,7 +137,7 @@ public class TimesealingSocket extends Socket
         private long jdField_int = 0L;
 
         public void write(int paramInt)
-                throws IOException {
+            throws IOException {
             synchronized (TimesealingSocket.this) {
                 if (paramInt == 10) {
                     byte[] arrayOfByte = this.jdField_if.toByteArray();

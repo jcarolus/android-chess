@@ -71,7 +71,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TAG, "onServiceConnected");
             serviceConnected = true;
-            LichessService lichessService = ((LichessService.LocalBinder)service).getService();
+            LichessService lichessService = ((LichessService.LocalBinder) service).getService();
             lichessApi.setAuth(lichessService.getAuth());
 
             if (pendingData != null) {
@@ -99,7 +99,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         ActivityHelper.fixPaddings(this, findViewById(R.id.ViewAnimatorRoot));
 
         gameApi = new LichessApi();
-        lichessApi = (LichessApi)gameApi;
+        lichessApi = (LichessApi) gameApi;
 
         MaterialButton buttonLogin = findViewById(R.id.ButtonLogin);
         buttonLogin.setOnClickListener(v -> lichessApi.login(LichessActivity.this));
@@ -112,9 +112,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonResign = findViewById(R.id.ButtonResign);
         buttonResign.setOnClickListener(v -> {
             openConfirmDialog(getString(R.string.lichess_confirm_resign),
-                    getString(R.string.lichess_play_button_resign),
-                    getString(R.string.button_cancel),
-                    () -> lichessApi.resign(), null);
+                getString(R.string.lichess_play_button_resign),
+                getString(R.string.button_cancel),
+                () -> lichessApi.resign(), null);
 
         });
 
@@ -163,8 +163,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewLobbyStatus = findViewById(R.id.TextViewLobbyStatus);
 
         adapterGames = new SimpleAdapter(LichessActivity.this, mapGames, R.layout.lichess_game_row,
-                new String[]{"image_turn_white", "text_white", "image_turn_black", "text_black"},
-                new int[]{R.id.image_turn_white, R.id.text_white, R.id.image_turn_black, R.id.text_black});
+            new String[]{"image_turn_white", "text_white", "image_turn_black", "text_black"},
+            new int[]{R.id.image_turn_white, R.id.text_white, R.id.image_turn_black, R.id.text_black});
 
         listViewGames = findViewById(R.id.ListViewGames);
         listViewGames.setAdapter(adapterGames);
@@ -254,7 +254,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewPlayerOpp.setText(playAsWhite ? gameFull.black.name : gameFull.white.name);
         textViewPlayerMe.setText(playAsWhite ? gameFull.white.name : gameFull.black.name);
 
-        textViewRatingOpp.setText(""  + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
+        textViewRatingOpp.setText("" + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
         textViewRatingMe.setText("" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
 
         if (gameFull.clock != null && isStarted) {
@@ -264,7 +264,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonResign.setEnabled(isStarted);
 
         String stateMessage = gameStateToTranslated(gameFull.state.status);
-        if (gameFull.state.winner != null){
+        if (gameFull.state.winner != null) {
             stateMessage += ". " + getString(R.string.lichess_game_winner, gameFull.state.winner);
         }
         textViewStatus.setText(stateMessage);
@@ -278,10 +278,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             textViewOfferDraw.setText("");
             buttonDraw.setOnClickListener(v -> {
                 openConfirmDialog(getString(R.string.lichess_confirm_offer_draw),
-                        getString(R.string.lichess_play_button_draw),
-                        getString(R.string.button_cancel),
-                        () -> lichessApi.draw(true),
-                        null);
+                    getString(R.string.lichess_play_button_draw),
+                    getString(R.string.button_cancel),
+                    () -> lichessApi.draw(true),
+                    null);
 
             });
         }
@@ -352,17 +352,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             int minutes = challenge.timeControl.limit / 60;
 
             String message = challenge.challenger.name +
-                    (challenge.rated ? " " + getString(R.string.lichess_challenge_dialog_message_rating) + "\n" : "\n") +
-                    getString(R.string.lichess_challenge_dialog_message_variant, challenge.variant.name) + "\n" +
-                    getString(R.string.lichess_challenge_dialog_message_time_control, challenge.timeControl.type) + "\n" +
-                    (challenge.timeControl.limit > 0 ? " " + minutes + "+" + challenge.timeControl.increment : "") + "\n" +
-                    (challenge.rated ? getString(R.string.lichess_challenge_dialog_message_rated) : getString(R.string.lichess_challenge_dialog_message_unrated));
+                (challenge.rated ? " " + getString(R.string.lichess_challenge_dialog_message_rating) + "\n" : "\n") +
+                getString(R.string.lichess_challenge_dialog_message_variant, challenge.variant.name) + "\n" +
+                getString(R.string.lichess_challenge_dialog_message_time_control, challenge.timeControl.type) + "\n" +
+                (challenge.timeControl.limit > 0 ? " " + minutes + "+" + challenge.timeControl.increment : "") + "\n" +
+                (challenge.rated ? getString(R.string.lichess_challenge_dialog_message_rated) : getString(R.string.lichess_challenge_dialog_message_unrated));
 
             openConfirmDialog(message,
-                    getString(R.string.lichess_challenge_dialog_button_accept),
-                    getString(R.string.lichess_challenge_dialog_button_decline),
-                    () -> lichessApi.acceptChallenge(challenge),
-                    () -> lichessApi.declineChallenge(challenge));
+                getString(R.string.lichess_challenge_dialog_button_accept),
+                getString(R.string.lichess_challenge_dialog_button_decline),
+                () -> lichessApi.acceptChallenge(challenge),
+                () -> lichessApi.declineChallenge(challenge));
         }
     }
 
@@ -435,17 +435,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         int turn = lichessApi.getTurn();
         boolean isMyTurn = myTurn == turn;
         imageTurnOpp.setImageResource(isMyTurn
-                ? R.drawable.turnempty
-                : turn == BoardConstants.BLACK
-                ? R.drawable.turnblack
-                : R.drawable.turnwhite
+            ? R.drawable.turnempty
+            : turn == BoardConstants.BLACK
+            ? R.drawable.turnblack
+            : R.drawable.turnwhite
         );
 
         imageTurnMe.setImageResource(isMyTurn
-                ? turn == BoardConstants.BLACK
-                ? R.drawable.turnblack
-                : R.drawable.turnwhite
-                : R.drawable.turnempty
+            ? turn == BoardConstants.BLACK
+            ? R.drawable.turnblack
+            : R.drawable.turnwhite
+            : R.drawable.turnempty
         );
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
@@ -458,6 +458,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     protected void displayLogin() {
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_LOGIN);
     }
+
     protected void displayLobby() {
         lichessApi.playing();
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
@@ -533,8 +534,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     public void OnDialogResult(int requestCode, Map<String, Object> data) {
         if (data == null) {
             buttonSeek.setEnabled(true);
-        }
-        else if (requestCode == ChallengeDialog.REQUEST_CHALLENGE) {
+        } else if (requestCode == ChallengeDialog.REQUEST_CHALLENGE) {
             textViewLobbyStatus.setText(R.string.lichess_challenge_posted);
             lichessApi.challenge(data);
         } else {

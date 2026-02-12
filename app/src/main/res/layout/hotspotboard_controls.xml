@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dip">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/TextStatus"
             android:layout_width="match_parent"
@@ -16,19 +17,22 @@
             android:gravity="center"
             android:textSize="16sp"
             android:layout_marginTop="4dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/LayoutConnect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/SwitchHost"
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchHost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"
                 android:text="@string/hotspot_host"
-                android:checked="true"
-                />
+                android:checked="true" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,21 +42,23 @@
                 android:maxLines="10"
                 android:scrollHorizontally="false"
                 android:ellipsize="none"
-                android:text="@string/hotspot_host_help"
-                />
+                android:text="@string/hotspot_host_help" />
+
             <EditText
                 android:id="@+id/EditName"
                 android:hint="@string/hotspot_name_hint"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dip"/>
+                android:layout_margin="8dip" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonConnect"
                 android:text="@string/hotspot_connect"
                 android:layout_width="wrap_content"
                 android:layout_margin="8dip"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/LayoutGameButtons"
             android:layout_width="match_parent"
@@ -64,29 +70,31 @@
                 android:id="@+id/ButtonResign"
                 android:text="@string/hotspot_resign"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDraw"
                 android:text="@string/hotspot_draw"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="16dp"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/LayoutNewGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dip"
             android:orientation="horizontal">
+
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/colorToggleGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:singleSelection="true"
-                app:selectionRequired="true"
-                >
+                app:selectionRequired="true">
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonWhite"
                     style="@style/Widget.Material3.Button.OutlinedButton"
@@ -101,10 +109,12 @@
                     android:layout_height="wrap_content"
                     android:text="@string/hotspot_black" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
-            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonNew"
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonNew"
                 android:text="@string/hotspot_new"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

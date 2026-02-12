@@ -29,12 +29,12 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
 
     public static final String TAG = "CustomCommands";
     public static final String DEFAULT_COMMANDS = "[" +
-            "\"tell relay listgames\"," +
-            "\"tell endgamebot kbnk\"," +
-            "\"tell endgamebot help\"," +
-            "\"exl\"," +
-            "\"help commands\"" +
-            "]";
+        "\"tell relay listgames\"," +
+        "\"tell endgamebot kbnk\"," +
+        "\"tell endgamebot help\"," +
+        "\"exl\"," +
+        "\"help commands\"" +
+        "]";
 
     private ListView _listCommands;
     ArrayAdapter<String> _adapter;
@@ -59,21 +59,21 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
                 fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(CustomCommands.this)
-                        .setView(fl)
-                        .setTitle(getString(R.string.title_edit_command))
-                        .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                String s = input.getText().toString();
+                    .setView(fl)
+                    .setTitle(getString(R.string.title_edit_command))
+                    .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String s = input.getText().toString();
 
-                                _adapter.remove(_adapter.getItem(position));
-                                _adapter.insert(s, position);
+                            _adapter.remove(_adapter.getItem(position));
+                            _adapter.insert(s, position);
 
-                                _listCommands.invalidateViews();
+                            _listCommands.invalidateViews();
 
-                                dialog.dismiss();
-                            }
+                            dialog.dismiss();
+                        }
 
-                        });
+                    });
                 AlertDialog alert = builder.create();
                 alert.show();
 
@@ -174,17 +174,17 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
             fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
-                    .setView(fl)
-                    .setTitle(R.string.menu_new_command)
-                    .setMessage(R.string.menu_new_command_message)
-                    .setPositiveButton(R.string.button_ok, (dialog, which) -> {
-                        String s = input.getText().toString();
+                .setView(fl)
+                .setTitle(R.string.menu_new_command)
+                .setMessage(R.string.menu_new_command_message)
+                .setPositiveButton(R.string.button_ok, (dialog, which) -> {
+                    String s = input.getText().toString();
 
-                        _adapter.add(s);
-                        _listCommands.invalidateViews();
+                    _adapter.add(s);
+                    _listCommands.invalidateViews();
 
-                        dialog.dismiss();
-                    });
+                    dialog.dismiss();
+                });
             AlertDialog alert = builder.create();
             alert.show();
 

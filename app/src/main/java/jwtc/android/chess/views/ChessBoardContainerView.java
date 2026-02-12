@@ -42,19 +42,23 @@ public class ChessBoardContainerView extends ViewGroup {
         Log.d(TAG, "init " + top + " " + board + " " + bottom);
     }
 
-    @Override public LayoutParams generateLayoutParams(AttributeSet attrs) {
+    @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);
     }
 
-    @Override protected LayoutParams generateDefaultLayoutParams() {
+    @Override
+    protected LayoutParams generateDefaultLayoutParams() {
         return new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     }
 
-    @Override protected LayoutParams generateLayoutParams(LayoutParams lp) {
+    @Override
+    protected LayoutParams generateLayoutParams(LayoutParams lp) {
         return new MarginLayoutParams(lp);
     }
 
-    @Override protected boolean checkLayoutParams(LayoutParams lp) {
+    @Override
+    protected boolean checkLayoutParams(LayoutParams lp) {
         return lp instanceof MarginLayoutParams;
     }
 
@@ -63,34 +67,34 @@ public class ChessBoardContainerView extends ViewGroup {
         int curTop = 0;
 
         top.layout(0, curTop,
-                top.getMeasuredWidth(),
-                curTop + top.getMeasuredHeight());
+            top.getMeasuredWidth(),
+            curTop + top.getMeasuredHeight());
         curTop += top.getMeasuredHeight();
 
         board.layout(0, curTop,
-                board.getMeasuredWidth(),
-                curTop + board.getMeasuredHeight());
+            board.getMeasuredWidth(),
+            curTop + board.getMeasuredHeight());
         curTop += board.getMeasuredHeight();
 
         bottom.layout(0, curTop,
-                bottom.getMeasuredWidth(),
-                curTop + bottom.getMeasuredHeight());
+            bottom.getMeasuredWidth(),
+            curTop + bottom.getMeasuredHeight());
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize =  MeasureSpec.getSize(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int minSize = Math.min(widthSize, heightSize);
 
         top.measure(
-                MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.UNSPECIFIED),
-                MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.UNSPECIFIED)
+            MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.UNSPECIFIED),
+            MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.UNSPECIFIED)
         );
         bottom.measure(
-                MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.UNSPECIFIED),
-                MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.UNSPECIFIED)
+            MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.UNSPECIFIED),
+            MeasureSpec.makeMeasureSpec(minSize, MeasureSpec.UNSPECIFIED)
         );
 
         int topHeight = top.getMeasuredHeight();

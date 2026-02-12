@@ -148,7 +148,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         Log.d(TAG, "currentPosition " + currentPosition);
 
         if (cursor != null) {
-            totalPuzzles= cursor.getCount();
+            totalPuzzles = cursor.getCount();
 
             Log.d(TAG, "totalPuzzles " + totalPuzzles);
 
@@ -286,12 +286,20 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
             numMoved--;
         }
     }
+
     @Override
-    public void OnEngineInfo(String message, float value) {}
+    public void OnEngineInfo(String message, float value) {
+    }
+
     @Override
-    public void OnEngineStarted() {}
+    public void OnEngineStarted() {
+    }
+
     @Override
-    public void OnEngineAborted() {}
+    public void OnEngineAborted() {
+    }
+
     @Override
-    public void OnEngineError() {}
+    public void OnEngineError() {
+    }
 }

@@ -23,8 +23,7 @@
                 android:id="@+id/ButtonConfirmYes"
                 android:text="@string/alert_yes"
                 android:layout_width="80dip"
-                style="@style/ChessButton"
-                />
+                style="@style/ChessButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonConfirmNo"

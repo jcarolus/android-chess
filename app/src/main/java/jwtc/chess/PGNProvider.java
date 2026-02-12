@@ -64,15 +64,15 @@ public class PGNProvider extends ContentProvider {
             Log.d(TAG, "DatabaseHelper.onCreate");
 
             db.execSQL("CREATE TABLE " + GAMES_TABLE_NAME + " ("
-                    + PGNColumns._ID + " INTEGER PRIMARY KEY,"
-                    + PGNColumns.WHITE + " TEXT,"
-                    + PGNColumns.BLACK + " TEXT,"
-                    + PGNColumns.PGN + " TEXT,"
-                    + PGNColumns.DATE + " INTEGER,"
-                    + PGNColumns.RATING + " REAL,"
-                    + PGNColumns.EVENT + " TEXT,"
-                    + PGNColumns.RESULT + " TEXT"
-                    + ");");
+                + PGNColumns._ID + " INTEGER PRIMARY KEY,"
+                + PGNColumns.WHITE + " TEXT,"
+                + PGNColumns.BLACK + " TEXT,"
+                + PGNColumns.PGN + " TEXT,"
+                + PGNColumns.DATE + " INTEGER,"
+                + PGNColumns.RATING + " REAL,"
+                + PGNColumns.EVENT + " TEXT,"
+                + PGNColumns.RESULT + " TEXT"
+                + ");");
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_result  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.RESULT + ")");
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_black  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.BLACK + ")");
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_games_table_white  ON " + GAMES_TABLE_NAME + "(" + PGNColumns.WHITE + ")");
@@ -83,9 +83,9 @@ public class PGNProvider extends ContentProvider {
             c.set(1956, 10, 17);
             String sDate = "" + c.getTimeInMillis();
             db.execSQL("INSERT INTO "
-                    + GAMES_TABLE_NAME
-                    + " (" + PGNColumns.WHITE + ", " + PGNColumns.BLACK + ", " + PGNColumns.PGN + ", " + PGNColumns.DATE + ", " + PGNColumns.RATING + ", " + PGNColumns.EVENT + ", " + PGNColumns.RESULT + ")"
-                    + " VALUES ('Donald Byrne', 'Robert James Fischer', '" + sPGN + "', " + sDate + ", 5.0, 'Great game', '0-1');");
+                + GAMES_TABLE_NAME
+                + " (" + PGNColumns.WHITE + ", " + PGNColumns.BLACK + ", " + PGNColumns.PGN + ", " + PGNColumns.DATE + ", " + PGNColumns.RATING + ", " + PGNColumns.EVENT + ", " + PGNColumns.RESULT + ")"
+                + " VALUES ('Donald Byrne', 'Robert James Fischer', '" + sPGN + "', " + sDate + ", 5.0, 'Great game', '0-1');");
         }
 
         @Override
@@ -134,10 +134,10 @@ public class PGNProvider extends ContentProvider {
                 }
 
                 c = db.query(
-                        GAMES_TABLE_NAME,
-                        new String[]{PGNColumns._ID, PGNColumns.PGN},
-                        null, null, null, null,
-                        null
+                    GAMES_TABLE_NAME,
+                    new String[]{PGNColumns._ID, PGNColumns.PGN},
+                    null, null, null, null,
+                    null
                 );
 
                 final int idIndex = c.getColumnIndexOrThrow(PGNColumns._ID);
@@ -310,7 +310,7 @@ public class PGNProvider extends ContentProvider {
             case GAMES_ID:
                 String gameId = uri.getPathSegments().get(1);
                 count = db.delete(GAMES_TABLE_NAME, PGNColumns._ID + "=" + gameId
-                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
                 break;
 
             default:
@@ -333,7 +333,7 @@ public class PGNProvider extends ContentProvider {
             case GAMES_ID:
                 String gameId = uri.getPathSegments().get(1);
                 count = db.update(GAMES_TABLE_NAME, values, PGNColumns._ID + "=" + gameId
-                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
                 break;
 
             default:

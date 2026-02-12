@@ -18,28 +18,28 @@ import java.util.zip.CRC32;
 
 /**
  * Compact hash->string map file:
- *
+ * <p>
  * Header (16 bytes, little-endian):
- *  0  : char[4] magic = "HMAP"
- *  4  : uint16  version = 1
- *  6  : uint16  reserved = 0
- *  8  : uint32  count = N
+ * 0  : char[4] magic = "HMAP"
+ * 4  : uint16  version = 1
+ * 6  : uint16  reserved = 0
+ * 8  : uint32  count = N
  * 12  : uint32  crc32 of (entries bytes || blob bytes). 0 means "not set".
- *
+ * <p>
  * Entries (N * 16 bytes, little-endian), sorted by hash:
- *  struct Entry {
- *      uint64 hash;
- *      uint32 offset; // byte offset into blob
- *      uint16 len;    // string length in bytes (UTF-8)
- *      uint16 pad;    // 0
- *  }
- *
+ * struct Entry {
+ * uint64 hash;
+ * uint32 offset; // byte offset into blob
+ * uint16 len;    // string length in bytes (UTF-8)
+ * uint16 pad;    // 0
+ * }
+ * <p>
  * Blob: concatenated UTF-8 bytes of each string, no terminator.
  */
 public final class HMap {
     private static final String TAG = "HMap";
     private static final int HEADER_SIZE = 16;
-    private static final int ENTRY_SIZE  = 16;
+    private static final int ENTRY_SIZE = 16;
 
     private final Entry[] entries;  // sorted by hash
     private final byte[] blob;
@@ -67,7 +67,7 @@ public final class HMap {
             if (afd == null) throw new FileNotFoundException("Unable to open: " + uri);
 
             long length = afd.getLength(); // may be UNKNOWN_LENGTH (-1) for some providers
-            long start  = afd.getStartOffset();
+            long start = afd.getStartOffset();
 
             try (FileInputStream fis = new FileInputStream(afd.getFileDescriptor());
                  FileChannel ch = fis.getChannel()) {
@@ -113,7 +113,7 @@ public final class HMap {
 
         byte[] magic = new byte[4];
         hdr.get(magic);
-        if (!(magic[0]=='H' && magic[1]=='M' && magic[2]=='A' && magic[3]=='P')) {
+        if (!(magic[0] == 'H' && magic[1] == 'M' && magic[2] == 'A' && magic[3] == 'P')) {
             throw new IOException("Bad magic");
         }
         int version = Short.toUnsignedInt(hdr.getShort());
@@ -126,8 +126,8 @@ public final class HMap {
         long blobLen = (all.length - HEADER_SIZE) - entriesBytesLen;
         if (entriesBytesLen < 0 || blobLen < 0) throw new IOException("Truncated content");
 
-        byte[] entriesBytes = Arrays.copyOfRange(all, HEADER_SIZE, (int)(HEADER_SIZE + entriesBytesLen));
-        byte[] blob         = Arrays.copyOfRange(all, (int)(HEADER_SIZE + entriesBytesLen), all.length);
+        byte[] entriesBytes = Arrays.copyOfRange(all, HEADER_SIZE, (int) (HEADER_SIZE + entriesBytesLen));
+        byte[] blob = Arrays.copyOfRange(all, (int) (HEADER_SIZE + entriesBytesLen), all.length);
 
         if (hdrCrc != 0) {
             CRC32 crc = new CRC32();
@@ -165,7 +165,7 @@ public final class HMap {
 
         byte[] magic = new byte[4];
         hdr.get(magic);
-        if (!(magic[0]=='H' && magic[1]=='M' && magic[2]=='A' && magic[3]=='P')) {
+        if (!(magic[0] == 'H' && magic[1] == 'M' && magic[2] == 'A' && magic[3] == 'P')) {
             throw new IOException("Bad magic");
         }
         int version = Short.toUnsignedInt(hdr.getShort());
@@ -219,7 +219,7 @@ public final class HMap {
         while (lo <= hi) {
             int mid = (lo + hi) >>> 1;
             long mh = entries[mid].hash;
-            if      (mh < hash) lo = mid + 1;
+            if (mh < hash) lo = mid + 1;
             else if (mh > hash) hi = mid - 1;
             else {
                 Entry e = entries[mid];
@@ -236,7 +236,11 @@ public final class HMap {
     public static final class Pair {
         public final long hash;
         public final String value;
-        public Pair(long hash, String value) { this.hash = hash; this.value = value; }
+
+        public Pair(long hash, String value) {
+            this.hash = hash;
+            this.value = value;
+        }
     }
 
     public static void write(Context context, Uri uri, Collection<Pair> pairs) throws IOException {

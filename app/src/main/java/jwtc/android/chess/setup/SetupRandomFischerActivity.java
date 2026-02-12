@@ -19,6 +19,7 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
     private static final String TAG = "SetupRandomFischer";
     private SeekBar seekBar;
     private TextView textViewSeed;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,10 +42,12 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         MaterialButton butNext = findViewById(R.id.ButtonNext);

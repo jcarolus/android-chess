@@ -136,7 +136,7 @@ public class ICSPatterns {
                     item.put("text_rating", match.group(2));
                     return item;
                 } else if (code.equals("(U)") || code.equals("(FM)") || code.equals("(GM)") ||
-                            code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
+                    code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
                     HashMap<String, String> item = new HashMap<String, String>();
                     name += code;
                     item.put("text_name", name);
@@ -226,7 +226,7 @@ public class ICSPatterns {
     }
 
     public int getCreatingOrContinuingGameNumber(String line) {
-        if(line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
+        if (line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
             Matcher m = gameNumber.matcher(line);
             if (m.matches()) {
                 try {
@@ -277,8 +277,8 @@ public class ICSPatterns {
 
     public boolean isAbortedOrAdourned(String line) {
         return line.indexOf("{Game " /*+ getGameNum()*/) >= 0 && line.indexOf("} *") > 0 ||
-                line.contains("[You are not playing a game.]") ||
-                line.contains("[You are neither playing, observing nor examining a game.]");
+            line.contains("[You are not playing a game.]") ||
+            line.contains("[You are neither playing, observing nor examining a game.]");
     }
 
     public int gameState(String line) {

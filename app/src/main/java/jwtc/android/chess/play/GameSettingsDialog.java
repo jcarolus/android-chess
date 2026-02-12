@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.helpers.ResultDialog;
@@ -41,8 +44,8 @@ public class GameSettingsDialog extends ResultDialog {
 
         toggleQuiescent.setChecked(quiescentSearchOn);
         toggleQuiescent.setText(quiescentSearchOn
-                ? R.string.options_quiescent_on
-                : R.string.options_quiescent_off);
+            ? R.string.options_quiescent_on
+            : R.string.options_quiescent_off);
 
         toggleOpponent.check(vsCPU ? R.id.radioAndroid : R.id.radioHuman);
 
@@ -63,9 +66,9 @@ public class GameSettingsDialog extends ResultDialog {
         });
 
         toggleQuiescent.setOnCheckedChangeListener((buttonView, isChecked) ->
-                toggleQuiescent.setText(isChecked
-                        ? R.string.options_quiescent_on
-                        : R.string.options_quiescent_off));
+            toggleQuiescent.setText(isChecked
+                ? R.string.options_quiescent_on
+                : R.string.options_quiescent_off));
 
         spinnerLevelTime.setSelection(levelTime - 1);
         spinnerLevelPly.setSelection(levelPly - 1);
@@ -81,8 +84,8 @@ public class GameSettingsDialog extends ResultDialog {
                 editor.putBoolean("myTurn", toggleColor.getCheckedButtonId() == R.id.radioWhite);
 
                 editor.putInt("levelMode", toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsTime
-                        ? EngineApi.LEVEL_TIME
-                        : EngineApi.LEVEL_PLY);
+                    ? EngineApi.LEVEL_TIME
+                    : EngineApi.LEVEL_PLY);
                 editor.putInt("level", spinnerLevelTime.getSelectedItemPosition() + 1);
                 editor.putInt("levelPly", spinnerLevelPly.getSelectedItemPosition() + 1);
 

@@ -6,6 +6,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 
 import androidx.appcompat.widget.AppCompatTextView;
+
 import jwtc.android.chess.R;
 import jwtc.chess.board.BoardConstants;
 

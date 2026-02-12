@@ -36,7 +36,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TAG, "onServiceConnected");
-            importService = ((ImportService.LocalBinder)service).getService();
+            importService = ((ImportService.LocalBinder) service).getService();
             importService.addListener(ImportActivity.this);
             importService.startImport(_intent, _mode);
         }

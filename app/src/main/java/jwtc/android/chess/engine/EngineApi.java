@@ -34,7 +34,7 @@ public abstract class EngineApi {
                 int duckMove = msg.getData().getInt("duckMove");
                 int value = msg.getData().getInt("value");
                 Log.d(TAG, "handleMessage MOVE " + Move.toDbgString(move) + " :: " + Pos.toString(duckMove));
-                for (EngineListener listener: listeners) {
+                for (EngineListener listener : listeners) {
                     listener.OnEngineMove(move, duckMove, value);
                 }
 
@@ -42,11 +42,11 @@ public abstract class EngineApi {
                 String message = msg.getData().getString("message");
                 float value = msg.getData().getFloat("value");
                 // Log.d(TAG, "handleMessage INFO " + message);
-                for (EngineListener listener: listeners) {
+                for (EngineListener listener : listeners) {
                     listener.OnEngineInfo(message, value);
                 }
             } else if (msg.what == MSG_ERROR) {
-                for (EngineListener listener: listeners) {
+                for (EngineListener listener : listeners) {
                     listener.OnEngineError();
                 }
             }
@@ -82,8 +82,11 @@ public abstract class EngineApi {
     }
 
     abstract public void play();
+
     abstract public boolean isReady();
+
     abstract public void abort();
+
     abstract public void destroy();
 
     public void setMsecs(int msecs) {

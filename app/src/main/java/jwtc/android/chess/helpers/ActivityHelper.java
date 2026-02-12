@@ -18,12 +18,12 @@ public class ActivityHelper {
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
 
             int nightModeFlags = context.getResources().getConfiguration().uiMode
-                    & Configuration.UI_MODE_NIGHT_MASK;
+                & Configuration.UI_MODE_NIGHT_MASK;
 
             boolean isDarkMode = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES);
 
             WindowInsetsControllerCompat controller =
-                    new WindowInsetsControllerCompat(context.getWindow(), rootView);
+                new WindowInsetsControllerCompat(context.getWindow(), rootView);
 
             if (isDarkMode) {
                 controller.setAppearanceLightStatusBars(false);
@@ -43,16 +43,16 @@ public class ActivityHelper {
             if (cutout != null) {
                 if (orientation == Configuration.ORIENTATION_PORTRAIT) {
                     topInset = fullScreen ? cutout.getSafeInsetTop() : Math.max(systemBars.top, cutout.getSafeInsetTop());
-                } else if (orientation == Configuration.ORIENTATION_LANDSCAPE){
+                } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     leftInset = fullScreen ? cutout.getSafeInsetLeft() : Math.max(systemBars.left, cutout.getSafeInsetLeft());
                 }
             }
             // Apply paddings to avoid cutout (status bar area / camera hole)
             v.setPadding(
-                    leftInset,
-                    topInset,
-                    systemBars.right,
-                    systemBars.bottom
+                leftInset,
+                topInset,
+                systemBars.right,
+                systemBars.bottom
             );
 
             return WindowInsetsCompat.CONSUMED;
@@ -65,10 +65,10 @@ public class ActivityHelper {
 
     public static void pulseAnimation(View v, float factor, int repeatCount) {
         ScaleAnimation pulse = new ScaleAnimation(
-                1f, factor,          // fromX, toX
-                1f, factor,          // fromY, toY
-                Animation.RELATIVE_TO_SELF, 0.5f, // pivotX (center)
-                Animation.RELATIVE_TO_SELF, 0.5f  // pivotY (center)
+            1f, factor,          // fromX, toX
+            1f, factor,          // fromY, toY
+            Animation.RELATIVE_TO_SELF, 0.5f, // pivotX (center)
+            Animation.RELATIVE_TO_SELF, 0.5f  // pivotY (center)
         );
         pulse.setDuration(300);                     // time for grow phase
         pulse.setRepeatMode(Animation.REVERSE);     // reverse back to original

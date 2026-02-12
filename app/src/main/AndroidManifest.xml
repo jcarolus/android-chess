@@ -11,10 +11,19 @@
         android:theme="@style/ChessTheme"
         android:banner="@drawable/ic_feature"
         android:enableOnBackInvokedCallback="false">
-        <service android:name=".ics.ICSServer" android:exported="true"/>
-        <service android:name=".tools.ImportService" android:exported="true"/>
-        <service android:name=".hotspotboard.HotspotBoardService" android:exported="true"/>
-        <service android:name=".lichess.LichessService" android:exported="true"/>
+        <service
+            android:name=".ics.ICSServer"
+            android:exported="true" />
+        <service
+            android:name=".tools.ImportService"
+            android:exported="true" />
+        <service
+            android:name=".hotspotboard.HotspotBoardService"
+            android:exported="true" />
+        <service
+            android:name=".lichess.LichessService"
+            android:exported="true" />
+
         <activity
             android:name=".start"
             android:label="@string/app_name"
@@ -37,18 +46,17 @@
             android:name=".HtmlActivity"
             android:label="@string/app_name_help"
             android:configChanges="orientation"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".activities.BoardPreferencesActivity"
             android:label="@string/globalpreferences"
             android:configChanges="orientation"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".activities.GamePreferenceActivity"
             android:label="@string/playpreferences"
             android:configChanges="orientation"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"
@@ -77,6 +85,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/x-chess-fen" />
             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".start" />
@@ -224,14 +233,17 @@
             android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:scheme="jwtc.android.chess"
-                    android:host="oauth2redirect"/>
+                    android:host="oauth2redirect" />
             </intent-filter>
         </activity>
+
         <provider
             android:name=".helpers.MyPGNProvider"
             android:authorities="jwtc.android.chess.helpers.MyPGNProvider"
@@ -253,6 +265,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
-    <uses-feature android:name="android.software.leanback" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
 </manifest>

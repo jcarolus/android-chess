@@ -45,12 +45,12 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
 
         for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove =  pgnEntries.get(i).sMove;
+            String sMove = pgnEntries.get(i).sMove;
             if (pgnEntries.get(i).duckMove != -1) {
                 sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
             }
             HashMap<String, String> item = new HashMap<String, String>();
-            item.put("nr", i % 2 == 0 ? ((i/2 + 1) + ". ") : " ");
+            item.put("nr", i % 2 == 0 ? ((i / 2 + 1) + ". ") : " ");
             item.put("move", sMove);
             item.put("turn", jni.getNumBoard() - 1 == i ? "yes" : "no");
 
@@ -59,15 +59,22 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
 
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             @Override
-            public int getOldListSize() { return mapMoves.size(); }
+            public int getOldListSize() {
+                return mapMoves.size();
+            }
+
             @Override
-            public int getNewListSize() { return newMapMoves.size(); }
+            public int getNewListSize() {
+                return newMapMoves.size();
+            }
+
             @Override
             public boolean areItemsTheSame(int oldPos, int newPos) {
                 HashMap<String, String> item = mapMoves.get(oldPos);
                 HashMap<String, String> newItem = newMapMoves.get(newPos);
                 return MoveRecyclerAdapter.this.equalsItem(item, newItem);
             }
+
             @Override
             public boolean areContentsTheSame(int oldPos, int newPos) {
                 HashMap<String, String> item = mapMoves.get(oldPos);
@@ -102,7 +109,7 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.pgn_item_view, parent, false);
+            .inflate(R.layout.pgn_item_view, parent, false);
         return new ViewHolder(view, listener);
     }
 
@@ -115,7 +122,7 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
             holder.textViewMove.setTextColor(ContextCompat.getColor(context, R.color.primaryColor));
         } else {
             holder.textViewMove.setTextColor(ContextCompat.getColor(context, R.color.surfaceTextColor));
-            holder.textViewMove.setPaintFlags(holder.textViewMove.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+            holder.textViewMove.setPaintFlags(holder.textViewMove.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
         }
         holder.textViewNumMove.setText(item.get("nr"));
         holder.textViewMove.setText(item.get("move"));

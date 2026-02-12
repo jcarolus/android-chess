@@ -107,8 +107,8 @@ public class SetupActivity extends ChessBoardActivity {
         } else {
             jni.initFEN(sFEN);
             toggleTurnGroup.check(jni.getTurn() == BoardConstants.WHITE
-                    ? R.id.RadioSetupTurnWhite
-                    : R.id.RadioSetupTurnBlack);
+                ? R.id.RadioSetupTurnWhite
+                : R.id.RadioSetupTurnBlack);
             checkWhiteCastleLong.setChecked(jni.getWhiteCanCastleLong() != 0);
             checkWhiteCastleShort.setChecked(jni.getWhiteCanCastleShort() != 0);
             checkBlackCastleLong.setChecked(jni.getBlackCanCastleLong() != 0);
@@ -135,15 +135,15 @@ public class SetupActivity extends ChessBoardActivity {
         int iEP = getEpSquare(turn);
 
         jni.setCastlingsEPAnd50(
-                checkWhiteCastleLong.isChecked() ? 1 : 0,
-                checkWhiteCastleShort.isChecked() ? 1 : 0,
-                checkBlackCastleLong.isChecked() ? 1 : 0,
-                checkBlackCastleShort.isChecked() ? 1 : 0,
-                iEP, 0);
+            checkWhiteCastleLong.isChecked() ? 1 : 0,
+            checkWhiteCastleShort.isChecked() ? 1 : 0,
+            checkBlackCastleLong.isChecked() ? 1 : 0,
+            checkBlackCastleShort.isChecked() ? 1 : 0,
+            iEP, 0);
         jni.commitBoard();
 
         if (jni.isLegalPosition() == 0) {
-            openConfirmDialog("Use illegal position?", getString(R.string.alert_yes),getString(R.string.alert_no), () -> {
+            openConfirmDialog("Use illegal position?", getString(R.string.alert_yes), getString(R.string.alert_no), () -> {
                 commitFEN();
                 SetupActivity.this.finish();
             }, null);
@@ -185,11 +185,11 @@ public class SetupActivity extends ChessBoardActivity {
         whitePieces.setFocusable(true);
         whitePieces.setNextFocusLeftId(R.id.ChessBoardLayout);
         whitePieces.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-             @Override
-             public void onFocusChange(View v, boolean hasFocus) {
-                 dpadPieceFocus(hasFocus, BoardConstants.WHITE);
-             }
-         });
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                dpadPieceFocus(hasFocus, BoardConstants.WHITE);
+            }
+        });
 
         whitePieces.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -336,7 +336,7 @@ public class SetupActivity extends ChessBoardActivity {
         jni.reset();
 
         jni.setTurn(turn);
-        int[] pieceSums = new int[] {0, 0};
+        int[] pieceSums = new int[]{0, 0};
 
         boolean[] occupied = new boolean[64];
 
@@ -353,12 +353,12 @@ public class SetupActivity extends ChessBoardActivity {
         jni.putPiece(blackKingPos, BoardConstants.KING, BoardConstants.BLACK);
 
         int piecesToAdd = 1 + rng.nextInt(20);
-        int[] pieceTypes = new int[] {
-                BoardConstants.PAWN,
-                BoardConstants.KNIGHT,
-                BoardConstants.BISHOP,
-                BoardConstants.ROOK,
-                BoardConstants.QUEEN
+        int[] pieceTypes = new int[]{
+            BoardConstants.PAWN,
+            BoardConstants.KNIGHT,
+            BoardConstants.BISHOP,
+            BoardConstants.ROOK,
+            BoardConstants.QUEEN
         };
 
         for (int i = 0; i < piecesToAdd; i++) {
@@ -392,6 +392,7 @@ public class SetupActivity extends ChessBoardActivity {
         rebuildBoard();
         OnState();
     }
+
     public void addPiece(final int pos, final int piece, final int turn) {
         Log.d(TAG, "addPiece " + pos + " " + piece + " " + turn);
         if (piece == BoardConstants.DUCK) {
@@ -423,7 +424,7 @@ public class SetupActivity extends ChessBoardActivity {
     }
 
     protected void selectPosition(int pos) {
-        Log.d(TAG, "selectPosition!"  + pos + " " + isPosOfKing(pos) + " " + selectedColor);
+        Log.d(TAG, "selectPosition!" + pos + " " + isPosOfKing(pos) + " " + selectedColor);
         if (selectedColor == -1) {
             if (selectedPosition == -1) {
                 selectedPosition = pos;
@@ -500,7 +501,7 @@ public class SetupActivity extends ChessBoardActivity {
             }
         }
 
-        ChessSquareView duckSquare = (ChessSquareView)duckStack.getChildAt(0);
+        ChessSquareView duckSquare = (ChessSquareView) duckStack.getChildAt(0);
         duckSquare.setFocussed(duckStack.hasFocus());
         duckSquare.setSelected(selectedPiece == BoardConstants.DUCK);
     }
@@ -635,7 +636,7 @@ public class SetupActivity extends ChessBoardActivity {
     protected void setEpPosition(int ep) {
         Log.d(TAG, "ep " + ep);
         int position = 0;
-        switch(ep) {
+        switch (ep) {
             case 16:
             case 40:
                 position = 1;
@@ -726,7 +727,7 @@ public class SetupActivity extends ChessBoardActivity {
                     case DragEvent.ACTION_DRAG_ENDED: {
                         final View droppedView = (View) event.getLocalState();
                         if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
-                            droppedView.post(new Runnable(){
+                            droppedView.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     droppedView.setVisibility(View.VISIBLE);
@@ -749,7 +750,7 @@ public class SetupActivity extends ChessBoardActivity {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             int action = motionEvent.getAction();
             if (view instanceof ChessPieceView) {
-                final int pos =  ((ChessPieceView) view).getPos();
+                final int pos = ((ChessPieceView) view).getPos();
 
                 if (action == MotionEvent.ACTION_DOWN) {
                     Log.i(TAG, "onTouch DOWN " + pos);
@@ -772,7 +773,7 @@ public class SetupActivity extends ChessBoardActivity {
         }
     }
 
-    protected class MyClickListener  extends ChessBoardActivity.MyClickListener {
+    protected class MyClickListener extends ChessBoardActivity.MyClickListener {
 
         @Override
         public void onClick(View view) {

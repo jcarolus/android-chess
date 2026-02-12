@@ -47,7 +47,8 @@ public class GameApi {
             patTag = Pattern.compile(PGNHelper.regexPgnTag);
             patMoveDots = Pattern.compile("\\.\\.");
 
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     public final HashMap<String, String> pgnTags; //
@@ -99,7 +100,7 @@ public class GameApi {
     public boolean setFinalState(int state) {
         int size = pgnMoves.size();
         if (size > 0 && jni.getNumBoard() == size) {
-            pgnMoves.get(size -1).finalState = state;
+            pgnMoves.get(size - 1).finalState = state;
             dispatchState();
             return true;
         }
@@ -154,14 +155,14 @@ public class GameApi {
 
     public boolean isPromotionMove(int from, int to) {
         if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
-                BoardConstants.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
-                BoardConstants.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
-                jni.getTurn() == BoardConstants.WHITE
-                ||
-                jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
-                        BoardConstants.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
-                        BoardConstants.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
-                        jni.getTurn() == BoardConstants.BLACK) {
+            BoardConstants.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
+            BoardConstants.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
+            jni.getTurn() == BoardConstants.WHITE
+            ||
+            jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
+                BoardConstants.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
+                BoardConstants.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
+                jni.getTurn() == BoardConstants.BLACK) {
             return true;
         }
         return false;
@@ -331,7 +332,7 @@ public class GameApi {
             }
         }
 
-        if(loadPGNMoves(s)) {
+        if (loadPGNMoves(s)) {
             if (pgnTags.containsKey("Result")) {
                 String value = pgnTags.get("Result");
                 if (value != null && jni.isEnded() == 0) {
@@ -355,7 +356,7 @@ public class GameApi {
 
             int size = pgnMoves.size();
             if (size > 0) {
-                pgnMoves.get(size -1).finalState = finalState;
+                pgnMoves.get(size - 1).finalState = finalState;
             }
             dispatchState();
             return true;
@@ -394,13 +395,13 @@ public class GameApi {
     public void resetForfeitTime() {
         int size = pgnMoves.size();
         if (size > 0) {
-            int finalState = pgnMoves.get(size -1).finalState;
+            int finalState = pgnMoves.get(size - 1).finalState;
             // any forfeit or resigns can be reset here
             if (finalState == BoardConstants.WHITE_FORFEIT_TIME ||
-                    finalState == BoardConstants.BLACK_FORFEIT_TIME ||
-                    finalState == BoardConstants.WHITE_RESIGNED ||
-                    finalState == BoardConstants.BLACK_RESIGNED ) {
-                pgnMoves.get(size -1).finalState = -1;
+                finalState == BoardConstants.BLACK_FORFEIT_TIME ||
+                finalState == BoardConstants.WHITE_RESIGNED ||
+                finalState == BoardConstants.BLACK_RESIGNED) {
+                pgnMoves.get(size - 1).finalState = -1;
                 dispatchState();
             }
         }
@@ -451,7 +452,7 @@ public class GameApi {
             if (sSpecial != null) {
                 if (sSpecial.equals("+")) {
                     sMoveSpeech += "check ";
-                } else if(sSpecial.equals("#")) {
+                } else if (sSpecial.equals("#")) {
                     sMoveSpeech += "checkmate ";
                 }
             }
@@ -636,9 +637,9 @@ public class GameApi {
                 if (sPromote != null) {
                     piece = Move.getPromotionPiece(move);
                     if (false == (sPromote.equals("=Q") && piece == BoardConstants.QUEEN ||
-                            sPromote.equals("=R") && piece == BoardConstants.ROOK ||
-                            sPromote.equals("=B") && piece == BoardConstants.BISHOP ||
-                            sPromote.equals("=N") && piece == BoardConstants.KNIGHT))
+                        sPromote.equals("=R") && piece == BoardConstants.ROOK ||
+                        sPromote.equals("=B") && piece == BoardConstants.BISHOP ||
+                        sPromote.equals("=N") && piece == BoardConstants.KNIGHT))
                         continue;
                 }
 
@@ -730,6 +731,7 @@ public class GameApi {
         }
         return false;
     }
+
     private boolean loadPGNMoves(String s) {
         pgnMoves.clear();
 
@@ -790,7 +792,7 @@ public class GameApi {
                 cursor = best.end;
             }
 
-        } while(best != null);
+        } while (best != null);
 
         return true;
     }
@@ -842,9 +844,9 @@ public class GameApi {
 
         // to make sure the order of the `Seven Tag Roster`
         String[] arrHead = {
-                "Event", "Site", "Date", "Round", "White", "Black", "Result",
-                // and the others we support
-                "EventDate", "Variant", "Setup", "FEN", "PlyCount", "TimeControl", "Time"};
+            "Event", "Site", "Date", "Round", "White", "Black", "Result",
+            // and the others we support
+            "EventDate", "Variant", "Setup", "FEN", "PlyCount", "TimeControl", "Time"};
 
         String s = "", key;
         for (int i = 0; i < arrHead.length; i++) {
@@ -943,14 +945,20 @@ public class GameApi {
             // If we already have a cached match but it's behind the cursor, advance.
             while (has && start < cursor) {
                 has = matcher.find();
-                if (has) { start = matcher.start(); end = matcher.end(); }
+                if (has) {
+                    start = matcher.start();
+                    end = matcher.end();
+                }
             }
 
             // If we don't have a cached match yet, find the first one at/after cursor.
             if (!has) {
                 matcher.region(cursor, matcher.regionEnd());
                 has = matcher.find();
-                if (has) { start = matcher.start(); end = matcher.end(); }
+                if (has) {
+                    start = matcher.start();
+                    end = matcher.end();
+                }
             }
         }
     }

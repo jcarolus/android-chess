@@ -43,7 +43,7 @@ public class MagnifyingDragShadowBuilder extends View.DragShadowBuilder {
 
     @Override
     public void onDrawShadow(Canvas canvas) {
-        canvas.drawBitmap(scaledBitmap, (int)((circleSize - bitmapSize) / 2), (int)((circleSize - bitmapSize) / 2), null);
+        canvas.drawBitmap(scaledBitmap, (int) ((circleSize - bitmapSize) / 2), (int) ((circleSize - bitmapSize) / 2), null);
 
         int radius = circleSize / 2;
 

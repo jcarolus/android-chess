@@ -113,10 +113,12 @@ public class GamesListActivity extends ChessBoardActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         MaterialButton butPrev = findViewById(R.id.ButtonPrevious);
@@ -177,8 +179,8 @@ public class GamesListActivity extends ChessBoardActivity {
         gridLayoutPgn.setAdapter(adapterMoves);
 
         adapterGames = new SimpleCursorAdapter(this, R.layout.game_row, null,
-                new String[]{PGNColumns._ID, PGNColumns.WHITE, PGNColumns.BLACK, PGNColumns.DATE, PGNColumns.EVENT, PGNColumns.RATING, PGNColumns.RESULT},
-                new int[]{R.id.text_id, R.id.text_name1, R.id.text_name2, R.id.text_date, R.id.text_event, R.id.rating, R.id.text_result});
+            new String[]{PGNColumns._ID, PGNColumns.WHITE, PGNColumns.BLACK, PGNColumns.DATE, PGNColumns.EVENT, PGNColumns.RATING, PGNColumns.RESULT},
+            new int[]{R.id.text_id, R.id.text_name1, R.id.text_name2, R.id.text_date, R.id.text_event, R.id.rating, R.id.text_result});
 
         adapterGames.setViewBinder((view, cursor, columnIndex) -> {
 
@@ -197,7 +199,7 @@ public class GamesListActivity extends ChessBoardActivity {
             int nResultIndex = cursor.getColumnIndex(PGNColumns.RESULT);
             if (nResultIndex == columnIndex) {
                 String result = Utils.getColumnString(cursor, PGNColumns.RESULT);
-                ((TextView) view).setText(result.equals("1/2-1/2") ?  "½-½" : result);
+                ((TextView) view).setText(result.equals("1/2-1/2") ? "½-½" : result);
                 return true;
             }
 
@@ -372,7 +374,7 @@ public class GamesListActivity extends ChessBoardActivity {
         textViewPlayerWhite.setText(white);
         textViewPlayerBlack.setText(black);
         textViewDate.setText(date);
-        textViewResult.setText(result.equals("1/2-1/2") ?  "½-½" : result);
+        textViewResult.setText(result.equals("1/2-1/2") ? "½-½" : result);
         textViewRating.setText(rating);
 
         gameApi.pgnTags.put("Event", event);
@@ -390,11 +392,11 @@ public class GamesListActivity extends ChessBoardActivity {
 
         mapMoves.clear();
         for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove =  pgnEntries.get(i).sMove;
+            String sMove = pgnEntries.get(i).sMove;
             if (pgnEntries.get(i).duckMove != -1) {
                 sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
             }
-            String nr = i % 2 == 0 ? ((i/2+1) + ". ") : " ";
+            String nr = i % 2 == 0 ? ((i / 2 + 1) + ". ") : " ";
             String annotation = pgnEntries.get(i).sAnnotation;
             int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
 
@@ -442,23 +444,24 @@ public class GamesListActivity extends ChessBoardActivity {
     private void updateParams() {
         doFilterSort();
     }
+
     private void doFilterSort() {
         List<String> whereParts = new ArrayList<>();
         List<String> args = new ArrayList<>();
 
-        String value =  Utils.getTrimmedOrNull(editTextFilterWhite.getText());
+        String value = Utils.getTrimmedOrNull(editTextFilterWhite.getText());
         if (value != null && switchFilterWhite.isChecked()) {
             whereParts.add(PGNColumns.WHITE + " LIKE ?");
             args.add("%" + value + "%");
         }
 
-        value =  Utils.getTrimmedOrNull(editTextFilterBlack.getText());
+        value = Utils.getTrimmedOrNull(editTextFilterBlack.getText());
         if (value != null && switchFilterBlack.isChecked()) {
             whereParts.add(PGNColumns.BLACK + " LIKE ?");
             args.add("%" + value + "%");
         }
 
-        value =  Utils.getTrimmedOrNull(editTextFilterEvent.getText());
+        value = Utils.getTrimmedOrNull(editTextFilterEvent.getText());
         if (value != null && switchFilterEvent.isChecked()) {
             whereParts.add(PGNColumns.EVENT + " LIKE ?");
             args.add("%" + value + "%");
@@ -478,7 +481,7 @@ public class GamesListActivity extends ChessBoardActivity {
             args.add(String.valueOf(dateBefore.getTime()));
         }
 
-        String result =  Utils.getTrimmedOrNull(dropDownResult.getSelectionText());
+        String result = Utils.getTrimmedOrNull(dropDownResult.getSelectionText());
         if (result != null && switchFilterResult.isChecked()) {
             whereParts.add(PGNColumns.RESULT + " = ?");
             args.add(result);
@@ -569,10 +572,12 @@ public class GamesListActivity extends ChessBoardActivity {
                 }
 
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
             };
 
             MaterialButton buttonFilterClose = findViewById(R.id.ButtonFilterClose);

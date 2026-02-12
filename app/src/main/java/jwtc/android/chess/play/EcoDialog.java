@@ -22,6 +22,7 @@ import jwtc.android.chess.services.EcoService;
 
 public class EcoDialog extends ResultDialog {
     private static final String TAG = "EcoDialog";
+
     public EcoDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, String title, JSONArray jArray) {
         super(context, listener, requestCode);
 
@@ -37,13 +38,14 @@ public class EcoDialog extends ResultDialog {
                 String name = obj.getString("name");
                 String move = obj.getString("move");
                 itemList.add(move + ": " + name);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                context,
-                R.layout.simple_text,
-                itemList
+            context,
+            R.layout.simple_text,
+            itemList
         );
 
         list.setAdapter(adapter);
@@ -55,7 +57,8 @@ public class EcoDialog extends ResultDialog {
                 try {
                     JSONObject jObj = jArray.getJSONObject(position);
                     data.putCharSequence("item", jObj.getString("move"));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 setResult(data);
                 dismiss();
             }

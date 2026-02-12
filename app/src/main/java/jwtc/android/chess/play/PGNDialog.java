@@ -40,11 +40,11 @@ public class PGNDialog extends Dialog {
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
 
         for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove =  pgnEntries.get(i).sMove;
+            String sMove = pgnEntries.get(i).sMove;
             if (pgnEntries.get(i).duckMove != -1) {
                 sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
             }
-            String nr = i % 2 == 0 ? ((i/2+1) + ". ") : " ";
+            String nr = i % 2 == 0 ? ((i / 2 + 1) + ". ") : " ";
             String annotation = pgnEntries.get(i).sAnnotation;
             int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
 

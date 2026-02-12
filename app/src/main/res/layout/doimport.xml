@@ -11,8 +11,8 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dip"
-        >
+        android:padding="8dip">
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
@@ -27,29 +27,37 @@
             <TableLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <TableRow android:layout_margin="8dip">
-                    <TextView android:text="Added"
+
+                    <TextView
+                        android:text="Added"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dip"/>
+                        android:layout_margin="8dip" />
+
                     <TextView
                         android:id="@+id/TextViewDoImportCnt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minWidth="40dip"
-                        android:layout_margin="8dip"/>
+                        android:layout_margin="8dip" />
                 </TableRow>
+
                 <TableRow android:layout_margin="8dip">
-                    <TextView android:text="Ignored"
+
+                    <TextView
+                        android:text="Ignored"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dip"/>
+                        android:layout_margin="8dip" />
+
                     <TextView
                         android:id="@+id/TextViewDoImportCntFail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minWidth="40dip"
-                        android:layout_margin="8dip"/>
+                        android:layout_margin="8dip" />
                 </TableRow>
             </TableLayout>
 
@@ -60,7 +68,7 @@
                 app:trackColor="@color/primaryColor"
                 android:indeterminate="true"
                 android:visibility="invisible"
-                android:layout_alignParentBottom="true"/>
+                android:layout_alignParentBottom="true" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

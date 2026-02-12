@@ -136,14 +136,14 @@ public class ChessSquareView extends View {
                 paint.setFlags(Paint.ANTI_ALIAS_FLAG);
                 paint.setColor(0x99ffffff);
                 canvas.drawRect(
-                        isRot ? size - textSize : 0,
-                        isRot ? 0 : size - textSize,
-                        isRot ? size : textSize,
-                        isRot ? textSize : size, paint);
+                    isRot ? size - textSize : 0,
+                    isRot ? 0 : size - textSize,
+                    isRot ? size : textSize,
+                    isRot ? textSize : size, paint);
 
                 paint.setColor(0x99000000);
                 paint.setTextSize(textSize - 4);
-                canvas.drawText(coord, isRot ? size - textSize + 4: 4, isRot ? textSize - 4 : size - 4, paint);
+                canvas.drawText(coord, isRot ? size - textSize + 4 : 4, isRot ? textSize - 4 : size - 4, paint);
             }
         }
 

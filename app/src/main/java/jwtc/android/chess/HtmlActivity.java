@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.core.text.HtmlCompat;
+
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 

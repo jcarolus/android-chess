@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/LayoutMenu"
-        />
+        app:layout_constraintBottom_toTopOf="@id/LayoutMenu" />
 
     <include
         android:id="@+id/includeboard"
@@ -21,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <GridView
         android:id="@+id/GridLayoutPgn"
@@ -31,7 +30,7 @@
         app:layout_constraintTop_toTopOf="@id/includeboard"
         app:layout_constraintBottom_toBottomOf="@id/includeboard"
         app:layout_constraintStart_toStartOf="@id/includeboard"
-        app:layout_constraintEnd_toEndOf="@id/includeboard"/>
+        app:layout_constraintEnd_toEndOf="@id/includeboard" />
 
     <ScrollView
         android:id="@+id/ScrollView"
@@ -40,25 +39,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/LayoutMenu"
         app:layout_constraintStart_toEndOf="@id/includeboard"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
+        app:layout_constraintEnd_toEndOf="parent">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <include
                 android:id="@+id/LayoutControls"
                 layout="@layout/gameslist_controls"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
 
             <include
                 android:id="@+id/LayoutSeek"
                 layout="@layout/gameslist_seek"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 
@@ -68,6 +66,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

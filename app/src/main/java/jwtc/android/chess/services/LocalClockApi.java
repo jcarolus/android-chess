@@ -1,4 +1,5 @@
 package jwtc.android.chess.services;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -49,6 +50,7 @@ public class LocalClockApi extends ClockApi {
             clockThread = null;
         }
     }
+
     public long getBlackRemaining() {
         if (currentTurn == BoardConstants.BLACK) {
             final long currentTime = System.currentTimeMillis();
@@ -108,8 +110,7 @@ public class LocalClockApi extends ClockApi {
 
                     Thread.sleep(500);
                 }
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 Log.d(TAG, "Runnable interrupted");
             }
         }

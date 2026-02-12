@@ -68,18 +68,18 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void openConfirmDialog(String message, String positiveText, String negativeText, Runnable onPositive, Runnable onNegative) {
         new MaterialAlertDialogBuilder(BaseActivity.this)
-                .setMessage(message)
-                .setPositiveButton(positiveText, (dialog, which) -> {
-                    dialog.dismiss();
-                    onPositive.run();
-                })
-                .setNegativeButton(negativeText, (dialog, which) -> {
-                    dialog.dismiss();
-                    if (onNegative != null) {
-                        onNegative.run();
-                    }
-                })
-                .show();
+            .setMessage(message)
+            .setPositiveButton(positiveText, (dialog, which) -> {
+                dialog.dismiss();
+                onPositive.run();
+            })
+            .setNegativeButton(negativeText, (dialog, which) -> {
+                dialog.dismiss();
+                if (onNegative != null) {
+                    onNegative.run();
+                }
+            })
+            .show();
     }
 
 

@@ -50,9 +50,9 @@ public class PracticeImportProcessor extends PGNProcessor {
                 int plies = 2, undos = 0, moves = 0;
                 String s = "";
                 String[] arrMoves = {
-                        gameApi.exportMovesPGNFromPly(startExport),
-                        "", // not interested in move from opponent
-                        gameApi.exportMovesPGNFromPly(startExport - 3),
+                    gameApi.exportMovesPGNFromPly(startExport),
+                    "", // not interested in move from opponent
+                    gameApi.exportMovesPGNFromPly(startExport - 3),
                 };
 
                 if (startExport >= 3) { // at least 3 half moves for a 2 move mate

@@ -27,7 +27,7 @@ public class Clipboard {
 
     private static void initClipboardManager(Context context) {
         if (clipboardManager == null) {
-            clipboardManager = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         }
     }
 }

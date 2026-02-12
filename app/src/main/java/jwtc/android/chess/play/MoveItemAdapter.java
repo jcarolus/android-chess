@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import java.util.List;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.services.GameApi;
 
@@ -55,7 +56,7 @@ public class MoveItemAdapter extends BaseAdapter {
             textMove.setTextColor(ContextCompat.getColor(context, R.color.primaryColor));
         } else {
             textMove.setTextColor(ContextCompat.getColor(context, R.color.surfaceTextColor));
-            textMove.setPaintFlags(textMove.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+            textMove.setPaintFlags(textMove.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
         }
 
         textNr.setText(move.nr);

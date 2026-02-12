@@ -33,7 +33,7 @@ import jwtc.android.chess.puzzle.PuzzleActivity;
 import jwtc.android.chess.tools.AdvancedActivity;
 
 
-public class StartBaseActivity  extends AppCompatActivity {
+public class StartBaseActivity extends AppCompatActivity {
     public static final String TAG = "StartBaseActivity";
     protected RecyclerView list;
     protected StartItemAdapter startItemAdapter;
@@ -49,7 +49,7 @@ public class StartBaseActivity  extends AppCompatActivity {
         Configuration configuration = resources.getConfiguration();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
             getApplicationContext().createConfigurationContext(configuration);
         } else {
             resources.updateConfiguration(configuration, displayMetrics);
@@ -66,7 +66,8 @@ public class StartBaseActivity  extends AppCompatActivity {
             try {
                 PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
                 actionBar.setSubtitle(pInfo.versionName);
-            } catch (PackageManager.NameNotFoundException e) {}
+            } catch (PackageManager.NameNotFoundException e) {
+            }
         }
 
         setContentView(layoutResource);
@@ -74,15 +75,15 @@ public class StartBaseActivity  extends AppCompatActivity {
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         List<StartItem> startItemList = List.of(
-                new StartItem(R.drawable.start_play, R.string.start_play, PlayActivity.class),
-                new StartItem(R.drawable.lichess, R.string.start_lichess, LichessActivity.class),
-                new StartItem(R.drawable.fics, R.string.start_ics, ICSClient.class),
-                new StartItem(R.drawable.percent, R.string.start_practice, PracticeActivity.class),
-                new StartItem(R.drawable.puzzle, R.string.start_puzzles, PuzzleActivity.class),
-                new StartItem(R.drawable.wifi, R.string.start_hotspotboard, HotspotBoardActivity.class),
-                new StartItem(R.drawable.database, R.string.start_database, GamesListActivity.class),
-                new StartItem(R.drawable.sliders, R.string.start_boardpreferences, BoardPreferencesActivity.class),
-                new StartItem(R.drawable.tools, R.string.start_pgn, AdvancedActivity.class)
+            new StartItem(R.drawable.start_play, R.string.start_play, PlayActivity.class),
+            new StartItem(R.drawable.lichess, R.string.start_lichess, LichessActivity.class),
+            new StartItem(R.drawable.fics, R.string.start_ics, ICSClient.class),
+            new StartItem(R.drawable.percent, R.string.start_practice, PracticeActivity.class),
+            new StartItem(R.drawable.puzzle, R.string.start_puzzles, PuzzleActivity.class),
+            new StartItem(R.drawable.wifi, R.string.start_hotspotboard, HotspotBoardActivity.class),
+            new StartItem(R.drawable.database, R.string.start_database, GamesListActivity.class),
+            new StartItem(R.drawable.sliders, R.string.start_boardpreferences, BoardPreferencesActivity.class),
+            new StartItem(R.drawable.tools, R.string.start_pgn, AdvancedActivity.class)
         );
         startItemAdapter = new StartItemAdapter(startItemList, (item, pos) -> {
             Intent i = new Intent();

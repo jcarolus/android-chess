@@ -29,7 +29,7 @@ public class ChessPiecesStackView extends ViewGroup {
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child instanceof ChessPieceView) {
-                ((ChessPieceView)child).resetImageResource();
+                ((ChessPieceView) child).resetImageResource();
             }
         }
     }
@@ -52,10 +52,10 @@ public class ChessPiecesStackView extends ViewGroup {
 
             if (child.getVisibility() != GONE) {
                 final int pos = child instanceof ChessSquareView
-                        ? ((ChessSquareView) child).getPos()
-                        : (child instanceof ChessPieceView
-                            ? ((ChessPieceView) child).getPos()
-                            : ((CapturedCountView) child).getPiece());
+                    ? ((ChessSquareView) child).getPos()
+                    : (child instanceof ChessPieceView
+                    ? ((ChessPieceView) child).getPos()
+                    : ((CapturedCountView) child).getPiece());
                 layoutChild(child, pos, height);
             }
         }
@@ -68,7 +68,7 @@ public class ChessPiecesStackView extends ViewGroup {
         int height = MeasureSpec.getSize(heightMeasureSpec);
         int numChilds = getId() == R.id.duckStack ? 1 : 5; // hack, an attr is another solution
 
-        setMeasuredDimension(height * numChilds , height);
+        setMeasuredDimension(height * numChilds, height);
     }
 
     public void layoutChild(View child, int index, int height) {

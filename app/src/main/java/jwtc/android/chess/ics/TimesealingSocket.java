@@ -12,7 +12,7 @@ public class TimesealingSocket extends Socket implements Runnable {
 
         private final OutputStream outputStreamToDecorate;
         private final byte timesealKey[] = "Timestamp (FICS) v1.0 - programmed by Henrik Gram."
-                .getBytes();
+            .getBytes();
 
         public CryptOutputStream(OutputStream outputstream) {
             buffer = new byte[10000];
@@ -24,8 +24,8 @@ public class TimesealingSocket extends Socket implements Runnable {
             if (i == 10) {
                 synchronized (TimesealingSocket.this) {
                     int resultLength = crypt(byteArrayOutputStream
-                            .toByteArray(), System.currentTimeMillis()
-                            - initialTime);
+                        .toByteArray(), System.currentTimeMillis()
+                        - initialTime);
                     outputStreamToDecorate.write(buffer, 0, resultLength);
                     outputStreamToDecorate.flush();
                     byteArrayOutputStream.reset();
@@ -38,7 +38,7 @@ public class TimesealingSocket extends Socket implements Runnable {
         private int crypt(byte stringToWriteBytes[], long timestamp) {
             int bytesInLength = stringToWriteBytes.length;
             System.arraycopy(stringToWriteBytes, 0, buffer, 0,
-                    stringToWriteBytes.length);
+                stringToWriteBytes.length);
             buffer[bytesInLength++] = 24;
             byte abyte1[] = Long.toString(timestamp).getBytes();
             System.arraycopy(abyte1, 0, buffer, bytesInLength, abyte1.length);
@@ -100,7 +100,7 @@ public class TimesealingSocket extends Socket implements Runnable {
     }
 
     public TimesealingSocket(String s, int i, String intialTimestampString)
-            throws IOException {
+        throws IOException {
         super(s, i);
         timesealPipe = new TimesealPipe(10000);
         initialTimesealString = intialTimestampString;
@@ -126,7 +126,7 @@ public class TimesealingSocket extends Socket implements Runnable {
     public void run() {
         try {
             BufferedInputStream bufferedinputstream = new BufferedInputStream(
-                    super.getInputStream());
+                super.getInputStream());
             TimesealOutputStream timesealOutputStream = timesealPipe.getTimesealOutputStream();
             //Timeseal 1
             //String timesealRequest = "\n\r[G]\n\r";
@@ -160,10 +160,10 @@ public class TimesealingSocket extends Socket implements Runnable {
                     }
                 } else if (j != 0) {
                     timesealOutputStream
-                            .write((byte) timesealRequest.charAt(0));
+                        .write((byte) timesealRequest.charAt(0));
                     for (int i1 = 0; i1 < j - 1; i1++) {
                         timesealRequestBytes[i1] = (byte) timesealRequest
-                                .charAt(i1 + 1);
+                            .charAt(i1 + 1);
                         i++;
                     }
 

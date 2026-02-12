@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,9 +27,11 @@
                 style="@style/MyHeaderTextStyle"
                 android:id="@+id/RadioButtonChallenge" />
         </RadioGroup>
+
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
+
             <TableRow>
 
                 <TextView
@@ -176,17 +179,19 @@
             </TableRow>
 
         </TableLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/button_cancel"
                 android:id="@+id/ButtonMatchCancel"
-                android:layout_margin="2dip"/>
+                android:layout_margin="2dip" />
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
@@ -194,7 +199,7 @@
                 android:layout_weight="1"
                 android:text="@string/button_ok"
                 android:id="@+id/ButtonMatchOk"
-                android:layout_margin="2dip"/>
+                android:layout_margin="2dip" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -8,6 +8,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <EditText
             android:id="@+id/EditICSConsole"
             android:layout_width="fill_parent"
@@ -17,11 +18,13 @@
             android:inputType="text"
             android:imeOptions="actionSend" />
     </com.google.android.material.card.MaterialCardView>
+
     <ScrollView
         android:id="@+id/ScrollICSConsole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <TextView
             android:text="..."
             android:id="@+id/TextViewConsole"

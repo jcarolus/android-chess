@@ -81,10 +81,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Bundle bundle = new Bundle();
         try {
             GameMessage message = new GameMessage(
-                    gameApi.getFEN(),
-                    ((HotspotBoardApi)gameApi).getWhite(),
-                    ((HotspotBoardApi)gameApi).getBlack(),
-                    move
+                gameApi.getFEN(),
+                ((HotspotBoardApi) gameApi).getWhite(),
+                ((HotspotBoardApi) gameApi).getBlack(),
+                move
             );
             bundle.putString("data", message.toJsonString());
             msg.setData(bundle);
@@ -99,7 +99,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public boolean requestMove(final int from, final int to) {
         Log.d(TAG, "requestMove");
-        if (((HotspotBoardApi)gameApi).isMyTurn()) {
+        if (((HotspotBoardApi) gameApi).isMyTurn()) {
             boolean res = super.requestMove(from, to);
             if (!res) {
                 rebuildBoard();
@@ -140,11 +140,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private void sendGameMessage(int type, int lastMove) {
         try {
             GameMessage message = new GameMessage(
-                    type,
-                    gameApi.getFEN(),
-                    ((HotspotBoardApi)gameApi).getWhite(),
-                    ((HotspotBoardApi)gameApi).getBlack(),
-                    lastMove
+                type,
+                gameApi.getFEN(),
+                ((HotspotBoardApi) gameApi).getWhite(),
+                ((HotspotBoardApi) gameApi).getBlack(),
+                lastMove
             );
             Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
             Bundle bundle = new Bundle();
@@ -170,9 +170,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 if (data != null) {
                     try {
                         GameMessage message = GameMessage.fromJson(data);
-                        ((HotspotBoardApi)gameApi).onGameUpdate(message);
+                        ((HotspotBoardApi) gameApi).onGameUpdate(message);
 
-                        switch(message.type) {
+                        switch (message.type) {
                             case GameMessage.TYPE_MOVE:
                                 if (message.lastMove > 0) {
                                     moveToPositions.clear();
@@ -236,7 +236,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.onStop();
         Log.d(TAG, "onStop");
         // if game is on, opponent wins
-        if (messengerFromService != null && ((HotspotBoardApi)gameApi).getOpponentName().length() > 0) {
+        if (messengerFromService != null && ((HotspotBoardApi) gameApi).getOpponentName().length() > 0) {
             // This might not be sent if the service is already disconnected.
             // The opponent will see a socket disconnection message.
         }
@@ -288,7 +288,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             String name = editName.getText().toString();
             Log.d(TAG, "buttonConnect " + name);
             if (!name.isEmpty()) {
-                ((HotspotBoardApi)gameApi).setMyName(name);
+                ((HotspotBoardApi) gameApi).setMyName(name);
                 textPlayer.setText(name);
                 startSession();
             }
@@ -335,7 +335,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     protected void onPause() {
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        editor.putString("hotspotboardName", ((HotspotBoardApi)gameApi).getMyName());
+        editor.putString("hotspotboardName", ((HotspotBoardApi) gameApi).getMyName());
         editor.putBoolean("hostpotboardIsHost", isHost);
 
         editor.commit();
@@ -346,7 +346,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private void newGame() {
         gameApi.newGame();
         overrideGameState = 0;
-        ((HotspotBoardApi)gameApi).setPlayingAsWhite(isPlayAsWhite);
+        ((HotspotBoardApi) gameApi).setPlayingAsWhite(isPlayAsWhite);
         sendGameMessage(GameMessage.TYPE_MOVE, 0); // send initial state
 
         rebuildBoard();
@@ -382,12 +382,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     protected void updateTurnSwitchers() {
         final int currentTurn = jni.getTurn();
-        boolean amIWhite = ((HotspotBoardApi)gameApi).isPlayingAsWhite();
+        boolean amIWhite = ((HotspotBoardApi) gameApi).isPlayingAsWhite();
 
-        switchTurnOpp.setVisibility(currentTurn == BoardConstants.BLACK && amIWhite || currentTurn == BoardConstants.WHITE && !amIWhite ?  View.VISIBLE : View.INVISIBLE);
+        switchTurnOpp.setVisibility(currentTurn == BoardConstants.BLACK && amIWhite || currentTurn == BoardConstants.WHITE && !amIWhite ? View.VISIBLE : View.INVISIBLE);
         switchTurnOpp.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
 
-        switchTurnMe.setVisibility(currentTurn == BoardConstants.WHITE && amIWhite || currentTurn == BoardConstants.BLACK && !amIWhite ?  View.VISIBLE : View.INVISIBLE);
+        switchTurnMe.setVisibility(currentTurn == BoardConstants.WHITE && amIWhite || currentTurn == BoardConstants.BLACK && !amIWhite ? View.VISIBLE : View.INVISIBLE);
         switchTurnMe.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
     }
 
@@ -397,15 +397,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
 
         new MaterialAlertDialogBuilder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    updateGameButtonsVisibility(false);
-                    updateNewGameButtonVisibility(true);
-                })
-                .setCancelable(false)
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .show();
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                updateGameButtonsVisibility(false);
+                updateNewGameButtonVisibility(true);
+            })
+            .setCancelable(false)
+            .setIcon(android.R.drawable.ic_dialog_info)
+            .show();
     }
 
     @Override
@@ -414,14 +414,14 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         final int state = gameApi.getState();
         int turn = jni.getTurn();
-        boolean amIWhite = ((HotspotBoardApi)gameApi).isPlayingAsWhite();
+        boolean amIWhite = ((HotspotBoardApi) gameApi).isPlayingAsWhite();
         chessBoardView.setRotated(!amIWhite);
 
         updateTurnSwitchers();
 
         if (((HotspotBoardApi) gameApi).getOpponentName().length() > 0) {
-            textPlayer.setText(((HotspotBoardApi)gameApi).getMyName());
-            textOpponent.setText(((HotspotBoardApi)gameApi).getOpponentName());
+            textPlayer.setText(((HotspotBoardApi) gameApi).getMyName());
+            textOpponent.setText(((HotspotBoardApi) gameApi).getOpponentName());
         }
 
         if (state == BoardConstants.MATE) {

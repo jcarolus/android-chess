@@ -79,7 +79,7 @@ public class start extends StartBaseActivity {
         // Configure Cast device discovery
         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
         mMediaRouteSelector = new MediaRouteSelector.Builder()
-                .addControlCategory(CastMediaControlIntent.categoryForCast("05EB93C6")).build();
+            .addControlCategory(CastMediaControlIntent.categoryForCast("05EB93C6")).build();
         mMediaRouterCallback = new MyMediaRouterCallback();
     }
 
@@ -88,7 +88,7 @@ public class start extends StartBaseActivity {
         super.onStart();
         // Start media router discovery
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
-                MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+            MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
     }
 
     @Override
@@ -111,8 +111,8 @@ public class start extends StartBaseActivity {
         getMenuInflater().inflate(R.menu.start_topmenu, menu);
         MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
         MediaRouteActionProvider mediaRouteActionProvider
-                = (MediaRouteActionProvider) MenuItemCompat
-                .getActionProvider(mediaRouteMenuItem);
+            = (MediaRouteActionProvider) MenuItemCompat
+            .getActionProvider(mediaRouteMenuItem);
         // Set the MediaRouteActionProvider selector for device discovery.
         mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
         return true;
@@ -141,17 +141,17 @@ public class start extends StartBaseActivity {
                 if (!_lastMessage.equals(message)) {
                     //Log.i(TAG, "Try to send " + message);
                     Cast.CastApi.sendMessage(mApiClient,
-                            mChessChannel.getNamespace(), message).setResultCallback(
-                            new ResultCallback<Status>() {
-                                @Override
-                                public void onResult(Status result) {
-                                    if (result.isSuccess()) {
-                                        _lastMessage = message;
-                                    } else {
-                                        Log.e(TAG, "Sending message failed");
-                                    }
+                        mChessChannel.getNamespace(), message).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status result) {
+                                if (result.isSuccess()) {
+                                    _lastMessage = message;
+                                } else {
+                                    Log.e(TAG, "Sending message failed");
                                 }
-                            });
+                            }
+                        });
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Exception while sending message", e);
@@ -185,7 +185,7 @@ public class start extends StartBaseActivity {
      * Google Play services callbacks
      */
     private class ConnectionCallbacks implements
-            GoogleApiClient.ConnectionCallbacks {
+        GoogleApiClient.ConnectionCallbacks {
 
         @Override
         public void onConnected(Bundle connectionHint) {
@@ -203,16 +203,16 @@ public class start extends StartBaseActivity {
 
                     // Check if the receiver app is still running
                     if ((connectionHint != null)
-                            && connectionHint.getBoolean(Cast.EXTRA_APP_NO_LONGER_RUNNING)) {
+                        && connectionHint.getBoolean(Cast.EXTRA_APP_NO_LONGER_RUNNING)) {
                         Log.d(TAG, "App  is no longer running");
                         teardown(true);
                     } else {
                         // Re-create the custom message channel
                         try {
                             Cast.CastApi.setMessageReceivedCallbacks(
-                                    mApiClient,
-                                    mChessChannel.getNamespace(),
-                                    mChessChannel);
+                                mApiClient,
+                                mChessChannel.getNamespace(),
+                                mChessChannel);
                         } catch (IOException e) {
                             Log.e(TAG, "Exception while creating channel", e);
                         }
@@ -220,48 +220,48 @@ public class start extends StartBaseActivity {
                 } else {
                     // Launch the receiver app
                     Cast.CastApi.launchApplication(mApiClient, "05EB93C6", false)
-                            .setResultCallback(
-                                    new ResultCallback<Cast.ApplicationConnectionResult>() {
-                                        @Override
-                                        public void onResult(
-                                                Cast.ApplicationConnectionResult result) {
-                                            Status status = result.getStatus();
-                                            Log.d(TAG,
-                                                    "ApplicationConnectionResultCallback.onResult:"
-                                                            + status.getStatusCode());
-                                            if (status.isSuccess()) {
-                                                ApplicationMetadata applicationMetadata = result
-                                                        .getApplicationMetadata();
-                                                mSessionId = result.getSessionId();
-                                                String applicationStatus = result
-                                                        .getApplicationStatus();
-                                                boolean wasLaunched = result.getWasLaunched();
-                                                Log.d(TAG, "application name: "
-                                                        + applicationMetadata.getName()
-                                                        + ", status: " + applicationStatus
-                                                        + ", sessionId: " + mSessionId
-                                                        + ", wasLaunched: " + wasLaunched);
-                                                mApplicationStarted = true;
+                        .setResultCallback(
+                            new ResultCallback<Cast.ApplicationConnectionResult>() {
+                                @Override
+                                public void onResult(
+                                    Cast.ApplicationConnectionResult result) {
+                                    Status status = result.getStatus();
+                                    Log.d(TAG,
+                                        "ApplicationConnectionResultCallback.onResult:"
+                                            + status.getStatusCode());
+                                    if (status.isSuccess()) {
+                                        ApplicationMetadata applicationMetadata = result
+                                            .getApplicationMetadata();
+                                        mSessionId = result.getSessionId();
+                                        String applicationStatus = result
+                                            .getApplicationStatus();
+                                        boolean wasLaunched = result.getWasLaunched();
+                                        Log.d(TAG, "application name: "
+                                            + applicationMetadata.getName()
+                                            + ", status: " + applicationStatus
+                                            + ", sessionId: " + mSessionId
+                                            + ", wasLaunched: " + wasLaunched);
+                                        mApplicationStarted = true;
 
-                                                // Create the custom message
-                                                // channel
-                                                mChessChannel = new ChessChannel();
-                                                try {
-                                                    Cast.CastApi.setMessageReceivedCallbacks(
-                                                            mApiClient,
-                                                            mChessChannel.getNamespace(),
-                                                            mChessChannel);
-                                                } catch (IOException e) {
-                                                    Log.e(TAG, "Exception while creating channel",
-                                                            e);
-                                                }
-
-                                            } else {
-                                                Log.e(TAG, "application could not launch");
-                                                teardown(true);
-                                            }
+                                        // Create the custom message
+                                        // channel
+                                        mChessChannel = new ChessChannel();
+                                        try {
+                                            Cast.CastApi.setMessageReceivedCallbacks(
+                                                mApiClient,
+                                                mChessChannel.getNamespace(),
+                                                mChessChannel);
+                                        } catch (IOException e) {
+                                            Log.e(TAG, "Exception while creating channel",
+                                                e);
                                         }
-                                    });
+
+                                    } else {
+                                        Log.e(TAG, "application could not launch");
+                                        teardown(true);
+                                    }
+                                }
+                            });
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Failed to launch application", e);
@@ -279,7 +279,7 @@ public class start extends StartBaseActivity {
      * Google Play services callbacks
      */
     private class ConnectionFailedListener implements
-            GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener {
 
         @Override
         public void onConnectionFailed(ConnectionResult result) {
@@ -307,12 +307,12 @@ public class start extends StartBaseActivity {
             mConnectionCallbacks = new ConnectionCallbacks();
             mConnectionFailedListener = new ConnectionFailedListener();
             Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
-                    .builder(mSelectedDevice, mCastListener);
+                .builder(mSelectedDevice, mCastListener);
             mApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(Cast.API, apiOptionsBuilder.build())
-                    .addConnectionCallbacks(mConnectionCallbacks)
-                    .addOnConnectionFailedListener(mConnectionFailedListener)
-                    .build();
+                .addApi(Cast.API, apiOptionsBuilder.build())
+                .addConnectionCallbacks(mConnectionCallbacks)
+                .addOnConnectionFailedListener(mConnectionFailedListener)
+                .build();
 
             mApiClient.connect();
         } catch (Exception e) {
@@ -355,8 +355,8 @@ public class start extends StartBaseActivity {
                         Cast.CastApi.stopApplication(mApiClient, mSessionId);
                         if (mChessChannel != null) {
                             Cast.CastApi.removeMessageReceivedCallbacks(
-                                    mApiClient,
-                                    mChessChannel.getNamespace());
+                                mApiClient,
+                                mChessChannel.getNamespace());
                             mChessChannel = null;
                         }
                     } catch (IOException e) {

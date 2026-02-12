@@ -68,14 +68,14 @@ public class Sounds {
     protected void initSoundPool() {
         if (soundPool == null) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_GAME)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .build();
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
 
             soundPool = new SoundPool.Builder()
-                    .setMaxStreams(7)
-                    .setAudioAttributes(audioAttributes)
-                    .build();
+                .setMaxStreams(7)
+                .setAudioAttributes(audioAttributes)
+                .build();
 
             soundTickTock = soundPool.load(context, R.raw.ticktock, 1);
             soundCheck = soundPool.load(context, R.raw.impact, 2);

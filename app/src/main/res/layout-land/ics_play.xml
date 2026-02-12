@@ -15,21 +15,24 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/ics_board_top"
+        <include
+            layout="@layout/ics_board_top"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true" />
 
-        <include layout="@layout/ics_board_bottom"
+        <include
+            layout="@layout/ics_board_bottom"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true" />
 
-        <include layout="@layout/ics_play_controls"
+        <include
+            layout="@layout/ics_play_controls"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_below="@id/LayoutBoardTop"
-            android:layout_above="@id/LayoutBoardBottom"/>
+            android:layout_above="@id/LayoutBoardBottom" />
 
     </RelativeLayout>
 

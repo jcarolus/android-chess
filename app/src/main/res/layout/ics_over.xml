@@ -8,8 +8,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dip"
-        >
+        android:padding="16dip">
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,7 +24,7 @@
             android:id="@+id/ButtonGameRematch"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            style="@style/ChessButton"/>
+            style="@style/ChessButton" />
 
 
         <com.google.android.material.button.MaterialButton
@@ -34,7 +33,7 @@
             android:id="@+id/ButtonGameExamine"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            style="@style/ChessButton"/>
+            style="@style/ChessButton" />
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
@@ -43,7 +42,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            style="@style/ChessButton"/>
+            style="@style/ChessButton" />
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"

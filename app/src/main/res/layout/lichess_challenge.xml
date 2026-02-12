@@ -5,6 +5,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="16dip">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,11 +15,13 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/CardViewPlayer"
             style="@style/MyFormCardView">
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="4dip">
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/InputMatchOpponent"
                     android:layout_width="match_parent"
@@ -33,18 +36,21 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyFormCardView">
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="4dip">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/lichess_create_challenge_time"
-                    style="@style/MyHeaderTextStyle"/>
+                    style="@style/MyHeaderTextStyle" />
+
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/ToggleTimeControlGroup"
                     android:layout_width="match_parent"
@@ -66,11 +72,13 @@
                         android:layout_weight="1"
                         android:text="@string/lichess_create_challenge_time_control" />
                 </com.google.android.material.button.MaterialButtonToggleGroup>
+
                 <LinearLayout
                     android:id="@+id/LayoutDays"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/InputDays"
                         android:layout_width="match_parent"
@@ -87,11 +95,13 @@
                             android:imeOptions="actionDone" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/LayoutMinutes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/InputMinutes"
                         android:layout_width="match_parent"
@@ -108,11 +118,13 @@
                             android:imeOptions="actionDone" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/LayoutIncrement"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/InputIncrement"
                         android:layout_width="match_parent"
@@ -131,18 +143,21 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyFormCardView">
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="4dip">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lichess_create_challenge_variant"
-                style="@style/MyHeaderTextStyle"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lichess_create_challenge_variant"
+                    style="@style/MyHeaderTextStyle" />
+
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/ToggleVariantGroup"
                     android:layout_width="match_parent"
@@ -166,18 +181,21 @@
                 </com.google.android.material.button.MaterialButtonToggleGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyFormCardView">
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="4dip">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lichess_create_challenge_color"
-                style="@style/MyHeaderTextStyle"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lichess_create_challenge_color"
+                    style="@style/MyHeaderTextStyle" />
+
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/ToggleColorGroup"
                     android:layout_width="match_parent"
@@ -208,12 +226,14 @@
                 </com.google.android.material.button.MaterialButtonToggleGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyFormCardView">
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -230,7 +250,7 @@
                         android:id="@+id/CheckBoxSeekRated"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="4"/>
+                        android:layout_weight="4" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -238,13 +258,14 @@
         <LinearLayout
             android:orientation="horizontal"
             style="@style/MyFormLayout">
+
             <Button
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/button_cancel"
                 android:id="@+id/ButtonChallengeCancel"
-                android:layout_margin="2dip"/>
+                android:layout_margin="2dip" />
 
             <Button
                 android:layout_width="0dp"
@@ -252,7 +273,7 @@
                 android:layout_weight="1"
                 android:text="@string/button_ok"
                 android:id="@+id/ButtonChallengeOk"
-                android:layout_margin="2dip"/>
+                android:layout_margin="2dip" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

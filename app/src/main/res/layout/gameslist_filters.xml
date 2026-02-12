@@ -2,143 +2,167 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_gravity="center"
-    android:padding="8dip">
-    <TableLayout
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TableRow>
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchFilterWhite"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minWidth="220dp"
-                android:hint="@string/savegame_white">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/EditTextFilterWhite"
-                    android:layout_height="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:padding="8dip">
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TableRow>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchFilterWhite"
                     android:layout_width="match_parent"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </TableRow>
-        <TableRow>
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchFilterBlack"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minWidth="220dp"
-                android:hint="@string/savegame_black">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/EditTextFilterBlack"
-                    android:layout_height="wrap_content"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </TableRow>
-        <TableRow>
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchFilterEvent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minWidth="220dp"
-                android:hint="@string/savegame_event">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/EditTextFilterEvent"
                     android:layout_height="wrap_content"
+                    android:minWidth="220dp"
+                    android:hint="@string/savegame_white">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/EditTextFilterWhite"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
+
+            <TableRow>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchFilterBlack"
                     android:layout_width="match_parent"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </TableRow>
-        <TableRow>
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchFilterDateAfter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content" />
 
-            <jwtc.android.chess.views.PGNDateView
-                android:id="@+id/PGNDateAfter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Date after"
-                android:minWidth="220dp" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="220dp"
+                    android:hint="@string/savegame_black">
 
-        </TableRow>
-        <TableRow>
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchFilterDateBefore"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/EditTextFilterBlack"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
 
-            <jwtc.android.chess.views.PGNDateView
-                android:id="@+id/PGNDateBefore"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Date before"
-                android:minWidth="220dp" />
-        </TableRow>
-        <TableRow>
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchFilterResult"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <TableRow>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchFilterEvent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="220dp"
+                    android:hint="@string/savegame_event">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/EditTextFilterEvent"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
+
+            <TableRow>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchFilterDateAfter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <jwtc.android.chess.views.PGNDateView
+                    android:id="@+id/PGNDateAfter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Date after"
+                    android:minWidth="220dp" />
+
+            </TableRow>
+
+            <TableRow>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchFilterDateBefore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <jwtc.android.chess.views.PGNDateView
+                    android:id="@+id/PGNDateBefore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Date before"
+                    android:minWidth="220dp" />
+            </TableRow>
+
+            <TableRow>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchFilterResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/DropdownResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Result"
+                    android:minWidth="220dp" />
+            </TableRow>
+        </TableLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <jwtc.android.chess.views.FixedDropdownView
-                android:id="@+id/DropdownResult"
-                android:layout_width="match_parent"
+                android:id="@+id/DropdownOrderBy"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Result"
-                android:minWidth="220dp"/>
-        </TableRow>
-    </TableLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <jwtc.android.chess.views.FixedDropdownView
-            android:id="@+id/DropdownOrderBy"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="8dip"
-            android:hint="Order by"/>
-        <jwtc.android.chess.views.FixedDropdownView
-            android:id="@+id/DropdownOrderDirection"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Order direction"/>
-    </LinearLayout>
+                android:layout_weight="1"
+                android:layout_marginRight="8dip"
+                android:hint="Order by" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="right">
-        <TextView
-            android:id="@+id/TextViewFilterInfo"
+            <jwtc.android.chess.views.FixedDropdownView
+                android:id="@+id/DropdownOrderDirection"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Order direction" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dip"
-            android:text="0"/>
-        <com.google.android.material.button.MaterialButton android:id="@+id/ButtonFilterClose"
-            android:text="Close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:orientation="horizontal"
+            android:layout_gravity="right">
+
+            <TextView
+                android:id="@+id/TextViewFilterInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dip"
+                android:text="0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonFilterClose"
+                android:text="Close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
 </ScrollView>

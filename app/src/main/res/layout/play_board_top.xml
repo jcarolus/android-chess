@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/LayoutBoardTop"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="4dip">
+
     <TableRow android:gravity="center_vertical">
 
         <ImageView
@@ -12,7 +13,7 @@
             android:layout_height="12dip"
             android:layout_width="12dip"
             android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
+            android:layout_marginRight="8dip" />
 
         <TextView
             android:id="@+id/TextViewTopClockTime"
@@ -31,7 +32,7 @@
             android:ellipsize="end"
             style="@style/MyHeaderTextStyle"
             android:text="Title..."
-            android:importantForAccessibility="no"/>
+            android:importantForAccessibility="no" />
 
         <jwtc.android.chess.views.ChessPiecesStackView
             android:layout_width="wrap_content"

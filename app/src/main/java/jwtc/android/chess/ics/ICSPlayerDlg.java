@@ -84,16 +84,16 @@ public class ICSPlayerDlg extends Dialog {
 
             alertDialog.setView(input);
             alertDialog.setOnKeyListener((dialog, keyCode, event) -> {
-            if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                _parent.sendString("smoves " + _opponentName + " " + input.getText());
-                alertDialog.dismiss();
-                _parent.setConsoleView();
-                ICSPlayerDlg.this.dismiss();
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                        _parent.sendString("smoves " + _opponentName + " " + input.getText());
+                        alertDialog.dismiss();
+                        _parent.setConsoleView();
+                        ICSPlayerDlg.this.dismiss();
 
-                return true;
-            }
-            return false;
-            }
+                        return true;
+                    }
+                    return false;
+                }
             );
 
             alertDialog.show();

@@ -15,6 +15,7 @@ public abstract class ClockApi {
     public void addListener(ClockListener listener) {
         this.listeners.add(listener);
     }
+
     public void removeListener(ClockListener listener) {
         this.listeners.remove(listener);
     }
@@ -36,7 +37,7 @@ public abstract class ClockApi {
     }
 
     protected String timeToString(final long millies) {
-        int seconds = (int)(millies / 1000);
+        int seconds = (int) (millies / 1000);
         if (seconds >= 0) {
             return String.format("%d:%02d", (int) (Math.floor(seconds / 60)), seconds % 60);
         } else {

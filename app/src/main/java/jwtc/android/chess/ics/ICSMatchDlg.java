@@ -140,15 +140,15 @@ public class ICSMatchDlg extends ResultDialog {
 
                 if (_rbSeek.isChecked()) {
                     s = "seek " + (_checkManual.isChecked() ? "m " : "a ") + (_checkFormula.isChecked() ? "f " : "") + _editRatingRangeMIN.getText().toString()
-                            + "-" + _editRatingRangeMAX.getText().toString() + " ";
+                        + "-" + _editRatingRangeMAX.getText().toString() + " ";
 
                 } else {
                     s = "match " + sP + " ";
                 }
 
                 s += (_checkRated.isChecked() ? "rated " : "unrated ") +
-                        (String) _spinTime.getSelectedItem() + " " +
-                        (String) _spinIncrement.getSelectedItem() + " ";
+                    (String) _spinTime.getSelectedItem() + " " +
+                    (String) _spinIncrement.getSelectedItem() + " ";
 
                 // Color
                 if (((String) _spinColor.getSelectedItem()).equals((String) _spinColor.getItemAtPosition(1))) {

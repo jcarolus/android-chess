@@ -2,6 +2,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="8dip">
+
     <TableRow
         style="@style/MyRowStyle"
         android:layout_width="wrap_content"
@@ -14,7 +15,7 @@
             android:paddingRight="4dip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:importantForAccessibility="no"/>
+            android:importantForAccessibility="no" />
 
         <TextView
             android:id="@+id/TextViewMove"
@@ -32,6 +33,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:ellipsize="end"/>
+            android:ellipsize="end" />
     </TableRow>
 </TableLayout>

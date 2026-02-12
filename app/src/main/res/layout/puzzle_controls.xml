@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/TextViewSolution"
             style="@style/MyPaneTextStyle"
@@ -15,26 +17,30 @@
             android:layout_marginTop="4dip"
             android:layout_marginLeft="4dip"
             android:layout_marginRight="4dip"
-            android:accessibilityLiveRegion="assertive"/>
+            android:accessibilityLiveRegion="assertive" />
+
         <LinearLayout
             android:id="@+id/LayoutButtons"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzlePrevious"
                 app:icon="@drawable/ic_chevron_left"
                 android:contentDescription="@string/button_previous_position"
                 style="@style/ChessImageButton" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
-            <com.google.android.material.button.MaterialButton android:id="@+id/ButtonPuzzleShow"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonPuzzleShow"
                 android:text="@string/puzzle_show"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleRetry"
@@ -45,7 +51,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleNext"
@@ -54,11 +60,13 @@
                 style="@style/ChessImageButton" />
 
         </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dip"
-            android:text="@string/puzzle_help"/>
+            android:text="@string/puzzle_help" />
+
         <TextView
             android:id="@+id/TextViewWhitePieces"
             style="@style/MyPaneTextStyle"
@@ -67,7 +75,8 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="none"/>
+            android:accessibilityLiveRegion="none" />
+
         <TextView
             android:id="@+id/TextViewBlackPieces"
             style="@style/MyPaneTextStyle"
@@ -76,6 +85,6 @@
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
-            android:accessibilityLiveRegion="none"/>
+            android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

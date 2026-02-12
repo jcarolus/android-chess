@@ -25,7 +25,7 @@ public class ChessPuzzleProvider extends ContentProvider {
     private static final String TAG = "ChessPuzzleProvider";
 
     private static final String DATABASE_NAME = "chess_puzzles.db";
-    private static final int DATABASE_VERSION = 8; // 7.6 lessons 
+    private static final int DATABASE_VERSION = 8; // 7.6 lessons
     private static final String GAMES_TABLE_NAME = "games";
 
     private static HashMap<String, String> sGamesProjectionMap;
@@ -45,9 +45,9 @@ public class ChessPuzzleProvider extends ContentProvider {
     public static final String COL_TYPE = "PUZZLE_TYPE";
 
     public static final String[] COLUMNS = {
-            COL_ID,
-            COL_TYPE,
-            COL_PGN
+        COL_ID,
+        COL_TYPE,
+        COL_PGN
     };
 
     public static final String DEFAULT_SORT_ORDER = "_ID ASC";
@@ -65,16 +65,16 @@ public class ChessPuzzleProvider extends ContentProvider {
 
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + GAMES_TABLE_NAME + " ("
-                    + COL_ID + " INTEGER PRIMARY KEY,"
-                    + COL_TYPE + " INTEGER,"
-                    + COL_PGN + " TEXT"
-                    + ");");
+                + COL_ID + " INTEGER PRIMARY KEY,"
+                + COL_TYPE + " INTEGER,"
+                + COL_PGN + " TEXT"
+                + ");");
 
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
+                + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + GAMES_TABLE_NAME);
             onCreate(db);
         }
@@ -202,24 +202,24 @@ public class ChessPuzzleProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PUZZLES:
                 count = db.delete(GAMES_TABLE_NAME, COL_TYPE + "=" + TYPE_PUZZLE
-                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
                 break;
 
             case PUZZLES_ID:
                 String puzzleId = uri.getPathSegments().get(1);
                 count = db.delete(GAMES_TABLE_NAME, COL_ID + "=" + puzzleId
-                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
                 break;
 
             case PRACTICES:
                 count = db.delete(GAMES_TABLE_NAME, COL_TYPE + "=" + TYPE_PRACTICE
-                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
                 break;
 
             case PRACTICES_ID:
                 String practiceId = uri.getPathSegments().get(1);
                 count = db.delete(GAMES_TABLE_NAME, COL_ID + "=" + practiceId
-                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
                 break;
 
             default:
@@ -239,7 +239,7 @@ public class ChessPuzzleProvider extends ContentProvider {
             case PRACTICES_ID:
                 String gameId = uri.getPathSegments().get(1);
                 count = db.update(GAMES_TABLE_NAME, values, COL_ID + "=" + gameId
-                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
                 break;
 
             default:

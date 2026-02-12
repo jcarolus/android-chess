@@ -41,7 +41,7 @@ public class ImportService extends Service {
     public static final int IMPORT_DATABASE = 5;
     public static final int PRACTICE_RESET = 8;
     public static final int EXPORT_GAME_DATABASE = 10;
-        public static final int PICK_BINARY = 12;
+    public static final int PICK_BINARY = 12;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
 
@@ -286,7 +286,7 @@ public class ImportService extends Service {
         }
     }
 
-    protected  String getUriDisplayName(Context context, Uri uri) throws URISyntaxException {
+    protected String getUriDisplayName(Context context, Uri uri) throws URISyntaxException {
         Log.d(TAG, "getUriDisplayName " + uri.getScheme());
 
         if ("content".equalsIgnoreCase(uri.getScheme())) {
@@ -299,8 +299,7 @@ public class ImportService extends Service {
             } catch (Exception e) {
                 Log.d(TAG, e.getMessage());
             }
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getLastPathSegment();
         }
 
@@ -328,11 +327,10 @@ public class ImportService extends Service {
     }
 
 
-
     public void writeHMapToDownloads(Uri uri, ArrayList<HMap.Pair> list) {
         Log.d(TAG, "write Hashmap with size:" + list.size());
 
-        try  {
+        try {
             HMap.write(this, uri, list);
         } catch (Exception e) {
             Log.d(TAG, "An error during writing of hash map " + e.getMessage());

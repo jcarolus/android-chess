@@ -15,7 +15,8 @@ import java.util.List;
 import jwtc.android.chess.R;
 
 public class StartItemAdapter extends RecyclerView.Adapter<StartItemAdapter.TileVH> {
-    final List<StartItem> items  = new ArrayList<>();
+    final List<StartItem> items = new ArrayList<>();
+
     public interface OnTileClickListener {
         void onTileClick(StartItem tile, int position);
     }

@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:minWidth="120dp"
             android:hint="@string/savegame_event">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/EditTextSaveEvent"
                 android:layout_height="wrap_content"
@@ -37,8 +38,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minWidth="120dp"
-            android:hint="@string/savegame_white"
-            >
+            android:hint="@string/savegame_white">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/EditTextSaveWhite"
                 android:layout_height="wrap_content"
@@ -51,6 +52,7 @@
             android:layout_height="wrap_content"
             android:minWidth="120dp"
             android:hint="@string/savegame_black">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/EditTextSaveBlack"
                 android:layout_height="wrap_content"
@@ -75,7 +77,7 @@
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSaveCopy"
@@ -84,7 +86,7 @@
                 android:enabled="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSaveSave"
@@ -92,7 +94,7 @@
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
 
         </LinearLayout>
     </LinearLayout>

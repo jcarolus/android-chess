@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dip">
+
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropdownPieceSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/chessboard_hint_piece_set"/>
+            android:hint="@string/chessboard_hint_piece_set" />
+
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropdownColorScheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/chessboard_hint_color_scheme"/>
+            android:hint="@string/chessboard_hint_color_scheme" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSaturation"
@@ -34,7 +36,7 @@
             android:id="@+id/DropdownTileSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/chessboard_hint_tile_effect"/>
+            android:hint="@string/chessboard_hint_tile_effect" />
 
         <CheckBox
             android:id="@+id/CheckBoxCoordinates"
@@ -48,7 +50,8 @@
             android:text="@string/pref_show_possible_moves"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"/>
+            android:layout_margin="8dip" />
+
         <CheckBox
             android:id="@+id/CheckBoxUseSound"
             android:text="@string/pref_sound"
@@ -56,14 +59,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
+            android:layout_marginRight="8dip" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dip"
             android:layout_marginRight="8dip"
             android:layout_marginBottom="8dip"
-            android:text="@string/pref_sound_desc"/>
+            android:text="@string/pref_sound_desc" />
+
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSpeechRate"
             android:layout_width="match_parent"
@@ -74,13 +79,15 @@
             android:stepSize="0.25"
             android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dip"
             android:layout_marginRight="8dip"
             android:layout_marginBottom="8dip"
-            android:text="@string/pref_speech_rate_desc"/>
+            android:text="@string/pref_speech_rate_desc" />
+
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSpeechPitch"
             android:layout_width="match_parent"
@@ -91,13 +98,15 @@
             android:stepSize="0.25"
             android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dip"
             android:layout_marginRight="8dip"
             android:layout_marginBottom="8dip"
-            android:text="@string/pref_speech_pitch_desc"/>
+            android:text="@string/pref_speech_pitch_desc" />
+
         <CheckBox
             android:id="@+id/CheckBoxUseWakeLock"
             android:text="@string/pref_wakelock"
@@ -105,14 +114,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
+            android:layout_marginRight="8dip" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dip"
             android:layout_marginRight="8dip"
             android:layout_marginBottom="8dip"
-            android:text="@string/pref_wakelock_desc"/>
+            android:text="@string/pref_wakelock_desc" />
+
         <CheckBox
             android:id="@+id/CheckBoxFullscreen"
             android:text="@string/pref_fullscreen"
@@ -120,14 +131,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
+            android:layout_marginRight="8dip" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dip"
             android:layout_marginRight="8dip"
             android:layout_marginBottom="8dip"
-            android:text="@string/pref_fullscreen_desc"/>
+            android:text="@string/pref_fullscreen_desc" />
+
         <CheckBox
             android:id="@+id/CheckBoxForceNightMode"
             android:text="@string/pref_night_mode"
@@ -135,13 +148,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
+            android:layout_marginRight="8dip" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dip"
             android:layout_marginRight="8dip"
             android:layout_marginBottom="8dip"
-            android:text="@string/pref_night_mode_desc"/>
+            android:text="@string/pref_night_mode_desc" />
     </LinearLayout>
 </ScrollView>

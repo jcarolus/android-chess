@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+
 import jwtc.android.chess.R;
 
 public class ResultDialog<T> extends Dialog {
