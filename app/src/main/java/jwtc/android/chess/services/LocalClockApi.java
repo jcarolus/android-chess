@@ -5,10 +5,16 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import jwtc.chess.board.BoardConstants;
 
-public class LocalClockApi extends ClockApi {
+public class LocalClockApi {
     protected static final String TAG = "LocalClockApi";
+
+    protected long whiteRemaining = 0;
+    protected long blackRemaining = 0;
+    protected ArrayList<ClockListener> listeners = new ArrayList<>();
 
     protected long increment = 0;
     protected long lastMeasureTime = 0;
@@ -24,6 +30,18 @@ public class LocalClockApi extends ClockApi {
             super.handleMessage(msg);
         }
     };
+
+    public void addListener(ClockListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeListener(ClockListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    public long getRemaining(int turn) {
+        return turn == BoardConstants.WHITE ? getWhiteRemaining() : getBlackRemaining();
+    }
 
     public void startClock(long increment, long whiteRemaining, long blackRemaining, int turn, long startTime) {
         Log.d(TAG, "startClock " + increment + " " + whiteRemaining + " " + blackRemaining + " " + turn + " " + startTime);
@@ -72,6 +90,14 @@ public class LocalClockApi extends ClockApi {
         return whiteRemaining >= 0 ? whiteRemaining : 0;
     }
 
+    public String getBlackRemainingTime() {
+        return timeToString(getRemaining(BoardConstants.BLACK));
+    }
+
+    public String getWhiteRemainingTime() {
+        return timeToString(getRemaining(BoardConstants.WHITE));
+    }
+
     public long getLastMeasureTime() {
         return lastMeasureTime;
     }
@@ -97,6 +123,21 @@ public class LocalClockApi extends ClockApi {
 
     public boolean isClockConfigured() {
         return clockIsConfigured;
+    }
+
+    protected String timeToString(final long millies) {
+        int seconds = (int) (millies / 1000);
+        if (seconds >= 0) {
+            return String.format("%d:%02d", (int) (Math.floor(seconds / 60)), seconds % 60);
+        } else {
+            return "-:-";
+        }
+    }
+
+    protected void dispatchClockTime() {
+        for (ClockListener listener : listeners) {
+            listener.OnClockTime();
+        }
     }
 
     private class RunnableImp implements Runnable {
