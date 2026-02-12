@@ -38,7 +38,6 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         playerView.setVisibility(requestCode == REQUEST_CHALLENGE ? View.VISIBLE : View.GONE);
 
         final EditText editTextPlayer = findViewById(R.id.EditTextMatchOpponent);
-        final TextView textViewPlayerName = findViewById(R.id.tvMatchPlayerName);
 
         final MaterialButtonToggleGroup toggleTimeControl = findViewById(R.id.ToggleTimeControlGroup);
 

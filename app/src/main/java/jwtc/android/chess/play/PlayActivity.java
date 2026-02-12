@@ -395,14 +395,16 @@ public class PlayActivity extends ChessBoardActivity implements
         Log.i(TAG, "onActivityResult " + requestCode + ", " + resultCode);
 
         if (data != null) {
+            final Uri uri = data.getData();
             if (requestCode == REQUEST_OPEN) {
                 if (resultCode == RESULT_OK) {
-                    Uri uri = data.getData();
                     if (uri != null) {
-                        try {
-                            lGameID = Long.parseLong(uri.getLastPathSegment());
-                        } catch (Exception ex) {
-                            lGameID = 0;
+                        lGameID = 0;
+                        String lastSegment = uri.getLastPathSegment();
+                        if (lastSegment != null) {
+                            try {
+                                lGameID = Long.parseLong(lastSegment);
+                            } catch (Exception ignored) {}
                         }
                         SharedPreferences.Editor editor = this.getPrefs().edit();
                         editor.putLong("game_id", lGameID);
@@ -424,19 +426,16 @@ public class PlayActivity extends ChessBoardActivity implements
                     editor.commit();
                 }
             } else if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
-                Uri uri = data.getData();
                 if (uri != null) {
                     saveToFile(uri, gameApi.exportFullPGN());
                 }
             } else if (requestCode == REQUEST_SAVE_POSITION_TO_FILE) {
-                Uri uri = data.getData();
                 if (uri != null) {
                     saveToFile(uri, gameApi.getFEN());
                 }
             } else if (requestCode == REQUEST_OPEN_POSITION_FILE) {
-                Uri uri = data.getData();
                 if (uri != null) {
-                    String sFEN = readInputStream(data.getData(), 1000);
+                    String sFEN = readInputStream(uri, 1000);
                     Log.d(TAG, "got FEN " + sFEN);
 
                     SharedPreferences.Editor editor = this.getPrefs().edit();
@@ -446,8 +445,7 @@ public class PlayActivity extends ChessBoardActivity implements
                     editor.putString("game_pgn", null);
                     editor.commit();
                 }
-            } else if (requestCode == REQUEST_OPEN_GAME_FILE && data != null) {
-                Uri uri = data.getData();
+            } else if (requestCode == REQUEST_OPEN_GAME_FILE) {
                 if (uri != null) {
                     String sPGN = readInputStream(uri, GameApi.MAX_PGN_SIZE);
                     Log.d(TAG, "got PGN " + sPGN);

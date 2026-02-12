@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import androidx.annotation.Nullable;
 
 import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.HMap;
 
@@ -213,10 +214,8 @@ public class ImportService extends Service {
 
                     Log.d(TAG, "Pick binary " + hashMap.size());
 
-                    int flags = intent.getFlags()
-                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     try {
-                        getContentResolver().takePersistableUriPermission(uri, flags);
+                        getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                         writeHMapToDownloads(uri, hashMap);
 
@@ -295,7 +294,7 @@ public class ImportService extends Service {
             try {
                 cursor = context.getContentResolver().query(uri, null, null, null, null);
                 if (cursor.moveToFirst()) {
-                    return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    return Utils.getColumnString(cursor, OpenableColumns.DISPLAY_NAME);
                 }
             } catch (Exception e) {
                 Log.d(TAG, e.getMessage());
@@ -319,7 +318,7 @@ public class ImportService extends Service {
                 cursor.moveToFirst();
 
                 while (cursor.isAfterLast() == false) {
-                    s += cursor.getString(cursor.getColumnIndex(PGNColumns.PGN)) + "\n\n\n";
+                    s += Utils.getColumnString(cursor, PGNColumns.PGN) + "\n\n\n";
                     cursor.moveToNext();
                 }
 

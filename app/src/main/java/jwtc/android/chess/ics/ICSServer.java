@@ -489,12 +489,12 @@ public class ICSServer extends Service {
     public void moveNotitication() {
         Log.d(TAG, "moveNotitication");
 
+        // @TODO requires POST_NOTIFICATIONS
+        /*
         Intent intent = new Intent(this, ICSClient.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            flags |= PendingIntent.FLAG_IMMUTABLE;
-        }
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, flags);
 
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -511,6 +511,7 @@ public class ICSServer extends Service {
         Notification notification = builder.build();
 
         notificationManager.notify(1, notification);
+         */
     }
 
 

@@ -156,7 +156,7 @@ public class AdvancedActivity extends BaseActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        // super.onActivityResult(requestCode, resultCode, resultData);
+        super.onActivityResult(requestCode, resultCode, resultData);
         Log.d(TAG, "result" + requestCode + "  " + resultCode);
         if (resultCode == Activity.RESULT_OK) {
             Uri uri = null;
