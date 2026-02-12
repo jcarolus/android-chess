@@ -323,6 +323,12 @@
     <string name="savegame_black_question">Чёрные?</string>
     <string name="savegame_event">Событие</string>
     <string name="savegame_event_question">Событие?</string>
+    <string name="gameslist_filter_switch_black_description">Включить или отключить фильтр чёрных</string>
+    <string name="gameslist_filter_switch_date_after_description">Включить или отключить фильтр даты после</string>
+    <string name="gameslist_filter_switch_date_before_description">Включить или отключить фильтр даты до</string>
+    <string name="gameslist_filter_switch_event_description">Включить или отключить фильтр события</string>
+    <string name="gameslist_filter_switch_result_description">Включить или отключить фильтр результата</string>
+    <string name="gameslist_filter_switch_white_description">Включить или отключить фильтр белых</string>
     <string name="savegame_white">Белые</string>
     <string name="savegame_white_question">Белые?</string>
     <string name="square_selected_with_duck_description">Выбрано %1$s на %2$s</string>

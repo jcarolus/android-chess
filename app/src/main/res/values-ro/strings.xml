@@ -323,6 +323,12 @@
     <string name="savegame_black_question">Negre?</string>
     <string name="savegame_event">Eveniment</string>
     <string name="savegame_event_question">Eveniment?</string>
+    <string name="gameslist_filter_switch_black_description">Activează sau dezactivează filtrul pentru negre</string>
+    <string name="gameslist_filter_switch_date_after_description">Activează sau dezactivează filtrul de dată după</string>
+    <string name="gameslist_filter_switch_date_before_description">Activează sau dezactivează filtrul de dată înainte</string>
+    <string name="gameslist_filter_switch_event_description">Activează sau dezactivează filtrul de eveniment</string>
+    <string name="gameslist_filter_switch_result_description">Activează sau dezactivează filtrul de rezultat</string>
+    <string name="gameslist_filter_switch_white_description">Activează sau dezactivează filtrul pentru albe</string>
     <string name="savegame_white">Albe</string>
     <string name="savegame_white_question">Albe?</string>
     <string name="square_selected_with_duck_description">Selectat %1$s la %2$s</string>

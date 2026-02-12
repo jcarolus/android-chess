@@ -323,6 +323,12 @@
     <string name="savegame_black_question">Siyah?</string>
     <string name="savegame_event">Etkinlik</string>
     <string name="savegame_event_question">Etkinlik?</string>
+    <string name="gameslist_filter_switch_black_description">Siyah filtresini aç veya kapat</string>
+    <string name="gameslist_filter_switch_date_after_description">Tarih sonrası filtresini aç veya kapat</string>
+    <string name="gameslist_filter_switch_date_before_description">Tarih öncesi filtresini aç veya kapat</string>
+    <string name="gameslist_filter_switch_event_description">Etkinlik filtresini aç veya kapat</string>
+    <string name="gameslist_filter_switch_result_description">Sonuç filtresini aç veya kapat</string>
+    <string name="gameslist_filter_switch_white_description">Beyaz filtresini aç veya kapat</string>
     <string name="savegame_white">Beyaz</string>
     <string name="savegame_white_question">Beyaz?</string>
     <string name="square_selected_with_duck_description">%2$s konumunda %1$s seçildi</string>

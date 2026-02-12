@@ -323,6 +323,12 @@
     <string name="savegame_black_question">Negras?</string>
     <string name="savegame_event">Evento</string>
     <string name="savegame_event_question">Evento?</string>
+    <string name="gameslist_filter_switch_black_description">Ativar ou desativar filtro de pretas</string>
+    <string name="gameslist_filter_switch_date_after_description">Ativar ou desativar filtro de data após</string>
+    <string name="gameslist_filter_switch_date_before_description">Ativar ou desativar filtro de data antes</string>
+    <string name="gameslist_filter_switch_event_description">Ativar ou desativar filtro de evento</string>
+    <string name="gameslist_filter_switch_result_description">Ativar ou desativar filtro de resultado</string>
+    <string name="gameslist_filter_switch_white_description">Ativar ou desativar filtro de brancas</string>
     <string name="savegame_white">Brancas</string>
     <string name="savegame_white_question">Brancas?</string>
     <string name="square_selected_with_duck_description">Selecionado %1$s em %2$s</string>

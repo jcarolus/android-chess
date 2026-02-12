@@ -19,7 +19,8 @@
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/SwitchFilterWhite"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/gameslist_filter_switch_white_description" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -40,7 +41,8 @@
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/SwitchFilterBlack"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/gameslist_filter_switch_black_description" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -61,7 +63,8 @@
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/SwitchFilterEvent"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/gameslist_filter_switch_event_description" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -82,7 +85,8 @@
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/SwitchFilterDateAfter"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/gameslist_filter_switch_date_after_description" />
 
                 <jwtc.android.chess.views.PGNDateView
                     android:id="@+id/PGNDateAfter"
@@ -98,7 +102,8 @@
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/SwitchFilterDateBefore"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/gameslist_filter_switch_date_before_description" />
 
                 <jwtc.android.chess.views.PGNDateView
                     android:id="@+id/PGNDateBefore"
@@ -113,7 +118,8 @@
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/SwitchFilterResult"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/gameslist_filter_switch_result_description" />
 
                 <jwtc.android.chess.views.FixedDropdownView
                     android:id="@+id/DropdownResult"

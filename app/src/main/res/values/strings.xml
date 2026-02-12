@@ -340,6 +340,12 @@
     <string name="savegame_black_question">Black?</string>
     <string name="savegame_event">Event</string>
     <string name="savegame_event_question">Event?</string>
+    <string name="gameslist_filter_switch_black_description">Enable or disable black player filter</string>
+    <string name="gameslist_filter_switch_date_after_description">Enable or disable date after filter</string>
+    <string name="gameslist_filter_switch_date_before_description">Enable or disable date before filter</string>
+    <string name="gameslist_filter_switch_event_description">Enable or disable event filter</string>
+    <string name="gameslist_filter_switch_result_description">Enable or disable result filter</string>
+    <string name="gameslist_filter_switch_white_description">Enable or disable white player filter</string>
     <string name="savegame_white">White</string>
     <string name="savegame_white_question">White?</string>
     <string name="square_selected_with_duck_description">Selected %1$s at %2$s</string>

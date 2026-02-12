@@ -323,6 +323,12 @@
     <string name="savegame_black_question">黑方?</string>
     <string name="savegame_event">赛事</string>
     <string name="savegame_event_question">赛事?</string>
+    <string name="gameslist_filter_switch_black_description">启用或禁用黑方筛选</string>
+    <string name="gameslist_filter_switch_date_after_description">启用或禁用起始日期筛选</string>
+    <string name="gameslist_filter_switch_date_before_description">启用或禁用截止日期筛选</string>
+    <string name="gameslist_filter_switch_event_description">启用或禁用赛事筛选</string>
+    <string name="gameslist_filter_switch_result_description">启用或禁用结果筛选</string>
+    <string name="gameslist_filter_switch_white_description">启用或禁用白方筛选</string>
     <string name="savegame_white">白方</string>
     <string name="savegame_white_question">白方?</string>
     <string name="square_selected_with_duck_description">已选择 %1$s 在 %2$s</string>
