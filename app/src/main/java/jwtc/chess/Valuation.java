@@ -42,9 +42,7 @@ public class Valuation {
     public static int DRAW_REPEAT = -10;
 
     // value of the pieces
-    // The standard 1, 3, 3, 6, 9 from pawn, knight, bishop, rook and queen
-    // tuned a little for experimentation
-    public static int PIECES[] = {100, 300, 305, 600, 1000, 0};
+    public static int[] PIECES = {100, 320, 340, 500, 900, 50000};
 
     public static int TRANSPOSITION_MOVE_SCORE = 2000;
     public static int KILLER_MOVE_SCORE = 1500;

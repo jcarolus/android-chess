@@ -394,58 +394,71 @@ public class PlayActivity extends ChessBoardActivity implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i(TAG, "onActivityResult " + requestCode + ", " + resultCode);
 
-        if (requestCode == REQUEST_OPEN) {
-            if (resultCode == RESULT_OK) {
-                Uri uri = data.getData();
-                try {
-                    lGameID = Long.parseLong(uri.getLastPathSegment());
-                } catch (Exception ex) {
-                    lGameID = 0;
+        if (data != null) {
+            if (requestCode == REQUEST_OPEN) {
+                if (resultCode == RESULT_OK) {
+                    Uri uri = data.getData();
+                    if (uri != null) {
+                        try {
+                            lGameID = Long.parseLong(uri.getLastPathSegment());
+                        } catch (Exception ex) {
+                            lGameID = 0;
+                        }
+                        SharedPreferences.Editor editor = this.getPrefs().edit();
+                        editor.putLong("game_id", lGameID);
+                        editor.putInt("boardNum", 0);
+                        editor.putString("FEN", null);
+                        editor.commit();
+                    }
                 }
-                SharedPreferences.Editor editor = this.getPrefs().edit();
-                editor.putLong("game_id", lGameID);
-                editor.putInt("boardNum", 0);
-                editor.putString("FEN", null);
-                editor.commit();
-            }
-        } else if (requestCode == REQUEST_FROM_QR_CODE) {
-            if (resultCode == RESULT_OK) {
-                String contents = data.getStringExtra("SCAN_RESULT");
-                //String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+            } else if (requestCode == REQUEST_FROM_QR_CODE) {
+                if (resultCode == RESULT_OK) {
+                    String contents = data.getStringExtra("SCAN_RESULT");
+                    //String format = data.getStringExtra("SCAN_RESULT_FORMAT");
 
-                SharedPreferences.Editor editor = this.getPrefs().edit();
-                editor.putLong("game_id", 0);
-                editor.putInt("boardNum", 0);
-                editor.putString("FEN", contents);
-                editor.putString("game_pgn", null);
-                editor.commit();
-            }
-        } else if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
-            saveToFile(data.getData(), gameApi.exportFullPGN());
-        } else if (requestCode == REQUEST_SAVE_POSITION_TO_FILE) {
-            saveToFile(data.getData(), gameApi.getFEN());
-        } else if (requestCode == REQUEST_OPEN_POSITION_FILE) {
-            String sFEN = readInputStream(data.getData(), 1000);
-            Log.d(TAG, "got FEN " + sFEN);
+                    SharedPreferences.Editor editor = this.getPrefs().edit();
+                    editor.putLong("game_id", 0);
+                    editor.putInt("boardNum", 0);
+                    editor.putString("FEN", contents);
+                    editor.putString("game_pgn", null);
+                    editor.commit();
+                }
+            } else if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
+                Uri uri = data.getData();
+                if (uri != null) {
+                    saveToFile(uri, gameApi.exportFullPGN());
+                }
+            } else if (requestCode == REQUEST_SAVE_POSITION_TO_FILE) {
+                Uri uri = data.getData();
+                if (uri != null) {
+                    saveToFile(uri, gameApi.getFEN());
+                }
+            } else if (requestCode == REQUEST_OPEN_POSITION_FILE) {
+                Uri uri = data.getData();
+                if (uri != null) {
+                    String sFEN = readInputStream(data.getData(), 1000);
+                    Log.d(TAG, "got FEN " + sFEN);
 
-            SharedPreferences.Editor editor = this.getPrefs().edit();
-            editor.putLong("game_id", 0);
-            editor.putInt("boardNum", 0);
-            editor.putString("FEN", sFEN);
-            editor.putString("game_pgn", null);
-            editor.commit();
-        } else if (requestCode == REQUEST_OPEN_GAME_FILE && data != null) {
-            Uri uri = data.getData();
-            if (uri != null) {
-                String sPGN = readInputStream(uri, GameApi.MAX_PGN_SIZE);
-                Log.d(TAG, "got PGN " + sPGN);
+                    SharedPreferences.Editor editor = this.getPrefs().edit();
+                    editor.putLong("game_id", 0);
+                    editor.putInt("boardNum", 0);
+                    editor.putString("FEN", sFEN);
+                    editor.putString("game_pgn", null);
+                    editor.commit();
+                }
+            } else if (requestCode == REQUEST_OPEN_GAME_FILE && data != null) {
+                Uri uri = data.getData();
+                if (uri != null) {
+                    String sPGN = readInputStream(uri, GameApi.MAX_PGN_SIZE);
+                    Log.d(TAG, "got PGN " + sPGN);
 
-                SharedPreferences.Editor editor = this.getPrefs().edit();
-                editor.putLong("game_id", 0);
-                editor.putInt("boardNum", 0);
-                editor.putString("FEN", null);
-                editor.putString("game_pgn", sPGN);
-                editor.commit();
+                    SharedPreferences.Editor editor = this.getPrefs().edit();
+                    editor.putLong("game_id", 0);
+                    editor.putInt("boardNum", 0);
+                    editor.putString("FEN", null);
+                    editor.putString("game_pgn", sPGN);
+                    editor.commit();
+                }
             }
         }
 

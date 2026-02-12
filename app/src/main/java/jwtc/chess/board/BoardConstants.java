@@ -5,8 +5,6 @@ package jwtc.chess.board;
 import jwtc.chess.Valuation;
 
 public class BoardConstants {
-    public static Valuation m_valuation = new Valuation();
-
     public static final int VARIANT_DEFAULT = 1;
     public static final int VARIANT_DUCK = 2;
 

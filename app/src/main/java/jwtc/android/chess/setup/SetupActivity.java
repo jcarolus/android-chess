@@ -27,6 +27,7 @@ import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.chess.JNI;
+import jwtc.chess.Valuation;
 import jwtc.chess.board.BoardConstants;
 
 public class SetupActivity extends ChessBoardActivity {
@@ -313,9 +314,11 @@ public class SetupActivity extends ChessBoardActivity {
         final int maxAttempts = 200;
         boolean legal = false;
         for (int attempt = 0; attempt < maxAttempts; attempt++) {
-            generateRandomBoardOnce(rng, turn);
-            if (jni.isLegalPosition() != 0 && jni.isEnded() == 0) {
+            int[] pieceSums = generateRandomBoardOnce(rng, turn);
+            boolean balanced = isPieceValueBalanced(pieceSums[BoardConstants.WHITE], pieceSums[BoardConstants.BLACK]);
+            if (balanced && jni.isLegalPosition() != 0 && jni.isEnded() == 0) {
                 legal = true;
+                Log.d(TAG, "randomBoard in " + attempt + " attempts, w: " + pieceSums[BoardConstants.WHITE] + " b: " + pieceSums[BoardConstants.BLACK]);
                 break;
             }
         }
@@ -329,10 +332,11 @@ public class SetupActivity extends ChessBoardActivity {
         rebuildAndDispatch();
     }
 
-    private void generateRandomBoardOnce(Random rng, int turn) {
+    private int[] generateRandomBoardOnce(Random rng, int turn) {
         jni.reset();
 
         jni.setTurn(turn);
+        int[] pieceSums = new int[] {0, 0};
 
         boolean[] occupied = new boolean[64];
 
@@ -367,8 +371,16 @@ public class SetupActivity extends ChessBoardActivity {
             int piece = pieceTypes[rng.nextInt(pieceTypes.length)];
             int color = rng.nextBoolean() ? BoardConstants.WHITE : BoardConstants.BLACK;
             jni.putPiece(pos, piece, color);
+            pieceSums[color] += Valuation.PIECES[piece];
         }
         jni.commitBoard();
+        return pieceSums;
+    }
+
+    private boolean isPieceValueBalanced(int whiteSum, int blackSum) {
+        int diff = Math.abs(whiteSum - blackSum);
+        int smaller = Math.min(whiteSum, blackSum);
+        return diff <= 2 * smaller;
     }
 
     public void initBoard() {
