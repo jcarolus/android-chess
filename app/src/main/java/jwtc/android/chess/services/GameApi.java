@@ -223,6 +223,9 @@ public class GameApi {
     public int getPGNSize() {
         return pgnMoves.size();
     }
+    public boolean isAtEndOfPGN() {
+        return this.getPGNSize() == jni.getNumBoard();
+    }
 
     public synchronized boolean isLegalMove(int from, int to) {
         int checkMove = Move.makeMove(from, to);
@@ -917,6 +920,9 @@ public class GameApi {
         return pgnTags.get(sProp);
     }
 
+    public int getTurn() {
+        return jni.getTurn();
+    }
     public String getWhite() {
         return getPGNHeadProperty("White");
     }

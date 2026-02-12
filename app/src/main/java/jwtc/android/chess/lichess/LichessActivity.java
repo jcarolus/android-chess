@@ -47,7 +47,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1;
 
     private LichessApi lichessApi;
-    private LocalClockApi localClockApi = new LocalClockApi();
+    private LocalClockApi localClockApi;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout layoutConfirm, layoutResignDraw;
     private SwitchMaterial switchConfirmMoves;
@@ -100,6 +100,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         gameApi = new LichessApi();
         lichessApi = (LichessApi) gameApi;
+        localClockApi = new LocalClockApi(gameApi);
 
         MaterialButton buttonLogin = findViewById(R.id.ButtonLogin);
         buttonLogin.setOnClickListener(v -> lichessApi.login(LichessActivity.this));

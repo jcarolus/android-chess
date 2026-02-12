@@ -24,9 +24,6 @@ import android.widget.AdapterView.OnItemClickListener;
 public class AdvancedActivity extends BaseActivity {
 
     public static final String TAG = "AdvancedActivity";
-    protected static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
-    protected static final int REQUEST_CREATE_PGN_FILE = 0;
-    private ListView _lvStart;
 
     /**
      * Called when the activity is first created.
@@ -39,105 +36,101 @@ public class AdvancedActivity extends BaseActivity {
 
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
-        _lvStart = (ListView) findViewById(R.id.ListPgn);
+        ListView listViewStart = findViewById(R.id.ListPgn);
 
         final CharSequence[] arrString;
 
         arrString = getResources().getTextArray(R.array.pgn_tool_menu);
 
-        _lvStart.setOnItemClickListener(new OnItemClickListener() {
+        listViewStart.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
 
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            if (arrString[arg2].equals(getString(R.string.pgntool_export_explanation))) {
+                startIntentForSaveDocument("application/x-chess-pgn", "chess.pgn", ImportService.EXPORT_GAME_DATABASE);
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_import_explanation))) {
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("*/*");
+                startActivityForResult(i, ImportService.IMPORT_GAMES);
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_create_db_explanation))) {
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("*/*");
+                startActivityForResult(i, ImportService.IMPORT_OPENINGS);
 
-                if (arrString[arg2].equals(getString(R.string.pgntool_export_explanation))) {
-                    startIntentForSaveDocument("application/x-chess-pgn", "chess.pgn", ImportService.EXPORT_GAME_DATABASE);
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_import_explanation))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    startActivityForResult(i, ImportService.IMPORT_GAMES);
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_create_db_explanation))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    startActivityForResult(i, ImportService.IMPORT_OPENINGS);
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))) {
 
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))) {
+                openConfirmDialog(getString(R.string.pgntool_confirm_delete), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
+                    AdvancedActivity.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
+                    doToast(getString(R.string.pgntool_deleted));
+                }, null);
 
-                    openConfirmDialog(getString(R.string.pgntool_confirm_delete), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
-                        AdvancedActivity.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
-                        doToast(getString(R.string.pgntool_deleted));
-                    }, null);
-
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_help))) {
-                    showHelp(R.string.advanced_help);
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_engine))) {
-                    SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-                    String sEngine = prefs.getString("UCIEngine", null);
-                    if (sEngine != null) {
-                        File f = new File("/data/data/jwtc.android.chess/" + sEngine);
-                        if (f.delete()) {
-                            Log.i("engines", sEngine + " deleted");
-                        } else {
-                            Log.w("engines", sEngine + " NOT deleted");
-                        }
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putString("UCIEngine", null);
-                        editor.commit();
-                        doToast("Engine " + sEngine + " uninstalled");
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_help))) {
+                showHelp(R.string.advanced_help);
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_engine))) {
+                SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+                String sEngine = prefs.getString("UCIEngine", null);
+                if (sEngine != null) {
+                    File f = new File("/data/data/jwtc.android.chess/" + sEngine);
+                    if (f.delete()) {
+                        Log.i("engines", sEngine + " deleted");
                     } else {
-                        doToast("No engine installed");
+                        Log.w("engines", sEngine + " NOT deleted");
                     }
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_database))) {
-                    SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-                    String sDatabase = prefs.getString("UCIDatabase", null);
-                    if (sDatabase != null) {
-                        File f = new File("/data/data/jwtc.android.chess/" + sDatabase);
-                        if (f.delete()) {
-                            Log.i("database", sDatabase + " deleted");
-                        } else {
-                            Log.w("database", sDatabase + " NOT deleted");
-                        }
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putString("UCIDatabase", null);
-                        editor.commit();
-                        doToast("Database " + sDatabase + " uninstalled");
-                    } else {
-                        doToast("No database installed");
-                    }
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
-
-                    openConfirmDialog(getString(R.string.pgntool_confirm_practice_reset), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
-                        SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putInt("practicePos", 0);
-                        editor.putInt("practiceNumPlayed", 0);
-                        editor.putInt("practiceSolved", 0);
-                        editor.commit();
-
-                        doToast(getString(R.string.practice_set_reset));
-                    }, null);
-
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_import_practice))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    startActivityForResult(i, ImportService.IMPORT_PRACTICE);
-
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_import_puzzle))) {
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    i.addCategory(Intent.CATEGORY_OPENABLE);
-                    i.setType("*/*");
-                    startActivityForResult(i, ImportService.IMPORT_PUZZLES);
-
-                } else if (arrString[arg2].equals(getString(R.string.pgntool_point_db_explanation))) {
-                    Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("application/octet-stream");
-                    intent.putExtra(Intent.EXTRA_TITLE, "hashmap.bin");
-                    startActivityForResult(intent, ImportService.PICK_BINARY);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("UCIEngine", null);
+                    editor.commit();
+                    doToast("Engine " + sEngine + " uninstalled");
+                } else {
+                    doToast("No engine installed");
                 }
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_unset_uci_database))) {
+                SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+                String sDatabase = prefs.getString("UCIDatabase", null);
+                if (sDatabase != null) {
+                    File f = new File("/data/data/jwtc.android.chess/" + sDatabase);
+                    if (f.delete()) {
+                        Log.i("database", sDatabase + " deleted");
+                    } else {
+                        Log.w("database", sDatabase + " NOT deleted");
+                    }
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("UCIDatabase", null);
+                    editor.commit();
+                    doToast("Database " + sDatabase + " uninstalled");
+                } else {
+                    doToast("No database installed");
+                }
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
+
+                openConfirmDialog(getString(R.string.pgntool_confirm_practice_reset), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
+                    SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putInt("practicePos", 0);
+                    editor.putInt("practiceNumPlayed", 0);
+                    editor.putInt("practiceSolved", 0);
+                    editor.commit();
+
+                    doToast(getString(R.string.practice_set_reset));
+                }, null);
+
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_import_practice))) {
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("*/*");
+                startActivityForResult(i, ImportService.IMPORT_PRACTICE);
+
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_import_puzzle))) {
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("*/*");
+                startActivityForResult(i, ImportService.IMPORT_PUZZLES);
+
+            } else if (arrString[arg2].equals(getString(R.string.pgntool_point_db_explanation))) {
+                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/octet-stream");
+                intent.putExtra(Intent.EXTRA_TITLE, "hashmap.bin");
+                startActivityForResult(intent, ImportService.PICK_BINARY);
             }
         });
     }

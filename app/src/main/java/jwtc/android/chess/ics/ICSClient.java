@@ -66,7 +66,7 @@ public class ICSClient extends ChessBoardActivity implements
     public static final int REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3;
 
     private ICSServer icsServer = null;
-    private LocalClockApi localClockApi = new LocalClockApi();
+    private LocalClockApi localClockApi;
 
     protected String _sConsoleEditText;
     private int _TimeWarning, _iConsoleCharacterSize;
@@ -144,6 +144,7 @@ public class ICSClient extends ChessBoardActivity implements
         ActivityHelper.fixPaddings(this, findViewById(R.id.ViewAnimatorRoot));
 
         gameApi = new ICSApi();
+        localClockApi = new LocalClockApi(gameApi);
 
         afterCreate();
 
@@ -193,13 +194,6 @@ public class ICSClient extends ChessBoardActivity implements
 
             final String handle = _editHandle.getText().toString();
             final String pwd = _editPwd.getText().toString();
-
-            /*
-            defaultHost = chessclub.com
-            hosts = chessclub.com queen.chessclub.com
-            ports = 5000 23
-            id = icc
-             */
 
             if (handle != "" && pwd != "") {
                 setLoadingView();

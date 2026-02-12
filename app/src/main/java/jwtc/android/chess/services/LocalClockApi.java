@@ -9,19 +9,25 @@ import java.util.ArrayList;
 
 import jwtc.chess.board.BoardConstants;
 
-public class LocalClockApi {
+public class LocalClockApi implements GameListener {
     protected static final String TAG = "LocalClockApi";
 
     protected long whiteRemaining = 0;
     protected long blackRemaining = 0;
     protected ArrayList<ClockListener> listeners = new ArrayList<>();
 
+    protected int currentTurn;
     protected long increment = 0;
     protected long lastMeasureTime = 0;
-    protected int currentTurn = 1;
     protected boolean clockIsConfigured = false;
 
+    private final GameApi gameApi;
     private Thread clockThread = null;
+
+    public LocalClockApi(GameApi gameApi) {
+        this.gameApi = gameApi;
+        this.gameApi.addListener(this);
+    }
 
     protected Handler updateHandler = new Handler(Looper.getMainLooper()) {
         // @Override
@@ -46,10 +52,10 @@ public class LocalClockApi {
     public void startClock(long increment, long whiteRemaining, long blackRemaining, int turn, long startTime) {
         Log.d(TAG, "startClock " + increment + " " + whiteRemaining + " " + blackRemaining + " " + turn + " " + startTime);
 
+        currentTurn = turn;
         this.increment = increment;
         this.whiteRemaining = whiteRemaining;
         this.blackRemaining = blackRemaining;
-        this.currentTurn = turn;
         this.clockIsConfigured = whiteRemaining > 0 && blackRemaining > 0;
 
         this.lastMeasureTime = startTime;
@@ -58,6 +64,8 @@ public class LocalClockApi {
             clockThread = new Thread(new RunnableImp());
             clockThread.start();
         }
+
+        switchTurn();
     }
 
     public void stopClock() {
@@ -70,6 +78,7 @@ public class LocalClockApi {
     }
 
     public long getBlackRemaining() {
+        int currentTurn = gameApi.getTurn();
         if (currentTurn == BoardConstants.BLACK) {
             final long currentTime = System.currentTimeMillis();
             final long usedMillies = (currentTime - lastMeasureTime);
@@ -81,6 +90,7 @@ public class LocalClockApi {
     }
 
     public long getWhiteRemaining() {
+        int currentTurn = gameApi.getTurn();
         if (currentTurn == BoardConstants.WHITE) {
             final long currentTime = System.currentTimeMillis();
             final long usedMillies = (currentTime - lastMeasureTime);
@@ -98,13 +108,13 @@ public class LocalClockApi {
         return timeToString(getRemaining(BoardConstants.WHITE));
     }
 
-    public long getLastMeasureTime() {
-        return lastMeasureTime;
+    public boolean isClockConfigured() {
+        return clockIsConfigured;
     }
 
-    public void switchTurn(int newTurn) {
-        if (newTurn != currentTurn) {
-            Log.d(TAG, "switchTurn " + newTurn);
+    protected void switchTurn() {
+        int newTurn = gameApi.getTurn();
+        if (clockIsConfigured && newTurn != currentTurn) {
             currentTurn = newTurn;
             final long currentTime = System.currentTimeMillis();
             final long usedMillies = (currentTime - lastMeasureTime);
@@ -121,10 +131,6 @@ public class LocalClockApi {
         }
     }
 
-    public boolean isClockConfigured() {
-        return clockIsConfigured;
-    }
-
     protected String timeToString(final long millies) {
         int seconds = (int) (millies / 1000);
         if (seconds >= 0) {
@@ -138,6 +144,24 @@ public class LocalClockApi {
         for (ClockListener listener : listeners) {
             listener.OnClockTime();
         }
+    }
+
+    @Override
+    public void OnMove(int move) {
+        // only if on top of move stack
+        if (this.gameApi.isAtEndOfPGN()) {
+            switchTurn();
+        }
+    }
+
+    @Override
+    public void OnDuckMove(int duckMove) {
+
+    }
+
+    @Override
+    public void OnState() {
+
     }
 
     private class RunnableImp implements Runnable {

@@ -77,7 +77,7 @@ public class PlayActivity extends ChessBoardActivity implements
     public static final int REQUEST_OPEN_POSITION_FILE = 11;
     public static final int REQUEST_OPEN_GAME_FILE = 12;
 
-    private final LocalClockApi localClock = new LocalClockApi();
+    private LocalClockApi localClock;
     private EngineApi myEngine;
     private final EcoService ecoService = new EcoService();
     private long lGameID;
@@ -130,6 +130,7 @@ public class PlayActivity extends ChessBoardActivity implements
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         gameApi = new GameApi();
+        localClock = new LocalClockApi(gameApi);
 
         localClock.addListener(this);
 
@@ -272,7 +273,6 @@ public class PlayActivity extends ChessBoardActivity implements
         myEngine = new LocalEngine(gameApi);
         myEngine.addListener(this);
 
-        updateClockByPrefs(false);
         lGameID = prefs.getLong("game_id", 0);
 
         Log.d(TAG, "onResume => " + lGameID + " " + (sPGN != null ? "PGN " : " ") + (sFEN != null ? "FEN" : ""));
@@ -326,6 +326,7 @@ public class PlayActivity extends ChessBoardActivity implements
             }
         }
 
+        updateClockByPrefs(false);
         updateGameSettingsByPrefs();
 
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
@@ -370,9 +371,10 @@ public class PlayActivity extends ChessBoardActivity implements
         editor.putString("game_pgn", gameApi.exportFullPGN());
         editor.putString("FEN", jni.toFEN());
 
+        final long pauseTime = System.currentTimeMillis();
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
-        editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : localClock.getLastMeasureTime());
+        editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : pauseTime);
 
         editor.putBoolean("flipBoard", flipBoard);
         editor.putBoolean("moveToSpeech", moveToSpeech);
@@ -537,11 +539,6 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void updateGUI() {
-        // only if on top of move stack
-        if (this.gameApi.getPGNSize() == jni.getNumBoard()) {
-            localClock.switchTurn(jni.getTurn());
-        }
-
         updateSelectedSquares();
         updateCapturedPieces();
         updateSeekBar();
