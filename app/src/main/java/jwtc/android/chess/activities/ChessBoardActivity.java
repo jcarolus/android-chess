@@ -694,14 +694,30 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 selectedPosition = pos;
                 setMoveToPositions(pos);
                 updateSelectedSquares();
-                vibrate(20);
-                chessBoardView.postDelayed(() -> vibrate(20), 70);
+                vibrate(90);
                 if (textToSpeech != null) {
                     textToSpeech.moveToSpeech(getFieldDescription(pos));
                 }
             }
         };
         accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragDwellMs);
+    }
+
+    private void handleAccessibilitySquareEntered(int pos, boolean emitCrossingHaptic) {
+        if (accessibilityDragHoverPos != pos) {
+            accessibilityDragHoverPos = pos;
+            if (accessibilityDragDwellRunnable != null) {
+                accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+                accessibilityDragDwellRunnable = null;
+            }
+            if (emitCrossingHaptic) {
+                vibrate(20);
+            }
+            if (textToSpeech != null) {
+                textToSpeech.moveToSpeech(getFieldDescription(pos));
+            }
+            scheduleAccessibilityDwellSelection(pos);
+        }
     }
 
     protected class MyAccessibilityDragListener implements View.OnDragListener {
@@ -715,20 +731,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     resetAccessibilityDragState();
+                    final View fromView = (View) event.getLocalState();
+                    if (fromView instanceof ChessSquareView) {
+                        handleAccessibilitySquareEntered(((ChessSquareView) fromView).getPos(), false);
+                    } else if (fromView instanceof ChessPieceView) {
+                        handleAccessibilitySquareEntered(((ChessPieceView) fromView).getPos(), false);
+                    }
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    if (accessibilityDragHoverPos != pos) {
-                        accessibilityDragHoverPos = pos;
-                        if (accessibilityDragDwellRunnable != null) {
-                            accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
-                            accessibilityDragDwellRunnable = null;
-                        }
-                        vibrate(20);
-                        if (textToSpeech != null) {
-                            textToSpeech.moveToSpeech(getFieldDescription(pos));
-                        }
-                        scheduleAccessibilityDwellSelection(pos);
-                    }
+                    handleAccessibilitySquareEntered(pos, true);
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     view.setSelected(false);
