@@ -302,6 +302,7 @@
     <string name="pref_sound">Som</string>
     <string name="pref_sound_desc">Reproduzido quando o adversário joga</string>
     <string name="pref_speech">Voz</string>
+    <string name="pref_accessibility_drag">Arrasto de acessibilidade</string>
     <string name="pref_speech_pitch_desc">Tom de voz</string>
     <string name="pref_speech_rate_desc">Velocidade da fala</string>
     <string name="pref_turn">Lado</string>

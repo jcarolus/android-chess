@@ -319,6 +319,7 @@
     <string name="pref_sound">Sound</string>
     <string name="pref_sound_desc">Played when your opponent moves</string>
     <string name="pref_speech">Speech</string>
+    <string name="pref_accessibility_drag">Accessibility drag</string>
     <string name="pref_speech_pitch_desc">Speech pitch</string>
     <string name="pref_speech_rate_desc">Speech rate</string>
     <string name="pref_turn">Side</string>

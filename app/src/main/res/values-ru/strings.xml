@@ -302,6 +302,7 @@
     <string name="pref_sound">Звук</string>
     <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
     <string name="pref_speech">Озвучка</string>
+    <string name="pref_accessibility_drag">Перетаскивание (доступность)</string>
     <string name="pref_speech_pitch_desc">Высота голоса</string>
     <string name="pref_speech_rate_desc">Скорость речи</string>
     <string name="pref_turn">Сторона</string>

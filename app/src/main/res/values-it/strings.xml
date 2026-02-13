@@ -302,6 +302,7 @@
     <string name="pref_sound">Suono</string>
     <string name="pref_sound_desc">Riprodotto quando l’avversario muove</string>
     <string name="pref_speech">Voce</string>
+    <string name="pref_accessibility_drag">Trascinamento accessibile</string>
     <string name="pref_speech_pitch_desc">Altezza voce</string>
     <string name="pref_speech_rate_desc">Velocità voce</string>
     <string name="pref_turn">Lato</string>

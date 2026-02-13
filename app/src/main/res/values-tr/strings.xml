@@ -302,6 +302,7 @@
     <string name="pref_sound">Ses</string>
     <string name="pref_sound_desc">Rakip hamle yaptığında çalınır</string>
     <string name="pref_speech">Sesli okuma</string>
+    <string name="pref_accessibility_drag">Erişilebilir sürükleme</string>
     <string name="pref_speech_pitch_desc">Ses perdesi</string>
     <string name="pref_speech_rate_desc">Konuşma hızı</string>
     <string name="pref_turn">Taraf</string>

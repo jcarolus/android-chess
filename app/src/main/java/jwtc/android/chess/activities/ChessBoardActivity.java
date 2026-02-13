@@ -658,7 +658,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    private void applySquareDragListeners() {
+    protected void applySquareDragListeners() {
         final int count = chessBoardView.getChildCount();
         for (int i = 0; i < count; i++) {
             final View child = chessBoardView.getChildAt(i);

@@ -302,6 +302,7 @@
     <string name="pref_sound">Sunet</string>
     <string name="pref_sound_desc">Redat când adversarul mută</string>
     <string name="pref_speech">Vorbire</string>
+    <string name="pref_accessibility_drag">Glisare accesibilă</string>
     <string name="pref_speech_pitch_desc">Înălțime voce</string>
     <string name="pref_speech_rate_desc">Viteză vorbire</string>
     <string name="pref_turn">Parte</string>

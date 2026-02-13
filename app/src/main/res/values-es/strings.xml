@@ -312,6 +312,7 @@
     <string name="pref_sound">Sonido</string>
     <string name="pref_sound_desc">Se reproduce cuando el oponente mueve</string>
     <string name="pref_speech">Voz</string>
+    <string name="pref_accessibility_drag">Arrastre de accesibilidad</string>
     <string name="pref_speech_pitch_desc">Tono de voz</string>
     <string name="pref_speech_rate_desc">Velocidad de voz</string>
     <string name="pref_turn">Lado</string>
