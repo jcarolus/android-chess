@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import androidx.annotation.Nullable;
 
 import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.HMap;
 
@@ -40,7 +41,7 @@ public class ImportService extends Service {
     public static final int IMPORT_DATABASE = 5;
     public static final int PRACTICE_RESET = 8;
     public static final int EXPORT_GAME_DATABASE = 10;
-        public static final int PICK_BINARY = 12;
+    public static final int PICK_BINARY = 12;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
 
@@ -213,10 +214,8 @@ public class ImportService extends Service {
 
                     Log.d(TAG, "Pick binary " + hashMap.size());
 
-                    int flags = intent.getFlags()
-                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     try {
-                        getContentResolver().takePersistableUriPermission(uri, flags);
+                        getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                         writeHMapToDownloads(uri, hashMap);
 
@@ -287,7 +286,7 @@ public class ImportService extends Service {
         }
     }
 
-    protected  String getUriDisplayName(Context context, Uri uri) throws URISyntaxException {
+    protected String getUriDisplayName(Context context, Uri uri) throws URISyntaxException {
         Log.d(TAG, "getUriDisplayName " + uri.getScheme());
 
         if ("content".equalsIgnoreCase(uri.getScheme())) {
@@ -295,13 +294,12 @@ public class ImportService extends Service {
             try {
                 cursor = context.getContentResolver().query(uri, null, null, null, null);
                 if (cursor.moveToFirst()) {
-                    return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    return Utils.getColumnString(cursor, OpenableColumns.DISPLAY_NAME);
                 }
             } catch (Exception e) {
                 Log.d(TAG, e.getMessage());
             }
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getLastPathSegment();
         }
 
@@ -319,7 +317,7 @@ public class ImportService extends Service {
                 cursor.moveToFirst();
 
                 while (cursor.isAfterLast() == false) {
-                    s += cursor.getString(cursor.getColumnIndex(PGNColumns.PGN)) + "\n\n\n";
+                    s += Utils.getColumnString(cursor, PGNColumns.PGN) + "\n\n\n";
                     cursor.moveToNext();
                 }
 
@@ -329,11 +327,10 @@ public class ImportService extends Service {
     }
 
 
-
     public void writeHMapToDownloads(Uri uri, ArrayList<HMap.Pair> list) {
         Log.d(TAG, "write Hashmap with size:" + list.size());
 
-        try  {
+        try {
             HMap.write(this, uri, list);
         } catch (Exception e) {
             Log.d(TAG, "An error during writing of hash map " + e.getMessage());

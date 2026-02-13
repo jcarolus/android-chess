@@ -11,12 +11,13 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.material.button.MaterialButton;
 
 /**
  *
@@ -30,7 +31,7 @@ public class ICSMatchDlg extends ResultDialog {
     private Spinner _spinTime, _spinIncrement, _spinVariant, _spinColor;
     private EditText _editPlayer, _editRatingRangeMIN, _editRatingRangeMAX;
     private ArrayAdapter<CharSequence> _adapterTime, _adapterIncrement, _adapterVariant, _adapterColor;
-    private Button _butOk, _butCancel;
+    private MaterialButton _butOk, _butCancel;
     private CheckBox _checkRated, _checkManual, _checkFormula;
 
     public ICSMatchDlg(Context context, ResultDialogListener<Bundle> listener, int requestCode, final SharedPreferences prefs) {
@@ -131,7 +132,7 @@ public class ICSMatchDlg extends ResultDialog {
         _checkFormula = (CheckBox) findViewById(R.id.CheckBoxSeekFormula);
         _tvFormula = (TextView) findViewById(R.id.tvMatchFormula);
 
-        _butOk = (Button) findViewById(R.id.ButtonMatchOk);
+        _butOk = findViewById(R.id.ButtonMatchOk);
         _butOk.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ICSMatchDlg.this.dismiss();
@@ -139,15 +140,15 @@ public class ICSMatchDlg extends ResultDialog {
 
                 if (_rbSeek.isChecked()) {
                     s = "seek " + (_checkManual.isChecked() ? "m " : "a ") + (_checkFormula.isChecked() ? "f " : "") + _editRatingRangeMIN.getText().toString()
-                            + "-" + _editRatingRangeMAX.getText().toString() + " ";
+                        + "-" + _editRatingRangeMAX.getText().toString() + " ";
 
                 } else {
                     s = "match " + sP + " ";
                 }
 
                 s += (_checkRated.isChecked() ? "rated " : "unrated ") +
-                        (String) _spinTime.getSelectedItem() + " " +
-                        (String) _spinIncrement.getSelectedItem() + " ";
+                    (String) _spinTime.getSelectedItem() + " " +
+                    (String) _spinIncrement.getSelectedItem() + " ";
 
                 // Color
                 if (((String) _spinColor.getSelectedItem()).equals((String) _spinColor.getItemAtPosition(1))) {
@@ -181,7 +182,7 @@ public class ICSMatchDlg extends ResultDialog {
 
             }
         });
-        _butCancel = (Button) findViewById(R.id.ButtonMatchCancel);
+        _butCancel = findViewById(R.id.ButtonMatchCancel);
         _butCancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ICSMatchDlg.this.dismiss();

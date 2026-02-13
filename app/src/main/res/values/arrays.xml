@@ -12,6 +12,7 @@
     </string-array>
     <string-array name="play_menu">
         <item>@string/menu_game_settings</item>
+        <item>@string/menu_set_clock</item>
         <item>@string/menu_new</item>
         <item>@string/menu_new_duck</item>
         <item>@string/menu_new_960</item>
@@ -22,7 +23,6 @@
         <item>@string/menu_open_game</item>
         <item>@string/menu_save_position_to_file</item>
         <item>@string/menu_open_position_file</item>
-        <item>@string/menu_set_clock</item>
         <item>@string/menu_fromclip</item>
         <item>@string/menu_clip_pgn</item>
     </string-array>
@@ -173,11 +173,11 @@
         <item>@string/pgntool_export_explanation</item>
         <item>@string/pgntool_import_explanation</item>
         <item>@string/pgntool_delete_explanation</item>
-<!--        <item>@string/pgntool_create_db_explanation</item>-->
-<!--        <item>@string/pgntool_point_db_explanation</item>-->
-<!--        <item>@string/pgntool_unset_uci_engine</item>-->
-<!--        <item>@string/pgntool_unset_uci_database</item>-->
-         <item>@string/pgntool_import_practice</item>
+        <!--        <item>@string/pgntool_create_db_explanation</item>-->
+        <!--        <item>@string/pgntool_point_db_explanation</item>-->
+        <!--        <item>@string/pgntool_unset_uci_engine</item>-->
+        <!--        <item>@string/pgntool_unset_uci_database</item>-->
+        <item>@string/pgntool_import_practice</item>
         <item>@string/pgntool_reset_practice</item>
         <item>@string/pgntool_import_puzzle</item>
         <item>@string/pgntool_help</item>

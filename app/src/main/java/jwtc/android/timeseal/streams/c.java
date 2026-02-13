@@ -59,7 +59,7 @@ public class c {
     }
 
     synchronized void a(int paramInt)
-            throws IOException {
+        throws IOException {
         synchronized (this.a) {
             if ((this.jdField_if) || (this.jdField_int))
                 throw new IOException("Stream closed");
@@ -82,7 +82,7 @@ public class c {
     }
 
     synchronized void a(byte[] paramArrayOfByte, int paramInt1, int paramInt2)
-            throws IOException {
+        throws IOException {
         synchronized (this.a) {
             if ((this.jdField_if) || (this.jdField_int))
                 throw new IOException("Stream closed");
@@ -110,7 +110,7 @@ public class c {
     }
 
     synchronized int jdField_for()
-            throws IOException {
+        throws IOException {
         synchronized (this.jdField_case) {
             if (this.jdField_if)
                 throw new IOException("Stream closed");
@@ -141,7 +141,7 @@ public class c {
     }
 
     synchronized int jdField_if(byte[] paramArrayOfByte, int paramInt1, int paramInt2)
-            throws IOException {
+        throws IOException {
         synchronized (this.jdField_case) {
             if (this.jdField_if)
                 throw new IOException("Stream closed");

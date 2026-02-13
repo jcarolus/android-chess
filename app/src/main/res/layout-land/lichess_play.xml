@@ -5,13 +5,15 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <jwtc.android.chess.views.ChessBoardContainerView
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
-        <include layout="@layout/lichess_board_top"
+        <include
+            layout="@layout/lichess_board_top"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <include
             android:id="@+id/includeboard"
@@ -22,15 +24,15 @@
         <include
             layout="@layout/lichess_board_bottom"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </jwtc.android.chess.views.ChessBoardContainerView>
 
-    <include layout="@layout/lichess_play_controls"
+    <include
+        layout="@layout/lichess_play_controls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dip"
-        android:layout_marginLeft="32dip"
-        />
+        android:layout_marginLeft="32dip" />
 
 </LinearLayout>

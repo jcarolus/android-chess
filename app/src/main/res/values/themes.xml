@@ -1,5 +1,6 @@
 <resources>
-    <style name="ChessTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+    <style name="ChessTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
         <item name="colorPrimary">@color/primaryColor</item>
@@ -12,9 +13,12 @@
         <item name="colorOnSurface">@color/surfaceTextColor</item>
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
+        <item name="switchStyle">@style/MySwitchStyle</item>
+        <item name="materialButtonStyle">@style/ChessButton</item>
+        <item name="materialAlertDialogTheme">@style/ChessAlertDialogTheme</item>
     </style>
 
-    <style name="ChessStart" parent="Theme.MaterialComponents.DayNight">
+    <style name="ChessStart" parent="Theme.Material3.DayNight">
         <item name="android:windowAnimationStyle">@null</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
@@ -27,13 +31,16 @@
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
         <item name="actionBarStyle">@style/Widget.MyApp.ActionBar</item>
+        <item name="switchStyle">@style/MySwitchStyle</item>
+        <item name="materialButtonStyle">@style/ChessButton</item>
+        <item name="materialAlertDialogTheme">@style/ChessAlertDialogTheme</item>
     </style>
 
     <style name="Widget.MyApp.ActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <item name="background">@color/primaryColor</item>
     </style>
 
-    <style name="ChessDialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
+    <style name="ChessDialogTheme" parent="Theme.Material3.DayNight.Dialog">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:windowMinWidthMajor">0%</item>
@@ -49,5 +56,13 @@
         <item name="colorSurface">@color/surfaceColor</item>
         <item name="colorControlHighlight">@color/secondaryColor</item>
         <item name="rippleColor">@color/secondaryColor</item>
+        <item name="switchStyle">@style/MySwitchStyle</item>
+        <item name="materialButtonStyle">@style/ChessButton</item>
+    </style>
+
+    <style name="ChessAlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/ChessButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/ChessButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/ChessButton</item>
     </style>
 </resources>

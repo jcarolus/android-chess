@@ -5,10 +5,12 @@
     android:layout_height="fill_parent"
     android:padding="4dip"
     android:id="@+id/LayoutMain">
+
     <include
         layout="@layout/chessboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/includeboard" />
-    <include layout="@layout/chessboard_prefs_controls"/>
+
+    <include layout="@layout/chessboard_prefs_controls" />
 </LinearLayout>

@@ -3,11 +3,10 @@ package jwtc.android.chess.setup;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.google.android.material.button.MaterialButton;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -20,6 +19,7 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
     private static final String TAG = "SetupRandomFischer";
     private SeekBar seekBar;
     private TextView textViewSeed;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,58 +42,41 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
-
-        ImageButton butNext = findViewById(R.id.ButtonNext);
-        butNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int progress = seekBar.getProgress();
-                if (progress < 959) {
-                    seekBar.setProgress(progress + 1);
-                }
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
 
-        ImageButton butPrev = findViewById(R.id.ButtonPrevious);
-        butPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int progress = seekBar.getProgress();
-                if (progress > 0) {
-                    seekBar.setProgress(progress - 1);
-                }
+        MaterialButton butNext = findViewById(R.id.ButtonNext);
+        butNext.setOnClickListener(v -> {
+            int progress = seekBar.getProgress();
+            if (progress < 959) {
+                seekBar.setProgress(progress + 1);
             }
         });
 
-        Button buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                commitFEN();
+        MaterialButton butPrev = findViewById(R.id.ButtonPrevious);
+        butPrev.setOnClickListener(v -> {
+            int progress = seekBar.getProgress();
+            if (progress > 0) {
+                seekBar.setProgress(progress - 1);
             }
         });
 
-        Button buttonCancel = findViewById(R.id.ButtonSetupOptionsCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        MaterialButton buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
+        buttonOk.setOnClickListener(v -> commitFEN());
 
-        Button buttonRandom = findViewById(R.id.ButtonSetupOptionsRandom);
-        buttonRandom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int seed = (int) (Math.random() * 960);
-                seekBar.setProgress(seed);
-                commitFEN();
-            }
+        MaterialButton buttonCancel = findViewById(R.id.ButtonSetupOptionsCancel);
+        buttonCancel.setOnClickListener(v -> finish());
+
+        MaterialButton buttonRandom = findViewById(R.id.ButtonSetupOptionsRandom);
+        buttonRandom.setOnClickListener(v -> {
+            int seed = (int) (Math.random() * 960);
+            seekBar.setProgress(seed);
+            commitFEN();
         });
     }
 

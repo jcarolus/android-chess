@@ -103,7 +103,8 @@ public class OpeningImportProcessor extends PGNProcessor {
                     sendMessage(MSG_FAILED_PGN);
                 }
 
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         Log.d(TAG, "Done..." + numProcessed);
@@ -131,7 +132,8 @@ public class OpeningImportProcessor extends PGNProcessor {
                         Log.d(TAG, "Duplicate hash");
                     }
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         Log.d(TAG, "Done..." + numProcessed);

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Spinner
-            android:id="@+id/SpinnerPieceSet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:entries="@array/piecesetarray"/>
+        android:layout_height="wrap_content"
+        android:padding="8dip">
 
-        <Spinner
-            android:id="@+id/SpinnerColorScheme"
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownPieceSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:entries="@array/colorschemes"/>
+            android:hint="@string/chessboard_hint_piece_set" />
+
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownColorScheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/chessboard_hint_color_scheme" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSaturation"
@@ -29,67 +29,29 @@
             android:valueFrom="0.5"
             android:valueTo="1.0"
             android:stepSize="0.05"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp" />
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp" />
 
-        <TextView
-            android:text="@string/pref_tileset"
-            style="@style/MyLabelTextStyle"
+        <jwtc.android.chess.views.FixedDropdownView
+            android:id="@+id/DropdownTileSet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
-
-        <Spinner
-            android:id="@+id/SpinnerTileSet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:entries="@array/tileArray"/>
+            android:hint="@string/chessboard_hint_tile_effect" />
 
         <CheckBox
             android:id="@+id/CheckBoxCoordinates"
-            android:text="@string/pref_showCoords"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"/>
+            android:layout_margin="8dip"
+            android:text="@string/pref_showCoords" />
+
         <CheckBox
             android:id="@+id/CheckBoxShowMoves"
             android:text="@string/pref_show_possible_moves"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"/>
-        <CheckBox
-            android:id="@+id/CheckBoxUseWakeLock"
-            android:text="@string/pref_wakelock"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dip"
-            android:layout_marginRight="8dip"
-            android:layout_marginBottom="8dip"
-            android:text="@string/pref_wakelock_desc"/>
-        <CheckBox
-            android:id="@+id/CheckBoxFullscreen"
-            android:text="@string/pref_fullscreen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dip"
-            android:layout_marginRight="8dip"
-            android:layout_marginBottom="8dip"
-            android:text="@string/pref_fullscreen_desc"/>
+            android:layout_margin="8dip" />
+
         <CheckBox
             android:id="@+id/CheckBoxUseSound"
             android:text="@string/pref_sound"
@@ -97,14 +59,88 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
+            android:layout_marginRight="8dip" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dip"
             android:layout_marginRight="8dip"
             android:layout_marginBottom="8dip"
-            android:text="@string/pref_sound_desc"/>
+            android:text="@string/pref_sound_desc" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/SliderSpeechRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="1"
+            android:valueFrom="0.5"
+            android:valueTo="3.0"
+            android:stepSize="0.25"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="8dip"
+            android:text="@string/pref_speech_rate_desc" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/SliderSpeechPitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="1"
+            android:valueFrom="0.5"
+            android:valueTo="2.0"
+            android:stepSize="0.25"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="8dip"
+            android:text="@string/pref_speech_pitch_desc" />
+
+        <CheckBox
+            android:id="@+id/CheckBoxUseWakeLock"
+            android:text="@string/pref_wakelock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="8dip"
+            android:text="@string/pref_wakelock_desc" />
+
+        <CheckBox
+            android:id="@+id/CheckBoxFullscreen"
+            android:text="@string/pref_fullscreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dip"
+            android:layout_marginRight="8dip"
+            android:layout_marginBottom="8dip"
+            android:text="@string/pref_fullscreen_desc" />
+
         <CheckBox
             android:id="@+id/CheckBoxForceNightMode"
             android:text="@string/pref_night_mode"
@@ -112,14 +148,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"/>
+            android:layout_marginRight="8dip" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dip"
             android:layout_marginRight="8dip"
             android:layout_marginBottom="8dip"
-            android:text="@string/pref_night_mode_desc"/>
-
+            android:text="@string/pref_night_mode_desc" />
     </LinearLayout>
 </ScrollView>

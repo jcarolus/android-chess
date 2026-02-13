@@ -5,7 +5,9 @@
     android:padding="4dip"
     android:orientation="vertical"
     android:id="@+id/LayoutMain">
-    <include layout="@layout/puzzle_board_top"/>
+
+    <include layout="@layout/puzzle_board_top" />
+
     <include
         layout="@layout/chessboard"
         android:layout_width="match_parent"
@@ -13,6 +15,8 @@
         android:layout_marginTop="1dip"
         android:layout_marginBottom="1dip"
         android:id="@+id/includeboard" />
-    <include layout="@layout/puzzle_board_bottom"/>
-    <include layout="@layout/puzzle_controls"/>
+
+    <include layout="@layout/puzzle_board_bottom" />
+
+    <include layout="@layout/puzzle_controls" />
 </LinearLayout>

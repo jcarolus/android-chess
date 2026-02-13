@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;

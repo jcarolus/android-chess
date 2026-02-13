@@ -40,7 +40,7 @@ public class ChessBoardView extends ViewGroup {
 
     public void removePieces() {
         int i = 0;
-        while(i < getChildCount()) {
+        while (i < getChildCount()) {
             final View child = getChildAt(i);
             if (child instanceof ChessPieceView) {
                 removeView(child);
@@ -52,7 +52,7 @@ public class ChessBoardView extends ViewGroup {
 
     public void removeLabels() {
         int i = 0;
-        while(i < getChildCount()) {
+        while (i < getChildCount()) {
             final View child = getChildAt(i);
             if (child instanceof ChessPieceLabelView) {
                 removeView(child);
@@ -88,7 +88,7 @@ public class ChessBoardView extends ViewGroup {
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child instanceof ChessPieceView) {
-                ((ChessPieceView)child).resetImageResource();
+                ((ChessPieceView) child).resetImageResource();
             }
         }
     }
@@ -98,7 +98,7 @@ public class ChessBoardView extends ViewGroup {
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child instanceof ChessSquareView) {
-                ((ChessSquareView)child).invalidate();
+                ((ChessSquareView) child).invalidate();
             }
         }
     }
@@ -107,7 +107,7 @@ public class ChessBoardView extends ViewGroup {
         for (int i = getChildCount() - 1; i >= 0; i--) {
             View child = getChildAt(i);
             if (child instanceof ChessSquareView && isPointInsideView(x, y, child)) {
-                return (ChessSquareView)child;
+                return (ChessSquareView) child;
             }
         }
         return null;
@@ -117,7 +117,7 @@ public class ChessBoardView extends ViewGroup {
         for (int i = getChildCount() - 1; i >= 0; i--) {
             View child = getChildAt(i);
             if (child instanceof ChessPieceView && isPointInsideView(x, y, child)) {
-                return (ChessPieceView)child;
+                return (ChessPieceView) child;
             }
         }
         return null;
@@ -140,7 +140,7 @@ public class ChessBoardView extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize =  MeasureSpec.getSize(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         // determine portrait vs landscape - take the smallest
         int size = widthSize < heightSize ? widthSize : heightSize;
         setMeasuredDimension(size, size);
@@ -148,10 +148,10 @@ public class ChessBoardView extends ViewGroup {
 
     public void layoutChild(View child) {
         final int pos = child instanceof ChessSquareView
-                ? ((ChessSquareView) child).getPos()
-                : (child instanceof ChessPieceView
-                    ? ((ChessPieceView) child).getPos()
-                    : ((ChessPieceLabelView) child).getPos());
+            ? ((ChessSquareView) child).getPos()
+            : (child instanceof ChessPieceView
+            ? ((ChessPieceView) child).getPos()
+            : ((ChessPieceLabelView) child).getPos());
         final int width = getWidth() / 8;
         // rotated
         final int actualPos = rotated ? 63 - pos : pos;
@@ -181,6 +181,6 @@ public class ChessBoardView extends ViewGroup {
         float tx = view.getTranslationX();
         float ty = view.getTranslationY();
         return x >= view.getLeft() + tx && x <= view.getRight() + tx &&
-                y >= view.getTop() + ty && y <= view.getBottom() + ty;
+            y >= view.getTop() + ty && y <= view.getBottom() + ty;
     }
 }

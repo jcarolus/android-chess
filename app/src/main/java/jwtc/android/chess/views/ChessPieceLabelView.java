@@ -6,8 +6,9 @@ import android.util.TypedValue;
 import android.view.Gravity;
 
 import androidx.appcompat.widget.AppCompatTextView;
+
 import jwtc.android.chess.R;
-import jwtc.chess.board.ChessBoard;
+import jwtc.chess.board.BoardConstants;
 
 public class ChessPieceLabelView extends AppCompatTextView {
     private int position;
@@ -23,7 +24,7 @@ public class ChessPieceLabelView extends AppCompatTextView {
         setWillNotDraw(false);
         setGravity(Gravity.CENTER);
 
-        if (color == ChessBoard.BLACK) {
+        if (color == BoardConstants.BLACK) {
             setTextColor(0xFFFFFFFF);
             setBackgroundResource(R.drawable.turnblack);
         } else {

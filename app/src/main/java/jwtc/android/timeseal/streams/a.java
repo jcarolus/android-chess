@@ -12,19 +12,19 @@ class a extends InputStream {
     }
 
     public int read()
-            throws IOException {
+        throws IOException {
         //return this.a.jdMethod_for();
         return this.a.jdField_for();
     }
 
     public int read(byte[] paramArrayOfByte, int paramInt1, int paramInt2)
-            throws IOException {
+        throws IOException {
         //return this.a.jdMethod_if(paramArrayOfByte, paramInt1, paramInt2);
         return this.a.jdField_if(paramArrayOfByte, paramInt1, paramInt2);
     }
 
     public void close()
-            throws IOException {
+        throws IOException {
         //this.a.jdMethod_new();
         this.a.jdField_new();
     }

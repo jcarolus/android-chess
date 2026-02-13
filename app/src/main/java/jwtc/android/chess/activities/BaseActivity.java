@@ -1,10 +1,12 @@
 package jwtc.android.chess.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -26,14 +30,16 @@ import java.nio.charset.StandardCharsets;
 
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.play.SaveGameDialog;
+import jwtc.chess.PGNColumns;
 
 
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     private AccessibilityManager am;
 
-
-    protected float fVolume = 1.0f;
     protected Vibrator vibrator;
 
     @Override
@@ -60,13 +66,26 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    protected void openConfirmDialog(String message, String positiveText, String negativeText, Runnable onPositive, Runnable onNegative) {
+        new MaterialAlertDialogBuilder(BaseActivity.this)
+            .setMessage(message)
+            .setPositiveButton(positiveText, (dialog, which) -> {
+                dialog.dismiss();
+                onPositive.run();
+            })
+            .setNegativeButton(negativeText, (dialog, which) -> {
+                dialog.dismiss();
+                if (onNegative != null) {
+                    onNegative.run();
+                }
+            })
+            .show();
+    }
+
+
     public void showExitConfirmationDialog() {
         if (needExitConfirmationDialog()) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.menu_abort))
-                    .setPositiveButton(getString(R.string.alert_yes), (dialog, which) -> finish())
-                    .setNegativeButton(getString(R.string.alert_no), null)
-                    .show();
+            openConfirmDialog(getString(R.string.menu_abort), getString(R.string.alert_yes), getString(R.string.alert_no), this::finish, null);
         } else {
             finish();
         }
@@ -94,6 +113,34 @@ public class BaseActivity extends AppCompatActivity {
         Toast t = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         t.setGravity(Gravity.BOTTOM, 0, 0);
         t.show();
+    }
+
+    protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
+        saveGame(result.getContentValues(), result.createCopy, result.lGameID);
+    }
+
+    protected long saveGame(ContentValues values, boolean bCopy, long lGameID) {
+
+        if (lGameID > 0 && (bCopy == false)) {
+            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
+            getContentResolver().update(uri, values, null, null);
+        } else {
+            Uri uri = MyPGNProvider.CONTENT_URI;
+            Uri uriInsert = getContentResolver().insert(uri, values);
+            if (uriInsert != null) {
+                try {
+                    Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+                    if (c != null && c.getCount() == 1) {
+                        c.moveToFirst();
+                        lGameID = Utils.getColumnLong(c, PGNColumns._ID);
+                        c.close();
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "Could not insert game " + ex.getMessage());
+                }
+            }
+        }
+        return lGameID;
     }
 
     public void shareString(String s) {

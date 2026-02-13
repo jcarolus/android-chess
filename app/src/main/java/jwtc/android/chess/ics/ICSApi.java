@@ -225,19 +225,19 @@ public class ICSApi extends GameApi {
     }
 
     public long getTime() {
-        return (long)iTime * 1000;
+        return (long) iTime * 1000;
     }
 
     public long getIncrement() {
-        return (long)iIncrement * 1000;
+        return (long) iIncrement * 1000;
     }
 
     public long getWhiteRemaining() {
-        return (long)whiteRemaining * 1000;
+        return (long) whiteRemaining * 1000;
     }
 
     public long getBlackRemaining() {
-        return (long)blackRemaining * 1000;
+        return (long) blackRemaining * 1000;
     }
 
     public String getLastMove() {

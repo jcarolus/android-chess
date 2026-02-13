@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
 import java.util.List;
+
 import jwtc.android.chess.R;
+import jwtc.android.chess.services.GameApi;
 
 public class MoveItemAdapter extends BaseAdapter {
     private Context context;
@@ -55,11 +56,12 @@ public class MoveItemAdapter extends BaseAdapter {
             textMove.setTextColor(ContextCompat.getColor(context, R.color.primaryColor));
         } else {
             textMove.setTextColor(ContextCompat.getColor(context, R.color.surfaceTextColor));
-            textMove.setPaintFlags(textMove.getPaintFlags() & (~ Paint.UNDERLINE_TEXT_FLAG));
+            textMove.setPaintFlags(textMove.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
         }
 
         textNr.setText(move.nr);
-        textMove.setText(move.move);
+        textMove.setText(move.sMove);
+        textMove.setContentDescription(GameApi.moveToSpeechString(move.sMove, move.move));
         textAnnotation.setText(move.annotation);
 
         return convertView;

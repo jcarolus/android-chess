@@ -2,23 +2,17 @@ package jwtc.android.chess.play;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
-import android.widget.SimpleAdapter;
-
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import androidx.annotation.NonNull;
+
+import com.google.android.material.button.MaterialButton;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.Clipboard;
-import jwtc.android.chess.play.MoveItem;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
@@ -46,47 +40,36 @@ public class PGNDialog extends Dialog {
         ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
 
         for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove =  pgnEntries.get(i)._sMove;
-            if (pgnEntries.get(i)._duckMove != -1) {
-                sMove += "@" + Pos.toString(pgnEntries.get(i)._duckMove);
+            String sMove = pgnEntries.get(i).sMove;
+            if (pgnEntries.get(i).duckMove != -1) {
+                sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
             }
-            String nr = i % 2 == 0 ? ((i/2+1) + ". ") : " ";
-            String annotation = pgnEntries.get(i)._sAnnotation;
+            String nr = i % 2 == 0 ? ((i / 2 + 1) + ". ") : " ";
+            String annotation = pgnEntries.get(i).sAnnotation;
             int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
 
-            mapMoves.add(new MoveItem(nr, sMove, annotation, turn));
+            mapMoves.add(new MoveItem(nr, sMove, pgnEntries.get(i).move, annotation, turn));
 
         }
 
         adapterMoves.notifyDataSetChanged();
         contentLayout.smoothScrollToPosition(adapterMoves.getCount());
 
-        contentLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (jni.getNumBoard() > position) {
-                    position++;
-                }
-                gameApi.jumpToBoardNum(position);
-                dismiss();
+        contentLayout.setOnItemClickListener((parent, view, position, id) -> {
+            if (jni.getNumBoard() > position) {
+                position++;
             }
+            gameApi.jumpToBoardNum(position);
+            dismiss();
         });
 
-        ImageButton buttonClip = findViewById(R.id.ButtonClip);
-        buttonClip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Clipboard.stringToClipboard(context, gameApi.exportFullPGN(), context.getString(R.string.copied_clipboard_success));
-                dismiss();
-            }
+        MaterialButton buttonClip = findViewById(R.id.ButtonClip);
+        buttonClip.setOnClickListener(view -> {
+            Clipboard.stringToClipboard(context, gameApi.exportFullPGN(), context.getString(R.string.copied_clipboard_success));
+            dismiss();
         });
 
-        Button buttonClose = findViewById(R.id.ButtonClose);
-        buttonClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
+        MaterialButton buttonClose = findViewById(R.id.ButtonClose);
+        buttonClose.setOnClickListener(view -> dismiss());
     }
 }

@@ -7,7 +7,6 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,16 +21,20 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 public class CustomCommands extends BaseActivity implements OnItemClickListener {
 
     public static final String TAG = "CustomCommands";
     public static final String DEFAULT_COMMANDS = "[" +
-            "\"tell relay listgames\"," +
-            "\"tell endgamebot kbnk\"," +
-            "\"tell endgamebot help\"," +
-            "\"exl\"," +
-            "\"help commands\"" +
-            "]";
+        "\"tell relay listgames\"," +
+        "\"tell endgamebot kbnk\"," +
+        "\"tell endgamebot help\"," +
+        "\"exl\"," +
+        "\"help commands\"" +
+        "]";
 
     private ListView _listCommands;
     ArrayAdapter<String> _adapter;
@@ -42,7 +45,7 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
 
         final int position = arg2;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(getString(R.string.title_edit_or_delete));
 
         builder.setPositiveButton(getString(R.string.choice_edit), new DialogInterface.OnClickListener() {
@@ -55,22 +58,22 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
 
                 fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(CustomCommands.this)
-                        .setView(fl)
-                        .setTitle(getString(R.string.title_edit_command))
-                        .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                String s = input.getText().toString();
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(CustomCommands.this)
+                    .setView(fl)
+                    .setTitle(getString(R.string.title_edit_command))
+                    .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String s = input.getText().toString();
 
-                                _adapter.remove(_adapter.getItem(position));
-                                _adapter.insert(s, position);
+                            _adapter.remove(_adapter.getItem(position));
+                            _adapter.insert(s, position);
 
-                                _listCommands.invalidateViews();
+                            _listCommands.invalidateViews();
 
-                                dialog.dismiss();
-                            }
+                            dialog.dismiss();
+                        }
 
-                        });
+                    });
                 AlertDialog alert = builder.create();
                 alert.show();
 
@@ -170,21 +173,18 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
 
             fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setView(fl)
-                    .setTitle(R.string.menu_new_command)
-                    .setMessage(R.string.menu_new_command_message)
-                    .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            String s = input.getText().toString();
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
+                .setView(fl)
+                .setTitle(R.string.menu_new_command)
+                .setMessage(R.string.menu_new_command_message)
+                .setPositiveButton(R.string.button_ok, (dialog, which) -> {
+                    String s = input.getText().toString();
 
-                            _adapter.add(s);
-                            _listCommands.invalidateViews();
+                    _adapter.add(s);
+                    _listCommands.invalidateViews();
 
-                            dialog.dismiss();
-                        }
-
-                    });
+                    dialog.dismiss();
+                });
             AlertDialog alert = builder.create();
             alert.show();
 

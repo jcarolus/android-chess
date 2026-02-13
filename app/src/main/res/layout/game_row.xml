@@ -1,73 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_optimizationLevel="none"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:background="@color/paneBackgroundColor"
+    android:padding="4dip">
 
-    <TableLayout
-        android:id="@+id/TableFirstRow"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/text_id"
+        android:text="id"
+        android:singleLine="false"
+        style="@style/MyNormalTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.1" />
 
-        <TableRow android:layout_marginTop="5dip">
+    <TextView
+        android:id="@+id/text_date"
+        android:text="date"
+        android:singleLine="false"
+        style="@style/MyNormalTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/text_id"
+        app:layout_constraintWidth_percent="0.3" />
 
-            <RelativeLayout
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/text_event"
+        android:text="event"
+        android:singleLine="false"
+        style="@style/MyNormalTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/text_date"
+        app:layout_constraintWidth_percent="0.4" />
 
-                <RatingBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:isIndicator="true"
-                    android:max="5"
-                    android:numStars="5"
-                    android:id="@+id/rating"
-                    style="?android:attr/ratingBarStyleSmall" />
-            </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rating_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/text_event"
+        app:layout_constraintWidth_percent="0.2">
 
-            <TextView
-                android:id="@+id/text_date"
-                android:text="date"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="3"
-                android:layout_height="wrap_content" />
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isIndicator="true"
+            android:max="5"
+            android:numStars="5"
+            android:id="@+id/rating"
+            style="?android:attr/ratingBarStyleSmall" />
+    </RelativeLayout>
 
-            <TextView
-                android:id="@+id/text_event"
-                android:text="event"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="3"
-                android:layout_height="wrap_content" />
-        </TableRow>
-    </TableLayout>
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/bottomBarrier"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="text_id,text_date,text_event,rating_container" />
 
-    <TableLayout
-        android:layout_below="@id/TableFirstRow"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/text_result"
+        android:text="*"
+        android:singleLine="false"
+        style="@style/MyNormalTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/bottomBarrier"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.1" />
 
-        <TableRow android:layout_marginBottom="5dip">
+    <TextView
+        android:id="@+id/text_name1"
+        android:text="white"
+        android:singleLine="false"
+        style="@style/MyNormalTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/bottomBarrier"
+        app:layout_constraintStart_toEndOf="@id/text_result"
+        app:layout_constraintWidth_percent="0.45" />
 
-            <TextView
-                android:id="@+id/text_id"
-                android:text="id"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="1"
-                android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/text_name2"
+        android:text="black"
+        android:singleLine="false"
+        style="@style/MyNormalTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/bottomBarrier"
+        app:layout_constraintStart_toEndOf="@id/text_name1"
+        app:layout_constraintWidth_percent="0.45" />
 
-            <TextView
-                android:id="@+id/text_name1"
-                android:text="white"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="3"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/text_name2"
-                android:text="black"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="3"
-                android:layout_height="wrap_content" />
-        </TableRow>
-    </TableLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

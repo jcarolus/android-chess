@@ -2,6 +2,7 @@ package jwtc.android.chess.ics;
 
 import android.os.Handler;
 import android.os.Message;
+
 import java.lang.ref.WeakReference;
 
 public class ICSThreadMessageHandler extends Handler {

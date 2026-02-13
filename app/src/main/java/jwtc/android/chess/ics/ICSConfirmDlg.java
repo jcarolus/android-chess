@@ -6,12 +6,12 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
+
 /**
- *
+ * @TODO just openConfirmDialog?
  */
 public class ICSConfirmDlg extends ResultDialog {
 
@@ -25,23 +25,17 @@ public class ICSConfirmDlg extends ResultDialog {
 
         setCanceledOnTouchOutside(true);
 
-        _tvText = (TextView) findViewById(R.id.TextViewConfirm);
+        _tvText = findViewById(R.id.TextViewConfirm);
 
-        Button butYes = (Button) findViewById(R.id.ButtonConfirmYes);
-        butYes.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                Bundle data = new Bundle();
-                data.putCharSequence("data", _sendString);
-                setResult(data);
-                dismiss();
-            }
+        MaterialButton butYes = findViewById(R.id.ButtonConfirmYes);
+        butYes.setOnClickListener(arg0 -> {
+            Bundle data = new Bundle();
+            data.putCharSequence("data", _sendString);
+            setResult(data);
+            dismiss();
         });
-        Button butNo = (Button) findViewById(R.id.ButtonConfirmNo);
-        butNo.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                dismiss();
-            }
-        });
+        MaterialButton butNo = findViewById(R.id.ButtonConfirmNo);
+        butNo.setOnClickListener(arg0 -> dismiss());
     }
 
     public void setText(String sTitle, String sText) {

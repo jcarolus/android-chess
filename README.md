@@ -5,7 +5,7 @@
 - Free
 - No ads
 - Small size
-- Demo video https://youtu.be/2HwjQDV1P8g
+- Demo video https://youtu.be/oFvqyaLGvq0
 
 ## Features
 - Chess 960

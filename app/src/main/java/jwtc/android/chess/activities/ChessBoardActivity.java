@@ -1,12 +1,7 @@
 package jwtc.android.chess.activities;
 
-import android.app.AlertDialog;
 import android.content.ClipData;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.DragEvent;
@@ -15,12 +10,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
+import jwtc.android.chess.helpers.Sounds;
 import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
@@ -35,8 +32,6 @@ import jwtc.chess.Move;
 import jwtc.android.chess.constants.Piece;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
-import jwtc.chess.board.BoardMembers;
-import jwtc.chess.board.ChessBoard;
 
 abstract public class ChessBoardActivity extends BaseActivity implements GameListener, OnInitListener {
     private static final String TAG = "ChessBoardActivity";
@@ -49,12 +44,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ChessBoardView chessBoardView;
     protected ChessSquareView currentChessSquareView = null;
     protected ChessPieceView currentChessPieceView = null;
-    protected SoundPool spSound = null;
+    protected Sounds sounds = null;
+
     protected TextToSpeechApi textToSpeech = null;
     protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1, lastMoveFrom = -1, lastMoveTo = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
-    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
+
     protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false, moveToSpeech = false;
     private String keyboardBuffer = "";
 
@@ -65,20 +61,17 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
             final String[] items = getResources().getStringArray(R.array.promotionpieces);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setTitle(R.string.title_pick_promo);
             builder.setCancelable(false);
-            builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    dialog.dismiss();
-                    jni.setPromo(4 - item);
-                    if (!gameApi.requestMove(from, to)) {
-                        rebuildBoard();
-                    }
+            builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
+                dialog.dismiss();
+                jni.setPromo(4 - item);
+                if (!gameApi.requestMove(from, to)) {
+                    rebuildBoard();
                 }
             });
-            AlertDialog alert = builder.create();
-            alert.show();
+            builder.create().show();
 
 //            if (_vibrator != null) {
 //                _vibrator.vibrate(40L);
@@ -106,13 +99,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         rebuildBoard();
 
-        if (spSound != null) {
+        if (sounds != null) {
             if (Move.isCheck(move)) {
-                spSound.play(soundCheck, fVolume, fVolume, 2, 0, 1);
+                sounds.playCheck();
             } else if (Move.isHIT(move)) {
-                spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);
+                sounds.playCapture();
             } else {
-                spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
+                sounds.playMove();
             }
         }
 
@@ -194,25 +187,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         showMoves = prefs.getBoolean("showMoves", false);
 
-        fVolume = prefs.getBoolean("moveSounds", false) ? 1.0f : 0.0f;
-
-        spSound = new SoundPool(7, AudioManager.STREAM_MUSIC, 0);
-        soundTickTock = spSound.load(this, R.raw.ticktock, 1);
-        soundCheck = spSound.load(this, R.raw.smallneigh, 2);
-        soundMove = spSound.load(this, R.raw.move, 1);
-        soundCapture = spSound.load(this, R.raw.capture, 1);
-        soundNewGame = spSound.load(this, R.raw.chesspiecesfall, 1);
+        sounds = new Sounds(this);
+        sounds.initPrefs(prefs);
     }
 
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
-
-        SharedPreferences.Editor editor = this.getPrefs().edit();
-        editor.putBoolean("moveSounds", fVolume == 1.0f);
-
-        editor.commit();
-
         super.onPause();
     }
 
@@ -241,7 +222,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         chessBoardView.removePieces();
         chessBoardView.removeLabels();
 
-        final int state = jni.getState();
+        final int state = gameApi.getState();
         final int turn = jni.getTurn();
         final int duckPos = jni.getDuckPos();
 
@@ -251,23 +232,33 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         String labelForWhiteKing = null;
         String labelForBlackKing = null;
         switch (state) {
-            case ChessBoard.MATE:
+            case BoardConstants.MATE:
                 labelForWhiteKing = turn == BoardConstants.BLACK ? "✓" : "#";
                 labelForBlackKing = turn == BoardConstants.WHITE ? "✓" : "#";
                 break;
-            case ChessBoard.DRAW_MATERIAL:
-            case ChessBoard.DRAW_REPEAT:
-            case ChessBoard.DRAW_AGREEMENT:
-            case ChessBoard.STALEMATE:
+            case BoardConstants.BLACK_RESIGNED:
+            case BoardConstants.BLACK_FORFEIT_TIME:
+                labelForWhiteKing = "✓";
+                labelForBlackKing = "⚑";
+                break;
+            case BoardConstants.WHITE_RESIGNED:
+            case BoardConstants.WHITE_FORFEIT_TIME:
+                labelForWhiteKing = "⚑";
+                labelForBlackKing = "✓";
+                break;
+            case BoardConstants.DRAW_MATERIAL:
+            case BoardConstants.DRAW_REPEAT:
+            case BoardConstants.DRAW_AGREEMENT:
+            case BoardConstants.STALEMATE:
                 labelForWhiteKing = "½";
                 labelForBlackKing = "½";
                 break;
-            case ChessBoard.DRAW_50:
+            case BoardConstants.DRAW_50:
                 labelForWhiteKing = "50";
                 labelForBlackKing = "50";
                 break;
-            case ChessBoard.CHECK:
-                if (turn == ChessBoard.WHITE) {
+            case BoardConstants.CHECK:
+                if (turn == BoardConstants.WHITE) {
                     labelForWhiteKing = "+";
                 } else {
                     labelForBlackKing = "+";
@@ -276,14 +267,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         for (int i = 0; i < 64; i++) {
-            int color = turn == ChessBoard.BLACK ? ChessBoard.WHITE : ChessBoard.BLACK;
+            int color = turn == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK;
             int piece = i == duckPos ? BoardConstants.DUCK : jni.pieceAt(color, i);
             if (piece == BoardConstants.FIELD) {
                 color = turn;
                 piece = jni.pieceAt(color, i);
             }
 
-            if (piece != BoardConstants.FIELD){
+            if (piece != BoardConstants.FIELD) {
                 ChessPieceView p = new ChessPieceView(this, color, piece, i);
                 p.setOnTouchListener(myTouchListener);
 
@@ -403,13 +394,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS && textToSpeech != null) {
-            int result = textToSpeech.setLanguage(Locale.US);
+            int result = textToSpeech.setDefaults(getPrefs());
 
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 doToast("Speech does not support US locale");
                 textToSpeech = null;
             } else {
-                textToSpeech.setDefaults();
+
             }
         } else {
             doToast("Speech not supported");
@@ -494,7 +485,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessPieceView) {
-                final ChessPieceView pieceView = (ChessPieceView)child;
+                final ChessPieceView pieceView = (ChessPieceView) child;
                 if (pieceView.getPos() == pos) {
                     return pieceView;
                 }
@@ -509,7 +500,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             final View child = chessBoardView.getChildAt(i);
 
             if (child instanceof ChessSquareView) {
-                final ChessSquareView squareView = (ChessSquareView)child;
+                final ChessSquareView squareView = (ChessSquareView) child;
                 if (squareView.getPos() == pos) {
                     return squareView;
                 }
@@ -523,12 +514,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
             int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
             int duckPos = jni.getDuckPos();
+
             if (whitePiece != BoardConstants.FIELD) {
-                return getString(R.string.square_with_piece_description, getString(R.string.piece_white), getString(Piece.toResource(whitePiece)), Pos.toString(pos));
+                return getString(selectedPosition == pos ? R.string.square_selected_with_piece_description : R.string.square_with_piece_description, getString(R.string.piece_white), getString(Piece.toResource(whitePiece)), Pos.toString(pos));
             } else if (blackPiece != BoardConstants.FIELD) {
-                return getString(R.string.square_with_piece_description, getString(R.string.piece_black), getString(Piece.toResource(blackPiece)), Pos.toString(pos));
+                return getString(selectedPosition == pos ? R.string.square_selected_with_piece_description : R.string.square_with_piece_description, getString(R.string.piece_black), getString(Piece.toResource(blackPiece)), Pos.toString(pos));
             } else if (duckPos != -1) {
-                return getString(R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos));
+                return getString(selectedPosition == pos ? R.string.square_selected_with_duck_description : R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos));
             }
         }
         return Pos.toString(pos);
@@ -538,20 +530,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         int move = jni.getMyMove();
         if (move != 0) {
             String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
-            if (jni.isEnded() != 0) {
+            if (gameApi.isEnded()) {
                 return sMove;
             }
             return jni.getTurn() == BoardConstants.BLACK
-                    ? getString(R.string.last_white_move_description, sMove)
-                    : getString(R.string.last_black_move_description, sMove);
+                ? getString(R.string.last_white_move_description, sMove)
+                : getString(R.string.last_black_move_description, sMove);
         }
         return "";
-    }
-
-    protected void showAccessibilityForSelectedPosition(int pos) {
-        if (isScreenReaderOn()) {
-            doToastShort(getString(R.string.square_selected_description, Pos.toString(pos)));
-        }
     }
 
     protected String getPiecesDescription(final int turn) {
@@ -567,11 +553,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
             if (positions.size() > 0) {
                 ret += Piece.toString(i)
-                        + " " + positions
-                        .stream()
-                        .map(Pos::toString)
-                        .collect(Collectors.joining(", "))
-                + ". ";
+                    + " " + positions
+                    .stream()
+                    .map(Pos::toString)
+                    .collect(Collectors.joining(", "))
+                    + ". ";
             }
         }
         return getString(turn == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black) + ": " + ret;
@@ -609,8 +595,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         view.setSelected(false);
                         break;
                     case DragEvent.ACTION_DRAG_STARTED:
-                       // all listeners allow drag started
-                       break;
+                        // all listeners allow drag started
+                        break;
                     case DragEvent.ACTION_DRAG_LOCATION:
                         break;
                     case DragEvent.ACTION_DROP: {
@@ -641,7 +627,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     case DragEvent.ACTION_DRAG_ENDED: {
                         final View droppedView = (View) event.getLocalState();
                         if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
-                            droppedView.post(new Runnable(){
+                            droppedView.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     droppedView.setVisibility(View.VISIBLE);
@@ -690,27 +676,27 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     public static int chessStateToR(int s) {
         switch (s) {
-            case ChessBoard.MATE:
+            case BoardConstants.MATE:
                 return R.string.state_mate;
-            case ChessBoard.DRAW_MATERIAL:
+            case BoardConstants.DRAW_MATERIAL:
                 return R.string.state_draw_material;
-            case ChessBoard.CHECK:
+            case BoardConstants.CHECK:
                 return R.string.state_check;
-            case ChessBoard.STALEMATE:
+            case BoardConstants.STALEMATE:
                 return R.string.state_draw_stalemate;
-            case ChessBoard.DRAW_50:
+            case BoardConstants.DRAW_50:
                 return R.string.state_draw_50;
-            case ChessBoard.DRAW_REPEAT:
+            case BoardConstants.DRAW_REPEAT:
                 return R.string.state_draw_repeat;
-            case ChessBoard.BLACK_FORFEIT_TIME:
+            case BoardConstants.BLACK_FORFEIT_TIME:
                 return R.string.state_black_forfeits_time;
-            case ChessBoard.WHITE_FORFEIT_TIME:
+            case BoardConstants.WHITE_FORFEIT_TIME:
                 return R.string.state_white_forfeits_time;
-            case ChessBoard.BLACK_RESIGNED:
+            case BoardConstants.BLACK_RESIGNED:
                 return R.string.state_black_resigned;
-            case ChessBoard.WHITE_RESIGNED:
+            case BoardConstants.WHITE_RESIGNED:
                 return R.string.state_white_resigned;
-            case ChessBoard.DRAW_AGREEMENT:
+            case BoardConstants.DRAW_AGREEMENT:
                 return R.string.state_draw_agreement;
             default:
                 return R.string.state_play;
@@ -719,7 +705,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected void dpadFocus(boolean hasFocus) {
         if (hasFocus) {
-            dpadPos = jni.getTurn() == ChessBoard.BLACK ? ChessBoard.e8 : ChessBoard.e1;
+            dpadPos = jni.getTurn() == BoardConstants.BLACK ? BoardConstants.e8 : BoardConstants.e1;
             updateSelectedSquares();
         } else {
             dpadPos = -1;
@@ -791,24 +777,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void handleAmbiguousCastle(int from, int to) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.title_castle);
-        builder.setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                gameApi.requestMoveCastle(from, to);
+        openConfirmDialog(getString(R.string.title_castle), getString(R.string.alert_yes), getString(R.string.alert_no), () -> {
+            gameApi.requestMoveCastle(from, to);
+        }, () -> {
+            if (from != to) {
+                gameApi.requestMove(from, to);
             }
         });
-        builder.setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                if (from != to) {
-                    gameApi.requestMove(from, to);
-                }
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
     protected void selectPosition(int pos) {
@@ -819,10 +794,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             if (selectedPosition == -1) {
                 selectedPosition = pos;
-                showAccessibilityForSelectedPosition(pos);
                 setMoveToPositions(pos);
                 updateSelectedSquares();
-            } else if (selectedPosition != pos){
+            } else if (selectedPosition != pos) {
                 handleMove(pos);
             } else {
                 if (jni.isAmbiguousCastle(selectedPosition, pos) != 0) {

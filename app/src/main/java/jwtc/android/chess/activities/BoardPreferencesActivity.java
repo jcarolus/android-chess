@@ -3,11 +3,7 @@ package jwtc.android.chess.activities;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.Spinner;
 
 import com.google.android.material.slider.Slider;
 
@@ -16,12 +12,13 @@ import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
     private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxNightMode;
-    private Spinner spinnerPieceSet, spinnerColorScheme, spinnerTileSet;
-    private Slider sliderSaturation;
+    private Slider sliderSaturation, sliderSpeechRate, sliderSpeechPitch;
+    private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,9 +28,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         ActivityHelper.fixPaddings(this, findViewById(R.id.LayoutMain));
 
-        spinnerPieceSet = findViewById(R.id.SpinnerPieceSet);
-        spinnerColorScheme = findViewById(R.id.SpinnerColorScheme);
-        spinnerTileSet = findViewById(R.id.SpinnerTileSet);
+        dropDownPieces = findViewById(R.id.DropdownPieceSet);
+        dropDownColorScheme = findViewById(R.id.DropdownColorScheme);
+        dropDownTileSet = findViewById(R.id.DropdownTileSet);
         checkBoxCoordinates = findViewById(R.id.CheckBoxCoordinates);
         checkBoxShowMoves = findViewById(R.id.CheckBoxShowMoves);
         checkBoxWakeLock = findViewById(R.id.CheckBoxUseWakeLock);
@@ -41,53 +38,45 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
         sliderSaturation = findViewById(R.id.SliderSaturation);
+        sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
+        sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
 
-        spinnerPieceSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                PieceSets.selectedSet = pos;
-                rebuildBoard();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-
+        dropDownPieces.setItems(getResources().getStringArray(R.array.piecesetarray));
+        dropDownPieces.setOnItemClickListener((parent, view, position, id) -> {
+            PieceSets.selectedSet = position;
+            rebuildBoard();
         });
 
-        spinnerColorScheme.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                ColorSchemes.selectedColorScheme = pos;
-                chessBoardView.invalidateSquares();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-
+        dropDownColorScheme.setItems(getResources().getStringArray(R.array.colorschemes));
+        dropDownColorScheme.setOnItemClickListener((parent, view, position, id) -> {
+            ColorSchemes.selectedColorScheme = position;
+            chessBoardView.invalidateSquares();
         });
 
-        spinnerTileSet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                ColorSchemes.selectedPattern = pos;
-                chessBoardView.invalidateSquares();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-
+        dropDownTileSet.setItems(getResources().getStringArray(R.array.tileArray));
+        dropDownTileSet.setOnItemClickListener((parent, view, position, id) -> {
+            ColorSchemes.selectedPattern = position;
+            chessBoardView.invalidateSquares();
         });
 
-        checkBoxCoordinates.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               ColorSchemes.showCoords = isChecked;
-               chessBoardView.invalidateSquares();
-           }
-       });
+        checkBoxCoordinates.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            ColorSchemes.showCoords = isChecked;
+            chessBoardView.invalidateSquares();
+        });
 
         sliderSaturation.addOnChangeListener((s, value, fromUser) -> {
             ColorSchemes.saturationFactor = value;
             chessBoardView.invalidateSquares();
+        });
+
+        sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
+            textToSpeech.setSpeechRate(value);
+            textToSpeech.moveToSpeech("Bishop takes G7 check");
+        });
+
+        sliderSpeechPitch.addOnChangeListener((s, value, fromUser) -> {
+            textToSpeech.setSpeechPitch(value);
+            textToSpeech.moveToSpeech("Bishop takes G7 check");
         });
 
         gameApi = new GameApi();
@@ -110,15 +99,15 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
 
-        spinnerPieceSet.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
-        spinnerColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
-        spinnerTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
+        dropDownPieces.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
+        dropDownColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
+        dropDownTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
 
         sliderSaturation.setValue(prefs.getFloat("squareSaturation", 1.0f));
+        sliderSpeechRate.setValue(prefs.getFloat("speechRate", 1.0f));
+        sliderSpeechPitch.setValue(prefs.getFloat("speechPitch", 1.0f));
 
         rebuildBoard();
-
-        spinnerPieceSet.requestFocus();
     }
 
     @Override
@@ -127,9 +116,11 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        editor.putString("pieceset", "" + spinnerPieceSet.getSelectedItemPosition());
-        editor.putString("colorscheme", "" + spinnerColorScheme.getSelectedItemPosition());
-        editor.putString("squarePattern", "" + spinnerTileSet.getSelectedItemPosition());
+        Log.d(TAG, "onPause " + dropDownPieces.getSelectedItemPosition());
+
+        editor.putString("pieceset", "" + dropDownPieces.getSelectedItemPosition());
+        editor.putString("colorscheme", "" + dropDownColorScheme.getSelectedItemPosition());
+        editor.putString("squarePattern", "" + dropDownTileSet.getSelectedItemPosition());
         editor.putBoolean("showCoords", checkBoxCoordinates.isChecked());
         editor.putBoolean("showMoves", checkBoxShowMoves.isChecked());
         editor.putBoolean("wakeLock", checkBoxWakeLock.isChecked());
@@ -137,6 +128,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
         editor.putFloat("squareSaturation", sliderSaturation.getValue());
+        editor.putFloat("speechRate", sliderSpeechRate.getValue());
+        editor.putFloat("speechPitch", sliderSpeechPitch.getValue());
 
         editor.commit();
     }

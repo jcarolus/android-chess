@@ -1,5 +1,7 @@
 package jwtc.android.chess.constants;
+
 import androidx.core.graphics.ColorUtils;
+
 import jwtc.android.chess.R;
 
 public class ColorSchemes {
@@ -9,7 +11,7 @@ public class ColorSchemes {
     public static boolean isRotated = false; // not ideal
     public static int selectedPattern = 0;
     public static float saturationFactor = 1.0f;
-    
+
     static {
         colorScheme[0][0] = 0xeeFAAE2F;
         colorScheme[0][1] = 0xeeFFCC78;
@@ -75,9 +77,12 @@ public class ColorSchemes {
 
     public static int getSelectedPatternDrawable() {
         switch (selectedPattern) {
-            case 1: return R.drawable.square_single_shade;
-            case 2: return R.drawable.square_double_shade;
-            case 3: return R.drawable.diagonal_stripes;
+            case 1:
+                return R.drawable.square_single_shade;
+            case 2:
+                return R.drawable.square_double_shade;
+            case 3:
+                return R.drawable.diagonal_stripes;
         }
 
         return 0;

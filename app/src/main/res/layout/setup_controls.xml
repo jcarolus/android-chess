@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <jwtc.android.chess.views.ChessPiecesStackView
-            android:layout_width="wrap_content"
-            android:layout_height="48dip"
-            android:layout_marginTop="4dip"
-            android:id="@+id/blackPieces" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <jwtc.android.chess.views.ChessPiecesStackView
+                android:layout_width="wrap_content"
+                android:layout_height="48dip"
+                android:layout_marginTop="4dip"
+                android:id="@+id/blackPieces" />
+
+            <jwtc.android.chess.views.ChessPiecesStackView
+                android:layout_width="wrap_content"
+                android:layout_height="48dip"
+                android:layout_marginTop="4dip"
+                android:layout_marginLeft="16dip"
+                android:layout_marginRight="4dip"
+                android:id="@+id/duckStack" />
+        </LinearLayout>
 
         <jwtc.android.chess.views.ChessPiecesStackView
             android:layout_width="wrap_content"
@@ -21,72 +35,61 @@
             android:layout_marginTop="4dip"
             android:id="@+id/whitePieces" />
 
-        <TableLayout
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dip">
-            <TableRow  style="@style/MyRowStyle">
-                <TextView
-                    android:id="@+id/TextViewSetupTurn"
-                    android:text="@string/msg_setup_turn"
-                    style="@style/MyLabelTextStyle"
+            android:padding="4dip"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:alignItems="center">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/RadioGroupSetup"
+                android:orientation="horizontal"
+                style="@style/MyRowStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/RadioSetupTurnWhite"
+                    android:text="@string/msg_setup_turn_white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <RadioGroup
-                    android:id="@+id/RadioGroupSetup"
-                    android:orientation="horizontal"
-                    style="@style/MyRowStyle"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-                    <RadioButton
-                        android:id="@+id/RadioSetupTurnWhite"
-                        android:text="@string/msg_setup_turn_white"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                    <RadioButton
-                        android:id="@+id/RadioSetupTurnBlack"
-                        android:text="@string/msg_setup_turn_black"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </RadioGroup>
-                <jwtc.android.chess.views.ChessPiecesStackView
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dip"
-                    android:layout_marginLeft="16dip"
-                    android:layout_marginRight="4dip"
-                    android:id="@+id/duckStack" />
-            </TableRow>
-        </TableLayout>
-        <TableLayout
-            android:id="@+id/TableSetupEnPassant"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-            <TableRow style="@style/MyRowStyle">
-                <TextView
-                    android:text="@string/msg_setup_enpassant"
-                    style="@style/MyLabelTextStyle"
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/RadioSetupTurnBlack"
+                    android:text="@string/msg_setup_turn_black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <Spinner
-                    android:id="@+id/SpinnerOptionsEnPassant"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-        </TableLayout>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <jwtc.android.chess.views.FixedDropdownView
+                android:id="@+id/SpinnerOptionsEnPassant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dip"
+                android:hint="@string/msg_setup_enpassant" />
+        </com.google.android.flexbox.FlexboxLayout>
+
         <TableLayout
             android:id="@+id/TableSetupCastling"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="*">
+
             <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 style="@style/MyRowStyle">
+
                 <TextView
                     android:text="@string/msg_setup_castle_white"
                     style="@style/MyLabelTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
                 <CheckBox
                     android:id="@+id/CheckBoxSetupWhiteCastleShort"
                     android:text="0-0"
@@ -99,20 +102,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </TableRow>
+
             <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 style="@style/MyRowStyle">
+
                 <TextView
                     android:text="@string/msg_setup_castle_black"
                     style="@style/MyLabelTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
                 <CheckBox
                     android:id="@+id/CheckBoxSetupBlackCastleShort"
                     android:text="0-0"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" />
+
                 <CheckBox
                     android:id="@+id/CheckBoxSetupBlackCastleLong"
                     android:text="0-0-0"
@@ -120,32 +127,65 @@
                     android:layout_height="wrap_content" />
             </TableRow>
         </TableLayout>
-        <TableLayout
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dip"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_end"
+            app:alignItems="center">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsCancel"
+                android:text="@string/button_cancel"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsReset"
+                android:text="@string/msg_setup_reset"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsClear"
+                android:text="@string/msg_setup_clear"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsRandom"
+                android:text="@string/msg_setup_random"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsOk"
+                android:text="@string/button_ok"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <TextView
+            android:id="@+id/TextViewWhitePieces"
+            style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="*">
-            <TableRow style="@style/MyRowStyle">
-                <Button
-                    android:id="@+id/ButtonSetupOptionsCancel"
-                    android:text="@string/button_cancel"
-                    android:layout_width="wrap_content"
-                    style="@style/ChessButton"/>
-                <Button
-                    android:id="@+id/ButtonSetupOptionsReset"
-                    android:text="@string/msg_setup_reset"
-                    android:layout_width="wrap_content"
-                    style="@style/ChessButton"/>
-                <Button
-                    android:id="@+id/ButtonSetupOptionsClear"
-                    android:text="@string/msg_setup_clear"
-                    android:layout_width="wrap_content"
-                    style="@style/ChessButton"/>
-                <Button
-                    android:id="@+id/ButtonSetupOptionsOk"
-                    android:text="@string/button_ok"
-                    android:layout_width="wrap_content"
-                    style="@style/ChessButton"/>
-            </TableRow>
-        </TableLayout>
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="none" />
+
+        <TextView
+            android:id="@+id/TextViewBlackPieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip"
+            android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

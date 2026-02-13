@@ -1,6 +1,7 @@
 package jwtc.android.chess.helpers;
 
 import android.util.Log;
+
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,6 +10,8 @@ import java.util.regex.Pattern;
 
 public class PGNHelper {
 
+
+    public static final String regexPgnTag = "\\[(\\w+) \\\"([^\\]]*)\\\"\\]";
 
     public static String getPGNFromInputStream(InputStream is) throws Exception {
         String sPGN = "";
@@ -32,7 +35,7 @@ public class PGNHelper {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
                     Date utilDate = formatter.parse(s);
                     return utilDate;
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
             } else {
 
@@ -57,12 +60,16 @@ public class PGNHelper {
                             SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
                             Date utilDate = formatter.parse(s);
                             return utilDate;
-                        } catch (Exception ex) {
+                        } catch (Exception ignored) {
                         }
                     }
                 }
             }
         }
         return null;
+    }
+
+    public static String cleanPgnString(String s) {
+        return s.replaceAll("[\\r\\n\\t]+", " ").replaceAll(" {2,}", " ").trim();
     }
 }

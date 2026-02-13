@@ -1,135 +1,60 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="advanced_help">
+                 <![CDATA[
+        <h3>Avanzado</h3>
+        <p>Crea o importa tu propio contenido aquí.</p>
+        
+        <h4>Exportar la base de datos de partidas a la tarjeta SD</h4>
+        <p>Todas las partidas de la base de datos pueden exportarse a un único archivo PGN en la tarjeta SD. Este archivo se llamará chess.pgn y, si existe, se sobrescribirá.</p>
+        
+        <h4>Importar partidas a la base de datos</h4>
+        <p>Usa esta opción para añadir partidas a la base de datos. Te permite buscar un archivo PGN. Selecciónalo y elige importar.</p>
+        
+        <h4>Eliminar todas las partidas de la base de datos</h4>
+        <p>Usa esta opción si quieres limpiar la base de datos. Asegúrate primero de hacer una copia de seguridad en la tarjeta SD; esta acción no se puede deshacer.</p>
+        
+        <h4>Crear conjunto de práctica</h4>
+        <p>Crea posiciones de práctica a partir de partidas que terminan en jaque mate. Navega hasta el archivo que deseas procesar. Las entradas fallidas suelen ser partidas que no terminaron en jaque mate o que están duplicadas.</p>
+        
+        <h4>Restablecer conjunto de práctica</h4>
+        <p>¿Quieres volver a empezar a practicar? Esto también restablecerá tu contador de tiempo promedio.</p>
+        
+        
+                ]]>
+            </string>
+    <string name="alert_no">No</string>
+    <string name="alert_ok">OK</string>
+    <string name="alert_yes">Sí</string>
     <string name="app_name">Ajedrez</string>
-    <string name="app_name_play">Jugar</string>
-    <string name="app_name_playonline">Jugar en línea</string>
-    <string name="app_name_setup">Configurar</string>
     <string name="app_name_help">Ayuda</string>
     <string name="app_name_import">Importar</string>
     <string name="app_name_pgntools">Avanzado</string>
+    <string name="app_name_play">Jugar</string>
+    <string name="app_name_playonline">Jugar en línea</string>
     <string name="app_name_save_games">Partidas guardadas</string>
-
-    <string name="start_play">Jugar</string>
-    <string name="start_practice">Practicar</string>
-    <string name="start_puzzles">Problemas</string>
-    <string name="start_hotspotboard">Tablero hotspot (experimental)</string>
-    <string name="start_pgn">Avanzado</string>
-    <string name="start_ics">Jugar en línea</string>
-    <string name="start_boardpreferences">Configuración del tablero</string>
-
-    <string name="globalpreferences">Configuración global</string>
-    <string name="playpreferences">Configuración de juego</string>
-    <string name="playonlinepreferences">Configuración en línea</string>
-    <string name="boardprerences">Configuración del tablero</string>
-    <string name="gamepreferences">Configuración de partida</string>
-    <string name="preferences">Configuración</string>
-    <string name="pref_wakelock">Mantener pantalla encendida</string>
-    <string name="pref_wakelock_desc">Evita que el dispositivo entre en reposo</string>
-    <string name="pref_showCoords">Coordenadas</string>
-    <string name="pref_sound">Sonido</string>
-    <string name="pref_sound_desc">Se reproduce cuando el oponente mueve</string>
-    <string name="pref_speech">Voz</string>
-    <string name="pref_speech_desc">Dice el movimiento realizado</string>
-    <string name="pref_eco">Info ECO</string>
-    <string name="pref_eco_desc">Muestra información de apertura ECO cuando esté disponible</string>
-    <string name="pref_fullscreen">Pantalla completa</string>
-    <string name="pref_fullscreen_desc">Recomendado para pantallas pequeñas y modo horizontal; de lo contrario, algunos elementos pueden quedar fuera</string>
-    <string name="pref_tileset">Patrón de casillas</string>
-    <string name="pref_icscustomcommand">Comandos personalizados</string>
-    <string name="pref_icscustomcommand_desc">Crea tus propios comandos</string>
-    <string name="pref_icsconsolecharactersize">Tamaño de caracteres de la CONSOLA</string>
-    <string name="pref_icsconsolecharactersize_desc">Ajusta el tamaño de caracteres en la consola</string>
-    <string name="pref_icsautosought">Búsqueda automática</string>
-    <string name="pref_icsautosought_desc">Actualiza automáticamente la pantalla de desafíos</string>
-    <string name="pref_icstimewarning">Aviso de tiempo</string>
-    <string name="pref_icstimewarning_desc">Un sonido de tic-tac te avisa si el tiempo baja al límite de aviso</string>
-    <string name="pref_icstimewarningsecs">Tiempo de aviso (segundos)</string>
-    <string name="pref_icstimewarningsecs_desc">¿Cuántos segundos antes empieza la advertencia?</string>
-    <string name="prefs_icsendgamedialog">Diálogo de fin de partida</string>
-    <string name="prefs_icsendgamesummary">¿Quieres que aparezca un diálogo para guardar al final de la partida?</string>
-    <string name="pref_icsnotification">Notificación de nueva partida</string>
-    <string name="prefs_icsnotificationsummary">Te avisa del inicio de una partida con un icono</string>
-    <string name="pref_vs_cpu">Contra CPU</string>
-    <string name="pref_vs_cpu_desc">Jugar contra la CPU/Motor</string>
-    <string name="pref_turn">Lado</string>
-    <string name="pref_turn_desc">Qué lado del tablero juegas</string>
-    <string name="pref_night_mode">Modo nocturno</string>
-    <string name="pref_night_mode_desc">Forzar la app en modo nocturno</string>
-
-    <string name="button_ok">OK</string>
+    <string name="app_name_setup">Configurar</string>
     <string name="button_cancel">Cancelar</string>
-    <string name="button_login">Iniciar sesión</string>
-    <string name="button_register">Registrar</string>
     <string name="button_close">Cerrar</string>
+    <string name="button_engine_play_description">Jugar con motor</string>
+    <string name="button_login">Iniciar sesión</string>
+    <string name="button_menu_description">Menú</string>
+    <string name="button_next_move_description">Siguiente movimiento</string>
+    <string name="button_next_position">Siguiente posición</string>
+    <string name="button_ok">OK</string>
+    <string name="button_previous_move_description">Movimiento anterior</string>
+    <string name="button_previous_position">Posición anterior</string>
+    <string name="button_register">Registrar</string>
+    <string name="button_reset_position">Restablecer posición</string>
     <string name="button_save">Guardar</string>
     <string name="button_save_copy">Guardar copia</string>
-    <string name="puzzle_show">Mostrar</string>
-
-    <string name="alert_yes">Sí</string>
-    <string name="alert_no">No</string>
-    <string name="alert_ok">OK</string>
-
-    <string name="title_challenge">Desafío</string>
-    <string name="title_error">Error</string>
-    <string name="title_offers_abort">Solicitud de anulación</string>
-    <string name="title_offers_takeback">Solicitud de retracto</string>
-    <string name="title_offers_draw">Solicitud de tablas</string>
-    <string name="title_offers_adjourn">Solicitud de aplazamiento</string>
-    <string name="title_pick_level">Elige nivel de juego</string>
-    <string name="title_menu">Menú</string>
-    <string name="title_save_game">Guardar partida</string>
-    <string name="title_delete_game">Eliminar partida</string>
-    <string name="title_pick_promo">Elige pieza de promoción</string>
-    <string name="title_castle">¿Enrocar?</string>
-    <string name="title_pick_en_passant">Casilla de captura al paso</string>
-    <string name="title_create_new_line">¿Crear nueva variante?</string>
-    <string name="title_chess960_manual_random">Chess960: ¿Número manual de posición o aleatorio?</string>
-    <string name="title_edit_or_delete">¿Editar o eliminar?</string>
-    <string name="title_edit_command">Editar comando</string>
-
-    <string name="menu_help">Ayuda</string>
-    <string name="menu_new">Nueva partida</string>
-    <string name="menu_new_duck">Nueva Duck (experimental)</string>
-    <string name="menu_clip_pgn">Partida al portapapeles</string>
-    <string name="menu_fromclip">Partida desde portapapeles</string>
-    <string name="menu_save_game">Guardar partida</string>
-    <string name="menu_load_game">Cargar partida</string>
-    <string name="menu_flip">Rotar</string>
-    <string name="menu_setup">Configurar tablero</string>
-    <string name="menu_new_command">Nuevo comando</string>
-    <string name="menu_new_command_message">escribe \u003cNR\u003e al final del comando para no retorno\nEjemplo: tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_set_clock">Configurar reloj</string>
-    <string name="menu_prefs">Configuración</string>
-    <string name="menu_game_settings">Configuración de partida</string>
-    <string name="menu_new_960">Nuevo Fischer aleatorio / 960</string>
-
-    <string name="pref_show_blindfold">A ciegas</string>
-
-    <string name="options_play_human">Humano contra Humano</string>
-    <string name="options_play_android">Humano contra Android</string>
-    <string name="options_play_white">Blancas</string>
-    <string name="options_play_black">Negras</string>
-    <string name="options_quiescent_on">Búsqueda de quietud activada</string>
-    <string name="options_quiescent_off">Búsqueda de quietud desactivada</string>
-    <string name="pref_show_possible_moves">Mostrar movimientos</string>
-    <string name="options_level_time">Nivel (tiempo)</string>
-    <string name="options_level_ply">Nivel (medio movimiento)</string>
-
-    <string name="state_play">en juego</string>
-    <string name="state_draw_material">tablas (material)</string>
-    <string name="state_draw_50">tablas (regla de 50 movimientos)</string>
-    <string name="state_draw_stalemate">tablas (ahogado)</string>
-    <string name="state_draw_repeat">tablas (repetición triple)</string>
-    <string name="state_mate">jaque mate</string>
-    <string name="state_check">jaque</string>
-    <string name="state_black_forfeits_time">negras pierden por tiempo</string>
-    <string name="state_white_forfeits_time">blancas pierden por tiempo</string>
-    <string name="state_black_resigned">negras se rinden</string>
-    <string name="state_white_resigned">blancas se rinden</string>
-    <string name="state_draw_agreement">tablas por acuerdo</string>
-
+    <string name="chessboard_hint_color_scheme">Esquema de color</string>
+    <string name="chessboard_hint_piece_set">Conjunto de piezas</string>
+    <string name="chessboard_hint_tile_effect">Efecto de casillas</string>
+    <string name="choice_delete">Eliminar</string>
+    <string name="choice_edit">Editar</string>
     <string name="choice_level_1">1 segundo</string>
+    <string name="choice_level_10">15 minutos</string>
     <string name="choice_level_2">2 segundos</string>
     <string name="choice_level_3">4 segundos</string>
     <string name="choice_level_4">8 segundos (medio)</string>
@@ -138,213 +63,335 @@
     <string name="choice_level_7">30 segundos (experimentado)</string>
     <string name="choice_level_8">1 minuto</string>
     <string name="choice_level_9">5 minutos</string>
-    <string name="choice_level_10">15 minutos</string>
-
-    <string name="square_description">Casilla %1$s</string>
-    <string name="square_with_piece_description">%1$s %2$s en %3$s</string>
-    <string name="square_selected_description">%1$s seleccionado</string>
-
-    <string name="piece_white">Blancas</string>
-    <string name="piece_black">Negras</string>
-    <string name="piece_king">Rey</string>
-    <string name="piece_queen">Dama</string>
-    <string name="piece_rook">Torre</string>
-    <string name="piece_bishop">Alfil</string>
-    <string name="piece_knight">Caballo</string>
-    <string name="piece_pawn">Peón</string>
-    <string name="choice_manually">Manual</string>
     <string name="choice_random">Aleatorio</string>
-    <string name="choice_edit">Editar</string>
-    <string name="choice_delete">Eliminar</string>
-
-    <string name="puzzle_already_solved">(posición ya resuelta)</string>
-    <string name="puzzle_not_correct_move"> no es el movimiento esperado</string>
-
-    <string name="savegame_event">Evento</string>
-    <string name="savegame_event_question">¿Evento?</string>
-    <string name="savegame_white">Blancas</string>
-    <string name="savegame_white_question">¿Blancas?</string>
-    <string name="savegame_black">Negras</string>
-    <string name="savegame_black_question">¿Negras?</string>
-    <string name="savegame_date">Fecha</string>
-
-    <string name="gameslist_stars">Estrellas</string>
-    <string name="gameslist_date">Fecha</string>
-    <string name="gameslist_event">Evento</string>
-    <string name="gameslist_id">ID</string>
-    <string name="games_list_white_pieces">Piezas blancas</string>
-    <string name="gameslist_black_pieces">Piezas negras</string>
-
-    <string name="msg_setup_turn">Turno</string>
-    <string name="msg_setup_turn_white">blancas</string>
-    <string name="msg_setup_turn_black">negras</string>
-    <string name="msg_setup_enpassant">Casilla de captura al paso</string>
-    <string name="msg_setup_castle_white">Blancas</string>
-    <string name="msg_setup_castle_black">Negras</string>
-    <string name="msg_ics_enter_handle">Por favor, introduce tu usuario</string>
-    <string name="msg_ics_enter_password">Por favor, introduce tu contraseña</string>
-
-    <string name="err_chess960_position_range">Posición inválida, introduce un número entre 0 y 960</string>
-    <string name="err_chess960_position_format">Posición inválida, introduce un número</string>
-
-    <string name="pgntool_export_explanation">Exportar base de datos de partidas</string>
-    <string name="pgntool_import_explanation">Importar partidas a la base de datos</string>
-    <string name="pgntool_delete_explanation">Eliminar todas las partidas de la base de datos</string>
-    <string name="pgntool_create_db_explanation">Crear base de datos de aperturas</string>
-    <string name="pgntool_point_db_explanation">Establecer base de datos de aperturas</string>
-    <string name="pgntool_unset_uci_engine">Desinstalar motor UCI</string>
-    <string name="pgntool_unset_uci_database">Desinstalar base de datos UCI</string>
-    <string name="pgntool_help">Ayuda</string>
-    <string name="pgntool_confirm_delete">¿Estás seguro?</string>
-    <string name="pgntool_deleted">Todas las partidas eliminadas</string>
-    <string name="pgntool_import_practice">Importar conjunto de práctica</string>
-    <string name="pgntool_reset_practice">Reiniciar práctica - empezar de nuevo</string>
-    <string name="pgntool_confirm_practice_reset">¿Seguro que quieres reiniciar?</string>
-    <string name="pgntool_import_puzzle">Importar problemas</string>
-    <string name="pgntool_import_opening">Usado por el desarrollador</string>
-
-    <string name="practice_set_reset">El conjunto de práctica se ha reiniciado</string>
-
-    <string name="ics_client_handle">Usuario</string>
-    <string name="ics_client_password">Contraseña</string>
-    <string name="ics_client_server">Servidor</string>
-
-    <string name="ics_menu_players">Jugadores</string>
-    <string name="ics_menu_games">Partidas</string>
-    <string name="ics_menu_stored">Guardadas</string>
-    <string name="ics_menu_challenges">Desafíos</string>
-    <string name="ics_menu_seek">Buscar</string>
-    <string name="menu_abort">Anular</string>
-    <string name="ics_menu_draw">Tablas</string>
-    <string name="ics_menu_flag">Reclamar tiempo</string>
-    <string name="ics_menu_resign">Rendirse</string>
-    <string name="ics_menu_console">Consola</string>
-    <string name="ics_menu_top_blitz">Top Blitz</string>
-    <string name="ics_menu_top_standard">Top Estándar</string>
-    <string name="ics_menu_puzzlebot_mate">Puzzlebot mate</string>
-    <string name="ics_menu_puzzlebot_tactics">Puzzlebot tácticas</string>
-    <string name="ics_menu_puzzlebot_study">Puzzlebot estudio</string>
-
-    <string name="ics_playertwo">Jugador 2</string>
-    <string name="ics_playerone">Jugador 1</string>
-    <string name="ics_offers_abort">Tu oponente quiere anular la partida.\n¿Quieres aceptar?</string>
-    <string name="ics_offers_draw">Tu oponente te ofrece tablas.\n¿Quieres aceptar?</string>
-    <string name="ics_offers_adjourn">Tu oponente quiere aplazar la partida.\n¿Quieres aceptar?</string>
-    <string name="ics_offers_takeback">Tu oponente quiere retractarse de un movimiento.\n¿Quieres aceptar?</string>
-    <string name="ics_request_sent">Solicitud enviada</string>
-    <string name="ics_game_over">Partida terminada</string>
-
-    <string name="copied_clipboard_success">Partida copiada al portapapeles con éxito</string>
-    <string name="ics_offer_rematch">Ofrecer REVANCHA</string>
-    <string name="ics_examine">Examinar</string>
-
-    <string name="ics_lost_connection">Conexión con el servidor perdida.</string>
-    <string name="ics_error">Ocurrió un error. Por favor, inténtalo de nuevo más tarde.</string>
-
-    <string name="ics_notification_title">Ajedrez por Jeroen</string>
-    <string name="ics_notification_text">Toca para jugar</string>
-
-    <string name="ics_seekseek">Buscar</string>
-    <string name="ics_seekchallenge">Desafío</string>
-    <string name="ics_seekplayer">Jugador</string>
-    <string name="ics_seektime">Tiempo (min)</string>
-    <string name="ics_seektimeinc">Incremento (seg)</string>
-    <string name="ics_seekvariant">Variante</string>
-    <string name="ics_seekcolor">Color</string>
-    <string name="ics_seekrangemin">Rango mínimo</string>
-    <string name="ics_seekrangemax">Rango máximo</string>
-    <string name="ics_seekrated">Partida clasificada</string>
-    <string name="ics_seekmanual">Aceptar manualmente</string>
-    <string name="ics_seekformula">Fórmula</string>
-
-    <string name="ics_historygamenumber">Número de partida en historial</string>
-    <string name="ics_typegamenumber">Introduce número de partida de</string>
-    <string name="ics_history">Historial</string>
-    <string name="ics_finger">Resumen</string>
-    <string name="ics_follow">Seguir</string>
-    <string name="ics_unfollow">Dejar de seguir</string>
-    <string name="ics_match">Partida</string>
-    <string name="ics_gamenumber">Partida #</string>
-    <string name="ics_quit">¿Salir?</string>
-
-    <string name="practice_help">Encuentra el jaque mate (puede ser en más de un movimiento).</string>
-    <string name="puzzle_help">Estos son problemas difíciles de mate en dos.\nEl objetivo es encontrar el primer movimiento que lleva a un mate forzado en dos movimientos.\nEs decir, después de tu jugada correcta, el oponente no puede evitar el mate en tu siguiente movimiento.\nTras este primer movimiento, el problema está resuelto.\nPulsa el botón “Mostrar” para ver la solución.\nFuente: EL ARTE DEL MATE EN DOS de Eduardo Sadier</string>
-    <string name="advanced_help">
-         <![CDATA[
-<h3>Avanzado</h3>
-<p>Crea o importa tu propio contenido aquí.</p>
-
-<h4>Exportar la base de datos de partidas a la tarjeta SD</h4>
-<p>Todas las partidas de la base de datos pueden exportarse a un único archivo PGN en la tarjeta SD. Este archivo se llamará chess.pgn y, si existe, se sobrescribirá.</p>
-
-<h4>Importar partidas a la base de datos</h4>
-<p>Usa esta opción para añadir partidas a la base de datos. Te permite buscar un archivo PGN. Selecciónalo y elige importar.</p>
-
-<h4>Eliminar todas las partidas de la base de datos</h4>
-<p>Usa esta opción si quieres limpiar la base de datos. Asegúrate primero de hacer una copia de seguridad en la tarjeta SD; esta acción no se puede deshacer.</p>
-
-<h4>Crear conjunto de práctica</h4>
-<p>Crea posiciones de práctica a partir de partidas que terminan en jaque mate. Navega hasta el archivo que deseas procesar. Las entradas fallidas suelen ser partidas que no terminaron en jaque mate o que están duplicadas.</p>
-
-<h4>Restablecer conjunto de práctica</h4>
-<p>¿Quieres volver a empezar a practicar? Esto también restablecerá tu contador de tiempo promedio.</p>
-
-
-        ]]>
-    </string>
-    <string name="online_help">
-        <![CDATA[
-        <p>
-        <strong>FICS: Free Internet Chess Server</strong> te permite jugar en línea con miles de jugadores.<br/>
-        Aviso: si tu dispositivo cambia de red, la conexión puede cortarse. No hay timeseal.<br/>
-    </p>
-    <h4>Menú</h4>
-    <strong>Desafíos</strong><br/>
-    Muestra jugadores que buscan partida. Pulsa sobre uno para aceptar.<br/>
-    <strong>Buscar</strong><br/>
-    Configura tu propio desafío. Si rellenas el usuario de alguien, será un reto directo.<br/>
-    <strong>Partidas</strong><br/>
-    Observa partidas en línea. Los grandes maestros se identifican con el prefijo GM.<br/>
-    <strong>Jugadores</strong><br/>
-    Muestra jugadores inactivos con puntuación.<br/>
-         ]]>
-    </string>
-
-    <!-- Toast strings -->
-    <string name="toast_could_not_start_activity">No se pudo iniciar la actividad</string>
-    <string name="toast_challenge_posted">Desafío publicado</string>
-
-    <string name="pieceset_alpha">Alpha</string>
-    <string name="pieceset_merida">Merida</string>
-    <string name="pieceset_leipzig">Leipzig</string>
-    <string name="pieceset_california">California</string>
-    <string name="pieceset_companion">Compañero</string>
-    <string name="pieceset_chessnut">Chessnut</string>
-    <string name="pieceset_kosal">Kosal</string>
-    <string name="pieceset_staunty">Staunty</string>
-
-    <string name="tile_none">ninguno</string>
-    <string name="tile_double_shade">doble sombreado</string>
-    <string name="tile_single_shade">sombreado simple</string>
-
-    <string name="color_scheme_yellow">Amarillo</string>
     <string name="color_scheme_blue">Azul</string>
+    <string name="color_scheme_brown">Marrón</string>
     <string name="color_scheme_green">Verde</string>
     <string name="color_scheme_grey">Gris</string>
-    <string name="color_scheme_brown">Marrón</string>
-    <string name="color_scheme_red">Rojo</string>
     <string name="color_scheme_orange">Naranja</string>
     <string name="color_scheme_pink">Rosa</string>
     <string name="color_scheme_purple">Púrpura</string>
-
+    <string name="color_scheme_red">Rojo</string>
+    <string name="color_scheme_yellow">Amarillo</string>
+    <string name="copied_clipboard_success">Partida copiada al portapapeles con éxito</string>
+    <string name="gamepreferences">Configuración de partida</string>
+    <string name="globalpreferences">Configuración global</string>
+    <string name="hotspot_black">♚ Negras</string>
+    <string name="hotspot_connect">Conectar</string>
+    <string name="hotspot_draw">Tablas</string>
+    <string name="hotspot_host">Host</string>
+    <string name="hotspot_host_help">Activa `host` si estás usando el punto de acceso WiFi.</string>
+    <string name="hotspot_name_hint">Tu nombre</string>
+    <string name="hotspot_new">Nueva</string>
+    <string name="hotspot_resign">Rendirse</string>
+    <string name="hotspot_white">♔ Blancas</string>
+    <string name="ics_client_handle">Usuario</string>
+    <string name="ics_client_password">Contraseña</string>
+    <string name="ics_client_server">Servidor</string>
+    <string name="ics_error">Ocurrió un error. Por favor, inténtalo de nuevo más tarde.</string>
+    <string name="ics_examine">Examinar</string>
+    <string name="ics_finger">Resumen</string>
+    <string name="ics_follow">Seguir</string>
+    <string name="ics_game_over">Partida terminada</string>
+    <string name="ics_gamenumber">Partida #</string>
+    <string name="ics_history">Historial</string>
+    <string name="ics_historygamenumber">Número de partida en historial</string>
+    <string name="ics_lost_connection">Conexión con el servidor perdida.</string>
+    <string name="ics_match">Partida</string>
+    <string name="ics_menu_challenges">Desafíos</string>
+    <string name="ics_menu_console">Consola</string>
+    <string name="ics_menu_draw">Tablas</string>
+    <string name="ics_menu_flag">Reclamar tiempo</string>
+    <string name="ics_menu_games">Partidas</string>
+    <string name="ics_menu_players">Jugadores</string>
+    <string name="ics_menu_puzzlebot_mate">Puzzlebot mate</string>
+    <string name="ics_menu_puzzlebot_study">Puzzlebot estudio</string>
+    <string name="ics_menu_puzzlebot_tactics">Puzzlebot tácticas</string>
+    <string name="ics_menu_resign">Rendirse</string>
+    <string name="ics_menu_resume">Reanudar</string>
+    <string name="ics_menu_seek">Buscar</string>
+    <string name="ics_menu_stored">Guardadas</string>
+    <string name="ics_menu_top_blitz">Top Blitz</string>
+    <string name="ics_menu_top_standard">Top Estándar</string>
+    <string name="ics_notification_text">Toca para jugar</string>
+    <string name="ics_notification_title">Ajedrez por Jeroen</string>
+    <string name="ics_offer_rematch">Ofrecer REVANCHA</string>
+    <string name="ics_offers_abort">Tu oponente quiere anular la partida.\n¿Quieres aceptar?</string>
+    <string name="ics_offers_adjourn">Tu oponente quiere aplazar la partida.\n¿Quieres aceptar?</string>
+    <string name="ics_offers_draw">Tu oponente te ofrece tablas.\n¿Quieres aceptar?</string>
+    <string name="ics_offers_takeback">Tu oponente quiere retractarse de un movimiento.\n¿Quieres aceptar?</string>
+    <string name="ics_playerone">Jugador 1</string>
+    <string name="ics_playertwo">Jugador 2</string>
+    <string name="ics_quit">¿Salir?</string>
+    <string name="ics_request_sent">Solicitud enviada</string>
+    <string name="ics_seekchallenge">Desafío</string>
+    <string name="ics_seekcolor">Color</string>
+    <string name="ics_seekformula">Fórmula</string>
+    <string name="ics_seekmanual">Aceptar manualmente</string>
+    <string name="ics_seekplayer">Jugador</string>
+    <string name="ics_seekrangemax">Rango máximo</string>
+    <string name="ics_seekrangemin">Rango mínimo</string>
+    <string name="ics_seekrated">Partida clasificada</string>
+    <string name="ics_seekseek">Buscar</string>
+    <string name="ics_seektime">Tiempo (min)</string>
+    <string name="ics_seektimeinc">Incremento (seg)</string>
+    <string name="ics_seekvariant">Variante</string>
+    <string name="ics_typegamenumber">Introduce número de partida de</string>
+    <string name="ics_unfollow">Dejar de seguir</string>
+    <string name="last_black_move_description">%1$s. Turno de las blancas</string>
+    <string name="last_white_move_description">%1$s. Turno de las negras</string>
+    <string name="lichess_challenge_by_cancelled">Desafío de %1$s cancelado</string>
+    <string name="lichess_challenge_by_declined">Desafío rechazado por %1$s</string>
+    <string name="lichess_challenge_days_hint">1</string>
+    <string name="lichess_challenge_dialog_button_accept">Aceptar</string>
+    <string name="lichess_challenge_dialog_button_decline">Rechazar</string>
+    <string name="lichess_challenge_dialog_message_rated">Puntuada</string>
+    <string name="lichess_challenge_dialog_message_rating">con rating %1$s</string>
+    <string name="lichess_challenge_dialog_message_time_control">Control de tiempo: %1$s</string>
+    <string name="lichess_challenge_dialog_message_unrated">Sin rating</string>
+    <string name="lichess_challenge_dialog_message_variant">Variante: %1$s</string>
+    <string name="lichess_challenge_increment_hint">10</string>
+    <string name="lichess_challenge_minutes_hint">5</string>
+    <string name="lichess_challenge_posted">Desafío publicado</string>
+    <string name="lichess_confirm_offer_draw">Confirma que deseas ofrecer tablas</string>
+    <string name="lichess_confirm_resign">Confirma que deseas rendirte</string>
+    <string name="lichess_create_challenge_color">Color</string>
+    <string name="lichess_create_challenge_color_black">Negras</string>
+    <string name="lichess_create_challenge_color_random">Aleatorio</string>
+    <string name="lichess_create_challenge_color_white">Blancas</string>
+    <string name="lichess_create_challenge_player">Oponente</string>
+    <string name="lichess_create_challenge_rated">Puntuada</string>
+    <string name="lichess_create_challenge_time">Tiempo</string>
+    <string name="lichess_create_challenge_time_control">Control de tiempo</string>
+    <string name="lichess_create_challenge_time_correspondence">Correspondencia</string>
+    <string name="lichess_create_challenge_time_days">Días por jugada</string>
+    <string name="lichess_create_challenge_time_increment">Incremento (s)</string>
+    <string name="lichess_create_challenge_time_minutes">Minutos</string>
+    <string name="lichess_create_challenge_title">Crear desafío</string>
+    <string name="lichess_create_challenge_variant">Variante</string>
+    <string name="lichess_create_challenge_variant_chess960">Ajedrez 960</string>
+    <string name="lichess_create_challenge_variant_standard">Estándar</string>
+    <string name="lichess_create_seek_title">Crear búsqueda</string>
+    <string name="lichess_game_cancel_move">Cancelar movimiento</string>
+    <string name="lichess_game_confirm_move">Confirmar %1$s</string>
+    <string name="lichess_game_confirm_moves">Confirmar movimientos</string>
+    <string name="lichess_game_disconnected">Partida desconectada. Comprueba tu conexión a internet e inténtalo de nuevo</string>
+    <string name="lichess_game_state_aborted">Partida abortada</string>
+    <string name="lichess_game_state_created">Partida creada</string>
+    <string name="lichess_game_state_mate">Partida terminó en jaque mate</string>
+    <string name="lichess_game_state_resigned">Partida terminó por rendición</string>
+    <string name="lichess_game_state_started">Partida iniciada</string>
+    <string name="lichess_game_winner">Ganador: %1$s</string>
+    <string name="lichess_games_connection_error_retry">No se pudieron obtener tus partidas. Reintentando en 5 segundos</string>
+    <string name="lichess_lobby_button_challenge">Desafío</string>
+    <string name="lichess_lobby_button_logout">Cerrar sesión</string>
+    <string name="lichess_lobby_button_seek">Buscar</string>
+    <string name="lichess_lobby_connected">Estás conectado a Lichess</string>
+    <string name="lichess_lobby_handle">usuario</string>
+    <string name="lichess_lobby_ongoing_games">Partidas en curso</string>
+    <string name="lichess_login_intro">Cuando elijas Iniciar sesión, serás redirigido a Lichess para iniciar sesión</string>
+    <string name="lichess_my_challenge_closed">Desafío cerrado</string>
+    <string name="lichess_my_seek_closed">Búsqueda cerrada</string>
+    <string name="lichess_opponent_offers_draw">Tu oponente ofrece tablas. Toca Tablas para aceptar</string>
+    <string name="lichess_play_button_draw">Tablas</string>
+    <string name="lichess_play_button_resign">Rendirse</string>
+    <string name="lichess_seek_posted">Búsqueda publicada</string>
+    <string name="lichess_starting">Iniciando...</string>
+    <string name="match_option_color_black">Negras</string>
     <string name="match_option_color_random">Aleatorio</string>
     <string name="match_option_color_white">Blancas</string>
-    <string name="match_option_color_black">Negras</string>
-
-    <string name="time_warning_5">5 segundos</string>
+    <string name="menu_abort">Anular</string>
+    <string name="menu_clip_pgn">Partida al portapapeles</string>
+    <string name="menu_flip">Rotar</string>
+    <string name="menu_fromclip">Partida desde portapapeles</string>
+    <string name="menu_game_settings">Configuración de partida</string>
+    <string name="menu_help">Ayuda</string>
+    <string name="menu_load_game">Cargar partida</string>
+    <string name="menu_new">Nueva partida</string>
+    <string name="menu_new_960">Nuevo Fischer aleatorio / 960</string>
+    <string name="menu_new_command">Nuevo comando</string>
+    <string name="menu_new_command_message">escribe \u003cNR\u003e al final del comando para no retorno\nEjemplo: tell ChessMaster \u003cNR\u003e\n</string>
+    <string name="menu_new_duck">Nueva Duck (experimental)</string>
+    <string name="menu_open_game">Abrir archivo de partida</string>
+    <string name="menu_open_position_file">Abrir archivo de posición</string>
+    <string name="menu_prefs">Configuración</string>
+    <string name="menu_save_game">Guardar partida</string>
+    <string name="menu_save_game_to_file">Guardar partida en archivo</string>
+    <string name="menu_save_position_to_file">Guardar posición en archivo</string>
+    <string name="menu_set_clock">Configurar reloj</string>
+    <string name="menu_setup">Configurar tablero</string>
+    <string name="msg_ics_enter_handle">Por favor, introduce tu usuario</string>
+    <string name="msg_ics_enter_password">Por favor, introduce tu contraseña</string>
+    <string name="msg_setup_castle_black">Negras</string>
+    <string name="msg_setup_castle_white">Blancas</string>
+    <string name="msg_setup_clear">Limpiar</string>
+    <string name="msg_setup_enpassant">Casilla de captura al paso</string>
+    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_reset">Restablecer</string>
+    <string name="msg_setup_turn">Turno</string>
+    <string name="msg_setup_turn_black">negras</string>
+    <string name="msg_setup_turn_white">blancas</string>
+    <string name="online_help">
+                <![CDATA[
+                <p>
+                <strong>FICS: Free Internet Chess Server</strong> te permite jugar en línea con miles de jugadores.<br/>
+                Aviso: si tu dispositivo cambia de red, la conexión puede cortarse. No hay timeseal.<br/>
+            </p>
+            <h4>Menú</h4>
+            <strong>Desafíos</strong><br/>
+            Muestra jugadores que buscan partida. Pulsa sobre uno para aceptar.<br/>
+            <strong>Buscar</strong><br/>
+            Configura tu propio desafío. Si rellenas el usuario de alguien, será un reto directo.<br/>
+            <strong>Partidas</strong><br/>
+            Observa partidas en línea. Los grandes maestros se identifican con el prefijo GM.<br/>
+            <strong>Jugadores</strong><br/>
+            Muestra jugadores inactivos con puntuación.<br/>
+                 ]]>
+            </string>
+    <string name="options_level_ply">Nivel (medio movimiento)</string>
+    <string name="options_level_time">Nivel (tiempo)</string>
+    <string name="options_play_android">Humano contra Android</string>
+    <string name="options_play_black">Negras</string>
+    <string name="options_play_human">Humano contra Humano</string>
+    <string name="options_play_white">Blancas</string>
+    <string name="options_quiescent_off">Búsqueda de quietud desactivada</string>
+    <string name="options_quiescent_on">Búsqueda de quietud activada</string>
+    <string name="pgntool_confirm_delete">¿Estás seguro?</string>
+    <string name="pgntool_confirm_practice_reset">¿Seguro que quieres reiniciar?</string>
+    <string name="pgntool_create_db_explanation">Crear base de datos de aperturas</string>
+    <string name="pgntool_delete_explanation">Eliminar todas las partidas de la base de datos</string>
+    <string name="pgntool_deleted">Todas las partidas eliminadas</string>
+    <string name="pgntool_export_explanation">Exportar base de datos de partidas</string>
+    <string name="pgntool_help">Ayuda</string>
+    <string name="pgntool_import_explanation">Importar partidas a la base de datos</string>
+    <string name="pgntool_import_practice">Importar conjunto de práctica</string>
+    <string name="pgntool_import_puzzle">Importar problemas</string>
+    <string name="pgntool_point_db_explanation">Establecer base de datos de aperturas</string>
+    <string name="pgntool_reset_practice">Reiniciar práctica - empezar de nuevo</string>
+    <string name="pgntool_unset_uci_database">Desinstalar base de datos UCI</string>
+    <string name="pgntool_unset_uci_engine">Desinstalar motor UCI</string>
+    <string name="piece_bishop">Alfil</string>
+    <string name="piece_black">Negras</string>
+    <string name="piece_duck">Pato</string>
+    <string name="piece_king">Rey</string>
+    <string name="piece_knight">Caballo</string>
+    <string name="piece_pawn">Peón</string>
+    <string name="piece_queen">Dama</string>
+    <string name="piece_rook">Torre</string>
+    <string name="piece_white">Blancas</string>
+    <string name="pieceset_alpha">Alpha</string>
+    <string name="pieceset_california">California</string>
+    <string name="pieceset_chessnut">Chessnut</string>
+    <string name="pieceset_companion">Compañero</string>
+    <string name="pieceset_kosal">Kosal</string>
+    <string name="pieceset_leipzig">Leipzig</string>
+    <string name="pieceset_merida">Merida</string>
+    <string name="pieceset_staunty">Staunty</string>
+    <string name="playonlinepreferences">Configuración en línea</string>
+    <string name="playpreferences">Configuración de juego</string>
+    <string name="practice_help">Encuentra el jaque mate (puede ser en más de un movimiento).</string>
+    <string name="practice_set_reset">El conjunto de práctica se ha reiniciado</string>
+    <string name="pref_fullscreen">Pantalla completa</string>
+    <string name="pref_fullscreen_desc">Recomendado para pantallas pequeñas y modo horizontal; de lo contrario, algunos elementos pueden quedar fuera</string>
+    <string name="pref_icsautosought">Búsqueda automática</string>
+    <string name="pref_icsautosought_desc">Actualiza automáticamente la pantalla de desafíos</string>
+    <string name="pref_icsconsolecharactersize">Tamaño de caracteres de la CONSOLA</string>
+    <string name="pref_icsconsolecharactersize_desc">Ajusta el tamaño de caracteres en la consola</string>
+    <string name="pref_icscustomcommand">Comandos personalizados</string>
+    <string name="pref_icscustomcommand_desc">Crea tus propios comandos</string>
+    <string name="pref_icsnotification">Notificación de nueva partida</string>
+    <string name="pref_icstimewarning">Aviso de tiempo</string>
+    <string name="pref_icstimewarning_desc">Un sonido de tic-tac te avisa si el tiempo baja al límite de aviso</string>
+    <string name="pref_icstimewarningsecs">Tiempo de aviso (segundos)</string>
+    <string name="pref_icstimewarningsecs_desc">¿Cuántos segundos antes empieza la advertencia?</string>
+    <string name="pref_night_mode">Modo nocturno</string>
+    <string name="pref_night_mode_desc">Forzar la app en modo nocturno</string>
+    <string name="pref_showCoords">Coordenadas</string>
+    <string name="pref_show_blindfold">A ciegas</string>
+    <string name="pref_show_possible_moves">Mostrar movimientos</string>
+    <string name="pref_sound">Sonido</string>
+    <string name="pref_sound_desc">Se reproduce cuando el oponente mueve</string>
+    <string name="pref_speech">Voz</string>
+    <string name="pref_speech_pitch_desc">Tono de voz</string>
+    <string name="pref_speech_rate_desc">Velocidad de voz</string>
+    <string name="pref_turn">Lado</string>
+    <string name="pref_turn_desc">Qué lado del tablero juegas</string>
+    <string name="pref_vs_cpu">Contra CPU</string>
+    <string name="pref_vs_cpu_desc">Jugar contra la CPU/Motor</string>
+    <string name="pref_wakelock">Mantener pantalla encendida</string>
+    <string name="pref_wakelock_desc">Evita que el dispositivo entre en reposo</string>
+    <string name="preferences">Configuración</string>
+    <string name="prefs_icsendgamedialog">Diálogo de fin de partida</string>
+    <string name="prefs_icsendgamesummary">¿Quieres que aparezca un diálogo para guardar al final de la partida?</string>
+    <string name="prefs_icsnotificationsummary">Te avisa del inicio de una partida con un icono</string>
+    <string name="puzzle_already_solved">(posición ya resuelta)</string>
+    <string name="puzzle_correct_move">Ese es el movimiento correcto</string>
+    <string name="puzzle_help">Estos son problemas difíciles de mate en dos.\nEl objetivo es encontrar el primer movimiento que lleva a un mate forzado en dos movimientos.\nEs decir, después de tu jugada correcta, el oponente no puede evitar el mate en tu siguiente movimiento.\nTras este primer movimiento, el problema está resuelto.\nPulsa el botón “Mostrar” para ver la solución.\nFuente: EL ARTE DEL MATE EN DOS de Eduardo Sadier</string>
+    <string name="puzzle_not_correct_move"> no es el movimiento esperado</string>
+    <string name="puzzle_show">Mostrar</string>
+    <string name="savegame_black">Negras</string>
+    <string name="savegame_black_question">¿Negras?</string>
+    <string name="savegame_event">Evento</string>
+    <string name="savegame_event_question">¿Evento?</string>
+    <string name="gameslist_filter_switch_black_description">Activar o desactivar filtro de negras</string>
+    <string name="gameslist_filter_switch_date_after_description">Activar o desactivar filtro de fecha desde</string>
+    <string name="gameslist_filter_switch_date_before_description">Activar o desactivar filtro de fecha hasta</string>
+    <string name="gameslist_filter_switch_event_description">Activar o desactivar filtro de evento</string>
+    <string name="gameslist_filter_switch_result_description">Activar o desactivar filtro de resultado</string>
+    <string name="gameslist_filter_switch_white_description">Activar o desactivar filtro de blancas</string>
+    <string name="savegame_white">Blancas</string>
+    <string name="savegame_white_question">¿Blancas?</string>
+    <string name="square_selected_with_duck_description">Seleccionado %1$s en %2$s</string>
+    <string name="square_selected_with_piece_description">Seleccionado %1$s %2$s en %3$s</string>
+    <string name="square_with_duck_description">%1$s en %2$s</string>
+    <string name="square_with_piece_description">%1$s %2$s en %3$s</string>
+    <string name="start_boardpreferences">Configuración del tablero</string>
+    <string name="start_database">Base de datos de partidas</string>
+    <string name="start_hotspotboard">Tablero hotspot</string>
+    <string name="start_ics">Jugar en línea</string>
+    <string name="start_lichess">Lichess (beta)</string>
+    <string name="start_pgn">Avanzado</string>
+    <string name="start_play">Jugar</string>
+    <string name="start_practice">Practicar</string>
+    <string name="start_puzzles">Problemas</string>
+    <string name="state_black_forfeits_time">negras pierden por tiempo</string>
+    <string name="state_black_resigned">negras se rinden</string>
+    <string name="state_check">jaque</string>
+    <string name="state_draw_50">tablas (regla de 50 movimientos)</string>
+    <string name="state_draw_agreement">tablas por acuerdo</string>
+    <string name="state_draw_material">tablas (material)</string>
+    <string name="state_draw_repeat">tablas (repetición triple)</string>
+    <string name="state_draw_stalemate">tablas (ahogado)</string>
+    <string name="state_mate">jaque mate</string>
+    <string name="state_play">en juego</string>
+    <string name="state_white_forfeits_time">blancas pierden por tiempo</string>
+    <string name="state_white_resigned">blancas se rinden</string>
+    <string name="tile_diagonal_stripes">rayas diagonales</string>
+    <string name="tile_double_shade">doble sombreado</string>
+    <string name="tile_none">ninguno</string>
+    <string name="tile_single_shade">sombreado simple</string>
     <string name="time_warning_10">10 segundos</string>
     <string name="time_warning_25">25 segundos</string>
     <string name="time_warning_45">45 segundos</string>
+    <string name="time_warning_5">5 segundos</string>
     <string name="time_warning_60">1 minuto</string>
-
+    <string name="title_castle">¿Enrocar?</string>
+    <string name="title_challenge">Desafío</string>
+    <string name="title_create_new_line">¿Crear nueva variante?</string>
+    <string name="title_delete_game">Eliminar partida</string>
+    <string name="title_edit_command">Editar comando</string>
+    <string name="title_edit_or_delete">¿Editar o eliminar?</string>
+    <string name="title_error">Error</string>
+    <string name="title_menu">Menú</string>
+    <string name="title_offers_abort">Solicitud de anulación</string>
+    <string name="title_offers_adjourn">Solicitud de aplazamiento</string>
+    <string name="title_offers_draw">Solicitud de tablas</string>
+    <string name="title_offers_takeback">Solicitud de retracto</string>
+    <string name="title_pick_en_passant">Casilla de captura al paso</string>
+    <string name="title_pick_level">Elige nivel de juego</string>
+    <string name="title_pick_time">Elige nivel de tiempo</string>
+    <string name="title_pick_ply">Elige nivel de ply</string>
+    <string name="title_pick_promo">Elige pieza de promoción</string>
+    <string name="title_save_game">Guardar partida</string>
+    <string name="toast_challenge_posted">Desafío publicado</string>
 </resources>

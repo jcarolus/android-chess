@@ -1,120 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_margin="8dip"
+    android:layout_gravity="center">
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dip">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="120dp"
             android:isIndicator="false"
             android:max="5"
             android:rating="2.5"
             android:numStars="5"
             android:id="@+id/RatingBarSave" />
 
-        <TableLayout
-            android:id="@+id/TableSaveOptions"
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="120dp"
+            android:hint="@string/savegame_event">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextSaveEvent"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="120dp"
+            android:hint="@string/savegame_white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextSaveWhite"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="120dp"
+            android:hint="@string/savegame_black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/EditTextSaveBlack"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <jwtc.android.chess.views.PGNDateView
+            android:id="@+id/DateView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
 
-            <TableRow
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSaveCancel"
+                android:text="@string/button_cancel"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                style="@style/ChessButton" />
 
-                <TextView
-                    android:layout_width="100dip"
-                    android:layout_height="wrap_content"
-                    android:text="@string/savegame_event"
-                    style="@style/MyLabelTextStyle" />
-
-                <EditText
-                    android:id="@+id/EditTextSaveEvent"
-                    android:layout_width="200dip"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-            <TableRow
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSaveCopy"
+                android:text="@string/button_save_copy"
+                android:layout_weight="1"
+                android:enabled="false"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                style="@style/ChessButton" />
 
-                <TextView
-                    android:layout_width="100dip"
-                    android:layout_height="wrap_content"
-                    android:text="@string/savegame_white"
-                    style="@style/MyLabelTextStyle" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSaveSave"
+                android:text="@string/button_save"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ChessButton" />
 
-                <EditText
-                    android:id="@+id/EditTextSaveWhite"
-                    android:layout_width="200dip"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="100dip"
-                    android:layout_height="wrap_content"
-                    android:text="@string/savegame_black"
-                    style="@style/MyLabelTextStyle" />
-
-                <EditText
-                    android:id="@+id/EditTextSaveBlack"
-                    android:layout_width="200dip"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="100dip"
-                    android:layout_height="wrap_content"
-                    android:text="@string/savegame_date"
-                    style="@style/MyLabelTextStyle" />
-
-                <Button
-                    android:id="@+id/ButtonSaveDate"
-                    android:text="YYYY.MM.DD"
-                    android:layout_width="200dip"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-        </TableLayout>
-
-        <Button
-            android:id="@+id/ButtonSaveSave"
-            android:text="@string/button_save"
-            android:layout_weight="1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0px" />
-
-        <Button
-            android:id="@+id/ButtonSaveCopy"
-            android:text="@string/button_save_copy"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0px" />
-
-        <Button
-            android:id="@+id/ButtonSaveCancel"
-            android:text="@string/button_cancel"
-            android:layout_weight="1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="0px" />
-
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

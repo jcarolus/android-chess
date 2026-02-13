@@ -9,11 +9,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.material.button.MaterialButton;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -32,16 +31,15 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     private Cursor cursor = null;
     private TextView tvPuzzleText, textViewSolution, textViewWhitePieces, textViewBlackPieces;
     private ImageView imageTurn;
-    private ImageButton butPrev, butNext, butRetry;
+    private MaterialButton butPrev, butNext, butRetry, butShow;
     private ImageView imgStatus;
     private int currentPosition, totalPuzzles, myTurn, numMoved = 0;
     private boolean showMove = false;
-    private Button butShow;
 
 
     @Override
     public boolean requestMove(int from, int to) {
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             setMessage(getString(R.string.puzzle_already_solved));
             rebuildBoard();
             return false;
@@ -82,47 +80,36 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
 
         imgStatus = findViewById(R.id.ImageStatus);
 
-        butPrev = (ImageButton) findViewById(R.id.ButtonPuzzlePrevious);
-        butPrev.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (currentPosition > 0) {
-                    currentPosition--;
-                }
-                startPuzzle();
+        butPrev = findViewById(R.id.ButtonPuzzlePrevious);
+        butPrev.setOnClickListener(arg0 -> {
+            if (currentPosition > 0) {
+                currentPosition--;
             }
+            startPuzzle();
         });
 
-        butNext = (ImageButton) findViewById(R.id.ButtonPuzzleNext);
-        butNext.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (currentPosition + 1 < totalPuzzles) {
-                    currentPosition++;
-                    startPuzzle();
-                }
+        butNext = findViewById(R.id.ButtonPuzzleNext);
+        butNext.setOnClickListener(arg0 -> {
+            if (currentPosition + 1 < totalPuzzles) {
+                currentPosition++;
+                startPuzzle();
             }
         });
 
         butRetry = findViewById(R.id.ButtonPuzzleRetry);
-        butRetry.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                startPuzzle();
-            }
-        });
+        butRetry.setOnClickListener(arg0 -> startPuzzle());
 
         butShow = findViewById(R.id.ButtonPuzzleShow);
-        butShow.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                showMove = true;
-                gameApi.jumpToBoardNum(numMoved);
-                //rebuildBoard();
-                if (jni.isEnded() == 0) {
-                    Log.d(TAG, "show " + numMoved);
-                    myEngine.setPly(4 - numMoved);
-                    myEngine.play();
-                }
+        butShow.setOnClickListener(arg0 -> {
+            showMove = true;
+            gameApi.jumpToBoardNum(numMoved);
+            //rebuildBoard();
+            if (!gameApi.isEnded()) {
+                Log.d(TAG, "show " + numMoved);
+                myEngine.setPly(4 - numMoved);
+                myEngine.play();
             }
         });
-
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
     }
@@ -132,7 +119,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         super.onResume();
         Log.i(TAG, "onResume");
 
-        myEngine = new LocalEngine();
+        myEngine = new LocalEngine(gameApi);
         myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
 
@@ -161,7 +148,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         Log.d(TAG, "currentPosition " + currentPosition);
 
         if (cursor != null) {
-            totalPuzzles= cursor.getCount();
+            totalPuzzles = cursor.getCount();
 
             Log.d(TAG, "totalPuzzles " + totalPuzzles);
 
@@ -260,7 +247,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         updateSelectedSquares();
         updatePieces();
 
-        if (jni.isEnded() == 0 && jni.getTurn() != myTurn && !showMove) {
+        if (!gameApi.isEnded() && jni.getTurn() != myTurn && !showMove) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -268,7 +255,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
                 }
             }, 1000);
         }
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             animateCorrect();
             butShow.setEnabled(false);
         }
@@ -292,19 +279,27 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
             int moveIndex = gameApi.getPGNSize() - 1;
             String sMove = "";
             if (moveIndex >= 0) {
-                sMove = gameApi.getPGNEntries().get(moveIndex)._sMove + " ";
+                sMove = gameApi.getPGNEntries().get(moveIndex).sMove + " ";
             }
             setMessage(sMove + getString(R.string.puzzle_not_correct_move));
             imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
             numMoved--;
         }
     }
+
     @Override
-    public void OnEngineInfo(String message) {}
+    public void OnEngineInfo(String message, float value) {
+    }
+
     @Override
-    public void OnEngineStarted() {}
+    public void OnEngineStarted() {
+    }
+
     @Override
-    public void OnEngineAborted() {}
+    public void OnEngineAborted() {
+    }
+
     @Override
-    public void OnEngineError() {}
+    public void OnEngineError() {
+    }
 }

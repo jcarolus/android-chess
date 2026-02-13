@@ -17,37 +17,48 @@ import jwtc.chess.Move;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
-import jwtc.chess.board.BoardMembers;
 
+/*
+Wraps the JNI Java Native Interface
+Implements PGN functionality
+Deals with some parts of move notation
+ */
 public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
     protected JNI jni;
-    private static Pattern _patNum;
-    private static Pattern _patAnnot;
-    private static Pattern _patMove;
-    private static Pattern _patCastling;
-    private static Pattern _patGameResult;
+    private static Pattern patMoveNum;
+    private static Pattern patMoveDots;
+    private static Pattern patAnnotation;
+    private static Pattern patMove;
+    private static Pattern patCastling;
+    private static Pattern patGameResult;
+    private static Pattern patTag;
+
+    public static final int MAX_PGN_SIZE = 500000;
 
     static {
         try {
-            _patNum = Pattern.compile("(\\d+)\\.");
-            _patAnnot = Pattern.compile("\\{([^\\{]*)\\}");
-            _patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
-            _patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?");
-            _patGameResult = Pattern.compile("((\\*)|(1-0)|(0-1)|(1/2-1/2))");
+            patMoveNum = Pattern.compile("(\\d+)\\.");
+            patAnnotation = Pattern.compile("\\{([^\\{]*)\\}");
+            patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
+            patCastling = Pattern.compile("(O\\-O|O\\-O\\-O)(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?");
+            patGameResult = Pattern.compile("((\\*)|(1-0)|(0-1)|(1/2-1/2))");
+            patTag = Pattern.compile(PGNHelper.regexPgnTag);
+            patMoveDots = Pattern.compile("\\.\\.");
 
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
-    protected HashMap<String, String> _mapPGNHead; //
-    protected ArrayList<PGNEntry> _arrPGN;
+    public final HashMap<String, String> pgnTags; //
+    protected final ArrayList<PGNEntry> pgnMoves;
 
     public GameApi() {
         jni = JNI.getInstance();
         jni.reset();
-        _mapPGNHead = new HashMap<String, String>();
-        _arrPGN = new ArrayList<PGNEntry>();
+        pgnTags = new HashMap<String, String>();
+        pgnMoves = new ArrayList<PGNEntry>();
     }
 
     public void addListener(GameListener listener) {
@@ -66,9 +77,39 @@ public class GameApi {
         return getPGNHeadProperty(myTurn == BoardConstants.WHITE ? "White" : "Black");
     }
 
+    public boolean isEnded() {
+        return getFinalState() != -1 || jni.isEnded() != 0;
+    }
+
+    public int getState() {
+        int finalState = getFinalState();
+        if (finalState != -1) {
+            return finalState;
+        }
+        return jni.getState();
+    }
+
+    public int getFinalState() {
+        int size = pgnMoves.size();
+        if (size > 0 && jni.getNumBoard() == size) {
+            return pgnMoves.get(size - 1).finalState;
+        }
+        return -1;
+    }
+
+    public boolean setFinalState(int state) {
+        int size = pgnMoves.size();
+        if (size > 0 && jni.getNumBoard() == size) {
+            pgnMoves.get(size - 1).finalState = state;
+            dispatchState();
+            return true;
+        }
+        return false;
+    }
+
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
-        if (jni.isEnded() != 0)
+        if (isEnded())
             return false;
 
         if (jni.requestMove(from, to) == 0) {
@@ -85,7 +126,7 @@ public class GameApi {
     }
 
     public boolean requestMoveCastle(int from, int to) {
-        if (jni.isEnded() != 0) {
+        if (isEnded()) {
             return false;
         }
 
@@ -114,14 +155,14 @@ public class GameApi {
 
     public boolean isPromotionMove(int from, int to) {
         if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
-                BoardMembers.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
-                jni.getTurn() == BoardConstants.WHITE
-                ||
-                jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
-                        BoardMembers.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
-                        jni.getTurn() == BoardConstants.BLACK) {
+            BoardConstants.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
+            BoardConstants.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
+            jni.getTurn() == BoardConstants.WHITE
+            ||
+            jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
+                BoardConstants.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
+                BoardConstants.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
+                jni.getTurn() == BoardConstants.BLACK) {
             return true;
         }
         return false;
@@ -145,7 +186,6 @@ public class GameApi {
 
     public void undoMove() {
 //        Log.d(TAG, "undoMove");
-
         jni.undo();
         dispatchState();
     }
@@ -156,17 +196,17 @@ public class GameApi {
 
 
     public void jumpToBoardNum(int toNumBoard) {
-        Log.d(TAG, "jumptoMove " + toNumBoard + ", " + _arrPGN.size());
+        Log.d(TAG, "jumptoMove " + toNumBoard + ", " + pgnMoves.size());
 
-        if (toNumBoard <= _arrPGN.size() && toNumBoard >= 0) {
+        if (toNumBoard <= pgnMoves.size() && toNumBoard >= 0) {
             int currentNumBoard = jni.getNumBoard();
             if (toNumBoard > currentNumBoard) {
                 while (toNumBoard > currentNumBoard) {
-                    int res = jni.move(_arrPGN.get(currentNumBoard)._move);
+                    int res = jni.move(pgnMoves.get(currentNumBoard).move);
                     Log.d(TAG, "jni.move " + res);
-                    Log.d(TAG, "duck at " + _arrPGN.get(currentNumBoard)._duckMove);
-                    if (_arrPGN.get(currentNumBoard)._duckMove != -1) {
-                        jni.requestDuckMove(_arrPGN.get(currentNumBoard)._duckMove);
+                    Log.d(TAG, "duck at " + pgnMoves.get(currentNumBoard).duckMove);
+                    if (pgnMoves.get(currentNumBoard).duckMove != -1) {
+                        jni.requestDuckMove(pgnMoves.get(currentNumBoard).duckMove);
                     }
                     currentNumBoard++;
                 }
@@ -181,7 +221,10 @@ public class GameApi {
     }
 
     public int getPGNSize() {
-        return _arrPGN.size();
+        return pgnMoves.size();
+    }
+    public boolean isAtEndOfPGN() {
+        return this.getPGNSize() == jni.getNumBoard();
     }
 
     public synchronized boolean isLegalMove(int from, int to) {
@@ -205,21 +248,21 @@ public class GameApi {
         Date d = Calendar.getInstance().getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
 
-        _mapPGNHead.clear();
-        _mapPGNHead.put("Event", "?");
-        _mapPGNHead.put("Site", "?");
-        _mapPGNHead.put("Round", "?");
-        _mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
-        _mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
-        _mapPGNHead.put("Date", formatter.format(d));
+        pgnTags.clear();
+        pgnTags.put("Event", "?");
+        pgnTags.put("Site", "?");
+        pgnTags.put("Round", "?");
+        pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.put("Date", formatter.format(d));
 
-        _arrPGN.clear();
+        pgnMoves.clear();
 
         jni.newGame(variant);
 
         if (variant == BoardConstants.VARIANT_DUCK) {
-            _mapPGNHead.put("Setup", "1");
-            _mapPGNHead.put("FEN", jni.toFEN());
+            pgnTags.put("Setup", "1");
+            pgnTags.put("FEN", jni.toFEN());
         }
 
         dispatchState();
@@ -231,17 +274,17 @@ public class GameApi {
         if (jni.initFEN(sFEN)) {
 
             if (resetHead) {
-                _mapPGNHead.clear();
-                _mapPGNHead.put("Event", "?");
-                _mapPGNHead.put("Site", "?");
-                _mapPGNHead.put("Round", "?");
-                _mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
-                _mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
+                pgnTags.clear();
+                pgnTags.put("Event", "?");
+                pgnTags.put("Site", "?");
+                pgnTags.put("Round", "?");
+                pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+                pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
             }
-            _mapPGNHead.put("Setup", "1");
-            _mapPGNHead.put("FEN", sFEN);
+            pgnTags.put("Setup", "1");
+            pgnTags.put("FEN", sFEN);
 
-            _arrPGN.clear();
+            pgnMoves.clear();
 
             dispatchState();
             return true;
@@ -257,18 +300,18 @@ public class GameApi {
 
         int ret = jni.initRandomFisher(seed);
 
-        _mapPGNHead.clear();
-        _mapPGNHead.put("Event", "?");
-        _mapPGNHead.put("Site", "?");
-        _mapPGNHead.put("Round", "?");
-        _mapPGNHead.put("White", Resources.getSystem().getString(android.R.string.unknownName));
-        _mapPGNHead.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.clear();
+        pgnTags.put("Event", "?");
+        pgnTags.put("Site", "?");
+        pgnTags.put("Round", "?");
+        pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
 
-        _mapPGNHead.put("Variant", "Fischerandom");
-        _mapPGNHead.put("Setup", "1");
-        _mapPGNHead.put("FEN", jni.toFEN());
+        pgnTags.put("Variant", "Fischerandom");
+        pgnTags.put("Setup", "1");
+        pgnTags.put("FEN", jni.toFEN());
 
-        _arrPGN.clear();
+        pgnMoves.clear();
 
         dispatchState();
         return ret;
@@ -277,17 +320,55 @@ public class GameApi {
     public boolean loadPGN(String s) {
         jni.newGame();
 
-        loadPGNHead(s);
+        if (s.length() > MAX_PGN_SIZE) {
+            Log.d(TAG, "PGN larger than max " + s.length());
+            return false;
+        }
 
-        if(loadPGNMoves(s)) {
+        int finalState = -1;
+        loadPGNHead(s, pgnTags);
+
+        if (pgnTags.containsKey("FEN")) {
+            String sFEN = pgnTags.get("FEN");
+            if (sFEN != null) {
+                initFEN(sFEN, false);
+            }
+        }
+
+        if (loadPGNMoves(s)) {
+            if (pgnTags.containsKey("Result")) {
+                String value = pgnTags.get("Result");
+                if (value != null && jni.isEnded() == 0) {
+                    Matcher match = patGameResult.matcher(value);
+                    if (match.matches()) {
+                        String result = match.group(1);
+                        if (result != null) {
+                            if (result.equals("1/2-1/2")) {
+                                finalState = BoardConstants.DRAW_AGREEMENT;
+                            } else if (result.equals("1-0")) {
+                                // @TODO once we can sum the move durations, we can also forfeit on time.
+                                finalState = BoardConstants.BLACK_RESIGNED;
+                            } else if (result.equals("0-1")) {
+                                finalState = BoardConstants.WHITE_RESIGNED;
+                            }
+                            Log.d(TAG, "Overriding game state " + result + " => " + finalState);
+                        }
+                    }
+                }
+            }
+
+            int size = pgnMoves.size();
+            if (size > 0) {
+                pgnMoves.get(size - 1).finalState = finalState;
+            }
             dispatchState();
             return true;
         }
         return false;
     }
 
-    public Matcher getMoveMatcher(String sMove) {
-        return _patMove.matcher(sMove);
+    public static Matcher getMoveMatcher(String sMove) {
+        return patMove.matcher(sMove);
     }
 
     public boolean requestMove(String sMove) {
@@ -295,15 +376,15 @@ public class GameApi {
         String sAnnotation = "";
         if (matchToken.matches()) {
             Log.d(TAG, "requestMove MATCHES " + sMove);
-            if (requestMove(sMove, matchToken, null, sAnnotation)) {
+            if (requestMove(matchToken, null, sAnnotation)) {
                 final int move = jni.getMyMove();
                 dispatchMove(move);
                 return true;
             }
         } else {
-            matchToken = _patCastling.matcher(sMove);
+            matchToken = patCastling.matcher(sMove);
             if (matchToken.matches()) {
-                if (requestMove(sMove, matchToken, matchToken.group(1), sAnnotation)) {
+                if (requestMove(matchToken, matchToken.group(1), sAnnotation)) {
                     final int move = jni.getMyMove();
                     dispatchMove(move);
                     return true;
@@ -314,7 +395,22 @@ public class GameApi {
         return false;
     }
 
-    public String moveToSpeechString(String sMove, int move) {
+    public void resetForfeitTime() {
+        int size = pgnMoves.size();
+        if (size > 0) {
+            int finalState = pgnMoves.get(size - 1).finalState;
+            // any forfeit or resigns can be reset here
+            if (finalState == BoardConstants.WHITE_FORFEIT_TIME ||
+                finalState == BoardConstants.BLACK_FORFEIT_TIME ||
+                finalState == BoardConstants.WHITE_RESIGNED ||
+                finalState == BoardConstants.BLACK_RESIGNED) {
+                pgnMoves.get(size - 1).finalState = -1;
+                dispatchState();
+            }
+        }
+    }
+
+    public static String moveToSpeechString(String sMove, int move) {
         String sMoveSpeech = "";
 
         // check regular move
@@ -359,7 +455,7 @@ public class GameApi {
             if (sSpecial != null) {
                 if (sSpecial.equals("+")) {
                     sMoveSpeech += "check ";
-                } else if(sSpecial.equals("#")) {
+                } else if (sSpecial.equals("#")) {
                     sMoveSpeech += "checkmate ";
                 }
             }
@@ -388,7 +484,7 @@ public class GameApi {
         return sMoveSpeech;
     }
 
-    protected String getPieceName(String piece) {
+    protected static String getPieceName(String piece) {
         switch (piece) {
             case "K":
                 return "King ";
@@ -445,14 +541,14 @@ public class GameApi {
         }
 
         int index = jni.getNumBoard() - 1;
-        if (index >= 0 && index < _arrPGN.size()) {
+        if (index >= 0 && index < pgnMoves.size()) {
             Log.d(TAG, " set duckmove " + index + " " + Pos.toString(duckMove));
-            _arrPGN.get(index)._duckMove = duckMove;
+            pgnMoves.get(index).duckMove = duckMove;
         }
         return true;
     }
 
-    private synchronized final boolean requestMove(final String token, final Matcher matchToken, final String sCastle, final String sAnnotation) {
+    private synchronized final boolean requestMove(final Matcher matchToken, final String sCastle, final String sAnnotation) {
 
         boolean bMatch = false;
         int size = jni.getMoveArraySize();
@@ -471,7 +567,7 @@ public class GameApi {
                 if (bMatch) {
                     if (move(move, "", false)) {
                         int numBoard = jni.getNumBoard() - 2;
-                        if (numBoard >= 0) {
+                        if (numBoard >= 0 && sAnnotation != null) {
                             setAnnotation(numBoard, sAnnotation);
                         }
 
@@ -495,8 +591,6 @@ public class GameApi {
                 }
             }
         } else {
-
-
             String sPiece = matchToken.group(1);
             String sDistFile = matchToken.group(2);
             String sDistRank = matchToken.group(3);
@@ -546,9 +640,9 @@ public class GameApi {
                 if (sPromote != null) {
                     piece = Move.getPromotionPiece(move);
                     if (false == (sPromote.equals("=Q") && piece == BoardConstants.QUEEN ||
-                            sPromote.equals("=R") && piece == BoardConstants.ROOK ||
-                            sPromote.equals("=B") && piece == BoardConstants.BISHOP ||
-                            sPromote.equals("=N") && piece == BoardConstants.KNIGHT))
+                        sPromote.equals("=R") && piece == BoardConstants.ROOK ||
+                        sPromote.equals("=B") && piece == BoardConstants.BISHOP ||
+                        sPromote.equals("=N") && piece == BoardConstants.KNIGHT))
                         continue;
                 }
 
@@ -574,7 +668,7 @@ public class GameApi {
 
                     if (move(move, "", false)) {
                         int numBoard = jni.getNumBoard() - 2;
-                        if (numBoard >= 0) {
+                        if (numBoard >= 0 && sAnnotation != null) {
                             setAnnotation(numBoard, sAnnotation);
                         }
 
@@ -602,43 +696,16 @@ public class GameApi {
     }
 
 
-    private void loadPGNHead(String s) {
+    public static void loadPGNHead(String s, HashMap<String, String> tagsMap) {
+        s = PGNHelper.cleanPgnString(s);
+        Matcher matcher = patTag.matcher(s);
 
-        s = s.replaceAll("[\\r\\n]+", " ");
-        s = s.replaceAll("  ", " ");
-        s = s.trim();
-        s = s + " "; // for last token
-
-        Matcher matchToken;
-        String token;
-        Pattern patTag = Pattern.compile("\\[(\\w+) \"(.*)\"\\]");
-
-        int i = 0, pos;
-        while (i < s.length()) {
-            pos = s.indexOf(" ", i);
-
-            if (pos > 0) {
-
-                if (s.charAt(i) == '[') {
-                    pos = s.indexOf("]", i);
-                    if (pos == -1)
-                        break;
-                    pos++;
-                }
-            } else {
-                break;
-            }
-
-            token = s.substring(i, pos);
-
-            i = pos + 1;
-
-            matchToken = patTag.matcher(token);
-            if (matchToken.matches()) {
-                _mapPGNHead.put(matchToken.group(1), matchToken.group(2));
-                if (matchToken.group(1).equals("FEN")) {
-                    initFEN(matchToken.group(2), false);
-                }
+        tagsMap.clear();
+        while (matcher.find()) {
+            String name = matcher.group(1);
+            String value = matcher.group(2);
+            if (name != null && value != null) {
+                tagsMap.put(name, value);
             }
         }
     }
@@ -668,164 +735,67 @@ public class GameApi {
         return false;
     }
 
-    private void removeDoubleSpaces(StringBuffer sb) {
-        String replaced = sb.toString().replaceAll(" {2,}", " ");
-        sb.setLength(0);
-        sb.append(replaced);
-    }
-
     private boolean loadPGNMoves(String s) {
-        _arrPGN.clear();
+        pgnMoves.clear();
 
-        s = s.replaceAll("[\\r\\n\\t]+", " ");
-        //s = s.replaceAll("\\{[^\\}]*\\}", ""); // remove comments
+        s = s.replaceAll(PGNHelper.regexPgnTag, "");
+        s = PGNHelper.cleanPgnString(s);
 
-        StringBuffer sb = new StringBuffer(s);
+        // Log.d(TAG, "loadPgnMoves " + s);
 
-        removeDoubleSpaces(sb);
+        int cursor = 0;
+        Matcher matchMoveNumber = patMoveNum.matcher(s);
+        Matcher matchAnnotation = patAnnotation.matcher(s);
+        Matcher matchMove = patMove.matcher(s);
+        Matcher matchCastling = patCastling.matcher(s);
+        Matcher matchMoveDots = patMoveDots.matcher(s);
 
-        //Log.i("loadPGNMoves", sb.toString());
+        NextMatch nextMoveNumber = new NextMatch(matchMoveNumber);
+        NextMatch nextAnnotation = new NextMatch(matchAnnotation);
+        NextMatch nextMove = new NextMatch(matchMove);
+        NextMatch nextCastling = new NextMatch(matchCastling);
+        NextMatch nextMoveDots = new NextMatch(matchMoveDots);
 
-        try {
-            while (removeComment(sb)) {
-                ;
+        NextMatch best;
+        do {
+            best = null;
+            nextMoveNumber.seek(cursor);
+            nextAnnotation.seek(cursor);
+            nextMove.seek(cursor);
+            nextCastling.seek(cursor);
+            nextMoveDots.seek(cursor);
+
+            if (nextMoveNumber.has) {
+                best = nextMoveNumber;
             }
-        } catch (Exception e) {
-            Log.w("loadPGNMoves", "Exception: " + e);
-            Log.i("loadPGNMoves", sb.toString());
-            return false;
-        }
-
-        removeDoubleSpaces(sb);
-
-        s = sb.toString();
-
-        //Log.i("loadPGNMoves", s);
-
-		/*
-		// the ( alternative ( move ) )
-		Pattern pat = Pattern.compile("(\\([^\\)\\(]*\\))?");
-		int i = 0, cnt = 0;
-		while(s.indexOf("(") >= 0 && cnt < 200){
-			cnt++;
-			Matcher m = pat.matcher(s);
-			if(m.find())
-				s = m.replaceAll("");
-			else {
-				Log.w("PGN Moves", "Could not find parentheses");
-				return false;
-			}
-		}
-		if(s.indexOf(")") >= 0){
-			Log.w("PGN Moves", "Still parentheses");
-			return false;
-		}
-		*/
-
-        int i;
-        s = s.replaceAll("\\$\\d+", ""); // the $x
-        //s = s.replaceAll("  ", " ");
-        s = s.trim();
-        s = s + " "; // for last token
-        try {
-
-            int pos, numMove = 1, tmp, posDot;
-            i = 0;
-
-            Matcher matchToken;
-            String token, sAnnotation;
-            sAnnotation = "";
-            while (i < s.length()) {
-                pos = s.indexOf(" ", i);
-                posDot = s.indexOf(".", i);
-
-                token = "";
-                if (pos > 0) {
-                    if (s.charAt(i) == '[') {
-                        pos = s.indexOf("]", i);
-                        if (pos == -1)
-                            break;
-                        pos++;
-                        token = s.substring(i, pos);
-
-                        i = pos + 1;
-                    } else if (s.charAt(i) == '{') {
-                        pos = s.indexOf("}", i);
-                        if (pos == -1)
-                            break;
-                        pos++;
-                        token = s.substring(i, pos);
-
-                        i = pos + 1;
-                    } else if (posDot > 0 && posDot < pos) {
-                        if (s.length() > posDot + 3 && s.substring(posDot, posDot + 3).equals("...")) {
-                            i = posDot + 3;
-                            continue;
-                        } else {
-                            posDot++;
-                            token = s.substring(i, posDot);
-                            i = posDot;
-                        }
-                    } else {
-                        token = s.substring(i, pos);
-                        i = pos + 1;
-                    }
-                } else {
-                    break;
-                }
-                if (token.equals("..")) {
-                    continue;
-                }
-
-                matchToken = _patNum.matcher(token);
-                if (matchToken.matches()) {
-                    tmp = Integer.parseInt(matchToken.group(1));
-                    if (tmp == numMove)
-                        numMove++;
-                    else {
-                        break;
-                    }
-                } else {
-                    matchToken = _patAnnot.matcher(token);
-                    if (matchToken.matches()) {
-                        sAnnotation = matchToken.group(1);
-                    } else {
-
-                        matchToken = _patMove.matcher(token);
-                        if (matchToken.matches()) {
-
-                            if (requestMove(token, matchToken, null, sAnnotation)) {
-                                sAnnotation = "";
-                            } else {
-                                break;
-                            }
-                        } else {
-
-                            matchToken = _patCastling.matcher(token);
-                            if (matchToken.matches()) {
-
-                                if (requestMove(token, matchToken, matchToken.group(1), sAnnotation)) {
-                                    sAnnotation = "";
-                                } else {
-                                    break;
-                                }
-                            } else {
-                                continue;
-                            }
-                        }
-                    }
-                }
+            if (nextAnnotation.has && (best == null || nextAnnotation.start < best.start)) {
+                best = nextAnnotation;
+            }
+            if (nextMove.has && (best == null || nextMove.start < best.start)) {
+                best = nextMove;
+            }
+            if (nextCastling.has && (best == null || nextCastling.start < best.start)) {
+                best = nextCastling;
+            }
+            if (nextMoveDots.has && (best == null || nextMoveDots.start < best.start)) {
+                best = nextMoveDots;
             }
 
-            if (sAnnotation.length() != 0) {
-                setAnnotation(jni.getNumBoard() - 1, sAnnotation);
+            if (best != null) {
+                if (best == nextAnnotation) {
+                    String sAnnotation = best.matcher.group(1);
+                    if (sAnnotation != null && !sAnnotation.isEmpty()) {
+                        setAnnotation(jni.getNumBoard() - 1, sAnnotation);
+                    }
+                } else if (best == nextMove) {
+                    requestMove(best.matcher, null, null);
+                } else if (best == nextCastling) {
+                    requestMove(best.matcher, best.matcher.group(1), null);
+                }
+                cursor = best.end;
             }
 
-        } catch (Exception e) {
-            Log.d(TAG, "Error loading PGN");
-            //System.out.println("@" + e);
-            return false;
-        }
+        } while (best != null);
 
         return true;
     }
@@ -833,34 +803,72 @@ public class GameApi {
 
     public void addPGNEntry(int ply, String sMove, String sAnnotation, int move, int duckMove) {
         // Log.d(TAG, "addPGNEntry " + ply + ": " + sMove + " @ " + Pos.toString(duckMove) + " = " + duckMove);
-        while (ply >= 0 && _arrPGN.size() >= ply) {
-            _arrPGN.remove(_arrPGN.size() - 1);
+        while (ply >= 0 && pgnMoves.size() >= ply) {
+            pgnMoves.remove(pgnMoves.size() - 1);
         }
-        _arrPGN.add(new PGNEntry(sMove, sAnnotation, move, duckMove));
+        pgnMoves.add(new PGNEntry(sMove, sAnnotation, move, duckMove));
     }
 
     public void setAnnotation(int i, String sAnno) {
-        if (_arrPGN.size() > i)
-            _arrPGN.get(i)._sAnnotation = sAnno;
+        if (pgnMoves.size() > i)
+            // Log.d(TAG, "set annotation " + sAnno);
+            pgnMoves.get(i).sAnnotation = sAnno;
     }
 
     public String exportFullPGN() {
-        String[] arrHead = {"Event", "Site", "Date", "Round", "White", "Black", "Result", "EventDate",
-                "Variant", "Setup", "FEN", "PlyCount"};
+
+        String result = "*";
+        int turn = jni.getTurn();
+        int state = getState();
+        switch (state) {
+            case BoardConstants.DRAW_50:
+            case BoardConstants.DRAW_AGREEMENT:
+            case BoardConstants.DRAW_MATERIAL:
+            case BoardConstants.DRAW_REPEAT:
+                result = "1/2-1/2";
+                break;
+            case BoardConstants.MATE:
+                result = turn == BoardConstants.WHITE ? "0-1" : "1-0";
+                break;
+            case BoardConstants.BLACK_RESIGNED:
+            case BoardConstants.BLACK_FORFEIT_TIME:
+                result = "1-0";
+                break;
+            case BoardConstants.WHITE_RESIGNED:
+            case BoardConstants.WHITE_FORFEIT_TIME:
+                result = "0-1";
+                break;
+            case BoardConstants.PLAY:
+                result = "*";
+                break;
+        }
+        pgnTags.put("Result", result);
+        pgnTags.put("PlyCount", Integer.toString(pgnMoves.size()));
+
+        // to make sure the order of the `Seven Tag Roster`
+        String[] arrHead = {
+            "Event", "Site", "Date", "Round", "White", "Black", "Result",
+            // and the others we support
+            "EventDate", "Variant", "Setup", "FEN", "PlyCount", "TimeControl", "Time"};
 
         String s = "", key;
         for (int i = 0; i < arrHead.length; i++) {
             key = arrHead[i];
-            if (_mapPGNHead.containsKey(key))
-                s += "[" + key + " \"" + _mapPGNHead.get(key) + "\"]\n";
+            if (pgnTags.containsKey(key)) {
+                String value = pgnTags.get(key).replace("\"", "\\\"");
+                s += "[" + key + " \"" + value + "\"]\n";
+            }
         }
 
         s += exportMovesPGN();
         s += "\n";
+
+        Log.d(TAG, "exportFullPGN " + s);
+
         return s;
     }
 
-    protected String exportMovesPGN() {
+    public String exportMovesPGN() {
         return exportMovesPGNFromPly(1);
     }
 
@@ -873,19 +881,19 @@ public class GameApi {
             iPly = 0;
         }
 
-        for (int i = iPly; i < _arrPGN.size(); i++) {
+        for (int i = iPly; i < pgnMoves.size(); i++) {
             if ((i - iPly) % 2 == 0) {
                 s += ((i - iPly) / 2 + 1) + ". ";
             }
-            s += _arrPGN.get(i)._sMove;
-            if (_arrPGN.get(i)._duckMove != -1) {
-                s += "@" + Pos.toString(_arrPGN.get(i)._duckMove);
+            s += pgnMoves.get(i).sMove;
+            if (pgnMoves.get(i).duckMove != -1) {
+                s += "@" + Pos.toString(pgnMoves.get(i).duckMove);
             }
             s += " ";
 
             // TODO this was commented? bug?
-            if (_arrPGN.get(i)._sAnnotation.length() > 0) {
-                s += " {" + _arrPGN.get(i)._sAnnotation + "}\n ";
+            if (pgnMoves.get(i).sAnnotation.length() > 0) {
+                s += " {" + pgnMoves.get(i).sAnnotation + "}\n ";
             }
         }
 
@@ -893,11 +901,11 @@ public class GameApi {
     }
 
     public ArrayList<PGNEntry> getPGNEntries() {
-        return _arrPGN;
+        return pgnMoves;
     }
 
-    public void setPGNHeadProperty(String sProp, String sValue) {
-        _mapPGNHead.put(sProp, sValue);
+    public void setPGNTag(String sProp, String sValue) {
+        pgnTags.put(sProp, sValue);
     }
 
     public void setDateLong(long lTime) {
@@ -905,13 +913,16 @@ public class GameApi {
         cal.setTimeInMillis(lTime);
         Date d = cal.getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-        setPGNHeadProperty("Date", formatter.format(d));
+        setPGNTag("Date", formatter.format(d));
     }
 
     public String getPGNHeadProperty(String sProp) {
-        return _mapPGNHead.get(sProp);
+        return pgnTags.get(sProp);
     }
 
+    public int getTurn() {
+        return jni.getTurn();
+    }
     public String getWhite() {
         return getPGNHeadProperty("White");
     }
@@ -923,6 +934,39 @@ public class GameApi {
     public Date getDate() {
         String s = getPGNHeadProperty("Date");
         return PGNHelper.getDate(s);
+    }
+
+    private static class NextMatch {
+        final Matcher matcher;
+        int start = -1;
+        int end = -1;
+        boolean has = false;
+
+        NextMatch(Matcher matcher) {
+            this.matcher = matcher;
+        }
+
+        // Ensure this match candidate is positioned at/after cursor.
+        void seek(int cursor) {
+            // If we already have a cached match but it's behind the cursor, advance.
+            while (has && start < cursor) {
+                has = matcher.find();
+                if (has) {
+                    start = matcher.start();
+                    end = matcher.end();
+                }
+            }
+
+            // If we don't have a cached match yet, find the first one at/after cursor.
+            if (!has) {
+                matcher.region(cursor, matcher.regionEnd());
+                has = matcher.find();
+                if (has) {
+                    start = matcher.start();
+                    end = matcher.end();
+                }
+            }
+        }
     }
 
 }

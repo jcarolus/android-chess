@@ -1,9 +1,9 @@
 package jwtc.android.chess.ics;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -11,19 +11,32 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewAnimator;
+import android.widget.ViewSwitcher;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.TimeZone;
@@ -33,7 +46,6 @@ import org.json.JSONException;
 
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.ResultDialogListener;
@@ -44,25 +56,28 @@ import jwtc.chess.PGNColumns;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
-public class ICSClient extends ChessBoardActivity implements ICSListener, ResultDialogListener<Bundle>, AdapterView.OnItemClickListener, ClockListener {
+public class ICSClient extends ChessBoardActivity implements
+    ICSListener,
+    ResultDialogListener<Bundle>,
+    AdapterView.OnItemClickListener,
+    ClockListener {
     public static final String TAG = "ICSClient";
 
-    public static final int REQUEST_SAVE_GAME = 1, REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3;
+    public static final int REQUEST_CHALLENGE = 2, REQUEST_CONFIRM = 3;
 
     private ICSServer icsServer = null;
-    private LocalClockApi localClockApi = new LocalClockApi();
+    private LocalClockApi localClockApi;
 
     protected String _sConsoleEditText;
-    private int  _TimeWarning, _iConsoleCharacterSize;
+    private int _TimeWarning, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
-            notificationsOn, _bICSVolume;
+        notificationsOn, _bICSVolume;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
-            _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber, textViewTitle;
+        _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber, textViewTitle;
     private TextView _tvConsole;
 
     private ViewSwitcher switchTurnMe, switchTurnOpp;
-    private ImageButton buttonRefresh, buttonTakeBack;
-    private Button buttonMenu;
+    private MaterialButton buttonRefresh, buttonTakeBack, buttonMenu;
     private EditText _editHandle, _editPwd, _editConsole;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
@@ -103,7 +118,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TAG, "onServiceConnected");
-            icsServer = ((ICSServer.LocalBinder)service).getService();
+            icsServer = ((ICSServer.LocalBinder) service).getService();
 
             addListeners();
             showLoginIfNotConnected();
@@ -129,6 +144,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         ActivityHelper.fixPaddings(this, findViewById(R.id.ViewAnimatorRoot));
 
         gameApi = new ICSApi();
+        localClockApi = new LocalClockApi(gameApi);
 
         afterCreate();
 
@@ -163,8 +179,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _tvTimePerMove = findViewById(R.id.TextViewICSTimePerMove);
         _tvMoveNumber = findViewById(R.id.TextViewMoveNumber);
 
-        switchTurnMe = findViewById(R.id.ImageTurnMe);
-        switchTurnOpp = findViewById(R.id.ImageTurnOpp);
+        switchTurnMe = findViewById(R.id.ImageBottomTurn);
+        switchTurnOpp = findViewById(R.id.ImageTopTurn);
 
         _tvConsole = findViewById(R.id.TextViewConsole);
         _tvConsole.setTypeface(Typeface.MONOSPACE);
@@ -172,114 +188,55 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _editHandle = findViewById(R.id.EditICSHandle);
         _editPwd = findViewById(R.id.EditICSPwd);
 
-        Button buttonLogin = findViewById(R.id.ButICSLogin);
-        buttonLogin.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        MaterialButton buttonLogin = findViewById(R.id.ButICSLogin);
+        buttonLogin.setOnClickListener(v -> {
 
 
-                final String handle = _editHandle.getText().toString();
-                final String pwd = _editPwd.getText().toString();
+            final String handle = _editHandle.getText().toString();
+            final String pwd = _editPwd.getText().toString();
 
-                /*
-                defaultHost = chessclub.com
-                hosts = chessclub.com queen.chessclub.com
-                ports = 5000 23
-                id = icc
-                 */
-
-                if (handle != "" && pwd != "") {
-                    setLoadingView();
-                    icsServer.startSession("freechess.org", 23, handle, pwd, "fics% ");
-                } else {
-                    if (handle == "") {
-                        globalToast(getString(R.string.msg_ics_enter_handle));
-                    }
-                    if (handle != "guest" && pwd == "") {
-                        globalToast(getString(R.string.msg_ics_enter_password));
-                    }
+            if (handle != "" && pwd != "") {
+                setLoadingView();
+                icsServer.startSession("freechess.org", 23, handle, pwd, "fics% ");
+            } else {
+                if (handle == "") {
+                    globalToast(getString(R.string.msg_ics_enter_handle));
+                }
+                if (handle != "guest" && pwd == "") {
+                    globalToast(getString(R.string.msg_ics_enter_password));
                 }
             }
         });
 
-        Button buttonResign = findViewById(R.id.ButtonResign);
-        buttonResign.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("resign");
-            }
-        });
+        MaterialButton buttonResign = findViewById(R.id.ButtonResign);
+        buttonResign.setOnClickListener(v -> sendString("resign"));
 
-        Button buttonDraw = findViewById(R.id.ButtonDraw);
-        buttonDraw.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("draw");
-            }
-        });
+        MaterialButton buttonDraw = findViewById(R.id.ButtonDraw);
+        buttonDraw.setOnClickListener(v -> sendString("draw"));
 
-        Button buttonFlag = findViewById(R.id.ButtonFlag);
-        buttonFlag.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("flag");
-            }
-        });
+        MaterialButton buttonFlag = findViewById(R.id.ButtonFlag);
+        buttonFlag.setOnClickListener(v -> sendString("flag"));
 
         buttonTakeBack = findViewById(R.id.ButtonTakeBack);
-        buttonTakeBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("takeback");
-            }
-        });
+        buttonTakeBack.setOnClickListener(v -> sendString("takeback"));
 
         buttonRefresh = findViewById(R.id.ButtonRefresh);
-        buttonRefresh.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("refresh");
-            }
-        });
+        buttonRefresh.setOnClickListener(v -> sendString("refresh"));
 
-        Button buttonClose = findViewById(R.id.ButtonClose);
-        buttonClose.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showExitConfirmationDialog();
-            }
-        });
+        MaterialButton buttonClose = findViewById(R.id.ButtonClose);
+        buttonClose.setOnClickListener(v -> showExitConfirmationDialog());
 
-        ImageButton buttonRevert = findViewById(R.id.ButtonICSExamineRevert);
-        buttonRevert.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("revert");
-            }
-        });
+        MaterialButton buttonRevert = findViewById(R.id.ButtonICSExamineRevert);
+        buttonRevert.setOnClickListener((OnClickListener) v -> sendString("revert"));
 
-        ImageButton buttonBackward = findViewById(R.id.ButtonICSExamineBackward);
-        buttonBackward.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("backward");
-            }
-        });
+        MaterialButton buttonBackward = findViewById(R.id.ButtonICSExamineBackward);
+        buttonBackward.setOnClickListener((OnClickListener) v -> sendString("backward"));
 
-        ImageButton buttonForward = findViewById(R.id.ButtonICSExamineForward);
-        buttonForward.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendString("forward");
-            }
-        });
+        MaterialButton buttonForward = findViewById(R.id.ButtonICSExamineForward);
+        buttonForward.setOnClickListener((OnClickListener) v -> sendString("forward"));
 
         switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                fVolume = switchSound.isChecked() ? 1.0f : 0.0f;
-            }
-        });
+        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> sounds.setEnabled(switchSound.isChecked()));
 
         textViewTitle = findViewById(R.id.TextViewTitle);
 
@@ -307,31 +264,31 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         });
 
         adapterChallenges = new SimpleAdapter(ICSClient.this, mapChallenges, R.layout.ics_seek_row,
-                new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
+            new String[]{"text_game", "text_name", "text_rating"}, new int[]{R.id.text_game, R.id.text_name, R.id.text_rating});
 //
         listChallenges = findViewById(R.id.ListChallenges);
         listChallenges.setAdapter(adapterChallenges);
         listChallenges.setOnItemClickListener(this);
 //
         adapterPlayers = new SimpleAdapter(ICSClient.this, mapPlayers, R.layout.ics_player_row,
-                new String[]{"text_name", "text_rating"},
-                new int[]{R.id.text_name, R.id.text_rating});
+            new String[]{"text_name", "text_rating"},
+            new int[]{R.id.text_name, R.id.text_rating});
 
         listPlayers = findViewById(R.id.ListPlayers);
         listPlayers.setAdapter(adapterPlayers);
         listPlayers.setOnItemClickListener(this);
 
         adapterGames = new SimpleAdapter(ICSClient.this, mapGames, R.layout.ics_game_row,
-                new String[]{"nr", "text_name1", "text_name2", "text_rating1", "text_rating2", "text_time1", "text_time2", "text_type"},
-                new int[]{R.id.nr, R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2, R.id.text_time1, R.id.text_time2, R.id.text_type});
+            new String[]{"nr", "text_name1", "text_name2", "text_rating1", "text_rating2", "text_time1", "text_time2", "text_type"},
+            new int[]{R.id.nr, R.id.text_name1, R.id.text_name2, R.id.text_rating1, R.id.text_rating2, R.id.text_time1, R.id.text_time2, R.id.text_type});
 
         _listGames = findViewById(R.id.ListGames);
         _listGames.setAdapter(adapterGames);
         _listGames.setOnItemClickListener(this);
 
         adapterStored = new SimpleAdapter(ICSClient.this, mapStored, R.layout.ics_stored_row,
-                new String[]{"nr_stored", "color_stored", "text_name_stored", "available_stored"},
-                new int[]{R.id.nr_stored, R.id.color_stored, R.id.text_name_stored, R.id.available_stored});
+            new String[]{"nr_stored", "color_stored", "text_name_stored", "available_stored"},
+            new int[]{R.id.nr_stored, R.id.color_stored, R.id.text_name_stored, R.id.available_stored});
 
         _listStored = (ListView) findViewById(R.id.ListStored);
         _listStored.setAdapter(adapterStored);
@@ -340,7 +297,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         View.OnKeyListener okl = new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) ||
-                        event.getAction() == EditorInfo.IME_ACTION_DONE
+                    event.getAction() == EditorInfo.IME_ACTION_DONE
                 ) {
                     // Perform action on key press
                     EditText et = (EditText) v;
@@ -364,19 +321,17 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         _scrollConsole = findViewById(R.id.ScrollICSConsole);
 
-        Button butReg = findViewById(R.id.ButICSRegister);
+        MaterialButton butReg = findViewById(R.id.ButICSRegister);
         if (butReg != null) {
-            butReg.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View arg0) {
-                    try {
-                        Intent i = new Intent();
-                        i.setAction(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse("http://www.freechess.org/Register/index.html"));
-                        startActivity(i);
-                    } catch (Exception ex) {
+            butReg.setOnClickListener(arg0 -> {
+                try {
+                    Intent i = new Intent();
+                    i.setAction(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse("http://www.freechess.org/Register/index.html"));
+                    startActivity(i);
+                } catch (Exception ex) {
 
-                        doToast("Could not go to registration page");
-                    }
+                    doToast("Could not go to registration page");
                 }
             });
         }
@@ -407,20 +362,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             int viewMode = icsApi.getViewMode();
 
             if (viewMode == ICSApi.VIEW_PLAY) {
-                new AlertDialog.Builder(ICSClient.this)
-                    .setTitle(ICSClient.this.getString(R.string.menu_abort))
-                    .setPositiveButton(getString(R.string.alert_yes),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                    sendString("abort");
-                                }
-                            })
-                    .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.dismiss();
-                        }
-                    }).show();
+                openConfirmDialog(getString(R.string.menu_abort), getString(R.string.alert_yes), getString(R.string.alert_no), () -> {
+                    sendString("abort");
+                }, null);
             } else {
                 switch (viewMode) {
                     case ICSApi.VIEW_OBSERVE:
@@ -443,19 +387,17 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             return;
         }
         if (isConnected()) {
-            new AlertDialog.Builder(ICSClient.this)
-                    .setTitle(resource)
+            new MaterialAlertDialogBuilder(ICSClient.this)
+                .setTitle(resource)
 //            .setMessage(resource)
-                    .setPositiveButton(R.string.alert_yes,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    dialog.dismiss();
-                                    stopService(new Intent(ICSClient.this, ICSServer.class));
-                                    finish();
-                                }
-                            })
-                    .setNegativeButton(getString(R.string.alert_no), null)
-                    .show();
+                .setPositiveButton(R.string.alert_yes,
+                    (dialog, whichButton) -> {
+                        dialog.dismiss();
+                        stopService(new Intent(ICSClient.this, ICSServer.class));
+                        finish();
+                    })
+                .setNegativeButton(getString(R.string.alert_no), null)
+                .show();
         } else {
             finish();
         }
@@ -497,7 +439,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 // if (jni.pieceAt(BoardConstants.WHITE, from)
                 String sMove = Pos.toString(from) + "-" + Pos.toString(to);
                 sendString(sMove);
-            } else  {
+            } else {
                 setPremove(from, to);
             }
         } else {
@@ -560,7 +502,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void showLoginIfNotConnected() {
         if (!isConnected()) {
             setLoginView();
-        } else if (((ICSApi)gameApi).getViewMode() == ICSApi.VIEW_NONE) {
+        } else if (((ICSApi) gameApi).getViewMode() == ICSApi.VIEW_NONE) {
             Log.d(TAG, "View none");
             setMenuView();
         } else {
@@ -618,17 +560,17 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     public void sendString(String s) {
         if (icsServer != null && !icsServer.sendString(s)) {
             try {
-                new AlertDialog.Builder(ICSClient.this)
-                        .setTitle(R.string.title_error)
-                        .setMessage(getString(R.string.ics_lost_connection))
-                        .setPositiveButton(getString(R.string.alert_ok),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        dialog.dismiss();
-                                        finish();
-                                    }
-                                })
-                        .show();
+                new MaterialAlertDialogBuilder(ICSClient.this)
+                    .setTitle(R.string.title_error)
+                    .setMessage(getString(R.string.ics_lost_connection))
+                    .setPositiveButton(getString(R.string.alert_ok),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                finish();
+                            }
+                        })
+                    .show();
             } catch (Exception ex) {
                 Log.e(TAG, ex.toString());
             }
@@ -714,31 +656,37 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         mapMenu.clear();
 
         final int[] resources = {
-                R.string.ics_menu_challenges,
-                R.string.ics_menu_seek,
-                R.string.ics_menu_games,
-                R.string.ics_menu_puzzlebot_mate,
-                R.string.ics_menu_puzzlebot_tactics,
-                R.string.ics_menu_puzzlebot_study,
-                R.string.ics_menu_players,
-                R.string.ics_menu_top_blitz,
-                R.string.ics_menu_top_standard,
-                R.string.menu_prefs,
-                R.string.ics_menu_console,
-                R.string.menu_help,
+            R.string.ics_menu_challenges,
+            R.string.ics_menu_seek,
+            R.string.ics_menu_games,
+            R.string.ics_menu_puzzlebot_mate,
+            R.string.ics_menu_puzzlebot_tactics,
+            R.string.ics_menu_puzzlebot_study,
+            R.string.ics_menu_players,
+            R.string.ics_menu_top_blitz,
+            R.string.ics_menu_top_standard,
+            R.string.menu_prefs,
+            R.string.ics_menu_console,
+            R.string.menu_help,
         };
 
         if (!icsServer.isGuest()) {
-            mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_resume)); }}) ;
+            mapMenu.add(new HashMap<String, String>() {{
+                put("menu_item", getString(R.string.ics_menu_resume));
+            }});
         }
 
         for (int i = 0; i < resources.length; i++) {
             final int index = i;
-            mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(resources[index])); }}) ;
+            mapMenu.add(new HashMap<String, String>() {{
+                put("menu_item", getString(resources[index]));
+            }});
         }
 
         if (!icsServer.isGuest()) {
-            mapMenu.add(new HashMap<String, String>() {{ put("menu_item", getString(R.string.ics_menu_stored)); }}) ;
+            mapMenu.add(new HashMap<String, String>() {{
+                put("menu_item", getString(R.string.ics_menu_stored));
+            }});
         }
 
         try {
@@ -748,7 +696,9 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
             for (int i = 0; i < jArray.length(); i++) {
                 final int index = i;
                 try {
-                    mapMenu.add(new HashMap<String, String>() {{ put("menu_item", jArray.getString(index)); }}) ;
+                    mapMenu.add(new HashMap<String, String>() {{
+                        put("menu_item", jArray.getString(index));
+                    }});
                 } catch (JSONException e) {
                 }
             }
@@ -818,7 +768,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     public void resetBoardView() {
-        ((ICSApi)gameApi).resetViewMode();
+        ((ICSApi) gameApi).resetViewMode();
         localClockApi.stopClock();
     }
 
@@ -842,19 +792,17 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         sendString("stored");
     }
 
-    public void saveGameFromBundle(Bundle data) {
-        ContentValues values = new ContentValues();
-
-        values.put(PGNColumns.DATE, data.getLong(PGNColumns.DATE));
-        values.put(PGNColumns.WHITE, data.getString(PGNColumns.WHITE));
-        values.put(PGNColumns.BLACK, data.getString(PGNColumns.BLACK));
-        values.put(PGNColumns.PGN, data.getString(PGNColumns.PGN));
-        values.put(PGNColumns.RATING, data.getFloat(PGNColumns.RATING));
-        values.put(PGNColumns.EVENT, data.getString(PGNColumns.EVENT));
+    public void saveGameFromResult(SaveGameDialog.SaveGameResult result) {
+        ContentValues values = result.getContentValues();
 
         Uri uri = MyPGNProvider.CONTENT_URI;
         Uri uriInsert = getContentResolver().insert(uri, values);
-        managedQuery(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+        if (uriInsert != null) {
+            Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
     @Override
@@ -866,9 +814,6 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                     sendString(challenge);
                     doToast(getString(R.string.toast_challenge_posted));
                 }
-                break;
-            case REQUEST_SAVE_GAME:
-                saveGameFromBundle(data);
                 break;
             case REQUEST_CONFIRM:
                 sendString(data.getString("data"));
@@ -930,15 +875,15 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnError() {
         Log.i(TAG, "OnError");
-        new AlertDialog.Builder(ICSClient.this)
+        new MaterialAlertDialogBuilder(ICSClient.this)
             .setTitle(ICSClient.this.getString(R.string.ics_error))
             .setPositiveButton(getString(R.string.alert_ok),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.dismiss();
-                            finish();
-                        }
-                    })
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                })
             .show();
     }
 
@@ -968,36 +913,36 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         examineButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_EXAMINE ? View.VISIBLE : View.GONE);
 
         String lastMove = icsApi.getLastMove();
-        if (spSound != null) {
+        if (sounds != null) {
             if (lastMove.contains("+") || lastMove.contains("#")) {
-                spSound.play(soundCheck, fVolume, fVolume, 1, 0, 1);
+                sounds.playCheck();
             } else if (lastMove.contains("x")) {
-                spSound.play(soundCapture, fVolume, fVolume, 1, 0, 1);
+                sounds.playCapture();
             } else {
-                spSound.play(soundMove, fVolume, fVolume, 1, 0, 1);
+                sounds.playMove();
             }
         }
     }
 
     @Override
     public void OnChallenged(HashMap<String, String> challenge) {
-        new AlertDialog.Builder(ICSClient.this)
+        new MaterialAlertDialogBuilder(ICSClient.this)
             .setTitle(ICSClient.this.getString(R.string.title_challenge))
             .setMessage(challenge.get("opponent") +
-                    " [" + challenge.get("rating") + "]\n " +
-                    " challenges you for a " +
-                    challenge.get("minutes") + " min.+" +
-                    challenge.get("seconds") + " s " +
-                    challenge.get("type") + " " +
-                    challenge.get("num") + ".\n" +
-                    "Do you wish to accept?")
+                " [" + challenge.get("rating") + "]\n " +
+                " challenges you for a " +
+                challenge.get("minutes") + " min.+" +
+                challenge.get("seconds") + " s " +
+                challenge.get("type") + " " +
+                challenge.get("num") + ".\n" +
+                "Do you wish to accept?")
             .setPositiveButton(getString(R.string.alert_yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            sendString("accept");
-                            dialog.dismiss();
-                        }
-                    })
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        sendString("accept");
+                        dialog.dismiss();
+                    }
+                })
             .setNegativeButton(getString(R.string.alert_no), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
@@ -1027,8 +972,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         resetSelectedSquares();
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
-                if (spSound != null) {
-                    spSound.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
+                if (sounds != null) {
+                    sounds.playNewGame();
                 }
             }
         }
@@ -1074,9 +1019,10 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     }
 
     @Override
-    public void OnGameHistory(String sEvent, String sWhite, String sBlack, Calendar cal, String PGN) {
-        Log.d(TAG, "OnGameHistory " + PGN);
-        SaveGameDialog saveDialog = new SaveGameDialog(this, this, REQUEST_SAVE_GAME, sEvent, sWhite, sBlack, cal, PGN, false);
+    public void OnGameHistory(String fullPGN) {
+        Log.d(TAG, "OnGameHistory " + fullPGN);
+        gameApi.loadPGN(fullPGN);
+        final SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, 0, this::saveGameFromResult);
         saveDialog.show();
     }
 
@@ -1175,7 +1121,7 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
     @Override
     public void OnGameEndedResult(int state) {
         int res = chessStateToR(state);
-        ICSApi icsApi = (ICSApi)gameApi;
+        ICSApi icsApi = (ICSApi) gameApi;
 
         highlightedPositions.clear();
         updateSelectedSquares();
@@ -1195,13 +1141,13 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
     @Override
     public void OnConsoleOutput(String buffer) {
-         addConsoleText(buffer);
+        addConsoleText(buffer);
     }
 
     @Override
     public void OnState() {
 
-        ICSApi icsApi = (ICSApi)gameApi;
+        ICSApi icsApi = (ICSApi) gameApi;
         int myTurn = icsApi.getMyTurn();
         int turn = icsApi.getTurn();
         _tvLastMove.setText(icsApi.getLastMove());
@@ -1219,10 +1165,10 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
 
         localClockApi.startClock(icsApi.getIncrement(), icsApi.getWhiteRemaining(), icsApi.getBlackRemaining(), icsApi.getTurn(), System.currentTimeMillis());
 
-        switchTurnOpp.setVisibility(turn == BoardConstants.BLACK && myTurn == BoardConstants.WHITE || turn == BoardConstants.WHITE && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
+        switchTurnOpp.setVisibility(turn == BoardConstants.BLACK && myTurn == BoardConstants.WHITE || turn == BoardConstants.WHITE && myTurn == BoardConstants.BLACK ? View.VISIBLE : View.INVISIBLE);
         switchTurnOpp.setDisplayedChild(turn == BoardConstants.BLACK ? 0 : 1);
 
-        switchTurnMe.setVisibility(turn == BoardConstants.WHITE && myTurn == BoardConstants.WHITE || turn == BoardConstants.BLACK && myTurn == BoardConstants.BLACK ?  View.VISIBLE : View.INVISIBLE);
+        switchTurnMe.setVisibility(turn == BoardConstants.WHITE && myTurn == BoardConstants.WHITE || turn == BoardConstants.BLACK && myTurn == BoardConstants.BLACK ? View.VISIBLE : View.INVISIBLE);
         switchTurnMe.setDisplayedChild(turn == BoardConstants.BLACK ? 0 : 1);
 
         if (myTurn == turn && hasPremoved()) {
@@ -1239,8 +1185,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
         _tvClockTop.setText(myTurn == BoardConstants.WHITE ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
         _tvClockBottom.setText(myTurn == BoardConstants.BLACK ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
 
-        if (((ICSApi)gameApi).getViewMode() == ICSApi.VIEW_PLAY) {
-            long remaining = myTurn == BoardConstants.WHITE ? localClockApi.getWhiteRemaining() : localClockApi.getBlackRemaining();
+        if (((ICSApi) gameApi).getViewMode() == ICSApi.VIEW_PLAY) {
+            long remaining = localClockApi.getRemaining(myTurn);
             boolean needWarning = remaining < _TimeWarning * 1000 && remaining > 0;
             if (needWarning) {
                 _tvClockBottom.setBackgroundColor(0xCCFF0000);
@@ -1248,8 +1194,8 @@ public class ICSClient extends ChessBoardActivity implements ICSListener, Result
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
             }
 
-            if (_bTimeWarning && needWarning && spSound != null) {
-                spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
+            if (_bTimeWarning && needWarning && sounds != null) {
+                sounds.playTickTock();
             }
         } else {
             _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);

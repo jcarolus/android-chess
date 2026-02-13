@@ -29,6 +29,7 @@ public class ImportApi extends GameApi {
         }
         return false;
     }
+
     public ArrayList<HMap.Pair> getHashMap() {
         return hashMap;
     }

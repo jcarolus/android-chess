@@ -141,7 +141,7 @@ public class TimesealPipe {
             int i1 = _mthcase();
             int j1 = j <= i1 ? j : i1;
             int k1 = buffer.length - _fldchar <= j1 ? buffer.length - _fldchar
-                    : j1;
+                : j1;
             int i2 = j1 - k1 <= 0 ? 0 : j1 - k1;
             System.arraycopy(buffer, _fldchar, abyte0, i, k1);
             System.arraycopy(buffer, 0, abyte0, i + k1, i2);
@@ -211,7 +211,7 @@ public class TimesealPipe {
                 int k = duno();
                 int l = j <= k ? j : k;
                 int i1 = buffer.length - _fldbyte < l ? buffer.length
-                        - _fldbyte : l;
+                    - _fldbyte : l;
                 int j1 = l - i1 <= 0 ? 0 : l - i1;
                 System.arraycopy(bytes, i, buffer, _fldbyte, i1);
                 System.arraycopy(bytes, i + i1, buffer, 0, j1);

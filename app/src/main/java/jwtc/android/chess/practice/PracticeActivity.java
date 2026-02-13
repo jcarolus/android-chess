@@ -9,11 +9,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.Timer;
@@ -34,7 +33,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
     private TextView tvPracticeMove, tvPercentage, textViewSolution, textViewWhitePieces, textViewBlackPieces;
-    private ImageButton buttonNext, buttonRetry;
+    private MaterialButton buttonNext, buttonRetry;
     private int totalPuzzles, currentPos;
     private Cursor cursor;
     private Timer timer;
@@ -48,7 +47,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     @Override
     public boolean requestMove(final int from, final int to) {
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             setMessage("Finished position");
             rebuildBoard();
             return false;
@@ -77,35 +76,31 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         afterCreate();
 
-        tvPracticeMove = (TextView) findViewById(R.id.TextViewPracticeMove);
+        tvPracticeMove = findViewById(R.id.TextViewPracticeMove);
         tvPercentage = findViewById(R.id.TextViewPercentage);
         textViewSolution = findViewById(R.id.TextViewSolution);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
-        imageTurn = (ImageView) findViewById(R.id.ImageTurn);
-        imgStatus = (ImageView) findViewById(R.id.ImageStatus);
-        buttonNext = (ImageButton) findViewById(R.id.ButtonPracticeNext);
+        imageTurn = findViewById(R.id.ImageTurn);
+        imgStatus = findViewById(R.id.ImageStatus);
+        buttonNext = findViewById(R.id.ButtonPracticeNext);
 
-        buttonNext.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                if (currentPos + 1 < totalPuzzles) {
-                    currentPos++;
-                    buttonRetry.setEnabled(false);
-                    startPuzzle();
-                } else {
-                    // completed
-                    setMessage("You completed all puzzles!!!");
-                }
+        buttonNext.setOnClickListener(arg0 -> {
+            if (currentPos + 1 < totalPuzzles) {
+                currentPos++;
+                buttonRetry.setEnabled(false);
+                startPuzzle();
+            } else {
+                // completed
+                setMessage("You completed all puzzles!!!");
             }
         });
 
         buttonRetry = findViewById(R.id.ButtonPracticeRetry);
-        buttonRetry.setOnClickListener(new View.OnClickListener() {
-              public void onClick(View arg0) {
-                  buttonRetry.setEnabled(false);
-                  startPuzzle();
-              }
-          });
+        buttonRetry.setOnClickListener(arg0 -> {
+            buttonRetry.setEnabled(false);
+            startPuzzle();
+        });
         buttonRetry.setEnabled(false);
 
         percentBar = findViewById(R.id.percentBar);
@@ -119,7 +114,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         Log.i(TAG, "onResume");
 
-        myEngine = new LocalEngine();
+        myEngine = new LocalEngine(gameApi);
         myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
 
@@ -136,7 +131,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         timer = null;
 
         // ended with correct solution, advance position
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             currentPos++;
         }
 
@@ -231,7 +226,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
     public void updateScore() {
         tvPercentage.setText(formatPercentage());
-        int percentage = numPlayed > 0 ? (int)((float)numSolved / numPlayed * 100) : 0;
+        int percentage = numPlayed > 0 ? (int) ((float) numSolved / numPlayed * 100) : 0;
         Log.d(TAG, "Set per " + percentage);
         percentBar.setProgressCompat(percentage, /*animated=*/true);
     }
@@ -242,7 +237,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     }
 
     private String formatPercentage() {
-        return String.format("%d / %d = %.1f %%", numSolved, numPlayed, numPlayed > 0 ? ((float)numSolved / numPlayed) * 100 : 0.0f);
+        return String.format("%d / %d = %.1f %%", numSolved, numPlayed, numPlayed > 0 ? ((float) numSolved / numPlayed) * 100 : 0.0f);
     }
 
     @Override
@@ -257,7 +252,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         updateSelectedSquares();
         updatePieces();
 
-        if (jni.isEnded() == 0 && jni.getTurn() != myTurn) {
+        if (!gameApi.isEnded() && jni.getTurn() != myTurn) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -265,7 +260,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
                 }
             }, 1000);
         }
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             Log.d(TAG, "Solved ");
 
             numPlayed++;
@@ -293,7 +288,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             int moveIndex = gameApi.getPGNSize() - 1;
             String sMove = "";
             if (moveIndex >= 0) {
-                sMove = gameApi.getPGNEntries().get(moveIndex)._sMove + " ";
+                sMove = gameApi.getPGNEntries().get(moveIndex).sMove + " ";
             }
 
             buttonRetry.setEnabled(true);
@@ -303,12 +298,20 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             animateWrong(sMove + getString(R.string.puzzle_not_correct_move));
         }
     }
+
     @Override
-    public void OnEngineInfo(String message) {}
+    public void OnEngineInfo(String message, float value) {
+    }
+
     @Override
-    public void OnEngineStarted() {}
+    public void OnEngineStarted() {
+    }
+
     @Override
-    public void OnEngineAborted() {}
+    public void OnEngineAborted() {
+    }
+
     @Override
-    public void OnEngineError() {}
+    public void OnEngineError() {
+    }
 }

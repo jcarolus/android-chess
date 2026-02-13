@@ -8,8 +8,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dip"
-        >
+        android:padding="16dip">
 
         <TextView
             android:layout_width="wrap_content"
@@ -19,33 +18,33 @@
             android:layout_marginBottom="15dp"
             android:textSize="15sp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:text="@string/ics_offer_rematch"
             android:id="@+id/ButtonGameRematch"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            style="@style/ChessButton"/>
+            style="@style/ChessButton" />
 
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:text="@string/ics_examine"
             android:id="@+id/ButtonGameExamine"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            style="@style/ChessButton"/>
+            style="@style/ChessButton" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:text="@string/button_save"
             android:id="@+id/ButtonGameSave"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            style="@style/ChessButton"/>
+            style="@style/ChessButton" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

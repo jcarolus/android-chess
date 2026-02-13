@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jwtc.chess.board.ChessBoard;
+import jwtc.chess.board.BoardConstants;
 
 public class ICSPatterns {
     private static final String TAG = "ICSPatterns";
@@ -136,7 +136,7 @@ public class ICSPatterns {
                     item.put("text_rating", match.group(2));
                     return item;
                 } else if (code.equals("(U)") || code.equals("(FM)") || code.equals("(GM)") ||
-                            code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
+                    code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
                     HashMap<String, String> item = new HashMap<String, String>();
                     name += code;
                     item.put("text_name", name);
@@ -226,7 +226,7 @@ public class ICSPatterns {
     }
 
     public int getCreatingOrContinuingGameNumber(String line) {
-        if(line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
+        if (line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
             Matcher m = gameNumber.matcher(line);
             if (m.matches()) {
                 try {
@@ -277,33 +277,33 @@ public class ICSPatterns {
 
     public boolean isAbortedOrAdourned(String line) {
         return line.indexOf("{Game " /*+ getGameNum()*/) >= 0 && line.indexOf("} *") > 0 ||
-                line.contains("[You are not playing a game.]") ||
-                line.contains("[You are neither playing, observing nor examining a game.]");
+            line.contains("[You are not playing a game.]") ||
+            line.contains("[You are neither playing, observing nor examining a game.]");
     }
 
     public int gameState(String line) {
         if (line.indexOf("{Game " /*+ getGameNum()*/) >= 0) {
             if (line.contains(" resigns} ")) {
-                return line.contains("} 1-0") ? ChessBoard.BLACK_RESIGNED : ChessBoard.WHITE_RESIGNED;
+                return line.contains("} 1-0") ? BoardConstants.BLACK_RESIGNED : BoardConstants.WHITE_RESIGNED;
             } else if (line.contains("forfeits")) {
-                return line.contains("} 1-0") ? ChessBoard.BLACK_FORFEIT_TIME : ChessBoard.WHITE_FORFEIT_TIME;
+                return line.contains("} 1-0") ? BoardConstants.BLACK_FORFEIT_TIME : BoardConstants.WHITE_FORFEIT_TIME;
             } else if (line.contains("checkmated")) {
-                return ChessBoard.MATE;
+                return BoardConstants.MATE;
             }
         }
         if (line.contains("} 1/2-1/2")) {
             if (line.contains("Game drawn by mutual agreement}")) {
-                return ChessBoard.DRAW_AGREEMENT;
+                return BoardConstants.DRAW_AGREEMENT;
             } else if (line.contains("material}")) {
-                return ChessBoard.DRAW_MATERIAL;
+                return BoardConstants.DRAW_MATERIAL;
             } else if (line.contains("stalemate}")) {
-                return ChessBoard.STALEMATE;
+                return BoardConstants.STALEMATE;
             } else {
-                return ChessBoard.DRAW_50;
+                return BoardConstants.DRAW_50;
             }
         }
 
-        return ChessBoard.PLAY;
+        return BoardConstants.PLAY;
     }
 
     public boolean isAbortOrDrawOrAdjourneRequestSent(String line) {

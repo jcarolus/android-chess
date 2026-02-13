@@ -19,11 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
 public class ImportActivity extends BaseActivity implements ImportListener {
 
     private ImportService importService = null;
     private TextView _tvWork, _tvWorkCnt, _tvWorkCntFail;
-    private ProgressBar _progress;
+    private LinearProgressIndicator _progress;
     private int _mode = 0;
     private Intent _intent;
 
@@ -34,7 +36,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TAG, "onServiceConnected");
-            importService = ((ImportService.LocalBinder)service).getService();
+            importService = ((ImportService.LocalBinder) service).getService();
             importService.addListener(ImportActivity.this);
             importService.startImport(_intent, _mode);
         }
@@ -55,10 +57,10 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
         _processing = false;
 
-        _tvWork = (TextView) findViewById(R.id.TextViewDoImport);
-        _tvWorkCnt = (TextView) findViewById(R.id.TextViewDoImportCnt);
-        _tvWorkCntFail = (TextView) findViewById(R.id.TextViewDoImportCntFail);
-        _progress = (ProgressBar) findViewById(R.id.ProgressDoImport);
+        _tvWork = findViewById(R.id.TextViewDoImport);
+        _tvWorkCnt = findViewById(R.id.TextViewDoImportCnt);
+        _tvWorkCntFail = findViewById(R.id.TextViewDoImportCntFail);
+        _progress = findViewById(R.id.ProgressDoImport);
 
         _progress.setVisibility(View.INVISIBLE);
     }
@@ -84,7 +86,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
         if (importService == null) {
             if (!bindService(new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
-                doToast("Could not import practice set");
+                doToast("Could not start import");
             }
         }
     }
@@ -122,6 +124,8 @@ public class ImportActivity extends BaseActivity implements ImportListener {
             } else {
                 _mode = ImportService.IMPORT_GAMES;
             }
+            // @TODO based on the _mode, set a description
+            // _tvWork
         }
     }
 

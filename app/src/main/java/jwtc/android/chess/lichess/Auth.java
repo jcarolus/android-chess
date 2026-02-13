@@ -41,10 +41,10 @@ public class Auth {
     private final OAuth2AuthCodePKCE oauth;
     private final OkHttpClient httpClient = new OkHttpClient();
     private final OkHttpClient httpStreamClient = new OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(0, TimeUnit.MILLISECONDS) // infinite timeout
-            .build();
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(0, TimeUnit.MILLISECONDS) // infinite timeout
+        .build();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     NdJsonStream.Stream eventStream, gameStream, challengeStream, seekStream;
     private String accessToken, refreshToken;
@@ -53,6 +53,7 @@ public class Auth {
 
     public interface AuthResponseHandler {
         void onResponse(JsonObject jsonObject);
+
         void onClose(boolean success);
     }
 
@@ -60,12 +61,12 @@ public class Auth {
         this.context = context;
         String redirectUri = "jwtc.android.chess:/oauth2redirect"; // match Android manifest intent filter
         this.oauth = new OAuth2AuthCodePKCE(
-                context,
-                LICHESS_HOST + "/oauth",
-                LICHESS_HOST + "/api/token",
-                CLIENT_ID,
-                redirectUri,
-                SCOPES
+            context,
+            LICHESS_HOST + "/oauth",
+            LICHESS_HOST + "/api/token",
+            CLIENT_ID,
+            redirectUri,
+            SCOPES
         );
     }
 
@@ -269,9 +270,9 @@ public class Auth {
 
     public void authenticate(OAuth2AuthCodePKCE.Callback<String, Exception> callback) {
         Request req = new Request.Builder()
-                .url(LICHESS_HOST + "/api/account")
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .build();
+            .url(LICHESS_HOST + "/api/account")
+            .addHeader("Authorization", "Bearer " + accessToken)
+            .build();
 
         httpClient.newCall(req).enqueue(new Callback() {
             @Override
@@ -303,18 +304,18 @@ public class Auth {
 
     public void saveTokens() {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .edit()
-                .putString(KEY_ACCESS_TOKEN, accessToken)
-                .putString(KEY_REFRESH_TOKEN, refreshToken)
-                .putLong(KEY_EXPIRES_AT, expiresAt != null ? expiresAt : 0L)
-                .apply();
+            .edit()
+            .putString(KEY_ACCESS_TOKEN, accessToken)
+            .putString(KEY_REFRESH_TOKEN, refreshToken)
+            .putLong(KEY_EXPIRES_AT, expiresAt != null ? expiresAt : 0L)
+            .apply();
     }
 
     public void clearTokens() {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .edit()
-                .clear()
-                .apply();
+            .edit()
+            .clear()
+            .apply();
     }
 
     public void restoreTokens() {
@@ -338,16 +339,16 @@ public class Auth {
 
     public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         Log.d(TAG, "post " + path);
-        Request.Builder reqBuilder =  new Request.Builder()
-                .url(LICHESS_HOST + path)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Accept", "*/*");
+        Request.Builder reqBuilder = new Request.Builder()
+            .url(LICHESS_HOST + path)
+            .addHeader("Authorization", "Bearer " + accessToken)
+            .addHeader("Accept", "*/*");
 
         if (jsonBody != null) {
             String json = new Gson().toJson(jsonBody);
             RequestBody body = RequestBody.create(
-                    json,
-                    MediaType.get("application/json; charset=utf-8")
+                json,
+                MediaType.get("application/json; charset=utf-8")
             );
             reqBuilder.post(body);
         } else {
@@ -406,11 +407,11 @@ public class Auth {
 
     public void get(String path, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         Log.d(TAG, "get " + path);
-        Request.Builder reqBuilder =  new Request.Builder()
-                .url(LICHESS_HOST + path)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Accept", "*/*")
-                .get();
+        Request.Builder reqBuilder = new Request.Builder()
+            .url(LICHESS_HOST + path)
+            .addHeader("Authorization", "Bearer " + accessToken)
+            .addHeader("Accept", "*/*")
+            .get();
 
         httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
             @Override
@@ -464,17 +465,17 @@ public class Auth {
 
     public NdJsonStream.Stream openStream(String path, Map<String, Object> jsonBody, NdJsonStream.Handler handler) {
         Log.d(TAG, "openStream " + path);
-        Request.Builder reqBuilder =  new Request.Builder()
-                .url(LICHESS_HOST + path)
-                .addHeader("Authorization", "Bearer " + accessToken)
-                .addHeader("Accept", "*/*");
+        Request.Builder reqBuilder = new Request.Builder()
+            .url(LICHESS_HOST + path)
+            .addHeader("Authorization", "Bearer " + accessToken)
+            .addHeader("Accept", "*/*");
 
         if (jsonBody != null) {
             String json = new Gson().toJson(jsonBody);
             Log.d(TAG, "post body " + json);
             RequestBody body = RequestBody.create(
-                    json,
-                    MediaType.get("application/json; charset=utf-8")
+                json,
+                MediaType.get("application/json; charset=utf-8")
             );
             reqBuilder.post(body);
         }

@@ -5,17 +5,18 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.Spinner;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+
+import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.views.FixedDropdownView;
 
 public class GameSettingsDialog extends ResultDialog {
     public GameSettingsDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs) {
@@ -31,51 +32,43 @@ public class GameSettingsDialog extends ResultDialog {
         final int levelPly = prefs.getInt("levelPly", 2);
         final boolean quiescentSearchOn = prefs.getBoolean("quiescentSearchOn", true);
 
-        final RadioButton radioAndroid = findViewById(R.id.radioAndroid);
-        final RadioButton radioHuman = findViewById(R.id.radioHuman);
-        final RadioButton radioWhite = findViewById(R.id.radioWhite);
-        final RadioButton radioBlack = findViewById(R.id.radioBlack);
-        final RadioButton radioTime = findViewById(R.id.RadioOptionsTime);
-        final RadioButton radioPly = findViewById(R.id.RadioOptionsPly);
-        final Spinner spinnerLevelTime = findViewById(R.id.SpinnerOptionsLevelTime);
-        final Spinner spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
-        final ToggleButton toggleQuiescent = findViewById(R.id.ToggleQuiescent);
+        final MaterialButtonToggleGroup toggleOpponent = findViewById(R.id.ToggleOpponentGroup);
+        final MaterialButtonToggleGroup toggleColor = findViewById(R.id.ToggleColorGroup);
+        final MaterialButtonToggleGroup toggleLevelMode = findViewById(R.id.ToggleLevelModeGroup);
+        final FixedDropdownView spinnerLevelTime = findViewById(R.id.SpinnerOptionsLevelTime);
+        final FixedDropdownView spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
+        final SwitchMaterial toggleQuiescent = findViewById(R.id.ToggleQuiescent);
 
-        ArrayAdapter<CharSequence> adapterTime = ArrayAdapter.createFromResource(context, R.array.levels_time, android.R.layout.simple_spinner_item);
-        adapterTime.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLevelTime.setPrompt(context.getString(R.string.title_pick_level));
-        spinnerLevelTime.setAdapter(adapterTime);
-
-        ArrayAdapter<CharSequence> adapterPly = ArrayAdapter.createFromResource(context, R.array.levels_ply, android.R.layout.simple_spinner_item);
-        adapterPly.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerLevelPly.setPrompt(context.getString(R.string.title_pick_level));
-        spinnerLevelPly.setAdapter(adapterPly);
+        spinnerLevelTime.setItems(context.getResources().getStringArray(R.array.levels_time));
+        spinnerLevelPly.setItems(context.getResources().getStringArray(R.array.levels_ply));
 
         toggleQuiescent.setChecked(quiescentSearchOn);
+        toggleQuiescent.setText(quiescentSearchOn
+            ? R.string.options_quiescent_on
+            : R.string.options_quiescent_off);
 
-        radioAndroid.setChecked(vsCPU);
-        radioHuman.setChecked(!vsCPU);
+        toggleOpponent.check(vsCPU ? R.id.radioAndroid : R.id.radioHuman);
 
-        radioWhite.setChecked(playAsWhite);
-        radioBlack.setChecked(!playAsWhite);
+        toggleColor.check(playAsWhite ? R.id.radioWhite : R.id.radioBlack);
 
-        radioTime.setChecked(levelMode == EngineApi.LEVEL_TIME);
-        radioPly.setChecked(levelMode == EngineApi.LEVEL_PLY);
+        boolean useTimeLevel = levelMode == EngineApi.LEVEL_TIME;
+        toggleLevelMode.check(useTimeLevel ? R.id.RadioOptionsTime : R.id.RadioOptionsPly);
+        spinnerLevelTime.setVisibility(useTimeLevel ? View.VISIBLE : View.GONE);
+        spinnerLevelPly.setVisibility(useTimeLevel ? View.GONE : View.VISIBLE);
 
-        // radio group
-        radioTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                radioPly.setChecked(!radioTime.isChecked());
+        toggleLevelMode.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) {
+                return;
             }
+            boolean isTime = checkedId == R.id.RadioOptionsTime;
+            spinnerLevelTime.setVisibility(isTime ? View.VISIBLE : View.GONE);
+            spinnerLevelPly.setVisibility(isTime ? View.GONE : View.VISIBLE);
         });
 
-        radioPly.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                radioTime.setChecked(!radioPly.isChecked());
-            }
-        });
+        toggleQuiescent.setOnCheckedChangeListener((buttonView, isChecked) ->
+            toggleQuiescent.setText(isChecked
+                ? R.string.options_quiescent_on
+                : R.string.options_quiescent_off));
 
         spinnerLevelTime.setSelection(levelTime - 1);
         spinnerLevelPly.setSelection(levelPly - 1);
@@ -87,10 +80,12 @@ public class GameSettingsDialog extends ResultDialog {
 
                 SharedPreferences.Editor editor = prefs.edit();
 
-                editor.putBoolean("opponent", radioAndroid.isChecked());
-                editor.putBoolean("myTurn", radioWhite.isChecked());
+                editor.putBoolean("opponent", toggleOpponent.getCheckedButtonId() == R.id.radioAndroid);
+                editor.putBoolean("myTurn", toggleColor.getCheckedButtonId() == R.id.radioWhite);
 
-                editor.putInt("levelMode", radioTime.isChecked() ? EngineApi.LEVEL_TIME : EngineApi.LEVEL_PLY);
+                editor.putInt("levelMode", toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsTime
+                    ? EngineApi.LEVEL_TIME
+                    : EngineApi.LEVEL_PLY);
                 editor.putInt("level", spinnerLevelTime.getSelectedItemPosition() + 1);
                 editor.putInt("levelPly", spinnerLevelPly.getSelectedItemPosition() + 1);
 

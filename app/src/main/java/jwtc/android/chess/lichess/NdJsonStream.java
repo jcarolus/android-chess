@@ -26,6 +26,7 @@ public class NdJsonStream {
 
     public interface Handler {
         void onResponse(JsonObject jsonObject);
+
         void onClose(boolean success);
     }
 

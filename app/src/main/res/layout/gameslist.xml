@@ -1,103 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
-    <TableLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="1">
-
-        <TableRow android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_search" />
-
-            <EditText
-                android:id="@+id/EditTextGamesList"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true" />
-        </TableRow>
-    </TableLayout>
-
-    <TableLayout
-        android:id="@+id/TableFirstRow"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dip">
-
-            <TextView
-                android:id="@+id/sort_rating"
-                android:text="@string/gameslist_stars"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="1"
-                android:layout_height="30dip" />
-
-            <TextView
-                android:id="@+id/sort_text_date"
-                android:text="@string/gameslist_date"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="1"
-                android:layout_height="30dip" />
-
-            <TextView
-                android:id="@+id/sort_text_event"
-                android:text="@string/gameslist_event"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="1"
-                android:layout_height="30dip" />
-        </TableRow>
-    </TableLayout>
-
-    <TableLayout
-        style="@style/MyRowStyle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dip">
-
-            <TextView
-                android:id="@+id/sort_text_id"
-                android:text="@string/gameslist_id"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="1"
-                android:layout_height="30dip" />
-
-            <TextView
-                android:id="@+id/sort_text_name1"
-                android:text="@string/games_list_white_pieces"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="3"
-                android:layout_height="30dip" />
-
-            <TextView
-                android:id="@+id/sort_text_name2"
-                android:text="@string/gameslist_black_pieces"
-                style="@style/MyNormalTextStyle"
-                android:layout_weight="3"
-                android:layout_height="30dip" />
-        </TableRow>
-    </TableLayout>
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="2dip">
 
     <ListView
-        android:id="@android:id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"
-        android:entries="@array/levels_ply" />
+        android:id="@+id/ListView"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/LayoutMenu" />
 
-</LinearLayout>
+    <include
+        android:id="@+id/includeboard"
+        layout="@layout/chessboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <GridView
+        android:id="@+id/GridLayoutPgn"
+        android:numColumns="2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/includeboard"
+        app:layout_constraintBottom_toBottomOf="@id/includeboard"
+        app:layout_constraintStart_toStartOf="@id/includeboard"
+        app:layout_constraintEnd_toEndOf="@id/includeboard"
+        android:clickable="false" />
+
+    <ScrollView
+        android:id="@+id/ScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/includeboard"
+        app:layout_constraintBottom_toTopOf="@id/LayoutMenu">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/LayoutControls"
+                layout="@layout/gameslist_controls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include
+                android:id="@+id/LayoutSeek"
+                layout="@layout/gameslist_seek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/LayoutMenu"
+        layout="@layout/gameslist_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

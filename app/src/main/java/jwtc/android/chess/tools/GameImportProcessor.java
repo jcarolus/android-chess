@@ -29,18 +29,21 @@ public class GameImportProcessor extends PGNProcessor {
         //Log.i("processPGN", sPGN);
         if (gameApi.loadPGN(sPGN)) {
 
+            String result = gameApi.pgnTags.get("Result");
+
             ContentValues values = new ContentValues();
             values.put(PGNColumns.EVENT, gameApi.getPGNHeadProperty("Event"));
             values.put(PGNColumns.WHITE, gameApi.getWhite());
             values.put(PGNColumns.BLACK, gameApi.getBlack());
             values.put(PGNColumns.PGN, gameApi.exportFullPGN());
             values.put(PGNColumns.RATING, 2.5F);
+            values.put(PGNColumns.RESULT, result);
 
             // todo date goes wrong #################################
             Date dd = gameApi.getDate();
-            if (dd == null)
+            if (dd == null) {
                 dd = Calendar.getInstance().getTime();
-
+            }
             values.put(PGNColumns.DATE, dd.getTime());
 
             Uri uri = Uri.parse("content://jwtc.android.chess.helpers.MyPGNProvider/games");

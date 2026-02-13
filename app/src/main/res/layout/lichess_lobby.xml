@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
+
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -10,26 +11,30 @@
         android:stretchColumns="1"
         android:layout_marginBottom="1dip"
         android:padding="8dip">
+
         <TableRow android:gravity="center_vertical">
+
             <ImageView
                 android:layout_width="32dip"
                 android:layout_height="32dip"
-                android:src="@drawable/lichess"
-                />
+                android:src="@drawable/lichess" />
+
             <TextView
-                android:text="handle"
+                android:text="@string/lichess_lobby_handle"
                 android:id="@+id/TextViewHandle"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 style="@style/MyHeaderTextStyle" />
-            <Button
+
+            <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_logout"
                 android:id="@+id/ButtonLogout"
                 android:layout_width="wrap_content"
 
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
         </TableRow>
     </TableLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,27 +48,26 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dip"
             android:text="@string/lichess_lobby_connected"
-            android:accessibilityLiveRegion="polite"
-            />
+            android:accessibilityLiveRegion="polite" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <Button
+
+            <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_challenge"
                 android:id="@+id/ButtonChallenge"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="8dip"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_seek"
                 android:id="@+id/ButtonSeek"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="8dip"
-                style="@style/ChessButton"/>
-
+                style="@style/ChessButton" />
 
         </LinearLayout>
 
@@ -72,12 +76,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:text="@string/lichess_lobby_ongoing_games"
-            />
+            android:text="@string/lichess_lobby_ongoing_games" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="fill_parent">
+
             <ListView
                 android:id="@+id/ListViewGames"
                 android:layout_width="fill_parent"

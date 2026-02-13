@@ -2,10 +2,7 @@ package jwtc.android.chess.engine;
 
 import android.util.Log;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-
+import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
@@ -13,20 +10,24 @@ import jwtc.chess.Pos;
 public class LocalEngine extends EngineApi {
     private static final String TAG = "LocalEngine";
 
+    private final GameApi gameApi;
     private Thread enginePeekThread = null;
     private Thread engineSearchThread = null;
+
+    public LocalEngine(GameApi gameApi) {
+        this.gameApi = gameApi;
+    }
 
     @Override
     public void play() {
         Log.d(TAG, "play " + msecs + ", " + ply);
 
-        JNI jni = JNI.getInstance();
-        if (jni.isEnded() != 0) {
+        if (gameApi.isEnded()) {
             Log.d(TAG, "ended!");
             return;
         }
 
-        for (EngineListener listener: listeners) {
+        for (EngineListener listener : listeners) {
             listener.OnEngineStarted();
         }
 
@@ -54,7 +55,7 @@ public class LocalEngine extends EngineApi {
                 JNI.getInstance().interrupt();
             }
 
-            for (EngineListener listener: listeners) {
+            for (EngineListener listener : listeners) {
                 listener.OnEngineAborted();
             }
         }
@@ -71,14 +72,14 @@ public class LocalEngine extends EngineApi {
         public void run() {
             try {
                 JNI jni = JNI.getInstance();
-                if (jni.isEnded() != 0) {
+                if (gameApi.isEnded()) {
                     Log.d(TAG, "search called while game was ended");
                     return;
                 }
                 long lMillies = System.currentTimeMillis();
                 if (ply > 0) {
                     jni.searchDepth(ply, quiescentSearchOn ? 1 : 0);
-                } else if (msecs > 0){
+                } else if (msecs > 0) {
                     jni.searchMove(msecs, quiescentSearchOn ? 1 : 0);
                 } else {
                     Log.d(TAG, "No ply and no msecs to work with");
@@ -106,7 +107,7 @@ public class LocalEngine extends EngineApi {
                     }
                     s += "\n\t" + String.format("%.2f", fValue);
                 }
-                sendMessageFromThread(s);
+                sendMessageFromThread(s, fValue);
 
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
@@ -147,9 +148,7 @@ public class LocalEngine extends EngineApi {
                         }
                     }
 
-                    s = s + "\t\t" + String.format("%.2f", fValue) /*+ "\t@ " + ply*/;
-
-                    sendMessageFromThread(s);
+                    sendMessageFromThread(s, fValue);
 
                     Thread.sleep(iSleep);
                 }

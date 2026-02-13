@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewAnimator
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewAnimator xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ViewAnimatorRoot"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:layout_alignParentTop="true"
-    android:layout_above="@id/HorizontalSpacer"
-    >
+    android:layout_above="@id/HorizontalSpacer">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -18,19 +17,22 @@
             android:layout_height="wrap_content"
             android:paddingLeft="4dip"
             android:stretchColumns="1">
+
             <TableRow>
-                <Button android:id="@+id/ButtonMenu"
+
+                <Button
+                    android:id="@+id/ButtonMenu"
                     android:text="@string/button_close"
                     android:layout_width="wrap_content"
-                    style="@style/ChessButton"
-                    />
-                <TextView android:id="@+id/TextViewTitle"
+                    style="@style/ChessButton" />
+
+                <TextView
+                    android:id="@+id/TextViewTitle"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dip"
-                    android:text=""
-                    />
+                    android:text="" />
 
             </TableRow>
         </TableLayout>
@@ -40,24 +42,24 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"
-            android:layout_above="@id/ButtonBar"
-            />
+            android:layout_above="@id/ButtonBar" />
 
         <ViewAnimator
             android:id="@+id/ViewAnimatorSub"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_alignParentTop="true"
-            android:layout_above="@id/HorizontalSpacer"
-            >
+            android:layout_above="@id/HorizontalSpacer">
 
             <!-- 0 -->
-            <include layout="@layout/ics_login"
+            <include
+                layout="@layout/ics_login"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent" />
 
             <!-- 1 -->
-            <include layout="@layout/loader"
+            <include
+                layout="@layout/loader"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent" />
 
@@ -97,14 +99,16 @@
                 android:drawSelectorOnTop="false" />
 
             <!-- 7 -->
-            <include layout="@layout/ics_console"
+            <include
+                layout="@layout/ics_console"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent" />
 
         </ViewAnimator>
     </RelativeLayout>
     <!-- 1 -->
-    <include layout="@layout/ics_play"
+    <include
+        layout="@layout/ics_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </ViewAnimator>

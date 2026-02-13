@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
@@ -18,8 +19,8 @@ public class ClockDialog extends ResultDialog {
 
         setContentView(R.layout.clock_dialog);
 
-        int increment = (int)(prefs.getLong("clockIncrement", 0) / 1000);
-        int totalMinutes = (int)(prefs.getLong("clockTotalMillies", 0) / 60000);
+        int increment = (int) (prefs.getLong("clockIncrement", 0) / 1000);
+        int totalMinutes = (int) (prefs.getLong("clockTotalMillies", 0) / 60000);
 
         final EditText editMinutes = findViewById(R.id.EditMinutes);
         final EditText editIncrement = findViewById(R.id.EditMinutes);
@@ -35,9 +36,10 @@ public class ClockDialog extends ResultDialog {
                 try {
                     SharedPreferences.Editor editor = prefs.edit();
 
-                    long totalMillies = (long)Integer.parseInt(editMinutes.getText().toString()) * 60000;
-                    long increment = (long)Integer.parseInt(editIncrement.getText().toString()) * 1000;
+                    long totalMillies = (long) Integer.parseInt(editMinutes.getText().toString()) * 60000;
+                    long increment = (long) Integer.parseInt(editIncrement.getText().toString()) * 1000;
 
+                    editor.putLong("clockInitialMillies", totalMillies);
                     editor.putLong("clockWhiteMillies", totalMillies);
                     editor.putLong("clockBlackMillies", totalMillies);
                     editor.putLong("clockIncrement", increment);
@@ -47,7 +49,8 @@ public class ClockDialog extends ResultDialog {
 
                     setResult(new Bundle());
 
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
                 dismiss();
             }
         });

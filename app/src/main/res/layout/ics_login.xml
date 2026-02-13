@@ -8,92 +8,81 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="320dip"
         android:layout_height="wrap_content"
-        android:padding="8dip"
-        >
-    <TableLayout
-        android:id="@+id/TableICSLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*"
-        android:gravity="center">
+        android:padding="8dip">
 
-        <TableRow
-            style="@style/MyRowStyle"
-            android:minHeight="50dip">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dip">
 
-            <TextView
-                android:text="@string/ics_client_server"
-                style="@style/MyLabelTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_width="48dip"
+                android:layout_height="48dip"
+                android:layout_gravity="center"
+                android:src="@drawable/fics" />
 
-            <TextView
-                android:text="FICS"
-                style="@style/MyLabelTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-
-        <TableRow
-            style="@style/MyRowStyle"
-            android:minHeight="50dip">
-
-            <TextView
-                android:text="@string/ics_client_handle"
-                style="@style/MyLabelTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <EditText
-                android:text="guest"
-                android:id="@+id/EditICSHandle"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/InputICSHandle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minWidth="100dip"
-                android:singleLine="true"
-                android:inputType="text"
-                android:imeOptions="actionNext" />
-        </TableRow>
+                android:hint="@string/ics_client_handle">
 
-        <TableRow
-            style="@style/MyRowStyle"
-            android:minHeight="50dip">
+                <EditText
+                    android:text="guest"
+                    android:id="@+id/EditICSHandle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="100dip"
+                    android:singleLine="true"
+                    android:inputType="text"
+                    android:labelFor="@id/InputICSHandle"
+                    android:imeOptions="actionNext" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:text="@string/ics_client_password"
-                style="@style/MyLabelTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <EditText
-                android:id="@+id/EditICSPwd"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/InputICSPwd"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minWidth="100dip"
-                android:singleLine="true"
-                android:inputType="textPassword"
-                android:layout_marginBottom="10dip"
-                android:imeOptions="actionDone" />
-        </TableRow>
+                android:hint="@string/ics_client_password">
 
-        <TableRow
-            style="@style/MyRowStyle"
-            android:minHeight="50dip">
+                <EditText
+                    android:id="@+id/EditICSPwd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="100dip"
+                    android:singleLine="true"
+                    android:inputType="textPassword"
+                    android:layout_marginBottom="10dip"
+                    android:labelFor="@id/InputICSPwd"
+                    android:imeOptions="actionDone" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:text="@string/button_register"
-                android:id="@+id/ButICSRegister"
-                android:layout_width="0dip"
-                android:layout_marginRight="2dip"
-                style="@style/ChessButton"/>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <Button
-                android:text="@string/button_login"
-                android:id="@+id/ButICSLogin"
-                android:layout_width="0dip"
-                android:layout_marginLeft="2dip"
-                style="@style/ChessButton"/>
-        </TableRow>
-    </TableLayout>
+                <TableRow
+                    style="@style/MyRowStyle"
+                    android:minHeight="50dip">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:text="@string/button_register"
+                        android:id="@+id/ButICSRegister"
+                        android:layout_width="0dip"
+                        android:layout_weight="1"
+                        android:layout_marginRight="2dip"
+                        style="@style/ChessButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:text="@string/button_login"
+                        android:id="@+id/ButICSLogin"
+                        android:layout_width="0dip"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="2dip"
+                        style="@style/ChessButton" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

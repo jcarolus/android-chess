@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -11,103 +12,123 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyFormCardView">
-            <RadioGroup
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/options_play_android"
-                    android:id="@+id/radioAndroid"
-                    style="@style/MyRowTextStyle" />
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
 
-                <RadioButton
-                    android:layout_width="wrap_content"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/ToggleOpponentGroup"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dip"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:insetBottom="0dp"
+                    android:text="@string/options_play_android"
+                    android:id="@+id/radioAndroid" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:insetTop="0dp"
                     android:text="@string/options_play_human"
-                    android:id="@+id/radioHuman"
-                    style="@style/MyRowTextStyle" />
-            </RadioGroup>
+                    android:id="@+id/radioHuman" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
         </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyFormCardView">
-            <RadioGroup
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <RadioButton
-                    android:layout_width="wrap_content"
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/ToggleColorGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dip"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/options_play_white"
-                    android:id="@+id/radioWhite"
-                    style="@style/MyRowTextStyle" />
+                    android:id="@+id/radioWhite" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/options_play_black"
-                    android:id="@+id/radioBlack"
-                    style="@style/MyRowTextStyle" />
-            </RadioGroup>
+                    android:id="@+id/radioBlack" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
         </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyFormCardView">
-            <TableLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
 
-                <TableRow style="@style/MyRowStyle">
-                    <RadioButton
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="4dip">
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/ToggleLevelModeGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioOptionsTime"
                         android:text="@string/options_level_time"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        style="@style/MyRowTextStyle" />
-                    <Spinner
-                        android:id="@+id/SpinnerOptionsLevelTime"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"/>
-                </TableRow>
-                <TableRow style="@style/MyRowStyle">
-                    <RadioButton
+                        android:layout_weight="1" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioOptionsPly"
                         android:text="@string/options_level_ply"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        style="@style/MyRowTextStyle" />
-                    <Spinner
-                        android:id="@+id/SpinnerOptionsLevelPly"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"/>
-                </TableRow>
+                        android:layout_weight="1" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
 
-                <TableRow style="@style/MyRowStyle">
-                    <ToggleButton
-                        android:id="@+id/ToggleQuiescent"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_margin="4dip"
-                        android:checked="true"
-                        android:textOn="@string/options_quiescent_on"
-                        android:textOff="@string/options_quiescent_off"/>
-                </TableRow>
-                </TableLayout>
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/SpinnerOptionsLevelTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/title_pick_time" />
+
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/SpinnerOptionsLevelPly"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/title_pick_ply" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/ToggleQuiescent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dip"
+                    android:checked="true"
+                    android:text="@string/options_quiescent_on" />
+            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
         <LinearLayout
             android:layout_width="300dip"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <Button
                 android:id="@+id/ButtonCancel"
                 android:text="@string/button_cancel"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="2dip"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
 
             <Button
                 android:id="@+id/ButtonOk"
@@ -115,7 +136,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="2dip"
-                style="@style/ChessButton"/>
+                style="@style/ChessButton" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

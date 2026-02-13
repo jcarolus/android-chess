@@ -144,7 +144,8 @@ public class HotspotBoardService extends Service {
             if (socket != null && socket.isConnected()) {
                 socket.close();
             }
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+        }
         socket = null;
 
         if (serverSocket != null) {
@@ -181,10 +182,10 @@ public class HotspotBoardService extends Service {
                     int hostAddress = dhcpInfo.gateway;
 
                     String hostIp = String.format(Locale.US, "%d.%d.%d.%d",
-                            (hostAddress & 0xff),
-                            (hostAddress >> 8 & 0xff),
-                            (hostAddress >> 16 & 0xff),
-                            (hostAddress >> 24 & 0xff));
+                        (hostAddress & 0xff),
+                        (hostAddress >> 8 & 0xff),
+                        (hostAddress >> 16 & 0xff),
+                        (hostAddress >> 24 & 0xff));
 
                     socket = new Socket(hostIp, port);
 

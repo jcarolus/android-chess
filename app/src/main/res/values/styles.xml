@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="ChessImageButton" parent="android:Widget.Material.ImageButton">
-        <item name="android:scaleType">centerInside</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:tint">@color/primaryTextColor</item>
-        <item name="android:backgroundTint">@color/imagebutton_background</item>
-        <item name="android:layout_width">@dimen/imageButtonSize</item>
-        <item name="android:layout_height">@dimen/imageButtonSize</item>
-    </style>
-
-    <style name="ChessButton" parent="android:Widget.Material.Button">
+    <style name="ChessButton" parent="Widget.Material3.Button">
         <item name="android:textColor">@color/surfaceTextColor</item>
         <item name="android:tint">@color/primaryTextColor</item>
         <item name="android:backgroundTint">@color/imagebutton_background</item>
         <item name="rippleColor">@color/secondaryVariantColor</item>
         <item name="android:layout_height">@dimen/imageButtonSize</item>
+        <item name="android:layout_margin">4dip</item>
+    </style>
+
+    <style name="ChessImageButton" parent="Widget.Material3.Button.Icon">
+        <item name="enforceMaterialTheme">true</item>
+        <item name="enforceTextAppearance">false</item>
+        <item name="android:textColor">@color/surfaceTextColor</item>
+        <item name="android:tint">@color/primaryTextColor</item>
+        <item name="android:backgroundTint">@color/imagebutton_background</item>
+        <item name="rippleColor">@color/secondaryVariantColor</item>
+        <item name="android:layout_width">@dimen/imageButtonSize</item>
+        <item name="android:layout_height">@dimen/imageButtonSize</item>
+        <item name="android:padding">0dip</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="minWidth">0dp</item>
+        <item name="minHeight">0dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="android:layout_margin">4dip</item>
     </style>
 
     <style name="ChessTextAppearance" parent="@android:style/TextAppearance">
@@ -111,9 +127,14 @@
         <item name="android:layout_width">300dip</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+
     <style name="MyFormCardView" parent="MyFormLayout">
         <item name="android:padding">8dip</item>
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="MySwitchStyle" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@color/switch_thumb_color</item>
     </style>
 </resources>

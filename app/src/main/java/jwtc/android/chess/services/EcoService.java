@@ -17,8 +17,9 @@ public class EcoService {
     JNI jni;
 
     public EcoService() {
-         jni = JNI.getInstance();
+        jni = JNI.getInstance();
     }
+
     public void load(final AssetManager assetManager) {
         if (hashMap == null) {
             (new Thread(new Runnable() {
