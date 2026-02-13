@@ -303,6 +303,7 @@
     <string name="pref_sound_desc">Joué quand l’adversaire déplace une pièce</string>
     <string name="pref_speech">Voix</string>
     <string name="pref_accessibility_drag">Glisser-déposer d’accessibilité</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Pour le glisser d’accessibilité, veuillez désactiver TalkBack.</string>
     <string name="pref_speech_pitch_desc">Hauteur de voix</string>
     <string name="pref_speech_rate_desc">Débit de parole</string>
     <string name="pref_turn">Camp</string>

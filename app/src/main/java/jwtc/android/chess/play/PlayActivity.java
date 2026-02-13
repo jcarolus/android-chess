@@ -246,6 +246,9 @@ public class PlayActivity extends ChessBoardActivity implements
         switchAccessibilityDrag.setOnCheckedChangeListener((buttonView, isChecked) -> {
             useAccessibilityDrag = switchAccessibilityDrag.isChecked();
             applySquareDragListeners();
+            if (isChecked && buttonView.isPressed() && textToSpeech != null) {
+                textToSpeech.moveToSpeech(getString(R.string.pref_accessibility_drag_talkback_reminder));
+            }
         });
 
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
