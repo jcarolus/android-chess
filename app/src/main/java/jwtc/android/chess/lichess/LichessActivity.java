@@ -53,7 +53,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private LocalClockApi localClockApi;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout layoutConfirm, layoutResignDraw, layoutSave;
-    private SwitchMaterial switchConfirmMoves;
+    private SwitchMaterial switchConfirmMoves, switchAccessibilityDrag;
 
     private ImageView imageTurnOpp, imageTurnMe;
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
@@ -151,6 +151,14 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         localClockApi.addListener(this);
 
         switchConfirmMoves = findViewById(R.id.SwitchConfirmMoves);
+        switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
+        switchAccessibilityDrag.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            useAccessibilityDrag = switchAccessibilityDrag.isChecked();
+            applySquareDragListeners();
+            if (isChecked && buttonView.isPressed() && textToSpeech != null) {
+                textToSpeech.moveToSpeech(getString(R.string.pref_accessibility_drag_talkback_reminder));
+            }
+        });
         layoutResignDraw = findViewById(R.id.LayoutResignDraw);
         layoutConfirm = findViewById(R.id.LayoutConfirm);
         layoutSave = findViewById(R.id.LayoutSave);
@@ -199,6 +207,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutSave.setVisibility(View.GONE);
         layoutResignDraw.setVisibility(View.VISIBLE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
+        switchAccessibilityDrag.setChecked(useAccessibilityDrag);
     }
 
     @Override
@@ -208,6 +217,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         editor.putBoolean("lichess_confirm_moves", switchConfirmMoves.isChecked());
+        editor.putBoolean("useAccessibilityDrag", useAccessibilityDrag);
 
         editor.commit();
     }

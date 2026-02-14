@@ -117,13 +117,28 @@
                 style="@style/ChessButton" />
         </LinearLayout>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/SwitchConfirmMoves"
-            android:layout_width="wrap_content"
+        <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:text="@string/lichess_game_confirm_moves"
-            android:checked="true" />
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="center">
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchConfirmMoves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dip"
+                android:text="@string/lichess_game_confirm_moves"
+                android:checked="true" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchAccessibilityDrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_accessibility_drag"
+                android:checked="false" />
+        </com.google.android.flexbox.FlexboxLayout>
 
         <TextView
             android:id="@+id/TextViewWhitePieces"
