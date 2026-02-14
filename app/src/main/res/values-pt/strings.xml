@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Empate</string>
     <string name="lichess_play_button_resign">Desistir</string>
     <string name="lichess_seek_posted">Busca publicada</string>
+    <string name="lichess_save_game_to_file">Salvar em arquivo</string>
+    <string name="lichess_save_game_to_database">Salvar no banco de dados</string>
     <string name="lichess_starting">Iniciando...</string>
     <string name="match_option_color_black">Negras</string>
     <string name="match_option_color_random">Aleatório</string>

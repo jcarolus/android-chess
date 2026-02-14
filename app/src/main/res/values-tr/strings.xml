@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Berabere</string>
     <string name="lichess_play_button_resign">Pes et</string>
     <string name="lichess_seek_posted">Arama gönderildi</string>
+    <string name="lichess_save_game_to_file">Dosyaya kaydet</string>
+    <string name="lichess_save_game_to_database">Veritabanına kaydet</string>
     <string name="lichess_starting">Başlıyor...</string>
     <string name="match_option_color_black">Siyah</string>
     <string name="match_option_color_random">Rastgele</string>

@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Patta</string>
     <string name="lichess_play_button_resign">Abbandona</string>
     <string name="lichess_seek_posted">Ricerca pubblicata</string>
+    <string name="lichess_save_game_to_file">Salva su file</string>
+    <string name="lichess_save_game_to_database">Salva nel database</string>
     <string name="lichess_starting">Avvio...</string>
     <string name="match_option_color_black">Neri</string>
     <string name="match_option_color_random">Casuale</string>

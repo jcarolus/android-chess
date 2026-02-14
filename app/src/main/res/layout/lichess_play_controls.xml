@@ -91,6 +91,32 @@
                 style="@style/ChessButton" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/LayoutSave"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dip">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSaveToFile"
+                app:icon="@drawable/save"
+                android:text="@string/lichess_save_game_to_file"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="1dip"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSaveToDatabase"
+                app:icon="@drawable/database"
+                android:text="@string/lichess_save_game_to_database"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_margin="1dip"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/SwitchConfirmMoves"
             android:layout_width="wrap_content"

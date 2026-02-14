@@ -196,6 +196,8 @@
     <string name="lichess_play_button_draw">Tablas</string>
     <string name="lichess_play_button_resign">Rendirse</string>
     <string name="lichess_seek_posted">Búsqueda publicada</string>
+    <string name="lichess_save_game_to_file">Guardar en archivo</string>
+    <string name="lichess_save_game_to_database">Guardar en base de datos</string>
     <string name="lichess_starting">Iniciando...</string>
     <string name="match_option_color_black">Negras</string>
     <string name="match_option_color_random">Aleatorio</string>

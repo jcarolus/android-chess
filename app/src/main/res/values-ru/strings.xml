@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Ничья</string>
     <string name="lichess_play_button_resign">Сдаться</string>
     <string name="lichess_seek_posted">Поиск опубликован</string>
+    <string name="lichess_save_game_to_file">Сохранить в файл</string>
+    <string name="lichess_save_game_to_database">Сохранить в базу данных</string>
     <string name="lichess_starting">Запуск...</string>
     <string name="match_option_color_black">Чёрные</string>
     <string name="match_option_color_random">Случайно</string>

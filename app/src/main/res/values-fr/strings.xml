@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Nulle</string>
     <string name="lichess_play_button_resign">Abandonner</string>
     <string name="lichess_seek_posted">Recherche publiée</string>
+    <string name="lichess_save_game_to_file">Enregistrer dans un fichier</string>
+    <string name="lichess_save_game_to_database">Enregistrer en base de données</string>
     <string name="lichess_starting">Démarrage...</string>
     <string name="match_option_color_black">Noirs</string>
     <string name="match_option_color_random">Aléatoire</string>
