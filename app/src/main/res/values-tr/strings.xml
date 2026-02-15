@@ -301,10 +301,13 @@
     <string name="pref_showCoords">Koordinatlar</string>
     <string name="pref_show_blindfold">Gözbağı</string>
     <string name="pref_show_possible_moves">Hamleleri göster</string>
+    <string name="pref_show_pieces_descriptions">Taşların konum açıklamasını göster</string>
+    <string name="pref_show_accessibility_drag_toggle">Erişilebilirlik sürükleme anahtarını göster</string>
     <string name="pref_sound">Ses</string>
     <string name="pref_sound_desc">Rakip hamle yaptığında çalınır</string>
     <string name="pref_speech">Sesli okuma</string>
     <string name="pref_accessibility_drag">Erişilebilir sürükleme</string>
+    <string name="pref_accessibility_drag_delay_desc">Erişilebilir sürükleme gecikmesi</string>
     <string name="pref_accessibility_drag_talkback_reminder">Erişilebilir sürükleme için TalkBack’i kapatın.</string>
     <string name="pref_speech_pitch_desc">Ses perdesi</string>
     <string name="pref_speech_rate_desc">Konuşma hızı</string>
@@ -339,6 +342,7 @@
     <string name="square_selected_with_piece_description">%3$s konumunda %1$s %2$s seçildi</string>
     <string name="square_with_duck_description">%2$s konumunda %1$s</string>
     <string name="square_with_piece_description">%1$s %2$s %3$s karesinde</string>
+    <string name="start_accessibility_preferences">Erişilebilirlik tercihleri</string>
     <string name="start_boardpreferences">Satranç tahtası ayarları</string>
     <string name="start_database">Oyun veritabanı</string>
     <string name="start_hotspotboard">Hotspot tahtası</string>

@@ -301,10 +301,13 @@
     <string name="pref_showCoords">坐标</string>
     <string name="pref_show_blindfold">盲棋</string>
     <string name="pref_show_possible_moves">显示可能走法</string>
+    <string name="pref_show_pieces_descriptions">显示棋子位置描述</string>
+    <string name="pref_show_accessibility_drag_toggle">显示无障碍拖动开关</string>
     <string name="pref_sound">声音</string>
     <string name="pref_sound_desc">当对手走棋时播放</string>
     <string name="pref_speech">语音播报</string>
     <string name="pref_accessibility_drag">无障碍拖拽</string>
+    <string name="pref_accessibility_drag_delay_desc">无障碍拖拽延迟</string>
     <string name="pref_accessibility_drag_talkback_reminder">使用无障碍拖拽时，请关闭 TalkBack。</string>
     <string name="pref_speech_pitch_desc">语音音调</string>
     <string name="pref_speech_rate_desc">语速</string>
@@ -339,6 +342,7 @@
     <string name="square_selected_with_piece_description">已选择 %1$s %2$s 在 %3$s</string>
     <string name="square_with_duck_description">%1$s 在 %2$s</string>
     <string name="square_with_piece_description">%1$s %2$s 在 %3$s</string>
+    <string name="start_accessibility_preferences">无障碍偏好设置</string>
     <string name="start_boardpreferences">棋盘设置</string>
     <string name="start_database">对局数据库</string>
     <string name="start_hotspotboard">热点棋盘</string>

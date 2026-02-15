@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dip">
+
+        <CheckBox
+            android:id="@+id/CheckBoxShowPiecesDescriptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+            android:text="@string/pref_show_pieces_descriptions" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_speech_rate_desc"
+            android:labelFor="@id/SliderSpeechRate"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"/>
+        <com.google.android.material.slider.Slider
+            android:id="@+id/SliderSpeechRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="1"
+            android:valueFrom="0.5"
+            android:valueTo="3.0"
+            android:stepSize="0.25"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_speech_pitch_desc"
+            android:labelFor="@id/SliderSpeechPitch"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"/>
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/SliderSpeechPitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="1"
+            android:valueFrom="0.5"
+            android:valueTo="2.0"
+            android:stepSize="0.25"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp" />
+
+        <CheckBox
+            android:id="@+id/CheckBoxShowAccessibilityDrag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+            android:text="@string/pref_show_accessibility_drag_toggle" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_accessibility_drag_delay_desc"
+            android:labelFor="@id/SliderSpeechRate"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"/>
+        <com.google.android.material.slider.Slider
+            android:id="@+id/SliderAccessibilityDragDelay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="300"
+            android:valueFrom="200"
+            android:valueTo="1000"
+            android:stepSize="50"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp" />
+    </LinearLayout>
+</ScrollView>

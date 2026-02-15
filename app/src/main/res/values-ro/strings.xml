@@ -301,10 +301,13 @@
     <string name="pref_showCoords">Coordonate</string>
     <string name="pref_show_blindfold">Cu ochii închiși</string>
     <string name="pref_show_possible_moves">Arată mutări</string>
+    <string name="pref_show_pieces_descriptions">Afișează descrierea amplasării pieselor</string>
+    <string name="pref_show_accessibility_drag_toggle">Afișează comutatorul de tragere pentru accesibilitate</string>
     <string name="pref_sound">Sunet</string>
     <string name="pref_sound_desc">Redat când adversarul mută</string>
     <string name="pref_speech">Vorbire</string>
     <string name="pref_accessibility_drag">Glisare accesibilă</string>
+    <string name="pref_accessibility_drag_delay_desc">Întârziere la glisarea accesibilă</string>
     <string name="pref_accessibility_drag_talkback_reminder">Pentru glisarea accesibilă, dezactivează TalkBack.</string>
     <string name="pref_speech_pitch_desc">Înălțime voce</string>
     <string name="pref_speech_rate_desc">Viteză vorbire</string>
@@ -339,6 +342,7 @@
     <string name="square_selected_with_piece_description">Selectat %1$s %2$s la %3$s</string>
     <string name="square_with_duck_description">%1$s la %2$s</string>
     <string name="square_with_piece_description">%1$s %2$s la %3$s</string>
+    <string name="start_accessibility_preferences">Preferințe de accesibilitate</string>
     <string name="start_boardpreferences">Setări tablă de șah</string>
     <string name="start_database">Baza de date a partidelor</string>
     <string name="start_hotspotboard">Tablă hotspot</string>

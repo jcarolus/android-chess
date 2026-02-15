@@ -301,10 +301,13 @@
     <string name="pref_showCoords">Coordonnées</string>
     <string name="pref_show_blindfold">À l’aveugle</string>
     <string name="pref_show_possible_moves">Montrer les coups</string>
+    <string name="pref_show_pieces_descriptions">Afficher la description de l’emplacement des pièces</string>
+    <string name="pref_show_accessibility_drag_toggle">Afficher le commutateur de glisser accessible</string>
     <string name="pref_sound">Son</string>
     <string name="pref_sound_desc">Joué quand l’adversaire déplace une pièce</string>
     <string name="pref_speech">Voix</string>
     <string name="pref_accessibility_drag">Glisser-déposer d’accessibilité</string>
+    <string name="pref_accessibility_drag_delay_desc">Délai du glisser d’accessibilité</string>
     <string name="pref_accessibility_drag_talkback_reminder">Pour le glisser d’accessibilité, veuillez désactiver TalkBack.</string>
     <string name="pref_speech_pitch_desc">Hauteur de voix</string>
     <string name="pref_speech_rate_desc">Débit de parole</string>
@@ -339,6 +342,7 @@
     <string name="square_selected_with_piece_description">%1$s %2$s sélectionné en %3$s</string>
     <string name="square_with_duck_description">%1$s en %2$s</string>
     <string name="square_with_piece_description">%1$s %2$s en %3$s</string>
+    <string name="start_accessibility_preferences">Préférences d’accessibilité</string>
     <string name="start_boardpreferences">Paramètres de l’échiquier</string>
     <string name="start_database">Base de données des parties</string>
     <string name="start_hotspotboard">Plateau hotspot</string>

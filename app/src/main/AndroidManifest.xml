@@ -53,10 +53,10 @@
             android:configChanges="orientation"
             android:exported="true"></activity>
         <activity
-            android:name=".activities.GamePreferenceActivity"
-            android:label="@string/playpreferences"
+            android:name=".activities.AccessibilityPreferences"
+            android:label="@string/globalpreferences"
             android:configChanges="orientation"
-            android:exported="true" />
+            android:exported="true"></activity>
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"

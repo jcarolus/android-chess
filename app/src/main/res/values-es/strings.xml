@@ -311,10 +311,13 @@
     <string name="pref_showCoords">Coordenadas</string>
     <string name="pref_show_blindfold">A ciegas</string>
     <string name="pref_show_possible_moves">Mostrar movimientos</string>
+    <string name="pref_show_pieces_descriptions">Mostrar descripción de la ubicación de las piezas</string>
+    <string name="pref_show_accessibility_drag_toggle">Mostrar interruptor de arrastre de accesibilidad</string>
     <string name="pref_sound">Sonido</string>
     <string name="pref_sound_desc">Se reproduce cuando el oponente mueve</string>
     <string name="pref_speech">Voz</string>
     <string name="pref_accessibility_drag">Arrastre de accesibilidad</string>
+    <string name="pref_accessibility_drag_delay_desc">Retraso del arrastre de accesibilidad</string>
     <string name="pref_accessibility_drag_talkback_reminder">Para el arrastre de accesibilidad, desactiva TalkBack.</string>
     <string name="pref_speech_pitch_desc">Tono de voz</string>
     <string name="pref_speech_rate_desc">Velocidad de voz</string>
@@ -349,6 +352,7 @@
     <string name="square_selected_with_piece_description">Seleccionado %1$s %2$s en %3$s</string>
     <string name="square_with_duck_description">%1$s en %2$s</string>
     <string name="square_with_piece_description">%1$s %2$s en %3$s</string>
+    <string name="start_accessibility_preferences">Preferencias de accesibilidad</string>
     <string name="start_boardpreferences">Configuración del tablero</string>
     <string name="start_database">Base de datos de partidas</string>
     <string name="start_hotspotboard">Tablero hotspot</string>

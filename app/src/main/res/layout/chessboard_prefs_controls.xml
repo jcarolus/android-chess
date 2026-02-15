@@ -69,44 +69,6 @@
             android:layout_marginBottom="8dip"
             android:text="@string/pref_sound_desc" />
 
-        <com.google.android.material.slider.Slider
-            android:id="@+id/SliderSpeechRate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:value="1"
-            android:valueFrom="0.5"
-            android:valueTo="3.0"
-            android:stepSize="0.25"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dip"
-            android:layout_marginRight="8dip"
-            android:layout_marginBottom="8dip"
-            android:text="@string/pref_speech_rate_desc" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/SliderSpeechPitch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:value="1"
-            android:valueFrom="0.5"
-            android:valueTo="2.0"
-            android:stepSize="0.25"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dip"
-            android:layout_marginRight="8dip"
-            android:layout_marginBottom="8dip"
-            android:text="@string/pref_speech_pitch_desc" />
-
         <CheckBox
             android:id="@+id/CheckBoxUseWakeLock"
             android:text="@string/pref_wakelock"

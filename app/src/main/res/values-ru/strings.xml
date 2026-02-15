@@ -301,10 +301,13 @@
     <string name="pref_showCoords">Координаты</string>
     <string name="pref_show_blindfold">Слепые шахматы</string>
     <string name="pref_show_possible_moves">Показывать ходы</string>
+    <string name="pref_show_pieces_descriptions">Показывать описание расположения фигур</string>
+    <string name="pref_show_accessibility_drag_toggle">Показывать переключатель перетаскивания для специальных возможностей</string>
     <string name="pref_sound">Звук</string>
     <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
     <string name="pref_speech">Озвучка</string>
     <string name="pref_accessibility_drag">Перетаскивание (доступность)</string>
+    <string name="pref_accessibility_drag_delay_desc">Задержка перетаскивания (доступность)</string>
     <string name="pref_accessibility_drag_talkback_reminder">Для доступного перетаскивания отключите TalkBack.</string>
     <string name="pref_speech_pitch_desc">Высота голоса</string>
     <string name="pref_speech_rate_desc">Скорость речи</string>
@@ -339,6 +342,7 @@
     <string name="square_selected_with_piece_description">Выбрано %1$s %2$s на %3$s</string>
     <string name="square_with_duck_description">%1$s на %2$s</string>
     <string name="square_with_piece_description">%1$s %2$s на %3$s</string>
+    <string name="start_accessibility_preferences">Настройки специальных возможностей</string>
     <string name="start_boardpreferences">Настройки шахматной доски</string>
     <string name="start_database">База партий</string>
     <string name="start_hotspotboard">Hotspot-доска</string>

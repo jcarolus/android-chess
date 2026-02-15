@@ -311,10 +311,13 @@
     <string name="pref_showCoords">Koordinaten</string>
     <string name="pref_show_blindfold">Blindschach</string>
     <string name="pref_show_possible_moves">Züge anzeigen</string>
+    <string name="pref_show_pieces_descriptions">Beschreibung der Positionen der Figuren anzeigen</string>
+    <string name="pref_show_accessibility_drag_toggle">Bedienungshilfe-Ziehschalter anzeigen</string>
     <string name="pref_sound">Ton</string>
     <string name="pref_sound_desc">Wird abgespielt, wenn dein Gegner zieht</string>
     <string name="pref_speech">Sprachausgabe</string>
     <string name="pref_accessibility_drag">Barrierefreies Ziehen</string>
+    <string name="pref_accessibility_drag_delay_desc">Verzögerung für barrierefreies Ziehen</string>
     <string name="pref_accessibility_drag_talkback_reminder">Für barrierefreies Ziehen bitte TalkBack ausschalten.</string>
     <string name="pref_speech_pitch_desc">Sprachhöhe</string>
     <string name="pref_speech_rate_desc">Sprechgeschwindigkeit</string>
@@ -349,6 +352,7 @@
     <string name="square_selected_with_piece_description">Ausgewählt: %1$s %2$s auf %3$s</string>
     <string name="square_with_duck_description">%1$s auf %2$s</string>
     <string name="square_with_piece_description">%1$s %2$s auf %3$s</string>
+    <string name="start_accessibility_preferences">Bedienungshilfe-Einstellungen</string>
     <string name="start_boardpreferences">Schachbrett-Einstellungen</string>
     <string name="start_database">Spieldatenbank</string>
     <string name="start_hotspotboard">Hotspot-Brett</string>

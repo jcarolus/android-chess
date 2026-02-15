@@ -17,7 +17,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
     private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxNightMode;
-    private Slider sliderSaturation, sliderSpeechRate, sliderSpeechPitch;
+    private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
 
     @Override
@@ -38,8 +38,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
         sliderSaturation = findViewById(R.id.SliderSaturation);
-        sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
-        sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
 
         dropDownPieces.setItems(getResources().getStringArray(R.array.piecesetarray));
         dropDownPieces.setOnItemClickListener((parent, view, position, id) -> {
@@ -69,16 +67,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
             chessBoardView.invalidateSquares();
         });
 
-        sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
-            textToSpeech.setSpeechRate(value);
-            textToSpeech.moveToSpeech("Bishop takes G7 check");
-        });
-
-        sliderSpeechPitch.addOnChangeListener((s, value, fromUser) -> {
-            textToSpeech.setSpeechPitch(value);
-            textToSpeech.moveToSpeech("Bishop takes G7 check");
-        });
-
         gameApi = new GameApi();
 
         afterCreate();
@@ -104,8 +92,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         dropDownTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
 
         sliderSaturation.setValue(prefs.getFloat("squareSaturation", 1.0f));
-        sliderSpeechRate.setValue(prefs.getFloat("speechRate", 1.0f));
-        sliderSpeechPitch.setValue(prefs.getFloat("speechPitch", 1.0f));
 
         rebuildBoard();
     }
@@ -128,8 +114,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
         editor.putFloat("squareSaturation", sliderSaturation.getValue());
-        editor.putFloat("speechRate", sliderSpeechRate.getValue());
-        editor.putFloat("speechPitch", sliderSpeechPitch.getValue());
 
         editor.commit();
     }
