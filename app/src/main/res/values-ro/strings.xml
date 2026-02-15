@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Remiză</string>
     <string name="lichess_play_button_resign">Renunță</string>
     <string name="lichess_seek_posted">Căutare publicată</string>
+    <string name="lichess_save_game_to_file">Salvează în fișier</string>
+    <string name="lichess_save_game_to_database">Salvează în baza de date</string>
     <string name="lichess_starting">Pornire...</string>
     <string name="match_option_color_black">Negre</string>
     <string name="match_option_color_random">Aleator</string>
@@ -302,6 +304,8 @@
     <string name="pref_sound">Sunet</string>
     <string name="pref_sound_desc">Redat când adversarul mută</string>
     <string name="pref_speech">Vorbire</string>
+    <string name="pref_accessibility_drag">Glisare accesibilă</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Pentru glisarea accesibilă, dezactivează TalkBack.</string>
     <string name="pref_speech_pitch_desc">Înălțime voce</string>
     <string name="pref_speech_rate_desc">Viteză vorbire</string>
     <string name="pref_turn">Parte</string>

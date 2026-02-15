@@ -93,7 +93,7 @@ public class PlayActivity extends ChessBoardActivity implements
     private TextView textViewLastMove, textViewEco, textViewWhitePieces, textViewBlackPieces;
     private TextView textViewInfoBalloon, textViewEngineValue;
     private MaterialButton buttonEco;
-    private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
+    private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech, switchAccessibilityDrag;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
     private PopupWindow popupWindowInfoBalloon;
@@ -242,6 +242,15 @@ public class PlayActivity extends ChessBoardActivity implements
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
         switchMoveToSpeech.setOnCheckedChangeListener((buttonView, isChecked) -> moveToSpeech = switchMoveToSpeech.isChecked());
 
+        switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
+        switchAccessibilityDrag.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            useAccessibilityDrag = switchAccessibilityDrag.isChecked();
+            applySquareDragListeners();
+            if (isChecked && buttonView.isPressed() && textToSpeech != null) {
+                textToSpeech.moveToSpeech(getString(R.string.pref_accessibility_drag_talkback_reminder));
+            }
+        });
+
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
 
         // Horizontal layout manager
@@ -378,6 +387,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         editor.putBoolean("flipBoard", flipBoard);
         editor.putBoolean("moveToSpeech", moveToSpeech);
+        editor.putBoolean("useAccessibilityDrag", useAccessibilityDrag);
 
         editor.putBoolean("moveSounds", sounds.getEnabled());
 
@@ -846,6 +856,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         switchFlip.setChecked(flipBoard);
         switchMoveToSpeech.setChecked(moveToSpeech);
+        switchAccessibilityDrag.setChecked(useAccessibilityDrag);
 
         updateBoardRotation();
         updateLastMove();

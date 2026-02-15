@@ -2,6 +2,8 @@ package jwtc.android.chess.activities;
 
 import android.content.ClipData;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.DragEvent;
@@ -38,6 +40,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected GameApi gameApi;
     protected MyDragListener myDragListener;
+    protected MyAccessibilityDragListener myAccessibilityDragListener;
     protected MyTouchListener myTouchListener;
     protected MyClickListener myClickListener;
     protected JNI jni;
@@ -52,7 +55,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
     protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false, moveToSpeech = false;
+    protected boolean useAccessibilityDrag = false;
     private String keyboardBuffer = "";
+    private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
+    private Runnable accessibilityDragDwellRunnable = null;
+    private int accessibilityDragHoverPos = -1;
+    private int accessibilityDragFromPos = -1;
+    private final int accessibilityDragDwellMs = 300;
 
     public boolean requestMove(final int from, final int to) {
         if (jni.getDuckPos() == from) {
@@ -145,16 +154,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         initDirectionalPad();
 
         myDragListener = new MyDragListener();
+        myAccessibilityDragListener = new MyAccessibilityDragListener();
         myTouchListener = new MyTouchListener();
         myClickListener = new MyClickListener();
+        useAccessibilityDrag = getPrefs().getBoolean("useAccessibilityDrag", false);
 
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);
-            csv.setOnDragListener(myDragListener);
             csv.setOnTouchListener(myTouchListener);
             csv.setOnClickListener(myClickListener);
             chessBoardView.addView(csv);
         }
+        applySquareDragListeners();
 
         gameApi.addListener(this);
     }
@@ -183,7 +194,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
 
         moveToSpeech = prefs.getBoolean("moveToSpeech", false);
+        useAccessibilityDrag = prefs.getBoolean("useAccessibilityDrag", false);
         textToSpeech = new TextToSpeechApi(this, this);
+        applySquareDragListeners();
 
         showMoves = prefs.getBoolean("showMoves", false);
 
@@ -645,11 +658,123 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    protected void applySquareDragListeners() {
+        final int count = chessBoardView.getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = chessBoardView.getChildAt(i);
+            if (child instanceof ChessSquareView) {
+                child.setOnDragListener(useAccessibilityDrag ? myAccessibilityDragListener : myDragListener);
+            }
+        }
+    }
+
+    private void resetAccessibilityDragState() {
+        if (accessibilityDragDwellRunnable != null) {
+            accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+            accessibilityDragDwellRunnable = null;
+        }
+        accessibilityDragHoverPos = -1;
+        accessibilityDragFromPos = -1;
+    }
+
+    private void scheduleAccessibilityDwellSelection(final int pos) {
+        if (accessibilityDragFromPos != -1) {
+            return;
+        }
+        if (accessibilityDragDwellRunnable != null) {
+            accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+        }
+        accessibilityDragDwellRunnable = () -> {
+            if (accessibilityDragFromPos != -1 || accessibilityDragHoverPos != pos) {
+                return;
+            }
+            int piece = jni.pieceAt(jni.getTurn(), pos);
+            if (piece != BoardConstants.FIELD) {
+                accessibilityDragFromPos = pos;
+                selectedPosition = pos;
+                setMoveToPositions(pos);
+                updateSelectedSquares();
+                vibrate(90);
+                if (textToSpeech != null) {
+                    textToSpeech.moveToSpeech(getFieldDescription(pos));
+                }
+            }
+        };
+        accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragDwellMs);
+    }
+
+    private void handleAccessibilitySquareEntered(int pos, boolean emitCrossingHaptic) {
+        if (accessibilityDragHoverPos != pos) {
+            accessibilityDragHoverPos = pos;
+            if (accessibilityDragDwellRunnable != null) {
+                accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+                accessibilityDragDwellRunnable = null;
+            }
+            if (emitCrossingHaptic) {
+                vibrate(20);
+            }
+            if (textToSpeech != null) {
+                textToSpeech.moveToSpeech(getFieldDescription(pos));
+            }
+            scheduleAccessibilityDwellSelection(pos);
+        }
+    }
+
+    protected class MyAccessibilityDragListener implements View.OnDragListener {
+        @Override
+        public boolean onDrag(View view, DragEvent event) {
+            if (!(view instanceof ChessSquareView)) {
+                return false;
+            }
+
+            final int pos = ((ChessSquareView) view).getPos();
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    resetAccessibilityDragState();
+                    final View fromView = (View) event.getLocalState();
+                    if (fromView instanceof ChessSquareView) {
+                        handleAccessibilitySquareEntered(((ChessSquareView) fromView).getPos(), false);
+                    } else if (fromView instanceof ChessPieceView) {
+                        handleAccessibilitySquareEntered(((ChessPieceView) fromView).getPos(), false);
+                    }
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    handleAccessibilitySquareEntered(pos, true);
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    view.setSelected(false);
+                    break;
+                case DragEvent.ACTION_DROP:
+                    if (accessibilityDragFromPos != -1 && accessibilityDragFromPos != pos) {
+                        requestMove(accessibilityDragFromPos, pos);
+                    }
+                    selectPosition(-1);
+                    updateSelectedSquares();
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    resetAccessibilityDragState();
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    }
+
     protected class MyTouchListener implements View.OnTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             int action = motionEvent.getAction();
             if (hasPremoved()) {
                 resetPremove();
+            } else if (useAccessibilityDrag && (view instanceof ChessPieceView || view instanceof ChessSquareView)) {
+                if (action == MotionEvent.ACTION_DOWN) {
+                    ClipData data = ClipData.newPlainText("", "");
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                    view.startDrag(data, shadowBuilder, view, 0);
+                    return true;
+                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                    return true;
+                }
             } else if (view instanceof ChessPieceView) {
                 if (action == MotionEvent.ACTION_DOWN) {
                     final ChessPieceView pieceView = (ChessPieceView) view;

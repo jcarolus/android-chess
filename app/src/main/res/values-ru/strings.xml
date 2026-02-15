@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Ничья</string>
     <string name="lichess_play_button_resign">Сдаться</string>
     <string name="lichess_seek_posted">Поиск опубликован</string>
+    <string name="lichess_save_game_to_file">Сохранить в файл</string>
+    <string name="lichess_save_game_to_database">Сохранить в базу данных</string>
     <string name="lichess_starting">Запуск...</string>
     <string name="match_option_color_black">Чёрные</string>
     <string name="match_option_color_random">Случайно</string>
@@ -302,6 +304,8 @@
     <string name="pref_sound">Звук</string>
     <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
     <string name="pref_speech">Озвучка</string>
+    <string name="pref_accessibility_drag">Перетаскивание (доступность)</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Для доступного перетаскивания отключите TalkBack.</string>
     <string name="pref_speech_pitch_desc">Высота голоса</string>
     <string name="pref_speech_rate_desc">Скорость речи</string>
     <string name="pref_turn">Сторона</string>

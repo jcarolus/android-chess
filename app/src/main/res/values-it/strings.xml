@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Patta</string>
     <string name="lichess_play_button_resign">Abbandona</string>
     <string name="lichess_seek_posted">Ricerca pubblicata</string>
+    <string name="lichess_save_game_to_file">Salva su file</string>
+    <string name="lichess_save_game_to_database">Salva nel database</string>
     <string name="lichess_starting">Avvio...</string>
     <string name="match_option_color_black">Neri</string>
     <string name="match_option_color_random">Casuale</string>
@@ -302,6 +304,8 @@
     <string name="pref_sound">Suono</string>
     <string name="pref_sound_desc">Riprodotto quando l’avversario muove</string>
     <string name="pref_speech">Voce</string>
+    <string name="pref_accessibility_drag">Trascinamento accessibile</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Per il trascinamento accessibile, disattiva TalkBack.</string>
     <string name="pref_speech_pitch_desc">Altezza voce</string>
     <string name="pref_speech_rate_desc">Velocità voce</string>
     <string name="pref_turn">Lato</string>

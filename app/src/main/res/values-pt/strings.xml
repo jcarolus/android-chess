@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Empate</string>
     <string name="lichess_play_button_resign">Desistir</string>
     <string name="lichess_seek_posted">Busca publicada</string>
+    <string name="lichess_save_game_to_file">Salvar em arquivo</string>
+    <string name="lichess_save_game_to_database">Salvar no banco de dados</string>
     <string name="lichess_starting">Iniciando...</string>
     <string name="match_option_color_black">Negras</string>
     <string name="match_option_color_random">Aleatório</string>
@@ -302,6 +304,8 @@
     <string name="pref_sound">Som</string>
     <string name="pref_sound_desc">Reproduzido quando o adversário joga</string>
     <string name="pref_speech">Voz</string>
+    <string name="pref_accessibility_drag">Arrasto de acessibilidade</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Para usar o arrasto de acessibilidade, desative o TalkBack.</string>
     <string name="pref_speech_pitch_desc">Tom de voz</string>
     <string name="pref_speech_rate_desc">Velocidade da fala</string>
     <string name="pref_turn">Lado</string>

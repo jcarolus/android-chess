@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -35,6 +36,7 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
+import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
 import jwtc.chess.Pos;
@@ -45,12 +47,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private static final String TAG = "LichessActivity";
     private static final int VIEW_ROOT_WAITING = 0, VIEW_ROOT_LOGIN = 1, VIEW_ROOT_SUB = 2;
     private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1;
+    public static final int REQUEST_SAVE_GAME_TO_FILE = 1;
 
     private LichessApi lichessApi;
     private LocalClockApi localClockApi;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
-    private LinearLayout layoutConfirm, layoutResignDraw;
-    private SwitchMaterial switchConfirmMoves;
+    private LinearLayout layoutConfirm, layoutResignDraw, layoutSave;
+    private SwitchMaterial switchConfirmMoves, switchAccessibilityDrag;
 
     private ImageView imageTurnOpp, imageTurnMe;
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
@@ -135,11 +138,30 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonDraw = findViewById(R.id.ButtonDraw);
         buttonConfirmMove = findViewById(R.id.ButtonConfirmMove);
 
+        MaterialButton buttonSaveToFile = findViewById(R.id.ButtonSaveToFile);
+        buttonSaveToFile.setOnClickListener(v -> {
+            startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
+        });
+        MaterialButton buttonSaveToDatabase = findViewById(R.id.ButtonSaveToDatabase);
+        buttonSaveToDatabase.setOnClickListener(v -> {
+            SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, 0, this::saveGameFromDialog);
+            saveDialog.show();
+        });
+
         localClockApi.addListener(this);
 
         switchConfirmMoves = findViewById(R.id.SwitchConfirmMoves);
+        switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
+        switchAccessibilityDrag.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            useAccessibilityDrag = switchAccessibilityDrag.isChecked();
+            applySquareDragListeners();
+            if (isChecked && buttonView.isPressed() && textToSpeech != null) {
+                textToSpeech.moveToSpeech(getString(R.string.pref_accessibility_drag_talkback_reminder));
+            }
+        });
         layoutResignDraw = findViewById(R.id.LayoutResignDraw);
         layoutConfirm = findViewById(R.id.LayoutConfirm);
+        layoutSave = findViewById(R.id.LayoutSave);
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
@@ -182,8 +204,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         lichessApi.setApiListener(LichessActivity.this);
 
         layoutConfirm.setVisibility(View.GONE);
+        layoutSave.setVisibility(View.GONE);
         layoutResignDraw.setVisibility(View.VISIBLE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
+        switchAccessibilityDrag.setChecked(useAccessibilityDrag);
     }
 
     @Override
@@ -193,6 +217,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         editor.putBoolean("lichess_confirm_moves", switchConfirmMoves.isChecked());
+        editor.putBoolean("useAccessibilityDrag", useAccessibilityDrag);
 
         editor.commit();
     }
@@ -201,12 +226,20 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Uri uri = null;
+        if (data != null) {
+            uri = data.getData();
+        }
         Log.d(TAG, "onActivityResult " + requestCode);
         if (requestCode == 1001) {
             if (serviceConnected) {
                 handleActivityResult(data);
             } else {
                 pendingData = data;
+            }
+        } else if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
+            if (uri != null) {
+                saveToFile(uri, gameApi.exportFullPGN());
             }
         }
     }
@@ -263,6 +296,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         }
         buttonDraw.setEnabled(isStarted);
         buttonResign.setEnabled(isStarted);
+
+        layoutSave.setVisibility(isStarted ? View.GONE : View.VISIBLE);
 
         String stateMessage = gameStateToTranslated(gameFull.state.status);
         if (gameFull.state.winner != null) {

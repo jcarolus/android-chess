@@ -196,6 +196,8 @@
     <string name="lichess_play_button_draw">Remis</string>
     <string name="lichess_play_button_resign">Aufgeben</string>
     <string name="lichess_seek_posted">Suche erstellt</string>
+    <string name="lichess_save_game_to_file">In Datei speichern</string>
+    <string name="lichess_save_game_to_database">In Datenbank speichern</string>
     <string name="lichess_starting">Startet...</string>
     <string name="match_option_color_black">Schwarz</string>
     <string name="match_option_color_random">Zufällig</string>
@@ -312,6 +314,8 @@
     <string name="pref_sound">Ton</string>
     <string name="pref_sound_desc">Wird abgespielt, wenn dein Gegner zieht</string>
     <string name="pref_speech">Sprachausgabe</string>
+    <string name="pref_accessibility_drag">Barrierefreies Ziehen</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Für barrierefreies Ziehen bitte TalkBack ausschalten.</string>
     <string name="pref_speech_pitch_desc">Sprachhöhe</string>
     <string name="pref_speech_rate_desc">Sprechgeschwindigkeit</string>
     <string name="pref_turn">Seite</string>

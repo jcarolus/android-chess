@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">和棋</string>
     <string name="lichess_play_button_resign">认输</string>
     <string name="lichess_seek_posted">已发布匹配</string>
+    <string name="lichess_save_game_to_file">保存到文件</string>
+    <string name="lichess_save_game_to_database">保存到数据库</string>
     <string name="lichess_starting">正在开始...</string>
     <string name="match_option_color_black">黑方</string>
     <string name="match_option_color_random">随机</string>
@@ -302,6 +304,8 @@
     <string name="pref_sound">声音</string>
     <string name="pref_sound_desc">当对手走棋时播放</string>
     <string name="pref_speech">语音播报</string>
+    <string name="pref_accessibility_drag">无障碍拖拽</string>
+    <string name="pref_accessibility_drag_talkback_reminder">使用无障碍拖拽时，请关闭 TalkBack。</string>
     <string name="pref_speech_pitch_desc">语音音调</string>
     <string name="pref_speech_rate_desc">语速</string>
     <string name="pref_turn">方</string>
