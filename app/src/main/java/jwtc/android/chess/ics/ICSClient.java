@@ -483,6 +483,9 @@ public class ICSClient extends ChessBoardActivity implements
 
         notificationsOn = prefs.getBoolean("ICSGameStartBringToFront", true);
 
+        useAccessibilityDrag = false;
+        applySquareDragListeners();
+
         showLoginIfNotConnected();
     }
 

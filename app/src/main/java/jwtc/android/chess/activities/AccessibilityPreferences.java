@@ -12,7 +12,7 @@ import jwtc.android.chess.services.GameApi;
 
 public class AccessibilityPreferences extends ChessBoardActivity {
     private static final String TAG = "AccessibilityPreferences";
-    private CheckBox checkBoxShowPiecesDescriptions;
+    private CheckBox checkBoxShowPiecesDescriptions, checkBoxShowAccessibilityDrag;
     private Slider sliderSpeechRate, sliderSpeechPitch, sliderAccessibilityDelay;
 
     @Override
@@ -24,6 +24,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         ActivityHelper.fixPaddings(this, findViewById(R.id.LayoutMain));
 
         checkBoxShowPiecesDescriptions = findViewById(R.id.CheckBoxShowPiecesDescriptions);
+        checkBoxShowAccessibilityDrag = findViewById(R.id.CheckBoxShowAccessibilityDrag);
         sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
         sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
         sliderAccessibilityDelay = findViewById(R.id.SliderAccessibilityDragDelay);
@@ -39,7 +40,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         });
 
         sliderAccessibilityDelay.addOnChangeListener((s, value, fromUser) -> {
-
+            accessibilityDragDwellMs = (int)value;
         });
 
         gameApi = new GameApi();
@@ -59,7 +60,12 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         sliderSpeechRate.setValue(prefs.getFloat("speechRate", 1.0f));
         sliderSpeechPitch.setValue(prefs.getFloat("speechPitch", 1.0f));
-        sliderAccessibilityDelay.setValue(prefs.getFloat("accessibilityDragDelay", 300f));
+        sliderAccessibilityDelay.setValue(accessibilityDragDwellMs);
+
+        checkBoxShowAccessibilityDrag.setChecked(prefs.getBoolean("show_accessibility_drag_toggle", false));
+        accessibilityDragDwellMs = prefs.getInt("accessibilityDragDelay", 300);
+        useAccessibilityDrag = true;
+        applySquareDragListeners();
 
         rebuildBoard();
     }
@@ -73,7 +79,11 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         editor.putBoolean("show_pieces_descriptions", checkBoxShowPiecesDescriptions.isChecked());
         editor.putFloat("speechRate", sliderSpeechRate.getValue());
         editor.putFloat("speechPitch", sliderSpeechPitch.getValue());
-        editor.putFloat("accessibilityDragDelay", sliderAccessibilityDelay.getValue());
+        editor.putBoolean("show_accessibility_drag_toggle", checkBoxShowAccessibilityDrag.isChecked());
+        if (!checkBoxShowAccessibilityDrag.isChecked()) {
+            editor.putBoolean("useAccessibilityDrag", false);
+        }
+        editor.putInt("accessibilityDragDelay", (int)sliderAccessibilityDelay.getValue());
 
         editor.commit();
     }

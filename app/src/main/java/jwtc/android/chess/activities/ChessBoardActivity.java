@@ -56,12 +56,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false, moveToSpeech = false;
     protected boolean useAccessibilityDrag = false;
+    protected int accessibilityDragDwellMs = 300;
     private String keyboardBuffer = "";
     private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
     private Runnable accessibilityDragDwellRunnable = null;
     private int accessibilityDragHoverPos = -1;
     private int accessibilityDragFromPos = -1;
-    private final int accessibilityDragDwellMs = 300;
 
     public boolean requestMove(final int from, final int to) {
         if (jni.getDuckPos() == from) {

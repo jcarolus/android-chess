@@ -341,6 +341,13 @@ public class PlayActivity extends ChessBoardActivity implements
         switchSound.setChecked(prefs.getBoolean("moveSounds", false));
         switchBlindfold.setChecked(false);
 
+        boolean showDrag = prefs.getBoolean("show_accessibility_drag_toggle", false);
+        switchAccessibilityDrag.setVisibility(showDrag ? View.VISIBLE : View.GONE);
+
+        int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
+        textViewWhitePieces.setVisibility(visibilityPiecesDescriptions);
+        textViewBlackPieces.setVisibility(visibilityPiecesDescriptions);
+
         buttonEco.setEnabled(false);
 
         new Handler(Looper.getMainLooper()).postDelayed(

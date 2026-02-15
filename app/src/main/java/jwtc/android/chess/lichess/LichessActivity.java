@@ -208,6 +208,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutResignDraw.setVisibility(View.VISIBLE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
         switchAccessibilityDrag.setChecked(useAccessibilityDrag);
+
+        boolean showDrag = prefs.getBoolean("show_accessibility_drag_toggle", false);
+        switchAccessibilityDrag.setVisibility(showDrag ? View.VISIBLE : View.GONE);
+
+        int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
+        textViewWhitePieces.setVisibility(visibilityPiecesDescriptions);
+        textViewBlackPieces.setVisibility(visibilityPiecesDescriptions);
     }
 
     @Override

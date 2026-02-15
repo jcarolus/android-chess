@@ -123,6 +123,9 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         myEngine.setQuiescentSearchOn(false);
         myEngine.addListener(this);
 
+        useAccessibilityDrag = false;
+        applySquareDragListeners();
+
         loadPuzzles();
     }
 
