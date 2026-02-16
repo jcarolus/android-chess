@@ -307,6 +307,7 @@
     <string name="pref_sound_desc">Rakip hamle yaptığında çalınır</string>
     <string name="pref_speech">Sesli okuma</string>
     <string name="tts_only_locale_us">Metinden konuşmaya şu anda yalnızca ABD yerel ayarı destekleniyor</string>
+    <string name="tts_not_loaded">Metinden konuşma yüklenemedi</string>
     <string name="pref_accessibility_drag">Erişilebilir sürükleme</string>
     <string name="pref_accessibility_drag_delay_desc">Erişilebilir sürükleme gecikmesi</string>
     <string name="pref_accessibility_drag_talkback_reminder">Erişilebilir sürükleme için TalkBack’i kapatın.</string>

@@ -317,6 +317,7 @@
     <string name="pref_sound_desc">Wird abgespielt, wenn dein Gegner zieht</string>
     <string name="pref_speech">Sprachausgabe</string>
     <string name="tts_only_locale_us">Die Sprachausgabe unterstützt derzeit nur die US-Locale</string>
+    <string name="tts_not_loaded">Sprachausgabe konnte nicht geladen werden</string>
     <string name="pref_accessibility_drag">Barrierefreies Ziehen</string>
     <string name="pref_accessibility_drag_delay_desc">Verzögerung für barrierefreies Ziehen</string>
     <string name="pref_accessibility_drag_talkback_reminder">Für barrierefreies Ziehen bitte TalkBack ausschalten.</string>

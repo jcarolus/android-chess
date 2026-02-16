@@ -317,6 +317,7 @@
     <string name="pref_sound_desc">Se reproduce cuando el oponente mueve</string>
     <string name="pref_speech">Voz</string>
     <string name="tts_only_locale_us">La conversión de texto a voz actualmente solo admite la configuración regional de EE. UU.</string>
+    <string name="tts_not_loaded">No se pudo cargar el texto a voz</string>
     <string name="pref_accessibility_drag">Arrastre de accesibilidad</string>
     <string name="pref_accessibility_drag_delay_desc">Retraso del arrastre de accesibilidad</string>
     <string name="pref_accessibility_drag_talkback_reminder">Para el arrastre de accesibilidad, desactiva TalkBack.</string>

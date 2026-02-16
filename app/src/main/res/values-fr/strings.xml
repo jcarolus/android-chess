@@ -307,6 +307,7 @@
     <string name="pref_sound_desc">Joué quand l’adversaire déplace une pièce</string>
     <string name="pref_speech">Voix</string>
     <string name="tts_only_locale_us">La synthèse vocale prend actuellement uniquement en charge la locale US</string>
+    <string name="tts_not_loaded">Impossible de charger la synthèse vocale</string>
     <string name="pref_accessibility_drag">Glisser-déposer d’accessibilité</string>
     <string name="pref_accessibility_drag_delay_desc">Délai du glisser d’accessibilité</string>
     <string name="pref_accessibility_drag_talkback_reminder">Pour le glisser d’accessibilité, veuillez désactiver TalkBack.</string>

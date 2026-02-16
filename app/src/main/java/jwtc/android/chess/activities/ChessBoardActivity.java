@@ -416,7 +416,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
             }
         } else {
-            doToast("Speech not supported");
+            doToast(getString(R.string.tts_not_loaded));
             textToSpeech = null;
         }
     }
@@ -542,7 +542,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getLastMoveAndTurnDescription() {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
+            String sMove = gameApi.moveToSpeechString(getResources(), jni.getMyMoveToString(), move);
             if (gameApi.isEnded()) {
                 return sMove;
             }

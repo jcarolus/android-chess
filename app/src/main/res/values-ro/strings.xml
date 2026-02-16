@@ -307,6 +307,7 @@
     <string name="pref_sound_desc">Redat când adversarul mută</string>
     <string name="pref_speech">Vorbire</string>
     <string name="tts_only_locale_us">Funcția text-în-vorbire acceptă în prezent doar localizarea SUA</string>
+    <string name="tts_not_loaded">Nu s-a putut încărca funcția text-în-vorbire</string>
     <string name="pref_accessibility_drag">Glisare accesibilă</string>
     <string name="pref_accessibility_drag_delay_desc">Întârziere la glisarea accesibilă</string>
     <string name="pref_accessibility_drag_talkback_reminder">Pentru glisarea accesibilă, dezactivează TalkBack.</string>

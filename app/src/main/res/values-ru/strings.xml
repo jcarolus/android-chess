@@ -307,6 +307,7 @@
     <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
     <string name="pref_speech">Озвучка</string>
     <string name="tts_only_locale_us">Преобразование текста в речь сейчас поддерживает только локаль США</string>
+    <string name="tts_not_loaded">Не удалось загрузить преобразование текста в речь</string>
     <string name="pref_accessibility_drag">Перетаскивание (доступность)</string>
     <string name="pref_accessibility_drag_delay_desc">Задержка перетаскивания (доступность)</string>
     <string name="pref_accessibility_drag_talkback_reminder">Для доступного перетаскивания отключите TalkBack.</string>

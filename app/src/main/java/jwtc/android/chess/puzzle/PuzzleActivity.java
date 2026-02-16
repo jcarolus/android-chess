@@ -228,7 +228,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     public void solutionMessage() {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = gameApi.moveToSpeechString(jni.getMyMoveToString(), move);
+            String sMove = gameApi.moveToSpeechString(getResources(), jni.getMyMoveToString(), move);
             textViewSolution.setText(sMove);
         }
     }

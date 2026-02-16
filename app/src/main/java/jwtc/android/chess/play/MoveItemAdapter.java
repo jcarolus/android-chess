@@ -61,7 +61,7 @@ public class MoveItemAdapter extends BaseAdapter {
 
         textNr.setText(move.nr);
         textMove.setText(move.sMove);
-        textMove.setContentDescription(GameApi.moveToSpeechString(move.sMove, move.move));
+        textMove.setContentDescription(GameApi.moveToSpeechString(context.getResources(), move.sMove, move.move));
         textAnnotation.setText(move.annotation);
 
         return convertView;

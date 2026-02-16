@@ -307,6 +307,7 @@
     <string name="pref_sound_desc">Reproduzido quando o adversário joga</string>
     <string name="pref_speech">Voz</string>
     <string name="tts_only_locale_us">A conversão de texto em fala atualmente só oferece suporte ao locale dos EUA</string>
+    <string name="tts_not_loaded">Não foi possível carregar a conversão de texto em fala</string>
     <string name="pref_accessibility_drag">Arrasto de acessibilidade</string>
     <string name="pref_accessibility_drag_delay_desc">Atraso do arrasto de acessibilidade</string>
     <string name="pref_accessibility_drag_talkback_reminder">Para usar o arrasto de acessibilidade, desative o TalkBack.</string>

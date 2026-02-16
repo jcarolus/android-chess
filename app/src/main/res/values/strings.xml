@@ -324,6 +324,14 @@
     <string name="pref_sound_desc">Played when your opponent moves</string>
     <string name="pref_speech">Speech</string>
     <string name="tts_only_locale_us">Text to speech currently only supports US locale</string>
+    <string name="tts_not_loaded">Could not load text to speech</string>
+    <string name="tts_move_takes">takes</string>
+    <string name="tts_move_en_passant">en passant</string>
+    <string name="tts_move_promotes_to">promotes to %1$s</string>
+    <string name="tts_move_checkmate">checkmate</string>
+    <string name="tts_move_castle_long">castle long</string>
+    <string name="tts_move_castle_short">castle short</string>
+    <string name="tts_move_square">%1$s%2$s</string>
     <string name="pref_accessibility_drag">Accessibility drag</string>
     <string name="pref_accessibility_drag_delay_desc">Accessibility drag delay</string>
     <string name="pref_accessibility_drag_talkback_reminder">For accessibility drag, please turn off TalkBack.</string>
