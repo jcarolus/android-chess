@@ -3,22 +3,22 @@
     <string name="advanced_help"><![CDATA[
         <h3>Gelişmiş</h3>
         <p>Burada kendi içeriklerinizi oluşturun veya içe aktarın.</p>
-        
+
         <h4>Oyun veritabanını SD karta aktar</h4>
         <p>Oyun veritabanındaki tüm oyunlar SD kartta tek bir PGN dosyasına aktarılabilir. Bu dosyanın adı chess.pgn olacaktır ve mevcut bir dosyanın üzerine yazılır.</p>
-        
+
         <h4>Oyunları oyun veritabanına içe aktar</h4>
         <p>Bu seçeneği, oyun veritabanına oyun eklemek için kullanın. Bir PGN dosyasına göz atmanıza olanak tanır. Seçin ve içe aktarmayı başlatın.</p>
-        
+
         <h4>Oyun veritabanındaki tüm oyunları sil</h4>
         <p>Veritabanını temizlemek istiyorsanız bu seçeneği kullanın. Önce SD karta bir yedek aldığınızdan emin olun; bu işlem geri alınamaz.</p>
-        
+
         <h4>Alıştırma seti oluştur</h4>
         <p>Şah matla biten oyunlardan alıştırma konumları oluşturur. İşlenecek dosyayı seçin. Başarısız girişler genellikle şah matla bitmeyen ya da yinelenen oyunlardır.</p>
-        
+
         <h4>Alıştırma setini sıfırla</h4>
         <p>Alıştırmalara baştan başlamak ister misiniz? Bu, ortalama süre sayacınızı da sıfırlar.</p>
-        
+
         ]]></string>
     <string name="alert_no">Hayır</string>
     <string name="alert_ok">Tamam</string>
@@ -310,7 +310,7 @@
     <string name="tts_not_loaded">Metinden konuşma yüklenemedi</string>
     <string name="tts_move_takes">alır</string>
     <string name="tts_move_en_passant">geçerken alma</string>
-    <string name="tts_move_promotes_to">%1$s&apos;ye terfi eder</string>
+    <string name="tts_move_promotes_to">%1$s`ye terfi eder</string>
     <string name="tts_move_checkmate">şah mat</string>
     <string name="tts_move_castle_long">uzun rok</string>
     <string name="tts_move_castle_short">kısa rok</string>
