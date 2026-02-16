@@ -323,6 +323,7 @@
     <string name="pref_sound">Sound</string>
     <string name="pref_sound_desc">Played when your opponent moves</string>
     <string name="pref_speech">Speech</string>
+    <string name="tts_only_locale_us">Text to speech currently only supports US locale</string>
     <string name="pref_accessibility_drag">Accessibility drag</string>
     <string name="pref_accessibility_drag_delay_desc">Accessibility drag delay</string>
     <string name="pref_accessibility_drag_talkback_reminder">For accessibility drag, please turn off TalkBack.</string>
@@ -352,6 +353,8 @@
     <string name="gameslist_filter_switch_date_before_description">Enable or disable date before filter</string>
     <string name="gameslist_filter_switch_event_description">Enable or disable event filter</string>
     <string name="gameslist_filter_switch_result_description">Enable or disable result filter</string>
+    <string name="gameslist_result_count">Results: %1$d</string>
+    <string name="gameslist_game_of_total">Game %1$d of %2$d</string>
     <string name="gameslist_filter_switch_white_description">Enable or disable white player filter</string>
     <string name="savegame_white">White</string>
     <string name="savegame_white_question">White?</string>

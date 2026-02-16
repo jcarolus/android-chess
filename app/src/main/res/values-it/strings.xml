@@ -306,6 +306,7 @@
     <string name="pref_sound">Suono</string>
     <string name="pref_sound_desc">Riprodotto quando l’avversario muove</string>
     <string name="pref_speech">Voce</string>
+    <string name="tts_only_locale_us">La sintesi vocale attualmente supporta solo la locale US</string>
     <string name="pref_accessibility_drag">Trascinamento accessibile</string>
     <string name="pref_accessibility_drag_delay_desc">Ritardo del trascinamento accessibile</string>
     <string name="pref_accessibility_drag_talkback_reminder">Per il trascinamento accessibile, disattiva TalkBack.</string>
@@ -335,6 +336,8 @@
     <string name="gameslist_filter_switch_date_before_description">Attiva o disattiva il filtro data prima</string>
     <string name="gameslist_filter_switch_event_description">Attiva o disattiva il filtro evento</string>
     <string name="gameslist_filter_switch_result_description">Attiva o disattiva il filtro risultato</string>
+    <string name="gameslist_result_count">Risultati: %1$d</string>
+    <string name="gameslist_game_of_total">Partita %1$d di %2$d</string>
     <string name="gameslist_filter_switch_white_description">Attiva o disattiva il filtro dei bianchi</string>
     <string name="savegame_white">Bianchi</string>
     <string name="savegame_white_question">Bianchi?</string>

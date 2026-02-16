@@ -306,6 +306,7 @@
     <string name="pref_sound">Sunet</string>
     <string name="pref_sound_desc">Redat când adversarul mută</string>
     <string name="pref_speech">Vorbire</string>
+    <string name="tts_only_locale_us">Funcția text-în-vorbire acceptă în prezent doar localizarea SUA</string>
     <string name="pref_accessibility_drag">Glisare accesibilă</string>
     <string name="pref_accessibility_drag_delay_desc">Întârziere la glisarea accesibilă</string>
     <string name="pref_accessibility_drag_talkback_reminder">Pentru glisarea accesibilă, dezactivează TalkBack.</string>
@@ -335,6 +336,8 @@
     <string name="gameslist_filter_switch_date_before_description">Activează sau dezactivează filtrul de dată înainte</string>
     <string name="gameslist_filter_switch_event_description">Activează sau dezactivează filtrul de eveniment</string>
     <string name="gameslist_filter_switch_result_description">Activează sau dezactivează filtrul de rezultat</string>
+    <string name="gameslist_result_count">Rezultate: %1$d</string>
+    <string name="gameslist_game_of_total">Partida %1$d din %2$d</string>
     <string name="gameslist_filter_switch_white_description">Activează sau dezactivează filtrul pentru albe</string>
     <string name="savegame_white">Albe</string>
     <string name="savegame_white_question">Albe?</string>

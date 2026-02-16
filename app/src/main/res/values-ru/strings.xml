@@ -306,6 +306,7 @@
     <string name="pref_sound">Звук</string>
     <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
     <string name="pref_speech">Озвучка</string>
+    <string name="tts_only_locale_us">Преобразование текста в речь сейчас поддерживает только локаль США</string>
     <string name="pref_accessibility_drag">Перетаскивание (доступность)</string>
     <string name="pref_accessibility_drag_delay_desc">Задержка перетаскивания (доступность)</string>
     <string name="pref_accessibility_drag_talkback_reminder">Для доступного перетаскивания отключите TalkBack.</string>
@@ -335,6 +336,8 @@
     <string name="gameslist_filter_switch_date_before_description">Включить или отключить фильтр даты до</string>
     <string name="gameslist_filter_switch_event_description">Включить или отключить фильтр события</string>
     <string name="gameslist_filter_switch_result_description">Включить или отключить фильтр результата</string>
+    <string name="gameslist_result_count">Результаты: %1$d</string>
+    <string name="gameslist_game_of_total">Партия %1$d из %2$d</string>
     <string name="gameslist_filter_switch_white_description">Включить или отключить фильтр белых</string>
     <string name="savegame_white">Белые</string>
     <string name="savegame_white_question">Белые?</string>

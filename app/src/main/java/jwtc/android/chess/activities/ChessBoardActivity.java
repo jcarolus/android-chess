@@ -410,7 +410,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             int result = textToSpeech.setDefaults(getPrefs());
 
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                doToast("Speech does not support US locale");
+                doToast(getString(R.string.tts_only_locale_us));
                 textToSpeech = null;
             } else {
 

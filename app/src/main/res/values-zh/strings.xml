@@ -306,6 +306,7 @@
     <string name="pref_sound">声音</string>
     <string name="pref_sound_desc">当对手走棋时播放</string>
     <string name="pref_speech">语音播报</string>
+    <string name="tts_only_locale_us">当前文本转语音仅支持美国地区设置</string>
     <string name="pref_accessibility_drag">无障碍拖拽</string>
     <string name="pref_accessibility_drag_delay_desc">无障碍拖拽延迟</string>
     <string name="pref_accessibility_drag_talkback_reminder">使用无障碍拖拽时，请关闭 TalkBack。</string>
@@ -335,6 +336,8 @@
     <string name="gameslist_filter_switch_date_before_description">启用或禁用截止日期筛选</string>
     <string name="gameslist_filter_switch_event_description">启用或禁用赛事筛选</string>
     <string name="gameslist_filter_switch_result_description">启用或禁用结果筛选</string>
+    <string name="gameslist_result_count">结果：%1$d</string>
+    <string name="gameslist_game_of_total">第 %1$d 局，共 %2$d 局</string>
     <string name="gameslist_filter_switch_white_description">启用或禁用白方筛选</string>
     <string name="savegame_white">白方</string>
     <string name="savegame_white_question">白方?</string>

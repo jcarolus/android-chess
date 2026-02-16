@@ -306,6 +306,7 @@
     <string name="pref_sound">Ses</string>
     <string name="pref_sound_desc">Rakip hamle yaptığında çalınır</string>
     <string name="pref_speech">Sesli okuma</string>
+    <string name="tts_only_locale_us">Metinden konuşmaya şu anda yalnızca ABD yerel ayarı destekleniyor</string>
     <string name="pref_accessibility_drag">Erişilebilir sürükleme</string>
     <string name="pref_accessibility_drag_delay_desc">Erişilebilir sürükleme gecikmesi</string>
     <string name="pref_accessibility_drag_talkback_reminder">Erişilebilir sürükleme için TalkBack’i kapatın.</string>
@@ -335,6 +336,8 @@
     <string name="gameslist_filter_switch_date_before_description">Tarih öncesi filtresini aç veya kapat</string>
     <string name="gameslist_filter_switch_event_description">Etkinlik filtresini aç veya kapat</string>
     <string name="gameslist_filter_switch_result_description">Sonuç filtresini aç veya kapat</string>
+    <string name="gameslist_result_count">Sonuçlar: %1$d</string>
+    <string name="gameslist_game_of_total">Oyun %1$d / %2$d</string>
     <string name="gameslist_filter_switch_white_description">Beyaz filtresini aç veya kapat</string>
     <string name="savegame_white">Beyaz</string>
     <string name="savegame_white_question">Beyaz?</string>

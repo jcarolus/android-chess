@@ -322,7 +322,7 @@ public class GamesListActivity extends ChessBoardActivity {
     private void onQueryUpdated() {
         if (cursor == null) {
             seekBarGames.setVisibility(View.INVISIBLE);
-            textViewFilterInfo.setText("Results: 0");
+            textViewFilterInfo.setText(getString(R.string.gameslist_result_count, 0));
             adapterGames.swapCursor(null);
             return;
         }
@@ -334,7 +334,7 @@ public class GamesListActivity extends ChessBoardActivity {
             seekBarGames.setProgress(position);
             seekBarGames.setMax(count > 0 ? count - 1 : 0);
             seekBarGames.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
-            textViewFilterInfo.setText("Results: " + count);
+            textViewFilterInfo.setText(getString(R.string.gameslist_result_count, count));
         } else {
             // @TODO
         }
@@ -357,7 +357,8 @@ public class GamesListActivity extends ChessBoardActivity {
             return; // @TODO
         }
 
-        textViewTotal.setText("" + (position + (count == 0 ? 0 : 1)) + "/" + count);
+        String totalText = getString(R.string.gameslist_game_of_total, position + (count == 0 ? 0 : 1), count);
+        textViewTotal.setText(totalText);
         cursor.moveToPosition(position);
 
         currentGameId = Utils.getColumnLong(cursor, PGNColumns._ID);
@@ -496,7 +497,6 @@ public class GamesListActivity extends ChessBoardActivity {
         String dbgArgs = selectionArgs == null ? "" : TextUtils.join("|", selectionArgs);
         Log.i(TAG, "runQuery " + selection + " " + dbgArgs + " BY " + sortBy + " " + sortOrder);
 
-        //buttonFilters.setText("Filters" + (selectionArgs == null ? "" : " (" + selectionArgs.length + ")"));
         buttonFilters.setChecked(selectionArgs != null && selectionArgs.length > 0);
 
         final int generation = ++queryGeneration;

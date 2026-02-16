@@ -306,6 +306,7 @@
     <string name="pref_sound">Som</string>
     <string name="pref_sound_desc">Reproduzido quando o adversário joga</string>
     <string name="pref_speech">Voz</string>
+    <string name="tts_only_locale_us">A conversão de texto em fala atualmente só oferece suporte ao locale dos EUA</string>
     <string name="pref_accessibility_drag">Arrasto de acessibilidade</string>
     <string name="pref_accessibility_drag_delay_desc">Atraso do arrasto de acessibilidade</string>
     <string name="pref_accessibility_drag_talkback_reminder">Para usar o arrasto de acessibilidade, desative o TalkBack.</string>
@@ -335,6 +336,8 @@
     <string name="gameslist_filter_switch_date_before_description">Ativar ou desativar filtro de data antes</string>
     <string name="gameslist_filter_switch_event_description">Ativar ou desativar filtro de evento</string>
     <string name="gameslist_filter_switch_result_description">Ativar ou desativar filtro de resultado</string>
+    <string name="gameslist_result_count">Resultados: %1$d</string>
+    <string name="gameslist_game_of_total">Partida %1$d de %2$d</string>
     <string name="gameslist_filter_switch_white_description">Ativar ou desativar filtro de brancas</string>
     <string name="savegame_white">Brancas</string>
     <string name="savegame_white_question">Brancas?</string>
