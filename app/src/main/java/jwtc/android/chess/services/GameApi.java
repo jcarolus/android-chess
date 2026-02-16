@@ -412,11 +412,10 @@ public class GameApi {
         }
     }
 
-    public static String moveToSpeechString(String sMove, int move) {
-        return moveToSpeechString(null, sMove, move);
-    }
-
     public static String moveToSpeechString(Resources resources, String sMove, int move) {
+        if (resources == null) {
+            resources = Resources.getSystem();
+        }
         StringBuilder sMoveSpeech = new StringBuilder();
 
         // check regular move
@@ -536,7 +535,7 @@ public class GameApi {
             } catch (Resources.NotFoundException ignored) {
             }
         }
-        return String.format(Locale.ROOT, fallback, args);
+        return String.format(Locale.getDefault(), fallback, args);
     }
 
     protected void dispatchMove(final int move) {

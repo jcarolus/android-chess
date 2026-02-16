@@ -2,6 +2,8 @@ package jwtc.android.chess.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.LocaleList;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -10,12 +12,15 @@ import java.util.Locale;
 
 public class TextToSpeechApi {
     private static final String TAG = "TextToSpeechApi";
+    private final Context context;
     private final TextToSpeech textToSpeech;
     private final LocaleList appLocales;
+    private Locale selectedLocale = Locale.US;
     protected float speechRate = 1.0f;
     protected float speechPitch = 1.0f;
 
     public TextToSpeechApi(Context context, TextToSpeech.OnInitListener listener) {
+        this.context = context;
         textToSpeech = new TextToSpeech(context, listener);
         appLocales = context.getResources().getConfiguration().getLocales();
     }
@@ -24,9 +29,9 @@ public class TextToSpeechApi {
         setSpeechRate(prefs.getFloat("speechRate", 1.0F));
         setSpeechPitch(prefs.getFloat("speechPitch", 1.0F));
 
-        Locale locale = findBestSupportedLocale();
-        Log.i(TAG, "setDefaults locale=" + locale);
-        return textToSpeech.setLanguage(locale);
+        selectedLocale = findBestSupportedLocale();
+        Log.i(TAG, "setDefaults locale=" + selectedLocale);
+        return textToSpeech.setLanguage(selectedLocale);
     }
 
     public void saveDefaults(SharedPreferences.Editor editor) {
@@ -69,5 +74,11 @@ public class TextToSpeechApi {
         return status == TextToSpeech.LANG_AVAILABLE
                 || status == TextToSpeech.LANG_COUNTRY_AVAILABLE
                 || status == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE;
+    }
+
+    public Resources getLocalizedResources() {
+        Configuration configuration = new Configuration(context.getResources().getConfiguration());
+        configuration.setLocales(new LocaleList(selectedLocale));
+        return context.createConfigurationContext(configuration).getResources();
     }
 }

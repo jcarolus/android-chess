@@ -308,6 +308,7 @@
     <string name="pref_speech">Sesli okuma</string>
     <string name="tts_only_locale_us">Metinden konuşmaya şu anda yalnızca ABD yerel ayarı destekleniyor</string>
     <string name="tts_not_loaded">Metinden konuşma yüklenemedi</string>
+    <string name="tts_example_move">Fil G7 alır, şah</string>
     <string name="tts_move_takes">alır</string>
     <string name="tts_move_en_passant">geçerken alma</string>
     <string name="tts_move_promotes_to">%1$s`ye terfi eder</string>

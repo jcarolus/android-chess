@@ -118,11 +118,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
         }
 
-        String sMove = getLastMoveAndTurnDescription();
-        Log.d(TAG, "last move " + sMove);
-        if (isScreenReaderOn()) {
-            //doToastShort(sMove);
-        } else if (textToSpeech != null && moveToSpeech) {
+        if (!isScreenReaderOn() && textToSpeech != null && moveToSpeech) {
+            String sMove = getLastMoveAndTurnDescription(true);
             textToSpeech.moveToSpeech(sMove);
         }
     }
@@ -539,10 +536,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return Pos.toString(pos);
     }
 
-    protected String getLastMoveAndTurnDescription() {
+    protected String getLastMoveAndTurnDescription(boolean forTTS) {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = gameApi.moveToSpeechString(getResources(), jni.getMyMoveToString(), move);
+            String sMove = GameApi.moveToSpeechString(textToSpeech != null && forTTS ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move);
             if (gameApi.isEnded()) {
                 return sMove;
             }

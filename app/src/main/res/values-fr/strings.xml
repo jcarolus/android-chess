@@ -308,6 +308,7 @@
     <string name="pref_speech">Voix</string>
     <string name="tts_only_locale_us">La synthèse vocale prend actuellement uniquement en charge la locale US</string>
     <string name="tts_not_loaded">Impossible de charger la synthèse vocale</string>
+    <string name="tts_example_move">Fou prend en G7, échec</string>
     <string name="tts_move_takes">prend</string>
     <string name="tts_move_en_passant">en passant</string>
     <string name="tts_move_promotes_to">est promu en %1$s</string>

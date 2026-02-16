@@ -572,7 +572,7 @@ public class PlayActivity extends ChessBoardActivity implements
         if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
             sState = ". " + getString(state);
         }
-        textViewLastMove.setText(getLastMoveAndTurnDescription() + sState);
+        textViewLastMove.setText(getLastMoveAndTurnDescription(false) + sState);
         textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
         textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
     }

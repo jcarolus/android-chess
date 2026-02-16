@@ -318,6 +318,7 @@
     <string name="pref_speech">Voz</string>
     <string name="tts_only_locale_us">La conversión de texto a voz actualmente solo admite la configuración regional de EE. UU.</string>
     <string name="tts_not_loaded">No se pudo cargar el texto a voz</string>
+    <string name="tts_example_move">Alfil captura en G7, jaque</string>
     <string name="tts_move_takes">captura</string>
     <string name="tts_move_en_passant">al paso</string>
     <string name="tts_move_promotes_to">promociona a %1$s</string>

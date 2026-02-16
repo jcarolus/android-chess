@@ -493,7 +493,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
-        textViewLastMove.setText(getLastMoveAndTurnDescription());
+        textViewLastMove.setText(getLastMoveAndTurnDescription(false));
         textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
         textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
     }

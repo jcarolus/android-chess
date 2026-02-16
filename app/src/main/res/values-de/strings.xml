@@ -318,6 +318,7 @@
     <string name="pref_speech">Sprachausgabe</string>
     <string name="tts_only_locale_us">Die Sprachausgabe unterstützt derzeit nur die US-Locale</string>
     <string name="tts_not_loaded">Sprachausgabe konnte nicht geladen werden</string>
+    <string name="tts_example_move">Läufer schlägt G7, Schach</string>
     <string name="tts_move_takes">schlägt</string>
     <string name="tts_move_en_passant">en passant</string>
     <string name="tts_move_promotes_to">wandelt zu %1$s um</string>

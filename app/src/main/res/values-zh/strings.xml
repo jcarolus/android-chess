@@ -308,6 +308,7 @@
     <string name="pref_speech">语音播报</string>
     <string name="tts_only_locale_us">当前文本转语音仅支持美国地区设置</string>
     <string name="tts_not_loaded">无法加载文本转语音</string>
+    <string name="tts_example_move">象吃G7，将军</string>
     <string name="tts_move_takes">吃</string>
     <string name="tts_move_en_passant">吃过路兵</string>
     <string name="tts_move_promotes_to">升变为%1$s</string>

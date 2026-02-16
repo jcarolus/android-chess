@@ -2,6 +2,7 @@ package jwtc.android.chess.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.content.res.Resources;
 import android.widget.CheckBox;
 
 import com.google.android.material.slider.Slider;
@@ -31,12 +32,16 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
             textToSpeech.setSpeechRate(value);
-            textToSpeech.moveToSpeech("Bishop takes G7 check");
+            Resources resources = textToSpeech.getLocalizedResources();
+            String previewMove = resources != null ? resources.getString(R.string.tts_example_move) : getString(R.string.tts_example_move);
+            textToSpeech.moveToSpeech(previewMove);
         });
 
         sliderSpeechPitch.addOnChangeListener((s, value, fromUser) -> {
             textToSpeech.setSpeechPitch(value);
-            textToSpeech.moveToSpeech("Bishop takes G7 check");
+            Resources resources = textToSpeech.getLocalizedResources();
+            String previewMove = resources != null ? resources.getString(R.string.tts_example_move) : getString(R.string.tts_example_move);
+            textToSpeech.moveToSpeech(previewMove);
         });
 
         sliderAccessibilityDelay.addOnChangeListener((s, value, fromUser) -> {
