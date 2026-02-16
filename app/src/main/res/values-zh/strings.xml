@@ -308,6 +308,13 @@
     <string name="pref_speech">语音播报</string>
     <string name="tts_only_locale_us">当前文本转语音仅支持美国地区设置</string>
     <string name="tts_not_loaded">无法加载文本转语音</string>
+    <string name="tts_move_takes">吃</string>
+    <string name="tts_move_en_passant">吃过路兵</string>
+    <string name="tts_move_promotes_to">升变为%1$s</string>
+    <string name="tts_move_checkmate">将死</string>
+    <string name="tts_move_castle_long">长易位</string>
+    <string name="tts_move_castle_short">短易位</string>
+    <string name="tts_move_square">%1$s%2$s</string>
     <string name="pref_accessibility_drag">无障碍拖拽</string>
     <string name="pref_accessibility_drag_delay_desc">无障碍拖拽延迟</string>
     <string name="pref_accessibility_drag_talkback_reminder">使用无障碍拖拽时，请关闭 TalkBack。</string>
