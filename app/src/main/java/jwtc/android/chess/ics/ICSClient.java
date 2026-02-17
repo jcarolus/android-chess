@@ -236,7 +236,11 @@ public class ICSClient extends ChessBoardActivity implements
         buttonForward.setOnClickListener((OnClickListener) v -> sendString("forward"));
 
         switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> sounds.setEnabled(switchSound.isChecked()));
+        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (sounds != null) {
+                sounds.setEnabled(switchSound.isChecked());
+            }
+        });
 
         textViewTitle = findViewById(R.id.TextViewTitle);
 
@@ -249,17 +253,14 @@ public class ICSClient extends ChessBoardActivity implements
         listMenu.setOnItemClickListener(this);
 
         buttonMenu = findViewById(R.id.ButtonMenu);
-        buttonMenu.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int menuChild = viewAnimatorSub.getDisplayedChild();
-                if (menuChild == VIEW_MENU || menuChild == VIEW_LOADING) {
-                    stopSession(R.string.ics_quit);
-                } else if (menuChild == VIEW_LOGIN) {
-                    finish();
-                } else {
-                    setMenuView();
-                }
+        buttonMenu.setOnClickListener(v -> {
+            int menuChild = viewAnimatorSub.getDisplayedChild();
+            if (menuChild == VIEW_MENU || menuChild == VIEW_LOADING) {
+                stopSession(R.string.ics_quit);
+            } else if (menuChild == VIEW_LOGIN) {
+                finish();
+            } else {
+                setMenuView();
             }
         });
 
