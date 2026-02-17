@@ -691,7 +691,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 selectedPosition = pos;
                 setMoveToPositions(pos);
                 updateSelectedSquares();
-                vibrate(90);
+                hapticFeedbackSelect();
                 if (textToSpeech != null) {
                     textToSpeech.moveToSpeech(getFieldDescription(pos));
                 }
@@ -708,7 +708,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 accessibilityDragDwellRunnable = null;
             }
             if (emitCrossingHaptic) {
-                vibrate(20);
+                hapticFeedbackTick();
             }
             if (textToSpeech != null) {
                 textToSpeech.moveToSpeech(getFieldDescription(pos));

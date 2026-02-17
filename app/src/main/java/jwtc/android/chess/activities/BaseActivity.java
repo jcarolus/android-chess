@@ -171,20 +171,29 @@ public class BaseActivity extends AppCompatActivity {
         }
 
     }
-
-    public void vibrate(long ms) {
+    
+    public void hapticFeedbackTick() {
         try {
             if (vibrator != null && vibrator.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
                 } else {
-                    vibrator.vibrate(ms);
+                    vibrator.vibrate(15);
                 }
             }
-        } catch (Exception e) {
-            Log.e(TAG, "vibrator process error", e);
-        }
+        } catch (Exception ignore) {}
+    }
 
+    public void hapticFeedbackSelect() {
+        try {
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK));
+                } else {
+                    vibrator.vibrate(100);
+                }
+            }
+        } catch (Exception ignore) {}
     }
 
     public void showHelp(int resource) {

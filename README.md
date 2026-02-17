@@ -16,6 +16,7 @@
 - Cast the board via Chromecast
 - ECO opening explorer
 - Accessibility support for screen readers like Talkback
+- Local game database with search options
 
 ## Install
 - Published on "F-droid" https://f-droid.org/packages/jwtc.android.chess/
