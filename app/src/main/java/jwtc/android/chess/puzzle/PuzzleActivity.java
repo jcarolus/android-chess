@@ -185,8 +185,6 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         Log.d(TAG, "startPuzzle " + sPGN);
 
         showMove = false;
-        lastMoveFrom = -1;
-        lastMoveTo = -1;
 
         gameApi.loadPGN(sPGN);
         numMoved = 0;
@@ -241,9 +239,6 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     @Override
     public void OnMove(int move) {
         super.OnMove(move);
-
-        lastMoveFrom = Move.getFrom(move);
-        lastMoveTo = Move.getTo(move);
 
         numMoved++;
 

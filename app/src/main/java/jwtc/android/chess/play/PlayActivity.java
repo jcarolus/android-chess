@@ -508,8 +508,6 @@ public class PlayActivity extends ChessBoardActivity implements
         hideInfoBalloon();
 
         gameApi.move(move, duckMove);
-        lastMoveFrom = Move.getFrom(move);
-        lastMoveTo = Move.getTo(move);
         highlightedPositions.clear();
 
         updateGUI();

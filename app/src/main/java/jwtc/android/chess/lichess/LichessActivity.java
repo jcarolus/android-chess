@@ -434,9 +434,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public boolean requestMove(int from, int to) {
         if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
-            lastMoveFrom = from;
-            lastMoveTo = to;
-
             if (lichessApi.isPromotionMove(from, to)) {
                 final String[] items = getResources().getStringArray(R.array.promotionpieces);
 

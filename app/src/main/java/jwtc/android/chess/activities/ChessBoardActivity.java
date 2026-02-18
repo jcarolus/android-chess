@@ -45,16 +45,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected MyClickListener myClickListener;
     protected JNI jni;
     protected ChessBoardView chessBoardView;
-    protected ChessSquareView currentChessSquareView = null;
-    protected ChessPieceView currentChessPieceView = null;
     protected Sounds sounds = null;
 
     protected TextToSpeechApi textToSpeech = null;
-    protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1, lastMoveFrom = -1, lastMoveTo = -1;
+    protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
-    protected boolean skipReturn = true, showMoves = false, flipBoard = false, isBackGestureBlocked = false, moveToSpeech = false;
+    protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false, moveToSpeech = false;
     protected boolean useAccessibilityDrag = false;
     protected int accessibilityDragDwellMs = 300;
     private String keyboardBuffer = "";
@@ -103,8 +101,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         moveToPositions.clear();
         highlightedPositions.clear();
-        lastMoveFrom = Move.getFrom(move);
-        lastMoveTo = Move.getTo(move);
 
         rebuildBoard();
 
@@ -306,6 +302,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void updateSelectedSquares() {
+        int move = jni.getMyMove();
+        int lastMoveFrom = -1, lastMoveTo = -1;
+        if (move != 0) {
+            lastMoveFrom = Move.getFrom(move);
+            lastMoveTo = Move.getTo(move);
+        }
+
         final int count = chessBoardView.getChildCount();
         for (int i = 0; i < count; i++) {
             final View child = chessBoardView.getChildAt(i);
@@ -333,9 +336,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         selectPosition(-1);
         premoveFrom = -1;
         premoveTo = -1;
-        lastMoveTo = -1;
-        lastMoveFrom = -1;
-
         highlightedPositions.clear();
         moveToPositions.clear();
         updateSelectedSquares();

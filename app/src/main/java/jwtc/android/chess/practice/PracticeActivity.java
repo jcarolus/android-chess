@@ -178,8 +178,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         Log.i(TAG, "Start puzzle init: " + sPGN);
 
-        lastMoveFrom = -1;
-        lastMoveTo = -1;
         gameApi.loadPGN(sPGN);
 
         gameApi.jumpToBoardNum(0);
@@ -246,9 +244,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     @Override
     public void OnMove(int move) {
         super.OnMove(move);
-
-        lastMoveFrom = Move.getFrom(move);
-        lastMoveTo = Move.getTo(move);
 
         numMoved++;
 

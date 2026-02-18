@@ -430,9 +430,6 @@ public class ICSClient extends ChessBoardActivity implements
 
     @Override
     public boolean requestMove(int from, int to) {
-        lastMoveFrom = from;
-        lastMoveTo = to;
-
         ICSApi icsApi = (ICSApi) gameApi;
         if (icsApi.getViewMode() == ICSApi.VIEW_PLAY) {
             if (icsApi.getMyTurn() == icsApi.getTurn()) {
@@ -958,8 +955,6 @@ public class ICSClient extends ChessBoardActivity implements
     @Override
     public void OnIllegalMove() {
         rebuildBoard();
-        lastMoveFrom = -1;
-        lastMoveTo = -1;
         highlightedPositions.clear();
         updateSelectedSquares();
     }
@@ -1161,8 +1156,7 @@ public class ICSClient extends ChessBoardActivity implements
         int lastTo = icsApi.getLastTo();
         highlightedPositions.clear();
         if (lastTo != -1) {
-            lastMoveFrom = -1;
-            lastMoveTo = lastTo;
+            highlightedPositions.add(lastTo);
         }
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
