@@ -910,13 +910,22 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected void selectPosition(int pos) {
         Log.d(TAG, "selectPosition " + pos + ", " + selectedPosition);
+        moveToPositions.clear();
         if (pos == -1) {
             selectedPosition = pos;
             updateSelectedSquares();
         } else {
             if (selectedPosition == -1) {
-                selectedPosition = pos;
-                setMoveToPositions(pos);
+                boolean isStartMove =
+                    pos == jni.getDuckPos() ||
+                    jni.pieceAt(jni.getTurn(), pos) != BoardConstants.FIELD;
+
+                if (isStartMove) {
+                    selectedPosition = pos;
+                    setMoveToPositions(pos);
+                } else {
+                    selectedPosition = -1;
+                }
                 updateSelectedSquares();
             } else if (selectedPosition != pos) {
                 handleMove(pos);
