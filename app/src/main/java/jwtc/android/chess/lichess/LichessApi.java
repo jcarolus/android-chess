@@ -280,7 +280,7 @@ public class LichessApi extends GameApi {
                 @Override
                 public void onError(JsonObject result) {
                     Log.d(TAG, "moved " + result);
-                    dispatchState();
+                    dispatchIllegalMove();
                     if (apiListener != null) {
                         apiListener.onInvalidMove(result.get("error").getAsString());
                     }
