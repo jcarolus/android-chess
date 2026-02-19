@@ -137,6 +137,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         rebuildBoard();
     }
 
+    @Override
+    public void OnIllegalMove() {
+        rebuildBoard();
+        if (sounds != null) {
+            Log.d(TAG, "OnIllegal");
+            sounds.playIllegalMove();
+        }
+    }
+
     public void afterCreate() {
         Log.d(TAG, " afterCreate");
 

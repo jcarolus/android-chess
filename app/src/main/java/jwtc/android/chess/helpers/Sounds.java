@@ -11,7 +11,7 @@ public class Sounds {
     private final static String TAG = "Sounds";
     private SoundPool soundPool = null;
     private final Context context;
-    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame;
+    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove;
     protected float fVolume = 1.0f;
     protected boolean enabled = false;
 
@@ -65,6 +65,13 @@ public class Sounds {
         }
     }
 
+    public void playIllegalMove() {
+        if (enabled && soundPool != null) {
+            float factor = 1f;
+            soundPool.play(soundIllegalMove, fVolume * factor, fVolume * factor, 1, 0, 1);
+        }
+    }
+
     protected void initSoundPool() {
         if (soundPool == null) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -73,7 +80,7 @@ public class Sounds {
                 .build();
 
             soundPool = new SoundPool.Builder()
-                .setMaxStreams(7)
+                .setMaxStreams(8)
                 .setAudioAttributes(audioAttributes)
                 .build();
 
@@ -82,6 +89,7 @@ public class Sounds {
             soundMove = soundPool.load(context, R.raw.move, 1);
             soundCapture = soundPool.load(context, R.raw.capture, 1);
             soundNewGame = soundPool.load(context, R.raw.chesspiecesfall, 1);
+            soundIllegalMove = soundPool.load(context, R.raw.illegal, 1);
         }
     }
 }

@@ -164,6 +164,11 @@ public class LocalClockApi implements GameListener {
 
     }
 
+    @Override
+    public void OnIllegalMove() {
+
+    }
+
     private class RunnableImp implements Runnable {
         @Override
         public void run() {

@@ -111,10 +111,12 @@ public class GameApi {
 
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
-        if (isEnded())
+        if (isEnded()) {
             return false;
+        }
 
         if (jni.requestMove(from, to) == 0) {
+            dispatchIllegalMove();
             return false;
         }
 
@@ -133,6 +135,7 @@ public class GameApi {
         }
 
         if (jni.doCastleMove(from, to) == 0) {
+            dispatchIllegalMove();
             return false;
         }
         final int move = jni.getMyMove();
@@ -147,6 +150,8 @@ public class GameApi {
     public boolean requestDuckMove(int duckPos) {
 //        Log.d(TAG, " requestDuckMove " + Pos.toString(duckPos));
         if (!moveDuck(duckPos)) {
+            // @TODO is this needed/possible? Prevent from moving on top of a piece should be enough
+            // dispatchIllegalMove();
             return false;
         }
 
@@ -559,6 +564,14 @@ public class GameApi {
 
         for (GameListener listener : listeners) {
             listener.OnState();
+        }
+    }
+
+    protected void dispatchIllegalMove() {
+        Log.d(TAG, "dispatchIllegalMove");
+
+        for (GameListener listener : listeners) {
+            listener.OnIllegalMove();
         }
     }
 
