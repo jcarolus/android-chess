@@ -15,6 +15,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -45,7 +46,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private LinearLayout layoutGameButtons, layoutNewGameButtons;
     private TextView textPlayer, textOpponent;
     private TextView textStatus;
-    private ViewSwitcher switchTurnMe, switchTurnOpp;
+    private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
     private Handler statusHandler = new Handler(Looper.getMainLooper());
     private int overrideGameState = 0;
 
@@ -265,8 +266,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             }
         });
 
-        switchTurnMe = findViewById(R.id.ImageBottomTurn);
-        switchTurnOpp = findViewById(R.id.ImageTopTurn);
+        imageBottomTurn = findViewById(R.id.ImageBottomTurn);
+        imageTopTurn = findViewById(R.id.ImageTopTurn);
         textPlayer = findViewById(R.id.TextPlayer);
         textOpponent = findViewById(R.id.TextOpponent);
         layoutConnect = findViewById(R.id.LayoutConnect);
@@ -276,6 +277,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonDraw = findViewById(R.id.ButtonDraw);
         buttonNew = findViewById(R.id.ButtonNew);
         textStatus = findViewById(R.id.TextStatus);
+
+        // default rotation
+        imageTurnWhite = imageBottomTurn;
+        imageTurnBlack = imageTopTurn;
 
         buttonNew.setOnClickListener(v -> newGame());
 
@@ -384,11 +389,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         final int currentTurn = jni.getTurn();
         boolean amIWhite = ((HotspotBoardApi) gameApi).isPlayingAsWhite();
 
-        switchTurnOpp.setVisibility(currentTurn == BoardConstants.BLACK && amIWhite || currentTurn == BoardConstants.WHITE && !amIWhite ? View.VISIBLE : View.INVISIBLE);
-        switchTurnOpp.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
+        imageTurnWhite.setImageResource(currentTurn == BoardConstants.WHITE
+            ? R.drawable.turnwhite
+            : R.drawable.turnempty
+        );
 
-        switchTurnMe.setVisibility(currentTurn == BoardConstants.WHITE && amIWhite || currentTurn == BoardConstants.BLACK && !amIWhite ? View.VISIBLE : View.INVISIBLE);
-        switchTurnMe.setDisplayedChild(currentTurn == BoardConstants.BLACK ? 0 : 1);
+        imageTurnBlack.setImageResource(currentTurn == BoardConstants.BLACK
+            ? R.drawable.turnblack
+            : R.drawable.turnempty
+        );
     }
 
     private void showGameResult(String title, String message) {
@@ -416,6 +425,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         int turn = jni.getTurn();
         boolean amIWhite = ((HotspotBoardApi) gameApi).isPlayingAsWhite();
         chessBoardView.setRotated(!amIWhite);
+
+        imageTurnWhite = !amIWhite ? imageTopTurn : imageBottomTurn;
+        imageTurnBlack = !amIWhite ? imageBottomTurn : imageTopTurn;
 
         updateTurnSwitchers();
 
