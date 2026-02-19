@@ -338,6 +338,9 @@
     <string name="pref_accessibility_drag_talkback_reminder">For accessibility drag, please turn off TalkBack.</string>
     <string name="pref_speech_pitch_desc">Speech pitch</string>
     <string name="pref_speech_rate_desc">Speech rate</string>
+    <string name="pref_speech_voice">Language/Voice</string>
+    <string name="pref_open_tts_settings">Open system TTS settings</string>
+    <string name="tts_settings_not_found">Could not open system text-to-speech settings</string>
     <string name="pref_turn">Side</string>
     <string name="pref_turn_desc">Which side of the board you play</string>
     <string name="pref_vs_cpu">vs CPU</string>

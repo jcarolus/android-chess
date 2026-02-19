@@ -188,6 +188,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         moveToSpeech = prefs.getBoolean("moveToSpeech", false);
         useAccessibilityDrag = prefs.getBoolean("useAccessibilityDrag", false);
+        accessibilityDragDwellMs = prefs.getInt("accessibilityDragDelay", 300);
         textToSpeech = new TextToSpeechApi(this, this);
         applySquareDragListeners();
 

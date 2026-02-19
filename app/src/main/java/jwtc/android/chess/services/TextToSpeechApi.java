@@ -6,8 +6,12 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.LocaleList;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 public class TextToSpeechApi {
@@ -31,7 +35,14 @@ public class TextToSpeechApi {
 
         selectedLocale = findBestSupportedLocale();
         Log.i(TAG, "setDefaults locale=" + selectedLocale);
-        return textToSpeech.setLanguage(selectedLocale);
+        int result = textToSpeech.setLanguage(selectedLocale);
+
+        String selectedVoiceName = prefs.getString("speechVoice", null);
+        if (selectedVoiceName != null && !selectedVoiceName.isEmpty() && setVoiceByName(selectedVoiceName)) {
+            result = TextToSpeech.SUCCESS;
+        }
+
+        return result;
     }
 
     public void saveDefaults(SharedPreferences.Editor editor) {
@@ -51,6 +62,49 @@ public class TextToSpeechApi {
 
     public void moveToSpeech(String sMoveSpeech) {
         this.textToSpeech.speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, sMoveSpeech);
+    }
+
+    public List<Voice> getSupportedVoices() {
+        List<Voice> filteredVoices = new ArrayList<>();
+        if (textToSpeech.getVoices() == null) {
+            return filteredVoices;
+        }
+
+        for (Voice voice : textToSpeech.getVoices()) {
+            if (voice == null || voice.getLocale() == null) {
+                continue;
+            }
+            if (isLocaleSupported(voice.getLocale()) && isSupportedByAppLocales(voice.getLocale())) {
+                filteredVoices.add(voice);
+            }
+        }
+
+        filteredVoices.sort(Comparator
+                .comparing((Voice voice) -> voice.getLocale().toLanguageTag())
+                .thenComparing(Voice::getName));
+        return filteredVoices;
+    }
+
+    public boolean setVoiceByName(String voiceName) {
+        if (voiceName == null || textToSpeech.getVoices() == null) {
+            return false;
+        }
+
+        for (Voice voice : textToSpeech.getVoices()) {
+            if (voice != null && voiceName.equals(voice.getName())) {
+                int result = textToSpeech.setVoice(voice);
+                if (result == TextToSpeech.SUCCESS) {
+                    selectedLocale = voice.getLocale();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public String getCurrentVoiceName() {
+        Voice voice = textToSpeech.getVoice();
+        return voice == null ? null : voice.getName();
     }
 
     private Locale findBestSupportedLocale() {
@@ -74,6 +128,21 @@ public class TextToSpeechApi {
         return status == TextToSpeech.LANG_AVAILABLE
                 || status == TextToSpeech.LANG_COUNTRY_AVAILABLE
                 || status == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE;
+    }
+
+    private boolean isSupportedByAppLocales(Locale locale) {
+        String language = locale.getLanguage();
+        if (language == null || language.isEmpty()) {
+            return false;
+        }
+
+        for (int i = 0; i < appLocales.size(); i++) {
+            Locale appLocale = appLocales.get(i);
+            if (language.equals(appLocale.getLanguage())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Resources getLocalizedResources() {
