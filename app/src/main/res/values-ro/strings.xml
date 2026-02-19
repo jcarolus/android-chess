@@ -309,6 +309,7 @@
     <string name="tts_only_locale_us">Funcția text-în-vorbire acceptă în prezent doar localizarea SUA</string>
     <string name="tts_not_loaded">Nu s-a putut încărca funcția text-în-vorbire</string>
     <string name="tts_example_move">Nebunul capturează la G7, șah</string>
+    <string name="tts_selected">Selectat</string>
     <string name="tts_move_takes">capturează</string>
     <string name="tts_move_en_passant">en passant</string>
     <string name="tts_move_promotes_to">promovează la %1$s</string>

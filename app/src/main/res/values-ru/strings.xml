@@ -309,6 +309,7 @@
     <string name="tts_only_locale_us">Преобразование текста в речь сейчас поддерживает только локаль США</string>
     <string name="tts_not_loaded">Не удалось загрузить преобразование текста в речь</string>
     <string name="tts_example_move">Слон бьёт на G7, шах</string>
+    <string name="tts_selected">Выбрано</string>
     <string name="tts_move_takes">бьет</string>
     <string name="tts_move_en_passant">на проходе</string>
     <string name="tts_move_promotes_to">превращается в %1$s</string>

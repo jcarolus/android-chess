@@ -309,6 +309,7 @@
     <string name="tts_only_locale_us">La sintesi vocale attualmente supporta solo la locale US</string>
     <string name="tts_not_loaded">Impossibile caricare la sintesi vocale</string>
     <string name="tts_example_move">Alfiere cattura in G7, scacco</string>
+    <string name="tts_selected">Selezionato</string>
     <string name="tts_move_takes">cattura</string>
     <string name="tts_move_en_passant">en passant</string>
     <string name="tts_move_promotes_to">promuove a %1$s</string>

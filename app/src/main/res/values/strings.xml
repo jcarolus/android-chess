@@ -326,6 +326,7 @@
     <string name="tts_only_locale_us">Text to speech currently only supports US locale</string>
     <string name="tts_not_loaded">Could not load text to speech</string>
     <string name="tts_example_move">Bishop takes G7 check</string>
+    <string name="tts_selected">Selected</string>
     <string name="tts_move_takes">takes</string>
     <string name="tts_move_en_passant">en passant</string>
     <string name="tts_move_promotes_to">promotes to %1$s</string>

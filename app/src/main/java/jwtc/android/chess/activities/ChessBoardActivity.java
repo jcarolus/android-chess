@@ -703,7 +703,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 updateSelectedSquares();
                 hapticFeedbackSelect();
                 if (textToSpeech != null) {
-                    textToSpeech.moveToSpeech(getFieldDescription(pos));
+                    textToSpeech.queueSpeech(getString(R.string.tts_selected));
                 }
             }
         };

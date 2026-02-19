@@ -61,7 +61,13 @@ public class TextToSpeechApi {
     }
 
     public void moveToSpeech(String sMoveSpeech) {
-        this.textToSpeech.speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, sMoveSpeech);
+        String id = "utt-" + System.nanoTime();
+        this.textToSpeech.speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, id);
+    }
+
+    public void queueSpeech(String sSpeech) {
+        String id = "utt-" + System.nanoTime();
+        this.textToSpeech.speak(sSpeech, TextToSpeech.QUEUE_ADD, null, id);
     }
 
     public List<Voice> getSupportedVoices() {
