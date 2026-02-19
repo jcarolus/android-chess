@@ -750,6 +750,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     updateSelectedSquares();
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
+                    if (!event.getResult() && selectedPosition != -1) {
+                        selectPosition(-1);
+                        hapticFeedbackSelect();
+                    }
                     resetAccessibilityDragState();
                     break;
                 default:
