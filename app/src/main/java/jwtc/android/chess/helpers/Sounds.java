@@ -10,7 +10,7 @@ public class Sounds {
     private final static String TAG = "Sounds";
     private SoundPool soundPool = null;
     private final Context context;
-    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove;
+    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove, soundSelect, soundTick;
     protected float fVolume = 1.0f;
     protected boolean enabled = false;
 
@@ -34,41 +34,35 @@ public class Sounds {
     }
 
     public void playCheck() {
-        if (enabled && soundPool != null) {
-            float factor = 1f;
-            soundPool.play(soundCheck, fVolume * factor, fVolume * factor, 1, 0, 1);
-        }
+        play(soundCheck);
     }
 
     public void playMove() {
-        if (enabled && soundPool != null) {
-            soundPool.play(soundMove, fVolume, fVolume, 1, 0, 1);
-        }
+        play(soundMove);
     }
 
     public void playCapture() {
-        if (enabled && soundPool != null) {
-            soundPool.play(soundCapture, fVolume, fVolume, 1, 0, 1);
-        }
+        play(soundCapture);
     }
 
     public void playNewGame() {
-        if (enabled && soundPool != null) {
-            soundPool.play(soundNewGame, fVolume, fVolume, 1, 0, 1);
-        }
+        play(soundNewGame);
     }
 
     public void playTickTock() {
-        if (enabled && soundPool != null) {
-            soundPool.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
-        }
+        play(soundTickTock);
     }
 
     public void playIllegalMove() {
-        if (enabled && soundPool != null) {
-            float factor = 1f;
-            soundPool.play(soundIllegalMove, fVolume * factor, fVolume * factor, 1, 0, 1);
-        }
+        play(soundIllegalMove);
+    }
+
+    public void playSelect() {
+        play(soundSelect);
+    }
+
+    public void playTick() {
+        play(soundTick);
     }
 
     protected void initSoundPool() {
@@ -83,12 +77,24 @@ public class Sounds {
                 .setAudioAttributes(audioAttributes)
                 .build();
 
-            soundTickTock = soundPool.load(context, R.raw.ticktock, 1);
-            soundCheck = soundPool.load(context, R.raw.impact, 2);
-            soundMove = soundPool.load(context, R.raw.move, 1);
-            soundCapture = soundPool.load(context, R.raw.capture, 1);
-            soundNewGame = soundPool.load(context, R.raw.chesspiecesfall, 1);
-            soundIllegalMove = soundPool.load(context, R.raw.illegal, 1);
+            soundTickTock = loadSound(R.raw.ticktock, 1);
+            soundCheck = loadSound(R.raw.impact, 2);
+            soundMove = loadSound(R.raw.move, 1);
+            soundCapture = loadSound(R.raw.capture, 1);
+            soundNewGame = loadSound(R.raw.chesspiecesfall, 1);
+            soundIllegalMove = loadSound(R.raw.illegal, 1);
+            soundSelect = loadSound(R.raw.select, 1);
+            soundTick = loadSound(R.raw.tick, 1);
         }
+    }
+
+    private void play(int soundId) {
+        if (enabled && soundPool != null) {
+            soundPool.play(soundId, fVolume, fVolume, 1, 0, 1);
+        }
+    }
+
+    private int loadSound(int resId, int priority) {
+        return soundPool.load(context, resId, priority);
     }
 }

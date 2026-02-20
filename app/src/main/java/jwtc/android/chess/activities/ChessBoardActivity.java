@@ -221,11 +221,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void hapticFeedbackTick() {
-        hapticFeedback.hapticFeedbackTick();
+        if (sounds.isEnabled()) {
+            sounds.playTick();
+        } else if (hapticFeedback.isEnabled()) {
+            hapticFeedback.hapticFeedbackTick();
+        }
     }
 
     public void feedbackSelect() {
-        hapticFeedback.feedbackSelect();
+        if (sounds.isEnabled()) {
+            sounds.playSelect();
+        } else if (hapticFeedback.isEnabled()) {
+            hapticFeedback.feedbackSelect();
+        }
     }
 
     public void feedbackCapture() {
