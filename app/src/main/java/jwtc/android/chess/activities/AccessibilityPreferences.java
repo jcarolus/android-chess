@@ -71,7 +71,12 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         dropDownSpeechVoice.setOnItemClickListener((AdapterView<?> parent, android.view.View view, int position, long id) -> {
             if (position >= 0 && position < speechVoiceNames.size() && textToSpeech != null) {
-                textToSpeech.setVoiceByName(speechVoiceNames.get(position));
+                String voiceName = speechVoiceNames.get(position);
+                if (voiceName == null) {
+                    textToSpeech.useSystemDefaultVoice();
+                } else {
+                    textToSpeech.setVoiceByName(voiceName);
+                }
                 textToSpeech.moveToSpeech(getPreviewMove());
             }
         });
@@ -119,7 +124,12 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         editor.putInt("accessibilityDragDelay", (int)sliderAccessibilityDelay.getValue());
         int selectedVoicePosition = dropDownSpeechVoice.getSelectedItemPosition();
         if (selectedVoicePosition >= 0 && selectedVoicePosition < speechVoiceNames.size()) {
-            editor.putString("speechVoice", speechVoiceNames.get(selectedVoicePosition));
+            String selectedVoice = speechVoiceNames.get(selectedVoicePosition);
+            if (selectedVoice == null) {
+                editor.remove("speechVoice");
+            } else {
+                editor.putString("speechVoice", selectedVoice);
+            }
         }
 
         editor.commit();
@@ -148,6 +158,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         List<Voice> supportedVoices = textToSpeech.getSupportedVoices();
         ArrayList<String> labels = new ArrayList<>();
+        speechVoiceNames.add(null);
+        labels.add(getString(R.string.pref_speech_voice_system_default));
 
         for (Voice voice : supportedVoices) {
             if (voice == null || voice.getLocale() == null) {
@@ -159,8 +171,9 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         dropDownSpeechVoice.setItems(labels);
 
-        String selectedVoice = getPrefs().getString("speechVoice", textToSpeech.getCurrentVoiceName());
-        if (selectedVoice == null) {
+        String selectedVoice = getPrefs().getString("speechVoice", null);
+        if (selectedVoice == null || selectedVoice.isEmpty()) {
+            dropDownSpeechVoice.setSelection(0);
             return;
         }
 

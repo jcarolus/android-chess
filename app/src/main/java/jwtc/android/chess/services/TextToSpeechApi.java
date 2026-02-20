@@ -33,6 +33,13 @@ public class TextToSpeechApi {
         setSpeechRate(prefs.getFloat("speechRate", 1.0F));
         setSpeechPitch(prefs.getFloat("speechPitch", 1.0F));
 
+        String defaultEngine = textToSpeech.getDefaultEngine();
+        Log.i(TAG, "TTS default engine package: " + defaultEngine);
+
+        for (TextToSpeech.EngineInfo engine : textToSpeech.getEngines()) {
+            Log.i(TAG, "Available engine: " + engine.name + " label=" + engine.label);
+        }
+
         selectedLocale = findBestSupportedLocale();
         Log.i(TAG, "setDefaults locale=" + selectedLocale);
         int result = textToSpeech.setLanguage(selectedLocale);
@@ -111,6 +118,11 @@ public class TextToSpeechApi {
     public String getCurrentVoiceName() {
         Voice voice = textToSpeech.getVoice();
         return voice == null ? null : voice.getName();
+    }
+
+    public void useSystemDefaultVoice() {
+        selectedLocale = findBestSupportedLocale();
+        textToSpeech.setLanguage(selectedLocale);
     }
 
     private Locale findBestSupportedLocale() {

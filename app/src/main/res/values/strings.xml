@@ -340,6 +340,7 @@
     <string name="pref_speech_pitch_desc">Speech pitch</string>
     <string name="pref_speech_rate_desc">Speech rate</string>
     <string name="pref_speech_voice">Language/Voice</string>
+    <string name="pref_speech_voice_system_default">System default</string>
     <string name="pref_open_tts_settings">Open system TTS settings</string>
     <string name="tts_settings_not_found">Could not open system text-to-speech settings</string>
     <string name="pref_turn">Side</string>
