@@ -1,14 +1,10 @@
 package jwtc.android.chess.activities;
 
-import android.content.Context;
 import android.content.ClipData;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.DragEvent;
@@ -23,6 +19,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.HapticFeedback;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.helpers.Sounds;
 import jwtc.android.chess.services.TextToSpeechApi;
@@ -51,7 +48,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected JNI jni;
     protected ChessBoardView chessBoardView;
     protected Sounds sounds;
-    protected Vibrator vibrator;
+    protected HapticFeedback hapticFeedback;
 
     protected TextToSpeechApi textToSpeech = null;
     protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1;
@@ -70,8 +67,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         sounds = new Sounds(this);
+        hapticFeedback = new HapticFeedback(this);
     }
 
     public boolean requestMove(final int from, final int to) {
@@ -214,6 +211,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         showMoves = prefs.getBoolean("showMoves", false);
 
         sounds.setEnabled(prefs.getBoolean("moveSounds", false));
+        hapticFeedback.setEnabled(prefs.getBoolean("useHapticFeedback", false));
     }
 
     @Override
@@ -222,45 +220,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         super.onPause();
     }
 
-    public void vibrateSequence(int seq) {
-        try {
-            int v1, v2;
-            if (seq == 1) {
-                v1 = 200;    // increase
-                v2 = 500;
-            } else {
-                v1 = 500;    // decrease
-                v2 = 200;
-            }
-            long[] pattern = {500, v1, 100, v2};
-            vibrator.vibrate(pattern, -1);
-        } catch (Exception e) {
-            Log.e(TAG, "vibrator process error", e);
-        }
-    }
-
     public void hapticFeedbackTick() {
-        try {
-            if (vibrator != null && vibrator.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
-                } else {
-                    vibrator.vibrate(15);
-                }
-            }
-        } catch (Exception ignore) {}
+        hapticFeedback.hapticFeedbackTick();
     }
 
     public void feedbackSelect() {
-        try {
-            if (vibrator != null && vibrator.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK));
-                } else {
-                    vibrator.vibrate(100);
-                }
-            }
-        } catch (Exception ignore) {}
+        hapticFeedback.feedbackSelect();
     }
 
     public void feedbackCapture() {
