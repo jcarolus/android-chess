@@ -3,22 +3,22 @@
     <string name="advanced_help"><![CDATA[
         <h3>高级</h3>
         <p>在这里创建或导入你自己的内容。</p>
-        
+
         <h4>将棋局数据库导出到 SD 卡</h4>
         <p>棋局数据库中的所有对局都可以导出到 SD 卡上的一个 PGN 文件。该文件名为 chess.pgn，若已存在将被覆盖。</p>
-        
+
         <h4>将对局导入棋局数据库</h4>
         <p>使用此选项向棋局数据库添加对局。它允许你浏览选择一个 PGN 文件，选中后进行导入。</p>
-        
+
         <h4>删除棋局数据库中的所有对局</h4>
         <p>如果你想清理棋局数据库，请使用此选项。请先在 SD 卡上做好备份；此操作无法撤销。</p>
-        
+
         <h4>创建练习集</h4>
         <p>从以将死结束的对局中生成练习局面。选择要处理的文件。失败的条目通常是未以将死结束或重复的对局。</p>
-        
+
         <h4>重置练习集</h4>
         <p>想重新开始练习吗？这也会重置你的平均用时计数器。</p>
-        
+
         ]]></string>
     <string name="alert_no">否</string>
     <string name="alert_ok">确定</string>
@@ -304,7 +304,7 @@
     <string name="pref_show_pieces_descriptions">显示棋子位置描述</string>
     <string name="pref_show_accessibility_drag_toggle">显示无障碍拖动开关</string>
     <string name="pref_sound">声音</string>
-    <string name="pref_sound_desc">当对手走棋时播放</string>
+    <string name="pref_haptic_feedback">使用触觉反馈</string>
     <string name="pref_speech">语音播报</string>
     <string name="tts_only_locale_us">当前文本转语音仅支持美国地区设置</string>
     <string name="tts_not_loaded">无法加载文本转语音</string>

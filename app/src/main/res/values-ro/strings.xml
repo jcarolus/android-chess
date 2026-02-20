@@ -3,22 +3,22 @@
     <string name="advanced_help"><![CDATA[
         <h3>Avansat</h3>
         <p>Creați sau importați aici conținutul dvs.</p>
-        
+
         <h4>Exportați baza de date de partide pe cardul SD</h4>
         <p>Toate partidele din baza de date pot fi exportate într-un singur fișier PGN pe cardul SD. Acest fișier se va numi chess.pgn, iar un fișier existent va fi suprascris.</p>
-        
+
         <h4>Importați partide în baza de date</h4>
         <p>Folosiți această opțiune pentru a adăuga partide în baza de date. Vă permite să navigați la un fișier PGN. Selectați-l și alegeți importul.</p>
-        
+
         <h4>Ștergeți toate partidele din baza de date</h4>
         <p>Folosiți această opțiune dacă doriți să curățați baza de date. Asigurați-vă că mai întâi faceți o copie de siguranță pe cardul SD; această acțiune nu poate fi anulată.</p>
-        
+
         <h4>Creați set de antrenament</h4>
         <p>Creează poziții de antrenament din partide care se termină cu șah mat. Selectați fișierul de procesat. Intrările eșuate sunt de obicei partide care nu s-au încheiat cu șah mat sau sunt duplicate.</p>
-        
+
         <h4>Resetați setul de antrenament</h4>
         <p>Doriți să începeți antrenamentul de la zero? Aceasta va reseta și contorul mediei timpului.</p>
-        
+
         ]]></string>
     <string name="alert_no">Nu</string>
     <string name="alert_ok">OK</string>
@@ -304,7 +304,7 @@
     <string name="pref_show_pieces_descriptions">Afișează descrierea amplasării pieselor</string>
     <string name="pref_show_accessibility_drag_toggle">Afișează comutatorul de tragere pentru accesibilitate</string>
     <string name="pref_sound">Sunet</string>
-    <string name="pref_sound_desc">Redat când adversarul mută</string>
+    <string name="pref_haptic_feedback">Folosește feedback haptic</string>
     <string name="pref_speech">Vorbire</string>
     <string name="tts_only_locale_us">Funcția text-în-vorbire acceptă în prezent doar localizarea SUA</string>
     <string name="tts_not_loaded">Nu s-a putut încărca funcția text-în-vorbire</string>

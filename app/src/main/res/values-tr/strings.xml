@@ -304,7 +304,7 @@
     <string name="pref_show_pieces_descriptions">Taşların konum açıklamasını göster</string>
     <string name="pref_show_accessibility_drag_toggle">Erişilebilirlik sürükleme anahtarını göster</string>
     <string name="pref_sound">Ses</string>
-    <string name="pref_sound_desc">Rakip hamle yaptığında çalınır</string>
+    <string name="pref_haptic_feedback">Dokunsal geri bildirim kullan</string>
     <string name="pref_speech">Sesli okuma</string>
     <string name="tts_only_locale_us">Metinden konuşmaya şu anda yalnızca ABD yerel ayarı destekleniyor</string>
     <string name="tts_not_loaded">Metinden konuşma yüklenemedi</string>

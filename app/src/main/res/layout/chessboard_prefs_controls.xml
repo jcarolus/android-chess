@@ -61,13 +61,14 @@
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip" />
 
-        <TextView
+        <CheckBox
+            android:id="@+id/CheckBoxUseHapticFeedback"
+            android:text="@string/pref_haptic_feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="32dip"
-            android:layout_marginRight="8dip"
-            android:layout_marginBottom="8dip"
-            android:text="@string/pref_sound_desc" />
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip" />
 
         <CheckBox
             android:id="@+id/CheckBoxUseWakeLock"

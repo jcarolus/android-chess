@@ -16,7 +16,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxNightMode;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode;
     private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
 
@@ -36,6 +36,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxWakeLock = findViewById(R.id.CheckBoxUseWakeLock);
         checkBoxFullscreen = findViewById(R.id.CheckBoxFullscreen);
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
+        checkBoxHapticFeedback = findViewById(R.id.CheckBoxUseHapticFeedback);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
         sliderSaturation = findViewById(R.id.SliderSaturation);
 
@@ -85,6 +86,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxWakeLock.setChecked(prefs.getBoolean("wakeLock", false));
         checkBoxFullscreen.setChecked(prefs.getBoolean("fullScreen", false));
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
+        checkBoxHapticFeedback.setChecked(prefs.getBoolean("useHapticFeedback", false));
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
 
         dropDownPieces.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
@@ -112,6 +114,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("wakeLock", checkBoxWakeLock.isChecked());
         editor.putBoolean("fullScreen", checkBoxFullscreen.isChecked());
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
+        editor.putBoolean("useHapticFeedback", checkBoxHapticFeedback.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
         editor.putFloat("squareSaturation", sliderSaturation.getValue());
 
