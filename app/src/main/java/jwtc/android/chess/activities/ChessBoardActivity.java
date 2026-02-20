@@ -117,14 +117,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         rebuildBoard();
 
-        if (sounds.isEnabled()) {
-            if (Move.isCheck(move)) {
-                sounds.playCheck();
-            } else if (Move.isHIT(move)) {
-                sounds.playCapture();
-            } else {
-                sounds.playMove();
-            }
+        if (Move.isCheck(move)) {
+            feedbackCheck();
+        } else if (Move.isHIT(move)) {
+            feedbackCapture();
+        } else {
+            feedbackMove();
+
         }
 
         if (!isScreenReaderOn() && textToSpeech != null && moveToSpeech) {
@@ -152,11 +151,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     @Override
     public void OnIllegalMove() {
+        Log.d(TAG, "OnIllegal");
         rebuildBoard();
-        if (sounds.isEnabled()) {
-            Log.d(TAG, "OnIllegal");
-            sounds.playIllegalMove();
-        }
+        feedbackIllegalMove();
     }
 
     public void afterCreate() {
@@ -264,6 +261,42 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
             }
         } catch (Exception ignore) {}
+    }
+
+    public void feedbackCapture() {
+        if (sounds.isEnabled()) {
+            sounds.playCapture();
+        }
+    }
+
+    public void feedbackCheck() {
+        if (sounds.isEnabled()) {
+            sounds.playCheck();
+        }
+    }
+
+    public void feedbackMove() {
+        if (sounds.isEnabled()) {
+            sounds.playMove();
+        }
+    }
+
+    public void feedbackIllegalMove() {
+        if (sounds.isEnabled()) {
+            sounds.playIllegalMove();
+        }
+    }
+
+    public void feedbackNewGame() {
+        if (sounds.isEnabled()) {
+            sounds.playNewGame();
+        }
+    }
+
+    public void feedbackTimeWarning() {
+        if (sounds.isEnabled()) {
+            sounds.playTickTock();
+        }
     }
 
     @Override

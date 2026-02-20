@@ -211,9 +211,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (sounds != null) {
-                sounds.setEnabled(switchSound.isChecked());
-            }
+            sounds.setEnabled(switchSound.isChecked());
         });
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
@@ -817,10 +815,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         updateClockByPrefs(true);
 
-        if (sounds != null) {
-            sounds.playNewGame();
-        }
-
+        feedbackNewGame();
         resetSelectedSquares();
         updateLastMove();
     }

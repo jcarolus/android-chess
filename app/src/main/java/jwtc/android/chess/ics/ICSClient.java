@@ -237,9 +237,7 @@ public class ICSClient extends ChessBoardActivity implements
 
         switchSound = findViewById(R.id.SwitchSound);
         switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (sounds != null) {
-                sounds.setEnabled(switchSound.isChecked());
-            }
+            sounds.setEnabled(switchSound.isChecked());
         });
 
         textViewTitle = findViewById(R.id.TextViewTitle);
@@ -914,14 +912,13 @@ public class ICSClient extends ChessBoardActivity implements
         examineButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_EXAMINE ? View.VISIBLE : View.GONE);
 
         String lastMove = icsApi.getLastMove();
-        if (sounds != null) {
-            if (lastMove.contains("+") || lastMove.contains("#")) {
-                sounds.playCheck();
-            } else if (lastMove.contains("x")) {
-                sounds.playCapture();
-            } else {
-                sounds.playMove();
-            }
+
+        if (lastMove.contains("+") || lastMove.contains("#")) {
+            feedbackCheck();
+        } else if (lastMove.contains("x")) {
+            feedbackCapture();
+        } else {
+            feedbackMove();
         }
     }
 
@@ -971,9 +968,7 @@ public class ICSClient extends ChessBoardActivity implements
         resetSelectedSquares();
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
-                if (sounds != null) {
-                    sounds.playNewGame();
-                }
+                feedbackNewGame();
             }
         }
     }
@@ -1192,8 +1187,8 @@ public class ICSClient extends ChessBoardActivity implements
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
             }
 
-            if (_bTimeWarning && needWarning && sounds != null) {
-                sounds.playTickTock();
+            if (_bTimeWarning && needWarning) {
+                feedbackTimeWarning();
             }
         } else {
             _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
