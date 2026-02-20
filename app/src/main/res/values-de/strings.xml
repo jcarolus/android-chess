@@ -332,6 +332,7 @@
     <string name="pref_accessibility_drag_talkback_reminder">Für barrierefreies Ziehen bitte TalkBack ausschalten.</string>
     <string name="pref_speech_pitch_desc">Sprachhöhe</string>
     <string name="pref_speech_rate_desc">Sprechgeschwindigkeit</string>
+    <string name="pref_speech_voice_system_default">Systemstandard</string>
     <string name="pref_turn">Seite</string>
     <string name="pref_turn_desc">Welche Seite du spielst</string>
     <string name="pref_vs_cpu">gegen CPU</string>

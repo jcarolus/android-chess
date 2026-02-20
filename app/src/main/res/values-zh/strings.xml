@@ -322,6 +322,7 @@
     <string name="pref_accessibility_drag_talkback_reminder">使用无障碍拖拽时，请关闭 TalkBack。</string>
     <string name="pref_speech_pitch_desc">语音音调</string>
     <string name="pref_speech_rate_desc">语速</string>
+    <string name="pref_speech_voice_system_default">系统默认</string>
     <string name="pref_turn">方</string>
     <string name="pref_turn_desc">你执哪方</string>
     <string name="pref_vs_cpu">对战 CPU</string>

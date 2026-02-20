@@ -322,6 +322,7 @@
     <string name="pref_accessibility_drag_talkback_reminder">Para usar o arrasto de acessibilidade, desative o TalkBack.</string>
     <string name="pref_speech_pitch_desc">Tom de voz</string>
     <string name="pref_speech_rate_desc">Velocidade da fala</string>
+    <string name="pref_speech_voice_system_default">Padrão do sistema</string>
     <string name="pref_turn">Lado</string>
     <string name="pref_turn_desc">Qual lado do tabuleiro você joga</string>
     <string name="pref_vs_cpu">contra CPU</string>

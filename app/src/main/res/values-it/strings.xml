@@ -322,6 +322,7 @@
     <string name="pref_accessibility_drag_talkback_reminder">Per il trascinamento accessibile, disattiva TalkBack.</string>
     <string name="pref_speech_pitch_desc">Altezza voce</string>
     <string name="pref_speech_rate_desc">Velocità voce</string>
+    <string name="pref_speech_voice_system_default">Predefinito di sistema</string>
     <string name="pref_turn">Lato</string>
     <string name="pref_turn_desc">Da che lato giochi</string>
     <string name="pref_vs_cpu">contro CPU</string>
