@@ -1,7 +1,6 @@
 package jwtc.android.chess.helpers;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 
@@ -21,17 +20,17 @@ public class Sounds {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        if (enabled) {
+            initSoundPool();
+        }
     }
 
     public boolean getEnabled() {
         return enabled;
     }
 
-    public void initPrefs(SharedPreferences prefs) {
-        enabled = prefs.getBoolean("moveSounds", false);
-        if (enabled) {
-            initSoundPool();
-        }
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public void playCheck() {

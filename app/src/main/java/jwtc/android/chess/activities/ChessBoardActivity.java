@@ -50,7 +50,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected MyClickListener myClickListener;
     protected JNI jni;
     protected ChessBoardView chessBoardView;
-    protected Sounds sounds = null;
+    protected Sounds sounds;
     protected Vibrator vibrator;
 
     protected TextToSpeechApi textToSpeech = null;
@@ -71,6 +71,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        sounds = new Sounds(this);
     }
 
     public boolean requestMove(final int from, final int to) {
@@ -116,7 +117,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         rebuildBoard();
 
-        if (sounds != null) {
+        if (sounds.isEnabled()) {
             if (Move.isCheck(move)) {
                 sounds.playCheck();
             } else if (Move.isHIT(move)) {
@@ -152,7 +153,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void OnIllegalMove() {
         rebuildBoard();
-        if (sounds != null) {
+        if (sounds.isEnabled()) {
             Log.d(TAG, "OnIllegal");
             sounds.playIllegalMove();
         }
@@ -215,8 +216,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         showMoves = prefs.getBoolean("showMoves", false);
 
-        sounds = new Sounds(this);
-        sounds.initPrefs(prefs);
+        sounds.setEnabled(prefs.getBoolean("moveSounds", false));
     }
 
     @Override
