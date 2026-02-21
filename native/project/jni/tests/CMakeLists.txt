@@ -7,6 +7,7 @@ find_package(GTest CONFIG REQUIRED)
 
 add_library(chess_engine STATIC
     ../BoardStack.cpp
+    ../SearchWorkspace.cpp
     ../Pos.cpp
     ../ChessBoard.cpp
     ../ChessBoardState.cpp

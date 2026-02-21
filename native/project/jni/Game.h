@@ -5,6 +5,7 @@
 #include "common.h"
 #include "BoardStack.h"
 #include "ChessBoard.h"
+#include "SearchWorkspace.h"
 
 typedef struct {
     int value;
@@ -68,8 +69,7 @@ class Game {
 
     static const BITBOARD DEFAULT_START_HASH = -8567268772865283918LL;
     BoardStack m_boardStack;
-    ChessBoard* m_boardFactory[MAX_DEPTH];
-    ChessBoard* m_boardRefurbish;
+    SearchWorkspace m_searchWorkspace;
     int m_promotionPiece;
     MoveAndValue m_arrBestMoves[MAX_DEPTH];
 };

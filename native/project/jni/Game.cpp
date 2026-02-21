@@ -2,25 +2,13 @@
 
 Game *Game::game = nullptr;
 
-Game::Game(void) {
+Game::Game(void) : m_searchWorkspace(MAX_DEPTH) {
     m_promotionPiece = ChessBoard::QUEEN;
-    for (int i = 0; i < MAX_DEPTH; i++) {
-        m_boardFactory[i] = new ChessBoard();
-    }
-    m_boardRefurbish = new ChessBoard();
     m_bSearching = false;
     reset();
 }
 
 Game::~Game(void) {
-    delete m_boardRefurbish;
-
-    // boardFactory boards are scratch buffers; reset severs any parent links before deletion.
-    for (int i = 0; i < MAX_DEPTH; i++) {
-        m_boardFactory[i]->reset();
-        delete m_boardFactory[i];
-        m_boardFactory[i] = nullptr;
-    }
 }
 
 // the non thread safe solution; assumption is that getInsance is called before any threads are created
@@ -51,10 +39,8 @@ void Game::reset() {
 
     ChessBoard *board = getBoard();
     board->reset();
-    board->calcState(m_boardRefurbish);
-    for (int i = 0; i < MAX_DEPTH; i++) {
-        m_boardFactory[i]->reset();
-    }
+    board->calcState(m_searchWorkspace.refurbish());
+    m_searchWorkspace.reset();
 
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     for (int i = 0; i < MAX_DEPTH; i++) {
@@ -84,7 +70,7 @@ void Game::commitBoard() {
     }
     ChessBoard *board = getBoard();
     board->commitBoard();
-    board->calcState(m_boardRefurbish);
+    board->calcState(m_searchWorkspace.refurbish());
 }
 
 ChessBoard *Game::getBoard() {
@@ -98,9 +84,11 @@ void Game::setPromo(int p) {
 int Game::getBestMove() {
     return m_bestMoveAndValue.move;
 }
+
 int Game::getBestDuckMove() {
     return m_bestMoveAndValue.duckMove;
 }
+
 int Game::getBestValue() {
     return m_bestMoveAndValue.value;
 }
@@ -126,8 +114,8 @@ boolean Game::requestMove(int from, int to) {
 
     ChessBoard *nb = new ChessBoard();
     ChessBoard *board = getBoard();
-    board->calcState(m_boardRefurbish);
-    boolean moved = board->requestMove(from, to, nb, m_boardRefurbish, m_promotionPiece);
+    board->calcState(m_searchWorkspace.refurbish());
+    boolean moved = board->requestMove(from, to, nb, m_searchWorkspace.refurbish(), m_promotionPiece);
     return m_boardStack.promoteOrDiscard(nb, moved);
 }
 
@@ -137,7 +125,7 @@ boolean Game::requestDuckMove(int duckPos) {
     }
 
     ChessBoard *board = getBoard();
-    board->calcState(m_boardRefurbish);
+    board->calcState(m_searchWorkspace.refurbish());
     if (board->requestDuckMove(duckPos)) {
         board->genMoves();
         return true;
@@ -152,8 +140,8 @@ boolean Game::move(int move) {
 
     ChessBoard *nb = new ChessBoard();
     ChessBoard *board = getBoard();
-    board->calcState(m_boardRefurbish);
-    boolean moved = board->requestMove(move, nb, m_boardRefurbish);
+    board->calcState(m_searchWorkspace.refurbish());
+    boolean moved = board->requestMove(move, nb, m_searchWorkspace.refurbish());
     return m_boardStack.promoteOrDiscard(nb, moved);
 }
 
@@ -164,6 +152,7 @@ void Game::undo() {
 
     m_boardStack.undo();
 }
+
 // allowAttack, if a new piece on the board is allowed to attack immediatly,
 // for crazyhouse that's ok, for parachute not
 boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowAttack) {
@@ -173,6 +162,6 @@ boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowA
 
     ChessBoard *nextBoard = new ChessBoard();
     ChessBoard *board = getBoard();
-    boolean moved = board->putHouse(pos, piece, nextBoard, m_boardRefurbish, allowAttack);
+    boolean moved = board->putHouse(pos, piece, nextBoard, m_searchWorkspace.refurbish(), allowAttack);
     return m_boardStack.promoteOrDiscard(nextBoard, moved);
 }

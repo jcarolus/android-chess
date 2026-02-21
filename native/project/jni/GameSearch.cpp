@@ -50,7 +50,7 @@ void Game::search() {
     m_evalCount = 0;
 
     ChessBoard *board = getBoard();
-    board->calcState(m_boardRefurbish);
+    board->calcState(m_searchWorkspace.refurbish());
 
     if (board->isEnded()) {
         return;
@@ -71,7 +71,7 @@ void Game::search() {
         m_arrBestMoves[i] = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     }
 
-    ChessBoard *searchBoard = m_boardFactory[0];
+    ChessBoard *searchBoard = m_searchWorkspace.boardAt(0);
     board->duplicate(searchBoard);
     if (m_milliesGiven > 0) {
         DEBUG_PRINT("Search with millies given %ld", m_milliesGiven);
@@ -156,7 +156,7 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
 
     MoveAndValue best = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
     MoveAndValue current;
-    ChessBoard *nextBoard = m_boardFactory[depth];
+    ChessBoard *nextBoard = m_searchWorkspace.boardAt(depth);
 
     while (board->hasMoreMoves()) {
         current = (MoveAndValue){.value = 0, .move = board->getNextScoredMove(), .duckMove = -1};
@@ -233,7 +233,7 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
         alpha = boardValue;
     }
 
-    ChessBoard *nextBoard = m_boardFactory[MAX_DEPTH - depth];
+    ChessBoard *nextBoard = m_searchWorkspace.boardAt(MAX_DEPTH - depth);
     board->scoreMoves();
     while (board->hasMoreMoves()) {
         int move = board->getNextScoredMove();
@@ -297,7 +297,7 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
     board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth].move);
 
     MoveAndValue best = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
-    ChessBoard *nextBoard = m_boardFactory[depth];
+    ChessBoard *nextBoard = m_searchWorkspace.boardAt(depth);
 
     while (board->hasMoreMoves()) {
         MoveAndValue current = {.value = 0, .move = board->getNextScoredMove(), .duckMove = -1};
@@ -321,7 +321,7 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
                     continue;
                 }
 
-                duckBoard->calcState(m_boardRefurbish);
+                duckBoard->calcState(m_searchWorkspace.refurbish());
                 duckBoard->getMoves();
                 currentDuck.value = -alphaBetaDuck(duckBoard, depth - 1, -beta, -alpha);
 
