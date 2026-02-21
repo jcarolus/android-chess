@@ -5,6 +5,8 @@ Game *Game::game = nullptr;
 Game::Game(void) : m_searchWorkspace(MAX_DEPTH) {
     m_promotionPiece = ChessBoard::QUEEN;
     m_bSearching = false;
+    m_quiescentSearchOn = true;
+    m_evalCount = 0;
     reset();
 }
 
@@ -105,6 +107,18 @@ int Game::getBestDuckMoveAt(int ply) {
         return m_arrBestMoves[ply].duckMove;
     }
     return -1;
+}
+
+int Game::getSearchDepth() const {
+    return m_searchSession.searchDepth();
+}
+
+int Game::getEvalCount() const {
+    return m_evalCount;
+}
+
+void Game::interruptSearch() {
+    m_searchSession.interrupt();
 }
 
 boolean Game::requestMove(int from, int to) {

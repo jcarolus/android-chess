@@ -81,10 +81,10 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchBestValue(JNIEnv* env, jobje
     return Game::getInstance()->getBestValue();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchDepth(JNIEnv* env, jobject thiz) {
-    return Game::getInstance()->m_searchDepth;
+    return Game::getInstance()->getSearchDepth();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEvalCount(JNIEnv* env, jobject thiz) {
-    return Game::getInstance()->m_evalCount;
+    return Game::getInstance()->getEvalCount();
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setPromo(JNIEnv* env, jobject thiz, jint piece) {
     Game::getInstance()->setPromo(piece);
@@ -199,7 +199,7 @@ JNIEXPORT BITBOARD JNICALL Java_jwtc_chess_JNI_getHashKey(JNIEnv* env, jobject t
     return Game::getInstance()->getBoard()->getHashKey();
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_interrupt(JNIEnv* env, jobject thiz) {
-    Game::getInstance()->m_bInterrupted = true;
+    Game::getInstance()->interruptSearch();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumCaptured(JNIEnv* env, jobject thiz, jint turn, jint piece) {
     return Game::getInstance()->getBoard()->getNumCaptured(turn, piece);

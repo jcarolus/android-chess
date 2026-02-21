@@ -18,20 +18,14 @@ void Game::setSearchTime(int secs) {
     if (m_bSearching.load()) {
         return;
     }
-    m_milliesGiven = (long) secs;
-    m_searchLimit = 0;
+    m_searchSession.configureTime((long) secs);
 }
 
 void Game::setSearchLimit(int depth) {
     if (m_bSearching.load()) {
         return;
     }
-    m_milliesGiven = 0;
-    if (depth <= MAX_DEPTH - QUIESCE_DEPTH) {
-        m_searchLimit = depth;
-    } else {
-        m_searchLimit = MAX_DEPTH - QUIESCE_DEPTH;
-    }
+    m_searchSession.configureDepthLimit(depth, MAX_DEPTH - QUIESCE_DEPTH);
 }
 
 void Game::search() {
@@ -46,8 +40,8 @@ void Game::search() {
     } searchGuard{&m_bSearching};
 
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
-    m_bInterrupted = false;
     m_evalCount = 0;
+    m_searchSession.begin();
 
     ChessBoard *board = getBoard();
     board->calcState(m_searchWorkspace.refurbish());
@@ -64,8 +58,6 @@ void Game::search() {
     int variant = board->getVariant();
     m_evalCount++;
 
-    startTime();
-
     char moveBuf[20], duckMoveBuf[4];
     for (int i = 0; i < MAX_DEPTH; i++) {
         m_arrBestMoves[i] = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
@@ -73,23 +65,30 @@ void Game::search() {
 
     ChessBoard *searchBoard = m_searchWorkspace.boardAt(0);
     board->duplicate(searchBoard);
-    if (m_milliesGiven > 0) {
-        DEBUG_PRINT("Search with millies given %ld", m_milliesGiven);
+    if (m_searchSession.timeBudgetMillis() > 0) {
+        DEBUG_PRINT("Search with millies given %ld", m_searchSession.timeBudgetMillis());
 
-        for (m_searchDepth = 1; m_searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); m_searchDepth++) {
+        for (int searchDepth = 1; searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); searchDepth++) {
+            m_searchSession.setSearchDepth(searchDepth);
             if (variant == ChessBoard::VARIANT_DEFAULT) {
-                alphaBeta(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+                alphaBeta(searchBoard,
+                          m_searchSession.searchDepth(),
+                          -ChessBoard::VALUATION_MATE,
+                          ChessBoard::VALUATION_MATE);
             } else {
-                alphaBetaDuck(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+                alphaBetaDuck(searchBoard,
+                              m_searchSession.searchDepth(),
+                              -ChessBoard::VALUATION_MATE,
+                              ChessBoard::VALUATION_MATE);
             }
 
             DEBUG_PRINT("Searched at depth %d - value: %d - move: %d - num moves: %d\n",
-                        m_searchDepth,
+                        m_searchSession.searchDepth(),
                         m_arrBestMoves[0].value,
-                        getBestMoveAt(m_searchDepth),
+                        getBestMoveAt(m_searchSession.searchDepth()),
                         board->getNumMoves());
 
-            if (m_bInterrupted) {
+            if (m_searchSession.interrupted()) {
                 break;
             }
 
@@ -106,45 +105,52 @@ void Game::search() {
                 break;
             }
 
-            if (usedTime()) {
+            if (m_searchSession.usedTime()) {
                 DEBUG_PRINT("Time over 50 pct - no further deepening\n");
                 break;
             }
         }
     } else {
-        DEBUG_PRINT("Search with limit given: %d\n", m_searchLimit);
-        m_searchDepth = m_searchLimit;
+        DEBUG_PRINT("Search with limit given: %d\n", m_searchSession.searchLimit());
+        m_searchSession.setSearchDepth(m_searchSession.searchLimit());
         if (variant == ChessBoard::VARIANT_DEFAULT) {
-            alphaBeta(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+            alphaBeta(searchBoard,
+                      m_searchSession.searchDepth(),
+                      -ChessBoard::VALUATION_MATE,
+                      ChessBoard::VALUATION_MATE);
         } else {
-            alphaBetaDuck(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
+            alphaBetaDuck(searchBoard,
+                          m_searchSession.searchDepth(),
+                          -ChessBoard::VALUATION_MATE,
+                          ChessBoard::VALUATION_MATE);
         }
         m_bestMoveAndValue = m_arrBestMoves[0];
     }
 
-    if (m_bInterrupted) {
+    if (m_searchSession.interrupted()) {
         DEBUG_PRINT("Interrupted search\n");
     }
 
     Move::toDbgString(m_bestMoveAndValue.move, moveBuf);
     Pos::toString(m_bestMoveAndValue.duckMove, duckMoveBuf);
+    long elapsed = m_searchSession.timePassed();
     DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
                 m_bestMoveAndValue.value,
                 m_evalCount,
                 moveBuf,
                 duckMoveBuf,
-                m_searchDepth,
-                timePassed(),
-                (double) m_evalCount / timePassed());
+                m_searchSession.searchDepth(),
+                elapsed,
+                elapsed > 0 ? (double) m_evalCount / elapsed : 0.0);
 }
 
 int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int beta) {
     if (m_evalCount % 1000 == 0) {
-        if (timeUp()) {
-            m_bInterrupted = true;
+        if (m_searchSession.timeUp()) {
+            m_searchSession.interrupt();
         }
     }
-    if (m_bInterrupted || depth >= MAX_DEPTH) {
+    if (m_searchSession.interrupted() || depth >= MAX_DEPTH) {
         return alpha;
     }
 
@@ -152,7 +158,8 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
         return ChessBoard::VALUATION_DRAW;
     }
 
-    board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth].move);
+    int currentPly = m_searchSession.searchDepth() - depth;
+    board->scoreMovesPV(m_arrBestMoves[currentPly].move);
 
     MoveAndValue best = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
     MoveAndValue current;
@@ -179,15 +186,15 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
             current.value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
         }
 
-        if (current.value > best.value && !m_bInterrupted) {
+        if (current.value > best.value && !m_searchSession.interrupted()) {
             best = current;
-            m_arrBestMoves[m_searchDepth - depth] = current;
+            m_arrBestMoves[currentPly] = current;
         }
 
         if (best.value > alpha) {
             alpha = best.value;
         }
-        if (best.value >= beta || m_bInterrupted) {
+        if (best.value >= beta || m_searchSession.interrupted()) {
             break;
         }
     }
@@ -205,12 +212,12 @@ int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int bet
 
 int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta) {
     if (m_evalCount % 1000 == 0) {
-        if (timeUp()) {
-            m_bInterrupted = true;
+        if (m_searchSession.timeUp()) {
+            m_searchSession.interrupt();
         }
     }
 
-    if (m_bInterrupted || depth >= MAX_DEPTH) {
+    if (m_searchSession.interrupted() || depth >= MAX_DEPTH) {
         return alpha;
     }
 
@@ -273,11 +280,11 @@ int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta)
 
 int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int beta) {
     if (m_evalCount % 1000 == 0) {
-        if (timeUp()) {
-            m_bInterrupted = true;
+        if (m_searchSession.timeUp()) {
+            m_searchSession.interrupt();
         }
     }
-    if (m_bInterrupted || depth >= MAX_DEPTH) {
+    if (m_searchSession.interrupted() || depth >= MAX_DEPTH) {
         return alpha;
     }
 
@@ -294,7 +301,8 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
         return board->boardValue();
     }
 
-    board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth].move);
+    int currentPly = m_searchSession.searchDepth() - depth;
+    board->scoreMovesPV(m_arrBestMoves[currentPly].move);
 
     MoveAndValue best = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
     ChessBoard *nextBoard = m_searchWorkspace.boardAt(depth);
@@ -331,7 +339,7 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
                 if (bestDuck.value > alpha) {
                     alpha = bestDuck.value;
                 }
-                if (bestDuck.value >= beta || m_bInterrupted) {
+                if (bestDuck.value >= beta || m_searchSession.interrupted()) {
                     break;
                 }
             }
@@ -342,15 +350,15 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
             current.value = -nextBoard->boardValue();
         }
 
-        if (current.value > best.value && !m_bInterrupted) {
+        if (current.value > best.value && !m_searchSession.interrupted()) {
             best = current;
-            m_arrBestMoves[m_searchDepth - depth] = current;
+            m_arrBestMoves[currentPly] = current;
         }
 
         if (best.value > alpha) {
             alpha = best.value;
         }
-        if (best.value >= beta || m_bInterrupted) {
+        if (best.value >= beta || m_searchSession.interrupted()) {
             break;
         }
     }
@@ -361,37 +369,6 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
     }
 
     return best.value;
-}
-
-#pragma endregion
-
-#pragma region Search timing functions
-
-void Game::startTime() {
-    timeval time;
-    gettimeofday(&time, nullptr);
-    m_millies = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-}
-
-boolean Game::timeUp() {
-    if (m_milliesGiven == 0) {
-        return false;
-    }
-    timeval time;
-    gettimeofday(&time, nullptr);
-    return m_milliesGiven < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies);
-}
-
-boolean Game::usedTime() {
-    timeval time;
-    gettimeofday(&time, nullptr);
-    return (m_milliesGiven / 3) < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies);
-}
-
-long Game::timePassed() {
-    timeval time;
-    gettimeofday(&time, nullptr);
-    return ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies);
 }
 
 #pragma endregion
