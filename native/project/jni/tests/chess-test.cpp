@@ -9,7 +9,7 @@ void ChessTest::startSearchThread() {
 
 bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
     scenario.game->newGameFromFEN(scenario.sInFEN);
-
+    scenario.game->setQuiescentOn(true);
     scenario.game->setSearchLimit(scenario.depth);
 
     char buf[1024];
