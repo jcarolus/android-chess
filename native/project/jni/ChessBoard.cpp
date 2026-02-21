@@ -1824,7 +1824,7 @@ void ChessBoard::toFENBoard(char* s) {
         }
         if (i > 0 && i % 8 == 0) {
             if (numEmpty > 0) {
-                sprintf(buf, "%d", numEmpty);
+                snprintf(buf, sizeof(buf), "%d", numEmpty);
                 strcat(s, buf);
                 numEmpty = 0;
             }
@@ -1836,7 +1836,7 @@ void ChessBoard::toFENBoard(char* s) {
             numEmpty++;
         } else {
             if (numEmpty > 0) {
-                sprintf(buf, "%d", numEmpty);
+                snprintf(buf, sizeof(buf), "%d", numEmpty);
                 strcat(s, buf);
             }
             strcat(s, sP);
@@ -1844,7 +1844,7 @@ void ChessBoard::toFENBoard(char* s) {
         }
     }
     if (numEmpty > 0) {
-        sprintf(buf, "%d", numEmpty);
+        snprintf(buf, sizeof(buf), "%d", numEmpty);
         strcat(s, buf);
     }
     strcat(s, " ");
@@ -1989,7 +1989,7 @@ void ChessBoard::toFEN(char* s) {
     }
 
     strcat(s, " ");
-    sprintf(buf, "%d", m_50RuleCount);
+    snprintf(buf, sizeof(buf), "%d", m_50RuleCount);
     strcat(s, buf);
     strcat(s, " ");
     int cnt = 0;
@@ -2000,7 +2000,7 @@ void ChessBoard::toFEN(char* s) {
         tmpBoard = tmpBoard->m_parent;
     }
     cnt = cnt / 2 + 1;
-    sprintf(buf, "%d", cnt);
+    snprintf(buf, sizeof(buf), "%d", cnt);
     strcat(s, buf);
 }
 
@@ -4145,14 +4145,16 @@ void ChessBoard::bitbToString(const BITBOARD bb, char* ret) {
 
 void ChessBoard::printB(char* s) {
     char buf[1024];
-    sprintf(s,
-            "\n# %d. State %d qualities: %d, %d\nCastling %d %d\n",
-            m_numBoard,
-            m_state,
-            m_qualities[m_turn],
-            m_qualities[m_o_turn],
-            m_castlings[m_turn],
-            m_castlings[m_o_turn]);
+    snprintf(buf,
+             sizeof(buf),
+             "\n# %d. State %d qualities: %d, %d\nCastling %d %d\n",
+             m_numBoard,
+             m_state,
+             m_qualities[m_turn],
+             m_qualities[m_o_turn],
+             m_castlings[m_turn],
+             m_castlings[m_o_turn]);
+    strcpy(s, buf);
 
     // s += "HashKey "+ "\n";
     // s += bitbToString(m_hashKey)+ "\n";
