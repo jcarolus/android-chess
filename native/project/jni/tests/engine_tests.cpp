@@ -337,6 +337,39 @@ void testThreefoldRepetition() {
     EXPECT_TRUE(game->getBoard()->getState() == ChessBoard::DRAW_REPEAT);
 }
 
+void testBoardEvaluationHeuristics() {
+    struct EvalScenario {
+        const char *betterFen;
+        const char *worseFen;
+        const char *message;
+    };
+
+    const EvalScenario scenarios[] = {
+        {"4k3/8/8/8/8/8/3Qp3/4K3 w - - 0 1", "4k3/8/8/8/8/8/3Rp3/4K3 w - - 0 1", "Queen vs rook material"},
+        {"4k3/8/8/8/8/8/3Rp3/4K3 w - - 0 1", "4k3/8/8/8/8/8/3Bp3/4K3 w - - 0 1", "Rook vs bishop material"},
+        {"4k3/7p/4P3/8/8/8/8/4K3 w - - 0 1", "4k3/7p/8/8/8/4P3/8/4K3 w - - 0 1", "Pawn advancement bonus"},
+        {"4k3/4p3/8/8/3N4/8/8/4K3 w - - 0 1", "4k3/4p3/8/8/8/8/N7/4K3 w - - 0 1", "Knight centralization"},
+        {"4k3/8/8/8/8/8/4p3/R3K2R w KQ - 0 1", "4k3/8/8/8/8/8/4p3/R3K2R w - - 0 1", "Castling rights value"},
+        {"4k3/4p3/8/8/8/8/8/3QK3 w - - 0 1", "4k3/4p3/8/8/8/3Q4/8/4K3 w - - 0 1", "Early queen penalty"},
+        {"4k3/2p1p3/8/8/8/8/2P1P3/4K3 w - - 0 1", "4k3/2p1p3/8/8/8/2P5/2P5/4K3 w - - 0 1", "Doubled pawn penalty"},
+        {"4k1n1/1b2p3/8/8/2B2B2/8/8/4K3 w - - 0 1", "4k1n1/1b2p3/8/8/2B2N2/8/8/4K3 w - - 0 1", "Bishop pair preference"},
+        {"4k3/4p3/8/8/8/4P3/8/4K3 w - - 0 1", "4k3/4p3/8/8/8/8/4P3/4K3 w - - 0 1", "Center pawn development"},
+    };
+
+    Game *game = Game::getInstance();
+    for (const EvalScenario &scenario : scenarios) {
+        SCOPED_TRACE(scenario.message);
+
+        ASSERT_TRUE(game->newGameFromFEN(scenario.betterFen));
+        const int better = game->getBoard()->boardValue();
+
+        ASSERT_TRUE(game->newGameFromFEN(scenario.worseFen));
+        const int worse = game->getBoard()->boardValue();
+
+        EXPECT_GT(better, worse);
+    }
+}
+
 class GameTest : public ::testing::Test {
    protected:
     void SetUp() override {
@@ -394,6 +427,10 @@ TEST_F(GameTest, GameLifecycleRegression) {
 
 TEST_F(GameTest, ThreefoldRepetition) {
     testThreefoldRepetition();
+}
+
+TEST_F(GameTest, BoardEvaluationHeuristics) {
+    testBoardEvaluationHeuristics();
 }
 
 }  // namespace
