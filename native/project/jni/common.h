@@ -21,16 +21,16 @@
 #if DEBUG_MODE
 #if TARGET_ANDROID
 #include <android/log.h>
-#define DEBUG_PRINT(x...) do { \
+#define DEBUG_PRINT(fmt, ...) do { \
   char buf[512]; \
-  sprintf(buf, x); \
+  snprintf(buf, sizeof(buf), fmt, ##__VA_ARGS__); \
   __android_log_print(ANDROID_LOG_ERROR,"JNI-CHESS", "%s | %s:%i", buf, __FILE__, __LINE__); \
 } while (0)
 #else
-#define DEBUG_PRINT(s, args...) fprintf(stdout, s, args)
+#define DEBUG_PRINT(fmt, ...) fprintf(stdout, fmt, ##__VA_ARGS__)
 #endif
 #else
-#define DEBUG_PRINT(s, args...)
+#define DEBUG_PRINT(fmt, ...)
 #endif
 
 #ifdef _MSC_VER

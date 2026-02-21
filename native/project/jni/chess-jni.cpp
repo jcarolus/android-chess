@@ -283,21 +283,21 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     JNIEnv* env = nullptr;
     jint result = -1;
 
-    DEBUG_PRINT("JNI_OnLoad called\n", 0);
+    DEBUG_PRINT("JNI_OnLoad called\n");
 
     if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
-        DEBUG_PRINT("vm->GetEnv failed\n", 0);
+        DEBUG_PRINT("vm->GetEnv failed\n");
         return result;
     }
 
     jniRegisterNativeMethods(env, "jwtc/chess/JNI", sMethods, 1);
 
-    DEBUG_PRINT("Getting pointer to JavaVM...\n", 0);
+    DEBUG_PRINT("Getting pointer to JavaVM...\n");
     if (env->GetJavaVM(&jvm) < 0) {
-        DEBUG_PRINT("Could not get pointer to JavaVM\n", 0);
+        DEBUG_PRINT("Could not get pointer to JavaVM\n");
     }
 
-    DEBUG_PRINT("JNI_OnLoad is DONE!\n", 0);
+    DEBUG_PRINT("JNI_OnLoad is DONE!\n");
 
     return JNI_VERSION_1_4;
 }

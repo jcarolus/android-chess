@@ -189,7 +189,7 @@ void Game::setSearchLimit(int depth) {
 
 void Game::search() {
     if (m_bSearching) {
-        DEBUG_PRINT("Already searching!", 0);
+        DEBUG_PRINT("Already searching!");
         return;
     }
     m_bSearching = true;
@@ -206,7 +206,7 @@ void Game::search() {
     }
 
     if (m_board->getNumMoves() == 0) {
-        DEBUG_PRINT("NO moves!", 0);
+        DEBUG_PRINT("NO moves!");
         m_bSearching = false;
         return;
     }
@@ -255,13 +255,13 @@ void Game::search() {
                             DEBUG_PRINT("%s,", moveBuf);
                         }
                     }
-                    DEBUG_PRINT("Found checkmate, stopping search\n", 0);
+                    DEBUG_PRINT("Found checkmate, stopping search\n");
                     break;
                 }
 
                 // bail out if we're over 50% of time, next depth will take more than sum of previous
                 if (usedTime()) {
-                    DEBUG_PRINT("Time over 50 pct - no further deepening\n", 0);
+                    DEBUG_PRINT("Time over 50 pct - no further deepening\n");
                     break;
                 }
             }
@@ -279,7 +279,7 @@ void Game::search() {
     }
 
     if (m_bInterrupted) {
-        DEBUG_PRINT("Interrupted search\n", 0);
+        DEBUG_PRINT("Interrupted search\n");
     }
 
     Move::toDbgString(m_bestMoveAndValue.move, moveBuf);

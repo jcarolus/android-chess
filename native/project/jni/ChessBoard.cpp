@@ -377,7 +377,7 @@ int ChessBoard::ambigiousMove() {
 boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece) {
     // if duckPos was not set, the previous turn was not completed, so no valid piece move
     if (m_variant == VARIANT_DUCK && m_duckPos == -1 && m_parent != nullptr) {
-        DEBUG_PRINT("requestMove duck with duckPos -1", 0);
+        DEBUG_PRINT("requestMove duck with duckPos -1");
         return false;
     }
     if (isEnded()) {
@@ -400,7 +400,7 @@ boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board,
             return true;
         }
     }
-    DEBUG_PRINT("requestMove exhausted all moves", 0);
+    DEBUG_PRINT("requestMove exhausted all moves");
     return false;
 }
 

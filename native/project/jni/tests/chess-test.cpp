@@ -219,35 +219,35 @@ void ChessTest::printFENAndState(ChessBoard *board) {
 
     switch (state) {
         case ChessBoard::PLAY:
-            DEBUG_PRINT("Play\n", 0);
+            DEBUG_PRINT("Play\n");
             break;
 
         case ChessBoard::CHECK:
-            DEBUG_PRINT("Check\n", 0);
+            DEBUG_PRINT("Check\n");
             break;
 
         case ChessBoard::INVALID:
-            DEBUG_PRINT("Invalid\n", 0);
+            DEBUG_PRINT("Invalid\n");
             break;
 
         case ChessBoard::DRAW_MATERIAL:
-            DEBUG_PRINT("Draw material\n", 0);
+            DEBUG_PRINT("Draw material\n");
             break;
 
         case ChessBoard::DRAW_50:
-            DEBUG_PRINT("Draw 50 move\n", 0);
+            DEBUG_PRINT("Draw 50 move\n");
             break;
 
         case ChessBoard::MATE:
-            DEBUG_PRINT("Mate\n", 0);
+            DEBUG_PRINT("Mate\n");
             break;
 
         case ChessBoard::STALEMATE:
-            DEBUG_PRINT("Stalemate\n", 0);
+            DEBUG_PRINT("Stalemate\n");
             break;
 
         case ChessBoard::DRAW_REPEAT:
-            DEBUG_PRINT("Draw repetition\n", 0);
+            DEBUG_PRINT("Draw repetition\n");
             break;
 
         default:
