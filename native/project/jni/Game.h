@@ -56,6 +56,8 @@ class Game {
     boolean m_quiescentSearchOn;
 
    protected:
+    void clearBoardHistory();
+
     MoveAndValue m_bestMoveAndValue;
     long m_millies, m_milliesGiven;
 

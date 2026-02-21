@@ -13,23 +13,28 @@ Game::Game(void) {
     reset();
 }
 
-Game::~Game(void) {
-    // clean up history
+void Game::clearBoardHistory() {
     ChessBoard *cb, *tmp;
     while ((cb = m_board->undoMove()) != nullptr) {
         tmp = m_board;
         m_board = cb;
         delete tmp;
     }
+}
+
+Game::~Game(void) {
+    clearBoardHistory();
 
     delete m_board;
 
     delete m_boardRefurbish;
 
-    // somehow boardFactory seems to cause segmentation
-//        for (int i = 0; i < MAX_DEPTH; i++) {
-//            delete m_boardFactory[i];
-//        }
+    // boardFactory boards are scratch buffers; reset severs any parent links before deletion.
+    for (int i = 0; i < MAX_DEPTH; i++) {
+        m_boardFactory[i]->reset();
+        delete m_boardFactory[i];
+        m_boardFactory[i] = nullptr;
+    }
 }
 
 // the non thread safe solution; assumption is that getInsance is called before any threads are created
@@ -54,20 +59,16 @@ void *Game::search_wrapper(void *arg) {
 }
 
 void Game::reset() {
-    // clean up history
-    ChessBoard *cb, *tmp;
-    while ((cb = m_board->undoMove()) != nullptr) {
-        tmp = m_board;
-        m_board = cb;
-        delete tmp;
-    }
+    clearBoardHistory();
 
     m_board->reset();
     m_board->calcState(m_boardRefurbish);
+    for (int i = 0; i < MAX_DEPTH; i++) {
+        m_boardFactory[i]->reset();
+    }
 
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
-    int i;
-    for (i = 0; i < MAX_DEPTH; i++) {
+    for (int i = 0; i < MAX_DEPTH; i++) {
         m_arrBestMoves[i] = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     }
 }

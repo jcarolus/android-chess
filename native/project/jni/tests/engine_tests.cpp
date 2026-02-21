@@ -200,6 +200,38 @@ void testMoves() {
     }
 }
 
+void testFenParsingRegression() {
+    Game *game = Game::getInstance();
+    char buf[255];
+
+    static constexpr const char *startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    static constexpr const char *duckFen = "rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+    ASSERT_TRUE(game->newGameFromFEN(startFen));
+    game->getBoard()->toFEN(buf);
+    EXPECT_STREQ(startFen, buf);
+
+    EXPECT_FALSE(game->newGameFromFEN("invalid-fen"));
+
+    ASSERT_TRUE(game->newGameFromFEN(duckFen));
+    game->getBoard()->toFEN(buf);
+    EXPECT_STREQ(duckFen, buf);
+}
+
+void testGameLifecycleRegression() {
+    static constexpr const char *fen = "3r1K2/8/5k2/8/8/8/8/8 w - - 0 1";
+    char buf[255];
+
+    for (int i = 0; i < 3; i++) {
+        Game::deleteInstance();
+        Game *game = Game::getInstance();
+        ASSERT_NE(game, nullptr);
+        ASSERT_TRUE(game->newGameFromFEN(fen));
+        game->getBoard()->toFEN(buf);
+        EXPECT_STREQ(fen, buf);
+    }
+}
+
 class GameTest : public ::testing::Test {
    protected:
     void SetUp() override {
@@ -245,6 +277,14 @@ TEST_F(GameTest, EngineUntilExpectedState) {
 
 TEST_F(GameTest, MovesForPosition) {
     testMoves();
+}
+
+TEST_F(GameTest, FenParsingRegression) {
+    testFenParsingRegression();
+}
+
+TEST_F(GameTest, GameLifecycleRegression) {
+    testGameLifecycleRegression();
 }
 
 }  // namespace
