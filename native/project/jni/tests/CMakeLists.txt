@@ -11,6 +11,7 @@ add_library(chess_engine STATIC
     ../SearchWorkspace.cpp
     ../Pos.cpp
     ../ChessBoard.cpp
+    ../BoardEvaluation.cpp
     ../ChessBoardState.cpp
     ../ChessBoardNotation.cpp
     ../Move.cpp

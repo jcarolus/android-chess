@@ -12,6 +12,7 @@ LOCAL_SRC_FILES := chess-jni.cpp\
 		Pos.cpp\
 		Move.cpp\
 		ChessBoard.cpp\
+		BoardEvaluation.cpp\
 		ChessBoardState.cpp\
 		ChessBoardNotation.cpp\
 		Game.cpp\

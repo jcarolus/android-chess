@@ -757,7 +757,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 updateSelectedSquares();
                 feedbackSelect();
                 if (textToSpeech.isEnabled()) {
-                    textToSpeech.queueSpeech(getString(R.string.tts_selected));
+                    textToSpeech.moveToSpeech(getFieldDescription(pos));
                 }
             }
         };
