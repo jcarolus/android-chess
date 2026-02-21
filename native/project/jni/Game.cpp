@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <memory>
+
 Game *Game::game = nullptr;
 
 Game::Game(void) : m_searchWorkspace(MAX_DEPTH) {
@@ -126,11 +128,11 @@ boolean Game::requestMove(int from, int to) {
         return false;
     }
 
-    ChessBoard *nb = new ChessBoard();
+    std::unique_ptr<ChessBoard> nb(new ChessBoard());
     ChessBoard *board = getBoard();
     board->calcState(m_searchWorkspace.refurbish());
-    boolean moved = board->requestMove(from, to, nb, m_searchWorkspace.refurbish(), m_promotionPiece);
-    return m_boardStack.promoteOrDiscard(nb, moved);
+    boolean moved = board->requestMove(from, to, nb.get(), m_searchWorkspace.refurbish(), m_promotionPiece);
+    return m_boardStack.promoteOrDiscard(std::move(nb), moved);
 }
 
 boolean Game::requestDuckMove(int duckPos) {
@@ -152,11 +154,11 @@ boolean Game::move(int move) {
         return false;
     }
 
-    ChessBoard *nb = new ChessBoard();
+    std::unique_ptr<ChessBoard> nb(new ChessBoard());
     ChessBoard *board = getBoard();
     board->calcState(m_searchWorkspace.refurbish());
-    boolean moved = board->requestMove(move, nb, m_searchWorkspace.refurbish());
-    return m_boardStack.promoteOrDiscard(nb, moved);
+    boolean moved = board->requestMove(move, nb.get(), m_searchWorkspace.refurbish());
+    return m_boardStack.promoteOrDiscard(std::move(nb), moved);
 }
 
 void Game::undo() {
@@ -174,8 +176,8 @@ boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowA
         return false;
     }
 
-    ChessBoard *nextBoard = new ChessBoard();
+    std::unique_ptr<ChessBoard> nextBoard(new ChessBoard());
     ChessBoard *board = getBoard();
-    boolean moved = board->putHouse(pos, piece, nextBoard, m_searchWorkspace.refurbish(), allowAttack);
-    return m_boardStack.promoteOrDiscard(nextBoard, moved);
+    boolean moved = board->putHouse(pos, piece, nextBoard.get(), m_searchWorkspace.refurbish(), allowAttack);
+    return m_boardStack.promoteOrDiscard(std::move(nextBoard), moved);
 }

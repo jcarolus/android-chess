@@ -315,7 +315,7 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
         if (nextBoard->areKingsOnTheBoard()) {
             MoveAndValue bestDuck = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
             int numMoves = nextBoard->getNumMoves();
-            ChessBoard *duckBoard = new ChessBoard();
+            ChessBoard duckBoard;
             for (int i = 0; i < numMoves; i++) {
                 int tmpDuckMove = nextBoard->getMoveAt(i);
                 if (Move_isHIT(tmpDuckMove)) {
@@ -323,15 +323,15 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
                 }
 
                 MoveAndValue currentDuck = {.value = 0, .move = 0, .duckMove = Move_getTo(tmpDuckMove)};
-                nextBoard->duplicate(duckBoard);
-                if (!duckBoard->requestDuckMove(currentDuck.duckMove)) {
+                nextBoard->duplicate(&duckBoard);
+                if (!duckBoard.requestDuckMove(currentDuck.duckMove)) {
                     DEBUG_PRINT("Could not make duckMove %d, %d\n", currentDuck.duckMove, Move_getFrom(tmpDuckMove));
                     continue;
                 }
 
-                duckBoard->calcState(m_searchWorkspace.refurbish());
-                duckBoard->getMoves();
-                currentDuck.value = -alphaBetaDuck(duckBoard, depth - 1, -beta, -alpha);
+                duckBoard.calcState(m_searchWorkspace.refurbish());
+                duckBoard.getMoves();
+                currentDuck.value = -alphaBetaDuck(&duckBoard, depth - 1, -beta, -alpha);
 
                 if (currentDuck.value > bestDuck.value) {
                     bestDuck = currentDuck;
@@ -343,7 +343,6 @@ int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int
                     break;
                 }
             }
-            delete duckBoard;
             current.value = bestDuck.value;
             current.duckMove = bestDuck.duckMove;
         } else {

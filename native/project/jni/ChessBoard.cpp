@@ -114,26 +114,24 @@ boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
 // ambigous when pieces of the same kind move to the same destination
 int ChessBoard::ambigiousMove() {
     if (m_parent != nullptr) {
-        auto* tmpBoard = new ChessBoard();
-        m_parent->duplicate(tmpBoard);
+        ChessBoard tmpBoard;
+        m_parent->duplicate(&tmpBoard);
 
-        tmpBoard->m_indexMoves = 0;
-        tmpBoard->genMoves();  // NEW, all (illegal) moves
+        tmpBoard.m_indexMoves = 0;
+        tmpBoard.genMoves();  // NEW, all (illegal) moves
         int m2;
-        while (tmpBoard->hasMoreMoves()) {
-            m2 = tmpBoard->getNextMove();
+        while (tmpBoard.hasMoreMoves()) {
+            m2 = tmpBoard.getNextMove();
             if (m_myMove != m2 && Move_equalTos(m2, m_myMove)) {
                 if (Move_getFrom(m2) != Move_getFrom(m_myMove) &&
-                    (tmpBoard->m_bitbPieces[m_o_turn][PAWN] & BITS[Move_getFrom(m_myMove)]) == 0) {
-                    if (tmpBoard->pieceAt(m_o_turn, Move_getFrom(m_myMove)) ==
-                        tmpBoard->pieceAt(m_o_turn, Move_getFrom(m2))) {
-                        delete tmpBoard;
+                    (tmpBoard.m_bitbPieces[m_o_turn][PAWN] & BITS[Move_getFrom(m_myMove)]) == 0) {
+                    if (tmpBoard.pieceAt(m_o_turn, Move_getFrom(m_myMove)) ==
+                        tmpBoard.pieceAt(m_o_turn, Move_getFrom(m2))) {
                         return m2;
                     }
                 }
             }
         }
-        delete tmpBoard;
     }
     return 0;
 }

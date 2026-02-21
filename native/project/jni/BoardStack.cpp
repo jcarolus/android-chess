@@ -41,3 +41,7 @@ boolean BoardStack::promoteOrDiscard(ChessBoard* nextBoard, boolean success) {
     delete nextBoard;
     return false;
 }
+
+boolean BoardStack::promoteOrDiscard(std::unique_ptr<ChessBoard> nextBoard, boolean success) {
+    return promoteOrDiscard(nextBoard.release(), success);
+}
