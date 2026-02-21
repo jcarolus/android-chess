@@ -34,15 +34,17 @@
 #endif
 
 #ifdef _MSC_VER
-#define longlong __int64
+using longlong = __int64;
 #else
-#define longlong unsigned long long
+using longlong = unsigned long long;
 #endif
-typedef longlong BITBOARD;
+using BITBOARD = longlong;
 
-#define MIN(a, b) (a < b ? (a) : (b))
+template <typename T>
+constexpr T chessMin(T a, T b) {
+    return a < b ? a : b;
+}
 
-#define boolint char
-typedef boolint boolean;
+using boolean = char;
 
 #endif /* COMMON_H */

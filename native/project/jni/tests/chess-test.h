@@ -6,9 +6,9 @@
 #include "../common.h"
 #include "../Game.h"
 
-typedef bool (*TestFunction)();
+using TestFunction = bool (*)();
 
-typedef struct {
+struct EngineInOutFEN {
     Game *game;
     const char *sInFEN;
     const char *sOutFEN;
@@ -16,26 +16,26 @@ typedef struct {
     int numMoves;
     boolean isDuck;
     const char *message;
-} EngineInOutFEN;
+};
 
-typedef struct {
+struct SequenceInOutFEN {
     Game *game;
     const char *sInFEN;
     const char *sOutFEN;
     int *moves;
     int moveNum;
     const char *message;
-} SequenceInOutFEN;
+};
 
-typedef struct {
+struct NonSequenceInFEN {
     Game *game;
     const char *sInFEN;
     int *moves;
     int moveNum;
     const char *message;
-} NonSequenceInFEN;
+};
 
-typedef struct {
+struct EngineInFENUntilState {
     Game *game;
     const char *sInFEN;
     int expectedState;
@@ -43,22 +43,22 @@ typedef struct {
     int maxMoves;
     boolean isDuck;
     const char *message;
-} EngineInFENUntilState;
+};
 
-typedef struct {
+struct MovesForFEN {
     Game *game;
     const char *sInFEN;
     int expectedMoveCount;
     const char *expectedMoves[20];
     bool all;
-} MovesForFEN;
+};
 
-typedef struct {
+struct StateForFEN {
     Game *game;
     const char *sInFEN;
     int expectedState;
     const char *message;
-} StateForFEN;
+};
 
 class ChessTest {
    public:

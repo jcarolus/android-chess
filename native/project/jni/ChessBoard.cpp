@@ -3450,7 +3450,7 @@ void ChessBoard::initMoveArrays() {
 
             // 45
             tmp = pos;
-            bit = (int) pow(2, MIN(ROW[tmp], 7 - COL[tmp]) + 1);
+            bit = (int) pow(2, chessMin(ROW[tmp], 7 - COL[tmp]) + 1);
 
             while (COL[tmp] > 0 && ROW[tmp] < 7) {
                 tmp += 7;
@@ -3466,7 +3466,7 @@ void ChessBoard::initMoveArrays() {
             }
 
             tmp = pos;
-            bit = (int) pow(2, MIN(ROW[tmp], 7 - COL[tmp]) - 1);
+            bit = (int) pow(2, chessMin(ROW[tmp], 7 - COL[tmp]) - 1);
 
             while (COL[tmp] < 7 && ROW[tmp] > 0) {
                 tmp -= 7;
@@ -3486,7 +3486,7 @@ void ChessBoard::initMoveArrays() {
             // 315
 
             tmp = pos;
-            bit = (int) pow(2, MIN(ROW[tmp], COL[tmp]) + 1);
+            bit = (int) pow(2, chessMin(ROW[tmp], COL[tmp]) + 1);
 
             while (COL[tmp] < 7 && ROW[tmp] < 7) {
                 tmp += 9;
@@ -3502,7 +3502,7 @@ void ChessBoard::initMoveArrays() {
             }
 
             tmp = pos;
-            bit = (int) pow(2, MIN(ROW[tmp], COL[tmp]) - 1);
+            bit = (int) pow(2, chessMin(ROW[tmp], COL[tmp]) - 1);
             while (COL[tmp] > 0 && ROW[tmp] > 0) {
                 tmp -= 9;
 

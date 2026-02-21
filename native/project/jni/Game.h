@@ -8,11 +8,11 @@
 #include "SearchSession.h"
 #include "SearchWorkspace.h"
 
-typedef struct {
+struct MoveAndValue {
     int value;
     int move;
     int duckMove;
-} MoveAndValue;
+};
 
 class Game {
    public:
