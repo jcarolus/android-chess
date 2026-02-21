@@ -72,7 +72,7 @@ void Game::reset() {
     }
 }
 
-boolean Game::newGameFromFEN(char *sFEN) {
+boolean Game::newGameFromFEN(const char *sFEN) {
     reset();
     ChessBoard *board = getBoard();
     int ret = board->parseFEN(sFEN);

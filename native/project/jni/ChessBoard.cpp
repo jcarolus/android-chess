@@ -1855,7 +1855,7 @@ void ChessBoard::toFENBoard(char* s) {
     }
 }
 
-boolean ChessBoard::parseFEN(char* sFEN) {
+boolean ChessBoard::parseFEN(const char* sFEN) {
     reset();
 
     m_variant = VARIANT_DEFAULT;

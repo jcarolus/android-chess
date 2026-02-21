@@ -38,16 +38,9 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, j
 }
 
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_newGameFromFEN(JNIEnv* env, jobject thiz, jstring str) {
-    jboolean isCopy;
-    const char* strChars = env->GetStringUTFChars(str, &isCopy);
-    char* sFEN = strdup(strChars);
-
-    if (isCopy == JNI_TRUE) {
-        env->ReleaseStringUTFChars(str, strChars);
-    }
+    const char* sFEN = env->GetStringUTFChars(str, nullptr);
     boolean ret = Game::getInstance()->newGameFromFEN(sFEN);
-
-    delete sFEN;
+    env->ReleaseStringUTFChars(str, sFEN);
     return ret;
 }
 

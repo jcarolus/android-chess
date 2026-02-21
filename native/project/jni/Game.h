@@ -19,7 +19,7 @@ class Game {
     static void* search_wrapper(void* arg);
 
     void reset();
-    boolean newGameFromFEN(char* sFEN);
+    boolean newGameFromFEN(const char* sFEN);
     void commitBoard();
     ChessBoard* getBoard();
     boolean requestMove(int from, int to);

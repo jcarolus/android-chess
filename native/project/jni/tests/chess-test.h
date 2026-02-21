@@ -10,54 +10,54 @@ typedef bool (*TestFunction)();
 
 typedef struct {
     Game *game;
-    char *sInFEN;
-    char *sOutFEN;
+    const char *sInFEN;
+    const char *sOutFEN;
     int depth;
     int numMoves;
     boolean isDuck;
-    char *message;
+    const char *message;
 } EngineInOutFEN;
 
 typedef struct {
     Game *game;
-    char *sInFEN;
-    char *sOutFEN;
+    const char *sInFEN;
+    const char *sOutFEN;
     int *moves;
     int moveNum;
-    char *message;
+    const char *message;
 } SequenceInOutFEN;
 
 typedef struct {
     Game *game;
-    char *sInFEN;
+    const char *sInFEN;
     int *moves;
     int moveNum;
-    char *message;
+    const char *message;
 } NonSequenceInFEN;
 
 typedef struct {
     Game *game;
-    char *sInFEN;
+    const char *sInFEN;
     int expectedState;
     int depth;
     int maxMoves;
     boolean isDuck;
-    char *message;
+    const char *message;
 } EngineInFENUntilState;
 
 typedef struct {
     Game *game;
-    char *sInFEN;
+    const char *sInFEN;
     int expectedMoveCount;
-    char *expectedMoves[20];
+    const char *expectedMoves[20];
     bool all;
 } MovesForFEN;
 
 typedef struct {
     Game *game;
-    char *sInFEN;
+    const char *sInFEN;
     int expectedState;
-    char *message;
+    const char *message;
 } StateForFEN;
 
 class ChessTest {
@@ -66,13 +66,11 @@ class ChessTest {
     ~ChessTest(void);
 
     static void startSearchThread();
-    static bool expectEqualInt(int a, int b, const char *message);
-    static bool expectEqualString(const char *a, const char *b, const char *message);
     static bool expectEngineMove(EngineInOutFEN scenario);
     static bool expectSequence(SequenceInOutFEN scenario);
     static bool expectNonSequence(NonSequenceInFEN scenario);
-    static bool expectStateForFEN(Game *game, char *sFEN, int state, char *message);
-    static bool expectInFENIsOutFEN(Game *game, char *sFEN, char *message);
+    static bool expectStateForFEN(Game *game, const char *sFEN, int state, const char *message);
+    static bool expectInFENIsOutFEN(Game *game, const char *sFEN, const char *message);
     static bool expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario);
     static bool expectMovesForFEN(MovesForFEN scenario);
     static void printMove(int move);
