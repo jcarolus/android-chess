@@ -17,138 +17,77 @@ void newGameDuck() {
     Game::getInstance()->newGameFromFEN("rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
-bool testSetupNewGame() {
+void testSetupNewGame() {
     newGame();
     char buf[255];
 
     ChessBoard *board = Game::getInstance()->getBoard();
     board->toFEN(buf);
 
-    return ChessTest::expectEqualString(
-        (char *)"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", buf, (char *)"testSetupNewGame");
+    EXPECT_TRUE(ChessTest::expectEqualString(
+        (char *)"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", buf, (char *)"testSetupNewGame"));
 }
 
-bool testInCheck() {
-    return ChessTest::expectStateForFEN(
-        Game::getInstance(), (char *)"5K2/8/8/8/4kr2/8/8/8 w - - 0 1", ChessBoard::CHECK, (char *)"State should equal CHECK");
+void testInCheck() {
+    EXPECT_TRUE(ChessTest::expectStateForFEN(
+        Game::getInstance(), (char *)"5K2/8/8/8/4kr2/8/8/8 w - - 0 1", ChessBoard::CHECK, (char *)"State should equal CHECK"));
 }
 
-bool testSetupMate() {
-    return ChessTest::expectStateForFEN(
-        Game::getInstance(), (char *)"3r1K2/8/5k2/8/8/8/8/8 w - - 0 1", ChessBoard::MATE, (char *)"State should equal MATE");
+void testSetupMate() {
+    EXPECT_TRUE(ChessTest::expectStateForFEN(
+        Game::getInstance(), (char *)"3r1K2/8/5k2/8/8/8/8/8 w - - 0 1", ChessBoard::MATE, (char *)"State should equal MATE"));
 }
 
-bool testSetupPieces() {
-    return ChessTest::expectInFENIsOutFEN(
-        Game::getInstance(), (char *)"r1k5/8/8/8/8/8/8/5KR1 w KQkq - 0 1", (char *)"testSetupCastle");
+void testSetupPieces() {
+    EXPECT_TRUE(ChessTest::expectInFENIsOutFEN(
+        Game::getInstance(), (char *)"r1k5/8/8/8/8/8/8/5KR1 w KQkq - 0 1", (char *)"testSetupCastle"));
 }
 
-bool testStates() {
+void testStates() {
     StateForFEN scenarios[] = {{.game = Game::getInstance(),
                                 .sInFEN = (char *)"2k5/8/8/8/8/8/8/4KB2 w - - 0 1",
                                 .expectedState = ChessBoard::DRAW_MATERIAL,
                                 .message = (char *)"Test draw material"}};
-    bool bRet = true;
 
     for (const StateForFEN &scenario : scenarios) {
-        if (!ChessTest::expectStateForFEN(scenario.game, scenario.sInFEN, scenario.expectedState, scenario.message)) {
-            bRet = false;
-        }
+        SCOPED_TRACE(scenario.message);
+        EXPECT_TRUE(ChessTest::expectStateForFEN(scenario.game, scenario.sInFEN, scenario.expectedState, scenario.message));
     }
-    return bRet;
 }
 
-bool testDuck() {
+void testDuck() {
     char buf[512];
     ChessBoard *board;
-    bool ret;
 
     newGameDuck();
 
     board = Game::getInstance()->getBoard();
     board->toFEN(buf);
-    ret = ChessTest::expectEqualString(
-        (char *)"rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", buf, (char *)"testDuck");
-    if (!ret) {
-        return false;
-    }
+    ASSERT_TRUE(ChessTest::expectEqualString(
+        (char *)"rnbqkbnr/pppppppp/8/7$/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", buf, (char *)"testDuck"));
 
-    ret = Game::getInstance()->requestMove(ChessBoard::e2, ChessBoard::e4);
-    ret = Game::getInstance()->requestDuckMove(ChessBoard::e6);
-    if (!ret) {
-        DEBUG_PRINT("no request duck move 1", 0);
-        return false;
-    }
-    ret = Game::getInstance()->requestMove(ChessBoard::e7, ChessBoard::e5);
-    if (ret) {
-        DEBUG_PRINT("move e7-e5 should not", 0);
-        return false;
-    }
-
-    ret = Game::getInstance()->requestMove(ChessBoard::d7, ChessBoard::e6);
-    if (ret) {
-        DEBUG_PRINT("move d7-e6 should not", 0);
-        return false;
-    }
+    ASSERT_TRUE(Game::getInstance()->requestMove(ChessBoard::e2, ChessBoard::e4)) << "no e2-e4";
+    ASSERT_TRUE(Game::getInstance()->requestDuckMove(ChessBoard::e6)) << "no request duck move 1";
+    EXPECT_FALSE(Game::getInstance()->requestMove(ChessBoard::e7, ChessBoard::e5)) << "move e7-e5 should not";
+    EXPECT_FALSE(Game::getInstance()->requestMove(ChessBoard::d7, ChessBoard::e6)) << "move d7-e6 should not";
 
     board = Game::getInstance()->getBoard();
     board->toFEN(buf);
-    ret = ChessTest::expectEqualString(
-        (char *)"rnbqkbnr/pppppppp/4$3/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", buf, (char *)"testDuck");
-    if (!ret) {
-        return false;
-    }
+    ASSERT_TRUE(ChessTest::expectEqualString(
+        (char *)"rnbqkbnr/pppppppp/4$3/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", buf, (char *)"testDuck"));
+    EXPECT_TRUE(ChessTest::expectEqualInt(board->getDuckPos(), ChessBoard::e6, (char *)"testDuck"));
 
-    ret = ChessTest::expectEqualInt(board->getDuckPos(), ChessBoard::e6, (char *)"testDuck");
-
-    ret = Game::getInstance()->requestMove(ChessBoard::d7, ChessBoard::d5);
-    if (!ret) {
-        DEBUG_PRINT("no d7-d5", 0);
-        return false;
-    }
-
-    ret = Game::getInstance()->requestDuckMove(ChessBoard::e3);
-    if (!ret) {
-        DEBUG_PRINT("no duck e3", 0);
-        return false;
-    }
-
-    ret = Game::getInstance()->requestMove(ChessBoard::f1, ChessBoard::b5);
-    if (!ret) {
-        DEBUG_PRINT("no f1-b5", 0);
-        return false;
-    }
-
-    ret = Game::getInstance()->requestDuckMove(ChessBoard::f3);
-    if (!ret) {
-        DEBUG_PRINT("no duck f3", 0);
-        return false;
-    }
-
-    ret = Game::getInstance()->requestMove(ChessBoard::f7, ChessBoard::f6);
-    if (!ret) {
-        DEBUG_PRINT("no f7-f6", 0);
-        return false;
-    }
-
-    ret = Game::getInstance()->requestDuckMove(ChessBoard::f4);
-    if (!ret) {
-        DEBUG_PRINT("no duck f4 x", 0);
-        return false;
-    }
-
-    ret = Game::getInstance()->requestMove(ChessBoard::b5, ChessBoard::e8);
-    if (!ret) {
-        DEBUG_PRINT("no b5-e8", 0);
-        return false;
-    }
-
-    ret = ChessTest::expectEqualInt(ChessBoard::MATE, Game::getInstance()->getBoard()->getState(), (char *)"State mate");
-
-    return ret;
+    ASSERT_TRUE(Game::getInstance()->requestMove(ChessBoard::d7, ChessBoard::d5)) << "no d7-d5";
+    ASSERT_TRUE(Game::getInstance()->requestDuckMove(ChessBoard::e3)) << "no duck e3";
+    ASSERT_TRUE(Game::getInstance()->requestMove(ChessBoard::f1, ChessBoard::b5)) << "no f1-b5";
+    ASSERT_TRUE(Game::getInstance()->requestDuckMove(ChessBoard::f3)) << "no duck f3";
+    ASSERT_TRUE(Game::getInstance()->requestMove(ChessBoard::f7, ChessBoard::f6)) << "no f7-f6";
+    ASSERT_TRUE(Game::getInstance()->requestDuckMove(ChessBoard::f4)) << "no duck f4 x";
+    ASSERT_TRUE(Game::getInstance()->requestMove(ChessBoard::b5, ChessBoard::e8)) << "no b5-e8";
+    EXPECT_TRUE(ChessTest::expectEqualInt(ChessBoard::MATE, Game::getInstance()->getBoard()->getState(), (char *)"State mate"));
 }
 
-bool testEngine() {
+void testEngine() {
     EngineInOutFEN scenarios[] = {{Game::getInstance(),
                                    (char *)"8/8/8/8/8/r2k4/8/3K4 b - - 0 1",
                                    (char *)"8/8/8/8/8/3k4/8/r2K4 w - - 1 1",
@@ -199,18 +138,13 @@ bool testEngine() {
                                    true,
                                    (char *)"Duck capture king in 3"}};
 
-    bool bRet = true;
-
     for (const EngineInOutFEN &scenario : scenarios) {
-        if (!ChessTest::expectEngineMove(scenario)) {
-            bRet = false;
-        }
+        SCOPED_TRACE(scenario.message);
+        EXPECT_TRUE(ChessTest::expectEngineMove(scenario));
     }
-
-    return bRet;
 }
 
-bool testSequence() {
+void testSequence() {
     const int openingMoves[] = {Move_makeMoveFirstPawn(ChessBoard::e2, ChessBoard::e4),
                                 Move_makeMoveFirstPawn(ChessBoard::e7, ChessBoard::e5),
                                 Move_makeMove(ChessBoard::g1, ChessBoard::f3),
@@ -235,18 +169,13 @@ bool testSequence() {
                                      4,
                                      (char *)"To mate"}};
 
-    bool bRet = true;
-
     for (const SequenceInOutFEN &scenario : scenarios) {
-        if (!ChessTest::expectSequence(scenario)) {
-            bRet = false;
-        }
+        SCOPED_TRACE(scenario.message);
+        EXPECT_TRUE(ChessTest::expectSequence(scenario));
     }
-
-    return bRet;
 }
 
-bool testEngineRunUntilState() {
+void testEngineRunUntilState() {
     EngineInFENUntilState scenario = {.game = Game::getInstance(),
                                       .sInFEN = (char *)"8/4k3/8/8/8/4NN2/3K4/8 w - - 0 1",
                                       .expectedState = ChessBoard::DRAW_50,
@@ -255,25 +184,19 @@ bool testEngineRunUntilState() {
                                       .isDuck = false,
                                       .message = (char *)"Test 50 move rule"};
 
-    return ChessTest::expectEndingStateWithinMaxMoves(scenario);
+    EXPECT_TRUE(ChessTest::expectEndingStateWithinMaxMoves(scenario));
 }
 
-bool testMoves() {
+void testMoves() {
     MovesForFEN scenarios[] = {{.game = Game::getInstance(),
                                 .sInFEN = (char *)"8/4k3/8/8/8/4NN2/3K4/8 w - - 0 1",
                                 .expectedMoveCount = 3,
                                 .expectedMoves = {(char *)"Nc4", (char *)"Ng4", (char *)"Ke1"},
                                 .all = false}};
 
-    bool bRet = true;
-
     for (const MovesForFEN &scenario : scenarios) {
-        if (!ChessTest::expectMovesForFEN(scenario)) {
-            bRet = false;
-        }
+        EXPECT_TRUE(ChessTest::expectMovesForFEN(scenario));
     }
-
-    return bRet;
 }
 
 class GameTest : public ::testing::Test {
@@ -284,43 +207,43 @@ class GameTest : public ::testing::Test {
 };
 
 TEST_F(GameTest, SetupNewGame) {
-    EXPECT_TRUE(testSetupNewGame());
+    testSetupNewGame();
 }
 
 TEST_F(GameTest, DetectCheck) {
-    EXPECT_TRUE(testInCheck());
+    testInCheck();
 }
 
 TEST_F(GameTest, DetectMate) {
-    EXPECT_TRUE(testSetupMate());
+    testSetupMate();
 }
 
 TEST_F(GameTest, SetupPieces) {
-    EXPECT_TRUE(testSetupPieces());
+    testSetupPieces();
 }
 
 TEST_F(GameTest, EvaluateStates) {
-    EXPECT_TRUE(testStates());
+    testStates();
 }
 
 TEST_F(GameTest, DuckMode) {
-    EXPECT_TRUE(testDuck());
+    testDuck();
 }
 
 TEST_F(GameTest, EngineScenarios) {
-    EXPECT_TRUE(testEngine());
+    testEngine();
 }
 
 TEST_F(GameTest, SequenceScenarios) {
-    EXPECT_TRUE(testSequence());
+    testSequence();
 }
 
 TEST_F(GameTest, EngineUntilExpectedState) {
-    EXPECT_TRUE(testEngineRunUntilState());
+    testEngineRunUntilState();
 }
 
 TEST_F(GameTest, MovesForPosition) {
-    EXPECT_TRUE(testMoves());
+    testMoves();
 }
 
 }  // namespace
