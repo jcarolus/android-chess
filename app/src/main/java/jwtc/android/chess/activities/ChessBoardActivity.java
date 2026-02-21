@@ -123,7 +123,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         }
 
-        if (!isScreenReaderOn() && textToSpeech != null && textToSpeech.isEnabled()) {
+        if (!isScreenReaderOn() && textToSpeech.isEnabled()) {
             String sMove = getLastMoveAndTurnDescription(true);
             textToSpeech.moveToSpeech(sMove);
         }
@@ -478,7 +478,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         if (languageStatus == TextToSpeech.LANG_MISSING_DATA || languageStatus == TextToSpeech.LANG_NOT_SUPPORTED) {
-            doToast(getString(R.string.tts_only_locale_us));
+            doToast(getString(R.string.tts_locale_not_supported));
         }
     }
 
@@ -603,7 +603,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getLastMoveAndTurnDescription(boolean forTTS) {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = GameApi.moveToSpeechString(textToSpeech != null && forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move);
+            String sMove = GameApi.moveToSpeechString(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move);
             if (gameApi.isEnded()) {
                 return sMove;
             }

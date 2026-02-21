@@ -306,7 +306,7 @@
     <string name="pref_sound">Ses</string>
     <string name="pref_haptic_feedback">Dokunsal geri bildirim kullan</string>
     <string name="pref_speech">Sesli okuma</string>
-    <string name="tts_only_locale_us">Metinden konuşmaya şu anda yalnızca ABD yerel ayarı destekleniyor</string>
+    <string name="tts_locale_not_supported">Metinden konuşmaya özelliği yerel ayarınızı desteklemiyor</string>
     <string name="tts_not_loaded">Metinden konuşma yüklenemedi</string>
     <string name="tts_example_move">Fil G7 alır, şah</string>
     <string name="tts_selected">Seçili</string>

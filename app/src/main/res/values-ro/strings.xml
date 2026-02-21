@@ -306,7 +306,7 @@
     <string name="pref_sound">Sunet</string>
     <string name="pref_haptic_feedback">Folosește feedback haptic</string>
     <string name="pref_speech">Vorbire</string>
-    <string name="tts_only_locale_us">Funcția text-în-vorbire acceptă în prezent doar localizarea SUA</string>
+    <string name="tts_locale_not_supported">Funcția text-în-vorbire nu acceptă localizarea dvs.</string>
     <string name="tts_not_loaded">Nu s-a putut încărca funcția text-în-vorbire</string>
     <string name="tts_example_move">Nebunul capturează la G7, șah</string>
     <string name="tts_selected">Selectat</string>

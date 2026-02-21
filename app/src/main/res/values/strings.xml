@@ -323,7 +323,7 @@
     <string name="pref_sound">Sound</string>
     <string name="pref_haptic_feedback">Use haptic feedback</string>
     <string name="pref_speech">Speech</string>
-    <string name="tts_only_locale_us">Text to speech currently only supports US locale</string>
+    <string name="tts_locale_not_supported">Text to speech does not support your locale</string>
     <string name="tts_not_loaded">Could not load text to speech</string>
     <string name="tts_example_move">Bishop takes G7 check</string>
     <string name="tts_selected">Selected</string>

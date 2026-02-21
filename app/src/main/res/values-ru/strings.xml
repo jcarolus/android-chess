@@ -306,7 +306,7 @@
     <string name="pref_sound">Звук</string>
     <string name="pref_haptic_feedback">Использовать виброотклик</string>
     <string name="pref_speech">Озвучка</string>
-    <string name="tts_only_locale_us">Преобразование текста в речь сейчас поддерживает только локаль США</string>
+    <string name="tts_locale_not_supported">Преобразование текста в речь не поддерживает вашу локаль</string>
     <string name="tts_not_loaded">Не удалось загрузить преобразование текста в речь</string>
     <string name="tts_example_move">Слон бьёт на G7, шах</string>
     <string name="tts_selected">Выбрано</string>
