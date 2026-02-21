@@ -3,6 +3,7 @@
 #include <atomic>
 
 #include "common.h"
+#include "BoardStack.h"
 #include "ChessBoard.h"
 
 typedef struct {
@@ -58,8 +59,6 @@ class Game {
     boolean m_quiescentSearchOn;
 
    protected:
-    void clearBoardHistory();
-
     MoveAndValue m_bestMoveAndValue;
     long m_millies, m_milliesGiven;
 
@@ -68,9 +67,9 @@ class Game {
     static const int QUIESCE_DEPTH = 5;  // makes effective max depth 15
 
     static const BITBOARD DEFAULT_START_HASH = -8567268772865283918LL;
+    BoardStack m_boardStack;
     ChessBoard* m_boardFactory[MAX_DEPTH];
     ChessBoard* m_boardRefurbish;
-    ChessBoard* m_board;
     int m_promotionPiece;
     MoveAndValue m_arrBestMoves[MAX_DEPTH];
 };

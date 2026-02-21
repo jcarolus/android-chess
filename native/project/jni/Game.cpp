@@ -3,7 +3,6 @@
 Game *Game::game = nullptr;
 
 Game::Game(void) {
-    m_board = new ChessBoard();
     m_promotionPiece = ChessBoard::QUEEN;
     for (int i = 0; i < MAX_DEPTH; i++) {
         m_boardFactory[i] = new ChessBoard();
@@ -13,20 +12,7 @@ Game::Game(void) {
     reset();
 }
 
-void Game::clearBoardHistory() {
-    ChessBoard *cb, *tmp;
-    while ((cb = m_board->undoMove()) != nullptr) {
-        tmp = m_board;
-        m_board = cb;
-        delete tmp;
-    }
-}
-
 Game::~Game(void) {
-    clearBoardHistory();
-
-    delete m_board;
-
     delete m_boardRefurbish;
 
     // boardFactory boards are scratch buffers; reset severs any parent links before deletion.
@@ -61,10 +47,11 @@ void Game::reset() {
         return;
     }
 
-    clearBoardHistory();
+    m_boardStack.clearHistory();
 
-    m_board->reset();
-    m_board->calcState(m_boardRefurbish);
+    ChessBoard *board = getBoard();
+    board->reset();
+    board->calcState(m_boardRefurbish);
     for (int i = 0; i < MAX_DEPTH; i++) {
         m_boardFactory[i]->reset();
     }
@@ -95,12 +82,13 @@ void Game::commitBoard() {
     if (m_bSearching.load()) {
         return;
     }
-    m_board->commitBoard();
-    m_board->calcState(m_boardRefurbish);
+    ChessBoard *board = getBoard();
+    board->commitBoard();
+    board->calcState(m_boardRefurbish);
 }
 
 ChessBoard *Game::getBoard() {
-    return m_board;
+    return m_boardStack.current();
 }
 
 void Game::setPromo(int p) {
@@ -137,15 +125,10 @@ boolean Game::requestMove(int from, int to) {
     }
 
     ChessBoard *nb = new ChessBoard();
-    m_board->calcState(m_boardRefurbish);
-    if (m_board->requestMove(from, to, nb, m_boardRefurbish, m_promotionPiece)) {
-        m_board = nb;
-        return true;
-    } else {
-        delete nb;
-        // DEBUG_PRINT("%d-%d not moved...(request)\n", from, to);
-        return false;
-    }
+    ChessBoard *board = getBoard();
+    board->calcState(m_boardRefurbish);
+    boolean moved = board->requestMove(from, to, nb, m_boardRefurbish, m_promotionPiece);
+    return m_boardStack.promoteOrDiscard(nb, moved);
 }
 
 boolean Game::requestDuckMove(int duckPos) {
@@ -168,15 +151,10 @@ boolean Game::move(int move) {
     }
 
     ChessBoard *nb = new ChessBoard();
-
-    m_board->calcState(m_boardRefurbish);
-    if (m_board->requestMove(move, nb, m_boardRefurbish)) {
-        m_board = nb;
-        return true;
-    } else {
-        delete nb;
-        return false;
-    }
+    ChessBoard *board = getBoard();
+    board->calcState(m_boardRefurbish);
+    boolean moved = board->requestMove(move, nb, m_boardRefurbish);
+    return m_boardStack.promoteOrDiscard(nb, moved);
 }
 
 void Game::undo() {
@@ -184,12 +162,7 @@ void Game::undo() {
         return;
     }
 
-    ChessBoard *tmp = m_board;
-    ChessBoard *cb = m_board->undoMove();
-    if (cb != nullptr) {
-        m_board = cb;
-        delete tmp;
-    }
+    m_boardStack.undo();
 }
 // allowAttack, if a new piece on the board is allowed to attack immediatly,
 // for crazyhouse that's ok, for parachute not
@@ -199,10 +172,7 @@ boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowA
     }
 
     ChessBoard *nextBoard = new ChessBoard();
-    if (m_board->putHouse(pos, piece, nextBoard, m_boardRefurbish, allowAttack)) {
-        m_board = nextBoard;
-        return true;
-    }
-    delete nextBoard;
-    return false;
+    ChessBoard *board = getBoard();
+    boolean moved = board->putHouse(pos, piece, nextBoard, m_boardRefurbish, allowAttack);
+    return m_boardStack.promoteOrDiscard(nextBoard, moved);
 }

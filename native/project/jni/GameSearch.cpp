@@ -49,18 +49,19 @@ void Game::search() {
     m_bInterrupted = false;
     m_evalCount = 0;
 
-    m_board->calcState(m_boardRefurbish);
+    ChessBoard *board = getBoard();
+    board->calcState(m_boardRefurbish);
 
-    if (m_board->isEnded()) {
+    if (board->isEnded()) {
         return;
     }
 
-    if (m_board->getNumMoves() == 0) {
+    if (board->getNumMoves() == 0) {
         DEBUG_PRINT("NO moves!");
         return;
     }
 
-    int variant = m_board->getVariant();
+    int variant = board->getVariant();
     m_evalCount++;
 
     startTime();
@@ -71,7 +72,7 @@ void Game::search() {
     }
 
     ChessBoard *searchBoard = m_boardFactory[0];
-    m_board->duplicate(searchBoard);
+    board->duplicate(searchBoard);
     if (m_milliesGiven > 0) {
         DEBUG_PRINT("Search with millies given %ld", m_milliesGiven);
 
@@ -86,7 +87,7 @@ void Game::search() {
                         m_searchDepth,
                         m_arrBestMoves[0].value,
                         getBestMoveAt(m_searchDepth),
-                        m_board->getNumMoves());
+                        board->getNumMoves());
 
             if (m_bInterrupted) {
                 break;

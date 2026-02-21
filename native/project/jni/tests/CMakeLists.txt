@@ -6,6 +6,7 @@ find_package(Threads REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 
 add_library(chess_engine STATIC
+    ../BoardStack.cpp
     ../Pos.cpp
     ../ChessBoard.cpp
     ../ChessBoardState.cpp
