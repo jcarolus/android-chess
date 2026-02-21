@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import com.google.android.material.button.MaterialButton;
@@ -69,6 +70,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private List<Game> nowPlayingGames;
     private Intent pendingData;
     private boolean serviceConnected = false;
+    private boolean serviceBound = false;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -256,8 +258,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         Log.d(TAG, "onStart");
         super.onStart();
 
-        startService(new Intent(LichessActivity.this, LichessService.class));
-        bindService(new Intent(LichessActivity.this, LichessService.class), mConnection, Context.BIND_AUTO_CREATE);
+        serviceBound = bindService(new Intent(LichessActivity.this, LichessService.class), mConnection, Context.BIND_AUTO_CREATE);
+        if (!serviceBound) {
+            Log.e(TAG, "Failed to bind LichessService");
+            Toast.makeText(this, R.string.lichess_service_unavailable, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
     }
 
     @Override
@@ -265,7 +272,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         Log.i(TAG, "onStop");
         super.onStop();
 
-        unbindService(mConnection);
+        if (serviceBound) {
+            unbindService(mConnection);
+            serviceBound = false;
+        }
     }
 
     @Override

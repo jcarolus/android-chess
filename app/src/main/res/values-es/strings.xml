@@ -416,4 +416,5 @@
     <string name="title_pick_promo">Elige pieza de promoción</string>
     <string name="title_save_game">Guardar partida</string>
     <string name="toast_challenge_posted">Desafío publicado</string>
+    <string name="lichess_service_unavailable">No se pudo iniciar el servicio de Lichess. Inténtalo de nuevo.</string>
 </resources>

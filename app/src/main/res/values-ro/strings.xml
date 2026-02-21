@@ -406,4 +406,5 @@
     <string name="title_pick_promo">Alege piesa de promovare</string>
     <string name="title_save_game">Salvează partida</string>
     <string name="toast_challenge_posted">Provocare postată</string>
+    <string name="lichess_service_unavailable">Serviciul Lichess nu a putut fi pornit. Te rugăm să încerci din nou.</string>
 </resources>

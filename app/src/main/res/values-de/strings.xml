@@ -416,4 +416,5 @@
     <string name="title_pick_promo">Umwandlungsfigur wählen</string>
     <string name="title_save_game">Partie speichern</string>
     <string name="toast_challenge_posted">Herausforderung gepostet</string>
+    <string name="lichess_service_unavailable">Lichess-Dienst konnte nicht gestartet werden. Bitte versuche es erneut.</string>
 </resources>
