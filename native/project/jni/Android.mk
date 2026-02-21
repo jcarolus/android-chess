@@ -9,8 +9,10 @@ LOCAL_SRC_FILES := chess-jni.cpp\
 		Pos.cpp\
 		Move.cpp\
 		ChessBoard.cpp\
+		ChessBoardState.cpp\
 		ChessBoardNotation.cpp\
-		Game.cpp
+		Game.cpp\
+		GameSearch.cpp
 
 LOCAL_LDLIBS := -llog
 LOCAL_CPPFLAGS += -fno-sized-deallocation

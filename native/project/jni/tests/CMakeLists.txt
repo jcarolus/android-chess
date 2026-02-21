@@ -8,9 +8,11 @@ find_package(GTest CONFIG REQUIRED)
 add_library(chess_engine STATIC
     ../Pos.cpp
     ../ChessBoard.cpp
+    ../ChessBoardState.cpp
     ../ChessBoardNotation.cpp
     ../Move.cpp
     ../Game.cpp
+    ../GameSearch.cpp
 )
 
 target_include_directories(chess_engine PUBLIC ../)

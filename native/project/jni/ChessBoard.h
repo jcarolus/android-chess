@@ -272,9 +272,9 @@ class ChessBoard {
 
 #pragma endregion
 
-    inline int trailingZeros(const BITBOARD bb);
+    int trailingZeros(const BITBOARD bb);
     // number of bits in bitb @bb
-    inline int bitCount(const BITBOARD bb);
+    int bitCount(const BITBOARD bb);
 
     void printB(char* buf);
     void printMoves(char* buf);
