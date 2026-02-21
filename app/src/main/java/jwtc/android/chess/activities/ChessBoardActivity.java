@@ -11,7 +11,6 @@ import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.speech.tts.TextToSpeech.OnInitListener;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -37,7 +36,7 @@ import jwtc.android.chess.constants.Piece;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
-abstract public class ChessBoardActivity extends BaseActivity implements GameListener, OnInitListener {
+abstract public class ChessBoardActivity extends BaseActivity implements GameListener {
     private static final String TAG = "ChessBoardActivity";
 
     protected GameApi gameApi;
@@ -50,12 +49,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected Sounds sounds;
     protected HapticFeedback hapticFeedback;
 
-    protected TextToSpeechApi textToSpeech = null;
+    protected TextToSpeechApi textToSpeech;
     protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
-    protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false, moveToSpeech = false;
+    protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false;
     protected boolean useAccessibilityDrag = false;
     protected int accessibilityDragDwellMs = 300;
     private String keyboardBuffer = "";
@@ -67,6 +66,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        textToSpeech = new TextToSpeechApi(this, this::onTextToSpeechInitStateChanged);
         sounds = new Sounds(this);
         hapticFeedback = new HapticFeedback(this);
     }
@@ -123,7 +123,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         }
 
-        if (!isScreenReaderOn() && textToSpeech != null && moveToSpeech) {
+        if (!isScreenReaderOn() && textToSpeech != null && textToSpeech.isEnabled()) {
             String sMove = getLastMoveAndTurnDescription(true);
             textToSpeech.moveToSpeech(sMove);
         }
@@ -202,15 +202,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
 
-        moveToSpeech = prefs.getBoolean("moveToSpeech", false);
         useAccessibilityDrag = prefs.getBoolean("useAccessibilityDrag", false);
         accessibilityDragDwellMs = prefs.getInt("accessibilityDragDelay", 300);
-        textToSpeech = new TextToSpeechApi(this, this, prefs.getString("speechEngine", null));
+        textToSpeech.setEnabled(prefs.getBoolean("moveToSpeech", false), prefs);
         applySquareDragListeners();
 
         showMoves = prefs.getBoolean("showMoves", false);
-
-        sounds.setEnabled(prefs.getBoolean("moveSounds", false));
         hapticFeedback.setEnabled(prefs.getBoolean("useHapticFeedback", false));
     }
 
@@ -223,7 +220,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public void hapticFeedbackTick() {
         if (sounds.isEnabled()) {
             sounds.playTick();
-        } else if (hapticFeedback.isEnabled()) {
+        }
+        if (hapticFeedback.isEnabled()) {
             hapticFeedback.hapticFeedbackTick();
         }
     }
@@ -231,7 +229,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public void feedbackSelect() {
         if (sounds.isEnabled()) {
             sounds.playSelect();
-        } else if (hapticFeedback.isEnabled()) {
+        }
+        if (hapticFeedback.isEnabled()) {
             hapticFeedback.feedbackSelect();
         }
     }
@@ -277,6 +276,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         Log.d(TAG, "onDestroy");
 
         gameApi.removeListener(this);
+        textToSpeech.shutdown();
+
         super.onDestroy();
     }
 
@@ -470,20 +471,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS && textToSpeech != null) {
-            int result = textToSpeech.setDefaults(getPrefs());
-
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                doToast(getString(R.string.tts_only_locale_us));
-                textToSpeech = null;
-            } else {
-
-            }
-        } else {
+    protected void onTextToSpeechInitStateChanged(int initStatus, int languageStatus) {
+        if (initStatus != TextToSpeech.SUCCESS) {
             doToast(getString(R.string.tts_not_loaded));
-            textToSpeech = null;
+            return;
+        }
+
+        if (languageStatus == TextToSpeech.LANG_MISSING_DATA || languageStatus == TextToSpeech.LANG_NOT_SUPPORTED) {
+            doToast(getString(R.string.tts_only_locale_us));
         }
     }
 
@@ -608,7 +603,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getLastMoveAndTurnDescription(boolean forTTS) {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = GameApi.moveToSpeechString(textToSpeech != null && forTTS ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move);
+            String sMove = GameApi.moveToSpeechString(textToSpeech != null && forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move);
             if (gameApi.isEnded()) {
                 return sMove;
             }
@@ -761,7 +756,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 setMoveToPositions(pos);
                 updateSelectedSquares();
                 feedbackSelect();
-                if (textToSpeech != null) {
+                if (textToSpeech.isEnabled()) {
                     textToSpeech.queueSpeech(getString(R.string.tts_selected));
                 }
             }
@@ -779,7 +774,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (emitCrossingHaptic) {
                 hapticFeedbackTick();
             }
-            if (textToSpeech != null) {
+            if (textToSpeech.isEnabled()) {
                 textToSpeech.moveToSpeech(getFieldDescription(pos));
             }
             scheduleAccessibilityDwellSelection(pos);

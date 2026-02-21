@@ -18,7 +18,6 @@ import java.util.List;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.services.GameApi;
-import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.FixedDropdownView;
 
 public class AccessibilityPreferences extends ChessBoardActivity {
@@ -46,17 +45,11 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         dropDownSpeechEngine = findViewById(R.id.DropDownSpeechEngine);
 
         sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
-            if (textToSpeech == null) {
-                return;
-            }
             textToSpeech.setSpeechRate(value);
             textToSpeech.moveToSpeech(getPreviewMove());
         });
 
         sliderSpeechPitch.addOnChangeListener((s, value, fromUser) -> {
-            if (textToSpeech == null) {
-                return;
-            }
             textToSpeech.setSpeechPitch(value);
             textToSpeech.moveToSpeech(getPreviewMove());
         });
@@ -97,10 +90,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
             editor.remove("speechVoice");
             editor.apply();
 
-            if (textToSpeech != null) {
-                textToSpeech.shutdown();
-            }
-            textToSpeech = new TextToSpeechApi(this, this, selectedEnginePackage);
+            textToSpeech.shutdown();
+            textToSpeech.setEnabled(true, getPrefs());
         });
 
         gameApi = new GameApi();
@@ -113,6 +104,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         super.onResume();
 
         SharedPreferences prefs = getPrefs();
+        textToSpeech.setEnabled(true, prefs);
 
         jni.newGame();
 
@@ -158,9 +150,9 @@ public class AccessibilityPreferences extends ChessBoardActivity {
     }
 
     @Override
-    public void onInit(int status) {
-        super.onInit(status);
-        if (status == TextToSpeech.SUCCESS) {
+    protected void onTextToSpeechInitStateChanged(int initStatus, int languageStatus) {
+        super.onTextToSpeechInitStateChanged(initStatus, languageStatus);
+        if (initStatus == TextToSpeech.SUCCESS) {
             populateSpeechEngineDropdown();
             populateSpeechVoiceDropdown();
         }
@@ -173,11 +165,6 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
     private void populateSpeechVoiceDropdown() {
         speechVoiceNames.clear();
-
-        if (textToSpeech == null) {
-            dropDownSpeechVoice.setItems(new ArrayList<>());
-            return;
-        }
 
         List<Voice> supportedVoices = textToSpeech.getSupportedVoices();
         ArrayList<String> labels = new ArrayList<>();
@@ -213,15 +200,13 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         speechEnginePackages.add(null);
         labels.add(getString(R.string.pref_speech_engine_system_default));
 
-        if (textToSpeech != null) {
-            List<EngineInfo> engines = textToSpeech.getInstalledEngines();
-            for (EngineInfo engine : engines) {
-                if (engine == null || engine.name == null || engine.name.isEmpty()) {
-                    continue;
-                }
-                speechEnginePackages.add(engine.name);
-                labels.add(engine.label + " - " + engine.name);
+        List<EngineInfo> engines = textToSpeech.getInstalledEngines();
+        for (EngineInfo engine : engines) {
+            if (engine == null || engine.name == null || engine.name.isEmpty()) {
+                continue;
             }
+            speechEnginePackages.add(engine.name);
+            labels.add(engine.label + " - " + engine.name);
         }
 
         dropDownSpeechEngine.setItems(labels);
@@ -242,9 +227,6 @@ public class AccessibilityPreferences extends ChessBoardActivity {
     }
 
     private String getPreviewMove() {
-        if (textToSpeech == null) {
-            return getString(R.string.tts_example_move);
-        }
         Resources resources = textToSpeech.getLocalizedResources();
         return resources != null ? resources.getString(R.string.tts_example_move) : getString(R.string.tts_example_move);
     }
