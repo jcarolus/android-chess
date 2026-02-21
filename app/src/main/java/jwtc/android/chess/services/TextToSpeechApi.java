@@ -24,8 +24,16 @@ public class TextToSpeechApi {
     protected float speechPitch = 1.0f;
 
     public TextToSpeechApi(Context context, TextToSpeech.OnInitListener listener) {
+        this(context, listener, null);
+    }
+
+    public TextToSpeechApi(Context context, TextToSpeech.OnInitListener listener, String enginePackage) {
         this.context = context;
-        textToSpeech = new TextToSpeech(context, listener);
+        if (enginePackage == null || enginePackage.isEmpty()) {
+            textToSpeech = new TextToSpeech(context, listener);
+        } else {
+            textToSpeech = new TextToSpeech(context, listener, enginePackage);
+        }
         appLocales = context.getResources().getConfiguration().getLocales();
     }
 
@@ -123,6 +131,15 @@ public class TextToSpeechApi {
     public void useSystemDefaultVoice() {
         selectedLocale = findBestSupportedLocale();
         textToSpeech.setLanguage(selectedLocale);
+    }
+
+    public List<TextToSpeech.EngineInfo> getInstalledEngines() {
+        return new ArrayList<>(textToSpeech.getEngines());
+    }
+
+    public void shutdown() {
+        textToSpeech.stop();
+        textToSpeech.shutdown();
     }
 
     private Locale findBestSupportedLocale() {

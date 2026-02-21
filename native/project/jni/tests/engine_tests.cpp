@@ -315,6 +315,28 @@ void testGameLifecycleRegression() {
     }
 }
 
+void testThreefoldRepetition() {
+    Game *game = Game::getInstance();
+    ASSERT_TRUE(game->newGameFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"));
+
+    const int repetitionMoves[] = {
+        Move_makeMove(ChessBoard::g1, ChessBoard::f3),
+        Move_makeMove(ChessBoard::g8, ChessBoard::f6),
+        Move_makeMove(ChessBoard::f3, ChessBoard::g1),
+        Move_makeMove(ChessBoard::f6, ChessBoard::g8),
+        Move_makeMove(ChessBoard::g1, ChessBoard::f3),
+        Move_makeMove(ChessBoard::g8, ChessBoard::f6),
+        Move_makeMove(ChessBoard::f3, ChessBoard::g1),
+        Move_makeMove(ChessBoard::f6, ChessBoard::g8),
+    };
+
+    for (int move : repetitionMoves) {
+        ASSERT_TRUE(game->move(move));
+    }
+
+    EXPECT_TRUE(game->getBoard()->getState() == ChessBoard::DRAW_REPEAT);
+}
+
 class GameTest : public ::testing::Test {
    protected:
     void SetUp() override {
@@ -368,6 +390,10 @@ TEST_F(GameTest, FenParsingRegression) {
 
 TEST_F(GameTest, GameLifecycleRegression) {
     testGameLifecycleRegression();
+}
+
+TEST_F(GameTest, ThreefoldRepetition) {
+    testThreefoldRepetition();
 }
 
 }  // namespace

@@ -1,35 +1,33 @@
 package jwtc.android.chess.activities;
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.content.res.Resources;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.EngineInfo;
 import android.speech.tts.Voice;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.slider.Slider;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.List;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.FixedDropdownView;
 
 public class AccessibilityPreferences extends ChessBoardActivity {
     private static final String TAG = "AccessibilityPreferences";
-    private static final String ACTION_TTS_SETTINGS = "com.android.settings.TTS_SETTINGS";
     private CheckBox checkBoxShowPiecesDescriptions, checkBoxShowAccessibilityDrag;
     private Slider sliderSpeechRate, sliderSpeechPitch, sliderAccessibilityDelay;
-    private MaterialButton buttonTtsSettings;
-    private FixedDropdownView dropDownSpeechVoice;
+    private FixedDropdownView dropDownSpeechVoice, dropDownSpeechEngine;
     private final ArrayList<String> speechVoiceNames = new ArrayList<>();
+    private final ArrayList<String> speechEnginePackages = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,8 +42,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
         sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
         sliderAccessibilityDelay = findViewById(R.id.SliderAccessibilityDragDelay);
-        buttonTtsSettings = findViewById(R.id.ButtonTtsSettings);
         dropDownSpeechVoice = findViewById(R.id.DropDownSpeechVoice);
+        dropDownSpeechEngine = findViewById(R.id.DropDownSpeechEngine);
 
         sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
             if (textToSpeech == null) {
@@ -67,8 +65,6 @@ public class AccessibilityPreferences extends ChessBoardActivity {
             accessibilityDragDwellMs = (int)value;
         });
 
-        buttonTtsSettings.setOnClickListener(v -> openSystemTtsSettings());
-
         dropDownSpeechVoice.setOnItemClickListener((AdapterView<?> parent, android.view.View view, int position, long id) -> {
             if (position >= 0 && position < speechVoiceNames.size() && textToSpeech != null) {
                 String voiceName = speechVoiceNames.get(position);
@@ -79,6 +75,32 @@ public class AccessibilityPreferences extends ChessBoardActivity {
                 }
                 textToSpeech.moveToSpeech(getPreviewMove());
             }
+        });
+
+        dropDownSpeechEngine.setOnItemClickListener((AdapterView<?> parent, android.view.View view, int position, long id) -> {
+            if (position < 0 || position >= speechEnginePackages.size()) {
+                return;
+            }
+
+            String selectedEnginePackage = speechEnginePackages.get(position);
+            String currentEnginePackage = getPrefs().getString("speechEngine", null);
+            if (Objects.equals(selectedEnginePackage, currentEnginePackage)) {
+                return;
+            }
+
+            SharedPreferences.Editor editor = getPrefs().edit();
+            if (selectedEnginePackage == null) {
+                editor.remove("speechEngine");
+            } else {
+                editor.putString("speechEngine", selectedEnginePackage);
+            }
+            editor.remove("speechVoice");
+            editor.apply();
+
+            if (textToSpeech != null) {
+                textToSpeech.shutdown();
+            }
+            textToSpeech = new TextToSpeechApi(this, this, selectedEnginePackage);
         });
 
         gameApi = new GameApi();
@@ -139,6 +161,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
     public void onInit(int status) {
         super.onInit(status);
         if (status == TextToSpeech.SUCCESS) {
+            populateSpeechEngineDropdown();
             populateSpeechVoiceDropdown();
         }
     }
@@ -184,14 +207,38 @@ public class AccessibilityPreferences extends ChessBoardActivity {
             }
         }
     }
+    private void populateSpeechEngineDropdown() {
+        speechEnginePackages.clear();
+        ArrayList<String> labels = new ArrayList<>();
+        speechEnginePackages.add(null);
+        labels.add(getString(R.string.pref_speech_engine_system_default));
 
-    private void openSystemTtsSettings() {
-        Intent intent = new Intent(ACTION_TTS_SETTINGS);
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException ex) {
-            doToast(getString(R.string.tts_settings_not_found));
+        if (textToSpeech != null) {
+            List<EngineInfo> engines = textToSpeech.getInstalledEngines();
+            for (EngineInfo engine : engines) {
+                if (engine == null || engine.name == null || engine.name.isEmpty()) {
+                    continue;
+                }
+                speechEnginePackages.add(engine.name);
+                labels.add(engine.label + " - " + engine.name);
+            }
         }
+
+        dropDownSpeechEngine.setItems(labels);
+
+        String selectedEngine = getPrefs().getString("speechEngine", null);
+        if (selectedEngine == null || selectedEngine.isEmpty()) {
+            dropDownSpeechEngine.setSelection(0);
+            return;
+        }
+
+        for (int i = 0; i < speechEnginePackages.size(); i++) {
+            if (selectedEngine.equals(speechEnginePackages.get(i))) {
+                dropDownSpeechEngine.setSelection(i);
+                return;
+            }
+        }
+        dropDownSpeechEngine.setSelection(0);
     }
 
     private String getPreviewMove() {
