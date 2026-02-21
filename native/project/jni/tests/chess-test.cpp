@@ -1,24 +1,22 @@
 #include "chess-test.h"
 
+#include <gtest/gtest.h>
+
 void ChessTest::startSearchThread() {
     pthread_t tid;
     pthread_create(&tid, nullptr, &Game::search_wrapper, nullptr);
 }
 
-bool ChessTest::expectEqualInt(int a, int b, char *message) {
-    if (a != b) {
-        DEBUG_PRINT("FAILED: %s => Expected [%d] but got [%d]\n", message, a, b);
-        return false;
-    }
-    return true;
+bool ChessTest::expectEqualInt(int a, int b, const char *message) {
+    SCOPED_TRACE(message);
+    EXPECT_EQ(a, b);
+    return a == b;
 }
 
-bool ChessTest::expectEqualString(char *a, char *b, char *message) {
-    if (strcmp(a, b) != 0) {
-        DEBUG_PRINT("FAILED: %s => Expected [%s] but got [%s]\n", message, a, b);
-        return false;
-    }
-    return true;
+bool ChessTest::expectEqualString(const char *a, const char *b, const char *message) {
+    SCOPED_TRACE(message);
+    EXPECT_STREQ(a, b);
+    return strcmp(a, b) == 0;
 }
 
 bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {

@@ -66,8 +66,8 @@ class ChessTest {
     ~ChessTest(void);
 
     static void startSearchThread();
-    static bool expectEqualInt(int a, int b, char *message);
-    static bool expectEqualString(char *a, char *b, char *message);
+    static bool expectEqualInt(int a, int b, const char *message);
+    static bool expectEqualString(const char *a, const char *b, const char *message);
     static bool expectEngineMove(EngineInOutFEN scenario);
     static bool expectSequence(SequenceInOutFEN scenario);
     static bool expectNonSequence(NonSequenceInFEN scenario);
