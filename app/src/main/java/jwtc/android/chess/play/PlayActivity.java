@@ -139,16 +139,20 @@ public class PlayActivity extends ChessBoardActivity implements
         playButton = findViewById(R.id.ButtonPlay);
         playButton.setOnClickListener(arg0 -> {
             if (!gameApi.isEnded()) {
-                if (jni.getNumBoard() < gameApi.getPGNSize()) {
-                    openConfirmDialog(
-                        getString(R.string.title_create_new_line),
-                        getString(R.string.alert_yes),
-                        getString(R.string.alert_no),
-                        this::playIfEngineCanMove,
-                        null
-                    );
+                if (myEngine.isReady()) {
+                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
+                        openConfirmDialog(
+                            getString(R.string.title_create_new_line),
+                            getString(R.string.alert_yes),
+                            getString(R.string.alert_no),
+                            this::playIfEngineCanMove,
+                            null
+                        );
+                    } else {
+                        playIfEngineCanMove();
+                    }
                 } else {
-                    playIfEngineCanMove();
+                    myEngine.abort(() -> {});
                 }
             }
         });
@@ -359,7 +363,7 @@ public class PlayActivity extends ChessBoardActivity implements
     protected void onPause() {
         //Debug.stopMethodTracing();
 
-        myEngine.abort();
+        myEngine.abort(() -> {});
         myEngine.removeListener(this);
 
         localClock.stopClock();
@@ -528,12 +532,14 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void OnEngineAborted() {
+        Log.d(TAG, "on engine aborted");
         toggleEngineProgress(false);
         // hideInfoBalloon();
     }
 
     @Override
     public void OnEngineError() {
+        Log.d(TAG, "on engine error");
         toggleEngineProgress(false);
         // hideInfoBalloon();
         // textViewEngineValue.setText("Engine error!");

@@ -18,7 +18,7 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
     while (movesPerformed < scenario.numMoves) {
         ChessTest::startSearchThread();
         sleep(1);
-        while (scenario.game->m_bSearching) {
+        while (scenario.game->m_bSearching.load()) {
             sleep(1);
         }
 

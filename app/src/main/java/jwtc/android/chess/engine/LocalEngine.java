@@ -40,24 +40,40 @@ public class LocalEngine extends EngineApi {
 
     @Override
     public boolean isReady() {
-        return true;
+        return JNI.getInstance().peekSearchDone() == 1;
     }
 
     @Override
-    public void abort() {
+    public void abort(Runnable onDone) {
         abortPeek();
+        final Thread searchThreadSnapshot;
 
-        if (engineSearchThread != null) {
-            Log.d(TAG, "abort");
-
-            synchronized (this) {
-                engineSearchThread.interrupt();
+        synchronized (this) {
+            searchThreadSnapshot = engineSearchThread;
+            if (searchThreadSnapshot != null) {
+                Log.d(TAG, "abort");
+                searchThreadSnapshot.interrupt();
                 JNI.getInstance().interrupt();
             }
+        }
 
+        if (searchThreadSnapshot != null) {
             for (EngineListener listener : listeners) {
                 listener.OnEngineAborted();
             }
+
+            if (onDone != null) {
+                new Thread(() -> {
+                    try {
+                        searchThreadSnapshot.join();
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                    updateHandler.post(onDone);
+                }).start();
+            }
+        } else if (onDone != null) {
+            updateHandler.post(onDone);
         }
     }
 
@@ -111,6 +127,10 @@ public class LocalEngine extends EngineApi {
 
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
+            } finally {
+                synchronized (LocalEngine.this) {
+                    engineSearchThread = null;
+                }
             }
         }
     }

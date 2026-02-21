@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 #include "common.h"
 #include "ChessBoard.h"
 
@@ -49,7 +51,7 @@ class Game {
     void startTime();
 
     boolean m_bInterrupted;
-    boolean m_bSearching;
+    std::atomic_bool m_bSearching;
     int m_evalCount;
     int m_searchDepth;
     int m_searchLimit;

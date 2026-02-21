@@ -48,6 +48,9 @@ Game *Game::getInstance() {
 
 void Game::deleteInstance() {
     if (Game::game != nullptr) {
+        if (Game::game->m_bSearching.load()) {
+            return;
+        }
         delete Game::game;
         Game::game = nullptr;
     }
@@ -59,6 +62,10 @@ void *Game::search_wrapper(void *arg) {
 }
 
 void Game::reset() {
+    if (m_bSearching.load()) {
+        return;
+    }
+
     clearBoardHistory();
 
     m_board->reset();
@@ -74,6 +81,10 @@ void Game::reset() {
 }
 
 boolean Game::newGameFromFEN(const char *sFEN) {
+    if (m_bSearching.load()) {
+        return false;
+    }
+
     reset();
     ChessBoard *board = getBoard();
     int ret = board->parseFEN(sFEN);
@@ -86,6 +97,9 @@ boolean Game::newGameFromFEN(const char *sFEN) {
 }
 
 void Game::commitBoard() {
+    if (m_bSearching.load()) {
+        return;
+    }
     m_board->commitBoard();
     m_board->calcState(m_boardRefurbish);
 }
@@ -123,6 +137,10 @@ int Game::getBestDuckMoveAt(int ply) {
 }
 
 boolean Game::requestMove(int from, int to) {
+    if (m_bSearching.load()) {
+        return false;
+    }
+
     ChessBoard *nb = new ChessBoard();
     m_board->calcState(m_boardRefurbish);
     if (m_board->requestMove(from, to, nb, m_boardRefurbish, m_promotionPiece)) {
@@ -136,6 +154,10 @@ boolean Game::requestMove(int from, int to) {
 }
 
 boolean Game::requestDuckMove(int duckPos) {
+    if (m_bSearching.load()) {
+        return false;
+    }
+
     ChessBoard *board = getBoard();
     board->calcState(m_boardRefurbish);
     if (board->requestDuckMove(duckPos)) {
@@ -146,6 +168,10 @@ boolean Game::requestDuckMove(int duckPos) {
 }
 
 boolean Game::move(int move) {
+    if (m_bSearching.load()) {
+        return false;
+    }
+
     ChessBoard *nb = new ChessBoard();
 
     m_board->calcState(m_boardRefurbish);
@@ -159,6 +185,10 @@ boolean Game::move(int move) {
 }
 
 void Game::undo() {
+    if (m_bSearching.load()) {
+        return;
+    }
+
     ChessBoard *tmp = m_board;
     ChessBoard *cb = m_board->undoMove();
     if (cb != nullptr) {
@@ -170,16 +200,25 @@ void Game::undo() {
 #pragma region Search methods
 
 void Game::setQuiescentOn(boolean on) {
+    if (m_bSearching.load()) {
+        return;
+    }
     m_quiescentSearchOn = on;
 }
 
 // returns the move found
 void Game::setSearchTime(int secs) {
+    if (m_bSearching.load()) {
+        return;
+    }
     m_milliesGiven = (long) secs;
     m_searchLimit = 0;
 }
 
 void Game::setSearchLimit(int depth) {
+    if (m_bSearching.load()) {
+        return;
+    }
     m_milliesGiven = 0;
     if (depth <= MAX_DEPTH - QUIESCE_DEPTH) {
         m_searchLimit = depth;
@@ -189,11 +228,16 @@ void Game::setSearchLimit(int depth) {
 }
 
 void Game::search() {
-    if (m_bSearching) {
+    bool expected = false;
+    if (!m_bSearching.compare_exchange_strong(expected, true)) {
         DEBUG_PRINT("Already searching!");
         return;
     }
-    m_bSearching = true;
+    struct SearchGuard {
+        std::atomic_bool *flag;
+        ~SearchGuard() { flag->store(false); }
+    } searchGuard{&m_bSearching};
+
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     m_bInterrupted = false;
     m_evalCount = 0;
@@ -202,13 +246,11 @@ void Game::search() {
 
     // no need to search if the game has allready ended
     if (m_board->isEnded()) {
-        m_bSearching = false;
         return;
     }
 
     if (m_board->getNumMoves() == 0) {
         DEBUG_PRINT("NO moves!");
-        m_bSearching = false;
         return;
     }
 
@@ -294,7 +336,6 @@ void Game::search() {
                 timePassed(),
                 (double) m_evalCount / timePassed());
 
-    m_bSearching = false;
 }
 
 int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int beta) {
@@ -576,6 +617,10 @@ int Game::searchHouse(boolean allowAttack)
 // allowAttack, if a new piece on the board is allowed to attack immediatly,
 // for crazyhouse that's ok, for parachute not
 boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowAttack) {
+    if (m_bSearching.load()) {
+        return false;
+    }
+
     ChessBoard *nextBoard = new ChessBoard();
     if (m_board->putHouse(pos, piece, nextBoard, m_boardRefurbish, allowAttack)) {
         m_board = nextBoard;
