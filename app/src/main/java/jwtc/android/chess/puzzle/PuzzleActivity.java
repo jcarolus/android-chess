@@ -29,7 +29,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     private static final String TAG = "PuzzleActivity";
     private EngineApi myEngine;
     private Cursor cursor = null;
-    private TextView tvPuzzleText, textViewSolution, textViewWhitePieces, textViewBlackPieces;
+    private TextView tvPuzzleText, textViewSolution;
     private ImageView imageTurn;
     private MaterialButton butPrev, butNext, butRetry, butShow;
     private ImageView imgStatus;

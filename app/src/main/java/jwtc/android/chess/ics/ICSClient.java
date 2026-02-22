@@ -471,7 +471,9 @@ public class ICSClient extends ChessBoardActivity implements
 
         _bICSVolume = prefs.getBoolean("ICSVolume", true);
 
-        switchSound.setChecked(prefs.getBoolean("moveSounds", false));
+        boolean moveSound = prefs.getBoolean("moveSounds", false);
+        switchSound.setChecked(moveSound);
+        sounds.setEnabled(moveSound);
 
         // get rid of notification for tap to play
 //        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

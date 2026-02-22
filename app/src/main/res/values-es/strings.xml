@@ -363,9 +363,9 @@
     <string name="savegame_white">Blancas</string>
     <string name="savegame_white_question">¿Blancas?</string>
     <string name="square_selected_with_duck_description">Seleccionado %1$s en %2$s</string>
-    <string name="square_selected_with_piece_description">Seleccionado %1$s %2$s en %3$s</string>
+    <string name="square_selected_with_piece_description">Seleccionado %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s en %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s en %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
     <string name="start_accessibility_preferences">Preferencias de accesibilidad</string>
     <string name="start_boardpreferences">Configuración del tablero</string>
     <string name="start_database">Base de datos de partidas</string>

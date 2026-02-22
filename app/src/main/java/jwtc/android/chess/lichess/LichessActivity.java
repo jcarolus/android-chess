@@ -59,7 +59,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private ImageView imageTurnOpp, imageTurnMe;
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
     private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
-    private TextView textViewLastMove, textViewStatus, textViewOfferDraw, textViewWhitePieces, textViewBlackPieces;
+    private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private TextView textViewLobbyStatus;
     private TextView textViewHandle;
     private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove;
@@ -501,8 +501,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
         textViewLastMove.setText(getLastMoveAndTurnDescription(false));
-        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
-        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
     }
 
     protected void displayLogin() {

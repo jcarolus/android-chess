@@ -11,6 +11,7 @@ import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -57,6 +58,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false;
     protected boolean useAccessibilityDrag = false;
     protected int accessibilityDragDwellMs = 300;
+    protected TextView textViewWhitePieces, textViewBlackPieces;
     private String keyboardBuffer = "";
     private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
     private Runnable accessibilityDragDwellRunnable = null;
@@ -144,6 +146,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         Log.d(TAG, "OnState");
         rebuildBoard();
+
+        if (textViewWhitePieces != null && textViewBlackPieces != null) {
+            textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
+            textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
+        }
     }
 
     @Override
@@ -590,9 +597,35 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             int duckPos = jni.getDuckPos();
 
             if (whitePiece != BoardConstants.FIELD) {
-                return getString(selectedPosition == pos ? R.string.square_selected_with_piece_description : R.string.square_with_piece_description, getString(R.string.piece_white), getString(Piece.toResource(whitePiece)), Pos.toString(pos));
+                if (selectedPosition == pos) {
+                    return getString(
+                        R.string.square_selected_with_piece_description,
+                        Pos.toString(pos),
+                        getString(R.string.piece_white),
+                        getString(Piece.toResource(whitePiece))
+                    );
+                }
+                return getString(
+                    R.string.square_with_piece_description,
+                    Pos.toString(pos),
+                    getString(R.string.piece_white),
+                    getString(Piece.toResource(whitePiece))
+                );
             } else if (blackPiece != BoardConstants.FIELD) {
-                return getString(selectedPosition == pos ? R.string.square_selected_with_piece_description : R.string.square_with_piece_description, getString(R.string.piece_black), getString(Piece.toResource(blackPiece)), Pos.toString(pos));
+                if (selectedPosition == pos) {
+                    return getString(
+                        R.string.square_selected_with_piece_description,
+                        Pos.toString(pos),
+                        getString(R.string.piece_black),
+                        getString(Piece.toResource(blackPiece))
+                    );
+                }
+                return getString(
+                    R.string.square_with_piece_description,
+                    Pos.toString(pos),
+                    getString(R.string.piece_black),
+                    getString(Piece.toResource(blackPiece))
+                );
             } else if (duckPos != -1) {
                 return getString(selectedPosition == pos ? R.string.square_selected_with_duck_description : R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos));
             }

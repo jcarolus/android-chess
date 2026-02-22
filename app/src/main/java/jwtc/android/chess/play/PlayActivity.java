@@ -90,7 +90,7 @@ public class PlayActivity extends ChessBoardActivity implements
     private ChessPiecesStackView bottomPieces;
     private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
     private TextView textViewTopPlayer, textViewBottomPlayer, textViewTopClockTime, textViewBottomClockTime, textViewWhitePlayer, textViewBlackPlayer, textViewWhiteClockTIme, textViewBlackClockTime;
-    private TextView textViewLastMove, textViewEco, textViewWhitePieces, textViewBlackPieces;
+    private TextView textViewLastMove, textViewEco;
     private TextView textViewInfoBalloon, textViewEngineValue;
     private MaterialButton buttonEco;
     private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech, switchAccessibilityDrag;
@@ -340,7 +340,9 @@ public class PlayActivity extends ChessBoardActivity implements
         updateClockByPrefs(false);
         updateGameSettingsByPrefs();
 
-        switchSound.setChecked(prefs.getBoolean("moveSounds", false));
+        boolean moveSounds = prefs.getBoolean("moveSounds", false);
+        switchSound.setChecked(moveSounds);
+        sounds.setEnabled(moveSounds);
         switchBlindfold.setChecked(false);
 
         boolean showDrag = prefs.getBoolean("show_accessibility_drag_toggle", false);
@@ -575,8 +577,6 @@ public class PlayActivity extends ChessBoardActivity implements
             sState = ". " + getString(state);
         }
         textViewLastMove.setText(getLastMoveAndTurnDescription(false) + sState);
-        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
-        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
     }
 
     protected void updateSeekBar() {

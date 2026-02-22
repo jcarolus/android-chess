@@ -32,7 +32,7 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
-    private TextView tvPracticeMove, tvPercentage, textViewSolution, textViewWhitePieces, textViewBlackPieces;
+    private TextView tvPracticeMove, tvPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
     private int totalPuzzles, currentPos;
     private Cursor cursor;

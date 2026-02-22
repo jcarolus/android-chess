@@ -44,7 +44,6 @@ public class SetupActivity extends ChessBoardActivity {
     private CheckBox checkWhiteCastleLong;
     private CheckBox checkBlackCastleShort;
     private CheckBox checkBlackCastleLong;
-    private TextView textViewWhitePieces, textViewBlackPieces;
 
     protected int selectedPiece = -1;
     protected int selectedColor = -1;

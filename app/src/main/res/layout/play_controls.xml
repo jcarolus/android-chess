@@ -146,19 +146,19 @@
                 android:checked="true" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchSound"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:text="@string/pref_sound"
-                android:checked="true" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFlip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:text="@string/menu_flip"
+                android:checked="true" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchSound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_sound"
                 android:checked="true" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial

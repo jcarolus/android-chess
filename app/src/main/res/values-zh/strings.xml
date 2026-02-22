@@ -353,9 +353,9 @@
     <string name="savegame_white">白方</string>
     <string name="savegame_white_question">白方?</string>
     <string name="square_selected_with_duck_description">已选择 %1$s 在 %2$s</string>
-    <string name="square_selected_with_piece_description">已选择 %1$s %2$s 在 %3$s</string>
+    <string name="square_selected_with_piece_description">已选择 %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s 在 %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s 在 %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
     <string name="start_accessibility_preferences">无障碍偏好设置</string>
     <string name="start_boardpreferences">棋盘设置</string>
     <string name="start_database">对局数据库</string>

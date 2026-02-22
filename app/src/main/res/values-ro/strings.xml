@@ -353,9 +353,9 @@
     <string name="savegame_white">Albe</string>
     <string name="savegame_white_question">Albe?</string>
     <string name="square_selected_with_duck_description">Selectat %1$s la %2$s</string>
-    <string name="square_selected_with_piece_description">Selectat %1$s %2$s la %3$s</string>
+    <string name="square_selected_with_piece_description">Selectat %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s la %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s la %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
     <string name="start_accessibility_preferences">Preferințe de accesibilitate</string>
     <string name="start_boardpreferences">Setări tablă de șah</string>
     <string name="start_database">Baza de date a partidelor</string>

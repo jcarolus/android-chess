@@ -62,7 +62,7 @@ public class GamesListActivity extends ChessBoardActivity {
     private static final int VIEW_BOARD = 1, VIEW_PGN = 2, VIEW_LIST = 3;
 
     private String sortOrder, sortBy;
-    private TextView textViewResult, textViewTotal, textViewPlayerWhite, textViewPlayerBlack, textViewEvent, textViewDate, textViewFilterInfo, textViewRating, textViewWhitePieces, textViewBlackPieces;
+    private TextView textViewResult, textViewTotal, textViewPlayerWhite, textViewPlayerBlack, textViewEvent, textViewDate, textViewFilterInfo, textViewRating;
     private TextInputEditText editTextFilterWhite, editTextFilterBlack, editTextFilterEvent;
     private MaterialButton buttonFilters;
     private PGNDateView pgnDateAfter, pgnDateBefore;
