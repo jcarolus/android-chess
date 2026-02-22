@@ -22,14 +22,13 @@ import jwtc.android.chess.engine.LocalEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
-import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
 public class PuzzleActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PuzzleActivity";
     private EngineApi myEngine;
     private Cursor cursor = null;
-    private TextView tvPuzzleText, textViewSolution;
+    private TextView textViewPuzzleText, textViewSolution;
     private ImageView imageTurn;
     private MaterialButton butPrev, butNext, butRetry, butShow;
     private ImageView imgStatus;
@@ -67,12 +66,10 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
 
         gameApi = new PuzzleApi();
 
-        afterCreate();
-
         currentPosition = 0;
         totalPuzzles = 0;
 
-        tvPuzzleText = findViewById(R.id.TextViewPuzzleText);
+        textViewPuzzleText = findViewById(R.id.TextViewPuzzleText);
         textViewSolution = findViewById(R.id.TextViewSolution);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
@@ -111,6 +108,11 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
             }
         });
 
+        switchSound = findViewById(R.id.SwitchSound);
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
+
+        afterCreate();
+
         chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
     }
 
@@ -125,6 +127,8 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
 
         useAccessibilityDrag = false;
         applySquareDragListeners();
+
+        textToSpeech.setEnabled(false, getPrefs());
 
         loadPuzzles();
     }
@@ -204,7 +208,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
             sWhite = sWhite.replace("?", "");
         }
 
-        tvPuzzleText.setText("# " + (currentPosition + 1) + " - " + sWhite /*+ sDate*/); // + "\n\n" + _mapPGNHead.get("Event") + ", " + _mapPGNHead.get("Date").replace(".??.??", ""));
+        textViewPuzzleText.setText("# " + (currentPosition + 1) + " - " + sWhite /*+ sDate*/); // + "\n\n" + _mapPGNHead.get("Event") + ", " + _mapPGNHead.get("Date").replace(".??.??", ""));
         textViewSolution.setText("");
     }
 

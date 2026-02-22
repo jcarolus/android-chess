@@ -67,6 +67,29 @@
             android:layout_margin="8dip"
             android:text="@string/puzzle_help" />
 
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="center">
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchSound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_sound"
+                android:checked="true" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchSpeech"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_speech"
+                android:checked="true" />
+        </com.google.android.flexbox.FlexboxLayout>
+
         <TextView
             android:id="@+id/TextViewWhitePieces"
             style="@style/MyPaneTextStyle"

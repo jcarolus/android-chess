@@ -26,20 +26,18 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
-import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
 public class PracticeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PracticeActivity";
     private EngineApi myEngine;
-    private TextView tvPracticeMove, tvPercentage, textViewSolution;
+    private TextView textViewPracticeMove, textViewPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
     private int totalPuzzles, currentPos;
     private Cursor cursor;
     private Timer timer;
 
-    private ImageView imageTurn;
-    private ImageView imgStatus;
+    private ImageView imageTurn, imgStatus;
 
     private int myTurn, numMoved, numPlayed, numSolved;
 
@@ -74,10 +72,11 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         gameApi = new PracticeApi();
 
-        afterCreate();
+        switchSound = findViewById(R.id.SwitchSound);
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
 
-        tvPracticeMove = findViewById(R.id.TextViewPracticeMove);
-        tvPercentage = findViewById(R.id.TextViewPercentage);
+        textViewPracticeMove = findViewById(R.id.TextViewPracticeMove);
+        textViewPercentage = findViewById(R.id.TextViewPercentage);
         textViewSolution = findViewById(R.id.TextViewSolution);
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
@@ -105,6 +104,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         percentBar = findViewById(R.id.percentBar);
 
+        afterCreate();
+
         chessBoardView.setNextFocusRightId(R.id.ButtonPracticeNext);
     }
 
@@ -120,6 +121,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         useAccessibilityDrag = false;
         applySquareDragListeners();
+
+        textToSpeech.setEnabled(false, getPrefs());
 
         loadPuzzles();
     }
@@ -190,7 +193,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
-        tvPracticeMove.setText("# " + (currentPos + 1));
+        textViewPracticeMove.setText("# " + (currentPos + 1));
         textViewSolution.setText("");
 
         imageTurn.setImageResource(myTurn == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
@@ -203,7 +206,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     }
 
     public void setMessage(int res) {
-        tvPracticeMove.setText(res);
+        textViewPracticeMove.setText(res);
     }
 
     protected void startEngine() {
@@ -215,6 +218,9 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         setMessage(getString(R.string.puzzle_correct_move));
         imgStatus.setImageResource(R.drawable.ic_check);
         pulseAnimation(imgStatus);
+        if (sounds.isEnabled()) {
+            sounds.playCorrect();
+        }
         updateScore();
     }
 
@@ -222,19 +228,17 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         setMessage(message);
         imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
         pulseAnimation(imgStatus);
+        if (sounds.isEnabled()) {
+            sounds.playError();
+        }
         updateScore();
     }
 
     public void updateScore() {
-        tvPercentage.setText(formatPercentage());
+        textViewPercentage.setText(formatPercentage());
         int percentage = numPlayed > 0 ? (int) ((float) numSolved / numPlayed * 100) : 0;
         Log.d(TAG, "Set per " + percentage);
         percentBar.setProgressCompat(percentage, /*animated=*/true);
-    }
-
-    public void updatePieces() {
-        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
-        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
     }
 
     private String formatPercentage() {
@@ -248,7 +252,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         numMoved++;
 
         updateSelectedSquares();
-        updatePieces();
 
         if (!gameApi.isEnded() && jni.getTurn() != myTurn) {
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -266,13 +269,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             buttonRetry.setEnabled(false);
             animateCorrect();
         }
-    }
-
-    @Override
-    public void OnState() {
-        super.OnState();
-
-        updatePieces();
     }
 
     @Override

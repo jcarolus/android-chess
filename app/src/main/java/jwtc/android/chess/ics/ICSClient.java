@@ -34,7 +34,6 @@ import android.widget.ViewSwitcher;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,7 +81,6 @@ public class ICSClient extends ChessBoardActivity implements
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
     private ScrollView _scrollConsole;
-    private SwitchMaterial switchSound;
 
     //private EditText _editPrompt;
     private ListView listChallenges, listPlayers, _listGames, _listStored, _listWelcome, listMenu;
@@ -145,8 +143,6 @@ public class ICSClient extends ChessBoardActivity implements
 
         gameApi = new ICSApi();
         localClockApi = new LocalClockApi(gameApi);
-
-        afterCreate();
 
         _dlgMatch = new ICSMatchDlg(this, this, REQUEST_CHALLENGE, getPrefs());
         _dlgPlayer = new ICSPlayerDlg(this);
@@ -236,9 +232,6 @@ public class ICSClient extends ChessBoardActivity implements
         buttonForward.setOnClickListener((OnClickListener) v -> sendString("forward"));
 
         switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sounds.setEnabled(switchSound.isChecked());
-        });
 
         textViewTitle = findViewById(R.id.TextViewTitle);
 
@@ -335,7 +328,7 @@ public class ICSClient extends ChessBoardActivity implements
             });
         }
 
-
+        afterCreate();
         chessBoardView.setNextFocusRightId(R.id.SwitchSound);
 
         localClockApi.addListener(this);
@@ -470,10 +463,6 @@ public class ICSClient extends ChessBoardActivity implements
         _bShowClockPGN = prefs.getBoolean("ICSClockPGN", true);
 
         _bICSVolume = prefs.getBoolean("ICSVolume", true);
-
-        boolean moveSound = prefs.getBoolean("moveSounds", false);
-        switchSound.setChecked(moveSound);
-        sounds.setEnabled(moveSound);
 
         // get rid of notification for tap to play
 //        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

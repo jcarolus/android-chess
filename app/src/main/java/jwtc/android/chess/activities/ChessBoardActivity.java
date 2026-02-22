@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -58,7 +59,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false;
     protected boolean useAccessibilityDrag = false;
     protected int accessibilityDragDwellMs = 300;
+    // shared views
     protected TextView textViewWhitePieces, textViewBlackPieces;
+    protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
     private String keyboardBuffer = "";
     private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
     private Runnable accessibilityDragDwellRunnable = null;
@@ -115,6 +118,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         highlightedPositions.clear();
 
         rebuildBoard();
+        updatePieceDescriptions();
 
         if (Move.isCheck(move)) {
             feedbackCheck();
@@ -147,10 +151,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         Log.d(TAG, "OnState");
         rebuildBoard();
 
-        if (textViewWhitePieces != null && textViewBlackPieces != null) {
-            textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
-            textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
-        }
+        updatePieceDescriptions();
     }
 
     @Override
@@ -167,13 +168,31 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         chessBoardView = findViewById(R.id.includeboard);
         chessBoardView.setNextFocusRightId(R.id.ButtonPlay);
 
+        if (switchSound != null) {
+            switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                sounds.setEnabled(switchSound.isChecked());
+            });
+        }
+
+        if (switchMoveToSpeech != null) {
+            switchMoveToSpeech.setOnCheckedChangeListener((buttonView, isChecked) -> textToSpeech.setEnabled(switchMoveToSpeech.isChecked(), getPrefs()));
+        }
+        if (switchAccessibilityDrag != null) {
+            switchAccessibilityDrag.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                useAccessibilityDrag = switchAccessibilityDrag.isChecked();
+                applySquareDragListeners();
+                if (isChecked && buttonView.isPressed() && textToSpeech != null) {
+                    textToSpeech.moveToSpeech(getString(R.string.pref_accessibility_drag_talkback_reminder));
+                }
+            });
+        }
+
         initDirectionalPad();
 
         myDragListener = new MyDragListener();
         myAccessibilityDragListener = new MyAccessibilityDragListener();
         myTouchListener = new MyTouchListener();
         myClickListener = new MyClickListener();
-        useAccessibilityDrag = getPrefs().getBoolean("useAccessibilityDrag", false);
 
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);
@@ -209,10 +228,41 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
 
+        // sounds
+        boolean moveSounds = prefs.getBoolean("moveSounds", false);
+        if (switchSound != null) {
+            switchSound.setChecked(moveSounds);
+        } else {
+            moveSounds = false;
+        }
+        sounds.setEnabled(moveSounds);
+
+        // accessibility drag
         useAccessibilityDrag = prefs.getBoolean("useAccessibilityDrag", false);
         accessibilityDragDwellMs = prefs.getInt("accessibilityDragDelay", 300);
-        textToSpeech.setEnabled(prefs.getBoolean("moveToSpeech", false), prefs);
+        if (switchAccessibilityDrag != null) {
+            boolean showDrag = prefs.getBoolean("show_accessibility_drag_toggle", false);
+            switchAccessibilityDrag.setVisibility(showDrag ? View.VISIBLE : View.GONE);
+            switchAccessibilityDrag.setChecked(useAccessibilityDrag);
+        } else {
+            useAccessibilityDrag = false;
+        }
         applySquareDragListeners();
+
+        // TTS
+        boolean moveToSpeech = prefs.getBoolean("moveToSpeech", false);
+        if (switchMoveToSpeech != null) {
+            textToSpeech.setEnabled(moveToSpeech, prefs);
+            switchMoveToSpeech.setChecked(moveToSpeech);
+        } else {
+            textToSpeech.setEnabled(false, prefs);
+        }
+
+        if (textViewWhitePieces != null && textViewBlackPieces != null) {
+            int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
+            textViewWhitePieces.setVisibility(visibilityPiecesDescriptions);
+            textViewBlackPieces.setVisibility(visibilityPiecesDescriptions);
+        }
 
         showMoves = prefs.getBoolean("showMoves", false);
         hapticFeedback.setEnabled(prefs.getBoolean("useHapticFeedback", false));
@@ -222,6 +272,20 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected void onPause() {
         Log.d(TAG, "onPause");
         super.onPause();
+
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+
+        if (switchAccessibilityDrag != null) {
+            editor.putBoolean("useAccessibilityDrag", switchAccessibilityDrag.isChecked());
+        }
+        if (switchMoveToSpeech != null) {
+            editor.putBoolean("moveToSpeech", switchMoveToSpeech.isChecked());
+        }
+        if (switchSound != null) {
+            editor.putBoolean("moveSounds", switchSound.isChecked());
+        }
+
+        editor.commit();
     }
 
     public void hapticFeedbackTick() {
@@ -416,6 +480,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         highlightedPositions.clear();
         moveToPositions.clear();
         updateSelectedSquares();
+    }
+
+    public void updatePieceDescriptions() {
+        if (textViewWhitePieces != null && textViewBlackPieces != null) {
+            textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
+            textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
+        }
     }
 
 //    @Override

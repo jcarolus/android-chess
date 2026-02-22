@@ -54,7 +54,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private LocalClockApi localClockApi;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout layoutConfirm, layoutResignDraw, layoutSave;
-    private SwitchMaterial switchConfirmMoves, switchAccessibilityDrag;
+    private SwitchMaterial switchConfirmMoves;
 
     private ImageView imageTurnOpp, imageTurnMe;
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
@@ -154,13 +154,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         switchConfirmMoves = findViewById(R.id.SwitchConfirmMoves);
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
-        switchAccessibilityDrag.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            useAccessibilityDrag = switchAccessibilityDrag.isChecked();
-            applySquareDragListeners();
-            if (isChecked && buttonView.isPressed() && textToSpeech != null) {
-                textToSpeech.moveToSpeech(getString(R.string.pref_accessibility_drag_talkback_reminder));
-            }
-        });
+
         layoutResignDraw = findViewById(R.id.LayoutResignDraw);
         layoutConfirm = findViewById(R.id.LayoutConfirm);
         layoutSave = findViewById(R.id.LayoutSave);
@@ -209,14 +203,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutSave.setVisibility(View.GONE);
         layoutResignDraw.setVisibility(View.VISIBLE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
-        switchAccessibilityDrag.setChecked(useAccessibilityDrag);
-
-        boolean showDrag = prefs.getBoolean("show_accessibility_drag_toggle", false);
-        switchAccessibilityDrag.setVisibility(showDrag ? View.VISIBLE : View.GONE);
-
-        int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
-        textViewWhitePieces.setVisibility(visibilityPiecesDescriptions);
-        textViewBlackPieces.setVisibility(visibilityPiecesDescriptions);
     }
 
     @Override
@@ -226,7 +212,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         editor.putBoolean("lichess_confirm_moves", switchConfirmMoves.isChecked());
-        editor.putBoolean("useAccessibilityDrag", useAccessibilityDrag);
 
         editor.commit();
     }

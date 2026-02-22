@@ -93,7 +93,7 @@ public class PlayActivity extends ChessBoardActivity implements
     private TextView textViewLastMove, textViewEco;
     private TextView textViewInfoBalloon, textViewEngineValue;
     private MaterialButton buttonEco;
-    private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech, switchAccessibilityDrag;
+    private SwitchMaterial switchBlindfold, switchFlip;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
     private PopupWindow popupWindowInfoBalloon;
@@ -133,6 +133,11 @@ public class PlayActivity extends ChessBoardActivity implements
         localClock = new LocalClockApi(gameApi);
 
         localClock.addListener(this);
+
+        // init shared views before aftercreate
+        switchSound = findViewById(R.id.SwitchSound);
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
+        switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
 
         afterCreate();
 
@@ -213,11 +218,6 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
 
-        switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sounds.setEnabled(switchSound.isChecked());
-        });
-
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (switchBlindfold.isChecked()) {
@@ -239,18 +239,6 @@ public class PlayActivity extends ChessBoardActivity implements
         switchFlip.setOnCheckedChangeListener((buttonView, isChecked) -> {
             flipBoard = switchFlip.isChecked();
             updateBoardRotation();
-        });
-
-        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
-        switchMoveToSpeech.setOnCheckedChangeListener((buttonView, isChecked) -> textToSpeech.setEnabled(switchMoveToSpeech.isChecked(), getPrefs()));
-
-        switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
-        switchAccessibilityDrag.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            useAccessibilityDrag = switchAccessibilityDrag.isChecked();
-            applySquareDragListeners();
-            if (isChecked && buttonView.isPressed() && textToSpeech != null) {
-                textToSpeech.moveToSpeech(getString(R.string.pref_accessibility_drag_talkback_reminder));
-            }
         });
 
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
@@ -337,20 +325,12 @@ public class PlayActivity extends ChessBoardActivity implements
             }
         }
 
-        updateClockByPrefs(false);
-        updateGameSettingsByPrefs();
-
-        boolean moveSounds = prefs.getBoolean("moveSounds", false);
-        switchSound.setChecked(moveSounds);
-        sounds.setEnabled(moveSounds);
+        flipBoard = prefs.getBoolean("flipBoard", false);
+        switchFlip.setChecked(flipBoard);
         switchBlindfold.setChecked(false);
 
-        boolean showDrag = prefs.getBoolean("show_accessibility_drag_toggle", false);
-        switchAccessibilityDrag.setVisibility(showDrag ? View.VISIBLE : View.GONE);
-
-        int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
-        textViewWhitePieces.setVisibility(visibilityPiecesDescriptions);
-        textViewBlackPieces.setVisibility(visibilityPiecesDescriptions);
+        updateClockByPrefs(false);
+        updateGameSettingsByPrefs();
 
         buttonEco.setEnabled(false);
 
@@ -363,7 +343,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     protected void onPause() {
-        //Debug.stopMethodTracing();
+        super.onPause();
 
         myEngine.abort(() -> {});
         myEngine.removeListener(this);
@@ -395,22 +375,9 @@ public class PlayActivity extends ChessBoardActivity implements
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
         editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : pauseTime);
-
         editor.putBoolean("flipBoard", flipBoard);
-        editor.putBoolean("moveToSpeech", switchMoveToSpeech.isChecked());
-        editor.putBoolean("useAccessibilityDrag", useAccessibilityDrag);
-
-        editor.putBoolean("moveSounds", switchSound.isChecked());
-
-
-//         if (_uriNotification == null)
-//            editor.putString("NotificationUri", null);
-//        else
-//            editor.putString("NotificationUri", _uriNotification.toString());
 
         editor.commit();
-
-        super.onPause();
     }
 
     @Override
@@ -857,14 +824,6 @@ public class PlayActivity extends ChessBoardActivity implements
         }
 
         myEngine.setQuiescentSearchOn(prefs.getBoolean("quiescentSearchOn", true));
-        boolean moveToSpeech = prefs.getBoolean("moveToSpeech", false);
-        textToSpeech.setEnabled(moveToSpeech, prefs);
-
-        flipBoard = prefs.getBoolean("flipBoard", false);
-
-        switchFlip.setChecked(flipBoard);
-        switchMoveToSpeech.setChecked(moveToSpeech);
-        switchAccessibilityDrag.setChecked(useAccessibilityDrag);
 
         updateBoardRotation();
         updateLastMove();
