@@ -336,6 +336,7 @@
     <string name="tts_move_square">%1$s%2$s</string>
     <string name="pref_accessibility_drag">Accessibility drag</string>
     <string name="pref_accessibility_drag_delay_desc">Accessibility drag delay</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Delay to repeat last move on when on empty square</string>
     <string name="pref_accessibility_drag_talkback_reminder">For accessibility drag, please turn off TalkBack.</string>
     <string name="pref_speech_pitch_desc">Speech pitch</string>
     <string name="pref_speech_rate_desc">Speech rate</string>

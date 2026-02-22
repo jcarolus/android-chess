@@ -93,5 +93,22 @@
             android:stepSize="100"
             android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp" />
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_accessibility_drag_last_move_delay_desc"
+            android:labelFor="@id/SliderAccessibilityDragLastMoveDelay"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"/>
+        <com.google.android.material.slider.Slider
+            android:id="@+id/SliderAccessibilityDragLastMoveDelay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="1000"
+            android:valueFrom="600"
+            android:valueTo="2000"
+            android:stepSize="200"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp" />
     </LinearLayout>
 </ScrollView>

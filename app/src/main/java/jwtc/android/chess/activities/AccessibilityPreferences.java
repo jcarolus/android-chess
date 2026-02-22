@@ -23,7 +23,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 public class AccessibilityPreferences extends ChessBoardActivity {
     private static final String TAG = "AccessibilityPreferences";
     private CheckBox checkBoxShowPiecesDescriptions, checkBoxShowAccessibilityDrag;
-    private Slider sliderSpeechRate, sliderSpeechPitch, sliderAccessibilityDelay;
+    private Slider sliderSpeechRate, sliderSpeechPitch, sliderAccessibilityDelay, sliderAccessibilityLastMoveDelay;
     private FixedDropdownView dropDownSpeechVoice, dropDownSpeechEngine;
     private final ArrayList<String> speechVoiceNames = new ArrayList<>();
     private final ArrayList<String> speechEnginePackages = new ArrayList<>();
@@ -41,6 +41,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
         sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
         sliderAccessibilityDelay = findViewById(R.id.SliderAccessibilityDragDelay);
+        sliderAccessibilityLastMoveDelay = findViewById(R.id.SliderAccessibilityDragLastMoveDelay);
         dropDownSpeechVoice = findViewById(R.id.DropDownSpeechVoice);
         dropDownSpeechEngine = findViewById(R.id.DropDownSpeechEngine);
 
@@ -56,6 +57,9 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         sliderAccessibilityDelay.addOnChangeListener((s, value, fromUser) -> {
             accessibilityDragDwellMs = (int)value;
+        });
+        sliderAccessibilityLastMoveDelay.addOnChangeListener((s, value, fromUser) -> {
+            accessibilityDragLastMoveDelayMs = (int)value;
         });
 
         dropDownSpeechVoice.setOnItemClickListener((AdapterView<?> parent, android.view.View view, int position, long id) -> {
@@ -111,9 +115,11 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         checkBoxShowPiecesDescriptions.setChecked(prefs.getBoolean("show_pieces_descriptions", true));
 
         accessibilityDragDwellMs = prefs.getInt("accessibilityDragDelay", 300);
+        accessibilityDragLastMoveDelayMs = prefs.getInt("accessibilityDragLastMoveDelay", 1000);
         sliderSpeechRate.setValue(prefs.getFloat("speechRate", 1.0f));
         sliderSpeechPitch.setValue(prefs.getFloat("speechPitch", 1.0f));
         sliderAccessibilityDelay.setValue(accessibilityDragDwellMs);
+        sliderAccessibilityLastMoveDelay.setValue(accessibilityDragLastMoveDelayMs);
 
         checkBoxShowAccessibilityDrag.setChecked(prefs.getBoolean("show_accessibility_drag_toggle", false));
         useAccessibilityDrag = true;
@@ -136,6 +142,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
             editor.putBoolean("useAccessibilityDrag", false);
         }
         editor.putInt("accessibilityDragDelay", (int)sliderAccessibilityDelay.getValue());
+        editor.putInt("accessibilityDragLastMoveDelay", (int)sliderAccessibilityLastMoveDelay.getValue());
         int selectedVoicePosition = dropDownSpeechVoice.getSelectedItemPosition();
         if (selectedVoicePosition >= 0 && selectedVoicePosition < speechVoiceNames.size()) {
             String selectedVoice = speechVoiceNames.get(selectedVoicePosition);

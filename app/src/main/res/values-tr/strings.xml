@@ -319,6 +319,7 @@
     <string name="tts_move_square">%1$s%2$s</string>
     <string name="pref_accessibility_drag">Erişilebilir sürükleme</string>
     <string name="pref_accessibility_drag_delay_desc">Erişilebilir sürükleme gecikmesi</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Boş karede son hamleyi tekrarlama gecikmesi</string>
     <string name="pref_accessibility_drag_talkback_reminder">Erişilebilir sürükleme için TalkBack’i kapatın.</string>
     <string name="pref_speech_pitch_desc">Ses perdesi</string>
     <string name="pref_speech_rate_desc">Konuşma hızı</string>

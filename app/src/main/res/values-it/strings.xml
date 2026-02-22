@@ -319,6 +319,7 @@
     <string name="tts_move_square">%1$s%2$s</string>
     <string name="pref_accessibility_drag">Trascinamento accessibile</string>
     <string name="pref_accessibility_drag_delay_desc">Ritardo del trascinamento accessibile</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Ritardo per ripetere l’ultima mossa su una casella vuota</string>
     <string name="pref_accessibility_drag_talkback_reminder">Per il trascinamento accessibile, disattiva TalkBack.</string>
     <string name="pref_speech_pitch_desc">Altezza voce</string>
     <string name="pref_speech_rate_desc">Velocità voce</string>

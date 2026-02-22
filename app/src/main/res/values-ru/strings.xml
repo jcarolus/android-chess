@@ -319,6 +319,7 @@
     <string name="tts_move_square">%1$s%2$s</string>
     <string name="pref_accessibility_drag">Перетаскивание (доступность)</string>
     <string name="pref_accessibility_drag_delay_desc">Задержка перетаскивания (доступность)</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Задержка перед повтором последнего хода на пустой клетке</string>
     <string name="pref_accessibility_drag_talkback_reminder">Для доступного перетаскивания отключите TalkBack.</string>
     <string name="pref_speech_pitch_desc">Высота голоса</string>
     <string name="pref_speech_rate_desc">Скорость речи</string>

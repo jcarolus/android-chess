@@ -329,6 +329,7 @@
     <string name="tts_move_square">%1$s%2$s</string>
     <string name="pref_accessibility_drag">Barrierefreies Ziehen</string>
     <string name="pref_accessibility_drag_delay_desc">Verzögerung für barrierefreies Ziehen</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Verzögerung für das Wiederholen des letzten Zuges auf einem leeren Feld</string>
     <string name="pref_accessibility_drag_talkback_reminder">Für barrierefreies Ziehen bitte TalkBack ausschalten.</string>
     <string name="pref_speech_pitch_desc">Sprachhöhe</string>
     <string name="pref_speech_rate_desc">Sprechgeschwindigkeit</string>

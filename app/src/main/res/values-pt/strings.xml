@@ -319,6 +319,7 @@
     <string name="tts_move_square">%1$s%2$s</string>
     <string name="pref_accessibility_drag">Arrasto de acessibilidade</string>
     <string name="pref_accessibility_drag_delay_desc">Atraso do arrasto de acessibilidade</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Atraso para repetir o último lance em uma casa vazia</string>
     <string name="pref_accessibility_drag_talkback_reminder">Para usar o arrasto de acessibilidade, desative o TalkBack.</string>
     <string name="pref_speech_pitch_desc">Tom de voz</string>
     <string name="pref_speech_rate_desc">Velocidade da fala</string>
