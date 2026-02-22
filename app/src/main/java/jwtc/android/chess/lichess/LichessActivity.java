@@ -153,6 +153,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         localClockApi.addListener(this);
 
         switchConfirmMoves = findViewById(R.id.SwitchConfirmMoves);
+        switchSound = findViewById(R.id.SwitchSound);
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
 
         layoutResignDraw = findViewById(R.id.LayoutResignDraw);

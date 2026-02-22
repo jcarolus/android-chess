@@ -129,7 +129,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         }
 
-        if (!isScreenReaderOn() && textToSpeech.isEnabled()) {
+        if (textToSpeech.isEnabled()) {
             String sMove = getLastMoveAndTurnDescription(true);
             textToSpeech.moveToSpeech(sMove);
         }
