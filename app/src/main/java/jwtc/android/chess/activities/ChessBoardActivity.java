@@ -59,6 +59,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false;
     protected boolean useAccessibilityDrag = false;
     protected int accessibilityDragDwellMs = 300;
+    protected int accessibilityDragLastMoveDelayMs = 1000;
     // shared views
     protected TextView textViewWhitePieces, textViewBlackPieces;
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
@@ -240,6 +241,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         // accessibility drag
         useAccessibilityDrag = prefs.getBoolean("useAccessibilityDrag", false);
         accessibilityDragDwellMs = prefs.getInt("accessibilityDragDelay", 300);
+        accessibilityDragLastMoveDelayMs = prefs.getInt("accessibilityDragLastMoveDelay", 1000);
         if (switchAccessibilityDrag != null) {
             boolean showDrag = prefs.getBoolean("show_accessibility_drag_toggle", false);
             switchAccessibilityDrag.setVisibility(showDrag ? View.VISIBLE : View.GONE);
@@ -707,11 +709,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         return Pos.toString(pos);
     }
-
-    protected String getLastMoveAndTurnDescription(boolean forTTS) {
+    protected String getLastMoveDescription(boolean forTTS) {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = GameApi.moveToSpeechString(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move);
+            return GameApi.moveToSpeechString(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move);
+        }
+        return "";
+    }
+    protected String getLastMoveAndTurnDescription(boolean forTTS) {
+        String sMove = getLastMoveDescription(forTTS);
+        if (!sMove.isEmpty()) {
             if (gameApi.isEnded()) {
                 return sMove;
             }
@@ -872,6 +879,26 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragDwellMs);
     }
 
+    private void scheduleAccessibilityDwellLastMoveRepeat(final int pos) {
+        if (accessibilityDragDwellRunnable != null) {
+            accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+        }
+        accessibilityDragDwellRunnable = () -> {
+            if (accessibilityDragHoverPos != pos) {
+                return;
+            }
+            boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
+            if (hasPiece || !textToSpeech.isEnabled()) {
+                return;
+            }
+            String lastMoveDescription = getLastMoveDescription(true);
+            if (!lastMoveDescription.isEmpty()) {
+                textToSpeech.moveToSpeech(lastMoveDescription);
+            }
+        };
+        accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragLastMoveDelayMs);
+    }
+
     private void handleAccessibilitySquareEntered(int pos, boolean emitCrossingHaptic) {
         if (accessibilityDragHoverPos != pos) {
             accessibilityDragHoverPos = pos;
@@ -880,17 +907,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 accessibilityDragDwellRunnable = null;
             }
             if (emitCrossingHaptic) {
-                boolean hasPiece =
-                        pos == jni.getDuckPos() ||
-                        jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
-                        jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
-                Log.d(TAG, "pos " + pos + " has " + hasPiece);
+                boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
                 hapticFeedbackTick(hasPiece);
             }
             if (textToSpeech.isEnabled()) {
                 textToSpeech.moveToSpeech(getFieldDescription(pos));
             }
-            scheduleAccessibilityDwellSelection(pos);
+            boolean hasPiece =
+                pos == jni.getDuckPos() ||
+                jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
+                jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+            if (hasPiece) {
+                scheduleAccessibilityDwellSelection(pos);
+            } else {
+                scheduleAccessibilityDwellLastMoveRepeat(pos);
+            }
         }
     }
 

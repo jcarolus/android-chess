@@ -981,6 +981,12 @@ public class GameApi {
         return PGNHelper.getDate(s);
     }
 
+    public boolean hasAnyPieceOnPosition(int pos) {
+        return pos == jni.getDuckPos() ||
+            jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
+            jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+    }
+
     private static class NextMatch {
         final Matcher matcher;
         int start = -1;
