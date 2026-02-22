@@ -10,7 +10,7 @@ public class Sounds {
     private final static String TAG = "Sounds";
     private SoundPool soundPool = null;
     private final Context context;
-    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove, soundSelect, soundTick, soundError, soundCorrect;
+    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove, soundSelect, soundTick, soundError, soundCorrect, soundTickPiece;
     protected float fVolume = 1.0f;
     protected boolean enabled = false;
 
@@ -65,6 +65,10 @@ public class Sounds {
         play(soundTick);
     }
 
+    public void playTickPiece() {
+        play(soundTickPiece);
+    }
+
     public void playError() {
         play(soundError);
     }
@@ -93,6 +97,7 @@ public class Sounds {
             soundIllegalMove = loadSound(R.raw.illegal, 1);
             soundSelect = loadSound(R.raw.select, 1);
             soundTick = loadSound(R.raw.tick, 1);
+            soundTickPiece = loadSound(R.raw.tick_piece, 1);
             soundError = loadSound(R.raw.error, 1);
             soundCorrect = loadSound(R.raw.correct, 1);
         }

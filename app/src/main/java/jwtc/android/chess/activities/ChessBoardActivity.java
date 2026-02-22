@@ -288,9 +288,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         editor.commit();
     }
 
-    public void hapticFeedbackTick() {
+    public void hapticFeedbackTick(boolean hasPiece) {
         if (sounds.isEnabled()) {
-            sounds.playTick();
+            if (hasPiece) {
+                sounds.playTickPiece();
+            } else {
+                sounds.playTick();
+            }
         }
         if (hapticFeedback.isEnabled()) {
             hapticFeedback.hapticFeedbackTick();
@@ -876,7 +880,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 accessibilityDragDwellRunnable = null;
             }
             if (emitCrossingHaptic) {
-                hapticFeedbackTick();
+                boolean hasPiece =
+                        pos == jni.getDuckPos() ||
+                        jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
+                        jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+                Log.d(TAG, "pos " + pos + " has " + hasPiece);
+                hapticFeedbackTick(hasPiece);
             }
             if (textToSpeech.isEnabled()) {
                 textToSpeech.moveToSpeech(getFieldDescription(pos));
