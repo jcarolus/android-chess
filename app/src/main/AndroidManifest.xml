@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="270"
-    android:versionName="10.0.15">
-
+    android:versionCode="271"
+    android:versionName="10.0.16">
+    <queries>
+        <intent>
+            <action
+                android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
     <application
         android:name="android.app.Application"
         android:icon="@mipmap/ic_launcher"
