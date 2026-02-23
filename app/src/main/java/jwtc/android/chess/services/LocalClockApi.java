@@ -11,6 +11,16 @@ import jwtc.chess.board.BoardConstants;
 
 public class LocalClockApi implements GameListener {
     protected static final String TAG = "LocalClockApi";
+    private static final long[] TIME_WARNING_THRESHOLDS_MILLIES = {
+            10 * 60 * 1000L,
+            5 * 60 * 1000L,
+            2 * 60 * 1000L,
+            60 * 1000L,
+            30 * 1000L,
+            15 * 1000L,
+            10 * 1000L,
+            5 * 1000L
+    };
 
     protected long whiteRemaining = 0;
     protected long blackRemaining = 0;
@@ -20,6 +30,10 @@ public class LocalClockApi implements GameListener {
     protected long increment = 0;
     protected long lastMeasureTime = 0;
     protected boolean clockIsConfigured = false;
+    protected int whiteWarningMask = 0;
+    protected int blackWarningMask = 0;
+    protected long whitePreviousWarningCheck = -1;
+    protected long blackPreviousWarningCheck = -1;
 
     private final GameApi gameApi;
     private Thread clockThread = null;
@@ -32,6 +46,7 @@ public class LocalClockApi implements GameListener {
     protected Handler updateHandler = new Handler(Looper.getMainLooper()) {
         // @Override
         public void handleMessage(Message msg) {
+            checkAndDispatchTimeWarning();
             dispatchClockTime();
             super.handleMessage(msg);
         }
@@ -57,8 +72,16 @@ public class LocalClockApi implements GameListener {
         this.whiteRemaining = whiteRemaining;
         this.blackRemaining = blackRemaining;
         this.clockIsConfigured = whiteRemaining > 0 && blackRemaining > 0;
+        this.whiteWarningMask = 0;
+        this.blackWarningMask = 0;
+        this.whitePreviousWarningCheck = this.whiteRemaining;
+        this.blackPreviousWarningCheck = this.blackRemaining;
 
         this.lastMeasureTime = startTime;
+        if (this.clockIsConfigured && startTime > 0) {
+            this.whitePreviousWarningCheck = getWhiteRemaining();
+            this.blackPreviousWarningCheck = getBlackRemaining();
+        }
 
         if (startTime > 0 && clockThread == null) {
             clockThread = new Thread(new RunnableImp());
@@ -128,6 +151,7 @@ public class LocalClockApi implements GameListener {
             }
 
             lastMeasureTime = currentTime;
+            updatePreviousWarningCheck(newTurn, getRemaining(newTurn));
         }
     }
 
@@ -143,6 +167,62 @@ public class LocalClockApi implements GameListener {
     protected void dispatchClockTime() {
         for (ClockListener listener : listeners) {
             listener.OnClockTime();
+        }
+    }
+
+    protected void dispatchTimeWarning(int turn, long remainingMillies) {
+        for (ClockListener listener : listeners) {
+            listener.OnTimeWarning(turn, remainingMillies);
+        }
+    }
+
+    protected void checkAndDispatchTimeWarning() {
+        if (!clockIsConfigured) {
+            return;
+        }
+
+        int turn = gameApi.getTurn();
+        long remaining = getRemaining(turn);
+        long previous = getPreviousWarningCheck(turn);
+
+        if (previous < 0) {
+            updatePreviousWarningCheck(turn, remaining);
+            return;
+        }
+
+        for (int i = 0; i < TIME_WARNING_THRESHOLDS_MILLIES.length; i++) {
+            long threshold = TIME_WARNING_THRESHOLDS_MILLIES[i];
+            int warningBit = 1 << i;
+            if (previous > threshold && remaining <= threshold && (getWarningMask(turn) & warningBit) == 0) {
+                setWarningMask(turn, getWarningMask(turn) | warningBit);
+                dispatchTimeWarning(turn, remaining);
+            }
+        }
+
+        updatePreviousWarningCheck(turn, remaining);
+    }
+
+    protected long getPreviousWarningCheck(int turn) {
+        return turn == BoardConstants.WHITE ? whitePreviousWarningCheck : blackPreviousWarningCheck;
+    }
+
+    protected void updatePreviousWarningCheck(int turn, long remaining) {
+        if (turn == BoardConstants.WHITE) {
+            whitePreviousWarningCheck = remaining;
+        } else {
+            blackPreviousWarningCheck = remaining;
+        }
+    }
+
+    protected int getWarningMask(int turn) {
+        return turn == BoardConstants.WHITE ? whiteWarningMask : blackWarningMask;
+    }
+
+    protected void setWarningMask(int turn, int value) {
+        if (turn == BoardConstants.WHITE) {
+            whiteWarningMask = value;
+        } else {
+            blackWarningMask = value;
         }
     }
 

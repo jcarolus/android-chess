@@ -566,6 +566,11 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
+    public void OnTimeWarning(int turn, long remainingMillies) {
+
+    }
+
+    @Override
     public void OnDialogResult(int requestCode, Map<String, Object> data) {
         if (data == null) {
             buttonSeek.setEnabled(true);

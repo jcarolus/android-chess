@@ -1177,12 +1177,20 @@ public class ICSClient extends ChessBoardActivity implements
             } else {
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
             }
-
-            if (_bTimeWarning && needWarning) {
-                feedbackTimeWarning();
-            }
         } else {
             _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    @Override
+    public void OnTimeWarning(int turn, long remainingMillies) {
+        if (!_bTimeWarning) {
+            return;
+        }
+
+        int myTurn = ((ICSApi) gameApi).getMyTurn();
+        if (turn == myTurn) {
+            feedbackTimeWarning();
         }
     }
 

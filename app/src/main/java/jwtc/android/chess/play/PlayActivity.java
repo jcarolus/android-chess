@@ -767,6 +767,11 @@ public class PlayActivity extends ChessBoardActivity implements
 //        }
     }
 
+    @Override
+    public void OnTimeWarning(int turn, long remainingMillies) {
+
+    }
+
     protected void updateClockByPrefs(boolean newGame) {
         SharedPreferences prefs = getPrefs();
         long increment = prefs.getLong("clockIncrement", 0);
