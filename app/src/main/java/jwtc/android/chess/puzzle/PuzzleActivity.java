@@ -20,6 +20,7 @@ import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.board.BoardConstants;
@@ -230,7 +231,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     public void solutionMessage() {
         int move = jni.getMyMove();
         if (move != 0) {
-            String sMove = gameApi.moveToSpeechString(getResources(), jni.getMyMoveToString(), move);
+            String sMove = GameApi.moveToSpeechString(getResources(), jni.getMyMoveToString(), move, useLongMoveFormat);
             textViewSolution.setText(sMove);
         }
     }

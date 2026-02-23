@@ -417,7 +417,7 @@ public class GameApi {
         }
     }
 
-    public static String moveToSpeechString(Resources resources, String sMove, int move) {
+    public static String moveToSpeechString(Resources resources, String sMove, int move, boolean useLongMove) {
         if (resources == null) {
             resources = Resources.getSystem();
         }
@@ -436,13 +436,22 @@ public class GameApi {
             }
             sMoveSpeech.append(piece).append(" ");
             String sFile = matchToken.group(2);
-            if (sFile != null) {
-                sMoveSpeech.append(sFile.toUpperCase(Locale.ROOT)).append(" ");
-            }
             String sRow = matchToken.group(3);
-            if (sRow != null) {
-                sMoveSpeech.append(sRow).append(" ");
+
+            if (useLongMove) {
+                sMoveSpeech.append(Pos.toString(Move.getFrom(move)).toUpperCase()).append(" ");
+                Log.d(TAG, "yes");
+            } else {
+
+                if (sFile != null) {
+                    sMoveSpeech.append(sFile.toUpperCase(Locale.ROOT)).append(" ");
+                }
+
+                if (sRow != null) {
+                    sMoveSpeech.append(sRow).append(" ");
+                }
             }
+
             if (matchToken.group(4) != null) {
                 sMoveSpeech.append(getString(resources, R.string.tts_move_takes, "takes")).append(" ");
             }
@@ -457,6 +466,7 @@ public class GameApi {
                     sRow
                 )).append(" ");
             }
+
             if (Move.isEP(move)) {
                 sMoveSpeech.append(getString(resources, R.string.tts_move_en_passant, "en passant")).append(" ");
             }

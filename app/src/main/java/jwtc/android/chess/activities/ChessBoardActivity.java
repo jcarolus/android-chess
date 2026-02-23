@@ -62,6 +62,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected int accessibilityDragLastMoveDelayMs = 1000;
     protected boolean fieldColorDescriptions = false;
     protected boolean announceLastMoveWhenOverEmptySquare = false;
+    protected boolean useLongMoveFormat = false;
     // shared views
     protected TextView textViewWhitePieces, textViewBlackPieces;
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
@@ -263,6 +264,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         fieldColorDescriptions = prefs.getBoolean("field_color_descriptions", false);
         announceLastMoveWhenOverEmptySquare = prefs.getBoolean("announce_last_move_when_over_empty_square", false);
+        useLongMoveFormat = prefs.getBoolean("use_long_move_description", false);
 
         if (textViewWhitePieces != null && textViewBlackPieces != null) {
             int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
@@ -733,7 +735,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getLastMoveDescription(boolean forTTS) {
         int move = jni.getMyMove();
         if (move != 0) {
-            return GameApi.moveToSpeechString(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move);
+            return GameApi.moveToSpeechString(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move, useLongMoveFormat);
         }
         return "";
     }
