@@ -22,7 +22,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class AccessibilityPreferences extends ChessBoardActivity {
     private static final String TAG = "AccessibilityPreferences";
-    private CheckBox checkBoxShowPiecesDescriptions, checkBoxShowAccessibilityDrag;
+    private CheckBox checkBoxShowPiecesDescriptions, checkBoxShowAccessibilityDrag, checkBoxFieldColorDescriptions, checkBoxLastMoveWhenOverEmptySquare;
     private Slider sliderSpeechRate, sliderSpeechPitch, sliderAccessibilityDelay, sliderAccessibilityLastMoveDelay;
     private FixedDropdownView dropDownSpeechVoice, dropDownSpeechEngine;
     private final ArrayList<String> speechVoiceNames = new ArrayList<>();
@@ -38,6 +38,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         checkBoxShowPiecesDescriptions = findViewById(R.id.CheckBoxShowPiecesDescriptions);
         checkBoxShowAccessibilityDrag = findViewById(R.id.CheckBoxShowAccessibilityDrag);
+        checkBoxFieldColorDescriptions = findViewById(R.id.CheckBoxFieldColorDescriptions);
+        checkBoxLastMoveWhenOverEmptySquare = findViewById(R.id.CheckBoxLastMoveWhenOverEmptySquare);
         sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
         sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
         sliderAccessibilityDelay = findViewById(R.id.SliderAccessibilityDragDelay);
@@ -122,6 +124,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         sliderAccessibilityLastMoveDelay.setValue(accessibilityDragLastMoveDelayMs);
 
         checkBoxShowAccessibilityDrag.setChecked(prefs.getBoolean("show_accessibility_drag_toggle", false));
+        checkBoxFieldColorDescriptions.setChecked(prefs.getBoolean("field_color_descriptions", false));
+        checkBoxLastMoveWhenOverEmptySquare.setChecked(prefs.getBoolean("announce_last_move_when_over_empty_square", false));
         useAccessibilityDrag = true;
         applySquareDragListeners();
 
@@ -141,6 +145,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         if (!checkBoxShowAccessibilityDrag.isChecked()) {
             editor.putBoolean("useAccessibilityDrag", false);
         }
+        editor.putBoolean("field_color_descriptions", checkBoxFieldColorDescriptions.isChecked());
+        editor.putBoolean("announce_last_move_when_over_empty_square", checkBoxLastMoveWhenOverEmptySquare.isChecked());
         editor.putInt("accessibilityDragDelay", (int)sliderAccessibilityDelay.getValue());
         editor.putInt("accessibilityDragLastMoveDelay", (int)sliderAccessibilityLastMoveDelay.getValue());
         int selectedVoicePosition = dropDownSpeechVoice.getSelectedItemPosition();

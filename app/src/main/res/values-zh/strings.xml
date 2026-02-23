@@ -283,6 +283,7 @@
     <string name="playpreferences">游戏设置</string>
     <string name="practice_help">找出将死 (可能需要多步)。</string>
     <string name="practice_set_reset">练习集已重置</string>
+    <string name="pref_field_color_descriptions">在格子描述中加入深/浅</string>
     <string name="pref_fullscreen">启用全屏</string>
     <string name="pref_fullscreen_desc">推荐小屏幕和横屏使用，否则部分元素可能被裁剪</string>
     <string name="pref_icsautosought">自动搜索</string>
@@ -296,6 +297,7 @@
     <string name="pref_icstimewarning_desc">当时间低于设定阈值时发出滴答声</string>
     <string name="pref_icstimewarningsecs">警告时间 (秒)</string>
     <string name="pref_icstimewarningsecs_desc">提前多少秒开始提示？</string>
+    <string name="pref_last_move_over_empty_square">拖动到空格子上并延迟后播报上一步走法</string>
     <string name="pref_night_mode">夜间模式</string>
     <string name="pref_night_mode_desc">强制应用夜间模式</string>
     <string name="pref_showCoords">坐标</string>
@@ -353,6 +355,8 @@
     <string name="gameslist_filter_switch_white_description">启用或禁用白方筛选</string>
     <string name="savegame_white">白方</string>
     <string name="savegame_white_question">白方?</string>
+    <string name="square_color_description_light">浅色格</string>
+    <string name="square_color_description_dark">深色格</string>
     <string name="square_selected_with_duck_description">已选择 %1$s 在 %2$s</string>
     <string name="square_selected_with_piece_description">已选择 %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s 在 %2$s</string>

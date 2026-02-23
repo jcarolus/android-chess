@@ -300,6 +300,7 @@
     <string name="playpreferences">Play settings</string>
     <string name="practice_help">Find the Check-Mate (can be more than one move).</string>
     <string name="practice_set_reset">Practice set has been reset</string>
+    <string name="pref_field_color_descriptions">Add dark/light to square description</string>
     <string name="pref_fullscreen">Enable full screen</string>
     <string name="pref_fullscreen_desc">Recommended for small screens and landscape view; elements may fall off the screen otherwise</string>
     <string name="pref_icsautosought">Auto sought</string>
@@ -313,6 +314,7 @@
     <string name="pref_icstimewarning_desc">A ticking noise warns you if your time is at Time Warning Amount or less</string>
     <string name="pref_icstimewarningsecs">Time Warning Amount (secs)</string>
     <string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
+    <string name="pref_last_move_over_empty_square">Announce last move when dragging over an empty square after delay</string>
     <string name="pref_night_mode">Night mode</string>
     <string name="pref_night_mode_desc">Force the app into night mode</string>
     <string name="pref_showCoords">Coordinates</string>
@@ -373,6 +375,8 @@
     <string name="gameslist_filter_switch_white_description">Enable or disable white player filter</string>
     <string name="savegame_white">White</string>
     <string name="savegame_white_question">White?</string>
+    <string name="square_color_description_light">Light square</string>
+    <string name="square_color_description_dark">Dark square</string>
     <string name="square_selected_with_duck_description">Selected %1$s at %2$s</string>
     <string name="square_selected_with_piece_description">Selected %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s at %2$s</string>

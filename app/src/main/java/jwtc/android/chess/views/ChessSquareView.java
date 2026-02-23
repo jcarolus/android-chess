@@ -93,8 +93,7 @@ public class ChessSquareView extends View {
     }
 
     public void onDraw(Canvas canvas) {
-
-        final int fieldColor = (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? BoardConstants.WHITE : BoardConstants.BLACK) : (((pos >> 3) & 1) == 0 ? BoardConstants.BLACK : BoardConstants.WHITE);
+        final int fieldColor = Pos.getFieldColor(pos);
 
         if (this.selected) {
             paint.setColor(ColorSchemes.getSelectedColor());

@@ -60,6 +60,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean useAccessibilityDrag = false;
     protected int accessibilityDragDwellMs = 300;
     protected int accessibilityDragLastMoveDelayMs = 1000;
+    protected boolean fieldColorDescriptions = false;
+    protected boolean announceLastMoveWhenOverEmptySquare = false;
     // shared views
     protected TextView textViewWhitePieces, textViewBlackPieces;
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
@@ -259,6 +261,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             textToSpeech.setEnabled(false, prefs);
         }
+        fieldColorDescriptions = prefs.getBoolean("field_color_descriptions", false);
+        announceLastMoveWhenOverEmptySquare = prefs.getBoolean("announce_last_move_when_over_empty_square", false);
 
         if (textViewWhitePieces != null && textViewBlackPieces != null) {
             int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
@@ -306,6 +310,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public void feedbackSelect() {
         if (sounds.isEnabled()) {
             sounds.playSelect();
+        }
+        if (hapticFeedback.isEnabled()) {
+            hapticFeedback.feedbackSelect();
+        }
+    }
+
+    public void feedbackUnselect() {
+        if (sounds.isEnabled()) {
+            sounds.playUnselect();
         }
         if (hapticFeedback.isEnabled()) {
             hapticFeedback.feedbackSelect();
@@ -680,14 +693,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         Pos.toString(pos),
                         getString(R.string.piece_white),
                         getString(Piece.toResource(whitePiece))
-                    );
+                    ) + getFieldColorDescription(pos);
                 }
                 return getString(
                     R.string.square_with_piece_description,
                     Pos.toString(pos),
                     getString(R.string.piece_white),
                     getString(Piece.toResource(whitePiece))
-                );
+                ) + getFieldColorDescription(pos);
             } else if (blackPiece != BoardConstants.FIELD) {
                 if (selectedPosition == pos) {
                     return getString(
@@ -695,20 +708,28 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         Pos.toString(pos),
                         getString(R.string.piece_black),
                         getString(Piece.toResource(blackPiece))
-                    );
+                    ) + getFieldColorDescription(pos);
                 }
                 return getString(
                     R.string.square_with_piece_description,
                     Pos.toString(pos),
                     getString(R.string.piece_black),
                     getString(Piece.toResource(blackPiece))
-                );
+                ) + getFieldColorDescription(pos);
             } else if (duckPos != -1) {
-                return getString(selectedPosition == pos ? R.string.square_selected_with_duck_description : R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos));
+                return (getString(selectedPosition == pos ? R.string.square_selected_with_duck_description : R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos))) + getFieldColorDescription(pos);
             }
         }
-        return Pos.toString(pos);
+        return Pos.toString(pos) + getFieldColorDescription(pos);
     }
+
+    protected String getFieldColorDescription(int pos) {
+        if (fieldColorDescriptions) {
+            return ". " + (Pos.getFieldColor(pos) == BoardConstants.WHITE ? getString(R.string.square_color_description_light) : getString(R.string.square_color_description_dark));
+        }
+        return "";
+    }
+
     protected String getLastMoveDescription(boolean forTTS) {
         int move = jni.getMyMove();
         if (move != 0) {
@@ -884,7 +905,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
         }
         accessibilityDragDwellRunnable = () -> {
-            if (accessibilityDragHoverPos != pos) {
+            if (!announceLastMoveWhenOverEmptySquare || accessibilityDragHoverPos != pos) {
                 return;
             }
             boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
@@ -959,7 +980,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 case DragEvent.ACTION_DRAG_ENDED:
                     if (!event.getResult() && selectedPosition != -1) {
                         selectPosition(-1);
-                        feedbackSelect();
                     }
                     resetAccessibilityDragState();
                     break;
@@ -1126,6 +1146,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (pos == -1) {
             selectedPosition = pos;
             updateSelectedSquares();
+            feedbackUnselect();
         } else {
             if (selectedPosition == -1) {
                 boolean isStartMove =
@@ -1135,8 +1156,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 if (isStartMove) {
                     selectedPosition = pos;
                     setMoveToPositions(pos);
+                    feedbackSelect();
                 } else {
                     selectedPosition = -1;
+                    feedbackUnselect();
                 }
                 updateSelectedSquares();
             } else if (selectedPosition != pos) {
@@ -1147,6 +1170,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
                 selectedPosition = -1;
                 moveToPositions.clear();
+                feedbackUnselect();
                 updateSelectedSquares();
             }
         }

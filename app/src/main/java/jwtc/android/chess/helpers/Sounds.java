@@ -10,7 +10,7 @@ public class Sounds {
     private final static String TAG = "Sounds";
     private SoundPool soundPool = null;
     private final Context context;
-    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove, soundSelect, soundTick, soundError, soundCorrect, soundTickPiece;
+    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove, soundSelect, soundTick, soundError, soundCorrect, soundTickPiece, soundUnselect;
     protected float fVolume = 1.0f;
     protected boolean enabled = false;
 
@@ -77,6 +77,10 @@ public class Sounds {
         play(soundCorrect);
     }
 
+    public void playUnselect() {
+        play(soundUnselect);
+    }
+
     protected void initSoundPool() {
         if (soundPool == null) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -100,6 +104,7 @@ public class Sounds {
             soundTickPiece = loadSound(R.raw.tick_piece, 1);
             soundError = loadSound(R.raw.error, 1);
             soundCorrect = loadSound(R.raw.correct, 1);
+            soundUnselect = loadSound(R.raw.unselect, 1);
         }
     }
 

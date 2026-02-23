@@ -293,6 +293,7 @@
     <string name="playpreferences">Spiel-Einstellungen</string>
     <string name="practice_help">Finde das Matt (kann mehrere Züge dauern).</string>
     <string name="practice_set_reset">Übungsset wurde zurückgesetzt</string>
+    <string name="pref_field_color_descriptions">Hell/Dunkel zur Feldbeschreibung hinzufügen</string>
     <string name="pref_fullscreen">Vollbildmodus aktivieren</string>
     <string name="pref_fullscreen_desc">Empfohlen für kleine Bildschirme und Querformat; Elemente könnten sonst abgeschnitten werden</string>
     <string name="pref_icsautosought">Automatisch suchen</string>
@@ -306,6 +307,7 @@
     <string name="pref_icstimewarning_desc">Ein Tickgeräusch warnt dich, wenn deine Zeit unter die eingestellte Warnzeit fällt</string>
     <string name="pref_icstimewarningsecs">Warnzeit (Sekunden)</string>
     <string name="pref_icstimewarningsecs_desc">Nach wie vielen Sekunden soll die Warnung starten?</string>
+    <string name="pref_last_move_over_empty_square">Letzten Zug nach Verzögerung ansagen, wenn über ein leeres Feld gezogen wird</string>
     <string name="pref_night_mode">Nachtmodus</string>
     <string name="pref_night_mode_desc">Erzwingt den Nachtmodus in der App</string>
     <string name="pref_showCoords">Koordinaten</string>
@@ -363,6 +365,8 @@
     <string name="gameslist_filter_switch_white_description">Weiß-Filter aktivieren oder deaktivieren</string>
     <string name="savegame_white">Weiß</string>
     <string name="savegame_white_question">Weiß?</string>
+    <string name="square_color_description_light">Helles Feld</string>
+    <string name="square_color_description_dark">Dunkles Feld</string>
     <string name="square_selected_with_duck_description">Ausgewählt: %1$s auf %2$s</string>
     <string name="square_selected_with_piece_description">Ausgewählt: %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s auf %2$s</string>
