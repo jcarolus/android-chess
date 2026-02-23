@@ -393,6 +393,10 @@
     <string name="time_warning_45">45 saniye</string>
     <string name="time_warning_5">5 saniye</string>
     <string name="time_warning_60">1 dakika</string>
+    <string name="time_warning_minutes">%1$d dakika kaldı</string>
+    <string name="time_warning_minutes_single">%1$d dakika kaldı</string>
+    <string name="time_warning_seconds">%1$d saniye kaldı</string>
+    <string name="time_warning_seconds_single">%1$d saniye kaldı</string>
     <string name="title_castle">Rok mu?</string>
     <string name="title_challenge">Meydan okuma</string>
     <string name="title_create_new_line">Yeni varyant oluşturulsun mu?</string>

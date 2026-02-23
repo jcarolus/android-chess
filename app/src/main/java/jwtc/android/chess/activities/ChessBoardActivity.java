@@ -363,6 +363,28 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    public void feedBackDescribeTimeWarning(long millies) {
+        if (textToSpeech.isEnabled()) {
+            long remainingSeconds = (millies + 999) / 1000;
+            if (remainingSeconds <= 0) {
+                return;
+            }
+
+            if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
+                long minutes = remainingSeconds / 60;
+                if (minutes == 1) {
+                    textToSpeech.moveToSpeech(getString(R.string.time_warning_minutes_single, minutes));
+                } else {
+                    textToSpeech.moveToSpeech(getString(R.string.time_warning_minutes, minutes));
+                }
+            } else if (remainingSeconds == 1) {
+                textToSpeech.moveToSpeech(getString(R.string.time_warning_seconds_single, remainingSeconds));
+            } else {
+                textToSpeech.moveToSpeech(getString(R.string.time_warning_seconds, remainingSeconds));
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
@@ -916,7 +938,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
             String lastMoveDescription = getLastMoveDescription(true);
             if (!lastMoveDescription.isEmpty()) {
-                textToSpeech.moveToSpeech(lastMoveDescription);
+                textToSpeech.moveToSpeech(lastMoveDescription, TextToSpeech.QUEUE_ADD);
             }
         };
         accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragLastMoveDelayMs);

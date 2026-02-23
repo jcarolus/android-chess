@@ -1191,6 +1191,7 @@ public class ICSClient extends ChessBoardActivity implements
         int myTurn = ((ICSApi) gameApi).getMyTurn();
         if (turn == myTurn) {
             feedbackTimeWarning();
+            feedBackDescribeTimeWarning(remainingMillies);
         }
     }
 

@@ -393,6 +393,10 @@
     <string name="time_warning_45">45 secunde</string>
     <string name="time_warning_5">5 secunde</string>
     <string name="time_warning_60">1 minut</string>
+    <string name="time_warning_minutes">Au rămas %1$d minute</string>
+    <string name="time_warning_minutes_single">A rămas %1$d minut</string>
+    <string name="time_warning_seconds">Au rămas %1$d secunde</string>
+    <string name="time_warning_seconds_single">A rămas %1$d secundă</string>
     <string name="title_castle">Rocadă?</string>
     <string name="title_challenge">Provocare</string>
     <string name="title_create_new_line">Creezi o variantă nouă?</string>

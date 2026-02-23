@@ -403,6 +403,10 @@
     <string name="time_warning_45">45 Sekunden</string>
     <string name="time_warning_5">5 Sekunden</string>
     <string name="time_warning_60">1 Minute</string>
+    <string name="time_warning_minutes">%1$d Minuten verbleibend</string>
+    <string name="time_warning_minutes_single">%1$d Minute verbleibend</string>
+    <string name="time_warning_seconds">%1$d Sekunden verbleibend</string>
+    <string name="time_warning_seconds_single">%1$d Sekunde verbleibend</string>
     <string name="title_castle">Rochieren?</string>
     <string name="title_challenge">Herausforderung</string>
     <string name="title_create_new_line">Neue Variante erstellen?</string>

@@ -393,6 +393,10 @@
     <string name="time_warning_45">45 秒</string>
     <string name="time_warning_5">5 秒</string>
     <string name="time_warning_60">1 分钟</string>
+    <string name="time_warning_minutes">还剩 %1$d 分钟</string>
+    <string name="time_warning_minutes_single">还剩 %1$d 分钟</string>
+    <string name="time_warning_seconds">还剩 %1$d 秒</string>
+    <string name="time_warning_seconds_single">还剩 %1$d 秒</string>
     <string name="title_castle">王车易位？</string>
     <string name="title_challenge">挑战</string>
     <string name="title_create_new_line">创建新变体？</string>

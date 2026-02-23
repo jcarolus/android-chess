@@ -393,6 +393,10 @@
     <string name="time_warning_45">45 segundos</string>
     <string name="time_warning_5">5 segundos</string>
     <string name="time_warning_60">1 minuto</string>
+    <string name="time_warning_minutes">Faltam %1$d minutos</string>
+    <string name="time_warning_minutes_single">Falta %1$d minuto</string>
+    <string name="time_warning_seconds">Faltam %1$d segundos</string>
+    <string name="time_warning_seconds_single">Falta %1$d segundo</string>
     <string name="title_castle">Roque?</string>
     <string name="title_challenge">Desafio</string>
     <string name="title_create_new_line">Criar nova linha?</string>

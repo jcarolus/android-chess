@@ -91,6 +91,10 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
     }
 
     public void moveToSpeech(String sMoveSpeech) {
+        moveToSpeech(sMoveSpeech, TextToSpeech.QUEUE_FLUSH);
+    }
+
+    public void moveToSpeech(String sMoveSpeech, int queueMode) {
         if (!enabled || !ready) {
             return;
         }
@@ -98,7 +102,7 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             return;
         }
         String id = "utt-" + System.nanoTime();
-        this.textToSpeech.speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, id);
+        this.textToSpeech.speak(sMoveSpeech, queueMode, null, id);
     }
 
     public void queueSpeech(String sSpeech) {
