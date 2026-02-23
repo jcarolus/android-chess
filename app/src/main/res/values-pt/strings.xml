@@ -308,6 +308,7 @@
     <string name="pref_sound">Som</string>
     <string name="pref_haptic_feedback">Usar feedback háptico</string>
     <string name="pref_speech">Voz</string>
+    <string name="pref_user_long_move_descriptions">Usar descrição completa da jogada</string>
     <string name="tts_locale_not_supported">A conversão de texto em fala não oferece suporte ao seu locale</string>
     <string name="tts_not_loaded">Não foi possível carregar a conversão de texto em fala</string>
     <string name="tts_example_move">Bispo captura em G7, xeque</string>

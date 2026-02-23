@@ -308,6 +308,7 @@
     <string name="pref_sound">Suono</string>
     <string name="pref_haptic_feedback">Usa feedback aptico</string>
     <string name="pref_speech">Voce</string>
+    <string name="pref_user_long_move_descriptions">Usa descrizione completa della mossa</string>
     <string name="tts_locale_not_supported">La sintesi vocale non supporta le impostazioni locali</string>
     <string name="tts_not_loaded">Impossibile caricare la sintesi vocale</string>
     <string name="tts_example_move">Alfiere cattura in G7, scacco</string>

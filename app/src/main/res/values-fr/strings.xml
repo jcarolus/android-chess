@@ -308,6 +308,7 @@
     <string name="pref_sound">Son</string>
     <string name="pref_haptic_feedback">Utiliser le retour haptique</string>
     <string name="pref_speech">Voix</string>
+    <string name="pref_user_long_move_descriptions">Utiliser la description complète du coup</string>
     <string name="tts_locale_not_supported">La synthèse vocale ne prend pas en charge vos paramètres régionaux</string>
     <string name="tts_not_loaded">Impossible de charger la synthèse vocale</string>
     <string name="tts_example_move">Fou prend en G7, échec</string>
