@@ -288,13 +288,14 @@ public class SetupActivity extends ChessBoardActivity {
             ChessSquareView squareForBlack = new ChessSquareView(this, i);
             squareForBlack.setOnDragListener(myDragListener);
             squareForBlack.setOnClickListener(myClickListener);
-            squareForBlack.setContentDescription(getPieceDescription(i, BoardConstants.BLACK));
+
+            squareForBlack.setContentDescription(getPieceDescription(i, BoardConstants.BLACK, selectedPiece == i && selectedColor == BoardConstants.BLACK));
             blackPieces.addView(squareForBlack);
 
             ChessSquareView squareForWhite = new ChessSquareView(this, i);
             squareForWhite.setOnDragListener(myDragListener);
             squareForWhite.setOnClickListener(myClickListener);
-            squareForWhite.setContentDescription(getPieceDescription(i, BoardConstants.WHITE));
+            squareForWhite.setContentDescription(getPieceDescription(i, BoardConstants.WHITE, selectedPiece == i && selectedColor == BoardConstants.WHITE));
             whitePieces.addView(squareForWhite);
 
             ChessPieceView blackPieceView = new ChessPieceView(this, BoardConstants.BLACK, i, i);
@@ -309,7 +310,7 @@ public class SetupActivity extends ChessBoardActivity {
         ChessSquareView squareForDuck = new ChessSquareView(this, 0);
         squareForDuck.setOnDragListener(myDragListener);
         squareForDuck.setOnClickListener(myClickListener);
-        squareForDuck.setContentDescription(getPieceDescription(BoardConstants.DUCK, BoardConstants.WHITE));
+        squareForDuck.setContentDescription(getPieceDescription(BoardConstants.DUCK, BoardConstants.WHITE, selectedPiece == BoardConstants.DUCK && selectedColor == BoardConstants.BLACK));
         duckStack.addView(squareForDuck);
 
         ChessPieceView duckView = new ChessPieceView(this, BoardConstants.WHITE, BoardConstants.DUCK, 0);
@@ -461,7 +462,7 @@ public class SetupActivity extends ChessBoardActivity {
     }
 
     protected void selectPosition(int pos) {
-        Log.d(TAG, "selectPosition!" + pos + " " + isPosOfKing(pos) + " " + selectedColor);
+        Log.d(TAG, "selectPosition!" + pos + " " + isPosOfKing(pos) + " " + selectedColor + " " + selectedPosition);
         if (selectedColor == -1) {
             if (selectedPosition == -1) {
                 selectedPosition = pos;
@@ -518,23 +519,33 @@ public class SetupActivity extends ChessBoardActivity {
 
     @Override
     public void updateSelectedSquares() {
-        // Log.d(TAG, "updateSelectedSquares");
+        Log.d(TAG, "updateSelectedSquares");
         super.updateSelectedSquares();
 
         final int count = whitePieces.getChildCount();
         for (int i = 0; i < count; i++) {
             View child = whitePieces.getChildAt(i);
+            ChessSquareView squareView;
+            int piece;
 
             if (child instanceof ChessSquareView) {
-                ((ChessSquareView) child).setSelected(selectedColor == BoardConstants.WHITE && selectedPiece == ((ChessSquareView) child).getPos());
-                ((ChessSquareView) child).setFocussed(((ChessSquareView) child).getPos() == dpadPosWhitePieces);
+                squareView = (ChessSquareView) child;
+                piece = squareView.getPos();
+                squareView.setSelected(selectedColor == BoardConstants.WHITE && selectedPiece == piece);
+                squareView.setFocussed(squareView.getPos() == dpadPosWhitePieces);
+
+                squareView.setContentDescription(getPieceDescription(piece, BoardConstants.WHITE, selectedPiece == piece && selectedColor == BoardConstants.WHITE));
             }
 
             child = blackPieces.getChildAt(i);
 
             if (child instanceof ChessSquareView) {
-                ((ChessSquareView) child).setSelected(selectedColor == BoardConstants.BLACK && selectedPiece == ((ChessSquareView) child).getPos());
-                ((ChessSquareView) child).setFocussed(((ChessSquareView) child).getPos() == dpadPosBlackPieces);
+                squareView = (ChessSquareView) child;
+                piece = squareView.getPos();
+                squareView.setSelected(selectedColor == BoardConstants.BLACK && selectedPiece == piece);
+                squareView.setFocussed(squareView.getPos() == dpadPosBlackPieces);
+
+                squareView.setContentDescription(getPieceDescription(piece, BoardConstants.BLACK, selectedPiece == piece && selectedColor == BoardConstants.BLACK));
             }
         }
 
@@ -556,11 +567,12 @@ public class SetupActivity extends ChessBoardActivity {
         saved = true;
     }
 
-    protected String getPieceDescription(int piece, int color) {
+    protected String getPieceDescription(int piece, int color, boolean selected) {
+        String sSelected = selected ? getString(R.string.tts_selected) + " " : "";
         if (piece == BoardConstants.DUCK) {
-            return getString(Piece.toResource(piece));
+            return sSelected + getString(Piece.toResource(piece));
         }
-        return getString(color == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black) + " " + getString(Piece.toResource(piece));
+        return sSelected + (getString(color == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black) + " " + getString(Piece.toResource(piece)));
     }
 
     protected void dpadPieceFocus(boolean hasFocus, int color) {
