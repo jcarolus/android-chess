@@ -410,8 +410,7 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private void openGame() {
-        int index = cursor.getColumnIndex(PGNColumns._ID);
-        long id = cursor.getLong(index);
+        long id =  Utils.getColumnLong(cursor, PGNColumns._ID);
 
         Log.d(TAG, "openGame " + id);
         SharedPreferences.Editor editor = getPrefs().edit();
@@ -522,12 +521,8 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private int findPositionById(Cursor c, long id) {
-        if (c == null) return -1;
-        int idCol = c.getColumnIndex(PGNColumns._ID);
-        if (idCol < 0) return -1;
-
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-            if (c.getLong(idCol) == id) {
+            if (Utils.getColumnLong(c, PGNColumns._ID) == id) {
                 return c.getPosition();
             }
         }
