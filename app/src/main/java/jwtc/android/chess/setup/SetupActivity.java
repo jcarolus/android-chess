@@ -359,6 +359,17 @@ public class SetupActivity extends ChessBoardActivity {
             BoardConstants.ROOK,
             BoardConstants.QUEEN
         };
+        int[] pieceWeights = new int[]{
+            6, // pawn
+            2, // knight
+            2, // bishop
+            2, // rook
+            1  // queen
+        };
+        int totalWeight = 0;
+        for (int weight : pieceWeights) {
+            totalWeight += weight;
+        }
 
         for (int i = 0; i < piecesToAdd; i++) {
             int pos;
@@ -367,7 +378,16 @@ public class SetupActivity extends ChessBoardActivity {
             } while (occupied[pos]);
 
             occupied[pos] = true;
-            int piece = pieceTypes[rng.nextInt(pieceTypes.length)];
+            int weightedRoll = rng.nextInt(totalWeight);
+            int cumulativeWeight = 0;
+            int piece = BoardConstants.QUEEN;
+            for (int j = 0; j < pieceTypes.length; j++) {
+                cumulativeWeight += pieceWeights[j];
+                if (weightedRoll < cumulativeWeight) {
+                    piece = pieceTypes[j];
+                    break;
+                }
+            }
             int color = rng.nextBoolean() ? BoardConstants.WHITE : BoardConstants.BLACK;
             jni.putPiece(pos, piece, color);
             pieceSums[color] += Valuation.PIECES[piece];
