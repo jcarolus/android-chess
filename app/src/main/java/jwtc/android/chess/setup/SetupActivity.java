@@ -3,11 +3,14 @@ package jwtc.android.chess.setup;
 import android.content.ClipData;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -49,6 +52,20 @@ public class SetupActivity extends ChessBoardActivity {
     protected int selectedColor = -1;
     protected int dpadPosWhitePieces = -1;
     protected int dpadPosBlackPieces = -1;
+    private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
+    private Runnable accessibilityDragDwellRunnable = null;
+    private int accessibilityDragHoverPos = -1;
+    private int accessibilityDragHoverArea = -1;
+    private int accessibilityDragSourcePos = -1;
+    private int accessibilityDragSourceArea = -1;
+    private int accessibilityDragSourcePiece = -1;
+    private int accessibilityDragSourceColor = -1;
+
+    private static final int DRAG_AREA_NONE = -1;
+    private static final int DRAG_AREA_BOARD = 0;
+    private static final int DRAG_AREA_WHITE_STACK = 1;
+    private static final int DRAG_AREA_BLACK_STACK = 2;
+    private static final int DRAG_AREA_DUCK_STACK = 3;
 
 
     @Override
@@ -97,6 +114,8 @@ public class SetupActivity extends ChessBoardActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
+
         SharedPreferences prefs = getPrefs();
 
         final String sFEN = prefs.getString("FEN", null);
@@ -122,7 +141,11 @@ public class SetupActivity extends ChessBoardActivity {
 
         rebuildAndDispatch();
 
-        super.onResume();
+        sounds.setEnabled(prefs.getBoolean("moveSounds", false));
+        textToSpeech.setEnabled(prefs.getBoolean("moveToSpeech", false), prefs);
+        useAccessibilityDrag = prefs.getBoolean("useAccessibilityDrag", false);
+        Log.d(TAG, "useAcc" + useAccessibilityDrag);
+        applySquareDragListeners();
     }
 
     protected void onSave() {
@@ -247,12 +270,14 @@ public class SetupActivity extends ChessBoardActivity {
         });
 
         myDragListener = new MyDragListener();
+        myAccessibilityDragListener = new MyAccessibilityDragListener();
         myTouchListener = new MyTouchListener();
         myClickListener = new MyClickListener();
 
         for (int i = 0; i < 64; i++) {
             ChessSquareView csv = new ChessSquareView(this, i);
-            csv.setOnDragListener(myDragListener);
+            csv.setOnDragListener(useAccessibilityDrag ? myAccessibilityDragListener : myDragListener);
+            csv.setOnTouchListener(myTouchListener);
             csv.setOnClickListener(myClickListener);
 
             String nextDescription = getFieldDescription(i);
@@ -264,17 +289,47 @@ public class SetupActivity extends ChessBoardActivity {
         gameApi.addListener(this);
     }
 
+    @Override
+    protected void applySquareDragListeners() {
+        final int count = chessBoardView.getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = chessBoardView.getChildAt(i);
+            if (child instanceof ChessSquareView) {
+                child.setOnDragListener(useAccessibilityDrag ? myAccessibilityDragListener : myDragListener);
+            }
+        }
+        applyStackDragListeners();
+    }
+
+    private void applyStackDragListeners() {
+        View.OnDragListener listener = useAccessibilityDrag ? myAccessibilityDragListener : myDragListener;
+        applyDragListenerToStackSquares(whitePieces, listener);
+        applyDragListenerToStackSquares(blackPieces, listener);
+        applyDragListenerToStackSquares(duckStack, listener);
+    }
+
+    private void applyDragListenerToStackSquares(ViewGroup stack, View.OnDragListener listener) {
+        final int childCount = stack.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = stack.getChildAt(i);
+            if (child instanceof ChessSquareView) {
+                child.setOnDragListener(listener);
+            }
+        }
+    }
+
     public void buildPieces() {
+        View.OnDragListener listener = useAccessibilityDrag ? myAccessibilityDragListener : myDragListener;
 
         for (int i = 0; i < 5; i++) {
             ChessSquareView squareForBlack = new ChessSquareView(this, i);
-            squareForBlack.setOnDragListener(myDragListener);
+            squareForBlack.setOnDragListener(listener);
             squareForBlack.setOnClickListener(myClickListener);
             squareForBlack.setContentDescription(getPieceDescription(i, BoardConstants.BLACK));
             blackPieces.addView(squareForBlack);
 
             ChessSquareView squareForWhite = new ChessSquareView(this, i);
-            squareForWhite.setOnDragListener(myDragListener);
+            squareForWhite.setOnDragListener(listener);
             squareForWhite.setOnClickListener(myClickListener);
             squareForWhite.setContentDescription(getPieceDescription(i, BoardConstants.WHITE));
             whitePieces.addView(squareForWhite);
@@ -289,7 +344,7 @@ public class SetupActivity extends ChessBoardActivity {
         }
 
         ChessSquareView squareForDuck = new ChessSquareView(this, 0);
-        squareForDuck.setOnDragListener(myDragListener);
+        squareForDuck.setOnDragListener(listener);
         squareForDuck.setOnClickListener(myClickListener);
         squareForDuck.setContentDescription(getPieceDescription(BoardConstants.DUCK, BoardConstants.WHITE));
         duckStack.addView(squareForDuck);
@@ -672,6 +727,156 @@ public class SetupActivity extends ChessBoardActivity {
         spinnerEPFile.setSelection(position);
     }
 
+    @Override
+    protected void onPause() {
+        resetAccessibilityDragState();
+        super.onPause();
+    }
+
+    private void resetAccessibilityDragState() {
+        if (accessibilityDragDwellRunnable != null) {
+            accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+            accessibilityDragDwellRunnable = null;
+        }
+        accessibilityDragHoverPos = -1;
+        accessibilityDragHoverArea = DRAG_AREA_NONE;
+        accessibilityDragSourcePos = -1;
+        accessibilityDragSourceArea = DRAG_AREA_NONE;
+        accessibilityDragSourcePiece = -1;
+        accessibilityDragSourceColor = -1;
+    }
+
+    private int getDragAreaForSquare(ChessSquareView squareView) {
+        View parent = (View) squareView.getParent();
+        if (parent instanceof ChessBoardView) {
+            return DRAG_AREA_BOARD;
+        }
+        if (parent == whitePieces) {
+            return DRAG_AREA_WHITE_STACK;
+        }
+        if (parent == blackPieces) {
+            return DRAG_AREA_BLACK_STACK;
+        }
+        if (parent == duckStack) {
+            return DRAG_AREA_DUCK_STACK;
+        }
+        return DRAG_AREA_NONE;
+    }
+
+    private boolean hasBoardPieceOnPosition(int pos) {
+        return jni.getDuckPos() == pos
+            || jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD
+            || jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+    }
+
+    private boolean isAccessibilitySourceCandidate(int area, int pos) {
+        if (area == DRAG_AREA_BOARD) {
+            return hasBoardPieceOnPosition(pos);
+        }
+        return area == DRAG_AREA_WHITE_STACK
+            || area == DRAG_AREA_BLACK_STACK
+            || area == DRAG_AREA_DUCK_STACK;
+    }
+
+    private String getAccessibilityHoverDescription(int area, int pos) {
+        switch (area) {
+            case DRAG_AREA_WHITE_STACK:
+                return getPieceDescription(pos, BoardConstants.WHITE);
+            case DRAG_AREA_BLACK_STACK:
+                return getPieceDescription(pos, BoardConstants.BLACK);
+            case DRAG_AREA_DUCK_STACK:
+                return getPieceDescription(BoardConstants.DUCK, BoardConstants.WHITE);
+            case DRAG_AREA_BOARD:
+            default:
+                return getFieldDescription(pos);
+        }
+    }
+
+    private void applyAccessibilitySourceSelection(int area, int pos) {
+        accessibilityDragSourceArea = area;
+        accessibilityDragSourcePos = pos;
+
+        if (area == DRAG_AREA_BOARD) {
+            accessibilityDragSourceColor = -1;
+            accessibilityDragSourcePiece = -1;
+            selectedColor = -1;
+            selectedPiece = -1;
+            selectedPosition = pos;
+            updateSelectedSquares();
+            return;
+        }
+
+        if (area == DRAG_AREA_WHITE_STACK) {
+            accessibilityDragSourceColor = BoardConstants.WHITE;
+            accessibilityDragSourcePiece = pos;
+        } else if (area == DRAG_AREA_BLACK_STACK) {
+            accessibilityDragSourceColor = BoardConstants.BLACK;
+            accessibilityDragSourcePiece = pos;
+        } else if (area == DRAG_AREA_DUCK_STACK) {
+            accessibilityDragSourceColor = BoardConstants.BLACK;
+            accessibilityDragSourcePiece = BoardConstants.DUCK;
+        } else {
+            accessibilityDragSourceColor = -1;
+            accessibilityDragSourcePiece = -1;
+        }
+
+        selectedPosition = -1;
+        selectedColor = accessibilityDragSourceColor;
+        selectedPiece = accessibilityDragSourcePiece;
+        updateSelectedSquares();
+    }
+
+    private void scheduleAccessibilityDwellSelection(int area, int pos) {
+        if (accessibilityDragDwellRunnable != null) {
+            accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+        }
+        accessibilityDragDwellRunnable = () -> {
+            if (accessibilityDragHoverArea != area || accessibilityDragHoverPos != pos) {
+                return;
+            }
+            if (!isAccessibilitySourceCandidate(area, pos)) {
+                return;
+            }
+            applyAccessibilitySourceSelection(area, pos);
+            feedbackSelect();
+            if (textToSpeech.isEnabled()) {
+                textToSpeech.doSpeak(getAccessibilityHoverDescription(area, pos));
+            }
+        };
+        accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragDwellMs);
+    }
+
+    private void handleAccessibilitySquareEntered(ChessSquareView squareView, boolean emitCrossingHaptic) {
+        final int pos = squareView.getPos();
+        final int area = getDragAreaForSquare(squareView);
+        if (area == DRAG_AREA_NONE) {
+            return;
+        }
+
+        if (accessibilityDragHoverArea == area && accessibilityDragHoverPos == pos) {
+            return;
+        }
+
+        accessibilityDragHoverArea = area;
+        accessibilityDragHoverPos = pos;
+
+        if (accessibilityDragDwellRunnable != null) {
+            accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+            accessibilityDragDwellRunnable = null;
+        }
+
+        boolean hasPiece = isAccessibilitySourceCandidate(area, pos);
+        if (emitCrossingHaptic) {
+            hapticFeedbackTick(hasPiece);
+        }
+        if (textToSpeech.isEnabled()) {
+            textToSpeech.doSpeak(getAccessibilityHoverDescription(area, pos));
+        }
+        if (hasPiece) {
+            scheduleAccessibilityDwellSelection(area, pos);
+        }
+    }
+
     protected class MyDragListener extends ChessBoardActivity.MyDragListener {
 
         @Override
@@ -745,10 +950,104 @@ public class SetupActivity extends ChessBoardActivity {
         }
     }
 
+    protected class MyAccessibilityDragListener extends ChessBoardActivity.MyAccessibilityDragListener {
+        @Override
+        public boolean onDrag(View view, DragEvent event) {
+            Log.d(TAG, "onDrag yes");
+            if (!(view instanceof ChessSquareView)) {
+                return false;
+            }
+
+            ChessSquareView squareView = (ChessSquareView) view;
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    resetAccessibilityDragState();
+                    View fromView = (View) event.getLocalState();
+                    if (fromView instanceof ChessSquareView) {
+                        handleAccessibilitySquareEntered((ChessSquareView) fromView, false);
+                    } else if (fromView instanceof ChessPieceView) {
+                        ViewGroup parent = (ViewGroup) ((ChessPieceView) fromView).getParent();
+                        if (parent instanceof ChessPiecesStackView && parent.getChildCount() > 0 && parent.getChildAt(0) instanceof ChessSquareView) {
+                            handleAccessibilitySquareEntered((ChessSquareView) parent.getChildAt(0), false);
+                        } else {
+                            int fromPos = ((ChessPieceView) fromView).getPos();
+                            ChessSquareView fromSquare = getSquareAt(fromPos);
+                            if (fromSquare != null) {
+                                handleAccessibilitySquareEntered(fromSquare, false);
+                            }
+                        }
+                    }
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    handleAccessibilitySquareEntered(squareView, true);
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    view.setSelected(false);
+                    break;
+                case DragEvent.ACTION_DROP:
+                    handleAccessibilityDrop(squareView);
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    if (!event.getResult() && selectedPosition != -1) {
+                        selectPosition(-1);
+                    }
+                    resetAccessibilityDragState();
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+
+        private void handleAccessibilityDrop(ChessSquareView droppedOnSquare) {
+            final int toPos = droppedOnSquare.getPos();
+            final int toArea = getDragAreaForSquare(droppedOnSquare);
+            boolean onChessBoard = toArea == DRAG_AREA_BOARD;
+
+            if (accessibilityDragSourceArea == DRAG_AREA_BOARD && accessibilityDragSourcePos != -1) {
+                if (onChessBoard) {
+                    if (toPos == accessibilityDragSourcePos) {
+                        selectPosition(toPos);
+                    } else {
+                        movePiece(accessibilityDragSourcePos, toPos);
+                    }
+                } else {
+                    removePiece(accessibilityDragSourcePos);
+                    rebuildAndDispatch();
+                }
+            } else if ((accessibilityDragSourceArea == DRAG_AREA_WHITE_STACK
+                || accessibilityDragSourceArea == DRAG_AREA_BLACK_STACK
+                || accessibilityDragSourceArea == DRAG_AREA_DUCK_STACK)
+                && accessibilityDragSourcePiece != -1 && accessibilityDragSourceColor != -1) {
+                if (onChessBoard) {
+                    selectedColor = accessibilityDragSourceColor;
+                    selectedPiece = accessibilityDragSourcePiece;
+                    addPieceFromStack(toPos);
+                } else {
+                    selectPieceInStack(accessibilityDragSourceColor, accessibilityDragSourcePiece);
+                }
+            }
+
+            selectedPosition = -1;
+            selectedColor = -1;
+            selectedPiece = -1;
+            updateSelectedSquares();
+        }
+    }
+
     protected class MyTouchListener extends ChessBoardActivity.MyTouchListener {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             int action = motionEvent.getAction();
-            if (view instanceof ChessPieceView) {
+            if (useAccessibilityDrag && (view instanceof ChessPieceView || view instanceof ChessSquareView)) {
+                if (action == MotionEvent.ACTION_DOWN) {
+                    ClipData data = ClipData.newPlainText("", "");
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                    view.startDrag(data, shadowBuilder, view, 0);
+                    return true;
+                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                    return true;
+                }
+            } else if (view instanceof ChessPieceView) {
                 final int pos = ((ChessPieceView) view).getPos();
 
                 if (action == MotionEvent.ACTION_DOWN) {
