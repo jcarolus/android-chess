@@ -543,8 +543,9 @@ public class PlayActivity extends ChessBoardActivity implements
         if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
             sState = ". " + getString(state);
         }
-        textViewLastMove.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
-        textViewLastMove.setText(getLastMoveAndTurnDescription(false) + sState);
+        String moveMessage = getLastMoveAndTurnDescription(false) + sState;
+
+        updateTextViewOrSpeech(textViewLastMove, moveMessage);
     }
 
     protected void updateSeekBar() {

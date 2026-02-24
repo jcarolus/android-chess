@@ -135,7 +135,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         if (textToSpeech.isEnabled()) {
             String sMove = getLastMoveAndTurnDescription(true);
-            textToSpeech.moveToSpeech(sMove);
+            textToSpeech.doSpeak(sMove);
         }
     }
 
@@ -186,7 +186,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 useAccessibilityDrag = switchAccessibilityDrag.isChecked();
                 applySquareDragListeners();
                 if (isChecked && buttonView.isPressed() && textToSpeech != null) {
-                    textToSpeech.moveToSpeech(getString(R.string.pref_accessibility_drag_talkback_reminder));
+                    textToSpeech.doSpeak(getString(R.string.pref_accessibility_drag_talkback_reminder));
                 }
             });
         }
@@ -373,14 +373,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
                 long minutes = remainingSeconds / 60;
                 if (minutes == 1) {
-                    textToSpeech.moveToSpeech(getString(R.string.time_warning_minutes_single, minutes));
+                    textToSpeech.doSpeak(getString(R.string.time_warning_minutes_single, minutes));
                 } else {
-                    textToSpeech.moveToSpeech(getString(R.string.time_warning_minutes, minutes));
+                    textToSpeech.doSpeak(getString(R.string.time_warning_minutes, minutes));
                 }
             } else if (remainingSeconds == 1) {
-                textToSpeech.moveToSpeech(getString(R.string.time_warning_seconds_single, remainingSeconds));
+                textToSpeech.doSpeak(getString(R.string.time_warning_seconds_single, remainingSeconds));
             } else {
-                textToSpeech.moveToSpeech(getString(R.string.time_warning_seconds, remainingSeconds));
+                textToSpeech.doSpeak(getString(R.string.time_warning_seconds, remainingSeconds));
             }
         }
     }
@@ -917,7 +917,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 updateSelectedSquares();
                 feedbackSelect();
                 if (textToSpeech.isEnabled()) {
-                    textToSpeech.moveToSpeech(getFieldDescription(pos));
+                    textToSpeech.doSpeak(getFieldDescription(pos));
                 }
             }
         };
@@ -938,7 +938,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
             String lastMoveDescription = getLastMoveDescription(true);
             if (!lastMoveDescription.isEmpty()) {
-                textToSpeech.moveToSpeech(lastMoveDescription, TextToSpeech.QUEUE_ADD);
+                textToSpeech.doSpeak(lastMoveDescription, TextToSpeech.QUEUE_ADD);
             }
         };
         accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragLastMoveDelayMs);
@@ -956,7 +956,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 hapticFeedbackTick(hasPiece);
             }
             if (textToSpeech.isEnabled()) {
-                textToSpeech.moveToSpeech(getFieldDescription(pos));
+                textToSpeech.doSpeak(getFieldDescription(pos));
             }
             boolean hasPiece =
                 pos == jni.getDuckPos() ||
@@ -1210,5 +1210,17 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         requestMove(selectedPosition, pos);
         selectedPosition = -1;
         ChessBoardActivity.this.updateSelectedSquares();
+    }
+
+    protected void updateTextViewOrSpeech(TextView textView, String text) {
+        String currentMessage = textView.getText().toString();
+        if (!currentMessage.equals(text)) {
+            textView.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
+            textView.setText(text);
+
+            if (textToSpeech.isEnabled()) {
+                textToSpeech.doSpeak(text);
+            }
+        }
     }
 }

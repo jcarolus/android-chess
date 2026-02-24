@@ -202,7 +202,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     }
 
     public void setMessage(String sMsg) {
-        textViewSolution.setText(sMsg);
+        updateTextViewOrSpeech(textViewSolution, sMsg);
     }
 
     public void setMessage(int res) {

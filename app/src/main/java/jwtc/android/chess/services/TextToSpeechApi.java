@@ -90,11 +90,11 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         }
     }
 
-    public void moveToSpeech(String sMoveSpeech) {
-        moveToSpeech(sMoveSpeech, TextToSpeech.QUEUE_FLUSH);
+    public void doSpeak(String sMoveSpeech) {
+        doSpeak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH);
     }
 
-    public void moveToSpeech(String sMoveSpeech, int queueMode) {
+    public void doSpeak(String sMoveSpeech, int queueMode) {
         if (!enabled || !ready) {
             return;
         }

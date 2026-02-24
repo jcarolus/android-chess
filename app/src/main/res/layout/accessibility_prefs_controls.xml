@@ -107,6 +107,12 @@
             android:stepSize="100"
             android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp" />
+        <CheckBox
+            android:id="@+id/CheckBoxLastMoveWhenOverEmptySquare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+            android:text="@string/pref_last_move_over_empty_square" />
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -115,12 +121,6 @@
             android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp"/>
 
-        <CheckBox
-            android:id="@+id/CheckBoxLastMoveWhenOverEmptySquare"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dip"
-            android:text="@string/pref_last_move_over_empty_square" />
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderAccessibilityDragLastMoveDelay"
             android:layout_width="match_parent"

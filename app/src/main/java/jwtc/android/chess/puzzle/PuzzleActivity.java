@@ -225,7 +225,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     }
 
     public void setMessage(String sMsg) {
-        textViewSolution.setText(sMsg);
+        updateTextViewOrSpeech(textViewSolution, sMsg);
     }
 
     public void solutionMessage() {

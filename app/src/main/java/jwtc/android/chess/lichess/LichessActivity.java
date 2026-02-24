@@ -307,11 +307,11 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         if (gameFull.state.winner != null) {
             stateMessage += ". " + getString(R.string.lichess_game_winner, gameFull.state.winner);
         }
-        textViewStatus.setText(stateMessage);
+        updateGameStateMessage(stateMessage);
 
         boolean isDrawOffer = playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw;
         if (isDrawOffer) {
-            textViewOfferDraw.setText(R.string.lichess_opponent_offers_draw);
+            updateTextViewOrSpeech(textViewOfferDraw, getString(R.string.lichess_opponent_offers_draw));
             pulseAnimation(buttonDraw, 1.05f, 1);
             buttonDraw.setOnClickListener(v -> lichessApi.draw(true));
         } else {
@@ -487,7 +487,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
-        textViewLastMove.setText(getLastMoveAndTurnDescription(false));
+        updateLastMoveDescription(getLastMoveAndTurnDescription(false));
     }
 
     protected void displayLogin() {
@@ -533,6 +533,14 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         }
 
         return "";
+    }
+
+    protected void updateGameStateMessage(String message) {
+        updateTextViewOrSpeech(textViewStatus, message);
+    }
+
+    protected void updateLastMoveDescription(String sMove) {
+        updateTextViewOrSpeech(textViewLastMove, sMove);
     }
 
     protected void handleActivityResult(Intent data) {

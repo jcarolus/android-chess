@@ -50,12 +50,12 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
             textToSpeech.setSpeechRate(value);
-            textToSpeech.moveToSpeech(getPreviewMove());
+            textToSpeech.doSpeak(getPreviewMove());
         });
 
         sliderSpeechPitch.addOnChangeListener((s, value, fromUser) -> {
             textToSpeech.setSpeechPitch(value);
-            textToSpeech.moveToSpeech(getPreviewMove());
+            textToSpeech.doSpeak(getPreviewMove());
         });
 
         sliderAccessibilityDelay.addOnChangeListener((s, value, fromUser) -> {
@@ -73,7 +73,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
                 } else {
                     textToSpeech.setVoiceByName(voiceName);
                 }
-                textToSpeech.moveToSpeech(getPreviewMove());
+                textToSpeech.doSpeak(getPreviewMove());
             }
         });
 
