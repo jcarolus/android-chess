@@ -45,6 +45,7 @@ public class SetupActivity extends ChessBoardActivity {
     private CheckBox checkBlackCastleShort;
     private CheckBox checkBlackCastleLong;
 
+    protected boolean saved = false;
     protected int selectedPiece = -1;
     protected int selectedColor = -1;
     protected int dpadPosWhitePieces = -1;
@@ -80,7 +81,10 @@ public class SetupActivity extends ChessBoardActivity {
         buttonOk.setOnClickListener(v -> onSave());
 
         MaterialButton buttonCancel = findViewById(R.id.ButtonSetupOptionsCancel);
-        buttonCancel.setOnClickListener(v -> finish());
+        buttonCancel.setOnClickListener(v -> {
+            saved = true;
+            finish();
+        });
 
         MaterialButton buttonReset = findViewById(R.id.ButtonSetupOptionsReset);
         buttonReset.setOnClickListener(v -> initBoard());
@@ -99,7 +103,10 @@ public class SetupActivity extends ChessBoardActivity {
     protected void onResume() {
         SharedPreferences prefs = getPrefs();
 
-        final String sFEN = prefs.getString("FEN", null);
+        String sFEN = prefs.getString("setupFEN", null);
+        if (sFEN == null) {
+            sFEN = prefs.getString("FEN", null);
+        }
         if (sFEN == null) {
             resetBoard();
             toggleTurnGroup.check(R.id.RadioSetupTurnWhite);
@@ -119,11 +126,22 @@ public class SetupActivity extends ChessBoardActivity {
         selectedPosition = -1;
         selectedColor = -1;
         selectedPiece = -1;
+        saved = false;
 
         rebuildAndDispatch();
 
         super.onResume();
     }
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        super.onPause();
+
+        SharedPreferences.Editor editor = this.getPrefs().edit();
+        editor.putString("setupFEN", saved ? null : jni.toFEN());
+        editor.commit();
+    }
+
 
     protected void onSave() {
 
@@ -534,6 +552,8 @@ public class SetupActivity extends ChessBoardActivity {
         editor.putInt("boardNum", 0);
         editor.putLong("game_id", 0);
         editor.commit();
+
+        saved = true;
     }
 
     protected String getPieceDescription(int piece, int color) {

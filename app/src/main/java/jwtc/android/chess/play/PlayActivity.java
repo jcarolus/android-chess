@@ -370,6 +370,7 @@ public class PlayActivity extends ChessBoardActivity implements
         editor.putLong("game_id", lGameID);
         editor.putString("game_pgn", gameApi.exportFullPGN());
         editor.putString("FEN", jni.toFEN());
+        editor.putString("setupFEN", null);
 
         final long pauseTime = System.currentTimeMillis();
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
