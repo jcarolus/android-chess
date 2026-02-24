@@ -745,6 +745,11 @@ public class SetupActivity extends ChessBoardActivity {
 
                     case DragEvent.ACTION_DRAG_ENDED: {
                         final View droppedView = (View) event.getLocalState();
+                        if (!event.getResult() && droppedView instanceof ChessPieceView && droppedView.getParent() instanceof ChessBoardView) {
+                            final int fromPos = ((ChessPieceView) droppedView).getPos();
+                            removePiece(fromPos);
+                            rebuildAndDispatch();
+                        }
                         if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
                             droppedView.post(new Runnable() {
                                 @Override
