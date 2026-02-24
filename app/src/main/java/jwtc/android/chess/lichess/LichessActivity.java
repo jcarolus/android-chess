@@ -340,7 +340,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onInvalidMove(String reason) {
-        textViewStatus.setText(reason);
+        updateTextViewOrSpeech(textViewStatus, reason);
     }
 
     @Override
@@ -523,7 +523,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         if (state.equals("created")) {
             return getString(R.string.lichess_game_state_created);
         } else if (state.equals("started")) {
-            return getString(R.string.lichess_game_state_started);
+            return "";
         } else if (state.equals("aborted")) {
             return getString(R.string.lichess_game_state_aborted);
         } else if (state.equals("mate")) {
@@ -575,7 +575,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void OnTimeWarning(int turn, long remainingMillies) {
-
+        if (turn == lichessApi.getMyTurn()) {
+            feedBackDescribeTimeWarning(remainingMillies);
+        }
     }
 
     @Override

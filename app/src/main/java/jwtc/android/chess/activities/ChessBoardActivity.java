@@ -909,6 +909,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (accessibilityDragFromPos != -1 || accessibilityDragHoverPos != pos) {
                 return;
             }
+            if (gameApi.isEnded()) {
+                return;
+            }
             int piece = jni.pieceAt(jni.getTurn(), pos);
             if (piece != BoardConstants.FIELD) {
                 accessibilityDragFromPos = pos;
@@ -1167,6 +1170,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected void selectPosition(int pos) {
         Log.d(TAG, "selectPosition " + pos + ", " + selectedPosition);
         moveToPositions.clear();
+        if (gameApi.isEnded()) {
+            selectedPosition = -1;
+            updateSelectedSquares();
+            return;
+        }
         if (pos == -1) {
             selectedPosition = pos;
             updateSelectedSquares();
@@ -1218,7 +1226,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             textView.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
             textView.setText(text);
 
-            if (textToSpeech.isEnabled()) {
+            if (textToSpeech.isEnabled() && !text.isEmpty()) {
                 textToSpeech.doSpeak(text);
             }
         }
