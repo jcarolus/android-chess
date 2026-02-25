@@ -211,6 +211,7 @@
     <string name="menu_flip">Rotate</string>
     <string name="menu_fromclip">Game from clip board</string>
     <string name="menu_game_settings">Game Settings</string>
+    <string name="menu_engine_picker">Engine</string>
     <string name="menu_help">Help</string>
     <string name="menu_load_game">Load game</string>
     <string name="menu_new">New Game</string>
@@ -422,6 +423,7 @@
     <string name="time_warning_seconds">%1$d seconds remaining</string>
     <string name="time_warning_seconds_single">%1$d second remaining</string>
     <string name="title_castle">Castle?</string>
+    <string name="title_engine_picker">Choose Engine</string>
     <string name="title_challenge">Challenge</string>
     <string name="title_create_new_line">Create new line?</string>
     <string name="title_delete_game">Delete game</string>
