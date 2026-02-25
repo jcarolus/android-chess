@@ -370,6 +370,26 @@ void testBoardEvaluationHeuristics() {
     }
 }
 
+void testBoardValueLoneKingBranches() {
+    Game *game = Game::getInstance();
+    ChessBoard *board = nullptr;
+
+    // Side to move has only king; opponent has no pawns -> loneKingValue branch.
+    ASSERT_TRUE(game->newGameFromFEN("4k3/8/8/8/8/8/4r3/4K3 w - - 0 1"));
+    board = game->getBoard();
+    EXPECT_EQ(board->boardValue(), -board->loneKingValue(ChessBoard::BLACK));
+
+    // Side to move has only king; opponent has pawns -> promotePawns branch.
+    ASSERT_TRUE(game->newGameFromFEN("4k3/8/8/8/8/8/4p3/4K3 w - - 0 1"));
+    board = game->getBoard();
+    EXPECT_EQ(board->boardValue(), -board->promotePawns(ChessBoard::BLACK));
+
+    // Opponent has only king; side to move has bishop+knight and no pawns/rooks/queens -> KBNK branch.
+    ASSERT_TRUE(game->newGameFromFEN("4k3/8/8/8/8/8/3BN3/4K3 w - - 0 1"));
+    board = game->getBoard();
+    EXPECT_EQ(board->boardValue(), board->kbnkValue(ChessBoard::WHITE));
+}
+
 class GameTest : public ::testing::Test {
    protected:
     void SetUp() override {
@@ -431,6 +451,10 @@ TEST_F(GameTest, ThreefoldRepetition) {
 
 TEST_F(GameTest, BoardEvaluationHeuristics) {
     testBoardEvaluationHeuristics();
+}
+
+TEST_F(GameTest, BoardValueLoneKingBranches) {
+    testBoardValueLoneKingBranches();
 }
 
 }  // namespace

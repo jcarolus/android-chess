@@ -80,14 +80,32 @@ int ChessBoard::boardValue() {
         return val;
     }
 
+    const auto nonKingMaterial = [this](const int turn) -> BITBOARD {
+        return m_bitbPieces[turn][PAWN] |
+               m_bitbPieces[turn][KNIGHT] |
+               m_bitbPieces[turn][BISHOP] |
+               m_bitbPieces[turn][ROOK] |
+               m_bitbPieces[turn][QUEEN];
+    };
+
+    const auto isLoneKing = [&nonKingMaterial](const int turn) -> bool {
+        return nonKingMaterial(turn) == 0;
+    };
+
+    const auto isKbnkAttacker = [this](const int turn) -> bool {
+        return m_bitbPieces[turn][PAWN] == 0 &&
+               m_bitbPieces[turn][ROOK] == 0 &&
+               m_bitbPieces[turn][QUEEN] == 0 &&
+               ChessBoard::bitCount(m_bitbPieces[turn][KNIGHT]) == 1 &&
+               ChessBoard::bitCount(m_bitbPieces[turn][BISHOP]) == 1;
+    };
+
     // lone king
-    if (m_qualities[m_turn] == 0) {
+    if (isLoneKing(m_turn)) {
         // no pawns to promote but enough mating material (m_state != DRAW_MATERIAL)
         if (m_bitbPieces[m_o_turn][PAWN] == 0) {
             // kbnk is special case
-            if ((m_qualities[m_o_turn] == ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
-                ChessBoard::bitCount(m_bitbPieces[m_o_turn][KNIGHT]) == 1 &&
-                ChessBoard::bitCount(m_bitbPieces[m_o_turn][BISHOP]) == 1) {
+            if (isKbnkAttacker(m_o_turn)) {
                 return -kbnkValue(m_o_turn);
             }
             return -loneKingValue(m_o_turn);
@@ -95,11 +113,9 @@ int ChessBoard::boardValue() {
         // promote pawns
         return -promotePawns(m_o_turn);
     }  // opponent has lone king
-    else if (m_qualities[m_o_turn] == 0) {
+    else if (isLoneKing(m_o_turn)) {
         if (m_bitbPieces[m_turn][PAWN] == 0) {
-            if ((m_qualities[m_turn] == ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
-                ChessBoard::bitCount(m_bitbPieces[m_turn][KNIGHT]) == 1 &&
-                ChessBoard::bitCount(m_bitbPieces[m_turn][BISHOP]) == 1) {
+            if (isKbnkAttacker(m_turn)) {
                 return kbnkValue(m_turn);
             }
             return loneKingValue(m_turn);
