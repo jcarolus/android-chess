@@ -8,6 +8,12 @@
             <action
                 android:name="android.intent.action.TTS_SERVICE" />
         </intent>
+        <intent>
+            <action android:name="intent.chess.provider.ENGINE" />
+        </intent>
+        <intent>
+            <action android:name="intent.chess.provider.ACTIVATION" />
+        </intent>
     </queries>
     <application
         android:name="android.app.Application"

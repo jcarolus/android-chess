@@ -259,6 +259,10 @@
             </string>
     <string name="options_level_ply">Level (ply)</string>
     <string name="options_level_time">Level (time)</string>
+    <string name="options_engine_builtin">Built-in</string>
+    <string name="options_engine_oex">OEX</string>
+    <string name="options_engine_oex_unavailable">No OEX engines found on this device.</string>
+    <string name="options_engine_oex_duck_disabled">OEX is not available for Duck chess.</string>
     <string name="options_play_android">Human vs Android</string>
     <string name="options_play_black">Black</string>
     <string name="options_play_human">Human vs Human</string>

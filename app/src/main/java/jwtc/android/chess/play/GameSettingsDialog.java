@@ -3,9 +3,9 @@ package jwtc.android.chess.play;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -14,12 +14,13 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineApi;
+import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.views.FixedDropdownView;
 
 public class GameSettingsDialog extends ResultDialog {
-    public GameSettingsDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs) {
+    public GameSettingsDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs, boolean isDuckGame) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.game_settings);
@@ -34,10 +35,12 @@ public class GameSettingsDialog extends ResultDialog {
 
         final MaterialButtonToggleGroup toggleOpponent = findViewById(R.id.ToggleOpponentGroup);
         final MaterialButtonToggleGroup toggleColor = findViewById(R.id.ToggleColorGroup);
+        final MaterialButtonToggleGroup toggleEngineBackend = findViewById(R.id.ToggleEngineBackendGroup);
         final MaterialButtonToggleGroup toggleLevelMode = findViewById(R.id.ToggleLevelModeGroup);
         final FixedDropdownView spinnerLevelTime = findViewById(R.id.SpinnerOptionsLevelTime);
         final FixedDropdownView spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
         final SwitchMaterial toggleQuiescent = findViewById(R.id.ToggleQuiescent);
+        final TextView textEngineBackendHint = findViewById(R.id.TextViewEngineBackendHint);
 
         spinnerLevelTime.setItems(context.getResources().getStringArray(R.array.levels_time));
         spinnerLevelPly.setItems(context.getResources().getStringArray(R.array.levels_ply));
@@ -50,6 +53,24 @@ public class GameSettingsDialog extends ResultDialog {
         toggleOpponent.check(vsCPU ? R.id.radioAndroid : R.id.radioHuman);
 
         toggleColor.check(playAsWhite ? R.id.radioWhite : R.id.radioBlack);
+
+        final boolean hasOex = OexEngine.hasAvailableEngines(context);
+        boolean oexSelectable = hasOex && !isDuckGame;
+        if (isDuckGame) {
+            textEngineBackendHint.setVisibility(View.VISIBLE);
+            textEngineBackendHint.setText(R.string.options_engine_oex_duck_disabled);
+        } else if (!hasOex) {
+            textEngineBackendHint.setVisibility(View.VISIBLE);
+            textEngineBackendHint.setText(R.string.options_engine_oex_unavailable);
+        } else {
+            textEngineBackendHint.setVisibility(View.GONE);
+        }
+
+        findViewById(R.id.radioEngineOex).setEnabled(oexSelectable);
+
+        String engineBackend = prefs.getString("engineBackend", "builtin");
+        boolean wantsOex = "oex".equals(engineBackend);
+        toggleEngineBackend.check(wantsOex && oexSelectable ? R.id.radioEngineOex : R.id.radioEngineBuiltin);
 
         boolean useTimeLevel = levelMode == EngineApi.LEVEL_TIME;
         toggleLevelMode.check(useTimeLevel ? R.id.RadioOptionsTime : R.id.RadioOptionsPly);
@@ -82,6 +103,7 @@ public class GameSettingsDialog extends ResultDialog {
 
                 editor.putBoolean("opponent", toggleOpponent.getCheckedButtonId() == R.id.radioAndroid);
                 editor.putBoolean("myTurn", toggleColor.getCheckedButtonId() == R.id.radioWhite);
+                editor.putString("engineBackend", toggleEngineBackend.getCheckedButtonId() == R.id.radioEngineOex ? "oex" : "builtin");
 
                 editor.putInt("levelMode", toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsTime
                     ? EngineApi.LEVEL_TIME

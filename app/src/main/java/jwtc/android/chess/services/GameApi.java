@@ -440,7 +440,6 @@ public class GameApi {
 
             if (useLongMove) {
                 sMoveSpeech.append(Pos.toString(Move.getFrom(move)).toUpperCase()).append(" ");
-                Log.d(TAG, "yes");
             } else {
 
                 if (sFile != null) {

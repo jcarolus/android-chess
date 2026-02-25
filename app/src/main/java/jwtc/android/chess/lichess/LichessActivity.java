@@ -340,7 +340,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onInvalidMove(String reason) {
-        updateTextViewOrSpeech(textViewStatus, reason);
+        feedbackIllegalMove();
     }
 
     @Override

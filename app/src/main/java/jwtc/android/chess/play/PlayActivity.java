@@ -43,6 +43,7 @@ import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
+import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.helpers.Utils;
@@ -79,6 +80,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
     private LocalClockApi localClock;
     private EngineApi myEngine;
+    private EngineApi localEngine;
+    private OexEngine oexEngine;
     private final EcoService ecoService = new EcoService();
     private long lGameID;
     private LinearProgressIndicator progressBarEngine;
@@ -269,8 +272,9 @@ public class PlayActivity extends ChessBoardActivity implements
         String type = intent.getType();
         Uri uri = intent.getData();
 
-        myEngine = new LocalEngine(gameApi);
-        myEngine.addListener(this);
+        localEngine = new LocalEngine(gameApi);
+        oexEngine = new OexEngine(this, gameApi, prefs.getString("oexEngineId", null));
+        myEngine = null;
 
         lGameID = prefs.getLong("game_id", 0);
 
@@ -345,8 +349,20 @@ public class PlayActivity extends ChessBoardActivity implements
     protected void onPause() {
         super.onPause();
 
-        myEngine.abort(() -> {});
-        myEngine.removeListener(this);
+        if (myEngine != null) {
+            myEngine.abort(() -> {
+            });
+            myEngine.removeListener(this);
+            myEngine = null;
+        }
+        if (localEngine != null) {
+            localEngine.destroy();
+            localEngine = null;
+        }
+        if (oexEngine != null) {
+            oexEngine.destroy();
+            oexEngine = null;
+        }
 
         localClock.stopClock();
 
@@ -667,7 +683,13 @@ public class PlayActivity extends ChessBoardActivity implements
                 String item = data.getString("item");
 
                 if (item.equals(getString(R.string.menu_game_settings))) {
-                    GameSettingsDialog settingsDialog = new GameSettingsDialog(this, this, REQUEST_GAME_SETTINGS, getPrefs());
+                    GameSettingsDialog settingsDialog = new GameSettingsDialog(
+                        this,
+                        this,
+                        REQUEST_GAME_SETTINGS,
+                        getPrefs(),
+                        jni.getVariant() == BoardConstants.VARIANT_DUCK
+                    );
                     settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
@@ -797,10 +819,51 @@ public class PlayActivity extends ChessBoardActivity implements
         Log.d(TAG, "updateForNewGame");
 
         updateClockByPrefs(true);
+        updateGameSettingsByPrefs();
 
         feedbackNewGame();
         resetSelectedSquares();
         updateLastMove();
+    }
+
+    private String getPreferredEngineBackend() {
+        return getPrefs().getString("engineBackend", "builtin");
+    }
+
+    private EngineApi resolveEngineByPrefsAndVariant() {
+        boolean isDuck = jni.getVariant() == BoardConstants.VARIANT_DUCK;
+        boolean wantsOex = "oex".equals(getPreferredEngineBackend());
+        if (wantsOex && !OexEngine.hasAvailableEngines(this)) {
+            wantsOex = false;
+        }
+        return wantsOex && !isDuck ? oexEngine : localEngine;
+    }
+
+    private void updateActiveEngine() {
+        if (localEngine == null) {
+            localEngine = new LocalEngine(gameApi);
+        }
+        if (oexEngine == null) {
+            oexEngine = new OexEngine(this, gameApi, getPrefs().getString("oexEngineId", null));
+        } else {
+            oexEngine.setPreferredEngineId(getPrefs().getString("oexEngineId", null));
+        }
+
+        EngineApi selectedEngine = resolveEngineByPrefsAndVariant();
+        if (selectedEngine == null) {
+            selectedEngine = localEngine;
+        }
+        if (selectedEngine == myEngine) {
+            return;
+        }
+
+        if (myEngine != null) {
+            myEngine.abort(() -> {
+            });
+            myEngine.removeListener(this);
+        }
+        myEngine = selectedEngine;
+        myEngine.addListener(this);
     }
 
     protected void updateBoardRotation() {
@@ -820,6 +883,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
         vsCPU = prefs.getBoolean("opponent", true);
         myTurn = prefs.getBoolean("myTurn", true) ? 1 : 0;
+
+        updateActiveEngine();
 
         int mode = prefs.getInt("levelMode", EngineApi.LEVEL_TIME);
 
@@ -890,14 +955,14 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected void playIfEngineMove() {
         Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
-        if (myTurn != jni.getTurn() && vsCPU) {
+        if (myEngine != null && myTurn != jni.getTurn() && vsCPU) {
             playIfEngineCanMove();
         }
     }
 
     protected void playIfEngineCanMove() {
         Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
-        if (myEngine.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+        if (myEngine != null && myEngine.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 
