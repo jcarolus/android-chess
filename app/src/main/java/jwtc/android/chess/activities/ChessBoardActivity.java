@@ -705,6 +705,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected String getFieldDescription(int pos) {
+        String sPos = Pos.toString(pos).toUpperCase();
         if (PieceSets.selectedBlindfoldMode != PieceSets.BLINDFOLD_HIDE_PIECES) {
             int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
             int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
@@ -714,14 +715,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 if (selectedPosition == pos) {
                     return getString(
                         R.string.square_selected_with_piece_description,
-                        Pos.toString(pos),
+                        sPos,
                         getString(R.string.piece_white),
                         getString(Piece.toResource(whitePiece))
                     ) + getFieldColorDescription(pos);
                 }
                 return getString(
                     R.string.square_with_piece_description,
-                    Pos.toString(pos),
+                    sPos,
                     getString(R.string.piece_white),
                     getString(Piece.toResource(whitePiece))
                 ) + getFieldColorDescription(pos);
@@ -729,14 +730,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 if (selectedPosition == pos) {
                     return getString(
                         R.string.square_selected_with_piece_description,
-                        Pos.toString(pos),
+                        sPos,
                         getString(R.string.piece_black),
                         getString(Piece.toResource(blackPiece))
                     ) + getFieldColorDescription(pos);
                 }
                 return getString(
                     R.string.square_with_piece_description,
-                    Pos.toString(pos),
+                    sPos,
                     getString(R.string.piece_black),
                     getString(Piece.toResource(blackPiece))
                 ) + getFieldColorDescription(pos);
@@ -744,7 +745,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 return (getString(selectedPosition == pos ? R.string.square_selected_with_duck_description : R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos))) + getFieldColorDescription(pos);
             }
         }
-        return Pos.toString(pos) + getFieldColorDescription(pos);
+        String selectedMessage = selectedPosition == pos ? getString(R.string.tts_selected) + " " : "";
+        return selectedMessage + sPos + getFieldColorDescription(pos);
     }
 
     protected String getFieldColorDescription(int pos) {
