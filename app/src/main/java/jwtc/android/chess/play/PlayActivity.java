@@ -77,7 +77,6 @@ public class PlayActivity extends ChessBoardActivity implements
     public static final int REQUEST_SAVE_POSITION_TO_FILE = 10;
     public static final int REQUEST_OPEN_POSITION_FILE = 11;
     public static final int REQUEST_OPEN_GAME_FILE = 12;
-    public static final int REQUEST_ENGINE_PICKER = 13;
 
     private LocalClockApi localClock;
     private EngineApi myEngine;
@@ -692,16 +691,6 @@ public class PlayActivity extends ChessBoardActivity implements
                         jni.getVariant() == BoardConstants.VARIANT_DUCK
                     );
                     settingsDialog.show();
-                } else if (item.equals(getString(R.string.menu_engine_picker))) {
-                    EnginePickerDialog dialog = new EnginePickerDialog(
-                        this,
-                        this,
-                        REQUEST_ENGINE_PICKER,
-                        getPrefs().getString("engineBackend", "builtin"),
-                        getPrefs().getString("oexEngineId", null),
-                        jni.getVariant() == BoardConstants.VARIANT_DUCK
-                    );
-                    dialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
                     lGameID = 0;
@@ -764,14 +753,6 @@ public class PlayActivity extends ChessBoardActivity implements
                 break;
 
             case REQUEST_GAME_SETTINGS:
-                updateGameSettingsByPrefs();
-                updateGUI();
-                break;
-            case REQUEST_ENGINE_PICKER:
-                SharedPreferences.Editor editor = getPrefs().edit();
-                editor.putString("engineBackend", data.getString("engineBackend", "builtin"));
-                editor.putString("oexEngineId", data.getString("oexEngineId"));
-                editor.apply();
                 updateGameSettingsByPrefs();
                 updateGUI();
                 break;

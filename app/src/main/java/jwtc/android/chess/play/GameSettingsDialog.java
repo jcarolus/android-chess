@@ -12,9 +12,13 @@ import androidx.annotation.NonNull;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineApi;
-import jwtc.android.chess.engine.OexEngine;
+import jwtc.android.chess.engine.oex.OexEngineDescriptor;
+import jwtc.android.chess.engine.oex.OexEngineResolver;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.views.FixedDropdownView;
@@ -35,8 +39,8 @@ public class GameSettingsDialog extends ResultDialog {
 
         final MaterialButtonToggleGroup toggleOpponent = findViewById(R.id.ToggleOpponentGroup);
         final MaterialButtonToggleGroup toggleColor = findViewById(R.id.ToggleColorGroup);
-        final MaterialButtonToggleGroup toggleEngineBackend = findViewById(R.id.ToggleEngineBackendGroup);
         final MaterialButtonToggleGroup toggleLevelMode = findViewById(R.id.ToggleLevelModeGroup);
+        final FixedDropdownView spinnerEngine = findViewById(R.id.SpinnerOptionsEngine);
         final FixedDropdownView spinnerLevelTime = findViewById(R.id.SpinnerOptionsLevelTime);
         final FixedDropdownView spinnerLevelPly = findViewById(R.id.SpinnerOptionsLevelPly);
         final SwitchMaterial toggleQuiescent = findViewById(R.id.ToggleQuiescent);
@@ -54,23 +58,53 @@ public class GameSettingsDialog extends ResultDialog {
 
         toggleColor.check(playAsWhite ? R.id.radioWhite : R.id.radioBlack);
 
-        final boolean hasOex = OexEngine.hasAvailableEngines(context);
-        boolean oexSelectable = hasOex && !isDuckGame;
-        if (isDuckGame) {
+        final List<EngineOption> engineOptions = new ArrayList<>();
+        final List<String> engineLabels = new ArrayList<>();
+
+        engineOptions.add(new EngineOption("builtin", null, true));
+        engineLabels.add(context.getString(R.string.options_engine_builtin));
+
+        List<OexEngineDescriptor> oexEngines = new OexEngineResolver(context).resolveEngines();
+        for (OexEngineDescriptor descriptor : oexEngines) {
+            String label = context.getString(R.string.options_engine_oex) + ": " + descriptor.getName();
+            boolean selectable = !isDuckGame;
+            if (!selectable) {
+                label += " (" + context.getString(R.string.options_engine_unavailable_short) + ")";
+            }
+            engineOptions.add(new EngineOption("oex", descriptor.getId(), selectable));
+            engineLabels.add(label);
+        }
+        spinnerEngine.setItems(engineLabels);
+
+        if (isDuckGame && oexEngines.size() > 0) {
             textEngineBackendHint.setVisibility(View.VISIBLE);
             textEngineBackendHint.setText(R.string.options_engine_oex_duck_disabled);
-        } else if (!hasOex) {
+        } else if (oexEngines.isEmpty()) {
             textEngineBackendHint.setVisibility(View.VISIBLE);
             textEngineBackendHint.setText(R.string.options_engine_oex_unavailable);
         } else {
             textEngineBackendHint.setVisibility(View.GONE);
         }
 
-        findViewById(R.id.radioEngineOex).setEnabled(oexSelectable);
-
         String engineBackend = prefs.getString("engineBackend", "builtin");
-        boolean wantsOex = "oex".equals(engineBackend);
-        toggleEngineBackend.check(wantsOex && oexSelectable ? R.id.radioEngineOex : R.id.radioEngineBuiltin);
+        String oexEngineId = prefs.getString("oexEngineId", null);
+
+        int selectedEnginePos = 0;
+        for (int i = 0; i < engineOptions.size(); i++) {
+            EngineOption option = engineOptions.get(i);
+            if ("builtin".equals(engineBackend) && "builtin".equals(option.backend)) {
+                selectedEnginePos = i;
+                break;
+            }
+            if ("oex".equals(engineBackend) &&
+                "oex".equals(option.backend) &&
+                option.oexEngineId != null &&
+                option.oexEngineId.equals(oexEngineId)) {
+                selectedEnginePos = i;
+                break;
+            }
+        }
+        spinnerEngine.setSelection(selectedEnginePos);
 
         boolean useTimeLevel = levelMode == EngineApi.LEVEL_TIME;
         toggleLevelMode.check(useTimeLevel ? R.id.RadioOptionsTime : R.id.RadioOptionsPly);
@@ -103,7 +137,15 @@ public class GameSettingsDialog extends ResultDialog {
 
                 editor.putBoolean("opponent", toggleOpponent.getCheckedButtonId() == R.id.radioAndroid);
                 editor.putBoolean("myTurn", toggleColor.getCheckedButtonId() == R.id.radioWhite);
-                editor.putString("engineBackend", toggleEngineBackend.getCheckedButtonId() == R.id.radioEngineOex ? "oex" : "builtin");
+                int engineSelection = spinnerEngine.getSelectedItemPosition();
+                EngineOption selectedOption = engineSelection >= 0 && engineSelection < engineOptions.size()
+                    ? engineOptions.get(engineSelection)
+                    : engineOptions.get(0);
+                if (!selectedOption.selectable) {
+                    selectedOption = engineOptions.get(0);
+                }
+                editor.putString("engineBackend", selectedOption.backend);
+                editor.putString("oexEngineId", selectedOption.oexEngineId);
 
                 editor.putInt("levelMode", toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsTime
                     ? EngineApi.LEVEL_TIME
@@ -128,5 +170,17 @@ public class GameSettingsDialog extends ResultDialog {
                 dismiss();
             }
         });
+    }
+
+    private static class EngineOption {
+        final String backend;
+        final String oexEngineId;
+        final boolean selectable;
+
+        EngineOption(String backend, String oexEngineId, boolean selectable) {
+            this.backend = backend;
+            this.oexEngineId = oexEngineId;
+            this.selectable = selectable;
+        }
     }
 }

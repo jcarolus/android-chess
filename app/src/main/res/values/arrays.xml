@@ -12,7 +12,6 @@
     </string-array>
     <string-array name="play_menu">
         <item>@string/menu_game_settings</item>
-        <item>@string/menu_engine_picker</item>
         <item>@string/menu_set_clock</item>
         <item>@string/menu_new</item>
         <item>@string/menu_new_duck</item>
