@@ -319,6 +319,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackUnselect() {
+        Log.d(TAG, "feedbackUnselect");
         if (sounds.isEnabled()) {
             sounds.playUnselect();
         }
@@ -373,14 +374,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
                 long minutes = remainingSeconds / 60;
                 if (minutes == 1) {
-                    textToSpeech.doSpeak(getString(R.string.time_warning_minutes_single, minutes));
+                    textToSpeech.doSpeak(getString(R.string.time_warning_minutes_single, minutes), TextToSpeech.QUEUE_ADD);
                 } else {
-                    textToSpeech.doSpeak(getString(R.string.time_warning_minutes, minutes));
+                    textToSpeech.doSpeak(getString(R.string.time_warning_minutes, minutes), TextToSpeech.QUEUE_ADD);
                 }
             } else if (remainingSeconds == 1) {
-                textToSpeech.doSpeak(getString(R.string.time_warning_seconds_single, remainingSeconds));
+                textToSpeech.doSpeak(getString(R.string.time_warning_seconds_single, remainingSeconds), TextToSpeech.QUEUE_ADD);
             } else {
-                textToSpeech.doSpeak(getString(R.string.time_warning_seconds, remainingSeconds));
+                textToSpeech.doSpeak(getString(R.string.time_warning_seconds, remainingSeconds), TextToSpeech.QUEUE_ADD);
             }
         }
     }
@@ -1178,9 +1179,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return;
         }
         if (pos == -1) {
-            selectedPosition = pos;
+            if (selectedPosition != -1) {
+                selectedPosition = pos;
+                feedbackUnselect();
+            }
+
             updateSelectedSquares();
-            feedbackUnselect();
         } else {
             if (selectedPosition == -1) {
                 boolean isStartMove =

@@ -331,10 +331,25 @@ public class Auth {
         Log.d(TAG, "closeStreams");
         if (gameStream != null) {
             gameStream.close();
+            gameStream = null;
         }
         if (eventStream != null) {
             eventStream.close();
+            eventStream = null;
         }
+        if (challengeStream != null) {
+            challengeStream.close();
+            challengeStream = null;
+        }
+        if (seekStream != null) {
+            seekStream.close();
+            seekStream = null;
+        }
+    }
+
+    public void destroy() {
+        closeStreams();
+        oauth.dispose();
     }
 
     public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
