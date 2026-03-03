@@ -3,22 +3,22 @@
     <string name="advanced_help"><![CDATA[
         <h3>Gelişmiş</h3>
         <p>Burada kendi içeriklerinizi oluşturun veya içe aktarın.</p>
-        
+
         <h4>Oyun veritabanını SD karta aktar</h4>
         <p>Oyun veritabanındaki tüm oyunlar SD kartta tek bir PGN dosyasına aktarılabilir. Bu dosyanın adı chess.pgn olacaktır ve mevcut bir dosyanın üzerine yazılır.</p>
-        
+
         <h4>Oyunları oyun veritabanına içe aktar</h4>
         <p>Bu seçeneği, oyun veritabanına oyun eklemek için kullanın. Bir PGN dosyasına göz atmanıza olanak tanır. Seçin ve içe aktarmayı başlatın.</p>
-        
+
         <h4>Oyun veritabanındaki tüm oyunları sil</h4>
         <p>Veritabanını temizlemek istiyorsanız bu seçeneği kullanın. Önce SD karta bir yedek aldığınızdan emin olun; bu işlem geri alınamaz.</p>
-        
+
         <h4>Alıştırma seti oluştur</h4>
         <p>Şah matla biten oyunlardan alıştırma konumları oluşturur. İşlenecek dosyayı seçin. Başarısız girişler genellikle şah matla bitmeyen ya da yinelenen oyunlardır.</p>
-        
+
         <h4>Alıştırma setini sıfırla</h4>
         <p>Alıştırmalara baştan başlamak ister misiniz? Bu, ortalama süre sayacınızı da sıfırlar.</p>
-        
+
         ]]></string>
     <string name="alert_no">Hayır</string>
     <string name="alert_ok">Tamam</string>
@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Berabere</string>
     <string name="lichess_play_button_resign">Pes et</string>
     <string name="lichess_seek_posted">Arama gönderildi</string>
+    <string name="lichess_save_game_to_file">Dosyaya kaydet</string>
+    <string name="lichess_save_game_to_database">Veritabanına kaydet</string>
     <string name="lichess_starting">Başlıyor...</string>
     <string name="match_option_color_black">Siyah</string>
     <string name="match_option_color_random">Rastgele</string>
@@ -281,6 +283,7 @@
     <string name="playpreferences">Oyun ayarları</string>
     <string name="practice_help">Mati bul (birden fazla hamle olabilir).</string>
     <string name="practice_set_reset">Alıştırma seti sıfırlandı</string>
+    <string name="pref_field_color_descriptions">Kare açıklamasına açık/koyu ekle</string>
     <string name="pref_fullscreen">Tam ekranı etkinleştir</string>
     <string name="pref_fullscreen_desc">Küçük ekranlar ve yatay mod için önerilir; aksi halde bazı öğeler ekrandan taşabilir</string>
     <string name="pref_icsautosought">Otomatik arama</string>
@@ -294,16 +297,36 @@
     <string name="pref_icstimewarning_desc">Zaman belirtilen eşiğe düştüğünde tik-tak sesi uyarır</string>
     <string name="pref_icstimewarningsecs">Uyarı süresi (sn)</string>
     <string name="pref_icstimewarningsecs_desc">Uyarı kaç saniye kala başlasın?</string>
+    <string name="pref_last_move_over_empty_square">Boş bir karenin üzerinden sürüklerken gecikmeden sonra son hamleyi oku</string>
     <string name="pref_night_mode">Gece modu</string>
     <string name="pref_night_mode_desc">Uygulamayı gece modunda zorla</string>
     <string name="pref_showCoords">Koordinatlar</string>
     <string name="pref_show_blindfold">Gözbağı</string>
     <string name="pref_show_possible_moves">Hamleleri göster</string>
+    <string name="pref_show_pieces_descriptions">Taşların konum açıklamasını göster</string>
+    <string name="pref_show_accessibility_drag_toggle">Erişilebilirlik sürükleme anahtarını göster</string>
     <string name="pref_sound">Ses</string>
-    <string name="pref_sound_desc">Rakip hamle yaptığında çalınır</string>
+    <string name="pref_haptic_feedback">Dokunsal geri bildirim kullan</string>
     <string name="pref_speech">Sesli okuma</string>
+    <string name="pref_user_long_move_descriptions">Tam hamle açıklamasını kullan</string>
+    <string name="tts_locale_not_supported">Metinden konuşmaya özelliği yerel ayarınızı desteklemiyor</string>
+    <string name="tts_not_loaded">Metinden konuşma yüklenemedi</string>
+    <string name="tts_example_move">Fil G7 alır, şah</string>
+    <string name="tts_selected">Seçili</string>
+    <string name="tts_move_takes">alır</string>
+    <string name="tts_move_en_passant">geçerken alma</string>
+    <string name="tts_move_promotes_to">%1$s`ye terfi eder</string>
+    <string name="tts_move_checkmate">şah mat</string>
+    <string name="tts_move_castle_long">uzun rok</string>
+    <string name="tts_move_castle_short">kısa rok</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">Erişilebilir sürükleme</string>
+    <string name="pref_accessibility_drag_delay_desc">Erişilebilir sürükleme gecikmesi</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Boş karede son hamleyi tekrarlama gecikmesi</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Erişilebilir sürükleme için TalkBack’i kapatın.</string>
     <string name="pref_speech_pitch_desc">Ses perdesi</string>
     <string name="pref_speech_rate_desc">Konuşma hızı</string>
+    <string name="pref_speech_voice_system_default">Sistem varsayılanı</string>
     <string name="pref_turn">Taraf</string>
     <string name="pref_turn_desc">Hangi tarafta oynayacağın</string>
     <string name="pref_vs_cpu">CPU’ya karşı</string>
@@ -328,13 +351,18 @@
     <string name="gameslist_filter_switch_date_before_description">Tarih öncesi filtresini aç veya kapat</string>
     <string name="gameslist_filter_switch_event_description">Etkinlik filtresini aç veya kapat</string>
     <string name="gameslist_filter_switch_result_description">Sonuç filtresini aç veya kapat</string>
+    <string name="gameslist_result_count">Sonuçlar: %1$d</string>
+    <string name="gameslist_game_of_total">Oyun %1$d / %2$d</string>
     <string name="gameslist_filter_switch_white_description">Beyaz filtresini aç veya kapat</string>
     <string name="savegame_white">Beyaz</string>
     <string name="savegame_white_question">Beyaz?</string>
+    <string name="square_color_description_light">Açık kare</string>
+    <string name="square_color_description_dark">Koyu kare</string>
     <string name="square_selected_with_duck_description">%2$s konumunda %1$s seçildi</string>
-    <string name="square_selected_with_piece_description">%3$s konumunda %1$s %2$s seçildi</string>
+    <string name="square_selected_with_piece_description">%1$s konumunda %2$s %3$s seçildi</string>
     <string name="square_with_duck_description">%2$s konumunda %1$s</string>
-    <string name="square_with_piece_description">%1$s %2$s %3$s karesinde</string>
+    <string name="square_with_piece_description">%1$s karesinde %2$s %3$s</string>
+    <string name="start_accessibility_preferences">Erişilebilirlik tercihleri</string>
     <string name="start_boardpreferences">Satranç tahtası ayarları</string>
     <string name="start_database">Oyun veritabanı</string>
     <string name="start_hotspotboard">Hotspot tahtası</string>
@@ -365,6 +393,10 @@
     <string name="time_warning_45">45 saniye</string>
     <string name="time_warning_5">5 saniye</string>
     <string name="time_warning_60">1 dakika</string>
+    <string name="time_warning_minutes">%1$d dakika kaldı</string>
+    <string name="time_warning_minutes_single">%1$d dakika kaldı</string>
+    <string name="time_warning_seconds">%1$d saniye kaldı</string>
+    <string name="time_warning_seconds_single">%1$d saniye kaldı</string>
     <string name="title_castle">Rok mu?</string>
     <string name="title_challenge">Meydan okuma</string>
     <string name="title_create_new_line">Yeni varyant oluşturulsun mu?</string>
@@ -384,4 +416,5 @@
     <string name="title_pick_promo">Terfi piyesi seç</string>
     <string name="title_save_game">Oyunu kaydet</string>
     <string name="toast_challenge_posted">Meydan okuma gönderildi</string>
+    <string name="lichess_service_unavailable">Lichess hizmeti başlatılamadı. Lütfen tekrar deneyin.</string>
 </resources>

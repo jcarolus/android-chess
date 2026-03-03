@@ -38,16 +38,9 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, j
 }
 
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_newGameFromFEN(JNIEnv* env, jobject thiz, jstring str) {
-    jboolean isCopy;
-    const char* strChars = env->GetStringUTFChars(str, &isCopy);
-    char* sFEN = strdup(strChars);
-
-    if (isCopy == JNI_TRUE) {
-        env->ReleaseStringUTFChars(str, strChars);
-    }
+    const char* sFEN = env->GetStringUTFChars(str, nullptr);
     boolean ret = Game::getInstance()->newGameFromFEN(sFEN);
-
-    delete sFEN;
+    env->ReleaseStringUTFChars(str, sFEN);
     return ret;
 }
 
@@ -75,7 +68,7 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getBoardValue(JNIEnv* env, jobject thi
     return Game::getInstance()->getBoard()->boardValue();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchDone(JNIEnv* env, jobject thiz) {
-    return Game::getInstance()->m_bSearching ? 0 : 1;
+    return Game::getInstance()->m_bSearching.load() ? 0 : 1;
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchBestMove(JNIEnv* env, jobject thiz, jint ply) {
     return Game::getInstance()->getBestMoveAt(ply);
@@ -88,10 +81,10 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchBestValue(JNIEnv* env, jobje
     return Game::getInstance()->getBestValue();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_peekSearchDepth(JNIEnv* env, jobject thiz) {
-    return Game::getInstance()->m_searchDepth;
+    return Game::getInstance()->getSearchDepth();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEvalCount(JNIEnv* env, jobject thiz) {
-    return Game::getInstance()->m_evalCount;
+    return Game::getInstance()->getEvalCount();
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setPromo(JNIEnv* env, jobject thiz, jint piece) {
     Game::getInstance()->setPromo(piece);
@@ -206,7 +199,7 @@ JNIEXPORT BITBOARD JNICALL Java_jwtc_chess_JNI_getHashKey(JNIEnv* env, jobject t
     return Game::getInstance()->getBoard()->getHashKey();
 }
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_interrupt(JNIEnv* env, jobject thiz) {
-    Game::getInstance()->m_bInterrupted = true;
+    Game::getInstance()->interruptSearch();
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumCaptured(JNIEnv* env, jobject thiz, jint turn, jint piece) {
     return Game::getInstance()->getBoard()->getNumCaptured(turn, piece);
@@ -290,21 +283,21 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     JNIEnv* env = nullptr;
     jint result = -1;
 
-    DEBUG_PRINT("JNI_OnLoad called\n", 0);
+    DEBUG_PRINT("JNI_OnLoad called\n");
 
     if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
-        DEBUG_PRINT("vm->GetEnv failed\n", 0);
+        DEBUG_PRINT("vm->GetEnv failed\n");
         return result;
     }
 
     jniRegisterNativeMethods(env, "jwtc/chess/JNI", sMethods, 1);
 
-    DEBUG_PRINT("Getting pointer to JavaVM...\n", 0);
+    DEBUG_PRINT("Getting pointer to JavaVM...\n");
     if (env->GetJavaVM(&jvm) < 0) {
-        DEBUG_PRINT("Could not get pointer to JavaVM\n", 0);
+        DEBUG_PRINT("Could not get pointer to JavaVM\n");
     }
 
-    DEBUG_PRINT("JNI_OnLoad is DONE!\n", 0);
+    DEBUG_PRINT("JNI_OnLoad is DONE!\n");
 
     return JNI_VERSION_1_4;
 }

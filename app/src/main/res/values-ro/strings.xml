@@ -3,22 +3,22 @@
     <string name="advanced_help"><![CDATA[
         <h3>Avansat</h3>
         <p>Creați sau importați aici conținutul dvs.</p>
-        
+
         <h4>Exportați baza de date de partide pe cardul SD</h4>
         <p>Toate partidele din baza de date pot fi exportate într-un singur fișier PGN pe cardul SD. Acest fișier se va numi chess.pgn, iar un fișier existent va fi suprascris.</p>
-        
+
         <h4>Importați partide în baza de date</h4>
         <p>Folosiți această opțiune pentru a adăuga partide în baza de date. Vă permite să navigați la un fișier PGN. Selectați-l și alegeți importul.</p>
-        
+
         <h4>Ștergeți toate partidele din baza de date</h4>
         <p>Folosiți această opțiune dacă doriți să curățați baza de date. Asigurați-vă că mai întâi faceți o copie de siguranță pe cardul SD; această acțiune nu poate fi anulată.</p>
-        
+
         <h4>Creați set de antrenament</h4>
         <p>Creează poziții de antrenament din partide care se termină cu șah mat. Selectați fișierul de procesat. Intrările eșuate sunt de obicei partide care nu s-au încheiat cu șah mat sau sunt duplicate.</p>
-        
+
         <h4>Resetați setul de antrenament</h4>
         <p>Doriți să începeți antrenamentul de la zero? Aceasta va reseta și contorul mediei timpului.</p>
-        
+
         ]]></string>
     <string name="alert_no">Nu</string>
     <string name="alert_ok">OK</string>
@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Remiză</string>
     <string name="lichess_play_button_resign">Renunță</string>
     <string name="lichess_seek_posted">Căutare publicată</string>
+    <string name="lichess_save_game_to_file">Salvează în fișier</string>
+    <string name="lichess_save_game_to_database">Salvează în baza de date</string>
     <string name="lichess_starting">Pornire...</string>
     <string name="match_option_color_black">Negre</string>
     <string name="match_option_color_random">Aleator</string>
@@ -281,6 +283,7 @@
     <string name="playpreferences">Setări joc</string>
     <string name="practice_help">Găsește șah-matul (poate dura mai multe mutări).</string>
     <string name="practice_set_reset">Setul de antrenament a fost resetat</string>
+    <string name="pref_field_color_descriptions">Adaugă deschis/închis la descrierea pătratului</string>
     <string name="pref_fullscreen">Activează ecran complet</string>
     <string name="pref_fullscreen_desc">Recomandat pentru ecrane mici și mod peisaj; altfel unele elemente pot fi decupate</string>
     <string name="pref_icsautosought">Căutare automată</string>
@@ -294,16 +297,36 @@
     <string name="pref_icstimewarning_desc">Un sunet de tic-tac te avertizează când timpul e aproape expirat</string>
     <string name="pref_icstimewarningsecs">Limită avertizare (secunde)</string>
     <string name="pref_icstimewarningsecs_desc">Câte secunde înainte să înceapă avertizarea?</string>
+    <string name="pref_last_move_over_empty_square">Anunță ultima mutare când glisezi peste un pătrat gol după o întârziere</string>
     <string name="pref_night_mode">Mod noapte</string>
     <string name="pref_night_mode_desc">Forțează aplicația în mod noapte</string>
     <string name="pref_showCoords">Coordonate</string>
     <string name="pref_show_blindfold">Cu ochii închiși</string>
     <string name="pref_show_possible_moves">Arată mutări</string>
+    <string name="pref_show_pieces_descriptions">Afișează descrierea amplasării pieselor</string>
+    <string name="pref_show_accessibility_drag_toggle">Afișează comutatorul de tragere pentru accesibilitate</string>
     <string name="pref_sound">Sunet</string>
-    <string name="pref_sound_desc">Redat când adversarul mută</string>
+    <string name="pref_haptic_feedback">Folosește feedback haptic</string>
     <string name="pref_speech">Vorbire</string>
+    <string name="pref_user_long_move_descriptions">Folosește descrierea completă a mutării</string>
+    <string name="tts_locale_not_supported">Funcția text-în-vorbire nu acceptă localizarea dvs.</string>
+    <string name="tts_not_loaded">Nu s-a putut încărca funcția text-în-vorbire</string>
+    <string name="tts_example_move">Nebunul capturează la G7, șah</string>
+    <string name="tts_selected">Selectat</string>
+    <string name="tts_move_takes">capturează</string>
+    <string name="tts_move_en_passant">en passant</string>
+    <string name="tts_move_promotes_to">promovează la %1$s</string>
+    <string name="tts_move_checkmate">șah mat</string>
+    <string name="tts_move_castle_long">rocadă lungă</string>
+    <string name="tts_move_castle_short">rocadă scurtă</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">Glisare accesibilă</string>
+    <string name="pref_accessibility_drag_delay_desc">Întârziere la glisarea accesibilă</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Întârziere pentru repetarea ultimei mutări pe o casetă goală</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Pentru glisarea accesibilă, dezactivează TalkBack.</string>
     <string name="pref_speech_pitch_desc">Înălțime voce</string>
     <string name="pref_speech_rate_desc">Viteză vorbire</string>
+    <string name="pref_speech_voice_system_default">Implicit sistem</string>
     <string name="pref_turn">Parte</string>
     <string name="pref_turn_desc">Ce parte a tablei joci</string>
     <string name="pref_vs_cpu">contra CPU</string>
@@ -328,13 +351,18 @@
     <string name="gameslist_filter_switch_date_before_description">Activează sau dezactivează filtrul de dată înainte</string>
     <string name="gameslist_filter_switch_event_description">Activează sau dezactivează filtrul de eveniment</string>
     <string name="gameslist_filter_switch_result_description">Activează sau dezactivează filtrul de rezultat</string>
+    <string name="gameslist_result_count">Rezultate: %1$d</string>
+    <string name="gameslist_game_of_total">Partida %1$d din %2$d</string>
     <string name="gameslist_filter_switch_white_description">Activează sau dezactivează filtrul pentru albe</string>
     <string name="savegame_white">Albe</string>
     <string name="savegame_white_question">Albe?</string>
+    <string name="square_color_description_light">Pătrat deschis</string>
+    <string name="square_color_description_dark">Pătrat închis</string>
     <string name="square_selected_with_duck_description">Selectat %1$s la %2$s</string>
-    <string name="square_selected_with_piece_description">Selectat %1$s %2$s la %3$s</string>
+    <string name="square_selected_with_piece_description">Selectat %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s la %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s la %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="start_accessibility_preferences">Preferințe de accesibilitate</string>
     <string name="start_boardpreferences">Setări tablă de șah</string>
     <string name="start_database">Baza de date a partidelor</string>
     <string name="start_hotspotboard">Tablă hotspot</string>
@@ -365,6 +393,10 @@
     <string name="time_warning_45">45 secunde</string>
     <string name="time_warning_5">5 secunde</string>
     <string name="time_warning_60">1 minut</string>
+    <string name="time_warning_minutes">Au rămas %1$d minute</string>
+    <string name="time_warning_minutes_single">A rămas %1$d minut</string>
+    <string name="time_warning_seconds">Au rămas %1$d secunde</string>
+    <string name="time_warning_seconds_single">A rămas %1$d secundă</string>
     <string name="title_castle">Rocadă?</string>
     <string name="title_challenge">Provocare</string>
     <string name="title_create_new_line">Creezi o variantă nouă?</string>
@@ -384,4 +416,5 @@
     <string name="title_pick_promo">Alege piesa de promovare</string>
     <string name="title_save_game">Salvează partida</string>
     <string name="toast_challenge_posted">Provocare postată</string>
+    <string name="lichess_service_unavailable">Serviciul Lichess nu a putut fi pornit. Te rugăm să încerci din nou.</string>
 </resources>

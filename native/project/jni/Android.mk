@@ -6,10 +6,17 @@ LOCAL_DEFAULT_CPP_EXTENSION := cpp
 
 LOCAL_MODULE    := chess-jni
 LOCAL_SRC_FILES := chess-jni.cpp\
+		BoardStack.cpp\
+		SearchSession.cpp\
+		SearchWorkspace.cpp\
 		Pos.cpp\
 		Move.cpp\
 		ChessBoard.cpp\
-		Game.cpp
+		BoardEvaluation.cpp\
+		ChessBoardState.cpp\
+		ChessBoardNotation.cpp\
+		Game.cpp\
+		GameSearch.cpp
 
 LOCAL_LDLIBS := -llog
 LOCAL_CPPFLAGS += -fno-sized-deallocation

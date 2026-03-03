@@ -48,6 +48,10 @@ public class LichessService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy");
+        if (auth != null) {
+            auth.destroy();
+            auth = null;
+        }
         super.onDestroy();
     }
 

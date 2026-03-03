@@ -43,9 +43,9 @@ int Pos::col(const int val) {
 
 void Pos::toString(const int val, char* buf) {
     if (val >= 0 && val < 64) {
-        sprintf(buf, "%c%d", (char) (Pos::col(val) + (int) 'a'), 8 - Pos::row(val));
+        snprintf(buf, 3, "%c%d", (char) (Pos::col(val) + (int) 'a'), 8 - Pos::row(val));
     } else {
-        sprintf(buf, "X");
+        snprintf(buf, 2, "X");
     }
 }
 
@@ -53,9 +53,9 @@ void Pos::toString(const int val, char* buf) {
 // ["1"-"8"]
 
 void Pos::rowToString(const int val, char* buf) {
-    sprintf(buf, "%d", (8 - Pos::row(val)));
+    snprintf(buf, 2, "%d", (8 - Pos::row(val)));
 }
 // returns string representation of the column. ["a"-"h"]
 void Pos::colToString(const int val, char* buf) {
-    sprintf(buf, "%c", ((char) (Pos::col(val) + (int) 'a')));
+    snprintf(buf, 2, "%c", ((char) (Pos::col(val) + (int) 'a')));
 }

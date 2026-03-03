@@ -34,7 +34,6 @@ import android.widget.ViewSwitcher;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,7 +81,6 @@ public class ICSClient extends ChessBoardActivity implements
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
     private LinearLayout playButtonsLayout, examineButtonsLayout;
     private ScrollView _scrollConsole;
-    private SwitchMaterial switchSound;
 
     //private EditText _editPrompt;
     private ListView listChallenges, listPlayers, _listGames, _listStored, _listWelcome, listMenu;
@@ -145,8 +143,6 @@ public class ICSClient extends ChessBoardActivity implements
 
         gameApi = new ICSApi();
         localClockApi = new LocalClockApi(gameApi);
-
-        afterCreate();
 
         _dlgMatch = new ICSMatchDlg(this, this, REQUEST_CHALLENGE, getPrefs());
         _dlgPlayer = new ICSPlayerDlg(this);
@@ -236,7 +232,6 @@ public class ICSClient extends ChessBoardActivity implements
         buttonForward.setOnClickListener((OnClickListener) v -> sendString("forward"));
 
         switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> sounds.setEnabled(switchSound.isChecked()));
 
         textViewTitle = findViewById(R.id.TextViewTitle);
 
@@ -249,17 +244,14 @@ public class ICSClient extends ChessBoardActivity implements
         listMenu.setOnItemClickListener(this);
 
         buttonMenu = findViewById(R.id.ButtonMenu);
-        buttonMenu.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int menuChild = viewAnimatorSub.getDisplayedChild();
-                if (menuChild == VIEW_MENU || menuChild == VIEW_LOADING) {
-                    stopSession(R.string.ics_quit);
-                } else if (menuChild == VIEW_LOGIN) {
-                    finish();
-                } else {
-                    setMenuView();
-                }
+        buttonMenu.setOnClickListener(v -> {
+            int menuChild = viewAnimatorSub.getDisplayedChild();
+            if (menuChild == VIEW_MENU || menuChild == VIEW_LOADING) {
+                stopSession(R.string.ics_quit);
+            } else if (menuChild == VIEW_LOGIN) {
+                finish();
+            } else {
+                setMenuView();
             }
         });
 
@@ -336,7 +328,7 @@ public class ICSClient extends ChessBoardActivity implements
             });
         }
 
-
+        afterCreate();
         chessBoardView.setNextFocusRightId(R.id.SwitchSound);
 
         localClockApi.addListener(this);
@@ -429,9 +421,6 @@ public class ICSClient extends ChessBoardActivity implements
 
     @Override
     public boolean requestMove(int from, int to) {
-        lastMoveFrom = from;
-        lastMoveTo = to;
-
         ICSApi icsApi = (ICSApi) gameApi;
         if (icsApi.getViewMode() == ICSApi.VIEW_PLAY) {
             if (icsApi.getMyTurn() == icsApi.getTurn()) {
@@ -475,13 +464,14 @@ public class ICSClient extends ChessBoardActivity implements
 
         _bICSVolume = prefs.getBoolean("ICSVolume", true);
 
-        switchSound.setChecked(prefs.getBoolean("moveSounds", false));
-
         // get rid of notification for tap to play
 //        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 //        notificationManager.cancel(0); // 0 is notification id
 
         notificationsOn = prefs.getBoolean("ICSGameStartBringToFront", true);
+
+        useAccessibilityDrag = false;
+        applySquareDragListeners();
 
         showLoginIfNotConnected();
     }
@@ -913,14 +903,13 @@ public class ICSClient extends ChessBoardActivity implements
         examineButtonsLayout.setVisibility(viewMode == ICSApi.VIEW_EXAMINE ? View.VISIBLE : View.GONE);
 
         String lastMove = icsApi.getLastMove();
-        if (sounds != null) {
-            if (lastMove.contains("+") || lastMove.contains("#")) {
-                sounds.playCheck();
-            } else if (lastMove.contains("x")) {
-                sounds.playCapture();
-            } else {
-                sounds.playMove();
-            }
+
+        if (lastMove.contains("+") || lastMove.contains("#")) {
+            feedbackCheck();
+        } else if (lastMove.contains("x")) {
+            feedbackCapture();
+        } else {
+            feedbackMove();
         }
     }
 
@@ -954,8 +943,6 @@ public class ICSClient extends ChessBoardActivity implements
     @Override
     public void OnIllegalMove() {
         rebuildBoard();
-        lastMoveFrom = -1;
-        lastMoveTo = -1;
         highlightedPositions.clear();
         updateSelectedSquares();
     }
@@ -972,9 +959,7 @@ public class ICSClient extends ChessBoardActivity implements
         resetSelectedSquares();
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
-                if (sounds != null) {
-                    sounds.playNewGame();
-                }
+                feedbackNewGame();
             }
         }
     }
@@ -1157,8 +1142,7 @@ public class ICSClient extends ChessBoardActivity implements
         int lastTo = icsApi.getLastTo();
         highlightedPositions.clear();
         if (lastTo != -1) {
-            lastMoveFrom = -1;
-            lastMoveTo = lastTo;
+            highlightedPositions.add(lastTo);
         }
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
@@ -1193,12 +1177,21 @@ public class ICSClient extends ChessBoardActivity implements
             } else {
                 _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
             }
-
-            if (_bTimeWarning && needWarning && sounds != null) {
-                sounds.playTickTock();
-            }
         } else {
             _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    @Override
+    public void OnTimeWarning(int turn, long remainingMillies) {
+        if (!_bTimeWarning) {
+            return;
+        }
+
+        int myTurn = ((ICSApi) gameApi).getMyTurn();
+        if (turn == myTurn) {
+            feedbackTimeWarning();
+            feedBackDescribeTimeWarning(remainingMillies);
         }
     }
 

@@ -3,22 +3,22 @@
     <string name="advanced_help"><![CDATA[
         <h3>高级</h3>
         <p>在这里创建或导入你自己的内容。</p>
-        
+
         <h4>将棋局数据库导出到 SD 卡</h4>
         <p>棋局数据库中的所有对局都可以导出到 SD 卡上的一个 PGN 文件。该文件名为 chess.pgn，若已存在将被覆盖。</p>
-        
+
         <h4>将对局导入棋局数据库</h4>
         <p>使用此选项向棋局数据库添加对局。它允许你浏览选择一个 PGN 文件，选中后进行导入。</p>
-        
+
         <h4>删除棋局数据库中的所有对局</h4>
         <p>如果你想清理棋局数据库，请使用此选项。请先在 SD 卡上做好备份；此操作无法撤销。</p>
-        
+
         <h4>创建练习集</h4>
         <p>从以将死结束的对局中生成练习局面。选择要处理的文件。失败的条目通常是未以将死结束或重复的对局。</p>
-        
+
         <h4>重置练习集</h4>
         <p>想重新开始练习吗？这也会重置你的平均用时计数器。</p>
-        
+
         ]]></string>
     <string name="alert_no">否</string>
     <string name="alert_ok">确定</string>
@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">和棋</string>
     <string name="lichess_play_button_resign">认输</string>
     <string name="lichess_seek_posted">已发布匹配</string>
+    <string name="lichess_save_game_to_file">保存到文件</string>
+    <string name="lichess_save_game_to_database">保存到数据库</string>
     <string name="lichess_starting">正在开始...</string>
     <string name="match_option_color_black">黑方</string>
     <string name="match_option_color_random">随机</string>
@@ -281,6 +283,7 @@
     <string name="playpreferences">游戏设置</string>
     <string name="practice_help">找出将死 (可能需要多步)。</string>
     <string name="practice_set_reset">练习集已重置</string>
+    <string name="pref_field_color_descriptions">在格子描述中加入深/浅</string>
     <string name="pref_fullscreen">启用全屏</string>
     <string name="pref_fullscreen_desc">推荐小屏幕和横屏使用，否则部分元素可能被裁剪</string>
     <string name="pref_icsautosought">自动搜索</string>
@@ -294,16 +297,36 @@
     <string name="pref_icstimewarning_desc">当时间低于设定阈值时发出滴答声</string>
     <string name="pref_icstimewarningsecs">警告时间 (秒)</string>
     <string name="pref_icstimewarningsecs_desc">提前多少秒开始提示？</string>
+    <string name="pref_last_move_over_empty_square">拖动到空格子上并延迟后播报上一步走法</string>
     <string name="pref_night_mode">夜间模式</string>
     <string name="pref_night_mode_desc">强制应用夜间模式</string>
     <string name="pref_showCoords">坐标</string>
     <string name="pref_show_blindfold">盲棋</string>
     <string name="pref_show_possible_moves">显示可能走法</string>
+    <string name="pref_show_pieces_descriptions">显示棋子位置描述</string>
+    <string name="pref_show_accessibility_drag_toggle">显示无障碍拖动开关</string>
     <string name="pref_sound">声音</string>
-    <string name="pref_sound_desc">当对手走棋时播放</string>
+    <string name="pref_haptic_feedback">使用触觉反馈</string>
     <string name="pref_speech">语音播报</string>
+    <string name="pref_user_long_move_descriptions">使用完整走法描述</string>
+    <string name="tts_locale_not_supported">文本转语音不支持您的地区设置</string>
+    <string name="tts_not_loaded">无法加载文本转语音</string>
+    <string name="tts_example_move">象吃G7，将军</string>
+    <string name="tts_selected">已选择</string>
+    <string name="tts_move_takes">吃</string>
+    <string name="tts_move_en_passant">吃过路兵</string>
+    <string name="tts_move_promotes_to">升变为%1$s</string>
+    <string name="tts_move_checkmate">将死</string>
+    <string name="tts_move_castle_long">长易位</string>
+    <string name="tts_move_castle_short">短易位</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">无障碍拖拽</string>
+    <string name="pref_accessibility_drag_delay_desc">无障碍拖拽延迟</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">在空白格上重复上一步的延迟</string>
+    <string name="pref_accessibility_drag_talkback_reminder">使用无障碍拖拽时，请关闭 TalkBack。</string>
     <string name="pref_speech_pitch_desc">语音音调</string>
     <string name="pref_speech_rate_desc">语速</string>
+    <string name="pref_speech_voice_system_default">系统默认</string>
     <string name="pref_turn">方</string>
     <string name="pref_turn_desc">你执哪方</string>
     <string name="pref_vs_cpu">对战 CPU</string>
@@ -328,13 +351,18 @@
     <string name="gameslist_filter_switch_date_before_description">启用或禁用截止日期筛选</string>
     <string name="gameslist_filter_switch_event_description">启用或禁用赛事筛选</string>
     <string name="gameslist_filter_switch_result_description">启用或禁用结果筛选</string>
+    <string name="gameslist_result_count">结果：%1$d</string>
+    <string name="gameslist_game_of_total">第 %1$d 局，共 %2$d 局</string>
     <string name="gameslist_filter_switch_white_description">启用或禁用白方筛选</string>
     <string name="savegame_white">白方</string>
     <string name="savegame_white_question">白方?</string>
+    <string name="square_color_description_light">浅色格</string>
+    <string name="square_color_description_dark">深色格</string>
     <string name="square_selected_with_duck_description">已选择 %1$s 在 %2$s</string>
-    <string name="square_selected_with_piece_description">已选择 %1$s %2$s 在 %3$s</string>
+    <string name="square_selected_with_piece_description">已选择 %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s 在 %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s 在 %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="start_accessibility_preferences">无障碍偏好设置</string>
     <string name="start_boardpreferences">棋盘设置</string>
     <string name="start_database">对局数据库</string>
     <string name="start_hotspotboard">热点棋盘</string>
@@ -365,6 +393,10 @@
     <string name="time_warning_45">45 秒</string>
     <string name="time_warning_5">5 秒</string>
     <string name="time_warning_60">1 分钟</string>
+    <string name="time_warning_minutes">还剩 %1$d 分钟</string>
+    <string name="time_warning_minutes_single">还剩 %1$d 分钟</string>
+    <string name="time_warning_seconds">还剩 %1$d 秒</string>
+    <string name="time_warning_seconds_single">还剩 %1$d 秒</string>
     <string name="title_castle">王车易位？</string>
     <string name="title_challenge">挑战</string>
     <string name="title_create_new_line">创建新变体？</string>
@@ -384,4 +416,5 @@
     <string name="title_pick_promo">选择升变棋子</string>
     <string name="title_save_game">保存对局</string>
     <string name="toast_challenge_posted">挑战已发布</string>
+    <string name="lichess_service_unavailable">无法启动 Lichess 服务。请重试。</string>
 </resources>

@@ -108,267 +108,30 @@ boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
 
 #pragma endregion
 
-#pragma region State calculations
-
-// calculate the state of the board
-// generate all moves - filter the moves that lead to illegal board situations
-// like (self check)
-// when a move generates a board in which the opponent king is attacked, set
-// the move to a "checking" move
-void ChessBoard::calcState(ChessBoard* board) {
-    if (isEnded()) {
-        return;
-    }
-
-    genMoves();
-
-    if (m_variant == VARIANT_DUCK) {
-        // no need to calculate anything else, duck chess allows king capture
-        return;
-    }
-
-    int move;
-    m_indexMoves = 0;
-
-    boolean isIncheck = this->isSquareAttacked(m_turn, m_kingPositions[m_turn]);
-    if (isIncheck) {
-        m_state = CHECK;
-    }
-
-    while (hasMoreMoves()) {
-        move = getNextMove();
-
-        // char buf[20];
-        // Move::toDbgString(move, buf);
-        // DEBUG_PRINT("%s\n", buf);
-
-        makeMove(move, board);
-
-        // check if king is attacked - since a move is done, this is in from m_o_turn
-        if (board->isSquareAttacked(board->m_o_turn, board->m_kingPositions[board->m_o_turn])) {
-            removeMoveElementAt();
-        } else {
-            // check if opponent king is checked
-            if (board->isSquareAttacked(board->m_turn, board->m_kingPositions[board->m_turn])) {
-                //  set checked flag in move - so in makeMove m_state can be set to check
-                m_arrMoves[m_indexMoves - 1] = Move_setCheck(move);
-            }
-        }
-    }
-
-    // game over when no moves left
-    if (m_sizeMoves == 0) {
-        // state set to check in makeMove
-        if (m_state == CHECK) {
-            m_state = MATE;
-        } else {
-            m_state = STALEMATE;
-        }
-    }
-}
-
-// this is called from search, so check for king of turn
-boolean ChessBoard::checkInCheck() {
-    if (isSquareAttacked(m_turn, m_kingPositions[m_turn])) {
-        m_state = CHECK;
-        return true;
-    }
-    return false;
-}
-
-// this is called from search, so check for opponent king!
-// only valid result if called after genmoves
-boolean ChessBoard::checkInSelfCheck() {
-    return isSquareAttacked(m_o_turn, m_kingPositions[m_o_turn]);
-}
-
-int ChessBoard::getState() {
-    return m_state;
-}
-
-int ChessBoard::getVariant() {
-    return m_variant;
-}
-
-void ChessBoard::setVariant(int variant) {
-    m_variant = variant;
-    if (variant == VARIANT_DEFAULT) {
-        unsetDuckPos();
-    }
-}
-
-boolean ChessBoard::isLegalPosition() {
-    if ((m_bitbPieces[WHITE][PAWN] & (ROW_BITS[0] | ROW_BITS[7])) ||
-        (m_bitbPieces[BLACK][PAWN] & (ROW_BITS[0] | ROW_BITS[7]))) {
-        return false;
-    }
-    if (ChessBoard::bitCount(m_bitbPieces[WHITE][PAWN]) > 8 || ChessBoard::bitCount(m_bitbPieces[BLACK][PAWN]) > 8) {
-        return false;
-    }
-    if (!areKingsOnTheBoard()) {
-        return false;
-    }
-    if (isSquareAttacked(m_o_turn, m_kingPositions[m_o_turn])) {
-        return false;
-    }
-    return true;
-}
-
-boolean ChessBoard::areKingsOnTheBoard() {
-    // one of the kings not on the board, return just the default value
-    if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 || m_kingPositions[m_o_turn] < 0 ||
-        m_kingPositions[m_o_turn] > 63) {
-        return false;
-    }
-    return true;
-}
-
-/*
-String ChessBoard::getStateToString()
-{
-        String msg = "";
-        switch(m_state)
-        {
-        case ChessBoard::MATE: msg = "Mate"; break;
-        case ChessBoard::DRAW_MATERIAL: msg = "Draw (material)"; break;
-        case ChessBoard::CHECK: msg = "Check"; break;
-        case ChessBoard::STALEMATE: msg = "Draw (stalemate)"; break;
-        case ChessBoard::DRAW_50: msg = "Draw (50 move rule)"; break;
-        case ChessBoard::DRAW_REPEAT: msg = "Draw (repeat)"; break;
-        default: msg = "In play"; break;
-        }
-        return msg;
-}
-*/
-
-// returns true when the game is ended
-// TODO repeat check can be made more efficient with repeat index of hashkey
-boolean ChessBoard::isEnded() {
-    if (m_variant == VARIANT_DUCK) {
-        // for duck chess, a captured king indicates end of game
-        if (m_kingPositions[m_turn] < 0 || m_kingPositions[m_turn] > 63 || m_kingPositions[m_o_turn] < 0 ||
-            m_kingPositions[m_o_turn] > 63) {
-            m_state = MATE;
-        }
-    }
-    if (m_state == MATE || m_state == STALEMATE) {
-        return true;
-    }
-    // TODO skip this when m_state == CHECK?
-    if (m_50RuleCount == 100) {
-        m_state = DRAW_50;
-        return true;
-    }
-    // check DRAW by material
-    //  first check for no pawns, rooks and queens on either side.
-    //  ASSUME: value of knight or bishop is never twice as big as the other
-    if (m_bitbPieces[m_turn][PAWN] == 0 && m_bitbPieces[m_o_turn][PAWN] == 0 && m_bitbPieces[m_turn][ROOK] == 0 &&
-        m_bitbPieces[m_o_turn][ROOK] == 0 && m_bitbPieces[m_turn][QUEEN] == 0 && m_bitbPieces[m_o_turn][QUEEN] == 0) {
-        // check for min material
-        if (m_qualities[m_o_turn] == 0 && m_qualities[m_turn] <= ChessBoard::MIN_MATERIAL_VALUE) {
-            m_state = ChessBoard::DRAW_MATERIAL;
-            return true;
-        }
-        if (m_qualities[m_turn] == 0 && m_qualities[m_o_turn] <= ChessBoard::MIN_MATERIAL_VALUE) {
-            m_state = ChessBoard::DRAW_MATERIAL;
-            return true;
-        }
-        // also KNkn and KBkb, KBkn are almost always draw; theoretical mates only with king in
-        // corner (and own piece next to it)
-        if (m_qualities[m_o_turn] <= ChessBoard::MIN_MATERIAL_VALUE &&
-            m_qualities[m_turn] <= ChessBoard::MIN_MATERIAL_VALUE) {
-            // test for either king NOT in a corner
-            if (!(m_kingPositions[m_o_turn] == a8 || m_kingPositions[m_o_turn] == h8 ||
-                  m_kingPositions[m_o_turn] == a1 || m_kingPositions[m_o_turn] == h1 || m_kingPositions[m_turn] == a8 ||
-                  m_kingPositions[m_turn] == h8 || m_kingPositions[m_turn] == a1 || m_kingPositions[m_turn] == h1)) {
-                m_state = ChessBoard::DRAW_MATERIAL;
-                return true;
-            }
-        }
-    }
-
-    // DRAW by repetition, no need to check with noHitcount < 4, because repetition needs at least 4
-    // sequential moves
-    //  that can lead to the same position
-    if (m_50RuleCount > 3 && m_parent != nullptr) {
-        // start at parent
-        ChessBoard* tmpBoard = m_parent;
-        int repeatCount = 0;
-        while (tmpBoard != nullptr) {
-            if (tmpBoard->m_hashKey == m_hashKey) {
-                repeatCount++;
-            }
-            if (repeatCount == 2) {
-                m_state = ChessBoard::DRAW_REPEAT;
-                return true;
-            }
-            // after hit or pawn move never the same
-            if (tmpBoard->m_50RuleCount == 0) {
-                break;
-            }
-
-            tmpBoard = tmpBoard->m_parent;
-        }
-    }
-    return false;
-}
-
-// called from search, a little different than isEnded (no MATE and STALEMATE)
-boolean ChessBoard::checkEnded() {
-    if (m_50RuleCount == 100) {
-        m_state = DRAW_50;
-        return true;
-    }
-    if (m_50RuleCount > 3 && m_parent != nullptr) {
-        // start at parent
-        ChessBoard* tmpBoard = m_parent->m_parent;
-        int repeatCount = 0;
-        while (tmpBoard != nullptr) {
-            if (tmpBoard->m_hashKey == m_hashKey) {
-                repeatCount++;
-            }
-            if (repeatCount == 2) {
-                m_state = ChessBoard::DRAW_REPEAT;
-                return true;
-            }
-            // after hit or pawn move never the same
-            if (tmpBoard->m_50RuleCount == 0) {
-                break;
-            }
-            tmpBoard = tmpBoard->m_parent;
-        }
-    }
-    return false;
-}
-
-#pragma endregion
-
 #pragma region Move related methods
 
 // return 0 when move is not ambigious, otherwise the ambigious move.
 // ambigous when pieces of the same kind move to the same destination
 int ChessBoard::ambigiousMove() {
     if (m_parent != nullptr) {
-        auto* tmpBoard = new ChessBoard();
-        m_parent->duplicate(tmpBoard);
+        ChessBoard tmpBoard;
+        m_parent->duplicate(&tmpBoard);
 
-        tmpBoard->m_indexMoves = 0;
-        tmpBoard->genMoves();  // NEW, all (illegal) moves
+        tmpBoard.m_indexMoves = 0;
+        tmpBoard.genMoves();  // NEW, all (illegal) moves
         int m2;
-        while (tmpBoard->hasMoreMoves()) {
-            m2 = tmpBoard->getNextMove();
+        while (tmpBoard.hasMoreMoves()) {
+            m2 = tmpBoard.getNextMove();
             if (m_myMove != m2 && Move_equalTos(m2, m_myMove)) {
                 if (Move_getFrom(m2) != Move_getFrom(m_myMove) &&
-                    (tmpBoard->m_bitbPieces[m_o_turn][PAWN] & BITS[Move_getFrom(m_myMove)]) == 0) {
-                    if (tmpBoard->pieceAt(m_o_turn, Move_getFrom(m_myMove)) ==
-                        tmpBoard->pieceAt(m_o_turn, Move_getFrom(m2))) {
-                        delete tmpBoard;
+                    (tmpBoard.m_bitbPieces[m_o_turn][PAWN] & BITS[Move_getFrom(m_myMove)]) == 0) {
+                    if (tmpBoard.pieceAt(m_o_turn, Move_getFrom(m_myMove)) ==
+                        tmpBoard.pieceAt(m_o_turn, Move_getFrom(m2))) {
                         return m2;
                     }
                 }
             }
         }
-        delete tmpBoard;
     }
     return 0;
 }
@@ -377,7 +140,7 @@ int ChessBoard::ambigiousMove() {
 boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece) {
     // if duckPos was not set, the previous turn was not completed, so no valid piece move
     if (m_variant == VARIANT_DUCK && m_duckPos == -1 && m_parent != nullptr) {
-        DEBUG_PRINT("requestMove duck with duckPos -1", 0);
+        DEBUG_PRINT("requestMove duck with duckPos -1");
         return false;
     }
     if (isEnded()) {
@@ -400,7 +163,7 @@ boolean ChessBoard::requestMove(const int from, const int to, ChessBoard* board,
             return true;
         }
     }
-    DEBUG_PRINT("requestMove exhausted all moves", 0);
+    DEBUG_PRINT("requestMove exhausted all moves");
     return false;
 }
 
@@ -1169,7 +932,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
     }
 }
 
-// reset the move index, moves are allready generated
+// reset the move index, moves are already generated
 void ChessBoard::getMoves() {
     m_indexMoves = 0;
 }
@@ -1313,307 +1076,6 @@ String ChessBoard::getHistoryDebug()
         return sz;
 }
 */
-
-#pragma endregion
-
-#pragma region Evaluation
-
-// boardValue will call this method when one of the players only has its king
-// on the board and no pawns
-int ChessBoard::loneKingValue(const int turn) {
-    if (turn == m_turn) {
-        return ChessBoard::VALUATION_LONE_KING_BONUS -
-               ChessBoard::VALUATION_LONE_KING * HOOK_DISTANCE[m_kingPositions[m_turn]][m_kingPositions[m_o_turn]] -
-               ChessBoard::VALUATION_KING_ENDINGS[m_kingPositions[m_o_turn]] + m_qualities[m_turn];
-    }
-    return ChessBoard::VALUATION_LONE_KING_BONUS -
-           ChessBoard::VALUATION_LONE_KING * HOOK_DISTANCE[m_kingPositions[m_o_turn]][m_kingPositions[m_turn]] -
-           ChessBoard::VALUATION_KING_ENDINGS[m_kingPositions[m_turn]] + m_qualities[m_o_turn];
-}
-
-// return "value" of king bishop knight against lone king
-int ChessBoard::kbnkValue(const int turn) {
-    int winnerKingPos, loserKingPos, value = 0;
-    if (m_turn == turn) {
-        winnerKingPos = m_kingPositions[m_turn];
-        loserKingPos = m_kingPositions[m_o_turn];
-        if ((m_bitbPieces[m_turn][KING] & ChessBoard::CENTER_4x4_SQUARES) != 0) {
-            value = 20;
-        }
-    } else {
-        winnerKingPos = m_kingPositions[m_o_turn];
-        loserKingPos = m_kingPositions[m_turn];
-        if ((m_bitbPieces[m_o_turn][KING] & ChessBoard::CENTER_4x4_SQUARES) != 0) {
-            value = 20;
-        }
-    }
-    value += (300 - 6 * HOOK_DISTANCE[winnerKingPos][loserKingPos]);
-    value -= ((m_bitbPieces[turn][BISHOP] & WHITE_SQUARES) == 0) ? ChessBoard::VALUATION_KBNK_SCORE[0][loserKingPos]
-                                                                 : ChessBoard::VALUATION_KBNK_SCORE[1][loserKingPos];
-    value -= ChessBoard::VALUATION_KING_ENDINGS[loserKingPos];
-    value -= HOOK_DISTANCE[trailingZeros(m_bitbPieces[turn][BISHOP])][loserKingPos];
-    value -= HOOK_DISTANCE[trailingZeros(m_bitbPieces[turn][KNIGHT])][loserKingPos];
-
-    return value;
-}
-
-// evaluation to promote promoting...
-int ChessBoard::promotePawns(const int turn) {
-    int value = 0;
-    BITBOARD bb = m_bitbPieces[turn][PAWN];
-    int pos;
-    if (m_turn == turn) {
-        value += (15 - HOOK_DISTANCE[m_kingPositions[m_turn]][m_kingPositions[m_o_turn]]);
-        value += ROW_TURN[turn][m_kingPositions[m_turn]];
-    } else {
-        value += (15 - HOOK_DISTANCE[m_kingPositions[m_turn]][m_kingPositions[m_o_turn]]);
-        value += ROW_TURN[turn][m_kingPositions[m_o_turn]];
-    }
-
-    while (bb != 0) {
-        pos = ChessBoard::trailingZeros(bb);
-        bb &= NOT_BITS[pos];
-        value += 10 * ROW_TURN[turn][pos];
-    }
-    return value;
-}
-
-// Extended evaluation function
-int ChessBoard::boardValue() {
-    // one of the kings not on the board
-
-    if (m_kingPositions[m_turn] < 0) {
-        return -VALUATION_MATE;
-    }
-
-    if (m_kingPositions[m_o_turn] < 0) {
-        return VALUATION_MATE;
-    }
-
-    // standard basic evaluation. sum of material quality
-    int val = m_qualities[m_turn] - m_qualities[m_o_turn];
-
-    // invalid state
-    if (m_kingPositions[m_turn] > 63 || m_kingPositions[m_o_turn] > 63) {
-        return val;
-    }
-
-    // lone king
-    if (m_qualities[m_turn] == 0) {
-        // no pawns to promote but enough mating material (m_state != DRAW_MATERIAL)
-        if (m_bitbPieces[m_o_turn][PAWN] == 0) {
-            // kbnk is special case
-            if ((m_qualities[m_o_turn] == ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
-                ChessBoard::bitCount(m_bitbPieces[m_o_turn][KNIGHT]) == 1 &&
-                ChessBoard::bitCount(m_bitbPieces[m_o_turn][BISHOP]) == 1) {
-                return -kbnkValue(m_o_turn);
-            }
-            return -loneKingValue(m_o_turn);
-        }
-        // promote pawns
-        return -promotePawns(m_o_turn);
-    }  // opponent has lone king
-    else if (m_qualities[m_o_turn] == 0) {
-        if (m_bitbPieces[m_turn][PAWN] == 0) {
-            if ((m_qualities[m_turn] == ChessBoard::PIECE_VALUES[KNIGHT] + ChessBoard::PIECE_VALUES[BISHOP]) &&
-                ChessBoard::bitCount(m_bitbPieces[m_turn][KNIGHT]) == 1 &&
-                ChessBoard::bitCount(m_bitbPieces[m_turn][BISHOP]) == 1) {
-                return kbnkValue(m_turn);
-            }
-            return loneKingValue(m_turn);
-        }
-        return promotePawns(m_turn);
-    }
-    // TODO some more known end-game evaluations (kqkq, kqkr, krkn, krkb...)
-
-    val += pawnValueExtension(m_turn);
-    val -= pawnValueExtension(m_o_turn);
-
-    val += kingValueExtension(m_turn);
-    val -= kingValueExtension(m_o_turn);
-
-    val += queenValueExtension(m_turn);
-    val -= queenValueExtension(m_o_turn);
-
-    val += knightValueExtension(m_turn);
-    val -= knightValueExtension(m_o_turn);
-
-    val += bishopValueExtension(m_turn);
-    val -= bishopValueExtension(m_o_turn);
-
-    val += rookValueExtension(m_turn);
-    val -= rookValueExtension(m_o_turn);
-
-    return val;
-}
-
-// penalty for early queen move
-int ChessBoard::queenValueExtension(const int turn) {
-    BITBOARD bbPiece = m_bitbPieces[turn][QUEEN];
-    if (bbPiece != 0) {
-        // TODO this assumes a default game and other pieces
-        if (m_numBoard < 11) {
-            const BITBOARD bbRows = ROW_BITS[ROW_TURN[turn][0]];
-            if ((bbRows & bbPiece) == 0) {  // Queen not on first row
-                return VALUATION_EARLY_QUEEN;
-            }
-        } else {
-            int iPos;
-            int val = 0;
-            while (bbPiece != 0) {
-                iPos = ChessBoard::trailingZeros(bbPiece);
-                bbPiece &= NOT_BITS[iPos];
-
-                val += ChessBoard::bitCount(rookMoves(turn, iPos)) * VALUATION_ROOK_MOBILITY;
-                val += ChessBoard::bitCount(bishopMoves(turn, iPos)) * VALUATION_BISHOP_MOBILITY;
-            }
-            return val;
-        }
-    }
-    return 0;
-}
-
-int ChessBoard::kingValueExtension(const int turn) {
-    int val;
-    if (m_castlings[turn] & MASK_CASTLED) {
-        val = VALUATION_CASTLED;
-    } else {
-        if (m_castlings[turn] == 0) {
-            val = VALUATION_CASTLING_POSSIBLE;
-        } else {
-            val = VALUATION_CASTLING_NOT_POSSIBLE;
-        }
-    }
-    // m_bitbPieces[turn][KING]
-    if (turn == m_turn) {
-        return (ChessBoard::bitCount(KING_RANGE[m_kingPositions[m_turn]] & m_bitbPieces[turn][PAWN]) *
-                VALUATION_PAWN_IN_KING_RANGE) +
-               val;
-    }
-    return (ChessBoard::bitCount(KING_RANGE[m_kingPositions[m_o_turn]] & m_bitbPieces[turn][PAWN]) *
-            VALUATION_PAWN_IN_KING_RANGE) +
-           val;
-}
-int ChessBoard::knightValueExtension(const int turn) {
-    ///
-    BITBOARD bbPiece = m_bitbPieces[turn][KNIGHT];
-    int iPos;
-    int val = ChessBoard::bitCount(m_bitbPieces[turn][KNIGHT] & CENTER_4x4_SQUARES) * VALUATION_KNIGHT_CENTER;
-    while (bbPiece != 0) {
-        iPos = ChessBoard::trailingZeros(bbPiece);
-        bbPiece &= NOT_BITS[iPos];
-
-        val += ChessBoard::bitCount(knightMoves(turn, iPos)) * VALUATION_KNIGHT_MOBILITY;
-    }
-    return val;
-}
-int ChessBoard::rookValueExtension(const int turn) {
-    const BITBOARD bbRooks = m_bitbPieces[turn][ROOK];
-    BITBOARD bbPiece = bbRooks;
-    int iPos;
-    int val = 0, col = -1, row = -1;
-
-    while (bbPiece != 0) {
-        iPos = ChessBoard::trailingZeros(bbPiece);
-        bbPiece &= NOT_BITS[iPos];
-
-        val += ChessBoard::bitCount(rookMoves(turn, iPos)) * VALUATION_ROOK_MOBILITY;
-
-        if (row == -1) {
-            row = Pos::row(iPos);
-            col = Pos::col(iPos);
-        } else {
-            if (row == Pos::row(iPos)) {
-                val += VALUATION_ROOK_SAME_ROW_FILE;
-            }
-            if (col == Pos::col(iPos)) {
-                val += VALUATION_ROOK_SAME_ROW_FILE;
-            }
-
-            // CONNECTED
-            if (((~m_bitbPositions[turn]) | (bbRooks & NOT_BITS[iPos])) &
-                ((RANK_MOVES[iPos][(int) (m_bitb >> SHIFT_0[iPos]) & 0xFF]) |
-                 (FILE_MOVES[iPos][(int) (m_bitb_90 >> SHIFT_90[iPos]) & 0xFF]))) {
-                val += VALUATION_ROOK_CONNECTED;
-            }
-        }
-    }
-    return val;
-}
-
-// for the bishop the moveability is key
-// the nr of attack squares
-// different valuation for single bishop
-// penalty for the number of colored squares that are occupied by own pawns
-int ChessBoard::bishopValueExtension(const int turn) {
-    BITBOARD bbPiece = m_bitbPieces[turn][BISHOP];
-    int iPos;
-    int val = 0;
-    if (bbPiece > 0) {
-        if (ChessBoard::bitCount(bbPiece) == 1) {
-            iPos = ChessBoard::trailingZeros(bbPiece);
-
-            val += ChessBoard::bitCount(bishopAttacks(turn, iPos)) * 5;
-            if (iPos % 2 == 0) {
-                val -= ChessBoard::bitCount(WHITE_SQUARES & m_bitbPieces[turn][PAWN]);
-            } else {
-                val -= ChessBoard::bitCount(BLACK_SQUARES & m_bitbPieces[turn][PAWN]);
-            }
-        } else {
-            val += VALUATION_BISHOP_PAIR;  // bonus for pair or more bishops
-            while (bbPiece != 0) {
-                iPos = ChessBoard::trailingZeros(bbPiece);
-                bbPiece &= NOT_BITS[iPos];
-
-                val += ChessBoard::bitCount(bishopMoves(turn, iPos)) * VALUATION_BISHOP_MOBILITY;
-            }
-        }
-    }
-    return val;
-}
-int ChessBoard::pawnValueExtension(const int turn) {
-    int val = 0;
-    const BITBOARD bbPawn = m_bitbPieces[turn][PAWN];
-    const BITBOARD bbPawnOpp = m_bitbPieces[turn ^ 1][PAWN];
-    BITBOARD bbPiece = bbPawn;
-
-    if (turn == WHITE) {
-        if (bbPawn & (D2 | E2)) {
-            val += VALUATION_PAWN_CENTRE_FIRST_ROW;
-        }
-
-    } else {
-        if (bbPawn & (D7 | E7)) {
-            val += VALUATION_PAWN_CENTRE_FIRST_ROW;
-        }
-    }
-
-    int iPos;
-    while (bbPiece != 0) {
-        iPos = ChessBoard::trailingZeros(bbPiece);
-        bbPiece &= NOT_BITS[iPos];
-
-        val += ROW_TURN[turn][iPos] * VALUATION_PAWN_ROW;  // advance pawn
-
-        if (PASSED_PAWN_MASK[turn][iPos] & bbPawn) {
-            val += VALUATION_PAWN_FILE_NEIGHBOUR;  // neighbours on files
-        }
-
-        if (PAWN_RANGE[turn][iPos] & bbPawn) {
-            val += VALUATION_PAWN_CONNECTED;  // covering neighbours
-        }
-
-        if (FILE_BITS[COL[iPos]] & (bbPawn & NOT_BITS[iPos])) {
-            val += VALUATION_PAWN_DOUBLED;  // doubled pawn
-        }
-
-        if ((PASSED_PAWN_MASK[turn][iPos] & bbPawnOpp) == 0) {  // passed pawn
-            val += VALUATION_PAWN_PASSED;
-        }
-    }
-    //
-    return val;
-}
 
 #pragma endregion
 
@@ -1801,208 +1263,6 @@ int ChessBoard::getIndex(const int col, const int row) {
     return (row * 8) + col;
 }
 
-// return FEN notation of board (just the pieces on the board board)
-void ChessBoard::toFENBoard(char* s) {
-    strcpy(s, "");
-
-    char sP[2], buf[50];
-    char arrP[2][7] = {"pnbrqk", "PNBRQK"};
-    sP[1] = '\0';
-
-    int numEmpty = 0, piece;
-    for (int i = 0; i < 64; i++) {
-        sP[0] = '\0';
-
-        if (i == getDuckPos()) {
-            sP[0] = '$';
-        } else if (isPieceOfColorAt(BLACK, i)) {
-            piece = pieceAt(BLACK, i);
-            sP[0] = arrP[BLACK][piece];
-        } else if (isPieceOfColorAt(WHITE, i)) {
-            piece = pieceAt(WHITE, i);
-            sP[0] = arrP[WHITE][piece];
-        }
-        if (i > 0 && i % 8 == 0) {
-            if (numEmpty > 0) {
-                sprintf(buf, "%d", numEmpty);
-                strcat(s, buf);
-                numEmpty = 0;
-            }
-            if (i < 62) {
-                strcat(s, "/");
-            }
-        }
-        if (sP[0] == '\0') {
-            numEmpty++;
-        } else {
-            if (numEmpty > 0) {
-                sprintf(buf, "%d", numEmpty);
-                strcat(s, buf);
-            }
-            strcat(s, sP);
-            numEmpty = 0;
-        }
-    }
-    if (numEmpty > 0) {
-        sprintf(buf, "%d", numEmpty);
-        strcat(s, buf);
-    }
-    strcat(s, " ");
-    if (m_turn == WHITE) {
-        strcat(s, "w");
-    } else {
-        strcat(s, "b");
-    }
-}
-
-boolean ChessBoard::parseFEN(char* sFEN) {
-    reset();
-
-    m_variant = VARIANT_DEFAULT;
-    char s;
-    int pos = 0, i = 0, iAdd, duckPos = -1;
-    while (pos < 64 && i < strlen(sFEN)) {
-        iAdd = 1;
-        s = sFEN[i];
-        if (s == 'k') {
-            put(pos, KING, BLACK);
-        } else if (s == 'K') {
-            put(pos, KING, WHITE);
-        } else if (s == 'q') {
-            put(pos, QUEEN, BLACK);
-        } else if (s == 'Q') {
-            put(pos, QUEEN, WHITE);
-        } else if (s == 'r') {
-            put(pos, ROOK, BLACK);
-        } else if (s == 'R') {
-            put(pos, ROOK, WHITE);
-        } else if (s == 'b') {
-            put(pos, BISHOP, BLACK);
-        } else if (s == 'B') {
-            put(pos, BISHOP, WHITE);
-        } else if (s == 'n') {
-            put(pos, KNIGHT, BLACK);
-        } else if (s == 'N') {
-            put(pos, KNIGHT, WHITE);
-        } else if (s == 'p') {
-            put(pos, PAWN, BLACK);
-        } else if (s == 'P') {
-            put(pos, PAWN, WHITE);
-        } else if (s == '$') {
-            duckPos = pos;
-            m_variant = VARIANT_DUCK;
-        } else if (s == '/') {
-            iAdd = 0;
-        } else {
-            iAdd = (int) s - 48;
-        }
-        pos += iAdd;
-        i++;
-    }
-    i++;  // skip space
-    if (i < strlen(sFEN)) {
-        int wccl = 0, wccs = 0, bccl = 0, bccs = 0, colA = 0, colH = 7, ep = -1, r50 = 0, turn;
-        const int restLen = strlen(sFEN) - i;
-        char sRest[restLen + 1];
-        memcpy(sRest, &sFEN[i], restLen);
-        sRest[restLen] = '\0';
-        char* token = strtok(sRest, " ");
-        if (token != nullptr) {
-            if (strcmp(token, "w") == 0) {
-                turn = WHITE;
-            } else {
-                turn = BLACK;
-            }
-            token = strtok(nullptr, " ");
-            if (token != 0) {
-                if (strstr(token, "k") != nullptr) {
-                    bccs = 1;
-                }
-                if (strstr(token, "q") != nullptr) {
-                    bccl = 1;
-                }
-                if (strstr(token, "K") != nullptr) {
-                    wccs = 1;
-                }
-                if (strstr(token, "Q") != nullptr) {
-                    wccl = 1;
-                }
-                token = strtok(nullptr, " ");
-                if (token != nullptr) {
-                    if (strcmp(token, "-") != 0) {
-                        ep = Pos::fromString(token);
-                    }
-                    token = strtok(nullptr, " ");
-                    if (token != nullptr) {
-                        r50 = atoi(token);
-                    }
-                }
-
-                setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
-                setTurn(turn);
-                commitBoard();
-
-                if (m_variant == VARIANT_DUCK) {
-                    requestDuckMove(duckPos);
-                }
-
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-// return complete FEN representation of the board
-void ChessBoard::toFEN(char* s) {
-    toFENBoard(s);
-    char buf[10];
-
-    strcat(s, " ");
-
-    boolean bCastle = false;
-    if (hasOO(WHITE)) {
-        strcat(s, "K");
-        bCastle = true;
-    }
-    if (hasOOO(WHITE)) {
-        strcat(s, "Q");
-        bCastle = true;
-    }
-    if (hasOO(BLACK)) {
-        strcat(s, "k");
-        bCastle = true;
-    }
-    if (hasOOO(BLACK)) {
-        strcat(s, "q");
-        bCastle = true;
-    }
-    if (false == bCastle) {
-        strcat(s, "-");
-    }
-    strcat(s, " ");
-    if (m_ep == -1) {
-        strcat(s, "-");
-    } else {
-        Pos::toString(m_ep, buf);
-        strcat(s, buf);
-    }
-
-    strcat(s, " ");
-    sprintf(buf, "%d", m_50RuleCount);
-    strcat(s, buf);
-    strcat(s, " ");
-    int cnt = 0;
-    ChessBoard* tmpBoard;
-    tmpBoard = this;
-    while (tmpBoard->m_parent != nullptr) {
-        cnt++;
-        tmpBoard = tmpBoard->m_parent;
-    }
-    cnt = cnt / 2 + 1;
-    sprintf(buf, "%d", cnt);
-    strcat(s, buf);
-}
 
 // in case of a setup, set 'white can castle short'=>wccs etc and ep square
 // and number of moves for 50 move rule
@@ -2284,71 +1544,6 @@ boolean ChessBoard::addMoveElement(const int move) {
 
 int ChessBoard::remainingMoves() {
     return m_sizeMoves - m_indexMoves;
-}
-
-// resturns pgn string representation of the move that lead to @board;
-// the move in the m_myMove member of the board
-void ChessBoard::myMoveToString(char* buf) {
-    strcpy(buf, "");
-    if (m_myMove == 0) {
-        return;
-    }
-
-    if (Move_isOO(m_myMove)) {
-        strcat(buf, "O-O");
-        strcat(buf, (this->getState() == ChessBoard::CHECK ? "+" : ""));
-    } else if (Move_isOOO(m_myMove)) {
-        strcat(buf, "O-O-O");
-        strcat(buf, (this->getState() == ChessBoard::CHECK ? "+" : ""));
-    } else if (Move_isPromotionMove(m_myMove)) {
-        char tmp[10];
-        if (Move_isHIT(m_myMove)) {
-            Pos::colToString(Move_getFrom(m_myMove), tmp);
-            strcat(buf, tmp);
-            strcat(buf, "x");
-        }
-        Pos::toString(Move_getTo(m_myMove), tmp);
-        strcat(buf, tmp);
-        strcat(buf, "=");
-        ChessBoard::pieceToString(this->pieceAt(this->opponentTurn(), Move_getTo(m_myMove)), tmp);
-        strcat(buf, tmp);
-        if (this->getState() == ChessBoard::CHECK) {
-            strcat(buf, "+");
-        } else if (this->getState() == ChessBoard::MATE) {
-            strcat(buf, "#");
-        }
-    } else {
-        char tmp[10];
-        ChessBoard::pieceToString(this->pieceAt(this->opponentTurn(), Move_getTo(m_myMove)), tmp);
-        strcat(buf, tmp);
-        int m = this->ambigiousMove();
-        if (m != 0) {
-            const int posFromAmb = Move_getFrom(m);
-            const int posFrom = Move_getFrom(m_myMove);
-            if (Pos::col(posFromAmb) == Pos::col(posFrom)) {
-                Pos::rowToString(posFrom, tmp);
-                strcat(buf, tmp);
-            } else {
-                Pos::colToString(posFrom, tmp);
-                strcat(buf, tmp);
-            }
-        }
-        if (Move_isHIT(m_myMove)) {
-            if (this->pieceAt(this->opponentTurn(), Move_getTo(m_myMove)) == ChessBoard::PAWN) {
-                Pos::colToString(Move_getFrom(m_myMove), tmp);
-                strcat(buf, tmp);
-            }
-            strcat(buf, "x");
-        }
-        Pos::toString(Move_getTo(m_myMove), tmp);
-        strcat(buf, tmp);
-
-        if (this->getState() == ChessBoard::CHECK) {
-            strcat(buf, "+");
-        } else if (this->getState() == ChessBoard::MATE) {
-            strcat(buf, "#");
-        }
-    }
 }
 
 //	 to initialize the quality members after a position is set up
@@ -3954,7 +3149,7 @@ void ChessBoard::initMoveArrays() {
 
             // 45
             tmp = pos;
-            bit = (int) pow(2, MIN(ROW[tmp], 7 - COL[tmp]) + 1);
+            bit = (int) pow(2, chessMin(ROW[tmp], 7 - COL[tmp]) + 1);
 
             while (COL[tmp] > 0 && ROW[tmp] < 7) {
                 tmp += 7;
@@ -3970,7 +3165,7 @@ void ChessBoard::initMoveArrays() {
             }
 
             tmp = pos;
-            bit = (int) pow(2, MIN(ROW[tmp], 7 - COL[tmp]) - 1);
+            bit = (int) pow(2, chessMin(ROW[tmp], 7 - COL[tmp]) - 1);
 
             while (COL[tmp] < 7 && ROW[tmp] > 0) {
                 tmp -= 7;
@@ -3990,7 +3185,7 @@ void ChessBoard::initMoveArrays() {
             // 315
 
             tmp = pos;
-            bit = (int) pow(2, MIN(ROW[tmp], COL[tmp]) + 1);
+            bit = (int) pow(2, chessMin(ROW[tmp], COL[tmp]) + 1);
 
             while (COL[tmp] < 7 && ROW[tmp] < 7) {
                 tmp += 9;
@@ -4006,7 +3201,7 @@ void ChessBoard::initMoveArrays() {
             }
 
             tmp = pos;
-            bit = (int) pow(2, MIN(ROW[tmp], COL[tmp]) - 1);
+            bit = (int) pow(2, chessMin(ROW[tmp], COL[tmp]) - 1);
             while (COL[tmp] > 0 && ROW[tmp] > 0) {
                 tmp -= 9;
 
@@ -4145,14 +3340,16 @@ void ChessBoard::bitbToString(const BITBOARD bb, char* ret) {
 
 void ChessBoard::printB(char* s) {
     char buf[1024];
-    sprintf(s,
-            "\n# %d. State %d qualities: %d, %d\nCastling %d %d\n",
-            m_numBoard,
-            m_state,
-            m_qualities[m_turn],
-            m_qualities[m_o_turn],
-            m_castlings[m_turn],
-            m_castlings[m_o_turn]);
+    snprintf(buf,
+             sizeof(buf),
+             "\n# %d. State %d qualities: %d, %d\nCastling %d %d\n",
+             m_numBoard,
+             m_state,
+             m_qualities[m_turn],
+             m_qualities[m_o_turn],
+             m_castlings[m_turn],
+             m_castlings[m_o_turn]);
+    strcpy(s, buf);
 
     // s += "HashKey "+ "\n";
     // s += bitbToString(m_hashKey)+ "\n";

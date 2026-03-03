@@ -54,7 +54,11 @@ public class Utils {
     public static long getColumnLong(Cursor cursor, String column) {
         int index = cursor.getColumnIndex(column);
         if (index >= 0 && index < cursor.getColumnCount()) {
-            return cursor.getLong(index);
+            try {
+                return cursor.getLong(index);
+            } catch (Exception ex) {
+                Log.d(TAG, "Caught exception for " + column + " " + ex.getMessage());
+            }
         }
         return -1;
     }
@@ -66,7 +70,6 @@ public class Utils {
                 return new Date(cursor.getLong(index));
             } catch (Exception ex) {
                 Log.d(TAG, "Caught exception for " + column + " " + ex.getMessage());
-                return null;
             }
         }
         Log.d(TAG, "invalid index " + index + " for " + column);
@@ -76,7 +79,11 @@ public class Utils {
     public static float getColumnFloat(Cursor cursor, String column) {
         int index = cursor.getColumnIndex(column);
         if (index >= 0 && index < cursor.getColumnCount()) {
-            return cursor.getFloat(index);
+            try {
+                return cursor.getFloat(index);
+            } catch (Exception ex) {
+                Log.d(TAG, "Caught exception for " + column + " " + ex.getMessage());
+            }
         }
         return 0;
     }

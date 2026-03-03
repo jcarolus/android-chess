@@ -4,27 +4,27 @@
                  <![CDATA[
         <h3>Advanced</h3>
             <p>Create or import your own stuff here.</p>
-        
+
             <h4>Export game database to sd-card</h4>
             <p>All games in the game database can be exported to a single PGN file on sd-card. This file
                 will be named chess.pgn and an existing file will be overwritten.</p>
-        
+
             <h4>Import games into the game database</h4>
             <p>Use this option to add games to the game database. It lets you browse to a PGN file. Select
                 and choose to import.</p>
-        
+
             <h4>Delete all games in the game database</h4>
             <p>Use this option if you want to clean up the game database. Make sure you first make a backup
                 to sd-card, this action can not be undone.</p>
-        
+
             <h4>Create practice set</h4>
             <p>Creates practice positions from games that end in a check-mate. Browse to the file to
                 process. Failed entries are usually games that did not end in a check-mate or are a
                 duplicate</p>
-        
+
             <h4>Reset practice set</h4>
             <p>Want to start over practicing? This will also reset your average time counter.</p>
-        
+
                 ]]>
             </string>
     <string name="alert_no">No</string>
@@ -200,6 +200,8 @@
     <string name="lichess_play_button_draw">Draw</string>
     <string name="lichess_play_button_resign">Resign</string>
     <string name="lichess_seek_posted">Posted seek</string>
+    <string name="lichess_save_game_to_file">Save to file</string>
+    <string name="lichess_save_game_to_database">Save to database</string>
     <string name="lichess_starting">Starting...</string>
     <string name="match_option_color_black">Black</string>
     <string name="match_option_color_random">Random</string>
@@ -257,6 +259,11 @@
             </string>
     <string name="options_level_ply">Level (ply)</string>
     <string name="options_level_time">Level (time)</string>
+    <string name="options_engine_builtin">Built-in</string>
+    <string name="options_engine_oex">OEX</string>
+    <string name="options_engine_oex_unavailable">No OEX engines found on this device.</string>
+    <string name="options_engine_oex_duck_disabled">OEX is not available for Duck chess.</string>
+    <string name="options_engine_unavailable_short">Unavailable</string>
     <string name="options_play_android">Human vs Android</string>
     <string name="options_play_black">Black</string>
     <string name="options_play_human">Human vs Human</string>
@@ -298,6 +305,7 @@
     <string name="playpreferences">Play settings</string>
     <string name="practice_help">Find the Check-Mate (can be more than one move).</string>
     <string name="practice_set_reset">Practice set has been reset</string>
+    <string name="pref_field_color_descriptions">Add dark/light to square description</string>
     <string name="pref_fullscreen">Enable full screen</string>
     <string name="pref_fullscreen_desc">Recommended for small screens and landscape view; elements may fall off the screen otherwise</string>
     <string name="pref_icsautosought">Auto sought</string>
@@ -311,16 +319,39 @@
     <string name="pref_icstimewarning_desc">A ticking noise warns you if your time is at Time Warning Amount or less</string>
     <string name="pref_icstimewarningsecs">Time Warning Amount (secs)</string>
     <string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
+    <string name="pref_last_move_over_empty_square">Announce last move when dragging over an empty square after delay</string>
     <string name="pref_night_mode">Night mode</string>
     <string name="pref_night_mode_desc">Force the app into night mode</string>
     <string name="pref_showCoords">Coordinates</string>
     <string name="pref_show_blindfold">Blindfold</string>
     <string name="pref_show_possible_moves">Show moves</string>
+    <string name="pref_show_pieces_descriptions">Show pieces location descriptions</string>
+    <string name="pref_show_accessibility_drag_toggle">Show accessibility drag toggle</string>
     <string name="pref_sound">Sound</string>
-    <string name="pref_sound_desc">Played when your opponent moves</string>
+    <string name="pref_haptic_feedback">Use haptic feedback</string>
     <string name="pref_speech">Speech</string>
+    <string name="pref_user_long_move_descriptions">Use full move description</string>
+    <string name="tts_locale_not_supported">Text to speech does not support your locale</string>
+    <string name="tts_not_loaded">Could not load text to speech</string>
+    <string name="tts_example_move">Bishop takes G7 check</string>
+    <string name="tts_selected">Selected</string>
+    <string name="tts_move_takes">takes</string>
+    <string name="tts_move_en_passant">en passant</string>
+    <string name="tts_move_promotes_to">promotes to %1$s</string>
+    <string name="tts_move_checkmate">checkmate</string>
+    <string name="tts_move_castle_long">castle long</string>
+    <string name="tts_move_castle_short">castle short</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">Accessibility drag</string>
+    <string name="pref_accessibility_drag_delay_desc">Accessibility drag delay</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Delay to repeat last move on when on empty square</string>
+    <string name="pref_accessibility_drag_talkback_reminder">For accessibility drag, please turn off TalkBack.</string>
     <string name="pref_speech_pitch_desc">Speech pitch</string>
     <string name="pref_speech_rate_desc">Speech rate</string>
+    <string name="pref_speech_engine">Speech engine</string>
+    <string name="pref_speech_engine_system_default">System default engine</string>
+    <string name="pref_speech_voice">Language/Voice</string>
+    <string name="pref_speech_voice_system_default">System default</string>
     <string name="pref_turn">Side</string>
     <string name="pref_turn_desc">Which side of the board you play</string>
     <string name="pref_vs_cpu">vs CPU</string>
@@ -345,13 +376,18 @@
     <string name="gameslist_filter_switch_date_before_description">Enable or disable date before filter</string>
     <string name="gameslist_filter_switch_event_description">Enable or disable event filter</string>
     <string name="gameslist_filter_switch_result_description">Enable or disable result filter</string>
+    <string name="gameslist_result_count">Results: %1$d</string>
+    <string name="gameslist_game_of_total">Game %1$d of %2$d</string>
     <string name="gameslist_filter_switch_white_description">Enable or disable white player filter</string>
     <string name="savegame_white">White</string>
     <string name="savegame_white_question">White?</string>
+    <string name="square_color_description_light">Light square</string>
+    <string name="square_color_description_dark">Dark square</string>
     <string name="square_selected_with_duck_description">Selected %1$s at %2$s</string>
-    <string name="square_selected_with_piece_description">Selected %1$s %2$s at %3$s</string>
+    <string name="square_selected_with_piece_description">Selected %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s at %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s at %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="start_accessibility_preferences">Accessibility preferences</string>
     <string name="start_boardpreferences">Board settings</string>
     <string name="start_database">Game database</string>
     <string name="start_hotspotboard">Hotspot board</string>
@@ -382,7 +418,12 @@
     <string name="time_warning_45">45 seconds</string>
     <string name="time_warning_5">5 seconds</string>
     <string name="time_warning_60">1 minute</string>
+    <string name="time_warning_minutes">%1$d minutes remaining</string>
+    <string name="time_warning_minutes_single">%1$d minute remaining</string>
+    <string name="time_warning_seconds">%1$d seconds remaining</string>
+    <string name="time_warning_seconds_single">%1$d second remaining</string>
     <string name="title_castle">Castle?</string>
+    <string name="title_pick_engine">Engine</string>
     <string name="title_challenge">Challenge</string>
     <string name="title_create_new_line">Create new line?</string>
     <string name="title_delete_game">Delete game</string>
@@ -401,4 +442,5 @@
     <string name="title_pick_promo">Pick promotion piece</string>
     <string name="title_save_game">Save game</string>
     <string name="toast_challenge_posted">Challenge posted</string>
+    <string name="lichess_service_unavailable">Could not start Lichess service. Please try again.</string>
 </resources>

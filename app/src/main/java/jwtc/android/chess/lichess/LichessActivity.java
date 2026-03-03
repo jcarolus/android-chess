@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import com.google.android.material.button.MaterialButton;
@@ -35,6 +37,7 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
+import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
 import jwtc.chess.Pos;
@@ -45,17 +48,18 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private static final String TAG = "LichessActivity";
     private static final int VIEW_ROOT_WAITING = 0, VIEW_ROOT_LOGIN = 1, VIEW_ROOT_SUB = 2;
     private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1;
+    public static final int REQUEST_SAVE_GAME_TO_FILE = 1;
 
     private LichessApi lichessApi;
     private LocalClockApi localClockApi;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
-    private LinearLayout layoutConfirm, layoutResignDraw;
+    private LinearLayout layoutConfirm, layoutResignDraw, layoutSave;
     private SwitchMaterial switchConfirmMoves;
 
     private ImageView imageTurnOpp, imageTurnMe;
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
     private TextView textViewClockMe, textViewPlayerMe, textViewRatingMe;
-    private TextView textViewLastMove, textViewStatus, textViewOfferDraw, textViewWhitePieces, textViewBlackPieces;
+    private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private TextView textViewLobbyStatus;
     private TextView textViewHandle;
     private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove;
@@ -66,6 +70,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private List<Game> nowPlayingGames;
     private Intent pendingData;
     private boolean serviceConnected = false;
+    private boolean serviceBound = false;
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -135,11 +140,26 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonDraw = findViewById(R.id.ButtonDraw);
         buttonConfirmMove = findViewById(R.id.ButtonConfirmMove);
 
+        MaterialButton buttonSaveToFile = findViewById(R.id.ButtonSaveToFile);
+        buttonSaveToFile.setOnClickListener(v -> {
+            startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
+        });
+        MaterialButton buttonSaveToDatabase = findViewById(R.id.ButtonSaveToDatabase);
+        buttonSaveToDatabase.setOnClickListener(v -> {
+            SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, 0, this::saveGameFromDialog);
+            saveDialog.show();
+        });
+
         localClockApi.addListener(this);
 
         switchConfirmMoves = findViewById(R.id.SwitchConfirmMoves);
+        switchSound = findViewById(R.id.SwitchSound);
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
+        switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
+
         layoutResignDraw = findViewById(R.id.LayoutResignDraw);
         layoutConfirm = findViewById(R.id.LayoutConfirm);
+        layoutSave = findViewById(R.id.LayoutSave);
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
@@ -182,6 +202,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         lichessApi.setApiListener(LichessActivity.this);
 
         layoutConfirm.setVisibility(View.GONE);
+        layoutSave.setVisibility(View.GONE);
         layoutResignDraw.setVisibility(View.VISIBLE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
     }
@@ -201,12 +222,20 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Uri uri = null;
+        if (data != null) {
+            uri = data.getData();
+        }
         Log.d(TAG, "onActivityResult " + requestCode);
         if (requestCode == 1001) {
             if (serviceConnected) {
                 handleActivityResult(data);
             } else {
                 pendingData = data;
+            }
+        } else if (requestCode == REQUEST_SAVE_GAME_TO_FILE) {
+            if (uri != null) {
+                saveToFile(uri, gameApi.exportFullPGN());
             }
         }
     }
@@ -216,8 +245,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         Log.d(TAG, "onStart");
         super.onStart();
 
-        startService(new Intent(LichessActivity.this, LichessService.class));
-        bindService(new Intent(LichessActivity.this, LichessService.class), mConnection, Context.BIND_AUTO_CREATE);
+        serviceBound = bindService(new Intent(LichessActivity.this, LichessService.class), mConnection, Context.BIND_AUTO_CREATE);
+        if (!serviceBound) {
+            Log.e(TAG, "Failed to bind LichessService");
+            Toast.makeText(this, R.string.lichess_service_unavailable, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
     }
 
     @Override
@@ -225,7 +259,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         Log.i(TAG, "onStop");
         super.onStop();
 
-        unbindService(mConnection);
+        if (serviceBound) {
+            unbindService(mConnection);
+            serviceBound = false;
+        }
     }
 
     @Override
@@ -264,15 +301,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonDraw.setEnabled(isStarted);
         buttonResign.setEnabled(isStarted);
 
+        layoutSave.setVisibility(isStarted ? View.GONE : View.VISIBLE);
+
         String stateMessage = gameStateToTranslated(gameFull.state.status);
         if (gameFull.state.winner != null) {
             stateMessage += ". " + getString(R.string.lichess_game_winner, gameFull.state.winner);
         }
-        textViewStatus.setText(stateMessage);
+        updateGameStateMessage(stateMessage);
 
         boolean isDrawOffer = playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw;
         if (isDrawOffer) {
-            textViewOfferDraw.setText(R.string.lichess_opponent_offers_draw);
+            updateTextViewOrSpeech(textViewOfferDraw, getString(R.string.lichess_opponent_offers_draw));
             pulseAnimation(buttonDraw, 1.05f, 1);
             buttonDraw.setOnClickListener(v -> lichessApi.draw(true));
         } else {
@@ -301,7 +340,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onInvalidMove(String reason) {
-        textViewStatus.setText(reason);
+        feedbackIllegalMove();
     }
 
     @Override
@@ -392,9 +431,6 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public boolean requestMove(int from, int to) {
         if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
-            lastMoveFrom = from;
-            lastMoveTo = to;
-
             if (lichessApi.isPromotionMove(from, to)) {
                 final String[] items = getResources().getStringArray(R.array.promotionpieces);
 
@@ -451,9 +487,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
-        textViewLastMove.setText(getLastMoveAndTurnDescription());
-        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
-        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
+        updateLastMoveDescription(getLastMoveAndTurnDescription(false));
     }
 
     protected void displayLogin() {
@@ -489,7 +523,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         if (state.equals("created")) {
             return getString(R.string.lichess_game_state_created);
         } else if (state.equals("started")) {
-            return getString(R.string.lichess_game_state_started);
+            return "";
         } else if (state.equals("aborted")) {
             return getString(R.string.lichess_game_state_aborted);
         } else if (state.equals("mate")) {
@@ -499,6 +533,14 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         }
 
         return "";
+    }
+
+    protected void updateGameStateMessage(String message) {
+        updateTextViewOrSpeech(textViewStatus, message);
+    }
+
+    protected void updateLastMoveDescription(String sMove) {
+        updateTextViewOrSpeech(textViewLastMove, sMove);
     }
 
     protected void handleActivityResult(Intent data) {
@@ -529,6 +571,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         textViewClockOpp.setText(playAsWhite ? blackRemaining : whiteRemaining);
         textViewClockMe.setText(playAsWhite ? whiteRemaining : blackRemaining);
+    }
+
+    @Override
+    public void OnTimeWarning(int turn, long remainingMillies) {
+        if (turn == lichessApi.getMyTurn()) {
+            feedBackDescribeTimeWarning(remainingMillies);
+        }
     }
 
     @Override

@@ -1,8 +1,15 @@
-all: 	
-	g++ -w -lpthread -DTERMINAL Pos.cpp ChessBoard.cpp Move.cpp Game.cpp tests/*.cpp  -o chess
+BUILD_DIR := build-tests
 
-pg:
-	g++ -w -lpthread -DTERMINAL -g Pos.cpp ChessBoard.cpp Move.cpp Game.cpp tests/*.cpp  -o chess
+.PHONY: all configure test clean
+
+all: test
+
+configure:
+	cmake -S . -B $(BUILD_DIR)
+
+test: configure
+	cmake --build $(BUILD_DIR)
+	ctest --test-dir $(BUILD_DIR) --output-on-failure
 
 clean:
-	rm -rf *o chess
+	rm -rf $(BUILD_DIR)

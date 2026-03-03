@@ -129,7 +129,7 @@
                 android:layout_marginRight="8dip" />
         </LinearLayout>
 
-        <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:flexDirection="row"
@@ -146,19 +146,19 @@
                 android:checked="true" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchSound"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:text="@string/pref_sound"
-                android:checked="true" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchFlip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:text="@string/menu_flip"
+                android:checked="true" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchSound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_sound"
                 android:checked="true" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -168,6 +168,14 @@
                 android:layout_margin="4dp"
                 android:text="@string/pref_speech"
                 android:checked="true" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchAccessibilityDrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_accessibility_drag"
+                android:checked="false" />
         </com.google.android.flexbox.FlexboxLayout>
 
         <TextView

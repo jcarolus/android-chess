@@ -99,4 +99,8 @@ public class OAuth2AuthCodePKCE {
 
         void onError(E e);
     }
+
+    public void dispose() {
+        authService.dispose();
+    }
 }

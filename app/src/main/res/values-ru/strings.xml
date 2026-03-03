@@ -3,22 +3,22 @@
     <string name="advanced_help"><![CDATA[
         <h3>Дополнительно</h3>
         <p>Создавайте или импортируйте здесь собственные материалы.</p>
-        
+
         <h4>Экспорт базы игр на карту SD</h4>
         <p>Все партии из базы можно экспортировать в один файл PGN на карту SD. Этот файл будет называться chess.pgn; существующий файл будет перезаписан.</p>
-        
+
         <h4>Импорт партий в базу</h4>
         <p>Используйте эту опцию, чтобы добавить партии в базу. Можно выбрать файл PGN и импортировать его.</p>
-        
+
         <h4>Удалить все партии из базы</h4>
         <p>Используйте эту опцию, если хотите очистить базу. Сначала обязательно сделайте резервную копию на карту SD; это действие нельзя отменить.</p>
-        
+
         <h4>Создать набор для тренировки</h4>
         <p>Создаёт учебные позиции из партий, которые закончились матом. Укажите файл для обработки. Неудачные записи — это обычно партии, которые не закончились матом, либо дубликаты.</p>
-        
+
         <h4>Сбросить набор для тренировки</h4>
         <p>Хотите начать тренировки заново? Это также сбросит счётчик среднего времени.</p>
-        
+
         ]]></string>
     <string name="alert_no">Нет</string>
     <string name="alert_ok">OK</string>
@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Ничья</string>
     <string name="lichess_play_button_resign">Сдаться</string>
     <string name="lichess_seek_posted">Поиск опубликован</string>
+    <string name="lichess_save_game_to_file">Сохранить в файл</string>
+    <string name="lichess_save_game_to_database">Сохранить в базу данных</string>
     <string name="lichess_starting">Запуск...</string>
     <string name="match_option_color_black">Чёрные</string>
     <string name="match_option_color_random">Случайно</string>
@@ -281,6 +283,7 @@
     <string name="playpreferences">Настройки игры</string>
     <string name="practice_help">Найди мат (может требоваться несколько ходов).</string>
     <string name="practice_set_reset">Тренировочный набор сброшен</string>
+    <string name="pref_field_color_descriptions">Добавлять светлое/тёмное к описанию поля</string>
     <string name="pref_fullscreen">Полноэкранный режим</string>
     <string name="pref_fullscreen_desc">Рекомендуется для маленьких экранов и альбомного вида; иначе элементы могут не помещаться</string>
     <string name="pref_icsautosought">Автопоиск</string>
@@ -294,16 +297,36 @@
     <string name="pref_icstimewarning_desc">Тиканье предупреждает, если времени осталось мало</string>
     <string name="pref_icstimewarningsecs">Порог времени (сек)</string>
     <string name="pref_icstimewarningsecs_desc">За сколько секунд начинать предупреждение?</string>
+    <string name="pref_last_move_over_empty_square">Озвучивать последний ход при перетаскивании по пустому полю после задержки</string>
     <string name="pref_night_mode">Ночной режим</string>
     <string name="pref_night_mode_desc">Включить приложение в ночном режиме</string>
     <string name="pref_showCoords">Координаты</string>
     <string name="pref_show_blindfold">Слепые шахматы</string>
     <string name="pref_show_possible_moves">Показывать ходы</string>
+    <string name="pref_show_pieces_descriptions">Показывать описание расположения фигур</string>
+    <string name="pref_show_accessibility_drag_toggle">Показывать переключатель перетаскивания для специальных возможностей</string>
     <string name="pref_sound">Звук</string>
-    <string name="pref_sound_desc">Проигрывается, когда соперник делает ход</string>
+    <string name="pref_haptic_feedback">Использовать виброотклик</string>
     <string name="pref_speech">Озвучка</string>
+    <string name="pref_user_long_move_descriptions">Использовать полное описание хода</string>
+    <string name="tts_locale_not_supported">Преобразование текста в речь не поддерживает вашу локаль</string>
+    <string name="tts_not_loaded">Не удалось загрузить преобразование текста в речь</string>
+    <string name="tts_example_move">Слон бьёт на G7, шах</string>
+    <string name="tts_selected">Выбрано</string>
+    <string name="tts_move_takes">бьет</string>
+    <string name="tts_move_en_passant">на проходе</string>
+    <string name="tts_move_promotes_to">превращается в %1$s</string>
+    <string name="tts_move_checkmate">мат</string>
+    <string name="tts_move_castle_long">длинная рокировка</string>
+    <string name="tts_move_castle_short">короткая рокировка</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">Перетаскивание (доступность)</string>
+    <string name="pref_accessibility_drag_delay_desc">Задержка перетаскивания (доступность)</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Задержка перед повтором последнего хода на пустой клетке</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Для доступного перетаскивания отключите TalkBack.</string>
     <string name="pref_speech_pitch_desc">Высота голоса</string>
     <string name="pref_speech_rate_desc">Скорость речи</string>
+    <string name="pref_speech_voice_system_default">Системный по умолчанию</string>
     <string name="pref_turn">Сторона</string>
     <string name="pref_turn_desc">За какую сторону вы играете</string>
     <string name="pref_vs_cpu">против CPU</string>
@@ -328,13 +351,18 @@
     <string name="gameslist_filter_switch_date_before_description">Включить или отключить фильтр даты до</string>
     <string name="gameslist_filter_switch_event_description">Включить или отключить фильтр события</string>
     <string name="gameslist_filter_switch_result_description">Включить или отключить фильтр результата</string>
+    <string name="gameslist_result_count">Результаты: %1$d</string>
+    <string name="gameslist_game_of_total">Партия %1$d из %2$d</string>
     <string name="gameslist_filter_switch_white_description">Включить или отключить фильтр белых</string>
     <string name="savegame_white">Белые</string>
     <string name="savegame_white_question">Белые?</string>
+    <string name="square_color_description_light">Светлое поле</string>
+    <string name="square_color_description_dark">Тёмное поле</string>
     <string name="square_selected_with_duck_description">Выбрано %1$s на %2$s</string>
-    <string name="square_selected_with_piece_description">Выбрано %1$s %2$s на %3$s</string>
+    <string name="square_selected_with_piece_description">Выбрано %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s на %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s на %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="start_accessibility_preferences">Настройки специальных возможностей</string>
     <string name="start_boardpreferences">Настройки шахматной доски</string>
     <string name="start_database">База партий</string>
     <string name="start_hotspotboard">Hotspot-доска</string>
@@ -365,6 +393,10 @@
     <string name="time_warning_45">45 секунд</string>
     <string name="time_warning_5">5 секунд</string>
     <string name="time_warning_60">1 минута</string>
+    <string name="time_warning_minutes">Осталось %1$d минут</string>
+    <string name="time_warning_minutes_single">Осталась %1$d минута</string>
+    <string name="time_warning_seconds">Осталось %1$d секунд</string>
+    <string name="time_warning_seconds_single">Осталась %1$d секунда</string>
     <string name="title_castle">Рокировка?</string>
     <string name="title_challenge">Вызов</string>
     <string name="title_create_new_line">Создать новую линию?</string>
@@ -384,4 +416,5 @@
     <string name="title_pick_promo">Выберите фигуру для превращения</string>
     <string name="title_save_game">Сохранить партию</string>
     <string name="toast_challenge_posted">Вызов опубликован</string>
+    <string name="lichess_service_unavailable">Не удалось запустить службу Lichess. Пожалуйста, попробуйте снова.</string>
 </resources>

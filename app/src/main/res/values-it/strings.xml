@@ -3,22 +3,22 @@
     <string name="advanced_help"><![CDATA[
         <h3>Avanzato</h3>
         <p>Crea o importa qui i tuoi contenuti.</p>
-        
+
         <h4>Esporta il database delle partite sulla scheda SD</h4>
         <p>Tutte le partite nel database possono essere esportate in un unico file PGN sulla scheda SD. Questo file si chiamerà chess.pgn e un eventuale file esistente verrà sovrascritto.</p>
-        
+
         <h4>Importa partite nel database</h4>
         <p>Usa questa opzione per aggiungere partite al database. Ti permette di sfogliare fino a un file PGN. Selezionalo e scegli di importarlo.</p>
-        
+
         <h4>Elimina tutte le partite nel database</h4>
         <p>Usa questa opzione se vuoi ripulire il database. Assicurati prima di creare un backup sulla scheda SD; questa azione non può essere annullata.</p>
-        
+
         <h4>Crea set di esercizi</h4>
         <p>Crea posizioni di allenamento dalle partite che finiscono con scacco matto. Seleziona il file da elaborare. Le voci non riuscite sono di solito partite che non finiscono con scacco matto o duplicati.</p>
-        
+
         <h4>Reimposta set di esercizi</h4>
         <p>Vuoi ricominciare ad allenarti? Questo reimposterà anche il tuo contatore del tempo medio.</p>
-        
+
         ]]></string>
     <string name="alert_no">No</string>
     <string name="alert_ok">OK</string>
@@ -193,6 +193,8 @@
     <string name="lichess_play_button_draw">Patta</string>
     <string name="lichess_play_button_resign">Abbandona</string>
     <string name="lichess_seek_posted">Ricerca pubblicata</string>
+    <string name="lichess_save_game_to_file">Salva su file</string>
+    <string name="lichess_save_game_to_database">Salva nel database</string>
     <string name="lichess_starting">Avvio...</string>
     <string name="match_option_color_black">Neri</string>
     <string name="match_option_color_random">Casuale</string>
@@ -281,6 +283,7 @@
     <string name="playpreferences">Impostazioni di gioco</string>
     <string name="practice_help">Trova lo scacco matto (può richiedere più mosse).</string>
     <string name="practice_set_reset">Il set di allenamento è stato reimpostato</string>
+    <string name="pref_field_color_descriptions">Aggiungi chiaro/scuro alla descrizione della casella</string>
     <string name="pref_fullscreen">Attiva schermo intero</string>
     <string name="pref_fullscreen_desc">Consigliato per piccoli schermi e orizzontale; altrimenti alcuni elementi potrebbero non comparire</string>
     <string name="pref_icsautosought">Ricerca automatica</string>
@@ -294,16 +297,36 @@
     <string name="pref_icstimewarning_desc">Un ticchettio ti avvisa se il tempo scende sotto la soglia</string>
     <string name="pref_icstimewarningsecs">Soglia di avviso (sec)</string>
     <string name="pref_icstimewarningsecs_desc">Quanti secondi prima inizia l’avviso?</string>
+    <string name="pref_last_move_over_empty_square">Annuncia l`ultima mossa quando trascini su una casella vuota dopo un ritardo</string>
     <string name="pref_night_mode">Modalità notturna</string>
     <string name="pref_night_mode_desc">Forza l’app in modalità notte</string>
     <string name="pref_showCoords">Coordinate</string>
     <string name="pref_show_blindfold">Alla cieca</string>
     <string name="pref_show_possible_moves">Mostra mosse</string>
+    <string name="pref_show_pieces_descriptions">Mostra la descrizione della posizione dei pezzi</string>
+    <string name="pref_show_accessibility_drag_toggle">Mostra interruttore trascinamento accessibilità</string>
     <string name="pref_sound">Suono</string>
-    <string name="pref_sound_desc">Riprodotto quando l’avversario muove</string>
+    <string name="pref_haptic_feedback">Usa feedback aptico</string>
     <string name="pref_speech">Voce</string>
+    <string name="pref_user_long_move_descriptions">Usa descrizione completa della mossa</string>
+    <string name="tts_locale_not_supported">La sintesi vocale non supporta le impostazioni locali</string>
+    <string name="tts_not_loaded">Impossibile caricare la sintesi vocale</string>
+    <string name="tts_example_move">Alfiere cattura in G7, scacco</string>
+    <string name="tts_selected">Selezionato</string>
+    <string name="tts_move_takes">cattura</string>
+    <string name="tts_move_en_passant">en passant</string>
+    <string name="tts_move_promotes_to">promuove a %1$s</string>
+    <string name="tts_move_checkmate">scacco matto</string>
+    <string name="tts_move_castle_long">arrocco lungo</string>
+    <string name="tts_move_castle_short">arrocco corto</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">Trascinamento accessibile</string>
+    <string name="pref_accessibility_drag_delay_desc">Ritardo del trascinamento accessibile</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Ritardo per ripetere l’ultima mossa su una casella vuota</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Per il trascinamento accessibile, disattiva TalkBack.</string>
     <string name="pref_speech_pitch_desc">Altezza voce</string>
     <string name="pref_speech_rate_desc">Velocità voce</string>
+    <string name="pref_speech_voice_system_default">Predefinito di sistema</string>
     <string name="pref_turn">Lato</string>
     <string name="pref_turn_desc">Da che lato giochi</string>
     <string name="pref_vs_cpu">contro CPU</string>
@@ -328,13 +351,18 @@
     <string name="gameslist_filter_switch_date_before_description">Attiva o disattiva il filtro data prima</string>
     <string name="gameslist_filter_switch_event_description">Attiva o disattiva il filtro evento</string>
     <string name="gameslist_filter_switch_result_description">Attiva o disattiva il filtro risultato</string>
+    <string name="gameslist_result_count">Risultati: %1$d</string>
+    <string name="gameslist_game_of_total">Partita %1$d di %2$d</string>
     <string name="gameslist_filter_switch_white_description">Attiva o disattiva il filtro dei bianchi</string>
     <string name="savegame_white">Bianchi</string>
     <string name="savegame_white_question">Bianchi?</string>
+    <string name="square_color_description_light">Casella chiara</string>
+    <string name="square_color_description_dark">Casella scura</string>
     <string name="square_selected_with_duck_description">Selezionato %1$s a %2$s</string>
-    <string name="square_selected_with_piece_description">Selezionato %1$s %2$s a %3$s</string>
+    <string name="square_selected_with_piece_description">Selezionato %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s a %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s su %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="start_accessibility_preferences">Preferenze di accessibilità</string>
     <string name="start_boardpreferences">Impostazioni scacchiera</string>
     <string name="start_database">Database delle partite</string>
     <string name="start_hotspotboard">Scacchiera hotspot</string>
@@ -365,6 +393,10 @@
     <string name="time_warning_45">45 secondi</string>
     <string name="time_warning_5">5 secondi</string>
     <string name="time_warning_60">1 minuto</string>
+    <string name="time_warning_minutes">Restano %1$d minuti</string>
+    <string name="time_warning_minutes_single">Resta %1$d minuto</string>
+    <string name="time_warning_seconds">Restano %1$d secondi</string>
+    <string name="time_warning_seconds_single">Resta %1$d secondo</string>
     <string name="title_castle">Arroccare?</string>
     <string name="title_challenge">Sfida</string>
     <string name="title_create_new_line">Creare nuova variante?</string>
@@ -384,4 +416,5 @@
     <string name="title_pick_promo">Scegli pezzo di promozione</string>
     <string name="title_save_game">Salva partita</string>
     <string name="toast_challenge_posted">Sfida pubblicata</string>
+    <string name="lichess_service_unavailable">Impossibile avviare il servizio Lichess. Riprova.</string>
 </resources>

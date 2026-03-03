@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="262"
-    android:versionName="10.0.7">
-
+    android:versionCode="275"
+    android:versionName="10.1.0">
+    <queries>
+        <intent>
+            <action
+                android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+        <intent>
+            <action android:name="intent.chess.provider.ENGINE" />
+        </intent>
+        <intent>
+            <action android:name="intent.chess.provider.ACTIVATION" />
+        </intent>
+    </queries>
     <application
         android:name="android.app.Application"
         android:icon="@mipmap/ic_launcher"
@@ -53,10 +64,10 @@
             android:configChanges="orientation"
             android:exported="true"></activity>
         <activity
-            android:name=".activities.GamePreferenceActivity"
-            android:label="@string/playpreferences"
+            android:name=".activities.AccessibilityPreferences"
+            android:label="@string/globalpreferences"
             android:configChanges="orientation"
-            android:exported="true" />
+            android:exported="true"></activity>
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"

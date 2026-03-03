@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
@@ -109,10 +111,12 @@ public class GameApi {
 
     public boolean requestMove(int from, int to) {
         Log.i(TAG, "requestMove");
-        if (isEnded())
+        if (isEnded()) {
             return false;
+        }
 
         if (jni.requestMove(from, to) == 0) {
+            dispatchIllegalMove();
             return false;
         }
 
@@ -131,6 +135,7 @@ public class GameApi {
         }
 
         if (jni.doCastleMove(from, to) == 0) {
+            dispatchIllegalMove();
             return false;
         }
         final int move = jni.getMyMove();
@@ -145,6 +150,8 @@ public class GameApi {
     public boolean requestDuckMove(int duckPos) {
 //        Log.d(TAG, " requestDuckMove " + Pos.toString(duckPos));
         if (!moveDuck(duckPos)) {
+            // @TODO is this needed/possible? Prevent from moving on top of a piece should be enough
+            // dispatchIllegalMove();
             return false;
         }
 
@@ -252,8 +259,8 @@ public class GameApi {
         pgnTags.put("Event", "?");
         pgnTags.put("Site", "?");
         pgnTags.put("Round", "?");
-        pgnTags.put("White", Resources.getSystem().getString(android.R.string.unknownName));
-        pgnTags.put("Black", Resources.getSystem().getString(android.R.string.unknownName));
+        pgnTags.put("White", "?");
+        pgnTags.put("Black", "?");
         pgnTags.put("Date", formatter.format(d));
 
         pgnMoves.clear();
@@ -410,8 +417,11 @@ public class GameApi {
         }
     }
 
-    public static String moveToSpeechString(String sMove, int move) {
-        String sMoveSpeech = "";
+    public static String moveToSpeechString(Resources resources, String sMove, int move, boolean useLongMove) {
+        if (resources == null) {
+            resources = Resources.getSystem();
+        }
+        StringBuilder sMoveSpeech = new StringBuilder();
 
         // check regular move
         Matcher matchToken = getMoveMatcher(sMove);
@@ -420,85 +430,126 @@ public class GameApi {
             // (K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*")
             String piece = matchToken.group(1);
             if (piece != null) {
-                piece = getPieceName(piece);
+                piece = getPieceName(resources, piece);
             } else {
-                piece = "Pawn ";
+                piece = getString(resources, R.string.piece_pawn, "Pawn");
             }
-            sMoveSpeech += piece;
+            sMoveSpeech.append(piece).append(" ");
             String sFile = matchToken.group(2);
-            if (sFile != null) {
-                sMoveSpeech += sFile.toUpperCase() + " ";
-            }
             String sRow = matchToken.group(3);
-            if (sRow != null) {
-                sMoveSpeech += sRow + " ";
+
+            if (useLongMove) {
+                sMoveSpeech.append(Pos.toString(Move.getFrom(move)).toUpperCase()).append(" ");
+            } else {
+
+                if (sFile != null) {
+                    sMoveSpeech.append(sFile.toUpperCase(Locale.ROOT)).append(" ");
+                }
+
+                if (sRow != null) {
+                    sMoveSpeech.append(sRow).append(" ");
+                }
             }
+
             if (matchToken.group(4) != null) {
-                sMoveSpeech += "takes ";
+                sMoveSpeech.append(getString(resources, R.string.tts_move_takes, "takes")).append(" ");
             }
             sFile = matchToken.group(5);
             sRow = matchToken.group(6);
             if (sFile != null && sRow != null) {
-                sMoveSpeech += sFile.toUpperCase() + sRow + " ";
+                sMoveSpeech.append(getString(
+                    resources,
+                    R.string.tts_move_square,
+                    "%1$s%2$s",
+                    sFile.toUpperCase(Locale.ROOT),
+                    sRow
+                )).append(" ");
             }
+
             if (Move.isEP(move)) {
-                sMoveSpeech += "(en Passant) ";
+                sMoveSpeech.append(getString(resources, R.string.tts_move_en_passant, "en passant")).append(" ");
             }
 
             String sPromote = matchToken.group(7);
             if (sPromote != null && sPromote.length() > 1) {
-                sMoveSpeech += "promotes to " + getPieceName(sPromote.substring(1));
+                sMoveSpeech.append(getString(
+                    resources,
+                    R.string.tts_move_promotes_to,
+                    "promotes to %1$s",
+                    getPieceName(resources, sPromote.substring(1))
+                )).append(" ");
             }
             // ignore Duck for now
 
             String sSpecial = matchToken.group(9);
             if (sSpecial != null) {
                 if (sSpecial.equals("+")) {
-                    sMoveSpeech += "check ";
+                    sMoveSpeech.append(getString(resources, R.string.state_check, "check")).append(" ");
                 } else if (sSpecial.equals("#")) {
-                    sMoveSpeech += "checkmate ";
+                    sMoveSpeech.append(getString(resources, R.string.tts_move_checkmate, "checkmate")).append(" ");
                 }
             }
         } else if (sMove.contains("O-O-O")) {
-            sMoveSpeech += "Castle long ";
+            sMoveSpeech.append(getString(resources, R.string.tts_move_castle_long, "castle long")).append(" ");
             if (sMove.contains("+")) {
-                sMoveSpeech += "check ";
+                sMoveSpeech.append(getString(resources, R.string.state_check, "check")).append(" ");
             }
             if (sMove.contains("#")) {
-                sMoveSpeech += "checkmate ";
+                sMoveSpeech.append(getString(resources, R.string.tts_move_checkmate, "checkmate")).append(" ");
             }
         } else if (sMove.contains("O-O")) {
-            sMoveSpeech += "Castle short ";
+            sMoveSpeech.append(getString(resources, R.string.tts_move_castle_short, "castle short")).append(" ");
             if (sMove.contains("+")) {
-                sMoveSpeech += "check ";
+                sMoveSpeech.append(getString(resources, R.string.state_check, "check")).append(" ");
             }
             if (sMove.contains("#")) {
-                sMoveSpeech += "checkmate ";
+                sMoveSpeech.append(getString(resources, R.string.tts_move_checkmate, "checkmate")).append(" ");
             }
         } else {
             Log.d(TAG, "Did not parse move " + sMove);
         }
 
-        Log.d(TAG, "TTS " + sMove + " => " + sMoveSpeech);
+        String spoken = sMoveSpeech.toString().trim();
+        Log.d(TAG, "TTS " + sMove + " => " + spoken);
 
-        return sMoveSpeech;
+        return spoken;
     }
 
-    protected static String getPieceName(String piece) {
+    protected static String getPieceName(Resources resources, String piece) {
         switch (piece) {
             case "K":
-                return "King ";
+                return getString(resources, R.string.piece_king, "King");
             case "Q":
-                return "Queen ";
+                return getString(resources, R.string.piece_queen, "Queen");
             case "R":
-                return "Rook ";
+                return getString(resources, R.string.piece_rook, "Rook");
             case "B":
-                return "Bishop ";
+                return getString(resources, R.string.piece_bishop, "Bishop");
             case "N":
-                return "Knight ";
+                return getString(resources, R.string.piece_knight, "Knight");
             default:
                 return "";
         }
+    }
+
+    private static String getString(Resources resources, int resourceId, String fallback) {
+        if (resources != null) {
+            try {
+                return resources.getString(resourceId);
+            } catch (Resources.NotFoundException ignored) {
+            }
+        }
+        return fallback;
+    }
+
+    private static String getString(Resources resources, int resourceId, String fallback, Object... args) {
+        if (resources != null) {
+            try {
+                return resources.getString(resourceId, args);
+            } catch (Resources.NotFoundException ignored) {
+            }
+        }
+        return String.format(Locale.getDefault(), fallback, args);
     }
 
     protected void dispatchMove(final int move) {
@@ -522,6 +573,14 @@ public class GameApi {
 
         for (GameListener listener : listeners) {
             listener.OnState();
+        }
+    }
+
+    protected void dispatchIllegalMove() {
+        Log.d(TAG, "dispatchIllegalMove");
+
+        for (GameListener listener : listeners) {
+            listener.OnIllegalMove();
         }
     }
 
@@ -648,13 +707,8 @@ public class GameApi {
 
                 piece = jni.pieceAt(t, from);
 
-                //if(Move.toDbgString(move).equals("[h5-f5]"))
-                //	System.out.println("#");
-
-
                 if (piece == movePiece && to == moveTo) {
                     if (sDistFile != null) {
-                        //System.out.println("#" + sDistFile + " - " + Move.toDbgString(move));
                         if (Pos.colToString(from).equals(sDistFile))
                             bMatch = true;
                     } else if (sDistRank != null) {
@@ -934,6 +988,12 @@ public class GameApi {
     public Date getDate() {
         String s = getPGNHeadProperty("Date");
         return PGNHelper.getDate(s);
+    }
+
+    public boolean hasAnyPieceOnPosition(int pos) {
+        return pos == jni.getDuckPos() ||
+            jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
+            jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
     }
 
     private static class NextMatch {

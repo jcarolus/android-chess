@@ -16,6 +16,10 @@
 - Cast the board via Chromecast
 - ECO opening explorer
 - Accessibility support for screen readers like Talkback
+- Local game database with search options
+
+## OEX engine support
+- Supports Open Exchange Protocol chess engines
 
 ## Install
 - Published on "F-droid" https://f-droid.org/packages/jwtc.android.chess/
@@ -26,9 +30,6 @@
 - Translation improvements (some translations are old or inconsistent).
 - Improve user interaction via screen readers
 - Contributions are welcome
-
-### UCI engines
-- support for UCI engines was dropped due to `security-related restrictions on W^X violations`
 
 ### License
 - MIT licensed (see License.md)

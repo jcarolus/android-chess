@@ -1,29 +1,15 @@
 #include "chess-test.h"
 
+#include <gtest/gtest.h>
+
 void ChessTest::startSearchThread() {
     pthread_t tid;
     pthread_create(&tid, nullptr, &Game::search_wrapper, nullptr);
 }
 
-bool ChessTest::expectEqualInt(int a, int b, char *message) {
-    if (a != b) {
-        DEBUG_PRINT("FAILED: %s => Expected [%d] but got [%d]\n", message, a, b);
-        return false;
-    }
-    return true;
-}
-
-bool ChessTest::expectEqualString(char *a, char *b, char *message) {
-    if (strcmp(a, b) != 0) {
-        DEBUG_PRINT("FAILED: %s => Expected [%s] but got [%s]\n", message, a, b);
-        return false;
-    }
-    return true;
-}
-
 bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
     scenario.game->newGameFromFEN(scenario.sInFEN);
-
+    scenario.game->setQuiescentOn(true);
     scenario.game->setSearchLimit(scenario.depth);
 
     char buf[1024];
@@ -32,7 +18,7 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
     while (movesPerformed < scenario.numMoves) {
         ChessTest::startSearchThread();
         sleep(1);
-        while (scenario.game->m_bSearching) {
+        while (scenario.game->m_bSearching.load()) {
             sleep(1);
         }
 
@@ -67,7 +53,9 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
     board = scenario.game->getBoard();
     board->toFEN(buf);
 
-    return expectEqualString(scenario.sOutFEN, buf, scenario.message);
+    SCOPED_TRACE(scenario.message);
+    EXPECT_STREQ(scenario.sOutFEN, buf);
+    return strcmp(scenario.sOutFEN, buf) == 0;
 }
 
 bool ChessTest::expectSequence(SequenceInOutFEN scenario) {
@@ -85,7 +73,9 @@ bool ChessTest::expectSequence(SequenceInOutFEN scenario) {
     char buf[512];
     board->toFEN(buf);
 
-    return expectEqualString(scenario.sOutFEN, buf, scenario.message);
+    SCOPED_TRACE(scenario.message);
+    EXPECT_STREQ(scenario.sOutFEN, buf);
+    return strcmp(scenario.sOutFEN, buf) == 0;
 }
 
 bool ChessTest::expectNonSequence(NonSequenceInFEN scenario) {
@@ -102,20 +92,25 @@ bool ChessTest::expectNonSequence(NonSequenceInFEN scenario) {
     return true;
 }
 
-bool ChessTest::expectStateForFEN(Game *game, char *sFEN, int state, char *message) {
+bool ChessTest::expectStateForFEN(Game *game, const char *sFEN, int state, const char *message) {
     game->newGameFromFEN(sFEN);
 
-    return ChessTest::expectEqualInt(state, game->getBoard()->getState(), message);
+    const int actualState = game->getBoard()->getState();
+    SCOPED_TRACE(message);
+    EXPECT_EQ(state, actualState);
+    return state == actualState;
 }
 
-bool ChessTest::expectInFENIsOutFEN(Game *game, char *sFEN, char *message) {
+bool ChessTest::expectInFENIsOutFEN(Game *game, const char *sFEN, const char *message) {
     game->newGameFromFEN(sFEN);
 
     ChessBoard *board = game->getBoard();
     char buf[512];
     board->toFEN(buf);
 
-    return expectEqualString(sFEN, buf, message);
+    SCOPED_TRACE(message);
+    EXPECT_STREQ(sFEN, buf);
+    return strcmp(sFEN, buf) == 0;
 }
 
 bool ChessTest::expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario) {
@@ -165,7 +160,9 @@ bool ChessTest::expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario) 
         movesPerformed++;
     }
 
-    return expectEqualInt(scenario.expectedState, gameState, scenario.message);
+    SCOPED_TRACE(scenario.message);
+    EXPECT_EQ(scenario.expectedState, gameState);
+    return scenario.expectedState == gameState;
 }
 
 bool ChessTest::expectMovesForFEN(MovesForFEN scenario) {
@@ -222,35 +219,35 @@ void ChessTest::printFENAndState(ChessBoard *board) {
 
     switch (state) {
         case ChessBoard::PLAY:
-            DEBUG_PRINT("Play\n", 0);
+            DEBUG_PRINT("Play\n");
             break;
 
         case ChessBoard::CHECK:
-            DEBUG_PRINT("Check\n", 0);
+            DEBUG_PRINT("Check\n");
             break;
 
         case ChessBoard::INVALID:
-            DEBUG_PRINT("Invalid\n", 0);
+            DEBUG_PRINT("Invalid\n");
             break;
 
         case ChessBoard::DRAW_MATERIAL:
-            DEBUG_PRINT("Draw material\n", 0);
+            DEBUG_PRINT("Draw material\n");
             break;
 
         case ChessBoard::DRAW_50:
-            DEBUG_PRINT("Draw 50 move\n", 0);
+            DEBUG_PRINT("Draw 50 move\n");
             break;
 
         case ChessBoard::MATE:
-            DEBUG_PRINT("Mate\n", 0);
+            DEBUG_PRINT("Mate\n");
             break;
 
         case ChessBoard::STALEMATE:
-            DEBUG_PRINT("Stalemate\n", 0);
+            DEBUG_PRINT("Stalemate\n");
             break;
 
         case ChessBoard::DRAW_REPEAT:
-            DEBUG_PRINT("Draw repetition\n", 0);
+            DEBUG_PRINT("Draw repetition\n");
             break;
 
         default:

@@ -72,7 +72,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="4dip">
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/SpinnerOptionsEngine"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/title_pick_engine" />
 
+                <TextView
+                    android:id="@+id/TextViewEngineBackendHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dip"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/ToggleLevelModeGroup"
                     android:layout_width="match_parent"

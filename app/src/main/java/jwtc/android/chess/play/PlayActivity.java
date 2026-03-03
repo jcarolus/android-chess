@@ -43,6 +43,7 @@ import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
+import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.helpers.Utils;
@@ -79,6 +80,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
     private LocalClockApi localClock;
     private EngineApi myEngine;
+    private EngineApi localEngine;
+    private OexEngine oexEngine;
     private final EcoService ecoService = new EcoService();
     private long lGameID;
     private LinearProgressIndicator progressBarEngine;
@@ -90,10 +93,10 @@ public class PlayActivity extends ChessBoardActivity implements
     private ChessPiecesStackView bottomPieces;
     private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
     private TextView textViewTopPlayer, textViewBottomPlayer, textViewTopClockTime, textViewBottomClockTime, textViewWhitePlayer, textViewBlackPlayer, textViewWhiteClockTIme, textViewBlackClockTime;
-    private TextView textViewLastMove, textViewEco, textViewWhitePieces, textViewBlackPieces;
+    private TextView textViewLastMove, textViewEco;
     private TextView textViewInfoBalloon, textViewEngineValue;
     private MaterialButton buttonEco;
-    private SwitchMaterial switchSound, switchBlindfold, switchFlip, switchMoveToSpeech;
+    private SwitchMaterial switchBlindfold, switchFlip;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
     private PopupWindow popupWindowInfoBalloon;
@@ -134,21 +137,30 @@ public class PlayActivity extends ChessBoardActivity implements
 
         localClock.addListener(this);
 
+        // init shared views before aftercreate
+        switchSound = findViewById(R.id.SwitchSound);
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
+        switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
+
         afterCreate();
 
         playButton = findViewById(R.id.ButtonPlay);
         playButton.setOnClickListener(arg0 -> {
             if (!gameApi.isEnded()) {
-                if (jni.getNumBoard() < gameApi.getPGNSize()) {
-                    openConfirmDialog(
-                        getString(R.string.title_create_new_line),
-                        getString(R.string.alert_yes),
-                        getString(R.string.alert_no),
-                        this::playIfEngineCanMove,
-                        null
-                    );
+                if (myEngine.isReady()) {
+                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
+                        openConfirmDialog(
+                            getString(R.string.title_create_new_line),
+                            getString(R.string.alert_yes),
+                            getString(R.string.alert_no),
+                            this::playIfEngineCanMove,
+                            null
+                        );
+                    } else {
+                        playIfEngineCanMove();
+                    }
                 } else {
-                    playIfEngineCanMove();
+                    myEngine.abort(() -> {});
                 }
             }
         });
@@ -209,13 +221,6 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
 
-        switchSound = findViewById(R.id.SwitchSound);
-        switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (sounds != null) {
-                sounds.setEnabled(switchSound.isChecked());
-            }
-        });
-
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (switchBlindfold.isChecked()) {
@@ -238,9 +243,6 @@ public class PlayActivity extends ChessBoardActivity implements
             flipBoard = switchFlip.isChecked();
             updateBoardRotation();
         });
-
-        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
-        switchMoveToSpeech.setOnCheckedChangeListener((buttonView, isChecked) -> moveToSpeech = switchMoveToSpeech.isChecked());
 
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
 
@@ -270,8 +272,9 @@ public class PlayActivity extends ChessBoardActivity implements
         String type = intent.getType();
         Uri uri = intent.getData();
 
-        myEngine = new LocalEngine(gameApi);
-        myEngine.addListener(this);
+        localEngine = new LocalEngine(gameApi);
+        oexEngine = new OexEngine(this, gameApi, prefs.getString("oexEngineId", null));
+        myEngine = null;
 
         lGameID = prefs.getLong("game_id", 0);
 
@@ -326,11 +329,12 @@ public class PlayActivity extends ChessBoardActivity implements
             }
         }
 
+        flipBoard = prefs.getBoolean("flipBoard", false);
+        switchFlip.setChecked(flipBoard);
+        switchBlindfold.setChecked(false);
+
         updateClockByPrefs(false);
         updateGameSettingsByPrefs();
-
-        switchSound.setChecked(prefs.getBoolean("moveSounds", false));
-        switchBlindfold.setChecked(false);
 
         buttonEco.setEnabled(false);
 
@@ -343,10 +347,22 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     protected void onPause() {
-        //Debug.stopMethodTracing();
+        super.onPause();
 
-        myEngine.abort();
-        myEngine.removeListener(this);
+        if (myEngine != null) {
+            myEngine.abort(() -> {
+            });
+            myEngine.removeListener(this);
+            myEngine = null;
+        }
+        if (localEngine != null) {
+            localEngine.destroy();
+            localEngine = null;
+        }
+        if (oexEngine != null) {
+            oexEngine.destroy();
+            oexEngine = null;
+        }
 
         localClock.stopClock();
 
@@ -370,26 +386,15 @@ public class PlayActivity extends ChessBoardActivity implements
         editor.putLong("game_id", lGameID);
         editor.putString("game_pgn", gameApi.exportFullPGN());
         editor.putString("FEN", jni.toFEN());
+        editor.putString("setupFEN", null);
 
         final long pauseTime = System.currentTimeMillis();
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
         editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : pauseTime);
-
         editor.putBoolean("flipBoard", flipBoard);
-        editor.putBoolean("moveToSpeech", moveToSpeech);
-
-        editor.putBoolean("moveSounds", sounds.getEnabled());
-
-
-//         if (_uriNotification == null)
-//            editor.putString("NotificationUri", null);
-//        else
-//            editor.putString("NotificationUri", _uriNotification.toString());
 
         editor.commit();
-
-        super.onPause();
     }
 
     @Override
@@ -491,8 +496,6 @@ public class PlayActivity extends ChessBoardActivity implements
         hideInfoBalloon();
 
         gameApi.move(move, duckMove);
-        lastMoveFrom = Move.getFrom(move);
-        lastMoveTo = Move.getTo(move);
         highlightedPositions.clear();
 
         updateGUI();
@@ -515,12 +518,14 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void OnEngineAborted() {
+        Log.d(TAG, "on engine aborted");
         toggleEngineProgress(false);
         // hideInfoBalloon();
     }
 
     @Override
     public void OnEngineError() {
+        Log.d(TAG, "on engine error");
         toggleEngineProgress(false);
         // hideInfoBalloon();
         // textViewEngineValue.setText("Engine error!");
@@ -555,9 +560,9 @@ public class PlayActivity extends ChessBoardActivity implements
         if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
             sState = ". " + getString(state);
         }
-        textViewLastMove.setText(getLastMoveAndTurnDescription() + sState);
-        textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
-        textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
+        String moveMessage = getLastMoveAndTurnDescription(false) + sState;
+
+        updateTextViewOrSpeech(textViewLastMove, moveMessage);
     }
 
     protected void updateSeekBar() {
@@ -678,7 +683,13 @@ public class PlayActivity extends ChessBoardActivity implements
                 String item = data.getString("item");
 
                 if (item.equals(getString(R.string.menu_game_settings))) {
-                    GameSettingsDialog settingsDialog = new GameSettingsDialog(this, this, REQUEST_GAME_SETTINGS, getPrefs());
+                    GameSettingsDialog settingsDialog = new GameSettingsDialog(
+                        this,
+                        this,
+                        REQUEST_GAME_SETTINGS,
+                        getPrefs(),
+                        jni.getVariant() == BoardConstants.VARIANT_DUCK
+                    );
                     settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
@@ -780,6 +791,13 @@ public class PlayActivity extends ChessBoardActivity implements
 //        }
     }
 
+    @Override
+    public void OnTimeWarning(int turn, long remainingMillies) {
+        if (turn == myTurn) {
+            feedBackDescribeTimeWarning(remainingMillies);
+        }
+    }
+
     protected void updateClockByPrefs(boolean newGame) {
         SharedPreferences prefs = getPrefs();
         long increment = prefs.getLong("clockIncrement", 0);
@@ -801,13 +819,51 @@ public class PlayActivity extends ChessBoardActivity implements
         Log.d(TAG, "updateForNewGame");
 
         updateClockByPrefs(true);
+        updateGameSettingsByPrefs();
 
-        if (sounds != null) {
-            sounds.playNewGame();
-        }
-
+        feedbackNewGame();
         resetSelectedSquares();
         updateLastMove();
+    }
+
+    private String getPreferredEngineBackend() {
+        return getPrefs().getString("engineBackend", "builtin");
+    }
+
+    private EngineApi resolveEngineByPrefsAndVariant() {
+        boolean isDuck = jni.getVariant() == BoardConstants.VARIANT_DUCK;
+        boolean wantsOex = "oex".equals(getPreferredEngineBackend());
+        if (wantsOex && !OexEngine.hasAvailableEngines(this)) {
+            wantsOex = false;
+        }
+        return wantsOex && !isDuck ? oexEngine : localEngine;
+    }
+
+    private void updateActiveEngine() {
+        if (localEngine == null) {
+            localEngine = new LocalEngine(gameApi);
+        }
+        if (oexEngine == null) {
+            oexEngine = new OexEngine(this, gameApi, getPrefs().getString("oexEngineId", null));
+        } else {
+            oexEngine.setPreferredEngineId(getPrefs().getString("oexEngineId", null));
+        }
+
+        EngineApi selectedEngine = resolveEngineByPrefsAndVariant();
+        if (selectedEngine == null) {
+            selectedEngine = localEngine;
+        }
+        if (selectedEngine == myEngine) {
+            return;
+        }
+
+        if (myEngine != null) {
+            myEngine.abort(() -> {
+            });
+            myEngine.removeListener(this);
+        }
+        myEngine = selectedEngine;
+        myEngine.addListener(this);
     }
 
     protected void updateBoardRotation() {
@@ -828,6 +884,8 @@ public class PlayActivity extends ChessBoardActivity implements
         vsCPU = prefs.getBoolean("opponent", true);
         myTurn = prefs.getBoolean("myTurn", true) ? 1 : 0;
 
+        updateActiveEngine();
+
         int mode = prefs.getInt("levelMode", EngineApi.LEVEL_TIME);
 
         int levelTime = prefs.getInt("level", 2);
@@ -841,11 +899,6 @@ public class PlayActivity extends ChessBoardActivity implements
         }
 
         myEngine.setQuiescentSearchOn(prefs.getBoolean("quiescentSearchOn", true));
-
-        flipBoard = prefs.getBoolean("flipBoard", false);
-
-        switchFlip.setChecked(flipBoard);
-        switchMoveToSpeech.setChecked(moveToSpeech);
 
         updateBoardRotation();
         updateLastMove();
@@ -902,14 +955,14 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected void playIfEngineMove() {
         Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
-        if (myTurn != jni.getTurn() && vsCPU) {
+        if (myEngine != null && myTurn != jni.getTurn() && vsCPU) {
             playIfEngineCanMove();
         }
     }
 
     protected void playIfEngineCanMove() {
         Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
-        if (myEngine.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+        if (myEngine != null && myEngine.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 

@@ -4,23 +4,23 @@
                  <![CDATA[
         <h3>Erweitert</h3>
         <p>Erstellen oder importieren Sie hier Ihre eigenen Inhalte.</p>
-        
+
         <h4>Spieldatenbank auf SD-Karte exportieren</h4>
         <p>Alle Partien in der Spieldatenbank können in eine einzige PGN-Datei auf die SD-Karte exportiert werden. Diese Datei heißt chess.pgn; eine vorhandene Datei wird überschrieben.</p>
-        
+
         <h4>Partien in die Spieldatenbank importieren</h4>
         <p>Verwenden Sie diese Option, um Partien zur Spieldatenbank hinzuzufügen. Sie können zu einer PGN-Datei navigieren, sie auswählen und importieren.</p>
-        
+
         <h4>Alle Partien in der Spieldatenbank löschen</h4>
         <p>Verwenden Sie diese Option, wenn Sie die Spieldatenbank bereinigen möchten. Erstellen Sie vorher unbedingt ein Backup auf die SD-Karte; dieser Vorgang kann nicht rückgängig gemacht werden.</p>
-        
+
         <h4>Übungssatz erstellen</h4>
         <p>Erstellt Übungsstellungen aus Partien, die mit Schachmatt enden. Navigieren Sie zur zu verarbeitenden Datei. Fehlgeschlagene Einträge sind normalerweise Partien, die nicht mit Schachmatt endeten oder Duplikate sind.</p>
-        
+
         <h4>Übungssatz zurücksetzen</h4>
         <p>Möchten Sie das Üben von vorne beginnen? Dadurch wird auch Ihr durchschnittlicher Zeitmesser zurückgesetzt.</p>
-        
-        
+
+
                 ]]>
             </string>
     <string name="alert_no">Nein</string>
@@ -196,6 +196,8 @@
     <string name="lichess_play_button_draw">Remis</string>
     <string name="lichess_play_button_resign">Aufgeben</string>
     <string name="lichess_seek_posted">Suche erstellt</string>
+    <string name="lichess_save_game_to_file">In Datei speichern</string>
+    <string name="lichess_save_game_to_database">In Datenbank speichern</string>
     <string name="lichess_starting">Startet...</string>
     <string name="match_option_color_black">Schwarz</string>
     <string name="match_option_color_random">Zufällig</string>
@@ -291,6 +293,7 @@
     <string name="playpreferences">Spiel-Einstellungen</string>
     <string name="practice_help">Finde das Matt (kann mehrere Züge dauern).</string>
     <string name="practice_set_reset">Übungsset wurde zurückgesetzt</string>
+    <string name="pref_field_color_descriptions">Hell/Dunkel zur Feldbeschreibung hinzufügen</string>
     <string name="pref_fullscreen">Vollbildmodus aktivieren</string>
     <string name="pref_fullscreen_desc">Empfohlen für kleine Bildschirme und Querformat; Elemente könnten sonst abgeschnitten werden</string>
     <string name="pref_icsautosought">Automatisch suchen</string>
@@ -304,16 +307,36 @@
     <string name="pref_icstimewarning_desc">Ein Tickgeräusch warnt dich, wenn deine Zeit unter die eingestellte Warnzeit fällt</string>
     <string name="pref_icstimewarningsecs">Warnzeit (Sekunden)</string>
     <string name="pref_icstimewarningsecs_desc">Nach wie vielen Sekunden soll die Warnung starten?</string>
+    <string name="pref_last_move_over_empty_square">Letzten Zug nach Verzögerung ansagen, wenn über ein leeres Feld gezogen wird</string>
     <string name="pref_night_mode">Nachtmodus</string>
     <string name="pref_night_mode_desc">Erzwingt den Nachtmodus in der App</string>
     <string name="pref_showCoords">Koordinaten</string>
     <string name="pref_show_blindfold">Blindschach</string>
     <string name="pref_show_possible_moves">Züge anzeigen</string>
+    <string name="pref_show_pieces_descriptions">Beschreibung der Positionen der Figuren anzeigen</string>
+    <string name="pref_show_accessibility_drag_toggle">Bedienungshilfe-Ziehschalter anzeigen</string>
     <string name="pref_sound">Ton</string>
-    <string name="pref_sound_desc">Wird abgespielt, wenn dein Gegner zieht</string>
+    <string name="pref_haptic_feedback">Haptisches Feedback verwenden</string>
     <string name="pref_speech">Sprachausgabe</string>
+    <string name="pref_user_long_move_descriptions">Vollständige Zugbeschreibung verwenden</string>
+    <string name="tts_locale_not_supported">Die Sprachausgabe unterstützt Ihr Gebietsschema nicht</string>
+    <string name="tts_not_loaded">Sprachausgabe konnte nicht geladen werden</string>
+    <string name="tts_example_move">Läufer schlägt G7, Schach</string>
+    <string name="tts_selected">Ausgewählt</string>
+    <string name="tts_move_takes">schlägt</string>
+    <string name="tts_move_en_passant">en passant</string>
+    <string name="tts_move_promotes_to">wandelt zu %1$s um</string>
+    <string name="tts_move_checkmate">schachmatt</string>
+    <string name="tts_move_castle_long">lange Rochade</string>
+    <string name="tts_move_castle_short">kurze Rochade</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">Barrierefreies Ziehen</string>
+    <string name="pref_accessibility_drag_delay_desc">Verzögerung für barrierefreies Ziehen</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Verzögerung für das Wiederholen des letzten Zuges auf einem leeren Feld</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Für barrierefreies Ziehen bitte TalkBack ausschalten.</string>
     <string name="pref_speech_pitch_desc">Sprachhöhe</string>
     <string name="pref_speech_rate_desc">Sprechgeschwindigkeit</string>
+    <string name="pref_speech_voice_system_default">Systemstandard</string>
     <string name="pref_turn">Seite</string>
     <string name="pref_turn_desc">Welche Seite du spielst</string>
     <string name="pref_vs_cpu">gegen CPU</string>
@@ -338,13 +361,18 @@
     <string name="gameslist_filter_switch_date_before_description">Filter „Datum vor“ aktivieren oder deaktivieren</string>
     <string name="gameslist_filter_switch_event_description">Ereignis-Filter aktivieren oder deaktivieren</string>
     <string name="gameslist_filter_switch_result_description">Ergebnis-Filter aktivieren oder deaktivieren</string>
+    <string name="gameslist_result_count">Ergebnisse: %1$d</string>
+    <string name="gameslist_game_of_total">Partie %1$d von %2$d</string>
     <string name="gameslist_filter_switch_white_description">Weiß-Filter aktivieren oder deaktivieren</string>
     <string name="savegame_white">Weiß</string>
     <string name="savegame_white_question">Weiß?</string>
+    <string name="square_color_description_light">Helles Feld</string>
+    <string name="square_color_description_dark">Dunkles Feld</string>
     <string name="square_selected_with_duck_description">Ausgewählt: %1$s auf %2$s</string>
-    <string name="square_selected_with_piece_description">Ausgewählt: %1$s %2$s auf %3$s</string>
+    <string name="square_selected_with_piece_description">Ausgewählt: %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s auf %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s auf %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="start_accessibility_preferences">Bedienungshilfe-Einstellungen</string>
     <string name="start_boardpreferences">Schachbrett-Einstellungen</string>
     <string name="start_database">Spieldatenbank</string>
     <string name="start_hotspotboard">Hotspot-Brett</string>
@@ -375,6 +403,10 @@
     <string name="time_warning_45">45 Sekunden</string>
     <string name="time_warning_5">5 Sekunden</string>
     <string name="time_warning_60">1 Minute</string>
+    <string name="time_warning_minutes">%1$d Minuten verbleibend</string>
+    <string name="time_warning_minutes_single">%1$d Minute verbleibend</string>
+    <string name="time_warning_seconds">%1$d Sekunden verbleibend</string>
+    <string name="time_warning_seconds_single">%1$d Sekunde verbleibend</string>
     <string name="title_castle">Rochieren?</string>
     <string name="title_challenge">Herausforderung</string>
     <string name="title_create_new_line">Neue Variante erstellen?</string>
@@ -394,4 +426,5 @@
     <string name="title_pick_promo">Umwandlungsfigur wählen</string>
     <string name="title_save_game">Partie speichern</string>
     <string name="toast_challenge_posted">Herausforderung gepostet</string>
+    <string name="lichess_service_unavailable">Lichess-Dienst konnte nicht gestartet werden. Bitte versuche es erneut.</string>
 </resources>

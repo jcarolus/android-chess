@@ -6,6 +6,8 @@ package jwtc.chess;
 // This part of the code is given under Pos to "free up" some lines in ChessBoard.
 // In ChessBoard all other positional related stuff is done
 
+import jwtc.chess.board.BoardConstants;
+
 public class Pos {
     // returns positional value [0-63] for squares [a8-h1]
     // when a position cannot be created a message is sent on console out (co).
@@ -68,5 +70,9 @@ public class Pos {
     // returns string representation of the column. ["a"-"h"]
     public static String colToString(final int val) {
         return "" + ((char) (Pos.col(val) + (int) 'a'));
+    }
+
+    public static int getFieldColor(final int pos) {
+        return (pos & 1) == 0 ? (((pos >> 3) & 1) == 0 ? BoardConstants.WHITE : BoardConstants.BLACK) : (((pos >> 3) & 1) == 0 ? BoardConstants.BLACK : BoardConstants.WHITE);
     }
 }

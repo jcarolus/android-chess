@@ -1,0 +1,7 @@
+# CMake/CTest artifacts (native test build)
+/build-tests/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/CTestTestfile.cmake
+/Testing/

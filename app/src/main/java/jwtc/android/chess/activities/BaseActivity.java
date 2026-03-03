@@ -8,10 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
@@ -40,14 +37,11 @@ public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     private AccessibilityManager am;
 
-    protected Vibrator vibrator;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
@@ -153,39 +147,6 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(shareIntent);
     }
 
-
-    public void vibrateSequence(int seq) {
-        try {
-            int v1, v2;
-            if (seq == 1) {
-                v1 = 200;    // increase
-                v2 = 500;
-            } else {
-                v1 = 500;    // decrease
-                v2 = 200;
-            }
-            long[] pattern = {500, v1, 100, v2};
-            vibrator.vibrate(pattern, -1);
-        } catch (Exception e) {
-            Log.e(TAG, "vibrator process error", e);
-        }
-
-    }
-
-    public void vibrate(long ms) {
-        try {
-            if (vibrator != null && vibrator.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
-                } else {
-                    vibrator.vibrate(ms);
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "vibrator process error", e);
-        }
-
-    }
 
     public void showHelp(int resource) {
         Intent i = new Intent();

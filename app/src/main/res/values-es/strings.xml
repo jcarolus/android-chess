@@ -4,23 +4,23 @@
                  <![CDATA[
         <h3>Avanzado</h3>
         <p>Crea o importa tu propio contenido aquí.</p>
-        
+
         <h4>Exportar la base de datos de partidas a la tarjeta SD</h4>
         <p>Todas las partidas de la base de datos pueden exportarse a un único archivo PGN en la tarjeta SD. Este archivo se llamará chess.pgn y, si existe, se sobrescribirá.</p>
-        
+
         <h4>Importar partidas a la base de datos</h4>
         <p>Usa esta opción para añadir partidas a la base de datos. Te permite buscar un archivo PGN. Selecciónalo y elige importar.</p>
-        
+
         <h4>Eliminar todas las partidas de la base de datos</h4>
         <p>Usa esta opción si quieres limpiar la base de datos. Asegúrate primero de hacer una copia de seguridad en la tarjeta SD; esta acción no se puede deshacer.</p>
-        
+
         <h4>Crear conjunto de práctica</h4>
         <p>Crea posiciones de práctica a partir de partidas que terminan en jaque mate. Navega hasta el archivo que deseas procesar. Las entradas fallidas suelen ser partidas que no terminaron en jaque mate o que están duplicadas.</p>
-        
+
         <h4>Restablecer conjunto de práctica</h4>
         <p>¿Quieres volver a empezar a practicar? Esto también restablecerá tu contador de tiempo promedio.</p>
-        
-        
+
+
                 ]]>
             </string>
     <string name="alert_no">No</string>
@@ -196,6 +196,8 @@
     <string name="lichess_play_button_draw">Tablas</string>
     <string name="lichess_play_button_resign">Rendirse</string>
     <string name="lichess_seek_posted">Búsqueda publicada</string>
+    <string name="lichess_save_game_to_file">Guardar en archivo</string>
+    <string name="lichess_save_game_to_database">Guardar en base de datos</string>
     <string name="lichess_starting">Iniciando...</string>
     <string name="match_option_color_black">Negras</string>
     <string name="match_option_color_random">Aleatorio</string>
@@ -291,6 +293,7 @@
     <string name="playpreferences">Configuración de juego</string>
     <string name="practice_help">Encuentra el jaque mate (puede ser en más de un movimiento).</string>
     <string name="practice_set_reset">El conjunto de práctica se ha reiniciado</string>
+    <string name="pref_field_color_descriptions">Agregar claro/oscuro a la descripción de la casilla</string>
     <string name="pref_fullscreen">Pantalla completa</string>
     <string name="pref_fullscreen_desc">Recomendado para pantallas pequeñas y modo horizontal; de lo contrario, algunos elementos pueden quedar fuera</string>
     <string name="pref_icsautosought">Búsqueda automática</string>
@@ -304,16 +307,36 @@
     <string name="pref_icstimewarning_desc">Un sonido de tic-tac te avisa si el tiempo baja al límite de aviso</string>
     <string name="pref_icstimewarningsecs">Tiempo de aviso (segundos)</string>
     <string name="pref_icstimewarningsecs_desc">¿Cuántos segundos antes empieza la advertencia?</string>
+    <string name="pref_last_move_over_empty_square">Anunciar el último movimiento al arrastrar sobre una casilla vacía tras un retraso</string>
     <string name="pref_night_mode">Modo nocturno</string>
     <string name="pref_night_mode_desc">Forzar la app en modo nocturno</string>
     <string name="pref_showCoords">Coordenadas</string>
     <string name="pref_show_blindfold">A ciegas</string>
     <string name="pref_show_possible_moves">Mostrar movimientos</string>
+    <string name="pref_show_pieces_descriptions">Mostrar descripción de la ubicación de las piezas</string>
+    <string name="pref_show_accessibility_drag_toggle">Mostrar interruptor de arrastre de accesibilidad</string>
     <string name="pref_sound">Sonido</string>
-    <string name="pref_sound_desc">Se reproduce cuando el oponente mueve</string>
+    <string name="pref_haptic_feedback">Usar respuesta háptica</string>
     <string name="pref_speech">Voz</string>
+    <string name="pref_user_long_move_descriptions">Usar descripción completa del movimiento</string>
+    <string name="tts_locale_not_supported">La conversión de texto a voz no admite tu configuración regional</string>
+    <string name="tts_not_loaded">No se pudo cargar el texto a voz</string>
+    <string name="tts_example_move">Alfil captura en G7, jaque</string>
+    <string name="tts_selected">Seleccionado</string>
+    <string name="tts_move_takes">captura</string>
+    <string name="tts_move_en_passant">al paso</string>
+    <string name="tts_move_promotes_to">promociona a %1$s</string>
+    <string name="tts_move_checkmate">jaque mate</string>
+    <string name="tts_move_castle_long">enroque largo</string>
+    <string name="tts_move_castle_short">enroque corto</string>
+    <string name="tts_move_square">%1$s%2$s</string>
+    <string name="pref_accessibility_drag">Arrastre de accesibilidad</string>
+    <string name="pref_accessibility_drag_delay_desc">Retraso del arrastre de accesibilidad</string>
+    <string name="pref_accessibility_drag_last_move_delay_desc">Retraso para repetir el último movimiento en una casilla vacía</string>
+    <string name="pref_accessibility_drag_talkback_reminder">Para el arrastre de accesibilidad, desactiva TalkBack.</string>
     <string name="pref_speech_pitch_desc">Tono de voz</string>
     <string name="pref_speech_rate_desc">Velocidad de voz</string>
+    <string name="pref_speech_voice_system_default">Predeterminado del sistema</string>
     <string name="pref_turn">Lado</string>
     <string name="pref_turn_desc">Qué lado del tablero juegas</string>
     <string name="pref_vs_cpu">Contra CPU</string>
@@ -338,13 +361,18 @@
     <string name="gameslist_filter_switch_date_before_description">Activar o desactivar filtro de fecha hasta</string>
     <string name="gameslist_filter_switch_event_description">Activar o desactivar filtro de evento</string>
     <string name="gameslist_filter_switch_result_description">Activar o desactivar filtro de resultado</string>
+    <string name="gameslist_result_count">Resultados: %1$d</string>
+    <string name="gameslist_game_of_total">Partida %1$d de %2$d</string>
     <string name="gameslist_filter_switch_white_description">Activar o desactivar filtro de blancas</string>
     <string name="savegame_white">Blancas</string>
     <string name="savegame_white_question">¿Blancas?</string>
+    <string name="square_color_description_light">Casilla clara</string>
+    <string name="square_color_description_dark">Casilla oscura</string>
     <string name="square_selected_with_duck_description">Seleccionado %1$s en %2$s</string>
-    <string name="square_selected_with_piece_description">Seleccionado %1$s %2$s en %3$s</string>
+    <string name="square_selected_with_piece_description">Seleccionado %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s en %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s en %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="start_accessibility_preferences">Preferencias de accesibilidad</string>
     <string name="start_boardpreferences">Configuración del tablero</string>
     <string name="start_database">Base de datos de partidas</string>
     <string name="start_hotspotboard">Tablero hotspot</string>
@@ -375,6 +403,10 @@
     <string name="time_warning_45">45 segundos</string>
     <string name="time_warning_5">5 segundos</string>
     <string name="time_warning_60">1 minuto</string>
+    <string name="time_warning_minutes">Quedan %1$d minutos</string>
+    <string name="time_warning_minutes_single">Queda %1$d minuto</string>
+    <string name="time_warning_seconds">Quedan %1$d segundos</string>
+    <string name="time_warning_seconds_single">Queda %1$d segundo</string>
     <string name="title_castle">¿Enrocar?</string>
     <string name="title_challenge">Desafío</string>
     <string name="title_create_new_line">¿Crear nueva variante?</string>
@@ -394,4 +426,5 @@
     <string name="title_pick_promo">Elige pieza de promoción</string>
     <string name="title_save_game">Guardar partida</string>
     <string name="toast_challenge_posted">Desafío publicado</string>
+    <string name="lichess_service_unavailable">No se pudo iniciar el servicio de Lichess. Inténtalo de nuevo.</string>
 </resources>

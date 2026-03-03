@@ -85,7 +85,7 @@ public abstract class EngineApi {
 
     abstract public boolean isReady();
 
-    abstract public void abort();
+    abstract public void abort(Runnable onDone);
 
     abstract public void destroy();
 

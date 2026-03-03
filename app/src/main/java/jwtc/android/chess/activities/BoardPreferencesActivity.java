@@ -16,8 +16,8 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxNightMode;
-    private Slider sliderSaturation, sliderSpeechRate, sliderSpeechPitch;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode;
+    private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
 
     @Override
@@ -36,10 +36,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxWakeLock = findViewById(R.id.CheckBoxUseWakeLock);
         checkBoxFullscreen = findViewById(R.id.CheckBoxFullscreen);
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
+        checkBoxHapticFeedback = findViewById(R.id.CheckBoxUseHapticFeedback);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
         sliderSaturation = findViewById(R.id.SliderSaturation);
-        sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
-        sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
 
         dropDownPieces.setItems(getResources().getStringArray(R.array.piecesetarray));
         dropDownPieces.setOnItemClickListener((parent, view, position, id) -> {
@@ -69,16 +68,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
             chessBoardView.invalidateSquares();
         });
 
-        sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
-            textToSpeech.setSpeechRate(value);
-            textToSpeech.moveToSpeech("Bishop takes G7 check");
-        });
-
-        sliderSpeechPitch.addOnChangeListener((s, value, fromUser) -> {
-            textToSpeech.setSpeechPitch(value);
-            textToSpeech.moveToSpeech("Bishop takes G7 check");
-        });
-
         gameApi = new GameApi();
 
         afterCreate();
@@ -97,6 +86,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxWakeLock.setChecked(prefs.getBoolean("wakeLock", false));
         checkBoxFullscreen.setChecked(prefs.getBoolean("fullScreen", false));
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
+        checkBoxHapticFeedback.setChecked(prefs.getBoolean("useHapticFeedback", false));
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
 
         dropDownPieces.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
@@ -104,8 +94,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         dropDownTileSet.setSelection(Integer.parseInt(prefs.getString("squarePattern", "0")));
 
         sliderSaturation.setValue(prefs.getFloat("squareSaturation", 1.0f));
-        sliderSpeechRate.setValue(prefs.getFloat("speechRate", 1.0f));
-        sliderSpeechPitch.setValue(prefs.getFloat("speechPitch", 1.0f));
 
         rebuildBoard();
     }
@@ -126,10 +114,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("wakeLock", checkBoxWakeLock.isChecked());
         editor.putBoolean("fullScreen", checkBoxFullscreen.isChecked());
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
+        editor.putBoolean("useHapticFeedback", checkBoxHapticFeedback.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
         editor.putFloat("squareSaturation", sliderSaturation.getValue());
-        editor.putFloat("speechRate", sliderSpeechRate.getValue());
-        editor.putFloat("speechPitch", sliderSpeechPitch.getValue());
 
         editor.commit();
     }

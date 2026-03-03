@@ -272,9 +272,9 @@ class ChessBoard {
 
 #pragma endregion
 
-    inline int trailingZeros(const BITBOARD bb);
+    int trailingZeros(const BITBOARD bb);
     // number of bits in bitb @bb
-    inline int bitCount(const BITBOARD bb);
+    int bitCount(const BITBOARD bb);
 
     void printB(char* buf);
     void printMoves(char* buf);
@@ -347,7 +347,7 @@ class ChessBoard {
     int getAvailableCol(int colNum);
     void toFEN(char* s);
     void toFENBoard(char* s);
-    boolean parseFEN(char* sFEN);
+    boolean parseFEN(const char* sFEN);
     void setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, boolean bccs, int ep, int r50);
     boolean getWhiteCanCastleLong();
     boolean getWhiteCanCastleShort();

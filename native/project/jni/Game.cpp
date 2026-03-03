@@ -1,35 +1,18 @@
 #include "Game.h"
 
+#include <memory>
+
 Game *Game::game = nullptr;
 
-Game::Game(void) {
-    m_board = new ChessBoard();
+Game::Game(void) : m_searchWorkspace(MAX_DEPTH) {
     m_promotionPiece = ChessBoard::QUEEN;
-    for (int i = 0; i < MAX_DEPTH; i++) {
-        m_boardFactory[i] = new ChessBoard();
-    }
-    m_boardRefurbish = new ChessBoard();
     m_bSearching = false;
+    m_quiescentSearchOn = true;
+    m_evalCount = 0;
     reset();
 }
 
 Game::~Game(void) {
-    // clean up history
-    ChessBoard *cb, *tmp;
-    while ((cb = m_board->undoMove()) != nullptr) {
-        tmp = m_board;
-        m_board = cb;
-        delete tmp;
-    }
-
-    delete m_board;
-
-    delete m_boardRefurbish;
-
-    // somehow boardFactory seems to cause segmentation
-//        for (int i = 0; i < MAX_DEPTH; i++) {
-//            delete m_boardFactory[i];
-//        }
 }
 
 // the non thread safe solution; assumption is that getInsance is called before any threads are created
@@ -43,36 +26,37 @@ Game *Game::getInstance() {
 
 void Game::deleteInstance() {
     if (Game::game != nullptr) {
+        if (Game::game->m_bSearching.load()) {
+            return;
+        }
         delete Game::game;
         Game::game = nullptr;
     }
 }
 
-void *Game::search_wrapper(void *arg) {
-    Game::getInstance()->search();
-    return 0;
-}
-
 void Game::reset() {
-    // clean up history
-    ChessBoard *cb, *tmp;
-    while ((cb = m_board->undoMove()) != nullptr) {
-        tmp = m_board;
-        m_board = cb;
-        delete tmp;
+    if (m_bSearching.load()) {
+        return;
     }
 
-    m_board->reset();
-    m_board->calcState(m_boardRefurbish);
+    m_boardStack.clearHistory();
+
+    ChessBoard *board = getBoard();
+    board->reset();
+    board->calcState(m_searchWorkspace.refurbish());
+    m_searchWorkspace.reset();
 
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
-    int i;
-    for (i = 0; i < MAX_DEPTH; i++) {
+    for (int i = 0; i < MAX_DEPTH; i++) {
         m_arrBestMoves[i] = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     }
 }
 
-boolean Game::newGameFromFEN(char *sFEN) {
+boolean Game::newGameFromFEN(const char *sFEN) {
+    if (m_bSearching.load()) {
+        return false;
+    }
+
     reset();
     ChessBoard *board = getBoard();
     int ret = board->parseFEN(sFEN);
@@ -85,12 +69,16 @@ boolean Game::newGameFromFEN(char *sFEN) {
 }
 
 void Game::commitBoard() {
-    m_board->commitBoard();
-    m_board->calcState(m_boardRefurbish);
+    if (m_bSearching.load()) {
+        return;
+    }
+    ChessBoard *board = getBoard();
+    board->commitBoard();
+    board->calcState(m_searchWorkspace.refurbish());
 }
 
 ChessBoard *Game::getBoard() {
-    return m_board;
+    return m_boardStack.current();
 }
 
 void Game::setPromo(int p) {
@@ -100,9 +88,11 @@ void Game::setPromo(int p) {
 int Game::getBestMove() {
     return m_bestMoveAndValue.move;
 }
+
 int Game::getBestDuckMove() {
     return m_bestMoveAndValue.duckMove;
 }
+
 int Game::getBestValue() {
     return m_bestMoveAndValue.value;
 }
@@ -121,22 +111,37 @@ int Game::getBestDuckMoveAt(int ply) {
     return -1;
 }
 
+int Game::getSearchDepth() const {
+    return m_searchSession.searchDepth();
+}
+
+int Game::getEvalCount() const {
+    return m_evalCount;
+}
+
+void Game::interruptSearch() {
+    m_searchSession.interrupt();
+}
+
 boolean Game::requestMove(int from, int to) {
-    ChessBoard *nb = new ChessBoard();
-    m_board->calcState(m_boardRefurbish);
-    if (m_board->requestMove(from, to, nb, m_boardRefurbish, m_promotionPiece)) {
-        m_board = nb;
-        return true;
-    } else {
-        delete nb;
-        // DEBUG_PRINT("%d-%d not moved...(request)\n", from, to);
+    if (m_bSearching.load()) {
         return false;
     }
+
+    std::unique_ptr<ChessBoard> nb(new ChessBoard());
+    ChessBoard *board = getBoard();
+    board->calcState(m_searchWorkspace.refurbish());
+    boolean moved = board->requestMove(from, to, nb.get(), m_searchWorkspace.refurbish(), m_promotionPiece);
+    return m_boardStack.promoteOrDiscard(std::move(nb), moved);
 }
 
 boolean Game::requestDuckMove(int duckPos) {
+    if (m_bSearching.load()) {
+        return false;
+    }
+
     ChessBoard *board = getBoard();
-    board->calcState(m_boardRefurbish);
+    board->calcState(m_searchWorkspace.refurbish());
     if (board->requestDuckMove(duckPos)) {
         board->genMoves();
         return true;
@@ -145,475 +150,34 @@ boolean Game::requestDuckMove(int duckPos) {
 }
 
 boolean Game::move(int move) {
-    ChessBoard *nb = new ChessBoard();
-
-    m_board->calcState(m_boardRefurbish);
-    if (m_board->requestMove(move, nb, m_boardRefurbish)) {
-        m_board = nb;
-        return true;
-    } else {
-        delete nb;
+    if (m_bSearching.load()) {
         return false;
     }
+
+    std::unique_ptr<ChessBoard> nb(new ChessBoard());
+    ChessBoard *board = getBoard();
+    board->calcState(m_searchWorkspace.refurbish());
+    boolean moved = board->requestMove(move, nb.get(), m_searchWorkspace.refurbish());
+    return m_boardStack.promoteOrDiscard(std::move(nb), moved);
 }
 
 void Game::undo() {
-    ChessBoard *tmp = m_board;
-    ChessBoard *cb = m_board->undoMove();
-    if (cb != nullptr) {
-        m_board = cb;
-        delete tmp;
-    }
-}
-
-#pragma region Search methods
-
-void Game::setQuiescentOn(boolean on) {
-    m_quiescentSearchOn = on;
-}
-
-// returns the move found
-void Game::setSearchTime(int secs) {
-    m_milliesGiven = (long) secs;
-    m_searchLimit = 0;
-}
-
-void Game::setSearchLimit(int depth) {
-    m_milliesGiven = 0;
-    if (depth <= MAX_DEPTH - QUIESCE_DEPTH) {
-        m_searchLimit = depth;
-    } else {
-        m_searchLimit = MAX_DEPTH - QUIESCE_DEPTH;
-    }
-}
-
-void Game::search() {
-    if (m_bSearching) {
-        DEBUG_PRINT("Already searching!", 0);
-        return;
-    }
-    m_bSearching = true;
-    m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
-    m_bInterrupted = false;
-    m_evalCount = 0;
-
-    m_board->calcState(m_boardRefurbish);
-
-    // no need to search if the game has allready ended
-    if (m_board->isEnded()) {
-        m_bSearching = false;
+    if (m_bSearching.load()) {
         return;
     }
 
-    if (m_board->getNumMoves() == 0) {
-        DEBUG_PRINT("NO moves!", 0);
-        m_bSearching = false;
-        return;
-    }
-
-    int variant = m_board->getVariant();
-
-    m_evalCount++;  // at least one so Nps is valid for non DB move
-
-    startTime();
-
-    char moveBuf[20], duckMoveBuf[4];
-    // reset best moves for this search
-    int i;
-    for (i = 0; i < MAX_DEPTH; i++) {
-        m_arrBestMoves[i] = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
-    }
-
-    ChessBoard* searchBoard = m_boardFactory[0];
-    m_board->duplicate(searchBoard);
-    if (m_milliesGiven > 0) {
-        DEBUG_PRINT("Search with millies given %ld", m_milliesGiven);
-
-        for (m_searchDepth = 1; m_searchDepth < (MAX_DEPTH - QUIESCE_DEPTH); m_searchDepth++) {
-            if (variant == ChessBoard::VARIANT_DEFAULT) {
-                alphaBeta(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
-            } else {
-                alphaBetaDuck(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
-            }
-
-            DEBUG_PRINT("Searched at depth %d - value: %d - move: %d - num moves: %d\n",
-                        m_searchDepth,
-                        m_arrBestMoves[0].value,
-                        getBestMoveAt(m_searchDepth),
-                        m_board->getNumMoves());
-
-            if (m_bInterrupted) {
-                break;
-            } else {
-                m_bestMoveAndValue = m_arrBestMoves[0];
-
-                if (m_bestMoveAndValue.value == ChessBoard::VALUATION_MATE) {
-                    for (i = 0; i < MAX_DEPTH; i++) {
-                        int moveAt = getBestMoveAt(i);
-                        if (moveAt != 0) {
-                            Move::toDbgString(moveAt, moveBuf);
-                            DEBUG_PRINT("%s,", moveBuf);
-                        }
-                    }
-                    DEBUG_PRINT("Found checkmate, stopping search\n", 0);
-                    break;
-                }
-
-                // bail out if we're over 50% of time, next depth will take more than sum of previous
-                if (usedTime()) {
-                    DEBUG_PRINT("Time over 50 pct - no further deepening\n", 0);
-                    break;
-                }
-            }
-        }
-    } else {
-        DEBUG_PRINT("Search with limit given: %d\n", m_searchLimit);
-        m_searchDepth = m_searchLimit;
-        if (variant == ChessBoard::VARIANT_DEFAULT) {
-            alphaBeta(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
-        } else {
-            alphaBetaDuck(searchBoard, m_searchDepth, -ChessBoard::VALUATION_MATE, ChessBoard::VALUATION_MATE);
-        }
-
-        m_bestMoveAndValue = m_arrBestMoves[0];
-    }
-
-    if (m_bInterrupted) {
-        DEBUG_PRINT("Interrupted search\n", 0);
-    }
-
-    Move::toDbgString(m_bestMoveAndValue.move, moveBuf);
-    Pos::toString(m_bestMoveAndValue.duckMove, duckMoveBuf);
-    DEBUG_PRINT("\n=====\nSearch\nvalue\t%d\nevalCnt\t%d\nMove\t%s\nDuck\t%s\ndepth\t%d\nTime\t%ld ms\nNps\t%.2f\n",
-                m_bestMoveAndValue.value,
-                m_evalCount,
-                moveBuf,
-                duckMoveBuf,
-                m_searchDepth,
-                timePassed(),
-                (double) m_evalCount / timePassed());
-
-    m_bSearching = false;
+    m_boardStack.undo();
 }
-
-int Game::alphaBeta(ChessBoard *board, const int depth, int alpha, const int beta) {
-    if (m_evalCount % 1000 == 0) {
-        if (timeUp()) {
-            m_bInterrupted = true;
-        }
-    }
-    if (m_bInterrupted || depth >= MAX_DEPTH) {
-        return alpha;
-    }
-
-    // 50 move rule and repetition check
-    if (board->checkEnded()) {
-        return ChessBoard::VALUATION_DRAW;
-    }
-
-    board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth].move);
-
-    MoveAndValue best = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
-    MoveAndValue current, next;
-    ChessBoard *nextBoard = m_boardFactory[depth];
-
-    while (board->hasMoreMoves()) {
-        current = (MoveAndValue){.value = 0, .move = board->getNextScoredMove(), .duckMove = -1};
-        board->makeMove(current.move, nextBoard);
-
-        if (nextBoard->checkInSelfCheck()) {
-            // not valid, remove this move and continue
-            board->removeMoveElementAt();
-            continue;
-        }
-
-        // generate the moves for this next board in order to validate the board
-        nextBoard->genMoves();
-
-        if (nextBoard->checkInCheck()) {
-            nextBoard->setMyMoveCheck();
-            current.move = Move_setCheck(current.move);
-        }
-
-        // at depth one is at the leaves, so call quiescent search
-        if (depth == 1) {
-            current.value = -quiesce(nextBoard, QUIESCE_DEPTH, -beta, -alpha);
-        } else {
-            current.value = -alphaBeta(nextBoard, depth - 1, -beta, -alpha);
-        }
-
-        if (current.value > best.value && !m_bInterrupted) {
-            best = current;
-            m_arrBestMoves[m_searchDepth - depth] = current;
-        }
-
-        if (best.value > alpha) {
-            alpha = best.value;
-        }
-
-        if (best.value >= beta || m_bInterrupted) {
-            break;
-        }
-    }
-
-    // no valid moves, so mate or stalemate
-    if (board->getNumMoves() == 0) {
-        m_evalCount++;
-        if (Move_isCheck(board->getMyMove())) {
-            return -ChessBoard::VALUATION_MATE;
-        }
-        return ChessBoard::VALUATION_DRAW;
-    }
-
-    return best.value;
-}
-
-//
-int Game::quiesce(ChessBoard *board, const int depth, int alpha, const int beta) {
-    // before any evaluation, first check if time is up
-    if (m_evalCount % 1000 == 0) {
-        if (timeUp()) {
-            m_bInterrupted = true;
-        }
-    }
-
-    if (m_bInterrupted || depth >= MAX_DEPTH) {
-        return alpha;  //
-    }
-
-    // administer evaluation count and get the board value
-    m_evalCount++;
-    const int boardValue = board->boardValue();
-
-    // at this point there can be a beta cutt-off unless we're in check
-
-    if (!Move_isCheck(board->getMyMove())) {
-        if (boardValue >= beta) {
-            return beta;
-        }
-    }
-
-    if (depth == 0 || !m_quiescentSearchOn) {
-        // max quiesce depth is reached; return this value
-        return boardValue;
-    }
-
-    if (boardValue >= beta) {
-        return beta;
-    }
-
-    // update lower bound
-    if (boardValue > alpha) {
-        alpha = boardValue;
-    }
-    int value, move;
-
-    ChessBoard *nextBoard = m_boardFactory[MAX_DEPTH - depth];
-    board->scoreMoves();
-    while (board->hasMoreMoves()) {
-        move = board->getNextScoredMove();
-
-        board->makeMove(move, nextBoard);
-
-        // self check is illegal!
-        if (nextBoard->checkInSelfCheck()) {
-            // not valid, remove this move and continue
-            board->removeMoveElementAt();
-            continue;
-        }
-
-        if (nextBoard->checkInCheck()) {
-            nextBoard->setMyMoveCheck();
-            move = Move_setCheck(move);
-        }
-
-        // quiescent search
-        if (Move_isHIT(move) || Move_isCheck(move) || Move_isPromotionMove(move)) {
-            // a valid and active move, so continue quiescent search
-            nextBoard->genMoves();
-
-            value = -quiesce(nextBoard, depth - 1, -beta, -alpha);
-
-            if (value > alpha) {
-                alpha = value;
-
-                if (value >= beta) {
-                    return beta;
-                }
-            }
-        }
-    }
-
-    // no valid moves, so mate or stalemate
-    if (board->getNumMoves() == 0) {
-        if (Move_isCheck(board->getMyMove())) {
-            return (-ChessBoard::VALUATION_MATE);
-        }
-        return ChessBoard::VALUATION_DRAW;
-    }
-
-    return alpha;
-}
-
-int Game::alphaBetaDuck(ChessBoard *board, const int depth, int alpha, const int beta) {
-    if (m_evalCount % 1000 == 0) {
-        if (timeUp()) {
-            m_bInterrupted = true;
-        }
-    }
-    if (m_bInterrupted || depth >= MAX_DEPTH) {
-        return alpha;
-    }
-
-    // 50 move rule and repetition check, mate
-    if (board->checkEnded()) {
-        if (board->getState() == ChessBoard::MATE) {
-            m_evalCount++;
-            return board->boardValue();
-        }
-        return ChessBoard::VALUATION_DRAW;
-    }
-
-    if (depth == 0) {
-        m_evalCount++;
-        return board->boardValue();
-    }
-
-    board->scoreMovesPV(m_arrBestMoves[m_searchDepth - depth].move);
-
-    MoveAndValue best = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
-    MoveAndValue current, next;
-    ChessBoard *nextBoard = m_boardFactory[depth];
-
-    while (board->hasMoreMoves()) {
-        current = (MoveAndValue){.value = 0, .move = board->getNextScoredMove(), .duckMove = -1};
-
-        board->makeMove(current.move, nextBoard);
-
-        // generate the moves for this next board in order to validate the board
-        nextBoard->genMoves();
-
-        if (nextBoard->areKingsOnTheBoard()) {
-            MoveAndValue currentDuck;
-            MoveAndValue bestDuck = {.value = (-ChessBoard::VALUATION_MATE) - 1, .move = 0, .duckMove = -1};
-            int tmpDuckMove = -1, numMoves = nextBoard->getNumMoves(), i;
-            ChessBoard *duckBoard = new ChessBoard();
-            for (i = 0; i < numMoves; i++) {
-                tmpDuckMove = nextBoard->getMoveAt(i);
-                if (Move_isHIT(tmpDuckMove)) {
-                    continue;
-                }
-                currentDuck = (MoveAndValue){.value = 0,
-                                             .move = 0,
-                                             .duckMove = Move_getTo(tmpDuckMove)};  // actual duckMove is a position
-
-                nextBoard->duplicate(duckBoard);
-
-                if (!duckBoard->requestDuckMove(currentDuck.duckMove)) {
-                    DEBUG_PRINT("Could not make duckMove %d, %d\n", currentDuck.duckMove, Move_getFrom(tmpDuckMove));
-                    continue;
-                }
-
-                duckBoard->calcState(m_boardRefurbish);
-                duckBoard->getMoves();
-                currentDuck.value = -alphaBetaDuck(duckBoard, depth - 1, -beta, -alpha);
-
-                if (currentDuck.value > bestDuck.value) {
-                    bestDuck = currentDuck;
-                }
-
-                if (bestDuck.value > alpha) {
-                    alpha = bestDuck.value;
-                }
-
-                if (bestDuck.value >= beta || m_bInterrupted) {
-                    break;
-                }
-            }
-            delete duckBoard;
-            current.value = bestDuck.value;
-            current.duckMove = bestDuck.duckMove;
-
-        } else {
-            current.value = -nextBoard->boardValue();
-        }
-
-        if (current.value > best.value && !m_bInterrupted) {
-            best = current;
-            m_arrBestMoves[m_searchDepth - depth] = current;
-        }
-
-        if (best.value > alpha) {
-            alpha = best.value;
-        }
-
-        if (best.value >= beta || m_bInterrupted) {
-            break;
-        }
-    }
-
-    // no valid moves => MATE
-    if (board->getNumMoves() == 0) {
-        m_evalCount++;
-
-        return -ChessBoard::VALUATION_MATE;
-    }
-
-    return best.value;
-}
-
-
-// House variant search
-// allowAttack as for putPieceHouse
-/*
-int Game::searchHouse(boolean allowAttack)
-{
-        return 0;
-}
-*/
 
 // allowAttack, if a new piece on the board is allowed to attack immediatly,
 // for crazyhouse that's ok, for parachute not
 boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowAttack) {
-    ChessBoard *nextBoard = new ChessBoard();
-    if (m_board->putHouse(pos, piece, nextBoard, m_boardRefurbish, allowAttack)) {
-        m_board = nextBoard;
-        return true;
-    }
-    delete nextBoard;
-    return false;
-}
-
-#pragma endregion
-
-#pragma region Search timing functions
-
-void Game::startTime() {
-    timeval time;
-    gettimeofday(&time, nullptr);
-    m_millies = (time.tv_sec * 1000) + (time.tv_usec / 1000);
-}
-
-boolean Game::timeUp() {
-    if (m_milliesGiven == 0) {
+    if (m_bSearching.load()) {
         return false;
     }
-    timeval time;
-    gettimeofday(&time, nullptr);
-    return (m_milliesGiven < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies));
-}
 
-// return true if we consumed more than x'd of tme
-boolean Game::usedTime() {
-    timeval time;
-    gettimeofday(&time, nullptr);
-    return ((m_milliesGiven / 3) < ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies));
+    std::unique_ptr<ChessBoard> nextBoard(new ChessBoard());
+    ChessBoard *board = getBoard();
+    boolean moved = board->putHouse(pos, piece, nextBoard.get(), m_searchWorkspace.refurbish(), allowAttack);
+    return m_boardStack.promoteOrDiscard(std::move(nextBoard), moved);
 }
-
-long Game::timePassed() {
-    timeval time;
-    gettimeofday(&time, nullptr);
-    return ((time.tv_sec * 1000) + (time.tv_usec / 1000) - m_millies);
-}
-
-#pragma endregion

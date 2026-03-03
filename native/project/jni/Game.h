@@ -1,13 +1,18 @@
 #pragma once
 
-#include "common.h"
-#include "ChessBoard.h"
+#include <atomic>
 
-typedef struct {
+#include "common.h"
+#include "BoardStack.h"
+#include "ChessBoard.h"
+#include "SearchSession.h"
+#include "SearchWorkspace.h"
+
+struct MoveAndValue {
     int value;
     int move;
     int duckMove;
-} MoveAndValue;
+};
 
 class Game {
    public:
@@ -19,7 +24,7 @@ class Game {
     static void* search_wrapper(void* arg);
 
     void reset();
-    boolean newGameFromFEN(char* sFEN);
+    boolean newGameFromFEN(const char* sFEN);
     void commitBoard();
     ChessBoard* getBoard();
     boolean requestMove(int from, int to);
@@ -39,34 +44,28 @@ class Game {
     void search();
     int alphaBeta(ChessBoard* board, const int depth, int alpha, const int beta);
     int alphaBetaDuck(ChessBoard* board, const int depth, int alpha, const int beta);
-    // @TODO actual performance testing inline vs regular
-    inline int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);
+    int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);
     int searchHouse();
     boolean putPieceHouse(const int pos, const int piece, const boolean allowAttack);
-    boolean usedTime();
-    boolean timeUp();
-    long timePassed();
-    void startTime();
+    int getSearchDepth() const;
+    int getEvalCount() const;
+    void interruptSearch();
 
-    boolean m_bInterrupted;
-    boolean m_bSearching;
-    int m_evalCount;
-    int m_searchDepth;
-    int m_searchLimit;
+    std::atomic_bool m_bSearching;
     boolean m_quiescentSearchOn;
 
    protected:
     MoveAndValue m_bestMoveAndValue;
-    long m_millies, m_milliesGiven;
+    int m_evalCount;
 
     static Game* game;
     static const int MAX_DEPTH = 20;
     static const int QUIESCE_DEPTH = 5;  // makes effective max depth 15
 
     static const BITBOARD DEFAULT_START_HASH = -8567268772865283918LL;
-    ChessBoard* m_boardFactory[MAX_DEPTH];
-    ChessBoard* m_boardRefurbish;
-    ChessBoard* m_board;
+    BoardStack m_boardStack;
+    SearchSession m_searchSession;
+    SearchWorkspace m_searchWorkspace;
     int m_promotionPiece;
     MoveAndValue m_arrBestMoves[MAX_DEPTH];
 };
