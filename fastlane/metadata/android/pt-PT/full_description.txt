@@ -1,0 +1,2 @@
+Jogue xadrez contra o seu Android ou online (Lichess, FICS). Inclui posições de treino, puzzles, Duck Chess, Xadrez 960 e muito mais. Também é possível configurar uma posição no tabuleiro, guardar e editar partidas, navegar pelo histórico e importar/exportar por e-mail ou área de transferência.
+Suporta leitores de ecrã como o TalkBack.

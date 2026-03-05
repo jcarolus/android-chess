@@ -25,10 +25,6 @@ public class Sounds {
         }
     }
 
-    public boolean getEnabled() {
-        return enabled;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }

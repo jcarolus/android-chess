@@ -1,0 +1,2 @@
+Joacă șah împotriva Androidului tău sau online (Lichess, FICS). Include poziții de antrenament, puzzle-uri, Duck Chess, Șah 960 și multe altele. De asemenea, poți configura o poziție pe tablă, salva și edita partide, naviga prin istoric și importa/exporta prin e-mail sau clipboard.
+Compatibil cu cititoare de ecran precum TalkBack.

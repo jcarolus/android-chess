@@ -1,0 +1,2 @@
+Jouez aux échecs contre votre appareil Android ou en ligne (Lichess, FICS). Avec des positions d'entraînement, des énigmes, Duck Chess, les échecs 960 et plus encore. Vous pouvez aussi configurer une position sur l'échiquier, enregistrer et modifier des parties, parcourir l'historique et importer/exporter par e-mail ou via le presse-papiers.
+Compatible avec les lecteurs d'écran comme TalkBack.

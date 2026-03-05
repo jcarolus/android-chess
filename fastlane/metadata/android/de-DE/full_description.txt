@@ -1,0 +1,2 @@
+Spiele Schach gegen dein Android-Gerät oder online (Lichess, FICS). Mit Übungspositionen, Rätseln, Duck Chess, Schach960 und mehr. Du kannst auch eine Stellung auf dem Brett aufbauen, Partien speichern und bearbeiten, durch den Verlauf navigieren und per E-Mail oder Zwischenablage importieren/exportieren.
+Unterstützt Screenreader wie TalkBack.
