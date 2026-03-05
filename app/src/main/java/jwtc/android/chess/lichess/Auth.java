@@ -128,7 +128,7 @@ public class Auth {
     }
 
     public void playing(OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
-        get("/api/account/playing?nd=5", callback);
+        get("/api/account/playing", callback);
     }
 
     public void challenge(Map<String, Object> payload, AuthResponseHandler responseHandler) {

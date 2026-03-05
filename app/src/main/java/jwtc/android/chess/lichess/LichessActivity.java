@@ -280,7 +280,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onGameInit(String gameId) {
-        openGame(gameId);
+        lichessApi.playing();
     }
 
     @Override
@@ -330,6 +330,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onGameFinish() {
         localClockApi.stopClock();
+        lichessApi.playing();
     }
 
     @Override
