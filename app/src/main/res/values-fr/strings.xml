@@ -84,7 +84,6 @@
     <string name="hotspot_white">♔ Blancs</string>
     <string name="ics_client_handle">Identifiant</string>
     <string name="ics_client_password">Mot de passe</string>
-    <string name="ics_client_server">Serveur</string>
     <string name="ics_error">Une erreur est survenue. Réessayez plus tard.</string>
     <string name="ics_examine">Analyser</string>
     <string name="ics_finger">Résumé</string>
@@ -139,7 +138,6 @@
     <string name="last_white_move_description">%1$s. Aux Noirs</string>
     <string name="lichess_challenge_by_cancelled">Défi de %1$s annulé</string>
     <string name="lichess_challenge_by_declined">Défi refusé par %1$s</string>
-    <string name="lichess_challenge_days_hint">1</string>
     <string name="lichess_challenge_dialog_button_accept">Accepter</string>
     <string name="lichess_challenge_dialog_button_decline">Refuser</string>
     <string name="lichess_challenge_dialog_message_rated">Classée</string>
@@ -147,8 +145,6 @@
     <string name="lichess_challenge_dialog_message_time_control">Cadence : %1$s</string>
     <string name="lichess_challenge_dialog_message_unrated">Non classée</string>
     <string name="lichess_challenge_dialog_message_variant">Variante : %1$s</string>
-    <string name="lichess_challenge_increment_hint">10</string>
-    <string name="lichess_challenge_minutes_hint">5</string>
     <string name="lichess_challenge_posted">Défi publié</string>
     <string name="lichess_confirm_offer_draw">Confirmez que vous voulez proposer nulle</string>
     <string name="lichess_confirm_resign">Confirmez que vous voulez abandonner</string>
@@ -177,7 +173,6 @@
     <string name="lichess_game_state_created">Partie créée</string>
     <string name="lichess_game_state_mate">Partie terminée par échec et mat</string>
     <string name="lichess_game_state_resigned">Partie terminée par abandon</string>
-    <string name="lichess_game_state_started">Partie commencée</string>
     <string name="lichess_game_winner">Gagnant : %1$s</string>
     <string name="lichess_games_connection_error_retry">Impossible d\'obtenir vos parties. Nouvelle tentative dans 5 secondes</string>
     <string name="lichess_lobby_button_challenge">Défi</string>
@@ -280,7 +275,6 @@
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_staunty">Staunty</string>
     <string name="playonlinepreferences">Paramètres en ligne</string>
-    <string name="playpreferences">Paramètres de jeu</string>
     <string name="practice_help">Trouver le mat (peut nécessiter plusieurs coups).</string>
     <string name="practice_set_reset">Ensemble d’entraînement réinitialisé</string>
     <string name="pref_field_color_descriptions">Ajouter clair/sombre à la description de la case</string>
@@ -343,9 +337,7 @@
     <string name="puzzle_not_correct_move"> n’est pas le coup attendu</string>
     <string name="puzzle_show">Montrer</string>
     <string name="savegame_black">Noirs</string>
-    <string name="savegame_black_question">Noirs ?</string>
     <string name="savegame_event">Événement</string>
-    <string name="savegame_event_question">Événement ?</string>
     <string name="gameslist_filter_switch_black_description">Activer ou désactiver le filtre des noirs</string>
     <string name="gameslist_filter_switch_date_after_description">Activer ou désactiver le filtre de date après</string>
     <string name="gameslist_filter_switch_date_before_description">Activer ou désactiver le filtre de date avant</string>
@@ -355,7 +347,6 @@
     <string name="gameslist_game_of_total">Partie %1$d sur %2$d</string>
     <string name="gameslist_filter_switch_white_description">Activer ou désactiver le filtre des blancs</string>
     <string name="savegame_white">Blancs</string>
-    <string name="savegame_white_question">Blancs ?</string>
     <string name="square_color_description_light">Case claire</string>
     <string name="square_color_description_dark">Case sombre</string>
     <string name="square_selected_with_duck_description">%1$s sélectionné en %2$s</string>
@@ -409,8 +400,6 @@
     <string name="title_offers_adjourn">Demande d’ajournement</string>
     <string name="title_offers_draw">Demande de nulle</string>
     <string name="title_offers_takeback">Demande de retrait</string>
-    <string name="title_pick_en_passant">Case en passant</string>
-    <string name="title_pick_level">Choisir le niveau de jeu</string>
     <string name="title_pick_time">Choisir le niveau de temps</string>
     <string name="title_pick_ply">Choisir le niveau de ply</string>
     <string name="title_pick_promo">Choisir une pièce de promotion</string>
