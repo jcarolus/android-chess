@@ -40,7 +40,6 @@
             android:name=".start"
             android:label="@string/app_name"
             android:theme="@style/ChessStart"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -57,22 +56,18 @@
         <activity
             android:name=".HtmlActivity"
             android:label="@string/app_name_help"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true" />
         <activity
             android:name=".activities.BoardPreferencesActivity"
             android:label="@string/globalpreferences"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true"></activity>
         <activity
             android:name=".activities.AccessibilityPreferences"
             android:label="@string/globalpreferences"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true"></activity>
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
@@ -106,7 +101,6 @@
         <activity
             android:name=".setup.SetupActivity"
             android:label="@string/app_name_setup"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
@@ -119,7 +113,6 @@
         <activity
             android:name=".setup.SetupRandomFischerActivity"
             android:label="@string/app_name_setup"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
@@ -132,7 +125,6 @@
         <activity
             android:name=".GamesListActivity"
             android:label="@string/app_name_save_games"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -144,7 +136,6 @@
         <activity
             android:name="jwtc.android.chess.puzzle.PuzzleActivity"
             android:label="@string/app_name"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
@@ -157,7 +148,6 @@
         <activity
             android:name="jwtc.android.chess.practice.PracticeActivity"
             android:label="@string/app_name"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <layout android:minWidth="300dp" android:minHeight="460dp" />
             <intent-filter>
@@ -171,7 +161,6 @@
             android:name="jwtc.android.chess.ics.ICSClient"
             android:label="@string/app_name_playonline"
             android:screenOrientation="locked"
-            android:configChanges="orientation"
             android:launchMode="singleInstance"
             android:taskAffinity=""
             android:exported="true">
@@ -185,7 +174,6 @@
         <activity
             android:name="jwtc.android.chess.ics.ICSPrefs"
             android:label="@string/preferences"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -197,7 +185,6 @@
         <activity
             android:name="jwtc.android.chess.ics.CustomCommands"
             android:label="@string/preferences"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -210,7 +197,6 @@
             android:name="jwtc.android.chess.hotspotboard.HotspotBoardActivity"
             android:label="@string/app_name"
             android:screenOrientation="locked"
-            android:configChanges="orientation"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -222,7 +208,6 @@
         <activity
             android:name="jwtc.android.chess.tools.AdvancedActivity"
             android:label="@string/app_name_pgntools"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -234,7 +219,6 @@
         <activity
             android:name="jwtc.android.chess.tools.ImportActivity"
             android:label="@string/app_name_import"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -248,7 +232,6 @@
         <activity
             android:name=".lichess.LichessActivity"
             android:launchMode="singleTask"
-            android:configChanges="orientation|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

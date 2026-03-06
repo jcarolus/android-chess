@@ -136,16 +136,6 @@ public class ChessBoardView extends ViewGroup {
         layoutChildren();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        // determine portrait vs landscape - take the smallest
-        int size = widthSize < heightSize ? widthSize : heightSize;
-        setMeasuredDimension(size, size);
-    }
-
     public void layoutChild(View child) {
         final int pos = child instanceof ChessSquareView
             ? ((ChessSquareView) child).getPos()
