@@ -47,7 +47,7 @@
         <ViewAnimator
             android:id="@+id/ViewAnimatorSub"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_above="@id/HorizontalSpacer">
 
@@ -55,54 +55,54 @@
             <include
                 layout="@layout/ics_login"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent" />
+                android:layout_height="match_parent" />
 
             <!-- 1 -->
             <include
                 layout="@layout/loader"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent" />
+                android:layout_height="match_parent" />
 
             <!-- 2 -->
             <ListView
                 android:id="@+id/ListPlayers"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:drawSelectorOnTop="false" />
 
             <!-- 3 -->
             <ListView
                 android:id="@+id/ListGames"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:drawSelectorOnTop="false" />
 
             <!-- 4 -->
             <ListView
                 android:id="@+id/ListChallenges"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:drawSelectorOnTop="false" />
 
             <!-- 5 -->
             <ListView
                 android:id="@+id/ListMenu"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:drawSelectorOnTop="false" />
 
             <!-- 6 -->
             <ListView
                 android:id="@+id/ListStored"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:drawSelectorOnTop="false" />
 
             <!-- 7 -->
             <include
                 layout="@layout/ics_console"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent" />
+                android:layout_height="match_parent" />
 
         </ViewAnimator>
     </RelativeLayout>
@@ -110,5 +110,5 @@
     <include
         layout="@layout/ics_play"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 </ViewAnimator>
