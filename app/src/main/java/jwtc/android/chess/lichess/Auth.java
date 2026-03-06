@@ -11,11 +11,9 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +29,7 @@ public class Auth {
     private static final String TAG = "lichess.Auth";
     private static final String LICHESS_HOST = "https://lichess.org";
     private static final String CLIENT_ID = "lichess-api-demo"; // "lichess-android-client";
-    private static final String[] SCOPES = new String[]{"board:play"};
+    private static final String[] SCOPES = new String[]{"board:play", "puzzle:read", "puzzle:write"};
     private static final String PREFS_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
@@ -221,6 +219,40 @@ public class Auth {
                 });
             }
         });
+    }
+
+    public void puzzleBatchSelect(
+        String angle,
+        Integer nb,
+        String difficulty,
+        String color,
+        OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback
+    ) {
+        StringBuilder path = new StringBuilder("/api/puzzle/batch/");
+        path.append(angle);
+        String queryAppend = "?";
+        if (nb != null) {
+            path.append(queryAppend).append("nb=").append(nb);
+            queryAppend = "&";
+        }
+        if (difficulty != null && !difficulty.isEmpty()) {
+            path.append(queryAppend).append("difficulty=").append(difficulty);
+            queryAppend = "&";
+        }
+        if (color != null && !color.isEmpty()) {
+            path.append(queryAppend).append("color=").append(color);
+        }
+        get(path.toString(), callback);
+    }
+
+    public void puzzleBatchSolve(
+        String angle,
+        int nb,
+        Map<String, Object> payload,
+        OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback
+    ) {
+        String path = "/api/puzzle/batch/" + angle + "?nb=" + nb;
+        post(path, payload, callback);
     }
 
     public void game(String gameId, AuthResponseHandler responseHandler) {

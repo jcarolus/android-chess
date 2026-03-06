@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +19,18 @@ import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.GameState;
+import jwtc.android.chess.lichess.models.PuzzleAndGame;
+import jwtc.android.chess.lichess.models.PuzzleBatchSelectResponse;
+import jwtc.android.chess.lichess.models.PuzzleBatchSolveRequest;
+import jwtc.android.chess.lichess.models.PuzzleBatchSolveResponse;
+import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 public class LichessApi extends GameApi {
     private static final String TAG = "LichessApi";
+    private static final String PUZZLE_ANGLE_DEFAULT = "mix";
 
     public interface LichessApiListener {
         void onAuthenticate(String user);
@@ -52,6 +59,9 @@ public class LichessApi extends GameApi {
         void onMyChallengeCancelled();
 
         void onMySeekCancelled();
+
+        void onPuzzle(PuzzleAndGame puzzle);
+        void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound);
     }
 
     protected int turn = 0;
@@ -225,6 +235,71 @@ public class LichessApi extends GameApi {
                 if (apiListener != null) {
                     apiListener.onMySeekCancelled();
                 }
+            }
+        });
+    }
+
+    public void fetchPuzzle(String angle, String difficulty, String color) {
+        String puzzleAngle = angle == null || angle.isEmpty() ? PUZZLE_ANGLE_DEFAULT : angle;
+        int puzzleCount = 1;
+
+        this.auth.puzzleBatchSelect(puzzleAngle, puzzleCount, difficulty, color, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                try {
+                    PuzzleBatchSelectResponse response = (new Gson()).fromJson(result, PuzzleBatchSelectResponse.class);
+                    if (!response.puzzles.isEmpty() && apiListener != null) {
+                        apiListener.onPuzzle(response.puzzles.get(0));
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "fetchPuzzleBatch parse error " + ex);
+                    JsonObject error = new JsonObject();
+                    error.addProperty("error", "Could not parse puzzle batch response");
+                    // @TODO
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                // @TODO
+            }
+        });
+    }
+
+    public void solvePuzzleBatch(String angle, String puzzleId, boolean win, boolean rated) {
+        String puzzleAngle = angle == null || angle.isEmpty() ? PUZZLE_ANGLE_DEFAULT : angle;
+        int puzzleCount = 1;
+
+        PuzzleBatchSolveRequest.Solution solution = new PuzzleBatchSolveRequest.Solution();
+        solution.id = puzzleId;
+        solution.win = win;
+        solution.rated = rated;
+
+        List<PuzzleBatchSolveRequest.Solution> solutions = new ArrayList<>();
+        solutions.add(solution);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("solutions", solutions);
+
+        this.auth.puzzleBatchSolve(puzzleAngle, puzzleCount, payload, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                try {
+                    PuzzleBatchSolveResponse response = (new Gson()).fromJson(result, PuzzleBatchSolveResponse.class);
+                    if (!response.puzzles.isEmpty() && !response.rounds.isEmpty() && apiListener != null) {
+                        apiListener.onPuzzleSolve(response.puzzles.get(0), response.rounds.get(0));
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "solvePuzzleBatch parse error " + ex);
+                    JsonObject error = new JsonObject();
+                    error.addProperty("error", "Could not parse puzzle solve response");
+                    // @TODO
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                // @TODO
             }
         });
     }

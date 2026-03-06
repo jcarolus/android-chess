@@ -9,7 +9,9 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,6 +39,8 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
+import jwtc.android.chess.lichess.models.PuzzleAndGame;
+import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
@@ -48,6 +52,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private static final String TAG = "LichessActivity";
     private static final int VIEW_ROOT_WAITING = 0, VIEW_ROOT_LOGIN = 1, VIEW_ROOT_SUB = 2;
     private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1;
+    private static final long LOBBY_REFRESH_INTERVAL_MS = 60_000L;
     public static final int REQUEST_SAVE_GAME_TO_FILE = 1;
 
     private LichessApi lichessApi;
@@ -71,6 +76,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private Intent pendingData;
     private boolean serviceConnected = false;
     private boolean serviceBound = false;
+    private final Handler lobbyRefreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable lobbyRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!isLobbyVisible()) {
+                return;
+            }
+            lichessApi.playing();
+            lobbyRefreshHandler.postDelayed(this, LOBBY_REFRESH_INTERVAL_MS);
+        }
+    };
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -205,11 +221,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutSave.setVisibility(View.GONE);
         layoutResignDraw.setVisibility(View.VISIBLE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
+        startLobbyRefreshLoop();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        stopLobbyRefreshLoop();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
@@ -258,6 +276,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     protected void onStop() {
         Log.i(TAG, "onStop");
         super.onStop();
+        stopLobbyRefreshLoop();
 
         if (serviceBound) {
             unbindService(mConnection);
@@ -430,6 +449,16 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
+    public void onPuzzle(PuzzleAndGame puzzle) {
+        
+    }
+
+    @Override
+    public void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound) {
+
+    }
+
+    @Override
     public boolean requestMove(int from, int to) {
         if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
             if (lichessApi.isPromotionMove(from, to)) {
@@ -497,17 +526,39 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     protected void displayLobby() {
         lichessApi.playing();
+        startLobbyRefreshLoop();
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_LOBBY);
     }
 
     protected void displayPlay() {
+        stopLobbyRefreshLoop();
         // reset info
         textViewLastMove.setText("");
         textViewStatus.setText("");
         textViewOfferDraw.setText("");
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_PLAY);
+    }
+
+    private boolean isLobbyVisible() {
+        return serviceConnected
+            && viewAnimatorRoot != null
+            && viewAnimatorSub != null
+            && viewAnimatorRoot.getDisplayedChild() == VIEW_ROOT_SUB
+            && viewAnimatorSub.getDisplayedChild() == VIEW_SUB_LOBBY;
+    }
+
+    private void startLobbyRefreshLoop() {
+        stopLobbyRefreshLoop();
+        if (!isLobbyVisible()) {
+            return;
+        }
+        lobbyRefreshHandler.postDelayed(lobbyRefreshRunnable, LOBBY_REFRESH_INTERVAL_MS);
+    }
+
+    private void stopLobbyRefreshLoop() {
+        lobbyRefreshHandler.removeCallbacks(lobbyRefreshRunnable);
     }
 
     protected void openChallengeDialog(int requestCode) {
