@@ -142,7 +142,8 @@ public class ChessBoardView extends ViewGroup {
             : (child instanceof ChessPieceView
             ? ((ChessPieceView) child).getPos()
             : ((ChessPieceLabelView) child).getPos());
-        final int width = getWidth() / 8;
+
+        final int width = Math.min(getWidth(), getHeight()) / 8;
         // rotated
         final int actualPos = rotated ? 63 - pos : pos;
         final int row = BoardConstants.ROW[actualPos];
