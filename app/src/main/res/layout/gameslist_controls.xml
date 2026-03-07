@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
         <TableLayout
             android:layout_width="match_parent"
@@ -15,14 +11,14 @@
             android:stretchColumns="0,1">
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
                     android:text="White"
                     android:id="@+id/TextViewPlayerWhite"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:singleLine="true"
                     style="@style/MyHeaderTextStyle" />
 
@@ -30,7 +26,7 @@
                     android:text="Black"
                     android:id="@+id/TextViewPlayerBlack"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:singleLine="true"
                     style="@style/MyHeaderTextStyle" />
 
@@ -44,21 +40,21 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
                     android:text="Event"
                     android:id="@+id/TextViewEvent"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:singleLine="true"
                     style="@style/MyHeaderTextStyle" />
 
                 <TextView
                     android:id="@+id/TextViewDate"
                     android:text="YYYY.MM.DD"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     style="@style/MyHeaderTextStyle" />
 
@@ -74,7 +70,7 @@
         <LinearLayout
             android:id="@+id/LayoutResignDraw"
             android:orientation="horizontal"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip">
 
@@ -103,7 +99,7 @@
         <TextView
             android:id="@+id/TextViewWhitePieces"
             style="@style/MyPaneTextStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
@@ -114,12 +110,11 @@
         <TextView
             android:id="@+id/TextViewBlackPieces"
             style="@style/MyPaneTextStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
             android:layout_marginRight="8dip"
             android:minLines="2"
             android:accessibilityLiveRegion="none" />
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>
