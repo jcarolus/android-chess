@@ -11,29 +11,40 @@
         android:layout_height="0dp"
         android:layout_width="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/includeboard"
+        app:layout_constraintStart_toEndOf="@id/board_area"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/LayoutMenu" />
 
-    <include
-        android:id="@+id/includeboard"
-        layout="@layout/chessboard"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/board_area"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginEnd="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/ScrollView"
-        app:layout_constraintDimensionRatio="1:1" />
+        app:layout_constraintEnd_toStartOf="@+id/ScrollView"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <include
+            android:id="@+id/includeboard"
+            layout="@layout/chessboard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="W,1:1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <GridView
         android:id="@+id/GridLayoutPgn"
         android:numColumns="2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="@id/includeboard"
-        app:layout_constraintBottom_toBottomOf="@id/includeboard"
-        app:layout_constraintStart_toStartOf="@id/includeboard"
-        app:layout_constraintEnd_toEndOf="@id/includeboard"
+        app:layout_constraintTop_toTopOf="@id/board_area"
+        app:layout_constraintBottom_toBottomOf="@id/board_area"
+        app:layout_constraintStart_toStartOf="@id/board_area"
+        app:layout_constraintEnd_toEndOf="@id/board_area"
         android:clickable="false" />
 
     <ScrollView
@@ -43,7 +54,7 @@
         android:minWidth="320dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/includeboard"
+        app:layout_constraintStart_toEndOf="@id/board_area"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
