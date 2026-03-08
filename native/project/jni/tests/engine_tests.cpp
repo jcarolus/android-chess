@@ -283,6 +283,58 @@ void testMoves() {
     }
 }
 
+void testRequestMove() {
+    RequestMove scenarios[] = {
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::h1,
+         .expectedSuccess = true,
+         .message = "White castling kingside"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::a1,
+         .expectedSuccess = true,
+         .message = "White castling queenside"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R b kq - 0 1",
+         .from = ChessBoard::e8,
+         .to = ChessBoard::h8,
+         .expectedSuccess = true,
+         .message = "Black castling kingside"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R b kq - 0 1",
+         .from = ChessBoard::e8,
+         .to = ChessBoard::a8,
+         .expectedSuccess = true,
+         .message = "Black castling queenside"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K3 w - - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::h1,
+         .expectedSuccess = false,
+         .message = "Castling rights removed"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3KQ1R w KQ - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::h1,
+         .expectedSuccess = false,
+         .message = "Castling blocked by piece on path"},
+        {.game = Game::getInstance(),
+         .sInFEN = "4kr2/8/8/8/8/8/8/R3K2R w KQ - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::h1,
+         .expectedSuccess = false,
+         .message = "Castling through check"},
+    };
+
+    for (const RequestMove &scenario : scenarios) {
+        SCOPED_TRACE(scenario.message);
+        EXPECT_TRUE(ChessTest::expectRequestMove(scenario));
+    }
+}
+
 void testFenParsingRegression() {
     Game *game = Game::getInstance();
     char buf[255];
@@ -435,6 +487,10 @@ TEST_F(GameTest, EngineUntilExpectedState) {
 
 TEST_F(GameTest, MovesForPosition) {
     testMoves();
+}
+
+TEST_F(GameTest, RequestMove) {
+    testRequestMove();
 }
 
 TEST_F(GameTest, FenParsingRegression) {

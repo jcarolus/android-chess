@@ -135,22 +135,22 @@ boolean Game::requestMove(int from, int to) {
 
     if (!moved && from != to) {
         const int turn = board->getTurn();
-        const int king = board->pieceAt(turn, from);
-        const int rook = board->pieceAt(turn, to);
-
-        if (turn == ChessBoard::WHITE && Pos::row(from) == 0 && Pos::row(to) == 0 ||
-            turn == ChessBoard::BLACK && Pos::row(from) == 7 && Pos::row(to) == 7) {
-
-            if (king == ChessBoard::KING && rook == ChessBoard::ROOK) {
-                int move = 0;
-                if (to > from) {
-                    // short castle
-                    move = Move_makeMoveOO(from,  (turn == ChessBoard::WHITE) ? ChessBoard::g1 : ChessBoard::g8);
-                } else if (to < from) {
-                    // long castle
-                    move = Move_makeMoveOOO(from, (turn == ChessBoard::WHITE) ? ChessBoard::c1 : ChessBoard::c8);
+        if (board->pieceAt(turn, from) == ChessBoard::KING && Pos::row(from) == Pos::row(to)) {
+            const int delta = to - from;
+            int castleMove = 0;
+            board->getMoves();
+            while (board->hasMoreMoves()) {
+                const int move = board->getNextMove();
+                if ((Move_isOO(move) || Move_isOOO(move)) && Move_getFrom(move) == from) {
+                    const int castleTo = Move_getTo(move);
+                    if (to == castleTo || (delta > 0 && Move_isOO(move)) || (delta < 0 && Move_isOOO(move))) {
+                        castleMove = move;
+                        break;
+                    }
                 }
-                moved = board->requestMove(move, nb.get(), m_searchWorkspace.refurbish());
+            }
+            if (castleMove != 0) {
+                moved = board->requestMove(castleMove, nb.get(), m_searchWorkspace.refurbish());
             }
         }
     }

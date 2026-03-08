@@ -204,6 +204,15 @@ bool ChessTest::expectMovesForFEN(MovesForFEN scenario) {
     return true;
 }
 
+bool ChessTest::expectRequestMove(RequestMove scenario) {
+    scenario.game->newGameFromFEN(scenario.sInFEN);
+    bool moved = scenario.game->requestMove(scenario.from, scenario.to);
+
+    SCOPED_TRACE(scenario.message);
+    EXPECT_EQ(scenario.expectedSuccess, moved);
+    return scenario.expectedSuccess == moved;
+}
+
 void ChessTest::printMove(int move) {
     char buf[10];
     Move::toDbgString(move, buf);

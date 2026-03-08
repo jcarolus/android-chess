@@ -53,6 +53,15 @@ struct MovesForFEN {
     bool all;
 };
 
+struct RequestMove {
+    Game *game;
+    const char *sInFEN;
+    int from;
+    int to;
+    bool expectedSuccess;
+    const char *message;
+};
+
 struct StateForFEN {
     Game *game;
     const char *sInFEN;
@@ -73,6 +82,7 @@ class ChessTest {
     static bool expectInFENIsOutFEN(Game *game, const char *sFEN, const char *message);
     static bool expectEndingStateWithinMaxMoves(EngineInFENUntilState scenario);
     static bool expectMovesForFEN(MovesForFEN scenario);
+    static bool expectRequestMove(RequestMove scenario);
     static void printMove(int move);
     static void printFENAndState(ChessBoard *board);
 };
