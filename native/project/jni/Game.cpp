@@ -132,6 +132,29 @@ boolean Game::requestMove(int from, int to) {
     ChessBoard *board = getBoard();
     board->calcState(m_searchWorkspace.refurbish());
     boolean moved = board->requestMove(from, to, nb.get(), m_searchWorkspace.refurbish(), m_promotionPiece);
+
+    if (!moved && from != to) {
+        const int turn = board->getTurn();
+        const int king = board->pieceAt(turn, from);
+        const int rook = board->pieceAt(turn, to);
+
+        if (turn == ChessBoard::WHITE && Pos::row(from) == 0 && Pos::row(to) == 0 ||
+            turn == ChessBoard::BLACK && Pos::row(from) == 7 && Pos::row(to) == 7) {
+
+            if (king == ChessBoard::KING && rook == ChessBoard::ROOK) {
+                int move = 0;
+                if (to > from) {
+                    // short castle
+                    move = Move_makeMoveOO(from,  (turn == ChessBoard::WHITE) ? ChessBoard::g1 : ChessBoard::g8);
+                } else if (to < from) {
+                    // long castle
+                    move = Move_makeMoveOOO(from, (turn == ChessBoard::WHITE) ? ChessBoard::c1 : ChessBoard::c8);
+                }
+                moved = board->requestMove(move, nb.get(), m_searchWorkspace.refurbish());
+            }
+        }
+    }
+
     return m_boardStack.promoteOrDiscard(std::move(nb), moved);
 }
 
