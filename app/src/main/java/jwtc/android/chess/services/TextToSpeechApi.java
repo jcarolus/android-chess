@@ -13,8 +13,10 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TextToSpeechApi implements TextToSpeech.OnInitListener {
     private static final String TAG = "TextToSpeechApi";
@@ -31,6 +33,7 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
     private boolean ready = false;
     private int lastInitStatus = TextToSpeech.ERROR;
     private int lastLanguageStatus = TextToSpeech.LANG_NOT_SUPPORTED;
+    private final Map<Locale, Integer> localeAvailabilityCache = new HashMap<>();
 
     public interface InitStateListener {
         void onTtsInitStateChanged(int initStatus, int languageStatus);
@@ -189,6 +192,7 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             textToSpeech.shutdown();
             textToSpeech = null;
         }
+        localeAvailabilityCache.clear();
         initializing = false;
         ready = false;
     }
@@ -269,7 +273,12 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         if (textToSpeech == null) {
             return false;
         }
-        int status = textToSpeech.isLanguageAvailable(locale);
+        Integer cachedStatus = localeAvailabilityCache.get(locale);
+        if (cachedStatus == null) {
+            cachedStatus = textToSpeech.isLanguageAvailable(locale);
+            localeAvailabilityCache.put(locale, cachedStatus);
+        }
+        int status = cachedStatus;
         return status == TextToSpeech.LANG_AVAILABLE
                 || status == TextToSpeech.LANG_COUNTRY_AVAILABLE
                 || status == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE;
