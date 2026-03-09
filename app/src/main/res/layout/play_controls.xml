@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingLeft="4dip"
     android:paddingRight="4dip">
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TableLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="2">
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/MyRowStyle">
 
@@ -71,12 +71,12 @@
         </TableLayout>
 
         <TableLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="1">
 
             <TableRow
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/MyRowStyle">
 
@@ -123,7 +123,7 @@
                 android:id="@+id/TextViewEco"
                 style="@style/MyPaneTextStyle2Lines"
                 android:text="--"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="38dip"
                 android:layout_marginLeft="8dip"
                 android:layout_marginRight="8dip" />
@@ -181,7 +181,7 @@
         <TextView
             android:id="@+id/TextViewWhitePieces"
             style="@style/MyPaneTextStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
@@ -191,7 +191,7 @@
         <TextView
             android:id="@+id/TextViewBlackPieces"
             style="@style/MyPaneTextStyle"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
             android:layout_marginLeft="8dip"
