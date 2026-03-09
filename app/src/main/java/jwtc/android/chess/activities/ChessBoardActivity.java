@@ -214,7 +214,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected void initBoardLayoutSizing(
         View rootLayout,
-        View boardAreaLayout
+        View boardAreaLayout,
+        View controlsLayout,
+        View boardTopLayout,
+        View boardBottomLayout
     ) {
         if (rootLayout == null || boardAreaLayout == null) {
             return;
@@ -222,12 +225,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         final int minLandscapeControlsPx = dpToPx(320);
         final int minPortraitControlsPx = dpToPx(64);
+        final View controlsLayoutRef = controlsLayout;
+        final View boardTopLayoutRef = boardTopLayout;
+        final View boardBottomLayoutRef = boardBottomLayout;
 
         rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             private int lastRootWidth = -1;
             private int lastRootHeight = -1;
             private int lastOrientation = -1;
             private int lastBoardSide = -1;
+            private int lastTopHeight = -1;
+            private int lastBottomHeight = -1;
+            private int lastControlsHeight = -1;
 
             @Override
             public void onGlobalLayout() {
@@ -239,15 +248,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     return;
                 }
 
-                final ViewGroup.LayoutParams boardAreaParams = boardAreaLayout.getLayoutParams();
-
-                if (lastRootWidth == rootWidth && lastRootHeight == rootHeight && lastOrientation == orientation && lastBoardSide == boardAreaLayout.getWidth()) {
-                    return;
-                }
-                lastRootWidth = rootWidth;
-                lastRootHeight = rootHeight;
-                lastOrientation = orientation;
-
                 final int rootAvailableWidth = rootWidth - rootLayout.getPaddingLeft() - rootLayout.getPaddingRight();
                 if (rootAvailableWidth <= 0) {
                     return;
@@ -257,27 +257,85 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     return;
                 }
 
+                final ViewGroup.LayoutParams boardAreaParams = boardAreaLayout.getLayoutParams();
+                final View boardView = boardAreaLayout.findViewById(R.id.includeboard);
+                final ViewGroup.LayoutParams boardViewParams = boardView == null ? null : boardView.getLayoutParams();
+                final ViewGroup.LayoutParams controlsParams = controlsLayoutRef == null ? null : controlsLayoutRef.getLayoutParams();
+                final ViewGroup controlsContainer = controlsLayoutRef instanceof ViewGroup ? (ViewGroup) controlsLayoutRef : null;
+                final int boardTopHeight = measureDependentHeight(boardTopLayoutRef);
+                final int boardBottomHeight = measureDependentHeight(boardBottomLayoutRef);
+                final int reservedVerticalHeight = boardTopHeight + boardBottomHeight;
+                final int preferredBoardSide = rootAvailableWidth;
+                final int controlsHeightRemainingAfterPreferredBoard = rootAvailableHeight - reservedVerticalHeight - preferredBoardSide;
+                final int portraitBoardSide = Math.max(
+                    0,
+                    controlsHeightRemainingAfterPreferredBoard < minPortraitControlsPx
+                        ? rootAvailableHeight - reservedVerticalHeight - minPortraitControlsPx
+                        : preferredBoardSide
+                );
+                final int portraitMaxControlsHeight = Math.max(minPortraitControlsPx, rootAvailableHeight - reservedVerticalHeight - portraitBoardSide);
+                final int portraitControlsContentHeight = measureDependentHeight(
+                    controlsContainer == null || controlsContainer.getChildCount() == 0 ? null : controlsContainer.getChildAt(0)
+                );
+                final int portraitControlsHeight = Math.min(
+                    portraitMaxControlsHeight,
+                    Math.max(portraitControlsContentHeight, minPortraitControlsPx)
+                );
+                final int landscapeBoardSide = Math.min(
+                    Math.max(0, rootAvailableWidth - minLandscapeControlsPx),
+                    Math.max(0, rootAvailableHeight - reservedVerticalHeight)
+                );
+
+                if (lastRootWidth == rootWidth && lastRootHeight == rootHeight && lastOrientation == orientation
+                    && lastBoardSide == boardAreaLayout.getWidth()
+                    && lastTopHeight == boardTopHeight && lastBottomHeight == boardBottomHeight
+                    && (orientation == Configuration.ORIENTATION_PORTRAIT ? lastControlsHeight == portraitControlsHeight : true)
+                ) {
+                    return;
+                }
+                lastRootWidth = rootWidth;
+                lastRootHeight = rootHeight;
+                lastOrientation = orientation;
+                lastTopHeight = boardTopHeight;
+                lastBottomHeight = boardBottomHeight;
+
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    int boardSide = Math.min(
-                        Math.max(0, rootAvailableWidth - minLandscapeControlsPx),
-                        rootAvailableHeight
-                    );
-                    if (boardAreaParams.width != boardSide || boardAreaParams.height != boardSide) {
-                        boardAreaParams.width = boardSide;
-                        boardAreaParams.height = boardSide;
+                    if (boardAreaParams.width != landscapeBoardSide) {
+                        boardAreaParams.width = landscapeBoardSide;
                         boardAreaLayout.setLayoutParams(boardAreaParams);
                     }
-                    lastBoardSide = boardSide;
+                    if (boardViewParams != null
+                        && (boardViewParams.width != landscapeBoardSide || boardViewParams.height != landscapeBoardSide)) {
+                        boardViewParams.width = landscapeBoardSide;
+                        boardViewParams.height = landscapeBoardSide;
+                        boardView.setLayoutParams(boardViewParams);
+                    }
+                    if (controlsParams != null && controlsParams.height != ViewGroup.LayoutParams.MATCH_PARENT) {
+                        controlsParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                        controlsLayoutRef.setLayoutParams(controlsParams);
+                    }
+                    lastBoardSide = landscapeBoardSide;
+                    lastControlsHeight = -1;
                     return;
                 }
 
-                int boardSide = Math.min(rootAvailableWidth, Math.max(0, rootAvailableHeight - minPortraitControlsPx));
-                if (boardAreaParams.width != boardSide || boardAreaParams.height != boardSide) {
+                final int boardSide = portraitBoardSide;
+                final int controlsHeight = portraitControlsHeight;
+                if (boardAreaParams.width != boardSide) {
                     boardAreaParams.width = boardSide;
-                    boardAreaParams.height = boardSide;
                     boardAreaLayout.setLayoutParams(boardAreaParams);
                 }
+                if (boardViewParams != null && (boardViewParams.width != boardSide || boardViewParams.height != boardSide)) {
+                    boardViewParams.width = boardSide;
+                    boardViewParams.height = boardSide;
+                    boardView.setLayoutParams(boardViewParams);
+                }
+                if (controlsParams != null && controlsParams.height != controlsHeight) {
+                    controlsParams.height = controlsHeight;
+                    controlsLayoutRef.setLayoutParams(controlsParams);
+                }
                 lastBoardSide = boardSide;
+                lastControlsHeight = controlsHeight;
             }
         });
     }
@@ -285,6 +343,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     private int dpToPx(final int dp) {
         final float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
+    }
+
+    private int measureDependentHeight(View dependentView) {
+        if (dependentView == null) {
+            return 0;
+        }
+
+        final int measuredHeight = dependentView.getMeasuredHeight();
+        if (measuredHeight > 0) {
+            return measuredHeight;
+        }
+
+        return Math.max(0, dependentView.getHeight());
     }
 
     @Override

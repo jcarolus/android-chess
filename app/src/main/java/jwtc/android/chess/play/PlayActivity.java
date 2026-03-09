@@ -146,7 +146,10 @@ public class PlayActivity extends ChessBoardActivity implements
 
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);
-        initBoardLayoutSizing(rootLayout, boardAreaLayout);
+        final View controlsLayout = findViewById(R.id.play_controls);
+        final View boardTopLayout = findViewById(R.id.play_board_top);
+        final View boardBottomLayout = findViewById(R.id.play_board_bottom);
+        initBoardLayoutSizing(rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout);
 
         playButton = findViewById(R.id.ButtonPlay);
         playButton.setOnClickListener(arg0 -> {
