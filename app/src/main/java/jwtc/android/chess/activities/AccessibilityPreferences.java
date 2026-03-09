@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.EngineInfo;
 import android.speech.tts.Voice;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 
@@ -104,6 +105,11 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         gameApi = new GameApi();
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -113,6 +114,11 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
     }

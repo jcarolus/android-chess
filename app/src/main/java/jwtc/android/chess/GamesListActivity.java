@@ -221,6 +221,11 @@ public class GamesListActivity extends ChessBoardActivity {
         scrollView = findViewById(R.id.ScrollView);
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(findViewById(R.id.root_layout), boardAreaLayout, findViewById(R.id.ScrollView), null, null);
     }
 
     @Override

@@ -329,6 +329,17 @@ public class ICSClient extends ChessBoardActivity implements
         }
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(
+            findViewById(R.id.ViewAnimatorRoot),
+            boardAreaLayout,
+            findViewById(R.id.play_controls),
+            findViewById(R.id.play_board_top),
+            findViewById(R.id.play_board_bottom)
+        );
         chessBoardView.setNextFocusRightId(R.id.SwitchSound);
 
         localClockApi.addListener(this);

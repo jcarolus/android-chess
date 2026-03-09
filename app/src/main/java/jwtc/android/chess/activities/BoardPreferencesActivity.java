@@ -3,6 +3,7 @@ package jwtc.android.chess.activities;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.CheckBox;
 
 import com.google.android.material.slider.Slider;
@@ -71,6 +72,11 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         gameApi = new GameApi();
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
     }
 
     @Override

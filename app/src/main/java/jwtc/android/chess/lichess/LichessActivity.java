@@ -207,6 +207,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         listViewGames.setAdapter(adapterGames);
         listViewGames.setOnItemClickListener(this);
 
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(
+            findViewById(R.id.ViewAnimatorRoot),
+            boardAreaLayout,
+            findViewById(R.id.play_controls),
+            findViewById(R.id.play_board_top),
+            findViewById(R.id.play_board_bottom)
+        );
         afterCreate();
     }
 
