@@ -2,6 +2,7 @@ package jwtc.android.chess.activities;
 
 import android.content.ClipData;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +12,8 @@ import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -207,6 +210,81 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         applySquareDragListeners();
 
         gameApi.addListener(this);
+    }
+
+    protected void initBoardLayoutSizing(
+        View rootLayout,
+        View boardAreaLayout
+    ) {
+        if (rootLayout == null || boardAreaLayout == null) {
+            return;
+        }
+
+        final int minLandscapeControlsPx = dpToPx(320);
+        final int minPortraitControlsPx = dpToPx(64);
+
+        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            private int lastRootWidth = -1;
+            private int lastRootHeight = -1;
+            private int lastOrientation = -1;
+            private int lastBoardSide = -1;
+
+            @Override
+            public void onGlobalLayout() {
+                final int orientation = getResources().getConfiguration().orientation;
+                final int rootWidth = rootLayout.getWidth();
+                final int rootHeight = rootLayout.getHeight();
+
+                if (rootWidth <= 0 || rootHeight <= 0) {
+                    return;
+                }
+
+                final ViewGroup.LayoutParams boardAreaParams = boardAreaLayout.getLayoutParams();
+
+                if (lastRootWidth == rootWidth && lastRootHeight == rootHeight && lastOrientation == orientation && lastBoardSide == boardAreaLayout.getWidth()) {
+                    return;
+                }
+                lastRootWidth = rootWidth;
+                lastRootHeight = rootHeight;
+                lastOrientation = orientation;
+
+                final int rootAvailableWidth = rootWidth - rootLayout.getPaddingLeft() - rootLayout.getPaddingRight();
+                if (rootAvailableWidth <= 0) {
+                    return;
+                }
+                final int rootAvailableHeight = rootHeight - rootLayout.getPaddingTop() - rootLayout.getPaddingBottom();
+                if (rootAvailableHeight <= 0) {
+                    return;
+                }
+
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    int boardSide = Math.min(
+                        Math.max(0, rootAvailableWidth - minLandscapeControlsPx),
+                        rootAvailableHeight
+                    );
+                    if (boardAreaParams.width != boardSide || boardAreaParams.height != boardSide) {
+                        boardAreaParams.width = boardSide;
+                        boardAreaParams.height = boardSide;
+                        boardAreaLayout.setLayoutParams(boardAreaParams);
+                    }
+                    lastBoardSide = boardSide;
+                    return;
+                }
+
+                int boardSide = Math.min(rootAvailableWidth, Math.max(0, rootAvailableHeight - minPortraitControlsPx));
+                if (boardAreaParams.width != boardSide || boardAreaParams.height != boardSide) {
+                    boardAreaParams.width = boardSide;
+                    boardAreaParams.height = boardSide;
+                    boardAreaLayout.setLayoutParams(boardAreaParams);
+                }
+                lastBoardSide = boardSide;
+            }
+        });
+    }
+
+    private int dpToPx(final int dp) {
+        final float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     @Override
