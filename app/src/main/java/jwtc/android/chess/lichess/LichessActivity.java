@@ -558,19 +558,19 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     protected void displayPlay() {
+        displayBoard();
         textViewLastMove.setText("");
         textViewStatus.setText("");
         textViewOfferDraw.setText("");
-        displayBoard();
         layoutResignDraw.setVisibility(View.VISIBLE);
         layoutPuzzleControls.setVisibility(View.GONE);
     }
 
     protected void displayPuzzle() {
+        displayBoard();
         textViewLastMove.setText("");
         textViewStatus.setText("");
         textViewOfferDraw.setText("");
-        displayBoard();
         layoutResignDraw.setVisibility(View.GONE);
         layoutPuzzleControls.setVisibility(View.VISIBLE);
     }

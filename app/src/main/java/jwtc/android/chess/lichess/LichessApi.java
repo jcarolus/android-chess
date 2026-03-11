@@ -70,6 +70,7 @@ public class LichessApi extends GameApi {
     private LichessApiListener apiListener;
 
     private GameFull ongoingGameFull;
+    private PuzzleAndGame ongoingPuzzle;
     private String user;
 
     public LichessApi() {
@@ -249,8 +250,10 @@ public class LichessApi extends GameApi {
                 try {
                     PuzzleBatchSelectResponse response = (new Gson()).fromJson(result, PuzzleBatchSelectResponse.class);
                     if (!response.puzzles.isEmpty() && apiListener != null) {
-                        apiListener.onPuzzle(response.puzzles.get(0));
-                        processPuzzle(response.puzzles.get(0));
+                        ongoingPuzzle = response.puzzles.get(0);
+                        apiListener.onPuzzle(ongoingPuzzle);
+                        ongoingGameFull = null;
+                        processPuzzle();
                     }
                 } catch (Exception ex) {
                     Log.d(TAG, "fetchPuzzleBatch parse error " + ex);
@@ -262,8 +265,8 @@ public class LichessApi extends GameApi {
 
             @Override
             public void onError(JsonObject e) {
-                // @TODO
                 Log.d(TAG, "fetchPuzzleBatch onError " + e);
+                handlePuzzleError(e);
             }
         });
     }
@@ -301,9 +304,19 @@ public class LichessApi extends GameApi {
 
             @Override
             public void onError(JsonObject e) {
-                // @TODO
+                Log.d(TAG, "solvePuzzleBatch onError " + e);
+                handlePuzzleError(e);
             }
         });
+    }
+
+    private void handlePuzzleError(JsonObject e) {
+        String error = e.has("error") ? e.get("error").getAsString() : "";
+        if (error.startsWith("Missing scope")) {
+            Log.d(TAG, "Puzzle scope missing — clearing token and forcing re-login");
+            auth.clearTokens();
+            onAuthenticate(null);
+        }
     }
 
     public void cancelChallenge() {
@@ -343,11 +356,11 @@ public class LichessApi extends GameApi {
     }
 
     public void move(int from, int to) {
+        String uciMove = Pos.toString(from) + Pos.toString(to);
+        if (isPromotionMove(from, to)) {
+            uciMove += Piece.toPromoUCI(promotionPiece);
+        }
         if (ongoingGameFull != null) {
-            String uciMove = Pos.toString(from) + Pos.toString(to);
-            if (isPromotionMove(from, to)) {
-                uciMove += Piece.toPromoUCI(promotionPiece);
-            }
             this.auth.move(ongoingGameFull.id, uciMove, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
                 @Override
                 public void onSuccess(JsonObject result) {
@@ -363,6 +376,8 @@ public class LichessApi extends GameApi {
                     }
                 }
             });
+        } else if (ongoingPuzzle != null) {
+            Log.d(TAG, "Check move " + uciMove);
         } else {
             Log.d(TAG, "Unexpected state; move without ongoing game");
         }
@@ -417,6 +432,7 @@ public class LichessApi extends GameApi {
                     ;
                 } else if (type.equals("gameFull")) {
                     ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
+                    ongoingPuzzle = null;
                 }
                 processGameState();
             }
@@ -464,47 +480,10 @@ public class LichessApi extends GameApi {
             } else {
                 jni.initFEN(ongoingGameFull.initialFen);
             }
-
-            resetForPGN();
-
             String moves = ongoingGameFull.state.moves;
 
-            String[] moveList = moves.split(" ");
-
-//            Log.d(TAG, "moves " + moves);
-
-            for (String sMove : moveList) {
-                if (sMove.length() >= 4) {
-                    try {
-                        String sFrom = sMove.substring(0, 2);
-                        String sTo = sMove.substring(2, 4);
-                        int from = Pos.fromString(sFrom);
-                        int to = Pos.fromString(sTo);
-
-                        if (sMove.length() == 5) {
-                            String promo = sMove.substring(4, 5).toLowerCase();
-                            jni.setPromo(Piece.fromUCIPromo(promo));
-                        }
-
-                        // @TODO Chess960 castling
-                        if (jni.requestMove(from, to) == 0) {
-                            Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
-                            break;
-                        } else {
-                            addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
-                        }
-
-                    } catch (Exception e) {
-                        Log.d(TAG, "Exception processing move " + sMove);
-                    }
-                } else {
-                    Log.d(TAG, "Invalid move length " + sMove);
-                }
-            }
-
-            dispatchMove(jni.getMyMove());
-
-            dispatchState();
+            resetForPGN();
+            processMoves(moves, -1);
 
             if (apiListener != null) {
                 apiListener.onGameUpdate(ongoingGameFull);
@@ -512,8 +491,53 @@ public class LichessApi extends GameApi {
         }
     }
 
-    private void processPuzzle(PuzzleAndGame puzzle) {
-        Log.d(TAG, "ProcessPuzzle " + puzzle.game.pgn);
+    private void processPuzzle() {
+        Log.d(TAG, "ProcessPuzzle " + ongoingPuzzle);
+        if (ongoingPuzzle != null) {
+            String moves = ongoingPuzzle.game.pgn;
+            processMoves(moves, ongoingPuzzle.puzzle.initialPly);
+        }
+    }
+
+    private void processMoves(String moves, int initialPly) {
+        String[] moveList = moves.split(" ");
+        int plyCount = 0;
+
+        for (String sMove : moveList) {
+            if (initialPly >= 0 && plyCount >= initialPly) {
+                break;
+            }
+            if (sMove.length() >= 4) {
+                try {
+                    String sFrom = sMove.substring(0, 2);
+                    String sTo = sMove.substring(2, 4);
+                    int from = Pos.fromString(sFrom);
+                    int to = Pos.fromString(sTo);
+
+                    if (sMove.length() == 5) {
+                        String promo = sMove.substring(4, 5).toLowerCase();
+                        jni.setPromo(Piece.fromUCIPromo(promo));
+                    }
+
+                    if (jni.requestMove(from, to) == 0) {
+                        Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
+                        break;
+                    } else {
+                        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
+                        plyCount++;
+                    }
+
+                } catch (Exception e) {
+                    Log.d(TAG, "Exception processing move " + sMove);
+                }
+            } else {
+                Log.d(TAG, "Invalid move length " + sMove);
+            }
+        }
+
+        dispatchMove(jni.getMyMove());
+
+        dispatchState();
     }
 
     private void resetForPGN() {
