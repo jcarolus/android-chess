@@ -485,6 +485,16 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
+    public void onPuzzleUnexpectedMove() {
+        feedbackIllegalMove();
+    }
+
+    @Override
+    public void onPuzzleCompleted() {
+        // TODO: handle puzzle completed (e.g. show feedback, enable next button)
+    }
+
+    @Override
     public boolean requestMove(int from, int to) {
         if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
             if (lichessApi.isPromotionMove(from, to)) {
