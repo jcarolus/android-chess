@@ -68,6 +68,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewLobbyStatus;
     private TextView textViewHandle;
     private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove, buttonPuzzle;
+    private MaterialButton buttonPuzzleShow, buttonPuzzleNext;
     private ListView listViewGames;
     private SimpleAdapter adapterGames;
 
@@ -183,13 +184,11 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutSave = findViewById(R.id.LayoutSave);
         layoutPuzzleControls = findViewById(R.id.LayoutPuzzleControls);
 
-        MaterialButton buttonPuzzleShow = findViewById(R.id.ButtonPuzzleShow);
-        buttonPuzzleShow.setOnClickListener(v -> {
-            // TODO: show puzzle solution
-        });
+        buttonPuzzleShow = findViewById(R.id.ButtonPuzzleShow);
+        buttonPuzzleShow.setOnClickListener(v -> lichessApi.showNextSolutionMove());
 
-        MaterialButton buttonPuzzleNext = findViewById(R.id.ButtonPuzzleNext);
-        buttonPuzzleNext.setOnClickListener(v -> lichessApi.fetchPuzzle(currentPuzzleAngle, currentPuzzleDifficulty, null));
+        buttonPuzzleNext = findViewById(R.id.ButtonPuzzleNext);
+        buttonPuzzleNext.setOnClickListener(v -> lichessApi.nextPuzzle());
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
@@ -491,7 +490,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onPuzzleCompleted() {
-        // TODO: handle puzzle completed (e.g. show feedback, enable next button)
+        buttonPuzzleNext.setEnabled(true);
     }
 
     @Override
@@ -583,6 +582,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewOfferDraw.setText("");
         layoutResignDraw.setVisibility(View.GONE);
         layoutPuzzleControls.setVisibility(View.VISIBLE);
+        buttonPuzzleNext.setEnabled(false);
     }
 
     protected void displayBoard() {

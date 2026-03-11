@@ -76,6 +76,8 @@ public class LichessApi extends GameApi {
     private GameFull ongoingGameFull;
     private PuzzleAndGame ongoingPuzzle;
     private int puzzleMoveIndex = 0;
+    private String currentPuzzleAngle = PUZZLE_ANGLE_DEFAULT;
+    private boolean puzzleSolvedWithoutHint = true;
     private String user;
 
     public LichessApi() {
@@ -247,6 +249,7 @@ public class LichessApi extends GameApi {
 
     public void fetchPuzzle(String angle, String difficulty, String color) {
         String puzzleAngle = angle == null || angle.isEmpty() ? PUZZLE_ANGLE_DEFAULT : angle;
+        currentPuzzleAngle = puzzleAngle;
         int puzzleCount = 1;
 
         this.auth.puzzleBatchSelect(puzzleAngle, puzzleCount, difficulty, color, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
@@ -276,6 +279,14 @@ public class LichessApi extends GameApi {
         });
     }
 
+    public void nextPuzzle() {
+        if (ongoingPuzzle != null) {
+            solvePuzzle(currentPuzzleAngle, ongoingPuzzle.puzzle.id, puzzleSolvedWithoutHint, true);
+        } else {
+            fetchPuzzle(currentPuzzleAngle, null, null);
+        }
+    }
+
     public void solvePuzzle(String angle, String puzzleId, boolean win, boolean rated) {
         String puzzleAngle = angle == null || angle.isEmpty() ? PUZZLE_ANGLE_DEFAULT : angle;
         int puzzleCount = 1;
@@ -296,8 +307,13 @@ public class LichessApi extends GameApi {
             public void onSuccess(JsonObject result) {
                 try {
                     PuzzleBatchSolveResponse response = (new Gson()).fromJson(result, PuzzleBatchSolveResponse.class);
-                    if (!response.puzzles.isEmpty() && !response.rounds.isEmpty() && apiListener != null) {
-                        apiListener.onPuzzleSolve(response.puzzles.get(0), response.rounds.get(0));
+                    if (!response.puzzles.isEmpty() && !response.rounds.isEmpty()) {
+                        ongoingPuzzle = response.puzzles.get(0);
+                        ongoingGameFull = null;
+                        processPuzzle();
+                        if (apiListener != null) {
+                            apiListener.onPuzzleSolve(ongoingPuzzle, response.rounds.get(0));
+                        }
                     }
                 } catch (Exception ex) {
                     Log.d(TAG, "solvePuzzleBatch parse error " + ex);
@@ -329,6 +345,39 @@ public class LichessApi extends GameApi {
             }
         } catch (Exception e) {
             Log.d(TAG, "applyUciMoveToBoard exception: " + uciMove + " " + e);
+        }
+    }
+
+    public void showNextSolutionMove() {
+        if (ongoingPuzzle == null) return;
+        List<String> solution = ongoingPuzzle.puzzle.solution;
+        if (puzzleMoveIndex >= solution.size()) return;
+        puzzleSolvedWithoutHint = false;
+        applyPuzzleMoveAndResponse(solution.get(puzzleMoveIndex));
+    }
+
+    private void applyPuzzleMoveAndResponse(String playerMove) {
+        List<String> solution = ongoingPuzzle.puzzle.solution;
+
+        applyUciMoveToBoard(playerMove);
+        dispatchMove(jni.getMyMove());
+        puzzleMoveIndex++;
+
+        if (puzzleMoveIndex >= solution.size()) {
+            dispatchState();
+            if (apiListener != null) apiListener.onPuzzleCompleted();
+            return;
+        }
+
+        // apply computer's response
+        applyUciMoveToBoard(solution.get(puzzleMoveIndex));
+        dispatchMove(jni.getMyMove());
+        puzzleMoveIndex++;
+
+        dispatchState();
+
+        if (puzzleMoveIndex >= solution.size()) {
+            if (apiListener != null) apiListener.onPuzzleCompleted();
         }
     }
 
@@ -414,28 +463,7 @@ public class LichessApi extends GameApi {
             }
 
             // correct player move — apply it
-            applyUciMoveToBoard(uciMove);
-            dispatchMove(jni.getMyMove());
-            puzzleMoveIndex++;
-
-            if (puzzleMoveIndex >= solution.size()) {
-                dispatchState();
-                if (apiListener != null) {
-                    apiListener.onPuzzleCompleted();
-                }
-                return;
-            }
-
-            // apply computer's response
-            applyUciMoveToBoard(solution.get(puzzleMoveIndex));
-            dispatchMove(jni.getMyMove());
-            puzzleMoveIndex++;
-
-            dispatchState();
-
-            if (puzzleMoveIndex >= solution.size()) {
-                if (apiListener != null) apiListener.onPuzzleCompleted();
-            }
+            applyPuzzleMoveAndResponse(uciMove);
         } else {
             Log.d(TAG, "Unexpected state; move without ongoing game");
         }
@@ -556,10 +584,11 @@ public class LichessApi extends GameApi {
         Log.d(TAG, "ProcessPuzzle " + ongoingPuzzle);
         if (ongoingPuzzle != null) {
             puzzleMoveIndex = 0;
+            puzzleSolvedWithoutHint = true;
             jni.newGame();
             pgnMoves.clear();
             String[] allMoves = ongoingPuzzle.game.pgn.split(" ");
-            int limit = Math.min(ongoingPuzzle.puzzle.initialPly, allMoves.length);
+            int limit = Math.min(ongoingPuzzle.puzzle.initialPly + 1, allMoves.length);
             for (int i = 0; i < limit; i++) {
                 if (!applyPGNMove(allMoves[i])) {
                     Log.d(TAG, "processPuzzle: skipped token " + allMoves[i]);
