@@ -432,4 +432,8 @@
     <string name="title_save_game">Save game</string>
     <string name="toast_challenge_posted">Challenge posted</string>
     <string name="lichess_service_unavailable">Could not start Lichess service. Please try again.</string>
+    <string name="lichess_lobby_button_puzzle">Puzzle</string>
+    <string name="lichess_puzzle_title">Get puzzle</string>
+    <string name="lichess_puzzle_difficulty">Difficulty</string>
+    <string name="lichess_puzzle_angle">Theme</string>
 </resources>

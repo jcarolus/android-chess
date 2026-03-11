@@ -250,6 +250,7 @@ public class LichessApi extends GameApi {
                     PuzzleBatchSelectResponse response = (new Gson()).fromJson(result, PuzzleBatchSelectResponse.class);
                     if (!response.puzzles.isEmpty() && apiListener != null) {
                         apiListener.onPuzzle(response.puzzles.get(0));
+                        processPuzzle(response.puzzles.get(0));
                     }
                 } catch (Exception ex) {
                     Log.d(TAG, "fetchPuzzleBatch parse error " + ex);
@@ -262,11 +263,12 @@ public class LichessApi extends GameApi {
             @Override
             public void onError(JsonObject e) {
                 // @TODO
+                Log.d(TAG, "fetchPuzzleBatch onError " + e);
             }
         });
     }
 
-    public void solvePuzzleBatch(String angle, String puzzleId, boolean win, boolean rated) {
+    public void solvePuzzle(String angle, String puzzleId, boolean win, boolean rated) {
         String puzzleAngle = angle == null || angle.isEmpty() ? PUZZLE_ANGLE_DEFAULT : angle;
         int puzzleCount = 1;
 
@@ -508,6 +510,10 @@ public class LichessApi extends GameApi {
                 apiListener.onGameUpdate(ongoingGameFull);
             }
         }
+    }
+
+    private void processPuzzle(PuzzleAndGame puzzle) {
+        Log.d(TAG, "ProcessPuzzle " + puzzle.game.pgn);
     }
 
     private void resetForPGN() {
