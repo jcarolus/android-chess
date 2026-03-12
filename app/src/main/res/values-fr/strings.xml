@@ -406,4 +406,7 @@
     <string name="title_save_game">Sauvegarder la partie</string>
     <string name="toast_challenge_posted">Défi publié</string>
     <string name="lichess_service_unavailable">Impossible de démarrer le service Lichess. Veuillez réessayer.</string>
+    <string name="lichess_challenge_rated">Classé</string>
+    <string name="lichess_puzzle_solved_rated">Puzzle résolu ! Classement %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Résolu avec des erreurs. Classement %1$s</string>
 </resources>

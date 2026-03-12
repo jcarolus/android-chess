@@ -406,4 +406,7 @@
     <string name="title_save_game">保存对局</string>
     <string name="toast_challenge_posted">挑战已发布</string>
     <string name="lichess_service_unavailable">无法启动 Lichess 服务。请重试。</string>
+    <string name="lichess_challenge_rated">计分</string>
+    <string name="lichess_puzzle_solved_rated">谜题已解决！评分 %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">有误解决。评分 %1$s</string>
 </resources>

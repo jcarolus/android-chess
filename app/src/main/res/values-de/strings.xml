@@ -416,4 +416,7 @@
     <string name="title_save_game">Partie speichern</string>
     <string name="toast_challenge_posted">Herausforderung gepostet</string>
     <string name="lichess_service_unavailable">Lichess-Dienst konnte nicht gestartet werden. Bitte versuche es erneut.</string>
+    <string name="lichess_challenge_rated">Gewertet</string>
+    <string name="lichess_puzzle_solved_rated">Aufgabe gelöst! Wertung %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Mit Fehlern gelöst. Wertung %1$s</string>
 </resources>

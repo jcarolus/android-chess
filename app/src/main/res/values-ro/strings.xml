@@ -406,4 +406,7 @@
     <string name="title_save_game">Salvează partida</string>
     <string name="toast_challenge_posted">Provocare postată</string>
     <string name="lichess_service_unavailable">Serviciul Lichess nu a putut fi pornit. Te rugăm să încerci din nou.</string>
+    <string name="lichess_challenge_rated">Evaluat</string>
+    <string name="lichess_puzzle_solved_rated">Puzzle rezolvat! Ratingul %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Rezolvat cu greșeli. Ratingul %1$s</string>
 </resources>

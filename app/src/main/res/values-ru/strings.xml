@@ -406,4 +406,7 @@
     <string name="title_save_game">Сохранить партию</string>
     <string name="toast_challenge_posted">Вызов опубликован</string>
     <string name="lichess_service_unavailable">Не удалось запустить службу Lichess. Пожалуйста, попробуйте снова.</string>
+    <string name="lichess_challenge_rated">Рейтинговый</string>
+    <string name="lichess_puzzle_solved_rated">Задача решена! Рейтинг %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Решено с ошибками. Рейтинг %1$s</string>
 </resources>

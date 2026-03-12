@@ -406,4 +406,7 @@
     <string name="title_save_game">Oyunu kaydet</string>
     <string name="toast_challenge_posted">Meydan okuma gönderildi</string>
     <string name="lichess_service_unavailable">Lichess hizmeti başlatılamadı. Lütfen tekrar deneyin.</string>
+    <string name="lichess_challenge_rated">Derecelendirmeli</string>
+    <string name="lichess_puzzle_solved_rated">Bulmaca çözüldü! Puan %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Hatalarla çözüldü. Puan %1$s</string>
 </resources>
