@@ -28,6 +28,7 @@ import jwtc.android.chess.lichess.models.PuzzleBatchSelectResponse;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRequest;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveResponse;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
+import jwtc.android.chess.lichess.models.PuzzleGlicko;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
@@ -65,7 +66,7 @@ public class LichessApi extends GameApi {
         void onMySeekCancelled();
 
         void onPuzzle(PuzzleAndGame puzzle);
-        void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound);
+        void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko);
         void onPuzzleMoveCorrect();
         void onPuzzleUnexpectedMove(String sMove);
         void onPuzzleCompleted();
@@ -81,7 +82,7 @@ public class LichessApi extends GameApi {
     private int puzzleMoveIndex = 0;
     private String currentPuzzleAngle = PUZZLE_ANGLE_DEFAULT;
     private boolean currentPuzzleRated = true;
-    private boolean puzzleSolvedWithoutHint = true;
+    private boolean puzzleSolvedCleanly = true;
     private boolean puzzleComputerMovePending = false;
     private final Handler puzzleHandler = new Handler(Looper.getMainLooper());
     private String user;
@@ -288,7 +289,7 @@ public class LichessApi extends GameApi {
 
     public void nextPuzzle() {
         if (currentPuzzleRated && ongoingPuzzle != null) {
-            solvePuzzle(currentPuzzleAngle, ongoingPuzzle.puzzle.id, puzzleSolvedWithoutHint, true);
+            solvePuzzle(currentPuzzleAngle, ongoingPuzzle.puzzle.id, puzzleSolvedCleanly, true);
         } else {
             fetchPuzzle(currentPuzzleAngle, null, null, currentPuzzleRated);
         }
@@ -319,7 +320,7 @@ public class LichessApi extends GameApi {
                         ongoingGameFull = null;
                         processPuzzle();
                         if (apiListener != null) {
-                            apiListener.onPuzzleSolve(ongoingPuzzle, response.rounds.get(0));
+                            apiListener.onPuzzleSolve(ongoingPuzzle, response.rounds.get(0), response.glicko);
                         }
                     }
                 } catch (Exception ex) {
@@ -363,7 +364,7 @@ public class LichessApi extends GameApi {
         if (puzzleMoveIndex >= solution.size()) {
             return;
         }
-        puzzleSolvedWithoutHint = false;
+        puzzleSolvedCleanly = false;
         applyPuzzleMoveAndResponse(solution.get(puzzleMoveIndex));
     }
 
@@ -478,6 +479,7 @@ public class LichessApi extends GameApi {
             }
             if (!uciMove.equals(solution.get(puzzleMoveIndex))) {
                 Log.d(TAG, "Not equal " + uciMove + " = " + solution.get(puzzleMoveIndex));
+                puzzleSolvedCleanly = false;
                 dispatchIllegalMove();
                 if (apiListener != null) {
                     String displayMove = uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
@@ -570,6 +572,10 @@ public class LichessApi extends GameApi {
         return jni.getTurn();
     }
 
+    public String getUser() {
+        return user;
+    }
+
     private void onAuthenticate(String result) {
         user = result;
         if (apiListener != null) {
@@ -608,7 +614,7 @@ public class LichessApi extends GameApi {
         Log.d(TAG, "ProcessPuzzle " + ongoingPuzzle);
         if (ongoingPuzzle != null) {
             puzzleMoveIndex = 0;
-            puzzleSolvedWithoutHint = true;
+            puzzleSolvedCleanly = true;
             puzzleComputerMovePending = false;
             puzzleHandler.removeCallbacksAndMessages(null);
             jni.newGame();

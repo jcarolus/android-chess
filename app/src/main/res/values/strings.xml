@@ -437,4 +437,6 @@
     <string name="lichess_challenge_rated">Rated</string>
     <string name="lichess_puzzle_difficulty">Difficulty</string>
     <string name="lichess_puzzle_angle">Theme</string>
+    <string name="lichess_puzzle_solved_rated">Puzzle solved! Rating %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Solved with mistakes. Rating %1$s</string>
 </resources>

@@ -41,6 +41,7 @@ import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.PuzzleAndGame;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
+import jwtc.android.chess.lichess.models.PuzzleGlicko;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
@@ -479,8 +480,16 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
-    public void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound) {
+    public void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {
         onPuzzle(nextPuzzle);
+        if (glicko != null) {
+            textViewRatingMe.setText("" + (int) glicko.rating);
+            String diffStr = solveRound.ratingDiff >= 0 ? "+" + solveRound.ratingDiff : "" + solveRound.ratingDiff;
+            String msg = solveRound.win
+                ? getString(R.string.lichess_puzzle_solved_rated, diffStr)
+                : getString(R.string.lichess_puzzle_solved_hint_rated, diffStr);
+            updateGameStateMessage(msg);
+        }
     }
 
     @Override
@@ -586,7 +595,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewLastMove.setText("");
         textViewStatus.setText("");
         textViewOfferDraw.setText("");
+        textViewPlayerMe.setText(lichessApi.getUser());
         layoutResignDraw.setVisibility(View.GONE);
+        layoutSave.setVisibility(View.GONE);
         layoutPuzzleControls.setVisibility(View.VISIBLE);
         buttonPuzzleNext.setEnabled(false);
     }
