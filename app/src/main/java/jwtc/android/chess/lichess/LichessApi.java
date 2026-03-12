@@ -2,6 +2,8 @@ package jwtc.android.chess.lichess;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -78,6 +80,8 @@ public class LichessApi extends GameApi {
     private int puzzleMoveIndex = 0;
     private String currentPuzzleAngle = PUZZLE_ANGLE_DEFAULT;
     private boolean puzzleSolvedWithoutHint = true;
+    private boolean puzzleComputerMovePending = false;
+    private final Handler puzzleHandler = new Handler(Looper.getMainLooper());
     private String user;
 
     public LichessApi() {
@@ -349,9 +353,13 @@ public class LichessApi extends GameApi {
     }
 
     public void showNextSolutionMove() {
-        if (ongoingPuzzle == null) return;
+        if (ongoingPuzzle == null || puzzleComputerMovePending) {
+            return;
+        }
         List<String> solution = ongoingPuzzle.puzzle.solution;
-        if (puzzleMoveIndex >= solution.size()) return;
+        if (puzzleMoveIndex >= solution.size()) {
+            return;
+        }
         puzzleSolvedWithoutHint = false;
         applyPuzzleMoveAndResponse(solution.get(puzzleMoveIndex));
     }
@@ -365,20 +373,25 @@ public class LichessApi extends GameApi {
 
         if (puzzleMoveIndex >= solution.size()) {
             dispatchState();
-            if (apiListener != null) apiListener.onPuzzleCompleted();
+            if (apiListener != null) {
+                apiListener.onPuzzleCompleted();
+            }
             return;
         }
 
-        // apply computer's response
-        applyUciMoveToBoard(solution.get(puzzleMoveIndex));
-        dispatchMove(jni.getMyMove());
-        puzzleMoveIndex++;
-
-        dispatchState();
-
-        if (puzzleMoveIndex >= solution.size()) {
-            if (apiListener != null) apiListener.onPuzzleCompleted();
-        }
+        // Delay the computer's response for smoother UX
+        final String computerMove = solution.get(puzzleMoveIndex);
+        puzzleComputerMovePending = true;
+        puzzleHandler.postDelayed(() -> {
+            puzzleComputerMovePending = false;
+            applyUciMoveToBoard(computerMove);
+            dispatchMove(jni.getMyMove());
+            puzzleMoveIndex++;
+            dispatchState();
+            if (puzzleMoveIndex >= solution.size()) {
+                if (apiListener != null) apiListener.onPuzzleCompleted();
+            }
+        }, 1000);
     }
 
     private void handlePuzzleError(JsonObject e) {
@@ -448,6 +461,9 @@ public class LichessApi extends GameApi {
                 }
             });
         } else if (ongoingPuzzle != null) {
+            if (puzzleComputerMovePending) {
+                return;
+            }
             List<String> solution = ongoingPuzzle.puzzle.solution;
             if (puzzleMoveIndex >= solution.size()) {
                 Log.d(TAG, "Solution index");
@@ -585,6 +601,8 @@ public class LichessApi extends GameApi {
         if (ongoingPuzzle != null) {
             puzzleMoveIndex = 0;
             puzzleSolvedWithoutHint = true;
+            puzzleComputerMovePending = false;
+            puzzleHandler.removeCallbacksAndMessages(null);
             jni.newGame();
             pgnMoves.clear();
             String[] allMoves = ongoingPuzzle.game.pgn.split(" ");
