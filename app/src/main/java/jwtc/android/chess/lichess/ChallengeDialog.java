@@ -81,8 +81,6 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         toggleVariant.check(variant.equals("standard")
             ? R.id.RadioButtonStandard
             : R.id.RadioButtonChess960);
-        buttonVariantDefault.setEnabled(false); // @TODO until castling is fixed
-        buttonVariantChess960.setEnabled(false);
 
         String color = prefs.getString("lichess_challenge_color", "random");
         if (color.equals("white")) {

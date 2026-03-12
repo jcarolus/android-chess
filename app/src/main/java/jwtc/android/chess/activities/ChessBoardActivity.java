@@ -109,11 +109,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 //            }
 
             return true;
-        } else if (jni.isAmbiguousCastle(from, to) != 0) { // in case of Fischer
-
-            handleAmbiguousCastle(from, to);
-
-            return true; // done, return from method!
         }
         return gameApi.requestMove(from, to);
     }
