@@ -5,7 +5,7 @@
 [![F-Droid](https://img.shields.io/f-droid/v/jwtc.android.chess?label=F-Droid&logo=f-droid)](https://f-droid.org/packages/jwtc.android.chess/)
 [![Google Play](https://img.shields.io/badge/Google%20Play-available-brightgreen?logo=google-play)](https://play.google.com/store/apps/details?id=jwtc.android.chess)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](License.md)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue?logo=paypal)](https://www.paypal.com/donate?business=jcarolus%40gmail.com)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue?logo=paypal)](https://paypal.me/jcaroluschess)
 
 ---
 
@@ -53,7 +53,7 @@
 
 If you enjoy the app, consider buying me a coffee!
 
-[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue?logo=paypal)](https://www.paypal.com/donate?business=jcarolus%40gmail.com)
+[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue?logo=paypal)](https://paypal.me/jcaroluschess)
 
 ---
 
