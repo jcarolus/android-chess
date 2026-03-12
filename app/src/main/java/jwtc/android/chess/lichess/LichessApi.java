@@ -66,7 +66,8 @@ public class LichessApi extends GameApi {
 
         void onPuzzle(PuzzleAndGame puzzle);
         void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound);
-        void onPuzzleUnexpectedMove();
+        void onPuzzleMoveCorrect();
+        void onPuzzleUnexpectedMove(String sMove);
         void onPuzzleCompleted();
     }
 
@@ -371,6 +372,10 @@ public class LichessApi extends GameApi {
         dispatchMove(jni.getMyMove());
         puzzleMoveIndex++;
 
+        if (apiListener != null) {
+            apiListener.onPuzzleMoveCorrect();
+        }
+
         if (puzzleMoveIndex >= solution.size()) {
             dispatchState();
             if (apiListener != null) {
@@ -473,7 +478,8 @@ public class LichessApi extends GameApi {
                 Log.d(TAG, "Not equal " + uciMove + " = " + solution.get(puzzleMoveIndex));
                 dispatchIllegalMove();
                 if (apiListener != null) {
-                    apiListener.onPuzzleUnexpectedMove();
+                    String displayMove = uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
+                    apiListener.onPuzzleUnexpectedMove(displayMove);
                 }
                 return;
             }
