@@ -385,11 +385,18 @@ public class Auth {
     }
 
     public void post(String path, Map<String, Object> jsonBody, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        post(path, jsonBody, true, callback);
+    }
+
+    public void post(String path, Map<String, Object> jsonBody, boolean withToken, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         Log.d(TAG, "post " + path);
         Request.Builder reqBuilder = new Request.Builder()
             .url(LICHESS_HOST + path)
-            .addHeader("Authorization", "Bearer " + accessToken)
             .addHeader("Accept", "*/*");
+
+        if (withToken) {
+            reqBuilder.addHeader("Authorization", "Bearer " + accessToken);
+        }
 
         if (jsonBody != null) {
             String json = new Gson().toJson(jsonBody);
@@ -453,12 +460,19 @@ public class Auth {
     }
 
     public void get(String path, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        get(path, true, callback);
+    }
+
+    public void get(String path, boolean withToken, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
         Log.d(TAG, "get " + path);
         Request.Builder reqBuilder = new Request.Builder()
             .url(LICHESS_HOST + path)
-            .addHeader("Authorization", "Bearer " + accessToken)
             .addHeader("Accept", "*/*")
             .get();
+
+        if (withToken) {
+            reqBuilder.addHeader("Authorization", "Bearer " + accessToken);
+        }
 
         httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
             @Override
