@@ -91,6 +91,14 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             lobbyRefreshHandler.postDelayed(this, LOBBY_REFRESH_INTERVAL_MS);
         }
     };
+    private final Runnable connectionRetryRunnable = () -> {
+        if (!serviceConnected) {
+            return;
+        }
+        textViewLobbyStatus.setText("");
+        lichessApi.event();
+        lichessApi.playing();
+    };
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -417,18 +425,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onConnectionError() {
         textViewLobbyStatus.setText(R.string.lichess_games_connection_error_retry);
-        new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    textViewLobbyStatus.post(() -> {
-                        textViewLobbyStatus.setText("");
-                    });
-                    lichessApi.event();
-                    lichessApi.playing();
-                }
-            }, 5000
-        );
+        lobbyRefreshHandler.removeCallbacks(connectionRetryRunnable);
+        lobbyRefreshHandler.postDelayed(connectionRetryRunnable, 5000);
     }
 
     @Override
@@ -626,6 +624,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     private void stopLobbyRefreshLoop() {
         lobbyRefreshHandler.removeCallbacks(lobbyRefreshRunnable);
+        lobbyRefreshHandler.removeCallbacks(connectionRetryRunnable);
     }
 
     protected void openChallengeDialog(int requestCode) {
