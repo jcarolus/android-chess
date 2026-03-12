@@ -1,35 +1,58 @@
-# Chess game for Android
+# ![Chess for Android](artwork/svg/icons/logo.svg) Chess for Android
 
-## Objectives
-- User friendly
-- Free
-- No ads
-- Small size
-- Demo video https://youtu.be/oFvqyaLGvq0
+> A free, open-source chess app — no ads, no bloat, just chess.
 
-## Features
-- Chess 960
-- Duck chess (experimental)
-- Setup board
-- Play online on Lichess
-- Play online on the Free Internet Chess Server (FICS)
-- Cast the board via Chromecast
-- ECO opening explorer
-- Accessibility support for screen readers like Talkback
-- Local game database with search options
+[![F-Droid](https://img.shields.io/f-droid/v/jwtc.android.chess?label=F-Droid&logo=f-droid)](https://f-droid.org/packages/jwtc.android.chess/)
+[![Google Play](https://img.shields.io/badge/Google%20Play-available-brightgreen?logo=google-play)](https://play.google.com/store/apps/details?id=jwtc.android.chess)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](License.md)
 
-## OEX engine support
-- Supports Open Exchange Protocol chess engines
+---
 
-## Install
-- Published on "F-droid" https://f-droid.org/packages/jwtc.android.chess/
-- Published on the Google Play store https://play.google.com/store/apps/details?id=jwtc.android.chess
+## ![features](artwork/svg/icons/check.svg) Features
 
-## Roadmap
-- Take items from the feature-request list (GitHub issue list)
-- Translation improvements (some translations are old or inconsistent).
-- Improve user interaction via screen readers
-- Contributions are welcome
+| | Details |
+|---|---|
+| ![game](artwork/svg/icons/logo.svg) Game modes | Standard chess, Chess 960, Duck chess *(experimental)* |
+| ![online](artwork/svg/icons/globe.svg) Play online | [Lichess](https://lichess.org) and [FICS](https://freechess.org) |
+| ![puzzles](artwork/svg/icons/puzzle.svg) Puzzles | Lichess puzzles — rated and unrated |
+| ![cast](artwork/svg/icons/wifi.svg) Cast | Cast the board via Chromecast |
+| ![openings](artwork/svg/icons/signpost-split.svg) Openings | ECO opening explorer |
+| ![database](artwork/svg/icons/database.svg) Database | Local game database with search |
+| ![accessibility](artwork/svg/icons/eye.svg) Accessibility | Screen reader support (TalkBack) |
+| ![setup](artwork/svg/icons/tools.svg) Setup | Manual board setup mode |
 
-### License
-- MIT licensed (see License.md)
+---
+
+## ![demo](artwork/svg/icons/play-fill.svg) Demo
+
+[![Demo video](https://img.shields.io/badge/YouTube-Watch%20demo-red?logo=youtube)](https://youtu.be/oFvqyaLGvq0)
+
+---
+
+## ![install](artwork/svg/icons/box-arrow-up-right.svg) Install
+
+| Store | Link |
+|---|---|
+| F-Droid | https://f-droid.org/packages/jwtc.android.chess/ |
+| Google Play | https://play.google.com/store/apps/details?id=jwtc.android.chess |
+
+---
+
+## ![engine](artwork/svg/icons/cpu.svg) Engine support
+
+Supports **Open Exchange Protocol (OEX)** chess engines, allowing you to plug in third-party engines for analysis and play.
+
+---
+
+## ![roadmap](artwork/svg/icons/list-ul.svg) Roadmap
+
+- Pick up items from the [feature request list](../../issues)
+- Improve translation coverage and consistency
+- Better screen reader interaction
+- **Contributions are welcome!** Feel free to open a PR or issue.
+
+---
+
+## ![license](artwork/svg/icons/clipboard.svg) License
+
+MIT — see [License.md](License.md) for details.
