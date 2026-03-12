@@ -74,6 +74,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     private Runnable accessibilityDragDwellRunnable = null;
     private int accessibilityDragHoverPos = -1;
     private int accessibilityDragFromPos = -1;
+    private ViewTreeObserver.OnGlobalLayoutListener boardLayoutListener = null;
+    private View boardLayoutRoot = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -229,7 +231,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         final View boardTopLayoutRef = boardTopLayout;
         final View boardBottomLayoutRef = boardBottomLayout;
 
-        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        boardLayoutRoot = rootLayout;
+        boardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
             private int lastRootWidth = -1;
             private int lastRootHeight = -1;
             private int lastOrientation = -1;
@@ -337,7 +340,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 lastBoardSide = boardSide;
                 lastControlsHeight = controlsHeight;
             }
-        });
+        };
+        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(boardLayoutListener);
     }
 
     private int dpToPx(final int dp) {
@@ -538,6 +542,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
+
+        if (boardLayoutListener != null && boardLayoutRoot != null) {
+            boardLayoutRoot.getViewTreeObserver().removeOnGlobalLayoutListener(boardLayoutListener);
+            boardLayoutListener = null;
+            boardLayoutRoot = null;
+        }
 
         gameApi.removeListener(this);
         textToSpeech.shutdown();

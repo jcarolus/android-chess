@@ -499,7 +499,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onPuzzleUnexpectedMove(String sMove) {
         feedbackIllegalMove();
-        updateGameStateMessage(sMove + getString(R.string.puzzle_not_correct_move));
+        updateGameStateMessage(sMove + " " + getString(R.string.puzzle_not_correct_move));
     }
 
     @Override
