@@ -11,17 +11,17 @@
 
 ## ✨ Features
 
-| Feature            | Details                                                                                                             |
-|--------------------|---------------------------------------------------------------------------------------------------------------------|
-| 👑️ Game modes     | Standard chess, Chess 960, Duck chess *(experimental)*                                                              |
-| 🌐 Play online     | [Lichess](https://lichess.org) and [FICS](https://freechess.org)                                                    |
-| 🧩 Puzzles         | Lichess puzzles, mate in two collection                                                                             |
-| 📶 Cast            | Cast the board to any Chromecast device                                                                             |
-| 📖 Openings        | ECO opening explorer                                                                                                |
-| 🗄️ Database       | Local game database with search                                                                                     |
-| ♿ Accessibility    | Screen reader support via TalkBack                                                                                  |
-| 🛠️ Setup          | Manual board setup mode                                                                                             |
-| 🖥️ Engine support | Supports the **Open Exchange Protocol (OEX)**, letting you plug in third-party chess engines for analysis and play. |
+| Feature            | Details                                                                                       |
+|--------------------|-----------------------------------------------------------------------------------------------|
+| 👑️ Game modes     | Standard chess, Chess 960, Duck chess *(experimental)*                                        |
+| 🌐 Play online     | [Lichess](https://lichess.org) and [FICS](https://freechess.org)                              |
+| 🧩 Puzzles         | Lichess puzzles, mate in two collection                                                       |
+| 📶 Cast            | Cast the board to any Chromecast device                                                       |
+| 📖 Openings        | ECO opening explorer                                                                          |
+| 🗄️ Database       | Local game database with search                                                               |
+| ♿ Accessibility    | Screen reader support via TalkBack                                                            |
+| 🛠️ Setup          | Manual board setup mode                                                                       |
+| 🖥️ Engine support | Supports the **Open Exchange Protocol (OEX)**, letting you plug in third-party chess engines  |
 
 ---
 
