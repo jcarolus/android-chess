@@ -701,7 +701,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             if (data != null) {
                 currentPuzzleAngle = (String) data.get("angle");
                 currentPuzzleDifficulty = (String) data.get("difficulty");
-                lichessApi.fetchPuzzle(currentPuzzleAngle, currentPuzzleDifficulty, null);
+                boolean rated = data.get("rated") != null && (boolean) data.get("rated");
+                lichessApi.fetchPuzzle(currentPuzzleAngle, currentPuzzleDifficulty, null, rated);
             }
             return;
         }

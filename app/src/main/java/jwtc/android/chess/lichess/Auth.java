@@ -226,6 +226,7 @@ public class Auth {
         Integer nb,
         String difficulty,
         String color,
+        boolean withToken,
         OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback
     ) {
         StringBuilder path = new StringBuilder("/api/puzzle/batch/");
@@ -242,7 +243,7 @@ public class Auth {
         if (color != null && !color.isEmpty()) {
             path.append(queryAppend).append("color=").append(color);
         }
-        get(path.toString(), callback);
+        get(path.toString(), withToken, callback);
     }
 
     public void puzzleBatchSolve(

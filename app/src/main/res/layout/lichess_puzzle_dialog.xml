@@ -31,6 +31,12 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/lichess_puzzle_angle" />
 
+                <CheckBox
+                    android:id="@+id/CheckBoxPuzzleRated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lichess_challenge_rated" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

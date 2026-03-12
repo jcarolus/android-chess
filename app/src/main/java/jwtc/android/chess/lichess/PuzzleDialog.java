@@ -3,6 +3,7 @@ package jwtc.android.chess.lichess;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Button;
+import android.widget.CheckBox;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,12 +37,14 @@ public class PuzzleDialog extends ResultDialog<Map<String, Object>> {
 
         FixedDropdownView dropdownDifficulty = findViewById(R.id.DropdownDifficulty);
         FixedDropdownView dropdownAngle = findViewById(R.id.DropdownAngle);
+        CheckBox checkBoxRated = findViewById(R.id.CheckBoxPuzzleRated);
 
         dropdownDifficulty.setItems(Arrays.asList(DIFFICULTY_LABELS));
         dropdownAngle.setItems(Arrays.asList(ANGLE_VALUES));
 
         String savedDifficulty = prefs.getString("lichess_puzzle_difficulty", "");
         String savedAngle = prefs.getString("lichess_puzzle_angle", "mix");
+        checkBoxRated.setChecked(prefs.getBoolean("lichess_puzzle_rated", true));
 
         for (int i = 0; i < DIFFICULTY_VALUES.length; i++) {
             if (DIFFICULTY_VALUES[i].equals(savedDifficulty)) {
@@ -70,6 +73,9 @@ public class PuzzleDialog extends ResultDialog<Map<String, Object>> {
             String angle = (anglePos >= 0 && anglePos < ANGLE_VALUES.length) ? ANGLE_VALUES[anglePos] : "mix";
             editor.putString("lichess_puzzle_angle", angle);
             data.put("angle", angle);
+
+            editor.putBoolean("lichess_puzzle_rated", checkBoxRated.isChecked());
+            data.put("rated", checkBoxRated.isChecked());
 
             editor.apply();
             PuzzleDialog.this.dismiss();

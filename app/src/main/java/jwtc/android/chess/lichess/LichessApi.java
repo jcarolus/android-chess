@@ -80,6 +80,7 @@ public class LichessApi extends GameApi {
     private PuzzleAndGame ongoingPuzzle;
     private int puzzleMoveIndex = 0;
     private String currentPuzzleAngle = PUZZLE_ANGLE_DEFAULT;
+    private boolean currentPuzzleRated = true;
     private boolean puzzleSolvedWithoutHint = true;
     private boolean puzzleComputerMovePending = false;
     private final Handler puzzleHandler = new Handler(Looper.getMainLooper());
@@ -252,12 +253,13 @@ public class LichessApi extends GameApi {
         });
     }
 
-    public void fetchPuzzle(String angle, String difficulty, String color) {
+    public void fetchPuzzle(String angle, String difficulty, String color, boolean rated) {
         String puzzleAngle = angle == null || angle.isEmpty() ? PUZZLE_ANGLE_DEFAULT : angle;
         currentPuzzleAngle = puzzleAngle;
+        currentPuzzleRated = rated;
         int puzzleCount = 1;
 
-        this.auth.puzzleBatchSelect(puzzleAngle, puzzleCount, difficulty, color, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+        this.auth.puzzleBatchSelect(puzzleAngle, puzzleCount, difficulty, color, rated, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
             @Override
             public void onSuccess(JsonObject result) {
                 try {
@@ -285,10 +287,10 @@ public class LichessApi extends GameApi {
     }
 
     public void nextPuzzle() {
-        if (ongoingPuzzle != null) {
+        if (currentPuzzleRated && ongoingPuzzle != null) {
             solvePuzzle(currentPuzzleAngle, ongoingPuzzle.puzzle.id, puzzleSolvedWithoutHint, true);
         } else {
-            fetchPuzzle(currentPuzzleAngle, null, null);
+            fetchPuzzle(currentPuzzleAngle, null, null, currentPuzzleRated);
         }
     }
 

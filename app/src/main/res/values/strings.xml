@@ -434,6 +434,7 @@
     <string name="lichess_service_unavailable">Could not start Lichess service. Please try again.</string>
     <string name="lichess_lobby_button_puzzle">Puzzle</string>
     <string name="lichess_puzzle_title">Get puzzle</string>
+    <string name="lichess_challenge_rated">Rated</string>
     <string name="lichess_puzzle_difficulty">Difficulty</string>
     <string name="lichess_puzzle_angle">Theme</string>
 </resources>
