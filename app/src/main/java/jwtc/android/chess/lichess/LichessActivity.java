@@ -261,6 +261,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     protected void onPause() {
         super.onPause();
+        lichessApi.setApiListener(null);
         stopLobbyRefreshLoop();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
