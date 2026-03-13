@@ -30,6 +30,7 @@ import jwtc.android.chess.lichess.models.PuzzleBatchSolveResponse;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
 import jwtc.android.chess.lichess.models.PuzzleGlicko;
 import jwtc.android.chess.services.GameApi;
+import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
@@ -68,8 +69,8 @@ public class LichessApi extends GameApi {
         void onPuzzle(PuzzleAndGame puzzle);
         void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko);
         void onPuzzleMoveCorrect();
-        void onPuzzleUnexpectedMove(String sMove);
-        void onPuzzleCompleted();
+        void onPuzzleUnexpectedMove(String sMove, int toPos);
+        void onPuzzleCompleted(int toPos);
     }
 
     protected int turn = 0;
@@ -372,7 +373,8 @@ public class LichessApi extends GameApi {
         List<String> solution = ongoingPuzzle.puzzle.solution;
 
         applyUciMoveToBoard(playerMove);
-        dispatchMove(jni.getMyMove());
+        int move = jni.getMyMove();
+        dispatchMove(move);
         puzzleMoveIndex++;
 
         if (apiListener != null) {
@@ -382,7 +384,7 @@ public class LichessApi extends GameApi {
         if (puzzleMoveIndex >= solution.size()) {
             dispatchState();
             if (apiListener != null) {
-                apiListener.onPuzzleCompleted();
+                apiListener.onPuzzleCompleted(Move.getTo(move));
             }
             return;
         }
@@ -393,11 +395,12 @@ public class LichessApi extends GameApi {
         puzzleHandler.postDelayed(() -> {
             puzzleComputerMovePending = false;
             applyUciMoveToBoard(computerMove);
-            dispatchMove(jni.getMyMove());
+            int cpuMove = jni.getMyMove();
+            dispatchMove(cpuMove);
             puzzleMoveIndex++;
             dispatchState();
             if (puzzleMoveIndex >= solution.size()) {
-                if (apiListener != null) apiListener.onPuzzleCompleted();
+                if (apiListener != null) apiListener.onPuzzleCompleted(Move.getTo(cpuMove));
             }
         }, 1000);
     }
@@ -480,10 +483,17 @@ public class LichessApi extends GameApi {
             if (!uciMove.equals(solution.get(puzzleMoveIndex))) {
                 Log.d(TAG, "Not equal " + uciMove + " = " + solution.get(puzzleMoveIndex));
                 puzzleSolvedCleanly = false;
-                dispatchIllegalMove();
+                applyUciMoveToBoard(uciMove);
+                dispatchMove(jni.getMyMove());
+                dispatchState();
                 if (apiListener != null) {
                     String displayMove = uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
-                    apiListener.onPuzzleUnexpectedMove(displayMove);
+                    try {
+                        int toPos = Pos.fromString(uciMove.substring(2, 4));
+                        apiListener.onPuzzleUnexpectedMove(displayMove, toPos);
+                    } catch (Exception ignore) {
+                        Log.d(TAG, "Unexpected uci move format " + uciMove);
+                    }
                 }
                 return;
             }
@@ -660,6 +670,12 @@ public class LichessApi extends GameApi {
             }
         }
 
+        dispatchMove(jni.getMyMove());
+        dispatchState();
+    }
+
+    public void retryWrongPuzzleMove() {
+        jni.undo();
         dispatchMove(jni.getMyMove());
         dispatchState();
     }

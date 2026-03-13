@@ -56,6 +56,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected TextToSpeechApi textToSpeech;
     protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1;
+    protected int correctPosition = -1, wrongPosition = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
@@ -361,6 +362,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected void onResume() {
         super.onResume();
 
+        correctPosition = -1;
+        wrongPosition = -1;
+
         SharedPreferences prefs = getPrefs();
 
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
@@ -633,6 +637,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, labelForBlackKing);
                         chessBoardView.addView(labelView);
                     }
+                }
+                if (correctPosition == i) {
+                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, "✓");
+                    chessBoardView.addView(labelView);
+                } else if (wrongPosition == i) {
+                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, "✕");
+                    chessBoardView.addView(labelView);
                 }
             }
         }

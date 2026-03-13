@@ -86,6 +86,12 @@
                 android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonPuzzleRetry"
+                app:icon="@drawable/ic_arrow_clockwise"
+                android:contentDescription="@string/button_reset_position"
+                style="@style/ChessImageButton" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleNext"
                 app:icon="@drawable/ic_chevron_right"
                 android:contentDescription="@string/button_next_position"

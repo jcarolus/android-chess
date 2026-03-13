@@ -69,7 +69,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewLobbyStatus;
     private TextView textViewHandle;
     private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove, buttonPuzzle;
-    private MaterialButton buttonPuzzleShow, buttonPuzzleNext;
+    private MaterialButton buttonPuzzleShow, buttonPuzzleNext, buttonPuzzleRetry;
     private ListView listViewGames;
     private SimpleAdapter adapterGames;
 
@@ -198,6 +198,14 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         buttonPuzzleNext = findViewById(R.id.ButtonPuzzleNext);
         buttonPuzzleNext.setOnClickListener(v -> lichessApi.nextPuzzle());
+
+        buttonPuzzleRetry = findViewById(R.id.ButtonPuzzleRetry);
+        buttonPuzzleRetry.setVisibility(View.GONE);
+        buttonPuzzleRetry.setOnClickListener(v -> {
+            wrongPosition = -1;
+            buttonPuzzleRetry.setVisibility(View.GONE);
+            lichessApi.retryWrongPuzzleMove();
+        });
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
@@ -497,13 +505,18 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     @Override
-    public void onPuzzleUnexpectedMove(String sMove) {
+    public void onPuzzleUnexpectedMove(String sMove, int toPos) {
+        wrongPosition = toPos;
+        rebuildBoard();
+        buttonPuzzleRetry.setVisibility(View.VISIBLE);
         feedbackIllegalMove();
         updateGameStateMessage(sMove + " " + getString(R.string.puzzle_not_correct_move));
     }
 
     @Override
-    public void onPuzzleCompleted() {
+    public void onPuzzleCompleted(int toPos) {
+        correctPosition = toPos;
+        rebuildBoard();
         buttonPuzzleNext.setEnabled(true);
     }
 
@@ -599,6 +612,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutSave.setVisibility(View.GONE);
         layoutPuzzleControls.setVisibility(View.VISIBLE);
         buttonPuzzleNext.setEnabled(false);
+        buttonPuzzleRetry.setVisibility(View.GONE);
+        correctPosition = -1;
+        wrongPosition = -1;
     }
 
     protected void displayBoard() {
