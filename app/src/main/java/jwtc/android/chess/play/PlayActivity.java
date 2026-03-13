@@ -631,22 +631,30 @@ public class PlayActivity extends ChessBoardActivity implements
 //                Log.d(TAG, "numCaptured for " + turnAt + " " + piece + " " + numCaptured);
                 if (numCaptured > 0) {
                     ChessPieceView capturedPiece = new ChessPieceView(this, turnAt, piece, piece);
-                    CapturedCountView capturedCountView = new CapturedCountView(this, numCaptured, piece, turnAt);
+                    CapturedCountView capturedCountView = numCaptured > 1 ? new CapturedCountView(this, numCaptured, piece, turnAt) : null;
                     if (myTurn == BoardConstants.WHITE) {
                         if (turnAt == BoardConstants.BLACK) {
                             bottomPieces.addView(capturedPiece);
-                            bottomPieces.addView(capturedCountView);
+                            if (numCaptured > 1) {
+                                bottomPieces.addView(capturedCountView);
+                            }
                         } else {
                             topPieces.addView(capturedPiece);
-                            topPieces.addView(capturedCountView);
+                            if (numCaptured > 1) {
+                                topPieces.addView(capturedCountView);
+                            }
                         }
                     } else {
                         if (turnAt == BoardConstants.WHITE) {
                             bottomPieces.addView(capturedPiece);
-                            bottomPieces.addView(capturedCountView);
+                            if (numCaptured > 1) {
+                                bottomPieces.addView(capturedCountView);
+                            }
                         } else {
                             topPieces.addView(capturedPiece);
-                            topPieces.addView(capturedCountView);
+                            if (numCaptured > 1) {
+                                topPieces.addView(capturedCountView);
+                            }
                         }
                     }
                 }

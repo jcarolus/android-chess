@@ -201,11 +201,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         buttonPuzzleRetry = findViewById(R.id.ButtonPuzzleRetry);
         buttonPuzzleRetry.setVisibility(View.GONE);
-        buttonPuzzleRetry.setOnClickListener(v -> {
-            wrongPosition = -1;
-            buttonPuzzleRetry.setVisibility(View.GONE);
-            lichessApi.retryWrongPuzzleMove();
-        });
+        buttonPuzzleRetry.setOnClickListener(v -> lichessApi.retryWrongPuzzleMove());
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
@@ -511,6 +507,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonPuzzleRetry.setVisibility(View.VISIBLE);
         feedbackIllegalMove();
         updateGameStateMessage(sMove + " " + getString(R.string.puzzle_not_correct_move));
+    }
+
+    @Override
+    public void onPuzzleRetried() {
+        wrongPosition = -1;
+        buttonPuzzleRetry.setVisibility(View.GONE);
+        rebuildBoard();
     }
 
     @Override

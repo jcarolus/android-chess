@@ -70,6 +70,7 @@ public class LichessApi extends GameApi {
         void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko);
         void onPuzzleMoveCorrect();
         void onPuzzleUnexpectedMove(String sMove, int toPos);
+        void onPuzzleRetried();
         void onPuzzleCompleted(int toPos);
     }
 
@@ -84,6 +85,7 @@ public class LichessApi extends GameApi {
     private String currentPuzzleAngle = PUZZLE_ANGLE_DEFAULT;
     private boolean currentPuzzleRated = true;
     private boolean puzzleSolvedCleanly = true;
+    private boolean hasPendingWrongMove = false;
     private boolean puzzleComputerMovePending = false;
     private final Handler puzzleHandler = new Handler(Looper.getMainLooper());
     private String user;
@@ -365,6 +367,13 @@ public class LichessApi extends GameApi {
         if (puzzleMoveIndex >= solution.size()) {
             return;
         }
+        if (hasPendingWrongMove) {
+            hasPendingWrongMove = false;
+            jni.undo();
+            if (apiListener != null) {
+                apiListener.onPuzzleRetried();
+            }
+        }
         puzzleSolvedCleanly = false;
         applyPuzzleMoveAndResponse(solution.get(puzzleMoveIndex));
     }
@@ -483,6 +492,7 @@ public class LichessApi extends GameApi {
             if (!uciMove.equals(solution.get(puzzleMoveIndex))) {
                 Log.d(TAG, "Not equal " + uciMove + " = " + solution.get(puzzleMoveIndex));
                 puzzleSolvedCleanly = false;
+                hasPendingWrongMove = true;
                 applyUciMoveToBoard(uciMove);
                 dispatchMove(jni.getMyMove());
                 dispatchState();
@@ -626,6 +636,7 @@ public class LichessApi extends GameApi {
             puzzleMoveIndex = 0;
             puzzleSolvedCleanly = true;
             puzzleComputerMovePending = false;
+            hasPendingWrongMove = false;
             puzzleHandler.removeCallbacksAndMessages(null);
             jni.newGame();
             pgnMoves.clear();
@@ -675,9 +686,13 @@ public class LichessApi extends GameApi {
     }
 
     public void retryWrongPuzzleMove() {
+        hasPendingWrongMove = false;
         jni.undo();
         dispatchMove(jni.getMyMove());
         dispatchState();
+        if (apiListener != null) {
+            apiListener.onPuzzleRetried();
+        }
     }
 
     private void resetForPGN() {
