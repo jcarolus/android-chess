@@ -30,11 +30,11 @@ public class CapturedCountView extends AppCompatTextView {
         setTypeface(Typeface.MONOSPACE);
 
         if (color == BoardConstants.BLACK) {
-            setTextColor(0xFFFFFFFF);
-            setBackgroundResource(R.drawable.turnblack);
-        } else {
-            setBackgroundResource(R.drawable.turnwhite);
             setTextColor(0xFF000000);
+            setBackgroundResource(R.drawable.whitecircle);
+        } else {
+            setTextColor(0xFFFFFFFF);
+            setBackgroundResource(R.drawable.blackcircle);
         }
 
         if (count > 0) {
