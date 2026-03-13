@@ -577,40 +577,39 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         Log.d(TAG, "state " + state);
 
-        // ⚑ ✓ ½
         String labelForWhiteKing = null;
         String labelForBlackKing = null;
         switch (state) {
             case BoardConstants.MATE:
-                labelForWhiteKing = turn == BoardConstants.BLACK ? "✓" : "#";
-                labelForBlackKing = turn == BoardConstants.WHITE ? "✓" : "#";
+                labelForWhiteKing = turn == BoardConstants.BLACK ? ChessPieceLabelView.MATE_WINNER : ChessPieceLabelView.MATE_LOSER;
+                labelForBlackKing = turn == BoardConstants.WHITE ? ChessPieceLabelView.MATE_WINNER : ChessPieceLabelView.MATE_LOSER;
                 break;
             case BoardConstants.BLACK_RESIGNED:
             case BoardConstants.BLACK_FORFEIT_TIME:
-                labelForWhiteKing = "✓";
-                labelForBlackKing = "⚑";
+                labelForWhiteKing = ChessPieceLabelView.MATE_WINNER;
+                labelForBlackKing = ChessPieceLabelView.FLAG;
                 break;
             case BoardConstants.WHITE_RESIGNED:
             case BoardConstants.WHITE_FORFEIT_TIME:
-                labelForWhiteKing = "⚑";
-                labelForBlackKing = "✓";
+                labelForWhiteKing = ChessPieceLabelView.FLAG;
+                labelForBlackKing = ChessPieceLabelView.MATE_WINNER;
                 break;
             case BoardConstants.DRAW_MATERIAL:
             case BoardConstants.DRAW_REPEAT:
             case BoardConstants.DRAW_AGREEMENT:
             case BoardConstants.STALEMATE:
-                labelForWhiteKing = "½";
-                labelForBlackKing = "½";
+                labelForWhiteKing = ChessPieceLabelView.DRAW;
+                labelForBlackKing = ChessPieceLabelView.DRAW;
                 break;
             case BoardConstants.DRAW_50:
-                labelForWhiteKing = "50";
-                labelForBlackKing = "50";
+                labelForWhiteKing = ChessPieceLabelView.DRAW_50;
+                labelForBlackKing = ChessPieceLabelView.DRAW_50;
                 break;
             case BoardConstants.CHECK:
                 if (turn == BoardConstants.WHITE) {
-                    labelForWhiteKing = "+";
+                    labelForWhiteKing = ChessPieceLabelView.CHECK;
                 } else {
-                    labelForBlackKing = "+";
+                    labelForBlackKing = ChessPieceLabelView.CHECK;
                 }
                 break;
         }
@@ -639,10 +638,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     }
                 }
                 if (correctPosition == i) {
-                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, "✓");
+                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, ChessPieceLabelView.CORRECT);
                     chessBoardView.addView(labelView);
                 } else if (wrongPosition == i) {
-                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, "✕");
+                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, ChessPieceLabelView.WRONG);
                     chessBoardView.addView(labelView);
                 }
             }

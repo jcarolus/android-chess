@@ -631,7 +631,7 @@ public class PlayActivity extends ChessBoardActivity implements
 //                Log.d(TAG, "numCaptured for " + turnAt + " " + piece + " " + numCaptured);
                 if (numCaptured > 0) {
                     ChessPieceView capturedPiece = new ChessPieceView(this, turnAt, piece, piece);
-                    CapturedCountView capturedCountView = new CapturedCountView(this, numCaptured, piece);
+                    CapturedCountView capturedCountView = new CapturedCountView(this, numCaptured, piece, turnAt);
                     if (myTurn == BoardConstants.WHITE) {
                         if (turnAt == BoardConstants.BLACK) {
                             bottomPieces.addView(capturedPiece);

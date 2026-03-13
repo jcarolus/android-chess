@@ -11,7 +11,16 @@ import jwtc.android.chess.R;
 import jwtc.chess.board.BoardConstants;
 
 public class ChessPieceLabelView extends AppCompatTextView {
-    private int position;
+    private final int position;
+    public static final String MATE_LOSER = "#";
+    public static final String MATE_WINNER = "\uD83D\uDF32";
+    public static final String FLAG = "⚑";
+    public static final String CHECK = "+";
+    public static final String DRAW = "½";
+    public static final String DRAW_50 = "50";
+    public static final String CORRECT = "✓"; //"✓";
+    public static final String WRONG = "✕"; //"✖";
+
 
     public ChessPieceLabelView(Context context, int position, int color, String label) {
         super(context);
@@ -23,6 +32,7 @@ public class ChessPieceLabelView extends AppCompatTextView {
 
         setWillNotDraw(false);
         setGravity(Gravity.CENTER);
+        setIncludeFontPadding(false);
 
         if (color == BoardConstants.BLACK) {
             setTextColor(0xFFFFFFFF);
@@ -30,6 +40,11 @@ public class ChessPieceLabelView extends AppCompatTextView {
         } else {
             setBackgroundResource(R.drawable.turnwhite);
             setTextColor(0xFF000000);
+        }
+        if (CORRECT.equals(label) || MATE_WINNER.equals(label)) {
+            setTextColor(0xFF00CC00);
+        } else if (WRONG.equals(label) || MATE_LOSER.equals(label) || FLAG.equals(label)) {
+            setTextColor(0xFFCC0000);
         }
         setText(label);
     }
