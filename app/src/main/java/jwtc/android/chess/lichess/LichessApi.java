@@ -342,7 +342,7 @@ public class LichessApi extends GameApi {
         });
     }
 
-    private void applyUciMoveToBoard(String uciMove) {
+    private boolean applyUciMoveToBoard(String uciMove) {
         try {
             int from = Pos.fromString(uciMove.substring(0, 2));
             int to = Pos.fromString(uciMove.substring(2, 4));
@@ -351,11 +351,14 @@ public class LichessApi extends GameApi {
             }
             if (jni.requestMove(from, to) != 0) {
                 addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
+                return true;
             } else {
                 Log.d(TAG, "applyUciMoveToBoard failed: " + uciMove);
+                return false;
             }
         } catch (Exception e) {
             Log.d(TAG, "applyUciMoveToBoard exception: " + uciMove + " " + e);
+            return false;
         }
     }
 
@@ -381,7 +384,11 @@ public class LichessApi extends GameApi {
     private void applyPuzzleMoveAndResponse(String playerMove) {
         List<String> solution = ongoingPuzzle.puzzle.solution;
 
-        applyUciMoveToBoard(playerMove);
+        if (!applyUciMoveToBoard(playerMove)) {
+            Log.e(TAG, "Player puzzle move failed to apply: " + playerMove);
+            dispatchState();
+            return;
+        }
         int move = jni.getMyMove();
         dispatchMove(move);
         puzzleMoveIndex++;
@@ -403,7 +410,11 @@ public class LichessApi extends GameApi {
         puzzleComputerMovePending = true;
         puzzleHandler.postDelayed(() -> {
             puzzleComputerMovePending = false;
-            applyUciMoveToBoard(computerMove);
+            if (!applyUciMoveToBoard(computerMove)) {
+                Log.e(TAG, "Computer puzzle move failed: " + computerMove);
+                dispatchState();
+                return;
+            }
             int cpuMove = jni.getMyMove();
             dispatchMove(cpuMove);
             puzzleMoveIndex++;
@@ -492,18 +503,22 @@ public class LichessApi extends GameApi {
             if (!uciMove.equals(solution.get(puzzleMoveIndex))) {
                 Log.d(TAG, "Not equal " + uciMove + " = " + solution.get(puzzleMoveIndex));
                 puzzleSolvedCleanly = false;
-                hasPendingWrongMove = true;
-                applyUciMoveToBoard(uciMove);
-                dispatchMove(jni.getMyMove());
-                dispatchState();
-                if (apiListener != null) {
-                    String displayMove = uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
-                    try {
-                        int toPos = Pos.fromString(uciMove.substring(2, 4));
-                        apiListener.onPuzzleUnexpectedMove(displayMove, toPos);
-                    } catch (Exception ignore) {
-                        Log.d(TAG, "Unexpected uci move format " + uciMove);
+                if (applyUciMoveToBoard(uciMove)) {
+                    hasPendingWrongMove = true;
+                    dispatchMove(jni.getMyMove());
+                    dispatchState();
+                    if (apiListener != null) {
+                        String displayMove = uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
+                        try {
+                            int toPos = Pos.fromString(uciMove.substring(2, 4));
+                            apiListener.onPuzzleUnexpectedMove(displayMove, toPos);
+                        } catch (Exception ignore) {
+                            Log.d(TAG, "Unexpected uci move format " + uciMove);
+                        }
                     }
+                } else {
+                    // Truly illegal chess move — board unchanged, no retry needed
+                    dispatchIllegalMove();
                 }
                 return;
             }
@@ -577,6 +592,10 @@ public class LichessApi extends GameApi {
                 }
             }
         });
+    }
+
+    public String getPuzzleId() {
+        return ongoingPuzzle != null ? ongoingPuzzle.puzzle.id : "";
     }
 
     public int getMyTurn() {

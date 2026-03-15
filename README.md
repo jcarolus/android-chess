@@ -43,7 +43,7 @@
 
 If you enjoy the app, consider buying me a coffee!
 
-https://paypal.me/jcaroluschess
+[https://paypal.me/jcaroluschess](https://paypal.me/jcaroluschess)
 
 
 ## 📄 License

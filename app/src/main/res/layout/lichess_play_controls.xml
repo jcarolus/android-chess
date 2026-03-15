@@ -70,8 +70,7 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dip"
-            android:visibility="gone">
+            android:layout_marginTop="1dip">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleShow"
@@ -89,6 +88,7 @@
                 android:id="@+id/ButtonPuzzleRetry"
                 app:icon="@drawable/ic_arrow_clockwise"
                 android:contentDescription="@string/button_reset_position"
+                android:layout_margin="1dip"
                 style="@style/ChessImageButton" />
 
             <com.google.android.material.button.MaterialButton
