@@ -7,8 +7,8 @@
 |            | Details                                                                                      |
 |-------------------|----------------------------------------------------------------------------------------------|
 | 👑| Standard chess, Chess 960, Duck chess *(experimental)*                                       |
-| 🌐| [Lichess](https://lichess.org) and [FICS](https://freechess.org)                             |
-| 🧩| Lichess puzzles, mate in two collection                                                      |
+| 🌐| Play online on [Lichess](https://lichess.org) and [FICS](https://freechess.org)              |
+| 🧩| Lichess puzzles. Mate in two collection                                                      |
 | 📶| Cast the board to your Chromecast device                                                     |
 | 📖| ECO opening explorer                                                                         |
 | 🗄| Local game database with search                                                              |
@@ -20,15 +20,15 @@
 
 ## 🎬 Demo
 
-https://youtu.be/oFvqyaLGvq0
+[https://youtu.be/oFvqyaLGvq0](https://youtu.be/oFvqyaLGvq0)
 
 
 ## 📦 Install
 
 | Store | Link |
 |---|---|
-| F-Droid | https://f-droid.org/packages/jwtc.android.chess/ |
-| Google Play | https://play.google.com/store/apps/details?id=jwtc.android.chess |
+| F-Droid | [https://f-droid.org/packages/jwtc.android.chess/](https://f-droid.org/packages/jwtc.android.chess/) |
+| Google Play | [https://play.google.com/store/apps/details?id=jwtc.android.chess](https://play.google.com/store/apps/details?id=jwtc.android.chess) |
 
 
 ## 📌 Roadmap
