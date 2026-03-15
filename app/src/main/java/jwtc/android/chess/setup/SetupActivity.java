@@ -96,6 +96,11 @@ public class SetupActivity extends ChessBoardActivity {
         buttonRandom.setOnClickListener(v -> randomBoard());
 
         afterCreate();
+        android.view.View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
         buildPieces();
     }
 

@@ -1,1 +1,1 @@
-Chess program and FICS client
+Online/offline chess with puzzles, Chess960, Duck Chess, and board setup.

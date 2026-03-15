@@ -144,6 +144,13 @@ public class PlayActivity extends ChessBoardActivity implements
 
         afterCreate();
 
+        final View rootLayout = findViewById(R.id.root_layout);
+        final View boardAreaLayout = findViewById(R.id.board_area);
+        final View controlsLayout = findViewById(R.id.play_controls);
+        final View boardTopLayout = findViewById(R.id.play_board_top);
+        final View boardBottomLayout = findViewById(R.id.play_board_bottom);
+        initBoardLayoutSizing(rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout);
+
         playButton = findViewById(R.id.ButtonPlay);
         playButton.setOnClickListener(arg0 -> {
             if (!gameApi.isEnded()) {
@@ -624,22 +631,30 @@ public class PlayActivity extends ChessBoardActivity implements
 //                Log.d(TAG, "numCaptured for " + turnAt + " " + piece + " " + numCaptured);
                 if (numCaptured > 0) {
                     ChessPieceView capturedPiece = new ChessPieceView(this, turnAt, piece, piece);
-                    CapturedCountView capturedCountView = new CapturedCountView(this, numCaptured, piece);
+                    CapturedCountView capturedCountView = numCaptured > 1 ? new CapturedCountView(this, numCaptured, piece, turnAt) : null;
                     if (myTurn == BoardConstants.WHITE) {
                         if (turnAt == BoardConstants.BLACK) {
                             bottomPieces.addView(capturedPiece);
-                            bottomPieces.addView(capturedCountView);
+                            if (numCaptured > 1) {
+                                bottomPieces.addView(capturedCountView);
+                            }
                         } else {
                             topPieces.addView(capturedPiece);
-                            topPieces.addView(capturedCountView);
+                            if (numCaptured > 1) {
+                                topPieces.addView(capturedCountView);
+                            }
                         }
                     } else {
                         if (turnAt == BoardConstants.WHITE) {
                             bottomPieces.addView(capturedPiece);
-                            bottomPieces.addView(capturedCountView);
+                            if (numCaptured > 1) {
+                                bottomPieces.addView(capturedCountView);
+                            }
                         } else {
                             topPieces.addView(capturedPiece);
-                            topPieces.addView(capturedCountView);
+                            if (numCaptured > 1) {
+                                topPieces.addView(capturedCountView);
+                            }
                         }
                     }
                 }

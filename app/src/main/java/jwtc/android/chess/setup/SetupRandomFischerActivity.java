@@ -3,6 +3,7 @@ package jwtc.android.chess.setup;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -31,6 +32,11 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
         gameApi = new SetupApi();
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
 
         textViewSeed = findViewById(R.id.TextViewSeed);
         seekBar = findViewById(R.id.seekbar);

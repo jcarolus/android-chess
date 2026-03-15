@@ -4,6 +4,9 @@ BoardStack::BoardStack() : m_current(new ChessBoard()) {
 }
 
 BoardStack::~BoardStack() {
+    if (m_current == nullptr) {
+        return;
+    }
     clearHistory();
     delete m_current;
     m_current = nullptr;
@@ -14,6 +17,10 @@ ChessBoard* BoardStack::current() const {
 }
 
 void BoardStack::clearHistory() {
+    if (m_current == nullptr) {
+        return;
+    }
+
     ChessBoard* previous = nullptr;
     while ((previous = m_current->undoMove()) != nullptr) {
         ChessBoard* obsolete = m_current;
@@ -23,6 +30,10 @@ void BoardStack::clearHistory() {
 }
 
 boolean BoardStack::undo() {
+    if (m_current == nullptr) {
+        return false;
+    }
+
     ChessBoard* previous = m_current->undoMove();
     if (previous == nullptr) {
         return false;
@@ -33,15 +44,15 @@ boolean BoardStack::undo() {
     return true;
 }
 
-boolean BoardStack::promoteOrDiscard(ChessBoard* nextBoard, boolean success) {
-    if (success) {
-        m_current = nextBoard;
-        return true;
-    }
-    delete nextBoard;
-    return false;
-}
-
 boolean BoardStack::promoteOrDiscard(std::unique_ptr<ChessBoard> nextBoard, boolean success) {
-    return promoteOrDiscard(nextBoard.release(), success);
+    if (!nextBoard) {
+        return false;
+    }
+
+    if (!success) {
+        return false;
+    }
+
+    m_current = nextBoard.release();
+    return true;
 }

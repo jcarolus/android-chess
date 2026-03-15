@@ -255,6 +255,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(findViewById(R.id.root_layout), boardAreaLayout, findViewById(R.id.play_controls), null, null);
 
         colorToggleGroup = findViewById(R.id.colorToggleGroup);
 

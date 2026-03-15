@@ -15,7 +15,6 @@ class BoardStack {
     ChessBoard* current() const;
     void clearHistory();
     boolean undo();
-    boolean promoteOrDiscard(ChessBoard* nextBoard, boolean success);
     boolean promoteOrDiscard(std::unique_ptr<ChessBoard> nextBoard, boolean success);
 
    private:

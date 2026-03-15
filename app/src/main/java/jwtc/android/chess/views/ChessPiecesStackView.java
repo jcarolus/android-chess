@@ -72,6 +72,10 @@ public class ChessPiecesStackView extends ViewGroup {
     }
 
     public void layoutChild(View child, int index, int height) {
-        child.layout(index * height, 0, index * height + height, height);
+        if (child instanceof CapturedCountView) {
+            child.layout(index * height + height/2, height/2, index * height + height - 4, height - 4);
+        } else {
+            child.layout(index * height, 0, index * height + height, height);
+        }
     }
 }

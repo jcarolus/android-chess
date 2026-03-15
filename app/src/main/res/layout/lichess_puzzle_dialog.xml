@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="16dip">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <com.google.android.material.card.MaterialCardView style="@style/MyFormCardView">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="4dip">
+
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/DropdownDifficulty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/lichess_puzzle_difficulty" />
+
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/DropdownAngle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/lichess_puzzle_angle" />
+
+                <CheckBox
+                    android:id="@+id/CheckBoxPuzzleRated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lichess_challenge_rated" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            style="@style/MyFormLayout">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_cancel"
+                android:id="@+id/ButtonPuzzleCancel"
+                android:layout_margin="2dip" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_ok"
+                android:id="@+id/ButtonPuzzleOk"
+                android:layout_margin="2dip" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

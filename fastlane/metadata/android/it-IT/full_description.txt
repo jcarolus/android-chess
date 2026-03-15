@@ -1,0 +1,2 @@
+Gioca a scacchi contro il tuo Android o online (Lichess, FICS). Include posizioni di allenamento, rompicapi, Duck Chess, Scacchi 960 e altro. È anche possibile impostare una posizione sulla scacchiera, salvare e modificare le partite, navigare nella cronologia e importare/esportare tramite e-mail o appunti.
+Supporta lettori di schermo come TalkBack.

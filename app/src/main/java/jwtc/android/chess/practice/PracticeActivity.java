@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -105,6 +106,17 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         percentBar = findViewById(R.id.percentBar);
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(
+            findViewById(R.id.root_layout),
+            boardAreaLayout,
+            findViewById(R.id.play_controls),
+            findViewById(R.id.play_board_top),
+            findViewById(R.id.play_board_bottom)
+        );
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPracticeNext);
     }

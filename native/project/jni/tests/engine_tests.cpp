@@ -40,7 +40,7 @@ void testSetupMate() {
 
 void testSetupPieces() {
     EXPECT_TRUE(ChessTest::expectInFENIsOutFEN(
-        Game::getInstance(), "r1k5/8/8/8/8/8/8/5KR1 w KQkq - 0 1", "testSetupCastle"));
+        Game::getInstance(), "r1k5/8/8/8/8/8/8/5KR1 w Kq - 0 1", "testSetupCastle"));
 }
 
 void testStates() {
@@ -283,6 +283,100 @@ void testMoves() {
     }
 }
 
+void testRequestMove() {
+    RequestMove scenarios[] = {
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::h1,
+         .expectedSuccess = true,
+         .message = "White castling kingside"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::a1,
+         .expectedSuccess = true,
+         .message = "White castling queenside"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::g1,
+         .expectedSuccess = true,
+         .message = "White castling kingside regular"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::c1,
+         .expectedSuccess = true,
+         .message = "White castling queenside regular"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R b kq - 0 1",
+         .from = ChessBoard::e8,
+         .to = ChessBoard::h8,
+         .expectedSuccess = true,
+         .message = "Black castling kingside"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R b kq - 0 1",
+         .from = ChessBoard::e8,
+         .to = ChessBoard::g8,
+         .expectedSuccess = true,
+         .message = "Black castling kingside regular"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R b kq - 0 1",
+         .from = ChessBoard::e8,
+         .to = ChessBoard::c8,
+         .expectedSuccess = true,
+         .message = "Black castling queenside regular"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K2R b kq - 0 1",
+         .from = ChessBoard::e8,
+         .to = ChessBoard::a8,
+         .expectedSuccess = true,
+         .message = "Black castling queenside"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3K3 w - - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::h1,
+         .expectedSuccess = false,
+         .message = "Castling rights removed"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3KQ1R w KQ - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::h1,
+         .expectedSuccess = false,
+         .message = "Castling blocked by piece on path"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R3KQ1R w KQ - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::g1,
+         .expectedSuccess = false,
+         .message = "White castling kingside blocked regular"},
+        {.game = Game::getInstance(),
+         .sInFEN = "r3k2r/8/8/8/8/8/8/R2QK2R w KQ - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::c1,
+         .expectedSuccess = false,
+         .message = "White castling queenside blocked regular"},
+        {.game = Game::getInstance(),
+         .sInFEN = "4kr2/8/8/8/8/8/8/R3K2R w KQ - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::h1,
+         .expectedSuccess = false,
+         .message = "Castling through check"},
+        {.game = Game::getInstance(),
+         .sInFEN = "4kr2/8/8/8/8/8/8/R3K2R w KQ - 0 1",
+         .from = ChessBoard::e1,
+         .to = ChessBoard::g1,
+         .expectedSuccess = false,
+         .message = "White castling kingside through check regular"},
+    };
+
+    for (const RequestMove &scenario : scenarios) {
+        SCOPED_TRACE(scenario.message);
+        EXPECT_TRUE(ChessTest::expectRequestMove(scenario));
+    }
+}
+
 void testFenParsingRegression() {
     Game *game = Game::getInstance();
     char buf[255];
@@ -435,6 +529,10 @@ TEST_F(GameTest, EngineUntilExpectedState) {
 
 TEST_F(GameTest, MovesForPosition) {
     testMoves();
+}
+
+TEST_F(GameTest, RequestMove) {
+    testRequestMove();
 }
 
 TEST_F(GameTest, FenParsingRegression) {

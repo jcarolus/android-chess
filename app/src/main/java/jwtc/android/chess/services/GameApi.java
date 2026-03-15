@@ -402,6 +402,25 @@ public class GameApi {
         return false;
     }
 
+    /**
+     * Applies a SAN/PGN move to the board without dispatching.
+     * Use this when replaying a series of moves (e.g. puzzle setup) where
+     * you want to call dispatchMove/dispatchState once at the end.
+     */
+    public boolean applyPGNMove(String sMove) {
+        Matcher matchToken = getMoveMatcher(sMove);
+        String sAnnotation = "";
+        if (matchToken.matches()) {
+            return requestMove(matchToken, null, sAnnotation);
+        } else {
+            matchToken = patCastling.matcher(sMove);
+            if (matchToken.matches()) {
+                return requestMove(matchToken, matchToken.group(1), sAnnotation);
+            }
+        }
+        return false;
+    }
+
     public void resetForfeitTime() {
         int size = pgnMoves.size();
         if (size > 0) {

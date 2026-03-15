@@ -1,0 +1,2 @@
+Juega al ajedrez contra tu Android o en línea (Lichess, FICS). Incluye posiciones de práctica, acertijos, Duck Chess, Ajedrez 960 y más. También puedes configurar una posición en el tablero, guardar y editar partidas, navegar por el historial e importar/exportar por correo electrónico o portapapeles.
+Compatible con lectores de pantalla como TalkBack.

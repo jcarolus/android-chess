@@ -87,7 +87,6 @@
     <string name="hotspot_white">♔ Blancas</string>
     <string name="ics_client_handle">Usuario</string>
     <string name="ics_client_password">Contraseña</string>
-    <string name="ics_client_server">Servidor</string>
     <string name="ics_error">Ocurrió un error. Por favor, inténtalo de nuevo más tarde.</string>
     <string name="ics_examine">Examinar</string>
     <string name="ics_finger">Resumen</string>
@@ -142,7 +141,6 @@
     <string name="last_white_move_description">%1$s. Turno de las negras</string>
     <string name="lichess_challenge_by_cancelled">Desafío de %1$s cancelado</string>
     <string name="lichess_challenge_by_declined">Desafío rechazado por %1$s</string>
-    <string name="lichess_challenge_days_hint">1</string>
     <string name="lichess_challenge_dialog_button_accept">Aceptar</string>
     <string name="lichess_challenge_dialog_button_decline">Rechazar</string>
     <string name="lichess_challenge_dialog_message_rated">Puntuada</string>
@@ -150,8 +148,6 @@
     <string name="lichess_challenge_dialog_message_time_control">Control de tiempo: %1$s</string>
     <string name="lichess_challenge_dialog_message_unrated">Sin rating</string>
     <string name="lichess_challenge_dialog_message_variant">Variante: %1$s</string>
-    <string name="lichess_challenge_increment_hint">10</string>
-    <string name="lichess_challenge_minutes_hint">5</string>
     <string name="lichess_challenge_posted">Desafío publicado</string>
     <string name="lichess_confirm_offer_draw">Confirma que deseas ofrecer tablas</string>
     <string name="lichess_confirm_resign">Confirma que deseas rendirte</string>
@@ -180,7 +176,6 @@
     <string name="lichess_game_state_created">Partida creada</string>
     <string name="lichess_game_state_mate">Partida terminó en jaque mate</string>
     <string name="lichess_game_state_resigned">Partida terminó por rendición</string>
-    <string name="lichess_game_state_started">Partida iniciada</string>
     <string name="lichess_game_winner">Ganador: %1$s</string>
     <string name="lichess_games_connection_error_retry">No se pudieron obtener tus partidas. Reintentando en 5 segundos</string>
     <string name="lichess_lobby_button_challenge">Desafío</string>
@@ -290,7 +285,6 @@
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_staunty">Staunty</string>
     <string name="playonlinepreferences">Configuración en línea</string>
-    <string name="playpreferences">Configuración de juego</string>
     <string name="practice_help">Encuentra el jaque mate (puede ser en más de un movimiento).</string>
     <string name="practice_set_reset">El conjunto de práctica se ha reiniciado</string>
     <string name="pref_field_color_descriptions">Agregar claro/oscuro a la descripción de la casilla</string>
@@ -353,9 +347,7 @@
     <string name="puzzle_not_correct_move"> no es el movimiento esperado</string>
     <string name="puzzle_show">Mostrar</string>
     <string name="savegame_black">Negras</string>
-    <string name="savegame_black_question">¿Negras?</string>
     <string name="savegame_event">Evento</string>
-    <string name="savegame_event_question">¿Evento?</string>
     <string name="gameslist_filter_switch_black_description">Activar o desactivar filtro de negras</string>
     <string name="gameslist_filter_switch_date_after_description">Activar o desactivar filtro de fecha desde</string>
     <string name="gameslist_filter_switch_date_before_description">Activar o desactivar filtro de fecha hasta</string>
@@ -365,7 +357,6 @@
     <string name="gameslist_game_of_total">Partida %1$d de %2$d</string>
     <string name="gameslist_filter_switch_white_description">Activar o desactivar filtro de blancas</string>
     <string name="savegame_white">Blancas</string>
-    <string name="savegame_white_question">¿Blancas?</string>
     <string name="square_color_description_light">Casilla clara</string>
     <string name="square_color_description_dark">Casilla oscura</string>
     <string name="square_selected_with_duck_description">Seleccionado %1$s en %2$s</string>
@@ -419,12 +410,13 @@
     <string name="title_offers_adjourn">Solicitud de aplazamiento</string>
     <string name="title_offers_draw">Solicitud de tablas</string>
     <string name="title_offers_takeback">Solicitud de retracto</string>
-    <string name="title_pick_en_passant">Casilla de captura al paso</string>
-    <string name="title_pick_level">Elige nivel de juego</string>
     <string name="title_pick_time">Elige nivel de tiempo</string>
     <string name="title_pick_ply">Elige nivel de ply</string>
     <string name="title_pick_promo">Elige pieza de promoción</string>
     <string name="title_save_game">Guardar partida</string>
     <string name="toast_challenge_posted">Desafío publicado</string>
     <string name="lichess_service_unavailable">No se pudo iniciar el servicio de Lichess. Inténtalo de nuevo.</string>
+    <string name="lichess_challenge_rated">Clasificado</string>
+    <string name="lichess_puzzle_solved_rated">¡Puzzle resuelto! Puntuación %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Resuelto con errores. Puntuación %1$s</string>
 </resources>

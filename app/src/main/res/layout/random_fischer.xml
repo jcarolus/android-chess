@@ -1,37 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="4dip"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="4dp"
     android:id="@+id/LayoutMain">
 
-    <include
-        layout="@layout/chessboard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/includeboard" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/board_area"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/play_controls">
+
+        <include
+            android:id="@+id/includeboard"
+            layout="@layout/chessboard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="W,1:1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:id="@+id/play_controls"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:minHeight="64dp"
+        android:padding="4dp"
+        app:layout_constraintTop_toBottomOf="@id/board_area"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="4dip">
+            android:padding="4dp">
 
             <TableLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:stretchColumns="1"
-                android:layout_marginTop="4dip">
+                android:layout_marginTop="4dp">
 
                 <TableRow
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center">
 
@@ -42,7 +65,7 @@
 
                     <SeekBar
                         android:id="@+id/seekbar"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:max="959" />
 
@@ -53,16 +76,16 @@
 
                     <TextView
                         android:id="@+id/TextViewSeed"
-                        android:layout_width="48dip"
+                        android:layout_width="48dp"
                         android:layout_height="wrap_content"
                         style="@style/MyHeaderTextStyle"></TextView>
                 </TableRow>
             </TableLayout>
 
             <TableLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dip"
+                android:layout_marginTop="4dp"
                 android:stretchColumns="*">
 
                 <TableRow style="@style/MyRowStyle">
@@ -71,21 +94,21 @@
                         android:id="@+id/ButtonSetupOptionsCancel"
                         android:text="@string/button_cancel"
                         android:layout_width="wrap_content"
-                        android:layout_marginRight="2dip"
+                        android:layout_marginRight="2dp"
                         style="@style/ChessButton" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsRandom"
                         android:text="@string/choice_random"
                         android:layout_width="wrap_content"
-                        android:layout_margin="2dip"
+                        android:layout_margin="2dp"
                         style="@style/ChessButton" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsOk"
                         android:text="@string/button_ok"
                         android:layout_width="wrap_content"
-                        android:layout_marginLeft="2dip"
+                        android:layout_marginLeft="2dp"
                         style="@style/ChessButton" />
                 </TableRow>
 
@@ -93,4 +116,4 @@
 
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

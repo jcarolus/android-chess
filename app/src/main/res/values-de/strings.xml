@@ -87,7 +87,6 @@
     <string name="hotspot_white">♔ Weiß</string>
     <string name="ics_client_handle">Benutzername</string>
     <string name="ics_client_password">Passwort</string>
-    <string name="ics_client_server">Server</string>
     <string name="ics_error">Ein Fehler ist aufgetreten. Bitte versuche es später erneut.</string>
     <string name="ics_examine">Analysieren</string>
     <string name="ics_finger">Zusammenfassung</string>
@@ -142,7 +141,6 @@
     <string name="last_white_move_description">%1$s. Schwarz ist am Zug</string>
     <string name="lichess_challenge_by_cancelled">Herausforderung von %1$s abgebrochen</string>
     <string name="lichess_challenge_by_declined">Herausforderung von %1$s abgelehnt</string>
-    <string name="lichess_challenge_days_hint">1</string>
     <string name="lichess_challenge_dialog_button_accept">Annehmen</string>
     <string name="lichess_challenge_dialog_button_decline">Ablehnen</string>
     <string name="lichess_challenge_dialog_message_rated">Gewertet</string>
@@ -150,8 +148,6 @@
     <string name="lichess_challenge_dialog_message_time_control">Zeitkontrolle: %1$s</string>
     <string name="lichess_challenge_dialog_message_unrated">Ungewertet</string>
     <string name="lichess_challenge_dialog_message_variant">Variante: %1$s</string>
-    <string name="lichess_challenge_increment_hint">10</string>
-    <string name="lichess_challenge_minutes_hint">5</string>
     <string name="lichess_challenge_posted">Herausforderung erstellt</string>
     <string name="lichess_confirm_offer_draw">Bestätige, dass du Remis anbieten möchtest</string>
     <string name="lichess_confirm_resign">Bestätige, dass du aufgeben möchtest</string>
@@ -180,7 +176,6 @@
     <string name="lichess_game_state_created">Spiel erstellt</string>
     <string name="lichess_game_state_mate">Spiel endete mit Schachmatt</string>
     <string name="lichess_game_state_resigned">Spiel endete durch Aufgabe</string>
-    <string name="lichess_game_state_started">Spiel gestartet</string>
     <string name="lichess_game_winner">Sieger: %1$s</string>
     <string name="lichess_games_connection_error_retry">Konnte deine Spiele nicht abrufen. Versuche in 5 Sekunden erneut zu verbinden</string>
     <string name="lichess_lobby_button_challenge">Herausforderung</string>
@@ -290,7 +285,6 @@
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_staunty">Staunty</string>
     <string name="playonlinepreferences">Online-Spiel-Einstellungen</string>
-    <string name="playpreferences">Spiel-Einstellungen</string>
     <string name="practice_help">Finde das Matt (kann mehrere Züge dauern).</string>
     <string name="practice_set_reset">Übungsset wurde zurückgesetzt</string>
     <string name="pref_field_color_descriptions">Hell/Dunkel zur Feldbeschreibung hinzufügen</string>
@@ -353,9 +347,7 @@
     <string name="puzzle_not_correct_move"> ist nicht der erwartete Zug</string>
     <string name="puzzle_show">Anzeigen</string>
     <string name="savegame_black">Schwarz</string>
-    <string name="savegame_black_question">Schwarz?</string>
     <string name="savegame_event">Ereignis</string>
-    <string name="savegame_event_question">Ereignis?</string>
     <string name="gameslist_filter_switch_black_description">Schwarz-Filter aktivieren oder deaktivieren</string>
     <string name="gameslist_filter_switch_date_after_description">Filter „Datum nach“ aktivieren oder deaktivieren</string>
     <string name="gameslist_filter_switch_date_before_description">Filter „Datum vor“ aktivieren oder deaktivieren</string>
@@ -365,7 +357,6 @@
     <string name="gameslist_game_of_total">Partie %1$d von %2$d</string>
     <string name="gameslist_filter_switch_white_description">Weiß-Filter aktivieren oder deaktivieren</string>
     <string name="savegame_white">Weiß</string>
-    <string name="savegame_white_question">Weiß?</string>
     <string name="square_color_description_light">Helles Feld</string>
     <string name="square_color_description_dark">Dunkles Feld</string>
     <string name="square_selected_with_duck_description">Ausgewählt: %1$s auf %2$s</string>
@@ -419,12 +410,13 @@
     <string name="title_offers_adjourn">Vertagungs-Anfrage</string>
     <string name="title_offers_draw">Remis-Anfrage</string>
     <string name="title_offers_takeback">Zurücknahme-Anfrage</string>
-    <string name="title_pick_en_passant">En-passant-Feld</string>
-    <string name="title_pick_level">Spielstärke wählen</string>
     <string name="title_pick_time">Zeitstufe wählen</string>
     <string name="title_pick_ply">Ply-Stufe wählen</string>
     <string name="title_pick_promo">Umwandlungsfigur wählen</string>
     <string name="title_save_game">Partie speichern</string>
     <string name="toast_challenge_posted">Herausforderung gepostet</string>
     <string name="lichess_service_unavailable">Lichess-Dienst konnte nicht gestartet werden. Bitte versuche es erneut.</string>
+    <string name="lichess_challenge_rated">Gewertet</string>
+    <string name="lichess_puzzle_solved_rated">Aufgabe gelöst! Wertung %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Mit Fehlern gelöst. Wertung %1$s</string>
 </resources>

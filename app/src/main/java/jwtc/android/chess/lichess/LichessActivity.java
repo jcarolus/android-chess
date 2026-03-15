@@ -9,7 +9,9 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,6 +39,9 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
+import jwtc.android.chess.lichess.models.PuzzleAndGame;
+import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
+import jwtc.android.chess.lichess.models.PuzzleGlicko;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
@@ -48,12 +53,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private static final String TAG = "LichessActivity";
     private static final int VIEW_ROOT_WAITING = 0, VIEW_ROOT_LOGIN = 1, VIEW_ROOT_SUB = 2;
     private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1;
+    private static final long LOBBY_REFRESH_INTERVAL_MS = 60_000L;
     public static final int REQUEST_SAVE_GAME_TO_FILE = 1;
 
     private LichessApi lichessApi;
     private LocalClockApi localClockApi;
     private ViewAnimator viewAnimatorRoot, viewAnimatorSub;
-    private LinearLayout layoutConfirm, layoutResignDraw, layoutSave;
+    private LinearLayout layoutConfirm, layoutResignDraw, layoutSave, layoutPuzzleControls;
     private SwitchMaterial switchConfirmMoves;
 
     private ImageView imageTurnOpp, imageTurnMe;
@@ -62,15 +68,37 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private TextView textViewLobbyStatus;
     private TextView textViewHandle;
-    private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove;
+    private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove, buttonPuzzle;
+    private MaterialButton buttonPuzzleShow, buttonPuzzleNext, buttonPuzzleRetry;
     private ListView listViewGames;
     private SimpleAdapter adapterGames;
+
+    private String currentPuzzleAngle, currentPuzzleDifficulty;
 
     private ArrayList<HashMap<String, String>> mapGames = new ArrayList<HashMap<String, String>>();
     private List<Game> nowPlayingGames;
     private Intent pendingData;
     private boolean serviceConnected = false;
     private boolean serviceBound = false;
+    private final Handler lobbyRefreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable lobbyRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!isLobbyVisible()) {
+                return;
+            }
+            lichessApi.playing();
+            lobbyRefreshHandler.postDelayed(this, LOBBY_REFRESH_INTERVAL_MS);
+        }
+    };
+    private final Runnable connectionRetryRunnable = () -> {
+        if (!serviceConnected) {
+            return;
+        }
+        textViewLobbyStatus.setText("");
+        lichessApi.event();
+        lichessApi.playing();
+    };
 
     private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -114,6 +142,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonChallenge.setOnClickListener(v -> openChallengeDialog(ChallengeDialog.REQUEST_CHALLENGE));
         buttonSeek = findViewById(R.id.ButtonSeek);
         buttonSeek.setOnClickListener(v -> openChallengeDialog(ChallengeDialog.REQUEST_SEEK));
+
+        buttonPuzzle = findViewById(R.id.ButtonPuzzle);
+        buttonPuzzle.setOnClickListener(v -> openPuzzleDialog());
 
         buttonResign = findViewById(R.id.ButtonResign);
         buttonResign.setOnClickListener(v -> {
@@ -160,6 +191,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutResignDraw = findViewById(R.id.LayoutResignDraw);
         layoutConfirm = findViewById(R.id.LayoutConfirm);
         layoutSave = findViewById(R.id.LayoutSave);
+        layoutPuzzleControls = findViewById(R.id.LayoutPuzzleControls);
+
+        buttonPuzzleShow = findViewById(R.id.ButtonPuzzleShow);
+        buttonPuzzleShow.setOnClickListener(v -> lichessApi.showNextSolutionMove());
+
+        buttonPuzzleNext = findViewById(R.id.ButtonPuzzleNext);
+        buttonPuzzleNext.setOnClickListener(v -> lichessApi.nextPuzzle());
+
+        buttonPuzzleRetry = findViewById(R.id.ButtonPuzzleRetry);
+        buttonPuzzleRetry.setVisibility(View.GONE);
+        buttonPuzzleRetry.setOnClickListener(v -> lichessApi.retryWrongPuzzleMove());
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
@@ -191,6 +233,17 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         listViewGames.setAdapter(adapterGames);
         listViewGames.setOnItemClickListener(this);
 
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(
+            findViewById(R.id.ViewAnimatorRoot),
+            boardAreaLayout,
+            findViewById(R.id.play_controls),
+            findViewById(R.id.play_board_top),
+            findViewById(R.id.play_board_bottom)
+        );
         afterCreate();
     }
 
@@ -204,12 +257,16 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutConfirm.setVisibility(View.GONE);
         layoutSave.setVisibility(View.GONE);
         layoutResignDraw.setVisibility(View.VISIBLE);
+        layoutPuzzleControls.setVisibility(View.GONE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
+        startLobbyRefreshLoop();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        lichessApi.setApiListener(null);
+        stopLobbyRefreshLoop();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
@@ -258,6 +315,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     protected void onStop() {
         Log.i(TAG, "onStop");
         super.onStop();
+        stopLobbyRefreshLoop();
 
         if (serviceBound) {
             unbindService(mConnection);
@@ -280,7 +338,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onGameInit(String gameId) {
-        openGame(gameId);
+        lichessApi.playing();
     }
 
     @Override
@@ -330,6 +388,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onGameFinish() {
         localClockApi.stopClock();
+        lichessApi.playing();
     }
 
     @Override
@@ -371,18 +430,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onConnectionError() {
         textViewLobbyStatus.setText(R.string.lichess_games_connection_error_retry);
-        new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    textViewLobbyStatus.post(() -> {
-                        textViewLobbyStatus.setText("");
-                    });
-                    lichessApi.event();
-                    lichessApi.playing();
-                }
-            }, 5000
-        );
+        lobbyRefreshHandler.removeCallbacks(connectionRetryRunnable);
+        lobbyRefreshHandler.postDelayed(connectionRetryRunnable, 5000);
     }
 
     @Override
@@ -426,6 +475,52 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     public void onMySeekCancelled() {
         buttonSeek.setEnabled(true);
         textViewLobbyStatus.setText(R.string.lichess_my_seek_closed);
+    }
+
+    @Override
+    public void onPuzzle(PuzzleAndGame puzzle) {
+        displayPuzzle();
+    }
+
+    @Override
+    public void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {
+        onPuzzle(nextPuzzle);
+        if (glicko != null) {
+            textViewRatingMe.setText("" + (int) glicko.rating);
+            String diffStr = solveRound.ratingDiff >= 0 ? "+" + solveRound.ratingDiff : "" + solveRound.ratingDiff;
+            String msg = solveRound.win
+                ? getString(R.string.lichess_puzzle_solved_rated, diffStr)
+                : getString(R.string.lichess_puzzle_solved_hint_rated, diffStr);
+            updateGameStateMessage(msg);
+        }
+    }
+
+    @Override
+    public void onPuzzleMoveCorrect() {
+        updateGameStateMessage(getString(R.string.puzzle_correct_move));
+    }
+
+    @Override
+    public void onPuzzleUnexpectedMove(String sMove, int toPos) {
+        wrongPosition = toPos;
+        rebuildBoard();
+        buttonPuzzleRetry.setVisibility(View.VISIBLE);
+        feedbackIllegalMove();
+        updateGameStateMessage(sMove + " " + getString(R.string.puzzle_not_correct_move));
+    }
+
+    @Override
+    public void onPuzzleRetried() {
+        wrongPosition = -1;
+        buttonPuzzleRetry.setVisibility(View.GONE);
+        rebuildBoard();
+    }
+
+    @Override
+    public void onPuzzleCompleted(int toPos) {
+        correctPosition = toPos;
+        rebuildBoard();
+        buttonPuzzleNext.setEnabled(true);
     }
 
     @Override
@@ -496,17 +591,60 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     protected void displayLobby() {
         lichessApi.playing();
+        startLobbyRefreshLoop();
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_LOBBY);
     }
 
     protected void displayPlay() {
-        // reset info
+        displayBoard();
         textViewLastMove.setText("");
         textViewStatus.setText("");
         textViewOfferDraw.setText("");
+        layoutResignDraw.setVisibility(View.VISIBLE);
+        layoutPuzzleControls.setVisibility(View.GONE);
+    }
+
+    protected void displayPuzzle() {
+        displayBoard();
+        textViewLastMove.setText("");
+        textViewStatus.setText("");
+        textViewOfferDraw.setText("");
+        textViewPlayerMe.setText(lichessApi.getUser());
+        layoutResignDraw.setVisibility(View.GONE);
+        layoutSave.setVisibility(View.GONE);
+        layoutPuzzleControls.setVisibility(View.VISIBLE);
+        buttonPuzzleNext.setEnabled(false);
+        buttonPuzzleRetry.setVisibility(View.GONE);
+        correctPosition = -1;
+        wrongPosition = -1;
+    }
+
+    protected void displayBoard() {
+        stopLobbyRefreshLoop();
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_PLAY);
+    }
+
+    private boolean isLobbyVisible() {
+        return serviceConnected
+            && viewAnimatorRoot != null
+            && viewAnimatorSub != null
+            && viewAnimatorRoot.getDisplayedChild() == VIEW_ROOT_SUB
+            && viewAnimatorSub.getDisplayedChild() == VIEW_SUB_LOBBY;
+    }
+
+    private void startLobbyRefreshLoop() {
+        stopLobbyRefreshLoop();
+        if (!isLobbyVisible()) {
+            return;
+        }
+        lobbyRefreshHandler.postDelayed(lobbyRefreshRunnable, LOBBY_REFRESH_INTERVAL_MS);
+    }
+
+    private void stopLobbyRefreshLoop() {
+        lobbyRefreshHandler.removeCallbacks(lobbyRefreshRunnable);
+        lobbyRefreshHandler.removeCallbacks(connectionRetryRunnable);
     }
 
     protected void openChallengeDialog(int requestCode) {
@@ -514,7 +652,14 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         dlg.show();
     }
 
+    protected void openPuzzleDialog() {
+        PuzzleDialog dlg = new PuzzleDialog(this, this, getPrefs());
+        dlg.show();
+    }
+
     protected void openGame(String gameId) {
+        layoutResignDraw.setVisibility(View.VISIBLE);
+        layoutPuzzleControls.setVisibility(View.GONE);
         lichessApi.game(gameId);
         displayPlay();
     }
@@ -582,6 +727,15 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void OnDialogResult(int requestCode, Map<String, Object> data) {
+        if (requestCode == PuzzleDialog.REQUEST_PUZZLE) {
+            if (data != null) {
+                currentPuzzleAngle = (String) data.get("angle");
+                currentPuzzleDifficulty = (String) data.get("difficulty");
+                boolean rated = data.get("rated") != null && (boolean) data.get("rated");
+                lichessApi.fetchPuzzle(currentPuzzleAngle, currentPuzzleDifficulty, null, rated);
+            }
+            return;
+        }
         if (data == null) {
             buttonSeek.setEnabled(true);
         } else if (requestCode == ChallengeDialog.REQUEST_CHALLENGE) {

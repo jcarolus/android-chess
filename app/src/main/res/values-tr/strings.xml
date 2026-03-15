@@ -84,7 +84,6 @@
     <string name="hotspot_white">♔ Beyaz</string>
     <string name="ics_client_handle">Kullanıcı</string>
     <string name="ics_client_password">Şifre</string>
-    <string name="ics_client_server">Sunucu</string>
     <string name="ics_error">Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</string>
     <string name="ics_examine">İncele</string>
     <string name="ics_finger">Özet</string>
@@ -139,7 +138,6 @@
     <string name="last_white_move_description">%1$s. Siyahın sırası</string>
     <string name="lichess_challenge_by_cancelled">%1$s tarafından gönderilen meydan okuma iptal edildi</string>
     <string name="lichess_challenge_by_declined">%1$s tarafından gönderilen meydan okuma reddedildi</string>
-    <string name="lichess_challenge_days_hint">1</string>
     <string name="lichess_challenge_dialog_button_accept">Kabul et</string>
     <string name="lichess_challenge_dialog_button_decline">Reddet</string>
     <string name="lichess_challenge_dialog_message_rated">Dereceli</string>
@@ -147,8 +145,6 @@
     <string name="lichess_challenge_dialog_message_time_control">Zaman kontrolü: %1$s</string>
     <string name="lichess_challenge_dialog_message_unrated">Derecesiz</string>
     <string name="lichess_challenge_dialog_message_variant">Varyant: %1$s</string>
-    <string name="lichess_challenge_increment_hint">10</string>
-    <string name="lichess_challenge_minutes_hint">5</string>
     <string name="lichess_challenge_posted">Meydan okuma gönderildi</string>
     <string name="lichess_confirm_offer_draw">Berabere teklif etmek istediğinizi onaylayın</string>
     <string name="lichess_confirm_resign">Pes etmek istediğinizi onaylayın</string>
@@ -177,7 +173,6 @@
     <string name="lichess_game_state_created">Oyun oluşturuldu</string>
     <string name="lichess_game_state_mate">Oyun şah mat ile bitti</string>
     <string name="lichess_game_state_resigned">Oyun pes edilerek bitti</string>
-    <string name="lichess_game_state_started">Oyun başladı</string>
     <string name="lichess_game_winner">Kazanan: %1$s</string>
     <string name="lichess_games_connection_error_retry">Oyunlarınız alınamadı. 5 saniye içinde yeniden bağlanılıyor</string>
     <string name="lichess_lobby_button_challenge">Meydan okuma</string>
@@ -280,7 +275,6 @@
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_staunty">Staunty</string>
     <string name="playonlinepreferences">Çevrimiçi oyun ayarları</string>
-    <string name="playpreferences">Oyun ayarları</string>
     <string name="practice_help">Mati bul (birden fazla hamle olabilir).</string>
     <string name="practice_set_reset">Alıştırma seti sıfırlandı</string>
     <string name="pref_field_color_descriptions">Kare açıklamasına açık/koyu ekle</string>
@@ -343,9 +337,7 @@
     <string name="puzzle_not_correct_move"> beklenen hamle değil</string>
     <string name="puzzle_show">Göster</string>
     <string name="savegame_black">Siyah</string>
-    <string name="savegame_black_question">Siyah?</string>
     <string name="savegame_event">Etkinlik</string>
-    <string name="savegame_event_question">Etkinlik?</string>
     <string name="gameslist_filter_switch_black_description">Siyah filtresini aç veya kapat</string>
     <string name="gameslist_filter_switch_date_after_description">Tarih sonrası filtresini aç veya kapat</string>
     <string name="gameslist_filter_switch_date_before_description">Tarih öncesi filtresini aç veya kapat</string>
@@ -355,7 +347,6 @@
     <string name="gameslist_game_of_total">Oyun %1$d / %2$d</string>
     <string name="gameslist_filter_switch_white_description">Beyaz filtresini aç veya kapat</string>
     <string name="savegame_white">Beyaz</string>
-    <string name="savegame_white_question">Beyaz?</string>
     <string name="square_color_description_light">Açık kare</string>
     <string name="square_color_description_dark">Koyu kare</string>
     <string name="square_selected_with_duck_description">%2$s konumunda %1$s seçildi</string>
@@ -409,12 +400,13 @@
     <string name="title_offers_adjourn">Erteleme isteği</string>
     <string name="title_offers_draw">Beraberlik isteği</string>
     <string name="title_offers_takeback">Geri alma isteği</string>
-    <string name="title_pick_en_passant">En passant karesi</string>
-    <string name="title_pick_level">Oyun seviyesi seç</string>
     <string name="title_pick_time">Zaman seviyesini seç</string>
     <string name="title_pick_ply">Yarım hamle seviyesini seç</string>
     <string name="title_pick_promo">Terfi piyesi seç</string>
     <string name="title_save_game">Oyunu kaydet</string>
     <string name="toast_challenge_posted">Meydan okuma gönderildi</string>
     <string name="lichess_service_unavailable">Lichess hizmeti başlatılamadı. Lütfen tekrar deneyin.</string>
+    <string name="lichess_challenge_rated">Derecelendirmeli</string>
+    <string name="lichess_puzzle_solved_rated">Bulmaca çözüldü! Puan %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Hatalarla çözüldü. Puan %1$s</string>
 </resources>

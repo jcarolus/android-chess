@@ -2,6 +2,8 @@ package jwtc.android.chess.lichess;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -10,6 +12,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +23,20 @@ import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.GameState;
+import jwtc.android.chess.lichess.models.PuzzleAndGame;
+import jwtc.android.chess.lichess.models.PuzzleBatchSelectResponse;
+import jwtc.android.chess.lichess.models.PuzzleBatchSolveRequest;
+import jwtc.android.chess.lichess.models.PuzzleBatchSolveResponse;
+import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
+import jwtc.android.chess.lichess.models.PuzzleGlicko;
 import jwtc.android.chess.services.GameApi;
+import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 public class LichessApi extends GameApi {
     private static final String TAG = "LichessApi";
+    private static final String PUZZLE_ANGLE_DEFAULT = "mix";
 
     public interface LichessApiListener {
         void onAuthenticate(String user);
@@ -52,6 +65,13 @@ public class LichessApi extends GameApi {
         void onMyChallengeCancelled();
 
         void onMySeekCancelled();
+
+        void onPuzzle(PuzzleAndGame puzzle);
+        void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko);
+        void onPuzzleMoveCorrect();
+        void onPuzzleUnexpectedMove(String sMove, int toPos);
+        void onPuzzleRetried();
+        void onPuzzleCompleted(int toPos);
     }
 
     protected int turn = 0;
@@ -60,6 +80,14 @@ public class LichessApi extends GameApi {
     private LichessApiListener apiListener;
 
     private GameFull ongoingGameFull;
+    private PuzzleAndGame ongoingPuzzle;
+    private int puzzleMoveIndex = 0;
+    private String currentPuzzleAngle = PUZZLE_ANGLE_DEFAULT;
+    private boolean currentPuzzleRated = true;
+    private boolean puzzleSolvedCleanly = true;
+    private boolean hasPendingWrongMove = false;
+    private boolean puzzleComputerMovePending = false;
+    private final Handler puzzleHandler = new Handler(Looper.getMainLooper());
     private String user;
 
     public LichessApi() {
@@ -229,6 +257,172 @@ public class LichessApi extends GameApi {
         });
     }
 
+    public void fetchPuzzle(String angle, String difficulty, String color, boolean rated) {
+        String puzzleAngle = angle == null || angle.isEmpty() ? PUZZLE_ANGLE_DEFAULT : angle;
+        currentPuzzleAngle = puzzleAngle;
+        currentPuzzleRated = rated;
+        int puzzleCount = 1;
+
+        this.auth.puzzleBatchSelect(puzzleAngle, puzzleCount, difficulty, color, rated, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                try {
+                    PuzzleBatchSelectResponse response = (new Gson()).fromJson(result, PuzzleBatchSelectResponse.class);
+                    if (!response.puzzles.isEmpty() && apiListener != null) {
+                        ongoingPuzzle = response.puzzles.get(0);
+                        apiListener.onPuzzle(ongoingPuzzle);
+                        ongoingGameFull = null;
+                        processPuzzle();
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "fetchPuzzleBatch parse error " + ex);
+                    JsonObject error = new JsonObject();
+                    error.addProperty("error", "Could not parse puzzle batch response");
+                    // @TODO
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "fetchPuzzleBatch onError " + e);
+                handlePuzzleError(e);
+            }
+        });
+    }
+
+    public void nextPuzzle() {
+        if (currentPuzzleRated && ongoingPuzzle != null) {
+            solvePuzzle(currentPuzzleAngle, ongoingPuzzle.puzzle.id, puzzleSolvedCleanly, true);
+        } else {
+            fetchPuzzle(currentPuzzleAngle, null, null, currentPuzzleRated);
+        }
+    }
+
+    public void solvePuzzle(String angle, String puzzleId, boolean win, boolean rated) {
+        String puzzleAngle = angle == null || angle.isEmpty() ? PUZZLE_ANGLE_DEFAULT : angle;
+        int puzzleCount = 1;
+
+        PuzzleBatchSolveRequest.Solution solution = new PuzzleBatchSolveRequest.Solution();
+        solution.id = puzzleId;
+        solution.win = win;
+        solution.rated = rated;
+
+        List<PuzzleBatchSolveRequest.Solution> solutions = new ArrayList<>();
+        solutions.add(solution);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("solutions", solutions);
+
+        this.auth.puzzleBatchSolve(puzzleAngle, puzzleCount, payload, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                try {
+                    PuzzleBatchSolveResponse response = (new Gson()).fromJson(result, PuzzleBatchSolveResponse.class);
+                    if (!response.puzzles.isEmpty() && !response.rounds.isEmpty()) {
+                        ongoingPuzzle = response.puzzles.get(0);
+                        ongoingGameFull = null;
+                        processPuzzle();
+                        if (apiListener != null) {
+                            apiListener.onPuzzleSolve(ongoingPuzzle, response.rounds.get(0), response.glicko);
+                        }
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "solvePuzzleBatch parse error " + ex);
+                    JsonObject error = new JsonObject();
+                    error.addProperty("error", "Could not parse puzzle solve response");
+                    // @TODO
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "solvePuzzleBatch onError " + e);
+                handlePuzzleError(e);
+            }
+        });
+    }
+
+    private void applyUciMoveToBoard(String uciMove) {
+        try {
+            int from = Pos.fromString(uciMove.substring(0, 2));
+            int to = Pos.fromString(uciMove.substring(2, 4));
+            if (uciMove.length() == 5) {
+                jni.setPromo(Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase()));
+            }
+            if (jni.requestMove(from, to) != 0) {
+                addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
+            } else {
+                Log.d(TAG, "applyUciMoveToBoard failed: " + uciMove);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "applyUciMoveToBoard exception: " + uciMove + " " + e);
+        }
+    }
+
+    public void showNextSolutionMove() {
+        if (ongoingPuzzle == null || puzzleComputerMovePending) {
+            return;
+        }
+        List<String> solution = ongoingPuzzle.puzzle.solution;
+        if (puzzleMoveIndex >= solution.size()) {
+            return;
+        }
+        if (hasPendingWrongMove) {
+            hasPendingWrongMove = false;
+            jni.undo();
+            if (apiListener != null) {
+                apiListener.onPuzzleRetried();
+            }
+        }
+        puzzleSolvedCleanly = false;
+        applyPuzzleMoveAndResponse(solution.get(puzzleMoveIndex));
+    }
+
+    private void applyPuzzleMoveAndResponse(String playerMove) {
+        List<String> solution = ongoingPuzzle.puzzle.solution;
+
+        applyUciMoveToBoard(playerMove);
+        int move = jni.getMyMove();
+        dispatchMove(move);
+        puzzleMoveIndex++;
+
+        if (apiListener != null) {
+            apiListener.onPuzzleMoveCorrect();
+        }
+
+        if (puzzleMoveIndex >= solution.size()) {
+            dispatchState();
+            if (apiListener != null) {
+                apiListener.onPuzzleCompleted(Move.getTo(move));
+            }
+            return;
+        }
+
+        // Delay the computer's response for smoother UX
+        final String computerMove = solution.get(puzzleMoveIndex);
+        puzzleComputerMovePending = true;
+        puzzleHandler.postDelayed(() -> {
+            puzzleComputerMovePending = false;
+            applyUciMoveToBoard(computerMove);
+            int cpuMove = jni.getMyMove();
+            dispatchMove(cpuMove);
+            puzzleMoveIndex++;
+            dispatchState();
+            if (puzzleMoveIndex >= solution.size()) {
+                if (apiListener != null) apiListener.onPuzzleCompleted(Move.getTo(cpuMove));
+            }
+        }, 1000);
+    }
+
+    private void handlePuzzleError(JsonObject e) {
+        String error = e.has("error") ? e.get("error").getAsString() : "";
+        if (error.startsWith("Missing scope")) {
+            Log.d(TAG, "Puzzle scope missing — clearing token and forcing re-login");
+            auth.clearTokens();
+            onAuthenticate(null);
+        }
+    }
+
     public void cancelChallenge() {
         this.auth.cancelChallenge();
     }
@@ -266,11 +460,11 @@ public class LichessApi extends GameApi {
     }
 
     public void move(int from, int to) {
+        String uciMove = Pos.toString(from) + Pos.toString(to);
+        if (isPromotionMove(from, to)) {
+            uciMove += Piece.toPromoUCI(promotionPiece);
+        }
         if (ongoingGameFull != null) {
-            String uciMove = Pos.toString(from) + Pos.toString(to);
-            if (isPromotionMove(from, to)) {
-                uciMove += Piece.toPromoUCI(promotionPiece);
-            }
             this.auth.move(ongoingGameFull.id, uciMove, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
                 @Override
                 public void onSuccess(JsonObject result) {
@@ -286,6 +480,36 @@ public class LichessApi extends GameApi {
                     }
                 }
             });
+        } else if (ongoingPuzzle != null) {
+            if (puzzleComputerMovePending) {
+                return;
+            }
+            List<String> solution = ongoingPuzzle.puzzle.solution;
+            if (puzzleMoveIndex >= solution.size()) {
+                Log.d(TAG, "Solution index");
+                return;
+            }
+            if (!uciMove.equals(solution.get(puzzleMoveIndex))) {
+                Log.d(TAG, "Not equal " + uciMove + " = " + solution.get(puzzleMoveIndex));
+                puzzleSolvedCleanly = false;
+                hasPendingWrongMove = true;
+                applyUciMoveToBoard(uciMove);
+                dispatchMove(jni.getMyMove());
+                dispatchState();
+                if (apiListener != null) {
+                    String displayMove = uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
+                    try {
+                        int toPos = Pos.fromString(uciMove.substring(2, 4));
+                        apiListener.onPuzzleUnexpectedMove(displayMove, toPos);
+                    } catch (Exception ignore) {
+                        Log.d(TAG, "Unexpected uci move format " + uciMove);
+                    }
+                }
+                return;
+            }
+
+            // correct player move — apply it
+            applyPuzzleMoveAndResponse(uciMove);
         } else {
             Log.d(TAG, "Unexpected state; move without ongoing game");
         }
@@ -340,6 +564,7 @@ public class LichessApi extends GameApi {
                     ;
                 } else if (type.equals("gameFull")) {
                     ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
+                    ongoingPuzzle = null;
                 }
                 processGameState();
             }
@@ -355,13 +580,20 @@ public class LichessApi extends GameApi {
     }
 
     public int getMyTurn() {
-        return ongoingGameFull != null
-            ? ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK
-            : BoardConstants.WHITE;
+        if (ongoingGameFull != null) {
+            return ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK;
+        } else if (ongoingPuzzle != null) {
+            return ongoingPuzzle.puzzle.initialPly % 2 == 1 ? BoardConstants.WHITE : BoardConstants.BLACK;
+        }
+        return BoardConstants.WHITE;
     }
 
     public int getTurn() {
         return jni.getTurn();
+    }
+
+    public String getUser() {
+        return user;
     }
 
     private void onAuthenticate(String result) {
@@ -387,51 +619,79 @@ public class LichessApi extends GameApi {
             } else {
                 jni.initFEN(ongoingGameFull.initialFen);
             }
-
-            resetForPGN();
-
             String moves = ongoingGameFull.state.moves;
 
-            String[] moveList = moves.split(" ");
-
-//            Log.d(TAG, "moves " + moves);
-
-            for (String sMove : moveList) {
-                if (sMove.length() >= 4) {
-                    try {
-                        String sFrom = sMove.substring(0, 2);
-                        String sTo = sMove.substring(2, 4);
-                        int from = Pos.fromString(sFrom);
-                        int to = Pos.fromString(sTo);
-
-                        if (sMove.length() == 5) {
-                            String promo = sMove.substring(4, 5).toLowerCase();
-                            jni.setPromo(Piece.fromUCIPromo(promo));
-                        }
-
-                        // @TODO Chess960 castling
-                        if (jni.requestMove(from, to) == 0) {
-                            Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
-                            break;
-                        } else {
-                            addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
-                        }
-
-                    } catch (Exception e) {
-                        Log.d(TAG, "Exception processing move " + sMove);
-                    }
-                } else {
-                    Log.d(TAG, "Invalid move length " + sMove);
-                }
-            }
-
-            dispatchMove(jni.getMyMove());
-
-            dispatchState();
+            resetForPGN();
+            processMoves(moves.isEmpty() ? Collections.emptyList() : Arrays.asList(moves.split(" ")));
 
             if (apiListener != null) {
                 apiListener.onGameUpdate(ongoingGameFull);
             }
+        }
+    }
+
+    private void processPuzzle() {
+        Log.d(TAG, "ProcessPuzzle " + ongoingPuzzle);
+        if (ongoingPuzzle != null) {
+            puzzleMoveIndex = 0;
+            puzzleSolvedCleanly = true;
+            puzzleComputerMovePending = false;
+            hasPendingWrongMove = false;
+            puzzleHandler.removeCallbacksAndMessages(null);
+            jni.newGame();
+            pgnMoves.clear();
+            String[] allMoves = ongoingPuzzle.game.pgn.split(" ");
+            int limit = Math.min(ongoingPuzzle.puzzle.initialPly + 1, allMoves.length);
+            for (int i = 0; i < limit; i++) {
+                if (!applyPGNMove(allMoves[i])) {
+                    Log.d(TAG, "processPuzzle: skipped token " + allMoves[i]);
+                }
+            }
+            dispatchMove(jni.getMyMove());
+            dispatchState();
+        }
+    }
+
+    private void processMoves(List<String> moveList) {
+        for (String sMove : moveList) {
+            if (sMove.length() >= 4) {
+                try {
+                    String sFrom = sMove.substring(0, 2);
+                    String sTo = sMove.substring(2, 4);
+                    int from = Pos.fromString(sFrom);
+                    int to = Pos.fromString(sTo);
+
+                    if (sMove.length() == 5) {
+                        String promo = sMove.substring(4, 5).toLowerCase();
+                        jni.setPromo(Piece.fromUCIPromo(promo));
+                    }
+
+                    if (jni.requestMove(from, to) == 0) {
+                        Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
+                        break;
+                    } else {
+                        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
+                    }
+
+                } catch (Exception e) {
+                    Log.d(TAG, "Exception processing move " + sMove);
+                }
+            } else {
+                Log.d(TAG, "Invalid move length " + sMove);
+            }
+        }
+
+        dispatchMove(jni.getMyMove());
+        dispatchState();
+    }
+
+    public void retryWrongPuzzleMove() {
+        hasPendingWrongMove = false;
+        jni.undo();
+        dispatchMove(jni.getMyMove());
+        dispatchState();
+        if (apiListener != null) {
+            apiListener.onPuzzleRetried();
         }
     }
 

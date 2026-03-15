@@ -84,7 +84,6 @@
     <string name="hotspot_white">♔ 白方</string>
     <string name="ics_client_handle">用户名</string>
     <string name="ics_client_password">密码</string>
-    <string name="ics_client_server">服务器</string>
     <string name="ics_error">发生错误。请稍后再试。</string>
     <string name="ics_examine">分析</string>
     <string name="ics_finger">摘要</string>
@@ -139,7 +138,6 @@
     <string name="last_white_move_description">%1$s。黑方行棋</string>
     <string name="lichess_challenge_by_cancelled">%1$s 的挑战已取消</string>
     <string name="lichess_challenge_by_declined">%1$s 拒绝了挑战</string>
-    <string name="lichess_challenge_days_hint">1</string>
     <string name="lichess_challenge_dialog_button_accept">接受</string>
     <string name="lichess_challenge_dialog_button_decline">拒绝</string>
     <string name="lichess_challenge_dialog_message_rated">有评级</string>
@@ -147,8 +145,6 @@
     <string name="lichess_challenge_dialog_message_time_control">用时: %1$s</string>
     <string name="lichess_challenge_dialog_message_unrated">无评级</string>
     <string name="lichess_challenge_dialog_message_variant">变体: %1$s</string>
-    <string name="lichess_challenge_increment_hint">10</string>
-    <string name="lichess_challenge_minutes_hint">5</string>
     <string name="lichess_challenge_posted">已发布挑战</string>
     <string name="lichess_confirm_offer_draw">确认要提和</string>
     <string name="lichess_confirm_resign">确认要认输</string>
@@ -177,7 +173,6 @@
     <string name="lichess_game_state_created">对局已创建</string>
     <string name="lichess_game_state_mate">对局以将死结束</string>
     <string name="lichess_game_state_resigned">对局因认输结束</string>
-    <string name="lichess_game_state_started">对局已开始</string>
     <string name="lichess_game_winner">胜者: %1$s</string>
     <string name="lichess_games_connection_error_retry">无法获取你的对局。5 秒后尝试重新连接</string>
     <string name="lichess_lobby_button_challenge">挑战</string>
@@ -280,7 +275,6 @@
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_staunty">Staunty</string>
     <string name="playonlinepreferences">在线设置</string>
-    <string name="playpreferences">游戏设置</string>
     <string name="practice_help">找出将死 (可能需要多步)。</string>
     <string name="practice_set_reset">练习集已重置</string>
     <string name="pref_field_color_descriptions">在格子描述中加入深/浅</string>
@@ -343,9 +337,7 @@
     <string name="puzzle_not_correct_move"> 不是预期的走法</string>
     <string name="puzzle_show">显示</string>
     <string name="savegame_black">黑方</string>
-    <string name="savegame_black_question">黑方?</string>
     <string name="savegame_event">赛事</string>
-    <string name="savegame_event_question">赛事?</string>
     <string name="gameslist_filter_switch_black_description">启用或禁用黑方筛选</string>
     <string name="gameslist_filter_switch_date_after_description">启用或禁用起始日期筛选</string>
     <string name="gameslist_filter_switch_date_before_description">启用或禁用截止日期筛选</string>
@@ -355,7 +347,6 @@
     <string name="gameslist_game_of_total">第 %1$d 局，共 %2$d 局</string>
     <string name="gameslist_filter_switch_white_description">启用或禁用白方筛选</string>
     <string name="savegame_white">白方</string>
-    <string name="savegame_white_question">白方?</string>
     <string name="square_color_description_light">浅色格</string>
     <string name="square_color_description_dark">深色格</string>
     <string name="square_selected_with_duck_description">已选择 %1$s 在 %2$s</string>
@@ -409,12 +400,13 @@
     <string name="title_offers_adjourn">暂停请求</string>
     <string name="title_offers_draw">求和请求</string>
     <string name="title_offers_takeback">悔棋请求</string>
-    <string name="title_pick_en_passant">吃过路兵格</string>
-    <string name="title_pick_level">选择难度</string>
     <string name="title_pick_time">选择时间难度</string>
     <string name="title_pick_ply">选择半回合难度</string>
     <string name="title_pick_promo">选择升变棋子</string>
     <string name="title_save_game">保存对局</string>
     <string name="toast_challenge_posted">挑战已发布</string>
     <string name="lichess_service_unavailable">无法启动 Lichess 服务。请重试。</string>
+    <string name="lichess_challenge_rated">计分</string>
+    <string name="lichess_puzzle_solved_rated">谜题已解决！评分 %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">有误解决。评分 %1$s</string>
 </resources>

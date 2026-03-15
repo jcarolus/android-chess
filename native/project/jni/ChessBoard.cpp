@@ -1276,23 +1276,33 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
     m_castlings[WHITE] = 0;
 
     if (wccl) {
+        boolean hasARook = false;
         int posRook = m_kingPositions[WHITE] - 1;
         while (posRook >= a1) {
             if ((m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
                 COL_AROOK = COL[posRook];
+                hasARook = true;
             }
             posRook--;
+        }
+        if (!hasARook) {
+            m_castlings[WHITE] |= MASK_AROOK;
         }
     } else {
         m_castlings[WHITE] |= MASK_AROOK;
     }
     if (wccs) {
+        boolean hasHRook = false;
         int posRook = m_kingPositions[WHITE] + 1;
         while (posRook <= h1) {
             if ((m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
                 COL_HROOK = COL[posRook];
+                hasHRook = true;
             }
             posRook++;
+        }
+        if (!hasHRook) {
+            m_castlings[WHITE] |= MASK_HROOK;
         }
     } else {
         m_castlings[WHITE] |= MASK_HROOK;
@@ -1303,23 +1313,33 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
     }
 
     if (bccl) {
+        boolean hasARook = false;
         int posRook = m_kingPositions[BLACK] - 1;
         while (posRook >= a8) {
             if ((m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
                 COL_AROOK = COL[posRook];
+                hasARook = true;
             }
             posRook--;
+        }
+        if (!hasARook) {
+            m_castlings[BLACK] |= MASK_AROOK;
         }
     } else {
         m_castlings[BLACK] |= MASK_AROOK;
     }
     if (bccs) {
+        boolean hasHRook = false;
         int posRook = m_kingPositions[BLACK] + 1;
         while (posRook <= h8) {
             if ((m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
                 COL_HROOK = COL[posRook];
+                hasHRook = true;
             }
             posRook++;
+        }
+        if (!hasHRook) {
+            m_castlings[BLACK] |= MASK_HROOK;
         }
     } else {
         m_castlings[BLACK] |= MASK_HROOK;

@@ -1,1 +1,2 @@
-Çevrim içi veya çevrim dışı satranç oynayın. Bulmaca çözün. Satranç 960 ve Ördek Satrancını destekler.
+Android cihazınıza karşı veya çevrim içi (Lichess, FICS) satranç oynayın. Alıştırma konumları, bulmacalar, Ördek Satrancı, Satranç960 ve daha fazlasını içerir. Tahtada bir konum kurabilir, oyunları kaydedip düzenleyebilir, geçmişte gezinebilir ve e-posta ya da panoyla içe/dışa aktarım yapabilirsiniz.
+TalkBack gibi ekran okuyucuları destekler.

@@ -84,7 +84,6 @@
     <string name="hotspot_white">♔ Albe</string>
     <string name="ics_client_handle">Utilizator</string>
     <string name="ics_client_password">Parolă</string>
-    <string name="ics_client_server">Server</string>
     <string name="ics_error">A apărut o eroare. Încearcă din nou mai târziu.</string>
     <string name="ics_examine">Examinează</string>
     <string name="ics_finger">Rezumat</string>
@@ -139,7 +138,6 @@
     <string name="last_white_move_description">%1$s. Rândul negrului</string>
     <string name="lichess_challenge_by_cancelled">Provocarea lui %1$s a fost anulată</string>
     <string name="lichess_challenge_by_declined">Provocarea a fost refuzată de %1$s</string>
-    <string name="lichess_challenge_days_hint">1</string>
     <string name="lichess_challenge_dialog_button_accept">Acceptă</string>
     <string name="lichess_challenge_dialog_button_decline">Refuză</string>
     <string name="lichess_challenge_dialog_message_rated">Cotată</string>
@@ -147,8 +145,6 @@
     <string name="lichess_challenge_dialog_message_time_control">Control timp: %1$s</string>
     <string name="lichess_challenge_dialog_message_unrated">Necotată</string>
     <string name="lichess_challenge_dialog_message_variant">Variantă: %1$s</string>
-    <string name="lichess_challenge_increment_hint">10</string>
-    <string name="lichess_challenge_minutes_hint">5</string>
     <string name="lichess_challenge_posted">Provocare publicată</string>
     <string name="lichess_confirm_offer_draw">Confirmă că vrei să oferi remiză</string>
     <string name="lichess_confirm_resign">Confirmă că vrei să renunți</string>
@@ -177,7 +173,6 @@
     <string name="lichess_game_state_created">Partida creată</string>
     <string name="lichess_game_state_mate">Partida s-a încheiat prin șah mat</string>
     <string name="lichess_game_state_resigned">Partida s-a încheiat prin renunțare</string>
-    <string name="lichess_game_state_started">Partida a început</string>
     <string name="lichess_game_winner">Câștigător: %1$s</string>
     <string name="lichess_games_connection_error_retry">Nu am putut obține partidele tale. Încerc reconectarea în 5 secunde</string>
     <string name="lichess_lobby_button_challenge">Provocare</string>
@@ -280,7 +275,6 @@
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_staunty">Staunty</string>
     <string name="playonlinepreferences">Setări online</string>
-    <string name="playpreferences">Setări joc</string>
     <string name="practice_help">Găsește șah-matul (poate dura mai multe mutări).</string>
     <string name="practice_set_reset">Setul de antrenament a fost resetat</string>
     <string name="pref_field_color_descriptions">Adaugă deschis/închis la descrierea pătratului</string>
@@ -343,9 +337,7 @@
     <string name="puzzle_not_correct_move"> nu este mutarea așteptată</string>
     <string name="puzzle_show">Arată</string>
     <string name="savegame_black">Negre</string>
-    <string name="savegame_black_question">Negre?</string>
     <string name="savegame_event">Eveniment</string>
-    <string name="savegame_event_question">Eveniment?</string>
     <string name="gameslist_filter_switch_black_description">Activează sau dezactivează filtrul pentru negre</string>
     <string name="gameslist_filter_switch_date_after_description">Activează sau dezactivează filtrul de dată după</string>
     <string name="gameslist_filter_switch_date_before_description">Activează sau dezactivează filtrul de dată înainte</string>
@@ -355,7 +347,6 @@
     <string name="gameslist_game_of_total">Partida %1$d din %2$d</string>
     <string name="gameslist_filter_switch_white_description">Activează sau dezactivează filtrul pentru albe</string>
     <string name="savegame_white">Albe</string>
-    <string name="savegame_white_question">Albe?</string>
     <string name="square_color_description_light">Pătrat deschis</string>
     <string name="square_color_description_dark">Pătrat închis</string>
     <string name="square_selected_with_duck_description">Selectat %1$s la %2$s</string>
@@ -409,12 +400,13 @@
     <string name="title_offers_adjourn">Cerere de amânare</string>
     <string name="title_offers_draw">Cerere de remiză</string>
     <string name="title_offers_takeback">Cerere de retragere mutare</string>
-    <string name="title_pick_en_passant">Căsuță en passant</string>
-    <string name="title_pick_level">Alege nivelul</string>
     <string name="title_pick_time">Alege nivelul de timp</string>
     <string name="title_pick_ply">Alege nivelul de ply</string>
     <string name="title_pick_promo">Alege piesa de promovare</string>
     <string name="title_save_game">Salvează partida</string>
     <string name="toast_challenge_posted">Provocare postată</string>
     <string name="lichess_service_unavailable">Serviciul Lichess nu a putut fi pornit. Te rugăm să încerci din nou.</string>
+    <string name="lichess_challenge_rated">Evaluat</string>
+    <string name="lichess_puzzle_solved_rated">Puzzle rezolvat! Ratingul %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Rezolvat cu greșeli. Ratingul %1$s</string>
 </resources>

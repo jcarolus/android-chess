@@ -91,7 +91,6 @@
     <string name="hotspot_white">♔ White</string>
     <string name="ics_client_handle">Handle</string>
     <string name="ics_client_password">Password</string>
-    <string name="ics_client_server">Server</string>
     <string name="ics_error">An error occurred. Please try again later.</string>
     <string name="ics_examine">Examine</string>
     <string name="ics_finger">Summary</string>
@@ -146,7 +145,6 @@
     <string name="last_white_move_description">%1$s. Black\'s turn</string>
     <string name="lichess_challenge_by_cancelled">Challenge by %1$s cancelled"</string>
     <string name="lichess_challenge_by_declined">Challenge declined by %1$s</string>
-    <string name="lichess_challenge_days_hint">1</string>
     <string name="lichess_challenge_dialog_button_accept">Accept</string>
     <string name="lichess_challenge_dialog_button_decline">Decline</string>
     <string name="lichess_challenge_dialog_message_rated">Rated</string>
@@ -154,8 +152,6 @@
     <string name="lichess_challenge_dialog_message_time_control">Time control: %1$s</string>
     <string name="lichess_challenge_dialog_message_unrated">Unrated</string>
     <string name="lichess_challenge_dialog_message_variant">Variant: %1$s</string>
-    <string name="lichess_challenge_increment_hint">10</string>
-    <string name="lichess_challenge_minutes_hint">5</string>
     <string name="lichess_challenge_posted">Posted challenge</string>
     <string name="lichess_confirm_offer_draw">Confirm you want to offer a draw</string>
     <string name="lichess_confirm_resign">Confirm you want to resign</string>
@@ -184,7 +180,6 @@
     <string name="lichess_game_state_created">Game created</string>
     <string name="lichess_game_state_mate">Game ended in a check-mate</string>
     <string name="lichess_game_state_resigned">Game ended by resignation</string>
-    <string name="lichess_game_state_started">Game started</string>
     <string name="lichess_game_winner">Winner: %1$s</string>
     <string name="lichess_games_connection_error_retry">"Could not get your games. Trying to reconnect in 5 seconds"</string>
     <string name="lichess_lobby_button_challenge">Challenge</string>
@@ -302,7 +297,6 @@
     <string name="pieceset_merida">Merida</string>
     <string name="pieceset_staunty">Staunty</string>
     <string name="playonlinepreferences">Play online settings</string>
-    <string name="playpreferences">Play settings</string>
     <string name="practice_help">Find the Check-Mate (can be more than one move).</string>
     <string name="practice_set_reset">Practice set has been reset</string>
     <string name="pref_field_color_descriptions">Add dark/light to square description</string>
@@ -368,9 +362,7 @@
     <string name="puzzle_not_correct_move"> is not the expected move</string>
     <string name="puzzle_show">Show</string>
     <string name="savegame_black">Black</string>
-    <string name="savegame_black_question">Black?</string>
     <string name="savegame_event">Event</string>
-    <string name="savegame_event_question">Event?</string>
     <string name="gameslist_filter_switch_black_description">Enable or disable black player filter</string>
     <string name="gameslist_filter_switch_date_after_description">Enable or disable date after filter</string>
     <string name="gameslist_filter_switch_date_before_description">Enable or disable date before filter</string>
@@ -380,7 +372,6 @@
     <string name="gameslist_game_of_total">Game %1$d of %2$d</string>
     <string name="gameslist_filter_switch_white_description">Enable or disable white player filter</string>
     <string name="savegame_white">White</string>
-    <string name="savegame_white_question">White?</string>
     <string name="square_color_description_light">Light square</string>
     <string name="square_color_description_dark">Dark square</string>
     <string name="square_selected_with_duck_description">Selected %1$s at %2$s</string>
@@ -435,12 +426,17 @@
     <string name="title_offers_adjourn">Adjourn request</string>
     <string name="title_offers_draw">Draw request</string>
     <string name="title_offers_takeback">Take back request</string>
-    <string name="title_pick_en_passant">En-passant file</string>
-    <string name="title_pick_level">Pick playing level</string>
     <string name="title_pick_time">Pick time level</string>
     <string name="title_pick_ply">Pick ply level</string>
     <string name="title_pick_promo">Pick promotion piece</string>
     <string name="title_save_game">Save game</string>
     <string name="toast_challenge_posted">Challenge posted</string>
     <string name="lichess_service_unavailable">Could not start Lichess service. Please try again.</string>
+    <string name="lichess_lobby_button_puzzle">Puzzle</string>
+    <string name="lichess_puzzle_title">Get puzzle</string>
+    <string name="lichess_challenge_rated">Rated</string>
+    <string name="lichess_puzzle_difficulty">Difficulty</string>
+    <string name="lichess_puzzle_angle">Theme</string>
+    <string name="lichess_puzzle_solved_rated">Puzzle solved! Rating %1$s</string>
+    <string name="lichess_puzzle_solved_hint_rated">Solved with mistakes. Rating %1$s</string>
 </resources>

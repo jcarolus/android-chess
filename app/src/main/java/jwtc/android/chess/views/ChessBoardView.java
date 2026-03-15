@@ -136,30 +136,21 @@ public class ChessBoardView extends ViewGroup {
         layoutChildren();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        // determine portrait vs landscape - take the smallest
-        int size = widthSize < heightSize ? widthSize : heightSize;
-        setMeasuredDimension(size, size);
-    }
-
     public void layoutChild(View child) {
         final int pos = child instanceof ChessSquareView
             ? ((ChessSquareView) child).getPos()
             : (child instanceof ChessPieceView
             ? ((ChessPieceView) child).getPos()
             : ((ChessPieceLabelView) child).getPos());
-        final int width = getWidth() / 8;
+
+        final int width = Math.min(getWidth(), getHeight()) / 8;
         // rotated
         final int actualPos = rotated ? 63 - pos : pos;
         final int row = BoardConstants.ROW[actualPos];
         final int col = BoardConstants.COL[actualPos];
 
         if (child instanceof ChessPieceLabelView) {
-            child.layout(col * width, row * width, col * width + width / 2, row * width + width / 2);
+            child.layout(col * width + width / 2, row * width + width / 2, col * width + width - 4, row * width + width - 4);
         } else {
             child.layout(col * width, row * width, col * width + width, row * width + width);
         }

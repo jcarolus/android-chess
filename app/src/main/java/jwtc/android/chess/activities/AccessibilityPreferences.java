@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.EngineInfo;
 import android.speech.tts.Voice;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 
@@ -104,6 +105,11 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         gameApi = new GameApi();
 
         afterCreate();
+        View boardAreaLayout = findViewById(R.id.board_area);
+        if (boardAreaLayout == null) {
+            boardAreaLayout = findViewById(R.id.includeboard);
+        }
+        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
     }
 
     @Override
@@ -169,8 +175,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
     protected void onTextToSpeechInitStateChanged(int initStatus, int languageStatus) {
         super.onTextToSpeechInitStateChanged(initStatus, languageStatus);
         if (initStatus == TextToSpeech.SUCCESS) {
-            populateSpeechEngineDropdown();
-            populateSpeechVoiceDropdown();
+            populateSpeechEngineDropdownAsync();
+            populateSpeechVoiceDropdownAsync();
         }
     }
 
@@ -179,10 +185,24 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         return false;
     }
 
-    private void populateSpeechVoiceDropdown() {
-        speechVoiceNames.clear();
+    private void populateSpeechVoiceDropdownAsync() {
+        if (textToSpeech == null) {
+            return;
+        }
+        new Thread(() -> {
+            List<Voice> supportedVoices = textToSpeech.getSupportedVoices();
+            runOnUiThread(() -> populateSpeechVoiceDropdown(supportedVoices));
+        }, "tts-voice-load").start();
+    }
 
-        List<Voice> supportedVoices = textToSpeech.getSupportedVoices();
+    private void populateSpeechVoiceDropdown(List<Voice> supportedVoices) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        speechVoiceNames.clear();
+        if (supportedVoices == null) {
+            supportedVoices = new ArrayList<>();
+        }
         ArrayList<String> labels = new ArrayList<>();
         speechVoiceNames.add(null);
         labels.add(getString(R.string.pref_speech_voice_system_default));
@@ -210,13 +230,29 @@ public class AccessibilityPreferences extends ChessBoardActivity {
             }
         }
     }
-    private void populateSpeechEngineDropdown() {
+
+    private void populateSpeechEngineDropdownAsync() {
+        if (textToSpeech == null) {
+            return;
+        }
+        new Thread(() -> {
+            List<EngineInfo> engines = textToSpeech.getInstalledEngines();
+            runOnUiThread(() -> populateSpeechEngineDropdown(engines));
+        }, "tts-engine-load").start();
+    }
+
+    private void populateSpeechEngineDropdown(List<EngineInfo> engines) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
         speechEnginePackages.clear();
         ArrayList<String> labels = new ArrayList<>();
         speechEnginePackages.add(null);
         labels.add(getString(R.string.pref_speech_engine_system_default));
 
-        List<EngineInfo> engines = textToSpeech.getInstalledEngines();
+        if (engines == null) {
+            engines = new ArrayList<>();
+        }
         for (EngineInfo engine : engines) {
             if (engine == null || engine.name == null || engine.name.isEmpty()) {
                 continue;

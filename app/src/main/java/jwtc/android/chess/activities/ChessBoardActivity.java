@@ -2,6 +2,7 @@ package jwtc.android.chess.activities;
 
 import android.content.ClipData;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +12,8 @@ import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -53,6 +56,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected TextToSpeechApi textToSpeech;
     protected int selectedPosition = -1, premoveFrom = -1, premoveTo = -1, dpadPos = -1;
+    protected int correctPosition = -1, wrongPosition = -1;
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
@@ -71,6 +75,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     private Runnable accessibilityDragDwellRunnable = null;
     private int accessibilityDragHoverPos = -1;
     private int accessibilityDragFromPos = -1;
+    private ViewTreeObserver.OnGlobalLayoutListener boardLayoutListener = null;
+    private View boardLayoutRoot = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,11 +110,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 //            }
 
             return true;
-        } else if (jni.isAmbiguousCastle(from, to) != 0) { // in case of Fischer
-
-            handleAmbiguousCastle(from, to);
-
-            return true; // done, return from method!
         }
         return gameApi.requestMove(from, to);
     }
@@ -209,9 +210,160 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         gameApi.addListener(this);
     }
 
+    protected void initBoardLayoutSizing(
+        View rootLayout,
+        View boardAreaLayout,
+        View controlsLayout,
+        View boardTopLayout,
+        View boardBottomLayout
+    ) {
+        if (rootLayout == null || boardAreaLayout == null) {
+            return;
+        }
+
+        final int minLandscapeControlsPx = dpToPx(320);
+        final int minPortraitControlsPx = dpToPx(64);
+        final View controlsLayoutRef = controlsLayout;
+        final View boardTopLayoutRef = boardTopLayout;
+        final View boardBottomLayoutRef = boardBottomLayout;
+
+        boardLayoutRoot = rootLayout;
+        boardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+            private int lastRootWidth = -1;
+            private int lastRootHeight = -1;
+            private int lastOrientation = -1;
+            private int lastBoardSide = -1;
+            private int lastTopHeight = -1;
+            private int lastBottomHeight = -1;
+            private int lastControlsHeight = -1;
+
+            @Override
+            public void onGlobalLayout() {
+                final int orientation = getResources().getConfiguration().orientation;
+                final int rootWidth = rootLayout.getWidth();
+                final int rootHeight = rootLayout.getHeight();
+
+                if (rootWidth <= 0 || rootHeight <= 0) {
+                    return;
+                }
+
+                final int rootAvailableWidth = rootWidth - rootLayout.getPaddingLeft() - rootLayout.getPaddingRight();
+                if (rootAvailableWidth <= 0) {
+                    return;
+                }
+                final int rootAvailableHeight = rootHeight - rootLayout.getPaddingTop() - rootLayout.getPaddingBottom();
+                if (rootAvailableHeight <= 0) {
+                    return;
+                }
+
+                final ViewGroup.LayoutParams boardAreaParams = boardAreaLayout.getLayoutParams();
+                final View boardView = boardAreaLayout.findViewById(R.id.includeboard);
+                final ViewGroup.LayoutParams boardViewParams = boardView == null ? null : boardView.getLayoutParams();
+                final ViewGroup.LayoutParams controlsParams = controlsLayoutRef == null ? null : controlsLayoutRef.getLayoutParams();
+                final ViewGroup controlsContainer = controlsLayoutRef instanceof ViewGroup ? (ViewGroup) controlsLayoutRef : null;
+                final int boardTopHeight = measureDependentHeight(boardTopLayoutRef);
+                final int boardBottomHeight = measureDependentHeight(boardBottomLayoutRef);
+                final int reservedVerticalHeight = boardTopHeight + boardBottomHeight;
+                final int preferredBoardSide = rootAvailableWidth;
+                final int controlsHeightRemainingAfterPreferredBoard = rootAvailableHeight - reservedVerticalHeight - preferredBoardSide;
+                final int portraitBoardSide = Math.max(
+                    0,
+                    controlsHeightRemainingAfterPreferredBoard < minPortraitControlsPx
+                        ? rootAvailableHeight - reservedVerticalHeight - minPortraitControlsPx
+                        : preferredBoardSide
+                );
+                final int portraitMaxControlsHeight = Math.max(minPortraitControlsPx, rootAvailableHeight - reservedVerticalHeight - portraitBoardSide);
+                final int portraitControlsContentHeight = measureDependentHeight(
+                    controlsContainer == null || controlsContainer.getChildCount() == 0 ? null : controlsContainer.getChildAt(0)
+                );
+                final int portraitControlsHeight = Math.min(
+                    portraitMaxControlsHeight,
+                    Math.max(portraitControlsContentHeight, minPortraitControlsPx)
+                );
+                final int landscapeBoardSide = Math.min(
+                    Math.max(0, rootAvailableWidth - minLandscapeControlsPx),
+                    Math.max(0, rootAvailableHeight - reservedVerticalHeight)
+                );
+
+                if (lastRootWidth == rootWidth && lastRootHeight == rootHeight && lastOrientation == orientation
+                    && lastBoardSide == boardAreaLayout.getWidth()
+                    && lastTopHeight == boardTopHeight && lastBottomHeight == boardBottomHeight
+                    && (orientation == Configuration.ORIENTATION_PORTRAIT ? lastControlsHeight == portraitControlsHeight : true)
+                ) {
+                    return;
+                }
+                lastRootWidth = rootWidth;
+                lastRootHeight = rootHeight;
+                lastOrientation = orientation;
+                lastTopHeight = boardTopHeight;
+                lastBottomHeight = boardBottomHeight;
+
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    if (boardAreaParams.width != landscapeBoardSide) {
+                        boardAreaParams.width = landscapeBoardSide;
+                        boardAreaLayout.setLayoutParams(boardAreaParams);
+                    }
+                    if (boardViewParams != null
+                        && (boardViewParams.width != landscapeBoardSide || boardViewParams.height != landscapeBoardSide)) {
+                        boardViewParams.width = landscapeBoardSide;
+                        boardViewParams.height = landscapeBoardSide;
+                        boardView.setLayoutParams(boardViewParams);
+                    }
+                    if (controlsParams != null && controlsParams.height != ViewGroup.LayoutParams.MATCH_PARENT) {
+                        controlsParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                        controlsLayoutRef.setLayoutParams(controlsParams);
+                    }
+                    lastBoardSide = landscapeBoardSide;
+                    lastControlsHeight = -1;
+                    return;
+                }
+
+                final int boardSide = portraitBoardSide;
+                final int controlsHeight = portraitControlsHeight;
+                if (boardAreaParams.width != boardSide) {
+                    boardAreaParams.width = boardSide;
+                    boardAreaLayout.setLayoutParams(boardAreaParams);
+                }
+                if (boardViewParams != null && (boardViewParams.width != boardSide || boardViewParams.height != boardSide)) {
+                    boardViewParams.width = boardSide;
+                    boardViewParams.height = boardSide;
+                    boardView.setLayoutParams(boardViewParams);
+                }
+                if (controlsParams != null && controlsParams.height != controlsHeight) {
+                    controlsParams.height = controlsHeight;
+                    controlsLayoutRef.setLayoutParams(controlsParams);
+                }
+                lastBoardSide = boardSide;
+                lastControlsHeight = controlsHeight;
+            }
+        };
+        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(boardLayoutListener);
+    }
+
+    private int dpToPx(final int dp) {
+        final float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
+
+    private int measureDependentHeight(View dependentView) {
+        if (dependentView == null) {
+            return 0;
+        }
+
+        final int measuredHeight = dependentView.getMeasuredHeight();
+        if (measuredHeight > 0) {
+            return measuredHeight;
+        }
+
+        return Math.max(0, dependentView.getHeight());
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+
+        correctPosition = -1;
+        wrongPosition = -1;
 
         SharedPreferences prefs = getPrefs();
 
@@ -390,6 +542,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
 
+        if (boardLayoutListener != null && boardLayoutRoot != null) {
+            boardLayoutRoot.getViewTreeObserver().removeOnGlobalLayoutListener(boardLayoutListener);
+            boardLayoutListener = null;
+            boardLayoutRoot = null;
+        }
+
         gameApi.removeListener(this);
         textToSpeech.shutdown();
 
@@ -419,40 +577,39 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         Log.d(TAG, "state " + state);
 
-        // ⚑ ✓ ½
         String labelForWhiteKing = null;
         String labelForBlackKing = null;
         switch (state) {
             case BoardConstants.MATE:
-                labelForWhiteKing = turn == BoardConstants.BLACK ? "✓" : "#";
-                labelForBlackKing = turn == BoardConstants.WHITE ? "✓" : "#";
+                labelForWhiteKing = turn == BoardConstants.BLACK ? ChessPieceLabelView.MATE_WINNER : ChessPieceLabelView.MATE_LOSER;
+                labelForBlackKing = turn == BoardConstants.WHITE ? ChessPieceLabelView.MATE_WINNER : ChessPieceLabelView.MATE_LOSER;
                 break;
             case BoardConstants.BLACK_RESIGNED:
             case BoardConstants.BLACK_FORFEIT_TIME:
-                labelForWhiteKing = "✓";
-                labelForBlackKing = "⚑";
+                labelForWhiteKing = ChessPieceLabelView.MATE_WINNER;
+                labelForBlackKing = ChessPieceLabelView.FLAG;
                 break;
             case BoardConstants.WHITE_RESIGNED:
             case BoardConstants.WHITE_FORFEIT_TIME:
-                labelForWhiteKing = "⚑";
-                labelForBlackKing = "✓";
+                labelForWhiteKing = ChessPieceLabelView.FLAG;
+                labelForBlackKing = ChessPieceLabelView.MATE_WINNER;
                 break;
             case BoardConstants.DRAW_MATERIAL:
             case BoardConstants.DRAW_REPEAT:
             case BoardConstants.DRAW_AGREEMENT:
             case BoardConstants.STALEMATE:
-                labelForWhiteKing = "½";
-                labelForBlackKing = "½";
+                labelForWhiteKing = ChessPieceLabelView.DRAW;
+                labelForBlackKing = ChessPieceLabelView.DRAW;
                 break;
             case BoardConstants.DRAW_50:
-                labelForWhiteKing = "50";
-                labelForBlackKing = "50";
+                labelForWhiteKing = ChessPieceLabelView.DRAW_50;
+                labelForBlackKing = ChessPieceLabelView.DRAW_50;
                 break;
             case BoardConstants.CHECK:
                 if (turn == BoardConstants.WHITE) {
-                    labelForWhiteKing = "+";
+                    labelForWhiteKing = ChessPieceLabelView.CHECK;
                 } else {
-                    labelForBlackKing = "+";
+                    labelForBlackKing = ChessPieceLabelView.CHECK;
                 }
                 break;
         }
@@ -479,6 +636,13 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, labelForBlackKing);
                         chessBoardView.addView(labelView);
                     }
+                }
+                if (correctPosition == i) {
+                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, ChessPieceLabelView.CORRECT);
+                    chessBoardView.addView(labelView);
+                } else if (wrongPosition == i) {
+                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, ChessPieceLabelView.WRONG);
+                    chessBoardView.addView(labelView);
                 }
             }
         }
