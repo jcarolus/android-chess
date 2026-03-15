@@ -601,6 +601,9 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewLastMove.setText("");
         textViewStatus.setText("");
         textViewOfferDraw.setText("");
+        textViewOfferDraw.setVisibility(View.VISIBLE);
+        textViewClockOpp.setVisibility(View.VISIBLE);
+        textViewClockMe.setVisibility(View.VISIBLE);
         layoutResignDraw.setVisibility(View.VISIBLE);
         layoutPuzzleControls.setVisibility(View.GONE);
     }
@@ -610,7 +613,12 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         textViewLastMove.setText("");
         textViewStatus.setText("");
         textViewOfferDraw.setText("");
+        textViewOfferDraw.setVisibility(View.GONE);
         textViewPlayerMe.setText(lichessApi.getUser());
+        textViewPlayerOpp.setText("");
+        textViewRatingOpp.setText(lichessApi.getPuzzleId());
+        textViewClockOpp.setVisibility(View.GONE);
+        textViewClockMe.setVisibility(View.GONE);
         layoutResignDraw.setVisibility(View.GONE);
         layoutSave.setVisibility(View.GONE);
         layoutPuzzleControls.setVisibility(View.VISIBLE);

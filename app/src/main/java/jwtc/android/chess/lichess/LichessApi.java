@@ -594,6 +594,10 @@ public class LichessApi extends GameApi {
         });
     }
 
+    public String getPuzzleId() {
+        return ongoingPuzzle != null ? ongoingPuzzle.puzzle.id : "";
+    }
+
     public int getMyTurn() {
         if (ongoingGameFull != null) {
             return ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK;
