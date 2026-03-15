@@ -150,7 +150,7 @@ public class ChessBoardView extends ViewGroup {
         final int col = BoardConstants.COL[actualPos];
 
         if (child instanceof ChessPieceLabelView) {
-            child.layout(col * width, row * width, col * width + width / 2, row * width + width / 2);
+            child.layout(col * width + width / 2, row * width + width / 2, col * width + width - 4, row * width + width - 4);
         } else {
             child.layout(col * width, row * width, col * width + width, row * width + width);
         }

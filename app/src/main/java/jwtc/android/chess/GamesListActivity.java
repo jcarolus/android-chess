@@ -420,6 +420,7 @@ public class GamesListActivity extends ChessBoardActivity {
         Log.d(TAG, "openGame " + id);
         SharedPreferences.Editor editor = getPrefs().edit();
         editor.putLong("game_id", id);
+        editor.putBoolean("opponent", false);
         editor.commit();
 
         Intent i = new Intent();

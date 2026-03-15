@@ -36,9 +36,9 @@ public class ChessPieceLabelView extends AppCompatTextView {
 
         if (color == BoardConstants.BLACK) {
             setTextColor(0xFFFFFFFF);
-            setBackgroundResource(R.drawable.turnblack);
+            setBackgroundResource(R.drawable.blackcircle);
         } else {
-            setBackgroundResource(R.drawable.turnwhite);
+            setBackgroundResource(R.drawable.whitecircle);
             setTextColor(0xFF000000);
         }
         if (CORRECT.equals(label) || MATE_WINNER.equals(label)) {
