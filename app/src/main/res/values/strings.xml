@@ -319,6 +319,7 @@
     <string name="pref_showCoords">Coordinates</string>
     <string name="pref_show_blindfold">Blindfold</string>
     <string name="pref_show_possible_moves">Show moves</string>
+    <string name="pref_show_captured_pieces">Show captured pieces when available</string>
     <string name="pref_show_pieces_descriptions">Show pieces location descriptions</string>
     <string name="pref_show_accessibility_drag_toggle">Show accessibility drag toggle</string>
     <string name="pref_sound">Sound</string>

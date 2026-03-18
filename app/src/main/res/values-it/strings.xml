@@ -297,6 +297,7 @@
     <string name="pref_showCoords">Coordinate</string>
     <string name="pref_show_blindfold">Alla cieca</string>
     <string name="pref_show_possible_moves">Mostra mosse</string>
+    <string name="pref_show_captured_pieces">Mostra i pezzi catturati quando disponibili</string>
     <string name="pref_show_pieces_descriptions">Mostra la descrizione della posizione dei pezzi</string>
     <string name="pref_show_accessibility_drag_toggle">Mostra interruttore trascinamento accessibilità</string>
     <string name="pref_sound">Suono</string>

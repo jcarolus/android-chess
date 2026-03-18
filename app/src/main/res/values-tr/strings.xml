@@ -297,6 +297,7 @@
     <string name="pref_showCoords">Koordinatlar</string>
     <string name="pref_show_blindfold">Gözbağı</string>
     <string name="pref_show_possible_moves">Hamleleri göster</string>
+    <string name="pref_show_captured_pieces">Varsa ele geçirilen taşları göster</string>
     <string name="pref_show_pieces_descriptions">Taşların konum açıklamasını göster</string>
     <string name="pref_show_accessibility_drag_toggle">Erişilebilirlik sürükleme anahtarını göster</string>
     <string name="pref_sound">Ses</string>

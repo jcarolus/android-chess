@@ -297,6 +297,7 @@
     <string name="pref_showCoords">Coordonate</string>
     <string name="pref_show_blindfold">Cu ochii închiși</string>
     <string name="pref_show_possible_moves">Arată mutări</string>
+    <string name="pref_show_captured_pieces">Afișează piesele capturate când sunt disponibile</string>
     <string name="pref_show_pieces_descriptions">Afișează descrierea amplasării pieselor</string>
     <string name="pref_show_accessibility_drag_toggle">Afișează comutatorul de tragere pentru accesibilitate</string>
     <string name="pref_sound">Sunet</string>

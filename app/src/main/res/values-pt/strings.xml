@@ -297,6 +297,7 @@
     <string name="pref_showCoords">Coordenadas</string>
     <string name="pref_show_blindfold">Às cegas</string>
     <string name="pref_show_possible_moves">Mostrar jogadas</string>
+    <string name="pref_show_captured_pieces">Mostrar peças capturadas quando disponíveis</string>
     <string name="pref_show_pieces_descriptions">Mostrar descrição da localização das peças</string>
     <string name="pref_show_accessibility_drag_toggle">Mostrar alternância de arrasto de acessibilidade</string>
     <string name="pref_sound">Som</string>

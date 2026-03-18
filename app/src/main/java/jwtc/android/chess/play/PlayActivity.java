@@ -232,14 +232,12 @@ public class PlayActivity extends ChessBoardActivity implements
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (switchBlindfold.isChecked()) {
                 PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
-                rebuildBoard();
-                topPieces.setVisibility(View.INVISIBLE);
-                bottomPieces.setVisibility(View.INVISIBLE);
             } else {
                 PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
-                rebuildBoard();
-                topPieces.setVisibility(View.VISIBLE);
-                bottomPieces.setVisibility(View.VISIBLE);
+            }
+            rebuildBoard();
+            applyCapturedPiecesVisibility();
+            if (topPieces.getVisibility() == View.VISIBLE) {
                 topPieces.invalidatePieces();
                 bottomPieces.invalidatePieces();
             }
@@ -339,6 +337,7 @@ public class PlayActivity extends ChessBoardActivity implements
         flipBoard = prefs.getBoolean("flipBoard", false);
         switchFlip.setChecked(flipBoard);
         switchBlindfold.setChecked(false);
+        applyCapturedPiecesVisibility();
 
         updateClockByPrefs(false);
         updateGameSettingsByPrefs();
@@ -349,6 +348,19 @@ public class PlayActivity extends ChessBoardActivity implements
             this::updateGUI,
             1000
         );
+    }
+
+    private void applyCapturedPiecesVisibility() {
+        boolean showCapturedPieces = getPrefs().getBoolean("showCapturedPieces", true);
+        boolean blindfoldEnabled = switchBlindfold != null && switchBlindfold.isChecked();
+
+        int visibility = showCapturedPieces ? View.VISIBLE : View.GONE;
+        if (blindfoldEnabled) {
+            visibility = View.INVISIBLE;
+        }
+
+        topPieces.setVisibility(visibility);
+        bottomPieces.setVisibility(visibility);
     }
 
 

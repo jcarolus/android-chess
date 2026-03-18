@@ -297,6 +297,7 @@
     <string name="pref_showCoords">坐标</string>
     <string name="pref_show_blindfold">盲棋</string>
     <string name="pref_show_possible_moves">显示可能走法</string>
+    <string name="pref_show_captured_pieces">有可用时显示被吃掉的棋子</string>
     <string name="pref_show_pieces_descriptions">显示棋子位置描述</string>
     <string name="pref_show_accessibility_drag_toggle">显示无障碍拖动开关</string>
     <string name="pref_sound">声音</string>

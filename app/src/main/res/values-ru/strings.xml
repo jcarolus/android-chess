@@ -297,6 +297,7 @@
     <string name="pref_showCoords">Координаты</string>
     <string name="pref_show_blindfold">Слепые шахматы</string>
     <string name="pref_show_possible_moves">Показывать ходы</string>
+    <string name="pref_show_captured_pieces">Показывать взятые фигуры, если доступны</string>
     <string name="pref_show_pieces_descriptions">Показывать описание расположения фигур</string>
     <string name="pref_show_accessibility_drag_toggle">Показывать переключатель перетаскивания для специальных возможностей</string>
     <string name="pref_sound">Звук</string>

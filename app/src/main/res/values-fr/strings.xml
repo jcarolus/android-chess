@@ -297,6 +297,7 @@
     <string name="pref_showCoords">Coordonnées</string>
     <string name="pref_show_blindfold">À l’aveugle</string>
     <string name="pref_show_possible_moves">Montrer les coups</string>
+    <string name="pref_show_captured_pieces">Afficher les pièces capturées lorsqu’elles sont disponibles</string>
     <string name="pref_show_pieces_descriptions">Afficher la description de l’emplacement des pièces</string>
     <string name="pref_show_accessibility_drag_toggle">Afficher le commutateur de glisser accessible</string>
     <string name="pref_sound">Son</string>

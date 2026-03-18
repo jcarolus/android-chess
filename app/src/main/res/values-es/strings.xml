@@ -307,6 +307,7 @@
     <string name="pref_showCoords">Coordenadas</string>
     <string name="pref_show_blindfold">A ciegas</string>
     <string name="pref_show_possible_moves">Mostrar movimientos</string>
+    <string name="pref_show_captured_pieces">Mostrar piezas capturadas cuando estén disponibles</string>
     <string name="pref_show_pieces_descriptions">Mostrar descripción de la ubicación de las piezas</string>
     <string name="pref_show_accessibility_drag_toggle">Mostrar interruptor de arrastre de accesibilidad</string>
     <string name="pref_sound">Sonido</string>

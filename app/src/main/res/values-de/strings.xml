@@ -307,6 +307,7 @@
     <string name="pref_showCoords">Koordinaten</string>
     <string name="pref_show_blindfold">Blindschach</string>
     <string name="pref_show_possible_moves">Züge anzeigen</string>
+    <string name="pref_show_captured_pieces">Geschlagene Figuren anzeigen, wenn vorhanden</string>
     <string name="pref_show_pieces_descriptions">Beschreibung der Positionen der Figuren anzeigen</string>
     <string name="pref_show_accessibility_drag_toggle">Bedienungshilfe-Ziehschalter anzeigen</string>
     <string name="pref_sound">Ton</string>
