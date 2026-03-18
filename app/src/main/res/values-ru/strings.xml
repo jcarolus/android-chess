@@ -364,6 +364,7 @@
     <string name="start_play">Играть</string>
     <string name="start_practice">Тренировка</string>
     <string name="start_puzzles">Задачи</string>
+    <string name="start_website">Сайт разработчика</string>
     <string name="state_black_forfeits_time">чёрные проиграли по времени</string>
     <string name="state_black_resigned">чёрные сдались</string>
     <string name="state_check">шах</string>

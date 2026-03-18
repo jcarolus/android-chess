@@ -389,6 +389,7 @@
     <string name="start_play">Play</string>
     <string name="start_practice">Practice</string>
     <string name="start_puzzles">Puzzles</string>
+    <string name="start_website">Developer website</string>
     <string name="state_black_forfeits_time">black forfeits on time</string>
     <string name="state_black_resigned">black resigned</string>
     <string name="state_check">check</string>

@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -84,13 +85,18 @@ public class StartBaseActivity extends AppCompatActivity {
             new StartItem(R.drawable.database, R.string.start_database, GamesListActivity.class),
             new StartItem(R.drawable.sliders, R.string.start_boardpreferences, BoardPreferencesActivity.class),
             new StartItem(R.drawable.eye, R.string.start_accessibility_preferences, AccessibilityPreferences.class),
-            new StartItem(R.drawable.tools, R.string.start_pgn, AdvancedActivity.class)
+            new StartItem(R.drawable.tools, R.string.start_pgn, AdvancedActivity.class),
+            new StartItem(R.drawable.link, R.string.start_website, null)
         );
         startItemAdapter = new StartItemAdapter(startItemList, (item, pos) -> {
-            Intent i = new Intent();
-            i.setClass(StartBaseActivity.this, item.cls);
-            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(i);
+            if (item.cls != null) {
+                Intent i = new Intent();
+                i.setClass(StartBaseActivity.this, item.cls);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(i);
+            } else {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.jwtc.nl/")));
+            }
         });
 
         int spanCount = getResources().getInteger(R.integer.start_span_count);

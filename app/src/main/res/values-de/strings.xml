@@ -374,6 +374,7 @@
     <string name="start_play">Spielen</string>
     <string name="start_practice">Üben</string>
     <string name="start_puzzles">Rätsel</string>
+    <string name="start_website">Entwickler-Website</string>
     <string name="state_black_forfeits_time">Schwarz verliert auf Zeit</string>
     <string name="state_black_resigned">Schwarz hat aufgegeben</string>
     <string name="state_check">Schach</string>

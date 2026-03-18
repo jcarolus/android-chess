@@ -364,6 +364,7 @@
     <string name="start_play">Jogar</string>
     <string name="start_practice">Treinar</string>
     <string name="start_puzzles">Problemas</string>
+    <string name="start_website">Site do desenvolvedor</string>
     <string name="state_black_forfeits_time">pretas perdem por tempo</string>
     <string name="state_black_resigned">pretas desistiram</string>
     <string name="state_check">xeque</string>

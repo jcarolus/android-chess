@@ -364,6 +364,7 @@
     <string name="start_play">开始</string>
     <string name="start_practice">练习</string>
     <string name="start_puzzles">习题</string>
+    <string name="start_website">开发者网站</string>
     <string name="state_black_forfeits_time">黑方超时判负</string>
     <string name="state_black_resigned">黑方认输</string>
     <string name="state_check">将军</string>

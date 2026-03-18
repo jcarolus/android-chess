@@ -364,6 +364,7 @@
     <string name="start_play">Oyna</string>
     <string name="start_practice">Alıştırma</string>
     <string name="start_puzzles">Problemler</string>
+    <string name="start_website">Geliştirici web sitesi</string>
     <string name="state_black_forfeits_time">siyah süreyi kaybetti</string>
     <string name="state_black_resigned">siyah terk etti</string>
     <string name="state_check">şah</string>

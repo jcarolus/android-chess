@@ -364,6 +364,7 @@
     <string name="start_play">Jouer</string>
     <string name="start_practice">Entraînement</string>
     <string name="start_puzzles">Problèmes</string>
+    <string name="start_website">Site web du développeur</string>
     <string name="state_black_forfeits_time">noirs perdent au temps</string>
     <string name="state_black_resigned">noirs ont abandonné</string>
     <string name="state_check">échec</string>

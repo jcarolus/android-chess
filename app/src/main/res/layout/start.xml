@@ -11,19 +11,7 @@
         android:id="@+id/startItemsRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/textViewWebsite"
         android:clipToPadding="false"
         android:drawSelectorOnTop="false"
         android:padding="16dp" />
-
-    <TextView
-        android:id="@+id/textViewWebsite"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:autoLink="web"
-        android:gravity="center"
-        android:padding="12dp"
-        android:text="https://www.jwtc.nl/"
-        android:textAppearance="?attr/textAppearanceBodySmall" />
 </RelativeLayout>

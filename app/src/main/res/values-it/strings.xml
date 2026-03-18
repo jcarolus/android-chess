@@ -364,6 +364,7 @@
     <string name="start_play">Gioca</string>
     <string name="start_practice">Allenamento</string>
     <string name="start_puzzles">Problemi</string>
+    <string name="start_website">Sito web dello sviluppatore</string>
     <string name="state_black_forfeits_time">neri perdono per tempo</string>
     <string name="state_black_resigned">neri si arrendono</string>
     <string name="state_check">scacco</string>
