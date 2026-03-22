@@ -100,7 +100,7 @@ public class PlayActivity extends ChessBoardActivity implements
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
     private PopupWindow popupWindowInfoBalloon;
-    private View boardTopLayout, boardBottomLayout;
+    private View boardTopLayout, boardBottomLayout, layoutHistory, layoutEco;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -150,6 +150,8 @@ public class PlayActivity extends ChessBoardActivity implements
         final View controlsLayout = findViewById(R.id.play_controls);
         boardTopLayout = findViewById(R.id.play_board_top);
         boardBottomLayout = findViewById(R.id.play_board_bottom);
+        layoutHistory = findViewById(R.id.LayoutHistory);
+        layoutEco = findViewById(R.id.LayoutEco);
 
         initBoardLayoutSizing(rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout);
 
@@ -345,6 +347,7 @@ public class PlayActivity extends ChessBoardActivity implements
         switchFlip.setChecked(flipBoard);
         switchBlindfold.setChecked(false);
         switchMinimal.setChecked(prefs.getBoolean("minimal", false));
+        switchMinimal(switchMinimal.isChecked());
         applyCapturedPiecesVisibility();
 
         updateClockByPrefs(false);
@@ -915,8 +918,16 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void switchMinimal(boolean minimal) {
+        minimalControls = minimal;
         boardTopLayout.setVisibility(minimal ? View.GONE : View.VISIBLE);
         boardBottomLayout.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        layoutHistory.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        layoutEco.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        switchBlindfold.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        switchFlip.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        textViewLastMove.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        textViewWhitePieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        textViewBlackPieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
         requestBoardLayoutSizingUpdate();
     }
 
