@@ -292,6 +292,7 @@
     <string name="pref_icstimewarningsecs">Soglia di avviso (sec)</string>
     <string name="pref_icstimewarningsecs_desc">Quanti secondi prima inizia l’avviso?</string>
     <string name="pref_last_move_over_empty_square">Annuncia l`ultima mossa quando trascini su una casella vuota dopo un ritardo</string>
+    <string name="pref_minimal">Controlli minimi</string>
     <string name="pref_night_mode">Modalità notturna</string>
     <string name="pref_night_mode_desc">Forza l’app in modalità notte</string>
     <string name="pref_showCoords">Coordinate</string>

@@ -72,6 +72,7 @@
         </TableLayout>
 
         <TableLayout
+            android:id="@+id/LayoutHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="1">
@@ -109,6 +110,7 @@
         </TableLayout>
 
         <LinearLayout
+            android:id="@+id/LayoutEco"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -176,6 +178,14 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:text="@string/pref_accessibility_drag"
+                android:checked="false" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchMinimal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_minimal"
                 android:checked="false" />
         </com.google.android.flexbox.FlexboxLayout>
 

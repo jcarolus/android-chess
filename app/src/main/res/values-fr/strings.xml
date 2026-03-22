@@ -292,6 +292,7 @@
     <string name="pref_icstimewarningsecs">Limite d’alerte (secondes)</string>
     <string name="pref_icstimewarningsecs_desc">Combien de secondes avant que l’alerte démarre ?</string>
     <string name="pref_last_move_over_empty_square">Annoncer le dernier coup lors du glissement sur une case vide après un délai</string>
+    <string name="pref_minimal">Contrôles minimaux</string>
     <string name="pref_night_mode">Mode nuit</string>
     <string name="pref_night_mode_desc">Forcer l’application en mode nuit</string>
     <string name="pref_showCoords">Coordonnées</string>

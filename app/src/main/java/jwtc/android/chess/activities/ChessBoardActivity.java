@@ -340,6 +340,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(boardLayoutListener);
     }
 
+    protected void requestBoardLayoutSizingUpdate() {
+        if (boardLayoutRoot == null) {
+            return;
+        }
+        boardLayoutRoot.requestLayout();
+        boardLayoutRoot.invalidate();
+    }
+
     private int dpToPx(final int dp) {
         final float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
@@ -347,6 +355,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     private int measureDependentHeight(View dependentView) {
         if (dependentView == null) {
+            return 0;
+        }
+
+        if (dependentView.getVisibility() == View.GONE) {
             return 0;
         }
 

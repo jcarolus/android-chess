@@ -292,6 +292,7 @@
     <string name="pref_icstimewarningsecs">警告时间 (秒)</string>
     <string name="pref_icstimewarningsecs_desc">提前多少秒开始提示？</string>
     <string name="pref_last_move_over_empty_square">拖动到空格子上并延迟后播报上一步走法</string>
+    <string name="pref_minimal">精简控件</string>
     <string name="pref_night_mode">夜间模式</string>
     <string name="pref_night_mode_desc">强制应用夜间模式</string>
     <string name="pref_showCoords">坐标</string>
