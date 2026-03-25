@@ -314,11 +314,13 @@
     <string name="pref_icstimewarningsecs">Time Warning Amount (secs)</string>
     <string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
     <string name="pref_last_move_over_empty_square">Announce last move when dragging over an empty square after delay</string>
+    <string name="pref_minimal">Minimal controls</string>
     <string name="pref_night_mode">Night mode</string>
     <string name="pref_night_mode_desc">Force the app into night mode</string>
     <string name="pref_showCoords">Coordinates</string>
     <string name="pref_show_blindfold">Blindfold</string>
     <string name="pref_show_possible_moves">Show moves</string>
+    <string name="pref_show_captured_pieces">Show captured pieces when available</string>
     <string name="pref_show_pieces_descriptions">Show pieces location descriptions</string>
     <string name="pref_show_accessibility_drag_toggle">Show accessibility drag toggle</string>
     <string name="pref_sound">Sound</string>
@@ -388,6 +390,7 @@
     <string name="start_play">Play</string>
     <string name="start_practice">Practice</string>
     <string name="start_puzzles">Puzzles</string>
+    <string name="start_website">Developer website</string>
     <string name="state_black_forfeits_time">black forfeits on time</string>
     <string name="state_black_resigned">black resigned</string>
     <string name="state_check">check</string>

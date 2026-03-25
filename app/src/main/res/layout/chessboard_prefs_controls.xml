@@ -53,6 +53,15 @@
             android:layout_margin="8dip" />
 
         <CheckBox
+            android:id="@+id/CheckBoxShowCapturedPieces"
+            android:text="@string/pref_show_captured_pieces"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginLeft="8dip"
+            android:layout_marginRight="8dip" />
+
+        <CheckBox
             android:id="@+id/CheckBoxUseSound"
             android:text="@string/pref_sound"
             android:layout_width="match_parent"

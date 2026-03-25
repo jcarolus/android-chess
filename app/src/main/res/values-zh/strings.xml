@@ -292,11 +292,13 @@
     <string name="pref_icstimewarningsecs">警告时间 (秒)</string>
     <string name="pref_icstimewarningsecs_desc">提前多少秒开始提示？</string>
     <string name="pref_last_move_over_empty_square">拖动到空格子上并延迟后播报上一步走法</string>
+    <string name="pref_minimal">精简控件</string>
     <string name="pref_night_mode">夜间模式</string>
     <string name="pref_night_mode_desc">强制应用夜间模式</string>
     <string name="pref_showCoords">坐标</string>
     <string name="pref_show_blindfold">盲棋</string>
     <string name="pref_show_possible_moves">显示可能走法</string>
+    <string name="pref_show_captured_pieces">有可用时显示被吃掉的棋子</string>
     <string name="pref_show_pieces_descriptions">显示棋子位置描述</string>
     <string name="pref_show_accessibility_drag_toggle">显示无障碍拖动开关</string>
     <string name="pref_sound">声音</string>
@@ -363,6 +365,7 @@
     <string name="start_play">开始</string>
     <string name="start_practice">练习</string>
     <string name="start_puzzles">习题</string>
+    <string name="start_website">开发者网站</string>
     <string name="state_black_forfeits_time">黑方超时判负</string>
     <string name="state_black_resigned">黑方认输</string>
     <string name="state_check">将军</string>

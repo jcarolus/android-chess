@@ -96,10 +96,11 @@ public class PlayActivity extends ChessBoardActivity implements
     private TextView textViewLastMove, textViewEco;
     private TextView textViewInfoBalloon, textViewEngineValue;
     private MaterialButton buttonEco;
-    private SwitchMaterial switchBlindfold, switchFlip;
+    private SwitchMaterial switchBlindfold, switchFlip, switchMinimal;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
     private PopupWindow popupWindowInfoBalloon;
+    private View boardTopLayout, boardBottomLayout, layoutHistory, layoutEco;
 
     @Override
     public boolean requestMove(final int from, final int to) {
@@ -147,8 +148,11 @@ public class PlayActivity extends ChessBoardActivity implements
         final View rootLayout = findViewById(R.id.root_layout);
         final View boardAreaLayout = findViewById(R.id.board_area);
         final View controlsLayout = findViewById(R.id.play_controls);
-        final View boardTopLayout = findViewById(R.id.play_board_top);
-        final View boardBottomLayout = findViewById(R.id.play_board_bottom);
+        boardTopLayout = findViewById(R.id.play_board_top);
+        boardBottomLayout = findViewById(R.id.play_board_bottom);
+        layoutHistory = findViewById(R.id.LayoutHistory);
+        layoutEco = findViewById(R.id.LayoutEco);
+
         initBoardLayoutSizing(rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout);
 
         playButton = findViewById(R.id.ButtonPlay);
@@ -232,14 +236,12 @@ public class PlayActivity extends ChessBoardActivity implements
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (switchBlindfold.isChecked()) {
                 PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
-                rebuildBoard();
-                topPieces.setVisibility(View.INVISIBLE);
-                bottomPieces.setVisibility(View.INVISIBLE);
             } else {
                 PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
-                rebuildBoard();
-                topPieces.setVisibility(View.VISIBLE);
-                bottomPieces.setVisibility(View.VISIBLE);
+            }
+            rebuildBoard();
+            applyCapturedPiecesVisibility();
+            if (topPieces.getVisibility() == View.VISIBLE) {
                 topPieces.invalidatePieces();
                 bottomPieces.invalidatePieces();
             }
@@ -249,6 +251,11 @@ public class PlayActivity extends ChessBoardActivity implements
         switchFlip.setOnCheckedChangeListener((buttonView, isChecked) -> {
             flipBoard = switchFlip.isChecked();
             updateBoardRotation();
+        });
+
+        switchMinimal = findViewById(R.id.SwitchMinimal);
+        switchMinimal.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            switchMinimal(isChecked);
         });
 
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
@@ -339,6 +346,9 @@ public class PlayActivity extends ChessBoardActivity implements
         flipBoard = prefs.getBoolean("flipBoard", false);
         switchFlip.setChecked(flipBoard);
         switchBlindfold.setChecked(false);
+        switchMinimal.setChecked(prefs.getBoolean("minimal", false));
+        switchMinimal(switchMinimal.isChecked());
+        applyCapturedPiecesVisibility();
 
         updateClockByPrefs(false);
         updateGameSettingsByPrefs();
@@ -349,6 +359,19 @@ public class PlayActivity extends ChessBoardActivity implements
             this::updateGUI,
             1000
         );
+    }
+
+    private void applyCapturedPiecesVisibility() {
+        boolean showCapturedPieces = getPrefs().getBoolean("showCapturedPieces", true);
+        boolean blindfoldEnabled = switchBlindfold != null && switchBlindfold.isChecked();
+
+        int visibility = showCapturedPieces ? View.VISIBLE : View.GONE;
+        if (blindfoldEnabled) {
+            visibility = View.INVISIBLE;
+        }
+
+        topPieces.setVisibility(visibility);
+        bottomPieces.setVisibility(visibility);
     }
 
 
@@ -400,6 +423,7 @@ public class PlayActivity extends ChessBoardActivity implements
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
         editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : pauseTime);
         editor.putBoolean("flipBoard", flipBoard);
+        editor.putBoolean("minimal", switchMinimal.isChecked());
 
         editor.commit();
     }
@@ -891,6 +915,20 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewBlackPlayer = isRotated ? textViewBottomPlayer : textViewTopPlayer;
         textViewWhiteClockTIme = isRotated ? textViewTopClockTime : textViewBottomClockTime;
         textViewBlackClockTime = isRotated ? textViewBottomClockTime : textViewTopClockTime;
+    }
+
+    protected void switchMinimal(boolean minimal) {
+        minimalControls = minimal;
+        boardTopLayout.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        boardBottomLayout.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        layoutHistory.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        layoutEco.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        switchBlindfold.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        switchFlip.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        textViewLastMove.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        textViewWhitePieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        textViewBlackPieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        requestBoardLayoutSizingUpdate();
     }
 
     protected void updateGameSettingsByPrefs() {

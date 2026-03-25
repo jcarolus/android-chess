@@ -302,11 +302,13 @@
     <string name="pref_icstimewarningsecs">Warnzeit (Sekunden)</string>
     <string name="pref_icstimewarningsecs_desc">Nach wie vielen Sekunden soll die Warnung starten?</string>
     <string name="pref_last_move_over_empty_square">Letzten Zug nach Verzögerung ansagen, wenn über ein leeres Feld gezogen wird</string>
+    <string name="pref_minimal">Minimale Bedienelemente</string>
     <string name="pref_night_mode">Nachtmodus</string>
     <string name="pref_night_mode_desc">Erzwingt den Nachtmodus in der App</string>
     <string name="pref_showCoords">Koordinaten</string>
     <string name="pref_show_blindfold">Blindschach</string>
     <string name="pref_show_possible_moves">Züge anzeigen</string>
+    <string name="pref_show_captured_pieces">Geschlagene Figuren anzeigen, wenn vorhanden</string>
     <string name="pref_show_pieces_descriptions">Beschreibung der Positionen der Figuren anzeigen</string>
     <string name="pref_show_accessibility_drag_toggle">Bedienungshilfe-Ziehschalter anzeigen</string>
     <string name="pref_sound">Ton</string>
@@ -373,6 +375,7 @@
     <string name="start_play">Spielen</string>
     <string name="start_practice">Üben</string>
     <string name="start_puzzles">Rätsel</string>
+    <string name="start_website">Entwickler-Website</string>
     <string name="state_black_forfeits_time">Schwarz verliert auf Zeit</string>
     <string name="state_black_resigned">Schwarz hat aufgegeben</string>
     <string name="state_check">Schach</string>

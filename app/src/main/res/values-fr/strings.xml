@@ -292,11 +292,13 @@
     <string name="pref_icstimewarningsecs">Limite d’alerte (secondes)</string>
     <string name="pref_icstimewarningsecs_desc">Combien de secondes avant que l’alerte démarre ?</string>
     <string name="pref_last_move_over_empty_square">Annoncer le dernier coup lors du glissement sur une case vide après un délai</string>
+    <string name="pref_minimal">Contrôles minimaux</string>
     <string name="pref_night_mode">Mode nuit</string>
     <string name="pref_night_mode_desc">Forcer l’application en mode nuit</string>
     <string name="pref_showCoords">Coordonnées</string>
     <string name="pref_show_blindfold">À l’aveugle</string>
     <string name="pref_show_possible_moves">Montrer les coups</string>
+    <string name="pref_show_captured_pieces">Afficher les pièces capturées lorsqu’elles sont disponibles</string>
     <string name="pref_show_pieces_descriptions">Afficher la description de l’emplacement des pièces</string>
     <string name="pref_show_accessibility_drag_toggle">Afficher le commutateur de glisser accessible</string>
     <string name="pref_sound">Son</string>
@@ -363,6 +365,7 @@
     <string name="start_play">Jouer</string>
     <string name="start_practice">Entraînement</string>
     <string name="start_puzzles">Problèmes</string>
+    <string name="start_website">Site web du développeur</string>
     <string name="state_black_forfeits_time">noirs perdent au temps</string>
     <string name="state_black_resigned">noirs ont abandonné</string>
     <string name="state_check">échec</string>

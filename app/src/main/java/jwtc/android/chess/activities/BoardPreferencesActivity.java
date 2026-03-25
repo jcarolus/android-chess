@@ -17,7 +17,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode;
     private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
 
@@ -34,6 +34,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         dropDownTileSet = findViewById(R.id.DropdownTileSet);
         checkBoxCoordinates = findViewById(R.id.CheckBoxCoordinates);
         checkBoxShowMoves = findViewById(R.id.CheckBoxShowMoves);
+        checkBoxShowCapturedPieces = findViewById(R.id.CheckBoxShowCapturedPieces);
         checkBoxWakeLock = findViewById(R.id.CheckBoxUseWakeLock);
         checkBoxFullscreen = findViewById(R.id.CheckBoxFullscreen);
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
@@ -89,6 +90,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         checkBoxCoordinates.setChecked(prefs.getBoolean("showCoords", false));
         checkBoxShowMoves.setChecked(prefs.getBoolean("showMoves", true));
+        checkBoxShowCapturedPieces.setChecked(prefs.getBoolean("showCapturedPieces", true));
         checkBoxWakeLock.setChecked(prefs.getBoolean("wakeLock", false));
         checkBoxFullscreen.setChecked(prefs.getBoolean("fullScreen", false));
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
@@ -117,6 +119,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putString("squarePattern", "" + dropDownTileSet.getSelectedItemPosition());
         editor.putBoolean("showCoords", checkBoxCoordinates.isChecked());
         editor.putBoolean("showMoves", checkBoxShowMoves.isChecked());
+        editor.putBoolean("showCapturedPieces", checkBoxShowCapturedPieces.isChecked());
         editor.putBoolean("wakeLock", checkBoxWakeLock.isChecked());
         editor.putBoolean("fullScreen", checkBoxFullscreen.isChecked());
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());

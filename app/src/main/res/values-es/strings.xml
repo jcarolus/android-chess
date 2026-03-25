@@ -302,11 +302,13 @@
     <string name="pref_icstimewarningsecs">Tiempo de aviso (segundos)</string>
     <string name="pref_icstimewarningsecs_desc">¿Cuántos segundos antes empieza la advertencia?</string>
     <string name="pref_last_move_over_empty_square">Anunciar el último movimiento al arrastrar sobre una casilla vacía tras un retraso</string>
+    <string name="pref_minimal">Controles mínimos</string>
     <string name="pref_night_mode">Modo nocturno</string>
     <string name="pref_night_mode_desc">Forzar la app en modo nocturno</string>
     <string name="pref_showCoords">Coordenadas</string>
     <string name="pref_show_blindfold">A ciegas</string>
     <string name="pref_show_possible_moves">Mostrar movimientos</string>
+    <string name="pref_show_captured_pieces">Mostrar piezas capturadas cuando estén disponibles</string>
     <string name="pref_show_pieces_descriptions">Mostrar descripción de la ubicación de las piezas</string>
     <string name="pref_show_accessibility_drag_toggle">Mostrar interruptor de arrastre de accesibilidad</string>
     <string name="pref_sound">Sonido</string>
@@ -373,6 +375,7 @@
     <string name="start_play">Jugar</string>
     <string name="start_practice">Practicar</string>
     <string name="start_puzzles">Problemas</string>
+    <string name="start_website">Sitio web del desarrollador</string>
     <string name="state_black_forfeits_time">negras pierden por tiempo</string>
     <string name="state_black_resigned">negras se rinden</string>
     <string name="state_check">jaque</string>

@@ -60,7 +60,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
-    protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false;
+    protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false, minimalControls = false;
     protected boolean useAccessibilityDrag = false;
     protected int accessibilityDragDwellMs = 300;
     protected int accessibilityDragLastMoveDelayMs = 1000;
@@ -221,8 +221,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return;
         }
 
-        final int minLandscapeControlsPx = dpToPx(320);
-        final int minPortraitControlsPx = dpToPx(64);
         final View controlsLayoutRef = controlsLayout;
         final View boardTopLayoutRef = boardTopLayout;
         final View boardBottomLayoutRef = boardBottomLayout;
@@ -242,6 +240,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 final int orientation = getResources().getConfiguration().orientation;
                 final int rootWidth = rootLayout.getWidth();
                 final int rootHeight = rootLayout.getHeight();
+                final int minLandscapeControlsPx = dpToPx(minimalControls ? 200 : 320);
+                final int minPortraitControlsPx = dpToPx(64);
 
                 if (rootWidth <= 0 || rootHeight <= 0) {
                     return;
@@ -340,6 +340,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(boardLayoutListener);
     }
 
+    protected void requestBoardLayoutSizingUpdate() {
+        if (boardLayoutRoot == null) {
+            return;
+        }
+        boardLayoutRoot.requestLayout();
+        boardLayoutRoot.invalidate();
+    }
+
     private int dpToPx(final int dp) {
         final float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
@@ -347,6 +355,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     private int measureDependentHeight(View dependentView) {
         if (dependentView == null) {
+            return 0;
+        }
+
+        if (dependentView.getVisibility() == View.GONE) {
             return 0;
         }
 

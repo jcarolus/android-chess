@@ -292,11 +292,13 @@
     <string name="pref_icstimewarningsecs">Uyarı süresi (sn)</string>
     <string name="pref_icstimewarningsecs_desc">Uyarı kaç saniye kala başlasın?</string>
     <string name="pref_last_move_over_empty_square">Boş bir karenin üzerinden sürüklerken gecikmeden sonra son hamleyi oku</string>
+    <string name="pref_minimal">Minimal kontroller</string>
     <string name="pref_night_mode">Gece modu</string>
     <string name="pref_night_mode_desc">Uygulamayı gece modunda zorla</string>
     <string name="pref_showCoords">Koordinatlar</string>
     <string name="pref_show_blindfold">Gözbağı</string>
     <string name="pref_show_possible_moves">Hamleleri göster</string>
+    <string name="pref_show_captured_pieces">Varsa ele geçirilen taşları göster</string>
     <string name="pref_show_pieces_descriptions">Taşların konum açıklamasını göster</string>
     <string name="pref_show_accessibility_drag_toggle">Erişilebilirlik sürükleme anahtarını göster</string>
     <string name="pref_sound">Ses</string>
@@ -363,6 +365,7 @@
     <string name="start_play">Oyna</string>
     <string name="start_practice">Alıştırma</string>
     <string name="start_puzzles">Problemler</string>
+    <string name="start_website">Geliştirici web sitesi</string>
     <string name="state_black_forfeits_time">siyah süreyi kaybetti</string>
     <string name="state_black_resigned">siyah terk etti</string>
     <string name="state_check">şah</string>
