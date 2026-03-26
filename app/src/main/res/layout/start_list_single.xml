@@ -9,7 +9,7 @@
             android:id="@+id/txt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp"
             style="@style/MyRowTextStyle"
             android:textSize="18sp" />
 
@@ -17,7 +17,7 @@
             android:id="@+id/img"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:layout_gravity="center_vertical" />
 
     </TableRow>

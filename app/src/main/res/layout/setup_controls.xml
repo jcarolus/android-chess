@@ -24,8 +24,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="48dip"
                 android:layout_marginTop="4dip"
-                android:layout_marginLeft="16dip"
-                android:layout_marginRight="4dip"
+                android:layout_marginStart="16dip"
+                android:layout_marginEnd="4dip"
                 android:id="@+id/duckStack" />
         </LinearLayout>
 
@@ -69,7 +69,7 @@
                 android:id="@+id/SpinnerOptionsEnPassant"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dip"
+                android:layout_marginStart="4dip"
                 android:hint="@string/msg_setup_enpassant" />
         </com.google.android.flexbox.FlexboxLayout>
 
@@ -174,8 +174,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -184,8 +184,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

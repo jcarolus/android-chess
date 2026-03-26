@@ -11,8 +11,8 @@
 
         <TableRow
             android:paddingTop="4dip"
-            android:paddingLeft="4dip"
-            android:paddingRight="4dip">
+            android:paddingStart="4dip"
+            android:paddingEnd="4dip">
 
             <TextView
                 android:id="@+id/nr"
@@ -49,8 +49,8 @@
         <TableRow
             android:paddingTop="4dip"
             android:paddingBottom="4dip"
-            android:paddingLeft="4dip"
-            android:paddingRight="4dip">
+            android:paddingStart="4dip"
+            android:paddingEnd="4dip">
 
             <TextView
                 android:id="@+id/text_type"

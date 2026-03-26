@@ -37,8 +37,8 @@
             <ProgressBar
                 android:layout_width="fill_parent"
                 android:layout_height="4dip"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip"
+                android:layout_marginStart="8dip"
+                android:layout_marginEnd="8dip"
                 android:layout_marginBottom="8dip"
                 style="?android:attr/progressBarStyleHorizontal" />
         </LinearLayout>

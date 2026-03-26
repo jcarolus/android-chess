@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:fillViewport="false"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingLeft="4dip"
-    android:paddingRight="4dip">
+    android:paddingStart="4dip"
+    android:paddingEnd="4dip">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,8 +58,8 @@
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dip"
-                    android:layout_marginRight="8dip"
+                    android:layout_marginStart="8dip"
+                    android:layout_marginEnd="8dip"
                     android:accessibilityLiveRegion="assertive" />
 
                 <com.google.android.material.button.MaterialButton
@@ -93,8 +93,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginLeft="8dip"
-                    android:layout_marginRight="8dip"
+                    android:layout_marginStart="8dip"
+                    android:layout_marginEnd="8dip"
                     android:orientation="horizontal"
                     android:scrollbars="horizontal"
                     android:fadeScrollbars="false"
@@ -128,8 +128,8 @@
                 android:text="--"
                 android:layout_width="match_parent"
                 android:layout_height="38dip"
-                android:layout_marginLeft="8dip"
-                android:layout_marginRight="8dip" />
+                android:layout_marginStart="8dip"
+                android:layout_marginEnd="8dip" />
         </LinearLayout>
 
         <com.google.android.flexbox.FlexboxLayout
@@ -195,8 +195,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -205,8 +205,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

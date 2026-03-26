@@ -95,7 +95,7 @@
                         android:id="@+id/ButtonSetupOptionsCancel"
                         android:text="@string/button_cancel"
                         android:layout_width="wrap_content"
-                        android:layout_marginRight="2dp"
+                        android:layout_marginEnd="2dp"
                         style="@style/ChessButton" />
 
                     <com.google.android.material.button.MaterialButton
@@ -109,7 +109,7 @@
                         android:id="@+id/ButtonSetupOptionsOk"
                         android:text="@string/button_ok"
                         android:layout_width="wrap_content"
-                        android:layout_marginLeft="2dp"
+                        android:layout_marginStart="2dp"
                         style="@style/ChessButton" />
                 </TableRow>
 

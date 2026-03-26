@@ -14,7 +14,7 @@
         <TableRow
             android:paddingTop="8dip"
             android:paddingBottom="4dip"
-            android:paddingLeft="4dip"
+            android:paddingStart="4dip"
             android:gravity="center">
 
             <ImageView
@@ -30,7 +30,7 @@
                 android:text="00:00"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dip" />
+                android:layout_marginStart="4dip" />
 
             <TextView
                 android:id="@+id/text_white"
@@ -43,7 +43,7 @@
         <TableRow
             android:paddingTop="4dip"
             android:paddingBottom="8dip"
-            android:paddingLeft="4dip"
+            android:paddingStart="4dip"
             android:gravity="center">
 
             <ImageView
@@ -59,7 +59,7 @@
                 android:text="00:00"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dip" />
+                android:layout_marginStart="4dip" />
 
             <TextView
                 android:id="@+id/text_black"
