@@ -1,0 +1,24 @@
+# JNI native methods
+-keep class jwtc.chess.JNI { *; }
+
+# Content providers
+-keep class jwtc.android.chess.helpers.MyPGNProvider { *; }
+-keep class jwtc.android.chess.puzzle.MyPuzzleProvider { *; }
+
+# Gson model classes (deserialized via reflection)
+-keep class jwtc.android.chess.lichess.models.** { *; }
+
+# Gson
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.google.gson.** { *; }
+
+# OkHttp
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+# AppAuth
+-keep class net.openid.appauth.** { *; }
+
+# Google Play Services Cast (playStore flavor)
+-dontwarn com.google.android.gms.**
