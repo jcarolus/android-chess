@@ -314,7 +314,8 @@ public class PGNProvider extends ContentProvider {
                 break;
 
             default:
-                throw new IllegalArgumentException("Unknown URI " + uri);
+                Log.w(TAG, "Unknown URI in delete: " + uri);
+                return 0;
         }
 
         getContext().getContentResolver().notifyChange(uri, null);

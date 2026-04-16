@@ -432,6 +432,9 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private void deleteGame() {
         final long id = Utils.getColumnLong(cursor, PGNColumns._ID);
+        if (id < 0) {
+            return;
+        }
 
         openConfirmDialog(getString(R.string.title_delete_game), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
             Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, id);

@@ -15,8 +15,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dip"
-            android:layout_marginLeft="4dip"
-            android:layout_marginRight="4dip"
+            android:layout_marginStart="4dip"
+            android:layout_marginEnd="4dip"
             android:accessibilityLiveRegion="assertive" />
 
         <LinearLayout
@@ -96,8 +96,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -106,8 +106,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

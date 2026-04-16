@@ -111,6 +111,10 @@ public class Sounds {
     }
 
     private int loadSound(int resId, int priority) {
-        return soundPool.load(context, resId, priority);
+        try {
+            return soundPool.load(context, resId, priority);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

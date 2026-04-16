@@ -21,7 +21,7 @@
 
         <TableRow
             style="@style/MyRowStyle"
-            android:gravity="right">
+            android:gravity="end">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonClip"

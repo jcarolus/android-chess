@@ -14,8 +14,8 @@
             android:src="@drawable/turnempty"
             android:layout_height="12dip"
             android:layout_width="12dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip" />
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip" />
 
         <TextView
             android:id="@+id/TextViewClockMe"
@@ -24,7 +24,7 @@
             android:text="00:00"
             android:gravity="center_vertical"
             style="@style/MyHeaderTextStyle"
-            android:layout_marginLeft="8dip" />
+            android:layout_marginStart="8dip" />
 
         <TextView
             android:text="@string/ics_playerone"
@@ -40,6 +40,6 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             style="@style/MyHeaderTextStyle"
-            android:layout_marginLeft="3dip" />
+            android:layout_marginStart="3dip" />
     </TableRow>
 </TableLayout>

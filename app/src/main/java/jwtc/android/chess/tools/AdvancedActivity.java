@@ -157,10 +157,13 @@ public class AdvancedActivity extends BaseActivity {
                 uri = resultData.getData();
 
                 if (uri != null) {
+                    getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                     Intent myIntent = new Intent();
                     myIntent.putExtra("mode", requestCode);
                     myIntent.setClass(AdvancedActivity.this, ImportActivity.class);
                     myIntent.setData(uri);
+                    myIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                     startActivity(myIntent);
                     finish();

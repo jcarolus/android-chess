@@ -14,16 +14,16 @@ public class PGNHelper {
     public static final String regexPgnTag = "\\[(\\w+) \\\"([^\\]]*)\\\"\\]";
 
     public static String getPGNFromInputStream(InputStream is) throws Exception {
-        String sPGN = "";
-
+        StringBuilder sb = new StringBuilder();
         byte[] b = new byte[4096];
+        int bytesRead;
 
-        while (is.read(b) > 0) {
-            sPGN += new String(b);
+        while ((bytesRead = is.read(b)) > 0) {
+            sb.append(new String(b, 0, bytesRead));
         }
         is.close();
 
-        return sPGN.trim();
+        return sb.toString().trim();
     }
 
     public static Date getDate(String s) {

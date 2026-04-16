@@ -20,7 +20,7 @@
                 android:text="@string/ics_seekseek"
                 style="@style/MyHeaderTextStyle"
                 android:id="@+id/RadioButtonSeek"
-                android:paddingRight="30dp" />
+                android:paddingEnd="30dp" />
 
             <RadioButton
                 android:text="@string/ics_seekchallenge"

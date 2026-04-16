@@ -13,8 +13,8 @@
             android:id="@+id/ImageTopTurn"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip">
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip">
 
             <ImageView
                 android:src="@drawable/turnblack"
@@ -34,7 +34,7 @@
             android:text="00:00"
             android:gravity="center_vertical"
             style="@style/MyNormalTextStyle"
-            android:layout_marginLeft="8dip" />
+            android:layout_marginStart="8dip" />
 
         <TextView
             android:text="@string/ics_playertwo"
@@ -49,14 +49,14 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             style="@style/MyHeaderTextStyle"
-            android:layout_marginLeft="3dip" />
+            android:layout_marginStart="3dip" />
 
         <TextView
             android:id="@+id/TextViewICSBoardNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="# 0"
-            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
             style="@style/MyHeaderTextStyle"
             android:gravity="right|center_vertical" />
     </TableRow>

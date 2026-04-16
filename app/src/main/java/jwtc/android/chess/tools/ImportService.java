@@ -98,7 +98,8 @@ public class ImportService extends Service {
                         isPuzzles = getContentResolver().openInputStream(uri);
                     }
                     puzzleImportProcessor.processPGNFile(isPuzzles);
-                } catch (IOException e) {
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
                 }
 
@@ -136,7 +137,8 @@ public class ImportService extends Service {
                         isPractice = getContentResolver().openInputStream(uri);
                     }
                     practiceImportProcessor.processPGNFile(isPractice);
-                } catch (IOException e) {
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
                     dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 0);
                 }
                 break;
@@ -221,7 +223,7 @@ public class ImportService extends Service {
 
                         Log.d(TAG, "Wrote hashMap");
 
-                    } catch (SecurityException ex) {
+                    } catch (Exception ex) {
                         Log.d(TAG, "Could not get the flags " + ex.getMessage());
                     }
                 } else {

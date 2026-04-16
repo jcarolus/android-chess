@@ -58,8 +58,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip" />
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip" />
 
         <CheckBox
             android:id="@+id/CheckBoxUseSound"
@@ -67,8 +67,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip" />
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip" />
 
         <CheckBox
             android:id="@+id/CheckBoxUseHapticFeedback"
@@ -76,8 +76,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip" />
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip" />
 
         <CheckBox
             android:id="@+id/CheckBoxUseWakeLock"
@@ -85,14 +85,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip" />
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="32dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="32dip"
+            android:layout_marginEnd="8dip"
             android:layout_marginBottom="8dip"
             android:text="@string/pref_wakelock_desc" />
 
@@ -102,14 +102,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip" />
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="32dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="32dip"
+            android:layout_marginEnd="8dip"
             android:layout_marginBottom="8dip"
             android:text="@string/pref_fullscreen_desc" />
 
@@ -119,14 +119,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip" />
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="32dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="32dip"
+            android:layout_marginEnd="8dip"
             android:layout_marginBottom="8dip"
             android:text="@string/pref_night_mode_desc" />
     </LinearLayout>

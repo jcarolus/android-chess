@@ -30,7 +30,7 @@
                 android:id="@+id/ButtonICSExamineRevert"
                 app:icon="@drawable/ic_backspace"
                 style="@style/ChessImageButton"
-                android:layout_marginRight="30dp" />
+                android:layout_marginEnd="30dp" />
         </LinearLayout>
 
         <LinearLayout

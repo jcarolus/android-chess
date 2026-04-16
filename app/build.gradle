@@ -12,13 +12,14 @@ android {
         applicationId "jwtc.android.chess"
         minSdkVersion 24
         targetSdkVersion 36
-        resourceConfigurations += ['en', 'zh', 'it', 'pt', 'es', 'ru', 'de', 'fr', 'tr', 'ro']
+        resourceConfigurations += ['en', 'zh', 'it', 'pt', 'es', 'ru', 'de', 'fr', 'tr', 'ro', 'ar']
         // place correct redirectScheme~
         manifestPlaceholders = [appAuthRedirectScheme: 'jwtc.android.chess']
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.config
         }

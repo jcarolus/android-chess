@@ -18,25 +18,25 @@
                 android:id="@+id/ButtonPracticeRetry"
                 app:icon="@drawable/ic_arrow_clockwise"
                 android:contentDescription="@string/button_reset_position"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 style="@style/ChessImageButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPracticeNext"
                 app:icon="@drawable/ic_chevron_right"
                 android:contentDescription="@string/button_next_position"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 style="@style/ChessImageButton" />
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/percentBar"
                 android:layout_width="match_parent"
                 android:layout_height="12dp"
-                android:layout_toLeftOf="@id/TextViewPercentage"
-                android:layout_toRightOf="@id/ButtonPracticeRetry"
+                android:layout_toStartOf="@id/TextViewPercentage"
+                android:layout_toEndOf="@id/ButtonPracticeRetry"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
                 app:trackThickness="12dp"
                 app:indicatorColor="@color/secondaryColor"
                 app:trackColor="@color/wrongColor" />
@@ -46,7 +46,7 @@
                 android:text="0%"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/ButtonPracticeNext"
+                android:layout_toStartOf="@id/ButtonPracticeNext"
                 android:layout_centerVertical="true"
                 style="@style/MyHeaderTextStyle" />
         </RelativeLayout>
@@ -57,8 +57,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dip"
-            android:layout_marginLeft="4dip"
-            android:layout_marginRight="4dip"
+            android:layout_marginStart="4dip"
+            android:layout_marginEnd="4dip"
             android:accessibilityLiveRegion="assertive" />
 
         <TextView
@@ -96,8 +96,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -106,8 +106,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_marginRight="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

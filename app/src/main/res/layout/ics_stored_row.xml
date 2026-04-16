@@ -6,8 +6,8 @@
 
     <TableRow
         android:paddingTop="4dip"
-        android:paddingLeft="4dip"
-        android:paddingRight="4dip">
+        android:paddingStart="4dip"
+        android:paddingEnd="4dip">
 
         <TextView
             android:id="@+id/nr_stored"

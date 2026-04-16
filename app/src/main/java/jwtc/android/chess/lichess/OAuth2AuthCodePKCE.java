@@ -58,6 +58,10 @@ public class OAuth2AuthCodePKCE {
     }
 
     public void handleAuthResponse(Intent intent, Callback<TokenResponse, Exception> callback) {
+        if (intent == null) {
+            callback.onError(new Exception("Authorization cancelled"));
+            return;
+        }
         AuthorizationResponse resp = AuthorizationResponse.fromIntent(intent);
         AuthorizationException ex = AuthorizationException.fromIntent(intent);
         if (resp != null) {

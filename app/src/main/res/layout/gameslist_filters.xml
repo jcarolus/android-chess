@@ -140,7 +140,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginRight="8dip"
+                android:layout_marginEnd="8dip"
                 android:hint="Order by" />
 
             <jwtc.android.chess.views.FixedDropdownView
@@ -155,13 +155,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_gravity="right">
+            android:layout_gravity="end">
 
             <TextView
                 android:id="@+id/TextViewFilterInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="16dip"
+                android:layout_marginEnd="16dip"
                 android:text="0" />
 
             <com.google.android.material.button.MaterialButton
