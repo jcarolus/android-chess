@@ -31,6 +31,8 @@ import jwtc.chess.board.BoardConstants;
 
 public class PracticeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PracticeActivity";
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Runnable delayedStartEngine = this::startEngine;
     private EngineApi myEngine;
     private TextView textViewPracticeMove, textViewPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
@@ -142,6 +144,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     @Override
     protected void onPause() {
         super.onPause();
+
+        handler.removeCallbacks(delayedStartEngine);
 
         if (myEngine != null) {
             myEngine.abort(() -> {
@@ -275,12 +279,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         updateSelectedSquares();
 
         if (!gameApi.isEnded() && jni.getTurn() != myTurn) {
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startEngine();
-                }
-            }, 1000);
+            handler.removeCallbacks(delayedStartEngine);
+            handler.postDelayed(delayedStartEngine, 1000);
         }
         if (gameApi.isEnded()) {
             Log.d(TAG, "Solved ");
