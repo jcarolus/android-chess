@@ -1218,6 +1218,9 @@ boolean ChessBoard::isPosEnemy(const int p) {
     return (m_bitbPositions[m_o_turn] & BITS[p]) != 0;
 }
 int ChessBoard::pieceAt(const int t, const int p) {
+    if (p < 0 || p >= NUM_FIELDS) {
+        return FIELD;
+    }
     const BITBOARD bb = BITS[p];
     if ((m_bitbPositions[t] & bb) != 0) {
         if ((m_bitbPieces[t][PAWN] & bb) != 0) {

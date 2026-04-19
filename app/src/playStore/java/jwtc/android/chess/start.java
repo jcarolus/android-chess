@@ -348,6 +348,11 @@ public class start extends StartBaseActivity {
      */
     private void teardown(boolean selectDefaultRoute) {
         Log.d(TAG, "teardown");
+        if (_timer != null) {
+            _timer.cancel();
+            _timer.purge();
+            _timer = null;
+        }
         if (mApiClient != null) {
             if (mApplicationStarted) {
                 if (mApiClient.isConnected() || mApiClient.isConnecting()) {
