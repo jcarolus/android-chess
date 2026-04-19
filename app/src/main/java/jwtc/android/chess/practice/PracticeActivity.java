@@ -143,9 +143,18 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     protected void onPause() {
         super.onPause();
 
+        if (myEngine != null) {
+            myEngine.abort(() -> {
+            });
+            myEngine.removeListener(this);
+            myEngine.destroy();
+            myEngine = null;
+        }
+
         SharedPreferences.Editor editor = this.getPrefs().edit();
-        if (timer != null)
+        if (timer != null) {
             timer.cancel();
+        }
         timer = null;
 
         // ended with correct solution, advance position
