@@ -600,7 +600,7 @@ public class LichessApi extends GameApi {
 
     public int getMyTurn() {
         if (ongoingGameFull != null) {
-            return ongoingGameFull.white.id.equals(user) ? BoardConstants.WHITE : BoardConstants.BLACK;
+            return ongoingGameFull.white != null && user != null && user.equals(ongoingGameFull.white.id) ? BoardConstants.WHITE : BoardConstants.BLACK;
         } else if (ongoingPuzzle != null) {
             return ongoingPuzzle.puzzle.initialPly % 2 == 1 ? BoardConstants.WHITE : BoardConstants.BLACK;
         }
