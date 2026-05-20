@@ -35,6 +35,8 @@ public class HotspotBoardService extends Service {
     public static final int MSG_RECEIVED_GAME_UPDATE = 6;
     public static final int MSG_SET_HOST_COLOR = 7;
     public static final int MSG_SET_PLAYER_COLOR = 8;
+    public static final String EXTRA_HOST_IP = "hostIp";
+    public static final String EXTRA_PORT = "port";
 
     private Thread workerThread;
     private Socket socket = null;
@@ -63,7 +65,10 @@ public class HotspotBoardService extends Service {
                     break;
                 case MSG_START_SESSION:
                     isHost = msg.arg1 == 1;
-                    startSession(isHost, 8080);
+                    Bundle bundle = msg.getData();
+                    String hostIp = bundle != null ? bundle.getString(EXTRA_HOST_IP) : null;
+                    int port = bundle != null ? bundle.getInt(EXTRA_PORT, 8080) : 8080;
+                    startSession(isHost, port, hostIp);
                     break;
                 case MSG_SEND_GAME_UPDATE:
                     if (writer != null) {
@@ -158,7 +163,7 @@ public class HotspotBoardService extends Service {
         }
     }
 
-    public void startSession(boolean isHost, final int port) {
+    public void startSession(boolean isHost, final int port, @Nullable final String explicitHostIp) {
         Log.d(TAG, "startSession " + (isHost ? " as host" : " as client"));
         if (serverSocket != null) {
             if (!serverSocket.isClosed()) {
@@ -177,15 +182,18 @@ public class HotspotBoardService extends Service {
                     socket = serverSocket.accept();
                     Log.d(TAG, "client socket connected to server");
                 } else {
-                    WifiManager wifiManager = (WifiManager) HotspotBoardService.this.getSystemService(Context.WIFI_SERVICE);
-                    DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-                    int hostAddress = dhcpInfo.gateway;
+                    String hostIp = explicitHostIp;
+                    if (hostIp == null || hostIp.trim().isEmpty()) {
+                        WifiManager wifiManager = (WifiManager) HotspotBoardService.this.getSystemService(Context.WIFI_SERVICE);
+                        DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+                        int hostAddress = dhcpInfo.gateway;
 
-                    String hostIp = String.format(Locale.US, "%d.%d.%d.%d",
-                        (hostAddress & 0xff),
-                        (hostAddress >> 8 & 0xff),
-                        (hostAddress >> 16 & 0xff),
-                        (hostAddress >> 24 & 0xff));
+                        hostIp = String.format(Locale.US, "%d.%d.%d.%d",
+                            (hostAddress & 0xff),
+                            (hostAddress >> 8 & 0xff),
+                            (hostAddress >> 16 & 0xff),
+                            (hostAddress >> 24 & 0xff));
+                    }
 
                     socket = new Socket(hostIp, port);
 

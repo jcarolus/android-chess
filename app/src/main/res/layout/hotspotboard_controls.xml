@@ -19,6 +19,16 @@
             android:layout_marginTop="4dp"
             android:visibility="gone" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/ButtonShareLink"
+            android:text="@string/hotspot_share_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            style="@style/ChessButton" />
+
         <LinearLayout
             android:id="@+id/LayoutConnect"
             android:layout_width="match_parent"
@@ -84,7 +94,7 @@
             android:id="@+id/LayoutNewGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dip"
+            android:layout_marginTop="8dip"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButtonToggleGroup

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -18,12 +19,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Collections;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -38,7 +43,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private Messenger messengerFromService;
     private SwitchMaterial switchHost;
     private MaterialButtonToggleGroup colorToggleGroup;
-    private MaterialButton buttonConnect;
+    private MaterialButton buttonConnect, buttonShareLink;
     private LinearLayout layoutConnect;
     private EditText editName;
     private boolean isHost = true, isPlayAsWhite = true;
@@ -49,6 +54,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
     private Handler statusHandler = new Handler(Looper.getMainLooper());
     private int overrideGameState = 0;
+    private boolean isConnected = false;
+    private boolean hasStartedSession = false;
+    private String inviteHostIp;
+    private int invitePort = 8080;
+    private String inviteHostName;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -114,13 +124,21 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     public void startSession() {
         Log.d(TAG, "startSession called " + isHost);
+        hasStartedSession = true;
         layoutConnect.setVisibility(View.GONE);
         updateStatus(isHost ? "Waiting for opponent to connect" : "Trying to connect");
+        updateShareButtonVisibility();
         try {
             if (messengerFromService != null) {
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
                 Log.d(TAG, "startMsg " + (startMsg == null ? "null" : "object"));
                 startMsg.arg1 = isHost ? 1 : 0; // boolean isHost
+                Bundle bundle = new Bundle();
+                if (!isHost && inviteHostIp != null && !inviteHostIp.isEmpty()) {
+                    bundle.putString(HotspotBoardService.EXTRA_HOST_IP, inviteHostIp);
+                }
+                bundle.putInt(HotspotBoardService.EXTRA_PORT, invitePort);
+                startMsg.setData(bundle);
                 messengerFromService.send(startMsg);
 
             } else {
@@ -294,6 +312,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         switchHost.setOnCheckedChangeListener((buttonView, isChecked) -> isHost = switchHost.isChecked());
 
         buttonConnect = findViewById(R.id.ButtonConnect);
+        buttonShareLink = findViewById(R.id.ButtonShareLink);
         buttonConnect.setOnClickListener(arg0 -> {
             String name = editName.getText().toString();
             Log.d(TAG, "buttonConnect " + name);
@@ -303,6 +322,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 startSession();
             }
         });
+        buttonShareLink.setOnClickListener(v -> shareInviteLink());
 
         buttonResign.setOnClickListener(v -> {
             openConfirmDialog("Are you sure you want to resign?", "Yes", "No", () -> {
@@ -323,6 +343,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         });
 
         editName = findViewById(R.id.EditName);
+        handleIntent(getIntent());
+        updateShareButtonVisibility();
     }
 
     @Override
@@ -335,10 +357,18 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         String sName = prefs.getString("hotspotboardName", "");
         editName.setText(sName);
 
-        switchHost.setChecked(prefs.getBoolean("hostpotboardIsHost", true));
+        boolean defaultIsHost = prefs.getBoolean("hostpotboardIsHost", true);
+        switchHost.setChecked(inviteHostIp == null ? defaultIsHost : false);
 
-        updateConnectedState(false);
-        updateGameButtonsVisibility(false);
+        if (hasStartedSession && !isConnected) {
+            layoutConnect.setVisibility(View.GONE);
+            updateGameButtonsVisibility(false);
+            updateShareButtonVisibility();
+        } else {
+            updateConnectedState(false);
+            updateGameButtonsVisibility(false);
+            updateShareButtonVisibility();
+        }
     }
 
     @Override
@@ -372,12 +402,14 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void updateConnectedState(boolean isConnected) {
+        this.isConnected = isConnected;
         layoutConnect.setVisibility(isConnected ? View.GONE : View.VISIBLE);
 
         updateNewGameButtonVisibility(isConnected);
+        updateShareButtonVisibility();
 
         if (!isConnected) {
-            textOpponent.setText("Opponent");
+            textOpponent.setText(inviteHostName != null && !inviteHostName.isEmpty() ? inviteHostName : "Opponent");
             updateGameButtonsVisibility(false);
         }
     }
@@ -388,6 +420,114 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     private void updateGameButtonsVisibility(boolean isVisible) {
         layoutGameButtons.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateShareButtonVisibility() {
+        if (buttonShareLink == null) {
+            return;
+        }
+        boolean showShareButton = isHost && hasStartedSession && !isConnected;
+        buttonShareLink.setVisibility(showShareButton ? View.VISIBLE : View.GONE);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (intent == null || !Intent.ACTION_VIEW.equals(intent.getAction())) {
+            return;
+        }
+        Uri data = intent.getData();
+        if (data == null || !"jwtc.android.chess".equals(data.getScheme()) || !"hotspot".equals(data.getHost())) {
+            return;
+        }
+        applyInviteUri(data);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void applyInviteUri(Uri data) {
+        String host = data.getQueryParameter("host");
+        if (host == null || host.isEmpty()) {
+            return;
+        }
+        inviteHostIp = host;
+        invitePort = parsePort(data.getQueryParameter("port"));
+        inviteHostName = data.getQueryParameter("name");
+        isHost = false;
+        hasStartedSession = false;
+        isConnected = false;
+        if (switchHost != null) {
+            switchHost.setChecked(false);
+        }
+        if (inviteHostName != null && !inviteHostName.isEmpty()) {
+            textOpponent.setText(inviteHostName);
+            updateStatus(getString(R.string.hotspot_invite_received, inviteHostName));
+        }
+    }
+
+    private int parsePort(String port) {
+        if (port == null || port.isEmpty()) {
+            return 8080;
+        }
+        try {
+            return Integer.parseInt(port);
+        } catch (NumberFormatException ex) {
+            return 8080;
+        }
+    }
+
+    private void shareInviteLink() {
+        Uri inviteUri = buildInviteUri();
+        if (inviteUri == null) {
+            updateStatus(getString(R.string.hotspot_share_link_failed));
+            return;
+        }
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, inviteUri.toString());
+        shareIntent.setType("text/plain");
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.hotspot_share_link_chooser)));
+    }
+
+    private Uri buildInviteUri() {
+        String hostIp = getLocalIpv4Address();
+        if (hostIp == null || hostIp.isEmpty()) {
+            return null;
+        }
+        String myName = ((HotspotBoardApi) gameApi).getMyName();
+        if ((myName == null || myName.isEmpty()) && editName != null) {
+            myName = editName.getText().toString();
+        }
+        Uri.Builder builder = new Uri.Builder()
+            .scheme("jwtc.android.chess")
+            .authority("hotspot")
+            .appendPath("join")
+            .appendQueryParameter("host", hostIp)
+            .appendQueryParameter("port", String.valueOf(invitePort));
+        if (myName != null && !myName.isEmpty()) {
+            builder.appendQueryParameter("name", myName);
+        }
+        return builder.build();
+    }
+
+    private String getLocalIpv4Address() {
+        try {
+            for (NetworkInterface networkInterface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                if (!networkInterface.isUp() || networkInterface.isLoopback()) {
+                    continue;
+                }
+                for (InetAddress address : Collections.list(networkInterface.getInetAddresses())) {
+                    if (address instanceof Inet4Address && !address.isLoopbackAddress() && address.isSiteLocalAddress()) {
+                        return address.getHostAddress();
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "Could not determine local IP address", ex);
+        }
+        return null;
     }
 
     protected void updateTurnSwitchers() {

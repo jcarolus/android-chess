@@ -88,6 +88,10 @@
     <string name="hotspot_name_hint">Your name</string>
     <string name="hotspot_new">New</string>
     <string name="hotspot_resign">Resign</string>
+    <string name="hotspot_share_link">Share link</string>
+    <string name="hotspot_share_link_chooser">Share hotspot game</string>
+    <string name="hotspot_share_link_failed">Could not create a share link on this network.</string>
+    <string name="hotspot_invite_received">Invite from %1$s received. Enter your name to connect.</string>
     <string name="hotspot_white">♔ White</string>
     <string name="ics_client_handle">Handle</string>
     <string name="ics_client_password">Password</string>
