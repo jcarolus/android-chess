@@ -89,8 +89,8 @@ public class PlayActivity extends ChessBoardActivity implements
     private boolean vsCPU = true;
     private boolean flipBoard = false;
     private int myTurn = 1;
-    private ChessPiecesStackView topPieces;
-    private ChessPiecesStackView bottomPieces;
+    private ChessPiecesStackView topPieces, capturedWhitePieces;
+    private ChessPiecesStackView bottomPieces, capturedBlackPieces;
     private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
     private TextView textViewTopPlayer, textViewBottomPlayer, textViewTopClockTime, textViewBottomClockTime, textViewWhitePlayer, textViewBlackPlayer, textViewWhiteClockTIme, textViewBlackClockTime;
     private TextView textViewLastMove, textViewEco;
@@ -224,6 +224,8 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewBlackPlayer = textViewTopPlayer;
         textViewWhiteClockTIme = textViewBottomClockTime;
         textViewBlackClockTime = textViewTopClockTime;
+        capturedBlackPieces = bottomPieces;
+        capturedWhitePieces = topPieces;
 
         textViewLastMove = findViewById(R.id.TextViewLastMove);
         buttonEco = findViewById(R.id.ButtonEco);
@@ -241,10 +243,8 @@ public class PlayActivity extends ChessBoardActivity implements
             }
             rebuildBoard();
             applyCapturedPiecesVisibility();
-            if (topPieces.getVisibility() == View.VISIBLE) {
-                topPieces.invalidatePieces();
-                bottomPieces.invalidatePieces();
-            }
+            capturedWhitePieces.invalidatePieces();
+            capturedBlackPieces.invalidatePieces();
         });
 
         switchFlip = findViewById(R.id.SwitchFlip);
@@ -638,17 +638,17 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void updateCapturedPieces() {
-        topPieces.removeAllViews();
-        bottomPieces.removeAllViews();
+        capturedWhitePieces.removeAllViews();
+        capturedBlackPieces.removeAllViews();
 
         int piece, turnAt;
         for (turnAt = 0; turnAt < 2; turnAt++) {
             for (piece = 0; piece < 5; piece++) {
                 ChessSquareView square = new ChessSquareView(this, piece);
                 if (turnAt == BoardConstants.WHITE) {
-                    topPieces.addView(square);
+                    capturedWhitePieces.addView(square);
                 } else {
-                    bottomPieces.addView(square);
+                    capturedBlackPieces.addView(square);
                 }
 
                 int numCaptured = jni.getNumCaptured(turnAt, piece);
@@ -656,29 +656,16 @@ public class PlayActivity extends ChessBoardActivity implements
                 if (numCaptured > 0) {
                     ChessPieceView capturedPiece = new ChessPieceView(this, turnAt, piece, piece);
                     CapturedCountView capturedCountView = numCaptured > 1 ? new CapturedCountView(this, numCaptured, piece, turnAt) : null;
-                    if (myTurn == BoardConstants.WHITE) {
-                        if (turnAt == BoardConstants.BLACK) {
-                            bottomPieces.addView(capturedPiece);
-                            if (numCaptured > 1) {
-                                bottomPieces.addView(capturedCountView);
-                            }
-                        } else {
-                            topPieces.addView(capturedPiece);
-                            if (numCaptured > 1) {
-                                topPieces.addView(capturedCountView);
-                            }
+
+                    if (turnAt == BoardConstants.BLACK) {
+                        capturedBlackPieces.addView(capturedPiece);
+                        if (numCaptured > 1) {
+                            capturedBlackPieces.addView(capturedCountView);
                         }
                     } else {
-                        if (turnAt == BoardConstants.WHITE) {
-                            bottomPieces.addView(capturedPiece);
-                            if (numCaptured > 1) {
-                                bottomPieces.addView(capturedCountView);
-                            }
-                        } else {
-                            topPieces.addView(capturedPiece);
-                            if (numCaptured > 1) {
-                                topPieces.addView(capturedCountView);
-                            }
+                        capturedWhitePieces.addView(capturedPiece);
+                        if (numCaptured > 1) {
+                            capturedWhitePieces.addView(capturedCountView);
                         }
                     }
                 }
@@ -915,6 +902,10 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewBlackPlayer = isRotated ? textViewBottomPlayer : textViewTopPlayer;
         textViewWhiteClockTIme = isRotated ? textViewTopClockTime : textViewBottomClockTime;
         textViewBlackClockTime = isRotated ? textViewBottomClockTime : textViewTopClockTime;
+        capturedBlackPieces = isRotated ? topPieces : bottomPieces;
+        capturedWhitePieces = isRotated ? bottomPieces : topPieces;
+
+        updateGUI();
     }
 
     protected void switchMinimal(boolean minimal) {
