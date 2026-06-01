@@ -1,14 +1,11 @@
 package jwtc.android.chess.hotspotboard;
 
 import android.content.Context;
-import android.net.DhcpInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 
-import java.util.Locale;
-
+import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.android.chess.services.SocketConnectService;
 
 public class HotspotBoardService extends SocketConnectService {
@@ -21,9 +18,15 @@ public class HotspotBoardService extends SocketConnectService {
     public static final int MSG_RECEIVED_GAME_UPDATE = 6;
     public static final int MSG_SET_HOST_COLOR = 7;
     public static final int MSG_SET_PLAYER_COLOR = 8;
+    public static final String KEY_CONNECTION_MODE = "connectionMode";
+    public static final String KEY_HOST_IP = "hostIp";
+    public static final int CONNECTION_MODE_HOTSPOT = 0;
+    public static final int CONNECTION_MODE_LOCAL_WIFI = 1;
 
     private boolean isHost = false;
     private ClientConnection activePlayingConnection = null;
+    private int connectionMode = CONNECTION_MODE_HOTSPOT;
+    private String hostIpAddress = null;
 
     @Override
     protected String getLogTag() {
@@ -39,6 +42,9 @@ public class HotspotBoardService extends SocketConnectService {
                 break;
             case MSG_START_SESSION:
                 isHost = msg.arg1 == 1;
+                Bundle sessionData = msg.getData();
+                connectionMode = sessionData.getInt(KEY_CONNECTION_MODE, CONNECTION_MODE_HOTSPOT);
+                hostIpAddress = sessionData.getString(KEY_HOST_IP, null);
                 startSession(isHost, 8080);
                 break;
             case MSG_SEND_GAME_UPDATE:
@@ -111,19 +117,14 @@ public class HotspotBoardService extends SocketConnectService {
         if (isHost) {
             startHosting(port);
         } else {
-            startClient(resolveGatewayHostIp(), port);
+            startClient(resolveRemoteHostIp(), port);
         }
     }
 
-    private String resolveGatewayHostIp() {
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-        int hostAddress = dhcpInfo.gateway;
-
-        return String.format(Locale.US, "%d.%d.%d.%d",
-            (hostAddress & 0xff),
-            (hostAddress >> 8 & 0xff),
-            (hostAddress >> 16 & 0xff),
-            (hostAddress >> 24 & 0xff));
+    private String resolveRemoteHostIp() {
+        if (connectionMode == CONNECTION_MODE_LOCAL_WIFI && hostIpAddress != null && hostIpAddress.trim().length() > 0) {
+            return hostIpAddress.trim();
+        }
+        return NetworkAddressHelper.getWifiGatewayIp(this);
     }
 }

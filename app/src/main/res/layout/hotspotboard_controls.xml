@@ -33,7 +33,32 @@
                 android:text="@string/hotspot_host"
                 android:checked="true" />
 
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/networkToggleGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonModeHotspot"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hotspot_mode_hotspot" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonModeLocalWifi"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hotspot_mode_local_wifi" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
             <TextView
+                android:id="@+id/TextConnectionHelp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip"
@@ -44,12 +69,37 @@
                 android:ellipsize="none"
                 android:text="@string/hotspot_host_help" />
 
+            <TextView
+                android:id="@+id/TextLocalIp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dip"
+                android:layout_marginEnd="8dip"
+                android:layout_marginBottom="4dip"
+                android:visibility="gone" />
+
             <EditText
                 android:id="@+id/EditName"
                 android:hint="@string/hotspot_name_hint"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dip" />
+
+            <LinearLayout
+                android:id="@+id/LayoutHostIp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/EditHostIp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:hint="@string/hotspot_host_ip_hint"
+                    android:inputType="textNoSuggestions" />
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonConnect"
