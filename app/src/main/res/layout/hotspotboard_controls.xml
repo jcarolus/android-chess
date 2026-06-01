@@ -25,13 +25,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchHost"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:text="@string/hotspot_host"
-                android:checked="true" />
+                android:orientation="horizontal">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchHost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:text="@string/hotspot_host"
+                    android:checked="true" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/SwitchShare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dip"
+                    android:text="@string/hotspot_share"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/networkToggleGroup"
