@@ -145,6 +145,21 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/LayoutShareButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonStopShare"
+                android:layout_width="wrap_content"
+                android:text="@string/hotspot_stop_share"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/LayoutNewGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

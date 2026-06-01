@@ -111,6 +111,7 @@
     <string name="hotspot_status_opponent_connected_host">Your opponent is connected. Start a new game.</string>
     <string name="hotspot_status_waiting">Waiting for opponent to connect</string>
     <string name="hotspot_status_waiting_observer">Waiting for observers to connect</string>
+    <string name="hotspot_stop_share">Stop sharing</string>
     <string name="hotspot_white">♔ White</string>
     <string name="ics_client_handle">Handle</string>
     <string name="ics_client_password">Password</string>

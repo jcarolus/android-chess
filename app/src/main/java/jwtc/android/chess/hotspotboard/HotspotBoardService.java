@@ -24,6 +24,7 @@ public class HotspotBoardService extends SocketConnectService {
     public static final int MSG_RECEIVED_GAME_UPDATE = 6;
     public static final int MSG_SET_HOST_COLOR = 7;
     public static final int MSG_SET_PLAYER_COLOR = 8;
+    public static final int MSG_STOP_SESSION = 9;
     public static final String KEY_CONNECTION_MODE = "connectionMode";
     public static final String KEY_HOST_IP = "hostIp";
     public static final String KEY_HOST_MODE = "hostMode";
@@ -81,6 +82,9 @@ public class HotspotBoardService extends SocketConnectService {
                         broadcastLine(gameUpdate);
                     }
                 }
+                break;
+            case MSG_STOP_SESSION:
+                stopSession();
                 break;
         }
     }
@@ -173,6 +177,15 @@ public class HotspotBoardService extends SocketConnectService {
             stopPolling();
             startClient(resolveRemoteHostIp(), port);
         }
+    }
+
+    public void stopSession() {
+        Log.d(TAG, "stopSession");
+        stopPolling();
+        stopConnections();
+        activePlayingConnection = null;
+        lastBroadcastFen = null;
+        notifyActivity(MSG_SOCKET_DISCONNECTED);
     }
 
     private void startPolling() {

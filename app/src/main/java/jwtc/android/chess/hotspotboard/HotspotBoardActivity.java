@@ -39,7 +39,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private SwitchMaterial switchHost, switchShare;
     private MaterialButtonToggleGroup colorToggleGroup;
     private MaterialButtonToggleGroup networkToggleGroup;
-    private MaterialButton buttonConnect;
+    private MaterialButton buttonConnect, buttonStopShare;
     private LinearLayout layoutConnect;
     private EditText editName, editHostIp;
     private boolean isHost = true, isPlayAsWhite = true;
@@ -47,13 +47,13 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private boolean isObserving = false;
     private int connectionMode = HotspotBoardService.CONNECTION_MODE_HOTSPOT;
     private MaterialButton buttonResign, buttonDraw, buttonNew;
-    private LinearLayout layoutGameButtons, layoutNewGameButtons;
+    private LinearLayout layoutGameButtons, layoutNewGameButtons, layoutShareButtons;
     private TextView textPlayer, textOpponent;
     private TextView textStatus, textConnectionHelp, textLocalIp;
     private View layoutHostIp;
     private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
-    private Handler statusHandler = new Handler(Looper.getMainLooper());
-    private int overrideGameState = 0;
+    private final Handler statusHandler = new Handler(Looper.getMainLooper());
+    private int overrideGameState = 0; // @TODO
     private boolean isServiceBound = false;
     private boolean isInitializingControls = false;
     private boolean hasActiveSession = false;
@@ -327,10 +327,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonResign = findViewById(R.id.ButtonResign);
         buttonDraw = findViewById(R.id.ButtonDraw);
         buttonNew = findViewById(R.id.ButtonNew);
+        buttonStopShare = findViewById(R.id.ButtonStopShare);
         textStatus = findViewById(R.id.TextStatus);
         textConnectionHelp = findViewById(R.id.TextConnectionHelp);
         textLocalIp = findViewById(R.id.TextLocalIp);
         layoutHostIp = findViewById(R.id.LayoutHostIp);
+        layoutShareButtons = findViewById(R.id.LayoutShareButtons);
         editName = findViewById(R.id.EditName);
         editHostIp = findViewById(R.id.EditHostIp);
 
@@ -415,6 +417,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             buttonDraw.setEnabled(false);
         });
 
+        buttonStopShare.setOnClickListener(v -> stopSharing());
+
         isInitializingControls = false;
         refreshConnectionControls();
     }
@@ -470,6 +474,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         layoutConnect.setVisibility(effectiveConnected ? View.GONE : View.VISIBLE);
 
         updateNewGameButtonVisibility(effectiveConnected);
+        updateShareButtonsVisibility(effectiveConnected);
 
         if (!effectiveConnected) {
             textOpponent.setText("Opponent");
@@ -483,6 +488,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     private void updateGameButtonsVisibility(boolean isVisible) {
         layoutGameButtons.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateShareButtonsVisibility(boolean isVisible) {
+        layoutShareButtons.setVisibility(isVisible && isHost && isShareMode && hasActiveSession ? View.VISIBLE : View.GONE);
     }
 
     private void refreshConnectionControls() {
@@ -566,6 +575,20 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     private boolean isObservingSessionRestored() {
         return !isHost && isObserving;
+    }
+
+    private void stopSharing() {
+        hasActiveSession = false;
+        isObserving = false;
+        try {
+            if (messengerFromService != null) {
+                messengerFromService.send(Message.obtain(null, HotspotBoardService.MSG_STOP_SESSION));
+            }
+        } catch (RemoteException e) {
+            Log.e(TAG, "stopSharing failed", e);
+        }
+        updateObservingState(false);
+        updateConnectedState(false);
     }
 
     protected void updateTurnSwitchers() {
