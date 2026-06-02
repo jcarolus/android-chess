@@ -385,7 +385,7 @@
     <string name="start_accessibility_preferences">Preferencias de accesibilidad</string>
     <string name="start_boardpreferences">Configuración del tablero</string>
     <string name="start_database">Base de datos de partidas</string>
-    <string name="start_hotspotboard">Tablero hotspot</string>
+    <string name="start_wifiboard">Tablero WiFi</string>
     <string name="start_ics">Jugar en línea</string>
     <string name="start_lichess">Lichess (beta)</string>
     <string name="start_pgn">Avanzado</string>

@@ -375,7 +375,7 @@
     <string name="start_accessibility_preferences">Preferințe de accesibilitate</string>
     <string name="start_boardpreferences">Setări tablă de șah</string>
     <string name="start_database">Baza de date a partidelor</string>
-    <string name="start_hotspotboard">Tablă hotspot</string>
+    <string name="start_wifiboard">Tablă Wi‑Fi</string>
     <string name="start_ics">Joacă online</string>
     <string name="start_lichess">Lichess (beta)</string>
     <string name="start_pgn">Avansat</string>

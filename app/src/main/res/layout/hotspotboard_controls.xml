@@ -163,7 +163,7 @@
             android:id="@+id/LayoutNewGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dip"
+            android:layout_marginTop="8dip"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButtonToggleGroup

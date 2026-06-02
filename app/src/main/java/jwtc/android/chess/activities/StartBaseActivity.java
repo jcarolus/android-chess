@@ -81,7 +81,7 @@ public class StartBaseActivity extends AppCompatActivity {
             new StartItem(R.drawable.fics, R.string.start_ics, ICSClient.class),
             new StartItem(R.drawable.percent, R.string.start_practice, PracticeActivity.class),
             new StartItem(R.drawable.puzzle, R.string.start_puzzles, PuzzleActivity.class),
-            new StartItem(R.drawable.wifi, R.string.start_hotspotboard, HotspotBoardActivity.class),
+            new StartItem(R.drawable.wifi, R.string.start_wifiboard, HotspotBoardActivity.class),
             new StartItem(R.drawable.database, R.string.start_database, GamesListActivity.class),
             new StartItem(R.drawable.sliders, R.string.start_boardpreferences, BoardPreferencesActivity.class),
             new StartItem(R.drawable.eye, R.string.start_accessibility_preferences, AccessibilityPreferences.class),
