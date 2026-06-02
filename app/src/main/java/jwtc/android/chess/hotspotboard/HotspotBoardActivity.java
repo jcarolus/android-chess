@@ -159,11 +159,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
     }
 
-    @Override
-    public boolean needExitConfirmationDialog() {
-        return !(isHost && isShareMode);
-    }
-
     private void sendGameMessage(int type, int lastMove) {
         try {
             GameMessage message = new GameMessage(
@@ -388,13 +383,14 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 updateStatus(getString(R.string.hotspot_status_name_required));
                 return;
             }
+            ((HotspotBoardApi) gameApi).setMyName(name);
+
             if (!isHost && connectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
                 && editHostIp.getText().toString().trim().isEmpty()) {
                 updateStatus(getString(R.string.hotspot_status_host_ip_required));
                 return;
             }
 
-            ((HotspotBoardApi) gameApi).setMyName(name);
             textPlayer.setText(name);
             startSession();
         });
@@ -545,9 +541,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
 
         Intent serviceIntent = new Intent(this, HotspotBoardService.class);
-        if (isHost) {
-            startService(serviceIntent);
-        }
+        startService(serviceIntent);
         isServiceBound = bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
     }
 

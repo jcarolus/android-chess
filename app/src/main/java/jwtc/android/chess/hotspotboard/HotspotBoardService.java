@@ -61,6 +61,9 @@ public class HotspotBoardService extends SocketConnectService {
         switch (msg.what) {
             case MSG_ACTIVITY_CONNECTED:
                 registerActivityMessenger(msg.replyTo);
+                if (hasConnectedSockets()) {
+                    notifyActivity(MSG_SOCKET_CONNECTED);
+                }
                 break;
             case MSG_START_SESSION:
                 isHost = msg.arg1 == 1;
@@ -99,37 +102,26 @@ public class HotspotBoardService extends SocketConnectService {
     @Override
     protected void onClientConnected(ClientConnection connection, boolean outgoingConnection) {
         Log.d(TAG, "client connected " + connection.clientId + ", outgoing=" + outgoingConnection);
+
+        notifyActivity(MSG_SOCKET_CONNECTED);
+
         if (isHost && hostMode == HOST_MODE_SHARE) {
-            notifyActivity(MSG_SOCKET_CONNECTED);
             sendSnapshot(connection);
-            return;
-        }
-        if (!isHost) {
-            notifyActivity(MSG_SOCKET_CONNECTED);
-            return;
         }
 
         if (activePlayingConnection == null) {
             activePlayingConnection = connection;
-            notifyActivity(MSG_SOCKET_CONNECTED);
         }
     }
 
     @Override
     protected void onClientDisconnected(ClientConnection connection, boolean outgoingConnection) {
         Log.d(TAG, "client disconnected " + connection.clientId + ", outgoing=" + outgoingConnection);
-        if (isHost && hostMode == HOST_MODE_SHARE) {
-            notifyActivity(MSG_SOCKET_DISCONNECTED);
-            return;
-        }
-        if (!isHost) {
-            notifyActivity(MSG_SOCKET_DISCONNECTED);
-            return;
-        }
+
+        notifyActivity(MSG_SOCKET_DISCONNECTED);
 
         if (connection == activePlayingConnection) {
             activePlayingConnection = null;
-            notifyActivity(MSG_SOCKET_DISCONNECTED);
         }
     }
 
@@ -186,6 +178,15 @@ public class HotspotBoardService extends SocketConnectService {
         activePlayingConnection = null;
         lastBroadcastFen = null;
         notifyActivity(MSG_SOCKET_DISCONNECTED);
+    }
+
+    private boolean hasConnectedSockets() {
+        for (ClientConnection connection : getClientConnectionsSnapshot()) {
+            if (!connection.socket.isClosed()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void startPolling() {
