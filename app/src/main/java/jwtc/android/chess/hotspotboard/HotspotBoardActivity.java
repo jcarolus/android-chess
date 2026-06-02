@@ -45,6 +45,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private boolean isHost = true, isPlayAsWhite = true;
     private boolean isShareMode = false;
     private boolean isObserving = false;
+    private boolean isListening = false;
     private int connectionMode = HotspotBoardService.CONNECTION_MODE_HOTSPOT;
     private MaterialButton buttonResign, buttonDraw, buttonNew;
     private LinearLayout layoutGameButtons, layoutNewGameButtons, layoutShareButtons;
@@ -132,6 +133,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Log.d(TAG, "startSession called " + isHost);
         isObserving = false;
         hasActiveSession = true;
+        isListening = isHost;
         layoutConnect.setVisibility(View.GONE);
         updateStatus(isHost
             ? getString(isShareMode ? R.string.hotspot_status_waiting_observer : R.string.hotspot_status_waiting)
@@ -240,8 +242,16 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                         Log.d(TAG, "Could not parse game message: " + ex.toString());
                     }
                 }
+            } else if (msg.what == HotspotBoardService.MSG_SOCKET_LISTENING) {
+                hasActiveSession = true;
+                isListening = true;
+                updateConnectedState(false);
+                updateStatus(getString(isShareMode
+                    ? R.string.hotspot_status_waiting_observer
+                    : R.string.hotspot_status_waiting));
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_CONNECTED) {
                 hasActiveSession = true;
+                isListening = false;
                 updateConnectedState(true);
 
                 updateStatus(getString(isHost
@@ -249,6 +259,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     : R.string.hotspot_status_opponent_connected_client));
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
                 hasActiveSession = false;
+                isListening = false;
                 isObserving = false;
                 updateObservingState(false);
                 updateConnectedState(false);
@@ -466,8 +477,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void updateConnectedState(boolean isConnected) {
+        boolean effectiveListening = isListeningSessionRestored();
         boolean effectiveConnected = isConnected || isShareHostSessionRestored() || isObservingSessionRestored();
-        layoutConnect.setVisibility(effectiveConnected ? View.GONE : View.VISIBLE);
+        layoutConnect.setVisibility((effectiveConnected || effectiveListening) ? View.GONE : View.VISIBLE);
 
         updateNewGameButtonVisibility(effectiveConnected);
         updateShareButtonsVisibility(effectiveConnected);
@@ -552,6 +564,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             return;
         }
 
+        if (isListeningSessionRestored()) {
+            updateConnectedState(false);
+            updateObservingState(false);
+            return;
+        }
+
         if (isObservingSessionRestored()) {
             updateConnectedState(true);
             updateObservingState(true);
@@ -564,7 +582,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private boolean isShareHostSessionRestored() {
-        return hasActiveSession && isHost && isShareMode;
+        return hasActiveSession && !isListening && isHost && isShareMode;
+    }
+
+    private boolean isListeningSessionRestored() {
+        return hasActiveSession && isListening && isHost;
     }
 
     private boolean isObservingSessionRestored() {
@@ -573,6 +595,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     private void stopSharing() {
         hasActiveSession = false;
+        isListening = false;
         isObserving = false;
         try {
             if (messengerFromService != null) {

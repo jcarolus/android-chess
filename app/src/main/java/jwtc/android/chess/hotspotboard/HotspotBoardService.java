@@ -25,6 +25,7 @@ public class HotspotBoardService extends SocketConnectService {
     public static final int MSG_SET_HOST_COLOR = 7;
     public static final int MSG_SET_PLAYER_COLOR = 8;
     public static final int MSG_STOP_SESSION = 9;
+    public static final int MSG_SOCKET_LISTENING = 10;
     public static final String KEY_CONNECTION_MODE = "connectionMode";
     public static final String KEY_HOST_IP = "hostIp";
     public static final String KEY_HOST_MODE = "hostMode";
@@ -49,6 +50,7 @@ public class HotspotBoardService extends SocketConnectService {
     private int hostMode = HOST_MODE_PLAY;
     private String hostIpAddress = null;
     private String lastBroadcastFen = null;
+    private boolean isListening = false;
 
     @Override
     protected String getLogTag() {
@@ -61,6 +63,9 @@ public class HotspotBoardService extends SocketConnectService {
         switch (msg.what) {
             case MSG_ACTIVITY_CONNECTED:
                 registerActivityMessenger(msg.replyTo);
+                if (isListening) {
+                    notifyActivity(MSG_SOCKET_LISTENING);
+                }
                 if (hasConnectedSockets()) {
                     notifyActivity(MSG_SOCKET_CONNECTED);
                 }
@@ -158,8 +163,11 @@ public class HotspotBoardService extends SocketConnectService {
         Log.d(TAG, "startSession " + (isHost ? " as host" : " as client") + ", hostMode=" + hostMode);
         activePlayingConnection = null;
         lastBroadcastFen = null;
+        isListening = false;
         if (isHost) {
             startHosting(port);
+            isListening = true;
+            notifyActivity(MSG_SOCKET_LISTENING);
             if (hostMode == HOST_MODE_SHARE) {
                 startPolling();
             } else {
@@ -177,6 +185,7 @@ public class HotspotBoardService extends SocketConnectService {
         stopConnections();
         activePlayingConnection = null;
         lastBroadcastFen = null;
+        isListening = false;
         notifyActivity(MSG_SOCKET_DISCONNECTED);
     }
 
