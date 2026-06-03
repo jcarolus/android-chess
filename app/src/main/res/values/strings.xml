@@ -82,7 +82,12 @@
     <string name="globalpreferences">Global settings</string>
     <string name="hotspot_black">♚ Black</string>
     <string name="hotspot_connect">Connect</string>
+    <string name="hotspot_connection_settings">Connection settings</string>
+    <string name="hotspot_client">Client</string>
     <string name="hotspot_client_help">Turn Host off and connect to the host\'s WiFi hotspot.</string>
+    <string name="hotspot_copy_ip">Copy IP address</string>
+    <string name="hotspot_copy_ip_success">IP address copied to clipboard</string>
+    <string name="hotspot_disconnect">Disconnect</string>
     <string name="hotspot_draw">Draw</string>
     <string name="hotspot_host">Host</string>
     <string name="hotspot_host_help">Turn Host on if this device is creating the WiFi hotspot.</string>
@@ -111,6 +116,7 @@
     <string name="hotspot_status_opponent_connected_host">Your opponent is connected. Start a new game.</string>
     <string name="hotspot_status_waiting">Waiting for opponent to connect</string>
     <string name="hotspot_status_waiting_observer">Waiting for observers to connect</string>
+    <string name="hotspot_start_hosting">Start hosting</string>
     <string name="hotspot_stop_share">Stop sharing</string>
     <string name="hotspot_white">♔ White</string>
     <string name="ics_client_handle">Handle</string>

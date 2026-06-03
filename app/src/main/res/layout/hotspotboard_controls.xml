@@ -23,103 +23,45 @@
             android:id="@+id/LayoutConnect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/SwitchHost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
-                    android:text="@string/hotspot_host"
-                    android:checked="true" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/SwitchShare"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
-                    android:text="@string/hotspot_share"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/networkToggleGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                app:singleSelection="true"
-                app:selectionRequired="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonModeHotspot"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hotspot_mode_hotspot" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonModeLocalWifi"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/hotspot_mode_local_wifi" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-
-            <TextView
-                android:id="@+id/TextConnectionHelp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:lines="2"
-                android:minLines="2"
-                android:maxLines="10"
-                android:scrollHorizontally="false"
-                android:ellipsize="none"
-                android:text="@string/hotspot_host_help" />
-
-            <TextView
-                android:id="@+id/TextLocalIp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dip"
-                android:layout_marginEnd="8dip"
-                android:layout_marginBottom="4dip"
-                android:visibility="gone" />
-
-            <EditText
-                android:id="@+id/EditName"
-                android:hint="@string/hotspot_name_hint"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip" />
-
-            <LinearLayout
-                android:id="@+id/LayoutHostIp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <EditText
-                    android:id="@+id/EditHostIp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dip"
-                    android:hint="@string/hotspot_host_ip_hint"
-                    android:inputType="textNoSuggestions" />
-            </LinearLayout>
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonConnect"
                 android:text="@string/hotspot_connect"
                 android:layout_width="wrap_content"
                 android:layout_margin="8dip"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LayoutSessionSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/TextSessionSummary"
+                style="@style/MyPaneTextStyle2Lines"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dip"
+                android:layout_marginEnd="4dip" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonCopyIp"
+                style="@style/ChessImageButton"
+                android:contentDescription="@string/hotspot_copy_ip"
+                android:visibility="gone"
+                app:icon="@drawable/ic_clipboard" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonDisconnect"
+                android:text="@string/hotspot_disconnect"
+                android:layout_width="wrap_content"
                 style="@style/ChessButton" />
         </LinearLayout>
 
@@ -141,21 +83,6 @@
                 android:text="@string/hotspot_draw"
                 android:layout_width="wrap_content"
                 android:layout_marginStart="16dp"
-                style="@style/ChessButton" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/LayoutShareButtons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonStopShare"
-                android:layout_width="wrap_content"
-                android:text="@string/hotspot_stop_share"
                 style="@style/ChessButton" />
         </LinearLayout>
 
