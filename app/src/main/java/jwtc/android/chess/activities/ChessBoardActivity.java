@@ -260,7 +260,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 final View boardView = boardAreaLayout.findViewById(R.id.includeboard);
                 final ViewGroup.LayoutParams boardViewParams = boardView == null ? null : boardView.getLayoutParams();
                 final ViewGroup.LayoutParams controlsParams = controlsLayoutRef == null ? null : controlsLayoutRef.getLayoutParams();
-                final ViewGroup controlsContainer = controlsLayoutRef instanceof ViewGroup ? (ViewGroup) controlsLayoutRef : null;
                 final int boardTopHeight = measureDependentHeight(boardTopLayoutRef);
                 final int boardBottomHeight = measureDependentHeight(boardBottomLayoutRef);
                 final int reservedVerticalHeight = boardTopHeight + boardBottomHeight;
@@ -272,13 +271,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         ? rootAvailableHeight - reservedVerticalHeight - minPortraitControlsPx
                         : preferredBoardSide
                 );
-                final int portraitMaxControlsHeight = Math.max(minPortraitControlsPx, rootAvailableHeight - reservedVerticalHeight - portraitBoardSide);
-                final int portraitControlsContentHeight = measureDependentHeight(
-                    controlsContainer == null || controlsContainer.getChildCount() == 0 ? null : controlsContainer.getChildAt(0)
-                );
-                final int portraitControlsHeight = Math.min(
-                    portraitMaxControlsHeight,
-                    Math.max(portraitControlsContentHeight, minPortraitControlsPx)
+                final int portraitControlsHeight = Math.max(
+                    minPortraitControlsPx,
+                    rootAvailableHeight - reservedVerticalHeight - portraitBoardSide
                 );
                 final int landscapeBoardSide = Math.min(
                     Math.max(0, rootAvailableWidth - minLandscapeControlsPx),
