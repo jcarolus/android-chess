@@ -63,12 +63,7 @@ public class HotspotBoardService extends SocketConnectService {
         switch (msg.what) {
             case MSG_ACTIVITY_CONNECTED:
                 registerActivityMessenger(msg.replyTo);
-                if (isListening) {
-                    notifyActivity(MSG_SOCKET_LISTENING);
-                }
-                if (hasConnectedSockets()) {
-                    notifyActivity(MSG_SOCKET_CONNECTED);
-                }
+                notifyCurrentConnectionState(false);
                 break;
             case MSG_START_SESSION:
                 isHost = msg.arg1 == 1;
@@ -108,8 +103,6 @@ public class HotspotBoardService extends SocketConnectService {
     protected void onClientConnected(ClientConnection connection, boolean outgoingConnection) {
         Log.d(TAG, "client connected " + connection.clientId + ", outgoing=" + outgoingConnection);
 
-        notifyActivity(MSG_SOCKET_CONNECTED);
-
         if (isHost && hostMode == HOST_MODE_SHARE) {
             sendSnapshot(connection);
         }
@@ -117,17 +110,19 @@ public class HotspotBoardService extends SocketConnectService {
         if (activePlayingConnection == null) {
             activePlayingConnection = connection;
         }
+
+        notifyCurrentConnectionState(true);
     }
 
     @Override
     protected void onClientDisconnected(ClientConnection connection, boolean outgoingConnection) {
         Log.d(TAG, "client disconnected " + connection.clientId + ", outgoing=" + outgoingConnection);
 
-        notifyActivity(MSG_SOCKET_DISCONNECTED);
-
         if (connection == activePlayingConnection) {
             activePlayingConnection = null;
         }
+
+        notifyCurrentConnectionState(true);
     }
 
     @Override
@@ -150,7 +145,7 @@ public class HotspotBoardService extends SocketConnectService {
     @Override
     protected void onSocketError(Exception exception) {
         Log.d(TAG, exception.toString());
-        notifyActivity(MSG_SOCKET_DISCONNECTED);
+        notifyCurrentConnectionState(true);
     }
 
     @Override
@@ -187,6 +182,22 @@ public class HotspotBoardService extends SocketConnectService {
         lastBroadcastFen = null;
         isListening = false;
         notifyActivity(MSG_SOCKET_DISCONNECTED);
+    }
+
+    private void notifyCurrentConnectionState(boolean includeDisconnected) {
+        if (hasConnectedSockets()) {
+            notifyActivity(MSG_SOCKET_CONNECTED);
+            return;
+        }
+
+        if (isHost && isListening) {
+            notifyActivity(MSG_SOCKET_LISTENING);
+            return;
+        }
+
+        if (includeDisconnected) {
+            notifyActivity(MSG_SOCKET_DISCONNECTED);
+        }
     }
 
     private boolean hasConnectedSockets() {
