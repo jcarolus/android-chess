@@ -49,6 +49,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private boolean isShareMode = false;
     private boolean isObserving = false;
     private boolean isListening = false;
+    private boolean hasReceivedGameUpdate = false;
     private int connectionMode = HotspotBoardService.CONNECTION_MODE_HOTSPOT;
     private MaterialButton buttonResign, buttonDraw, buttonNew;
     private LinearLayout layoutGameButtons, layoutNewGameButtons;
@@ -196,7 +197,13 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 // Update UI here
                 if (data != null) {
                     try {
+
                         GameMessage message = GameMessage.fromJson(data);
+
+                        if (!hasReceivedGameUpdate && message.type != GameMessage.TYPE_SHARE_SNAPSHOT) {
+                            hasReceivedGameUpdate = true;
+                        }
+
                         ((HotspotBoardApi) gameApi).onGameUpdate(message);
 
                         switch (message.type) {
@@ -264,6 +271,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 hasActiveSession = false;
                 isListening = false;
                 isObserving = false;
+                hasReceivedGameUpdate = false;
                 updateObservingState(false);
                 updateConnectedState(false);
 
@@ -755,7 +763,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             textOpponent.setText(((HotspotBoardApi) gameApi).getOpponentName());
         }
 
-        if (!isObserving) {
+        if (!isObserving && hasReceivedGameUpdate) {
 
             if (state == BoardConstants.MATE) {
                 // if it's white's turn, white is mated (and loses)
