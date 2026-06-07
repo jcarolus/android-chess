@@ -14,10 +14,9 @@
             android:id="@+id/TextStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="16sp"
+            style="@style/MyPaneTextStyle2Lines"
             android:layout_marginTop="4dp"
-            android:visibility="gone" />
+            android:visibility="invisible" />
 
         <LinearLayout
             android:id="@+id/LayoutConnect"

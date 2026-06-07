@@ -419,7 +419,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         textStatus.setText(status);
         textStatus.setVisibility(View.VISIBLE);
         statusHandler.removeCallbacksAndMessages(null);
-        statusHandler.postDelayed(() -> textStatus.setVisibility(View.GONE), 3000);
+        statusHandler.postDelayed(() -> textStatus.setVisibility(View.INVISIBLE), 3000);
     }
 
     private void updateConnectedState(boolean isConnected) {
@@ -639,7 +639,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             updateNewGameButtonVisibility(false);
         } else if (textStatus.getVisibility() == View.VISIBLE
             && getString(R.string.hotspot_status_observing).contentEquals(textStatus.getText())) {
-            textStatus.setVisibility(View.GONE);
+            textStatus.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -755,7 +755,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             textOpponent.setText(((HotspotBoardApi) gameApi).getOpponentName());
         }
 
-        if (!isObserving) {
+        if (!isObserving && jni.getMyMove() != 0) {
 
             if (state == BoardConstants.MATE) {
                 // if it's white's turn, white is mated (and loses)
