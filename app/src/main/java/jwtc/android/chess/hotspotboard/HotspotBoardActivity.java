@@ -116,9 +116,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public boolean requestMove(final int from, final int to) {
         Log.d(TAG, "requestMove");
-        if (isObserving) {
+        if (isObserving || isShareMode) {
             rebuildBoard();
-            Log.d(TAG, "requestMove observing");
+            Log.d(TAG, "requestMove observing or sharing");
             return false;
         }
         if (((HotspotBoardApi) gameApi).isMyTurn()) {
@@ -763,8 +763,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             textOpponent.setText(((HotspotBoardApi) gameApi).getOpponentName());
         }
 
-        if (!isObserving && hasReceivedGameUpdate) {
-
+        if (!isObserving && !isShareMode && hasReceivedGameUpdate) {
             if (state == BoardConstants.MATE) {
                 // if it's white's turn, white is mated (and loses)
                 if ((turn == BoardConstants.WHITE && amIWhite) || (turn == BoardConstants.BLACK && !amIWhite)) {
@@ -781,8 +780,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             } else if (state == BoardConstants.DRAW_MATERIAL) {
                 showGameResult("Game Over", "The game is a draw by insufficient material.");
             }
-        }
 
-        updateGameButtonsVisibility(state == BoardConstants.PLAY || state == BoardConstants.CHECK);
+            updateGameButtonsVisibility(state == BoardConstants.PLAY || state == BoardConstants.CHECK);
+        } else {
+            updateGameButtonsVisibility(false);
+        }
     }
 }
