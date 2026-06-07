@@ -755,7 +755,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             textOpponent.setText(((HotspotBoardApi) gameApi).getOpponentName());
         }
 
-        if (!isObserving && jni.getMyMove() != 0) {
+        if (!isObserving) {
 
             if (state == BoardConstants.MATE) {
                 // if it's white's turn, white is mated (and loses)

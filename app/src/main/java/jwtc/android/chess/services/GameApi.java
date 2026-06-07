@@ -783,31 +783,6 @@ public class GameApi {
         }
     }
 
-    private boolean removeComment(StringBuffer s) throws Exception {
-        int iOpen = s.indexOf("("), iClose = s.indexOf(")"), iNextOpen;
-        if (iOpen >= 0 && iClose >= 0) {
-
-            iNextOpen = s.indexOf("(", iOpen + 1);
-            while (iNextOpen >= 0 && iNextOpen < iClose) {
-                iOpen = iNextOpen;
-                iNextOpen = s.indexOf("(", iNextOpen + 1);
-            }
-            if (iOpen > iClose) {
-                throw new Exception("Open bracket after closing bracket: " + iOpen + ", " + iClose);
-            }
-
-            s.delete(iOpen, iClose + 1);
-            return true;
-        }
-        if (iOpen >= 0) {
-            throw new Exception("No closing bracket for comment");
-        }
-        if (iClose >= 0) {
-            throw new Exception("No opening bracket for comment");
-        }
-        return false;
-    }
-
     private boolean loadPGNMoves(String s) {
         pgnMoves.clear();
 
