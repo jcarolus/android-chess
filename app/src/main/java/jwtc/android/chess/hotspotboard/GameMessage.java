@@ -9,6 +9,7 @@ public class GameMessage {
     public static final int TYPE_DRAW_OFFER = 2;
     public static final int TYPE_DRAW_ACCEPT = 3;
     public static final int TYPE_DRAW_DECLINE = 4;
+    public static final int TYPE_SHARE_SNAPSHOT = 5;
 
     public int type;
     public String FEN;

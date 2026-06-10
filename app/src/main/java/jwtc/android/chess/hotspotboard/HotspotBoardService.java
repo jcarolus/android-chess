@@ -1,32 +1,21 @@
 package jwtc.android.chess.hotspotboard;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
-import android.net.DhcpInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
+import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Locale;
+import jwtc.android.chess.services.NetworkAddressHelper;
+import jwtc.android.chess.services.SocketConnectService;
+import jwtc.chess.JNI;
 
-public class HotspotBoardService extends Service {
+public class HotspotBoardService extends SocketConnectService {
     protected static final String TAG = "HotspotBoardService";
+    private static final int POLL_INTERVAL_MS = 1000;
     public static final int MSG_ACTIVITY_CONNECTED = 1;
     public static final int MSG_START_SESSION = 2;
     public static final int MSG_SOCKET_CONNECTED = 3;
@@ -35,188 +24,242 @@ public class HotspotBoardService extends Service {
     public static final int MSG_RECEIVED_GAME_UPDATE = 6;
     public static final int MSG_SET_HOST_COLOR = 7;
     public static final int MSG_SET_PLAYER_COLOR = 8;
+    public static final int MSG_STOP_SESSION = 9;
+    public static final int MSG_SOCKET_LISTENING = 10;
+    public static final String KEY_CONNECTION_MODE = "connectionMode";
+    public static final String KEY_HOST_IP = "hostIp";
+    public static final String KEY_HOST_MODE = "hostMode";
+    public static final int CONNECTION_MODE_HOTSPOT = 0;
+    public static final int CONNECTION_MODE_LOCAL_WIFI = 1;
+    public static final int HOST_MODE_PLAY = 0;
+    public static final int HOST_MODE_SHARE = 1;
 
-    private Thread workerThread;
-    private Socket socket = null;
-    private ServerSocket serverSocket = null;
-    BufferedWriter writer = null;
+    private final Handler pollHandler = new Handler(Looper.getMainLooper());
+    private final Runnable pollRunnable = new Runnable() {
+        @Override
+        public void run() {
+            broadcastSnapshotIfChanged();
+            pollHandler.postDelayed(this, POLL_INTERVAL_MS);
+        }
+    };
+    private final JNI jni = JNI.getInstance();
 
-    private Messenger activityMessenger = null;
     private boolean isHost = false;
-    private boolean hostPlaysAsWhite = true;
+    private ClientConnection activePlayingConnection = null;
+    private int connectionMode = CONNECTION_MODE_HOTSPOT;
+    private int hostMode = HOST_MODE_PLAY;
+    private String hostIpAddress = null;
+    private String lastBroadcastFen = null;
+    private boolean isListening = false;
 
-    @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind");
-        return messengerFromActivity.getBinder();
+    protected String getLogTag() {
+        return TAG;
     }
 
-    // Messenger that receives messages from the activity
-    private final Messenger messengerFromActivity = new Messenger(new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            Log.d(TAG, "handleMessage " + msg.what);
-            switch (msg.what) {
-                case MSG_ACTIVITY_CONNECTED:
-                    activityMessenger = msg.replyTo;
-                    break;
-                case MSG_START_SESSION:
-                    isHost = msg.arg1 == 1;
-                    startSession(isHost, 8080);
-                    break;
-                case MSG_SEND_GAME_UPDATE:
-                    if (writer != null) {
-                        if (socket == null) {
-                            Log.d(TAG, "socket is null");
-                        } else {
-                            try {
-                                String s = msg.getData().getString("data", null);
-                                Log.d(TAG, "Trying to write to socket: " + s);
-                                if (s != null) {
-                                    new Thread(() -> {
-                                        try {
-                                            writer.write(s + "\n");
-                                            writer.flush();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }).start();
-                                }
-                            } catch (Exception ex) {
-                                Log.d(TAG, "Could not write to socket: " + ex.getMessage());
-                                ex.printStackTrace();
-                            }
-                        }
-                    } else {
-                        Log.d(TAG, "writer is null");
+    @Override
+    protected void onActivityMessage(Message msg) {
+        Log.d(TAG, "handleMessage " + msg.what);
+        switch (msg.what) {
+            case MSG_ACTIVITY_CONNECTED:
+                registerActivityMessenger(msg.replyTo);
+                notifyCurrentConnectionState(false);
+                break;
+            case MSG_START_SESSION:
+                isHost = msg.arg1 == 1;
+                Bundle sessionData = msg.getData();
+                if (sessionData != null) {
+                    connectionMode = sessionData.getInt(KEY_CONNECTION_MODE, CONNECTION_MODE_HOTSPOT);
+                    hostIpAddress = sessionData.getString(KEY_HOST_IP, null);
+                    hostMode = sessionData.getInt(KEY_HOST_MODE, HOST_MODE_PLAY);
+                }
+                startSession(isHost, 8080);
+                break;
+            case MSG_SEND_GAME_UPDATE:
+                if (isHost && hostMode == HOST_MODE_SHARE) {
+                    broadcastSnapshot(true);
+                } else {
+                    String gameUpdate = msg.getData().getString("data", null);
+                    Log.d(TAG, "Trying to write to socket: " + gameUpdate);
+                    if (gameUpdate != null) {
+                        broadcastLine(gameUpdate);
                     }
-
-                    break;
-            }
+                }
+                break;
+            case MSG_STOP_SESSION:
+                stopSession();
+                break;
         }
-    });
+    }
 
     private void notifyActivityGameUpdate(String data) {
-        if (activityMessenger == null) {
-            Log.d(TAG, "notifyActivityGameUpdate but activityMessenger is null");
+        Log.d(TAG, "notifyActivityGameUpdate: " + data);
+        Bundle bundle = new Bundle();
+        bundle.putString("data", data);
+        notifyActivity(MSG_RECEIVED_GAME_UPDATE, bundle);
+    }
+
+    @Override
+    protected void onClientConnected(ClientConnection connection, boolean outgoingConnection) {
+        Log.d(TAG, "client connected " + connection.clientId + ", outgoing=" + outgoingConnection);
+
+        if (isHost && hostMode == HOST_MODE_SHARE) {
+            sendSnapshot(connection);
+        }
+
+        if (activePlayingConnection == null) {
+            activePlayingConnection = connection;
+        }
+
+        notifyCurrentConnectionState(true);
+    }
+
+    @Override
+    protected void onClientDisconnected(ClientConnection connection, boolean outgoingConnection) {
+        Log.d(TAG, "client disconnected " + connection.clientId + ", outgoing=" + outgoingConnection);
+
+        if (connection == activePlayingConnection) {
+            activePlayingConnection = null;
+        }
+
+        notifyCurrentConnectionState(true);
+    }
+
+    @Override
+    protected void onLineReceived(ClientConnection connection, String line) {
+        Log.d(TAG, "Received from socket: " + line + ", clientId=" + connection.clientId);
+        if (isHost && hostMode == HOST_MODE_SHARE) {
+            notifyActivityGameUpdate(line);
             return;
         }
-        Log.d(TAG, "notifyActivityGameUpdate: " + data);
-        try {
-            Message message = Message.obtain(null, MSG_RECEIVED_GAME_UPDATE);
-            Bundle bundle = new Bundle();
-            bundle.putString("data", data);
-            message.setData(bundle);
-            activityMessenger.send(message);
-        } catch (RemoteException e) {
-            Log.d(TAG, "notifyActivityGameUpdate failed");
-            e.printStackTrace();
+        if (!isHost) {
+            notifyActivityGameUpdate(line);
+            return;
+        }
+
+        if (connection == activePlayingConnection) {
+            notifyActivityGameUpdate(line);
         }
     }
 
-    private void notifyActivity(int what) {
-        if (activityMessenger == null) {
-            Log.d(TAG, "notifyActivity but activityMessenger is null");
-            return;
-        }
-        Log.d(TAG, "notifyActivity: " + what);
-        try {
-            Message message = Message.obtain(null, what);
-            activityMessenger.send(message);
-        } catch (RemoteException e) {
-            Log.d(TAG, "notifyActivity failed");
-            e.printStackTrace();
-        }
+    @Override
+    protected void onSocketError(Exception exception) {
+        Log.d(TAG, exception.toString());
+        notifyCurrentConnectionState(true);
     }
 
     @Override
     public void onDestroy() {
-        Log.i(TAG, "onDestroy");
-        tearDown();
+        stopPolling();
         super.onDestroy();
     }
 
-    public void tearDown() {
-        // activityMessenger = null;
-        workerThread = null;
-        try {
-            if (socket != null && socket.isConnected()) {
-                socket.close();
+    public void startSession(boolean isHost, final int port) {
+        Log.d(TAG, "startSession " + (isHost ? " as host" : " as client") + ", hostMode=" + hostMode);
+        activePlayingConnection = null;
+        lastBroadcastFen = null;
+        isListening = false;
+        if (isHost) {
+            startHosting(port);
+            isListening = true;
+            notifyActivity(MSG_SOCKET_LISTENING);
+            if (hostMode == HOST_MODE_SHARE) {
+                startPolling();
+            } else {
+                stopPolling();
             }
-        } catch (Exception ex) {
-        }
-        socket = null;
-
-        if (serverSocket != null) {
-            try {
-                serverSocket.close();
-                serverSocket = null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } else {
+            stopPolling();
+            startClient(resolveRemoteHostIp(), port);
         }
     }
 
-    public void startSession(boolean isHost, final int port) {
-        Log.d(TAG, "startSession " + (isHost ? " as host" : " as client"));
-        if (serverSocket != null) {
-            if (!serverSocket.isClosed()) {
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    Log.d(TAG, "ServerSocket was open, but closing error " + e.getMessage());
-                }
+    public void stopSession() {
+        Log.d(TAG, "stopSession");
+        stopPolling();
+        stopConnections();
+        activePlayingConnection = null;
+        lastBroadcastFen = null;
+        isListening = false;
+        notifyActivity(MSG_SOCKET_DISCONNECTED);
+    }
+
+    private void notifyCurrentConnectionState(boolean includeDisconnected) {
+        if (hasConnectedSockets()) {
+            notifyActivity(MSG_SOCKET_CONNECTED);
+            return;
+        }
+
+        if (isHost && isListening) {
+            notifyActivity(MSG_SOCKET_LISTENING);
+            return;
+        }
+
+        if (includeDisconnected) {
+            notifyActivity(MSG_SOCKET_DISCONNECTED);
+        }
+    }
+
+    private boolean hasConnectedSockets() {
+        for (ClientConnection connection : getClientConnectionsSnapshot()) {
+            if (!connection.socket.isClosed()) {
+                return true;
             }
         }
-        workerThread = new Thread(() -> {
-            try {
-                if (isHost) {
-                    serverSocket = new ServerSocket(port);
-                    Log.d(TAG, "Serversocket created");
-                    socket = serverSocket.accept();
-                    Log.d(TAG, "client socket connected to server");
-                } else {
-                    WifiManager wifiManager = (WifiManager) HotspotBoardService.this.getSystemService(Context.WIFI_SERVICE);
-                    DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-                    int hostAddress = dhcpInfo.gateway;
+        return false;
+    }
 
-                    String hostIp = String.format(Locale.US, "%d.%d.%d.%d",
-                        (hostAddress & 0xff),
-                        (hostAddress >> 8 & 0xff),
-                        (hostAddress >> 16 & 0xff),
-                        (hostAddress >> 24 & 0xff));
+    private void startPolling() {
+        pollHandler.removeCallbacks(pollRunnable);
+        pollHandler.post(pollRunnable);
+    }
 
-                    socket = new Socket(hostIp, port);
+    private void stopPolling() {
+        pollHandler.removeCallbacks(pollRunnable);
+    }
 
-                    Log.d(TAG, "client socket connected");
-                }
+    private void broadcastSnapshotIfChanged() {
+        String fen = jni.toFEN();
+        if (fen == null || fen.equals(lastBroadcastFen)) {
+            return;
+        }
+        broadcastSnapshot(false);
+    }
 
-                notifyActivity(MSG_SOCKET_CONNECTED);
+    private void broadcastSnapshot(boolean force) {
+        String fen = jni.toFEN();
+        if (!force && (fen == null || fen.equals(lastBroadcastFen))) {
+            return;
+        }
+        if (fen == null) {
+            return;
+        }
 
-                writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        try {
+            String payload = new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "", "", 0).toJsonString();
+            lastBroadcastFen = fen;
+            broadcastLine(payload);
+        } catch (JSONException e) {
+            Log.d(TAG, "Could not serialize share snapshot", e);
+        }
+    }
 
-                while (socket != null && socket.isConnected()) {
-                    String response = reader.readLine();
-                    Log.d(TAG, "Received from socket: " + response);
-                    if (response != null) { // null when socket is closed
-                        notifyActivityGameUpdate(response);
-                    } else {
-                        break;
-                    }
-                }
-                notifyActivity(MSG_SOCKET_DISCONNECTED);
-                Log.d(TAG, "socket disconnected in workerThread");
-                if (serverSocket != null) {
-                    serverSocket.close();
-                    serverSocket = null;
-                }
-            } catch (Exception ex) {
-                Log.d(TAG, ex.toString());
-                notifyActivity(MSG_SOCKET_DISCONNECTED);
+    private void sendSnapshot(ClientConnection connection) {
+        try {
+            String fen = jni.toFEN();
+            if (fen == null) {
+                return;
             }
-        });
-        workerThread.start();
+            sendLine(connection, new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "", "", 0).toJsonString());
+        } catch (JSONException e) {
+            Log.d(TAG, "Could not send share snapshot", e);
+        }
+    }
+
+    private String resolveRemoteHostIp() {
+        if (connectionMode == CONNECTION_MODE_LOCAL_WIFI && hostIpAddress != null && hostIpAddress.trim().length() > 0) {
+            return hostIpAddress.trim();
+        }
+        return NetworkAddressHelper.getWifiGatewayIp(this);
     }
 }

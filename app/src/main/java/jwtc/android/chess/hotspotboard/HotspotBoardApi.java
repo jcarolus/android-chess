@@ -10,17 +10,12 @@ public class HotspotBoardApi extends GameApi {
     protected String myName = "", opponentName = "";
     protected boolean isPlayingAsWhite = true;
 
-
     public void setMyName(String myName) {
         this.myName = myName;
     }
 
     public String getOpponentName() {
         return opponentName;
-    }
-
-    public void setOpponentName(String opponentName) {
-        this.opponentName = opponentName;
     }
 
     public String getMyName() {

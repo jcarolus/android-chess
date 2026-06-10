@@ -70,6 +70,7 @@ public class ICSClient extends ChessBoardActivity implements
     protected String _sConsoleEditText;
     private int _TimeWarning, _iConsoleCharacterSize;
     private boolean _bAutoSought, _bTimeWarning, _bEndGameDialog, _bShowClockPGN,
+        _bMyTimeWarningTriggered,
         notificationsOn, _bICSVolume;
     private TextView _tvPlayerTop, _tvPlayerBottom, _tvPlayerTopRating, _tvPlayerBottomRating,
         _tvClockTop, _tvClockBottom, _tvBoardNum, _tvLastMove, _tvTimePerMove, _tvMoveNumber, textViewTitle;
@@ -154,6 +155,7 @@ public class ICSClient extends ChessBoardActivity implements
         _bTimeWarning = true;
         _bEndGameDialog = true;
         _bShowClockPGN = true;
+        _bMyTimeWarningTriggered = false;
 
         viewAnimatorRoot = findViewById(R.id.ViewAnimatorRoot);
         viewAnimatorSub = findViewById(R.id.ViewAnimatorSub);
@@ -1177,12 +1179,13 @@ public class ICSClient extends ChessBoardActivity implements
     @Override
     public void OnClockTime() {
         int myTurn = ((ICSApi) gameApi).getMyTurn();
+        long remaining = localClockApi.getRemaining(myTurn);
+        boolean needWarning = remaining < _TimeWarning * 1000 && remaining > 0;
+
         _tvClockTop.setText(myTurn == BoardConstants.WHITE ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
         _tvClockBottom.setText(myTurn == BoardConstants.BLACK ? localClockApi.getBlackRemainingTime() : localClockApi.getWhiteRemainingTime());
 
         if (((ICSApi) gameApi).getViewMode() == ICSApi.VIEW_PLAY) {
-            long remaining = localClockApi.getRemaining(myTurn);
-            boolean needWarning = remaining < _TimeWarning * 1000 && remaining > 0;
             if (needWarning) {
                 _tvClockBottom.setBackgroundColor(0xCCFF0000);
             } else {
@@ -1191,19 +1194,22 @@ public class ICSClient extends ChessBoardActivity implements
         } else {
             _tvClockBottom.setBackgroundColor(Color.TRANSPARENT);
         }
+
+        if (!needWarning || !_bTimeWarning || ((ICSApi) gameApi).getViewMode() != ICSApi.VIEW_PLAY) {
+            _bMyTimeWarningTriggered = false;
+            return;
+        }
+
+        if (!_bMyTimeWarningTriggered) {
+            _bMyTimeWarningTriggered = true;
+            feedbackTimeWarning();
+            feedBackDescribeTimeWarning(remaining);
+        }
     }
 
     @Override
     public void OnTimeWarning(int turn, long remainingMillies) {
-        if (!_bTimeWarning) {
-            return;
-        }
-
-        int myTurn = ((ICSApi) gameApi).getMyTurn();
-        if (turn == myTurn) {
-            feedbackTimeWarning();
-            feedBackDescribeTimeWarning(remainingMillies);
-        }
+        // ICS uses its own configurable warning threshold in OnClockTime().
     }
 
     protected void addConsoleText(String s) {

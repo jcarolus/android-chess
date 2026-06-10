@@ -13,20 +13,25 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.helpers.Clipboard;
+import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
 
@@ -36,30 +41,40 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private final Messenger messengerToService = new Messenger(new IncomingHandler());
     private final String TAG = "HotspotBoardActivity";
     private Messenger messengerFromService;
-    private SwitchMaterial switchHost;
     private MaterialButtonToggleGroup colorToggleGroup;
-    private MaterialButton buttonConnect;
+    private MaterialButton buttonConnect, buttonDisconnect, buttonCopyIp;
     private LinearLayout layoutConnect;
-    private EditText editName;
+    private LinearLayout layoutSessionSummary;
     private boolean isHost = true, isPlayAsWhite = true;
+    private boolean isShareMode = false;
+    private boolean isObserving = false;
+    private boolean isListening = false;
+    private boolean hasReceivedGameUpdate = false;
+    private int connectionMode = HotspotBoardService.CONNECTION_MODE_HOTSPOT;
     private MaterialButton buttonResign, buttonDraw, buttonNew;
     private LinearLayout layoutGameButtons, layoutNewGameButtons;
     private TextView textPlayer, textOpponent;
-    private TextView textStatus;
+    private TextView textStatus, textSessionSummary;
     private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
-    private Handler statusHandler = new Handler(Looper.getMainLooper());
-    private int overrideGameState = 0;
+    private final Handler statusHandler = new Handler(Looper.getMainLooper());
+    private int overrideGameState = 0; // @TODO
+    private boolean isServiceBound = false;
+    private boolean hasActiveSession = false;
+    private String configuredName = "";
+    private String configuredHostIp = "";
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "onServiceConnected");
             messengerFromService = new Messenger(service);
+            isServiceBound = true;
             // Send our messenger so service can talk to us
             Message msg = Message.obtain(null, HotspotBoardService.MSG_ACTIVITY_CONNECTED);
             msg.replyTo = messengerToService;
             try {
                 messengerFromService.send(msg);
+                syncRestoredSessionUi();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -69,6 +84,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "onServiceDisconnected");
             messengerFromService = null;
+            isServiceBound = false;
         }
     };
 
@@ -100,6 +116,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public boolean requestMove(final int from, final int to) {
         Log.d(TAG, "requestMove");
+        if (isObserving || isShareMode) {
+            rebuildBoard();
+            Log.d(TAG, "requestMove observing or sharing");
+            return false;
+        }
         if (((HotspotBoardApi) gameApi).isMyTurn()) {
             boolean res = super.requestMove(from, to);
             if (!res) {
@@ -114,13 +135,25 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     public void startSession() {
         Log.d(TAG, "startSession called " + isHost);
-        layoutConnect.setVisibility(View.GONE);
-        updateStatus(isHost ? "Waiting for opponent to connect" : "Trying to connect");
+        isObserving = false;
+        hasActiveSession = true;
+        isListening = isHost;
+        updateConnectedState(false);
+        updateStatus(isHost
+            ? getString(isShareMode ? R.string.hotspot_status_waiting_observer : R.string.hotspot_status_waiting)
+            : getString(R.string.hotspot_status_connecting));
         try {
             if (messengerFromService != null) {
                 Message startMsg = Message.obtain(null, HotspotBoardService.MSG_START_SESSION);
                 Log.d(TAG, "startMsg " + (startMsg == null ? "null" : "object"));
                 startMsg.arg1 = isHost ? 1 : 0; // boolean isHost
+                Bundle sessionData = new Bundle();
+                sessionData.putInt(HotspotBoardService.KEY_CONNECTION_MODE, connectionMode);
+                sessionData.putString(HotspotBoardService.KEY_HOST_IP, configuredHostIp);
+                sessionData.putInt(HotspotBoardService.KEY_HOST_MODE, isShareMode
+                    ? HotspotBoardService.HOST_MODE_SHARE
+                    : HotspotBoardService.HOST_MODE_PLAY);
+                startMsg.setData(sessionData);
                 messengerFromService.send(startMsg);
 
             } else {
@@ -131,12 +164,6 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             e.printStackTrace();
         }
     }
-
-    @Override
-    public boolean needExitConfirmationDialog() {
-        return true;
-    }
-
 
     private void sendGameMessage(int type, int lastMove) {
         try {
@@ -170,11 +197,23 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 // Update UI here
                 if (data != null) {
                     try {
+
                         GameMessage message = GameMessage.fromJson(data);
+
+                        if (!hasReceivedGameUpdate && message.type != GameMessage.TYPE_SHARE_SNAPSHOT) {
+                            hasReceivedGameUpdate = true;
+                        }
+
                         ((HotspotBoardApi) gameApi).onGameUpdate(message);
 
                         switch (message.type) {
+                            case GameMessage.TYPE_SHARE_SNAPSHOT:
+                                isObserving = true;
+                                updateObservingState(true);
+                                break;
                             case GameMessage.TYPE_MOVE:
+                                isObserving = false;
+                                updateObservingState(false);
                                 if (message.lastMove > 0) {
                                     moveToPositions.clear();
                                     highlightedPositions.clear();
@@ -205,7 +244,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 showGameResult("Game Over", "The game is a draw.");
                                 break;
                             case GameMessage.TYPE_DRAW_DECLINE:
-                                updateStatus("Draw offer declined.");
+                                updateStatus(getString(R.string.hotspot_status_draw_declined));
                                 break;
                         }
 
@@ -213,14 +252,30 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                         Log.d(TAG, "Could not parse game message: " + ex.toString());
                     }
                 }
+            } else if (msg.what == HotspotBoardService.MSG_SOCKET_LISTENING) {
+                hasActiveSession = true;
+                isListening = true;
+                updateConnectedState(false);
+                updateStatus(getString(isShareMode
+                    ? R.string.hotspot_status_waiting_observer
+                    : R.string.hotspot_status_waiting));
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_CONNECTED) {
+                hasActiveSession = true;
+                isListening = false;
                 updateConnectedState(true);
 
-                updateStatus("Your opponent is connected. " + (isHost ? " Start a new game" : "Wait for your opponent to start a new game"));
+                updateStatus(getString(isHost
+                    ? (isShareMode ? R.string.hotspot_status_observer_connected_host : R.string.hotspot_status_opponent_connected_host)
+                    : R.string.hotspot_status_opponent_connected_client));
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
+                hasActiveSession = false;
+                isListening = false;
+                isObserving = false;
+                hasReceivedGameUpdate = false;
+                updateObservingState(false);
                 updateConnectedState(false);
 
-                updateStatus("Your opponent is no longer connected");
+                updateStatus(getString(R.string.hotspot_status_disconnected));
             }
         }
     }
@@ -229,7 +284,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart, call bindService");
-        bindService(new Intent(this, HotspotBoardService.class), connection, Context.BIND_AUTO_CREATE);
+        bindHotspotBoardService();
     }
 
     @Override
@@ -241,7 +296,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             // This might not be sent if the service is already disconnected.
             // The opponent will see a socket disconnection message.
         }
-        unbindService(connection);
+        if (isServiceBound) {
+            unbindService(connection);
+            isServiceBound = false;
+        }
+        messengerFromService = null;
     }
 
     @Override
@@ -249,6 +308,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "onCreate");
+        SharedPreferences prefs = getPrefs();
+        isHost = prefs.getBoolean("hostpotboardIsHost", true);
+        isShareMode = prefs.getBoolean("hotspotboardShareMode", false);
+        connectionMode = prefs.getInt("hotspotboardConnectionMode", HotspotBoardService.CONNECTION_MODE_HOTSPOT);
+        configuredName = prefs.getString("hotspotboardName", "");
+        configuredHostIp = prefs.getString("hotspotboardHostIp", "");
         gameApi = new HotspotBoardApi();
         setContentView(R.layout.hotspotboard);
 
@@ -276,12 +341,16 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         textPlayer = findViewById(R.id.TextPlayer);
         textOpponent = findViewById(R.id.TextOpponent);
         layoutConnect = findViewById(R.id.LayoutConnect);
+        layoutSessionSummary = findViewById(R.id.LayoutSessionSummary);
         layoutGameButtons = findViewById(R.id.LayoutGameButtons);
         layoutNewGameButtons = findViewById(R.id.LayoutNewGame);
         buttonResign = findViewById(R.id.ButtonResign);
         buttonDraw = findViewById(R.id.ButtonDraw);
         buttonNew = findViewById(R.id.ButtonNew);
+        buttonDisconnect = findViewById(R.id.ButtonDisconnect);
+        buttonCopyIp = findViewById(R.id.ButtonCopyIp);
         textStatus = findViewById(R.id.TextStatus);
+        textSessionSummary = findViewById(R.id.TextSessionSummary);
 
         // default rotation
         imageTurnWhite = imageBottomTurn;
@@ -289,20 +358,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         buttonNew.setOnClickListener(v -> newGame());
 
-        switchHost = findViewById(R.id.SwitchHost);
-        switchHost.setChecked(true);
-        switchHost.setOnCheckedChangeListener((buttonView, isChecked) -> isHost = switchHost.isChecked());
-
         buttonConnect = findViewById(R.id.ButtonConnect);
-        buttonConnect.setOnClickListener(arg0 -> {
-            String name = editName.getText().toString();
-            Log.d(TAG, "buttonConnect " + name);
-            if (!name.isEmpty()) {
-                ((HotspotBoardApi) gameApi).setMyName(name);
-                textPlayer.setText(name);
-                startSession();
-            }
-        });
+        buttonConnect.setOnClickListener(arg0 -> showConnectionDialog());
+        buttonDisconnect.setOnClickListener(v -> stopSharing());
+        buttonCopyIp.setOnClickListener(v -> copyLocalIp());
 
         buttonResign.setOnClickListener(v -> {
             openConfirmDialog("Are you sure you want to resign?", "Yes", "No", () -> {
@@ -318,35 +377,35 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         buttonDraw.setOnClickListener(v -> {
             sendGameMessage(GameMessage.TYPE_DRAW_OFFER, 0);
-            updateStatus("Draw offer sent.");
+            updateStatus(getString(R.string.hotspot_status_draw_sent));
             buttonDraw.setEnabled(false);
         });
 
-        editName = findViewById(R.id.EditName);
+        refreshConnectionControls();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        SharedPreferences prefs = getPrefs();
 
         Log.d(TAG, "messengerFromService " + (messengerFromService == null));
 
-        String sName = prefs.getString("hotspotboardName", "");
-        editName.setText(sName);
-
-        switchHost.setChecked(prefs.getBoolean("hostpotboardIsHost", true));
-
-        updateConnectedState(false);
-        updateGameButtonsVisibility(false);
+        SharedPreferences prefs = getPrefs();
+        configuredName = prefs.getString("hotspotboardName", configuredName);
+        configuredHostIp = prefs.getString("hotspotboardHostIp", configuredHostIp);
+        refreshConnectionControls();
+        syncRestoredSessionUi();
     }
 
     @Override
     protected void onPause() {
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
-        editor.putString("hotspotboardName", ((HotspotBoardApi) gameApi).getMyName());
+        editor.putString("hotspotboardName", configuredName);
+        editor.putString("hotspotboardHostIp", configuredHostIp);
         editor.putBoolean("hostpotboardIsHost", isHost);
+        editor.putBoolean("hotspotboardShareMode", isShareMode);
+        editor.putInt("hotspotboardConnectionMode", connectionMode);
 
         editor.commit();
 
@@ -368,26 +427,289 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         textStatus.setText(status);
         textStatus.setVisibility(View.VISIBLE);
         statusHandler.removeCallbacksAndMessages(null);
-        statusHandler.postDelayed(() -> textStatus.setVisibility(View.GONE), 3000);
+        statusHandler.postDelayed(() -> textStatus.setVisibility(View.INVISIBLE), 3000);
     }
 
     private void updateConnectedState(boolean isConnected) {
-        layoutConnect.setVisibility(isConnected ? View.GONE : View.VISIBLE);
+        boolean effectiveListening = isListeningSessionRestored();
+        boolean effectiveConnected = isConnected || isShareHostSessionRestored() || isObservingSessionRestored();
+        boolean showSessionSummary = hasActiveSession || effectiveConnected || effectiveListening;
+        layoutConnect.setVisibility(showSessionSummary ? View.GONE : View.VISIBLE);
+        layoutSessionSummary.setVisibility(showSessionSummary ? View.VISIBLE : View.GONE);
+        updateSessionSummary(showSessionSummary);
 
-        updateNewGameButtonVisibility(isConnected);
+        updateNewGameButtonVisibility(effectiveConnected);
 
-        if (!isConnected) {
+        if (!effectiveConnected) {
             textOpponent.setText("Opponent");
             updateGameButtonsVisibility(false);
         }
     }
 
     private void updateNewGameButtonVisibility(boolean isVisible) {
-        layoutNewGameButtons.setVisibility(isHost && isVisible ? View.VISIBLE : View.GONE);
+        layoutNewGameButtons.setVisibility(isHost && !isShareMode && isVisible ? View.VISIBLE : View.GONE);
     }
 
     private void updateGameButtonsVisibility(boolean isVisible) {
         layoutGameButtons.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void refreshConnectionControls() {
+        updateConnectedState(false);
+        updateObservingState(false);
+    }
+
+    private void updateSessionSummary(boolean showSessionSummary) {
+        if (!showSessionSummary) {
+            textSessionSummary.setText("");
+            buttonCopyIp.setVisibility(View.GONE);
+            return;
+        }
+
+        StringBuilder summary = new StringBuilder();
+        appendSummaryPart(summary, isHost ? getString(R.string.hotspot_host) : getString(R.string.hotspot_client));
+        if (isHost && isShareMode) {
+            appendSummaryPart(summary, getString(R.string.hotspot_share));
+        }
+        appendSummaryPart(summary, connectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
+            ? getString(R.string.hotspot_mode_local_wifi)
+            : getString(R.string.hotspot_mode_hotspot));
+        appendSummaryPart(summary, getConfiguredPlayerName());
+
+        String localIp = getCurrentLocalIp();
+        boolean showCopyIp = isHost
+            && connectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
+            && localIp != null;
+        if (showCopyIp) {
+            appendSummaryPart(summary, localIp);
+        }
+
+        textSessionSummary.setText(summary.toString());
+        buttonCopyIp.setVisibility(showCopyIp ? View.VISIBLE : View.GONE);
+    }
+
+    private void appendSummaryPart(StringBuilder summary, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return;
+        }
+        if (summary.length() > 0) {
+            summary.append(" \u2022 ");
+        }
+        summary.append(value.trim());
+    }
+
+    private void showConnectionDialog() {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.hotspotboard_connection_dialog, null);
+        SwitchMaterial dialogSwitchHost = dialogView.findViewById(R.id.SwitchHost);
+        SwitchMaterial dialogSwitchShare = dialogView.findViewById(R.id.SwitchShare);
+        MaterialButtonToggleGroup dialogNetworkToggleGroup = dialogView.findViewById(R.id.networkToggleGroup);
+        TextView dialogConnectionHelp = dialogView.findViewById(R.id.TextConnectionHelp);
+        TextView dialogLocalIp = dialogView.findViewById(R.id.TextLocalIp);
+        TextInputLayout inputName = dialogView.findViewById(R.id.InputName);
+        TextInputLayout inputHostIp = dialogView.findViewById(R.id.InputHostIp);
+        TextInputEditText dialogEditName = dialogView.findViewById(R.id.EditName);
+        TextInputEditText dialogEditHostIp = dialogView.findViewById(R.id.EditHostIp);
+
+        dialogSwitchHost.setChecked(isHost);
+        dialogSwitchShare.setChecked(isShareMode);
+        dialogEditName.setText(configuredName);
+        dialogEditHostIp.setText(configuredHostIp);
+        dialogNetworkToggleGroup.check(connectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
+            ? R.id.buttonModeLocalWifi
+            : R.id.buttonModeHotspot);
+
+        final AlertDialog[] dialogHolder = new AlertDialog[1];
+        Runnable syncDialogControls = () -> {
+            boolean dialogIsHost = dialogSwitchHost.isChecked();
+            boolean dialogIsShareMode = dialogIsHost && dialogSwitchShare.isChecked();
+            int dialogConnectionMode = dialogNetworkToggleGroup.getCheckedButtonId() == R.id.buttonModeLocalWifi
+                ? HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
+                : HotspotBoardService.CONNECTION_MODE_HOTSPOT;
+
+            dialogSwitchShare.setVisibility(dialogIsHost ? View.VISIBLE : View.GONE);
+
+            if (dialogConnectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI) {
+                dialogConnectionHelp.setText(dialogIsHost
+                    ? (dialogIsShareMode ? R.string.hotspot_local_wifi_share_host_help : R.string.hotspot_local_wifi_host_help)
+                    : R.string.hotspot_local_wifi_client_help);
+            } else {
+                dialogConnectionHelp.setText(dialogIsHost
+                    ? (dialogIsShareMode ? R.string.hotspot_share_host_help : R.string.hotspot_host_help)
+                    : R.string.hotspot_client_help);
+            }
+
+            boolean showLocalIp = dialogIsHost && dialogConnectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI;
+            dialogLocalIp.setVisibility(showLocalIp ? View.VISIBLE : View.GONE);
+            if (showLocalIp) {
+                String localIp = getCurrentLocalIp();
+                dialogLocalIp.setText(localIp == null
+                    ? getString(R.string.hotspot_local_ip_unavailable)
+                    : getString(R.string.hotspot_local_ip_value, localIp));
+            }
+
+            inputHostIp.setVisibility(!dialogIsHost && dialogConnectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
+                ? View.VISIBLE
+                : View.GONE);
+
+            AlertDialog alertDialog = dialogHolder[0];
+            if (alertDialog != null) {
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setText(dialogIsHost
+                    ? R.string.hotspot_start_hosting
+                    : R.string.hotspot_connect);
+            }
+        };
+
+        dialogSwitchHost.setOnCheckedChangeListener((buttonView, isChecked) -> syncDialogControls.run());
+        dialogSwitchShare.setOnCheckedChangeListener((buttonView, isChecked) -> syncDialogControls.run());
+        dialogNetworkToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                syncDialogControls.run();
+            }
+        });
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.hotspot_connection_settings)
+            .setView(dialogView)
+            .setNegativeButton(R.string.button_cancel, null)
+            .setPositiveButton(isHost ? R.string.hotspot_start_hosting : R.string.hotspot_connect, null)
+            .show();
+        dialogHolder[0] = dialog;
+        syncDialogControls.run();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            inputName.setError(null);
+            inputHostIp.setError(null);
+
+            String name = getTextValue(dialogEditName);
+            boolean dialogIsHost = dialogSwitchHost.isChecked();
+            int dialogConnectionMode = dialogNetworkToggleGroup.getCheckedButtonId() == R.id.buttonModeLocalWifi
+                ? HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
+                : HotspotBoardService.CONNECTION_MODE_HOTSPOT;
+            String hostIp = getTextValue(dialogEditHostIp);
+
+            boolean hasError = false;
+            if (name.isEmpty()) {
+                inputName.setError(getString(R.string.hotspot_status_name_required));
+                hasError = true;
+            }
+            if (!dialogIsHost
+                && dialogConnectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
+                && hostIp.isEmpty()) {
+                inputHostIp.setError(getString(R.string.hotspot_status_host_ip_required));
+                hasError = true;
+            }
+            if (hasError) {
+                return;
+            }
+
+            configuredName = name;
+            configuredHostIp = hostIp;
+            isHost = dialogIsHost;
+            isShareMode = dialogIsHost && dialogSwitchShare.isChecked();
+            connectionMode = dialogConnectionMode;
+
+            ((HotspotBoardApi) gameApi).setMyName(configuredName);
+            textPlayer.setText(configuredName);
+            dialog.dismiss();
+            refreshConnectionControls();
+            startSession();
+        });
+    }
+
+    private String getTextValue(TextInputEditText editText) {
+        return editText.getText() == null ? "" : editText.getText().toString().trim();
+    }
+
+    private String getConfiguredPlayerName() {
+        String currentName = ((HotspotBoardApi) gameApi).getMyName();
+        return currentName == null || currentName.trim().isEmpty() ? configuredName : currentName.trim();
+    }
+
+    private String getCurrentLocalIp() {
+        return NetworkAddressHelper.getLikelyWifiIpv4Address(this);
+    }
+
+    private void copyLocalIp() {
+        String localIp = getCurrentLocalIp();
+        if (localIp == null) {
+            return;
+        }
+        Clipboard.stringToClipboard(this, localIp, getString(R.string.hotspot_copy_ip_success));
+        doToast(getString(R.string.hotspot_copy_ip_success));
+    }
+
+    private void updateObservingState(boolean observing) {
+        boolean effectiveObserving = observing || isObservingSessionRestored();
+        if (effectiveObserving) {
+            statusHandler.removeCallbacksAndMessages(null);
+            textStatus.setText(R.string.hotspot_status_observing);
+            textStatus.setVisibility(View.VISIBLE);
+            updateGameButtonsVisibility(false);
+            updateNewGameButtonVisibility(false);
+        } else if (textStatus.getVisibility() == View.VISIBLE
+            && getString(R.string.hotspot_status_observing).contentEquals(textStatus.getText())) {
+            textStatus.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void bindHotspotBoardService() {
+        if (isServiceBound) {
+            return;
+        }
+
+        Intent serviceIntent = new Intent(this, HotspotBoardService.class);
+        startService(serviceIntent);
+        isServiceBound = bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void syncRestoredSessionUi() {
+        if (isShareHostSessionRestored()) {
+            updateConnectedState(true);
+            updateObservingState(false);
+            return;
+        }
+
+        if (isListeningSessionRestored()) {
+            updateConnectedState(false);
+            updateObservingState(false);
+            return;
+        }
+
+        if (isObservingSessionRestored()) {
+            updateConnectedState(true);
+            updateObservingState(true);
+            return;
+        }
+
+        updateConnectedState(false);
+        updateObservingState(false);
+        updateGameButtonsVisibility(false);
+    }
+
+    private boolean isShareHostSessionRestored() {
+        return hasActiveSession && !isListening && isHost && isShareMode;
+    }
+
+    private boolean isListeningSessionRestored() {
+        return hasActiveSession && isListening && isHost;
+    }
+
+    private boolean isObservingSessionRestored() {
+        return !isHost && isObserving;
+    }
+
+    private void stopSharing() {
+        hasActiveSession = false;
+        isListening = false;
+        isObserving = false;
+        try {
+            if (messengerFromService != null) {
+                messengerFromService.send(Message.obtain(null, HotspotBoardService.MSG_STOP_SESSION));
+            }
+        } catch (RemoteException e) {
+            Log.e(TAG, "stopSharing failed", e);
+        }
+        updateObservingState(false);
+        updateConnectedState(false);
     }
 
     protected void updateTurnSwitchers() {
@@ -441,23 +763,27 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             textOpponent.setText(((HotspotBoardApi) gameApi).getOpponentName());
         }
 
-        if (state == BoardConstants.MATE) {
-            // if it's white's turn, white is mated (and loses)
-            if ((turn == BoardConstants.WHITE && amIWhite) || (turn == BoardConstants.BLACK && !amIWhite)) {
-                showGameResult("Defeat", "You lost by checkmate.");
-            } else {
-                showGameResult("Victory!", "You won by checkmate.");
+        if (!isObserving && !isShareMode && hasReceivedGameUpdate) {
+            if (state == BoardConstants.MATE) {
+                // if it's white's turn, white is mated (and loses)
+                if ((turn == BoardConstants.WHITE && amIWhite) || (turn == BoardConstants.BLACK && !amIWhite)) {
+                    showGameResult("Defeat", "You lost by checkmate.");
+                } else {
+                    showGameResult("Victory!", "You won by checkmate.");
+                }
+            } else if (state == BoardConstants.STALEMATE) {
+                showGameResult("Game Over", "The game is a draw by stalemate.");
+            } else if (state == BoardConstants.DRAW_REPEAT) {
+                showGameResult("Game Over", "The game is a draw by 3-fold repetition.");
+            } else if (state == BoardConstants.DRAW_50) {
+                showGameResult("Game Over", "The game is a draw by the 50-move rule.");
+            } else if (state == BoardConstants.DRAW_MATERIAL) {
+                showGameResult("Game Over", "The game is a draw by insufficient material.");
             }
-        } else if (state == BoardConstants.STALEMATE) {
-            showGameResult("Game Over", "The game is a draw by stalemate.");
-        } else if (state == BoardConstants.DRAW_REPEAT) {
-            showGameResult("Game Over", "The game is a draw by 3-fold repetition.");
-        } else if (state == BoardConstants.DRAW_50) {
-            showGameResult("Game Over", "The game is a draw by the 50-move rule.");
-        } else if (state == BoardConstants.DRAW_MATERIAL) {
-            showGameResult("Game Over", "The game is a draw by insufficient material.");
-        }
 
-        updateGameButtonsVisibility(state == BoardConstants.PLAY || state == BoardConstants.CHECK);
+            updateGameButtonsVisibility(state == BoardConstants.PLAY || state == BoardConstants.CHECK);
+        } else {
+            updateGameButtonsVisibility(false);
+        }
     }
 }

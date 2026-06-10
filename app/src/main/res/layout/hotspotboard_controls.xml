@@ -14,48 +14,53 @@
             android:id="@+id/TextStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="16sp"
+            style="@style/MyPaneTextStyle2Lines"
             android:layout_marginTop="4dp"
-            android:visibility="gone" />
+            android:visibility="invisible" />
 
         <LinearLayout
             android:id="@+id/LayoutConnect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/SwitchHost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:text="@string/hotspot_host"
-                android:checked="true" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip"
-                android:lines="2"
-                android:minLines="2"
-                android:maxLines="10"
-                android:scrollHorizontally="false"
-                android:ellipsize="none"
-                android:text="@string/hotspot_host_help" />
-
-            <EditText
-                android:id="@+id/EditName"
-                android:hint="@string/hotspot_name_hint"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dip" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonConnect"
                 android:text="@string/hotspot_connect"
                 android:layout_width="wrap_content"
                 android:layout_margin="8dip"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LayoutSessionSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/TextSessionSummary"
+                style="@style/MyPaneTextStyle2Lines"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dip"
+                android:layout_marginEnd="4dip" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonCopyIp"
+                style="@style/ChessImageButton"
+                android:contentDescription="@string/hotspot_copy_ip"
+                android:visibility="gone"
+                app:icon="@drawable/ic_clipboard" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonDisconnect"
+                android:text="@string/hotspot_disconnect"
+                android:layout_width="wrap_content"
                 style="@style/ChessButton" />
         </LinearLayout>
 
@@ -84,7 +89,7 @@
             android:id="@+id/LayoutNewGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dip"
+            android:layout_marginTop="8dip"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButtonToggleGroup
