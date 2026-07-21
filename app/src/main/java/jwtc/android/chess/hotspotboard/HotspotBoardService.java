@@ -236,7 +236,8 @@ public class HotspotBoardService extends SocketConnectService {
         }
 
         try {
-            String payload = new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "", "", 0).toJsonString();
+            // int type, String FEN, String white, String black, int lastMove, String lastMovePgn
+            String payload = new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "","", 0, "").toJsonString();
             lastBroadcastFen = fen;
             broadcastLine(payload);
         } catch (JSONException e) {
@@ -250,7 +251,7 @@ public class HotspotBoardService extends SocketConnectService {
             if (fen == null) {
                 return;
             }
-            sendLine(connection, new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "", "", 0).toJsonString());
+            sendLine(connection, new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "", "", 0, "").toJsonString());
         } catch (JSONException e) {
             Log.d(TAG, "Could not send share snapshot", e);
         }
