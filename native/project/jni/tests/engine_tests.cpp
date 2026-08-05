@@ -484,6 +484,50 @@ void testBoardValueLoneKingBranches() {
     EXPECT_EQ(board->boardValue(), board->kbnkValue(ChessBoard::WHITE));
 }
 
+void testCountAttackersToCountsEveryPieceType() {
+    Game *game = Game::getInstance();
+    ASSERT_TRUE(game->newGameFromFEN("8/kB6/8/8/3Kp2Q/2NP1PN1/8/4R3 w - - 0 1"));
+
+    EXPECT_EQ(8, game->getBoard()->countAttackersTo(ChessBoard::e4, ChessBoard::WHITE));
+}
+
+void testCountAttackersToExcludesXRayPieces() {
+    Game *game = Game::getInstance();
+    ASSERT_TRUE(game->newGameFromFEN("k7/8/8/8/4p3/4R3/8/4R2K w - - 0 1"));
+
+    EXPECT_EQ(1, game->getBoard()->countAttackersTo(ChessBoard::e4, ChessBoard::WHITE));
+}
+
+void testCountAttackersToUsesPawnCaptureDirections() {
+    Game *game = Game::getInstance();
+    ASSERT_TRUE(game->newGameFromFEN("k7/8/8/3pp3/8/3PP3/8/7K w - - 0 1"));
+
+    ChessBoard *board = game->getBoard();
+    EXPECT_EQ(1, board->countAttackersTo(ChessBoard::e4, ChessBoard::WHITE));
+    EXPECT_EQ(1, board->countAttackersTo(ChessBoard::e4, ChessBoard::BLACK));
+}
+
+void testCountAttackersToTreatsFriendlyTargetAsCapturable() {
+    Game *game = Game::getInstance();
+    ASSERT_TRUE(game->newGameFromFEN("k7/8/8/8/4P3/8/8/4R2K w - - 0 1"));
+
+    EXPECT_EQ(1, game->getBoard()->countAttackersTo(ChessBoard::e4, ChessBoard::WHITE));
+}
+
+void testCountAttackersToIgnoresKingSafety() {
+    Game *game = Game::getInstance();
+    ASSERT_TRUE(game->newGameFromFEN("k3r3/8/8/8/8/3pR3/8/4K3 w - - 0 1"));
+
+    EXPECT_EQ(1, game->getBoard()->countAttackersTo(ChessBoard::d3, ChessBoard::WHITE));
+}
+
+void testCountAttackersToTreatsDuckAsBlocker() {
+    Game *game = Game::getInstance();
+    ASSERT_TRUE(game->newGameFromFEN("k7/8/8/8/8/4$3/8/4R2K w - - 0 1"));
+
+    EXPECT_EQ(0, game->getBoard()->countAttackersTo(ChessBoard::e4, ChessBoard::WHITE));
+}
+
 class GameTest : public ::testing::Test {
    protected:
     void SetUp() override {
@@ -553,6 +597,30 @@ TEST_F(GameTest, BoardEvaluationHeuristics) {
 
 TEST_F(GameTest, BoardValueLoneKingBranches) {
     testBoardValueLoneKingBranches();
+}
+
+TEST_F(GameTest, CountAttackersToCountsEveryPieceType) {
+    testCountAttackersToCountsEveryPieceType();
+}
+
+TEST_F(GameTest, CountAttackersToExcludesXRayPieces) {
+    testCountAttackersToExcludesXRayPieces();
+}
+
+TEST_F(GameTest, CountAttackersToUsesPawnCaptureDirections) {
+    testCountAttackersToUsesPawnCaptureDirections();
+}
+
+TEST_F(GameTest, CountAttackersToTreatsFriendlyTargetAsCapturable) {
+    testCountAttackersToTreatsFriendlyTargetAsCapturable();
+}
+
+TEST_F(GameTest, CountAttackersToIgnoresKingSafety) {
+    testCountAttackersToIgnoresKingSafety();
+}
+
+TEST_F(GameTest, CountAttackersToTreatsDuckAsBlocker) {
+    testCountAttackersToTreatsDuckAsBlocker();
 }
 
 }  // namespace

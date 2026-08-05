@@ -157,6 +157,9 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getTurn(JNIEnv* env, jobject thiz) {
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_pieceAt(JNIEnv* env, jobject thiz, jint turn, jint pos) {
     return Game::getInstance()->getBoard()->pieceAt(turn, pos);
 }
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_countAttackersTo(JNIEnv* env, jobject thiz, jint pos, jint byTurn) {
+    return Game::getInstance()->getBoard()->countAttackersTo(pos, byTurn);
+}
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getDuckPos(JNIEnv* env, jobject thiz) {
     return Game::getInstance()->getBoard()->getDuckPos();
 }
@@ -262,6 +265,7 @@ static JNINativeMethod sMethods[] = {
     {"getMoveArraySize", "()I", (void*) Java_jwtc_chess_JNI_getMoveArraySize},
     {"getMoveArrayAt", "(I)I", (void*) Java_jwtc_chess_JNI_getMoveArrayAt},
     {"pieceAt", "(II)I", (void*) Java_jwtc_chess_JNI_pieceAt},
+    {"countAttackersTo", "(II)I", (void*) Java_jwtc_chess_JNI_countAttackersTo},
     {"getDuckPos", "()I", (void*) Java_jwtc_chess_JNI_getDuckPos},
     {"getMyDuckPos", "()I", (void*) Java_jwtc_chess_JNI_getMyDuckPos},
     {"getMyMoveToString", "()Ljava/lang/String;", (void*) Java_jwtc_chess_JNI_getMyMoveToString},

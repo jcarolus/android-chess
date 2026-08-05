@@ -307,6 +307,8 @@ public class JNI {
 
     public native int pieceAt(int turn, int pos);
 
+    public native int countAttackersTo(int pos, int byTurn);
+
     public native int getDuckPos();
 
     public native int getMyDuckPos();

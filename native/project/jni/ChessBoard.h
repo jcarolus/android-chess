@@ -290,6 +290,7 @@ class ChessBoard {
     BITBOARD queenAttacks(const int turn, BITBOARD bb);
     BITBOARD kingAttacks(const int turn, BITBOARD bb);
     boolean isSquareAttacked(const int turn, const int pos);
+    int countAttackersTo(const int pos, const int byTurn);
     void calcState(ChessBoard* board);
     boolean checkInCheck();
     boolean checkInSelfCheck();
