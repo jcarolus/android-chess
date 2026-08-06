@@ -488,7 +488,18 @@ void testCountAttackersToCountsEveryPieceType() {
     Game *game = Game::getInstance();
     ASSERT_TRUE(game->newGameFromFEN("8/kB6/8/8/3Kp2Q/2NP1PN1/8/4R3 w - - 0 1"));
 
-    EXPECT_EQ(8, game->getBoard()->countAttackersTo(ChessBoard::e4, ChessBoard::WHITE));
+    ChessBoard *board = game->getBoard();
+    const BITBOARD expectedAttackers = ChessBoard::BITS[ChessBoard::b7] |
+                                       ChessBoard::BITS[ChessBoard::d4] |
+                                       ChessBoard::BITS[ChessBoard::h4] |
+                                       ChessBoard::BITS[ChessBoard::c3] |
+                                       ChessBoard::BITS[ChessBoard::d3] |
+                                       ChessBoard::BITS[ChessBoard::f3] |
+                                       ChessBoard::BITS[ChessBoard::g3] |
+                                       ChessBoard::BITS[ChessBoard::e1];
+
+    EXPECT_EQ(expectedAttackers, board->attackersTo(ChessBoard::e4, ChessBoard::WHITE));
+    EXPECT_EQ(8, board->countAttackersTo(ChessBoard::e4, ChessBoard::WHITE));
 }
 
 void testCountAttackersToExcludesXRayPieces() {

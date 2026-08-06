@@ -160,6 +160,27 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_pieceAt(JNIEnv* env, jobject thiz, jin
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_countAttackersTo(JNIEnv* env, jobject thiz, jint pos, jint byTurn) {
     return Game::getInstance()->getBoard()->countAttackersTo(pos, byTurn);
 }
+JNIEXPORT jintArray JNICALL Java_jwtc_chess_JNI_getAttackerPositionsTo(JNIEnv* env, jobject thiz, jint pos, jint byTurn) {
+    ChessBoard* board = Game::getInstance()->getBoard();
+    BITBOARD attackers = board->attackersTo(pos, byTurn);
+    const int count = board->bitCount(attackers);
+
+    jintArray result = env->NewIntArray(count);
+    if (result == nullptr) {
+        return nullptr;
+    }
+
+    jint positions[ChessBoard::NUM_FIELDS];
+    int index = 0;
+    while (attackers != 0) {
+        const int attackerPos = board->trailingZeros(attackers);
+        positions[index++] = attackerPos;
+        attackers &= ChessBoard::NOT_BITS[attackerPos];
+    }
+
+    env->SetIntArrayRegion(result, 0, count, positions);
+    return result;
+}
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getDuckPos(JNIEnv* env, jobject thiz) {
     return Game::getInstance()->getBoard()->getDuckPos();
 }
@@ -266,6 +287,7 @@ static JNINativeMethod sMethods[] = {
     {"getMoveArrayAt", "(I)I", (void*) Java_jwtc_chess_JNI_getMoveArrayAt},
     {"pieceAt", "(II)I", (void*) Java_jwtc_chess_JNI_pieceAt},
     {"countAttackersTo", "(II)I", (void*) Java_jwtc_chess_JNI_countAttackersTo},
+    {"getAttackerPositionsTo", "(II)[I", (void*) Java_jwtc_chess_JNI_getAttackerPositionsTo},
     {"getDuckPos", "()I", (void*) Java_jwtc_chess_JNI_getDuckPos},
     {"getMyDuckPos", "()I", (void*) Java_jwtc_chess_JNI_getMyDuckPos},
     {"getMyMoveToString", "()Ljava/lang/String;", (void*) Java_jwtc_chess_JNI_getMyMoveToString},

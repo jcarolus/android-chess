@@ -106,9 +106,9 @@ boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
     return false;
 }
 
-// Counts geometrical attacks by @byTurn on @pos. The target square is treated
+// Returns geometrical attackers by @byTurn on @pos. The target square is treated
 // as if it contains an opponent piece; king-safety constraints are ignored.
-int ChessBoard::countAttackersTo(const int pos, const int byTurn) {
+BITBOARD ChessBoard::attackersTo(const int pos, const int byTurn) {
     if (pos < 0 || pos >= NUM_FIELDS || byTurn < BLACK || byTurn > WHITE) {
         return 0;
     }
@@ -123,7 +123,11 @@ int ChessBoard::countAttackersTo(const int pos, const int byTurn) {
     attackers |= diagonalAttackers & bishopMoves(againstTurn, pos);
     attackers |= straightAttackers & rookMoves(againstTurn, pos);
 
-    return bitCount(attackers);
+    return attackers;
+}
+
+int ChessBoard::countAttackersTo(const int pos, const int byTurn) {
+    return bitCount(attackersTo(pos, byTurn));
 }
 
 #pragma endregion
