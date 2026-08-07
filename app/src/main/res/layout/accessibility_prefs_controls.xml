@@ -24,6 +24,13 @@
             android:text="@string/pref_user_long_move_descriptions" />
 
         <CheckBox
+            android:id="@+id/CheckBoxIncludeAttackersAndDefendersDescriptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+            android:text="@string/pref_include_attackers_defenders_descriptions" />
+
+        <CheckBox
             android:id="@+id/CheckBoxFieldColorDescriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

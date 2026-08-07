@@ -38,6 +38,8 @@
     <string name="app_name_playonline">Play online</string>
     <string name="app_name_save_games">Saved games</string>
     <string name="app_name_setup">Setup</string>
+    <string name="attacked_by_pieces">Attacked by %1$s</string>
+    <string name="defended_by_pieces">Defended by %1$s</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_close">Close</string>
     <string name="button_engine_play_description">Engine play</string>
@@ -330,6 +332,7 @@
     <string name="practice_help">Find the Check-Mate (can be more than one move).</string>
     <string name="practice_set_reset">Practice set has been reset</string>
     <string name="pref_field_color_descriptions">Add dark/light to square description</string>
+    <string name="pref_include_attackers_defenders_descriptions">Include attackers and defenders in field description</string>
     <string name="pref_fullscreen">Enable full screen</string>
     <string name="pref_fullscreen_desc">Recommended for small screens and landscape view; elements may fall off the screen otherwise</string>
     <string name="pref_icsautosought">Auto sought</string>
@@ -409,7 +412,8 @@
     <string name="square_selected_with_duck_description">Selected %1$s at %2$s</string>
     <string name="square_selected_with_piece_description">Selected %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s at %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_color_and_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s</string>
     <string name="start_accessibility_preferences">Accessibility preferences</string>
     <string name="start_boardpreferences">Board settings</string>
     <string name="start_database">Game database</string>

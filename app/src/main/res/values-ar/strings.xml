@@ -33,6 +33,8 @@
     <string name="app_name_playonline">لعب عبر الإنترنت</string>
     <string name="app_name_save_games">الألعاب المحفوظة</string>
     <string name="app_name_setup">إعداد</string>
+    <string name="attacked_by_pieces">مُهاجَم بواسطة %1$s</string>
+    <string name="defended_by_pieces">مُدافَع عنه بواسطة %1$s</string>
     <string name="button_cancel">إلغاء</string>
     <string name="button_close">إغلاق</string>
     <string name="button_engine_play_description">لعب المحرك</string>
@@ -309,6 +311,7 @@
     <string name="practice_help">ابحث عن كش مات (يمكن أن يكون أكثر من نقلة).</string>
     <string name="practice_set_reset">تمت إعادة تعيين مجموعة التمارين</string>
     <string name="pref_field_color_descriptions">إضافة فاتح/غامق إلى وصف المربع</string>
+    <string name="pref_include_attackers_defenders_descriptions">تضمين المهاجمين والمدافعين في وصف المربع</string>
     <string name="pref_fullscreen">تمكين ملء الشاشة</string>
     <string name="pref_fullscreen_desc">موصى به للشاشات الصغيرة والعرض الأفقي؛ فقد تخرج العناصر عن الشاشة بخلاف ذلك</string>
     <string name="pref_icsautosought">بحث تلقائي</string>
@@ -388,7 +391,8 @@
     <string name="square_selected_with_duck_description">تم تحديد %1$s في %2$s</string>
     <string name="square_selected_with_piece_description">تم تحديد %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s في %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_color_and_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s</string>
     <string name="start_accessibility_preferences">تفضيلات إمكانية الوصول</string>
     <string name="start_boardpreferences">إعدادات الرقعة</string>
     <string name="start_database">قاعدة بيانات الألعاب</string>

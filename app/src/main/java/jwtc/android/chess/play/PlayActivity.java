@@ -233,6 +233,7 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
+        textViewSquareInfo = findViewById(R.id.TextViewSquareInfo);
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {

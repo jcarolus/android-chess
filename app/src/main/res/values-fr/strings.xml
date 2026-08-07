@@ -31,6 +31,8 @@
     <string name="app_name_playonline">Jouer en ligne</string>
     <string name="app_name_save_games">Parties sauvegardées</string>
     <string name="app_name_setup">Configurer</string>
+    <string name="attacked_by_pieces">Attaquée par %1$s</string>
+    <string name="defended_by_pieces">Défendue par %1$s</string>
     <string name="button_cancel">Annuler</string>
     <string name="button_close">Fermer</string>
     <string name="button_engine_play_description">Jeu moteur</string>
@@ -295,6 +297,7 @@
     <string name="practice_help">Trouver le mat (peut nécessiter plusieurs coups).</string>
     <string name="practice_set_reset">Ensemble d’entraînement réinitialisé</string>
     <string name="pref_field_color_descriptions">Ajouter clair/sombre à la description de la case</string>
+    <string name="pref_include_attackers_defenders_descriptions">Inclure les attaquants et les défenseurs dans la description de la case</string>
     <string name="pref_fullscreen">Activer le plein écran</string>
     <string name="pref_fullscreen_desc">Recommandé pour petits écrans et mode paysage ; sinon des éléments peuvent dépasser</string>
     <string name="pref_icsautosought">Recherche auto</string>
@@ -371,7 +374,8 @@
     <string name="square_selected_with_duck_description">%1$s sélectionné en %2$s</string>
     <string name="square_selected_with_piece_description">Sélectionné %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s en %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_color_and_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s</string>
     <string name="start_accessibility_preferences">Préférences d’accessibilité</string>
     <string name="start_boardpreferences">Paramètres de l’échiquier</string>
     <string name="start_database">Base de données des parties</string>

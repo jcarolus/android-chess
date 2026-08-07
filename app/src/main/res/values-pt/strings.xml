@@ -31,6 +31,8 @@
     <string name="app_name_playonline">Jogar online</string>
     <string name="app_name_save_games">Partidas salvas</string>
     <string name="app_name_setup">Configurar</string>
+    <string name="attacked_by_pieces">Atacada por %1$s</string>
+    <string name="defended_by_pieces">Defendida por %1$s</string>
     <string name="button_cancel">Cancelar</string>
     <string name="button_close">Fechar</string>
     <string name="button_engine_play_description">Jogar com motor</string>
@@ -295,6 +297,7 @@
     <string name="practice_help">Encontre o xeque-mate (pode precisar de mais de um lance).</string>
     <string name="practice_set_reset">O conjunto de treino foi reiniciado</string>
     <string name="pref_field_color_descriptions">Adicionar claro/escuro à descrição da casa</string>
+    <string name="pref_include_attackers_defenders_descriptions">Incluir atacantes e defensores na descrição da casa</string>
     <string name="pref_fullscreen">Ativar tela cheia</string>
     <string name="pref_fullscreen_desc">Recomendado para telas pequenas e modo paisagem; caso contrário, elementos podem ficar fora da tela</string>
     <string name="pref_icsautosought">Busca automática</string>
@@ -371,7 +374,8 @@
     <string name="square_selected_with_duck_description">Selecionado %1$s em %2$s</string>
     <string name="square_selected_with_piece_description">Selecionado %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s em %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_color_and_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s</string>
     <string name="start_accessibility_preferences">Preferências de acessibilidade</string>
     <string name="start_boardpreferences">Configurações do tabuleiro</string>
     <string name="start_database">Banco de dados de partidas</string>

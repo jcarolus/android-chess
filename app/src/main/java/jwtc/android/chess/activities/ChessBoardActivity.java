@@ -67,8 +67,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean fieldColorDescriptions = false;
     protected boolean announceLastMoveWhenOverEmptySquare = false;
     protected boolean useLongMoveFormat = false;
+    protected boolean includeAttackersAndDefendersInFieldDescription = false;
     // shared views
-    protected TextView textViewWhitePieces, textViewBlackPieces;
+    protected TextView textViewWhitePieces, textViewBlackPieces, textViewSquareInfo;
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
     private String keyboardBuffer = "";
     private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
@@ -424,6 +425,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         fieldColorDescriptions = prefs.getBoolean("field_color_descriptions", false);
         announceLastMoveWhenOverEmptySquare = prefs.getBoolean("announce_last_move_when_over_empty_square", false);
         useLongMoveFormat = prefs.getBoolean("use_long_move_description", false);
+        includeAttackersAndDefendersInFieldDescription = prefs.getBoolean("include_attackers_defenders_in_field_description", false);
 
         if (textViewWhitePieces != null && textViewBlackPieces != null) {
             int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
@@ -679,12 +681,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 int piece = jni.pieceAt(jni.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
                 String nextDescription = getFieldDescription(pos);
+                Log.d(TAG, "next " + nextDescription);
                 CharSequence currentDescription = squareView.getContentDescription();
                 if (currentDescription == null || !nextDescription.contentEquals(currentDescription)) {
                     squareView.setContentDescription(nextDescription);
                 }
             }
         }
+
+        updateSquareInfo();
     }
 
     public void resetSelectedSquares() {
@@ -701,6 +706,24 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (textViewWhitePieces != null && textViewBlackPieces != null) {
             textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
             textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
+        }
+    }
+
+    public void updateSquareInfo() {
+        if (textViewSquareInfo != null && this.selectedPosition != -1) {
+            int[] positions = jni.getAttackerPositionsTo(selectedPosition, jni.getTurn() == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK);
+            String attackers = java.util.Arrays.stream(positions)
+                .mapToObj(Pos::toString)
+                .collect(Collectors.joining(","));
+
+            positions = jni.getAttackerPositionsTo(selectedPosition, jni.getTurn());
+            String defenders = java.util.Arrays.stream(positions)
+                .mapToObj(Pos::toString)
+                .collect(Collectors.joining(","));
+
+            textViewSquareInfo.setText(
+                attackers + " <> " + defenders
+            );
         }
     }
 
@@ -890,14 +913,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         sPos,
                         getString(R.string.piece_white),
                         getString(Piece.toResource(whitePiece))
-                    ) + getFieldColorDescription(pos);
+                    ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
                 }
                 return getString(
-                    R.string.square_with_piece_description,
+                    R.string.square_with_color_and_piece_description,
                     sPos,
                     getString(R.string.piece_white),
                     getString(Piece.toResource(whitePiece))
-                ) + getFieldColorDescription(pos);
+                ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
             } else if (blackPiece != BoardConstants.FIELD) {
                 if (selectedPosition == pos) {
                     return getString(
@@ -905,25 +928,65 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         sPos,
                         getString(R.string.piece_black),
                         getString(Piece.toResource(blackPiece))
-                    ) + getFieldColorDescription(pos);
+                    ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
                 }
                 return getString(
-                    R.string.square_with_piece_description,
+                    R.string.square_with_color_and_piece_description,
                     sPos,
                     getString(R.string.piece_black),
                     getString(Piece.toResource(blackPiece))
-                ) + getFieldColorDescription(pos);
+                ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
             } else if (duckPos != -1) {
                 return (getString(selectedPosition == pos ? R.string.square_selected_with_duck_description : R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos))) + getFieldColorDescription(pos);
             }
         }
+
         String selectedMessage = selectedPosition == pos ? getString(R.string.tts_selected) + " " : "";
-        return selectedMessage + sPos + getFieldColorDescription(pos);
+        return selectedMessage + sPos + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
     }
 
     protected String getFieldColorDescription(int pos) {
         if (fieldColorDescriptions) {
             return ". " + (Pos.getFieldColor(pos) == BoardConstants.WHITE ? getString(R.string.square_color_description_light) : getString(R.string.square_color_description_dark));
+        }
+        return "";
+    }
+
+    protected String getAttackersAndDefendersDescription(int pos) {
+        String sRet = "";
+        if (includeAttackersAndDefendersInFieldDescription) {
+            int[] positions = jni.getAttackerPositionsTo(pos, jni.getTurn() == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK);
+            if (positions.length > 0) {
+                sRet += ". " + getString(R.string.attacked_by_pieces, getPieceDescriptionsForPosition(positions));
+            }
+            positions = jni.getAttackerPositionsTo(pos, jni.getTurn());
+            if (positions.length > 0) {
+                sRet += ". " + getString(R.string.defended_by_pieces, getPieceDescriptionsForPosition(positions));
+            }
+        }
+
+        return sRet;
+    }
+
+    protected String getPieceDescriptionsForPosition(int[] positions) {
+        if (positions.length > 0) {
+            StringBuilder pieceDescriptions = new StringBuilder();
+            for (int i = 0; i < positions.length; i++) {
+                int piece = jni.pieceAt(BoardConstants.WHITE, positions[i]);
+                if (piece == BoardConstants.FIELD) {
+                    piece = jni.pieceAt(BoardConstants.BLACK, positions[i]);
+                }
+                if (piece != BoardConstants.FIELD) {
+                    String sPos = Pos.toString(positions[i]).toUpperCase();
+                    String sPiece = getString(Piece.toResource(piece));
+                    pieceDescriptions.append(getString(R.string.square_with_piece_description, sPiece, sPos));
+                    if (i < positions.length - 1) {
+                        pieceDescriptions.append(", ");
+                    }
+                }
+            }
+
+            return pieceDescriptions.toString();
         }
         return "";
     }
