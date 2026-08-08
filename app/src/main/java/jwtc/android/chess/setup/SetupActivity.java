@@ -27,6 +27,7 @@ import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.chess.JNI;
+import jwtc.chess.Pos;
 import jwtc.chess.Valuation;
 import jwtc.chess.board.BoardConstants;
 
@@ -339,7 +340,8 @@ public class SetupActivity extends ChessBoardActivity {
         for (int attempt = 0; attempt < maxAttempts; attempt++) {
             int[] pieceSums = generateRandomBoardOnce(rng, turn);
             boolean balanced = isPieceValueBalanced(pieceSums[BoardConstants.WHITE], pieceSums[BoardConstants.BLACK]);
-            if (balanced && jni.isLegalPosition() != 0 && jni.isEnded() == 0) {
+            boolean bishopsBalanced = isBishopsBalanced();
+            if (balanced && bishopsBalanced && jni.isLegalPosition() != 0 && jni.isEnded() == 0) {
                 legal = true;
                 Log.d(TAG, "randomBoard in " + attempt + " attempts, w: " + pieceSums[BoardConstants.WHITE] + " b: " + pieceSums[BoardConstants.BLACK]);
                 break;
@@ -424,6 +426,29 @@ public class SetupActivity extends ChessBoardActivity {
         int diff = Math.abs(whiteSum - blackSum);
         int smaller = Math.min(whiteSum, blackSum);
         return diff <= 2 * smaller;
+    }
+
+    private boolean isBishopsBalanced() {
+        for (int color = BoardConstants.BLACK; color <= BoardConstants.WHITE; color++) {
+            int lightsSquareBishopCount = 0, darkSquareBishopCount = 0;
+
+            for (int pos = 0; pos < 64; pos++) {
+                if (jni.pieceAt(color, pos) != BoardConstants.BISHOP) {
+                    continue;
+                }
+
+                if (Pos.getFieldColor(pos) == BoardConstants.WHITE) {
+                    lightsSquareBishopCount++;
+                } else {
+                    darkSquareBishopCount++;
+                }
+            }
+
+            if (Math.abs(lightsSquareBishopCount - darkSquareBishopCount) > 1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void initBoard() {
