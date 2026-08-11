@@ -70,7 +70,12 @@ public class OexEngineResolver {
                 }
 
                 PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-                int versionCode = (int) packageInfo.getLongVersionCode();
+                int versionCode;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    versionCode = (int) packageInfo.getLongVersionCode();
+                } else {
+                    versionCode = packageInfo.versionCode;
+                }
 
                 XmlResourceParser parser = resources.getXml(xmlResourceId);
                 try {
