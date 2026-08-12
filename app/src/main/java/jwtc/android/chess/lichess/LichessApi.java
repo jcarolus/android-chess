@@ -29,6 +29,10 @@ import jwtc.android.chess.lichess.models.PuzzleBatchSolveRequest;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveResponse;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
 import jwtc.android.chess.lichess.models.PuzzleGlicko;
+import jwtc.android.chess.lichess.models.SwissStanding;
+import jwtc.android.chess.lichess.models.SwissTournament;
+import jwtc.android.chess.lichess.models.Team;
+import jwtc.android.chess.lichess.models.TeamPaginator;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
@@ -72,6 +76,15 @@ public class LichessApi extends GameApi {
         void onPuzzleUnexpectedMove(String sMove, int toPos);
         void onPuzzleRetried();
         void onPuzzleCompleted(int toPos);
+
+        void onMyTeams(List<Team> teams);
+        void onAllTeams(List<Team> teams, int page, int nbPages);
+        void onTeamJoined(String teamId);
+        void onTeamLeft(String teamId);
+        void onSwissList(List<SwissTournament> tournaments);
+        void onSwissDetail(SwissTournament tournament, List<SwissStanding> standings);
+        void onSwissJoined(String id);
+        void onSwissError(String message);
     }
 
     protected int turn = 0;
@@ -426,12 +439,224 @@ public class LichessApi extends GameApi {
     }
 
     private void handlePuzzleError(JsonObject e) {
-        String error = e.has("error") ? e.get("error").getAsString() : "";
+        handleScopeError(e);
+    }
+
+    /**
+     * Returns true when the error was a missing-scope error and a re-login was triggered.
+     */
+    private boolean handleScopeError(JsonObject e) {
+        String error = e != null && e.has("error") ? e.get("error").getAsString() : "";
         if (error.startsWith("Missing scope")) {
-            Log.d(TAG, "Puzzle scope missing — clearing token and forcing re-login");
+            Log.d(TAG, "Scope missing — clearing token and forcing re-login");
             auth.clearTokens();
             onAuthenticate(null);
+            return true;
         }
+        return false;
+    }
+
+    private String errorMessage(JsonObject e) {
+        if (e == null) {
+            return "";
+        }
+        if (e.has("error")) {
+            return e.get("error").getAsString();
+        }
+        if (e.has("message")) {
+            return e.get("message").getAsString();
+        }
+        return e.toString();
+    }
+
+    // --- Teams & Swiss tournaments ---
+
+    public void fetchMyTeams() {
+        this.auth.teamsOfUser(user, new OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject>() {
+            @Override
+            public void onSuccess(JsonArray result) {
+                List<Team> teams = new ArrayList<>();
+                for (JsonElement element : result) {
+                    teams.add((new Gson()).fromJson(element.getAsJsonObject(), Team.class));
+                }
+                if (apiListener != null) {
+                    apiListener.onMyTeams(teams);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "fetchMyTeams onError " + e);
+                if (apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void fetchAllTeams(int page) {
+        this.auth.allTeams(page, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                try {
+                    TeamPaginator paginator = (new Gson()).fromJson(result, TeamPaginator.class);
+                    List<Team> teams = paginator.currentPageResults != null ? paginator.currentPageResults : new ArrayList<>();
+                    if (apiListener != null) {
+                        apiListener.onAllTeams(teams, paginator.currentPage, paginator.nbPages);
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "fetchAllTeams parse error " + ex);
+                    if (apiListener != null) {
+                        apiListener.onSwissError("Could not parse teams");
+                    }
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "fetchAllTeams onError " + e);
+                if (apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void joinTeam(String teamId, String message, String password) {
+        Map<String, Object> body = new HashMap<>();
+        if (message != null && !message.isEmpty()) {
+            body.put("message", message);
+        }
+        if (password != null && !password.isEmpty()) {
+            body.put("password", password);
+        }
+        this.auth.joinTeam(teamId, body.isEmpty() ? null : body, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "joinTeam success " + teamId);
+                if (apiListener != null) {
+                    apiListener.onTeamJoined(teamId);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "joinTeam onError " + e);
+                if (!handleScopeError(e) && apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void quitTeam(String teamId) {
+        this.auth.quitTeam(teamId, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "quitTeam success " + teamId);
+                if (apiListener != null) {
+                    apiListener.onTeamLeft(teamId);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "quitTeam onError " + e);
+                if (!handleScopeError(e) && apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void fetchTeamSwiss(String teamId) {
+        final List<SwissTournament> tournaments = new ArrayList<>();
+        this.auth.teamSwiss(teamId, new Auth.AuthResponseHandler() {
+            @Override
+            public void onResponse(JsonObject jsonObject) {
+                tournaments.add((new Gson()).fromJson(jsonObject, SwissTournament.class));
+            }
+
+            @Override
+            public void onClose(boolean success) {
+                Log.d(TAG, "fetchTeamSwiss closed " + success + " count " + tournaments.size());
+                if (apiListener != null) {
+                    apiListener.onSwissList(tournaments);
+                }
+            }
+        });
+    }
+
+    public void fetchSwissDetail(String id) {
+        this.auth.swissInfo(id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                final SwissTournament tournament = (new Gson()).fromJson(result, SwissTournament.class);
+                final List<SwissStanding> standings = new ArrayList<>();
+                auth.swissResults(id, new Auth.AuthResponseHandler() {
+                    @Override
+                    public void onResponse(JsonObject jsonObject) {
+                        standings.add((new Gson()).fromJson(jsonObject, SwissStanding.class));
+                    }
+
+                    @Override
+                    public void onClose(boolean success) {
+                        if (apiListener != null) {
+                            apiListener.onSwissDetail(tournament, standings);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "fetchSwissDetail onError " + e);
+                if (apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void joinSwiss(String id, String password) {
+        Map<String, Object> body = new HashMap<>();
+        if (password != null && !password.isEmpty()) {
+            body.put("password", password);
+        }
+        this.auth.joinSwiss(id, body.isEmpty() ? null : body, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "joinSwiss success " + id);
+                if (apiListener != null) {
+                    apiListener.onSwissJoined(id);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "joinSwiss onError " + e);
+                if (!handleScopeError(e) && apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void withdrawSwiss(String id) {
+        this.auth.withdrawSwiss(id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "withdrawSwiss success " + id);
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "withdrawSwiss onError " + e);
+                if (!handleScopeError(e) && apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
     }
 
     public void cancelChallenge() {
