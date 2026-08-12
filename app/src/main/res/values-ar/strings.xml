@@ -455,4 +455,17 @@
     <string name="lichess_puzzle_angle">الموضوع</string>
     <string name="lichess_puzzle_solved_rated">تم حل اللغز! التقييم %1$s</string>
     <string name="lichess_puzzle_solved_hint_rated">تم الحل مع أخطاء. التقييم %1$s</string>
+    <string name="hotspot_connection_settings">إعدادات الاتصال</string>
+    <string name="hotspot_client">العميل</string>
+    <string name="hotspot_copy_ip">نسخ عنوان IP</string>
+    <string name="hotspot_copy_ip_success">تم نسخ عنوان IP إلى الحافظة</string>
+    <string name="hotspot_disconnect">قطع الاتصال</string>
+    <string name="hotspot_local_wifi_share_host_help">شارك عنوان IP الخاص بهذا الجهاز مع المراقبين على شبكة Wi-Fi المحلية نفسها.</string>
+    <string name="hotspot_share">مشاركة</string>
+    <string name="hotspot_share_host_help">فعّل المضيف والمشاركة لبث رقعة الشطرنج هذه للمراقبين.</string>
+    <string name="hotspot_status_observer_connected_host">تم اتصال مراقب.</string>
+    <string name="hotspot_status_observing">المشاهدة</string>
+    <string name="hotspot_status_waiting_observer">في انتظار اتصال المراقبين</string>
+    <string name="hotspot_start_hosting">بدء الاستضافة</string>
+    <string name="hotspot_stop_share">إيقاف المشاركة</string>
 </resources>
