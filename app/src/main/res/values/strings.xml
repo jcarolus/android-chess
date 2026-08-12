@@ -490,7 +490,8 @@
     <string name="lichess_team_join">Join team</string>
     <string name="lichess_team_leave">Leave team</string>
     <string name="lichess_team_members">%1$d members</string>
-    <string name="lichess_swiss_row_info">%1$s · %2$d players</string>
+    <string name="lichess_swiss_players">%1$d players</string>
+    <string name="lichess_swiss_starts_at">starts %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · round %2$d/%3$d · %4$d players</string>
     <string name="lichess_swiss_no_teams">You are not in any team yet. Tap \"All teams\" to find one to join.</string>
     <string name="lichess_swiss_no_tournaments">This team has no Swiss tournaments.</string>

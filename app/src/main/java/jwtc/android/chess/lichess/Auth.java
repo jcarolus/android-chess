@@ -240,11 +240,11 @@ public class Auth {
         post("/api/team/" + teamId + "/quit", null, callback);
     }
 
-    public void teamSwiss(String teamId, AuthResponseHandler responseHandler) {
+    public void teamSwiss(String teamId, String status, AuthResponseHandler responseHandler) {
         if (swissListStream != null) {
             swissListStream.close();
         }
-        swissListStream = openStream("/api/team/" + teamId + "/swiss?max=50", null, new NdJsonStream.Handler() {
+        swissListStream = openStream("/api/team/" + teamId + "/swiss?status=" + status, null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 mainHandler.post(() -> {
@@ -255,8 +255,11 @@ public class Auth {
             @Override
             public void onClose(boolean success) {
                 mainHandler.post(() -> {
-                    responseHandler.onClose(success);
+                    // Clear the reference to this (now finished) stream first, so that if
+                    // responseHandler.onClose() chains a new stream into swissListStream
+                    // (as fetchTeamSwiss does), that reference survives and stays cancellable.
                     swissListStream = null;
+                    responseHandler.onClose(success);
                 });
             }
         });

@@ -28,12 +28,18 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -602,16 +608,35 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onSwissList(List<SwissTournament> tournaments) {
-        swissTournaments = tournaments;
+        // Show ongoing and upcoming tournaments (the request already caps the count).
+        List<SwissTournament> visible = new ArrayList<>(tournaments);
+        // Order: ongoing first, then by start time (soonest first).
+        Collections.sort(visible, (a, b) -> {
+            int rankA = "started".equals(a.status) ? 0 : 1;
+            int rankB = "started".equals(b.status) ? 0 : 1;
+            if (rankA != rankB) {
+                return rankA - rankB;
+            }
+            return Long.compare(parseIsoToMillis(a.startsAt), parseIsoToMillis(b.startsAt));
+        });
+        swissTournaments = visible;
         mapSwissList.clear();
-        for (SwissTournament t : tournaments) {
+        for (SwissTournament t : visible) {
             HashMap<String, String> row = new HashMap<>();
             row.put("text_swiss_name", t.name != null ? t.name : t.id);
-            row.put("text_swiss_info", getString(R.string.lichess_swiss_row_info, swissStatusLabel(t.status), t.nbPlayers));
+            StringBuilder info = new StringBuilder(swissStatusLabel(t.status));
+            if ("created".equals(t.status)) {
+                String startsAt = swissStartTime(t.startsAt);
+                if (startsAt != null) {
+                    info.append(" · ").append(startsAt);
+                }
+            }
+            info.append(" · ").append(getString(R.string.lichess_swiss_players, t.nbPlayers));
+            row.put("text_swiss_info", info.toString());
             mapSwissList.add(row);
         }
         adapterSwissList.notifyDataSetChanged();
-        textViewSwissListStatus.setText(tournaments.isEmpty()
+        textViewSwissListStatus.setText(visible.isEmpty()
             ? getString(R.string.lichess_swiss_no_tournaments) : "");
     }
 
@@ -970,6 +995,37 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             return getString(R.string.lichess_swiss_status_finished);
         }
         return status != null ? status : "";
+    }
+
+    private static final String[] ISO_DATE_PATTERNS = {
+        "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    };
+
+    private long parseIsoToMillis(String iso) {
+        if (iso == null || iso.isEmpty()) {
+            return -1;
+        }
+        for (String pattern : ISO_DATE_PATTERNS) {
+            try {
+                SimpleDateFormat fmt = new SimpleDateFormat(pattern, Locale.US);
+                fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+                return fmt.parse(iso).getTime();
+            } catch (ParseException ignore) {
+                // try next pattern
+            }
+        }
+        return -1;
+    }
+
+    /** Local start time (e.g. "starts 23:30") for a tournament, or null if unknown. */
+    private String swissStartTime(String startsAt) {
+        long startMs = parseIsoToMillis(startsAt);
+        if (startMs <= 0) {
+            return null;
+        }
+        java.text.DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(this);
+        return getString(R.string.lichess_swiss_starts_at, timeFormat.format(new Date(startMs)));
     }
 
     private boolean isSwissVisible() {

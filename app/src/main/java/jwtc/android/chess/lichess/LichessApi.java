@@ -570,8 +570,9 @@ public class LichessApi extends GameApi {
     }
 
     public void fetchTeamSwiss(String teamId) {
+        // Two sequential calls (streams share one slot in Auth): ongoing first, then upcoming.
         final List<SwissTournament> tournaments = new ArrayList<>();
-        this.auth.teamSwiss(teamId, new Auth.AuthResponseHandler() {
+        this.auth.teamSwiss(teamId, "started", new Auth.AuthResponseHandler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 tournaments.add((new Gson()).fromJson(jsonObject, SwissTournament.class));
@@ -579,10 +580,21 @@ public class LichessApi extends GameApi {
 
             @Override
             public void onClose(boolean success) {
-                Log.d(TAG, "fetchTeamSwiss closed " + success + " count " + tournaments.size());
-                if (apiListener != null) {
-                    apiListener.onSwissList(tournaments);
-                }
+                Log.d(TAG, "fetchTeamSwiss started closed " + success + " count " + tournaments.size());
+                auth.teamSwiss(teamId, "created", new Auth.AuthResponseHandler() {
+                    @Override
+                    public void onResponse(JsonObject jsonObject) {
+                        tournaments.add((new Gson()).fromJson(jsonObject, SwissTournament.class));
+                    }
+
+                    @Override
+                    public void onClose(boolean success) {
+                        Log.d(TAG, "fetchTeamSwiss created closed " + success + " count " + tournaments.size());
+                        if (apiListener != null) {
+                            apiListener.onSwissList(tournaments);
+                        }
+                    }
+                });
             }
         });
     }
