@@ -84,6 +84,12 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumHouse(JNIEnv* env, jobject thiz,
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setNumHouse(JNIEnv* env, jobject thiz, jint turn, jint piece, jint num);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_searchMoveHouse(JNIEnv* env, jobject thiz, jint secs);
 
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_scratchSyncFromCurrent(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_scratchMove(JNIEnv* env, jobject thiz, jint move);
+JNIEXPORT BITBOARD JNICALL Java_jwtc_chess_JNI_scratchGetHashKey(JNIEnv* env, jobject thiz);
+JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_scratchGetMyMoveToString(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_scratchUndo(JNIEnv* env, jobject thiz);
+
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEvalPropertyCount(JNIEnv* env, jobject thiz);
 JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_getEvalPropertyName(JNIEnv* env, jobject thiz, jint iProp);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEvalPropertyValue(JNIEnv* env, jobject thiz, jint iProp);

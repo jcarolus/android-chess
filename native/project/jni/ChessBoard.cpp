@@ -1167,6 +1167,14 @@ void ChessBoard::duplicate(ChessBoard* ret) {
     memcpy(ret, this, SIZEOF_BOARD);
 }
 
+// Detach this board into the root of its own history. duplicate() is a memcpy
+// that also copies m_parent (pointing into the source's chain); makeRoot severs
+// that link so the board owns an independent history.
+void ChessBoard::makeRoot() {
+    m_parent = nullptr;
+    m_myMove = 0;
+}
+
 // convinient method to return pointer to first board
 ChessBoard* ChessBoard::getFirstBoard() {
     ChessBoard* ret = this;

@@ -282,6 +282,9 @@ class ChessBoard {
     void reset();
     void commitBoard();
     void duplicate(ChessBoard* ret);
+    // Make this board the root of its own history (used after duplicate() to
+    // detach a clone from the source board's parent chain).
+    void makeRoot();
     ChessBoard* getFirstBoard();
 
     BITBOARD knightAttacks(const int turn, BITBOARD bb);

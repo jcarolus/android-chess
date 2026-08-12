@@ -1,7 +1,17 @@
 #include "chess-jni.hpp"
 
+#include <memory>
+
+#include "BoardStack.h"
+
 static JavaVM* jvm;
 static jint stArrMoves[ChessBoard::MAX_MOVES];
+
+// Scratch board stack, fully separate from the live game board (Game/BoardStack).
+// Used by EcoService to probe candidate moves (apply, read hash, undo) without
+// ever touching the live m_current. Single-threaded use (EcoService, UI thread).
+static BoardStack g_scratchStack;
+static ChessBoard g_scratchTmp;  // workspace for requestMove's calcState
 
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_destroy(JNIEnv* env, jobject thiz) {
     Game::deleteInstance();
@@ -227,6 +237,40 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_interrupt(JNIEnv* env, jobject thiz) 
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumCaptured(JNIEnv* env, jobject thiz, jint turn, jint piece) {
     return Game::getInstance()->getBoard()->getNumCaptured(turn, piece);
+}
+
+// Scratch board: a clone of the live board with its own move stack, so callers
+// (EcoService) can apply/undo candidate moves and read hashes without mutating
+// the live game board.
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_scratchSyncFromCurrent(JNIEnv* env, jobject thiz) {
+    g_scratchStack.clearHistory();
+    Game::getInstance()->getBoard()->duplicate(g_scratchStack.current());
+    g_scratchStack.current()->makeRoot();  // detach from the live history chain
+    g_scratchStack.current()->getMoves();  // generate legal moves for requestMove / SAN
+}
+
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_scratchMove(JNIEnv* env, jobject thiz, jint move) {
+    std::unique_ptr<ChessBoard> nb(new ChessBoard());
+    ChessBoard* cur = g_scratchStack.current();
+    boolean moved = cur->requestMove(move, nb.get(), &g_scratchTmp);
+    if (moved) {
+        nb->getMoves();  // ready the new node for deeper probing / SAN disambiguation
+    }
+    return (int) g_scratchStack.promoteOrDiscard(std::move(nb), moved);
+}
+
+JNIEXPORT BITBOARD JNICALL Java_jwtc_chess_JNI_scratchGetHashKey(JNIEnv* env, jobject thiz) {
+    return g_scratchStack.current()->getHashKey();
+}
+
+JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_scratchGetMyMoveToString(JNIEnv* env, jobject thiz) {
+    char buf[20];
+    g_scratchStack.current()->myMoveToString(buf);
+    return env->NewStringUTF(buf);
+}
+
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_scratchUndo(JNIEnv* env, jobject thiz) {
+    return (int) g_scratchStack.undo();
 }
 
 // Evaluation settings stuff

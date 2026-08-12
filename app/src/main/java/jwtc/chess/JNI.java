@@ -335,6 +335,19 @@ public class JNI {
 
     public native int getNumCaptured(int turn, int piece);
 
+    // Scratch board: a clone of the current board with its own move stack, for
+    // probing candidate moves (apply / read hash / undo) without touching the
+    // live game board. See EcoService.
+    public native void scratchSyncFromCurrent();
+
+    public native int scratchMove(int move);
+
+    public native long scratchGetHashKey();
+
+    public native String scratchGetMyMoveToString();
+
+    public native int scratchUndo();
+
     static {
         System.loadLibrary("chess-jni");
     }
