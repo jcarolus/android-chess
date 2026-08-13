@@ -456,6 +456,7 @@
     <string name="pref_speech_voice">Lingua/Voce</string>
     <string name="title_pick_engine">Motore</string>
     <string name="lichess_lobby_button_puzzle">Puzzle</string>
+    <string name="lichess_lobby_button_teams">Squadre</string>
     <string name="lichess_puzzle_title">Ottieni puzzle</string>
     <string name="lichess_puzzle_difficulty">Difficoltà</string>
     <string name="lichess_puzzle_angle">Tema</string>

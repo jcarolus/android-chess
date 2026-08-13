@@ -476,7 +476,7 @@
     <string name="lichess_puzzle_angle">موضوع</string>
     <string name="lichess_puzzle_solved_rated">پازل حل شد! ریتینگ %1$s</string>
     <string name="lichess_puzzle_solved_hint_rated">با اشتباه حل شد. ریتینگ %1$s</string>
-    <string name="lichess_lobby_button_swiss">سوئیسی</string>
+    <string name="lichess_lobby_button_teams">تیم‌ها</string>
     <string name="lichess_swiss_title">برای دیدن تورنمنت‌های سوئیسی یک تیم انتخاب کنید</string>
     <string name="lichess_swiss_my_teams">تیم‌های من</string>
     <string name="lichess_swiss_all_teams">همه‌ی تیم‌ها</string>

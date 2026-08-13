@@ -456,6 +456,7 @@
     <string name="pref_speech_voice">Язык/Голос</string>
     <string name="title_pick_engine">Движок</string>
     <string name="lichess_lobby_button_puzzle">Задача</string>
+    <string name="lichess_lobby_button_teams">Команды</string>
     <string name="lichess_puzzle_title">Получить задачу</string>
     <string name="lichess_puzzle_difficulty">Сложность</string>
     <string name="lichess_puzzle_angle">Тема</string>

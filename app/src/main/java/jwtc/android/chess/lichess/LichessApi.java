@@ -41,6 +41,7 @@ import jwtc.chess.board.BoardConstants;
 public class LichessApi extends GameApi {
     private static final String TAG = "LichessApi";
     private static final String PUZZLE_ANGLE_DEFAULT = "mix";
+    public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_PUZZLE = 2;
 
     public interface LichessApiListener {
         void onAuthenticate(String user);
@@ -833,6 +834,20 @@ public class LichessApi extends GameApi {
 
     public String getPuzzleId() {
         return ongoingPuzzle != null ? ongoingPuzzle.puzzle.id : "";
+    }
+
+    public int getViewMode() {
+        if (ongoingPuzzle != null) {
+            return VIEW_PUZZLE;
+        }
+        if (ongoingGameFull != null) {
+            return VIEW_PLAY;
+        }
+        return VIEW_NONE;
+    }
+
+    public String getOngoingGameId() {
+        return ongoingGameFull != null ? ongoingGameFull.id : null;
     }
 
     public int getMyTurn() {

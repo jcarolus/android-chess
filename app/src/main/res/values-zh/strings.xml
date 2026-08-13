@@ -456,6 +456,7 @@
     <string name="pref_speech_voice">语言/语音</string>
     <string name="title_pick_engine">引擎</string>
     <string name="lichess_lobby_button_puzzle">谜题</string>
+    <string name="lichess_lobby_button_teams">团队</string>
     <string name="lichess_puzzle_title">获取谜题</string>
     <string name="lichess_puzzle_difficulty">难度</string>
     <string name="lichess_puzzle_angle">主题</string>

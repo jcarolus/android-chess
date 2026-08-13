@@ -476,7 +476,7 @@
     <string name="lichess_puzzle_angle">Theme</string>
     <string name="lichess_puzzle_solved_rated">Puzzle solved! Rating %1$s</string>
     <string name="lichess_puzzle_solved_hint_rated">Solved with mistakes. Rating %1$s</string>
-    <string name="lichess_lobby_button_swiss">Swiss</string>
+    <string name="lichess_lobby_button_teams">Teams</string>
     <string name="lichess_swiss_title">Pick a team to see its Swiss tournaments</string>
     <string name="lichess_swiss_my_teams">My teams</string>
     <string name="lichess_swiss_all_teams">All teams</string>

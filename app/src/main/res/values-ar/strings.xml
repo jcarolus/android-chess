@@ -449,6 +449,7 @@
     <string name="toast_challenge_posted">تم نشر التحدي</string>
     <string name="lichess_service_unavailable">تعذر بدء خدمة Lichess. الرجاء المحاولة مرة أخرى.</string>
     <string name="lichess_lobby_button_puzzle">لغز</string>
+    <string name="lichess_lobby_button_teams">فرق</string>
     <string name="lichess_puzzle_title">احصل على لغز</string>
     <string name="lichess_challenge_rated">بتقييم</string>
     <string name="lichess_puzzle_difficulty">الصعوبة</string>

@@ -456,6 +456,7 @@
     <string name="pref_speech_voice">Dil/Ses</string>
     <string name="title_pick_engine">Motor</string>
     <string name="lichess_lobby_button_puzzle">Bulmaca</string>
+    <string name="lichess_lobby_button_teams">Takımlar</string>
     <string name="lichess_puzzle_title">Bulmaca al</string>
     <string name="lichess_puzzle_difficulty">Zorluk</string>
     <string name="lichess_puzzle_angle">Tema</string>

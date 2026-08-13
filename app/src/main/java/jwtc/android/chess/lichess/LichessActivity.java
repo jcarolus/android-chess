@@ -81,7 +81,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private TextView textViewLastMove, textViewStatus, textViewOfferDraw;
     private TextView textViewLobbyStatus;
     private TextView textViewHandle;
-    private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove, buttonPuzzle, buttonSwiss;
+    private MaterialButton buttonDraw, buttonResign, buttonSeek, buttonChallenge, buttonConfirmMove, buttonPuzzle, buttonTeams;
     private MaterialButton buttonPuzzleShow, buttonPuzzleNext, buttonPuzzleRetry;
     private ListView listViewGames;
     private SimpleAdapter adapterGames;
@@ -176,8 +176,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonPuzzle = findViewById(R.id.ButtonPuzzle);
         buttonPuzzle.setOnClickListener(v -> openPuzzleDialog());
 
-        buttonSwiss = findViewById(R.id.ButtonSwiss);
-        buttonSwiss.setOnClickListener(v -> openSwiss());
+        buttonTeams = findViewById(R.id.ButtonTeams);
+        buttonTeams.setOnClickListener(v -> openSwiss());
 
         buttonResign = findViewById(R.id.ButtonResign);
         buttonResign.setOnClickListener(v -> {
@@ -291,8 +291,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
         layoutConfirm.setVisibility(View.GONE);
         layoutSave.setVisibility(View.GONE);
-        layoutResignDraw.setVisibility(View.VISIBLE);
-        layoutPuzzleControls.setVisibility(View.GONE);
+        boolean puzzleActive = viewAnimatorSub.getDisplayedChild() == VIEW_SUB_PLAY
+            && lichessApi.getViewMode() == LichessApi.VIEW_PUZZLE;
+        layoutResignDraw.setVisibility(puzzleActive ? View.GONE : View.VISIBLE);
+        layoutPuzzleControls.setVisibility(puzzleActive ? View.VISIBLE : View.GONE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
         startLobbyRefreshLoop();
     }
@@ -365,7 +367,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         if (user != null) {
             textViewHandle.setText(user);
             lichessApi.event();
-            displayLobby();
+            restoreView();
         } else {
             displayLogin();
         }
@@ -784,6 +786,39 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         stopLobbyRefreshLoop();
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_PLAY);
+    }
+
+    /**
+     * Re-show whatever view was active before an interruption. The activity (and thus
+     * viewAnimator children, adapters and LichessApi state) survives a background/resume,
+     * so we key off the currently displayed view and only use the API mode to tell a
+     * puzzle apart from a game within the board view.
+     */
+    private void restoreView() {
+        // Fresh login / not yet inside the sub views → default to lobby.
+        if (viewAnimatorRoot.getDisplayedChild() != VIEW_ROOT_SUB) {
+            displayLobby();
+            return;
+        }
+        int sub = viewAnimatorSub.getDisplayedChild();
+        if (sub == VIEW_SUB_SWISS) {
+            // Swiss navigation and list adapters survived the interruption; keep the view.
+            return;
+        }
+        if (sub == VIEW_SUB_PLAY) {
+            int mode = lichessApi.getViewMode();
+            if (mode == LichessApi.VIEW_PUZZLE) {
+                displayPuzzle();
+                rebuildBoard();
+                return;
+            }
+            String gameId = lichessApi.getOngoingGameId();
+            if (mode == LichessApi.VIEW_PLAY && gameId != null) {
+                openGame(gameId);
+                return;
+            }
+        }
+        displayLobby();
     }
 
     private boolean isLobbyVisible() {
