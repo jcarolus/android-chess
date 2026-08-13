@@ -37,6 +37,13 @@
             android:layout_margin="8dip"
             android:text="@string/pref_field_color_descriptions" />
 
+        <CheckBox
+            android:id="@+id/CheckBoxLastMoveInterruptsSpeech"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip"
+            android:text="@string/pref_last_move_interrupts_speech" />
+
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
