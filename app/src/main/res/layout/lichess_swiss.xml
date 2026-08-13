@@ -147,6 +147,37 @@
             android:layout_marginTop="8dip"
             android:text="@string/lichess_swiss_tournaments" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_status_created"
+                android:id="@+id/ButtonSwissFilterCreated"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_status_started"
+                android:id="@+id/ButtonSwissFilterStarted"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_status_finished"
+                android:id="@+id/ButtonSwissFilterFinished"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/TextViewSwissListStatus"
             android:layout_width="match_parent"

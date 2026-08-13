@@ -570,10 +570,11 @@ public class LichessApi extends GameApi {
         });
     }
 
-    public void fetchTeamSwiss(String teamId) {
-        // Two sequential calls (streams share one slot in Auth): ongoing first, then upcoming.
+    public void fetchTeamSwiss(String teamId, String status) {
+        // Single-status fetch. Auth.teamSwiss cancels any in-flight stream, so switching
+        // the status filter safely aborts a pending request.
         final List<SwissTournament> tournaments = new ArrayList<>();
-        this.auth.teamSwiss(teamId, "started", new Auth.AuthResponseHandler() {
+        this.auth.teamSwiss(teamId, status, new Auth.AuthResponseHandler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 tournaments.add((new Gson()).fromJson(jsonObject, SwissTournament.class));
@@ -581,21 +582,10 @@ public class LichessApi extends GameApi {
 
             @Override
             public void onClose(boolean success) {
-                Log.d(TAG, "fetchTeamSwiss started closed " + success + " count " + tournaments.size());
-                auth.teamSwiss(teamId, "created", new Auth.AuthResponseHandler() {
-                    @Override
-                    public void onResponse(JsonObject jsonObject) {
-                        tournaments.add((new Gson()).fromJson(jsonObject, SwissTournament.class));
-                    }
-
-                    @Override
-                    public void onClose(boolean success) {
-                        Log.d(TAG, "fetchTeamSwiss created closed " + success + " count " + tournaments.size());
-                        if (apiListener != null) {
-                            apiListener.onSwissList(tournaments);
-                        }
-                    }
-                });
+                Log.d(TAG, "fetchTeamSwiss " + status + " closed " + success + " count " + tournaments.size());
+                if (apiListener != null) {
+                    apiListener.onSwissList(tournaments);
+                }
             }
         });
     }
@@ -848,6 +838,11 @@ public class LichessApi extends GameApi {
 
     public String getOngoingGameId() {
         return ongoingGameFull != null ? ongoingGameFull.id : null;
+    }
+
+    public boolean isOngoingGameInProgress() {
+        return ongoingGameFull != null && ongoingGameFull.state != null
+            && "started".equals(ongoingGameFull.state.status);
     }
 
     public int getMyTurn() {

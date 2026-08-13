@@ -97,6 +97,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private List<SwissTournament> swissTournaments = new ArrayList<>();
     private final Set<String> myTeamIds = new HashSet<>();
     private MaterialButton buttonSwissMyTeams, buttonSwissAllTeams, buttonSwissSearch, buttonSwissPrevPage, buttonSwissNextPage, buttonTeamJoinLeave;
+    private MaterialButton buttonSwissFilterCreated, buttonSwissFilterStarted, buttonSwissFilterFinished;
+    private String swissStatusFilter = "started";
     private EditText editTextTeamSearch;
     private LinearLayout layoutSwissPaging;
     private TextView textViewSwissTeamsStatus, textViewSwissTeamName, textViewSwissListStatus, textViewSwissName, textViewSwissInfo, textViewSwissPage;
@@ -109,6 +111,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     private ArrayList<HashMap<String, String>> mapGames = new ArrayList<HashMap<String, String>>();
     private List<Game> nowPlayingGames;
+    private final Set<String> autoOpenedGameIds = new HashSet<>();
     private Intent pendingData;
     private boolean serviceConnected = false;
     private boolean serviceBound = false;
@@ -378,6 +381,29 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     @Override
     public void onGameInit(String gameId) {
         lichessApi.playing();
+        if (shouldAutoOpen(gameId)) {
+            autoOpenedGameIds.add(gameId);
+            openGame(gameId);
+        }
+    }
+
+    // A gameStart event fires when a round pairs us (swiss/arena), a seek matches, or a challenge is
+    // accepted. Auto-open the board for it, but the event stream also re-emits gameStart for every
+    // ongoing game whenever it (re)connects, so guard against hijacking or duplicating the view.
+    private boolean shouldAutoOpen(String gameId) {
+        if (gameId == null || autoOpenedGameIds.contains(gameId)) {
+            return false;
+        }
+        // Don't interrupt a puzzle in progress.
+        if (lichessApi.getViewMode() == LichessApi.VIEW_PUZZLE) {
+            return false;
+        }
+        // Don't yank the user out of a game they're still playing (a finished game is fine to leave,
+        // e.g. finishing round N and getting paired for round N+1).
+        if (lichessApi.isOngoingGameInProgress() && !gameId.equals(lichessApi.getOngoingGameId())) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -596,7 +622,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         Toast.makeText(this, getString(R.string.lichess_team_joined,
             currentTeam != null && currentTeam.name != null ? currentTeam.name : teamId), Toast.LENGTH_SHORT).show();
         refreshTeamJoinLeaveButton();
-        lichessApi.fetchTeamSwiss(teamId);
+        lichessApi.fetchTeamSwiss(teamId, swissStatusFilter);
     }
 
     @Override
@@ -612,7 +638,10 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     @Override
     public void onSwissList(List<SwissTournament> tournaments) {
-        // Show ongoing and upcoming tournaments (the request already caps the count).
+        if (currentTeam == null) {
+            return;
+        }
+        // Single-status list for the active filter; order by start time (ongoing sort is a no-op here).
         List<SwissTournament> visible = new ArrayList<>(tournaments);
         // Order: ongoing first, then by start time (soonest first).
         Collections.sort(visible, (a, b) -> {
@@ -901,6 +930,13 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonTeamJoinLeave = findViewById(R.id.ButtonTeamJoinLeave);
         buttonTeamJoinLeave.setOnClickListener(v -> onTeamJoinLeaveClicked());
 
+        buttonSwissFilterCreated = findViewById(R.id.ButtonSwissFilterCreated);
+        buttonSwissFilterCreated.setOnClickListener(v -> showSwissStatus("created"));
+        buttonSwissFilterStarted = findViewById(R.id.ButtonSwissFilterStarted);
+        buttonSwissFilterStarted.setOnClickListener(v -> showSwissStatus("started"));
+        buttonSwissFilterFinished = findViewById(R.id.ButtonSwissFilterFinished);
+        buttonSwissFilterFinished.setOnClickListener(v -> showSwissStatus("finished"));
+
         findViewById(R.id.ButtonSwissTeamsBack).setOnClickListener(v -> displayLobby());
         findViewById(R.id.ButtonSwissListBack).setOnClickListener(v -> viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_TEAMS));
         findViewById(R.id.ButtonSwissDetailBack).setOnClickListener(v -> viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_LIST));
@@ -992,7 +1028,20 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         adapterSwissList.notifyDataSetChanged();
         refreshTeamJoinLeaveButton();
         viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_LIST);
-        lichessApi.fetchTeamSwiss(team.id);
+        showSwissStatus("started");
+    }
+
+    private void showSwissStatus(String status) {
+        swissStatusFilter = status;
+        buttonSwissFilterCreated.setChecked("created".equals(status));
+        buttonSwissFilterStarted.setChecked("started".equals(status));
+        buttonSwissFilterFinished.setChecked("finished".equals(status));
+        mapSwissList.clear();
+        adapterSwissList.notifyDataSetChanged();
+        textViewSwissListStatus.setText("");
+        if (currentTeam != null) {
+            lichessApi.fetchTeamSwiss(currentTeam.id, status);
+        }
     }
 
     private boolean isMemberOfCurrentTeam() {

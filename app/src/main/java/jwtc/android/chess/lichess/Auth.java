@@ -350,7 +350,11 @@ public class Auth {
         if (gameStream != null) {
             gameStream.close();
         }
-        gameStream = openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
+        // Track this stream's identity so that when it is deliberately replaced by a later game()
+        // call, the resulting (cancelled) onClose is ignored instead of being reported as a
+        // disconnect that would bounce the user back to the lobby.
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] = openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 String type = jsonObject.get("type").getAsString();
@@ -364,11 +368,16 @@ public class Auth {
             @Override
             public void onClose(boolean sucess) {
                 mainHandler.post(() -> {
+                    if (gameStream != self[0]) {
+                        // Superseded by a newer game stream; this close is intentional.
+                        return;
+                    }
                     responseHandler.onClose(sucess);
                     gameStream = null;
                 });
             }
         });
+        gameStream = self[0];
     }
 
     public void move(String gameId, String move, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
