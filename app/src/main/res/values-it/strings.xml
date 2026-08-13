@@ -312,7 +312,7 @@
     <string name="pref_icstimewarningsecs">Soglia di avviso (sec)</string>
     <string name="pref_icstimewarningsecs_desc">Quanti secondi prima inizia l’avviso?</string>
     <string name="pref_last_move_over_empty_square">Annuncia l`ultima mossa quando trascini su una casella vuota dopo un ritardo</string>
-    <string name="pref_last_move_interrupts_speech">L`ultima mossa interrompe la voce corrente</string>
+    <string name="pref_protect_last_move_speech">Non interrompere l\'annuncio dell\'ultima mossa</string>
     <string name="pref_minimal">Controlli minimi</string>
     <string name="pref_night_mode">Modalità notturna</string>
     <string name="pref_night_mode_desc">Forza l’app in modalità notte</string>
@@ -461,4 +461,7 @@
     <string name="lichess_puzzle_title">Ottieni puzzle</string>
     <string name="lichess_puzzle_difficulty">Difficoltà</string>
     <string name="lichess_puzzle_angle">Tema</string>
+    <string name="lichess_team_search">Cerca</string>
+    <string name="lichess_team_search_hint">Cerca squadre…</string>
+    <string name="lichess_team_search_results">Ricerca: %1$s</string>
 </resources>

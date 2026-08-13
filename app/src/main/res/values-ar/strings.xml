@@ -326,7 +326,7 @@
     <string name="pref_icstimewarningsecs">مبلغ تحذير الوقت (ثوان)</string>
     <string name="pref_icstimewarningsecs_desc">كم ثانية حتى يبدأ تحذير الوقت؟</string>
     <string name="pref_last_move_over_empty_square">الإعلان عن النقلة الأخيرة عند السحب فوق مربع فارغ بعد تأخير</string>
-    <string name="pref_last_move_interrupts_speech">النقلة الأخيرة تقاطع النطق الحالي</string>
+    <string name="pref_protect_last_move_speech">عدم مقاطعة نطق النقلة الأخيرة</string>
     <string name="pref_minimal">أدوات تحكم بسيطة</string>
     <string name="pref_night_mode">الوضع الليلي</string>
     <string name="pref_night_mode_desc">فرض التطبيق على الوضع الليلي</string>
@@ -470,4 +470,7 @@
     <string name="hotspot_status_waiting_observer">في انتظار اتصال المراقبين</string>
     <string name="hotspot_start_hosting">بدء الاستضافة</string>
     <string name="hotspot_stop_share">إيقاف المشاركة</string>
+    <string name="lichess_team_search">بحث</string>
+    <string name="lichess_team_search_hint">ابحث عن الفرق…</string>
+    <string name="lichess_team_search_results">بحث: %1$s</string>
 </resources>

@@ -23,7 +23,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class AccessibilityPreferences extends ChessBoardActivity {
     private static final String TAG = "AccessibilityPreferences";
-    private CheckBox checkBoxShowPiecesDescriptions, checkBoxShowAccessibilityDrag, checkBoxFieldColorDescriptions, checkBoxLastMoveWhenOverEmptySquare, checkBoxUseLongMoveDescriptions, checkBoxIncludeAttackersAndDefenders;
+    private CheckBox checkBoxShowPiecesDescriptions, checkBoxShowAccessibilityDrag, checkBoxFieldColorDescriptions, checkBoxLastMoveWhenOverEmptySquare, checkBoxUseLongMoveDescriptions, checkBoxIncludeAttackersAndDefenders, checkBoxProtectLastMoveSpeech;
     private Slider sliderSpeechRate, sliderSpeechPitch, sliderAccessibilityDelay, sliderAccessibilityLastMoveDelay;
     private FixedDropdownView dropDownSpeechVoice, dropDownSpeechEngine;
     private final ArrayList<String> speechVoiceNames = new ArrayList<>();
@@ -43,6 +43,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         checkBoxLastMoveWhenOverEmptySquare = findViewById(R.id.CheckBoxLastMoveWhenOverEmptySquare);
         checkBoxUseLongMoveDescriptions = findViewById(R.id.CheckBoxUseLongMoveDescriptions);
         checkBoxIncludeAttackersAndDefenders = findViewById(R.id.CheckBoxIncludeAttackersAndDefendersDescriptions);
+        checkBoxProtectLastMoveSpeech = findViewById(R.id.CheckBoxProtectLastMoveSpeech);
         sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
         sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
         sliderAccessibilityDelay = findViewById(R.id.SliderAccessibilityDragDelay);
@@ -136,6 +137,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         checkBoxLastMoveWhenOverEmptySquare.setChecked(prefs.getBoolean("announce_last_move_when_over_empty_square", false));
         checkBoxUseLongMoveDescriptions.setChecked(prefs.getBoolean("use_long_move_description", false));
         checkBoxIncludeAttackersAndDefenders.setChecked(prefs.getBoolean("include_attackers_defenders_in_field_description", false));
+        checkBoxProtectLastMoveSpeech.setChecked(prefs.getBoolean("pref_protect_last_move_speech", false));
         useAccessibilityDrag = true;
         applySquareDragListeners();
 
@@ -159,6 +161,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         editor.putBoolean("announce_last_move_when_over_empty_square", checkBoxLastMoveWhenOverEmptySquare.isChecked());
         editor.putBoolean("use_long_move_description", checkBoxUseLongMoveDescriptions.isChecked());
         editor.putBoolean("include_attackers_defenders_in_field_description", checkBoxIncludeAttackersAndDefenders.isChecked());
+        editor.putBoolean("pref_protect_last_move_speech", checkBoxProtectLastMoveSpeech.isChecked());
 
         editor.putInt("accessibilityDragDelay", (int)sliderAccessibilityDelay.getValue());
         editor.putInt("accessibilityDragLastMoveDelay", (int)sliderAccessibilityLastMoveDelay.getValue());

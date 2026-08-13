@@ -495,8 +495,8 @@ public class LichessApi extends GameApi {
         });
     }
 
-    public void fetchAllTeams(int page) {
-        this.auth.allTeams(page, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+    public void fetchAllTeams(int page, String search) {
+        this.auth.allTeams(page, search, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
             @Override
             public void onSuccess(JsonObject result) {
                 try {

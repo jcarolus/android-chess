@@ -61,7 +61,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
     protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false, minimalControls = false;
-    protected boolean useAccessibilityDrag = false;
+    protected boolean useAccessibilityDrag = false, protectLastMoveSpeech = false;
     protected int accessibilityDragDwellMs = 300;
     protected int accessibilityDragLastMoveDelayMs = 1000;
     protected boolean fieldColorDescriptions = false;
@@ -137,7 +137,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         if (textToSpeech.isEnabled()) {
             String sMove = getLastMoveAndTurnDescription(true);
-            textToSpeech.doSpeak(sMove);
+            speakLastMove(sMove);
         }
     }
 
@@ -422,6 +422,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             textToSpeech.setEnabled(false, prefs);
         }
+        protectLastMoveSpeech = prefs.getBoolean("pref_protect_last_move_speech", false);
         fieldColorDescriptions = prefs.getBoolean("field_color_descriptions", false);
         announceLastMoveWhenOverEmptySquare = prefs.getBoolean("announce_last_move_when_over_empty_square", false);
         useLongMoveFormat = prefs.getBoolean("use_long_move_description", false);
@@ -1461,14 +1462,33 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void updateTextViewOrSpeech(TextView textView, String text) {
+        updateTextViewOrSpeech(textView, text, false);
+    }
+
+    protected void updateTextViewOrSpeech(TextView textView, String text, boolean protectSpeech) {
         String currentMessage = textView.getText().toString();
         if (!currentMessage.equals(text)) {
             textView.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
             textView.setText(text);
 
             if (textToSpeech.isEnabled() && !text.isEmpty()) {
-                textToSpeech.doSpeak(text);
+                if (protectSpeech) {
+                    speakLastMove(text);
+                } else {
+                    textToSpeech.doSpeak(text);
+                }
             }
+        }
+    }
+
+    // Speaks a last-move announcement. When the "protect last move speech"
+    // preference is on, the announcement is protected so later interrupting
+    // (QUEUE_FLUSH) speaks won't cut it off; otherwise it behaves as before.
+    protected void speakLastMove(String text) {
+        if (protectLastMoveSpeech) {
+            textToSpeech.doSpeakProtected(text);
+        } else {
+            textToSpeech.doSpeak(text);
         }
     }
 }

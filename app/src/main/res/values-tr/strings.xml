@@ -312,7 +312,7 @@
     <string name="pref_icstimewarningsecs">Uyarı süresi (sn)</string>
     <string name="pref_icstimewarningsecs_desc">Uyarı kaç saniye kala başlasın?</string>
     <string name="pref_last_move_over_empty_square">Boş bir karenin üzerinden sürüklerken gecikmeden sonra son hamleyi oku</string>
-    <string name="pref_last_move_interrupts_speech">Son hamle mevcut konuşmayı keser</string>
+    <string name="pref_protect_last_move_speech">Son hamle anonsunu kesme</string>
     <string name="pref_minimal">Minimal kontroller</string>
     <string name="pref_night_mode">Gece modu</string>
     <string name="pref_night_mode_desc">Uygulamayı gece modunda zorla</string>
@@ -461,4 +461,7 @@
     <string name="lichess_puzzle_title">Bulmaca al</string>
     <string name="lichess_puzzle_difficulty">Zorluk</string>
     <string name="lichess_puzzle_angle">Tema</string>
+    <string name="lichess_team_search">Ara</string>
+    <string name="lichess_team_search_hint">Takım ara…</string>
+    <string name="lichess_team_search_results">Arama: %1$s</string>
 </resources>

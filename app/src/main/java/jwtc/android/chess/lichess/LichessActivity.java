@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -95,7 +96,8 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private List<Team> swissTeams = new ArrayList<>();
     private List<SwissTournament> swissTournaments = new ArrayList<>();
     private final Set<String> myTeamIds = new HashSet<>();
-    private MaterialButton buttonSwissMyTeams, buttonSwissAllTeams, buttonSwissPrevPage, buttonSwissNextPage, buttonTeamJoinLeave;
+    private MaterialButton buttonSwissMyTeams, buttonSwissAllTeams, buttonSwissSearch, buttonSwissPrevPage, buttonSwissNextPage, buttonTeamJoinLeave;
+    private EditText editTextTeamSearch;
     private LinearLayout layoutSwissPaging;
     private TextView textViewSwissTeamsStatus, textViewSwissTeamName, textViewSwissListStatus, textViewSwissName, textViewSwissInfo, textViewSwissPage;
     private boolean showingAllTeams = false;
@@ -875,7 +877,21 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         buttonSwissMyTeams = findViewById(R.id.ButtonSwissMyTeams);
         buttonSwissMyTeams.setOnClickListener(v -> showMyTeams());
         buttonSwissAllTeams = findViewById(R.id.ButtonSwissAllTeams);
-        buttonSwissAllTeams.setOnClickListener(v -> showAllTeams(1));
+        buttonSwissAllTeams.setOnClickListener(v -> {
+            editTextTeamSearch.setText("");
+            showAllTeams(1);
+        });
+
+        editTextTeamSearch = findViewById(R.id.EditTextTeamSearch);
+        editTextTeamSearch.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                showAllTeams(1);
+                return true;
+            }
+            return false;
+        });
+        buttonSwissSearch = findViewById(R.id.ButtonSwissSearch);
+        buttonSwissSearch.setOnClickListener(v -> showAllTeams(1));
 
         buttonSwissPrevPage = findViewById(R.id.ButtonSwissPrevPage);
         buttonSwissPrevPage.setOnClickListener(v -> showAllTeams(allTeamsPage - 1));
@@ -949,8 +965,11 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         showingAllTeams = true;
         allTeamsPage = page;
         layoutSwissPaging.setVisibility(View.VISIBLE);
-        textViewSwissTeamsStatus.setText(R.string.lichess_swiss_all_teams);
-        lichessApi.fetchAllTeams(page);
+        String search = editTextTeamSearch.getText().toString().trim();
+        textViewSwissTeamsStatus.setText(search.isEmpty()
+            ? getString(R.string.lichess_swiss_all_teams)
+            : getString(R.string.lichess_team_search_results, search));
+        lichessApi.fetchAllTeams(page, search);
     }
 
     private void populateTeams(List<Team> teams) {
@@ -1105,7 +1124,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     protected void updateLastMoveDescription(String sMove) {
-        updateTextViewOrSpeech(textViewLastMove, sMove);
+        updateTextViewOrSpeech(textViewLastMove, sMove, true);
     }
 
     protected void handleActivityResult(Intent data) {

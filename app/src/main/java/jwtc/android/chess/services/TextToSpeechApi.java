@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.LocaleList;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
 import android.util.Log;
 
@@ -20,8 +21,11 @@ import java.util.Map;
 
 public class TextToSpeechApi implements TextToSpeech.OnInitListener {
     private static final String TAG = "TextToSpeechApi";
+    private static final String PROTECTED_PREFIX = "protected-";
     private final Context context;
     private TextToSpeech textToSpeech;
+    private volatile boolean protectedSpeaking = false;
+    private volatile String activeProtectedId = null;
     private SharedPreferences prefs;
     private final InitStateListener initStateListener;
     private final LocaleList appLocales;
@@ -104,8 +108,34 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         if (textToSpeech == null) {
             return;
         }
+        if (protectedSpeaking && queueMode == TextToSpeech.QUEUE_FLUSH) {
+            return;
+        }
         String id = "utt-" + System.nanoTime();
         this.textToSpeech.speak(sMoveSpeech, queueMode, null, id);
+    }
+
+    // Speaks protected announcement that must not be interrupted by later
+    // QUEUE_FLUSH speaks until it finishes. A newer protected speak still
+    // supersedes an older one (it flushes and re-arms the protected window).
+    public void doSpeakProtected(String sMoveSpeech) {
+        if (!enabled || !ready) {
+            return;
+        }
+        if (textToSpeech == null) {
+            return;
+        }
+        String id = PROTECTED_PREFIX + System.nanoTime();
+        activeProtectedId = id;
+        protectedSpeaking = true;
+        this.textToSpeech.speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, id);
+    }
+
+    private void clearProtectedIfMatches(String utteranceId) {
+        if (utteranceId != null && utteranceId.equals(activeProtectedId)) {
+            protectedSpeaking = false;
+            activeProtectedId = null;
+        }
     }
 
     public void queueSpeech(String sSpeech) {
@@ -192,6 +222,8 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             textToSpeech.shutdown();
             textToSpeech = null;
         }
+        protectedSpeaking = false;
+        activeProtectedId = null;
         localeAvailabilityCache.clear();
         initializing = false;
         ready = false;
@@ -206,6 +238,8 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             textToSpeech.stop();
             textToSpeech.shutdown();
             textToSpeech = null;
+            protectedSpeaking = false;
+            activeProtectedId = null;
             initializing = false;
             ready = false;
         }
@@ -316,5 +350,20 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
         } else {
             textToSpeech = new TextToSpeech(context, this, enginePackage);
         }
+        textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+            @Override
+            public void onStart(String utteranceId) {
+            }
+
+            @Override
+            public void onDone(String utteranceId) {
+                clearProtectedIfMatches(utteranceId);
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+                clearProtectedIfMatches(utteranceId);
+            }
+        });
     }
 }

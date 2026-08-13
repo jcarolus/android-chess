@@ -312,7 +312,7 @@
     <string name="pref_icstimewarningsecs">Tempo de aviso (segundos)</string>
     <string name="pref_icstimewarningsecs_desc">Quantos segundos antes o aviso deve começar?</string>
     <string name="pref_last_move_over_empty_square">Anunciar o último lance ao arrastar sobre uma casa vazia após um atraso</string>
-    <string name="pref_last_move_interrupts_speech">O último lance interrompe a fala atual</string>
+    <string name="pref_protect_last_move_speech">Não interromper o anúncio do último lance</string>
     <string name="pref_minimal">Controles mínimos</string>
     <string name="pref_night_mode">Modo noturno</string>
     <string name="pref_night_mode_desc">Forçar app em modo noturno</string>
@@ -461,4 +461,7 @@
     <string name="lichess_puzzle_title">Obter puzzle</string>
     <string name="lichess_puzzle_difficulty">Dificuldade</string>
     <string name="lichess_puzzle_angle">Tema</string>
+    <string name="lichess_team_search">Pesquisar</string>
+    <string name="lichess_team_search_hint">Pesquisar equipas…</string>
+    <string name="lichess_team_search_results">Pesquisa: %1$s</string>
 </resources>

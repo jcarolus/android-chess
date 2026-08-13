@@ -347,7 +347,7 @@
     <string name="pref_icstimewarningsecs">مقدار هشدار زمان (ثانیه)</string>
     <string name="pref_icstimewarningsecs_desc">چند ثانیه تا شروع هشدار زمان؟</string>
     <string name="pref_last_move_over_empty_square">اعلام آخرین حرکت هنگام کشیدن روی خانه‌ی خالی پس از تأخیر</string>
-    <string name="pref_last_move_interrupts_speech">آخرین حرکت گفتار فعلی را قطع می‌کند</string>
+    <string name="pref_protect_last_move_speech">اعلام آخرین حرکت قطع نشود</string>
     <string name="pref_minimal">کنترل‌های حداقلی</string>
     <string name="pref_night_mode">حالت شب</string>
     <string name="pref_night_mode_desc">برنامه را به‌اجبار در حالت شب قرار بده</string>
@@ -504,4 +504,7 @@
     <string name="lichess_swiss_status_created">پیش‌رو</string>
     <string name="lichess_swiss_status_started">در جریان</string>
     <string name="lichess_swiss_status_finished">پایان‌یافته</string>
+    <string name="lichess_team_search">جستجو</string>
+    <string name="lichess_team_search_hint">جستجوی تیم‌ها…</string>
+    <string name="lichess_team_search_results">جستجو: %1$s</string>
 </resources>

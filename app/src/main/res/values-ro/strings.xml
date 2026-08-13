@@ -312,7 +312,7 @@
     <string name="pref_icstimewarningsecs">Limită avertizare (secunde)</string>
     <string name="pref_icstimewarningsecs_desc">Câte secunde înainte să înceapă avertizarea?</string>
     <string name="pref_last_move_over_empty_square">Anunță ultima mutare când glisezi peste un pătrat gol după o întârziere</string>
-    <string name="pref_last_move_interrupts_speech">Ultima mutare întrerupe vorbirea curentă</string>
+    <string name="pref_protect_last_move_speech">Nu întrerupe anunțul ultimei mutări</string>
     <string name="pref_minimal">Controale minime</string>
     <string name="pref_night_mode">Mod noapte</string>
     <string name="pref_night_mode_desc">Forțează aplicația în mod noapte</string>
@@ -461,4 +461,7 @@
     <string name="lichess_puzzle_title">Obține puzzle</string>
     <string name="lichess_puzzle_difficulty">Dificultate</string>
     <string name="lichess_puzzle_angle">Temă</string>
+    <string name="lichess_team_search">Caută</string>
+    <string name="lichess_team_search_hint">Caută echipe…</string>
+    <string name="lichess_team_search_results">Căutare: %1$s</string>
 </resources>

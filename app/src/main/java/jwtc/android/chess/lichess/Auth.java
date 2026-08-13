@@ -228,8 +228,20 @@ public class Auth {
         getArray("/api/team/of/" + username, callback);
     }
 
-    public void allTeams(int page, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
-        get("/api/team/all?page=" + page, callback);
+    public void allTeams(int page, String search, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        String path;
+        if (search != null && !search.trim().isEmpty()) {
+            String text;
+            try {
+                text = URLEncoder.encode(search.trim(), "UTF-8");
+            } catch (java.io.UnsupportedEncodingException e) {
+                text = search.trim();
+            }
+            path = "/api/team/search?text=" + text + "&page=" + page;
+        } else {
+            path = "/api/team/all?page=" + page;
+        }
+        get(path, callback);
     }
 
     public void joinTeam(String teamId, Map<String, Object> body, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
