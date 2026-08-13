@@ -13,12 +13,12 @@ import com.google.android.material.button.MaterialButton;
 /**
  * @TODO just openConfirmDialog?
  */
-public class ICSConfirmDlg extends ResultDialog {
+public class ICSConfirmDlg extends ResultDialog<Bundle> {
 
     private String _sendString;
     private TextView _tvText;
 
-    public ICSConfirmDlg(Context context, ResultDialogListener listener, int requestCode) {
+    public ICSConfirmDlg(Context context, ResultDialogListener<Bundle> listener, int requestCode) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.icsconfirm);

@@ -3,6 +3,7 @@ package jwtc.android.chess.ics;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.ServiceConnection;
+import androidx.core.content.ContextCompat;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -308,7 +309,7 @@ public class ICSClient extends ChessBoardActivity implements
 
         _editConsole = (EditText) findViewById(R.id.EditICSConsole);
         if (_editConsole != null) {
-            _editConsole.setTextColor(getResources().getColor(android.R.color.white));
+            _editConsole.setTextColor(ContextCompat.getColor(this, android.R.color.white));
             _editConsole.setSingleLine(true);
             _editConsole.setOnKeyListener(okl);
         }

@@ -11,7 +11,7 @@ public class ResultDialog<T> extends Dialog {
     protected int requestCode;
     protected ResultDialogListener<T> listener;
 
-    public ResultDialog(@NonNull Context context, ResultDialogListener listener, int requestCode) {
+    public ResultDialog(@NonNull Context context, ResultDialogListener<T> listener, int requestCode) {
         super(context, R.style.ChessDialogTheme);
 
         this.listener = listener;

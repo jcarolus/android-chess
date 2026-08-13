@@ -843,7 +843,7 @@ public class SetupActivity extends ChessBoardActivity {
 
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new MagnifyingDragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
+                    view.startDragAndDrop(data, shadowBuilder, view, 0);
 
                     view.setVisibility(View.INVISIBLE);
                     return true;

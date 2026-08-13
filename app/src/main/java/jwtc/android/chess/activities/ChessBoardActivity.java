@@ -1263,7 +1263,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 if (action == MotionEvent.ACTION_DOWN) {
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
+                    view.startDragAndDrop(data, shadowBuilder, view, 0);
                     return true;
                 } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     return true;
@@ -1279,7 +1279,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new MagnifyingDragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
+                    view.startDragAndDrop(data, shadowBuilder, view, 0);
                     view.setVisibility(View.INVISIBLE);
                     return true;
                 } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {

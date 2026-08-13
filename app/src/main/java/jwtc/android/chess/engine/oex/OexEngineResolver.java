@@ -70,12 +70,7 @@ public class OexEngineResolver {
                 }
 
                 PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-                int versionCode;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    versionCode = (int) packageInfo.getLongVersionCode();
-                } else {
-                    versionCode = packageInfo.versionCode;
-                }
+                int versionCode = getVersionCode(packageInfo);
 
                 XmlResourceParser parser = resources.getXml(xmlResourceId);
                 try {
@@ -263,5 +258,13 @@ public class OexEngineResolver {
             }
         }
         return authorityValue;
+    }
+
+    @SuppressWarnings("deprecation") // packageInfo.versionCode is the only option below API 28
+    private static int getVersionCode(PackageInfo packageInfo) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return (int) packageInfo.getLongVersionCode();
+        }
+        return packageInfo.versionCode;
     }
 }
