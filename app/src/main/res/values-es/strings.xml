@@ -191,6 +191,7 @@
     <string name="lichess_game_confirm_move">Confirmar %1$s</string>
     <string name="lichess_game_confirm_moves">Confirmar movimientos</string>
     <string name="lichess_game_disconnected">Partida desconectada. Comprueba tu conexión a internet e inténtalo de nuevo</string>
+    <string name="lichess_game_not_board_compatible">Esta partida no se puede jugar aquí. La Board API de Lichess solo permite los ritmos rápido, clásico y por correspondencia, no blitz ni bullet. Juégala en lichess.org.</string>
     <string name="lichess_game_state_aborted">Partida abortada</string>
     <string name="lichess_game_state_created">Partida creada</string>
     <string name="lichess_game_state_mate">Partida terminó en jaque mate</string>

@@ -212,10 +212,14 @@ public class LichessLobbyActivity extends LichessBaseActivity
     }
 
     @Override
-    public void onGameInit(String gameId) {
+    public void onGameInit(String gameId, boolean boardCompatible) {
         lichessApi.playing();
         if (lichessApi.consumeAutoOpenGameId(gameId)) {
-            launchGame(gameId);
+            if (boardCompatible) {
+                launchGame(gameId);
+            } else {
+                textViewLobbyStatus.setText(R.string.lichess_game_not_board_compatible);
+            }
         }
     }
 
@@ -321,7 +325,12 @@ public class LichessLobbyActivity extends LichessBaseActivity
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (parent == listViewGames && nowPlayingGames != null && nowPlayingGames.size() > position) {
-            launchGame(nowPlayingGames.get(position).gameId);
+            Game game = nowPlayingGames.get(position);
+            if (game.compat == null || game.compat.board) {
+                launchGame(game.gameId);
+            } else {
+                textViewLobbyStatus.setText(R.string.lichess_game_not_board_compatible);
+            }
         }
     }
 }

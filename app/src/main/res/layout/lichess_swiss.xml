@@ -68,6 +68,15 @@
             android:text="@string/lichess_swiss_title"
             android:accessibilityLiveRegion="polite" />
 
+        <ProgressBar
+            android:id="@+id/ProgressBarSwissTeams"
+            android:layout_width="match_parent"
+            android:layout_height="4dip"
+            android:layout_marginTop="8dip"
+            android:visibility="gone"
+            android:indeterminate="true"
+            style="?android:attr/progressBarStyleHorizontal" />
+
         <ListView
             android:id="@+id/ListViewSwissTeams"
             android:layout_width="match_parent"
@@ -185,6 +194,15 @@
             android:text=""
             android:accessibilityLiveRegion="polite" />
 
+        <ProgressBar
+            android:id="@+id/ProgressBarSwissList"
+            android:layout_width="match_parent"
+            android:layout_height="4dip"
+            android:layout_marginTop="8dip"
+            android:visibility="gone"
+            android:indeterminate="true"
+            style="?android:attr/progressBarStyleHorizontal" />
+
         <ListView
             android:id="@+id/ListViewSwissList"
             android:layout_width="match_parent"
@@ -249,6 +267,15 @@
                 android:layout_marginTop="4dip"
                 style="@style/ChessButton" />
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/ProgressBarSwissStandings"
+            android:layout_width="match_parent"
+            android:layout_height="4dip"
+            android:layout_marginTop="8dip"
+            android:visibility="gone"
+            android:indeterminate="true"
+            style="?android:attr/progressBarStyleHorizontal" />
 
         <ListView
             android:id="@+id/ListViewSwissStandings"

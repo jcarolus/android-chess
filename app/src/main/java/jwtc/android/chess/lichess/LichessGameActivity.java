@@ -362,10 +362,14 @@ public class LichessGameActivity extends ChessBoardActivity
     // --- LichessApiListener (game + puzzle callbacks) ---
 
     @Override
-    public void onGameInit(String gameId) {
+    public void onGameInit(String gameId, boolean boardCompatible) {
         // A new pairing (e.g. round N+1) while the board is up: switch to it if appropriate.
         if (lichessApi.consumeAutoOpenGameId(gameId)) {
-            openGame(gameId);
+            if (boardCompatible) {
+                openGame(gameId);
+            } else {
+                Toast.makeText(this, R.string.lichess_game_not_board_compatible, Toast.LENGTH_LONG).show();
+            }
         }
     }
 

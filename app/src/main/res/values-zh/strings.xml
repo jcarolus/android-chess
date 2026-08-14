@@ -188,6 +188,7 @@
     <string name="lichess_game_confirm_move">确认 %1$s</string>
     <string name="lichess_game_confirm_moves">确认走子</string>
     <string name="lichess_game_disconnected">对局已断开。请检查网络连接并重试</string>
+    <string name="lichess_game_not_board_compatible">此对局无法在此进行。Lichess Board API 仅支持慢棋、古典和通信时间控制，不支持超快棋或子弹棋。请在 lichess.org 上对弈。</string>
     <string name="lichess_game_state_aborted">对局已中止</string>
     <string name="lichess_game_state_created">对局已创建</string>
     <string name="lichess_game_state_mate">对局以将死结束</string>

@@ -208,6 +208,7 @@
     <string name="lichess_game_confirm_move">تأیید %1$s</string>
     <string name="lichess_game_confirm_moves">تأیید حرکت‌ها</string>
     <string name="lichess_game_disconnected">اتصال بازی قطع شد. اتصال اینترنت خود را بررسی کرده و دوباره تلاش کنید</string>
+    <string name="lichess_game_not_board_compatible">این بازی را نمی‌توان اینجا انجام داد. Lichess Board API فقط زمان‌بندی‌های سریع، کلاسیک و مکاتبه‌ای را مجاز می‌داند، نه بلیتز یا بولت. آن را در lichess.org بازی کنید.</string>
     <string name="lichess_game_state_aborted">بازی لغو شد</string>
     <string name="lichess_game_state_created">بازی ساخته شد</string>
     <string name="lichess_game_state_mate">بازی با کیش و مات به پایان رسید</string>

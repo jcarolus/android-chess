@@ -50,7 +50,7 @@ public class LichessApi extends GameApi {
     public interface LichessApiListener {
         default void onAuthenticate(String user) {}
 
-        default void onGameInit(String gameId) {}
+        default void onGameInit(String gameId, boolean boardCompatible) {}
 
         default void onGameUpdate(GameFull gameFull) {}
 
@@ -180,8 +180,12 @@ public class LichessApi extends GameApi {
                 if (type.equals("gameStart")) {
                     Game ongoingGame = (new Gson()).fromJson(jsonObject.get("game").getAsJsonObject(), Game.class);
 
+                    // The Board API only streams/plays rapid, classical and correspondence games;
+                    // blitz/bullet (typical for swiss) come through with compat.board == false and would
+                    // 4xx on the game stream. Treat a missing compat as compatible so nothing else breaks.
+                    boolean boardCompatible = ongoingGame.compat == null || ongoingGame.compat.board;
                     if (apiListener != null) {
-                        apiListener.onGameInit(ongoingGame.gameId);
+                        apiListener.onGameInit(ongoingGame.gameId, boardCompatible);
                     }
                 } else if (type.equals("gameFinish")) {
                     onGameFinish();

@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
 
     private android.widget.ViewAnimator viewAnimatorSwiss;
     private ListView listViewSwissTeams, listViewSwissList, listViewSwissStandings;
+    private ProgressBar progressBarSwissTeams, progressBarSwissList, progressBarSwissStandings;
     private SimpleAdapter adapterSwissTeams, adapterSwissList, adapterSwissStandings;
     private final ArrayList<HashMap<String, String>> mapSwissTeams = new ArrayList<>();
     private final ArrayList<HashMap<String, String>> mapSwissList = new ArrayList<>();
@@ -133,6 +135,10 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         textViewSwissPage = findViewById(R.id.TextViewSwissPage);
         layoutSwissPaging = findViewById(R.id.LayoutSwissPaging);
 
+        progressBarSwissTeams = findViewById(R.id.ProgressBarSwissTeams);
+        progressBarSwissList = findViewById(R.id.ProgressBarSwissList);
+        progressBarSwissStandings = findViewById(R.id.ProgressBarSwissStandings);
+
         buttonSwissMyTeams = findViewById(R.id.ButtonSwissMyTeams);
         buttonSwissMyTeams.setOnClickListener(v -> showMyTeams());
         buttonSwissAllTeams = findViewById(R.id.ButtonSwissAllTeams);
@@ -218,6 +224,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         showingAllTeams = false;
         layoutSwissPaging.setVisibility(View.GONE);
         textViewSwissTeamsStatus.setText(R.string.lichess_swiss_title);
+        progressBarSwissTeams.setVisibility(View.VISIBLE);
         lichessApi.fetchMyTeams();
     }
 
@@ -232,6 +239,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         textViewSwissTeamsStatus.setText(search.isEmpty()
             ? getString(R.string.lichess_swiss_all_teams)
             : getString(R.string.lichess_team_search_results, search));
+        progressBarSwissTeams.setVisibility(View.VISIBLE);
         lichessApi.fetchAllTeams(page, search);
     }
 
@@ -267,6 +275,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         adapterSwissList.notifyDataSetChanged();
         textViewSwissListStatus.setText("");
         if (currentTeam != null) {
+            progressBarSwissList.setVisibility(View.VISIBLE);
             lichessApi.fetchTeamSwiss(currentTeam.id, status);
         }
     }
@@ -391,6 +400,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         if (showingAllTeams) {
             return; // user switched to All teams before this returned
         }
+        progressBarSwissTeams.setVisibility(View.GONE);
         populateTeams(teams);
         textViewSwissTeamsStatus.setText(teams.isEmpty()
             ? getString(R.string.lichess_swiss_no_teams)
@@ -402,6 +412,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         if (!showingAllTeams) {
             return;
         }
+        progressBarSwissTeams.setVisibility(View.GONE);
         allTeamsPage = page > 0 ? page : allTeamsPage;
         allTeamsNbPages = nbPages > 0 ? nbPages : 1;
         populateTeams(teams);
@@ -416,6 +427,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         Toast.makeText(this, getString(R.string.lichess_team_joined,
             currentTeam != null && currentTeam.name != null ? currentTeam.name : teamId), Toast.LENGTH_SHORT).show();
         refreshTeamJoinLeaveButton();
+        progressBarSwissList.setVisibility(View.VISIBLE);
         lichessApi.fetchTeamSwiss(teamId, swissStatusFilter);
     }
 
@@ -432,6 +444,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
 
     @Override
     public void onSwissList(List<SwissTournament> tournaments) {
+        progressBarSwissList.setVisibility(View.GONE);
         if (currentTeam == null) {
             return;
         }
@@ -469,6 +482,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
 
     @Override
     public void onSwissDetail(SwissTournament tournament, List<SwissStanding> standings) {
+        progressBarSwissStandings.setVisibility(View.GONE);
         currentSwiss = tournament;
         textViewSwissName.setText(tournament.name != null ? tournament.name : tournament.id);
         textViewSwissInfo.setText(getString(R.string.lichess_swiss_detail_info,
@@ -500,11 +514,15 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
     public void onSwissJoined(String id) {
         Toast.makeText(this, R.string.lichess_swiss_joined, Toast.LENGTH_SHORT).show();
         swissDetailRefresh = false;
+        progressBarSwissStandings.setVisibility(View.VISIBLE);
         lichessApi.fetchSwissDetail(id);
     }
 
     @Override
     public void onSwissError(String message) {
+        progressBarSwissTeams.setVisibility(View.GONE);
+        progressBarSwissList.setVisibility(View.GONE);
+        progressBarSwissStandings.setVisibility(View.GONE);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
@@ -514,6 +532,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
             openTeamDetail(swissTeams.get(position));
         } else if (parent == listViewSwissList && swissTournaments.size() > position) {
             swissDetailRefresh = false;
+            progressBarSwissStandings.setVisibility(View.VISIBLE);
             lichessApi.fetchSwissDetail(swissTournaments.get(position).id);
         }
     }

@@ -208,6 +208,7 @@
     <string name="lichess_game_confirm_move">Confirm %1$s</string>
     <string name="lichess_game_confirm_moves">Confirm moves</string>
     <string name="lichess_game_disconnected">Game disconnected. Check your internet connection and try again</string>
+    <string name="lichess_game_not_board_compatible">This game can\'t be played here. The Lichess Board API only allows rapid, classical and correspondence time controls, not blitz or bullet. Play it on lichess.org.</string>
     <string name="lichess_game_state_aborted">Game aborted</string>
     <string name="lichess_game_state_created">Game created</string>
     <string name="lichess_game_state_mate">Game ended in a check-mate</string>

@@ -188,6 +188,7 @@
     <string name="lichess_game_confirm_move">%1$s onayla</string>
     <string name="lichess_game_confirm_moves">Hamleleri onayla</string>
     <string name="lichess_game_disconnected">Oyun bağlantısı kesildi. İnternet bağlantınızı kontrol edin ve tekrar deneyin</string>
+    <string name="lichess_game_not_board_compatible">Bu oyun burada oynanamaz. Lichess Board API yalnızca hızlı (rapid), klasik ve yazışmalı zaman kontrollerine izin verir, blitz veya bullet\'e değil. lichess.org üzerinde oyna.</string>
     <string name="lichess_game_state_aborted">Oyun iptal edildi</string>
     <string name="lichess_game_state_created">Oyun oluşturuldu</string>
     <string name="lichess_game_state_mate">Oyun şah mat ile bitti</string>
