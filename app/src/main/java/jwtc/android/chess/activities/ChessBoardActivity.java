@@ -208,7 +208,26 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         applySquareDragListeners();
 
+        // Synchronous subclasses assign gameApi before calling afterCreate(), so register here to
+        // preserve the original lifecycle. Service-bound subclasses (e.g. the Lichess screens)
+        // leave gameApi null at this point and call onGameApiReady() once the service connects.
+        if (gameApi != null) {
+            gameApi.addListener(this);
+        }
+    }
+
+    /**
+     * Called once the service-owned {@link #gameApi} becomes available (from onServiceConnected).
+     * The board views are already built by {@link #afterCreate()}; here we register as a game
+     * listener and paint the current position. Not used by subclasses that create gameApi
+     * synchronously — those register in {@link #afterCreate()}.
+     */
+    protected void onGameApiReady() {
+        if (gameApi == null) {
+            return;
+        }
         gameApi.addListener(this);
+        rebuildBoard();
     }
 
     protected void initBoardLayoutSizing(
@@ -558,7 +577,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             boardLayoutRoot = null;
         }
 
-        gameApi.removeListener(this);
+        if (gameApi != null) {
+            gameApi.removeListener(this);
+        }
         textToSpeech.shutdown();
 
         super.onDestroy();

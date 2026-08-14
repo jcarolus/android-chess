@@ -231,7 +231,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".lichess.LichessActivity"
+            android:name=".lichess.LichessLobbyActivity"
             android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
@@ -244,6 +244,20 @@
                     android:scheme="jwtc.android.chess"
                     android:host="oauth2redirect" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".lichess.LichessGameActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".lichess.LichessLobbyActivity" />
+        </activity>
+        <activity
+            android:name=".lichess.LichessSwissActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".lichess.LichessLobbyActivity" />
         </activity>
 
         <provider

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lobby activity: the auth gate (waiting/login) welded to the lobby, since auth state lives here. -->
+<ViewAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ViewAnimatorRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- 0 : waiting -->
+    <include
+        layout="@layout/lichess_waiting"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+
+    <!-- 1 : login -->
+    <include
+        layout="@layout/lichess_login"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+
+    <!-- 2 : lobby -->
+    <include
+        layout="@layout/lichess_lobby"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+</ViewAnimator>

@@ -27,7 +27,7 @@ import jwtc.android.chess.helpers.StartItemAdapter;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
 import jwtc.android.chess.ics.ICSClient;
-import jwtc.android.chess.lichess.LichessActivity;
+import jwtc.android.chess.lichess.LichessLobbyActivity;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
@@ -77,7 +77,7 @@ public class StartBaseActivity extends AppCompatActivity {
 
         List<StartItem> startItemList = List.of(
             new StartItem(R.drawable.start_play, R.string.start_play, PlayActivity.class),
-            new StartItem(R.drawable.lichess, R.string.start_lichess, LichessActivity.class),
+            new StartItem(R.drawable.lichess, R.string.start_lichess, LichessLobbyActivity.class),
             new StartItem(R.drawable.fics, R.string.start_ics, ICSClient.class),
             new StartItem(R.drawable.percent, R.string.start_practice, PracticeActivity.class),
             new StartItem(R.drawable.puzzle, R.string.start_puzzles, PuzzleActivity.class),

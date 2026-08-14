@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.lichess.models.Challenge;
@@ -43,49 +45,51 @@ public class LichessApi extends GameApi {
     private static final String PUZZLE_ANGLE_DEFAULT = "mix";
     public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_PUZZLE = 2;
 
+    // Default no-op methods so each screen (lobby / game / swiss) overrides only the callbacks it
+    // owns. The single registered listener is always the foreground activity.
     public interface LichessApiListener {
-        void onAuthenticate(String user);
+        default void onAuthenticate(String user) {}
 
-        void onGameInit(String gameId);
+        default void onGameInit(String gameId) {}
 
-        void onGameUpdate(GameFull gameFull);
+        default void onGameUpdate(GameFull gameFull) {}
 
         // void onDrawAccepted(boolean accepted);
-        void onGameFinish();
+        default void onGameFinish() {}
 
-        void onGameDisconnected();
+        default void onGameDisconnected() {}
 
-        void onInvalidMove(String reason);
+        default void onInvalidMove(String reason) {}
 
-        void onNowPlaying(List<Game> games, String me);
+        default void onNowPlaying(List<Game> games, String me) {}
 
-        void onConnectionError();
+        default void onConnectionError() {}
 
-        void onChallenge(Challenge challenge);
+        default void onChallenge(Challenge challenge) {}
 
-        void onChallengeCancelled(Challenge challenge);
+        default void onChallengeCancelled(Challenge challenge) {}
 
-        void onChallengeDeclined(Challenge challenge);
+        default void onChallengeDeclined(Challenge challenge) {}
 
-        void onMyChallengeCancelled();
+        default void onMyChallengeCancelled() {}
 
-        void onMySeekCancelled();
+        default void onMySeekCancelled() {}
 
-        void onPuzzle(PuzzleAndGame puzzle);
-        void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko);
-        void onPuzzleMoveCorrect();
-        void onPuzzleUnexpectedMove(String sMove, int toPos);
-        void onPuzzleRetried();
-        void onPuzzleCompleted(int toPos);
+        default void onPuzzle(PuzzleAndGame puzzle) {}
+        default void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {}
+        default void onPuzzleMoveCorrect() {}
+        default void onPuzzleUnexpectedMove(String sMove, int toPos) {}
+        default void onPuzzleRetried() {}
+        default void onPuzzleCompleted(int toPos) {}
 
-        void onMyTeams(List<Team> teams);
-        void onAllTeams(List<Team> teams, int page, int nbPages);
-        void onTeamJoined(String teamId);
-        void onTeamLeft(String teamId);
-        void onSwissList(List<SwissTournament> tournaments);
-        void onSwissDetail(SwissTournament tournament, List<SwissStanding> standings);
-        void onSwissJoined(String id);
-        void onSwissError(String message);
+        default void onMyTeams(List<Team> teams) {}
+        default void onAllTeams(List<Team> teams, int page, int nbPages) {}
+        default void onTeamJoined(String teamId) {}
+        default void onTeamLeft(String teamId) {}
+        default void onSwissList(List<SwissTournament> tournaments) {}
+        default void onSwissDetail(SwissTournament tournament, List<SwissStanding> standings) {}
+        default void onSwissJoined(String id) {}
+        default void onSwissError(String message) {}
     }
 
     protected int turn = 0;
@@ -843,6 +847,33 @@ public class LichessApi extends GameApi {
     public boolean isOngoingGameInProgress() {
         return ongoingGameFull != null && ongoingGameFull.state != null
             && "started".equals(ongoingGameFull.state.status);
+    }
+
+    // gameStart events auto-open the board, but the event stream re-emits gameStart for every
+    // ongoing game whenever it (re)connects. This dedupe set lives in the (service-owned) api so it
+    // survives the lobby -> game activity transition; otherwise each screen would re-open the board.
+    private final Set<String> autoOpenedGameIds = new HashSet<>();
+
+    /**
+     * Decide whether a gameStart should auto-open the board now, recording the decision so a later
+     * re-emit doesn't re-open. A gameStart fires when a round pairs us (swiss/arena), a seek
+     * matches, or a challenge is accepted.
+     */
+    public boolean consumeAutoOpenGameId(String gameId) {
+        if (gameId == null || autoOpenedGameIds.contains(gameId)) {
+            return false;
+        }
+        // Don't interrupt a puzzle in progress.
+        if (getViewMode() == VIEW_PUZZLE) {
+            return false;
+        }
+        // Don't yank the user out of a game they're still playing (a finished game is fine to leave,
+        // e.g. finishing round N and getting paired for round N+1).
+        if (isOngoingGameInProgress() && !gameId.equals(getOngoingGameId())) {
+            return false;
+        }
+        autoOpenedGameIds.add(gameId);
+        return true;
     }
 
     public int getMyTurn() {
