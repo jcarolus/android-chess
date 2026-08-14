@@ -68,6 +68,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private static final int VIEW_SUB_LOBBY = 0, VIEW_SUB_PLAY = 1, VIEW_SUB_SWISS = 2;
     private static final int VIEW_SWISS_TEAMS = 0, VIEW_SWISS_LIST = 1, VIEW_SWISS_DETAIL = 2;
     private static final long LOBBY_REFRESH_INTERVAL_MS = 60_000L;
+    private static final long SWISS_REFRESH_INTERVAL_MS = 30_000L;
     public static final int REQUEST_SAVE_GAME_TO_FILE = 1;
 
     private LichessApi lichessApi;
@@ -124,6 +125,26 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             }
             lichessApi.playing();
             lobbyRefreshHandler.postDelayed(this, LOBBY_REFRESH_INTERVAL_MS);
+        }
+    };
+    private final Handler swissRefreshHandler = new Handler(Looper.getMainLooper());
+    // Set true only for a background poll of the detail screen, so onSwissDetail refreshes
+    // in place without forcing the view back to the detail child (see onSwissDetail).
+    private boolean swissDetailRefresh = false;
+    private final Runnable swissRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!isSwissVisible()) {
+                return;
+            }
+            int child = viewAnimatorSwiss.getDisplayedChild();
+            if (child == VIEW_SWISS_LIST && currentTeam != null) {
+                lichessApi.fetchTeamSwiss(currentTeam.id, swissStatusFilter);
+            } else if (child == VIEW_SWISS_DETAIL && currentSwiss != null) {
+                swissDetailRefresh = true;
+                lichessApi.fetchSwissDetail(currentSwiss.id);
+            }
+            swissRefreshHandler.postDelayed(this, SWISS_REFRESH_INTERVAL_MS);
         }
     };
     private final Runnable connectionRetryRunnable = () -> {
@@ -302,6 +323,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         layoutPuzzleControls.setVisibility(puzzleActive ? View.VISIBLE : View.GONE);
         switchConfirmMoves.setChecked(prefs.getBoolean("lichess_confirm_moves", false));
         startLobbyRefreshLoop();
+        startSwissRefreshLoop();
     }
 
     @Override
@@ -309,6 +331,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         super.onPause();
         lichessApi.setApiListener(null);
         stopLobbyRefreshLoop();
+        stopSwissRefreshLoop();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
@@ -358,6 +381,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         Log.i(TAG, "onStop");
         super.onStop();
         stopLobbyRefreshLoop();
+        stopSwissRefreshLoop();
 
         if (serviceBound) {
             unbindService(mConnection);
@@ -694,12 +718,18 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
             mapSwissStandings.add(row);
         }
         adapterSwissStandings.notifyDataSetChanged();
-        viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_DETAIL);
+        // A background poll refreshes in place; only an explicit open switches to the detail child,
+        // so a poll response landing after the user navigated away won't yank them back.
+        if (!swissDetailRefresh) {
+            viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_DETAIL);
+        }
+        swissDetailRefresh = false;
     }
 
     @Override
     public void onSwissJoined(String id) {
         Toast.makeText(this, R.string.lichess_swiss_joined, Toast.LENGTH_SHORT).show();
+        swissDetailRefresh = false;
         lichessApi.fetchSwissDetail(id);
     }
 
@@ -775,6 +805,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     }
 
     protected void displayLobby() {
+        stopSwissRefreshLoop();
         lichessApi.playing();
         startLobbyRefreshLoop();
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
@@ -815,6 +846,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
 
     protected void displayBoard() {
         stopLobbyRefreshLoop();
+        stopSwissRefreshLoop();
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_PLAY);
     }
@@ -871,6 +903,18 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
     private void stopLobbyRefreshLoop() {
         lobbyRefreshHandler.removeCallbacks(lobbyRefreshRunnable);
         lobbyRefreshHandler.removeCallbacks(connectionRetryRunnable);
+    }
+
+    private void startSwissRefreshLoop() {
+        stopSwissRefreshLoop();
+        if (!isSwissVisible()) {
+            return;
+        }
+        swissRefreshHandler.postDelayed(swissRefreshRunnable, SWISS_REFRESH_INTERVAL_MS);
+    }
+
+    private void stopSwissRefreshLoop() {
+        swissRefreshHandler.removeCallbacks(swissRefreshRunnable);
     }
 
     protected void openChallengeDialog(int requestCode) {
@@ -985,6 +1029,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         viewAnimatorRoot.setDisplayedChild(VIEW_ROOT_SUB);
         viewAnimatorSub.setDisplayedChild(VIEW_SUB_SWISS);
         viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_TEAMS);
+        startSwissRefreshLoop();
     }
 
     private void showMyTeams() {
@@ -1247,6 +1292,7 @@ public class LichessActivity extends ChessBoardActivity implements LichessApi.Li
         } else if (parent == listViewSwissTeams && swissTeams.size() > position) {
             openTeamDetail(swissTeams.get(position));
         } else if (parent == listViewSwissList && swissTournaments.size() > position) {
+            swissDetailRefresh = false;
             lichessApi.fetchSwissDetail(swissTournaments.get(position).id);
         }
     }
