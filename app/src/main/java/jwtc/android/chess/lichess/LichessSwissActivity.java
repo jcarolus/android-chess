@@ -179,8 +179,13 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
 
         MaterialButton buttonSwissJoin = findViewById(R.id.ButtonSwissJoin);
         buttonSwissJoin.setOnClickListener(v -> {
-            if (currentSwiss != null) {
+            if (currentSwiss == null) {
+                return;
+            }
+            if (currentSwiss.isBoardCompatible()) {
                 lichessApi.joinSwiss(currentSwiss.id, null);
+            } else {
+                Toast.makeText(this, R.string.lichess_swiss_not_board_compatible, Toast.LENGTH_LONG).show();
             }
         });
         MaterialButton buttonSwissWithdraw = findViewById(R.id.ButtonSwissWithdraw);
@@ -471,7 +476,13 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
                     info.append(" · ").append(startsAt);
                 }
             }
+            if (t.clock != null) {
+                info.append(" · ").append(t.clock.limit / 60).append("+").append(t.clock.increment);
+            }
             info.append(" · ").append(getString(R.string.lichess_swiss_players, t.nbPlayers));
+            if (!t.isBoardCompatible()) {
+                info.append(" · ").append(getString(R.string.lichess_swiss_not_playable));
+            }
             row.put("text_swiss_info", info.toString());
             mapSwissList.add(row);
         }
@@ -485,12 +496,18 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         progressBarSwissStandings.setVisibility(View.GONE);
         currentSwiss = tournament;
         textViewSwissName.setText(tournament.name != null ? tournament.name : tournament.id);
-        textViewSwissInfo.setText(getString(R.string.lichess_swiss_detail_info,
-            swissStatusLabel(tournament.status), tournament.round, tournament.nbRounds, tournament.nbPlayers));
+        String info = getString(R.string.lichess_swiss_detail_info,
+            swissStatusLabel(tournament.status), tournament.round, tournament.nbRounds, tournament.nbPlayers);
+        if (!tournament.isBoardCompatible()) {
+            info += "\n" + getString(R.string.lichess_swiss_not_board_compatible);
+        }
+        textViewSwissInfo.setText(info);
 
-        boolean joinable = "created".equals(tournament.status) || "started".equals(tournament.status);
-        findViewById(R.id.ButtonSwissJoin).setEnabled(joinable);
-        findViewById(R.id.ButtonSwissWithdraw).setEnabled(joinable);
+        // Only rapid/classical standard/chess960 swiss games can be played through the Board API;
+        // block joining the rest here (Withdraw stays available for games joined on the web).
+        boolean statusJoinable = "created".equals(tournament.status) || "started".equals(tournament.status);
+        findViewById(R.id.ButtonSwissJoin).setEnabled(statusJoinable && tournament.isBoardCompatible());
+        findViewById(R.id.ButtonSwissWithdraw).setEnabled(statusJoinable);
 
         mapSwissStandings.clear();
         for (SwissStanding s : standings) {

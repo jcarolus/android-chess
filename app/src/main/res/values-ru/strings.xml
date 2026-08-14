@@ -189,6 +189,8 @@
     <string name="lichess_game_confirm_moves">Подтвердить ходы</string>
     <string name="lichess_game_disconnected">Игра отключена. Проверьте интернет-соединение и попробуйте снова</string>
     <string name="lichess_game_not_board_compatible">В эту партию нельзя играть здесь. Board API Lichess поддерживает только контроль времени рапид, классику и игру по переписке, но не блиц или пулю. Играйте её на lichess.org.</string>
+    <string name="lichess_swiss_not_playable">нельзя играть здесь</string>
+    <string name="lichess_swiss_not_board_compatible">В этот турнир нельзя играть здесь. С Board API работают только швейцарские турниры с рапидом или классикой в standard/chess960. Присоединяйтесь и играйте на lichess.org.</string>
     <string name="lichess_game_state_aborted">Игра прервана</string>
     <string name="lichess_game_state_created">Игра создана</string>
     <string name="lichess_game_state_mate">Игра завершилась матом</string>

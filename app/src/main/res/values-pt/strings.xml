@@ -189,6 +189,8 @@
     <string name="lichess_game_confirm_moves">Confirmar lances</string>
     <string name="lichess_game_disconnected">Partida desconectada. Verifique sua conexão com a internet e tente novamente</string>
     <string name="lichess_game_not_board_compatible">Esta partida não pode ser jogada aqui. A Board API do Lichess permite apenas os ritmos rápido, clássico e por correspondência, não blitz nem bullet. Jogue-a em lichess.org.</string>
+    <string name="lichess_swiss_not_playable">não jogável aqui</string>
+    <string name="lichess_swiss_not_board_compatible">Este torneio não pode ser jogado aqui. Com a Board API só funcionam torneios suíços de ritmo rápido ou clássico em standard/chess960. Participe e jogue em lichess.org.</string>
     <string name="lichess_game_state_aborted">Partida abortada</string>
     <string name="lichess_game_state_created">Partida criada</string>
     <string name="lichess_game_state_mate">Partida terminou em xeque-mate</string>

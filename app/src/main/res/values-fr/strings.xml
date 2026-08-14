@@ -189,6 +189,8 @@
     <string name="lichess_game_confirm_moves">Confirmer les coups</string>
     <string name="lichess_game_disconnected">Partie déconnectée. Vérifiez votre connexion internet et réessayez</string>
     <string name="lichess_game_not_board_compatible">Cette partie ne peut pas être jouée ici. L\'API Board de Lichess n\'autorise que les cadences rapide, classique et par correspondance, pas le blitz ni le bullet. Jouez-la sur lichess.org.</string>
+    <string name="lichess_swiss_not_playable">non jouable ici</string>
+    <string name="lichess_swiss_not_board_compatible">Ce tournoi ne peut pas être joué ici. Avec l\'API Board, seuls les tournois suisses en cadence rapide ou classique en standard/chess960 fonctionnent. Rejoignez-le et jouez sur lichess.org.</string>
     <string name="lichess_game_state_aborted">Partie annulée</string>
     <string name="lichess_game_state_created">Partie créée</string>
     <string name="lichess_game_state_mate">Partie terminée par échec et mat</string>

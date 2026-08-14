@@ -191,6 +191,8 @@
     <string name="lichess_game_confirm_moves">تأكيد النقلات</string>
     <string name="lichess_game_disconnected">انقطع الاتصال باللعبة. تحقق من اتصالك بالإنترنت وحاول مرة أخرى</string>
     <string name="lichess_game_not_board_compatible">لا يمكن لعب هذه المباراة هنا. تسمح واجهة Lichess Board API بأنماط التحكم بالوقت السريع والكلاسيكي والمراسلة فقط، وليس البليتز أو الرصاصة. العبها على lichess.org.</string>
+    <string name="lichess_swiss_not_playable">غير قابلة للعب هنا</string>
+    <string name="lichess_swiss_not_board_compatible">لا يمكن لعب هذه البطولة هنا. تعمل مع واجهة Board API فقط بطولات السويسي السريعة أو الكلاسيكية بنمط standard/chess960. انضم إليها والعبها على lichess.org.</string>
     <string name="lichess_game_state_aborted">تم إلغاء اللعبة</string>
     <string name="lichess_game_state_created">تم إنشاء اللعبة</string>
     <string name="lichess_game_state_mate">انتهت اللعبة بكش مات</string>

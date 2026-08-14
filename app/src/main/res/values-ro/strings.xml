@@ -189,6 +189,8 @@
     <string name="lichess_game_confirm_moves">Confirmă mutările</string>
     <string name="lichess_game_disconnected">Partida s-a deconectat. Verifică conexiunea la internet și încearcă din nou</string>
     <string name="lichess_game_not_board_compatible">Această partidă nu poate fi jucată aici. Board API de la Lichess permite doar cadențele rapid, clasic și prin corespondență, nu blitz sau bullet. Joac-o pe lichess.org.</string>
+    <string name="lichess_swiss_not_playable">nejucabil aici</string>
+    <string name="lichess_swiss_not_board_compatible">Acest turneu nu poate fi jucat aici. Cu Board API funcționează doar turneele elvețiene rapid sau clasic în standard/chess960. Alătură-te și joacă pe lichess.org.</string>
     <string name="lichess_game_state_aborted">Partida anulată</string>
     <string name="lichess_game_state_created">Partida creată</string>
     <string name="lichess_game_state_mate">Partida s-a încheiat prin șah mat</string>

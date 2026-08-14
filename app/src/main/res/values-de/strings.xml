@@ -192,6 +192,8 @@
     <string name="lichess_game_confirm_moves">Züge bestätigen</string>
     <string name="lichess_game_disconnected">Spiel getrennt. Prüfe deine Internetverbindung und versuche es erneut</string>
     <string name="lichess_game_not_board_compatible">Diese Partie kann hier nicht gespielt werden. Die Lichess Board API erlaubt nur die Zeitkontrollen Schnellschach, Klassisch und Fernschach, nicht Blitz oder Bullet. Spiele sie auf lichess.org.</string>
+    <string name="lichess_swiss_not_playable">hier nicht spielbar</string>
+    <string name="lichess_swiss_not_board_compatible">Dieses Turnier kann hier nicht gespielt werden. Nur Schweizer Turniere mit Schnellschach oder Klassisch in Standard/Chess960 funktionieren mit der Board API. Tritt bei und spiele auf lichess.org.</string>
     <string name="lichess_game_state_aborted">Spiel abgebrochen</string>
     <string name="lichess_game_state_created">Spiel erstellt</string>
     <string name="lichess_game_state_mate">Spiel endete mit Schachmatt</string>
