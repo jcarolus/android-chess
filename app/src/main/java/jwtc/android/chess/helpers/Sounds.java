@@ -14,6 +14,11 @@ public class Sounds {
     protected float fVolume = 1.0f;
     protected boolean enabled = false;
 
+    // Pitch of the crossing tick, keyed off square color: light squares sound higher,
+    // dark squares lower. Tunable; SoundPool rate range is 0.5f..2.0f.
+    private static final float RATE_LIGHT_SQUARE = 1.0f;
+    private static final float RATE_DARK_SQUARE = 0.84f; // ~minor third lower
+
     public Sounds(Context context) {
         this.context = context;
     }
@@ -61,8 +66,16 @@ public class Sounds {
         play(soundTick);
     }
 
+    public void playTick(boolean isDarkSquare) {
+        play(soundTick, isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE);
+    }
+
     public void playTickPiece() {
         play(soundTickPiece);
+    }
+
+    public void playTickPiece(boolean isDarkSquare) {
+        play(soundTickPiece, isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE);
     }
 
     public void playError() {
@@ -105,8 +118,12 @@ public class Sounds {
     }
 
     private void play(int soundId) {
+        play(soundId, 1f);
+    }
+
+    private void play(int soundId, float rate) {
         if (enabled && soundPool != null) {
-            soundPool.play(soundId, fVolume, fVolume, 1, 0, 1);
+            soundPool.play(soundId, fVolume, fVolume, 1, 0, rate);
         }
     }
 

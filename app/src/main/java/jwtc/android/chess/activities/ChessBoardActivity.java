@@ -477,12 +477,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         editor.commit();
     }
 
-    public void hapticFeedbackTick(boolean hasPiece) {
+    public void hapticFeedbackTick(boolean hasPiece, boolean isDarkSquare) {
         if (sounds.isEnabled()) {
             if (hasPiece) {
-                sounds.playTickPiece();
+                sounds.playTickPiece(isDarkSquare);
             } else {
-                sounds.playTick();
+                sounds.playTick(isDarkSquare);
             }
         }
         if (hapticFeedback.isEnabled()) {
@@ -1215,7 +1215,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
             if (emitCrossingHaptic) {
                 boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
-                hapticFeedbackTick(hasPiece);
+                boolean isDarkSquare = Pos.getFieldColor(pos) == BoardConstants.BLACK;
+                hapticFeedbackTick(hasPiece, isDarkSquare);
             }
             if (textToSpeech.isEnabled()) {
                 textToSpeech.doSpeak(getFieldDescription(pos));
