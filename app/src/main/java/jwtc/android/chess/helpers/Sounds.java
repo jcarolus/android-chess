@@ -10,7 +10,7 @@ public class Sounds {
     private final static String TAG = "Sounds";
     private SoundPool soundPool = null;
     private final Context context;
-    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove, soundSelect, soundTick, soundError, soundCorrect, soundTickPiece, soundUnselect;
+    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove, soundSelect, soundTick, soundError, soundCorrect, soundTickPiece, soundTickPieceBlack, soundUnselect;
     protected float fVolume = 1.0f;
     protected boolean enabled = false;
 
@@ -78,6 +78,13 @@ public class Sounds {
         play(soundTickPiece, isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE);
     }
 
+    // Black pieces use the echoing variant; white pieces (and the duck) use the plain
+    // tick_piece. Square color still drives the pitch on top of either sample.
+    public void playTickPiece(boolean isDarkSquare, boolean isBlackPiece) {
+        int soundId = isBlackPiece ? soundTickPieceBlack : soundTickPiece;
+        play(soundId, isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE);
+    }
+
     public void playError() {
         play(soundError);
     }
@@ -111,6 +118,7 @@ public class Sounds {
             soundSelect = loadSound(R.raw.select, 1);
             soundTick = loadSound(R.raw.tick, 1);
             soundTickPiece = loadSound(R.raw.tick_piece, 1);
+            soundTickPieceBlack = loadSound(R.raw.tick_piece_black, 1);
             soundError = loadSound(R.raw.error, 1);
             soundCorrect = loadSound(R.raw.correct, 1);
             soundUnselect = loadSound(R.raw.unselect, 1);
