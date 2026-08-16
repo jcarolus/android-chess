@@ -11,6 +11,9 @@ import jwtc.chess.board.BoardConstants;
 
 public class LocalClockApi implements GameListener {
     protected static final String TAG = "LocalClockApi";
+    // Fire warnings this much before the clock actually reaches a threshold, so the
+    // sound/speech lands on time rather than after the mark has already passed.
+    private static final long TIME_WARNING_LEAD_MILLIES = 1000L;
     private static final long[] TIME_WARNING_THRESHOLDS_MILLIES = {
             10 * 60 * 1000L,
             5 * 60 * 1000L,
@@ -182,7 +185,9 @@ public class LocalClockApi implements GameListener {
         }
 
         int turn = gameApi.getTurn();
-        long remaining = getRemaining(turn);
+        // Bring the warning forward by the lead time: both the threshold crossing and the
+        // value handed to feedbackTimeWarning shift together, so the spoken label stays correct.
+        long remaining = getRemaining(turn) - TIME_WARNING_LEAD_MILLIES;
         long previous = getPreviousWarningCheck(turn);
 
         if (previous < 0) {

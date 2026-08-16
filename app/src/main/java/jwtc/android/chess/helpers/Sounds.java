@@ -10,13 +10,28 @@ public class Sounds {
     private final static String TAG = "Sounds";
     private SoundPool soundPool = null;
     private final Context context;
-    protected int soundTickTock, soundCheck, soundMove, soundCapture, soundNewGame, soundIllegalMove, soundSelect, soundTick, soundError, soundCorrect, soundTickPiece, soundTickPieceBlack, soundUnselect;
+    protected int soundTickTock,
+        soundCheck,
+        soundMove,
+        soundCapture,
+        soundNewGame,
+        soundIllegalMove,
+        soundSelect,
+        soundTick,
+        soundError,
+        soundCorrect,
+        soundTickPiece,
+        soundTickPieceBlack,
+        soundUnselect,
+        soundBell,
+        soundLowTime,
+        soundStopWatch;
     protected float fVolume = 1.0f;
     protected boolean enabled = false;
 
     // Pitch of the crossing tick, keyed off square color: light squares sound higher,
     // dark squares lower. Tunable; SoundPool rate range is 0.5f..2.0f.
-    private static final float RATE_LIGHT_SQUARE = 1.0f;
+    private static final float RATE_LIGHT_SQUARE = 1.2f;
     private static final float RATE_DARK_SQUARE = 0.84f; // ~minor third lower
 
     public Sounds(Context context) {
@@ -62,20 +77,8 @@ public class Sounds {
         play(soundSelect);
     }
 
-    public void playTick() {
-        play(soundTick);
-    }
-
     public void playTick(boolean isDarkSquare) {
         play(soundTick, isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE);
-    }
-
-    public void playTickPiece() {
-        play(soundTickPiece);
-    }
-
-    public void playTickPiece(boolean isDarkSquare) {
-        play(soundTickPiece, isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE);
     }
 
     // Black pieces use the echoing variant; white pieces (and the duck) use the plain
@@ -95,6 +98,18 @@ public class Sounds {
 
     public void playUnselect() {
         play(soundUnselect);
+    }
+
+    public void playBell() {
+        play(soundBell);
+    }
+
+    public void playLowTime() {
+        play(soundLowTime);
+    }
+
+    public void playStopWatch() {
+        play(soundStopWatch);
     }
 
     protected void initSoundPool() {
@@ -122,6 +137,9 @@ public class Sounds {
             soundError = loadSound(R.raw.error, 1);
             soundCorrect = loadSound(R.raw.correct, 1);
             soundUnselect = loadSound(R.raw.unselect, 1);
+            soundBell = loadSound(R.raw.bell, 1);
+            soundLowTime = loadSound(R.raw.lowtime, 1);
+            soundStopWatch = loadSound(R.raw.stopwatch, 1);
         }
     }
 

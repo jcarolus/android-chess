@@ -1203,8 +1203,7 @@ public class ICSClient extends ChessBoardActivity implements
 
         if (!_bMyTimeWarningTriggered) {
             _bMyTimeWarningTriggered = true;
-            feedbackTimeWarning();
-            feedBackDescribeTimeWarning(remaining);
+            feedbackTimeWarning(remaining);
         }
     }
 

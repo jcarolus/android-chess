@@ -821,7 +821,7 @@ public class PlayActivity extends ChessBoardActivity implements
     @Override
     public void OnTimeWarning(int turn, long remainingMillies) {
         if (turn == myTurn) {
-            feedBackDescribeTimeWarning(remainingMillies);
+            feedbackTimeWarning(remainingMillies);
         }
     }
 

@@ -588,7 +588,7 @@ public class LichessGameActivity extends ChessBoardActivity
     @Override
     public void OnTimeWarning(int turn, long remainingMillies) {
         if (lichessApi != null && turn == lichessApi.getMyTurn()) {
-            feedBackDescribeTimeWarning(remainingMillies);
+            feedbackTimeWarning(remainingMillies);
         }
     }
 }
