@@ -245,11 +245,17 @@ public class Auth {
     }
 
     public void joinTeam(String teamId, Map<String, Object> body, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
-        post("/api/team/" + teamId + "/join", body, callback);
+        enqueueJsonResponse(
+            LichessWriteRequestFactory.teamJoin(LICHESS_HOST, accessToken, teamId, body),
+            callback
+        );
     }
 
     public void quitTeam(String teamId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
-        post("/api/team/" + teamId + "/quit", null, callback);
+        enqueueJsonResponse(
+            LichessWriteRequestFactory.teamQuit(LICHESS_HOST, accessToken, teamId),
+            callback
+        );
     }
 
     public void teamSwiss(String teamId, String status, AuthResponseHandler responseHandler) {
@@ -304,11 +310,17 @@ public class Auth {
     }
 
     public void joinSwiss(String id, Map<String, Object> body, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
-        post("/api/swiss/" + id + "/join", body, callback);
+        enqueueJsonResponse(
+            LichessWriteRequestFactory.swissJoin(LICHESS_HOST, accessToken, id, body),
+            callback
+        );
     }
 
     public void withdrawSwiss(String id, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
-        post("/api/swiss/" + id + "/withdraw", null, callback);
+        enqueueJsonResponse(
+            LichessWriteRequestFactory.swissWithdraw(LICHESS_HOST, accessToken, id),
+            callback
+        );
     }
 
     public void puzzleBatchSelect(
@@ -517,7 +529,11 @@ public class Auth {
             reqBuilder.post(RequestBody.create(new byte[0]));
         }
 
-        httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
+        enqueueJsonResponse(reqBuilder.build(), callback);
+    }
+
+    private void enqueueJsonResponse(Request request, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure " + e);

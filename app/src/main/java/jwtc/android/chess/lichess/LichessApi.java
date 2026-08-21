@@ -455,7 +455,7 @@ public class LichessApi extends GameApi {
      * Returns true when the error was a missing-scope error and a re-login was triggered.
      */
     private boolean handleScopeError(JsonObject e) {
-        String error = e != null && e.has("error") ? e.get("error").getAsString() : "";
+        String error = LichessJsonError.message(e);
         if (error.startsWith("Missing scope")) {
             Log.d(TAG, "Scope missing — clearing token and forcing re-login");
             auth.clearTokens();
@@ -466,16 +466,7 @@ public class LichessApi extends GameApi {
     }
 
     private String errorMessage(JsonObject e) {
-        if (e == null) {
-            return "";
-        }
-        if (e.has("error")) {
-            return e.get("error").getAsString();
-        }
-        if (e.has("message")) {
-            return e.get("message").getAsString();
-        }
-        return e.toString();
+        return LichessJsonError.message(e);
     }
 
     // --- Teams & Swiss tournaments ---
