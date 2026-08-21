@@ -935,7 +935,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         int levelTime = prefs.getInt("level", 2);
         int levelPly = prefs.getInt("levelPly", 2);
-        int secs[] = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
+        int[] secs = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
 
         if (mode == EngineApi.LEVEL_TIME) {
             myEngine.setMsecs(secs[levelTime] * 1000);
