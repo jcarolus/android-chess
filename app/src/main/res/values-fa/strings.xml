@@ -414,9 +414,9 @@
     <string name="square_color_description_light">خانه‌ی روشن</string>
     <string name="square_color_description_dark">خانه‌ی تیره</string>
     <string name="square_selected_with_duck_description">%1$s انتخاب‌شده در %2$s</string>
-    <string name="square_selected_with_piece_description">%1$s %2$s %3$s انتخاب‌شده</string>
+    <string name="square_selected_with_piece_description">%1$s %3$s %2$s انتخاب‌شده</string>
     <string name="square_with_duck_description">%1$s در %2$s</string>
-    <string name="square_with_color_and_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_color_and_piece_description">%1$s %3$s %2$s</string>
     <string name="square_with_piece_description">%1$s %2$s</string>
     <string name="start_accessibility_preferences">تنظیمات دسترس‌پذیری</string>
     <string name="start_boardpreferences">تنظیمات صفحه</string>
