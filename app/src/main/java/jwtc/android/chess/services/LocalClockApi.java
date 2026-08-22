@@ -15,14 +15,16 @@ public class LocalClockApi implements GameListener {
     // sound/speech lands on time rather than after the mark has already passed.
     private static final long TIME_WARNING_LEAD_MILLIES = 1000L;
     private static final long[] TIME_WARNING_THRESHOLDS_MILLIES = {
-            10 * 60 * 1000L,
-            5 * 60 * 1000L,
-            2 * 60 * 1000L,
-            60 * 1000L,
-            30 * 1000L,
-            15 * 1000L,
-            10 * 1000L,
-            5 * 1000L
+        30 * 60 * 1000L,
+        20 * 60 * 1000L,
+        10 * 60 * 1000L,
+        5 * 60 * 1000L,
+        2 * 60 * 1000L,
+        60 * 1000L,
+        30 * 1000L,
+        15 * 1000L,
+        10 * 1000L,
+        5 * 1000L
     };
 
     protected long whiteRemaining = 0;
