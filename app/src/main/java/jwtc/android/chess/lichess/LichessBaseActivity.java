@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
+import jwtc.android.chess.lichess.models.Challenge;
 
 /**
  * Shared base for the boardless Lichess screens (lobby, swiss). It binds {@link LichessService},
@@ -124,5 +125,29 @@ abstract public class LichessBaseActivity extends BaseActivity
 
     protected void onAutoOpenGameNotCompatible() {
         Toast.makeText(this, R.string.lichess_game_not_board_compatible, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onChallenge(Challenge challenge) {
+        int minutes = challenge.timeControl.limit / 60;
+        String message = challenge.challenger.name
+            + (challenge.rated
+                ? " " + getString(R.string.lichess_challenge_dialog_message_rating) + "\n"
+                : "\n")
+            + getString(R.string.lichess_challenge_dialog_message_variant, challenge.variant.name) + "\n"
+            + getString(R.string.lichess_challenge_dialog_message_time_control, challenge.timeControl.type) + "\n"
+            + (challenge.timeControl.limit > 0
+                ? " " + minutes + "+" + challenge.timeControl.increment
+                : "")
+            + "\n"
+            + (challenge.rated
+                ? getString(R.string.lichess_challenge_dialog_message_rated)
+                : getString(R.string.lichess_challenge_dialog_message_unrated));
+
+        openConfirmDialog(message,
+            getString(R.string.lichess_challenge_dialog_button_accept),
+            getString(R.string.lichess_challenge_dialog_button_decline),
+            () -> lichessApi.acceptChallenge(challenge),
+            () -> lichessApi.declineChallenge(challenge));
     }
 }

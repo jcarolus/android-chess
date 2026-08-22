@@ -243,24 +243,6 @@ public class LichessLobbyActivity extends LichessBaseActivity
     }
 
     @Override
-    public void onChallenge(Challenge challenge) {
-        int minutes = challenge.timeControl.limit / 60;
-
-        String message = challenge.challenger.name +
-            (challenge.rated ? " " + getString(R.string.lichess_challenge_dialog_message_rating) + "\n" : "\n") +
-            getString(R.string.lichess_challenge_dialog_message_variant, challenge.variant.name) + "\n" +
-            getString(R.string.lichess_challenge_dialog_message_time_control, challenge.timeControl.type) + "\n" +
-            (challenge.timeControl.limit > 0 ? " " + minutes + "+" + challenge.timeControl.increment : "") + "\n" +
-            (challenge.rated ? getString(R.string.lichess_challenge_dialog_message_rated) : getString(R.string.lichess_challenge_dialog_message_unrated));
-
-        openConfirmDialog(message,
-            getString(R.string.lichess_challenge_dialog_button_accept),
-            getString(R.string.lichess_challenge_dialog_button_decline),
-            () -> lichessApi.acceptChallenge(challenge),
-            () -> lichessApi.declineChallenge(challenge));
-    }
-
-    @Override
     public void onChallengeCancelled(Challenge challenge) {
         textViewLobbyStatus.setText(getString(R.string.lichess_challenge_by_cancelled, challenge.challenger.name));
     }
