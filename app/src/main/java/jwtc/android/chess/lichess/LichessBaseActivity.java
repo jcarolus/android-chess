@@ -1,5 +1,6 @@
 package jwtc.android.chess.lichess;
 
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ abstract public class LichessBaseActivity extends BaseActivity
         super.onResume();
         if (lichessApi != null) {
             lichessApi.setApiListener(this);
+            openPendingGameStart();
         }
     }
 
@@ -66,6 +68,7 @@ abstract public class LichessBaseActivity extends BaseActivity
         // onAuthenticate drive onLichessApiConnected; on failure we finish back to the lobby.
         if (api.getUser() != null) {
             onLichessApiConnected(api);
+            openPendingGameStart();
         } else {
             api.resume();
         }
@@ -75,6 +78,7 @@ abstract public class LichessBaseActivity extends BaseActivity
     public void onAuthenticate(String user) {
         if (user != null && lichessApi != null) {
             onLichessApiConnected(lichessApi);
+            openPendingGameStart();
         } else {
             // No session; the lobby owns login, so bail back to it.
             finish();
@@ -90,5 +94,35 @@ abstract public class LichessBaseActivity extends BaseActivity
 
     /** The shared api is connected and authenticated. Subclasses load their data here. */
     protected void onLichessApiConnected(LichessApi api) {
+    }
+
+    @Override
+    public void onGameInit(String gameId, boolean boardCompatible) {
+        openPendingGameStart();
+    }
+
+    private void openPendingGameStart() {
+        if (lichessApi == null) {
+            return;
+        }
+        LichessApi.PendingGameStart gameStart = lichessApi.consumePendingGameStart();
+        if (gameStart == null) {
+            return;
+        }
+        if (gameStart.boardCompatible) {
+            launchGame(gameStart.gameId);
+        } else {
+            onAutoOpenGameNotCompatible();
+        }
+    }
+
+    protected void launchGame(String gameId) {
+        Intent intent = new Intent(this, LichessGameActivity.class);
+        intent.putExtra(LichessGameActivity.EXTRA_GAME_ID, gameId);
+        startActivity(intent);
+    }
+
+    protected void onAutoOpenGameNotCompatible() {
+        Toast.makeText(this, R.string.lichess_game_not_board_compatible, Toast.LENGTH_LONG).show();
     }
 }

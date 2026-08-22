@@ -180,6 +180,7 @@ public class LichessGameActivity extends ChessBoardActivity
         // triggered it on resume). Authenticate first if needed; onAuthenticate opens the view.
         if (lichessApi.getUser() != null) {
             openInitialView();
+            openPendingGameStart();
         } else {
             lichessApi.resume();
         }
@@ -189,6 +190,7 @@ public class LichessGameActivity extends ChessBoardActivity
     public void onAuthenticate(String user) {
         if (user != null) {
             openInitialView();
+            openPendingGameStart();
         } else {
             // No session; the lobby owns login, so bail back to it.
             finish();
@@ -276,6 +278,7 @@ public class LichessGameActivity extends ChessBoardActivity
         if (lichessApi != null) {
             lichessApi.setApiListener(this);
             puzzleActive = lichessApi.getViewMode() == LichessApi.VIEW_PUZZLE;
+            openPendingGameStart();
         }
         layoutResignDraw.setVisibility(puzzleActive ? View.GONE : View.VISIBLE);
         layoutPuzzleControls.setVisibility(puzzleActive ? View.VISIBLE : View.GONE);
@@ -364,12 +367,21 @@ public class LichessGameActivity extends ChessBoardActivity
     @Override
     public void onGameInit(String gameId, boolean boardCompatible) {
         // A new pairing (e.g. round N+1) while the board is up: switch to it if appropriate.
-        if (lichessApi.consumeAutoOpenGameId(gameId)) {
-            if (boardCompatible) {
-                openGame(gameId);
-            } else {
-                Toast.makeText(this, R.string.lichess_game_not_board_compatible, Toast.LENGTH_LONG).show();
-            }
+        openPendingGameStart();
+    }
+
+    private void openPendingGameStart() {
+        if (lichessApi == null) {
+            return;
+        }
+        LichessApi.PendingGameStart gameStart = lichessApi.consumePendingGameStart();
+        if (gameStart == null) {
+            return;
+        }
+        if (gameStart.boardCompatible) {
+            openGame(gameStart.gameId);
+        } else {
+            Toast.makeText(this, R.string.lichess_game_not_board_compatible, Toast.LENGTH_LONG).show();
         }
     }
 

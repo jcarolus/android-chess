@@ -191,12 +191,6 @@ public class LichessLobbyActivity extends LichessBaseActivity
         dlg.show();
     }
 
-    private void launchGame(String gameId) {
-        Intent intent = new Intent(this, LichessGameActivity.class);
-        intent.putExtra(LichessGameActivity.EXTRA_GAME_ID, gameId);
-        startActivity(intent);
-    }
-
     // --- LichessApiListener (auth + lobby callbacks) ---
 
     @Override
@@ -204,7 +198,6 @@ public class LichessLobbyActivity extends LichessBaseActivity
         Log.d(TAG, "onAuthenticate " + user);
         if (user != null) {
             textViewHandle.setText(user);
-            lichessApi.event();
             displayLobby();
         } else {
             displayLogin();
@@ -214,13 +207,7 @@ public class LichessLobbyActivity extends LichessBaseActivity
     @Override
     public void onGameInit(String gameId, boolean boardCompatible) {
         lichessApi.playing();
-        if (lichessApi.consumeAutoOpenGameId(gameId)) {
-            if (boardCompatible) {
-                launchGame(gameId);
-            } else {
-                textViewLobbyStatus.setText(R.string.lichess_game_not_board_compatible);
-            }
-        }
+        super.onGameInit(gameId, boardCompatible);
     }
 
     @Override

@@ -96,6 +96,7 @@ public class LichessApi extends GameApi {
     private int promotionPiece = BoardConstants.QUEEN;
     private Auth auth;
     private LichessApiListener apiListener;
+    private boolean eventStreamOpen = false;
 
     private GameFull ongoingGameFull;
     private PuzzleAndGame ongoingPuzzle;
@@ -171,7 +172,12 @@ public class LichessApi extends GameApi {
         });
     }
 
+    /** Ensure the account event stream is running. Safe to call after every authentication. */
     public void event() {
+        if (eventStreamOpen || user == null) {
+            return;
+        }
+        eventStreamOpen = true;
         this.auth.event(new Auth.AuthResponseHandler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
@@ -184,7 +190,7 @@ public class LichessApi extends GameApi {
                     // blitz/bullet (typical for swiss) come through with compat.board == false and would
                     // 4xx on the game stream. Treat a missing compat as compatible so nothing else breaks.
                     boolean boardCompatible = ongoingGame.compat == null || ongoingGame.compat.board;
-                    if (apiListener != null) {
+                    if (queuePendingGameStart(ongoingGame.gameId, boardCompatible) && apiListener != null) {
                         apiListener.onGameInit(ongoingGame.gameId, boardCompatible);
                     }
                 } else if (type.equals("gameFinish")) {
@@ -210,6 +216,7 @@ public class LichessApi extends GameApi {
 
             @Override
             public void onClose(boolean success) {
+                eventStreamOpen = false;
                 Log.d(TAG, "event closed " + success);
                 if (apiListener != null && !success) {
                     apiListener.onConnectionError();
@@ -844,31 +851,61 @@ public class LichessApi extends GameApi {
             && "started".equals(ongoingGameFull.state.status);
     }
 
-    // gameStart events auto-open the board, but the event stream re-emits gameStart for every
-    // ongoing game whenever it (re)connects. This dedupe set lives in the (service-owned) api so it
-    // survives the lobby -> game activity transition; otherwise each screen would re-open the board.
-    private final Set<String> autoOpenedGameIds = new HashSet<>();
+    /** A gameStart retained until a foreground Lichess screen can act on it. */
+    public static final class PendingGameStart {
+        public final String gameId;
+        public final boolean boardCompatible;
 
-    /**
-     * Decide whether a gameStart should auto-open the board now, recording the decision so a later
-     * re-emit doesn't re-open. A gameStart fires when a round pairs us (swiss/arena), a seek
-     * matches, or a challenge is accepted.
-     */
-    public boolean consumeAutoOpenGameId(String gameId) {
+        private PendingGameStart(String gameId, boolean boardCompatible) {
+            this.gameId = gameId;
+            this.boardCompatible = boardCompatible;
+        }
+    }
+
+    // gameStart events auto-open the board, but the event stream re-emits gameStart for every
+    // ongoing game whenever it (re)connects. This state lives in the service-owned api so both the
+    // dedupe history and an event received between activity listeners survive screen transitions.
+    private final Set<String> autoOpenedGameIds = new HashSet<>();
+    private PendingGameStart pendingGameStart;
+    // Blocks a second gameStart while the first selected game is still loading and ongoingGameFull
+    // has not arrived yet. Once that game is known to be finished, the next pairing may replace it.
+    private String autoOpeningGameId;
+
+    private boolean queuePendingGameStart(String gameId, boolean boardCompatible) {
         if (gameId == null || autoOpenedGameIds.contains(gameId)) {
             return false;
         }
-        // Don't interrupt a puzzle in progress.
+        if (pendingGameStart != null) {
+            return gameId.equals(pendingGameStart.gameId);
+        }
         if (getViewMode() == VIEW_PUZZLE) {
             return false;
         }
-        // Don't yank the user out of a game they're still playing (a finished game is fine to leave,
-        // e.g. finishing round N and getting paired for round N+1).
         if (isOngoingGameInProgress() && !gameId.equals(getOngoingGameId())) {
             return false;
         }
-        autoOpenedGameIds.add(gameId);
+        if (autoOpeningGameId != null && ongoingGameFull == null
+            && !gameId.equals(autoOpeningGameId)) {
+            return false;
+        }
+        pendingGameStart = new PendingGameStart(gameId, boardCompatible);
         return true;
+    }
+
+    /**
+     * Consume the pending pairing, recording it so reconnects don't reopen the same board.
+     * Returns null when no foreground navigation is pending.
+     */
+    public PendingGameStart consumePendingGameStart() {
+        PendingGameStart result = pendingGameStart;
+        if (result != null) {
+            pendingGameStart = null;
+            autoOpenedGameIds.add(result.gameId);
+            if (result.boardCompatible) {
+                autoOpeningGameId = result.gameId;
+            }
+        }
+        return result;
     }
 
     public int getMyTurn() {
@@ -890,6 +927,9 @@ public class LichessApi extends GameApi {
 
     private void onAuthenticate(String result) {
         user = result;
+        if (user != null) {
+            event();
+        }
         if (apiListener != null) {
             apiListener.onAuthenticate(user);
         }
