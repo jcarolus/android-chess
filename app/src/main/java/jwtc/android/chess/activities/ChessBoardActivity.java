@@ -1060,16 +1060,26 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getPiecesDescription(final int turn) {
         String ret = "";
         ArrayList<Integer> positions = new ArrayList<Integer>();
-        for (int i = 0; i < 6; i++) {
+        final int[] pieceOrder = {
+            BoardConstants.KING,
+            BoardConstants.ROOK,
+            BoardConstants.QUEEN,
+            BoardConstants.BISHOP,
+            BoardConstants.KNIGHT,
+            BoardConstants.PAWN
+        };
+        for (int piece : pieceOrder) {
             positions.clear();
-            for (int pos = 0; pos < 64; pos++) {
-                int piece = jni.pieceAt(turn, pos);
-                if (piece == i) {
-                    positions.add(pos);
+            for (int col = 0; col < 8; col++) {
+                for (int row = 0; row < 8; row++) {
+                    int pos = Pos.fromColAndRow(col, row);
+                    if (jni.pieceAt(turn, pos) == piece) {
+                        positions.add(pos);
+                    }
                 }
             }
             if (positions.size() > 0) {
-                ret += Piece.toString(i)
+                ret += Piece.toString(piece)
                     + " " + positions
                     .stream()
                     .map(Pos::toString)
