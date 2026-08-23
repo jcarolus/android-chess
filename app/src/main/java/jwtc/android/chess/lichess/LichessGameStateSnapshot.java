@@ -104,5 +104,16 @@ final class LichessGameStateSnapshot {
             this.drawEnded = drawEnded;
             this.resignedColor = resignedColor;
         }
+
+        @Override
+        public String toString() {
+            return "Transition{" +
+                "newGame=" + newGame +
+                ", moveApplied=" + moveApplied +
+                ", historyPositionChanged=" + historyPositionChanged +
+                ", drawEnded=" + drawEnded +
+                ", resignedColor=" + resignedColor +
+                '}';
+        }
     }
 }
