@@ -103,9 +103,11 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
 
     public void doSpeak(String sMoveSpeech, int queueMode) {
         if (!enabled || !ready) {
+            Log.d(TAG, "doSpeak not enabled or not ready " + enabled + " " + ready);
             return;
         }
         if (textToSpeech == null) {
+            Log.d(TAG, "textToSpeech == null");
             return;
         }
         if (protectedSpeaking && queueMode == TextToSpeech.QUEUE_FLUSH) {

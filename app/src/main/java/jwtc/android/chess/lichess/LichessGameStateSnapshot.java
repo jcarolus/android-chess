@@ -72,6 +72,11 @@ final class LichessGameStateSnapshot {
         return "created".equals(status) || "started".equals(status);
     }
 
+    @Override
+    public String toString() {
+        return "Snapshot {status=" + status + ", moves " + moves.size() + "}";
+    }
+
     private static boolean isPrefix(List<String> prefix, List<String> moves) {
         if (prefix.size() > moves.size()) {
             return false;

@@ -77,6 +77,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     // Delay before speaking a time warning when a warning sound is also playing,
     // so the sound has time to finish before TTS starts.
     private static final long TIME_WARNING_SPEECH_DELAY_MS = 700L;
+    private static final long INIT_SPEECH_DELAY_MS = 1000L;
     private Runnable accessibilityDragDwellRunnable = null;
     private int accessibilityDragHoverPos = -1;
     private int accessibilityDragFromPos = -1;
@@ -174,6 +175,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onHistoryPositionChanged(int boardNumber) {
         Log.d(TAG, "onHistoryPositionChanged " + boardNumber);
+    }
+
+    @Override
+    public void onNewGameStarted(int variant) {
+        Log.d(TAG, "onNewGameStarted " + variant);
     }
 
     @Override
@@ -579,13 +585,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         if (speechEnabled) {
             final Runnable speak = () -> {
+                Log.d(TAG, "doSpeak");
                 textToSpeech.doSpeak(getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black), TextToSpeech.QUEUE_ADD);
             };
-            if (soundsEnabled) {
-                timeWarningSpeechHandler.postDelayed(speak, TIME_WARNING_SPEECH_DELAY_MS);
-            } else {
-                speak.run();
-            }
+            // @TODO should this be on status text?
+            // delay because speech not ready after Activity resume with new game
+            timeWarningSpeechHandler.postDelayed(speak, INIT_SPEECH_DELAY_MS);
         }
     }
 

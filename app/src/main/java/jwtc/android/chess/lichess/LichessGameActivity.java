@@ -551,6 +551,13 @@ public class LichessGameActivity extends ChessBoardActivity
         updateLastMoveDescription(getLastMoveAndTurnDescription(false));
     }
 
+    @Override
+    public void onNewGameStarted(int variant) {
+        super.onNewGameStarted(variant);
+
+        feedbackNewGameStarted(lichessApi.getMyTurn());
+    }
+
     protected String gameStateToTranslated(String state) {
         if (state.equals("created")) {
             return getString(R.string.lichess_game_state_created);
