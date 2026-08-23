@@ -777,7 +777,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-   
+
 //    @Override
 //    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
 //    public boolean dispatchKeyEvent(KeyEvent event) {

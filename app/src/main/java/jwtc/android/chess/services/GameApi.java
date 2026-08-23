@@ -603,6 +603,42 @@ public class GameApi {
         }
     }
 
+    protected void dispatchHistoryPositionChanged(final int boardNumber) {
+        for (GameListener listener : listeners) {
+            listener.onHistoryPositionChanged(boardNumber);
+        }
+    }
+
+    protected void dispatchNewGameStarted(final int variant) {
+        for (GameListener listener : listeners) {
+            listener.onNewGameStarted(variant);
+        }
+    }
+
+    protected void dispatchGameContinued() {
+        for (GameListener listener : listeners) {
+            listener.onGameContinued();
+        }
+    }
+
+    protected void dispatchPlayerResigned(final int color) {
+        for (GameListener listener : listeners) {
+            listener.onPlayerResigned(color);
+        }
+    }
+
+    protected void dispatchDrawAgreed() {
+        for (GameListener listener : listeners) {
+            listener.onDrawAgreed();
+        }
+    }
+
+    protected void dispatchPlayerForfeitedOnTime(final int color) {
+        for (GameListener listener : listeners) {
+            listener.onPlayerForfeitedOnTime(color);
+        }
+    }
+
     private boolean move(int move, String sAnnotation, boolean bUpdate) {
 //        Log.i(TAG, "move " + move);
         if (jni.move(move) == 0) {
