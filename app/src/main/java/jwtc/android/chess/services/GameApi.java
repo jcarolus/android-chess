@@ -575,7 +575,7 @@ public class GameApi {
 //        Log.d(TAG, "dispatchMove " + move);
 
         for (GameListener listener : listeners) {
-            listener.OnMove(move);
+            listener.onMoveApplied(move);
         }
     }
 
@@ -583,7 +583,7 @@ public class GameApi {
         Log.d(TAG, "dispatchDuckMove " + duckMove);
 
         for (GameListener listener : listeners) {
-            listener.OnDuckMove(duckMove);
+            listener.onDuckMoveApplied(duckMove);
         }
     }
 
@@ -599,7 +599,7 @@ public class GameApi {
         Log.d(TAG, "dispatchIllegalMove");
 
         for (GameListener listener : listeners) {
-            listener.OnIllegalMove();
+            listener.onIllegalMoveAttempted();
         }
     }
 

@@ -234,7 +234,7 @@ public class LocalClockApi implements GameListener {
     }
 
     @Override
-    public void OnMove(int move) {
+    public void onMoveApplied(int move) {
         // only if on top of move stack
         if (this.gameApi.isAtEndOfPGN()) {
             switchTurn();
@@ -242,7 +242,7 @@ public class LocalClockApi implements GameListener {
     }
 
     @Override
-    public void OnDuckMove(int duckMove) {
+    public void onDuckMoveApplied(int duckMove) {
 
     }
 
@@ -252,8 +252,32 @@ public class LocalClockApi implements GameListener {
     }
 
     @Override
-    public void OnIllegalMove() {
+    public void onIllegalMoveAttempted() {
 
+    }
+
+    @Override
+    public void onHistoryPositionChanged(int boardNumber) {
+    }
+
+    @Override
+    public void onNewGameStarted(int variant) {
+    }
+
+    @Override
+    public void onGameContinued() {
+    }
+
+    @Override
+    public void onPlayerResigned(int color) {
+    }
+
+    @Override
+    public void onDrawAgreed() {
+    }
+
+    @Override
+    public void onPlayerForfeitedOnTime(int color) {
     }
 
     private class RunnableImp implements Runnable {

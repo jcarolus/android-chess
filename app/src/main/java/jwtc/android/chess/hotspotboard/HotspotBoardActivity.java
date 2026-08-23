@@ -89,8 +89,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     };
 
     @Override
-    public void OnMove(int move) {
-        super.OnMove(move);
+    public void onMoveApplied(int move) {
+        super.onMoveApplied(move);
 
         Log.d(TAG, "OnMove " + move);
 

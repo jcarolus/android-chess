@@ -69,7 +69,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean useLongMoveFormat = false;
     protected boolean includeAttackersAndDefendersInFieldDescription = false;
     // shared views
-    protected TextView textViewWhitePieces, textViewBlackPieces, textViewSquareInfo;
+    protected TextView textViewWhitePieces, textViewBlackPieces;
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
     private String keyboardBuffer = "";
     private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
@@ -120,8 +120,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
-    public void OnMove(int move) {
-        Log.d(TAG, "OnMove " + Move.toDbgString(move));
+    public void onMoveApplied(int move) {
+        Log.d(TAG, "onMoveApplied " + Move.toDbgString(move));
         // selectPosition(-1);
 
         moveToPositions.clear();
@@ -146,8 +146,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
-    public void OnDuckMove(int duckMove) {
-        Log.d(TAG, "OnDuckMove " + Pos.toString(duckMove));
+    public void onDuckMoveApplied(int duckMove) {
+        Log.d(TAG, "OnDuckMoveApplied " + Pos.toString(duckMove));
         selectPosition(-1);
 
         rebuildBoard();
@@ -165,10 +165,34 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
-    public void OnIllegalMove() {
+    public void onIllegalMoveAttempted() {
         Log.d(TAG, "OnIllegal");
         rebuildBoard();
         feedbackIllegalMove();
+    }
+
+    @Override
+    public void onHistoryPositionChanged(int boardNumber) {
+    }
+
+    @Override
+    public void onNewGameStarted(int variant) {
+    }
+
+    @Override
+    public void onGameContinued() {
+    }
+
+    @Override
+    public void onPlayerResigned(int color) {
+    }
+
+    @Override
+    public void onDrawAgreed() {
+    }
+
+    @Override
+    public void onPlayerForfeitedOnTime(int color) {
     }
 
     public void afterCreate() {
@@ -734,8 +758,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
             }
         }
-
-        updateSquareInfo();
     }
 
     public void resetSelectedSquares() {
@@ -755,24 +777,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    public void updateSquareInfo() {
-        if (textViewSquareInfo != null && this.selectedPosition != -1) {
-            int[] positions = jni.getAttackerPositionsTo(selectedPosition, jni.getTurn() == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK);
-            String attackers = java.util.Arrays.stream(positions)
-                .mapToObj(Pos::toString)
-                .collect(Collectors.joining(","));
-
-            positions = jni.getAttackerPositionsTo(selectedPosition, jni.getTurn());
-            String defenders = java.util.Arrays.stream(positions)
-                .mapToObj(Pos::toString)
-                .collect(Collectors.joining(","));
-
-            textViewSquareInfo.setText(
-                attackers + " <> " + defenders
-            );
-        }
-    }
-
+   
 //    @Override
 //    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
 //    public boolean dispatchKeyEvent(KeyEvent event) {

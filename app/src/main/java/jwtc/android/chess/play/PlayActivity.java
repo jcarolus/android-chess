@@ -233,7 +233,6 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
-        textViewSquareInfo = findViewById(R.id.TextViewSquareInfo);
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -505,8 +504,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
 
     @Override
-    public void OnMove(int move) {
-        super.OnMove(move);
+    public void onMoveApplied(int move) {
+        super.onMoveApplied(move);
 
         updateGUI();
 
@@ -514,8 +513,8 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     @Override
-    public void OnDuckMove(int duckMove) {
-        super.OnDuckMove(duckMove);
+    public void onDuckMoveApplied(int duckMove) {
+        super.onDuckMoveApplied(duckMove);
 
         updateGUI();
 
