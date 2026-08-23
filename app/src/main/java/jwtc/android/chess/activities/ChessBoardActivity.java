@@ -933,7 +933,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void setMoveToPositions(int from) {
-        Log.d(TAG, "setMoveToPositions " + from);
+        // Log.d(TAG, "setMoveToPositions " + from);
         moveToPositions.clear();
         if (showMoves) {
             int size = jni.getMoveArraySize();

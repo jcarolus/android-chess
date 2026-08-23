@@ -8,25 +8,25 @@ package jwtc.android.chess.services;
  * are notifications only and do not request or authorize game changes.</p>
  */
 public interface GameListener {
-    void onMoveApplied(int move);
+    default void onMoveApplied(int move) {}
 
-    void onDuckMoveApplied(int duckMove);
+    default void onDuckMoveApplied(int duckMove) {}
 
-    void OnState();
+    default void OnState() {}
 
-    void onIllegalMoveAttempted();
+    default void onIllegalMoveAttempted() {}
 
-    void onHistoryPositionChanged(int boardNumber);
+    default void onHistoryPositionChanged(int boardNumber) {}
 
-    void onNewGameStarted(int variant);
+    default void onNewGameStarted(int variant) {}
 
-    void onGameLoaded();
+    default void onGameLoaded() {}
 
-    void onGameResumed();
+    default void onGameResumed() {}
 
-    void onPlayerResigned(int color);
+    default void onPlayerResigned(int color) {}
 
-    void onDrawAgreed();
+    default void onDrawAgreed() {}
 
-    void onPlayerForfeitedOnTime(int color);
+    default void onPlayerForfeitedOnTime(int color) {}
 }

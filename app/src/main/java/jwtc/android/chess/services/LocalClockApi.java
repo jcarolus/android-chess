@@ -241,49 +241,6 @@ public class LocalClockApi implements GameListener {
         }
     }
 
-    @Override
-    public void onDuckMoveApplied(int duckMove) {
-
-    }
-
-    @Override
-    public void OnState() {
-
-    }
-
-    @Override
-    public void onIllegalMoveAttempted() {
-
-    }
-
-    @Override
-    public void onHistoryPositionChanged(int boardNumber) {
-    }
-
-    @Override
-    public void onNewGameStarted(int variant) {
-    }
-
-    @Override
-    public void onGameLoaded() {
-    }
-
-    @Override
-    public void onGameResumed() {
-    }
-
-    @Override
-    public void onPlayerResigned(int color) {
-    }
-
-    @Override
-    public void onDrawAgreed() {
-    }
-
-    @Override
-    public void onPlayerForfeitedOnTime(int color) {
-    }
-
     private class RunnableImp implements Runnable {
         @Override
         public void run() {
