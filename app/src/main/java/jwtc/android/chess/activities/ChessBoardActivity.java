@@ -635,7 +635,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackDrawAgreed() {
-
+        if (textToSpeech.isEnabled()) {
+            textToSpeech.doSpeak(getString(R.string.players_agreed_draw), TextToSpeech.QUEUE_ADD);
+        }
     }
 
     public void feedbackPlayerForfeitedOnTime(int color) {

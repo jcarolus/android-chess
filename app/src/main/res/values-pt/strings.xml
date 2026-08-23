@@ -494,5 +494,6 @@
     <string name="lichess_swiss_status_started">Em curso</string>
     <string name="lichess_swiss_status_finished">Terminado</string>
     <string name="black_player_resigned">As pretas desistiram</string>
+    <string name="players_agreed_draw">Empate por acordo</string>
     <string name="white_player_resigned">As brancas desistiram</string>
 </resources>

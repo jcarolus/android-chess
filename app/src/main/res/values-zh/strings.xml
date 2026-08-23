@@ -494,5 +494,6 @@
     <string name="lichess_swiss_status_started">进行中</string>
     <string name="lichess_swiss_status_finished">已结束</string>
     <string name="black_player_resigned">黑方认输</string>
+    <string name="players_agreed_draw">和棋（双方同意）</string>
     <string name="white_player_resigned">白方认输</string>
 </resources>

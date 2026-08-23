@@ -504,5 +504,6 @@
     <string name="lichess_swiss_status_started">En curso</string>
     <string name="lichess_swiss_status_finished">Finalizado</string>
     <string name="black_player_resigned">Las negras se rindieron</string>
+    <string name="players_agreed_draw">Tablas por acuerdo</string>
     <string name="white_player_resigned">Las blancas se rindieron</string>
 </resources>

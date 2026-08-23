@@ -494,5 +494,6 @@
     <string name="lichess_swiss_status_started">În desfășurare</string>
     <string name="lichess_swiss_status_finished">Încheiat</string>
     <string name="black_player_resigned">Negrul a abandonat</string>
+    <string name="players_agreed_draw">Remiză prin acord</string>
     <string name="white_player_resigned">Albul a abandonat</string>
 </resources>
