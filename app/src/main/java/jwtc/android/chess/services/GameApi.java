@@ -194,6 +194,7 @@ public class GameApi {
     public void undoMove() {
 //        Log.d(TAG, "undoMove");
         jni.undo();
+        dispatchHistoryPositionChanged(jni.getNumBoard());
         dispatchState();
     }
 
@@ -223,6 +224,7 @@ public class GameApi {
                     currentNumBoard--;
                 }
             }
+            dispatchHistoryPositionChanged(jni.getNumBoard());
             dispatchState();
         }
     }
@@ -272,6 +274,7 @@ public class GameApi {
             pgnTags.put("FEN", jni.toFEN());
         }
 
+        dispatchNewGameStarted(variant);
         dispatchState();
     }
 
@@ -320,6 +323,7 @@ public class GameApi {
 
         pgnMoves.clear();
 
+        dispatchNewGameStarted(jni.getVariant());
         dispatchState();
         return ret;
     }

@@ -757,7 +757,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 int piece = jni.pieceAt(jni.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
                 String nextDescription = getFieldDescription(pos);
-                Log.d(TAG, "next " + nextDescription);
+                // Log.d(TAG, "next " + nextDescription);
                 CharSequence currentDescription = squareView.getContentDescription();
                 if (currentDescription == null || !nextDescription.contentEquals(currentDescription)) {
                     squareView.setContentDescription(nextDescription);
