@@ -177,12 +177,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
-    public void onNewGameStarted(int variant) {
-        Log.d(TAG, "onNewGameStarted " + variant);
-        feedbackNewGameStarted();
-    }
-
-    @Override
     public void onGameLoaded() {
         Log.d(TAG, "onGameLoaded");
     }
