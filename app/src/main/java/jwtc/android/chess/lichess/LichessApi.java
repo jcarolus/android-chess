@@ -12,8 +12,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -99,6 +97,7 @@ public class LichessApi extends GameApi {
     private boolean eventStreamOpen = false;
 
     private GameFull ongoingGameFull;
+    private LichessGameStateSnapshot lastGameStateSnapshot;
     private PuzzleAndGame ongoingPuzzle;
     private int puzzleMoveIndex = 0;
     private String currentPuzzleAngle = PUZZLE_ANGLE_DEFAULT;
@@ -810,7 +809,6 @@ public class LichessApi extends GameApi {
                 Log.d(TAG, "game " + jsonObject.get("type").getAsString());
                 if (type.equals("gameState") && ongoingGameFull != null) {
                     ongoingGameFull.state = (new Gson()).fromJson(jsonObject, GameState.class);
-                    ;
                 } else if (type.equals("gameFull")) {
                     ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
                     ongoingPuzzle = null;
@@ -945,16 +943,24 @@ public class LichessApi extends GameApi {
     private void processGameState() {
         Log.d(TAG, "processGameState");
         if (ongoingGameFull != null) {
+            LichessGameStateSnapshot snapshot = LichessGameStateSnapshot.from(ongoingGameFull);
+            LichessGameStateSnapshot.Transition transition =
+                snapshot.transitionFrom(lastGameStateSnapshot);
+
             // jni.initFEN(ongoingGame.fen);
             if (ongoingGameFull.initialFen.equals("startpos")) {
                 jni.newGame();
             } else {
                 jni.initFEN(ongoingGameFull.initialFen);
             }
-            String moves = ongoingGameFull.state.moves;
-
             resetForPGN();
-            processMoves(moves.isEmpty() ? Collections.emptyList() : Arrays.asList(moves.split(" ")));
+            boolean replayedEntireSnapshot = processMoves(snapshot.moves);
+
+            if (replayedEntireSnapshot) {
+                dispatchGameStateTransition(snapshot, transition);
+                lastGameStateSnapshot = snapshot;
+            }
+            dispatchState();
 
             if (apiListener != null) {
                 apiListener.onGameUpdate(ongoingGameFull);
@@ -984,7 +990,7 @@ public class LichessApi extends GameApi {
         }
     }
 
-    private void processMoves(List<String> moveList) {
+    private boolean processMoves(List<String> moveList) {
         for (String sMove : moveList) {
             if (sMove.length() >= 4) {
                 try {
@@ -1000,21 +1006,54 @@ public class LichessApi extends GameApi {
 
                     if (jni.requestMove(from, to) == 0) {
                         Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
-                        break;
+                        return false;
                     } else {
                         addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
                     }
 
                 } catch (Exception e) {
                     Log.d(TAG, "Exception processing move " + sMove);
+                    return false;
                 }
             } else {
                 Log.d(TAG, "Invalid move length " + sMove);
+                return false;
             }
         }
+        return true;
+    }
 
-        dispatchMove(jni.getMyMove());
-        dispatchState();
+    private void dispatchGameStateTransition(
+        LichessGameStateSnapshot snapshot,
+        LichessGameStateSnapshot.Transition transition
+    ) {
+        if (transition.newGame) {
+            if (snapshot.isStarted()) {
+                dispatchNewGameStarted(jni.getVariant());
+            }
+            return;
+        }
+
+        if (transition.moveApplied && !snapshot.moves.isEmpty()) {
+            dispatchMove(jni.getMyMove());
+        } else if (transition.historyPositionChanged) {
+            dispatchHistoryPositionChanged(snapshot.moves.size());
+        }
+
+        if (transition.resignedColor != -1) {
+            dispatchPlayerResigned(transition.resignedColor);
+        }
+        if (transition.drawEnded && !isBoardDetectedDraw()) {
+            dispatchDrawAgreed();
+        }
+    }
+
+    private boolean isBoardDetectedDraw() {
+        int state = jni.getState();
+        return state == BoardConstants.DRAW_MATERIAL
+            || state == BoardConstants.DRAW_50
+            || state == BoardConstants.STALEMATE
+            || state == BoardConstants.DRAW_REPEAT;
     }
 
     public void retryWrongPuzzleMove() {

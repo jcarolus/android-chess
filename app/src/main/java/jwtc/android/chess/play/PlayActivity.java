@@ -337,12 +337,7 @@ public class PlayActivity extends ChessBoardActivity implements
             gameApi.newGame();
         }
 
-
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            playIfEngineMove();
-        },
-            500
-        );
+        new Handler(Looper.getMainLooper()).postDelayed(this::playIfEngineMove, 500);
     }
 
     private void applyCapturedPiecesVisibility() {
