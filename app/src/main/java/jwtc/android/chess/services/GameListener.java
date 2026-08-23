@@ -22,6 +22,8 @@ public interface GameListener {
 
     void onGameLoaded();
 
+    void onGameResumed();
+
     void onPlayerResigned(int color);
 
     void onDrawAgreed();

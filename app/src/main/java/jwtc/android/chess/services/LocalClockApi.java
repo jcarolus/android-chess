@@ -269,6 +269,10 @@ public class LocalClockApi implements GameListener {
     }
 
     @Override
+    public void onGameResumed() {
+    }
+
+    @Override
     public void onPlayerResigned(int color) {
     }
 

@@ -187,6 +187,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
+    public void onGameResumed() {
+        Log.d(TAG, "onGameResumed");
+    }
+
+    @Override
     public void onPlayerResigned(int color) {
         Log.d(TAG, "onPlayerResigned " + color);
     }

@@ -438,6 +438,7 @@ public class GameApi {
                 finalState == BoardConstants.WHITE_RESIGNED ||
                 finalState == BoardConstants.BLACK_RESIGNED) {
                 pgnMoves.get(size - 1).finalState = -1;
+                dispatchGameResumed();
                 dispatchState();
             }
         }
@@ -625,6 +626,12 @@ public class GameApi {
     protected void dispatchGameLoaded() {
         for (GameListener listener : listeners) {
             listener.onGameLoaded();
+        }
+    }
+
+    protected void dispatchGameResumed() {
+        for (GameListener listener : listeners) {
+            listener.onGameResumed();
         }
     }
 
