@@ -372,6 +372,9 @@ public class GameApi {
             if (size > 0) {
                 pgnMoves.get(size - 1).finalState = finalState;
             }
+            if (!pgnMoves.isEmpty()) {
+                dispatchGameLoaded();
+            }
             dispatchState();
             return true;
         }
@@ -619,9 +622,9 @@ public class GameApi {
         }
     }
 
-    protected void dispatchGameContinued() {
+    protected void dispatchGameLoaded() {
         for (GameListener listener : listeners) {
-            listener.onGameContinued();
+            listener.onGameLoaded();
         }
     }
 

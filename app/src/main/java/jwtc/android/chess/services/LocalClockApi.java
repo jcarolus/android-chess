@@ -265,7 +265,7 @@ public class LocalClockApi implements GameListener {
     }
 
     @Override
-    public void onGameContinued() {
+    public void onGameLoaded() {
     }
 
     @Override

@@ -20,7 +20,7 @@ public interface GameListener {
 
     void onNewGameStarted(int variant);
 
-    void onGameContinued();
+    void onGameLoaded();
 
     void onPlayerResigned(int color);
 
