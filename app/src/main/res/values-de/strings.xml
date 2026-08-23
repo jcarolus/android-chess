@@ -503,4 +503,6 @@
     <string name="lichess_swiss_status_created">Bevorstehend</string>
     <string name="lichess_swiss_status_started">Läuft</string>
     <string name="lichess_swiss_status_finished">Beendet</string>
+    <string name="black_player_resigned">Schwarz gab auf</string>
+    <string name="white_player_resigned">Weiß gab auf</string>
 </resources>

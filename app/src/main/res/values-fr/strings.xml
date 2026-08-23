@@ -493,4 +493,6 @@
     <string name="lichess_swiss_status_created">À venir</string>
     <string name="lichess_swiss_status_started">En cours</string>
     <string name="lichess_swiss_status_finished">Terminé</string>
+    <string name="black_player_resigned">Les Noirs ont abandonné</string>
+    <string name="white_player_resigned">Les Blancs ont abandonné</string>
 </resources>

@@ -629,7 +629,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackPlayerResigned(int color) {
-
+        if (textToSpeech.isEnabled()) {
+            textToSpeech.doSpeak(getString(color == BoardConstants.WHITE ? R.string.white_player_resigned : R.string.black_player_resigned), TextToSpeech.QUEUE_ADD);
+        }
     }
 
     public void feedbackDrawAgreed() {

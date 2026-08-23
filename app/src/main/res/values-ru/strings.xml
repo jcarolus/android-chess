@@ -493,4 +493,6 @@
     <string name="lichess_swiss_status_created">Предстоящий</string>
     <string name="lichess_swiss_status_started">Идёт</string>
     <string name="lichess_swiss_status_finished">Завершён</string>
+    <string name="black_player_resigned">Чёрные сдались</string>
+    <string name="white_player_resigned">Белые сдались</string>
 </resources>

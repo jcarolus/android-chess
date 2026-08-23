@@ -493,4 +493,6 @@
     <string name="lichess_swiss_status_created">Yaklaşan</string>
     <string name="lichess_swiss_status_started">Devam ediyor</string>
     <string name="lichess_swiss_status_finished">Tamamlandı</string>
+    <string name="black_player_resigned">Siyah pes etti</string>
+    <string name="white_player_resigned">Beyaz pes etti</string>
 </resources>

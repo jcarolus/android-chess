@@ -502,4 +502,6 @@
     <string name="lichess_swiss_status_created">قادمة</string>
     <string name="lichess_swiss_status_started">جارية</string>
     <string name="lichess_swiss_status_finished">منتهية</string>
+    <string name="black_player_resigned">استسلم الأسود</string>
+    <string name="white_player_resigned">استسلم الأبيض</string>
 </resources>
