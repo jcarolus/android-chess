@@ -973,7 +973,7 @@ public class ICSClient extends ChessBoardActivity implements
         resetSelectedSquares();
         if (icsServer != null) {
             if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
-                feedbackNewGame();
+                feedbackNewGameStarted();
             }
         }
     }

@@ -29,8 +29,6 @@ import org.json.JSONArray;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -55,7 +53,6 @@ import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.chess.Move;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
@@ -301,7 +298,6 @@ public class PlayActivity extends ChessBoardActivity implements
                 sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
                 if (sPGN != null) {
                     gameApi.loadPGN(sPGN);
-                    updateForNewGame();
                 }
             } else {
                 sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -309,7 +305,6 @@ public class PlayActivity extends ChessBoardActivity implements
                     sFEN = sFEN.trim();
 
                     gameApi.initFEN(sFEN, true);
-                    updateForNewGame();
                 }
             }
         } else if (uri != null) {
@@ -336,10 +331,8 @@ public class PlayActivity extends ChessBoardActivity implements
                 Log.i("onResume", "FEN: " + sFEN);
                 lGameID = 0;
                 gameApi.initFEN(sFEN, true);
-                updateForNewGame();
             } else {
                 gameApi.newGame();
-                updateForNewGame();
             }
         }
 
@@ -570,6 +563,13 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     @Override
+    public void onNewGameStarted(int variant) {
+        super.onNewGameStarted(variant);
+
+        updateForNewGame();
+    }
+
+    @Override
     public void onMoveItemClick(int pos) {
         this.gameApi.jumpToBoardNum(pos + 1);
     }
@@ -720,11 +720,9 @@ public class PlayActivity extends ChessBoardActivity implements
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
                     lGameID = 0;
-                    updateForNewGame();
                 } else if (item.equals(getString(R.string.menu_new_duck))) {
                     gameApi.newGame(BoardConstants.VARIANT_DUCK);
                     lGameID = 0;
-                    updateForNewGame();
                 } else if (item.equals(getString(R.string.menu_new_960))) {
                     intent = new Intent();
                     intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupRandomFischerActivity.class);
@@ -747,11 +745,9 @@ public class PlayActivity extends ChessBoardActivity implements
                     String s = Clipboard.getStringFromClipboard(this);
                     if (gameApi.loadPGN(s)) {
                         lGameID = 0;
-                        updateForNewGame();
                     } else {
                         if (gameApi.initFEN(s, true)) {
                             lGameID = 0;
-                            updateForNewGame();
                         }
                     }
                 } else if (item.equals(getString(R.string.menu_clip_pgn))) {
@@ -847,7 +843,6 @@ public class PlayActivity extends ChessBoardActivity implements
         updateClockByPrefs(true);
         updateGameSettingsByPrefs();
 
-        feedbackNewGame();
         resetSelectedSquares();
         updateLastMove();
     }

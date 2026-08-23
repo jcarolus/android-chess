@@ -103,6 +103,11 @@ public class GameApi {
         int size = pgnMoves.size();
         if (size > 0 && jni.getNumBoard() == size) {
             pgnMoves.get(size - 1).finalState = state;
+            if (state == BoardConstants.WHITE_FORFEIT_TIME) {
+                dispatchPlayerForfeitedOnTime(BoardConstants.WHITE);
+            } else if (state == BoardConstants.BLACK_FORFEIT_TIME) {
+                dispatchPlayerForfeitedOnTime(BoardConstants.BLACK);
+            }
             dispatchState();
             return true;
         }
@@ -297,6 +302,7 @@ public class GameApi {
             pgnMoves.clear();
 
             dispatchState();
+            dispatchGameLoaded();
             return true;
         }
         return false;

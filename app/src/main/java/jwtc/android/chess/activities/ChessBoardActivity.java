@@ -179,6 +179,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onNewGameStarted(int variant) {
         Log.d(TAG, "onNewGameStarted " + variant);
+        feedbackNewGameStarted();
     }
 
     @Override
@@ -194,16 +195,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onPlayerResigned(int color) {
         Log.d(TAG, "onPlayerResigned " + color);
+        feedbackPlayerResigned(color);
     }
 
     @Override
     public void onDrawAgreed() {
         Log.d(TAG, "onDrawAgreed");
+        feedbackDrawAgreed();
     }
 
     @Override
     public void onPlayerForfeitedOnTime(int color) {
         Log.d(TAG, "onPlayerForfeitedOnTime " + color);
+        feedbackPlayerForfeitedOnTime(color);
     }
 
     public void afterCreate() {
@@ -572,7 +576,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    public void feedbackNewGame() {
+    public void feedbackNewGameStarted() {
         if (sounds.isEnabled()) {
             sounds.playNewGame();
         }
@@ -622,6 +626,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 speak.run();
             }
         }
+    }
+
+    public void feedbackPlayerResigned(int color) {
+
+    }
+
+    public void feedbackDrawAgreed() {
+
+    }
+
+    public void feedbackPlayerForfeitedOnTime(int color) {
+
     }
 
     @Override
