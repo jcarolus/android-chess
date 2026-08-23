@@ -510,7 +510,9 @@
     <string name="lichess_swiss_status_created">Upcoming</string>
     <string name="lichess_swiss_status_started">Ongoing</string>
     <string name="lichess_swiss_status_finished">Finished</string>
+    <string name="black_player_forfeits_on_time">Black lost on time</string>
     <string name="black_player_resigned">Black resigned</string>
     <string name="players_agreed_draw">Draw by agreement</string>
+    <string name="white_player_forfeits_on_time">White lost on time</string>
     <string name="white_player_resigned">White resigned</string>
 </resources>

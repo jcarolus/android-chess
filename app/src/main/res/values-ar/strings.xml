@@ -502,7 +502,9 @@
     <string name="lichess_swiss_status_created">قادمة</string>
     <string name="lichess_swiss_status_started">جارية</string>
     <string name="lichess_swiss_status_finished">منتهية</string>
+    <string name="black_player_forfeits_on_time">خسر الأسود بسبب انتهاء الوقت</string>
     <string name="black_player_resigned">استسلم الأسود</string>
     <string name="players_agreed_draw">تعادل بالاتفاق</string>
+    <string name="white_player_forfeits_on_time">خسر الأبيض بسبب انتهاء الوقت</string>
     <string name="white_player_resigned">استسلم الأبيض</string>
 </resources>

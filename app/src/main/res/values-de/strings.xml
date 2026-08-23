@@ -503,7 +503,9 @@
     <string name="lichess_swiss_status_created">Bevorstehend</string>
     <string name="lichess_swiss_status_started">Läuft</string>
     <string name="lichess_swiss_status_finished">Beendet</string>
+    <string name="black_player_forfeits_on_time">Schwarz verlor auf Zeit</string>
     <string name="black_player_resigned">Schwarz gab auf</string>
     <string name="players_agreed_draw">Remis durch Vereinbarung</string>
+    <string name="white_player_forfeits_on_time">Weiß verlor auf Zeit</string>
     <string name="white_player_resigned">Weiß gab auf</string>
 </resources>

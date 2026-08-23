@@ -641,7 +641,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackPlayerForfeitedOnTime(int color) {
-
+        if (textToSpeech.isEnabled()) {
+            textToSpeech.doSpeak(getString(color == BoardConstants.WHITE ? R.string.white_player_forfeits_on_time : R.string.black_player_forfeits_on_time), TextToSpeech.QUEUE_ADD);
+        }
     }
 
     @Override

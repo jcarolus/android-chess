@@ -493,7 +493,9 @@
     <string name="lichess_swiss_status_created">In programma</string>
     <string name="lichess_swiss_status_started">In corso</string>
     <string name="lichess_swiss_status_finished">Terminato</string>
+    <string name="black_player_forfeits_on_time">Il Nero ha perso per tempo</string>
     <string name="black_player_resigned">Il Nero si è arreso</string>
     <string name="players_agreed_draw">Patta per accordo</string>
+    <string name="white_player_forfeits_on_time">Il Bianco ha perso per tempo</string>
     <string name="white_player_resigned">Il Bianco si è arreso</string>
 </resources>

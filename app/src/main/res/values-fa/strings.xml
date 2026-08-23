@@ -510,7 +510,9 @@
     <string name="lichess_team_search">جستجو</string>
     <string name="lichess_team_search_hint">جستجوی تیم‌ها…</string>
     <string name="lichess_team_search_results">جستجو: %1$s</string>
+    <string name="black_player_forfeits_on_time">سیاه به‌دلیل اتمام وقت باخت</string>
     <string name="black_player_resigned">سیاه تسلیم شد</string>
     <string name="players_agreed_draw">مساوی با توافق</string>
+    <string name="white_player_forfeits_on_time">سفید به‌دلیل اتمام وقت باخت</string>
     <string name="white_player_resigned">سفید تسلیم شد</string>
 </resources>
