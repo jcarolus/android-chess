@@ -173,26 +173,32 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     @Override
     public void onHistoryPositionChanged(int boardNumber) {
+        Log.d(TAG, "onHistoryPositionChanged " + boardNumber);
     }
 
     @Override
     public void onNewGameStarted(int variant) {
+        Log.d(TAG, "onNewGameStarted " + variant);
     }
 
     @Override
     public void onGameContinued() {
+        Log.d(TAG, "onGameContinued");
     }
 
     @Override
     public void onPlayerResigned(int color) {
+        Log.d(TAG, "onPlayerResigned " + color);
     }
 
     @Override
     public void onDrawAgreed() {
+        Log.d(TAG, "onDrawAgreed");
     }
 
     @Override
     public void onPlayerForfeitedOnTime(int color) {
+        Log.d(TAG, "onPlayerForfeitedOnTime " + color);
     }
 
     public void afterCreate() {
