@@ -247,6 +247,8 @@
     <string name="msg_setup_turn">Turno</string>
     <string name="msg_setup_turn_black">neri</string>
     <string name="msg_setup_turn_white">bianchi</string>
+    <string name="new_game_as_black">Nuova partita, giochi con i pezzi neri</string>
+    <string name="new_game_as_white">Nuova partita, giochi con i pezzi bianchi</string>
     <string name="online_help"><![CDATA[
         <p><strong>FICS: Free Internet Chess Server</strong> ti permette di giocare con migliaia di utenti.<br/>
         Attenzione: se il dispositivo cambia rete, la connessione può interrompersi.<br/>

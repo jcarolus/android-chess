@@ -247,6 +247,8 @@
     <string name="msg_setup_turn">Tour</string>
     <string name="msg_setup_turn_black">noirs</string>
     <string name="msg_setup_turn_white">blancs</string>
+    <string name="new_game_as_black">Nouvelle partie, vous jouez avec les pièces noires</string>
+    <string name="new_game_as_white">Nouvelle partie, vous jouez avec les pièces blanches</string>
     <string name="online_help"><![CDATA[
         <p><strong>FICS : Free Internet Chess Server</strong> vous permet de jouer avec des milliers de joueurs.<br/>
         Attention : si votre appareil change de connexion, la partie peut être interrompue.<br/>

@@ -247,6 +247,8 @@
     <string name="msg_setup_turn">Sıra</string>
     <string name="msg_setup_turn_black">siyah</string>
     <string name="msg_setup_turn_white">beyaz</string>
+    <string name="new_game_as_black">Yeni oyun, siyah taşlarla oynuyorsunuz</string>
+    <string name="new_game_as_white">Yeni oyun, beyaz taşlarla oynuyorsunuz</string>
     <string name="online_help"><![CDATA[
         <p><strong>FICS: Free Internet Chess Server</strong> binlerce oyuncu ile çevrimiçi oynama imkanı sağlar.<br/>
         Uyarı: cihaz ağ değiştirirse bağlantı kesilebilir.<br/>

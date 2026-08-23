@@ -249,6 +249,8 @@
     <string name="msg_setup_turn">دور</string>
     <string name="msg_setup_turn_black">أسود</string>
     <string name="msg_setup_turn_white">أبيض</string>
+    <string name="new_game_as_black">لعبة جديدة، أنت تلعب بالقطع السوداء</string>
+    <string name="new_game_as_white">لعبة جديدة، أنت تلعب بالقطع البيضاء</string>
     <string name="online_help">
                 <![CDATA[
                 <p>

@@ -576,9 +576,22 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    public void feedbackNewGameStarted() {
-        if (sounds.isEnabled()) {
+    public void feedbackNewGameStarted(int color) {
+        final boolean soundsEnabled = sounds.isEnabled();
+        final boolean speechEnabled = textToSpeech.isEnabled();
+
+        if (soundsEnabled) {
             sounds.playNewGame();
+        }
+        if (speechEnabled) {
+            final Runnable speak = () -> {
+                textToSpeech.doSpeak(getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black), TextToSpeech.QUEUE_ADD);
+            };
+            if (soundsEnabled) {
+                timeWarningSpeechHandler.postDelayed(speak, TIME_WARNING_SPEECH_DELAY_MS);
+            } else {
+                speak.run();
+            }
         }
     }
 

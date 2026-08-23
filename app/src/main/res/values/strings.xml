@@ -267,6 +267,8 @@
     <string name="msg_setup_turn">Turn</string>
     <string name="msg_setup_turn_black">black</string>
     <string name="msg_setup_turn_white">white</string>
+    <string name="new_game_as_black">New game, you are playing with the black pieces</string>
+    <string name="new_game_as_white">New game, you are playing with the white pieces</string>
     <string name="online_help">
                 <![CDATA[
                 <p>

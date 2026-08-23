@@ -267,6 +267,8 @@
     <string name="msg_setup_turn">نوبت</string>
     <string name="msg_setup_turn_black">سیاه</string>
     <string name="msg_setup_turn_white">سفید</string>
+    <string name="new_game_as_black">بازی جدید، شما با مهره‌های سیاه بازی می‌کنید</string>
+    <string name="new_game_as_white">بازی جدید، شما با مهره‌های سفید بازی می‌کنید</string>
     <string name="online_help">
                 <![CDATA[
                 <p>

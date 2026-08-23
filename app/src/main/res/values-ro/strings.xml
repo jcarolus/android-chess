@@ -247,6 +247,8 @@
     <string name="msg_setup_turn">Tură</string>
     <string name="msg_setup_turn_black">negre</string>
     <string name="msg_setup_turn_white">albe</string>
+    <string name="new_game_as_black">Joc nou, joci cu piesele negre</string>
+    <string name="new_game_as_white">Joc nou, joci cu piesele albe</string>
     <string name="online_help"><![CDATA[
         <p><strong>FICS: Free Internet Chess Server</strong> îți permite să joci online cu mii de jucători.<br/>
         Atenție: dacă dispozitivul schimbă rețeaua, conexiunea se poate întrerupe.<br/>

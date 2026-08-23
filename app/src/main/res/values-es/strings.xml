@@ -250,6 +250,8 @@
     <string name="msg_setup_turn">Turno</string>
     <string name="msg_setup_turn_black">negras</string>
     <string name="msg_setup_turn_white">blancas</string>
+    <string name="new_game_as_black">Nueva partida, juegas con las piezas negras</string>
+    <string name="new_game_as_white">Nueva partida, juegas con las piezas blancas</string>
     <string name="online_help">
                 <![CDATA[
                 <p>

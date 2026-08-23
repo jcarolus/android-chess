@@ -247,6 +247,8 @@
     <string name="msg_setup_turn">Ход</string>
     <string name="msg_setup_turn_black">чёрные</string>
     <string name="msg_setup_turn_white">белые</string>
+    <string name="new_game_as_black">Новая игра, вы играете чёрными фигурами</string>
+    <string name="new_game_as_white">Новая игра, вы играете белыми фигурами</string>
     <string name="online_help"><![CDATA[
         <p><strong>FICS: Free Internet Chess Server</strong> позволяет играть с тысячами игроков.<br/>
         Внимание: если устройство переключит сеть, соединение может оборваться.<br/>

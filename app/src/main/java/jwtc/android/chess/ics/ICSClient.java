@@ -39,6 +39,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import org.json.JSONArray;
@@ -972,8 +973,8 @@ public class ICSClient extends ChessBoardActivity implements
         Log.d(TAG, "OnPlayGameStarted " + whiteHandle + blackHandle + whiteRating + blackRating);
         resetSelectedSquares();
         if (icsServer != null) {
-            if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
-                feedbackNewGameStarted();
+            if (Objects.equals(icsServer.getHandle(), whiteHandle) || Objects.equals(icsServer.getHandle(), blackHandle)) {
+                feedbackNewGameStarted(icsServer.getHandle().equals(whiteHandle) ? BoardConstants.WHITE : BoardConstants.BLACK);
             }
         }
     }
