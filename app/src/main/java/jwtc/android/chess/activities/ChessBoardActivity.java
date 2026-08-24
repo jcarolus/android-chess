@@ -576,7 +576,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    public void feedbackNewGameStarted(int color) {
+    public void feedbackNewGameStarted(int color, TextView textView) {
         final boolean soundsEnabled = sounds.isEnabled();
         final boolean speechEnabled = textToSpeech.isEnabled();
 
@@ -584,13 +584,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             sounds.playNewGame();
         }
         if (speechEnabled) {
-            final Runnable speak = () -> {
-                Log.d(TAG, "doSpeak");
-                textToSpeech.doSpeak(getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black), TextToSpeech.QUEUE_ADD);
+            final Runnable feedbackRunnable = () -> {
+                String message = getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black);
+                if (textView != null) {
+                    updateTextViewOrSpeech(textView, message);
+                } else {
+                    textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
+                }
             };
-            // @TODO should this be on status text?
-            // delay because speech not ready after Activity resume with new game
-            timeWarningSpeechHandler.postDelayed(speak, INIT_SPEECH_DELAY_MS);
+            if (textToSpeech.isReady()) {
+                feedbackRunnable.run();
+            } else {
+                // @TODO should this be on status text?
+                // delay because speech not ready after Activity resume with new game
+                timeWarningSpeechHandler.postDelayed(feedbackRunnable, INIT_SPEECH_DELAY_MS);
+            }
         }
     }
 

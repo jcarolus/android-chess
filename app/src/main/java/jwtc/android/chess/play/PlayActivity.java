@@ -552,7 +552,7 @@ public class PlayActivity extends ChessBoardActivity implements
     public void onNewGameStarted(int variant) {
         super.onNewGameStarted(variant);
 
-        feedbackNewGameStarted(myTurn);
+        feedbackNewGameStarted(myTurn, textViewLastMove);
 
         updateForNewGame();
     }

@@ -555,7 +555,7 @@ public class LichessGameActivity extends ChessBoardActivity
     public void onNewGameStarted(int variant) {
         super.onNewGameStarted(variant);
 
-        feedbackNewGameStarted(lichessApi.getMyTurn());
+        feedbackNewGameStarted(lichessApi.getMyTurn(), textViewStatus);
     }
 
     protected String gameStateToTranslated(String state) {
