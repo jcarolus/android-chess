@@ -195,19 +195,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onPlayerResigned(int color) {
         Log.d(TAG, "onPlayerResigned " + color);
-        feedbackPlayerResigned(color);
     }
 
     @Override
     public void onDrawAgreed() {
         Log.d(TAG, "onDrawAgreed");
-        feedbackDrawAgreed();
     }
 
     @Override
     public void onPlayerForfeitedOnTime(int color) {
         Log.d(TAG, "onPlayerForfeitedOnTime " + color);
-        feedbackPlayerForfeitedOnTime(color);
     }
 
     public void afterCreate() {
@@ -648,21 +645,36 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    public void feedbackPlayerResigned(int color) {
+    public void feedbackPlayerResigned(int color, TextView textView) {
         if (textToSpeech.isEnabled()) {
-            textToSpeech.doSpeak(getString(color == BoardConstants.WHITE ? R.string.white_player_resigned : R.string.black_player_resigned), TextToSpeech.QUEUE_ADD);
+            String message = getString(color == BoardConstants.WHITE ? R.string.white_player_resigned : R.string.black_player_resigned);
+            if (textView != null) {
+                updateTextViewOrSpeech(textView, message);
+            } else {
+                textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
+            }
         }
     }
 
-    public void feedbackDrawAgreed() {
+    public void feedbackDrawAgreed(TextView textView) {
         if (textToSpeech.isEnabled()) {
-            textToSpeech.doSpeak(getString(R.string.players_agreed_draw), TextToSpeech.QUEUE_ADD);
+            String message = getString(R.string.players_agreed_draw);
+            if (textView != null) {
+                updateTextViewOrSpeech(textView, message);
+            } else {
+                textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
+            }
         }
     }
 
-    public void feedbackPlayerForfeitedOnTime(int color) {
+    public void feedbackPlayerForfeitedOnTime(int color, TextView textView) {
         if (textToSpeech.isEnabled()) {
-            textToSpeech.doSpeak(getString(color == BoardConstants.WHITE ? R.string.white_player_forfeits_on_time : R.string.black_player_forfeits_on_time), TextToSpeech.QUEUE_ADD);
+            String message = getString(color == BoardConstants.WHITE ? R.string.white_player_forfeits_on_time : R.string.black_player_forfeits_on_time);
+            if (textView != null) {
+                updateTextViewOrSpeech(textView, message);
+            } else {
+                textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
+            }
         }
     }
 

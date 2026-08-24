@@ -558,6 +558,24 @@ public class LichessGameActivity extends ChessBoardActivity
         feedbackNewGameStarted(lichessApi.getMyTurn(), textViewStatus);
     }
 
+    @Override
+    public void onPlayerResigned(int color) {
+        super.onPlayerResigned(color);
+        feedbackPlayerResigned(color, textViewStatus);
+    }
+
+    @Override
+    public void onDrawAgreed() {
+        super.onDrawAgreed();
+        feedbackDrawAgreed(textViewStatus);
+    }
+
+    @Override
+    public void onPlayerForfeitedOnTime(int color) {
+        super.onPlayerForfeitedOnTime(color);
+        feedbackPlayerForfeitedOnTime(color, textViewStatus);
+    }
+
     protected String gameStateToTranslated(String state) {
         if (state.equals("created")) {
             return getString(R.string.lichess_game_state_created);

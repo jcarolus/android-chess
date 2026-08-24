@@ -558,6 +558,24 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     @Override
+    public void onPlayerResigned(int color) {
+        Log.d(TAG, "onPlayerResigned " + color);
+        feedbackPlayerResigned(color, textViewLastMove);
+    }
+
+    @Override
+    public void onDrawAgreed() {
+        Log.d(TAG, "onDrawAgreed");
+        feedbackDrawAgreed(textViewLastMove);
+    }
+
+    @Override
+    public void onPlayerForfeitedOnTime(int color) {
+        Log.d(TAG, "onPlayerForfeitedOnTime " + color);
+        feedbackPlayerForfeitedOnTime(color, textViewLastMove);
+    }
+
+    @Override
     public void onMoveItemClick(int pos) {
         this.gameApi.jumpToBoardNum(pos + 1);
     }
