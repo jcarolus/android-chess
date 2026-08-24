@@ -18,6 +18,7 @@ public class Sounds {
         soundIllegalMove,
         soundSelect,
         soundTick,
+        soundTickBlack,
         soundError,
         soundCorrect,
         soundTickPiece,
@@ -78,7 +79,7 @@ public class Sounds {
     }
 
     public void playTick(boolean isDarkSquare) {
-        play(soundTick, isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE);
+        play(isDarkSquare ? soundTickBlack : soundTick, isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE);
     }
 
     // Black pieces use the echoing variant; white pieces (and the duck) use the plain
@@ -132,6 +133,7 @@ public class Sounds {
             soundIllegalMove = loadSound(R.raw.illegal, 1);
             soundSelect = loadSound(R.raw.select, 1);
             soundTick = loadSound(R.raw.tick, 1);
+            soundTickBlack = loadSound(R.raw.tick_black, 1);
             soundTickPiece = loadSound(R.raw.tick_piece, 1);
             soundTickPieceBlack = loadSound(R.raw.tick_piece_black, 1);
             soundError = loadSound(R.raw.error, 1);

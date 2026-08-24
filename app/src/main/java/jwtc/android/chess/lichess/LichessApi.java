@@ -947,7 +947,7 @@ public class LichessApi extends GameApi {
             LichessGameStateSnapshot.Transition transition =
                 snapshot.transitionFrom(lastGameStateSnapshot);
 
-            // Log.d(TAG, transition.toString());
+            Log.d(TAG, transition.toString());
 
             // jni.initFEN(ongoingGame.fen);
             if (ongoingGameFull.initialFen.equals("startpos")) {
