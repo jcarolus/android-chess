@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +45,8 @@ public class StartBaseActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         SharedPreferences prefs = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
 
         Resources resources = getResources();
@@ -72,8 +75,6 @@ public class StartBaseActivity extends AppCompatActivity {
         }
 
         setContentView(layoutResource);
-
-        ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         List<StartItem> startItemList = List.of(
             new StartItem(R.drawable.start_play, R.string.start_play, PlayActivity.class),
