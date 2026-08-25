@@ -956,11 +956,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         highlightedPositions.add(to);
     }
 
-    protected void resetPremove() {
-        Log.d(TAG, "resetPremove");
+    protected void clearPremove() {
         this.premoveFrom = -1;
         this.premoveTo = -1;
         highlightedPositions.clear();
+    }
+
+    protected void resetPremove() {
+        Log.d(TAG, "resetPremove");
+        clearPremove();
 
         rebuildBoard();
         updateSelectedSquares();
@@ -973,7 +977,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected void setMoveToPositions(int from) {
         // Log.d(TAG, "setMoveToPositions " + from);
         moveToPositions.clear();
-        if (showMoves) {
+        // The JNI move array only describes the side whose turn it currently is. Activities that
+        // allow selecting the other side (for example, while preparing a pre-move) must not show
+        // those destinations as if they applied to the selected piece.
+        if (showMoves && getSelectableColor() == jni.getTurn()) {
             int size = jni.getMoveArraySize();
             int move;
             for (int i = 0; i < size; i++) {
@@ -1275,7 +1282,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (gameApi.isEnded()) {
                 return;
             }
-            int piece = jni.pieceAt(jni.getTurn(), pos);
+            int piece = jni.pieceAt(getSelectableColor(), pos);
             if (piece != BoardConstants.FIELD) {
                 accessibilityDragFromPos = pos;
                 selectedPosition = pos;
@@ -1551,7 +1558,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (selectedPosition == -1) {
                 boolean isStartMove =
                     pos == jni.getDuckPos() ||
-                    jni.pieceAt(jni.getTurn(), pos) != BoardConstants.FIELD;
+                    jni.pieceAt(getSelectableColor(), pos) != BoardConstants.FIELD;
 
                 if (isStartMove) {
                     selectedPosition = pos;
@@ -1574,6 +1581,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 updateSelectedSquares();
             }
         }
+    }
+
+    /**
+     * Color whose pieces can start a board interaction. Normally this is the side to move;
+     * online activities may override it while collecting a pre-move.
+     */
+    protected int getSelectableColor() {
+        return jni.getTurn();
     }
 
     protected void handleMove(int pos) {

@@ -69,6 +69,7 @@ public class LichessGameActivity extends ChessBoardActivity
     // whether to honor the launch extras vs. restore in-progress api state on first connect.
     private boolean freshLaunch;
     private boolean firstConnect = true;
+    private String premoveGameId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -325,6 +326,9 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     protected void openGame(String gameId) {
+        if (hasPremoved() && (premoveGameId == null || !premoveGameId.equals(gameId))) {
+            clearPremove();
+        }
         currentGameId = gameId;
         layoutResignDraw.setVisibility(View.VISIBLE);
         layoutPuzzleControls.setVisibility(View.GONE);
@@ -344,6 +348,7 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     protected void displayPuzzle() {
+        clearPremove();
         textViewLastMove.setText("");
         textViewStatus.setText("");
         textViewOfferDraw.setText("");
@@ -391,6 +396,10 @@ public class LichessGameActivity extends ChessBoardActivity
         int turn = lichessApi.getTurn();
         boolean playAsWhite = myTurn == BoardConstants.WHITE;
         boolean isStarted = gameFull.state.status.equals("started");
+        if (!isStarted && hasPremoved()) {
+            clearPremove();
+            updateSelectedSquares();
+        }
         textViewPlayerOpp.setText(playAsWhite ? gameFull.black.name : gameFull.white.name);
         textViewPlayerMe.setText(playAsWhite ? gameFull.white.name : gameFull.black.name);
 
@@ -429,17 +438,22 @@ public class LichessGameActivity extends ChessBoardActivity
 
     @Override
     public void onGameFinish() {
+        clearPremove();
+        updateSelectedSquares();
         localClockApi.stopClock();
     }
 
     @Override
     public void onGameDisconnected() {
+        clearPremove();
         Toast.makeText(this, R.string.lichess_game_disconnected, Toast.LENGTH_SHORT).show();
         finish();
     }
 
     @Override
     public void onInvalidMove(String reason) {
+        clearPremove();
+        updateSelectedSquares();
         feedbackIllegalMove();
     }
 
@@ -491,38 +505,124 @@ public class LichessGameActivity extends ChessBoardActivity
 
     @Override
     public boolean requestMove(int from, int to) {
-        if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
-            if (lichessApi.isPromotionMove(from, to)) {
-                final String[] items = getResources().getStringArray(R.array.promotionpieces);
-
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-                builder.setTitle(R.string.title_pick_promo);
-                builder.setCancelable(false);
-                builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
-                    dialog.dismiss();
-                    lichessApi.setPromotionPiece(4 - item);
-                    lichessApi.move(from, to);
-                });
-                builder.create().show();
-
-                return true;
-            } else if (switchConfirmMoves.isChecked()) {
-                layoutConfirm.setVisibility(View.VISIBLE);
-                layoutResignDraw.setVisibility(View.GONE);
-                buttonConfirmMove.setText(getString(R.string.lichess_game_confirm_move, Pos.toString(from) + " " + Pos.toString(to)));
-                pulseAnimation(buttonConfirmMove, 1.05f, 1);
-                buttonConfirmMove.setOnClickListener(v -> {
-                    lichessApi.move(from, to);
-                    layoutConfirm.setVisibility(View.GONE);
-                    layoutResignDraw.setVisibility(View.VISIBLE);
-                });
-            } else {
-                lichessApi.move(from, to);
-            }
+        if (lichessApi == null) {
+            rebuildBoard();
             return false;
+        }
+
+        boolean liveGame = lichessApi.getViewMode() == LichessApi.VIEW_PLAY;
+        if (liveGame && !lichessApi.isOngoingGameInProgress()) {
+            rebuildBoard();
+            return false;
+        }
+
+        if (lichessApi.getMyTurn() == lichessApi.getTurn()) {
+            return submitMove(from, to);
+        }
+
+        // Puzzles share this activity, but their automatic reply window must never accept a
+        // pre-move. Only an active online game reaches the queueing path.
+        if (liveGame && isMyPieceAt(from)) {
+            storePremove(from, to);
+            return true;
         }
         rebuildBoard();
         return false;
+    }
+
+    private boolean submitMove(int from, int to) {
+        if (lichessApi.isPromotionMove(from, to)) {
+            showPromotionPicker(piece -> {
+                lichessApi.setPromotionPiece(piece);
+                lichessApi.move(from, to);
+            });
+            return true;
+        }
+        if (switchConfirmMoves.isChecked()) {
+            layoutConfirm.setVisibility(View.VISIBLE);
+            layoutResignDraw.setVisibility(View.GONE);
+            buttonConfirmMove.setText(getString(
+                R.string.lichess_game_confirm_move,
+                Pos.toString(from) + " " + Pos.toString(to)
+            ));
+            pulseAnimation(buttonConfirmMove, 1.05f, 1);
+            buttonConfirmMove.setOnClickListener(v -> {
+                lichessApi.move(from, to);
+                layoutConfirm.setVisibility(View.GONE);
+                layoutResignDraw.setVisibility(View.VISIBLE);
+            });
+        } else {
+            lichessApi.move(from, to);
+        }
+        return false;
+    }
+
+    private void storePremove(int from, int to) {
+        premoveGameId = lichessApi.getOngoingGameId();
+        setPremove(from, to);
+        updateSelectedSquares();
+        executePremoveIfReady();
+    }
+
+    private interface PromotionSelectionListener {
+        void onPromotionPieceSelected(int piece);
+    }
+
+    private void showPromotionPicker(PromotionSelectionListener listener) {
+        final String[] items = getResources().getStringArray(R.array.promotionpieces);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle(R.string.title_pick_promo);
+        builder.setCancelable(false);
+        builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
+            dialog.dismiss();
+            listener.onPromotionPieceSelected(4 - item);
+        });
+        builder.create().show();
+    }
+
+    private boolean isMyPieceAt(int position) {
+        return jni.pieceAt(lichessApi.getMyTurn(), position) != BoardConstants.FIELD;
+    }
+
+    private void executePremoveIfReady() {
+        if (!hasPremoved() || lichessApi == null) {
+            return;
+        }
+        if (lichessApi.getViewMode() != LichessApi.VIEW_PLAY
+            || !lichessApi.isOngoingGameInProgress()
+            || premoveGameId == null
+            || !premoveGameId.equals(lichessApi.getOngoingGameId())) {
+            clearPremove();
+            updateSelectedSquares();
+            return;
+        }
+        if (lichessApi.getMyTurn() != lichessApi.getTurn()) {
+            return;
+        }
+
+        int from = premoveFrom;
+        int to = premoveTo;
+        // Clear before sending so duplicate stream states cannot submit the same pre-move twice.
+        clearPremove();
+        updateSelectedSquares();
+        requestMove(from, to);
+    }
+
+    @Override
+    protected int getSelectableColor() {
+        if (lichessApi != null
+            && lichessApi.getViewMode() == LichessApi.VIEW_PLAY
+            && lichessApi.isOngoingGameInProgress()
+            && lichessApi.getMyTurn() != lichessApi.getTurn()) {
+            return lichessApi.getMyTurn();
+        }
+        return super.getSelectableColor();
+    }
+
+    @Override
+    protected void clearPremove() {
+        super.clearPremove();
+        premoveGameId = null;
     }
 
     @Override
@@ -549,6 +649,7 @@ public class LichessGameActivity extends ChessBoardActivity
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
         updateLastMoveDescription(getLastMoveAndTurnDescription(false));
+        executePremoveIfReady();
     }
 
     @Override
