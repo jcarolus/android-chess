@@ -578,11 +578,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (speechEnabled) {
             final Runnable feedbackRunnable = () -> {
                 String message = getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black);
-                if (textView != null) {
-                    updateTextViewOrSpeech(textView, message);
-                } else {
-                    textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
-                }
+                updateTextViewOrSpeech(textView, message);
             };
             if (textToSpeech.isReady()) {
                 feedbackRunnable.run();
@@ -641,36 +637,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackPlayerResigned(int color, TextView textView) {
-        if (textToSpeech.isEnabled()) {
-            String message = getString(color == BoardConstants.WHITE ? R.string.white_player_resigned : R.string.black_player_resigned);
-            if (textView != null) {
-                updateTextViewOrSpeech(textView, message);
-            } else {
-                textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
-            }
-        }
+        String message = getString(color == BoardConstants.WHITE ? R.string.white_player_resigned : R.string.black_player_resigned);
+        updateTextViewOrSpeech(textView, message);
     }
 
     public void feedbackDrawAgreed(TextView textView) {
-        if (textToSpeech.isEnabled()) {
-            String message = getString(R.string.players_agreed_draw);
-            if (textView != null) {
-                updateTextViewOrSpeech(textView, message);
-            } else {
-                textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
-            }
-        }
+        String message = getString(R.string.players_agreed_draw);
+        updateTextViewOrSpeech(textView, message);
     }
 
     public void feedbackPlayerForfeitedOnTime(int color, TextView textView) {
-        if (textToSpeech.isEnabled()) {
-            String message = getString(color == BoardConstants.WHITE ? R.string.white_player_forfeits_on_time : R.string.black_player_forfeits_on_time);
-            if (textView != null) {
-                updateTextViewOrSpeech(textView, message);
-            } else {
-                textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
-            }
-        }
+        String message = getString(color == BoardConstants.WHITE ? R.string.white_player_forfeits_on_time : R.string.black_player_forfeits_on_time);
+        updateTextViewOrSpeech(textView, message);
     }
 
     @Override
@@ -1603,17 +1581,31 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void updateTextViewOrSpeech(TextView textView, String text, boolean protectSpeech) {
-        String currentMessage = textView.getText().toString();
-        if (!currentMessage.equals(text)) {
-            textView.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
-            textView.setText(text);
+        if (text == null) {
+            return;
+        }
+        if (textView == null) {
+            speakIfEnabled(text, protectSpeech);
+        } else {
+            String currentMessage = textView.getText().toString();
+            if (!currentMessage.equals(text)) {
+                textView.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
+                textView.setText(text);
 
-            if (textToSpeech.isEnabled() && !text.isEmpty()) {
-                if (protectSpeech) {
-                    speakLastMove(text);
-                } else {
-                    textToSpeech.doSpeak(text);
-                }
+                speakIfEnabled(text, protectSpeech);
+            }
+        }
+    }
+
+    protected void speakIfEnabled(String text, boolean protectSpeech) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        if (textToSpeech.isEnabled()) {
+            if (protectSpeech) {
+                speakLastMove(text);
+            } else {
+                textToSpeech.doSpeak(text);
             }
         }
     }
