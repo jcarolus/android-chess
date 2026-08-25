@@ -487,6 +487,7 @@ public class PlayActivity extends ChessBoardActivity implements
         super.onMoveApplied(move);
 
         updateGUI();
+        updateLastMove();
 
         playIfEngineMove();
     }
@@ -498,6 +499,13 @@ public class PlayActivity extends ChessBoardActivity implements
         updateGUI();
 
         playIfEngineMove();
+    }
+
+    @Override
+    public void onHistoryPositionChanged(int boardNumber) {
+        super.onHistoryPositionChanged(boardNumber);
+
+        updateLastMove();
     }
 
     @Override
@@ -586,7 +594,6 @@ public class PlayActivity extends ChessBoardActivity implements
         updateSeekBar();
         updateTurnSwitchers();
         updatePlayers();
-        updateLastMove();
         updateEco();
     }
 

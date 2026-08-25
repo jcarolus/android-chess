@@ -139,11 +139,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             feedbackMove();
 
         }
-
-        if (textToSpeech.isEnabled()) {
-            String sMove = getLastMoveAndTurnDescription(true);
-            speakLastMove(sMove);
-        }
     }
 
     @Override
@@ -1623,14 +1618,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    // Speaks a last-move announcement. When the "protect last move speech"
-    // preference is on, the announcement is protected so later interrupting
-    // (QUEUE_FLUSH) speaks won't cut it off; otherwise it behaves as before.
+    // Queues consecutive last-move announcements. When the "protect last move
+    // speech" preference is on, interrupting (QUEUE_FLUSH) speech cannot cut
+    // the protected announcements off.
     protected void speakLastMove(String text) {
-        if (protectLastMoveSpeech) {
-            textToSpeech.doSpeakProtected(text);
-        } else {
-            textToSpeech.doSpeak(text);
-        }
+        textToSpeech.doSpeakLastMove(text, protectLastMoveSpeech);
     }
 }

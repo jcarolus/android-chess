@@ -22,10 +22,11 @@ import java.util.Map;
 public class TextToSpeechApi implements TextToSpeech.OnInitListener {
     private static final String TAG = "TextToSpeechApi";
     private static final String PROTECTED_PREFIX = "protected-";
+    private static final String LAST_MOVE_PREFIX = "last-move-";
     private final Context context;
     private TextToSpeech textToSpeech;
-    private volatile boolean protectedSpeaking = false;
-    private volatile String activeProtectedId = null;
+    private final Object speechStateLock = new Object();
+    private final LastMoveSpeechQueue lastMoveSpeechQueue = new LastMoveSpeechQueue();
     private SharedPreferences prefs;
     private final InitStateListener initStateListener;
     private final LocaleList appLocales;
@@ -110,33 +111,38 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             Log.d(TAG, "textToSpeech == null");
             return;
         }
-        if (protectedSpeaking && queueMode == TextToSpeech.QUEUE_FLUSH) {
-            return;
+        synchronized (speechStateLock) {
+            if (lastMoveSpeechQueue.hasProtectedSpeech() && queueMode == TextToSpeech.QUEUE_FLUSH) {
+                return;
+            }
+            if (queueMode == TextToSpeech.QUEUE_FLUSH) {
+                lastMoveSpeechQueue.clear();
+            }
+            String id = "utt-" + System.nanoTime();
+            this.textToSpeech.speak(sMoveSpeech, queueMode, null, id);
         }
-        String id = "utt-" + System.nanoTime();
-        this.textToSpeech.speak(sMoveSpeech, queueMode, null, id);
     }
 
-    // Speaks protected announcement that must not be interrupted by later
-    // QUEUE_FLUSH speaks until it finishes. A newer protected speak still
-    // supersedes an older one (it flushes and re-arms the protected window).
-    public void doSpeakProtected(String sMoveSpeech) {
+    // Starts a last-move sequence immediately, then appends further last moves
+    // until the sequence drains. Protected moves prevent QUEUE_FLUSH speech from
+    // interrupting them.
+    public void doSpeakLastMove(String sMoveSpeech, boolean protectSpeech) {
         if (!enabled || !ready) {
             return;
         }
         if (textToSpeech == null) {
             return;
         }
-        String id = PROTECTED_PREFIX + System.nanoTime();
-        activeProtectedId = id;
-        protectedSpeaking = true;
-        this.textToSpeech.speak(sMoveSpeech, TextToSpeech.QUEUE_FLUSH, null, id);
-    }
-
-    private void clearProtectedIfMatches(String utteranceId) {
-        if (utteranceId != null && utteranceId.equals(activeProtectedId)) {
-            protectedSpeaking = false;
-            activeProtectedId = null;
+        Log.d(TAG, "doSpeakLastMove " + protectSpeech + " " + sMoveSpeech);
+        synchronized (speechStateLock) {
+            String prefix = protectSpeech ? PROTECTED_PREFIX : LAST_MOVE_PREFIX;
+            String id = prefix + System.nanoTime();
+            boolean append = lastMoveSpeechQueue.start(id, protectSpeech);
+            int queueMode = append ? TextToSpeech.QUEUE_ADD : TextToSpeech.QUEUE_FLUSH;
+            int result = this.textToSpeech.speak(sMoveSpeech, queueMode, null, id);
+            if (result == TextToSpeech.ERROR) {
+                lastMoveSpeechQueue.finish(id);
+            }
         }
     }
 
@@ -224,8 +230,9 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             textToSpeech.shutdown();
             textToSpeech = null;
         }
-        protectedSpeaking = false;
-        activeProtectedId = null;
+        synchronized (speechStateLock) {
+            lastMoveSpeechQueue.clear();
+        }
         localeAvailabilityCache.clear();
         initializing = false;
         ready = false;
@@ -240,8 +247,9 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
             textToSpeech.stop();
             textToSpeech.shutdown();
             textToSpeech = null;
-            protectedSpeaking = false;
-            activeProtectedId = null;
+            synchronized (speechStateLock) {
+                lastMoveSpeechQueue.clear();
+            }
             initializing = false;
             ready = false;
         }
@@ -359,12 +367,23 @@ public class TextToSpeechApi implements TextToSpeech.OnInitListener {
 
             @Override
             public void onDone(String utteranceId) {
-                clearProtectedIfMatches(utteranceId);
+                synchronized (speechStateLock) {
+                    lastMoveSpeechQueue.finish(utteranceId);
+                }
             }
 
             @Override
             public void onError(String utteranceId) {
-                clearProtectedIfMatches(utteranceId);
+                synchronized (speechStateLock) {
+                    lastMoveSpeechQueue.finish(utteranceId);
+                }
+            }
+
+            @Override
+            public void onStop(String utteranceId, boolean interrupted) {
+                synchronized (speechStateLock) {
+                    lastMoveSpeechQueue.finish(utteranceId);
+                }
             }
         });
     }

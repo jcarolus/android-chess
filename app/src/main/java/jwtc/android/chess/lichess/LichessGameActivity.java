@@ -648,8 +648,15 @@ public class LichessGameActivity extends ChessBoardActivity
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 
-        updateLastMoveDescription(getLastMoveAndTurnDescription(false));
         executePremoveIfReady();
+    }
+
+    @Override
+    public void onMoveApplied(int move) {
+        super.onMoveApplied(move);
+
+        String sMove = getLastMoveAndTurnDescription(true);
+        updateTextViewOrSpeech(textViewLastMove, sMove, protectLastMoveSpeech);
     }
 
     @Override
@@ -694,10 +701,6 @@ public class LichessGameActivity extends ChessBoardActivity
 
     protected void updateGameStateMessage(String message) {
         updateTextViewOrSpeech(textViewStatus, message);
-    }
-
-    protected void updateLastMoveDescription(String sMove) {
-        updateTextViewOrSpeech(textViewLastMove, sMove, true);
     }
 
     @Override
