@@ -1,2 +1,36 @@
-Jouez aux échecs contre votre appareil Android ou en ligne (Lichess, FICS). Avec des positions d'entraînement, des énigmes, Duck Chess, les échecs 960 et plus encore. Vous pouvez aussi configurer une position sur l'échiquier, enregistrer et modifier des parties, parcourir l'historique et importer/exporter par e-mail ou via le presse-papiers.
-Compatible avec les lecteurs d'écran comme TalkBack.
+Échecs pour Android est une application d'échecs gratuite, libre et sans publicité : rien que les échecs. Jouez hors ligne, affrontez des joueurs en ligne, résolvez des problèmes, étudiez des positions et organisez vos parties au même endroit.
+
+JOUEZ À VOTRE FAÇON
+
+• Jouez hors ligne contre le moteur d'échecs intégré.
+• Connectez-vous à Lichess ou à FICS pour jouer en ligne.
+• Créez ou acceptez des défis Lichess et reprenez vos parties en cours.
+• Choisissez les échecs classiques, les échecs960 ou Duck Chess en version expérimentale.
+• Configurez des positions personnalisées directement sur l'échiquier.
+
+ENTRAÎNEZ-VOUS ET PROGRESSEZ
+
+• Résolvez des problèmes de Lichess.
+• Entraînez-vous avec une collection de mats en deux coups et de positions d'exercice.
+• Explorez les ouvertures avec l'explorateur ECO intégré.
+• Parcourez les coups et analysez des parties complètes.
+
+GÉREZ VOS PARTIES
+
+Enregistrez vos parties dans une base de données locale et effectuez des recherches par joueur, événement, date ou résultat. Modifiez les parties enregistrées, importez et exportez des fichiers de parties, et partagez des positions ou des parties avec d'autres applications.
+
+DES ÉCHECS ACCESSIBLES
+
+Échecs pour Android prend en charge les lecteurs d'écran tels que TalkBack. Les cases, les pièces, les coups et les commandes fournissent des informations vocales pour aider les utilisateurs de lecteurs d'écran à se repérer et à jouer.
+
+Le mode facultatif Glisser accessible offre une autre façon de déplacer les pièces aux personnes pour lesquelles le glissement classique est difficile. Sa temporisation peut être adaptée à différents besoins d'interaction. Il s'agit d'un mode distinct, conçu pour être utilisé sans TalkBack.
+
+JOUEZ SUR UN ÉCRAN PLUS GRAND
+
+Diffusez l'échiquier sur un téléviseur ou un écran compatible Chromecast afin que d'autres personnes puissent suivre la partie sur grand écran.
+
+UTILISEZ VOTRE MOTEUR PRÉFÉRÉ
+
+En plus du moteur intégré, Échecs pour Android prend en charge l'Open Exchange Protocol (OEX), ce qui permet d'utiliser des moteurs d'échecs tiers compatibles lorsqu'ils sont installés.
+
+Partie rapide hors ligne, compétition sur Lichess, entraînement tactique, commandes accessibles ou base de données consultable : Échecs pour Android vous offre un échiquier polyvalent où que vous soyez.

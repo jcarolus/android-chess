@@ -1,2 +1,36 @@
-Gioca a scacchi contro il tuo Android o online (Lichess, FICS). Include posizioni di allenamento, rompicapi, Duck Chess, Scacchi 960 e altro. È anche possibile impostare una posizione sulla scacchiera, salvare e modificare le partite, navigare nella cronologia e importare/esportare tramite e-mail o appunti.
-Supporta lettori di schermo come TalkBack.
+Scacchi per Android è un'app di scacchi gratuita, open source e senza pubblicità: solo scacchi. Gioca offline, sfida altri giocatori online, risolvi problemi, studia posizioni e organizza le tue partite in un unico posto.
+
+GIOCA COME PREFERISCI
+
+• Gioca offline contro il motore scacchistico integrato.
+• Collegati a Lichess o FICS per giocare online.
+• Crea o accetta sfide su Lichess e continua le partite in corso.
+• Scegli tra scacchi standard, Scacchi960 e la variante sperimentale Duck Chess.
+• Imposta posizioni personalizzate direttamente sulla scacchiera.
+
+ALLENATI E MIGLIORA
+
+• Risolvi i problemi di Lichess.
+• Esercitati con una raccolta di problemi di matto in due e posizioni di allenamento.
+• Esplora le aperture con l'esploratore ECO integrato.
+• Ripercorri le mosse e rivedi partite complete.
+
+GESTISCI LE TUE PARTITE
+
+Salva le partite in un database locale e cercale per giocatore, evento, data o risultato. Modifica le partite salvate, importa ed esporta file di partita e condividi posizioni o partite tramite altre app.
+
+SCACCHI ACCESSIBILI
+
+Scacchi per Android supporta lettori di schermo come TalkBack. Case, pezzi, mosse e comandi forniscono informazioni vocali per aiutare chi usa un lettore di schermo a orientarsi e giocare.
+
+La modalità opzionale Trascinamento accessibile offre un modo alternativo di muovere i pezzi a chi trova difficile il trascinamento tradizionale. I tempi possono essere regolati per adattarsi a diverse esigenze di interazione. È una modalità separata, pensata per essere utilizzata senza TalkBack.
+
+GIOCA SU UNO SCHERMO PIÙ GRANDE
+
+Trasmetti la scacchiera a un televisore o display compatibile con Chromecast, così altre persone potranno seguire la partita su uno schermo più grande.
+
+USA IL TUO MOTORE PREFERITO
+
+Oltre al motore integrato, Scacchi per Android supporta Open Exchange Protocol (OEX), consentendo di utilizzare motori scacchistici compatibili di terze parti quando installati.
+
+Che tu voglia una rapida partita offline, competere su Lichess, allenare la tattica, usare comandi accessibili o consultare un database delle tue partite, Scacchi per Android ti offre una scacchiera versatile ovunque tu vada.

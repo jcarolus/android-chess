@@ -1,2 +1,36 @@
-Jogue xadrez contra o seu Android ou online (Lichess, FICS). Inclui posições de treino, puzzles, Duck Chess, Xadrez 960 e muito mais. Também é possível configurar uma posição no tabuleiro, guardar e editar partidas, navegar pelo histórico e importar/exportar por e-mail ou área de transferência.
-Suporta leitores de ecrã como o TalkBack.
+Xadrez para Android é uma aplicação de xadrez gratuita, de código aberto e sem anúncios: apenas xadrez. Jogue offline, compita online, resolva puzzles, estude posições e organize as suas partidas num só lugar.
+
+JOGUE À SUA MANEIRA
+
+• Jogue offline contra o motor de xadrez integrado.
+• Ligue-se ao Lichess ou ao FICS para jogar online.
+• Crie ou aceite desafios no Lichess e continue as suas partidas em curso.
+• Escolha entre xadrez clássico, Xadrez960 ou o modo experimental Duck Chess.
+• Configure posições personalizadas diretamente no tabuleiro.
+
+TREINE E MELHORE
+
+• Resolva puzzles do Lichess.
+• Pratique com uma coleção de problemas de mate em dois e posições de treino.
+• Explore aberturas com o explorador ECO integrado.
+• Percorra os lances e reveja partidas completas.
+
+GERIR AS SUAS PARTIDAS
+
+Guarde partidas numa base de dados local e pesquise por informações como jogador, evento, data ou resultado. Edite partidas guardadas, importe e exporte ficheiros de partidas e partilhe posições ou partidas através de outras aplicações.
+
+XADREZ ACESSÍVEL
+
+Xadrez para Android suporta leitores de ecrã como o TalkBack. As casas, peças, jogadas e controlos fornecem informações faladas para ajudar quem utiliza leitores de ecrã a navegar e jogar.
+
+O modo opcional Arrasto de acessibilidade oferece outra forma de mover as peças a jogadores que tenham dificuldade com o arrasto convencional. A temporização pode ser ajustada a diferentes necessidades de interação. É um modo separado, destinado a ser utilizado sem o TalkBack.
+
+JOGUE NUM ECRÃ MAIOR
+
+Transmita o tabuleiro para um televisor ou ecrã compatível com Chromecast, permitindo que outras pessoas acompanhem a partida num ecrã maior.
+
+UTILIZE O SEU MOTOR PREFERIDO
+
+Além do motor integrado, Xadrez para Android suporta o Open Exchange Protocol (OEX), permitindo utilizar motores de xadrez compatíveis de terceiros quando instalados.
+
+Quer procure uma partida offline rápida, competição no Lichess, treino tático, controlos de xadrez acessíveis ou uma base de dados pesquisável, Xadrez para Android oferece-lhe um tabuleiro versátil onde quer que esteja.

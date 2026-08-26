@@ -1,2 +1,36 @@
-Juega al ajedrez contra tu Android o en línea (Lichess, FICS). Incluye posiciones de práctica, acertijos, Duck Chess, Ajedrez 960 y más. También puedes configurar una posición en el tablero, guardar y editar partidas, navegar por el historial e importar/exportar por correo electrónico o portapapeles.
-Compatible con lectores de pantalla como TalkBack.
+Ajedrez para Android es una aplicación de ajedrez gratuita, de código abierto y sin anuncios: solo ajedrez. Juega sin conexión, compite en línea, resuelve problemas, estudia posiciones y organiza tus partidas en un único lugar.
+
+JUEGA A TU MANERA
+
+• Juega sin conexión contra el motor de ajedrez integrado.
+• Conéctate a Lichess o FICS para jugar partidas en línea.
+• Crea o acepta desafíos de Lichess y continúa tus partidas en curso.
+• Elige entre ajedrez estándar, Ajedrez960 o el modo experimental Duck Chess.
+• Configura posiciones personalizadas directamente en el tablero.
+
+ENTRENA Y MEJORA
+
+• Resuelve problemas de Lichess.
+• Practica con una colección de problemas de mate en dos y posiciones de entrenamiento.
+• Explora aperturas con el explorador de aperturas ECO integrado.
+• Recorre las jugadas y revisa partidas completas.
+
+GESTIONA TUS PARTIDAS
+
+Guarda partidas en una base de datos local y busca por datos como jugador, evento, fecha o resultado. Edita partidas guardadas, importa y exporta archivos de partidas y comparte posiciones o partidas mediante otras aplicaciones.
+
+AJEDREZ ACCESIBLE
+
+Ajedrez para Android es compatible con lectores de pantalla como TalkBack. Las casillas, piezas, jugadas y controles proporcionan información hablada para ayudar a las personas que usan lectores de pantalla a navegar y jugar.
+
+El modo opcional Arrastre accesible ofrece otra forma de mover las piezas a quienes tienen dificultades con el arrastre convencional. Su temporización puede ajustarse a distintas necesidades de interacción. Arrastre accesible es un modo independiente pensado para utilizarse sin TalkBack.
+
+JUEGA EN UNA PANTALLA MÁS GRANDE
+
+Envía el tablero a un televisor o pantalla con Chromecast para que otras personas puedan seguir la partida en una pantalla más grande.
+
+UTILIZA TU MOTOR PREFERIDO
+
+Además del motor integrado, Ajedrez para Android admite Open Exchange Protocol (OEX), lo que permite utilizar motores de ajedrez de terceros compatibles que estén instalados.
+
+Ya busques una partida rápida sin conexión, competir en Lichess, entrenar táctica, controles de ajedrez accesibles o una base de datos de partidas con búsqueda, Ajedrez para Android te ofrece un tablero flexible vayas donde vayas.
