@@ -38,6 +38,8 @@
     <string name="app_name_playonline">Play online</string>
     <string name="app_name_save_games">Saved games</string>
     <string name="app_name_setup">Setup</string>
+    <string name="attacked_by_pieces">Attacked by %1$s</string>
+    <string name="defended_by_pieces">Defended by %1$s</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_close">Close</string>
     <string name="button_engine_play_description">Engine play</string>
@@ -206,6 +208,9 @@
     <string name="lichess_game_confirm_move">Confirm %1$s</string>
     <string name="lichess_game_confirm_moves">Confirm moves</string>
     <string name="lichess_game_disconnected">Game disconnected. Check your internet connection and try again</string>
+    <string name="lichess_game_not_board_compatible">This game can\'t be played here. The Lichess Board API only allows rapid, classical and correspondence time controls, not blitz or bullet. Play it on lichess.org.</string>
+    <string name="lichess_swiss_not_playable">not playable here</string>
+    <string name="lichess_swiss_not_board_compatible">This tournament can\'t be played here. Only rapid or classical standard/chess960 swiss games work with the Board API. Join and play it on lichess.org.</string>
     <string name="lichess_game_state_aborted">Game aborted</string>
     <string name="lichess_game_state_created">Game created</string>
     <string name="lichess_game_state_mate">Game ended in a check-mate</string>
@@ -262,6 +267,8 @@
     <string name="msg_setup_turn">Turn</string>
     <string name="msg_setup_turn_black">black</string>
     <string name="msg_setup_turn_white">white</string>
+    <string name="new_game_as_black">New game, you are playing with the black pieces</string>
+    <string name="new_game_as_white">New game, you are playing with the white pieces</string>
     <string name="online_help">
                 <![CDATA[
                 <p>
@@ -330,6 +337,7 @@
     <string name="practice_help">Find the Check-Mate (can be more than one move).</string>
     <string name="practice_set_reset">Practice set has been reset</string>
     <string name="pref_field_color_descriptions">Add dark/light to square description</string>
+    <string name="pref_include_attackers_defenders_descriptions">Include attackers and defenders in field description</string>
     <string name="pref_fullscreen">Enable full screen</string>
     <string name="pref_fullscreen_desc">Recommended for small screens and landscape view; elements may fall off the screen otherwise</string>
     <string name="pref_icsautosought">Auto sought</string>
@@ -344,6 +352,7 @@
     <string name="pref_icstimewarningsecs">Time Warning Amount (secs)</string>
     <string name="pref_icstimewarningsecs_desc">How many seconds until time warning starts?</string>
     <string name="pref_last_move_over_empty_square">Announce last move when dragging over an empty square after delay</string>
+    <string name="pref_protect_last_move_speech">Do not interrupt the last move announcement</string>
     <string name="pref_minimal">Minimal controls</string>
     <string name="pref_night_mode">Night mode</string>
     <string name="pref_night_mode_desc">Force the app into night mode</string>
@@ -409,7 +418,8 @@
     <string name="square_selected_with_duck_description">Selected %1$s at %2$s</string>
     <string name="square_selected_with_piece_description">Selected %1$s %2$s %3$s</string>
     <string name="square_with_duck_description">%1$s at %2$s</string>
-    <string name="square_with_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_color_and_piece_description">%1$s %2$s %3$s</string>
+    <string name="square_with_piece_description">%1$s %2$s</string>
     <string name="start_accessibility_preferences">Accessibility preferences</string>
     <string name="start_boardpreferences">Board settings</string>
     <string name="start_database">Game database</string>
@@ -472,4 +482,39 @@
     <string name="lichess_puzzle_angle">Theme</string>
     <string name="lichess_puzzle_solved_rated">Puzzle solved! Rating %1$s</string>
     <string name="lichess_puzzle_solved_hint_rated">Solved with mistakes. Rating %1$s</string>
+    <string name="lichess_lobby_button_teams">Teams</string>
+    <string name="lichess_swiss_title">Pick a team to see its Swiss tournaments</string>
+    <string name="lichess_swiss_my_teams">My teams</string>
+    <string name="lichess_swiss_all_teams">All teams</string>
+    <string name="lichess_team_search">Search</string>
+    <string name="lichess_team_search_hint">Search teams…</string>
+    <string name="lichess_team_search_results">Search: %1$s</string>
+    <string name="lichess_swiss_tournaments">Swiss tournaments</string>
+    <string name="lichess_swiss_back">Back</string>
+    <string name="lichess_swiss_prev">Previous</string>
+    <string name="lichess_swiss_next">Next</string>
+    <string name="lichess_swiss_page">Page %1$d / %2$d</string>
+    <string name="lichess_swiss_join">Join</string>
+    <string name="lichess_swiss_withdraw">Withdraw</string>
+    <string name="lichess_team_join">Join team</string>
+    <string name="lichess_team_leave">Leave team</string>
+    <string name="lichess_team_members">%1$d members</string>
+    <string name="lichess_swiss_players">%1$d players</string>
+    <string name="lichess_swiss_starts_at">starts %1$s</string>
+    <string name="lichess_swiss_detail_info">%1$s · round %2$d/%3$d · %4$d players</string>
+    <string name="lichess_swiss_no_teams">You are not in any team yet. Tap \"All teams\" to find one to join.</string>
+    <string name="lichess_swiss_no_tournaments">This team has no Swiss tournaments.</string>
+    <string name="lichess_team_join_message_hint">Message (if the team reviews requests)</string>
+    <string name="lichess_team_join_password_hint">Password (if required)</string>
+    <string name="lichess_team_joined">Joined %1$s</string>
+    <string name="lichess_team_left">Left %1$s</string>
+    <string name="lichess_swiss_joined">Joined tournament</string>
+    <string name="lichess_swiss_status_created">Upcoming</string>
+    <string name="lichess_swiss_status_started">Ongoing</string>
+    <string name="lichess_swiss_status_finished">Finished</string>
+    <string name="black_player_forfeits_on_time">Black lost on time</string>
+    <string name="black_player_resigned">Black resigned</string>
+    <string name="players_agreed_draw">Draw by agreement</string>
+    <string name="white_player_forfeits_on_time">White lost on time</string>
+    <string name="white_player_resigned">White resigned</string>
 </resources>

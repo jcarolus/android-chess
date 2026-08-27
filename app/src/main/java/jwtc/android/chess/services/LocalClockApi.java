@@ -11,15 +11,20 @@ import jwtc.chess.board.BoardConstants;
 
 public class LocalClockApi implements GameListener {
     protected static final String TAG = "LocalClockApi";
+    // Fire warnings this much before the clock actually reaches a threshold, so the
+    // sound/speech lands on time rather than after the mark has already passed.
+    private static final long TIME_WARNING_LEAD_MILLIES = 1000L;
     private static final long[] TIME_WARNING_THRESHOLDS_MILLIES = {
-            10 * 60 * 1000L,
-            5 * 60 * 1000L,
-            2 * 60 * 1000L,
-            60 * 1000L,
-            30 * 1000L,
-            15 * 1000L,
-            10 * 1000L,
-            5 * 1000L
+        30 * 60 * 1000L,
+        20 * 60 * 1000L,
+        10 * 60 * 1000L,
+        5 * 60 * 1000L,
+        2 * 60 * 1000L,
+        60 * 1000L,
+        30 * 1000L,
+        15 * 1000L,
+        10 * 1000L,
+        5 * 1000L
     };
 
     protected long whiteRemaining = 0;
@@ -182,7 +187,9 @@ public class LocalClockApi implements GameListener {
         }
 
         int turn = gameApi.getTurn();
-        long remaining = getRemaining(turn);
+        // Bring the warning forward by the lead time: both the threshold crossing and the
+        // value handed to feedbackTimeWarning shift together, so the spoken label stays correct.
+        long remaining = getRemaining(turn) - TIME_WARNING_LEAD_MILLIES;
         long previous = getPreviousWarningCheck(turn);
 
         if (previous < 0) {
@@ -227,26 +234,11 @@ public class LocalClockApi implements GameListener {
     }
 
     @Override
-    public void OnMove(int move) {
+    public void onMoveApplied(int move) {
         // only if on top of move stack
         if (this.gameApi.isAtEndOfPGN()) {
             switchTurn();
         }
-    }
-
-    @Override
-    public void OnDuckMove(int duckMove) {
-
-    }
-
-    @Override
-    public void OnState() {
-
-    }
-
-    @Override
-    public void OnIllegalMove() {
-
     }
 
     private class RunnableImp implements Runnable {

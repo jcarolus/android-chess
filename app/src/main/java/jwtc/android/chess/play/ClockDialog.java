@@ -13,8 +13,8 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 
-public class ClockDialog extends ResultDialog {
-    public ClockDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs) {
+public class ClockDialog extends ResultDialog<Bundle> {
+    public ClockDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, final SharedPreferences prefs) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.clock_dialog);

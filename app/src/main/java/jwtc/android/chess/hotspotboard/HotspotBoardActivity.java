@@ -89,10 +89,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     };
 
     @Override
-    public void OnMove(int move) {
-        super.OnMove(move);
+    public void onMoveApplied(int move) {
+        super.onMoveApplied(move);
 
-        Log.d(TAG, "OnMove");
+        Log.d(TAG, "OnMove " + move);
+
+        String lastMovePgn = getLastMoveDescription(false);
 
         Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
         Bundle bundle = new Bundle();
@@ -101,7 +103,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 gameApi.getFEN(),
                 ((HotspotBoardApi) gameApi).getWhite(),
                 ((HotspotBoardApi) gameApi).getBlack(),
-                move
+                move,
+                lastMovePgn
             );
             bundle.putString("data", message.toJsonString());
             msg.setData(bundle);
@@ -165,14 +168,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
     }
 
-    private void sendGameMessage(int type, int lastMove) {
+    private void sendGameMessage(int type, int lastMove, String lastMovePgn) {
         try {
             GameMessage message = new GameMessage(
                 type,
                 gameApi.getFEN(),
                 ((HotspotBoardApi) gameApi).getWhite(),
                 ((HotspotBoardApi) gameApi).getBlack(),
-                lastMove
+                lastMove,
+                lastMovePgn
             );
             Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
             Bundle bundle = new Bundle();
@@ -220,6 +224,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                     highlightedPositions.add(Move.getFrom(message.lastMove));
                                     highlightedPositions.add(Move.getTo(message.lastMove));
                                     updateSelectedSquares();
+
+                                    updateTextViewOrSpeech(textStatus, message.lastMovePgn);
                                 }
                                 buttonDraw.setEnabled(true);
                                 break;
@@ -233,10 +239,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 break;
                             case GameMessage.TYPE_DRAW_OFFER:
                                 openConfirmDialog("Draw Offer", "Accept", "Decline", () -> {
-                                    sendGameMessage(GameMessage.TYPE_DRAW_ACCEPT, 0);
+                                    sendGameMessage(GameMessage.TYPE_DRAW_ACCEPT, 0, "");
                                     showGameResult("Game Over", "The game is a draw.");
                                 }, () -> {
-                                    sendGameMessage(GameMessage.TYPE_DRAW_DECLINE, 0);
+                                    sendGameMessage(GameMessage.TYPE_DRAW_DECLINE, 0, "");
                                 });
                                 break;
                             case GameMessage.TYPE_DRAW_ACCEPT:
@@ -319,6 +325,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
+        // init shared views before aftercreate
+        switchSound = findViewById(R.id.SwitchSound);
+        switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
+        switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
+
         afterCreate();
         View boardAreaLayout = findViewById(R.id.board_area);
         if (boardAreaLayout == null) {
@@ -365,7 +376,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         buttonResign.setOnClickListener(v -> {
             openConfirmDialog("Are you sure you want to resign?", "Yes", "No", () -> {
-                sendGameMessage(GameMessage.TYPE_RESIGN, 0);
+                sendGameMessage(GameMessage.TYPE_RESIGN, 0, "");
                 if (((HotspotBoardApi) gameApi).isPlayingAsWhite()) {
                     overrideGameState = BoardConstants.WHITE_RESIGNED;
                 } else {
@@ -376,7 +387,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         });
 
         buttonDraw.setOnClickListener(v -> {
-            sendGameMessage(GameMessage.TYPE_DRAW_OFFER, 0);
+            sendGameMessage(GameMessage.TYPE_DRAW_OFFER, 0, "");
             updateStatus(getString(R.string.hotspot_status_draw_sent));
             buttonDraw.setEnabled(false);
         });
@@ -416,7 +427,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         gameApi.newGame();
         overrideGameState = 0;
         ((HotspotBoardApi) gameApi).setPlayingAsWhite(isPlayAsWhite);
-        sendGameMessage(GameMessage.TYPE_MOVE, 0); // send initial state
+        sendGameMessage(GameMessage.TYPE_MOVE, 0, ""); // send initial state
 
         rebuildBoard();
         updateNewGameButtonVisibility(false);

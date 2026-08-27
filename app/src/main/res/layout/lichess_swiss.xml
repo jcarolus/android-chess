@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ViewAnimatorSwiss"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 0 : teams browser -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="8dip">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_back"
+                android:id="@+id/ButtonSwissTeamsBack"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_my_teams"
+                android:id="@+id/ButtonSwissMyTeams"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_all_teams"
+                android:id="@+id/ButtonSwissAllTeams"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dip"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/EditTextTeamSearch"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
+                android:maxLines="1"
+                android:hint="@string/lichess_team_search_hint" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_team_search"
+                android:id="@+id/ButtonSwissSearch"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/TextViewSwissTeamsStatus"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:text="@string/lichess_swiss_title"
+            android:accessibilityLiveRegion="polite" />
+
+        <ProgressBar
+            android:id="@+id/ProgressBarSwissTeams"
+            android:layout_width="match_parent"
+            android:layout_height="4dip"
+            android:layout_marginTop="8dip"
+            android:visibility="gone"
+            android:indeterminate="true"
+            style="?android:attr/progressBarStyleHorizontal" />
+
+        <ListView
+            android:id="@+id/ListViewSwissTeams"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dip" />
+
+        <LinearLayout
+            android:id="@+id/LayoutSwissPaging"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_prev"
+                android:id="@+id/ButtonSwissPrevPage"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <TextView
+                android:id="@+id/TextViewSwissPage"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_next"
+                android:id="@+id/ButtonSwissNextPage"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 1 : team detail (join/leave + team's swiss tournaments) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="8dip">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_back"
+                android:id="@+id/ButtonSwissListBack"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <TextView
+                android:id="@+id/TextViewSwissTeamName"
+                style="@style/MyHeaderTextStyle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dip"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_team_join"
+                android:id="@+id/ButtonTeamJoinLeave"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:text="@string/lichess_swiss_tournaments" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_status_created"
+                android:id="@+id/ButtonSwissFilterCreated"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_status_started"
+                android:id="@+id/ButtonSwissFilterStarted"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_status_finished"
+                android:id="@+id/ButtonSwissFilterFinished"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/TextViewSwissListStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:accessibilityLiveRegion="polite" />
+
+        <ProgressBar
+            android:id="@+id/ProgressBarSwissList"
+            android:layout_width="match_parent"
+            android:layout_height="4dip"
+            android:layout_marginTop="8dip"
+            android:visibility="gone"
+            android:indeterminate="true"
+            style="?android:attr/progressBarStyleHorizontal" />
+
+        <ListView
+            android:id="@+id/ListViewSwissList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dip" />
+    </LinearLayout>
+
+    <!-- 2 : tournament detail + standings -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="8dip">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_back"
+                android:id="@+id/ButtonSwissDetailBack"
+                android:layout_width="wrap_content"
+                style="@style/ChessButton" />
+
+            <TextView
+                android:id="@+id/TextViewSwissName"
+                style="@style/MyHeaderTextStyle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dip"
+                android:layout_height="wrap_content"
+                android:text="" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/TextViewSwissInfo"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dip"
+            android:text="" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_join"
+                android:id="@+id/ButtonSwissJoin"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="4dip"
+                style="@style/ChessButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:text="@string/lichess_swiss_withdraw"
+                android:id="@+id/ButtonSwissWithdraw"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="4dip"
+                style="@style/ChessButton" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/ProgressBarSwissStandings"
+            android:layout_width="match_parent"
+            android:layout_height="4dip"
+            android:layout_marginTop="8dip"
+            android:visibility="gone"
+            android:indeterminate="true"
+            style="?android:attr/progressBarStyleHorizontal" />
+
+        <ListView
+            android:id="@+id/ListViewSwissStandings"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dip" />
+    </LinearLayout>
+</ViewAnimator>

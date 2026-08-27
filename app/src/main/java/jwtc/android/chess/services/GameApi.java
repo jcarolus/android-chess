@@ -103,6 +103,11 @@ public class GameApi {
         int size = pgnMoves.size();
         if (size > 0 && jni.getNumBoard() == size) {
             pgnMoves.get(size - 1).finalState = state;
+            if (state == BoardConstants.WHITE_FORFEIT_TIME) {
+                dispatchPlayerForfeitedOnTime(BoardConstants.WHITE);
+            } else if (state == BoardConstants.BLACK_FORFEIT_TIME) {
+                dispatchPlayerForfeitedOnTime(BoardConstants.BLACK);
+            }
             dispatchState();
             return true;
         }
@@ -194,6 +199,7 @@ public class GameApi {
     public void undoMove() {
 //        Log.d(TAG, "undoMove");
         jni.undo();
+        dispatchHistoryPositionChanged(jni.getNumBoard());
         dispatchState();
     }
 
@@ -223,6 +229,7 @@ public class GameApi {
                     currentNumBoard--;
                 }
             }
+            dispatchHistoryPositionChanged(jni.getNumBoard());
             dispatchState();
         }
     }
@@ -272,6 +279,7 @@ public class GameApi {
             pgnTags.put("FEN", jni.toFEN());
         }
 
+        dispatchNewGameStarted(variant);
         dispatchState();
     }
 
@@ -294,6 +302,7 @@ public class GameApi {
             pgnMoves.clear();
 
             dispatchState();
+            dispatchGameLoaded();
             return true;
         }
         return false;
@@ -320,6 +329,7 @@ public class GameApi {
 
         pgnMoves.clear();
 
+        dispatchNewGameStarted(jni.getVariant());
         dispatchState();
         return ret;
     }
@@ -367,6 +377,9 @@ public class GameApi {
             int size = pgnMoves.size();
             if (size > 0) {
                 pgnMoves.get(size - 1).finalState = finalState;
+            }
+            if (!pgnMoves.isEmpty()) {
+                dispatchGameLoaded();
             }
             dispatchState();
             return true;
@@ -431,6 +444,7 @@ public class GameApi {
                 finalState == BoardConstants.WHITE_RESIGNED ||
                 finalState == BoardConstants.BLACK_RESIGNED) {
                 pgnMoves.get(size - 1).finalState = -1;
+                dispatchGameResumed();
                 dispatchState();
             }
         }
@@ -575,7 +589,7 @@ public class GameApi {
 //        Log.d(TAG, "dispatchMove " + move);
 
         for (GameListener listener : listeners) {
-            listener.OnMove(move);
+            listener.onMoveApplied(move);
         }
     }
 
@@ -583,7 +597,7 @@ public class GameApi {
         Log.d(TAG, "dispatchDuckMove " + duckMove);
 
         for (GameListener listener : listeners) {
-            listener.OnDuckMove(duckMove);
+            listener.onDuckMoveApplied(duckMove);
         }
     }
 
@@ -599,7 +613,49 @@ public class GameApi {
         Log.d(TAG, "dispatchIllegalMove");
 
         for (GameListener listener : listeners) {
-            listener.OnIllegalMove();
+            listener.onIllegalMoveAttempted();
+        }
+    }
+
+    protected void dispatchHistoryPositionChanged(final int boardNumber) {
+        for (GameListener listener : listeners) {
+            listener.onHistoryPositionChanged(boardNumber);
+        }
+    }
+
+    protected void dispatchNewGameStarted(final int variant) {
+        for (GameListener listener : listeners) {
+            listener.onNewGameStarted(variant);
+        }
+    }
+
+    protected void dispatchGameLoaded() {
+        for (GameListener listener : listeners) {
+            listener.onGameLoaded();
+        }
+    }
+
+    protected void dispatchGameResumed() {
+        for (GameListener listener : listeners) {
+            listener.onGameResumed();
+        }
+    }
+
+    protected void dispatchPlayerResigned(final int color) {
+        for (GameListener listener : listeners) {
+            listener.onPlayerResigned(color);
+        }
+    }
+
+    protected void dispatchDrawAgreed() {
+        for (GameListener listener : listeners) {
+            listener.onDrawAgreed();
+        }
+    }
+
+    protected void dispatchPlayerForfeitedOnTime(final int color) {
+        for (GameListener listener : listeners) {
+            listener.onPlayerForfeitedOnTime(color);
         }
     }
 

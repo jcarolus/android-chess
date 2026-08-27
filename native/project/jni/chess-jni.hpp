@@ -64,6 +64,8 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMoveArraySize(JNIEnv* env, jobject 
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMoveArrayAt(JNIEnv* env, jobject thiz, jint i);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getTurn(JNIEnv* env, jobject thiz);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_pieceAt(JNIEnv* env, jobject thiz, jint turn, jint pos);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_countAttackersTo(JNIEnv* env, jobject thiz, jint pos, jint byTurn);
+JNIEXPORT jintArray JNICALL Java_jwtc_chess_JNI_getAttackerPositionsTo(JNIEnv* env, jobject thiz, jint pos, jint byTurn);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getDuckPos(JNIEnv* env, jobject thiz);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMyDuckPos(JNIEnv* env, jobject thiz);
 JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_getMyMoveToString(JNIEnv* env, jobject thiz);
@@ -81,6 +83,12 @@ JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPieceHouse(JNIEnv* env, jobject th
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getNumHouse(JNIEnv* env, jobject thiz, jint turn, jint piece);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_setNumHouse(JNIEnv* env, jobject thiz, jint turn, jint piece, jint num);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_searchMoveHouse(JNIEnv* env, jobject thiz, jint secs);
+
+JNIEXPORT void JNICALL Java_jwtc_chess_JNI_scratchSyncFromCurrent(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_scratchMove(JNIEnv* env, jobject thiz, jint move);
+JNIEXPORT BITBOARD JNICALL Java_jwtc_chess_JNI_scratchGetHashKey(JNIEnv* env, jobject thiz);
+JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_scratchGetMyMoveToString(JNIEnv* env, jobject thiz);
+JNIEXPORT int JNICALL Java_jwtc_chess_JNI_scratchUndo(JNIEnv* env, jobject thiz);
 
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getEvalPropertyCount(JNIEnv* env, jobject thiz);
 JNIEXPORT jstring JNICALL Java_jwtc_chess_JNI_getEvalPropertyName(JNIEnv* env, jobject thiz, jint iProp);

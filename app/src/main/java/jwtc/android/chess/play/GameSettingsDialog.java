@@ -23,8 +23,8 @@ import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.views.FixedDropdownView;
 
-public class GameSettingsDialog extends ResultDialog {
-    public GameSettingsDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, final SharedPreferences prefs, boolean isDuckGame) {
+public class GameSettingsDialog extends ResultDialog<Bundle> {
+    public GameSettingsDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, final SharedPreferences prefs, boolean isDuckGame) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.game_settings);

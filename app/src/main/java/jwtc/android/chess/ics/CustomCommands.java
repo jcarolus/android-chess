@@ -56,7 +56,7 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
                 input.setText(_adapter.getItem(position));
                 input.setGravity(Gravity.CENTER);
 
-                fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+                fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(CustomCommands.this)
                     .setView(fl)
@@ -171,7 +171,7 @@ public class CustomCommands extends BaseActivity implements OnItemClickListener 
             input.setGravity(Gravity.CENTER);
             input.setSingleLine();
 
-            fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+            fl.addView(input, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setView(fl)

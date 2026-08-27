@@ -22,6 +22,10 @@ This will:
 2. Build `chess_engine_tests`
 3. Run tests with `ctest --output-on-failure`
 
+Run a single test (e.g. 17):
+
+`ctest --test-dir build-tests -I 17,17 --output-on-failure`
+
 ## NDK
 
 - Android `ndkBuild` integration (`Android.mk`)

@@ -1,2 +1,36 @@
-Android cihazınıza karşı veya çevrim içi (Lichess, FICS) satranç oynayın. Alıştırma konumları, bulmacalar, Ördek Satrancı, Satranç960 ve daha fazlasını içerir. Tahtada bir konum kurabilir, oyunları kaydedip düzenleyebilir, geçmişte gezinebilir ve e-posta ya da panoyla içe/dışa aktarım yapabilirsiniz.
-TalkBack gibi ekran okuyucuları destekler.
+Android için Satranç; ücretsiz, açık kaynaklı ve reklamsız bir satranç uygulamasıdır. Sadece satranç. Çevrim dışı oynayın, çevrim içi yarışın, bulmacalar çözün, konumları inceleyin ve oyunlarınızı tek bir yerde düzenleyin.
+
+İSTEDİĞİNİZ GİBİ OYNAYIN
+
+• Yerleşik satranç motoruna karşı çevrim dışı oynayın.
+• Çevrim içi oyunlar için Lichess veya FICS'e bağlanın.
+• Lichess meydan okumaları oluşturun veya kabul edin ve devam eden oyunlarınızı sürdürün.
+• Standart satranç, Satranç960 veya deneysel Ördek Satrancı arasında seçim yapın.
+• Özel konumları doğrudan tahtada kurun.
+
+ANTRENMAN YAPIN VE GELİŞİN
+
+• Lichess bulmacalarını çözün.
+• İki hamlede mat problemleri ve antrenman konumları koleksiyonuyla çalışın.
+• Yerleşik ECO açılış gezginiyle açılışları keşfedin.
+• Hamleler arasında gezinin ve oyunların tamamını inceleyin.
+
+OYUNLARINIZI YÖNETİN
+
+Oyunları yerel bir oyun veri tabanına kaydedin ve oyuncu, etkinlik, tarih veya sonuç gibi ayrıntılara göre arayın. Kaydedilmiş oyunları düzenleyin, oyun dosyalarını içe ve dışa aktarın, konumları veya oyunları diğer uygulamalar aracılığıyla paylaşın.
+
+ERİŞİLEBİLİR SATRANÇ
+
+Android için Satranç, TalkBack gibi ekran okuyucuları destekler. Tahta kareleri, taşlar, hamleler ve kontroller, ekran okuyucu kullanıcılarının gezinmesine ve oynamasına yardımcı olmak için sesli bilgiler sağlar.
+
+İsteğe bağlı Erişilebilir sürükleme modu, normal sürüklemeyi zor bulan oyunculara taşları hareket ettirmenin başka bir yolunu sunar. Zamanlaması farklı etkileşim ihtiyaçlarına göre ayarlanabilir. Bu, TalkBack olmadan kullanılmak üzere tasarlanmış ayrı bir moddur.
+
+DAHA BÜYÜK BİR EKRANDA OYNAYIN
+
+Satranç tahtasını Chromecast özellikli bir televizyona veya ekrana aktarın; böylece başkaları da oyunu daha büyük bir ekrandan takip edebilir.
+
+TERCİH ETTİĞİNİZ MOTORU KULLANIN
+
+Android için Satranç, yerleşik motora ek olarak Open Exchange Protocol'ü (OEX) destekler ve yüklü uyumlu üçüncü taraf satranç motorlarının kullanılmasını sağlar.
+
+İster hızlı bir çevrim dışı oyun, ister Lichess üzerinden çevrim içi rekabet, taktik antrenmanı, erişilebilir satranç kontrolleri ya da aranabilir bir oyun veri tabanı isteyin, Android için Satranç gittiğiniz her yerde esnek bir satranç tahtası sunar.

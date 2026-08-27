@@ -61,17 +61,23 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
     protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false, minimalControls = false;
-    protected boolean useAccessibilityDrag = false;
+    protected boolean useAccessibilityDrag = false, protectLastMoveSpeech = false;
     protected int accessibilityDragDwellMs = 300;
     protected int accessibilityDragLastMoveDelayMs = 1000;
     protected boolean fieldColorDescriptions = false;
     protected boolean announceLastMoveWhenOverEmptySquare = false;
     protected boolean useLongMoveFormat = false;
+    protected boolean includeAttackersAndDefendersInFieldDescription = false;
     // shared views
     protected TextView textViewWhitePieces, textViewBlackPieces;
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
     private String keyboardBuffer = "";
     private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
+    private final Handler timeWarningSpeechHandler = new Handler(Looper.getMainLooper());
+    // Delay before speaking a time warning when a warning sound is also playing,
+    // so the sound has time to finish before TTS starts.
+    private static final long TIME_WARNING_SPEECH_DELAY_MS = 700L;
+    private static final long INIT_SPEECH_DELAY_MS = 1000L;
     private Runnable accessibilityDragDwellRunnable = null;
     private int accessibilityDragHoverPos = -1;
     private int accessibilityDragFromPos = -1;
@@ -115,8 +121,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
-    public void OnMove(int move) {
-        Log.d(TAG, "OnMove " + Move.toDbgString(move));
+    public void onMoveApplied(int move) {
+        Log.d(TAG, "onMoveApplied " + Move.toDbgString(move));
         // selectPosition(-1);
 
         moveToPositions.clear();
@@ -133,16 +139,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             feedbackMove();
 
         }
-
-        if (textToSpeech.isEnabled()) {
-            String sMove = getLastMoveAndTurnDescription(true);
-            textToSpeech.doSpeak(sMove);
-        }
     }
 
     @Override
-    public void OnDuckMove(int duckMove) {
-        Log.d(TAG, "OnDuckMove " + Pos.toString(duckMove));
+    public void onDuckMoveApplied(int duckMove) {
+        Log.d(TAG, "OnDuckMoveApplied " + Pos.toString(duckMove));
         selectPosition(-1);
 
         rebuildBoard();
@@ -160,10 +161,45 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     @Override
-    public void OnIllegalMove() {
+    public void onIllegalMoveAttempted() {
         Log.d(TAG, "OnIllegal");
         rebuildBoard();
         feedbackIllegalMove();
+    }
+
+    @Override
+    public void onHistoryPositionChanged(int boardNumber) {
+        Log.d(TAG, "onHistoryPositionChanged " + boardNumber);
+    }
+
+    @Override
+    public void onNewGameStarted(int variant) {
+        Log.d(TAG, "onNewGameStarted " + variant);
+    }
+
+    @Override
+    public void onGameLoaded() {
+        Log.d(TAG, "onGameLoaded");
+    }
+
+    @Override
+    public void onGameResumed() {
+        Log.d(TAG, "onGameResumed");
+    }
+
+    @Override
+    public void onPlayerResigned(int color) {
+        Log.d(TAG, "onPlayerResigned " + color);
+    }
+
+    @Override
+    public void onDrawAgreed() {
+        Log.d(TAG, "onDrawAgreed");
+    }
+
+    @Override
+    public void onPlayerForfeitedOnTime(int color) {
+        Log.d(TAG, "onPlayerForfeitedOnTime " + color);
     }
 
     public void afterCreate() {
@@ -207,7 +243,26 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         applySquareDragListeners();
 
+        // Synchronous subclasses assign gameApi before calling afterCreate(), so register here to
+        // preserve the original lifecycle. Service-bound subclasses (e.g. the Lichess screens)
+        // leave gameApi null at this point and call onGameApiReady() once the service connects.
+        if (gameApi != null) {
+            gameApi.addListener(this);
+        }
+    }
+
+    /**
+     * Called once the service-owned {@link #gameApi} becomes available (from onServiceConnected).
+     * The board views are already built by {@link #afterCreate()}; here we register as a game
+     * listener and paint the current position. Not used by subclasses that create gameApi
+     * synchronously — those register in {@link #afterCreate()}.
+     */
+    protected void onGameApiReady() {
+        if (gameApi == null) {
+            return;
+        }
         gameApi.addListener(this);
+        rebuildBoard();
     }
 
     protected void initBoardLayoutSizing(
@@ -421,9 +476,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             textToSpeech.setEnabled(false, prefs);
         }
+        protectLastMoveSpeech = prefs.getBoolean("pref_protect_last_move_speech", false);
         fieldColorDescriptions = prefs.getBoolean("field_color_descriptions", false);
         announceLastMoveWhenOverEmptySquare = prefs.getBoolean("announce_last_move_when_over_empty_square", false);
         useLongMoveFormat = prefs.getBoolean("use_long_move_description", false);
+        includeAttackersAndDefendersInFieldDescription = prefs.getBoolean("include_attackers_defenders_in_field_description", false);
 
         if (textViewWhitePieces != null && textViewBlackPieces != null) {
             int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
@@ -455,12 +512,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         editor.commit();
     }
 
-    public void hapticFeedbackTick(boolean hasPiece) {
+    public void hapticFeedbackTick(boolean hasPiece, boolean isDarkSquare, boolean isBlackPiece) {
         if (sounds.isEnabled()) {
             if (hasPiece) {
-                sounds.playTickPiece();
+                sounds.playTickPiece(isDarkSquare, isBlackPiece);
             } else {
-                sounds.playTick();
+                sounds.playTick(isDarkSquare);
             }
         }
         if (hapticFeedback.isEnabled()) {
@@ -511,43 +568,94 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-    public void feedbackNewGame() {
-        if (sounds.isEnabled()) {
+    public void feedbackNewGameStarted(int color, TextView textView) {
+        final boolean soundsEnabled = sounds.isEnabled();
+        final boolean speechEnabled = textToSpeech.isEnabled();
+
+        if (soundsEnabled) {
             sounds.playNewGame();
         }
-    }
-
-    public void feedbackTimeWarning() {
-        if (sounds.isEnabled()) {
-            sounds.playTickTock();
+        if (speechEnabled) {
+            final Runnable feedbackRunnable = () -> {
+                String message = getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black);
+                updateTextViewOrSpeech(textView, message);
+            };
+            if (textToSpeech.isReady()) {
+                feedbackRunnable.run();
+            } else {
+                // @TODO should this be on status text?
+                // delay because speech not ready after Activity resume with new game
+                timeWarningSpeechHandler.postDelayed(feedbackRunnable, INIT_SPEECH_DELAY_MS);
+            }
         }
     }
 
-    public void feedBackDescribeTimeWarning(long millies) {
-        if (textToSpeech.isEnabled()) {
-            long remainingSeconds = (millies + 999) / 1000;
-            if (remainingSeconds <= 0) {
-                return;
-            }
+    public void feedbackTimeWarning(long millies) {
+        final long remainingSeconds = (millies + 999) / 1000;
+        if (remainingSeconds <= 0) {
+            return;
+        }
 
+        final boolean soundsEnabled = sounds.isEnabled();
+        final boolean speechEnabled = textToSpeech.isEnabled();
+
+        if (soundsEnabled) {
             if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
                 long minutes = remainingSeconds / 60;
                 if (minutes == 1) {
-                    textToSpeech.doSpeak(getString(R.string.time_warning_minutes_single, minutes), TextToSpeech.QUEUE_ADD);
+                    sounds.playBell();
                 } else {
-                    textToSpeech.doSpeak(getString(R.string.time_warning_minutes, minutes), TextToSpeech.QUEUE_ADD);
+                    sounds.playLowTime();
                 }
-            } else if (remainingSeconds == 1) {
-                textToSpeech.doSpeak(getString(R.string.time_warning_seconds_single, remainingSeconds), TextToSpeech.QUEUE_ADD);
             } else {
-                textToSpeech.doSpeak(getString(R.string.time_warning_seconds, remainingSeconds), TextToSpeech.QUEUE_ADD);
+                sounds.playStopWatch();
             }
         }
+
+        if (speechEnabled) {
+            final Runnable speak = () -> {
+                if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
+                    long minutes = remainingSeconds / 60;
+                    if (minutes == 1) {
+                        textToSpeech.doSpeak(getString(R.string.time_warning_minutes_single, minutes), TextToSpeech.QUEUE_ADD);
+                    } else {
+                        textToSpeech.doSpeak(getString(R.string.time_warning_minutes, minutes), TextToSpeech.QUEUE_ADD);
+                    }
+                } else {
+                    textToSpeech.doSpeak(getString(R.string.time_warning_seconds, remainingSeconds), TextToSpeech.QUEUE_ADD);
+                }
+            };
+
+            // When a sound also plays, delay the speech a little so the sound can
+            // finish first instead of the two overlapping.
+            if (soundsEnabled) {
+                timeWarningSpeechHandler.postDelayed(speak, TIME_WARNING_SPEECH_DELAY_MS);
+            } else {
+                speak.run();
+            }
+        }
+    }
+
+    public void feedbackPlayerResigned(int color, TextView textView) {
+        String message = getString(color == BoardConstants.WHITE ? R.string.white_player_resigned : R.string.black_player_resigned);
+        updateTextViewOrSpeech(textView, message);
+    }
+
+    public void feedbackDrawAgreed(TextView textView) {
+        String message = getString(R.string.players_agreed_draw);
+        updateTextViewOrSpeech(textView, message);
+    }
+
+    public void feedbackPlayerForfeitedOnTime(int color, TextView textView) {
+        String message = getString(color == BoardConstants.WHITE ? R.string.white_player_forfeits_on_time : R.string.black_player_forfeits_on_time);
+        updateTextViewOrSpeech(textView, message);
     }
 
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
+
+        timeWarningSpeechHandler.removeCallbacksAndMessages(null);
 
         if (boardLayoutListener != null && boardLayoutRoot != null) {
             boardLayoutRoot.getViewTreeObserver().removeOnGlobalLayoutListener(boardLayoutListener);
@@ -555,7 +663,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             boardLayoutRoot = null;
         }
 
-        gameApi.removeListener(this);
+        if (gameApi != null) {
+            gameApi.removeListener(this);
+        }
         textToSpeech.shutdown();
 
         super.onDestroy();
@@ -679,6 +789,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 int piece = jni.pieceAt(jni.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
                 String nextDescription = getFieldDescription(pos);
+                // Log.d(TAG, "next " + nextDescription);
                 CharSequence currentDescription = squareView.getContentDescription();
                 if (currentDescription == null || !nextDescription.contentEquals(currentDescription)) {
                     squareView.setContentDescription(nextDescription);
@@ -703,6 +814,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
         }
     }
+
 
 //    @Override
 //    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
@@ -817,11 +929,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         highlightedPositions.add(to);
     }
 
-    protected void resetPremove() {
-        Log.d(TAG, "resetPremove");
+    protected void clearPremove() {
         this.premoveFrom = -1;
         this.premoveTo = -1;
         highlightedPositions.clear();
+    }
+
+    protected void resetPremove() {
+        Log.d(TAG, "resetPremove");
+        clearPremove();
 
         rebuildBoard();
         updateSelectedSquares();
@@ -832,9 +948,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void setMoveToPositions(int from) {
-        Log.d(TAG, "setMoveToPositions " + from);
+        // Log.d(TAG, "setMoveToPositions " + from);
         moveToPositions.clear();
-        if (showMoves) {
+        // The JNI move array only describes the side whose turn it currently is. Activities that
+        // allow selecting the other side (for example, while preparing a pre-move) must not show
+        // those destinations as if they applied to the selected piece.
+        if (showMoves && getSelectableColor() == jni.getTurn()) {
             int size = jni.getMoveArraySize();
             int move;
             for (int i = 0; i < size; i++) {
@@ -890,14 +1009,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         sPos,
                         getString(R.string.piece_white),
                         getString(Piece.toResource(whitePiece))
-                    ) + getFieldColorDescription(pos);
+                    ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
                 }
                 return getString(
-                    R.string.square_with_piece_description,
+                    R.string.square_with_color_and_piece_description,
                     sPos,
                     getString(R.string.piece_white),
                     getString(Piece.toResource(whitePiece))
-                ) + getFieldColorDescription(pos);
+                ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
             } else if (blackPiece != BoardConstants.FIELD) {
                 if (selectedPosition == pos) {
                     return getString(
@@ -905,25 +1024,65 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         sPos,
                         getString(R.string.piece_black),
                         getString(Piece.toResource(blackPiece))
-                    ) + getFieldColorDescription(pos);
+                    ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
                 }
                 return getString(
-                    R.string.square_with_piece_description,
+                    R.string.square_with_color_and_piece_description,
                     sPos,
                     getString(R.string.piece_black),
                     getString(Piece.toResource(blackPiece))
-                ) + getFieldColorDescription(pos);
+                ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
             } else if (duckPos != -1) {
                 return (getString(selectedPosition == pos ? R.string.square_selected_with_duck_description : R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos))) + getFieldColorDescription(pos);
             }
         }
+
         String selectedMessage = selectedPosition == pos ? getString(R.string.tts_selected) + " " : "";
-        return selectedMessage + sPos + getFieldColorDescription(pos);
+        return selectedMessage + sPos + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
     }
 
     protected String getFieldColorDescription(int pos) {
         if (fieldColorDescriptions) {
             return ". " + (Pos.getFieldColor(pos) == BoardConstants.WHITE ? getString(R.string.square_color_description_light) : getString(R.string.square_color_description_dark));
+        }
+        return "";
+    }
+
+    protected String getAttackersAndDefendersDescription(int pos) {
+        String sRet = "";
+        if (includeAttackersAndDefendersInFieldDescription) {
+            int[] positions = jni.getAttackerPositionsTo(pos, jni.getTurn() == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK);
+            if (positions.length > 0) {
+                sRet += ". " + getString(R.string.attacked_by_pieces, getPieceDescriptionsForPosition(positions));
+            }
+            positions = jni.getAttackerPositionsTo(pos, jni.getTurn());
+            if (positions.length > 0) {
+                sRet += ". " + getString(R.string.defended_by_pieces, getPieceDescriptionsForPosition(positions));
+            }
+        }
+
+        return sRet;
+    }
+
+    protected String getPieceDescriptionsForPosition(int[] positions) {
+        if (positions.length > 0) {
+            StringBuilder pieceDescriptions = new StringBuilder();
+            for (int i = 0; i < positions.length; i++) {
+                int piece = jni.pieceAt(BoardConstants.WHITE, positions[i]);
+                if (piece == BoardConstants.FIELD) {
+                    piece = jni.pieceAt(BoardConstants.BLACK, positions[i]);
+                }
+                if (piece != BoardConstants.FIELD) {
+                    String sPos = Pos.toString(positions[i]).toUpperCase();
+                    String sPiece = getString(Piece.toResource(piece));
+                    pieceDescriptions.append(getString(R.string.square_with_piece_description, sPiece, sPos));
+                    if (i < positions.length - 1) {
+                        pieceDescriptions.append(", ");
+                    }
+                }
+            }
+
+            return pieceDescriptions.toString();
         }
         return "";
     }
@@ -1096,7 +1255,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (gameApi.isEnded()) {
                 return;
             }
-            int piece = jni.pieceAt(jni.getTurn(), pos);
+            int piece = jni.pieceAt(getSelectableColor(), pos);
             if (piece != BoardConstants.FIELD) {
                 accessibilityDragFromPos = pos;
                 selectedPosition = pos;
@@ -1140,7 +1299,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             }
             if (emitCrossingHaptic) {
                 boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
-                hapticFeedbackTick(hasPiece);
+                boolean isDarkSquare = Pos.getFieldColor(pos) == BoardConstants.BLACK;
+                boolean isBlackPiece = jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+                hapticFeedbackTick(hasPiece, isDarkSquare, isBlackPiece);
             }
             if (textToSpeech.isEnabled()) {
                 textToSpeech.doSpeak(getFieldDescription(pos));
@@ -1210,7 +1371,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 if (action == MotionEvent.ACTION_DOWN) {
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
+                    view.startDragAndDrop(data, shadowBuilder, view, 0);
                     return true;
                 } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     return true;
@@ -1226,7 +1387,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new MagnifyingDragShadowBuilder(view);
-                    view.startDrag(data, shadowBuilder, view, 0);
+                    view.startDragAndDrop(data, shadowBuilder, view, 0);
                     view.setVisibility(View.INVISIBLE);
                     return true;
                 } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
@@ -1370,7 +1531,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (selectedPosition == -1) {
                 boolean isStartMove =
                     pos == jni.getDuckPos() ||
-                    jni.pieceAt(jni.getTurn(), pos) != BoardConstants.FIELD;
+                    jni.pieceAt(getSelectableColor(), pos) != BoardConstants.FIELD;
 
                 if (isStartMove) {
                     selectedPosition = pos;
@@ -1395,6 +1556,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    /**
+     * Color whose pieces can start a board interaction. Normally this is the side to move;
+     * online activities may override it while collecting a pre-move.
+     */
+    protected int getSelectableColor() {
+        return jni.getTurn();
+    }
+
     protected void handleMove(int pos) {
         Log.d(TAG, "handleMove " + selectedPosition + ", " + pos);
         ChessPieceView pieceViewFrom = getPieceViewOnPosition(selectedPosition);
@@ -1408,14 +1577,43 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void updateTextViewOrSpeech(TextView textView, String text) {
-        String currentMessage = textView.getText().toString();
-        if (!currentMessage.equals(text)) {
-            textView.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
-            textView.setText(text);
+        updateTextViewOrSpeech(textView, text, false);
+    }
 
-            if (textToSpeech.isEnabled() && !text.isEmpty()) {
+    protected void updateTextViewOrSpeech(TextView textView, String text, boolean protectSpeech) {
+        if (text == null) {
+            return;
+        }
+        if (textView == null) {
+            speakIfEnabled(text, protectSpeech);
+        } else {
+            String currentMessage = textView.getText().toString();
+            if (!currentMessage.equals(text)) {
+                textView.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
+                textView.setText(text);
+
+                speakIfEnabled(text, protectSpeech);
+            }
+        }
+    }
+
+    protected void speakIfEnabled(String text, boolean protectSpeech) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        if (textToSpeech.isEnabled()) {
+            if (protectSpeech) {
+                speakLastMove(text);
+            } else {
                 textToSpeech.doSpeak(text);
             }
         }
+    }
+
+    // Queues consecutive last-move announcements. When the "protect last move
+    // speech" preference is on, interrupting (QUEUE_FLUSH) speech cannot cut
+    // the protected announcements off.
+    protected void speakLastMove(String text) {
+        textToSpeech.doSpeakLastMove(text, protectLastMoveSpeech);
     }
 }

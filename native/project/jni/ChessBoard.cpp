@@ -106,6 +106,30 @@ boolean ChessBoard::isSquareAttacked(const int turn, const int pos) {
     return false;
 }
 
+// Returns geometrical attackers by @byTurn on @pos. The target square is treated
+// as if it contains an opponent piece; king-safety constraints are ignored.
+BITBOARD ChessBoard::attackersTo(const int pos, const int byTurn) {
+    if (pos < 0 || pos >= NUM_FIELDS || byTurn < BLACK || byTurn > WHITE) {
+        return 0;
+    }
+
+    const int againstTurn = byTurn ^ 1;
+    const BITBOARD diagonalAttackers = m_bitbPieces[byTurn][BISHOP] | m_bitbPieces[byTurn][QUEEN];
+    const BITBOARD straightAttackers = m_bitbPieces[byTurn][ROOK] | m_bitbPieces[byTurn][QUEEN];
+
+    BITBOARD attackers = m_bitbPieces[byTurn][KNIGHT] & KNIGHT_RANGE[pos];
+    attackers |= m_bitbPieces[byTurn][KING] & KING_RANGE[pos];
+    attackers |= m_bitbPieces[byTurn][PAWN] & PAWN_RANGE[againstTurn][pos];
+    attackers |= diagonalAttackers & bishopMoves(againstTurn, pos);
+    attackers |= straightAttackers & rookMoves(againstTurn, pos);
+
+    return attackers;
+}
+
+int ChessBoard::countAttackersTo(const int pos, const int byTurn) {
+    return bitCount(attackersTo(pos, byTurn));
+}
+
 #pragma endregion
 
 #pragma region Move related methods
@@ -1141,6 +1165,14 @@ void ChessBoard::commitBoard() {
 // duplicate/clone the board
 void ChessBoard::duplicate(ChessBoard* ret) {
     memcpy(ret, this, SIZEOF_BOARD);
+}
+
+// Detach this board into the root of its own history. duplicate() is a memcpy
+// that also copies m_parent (pointing into the source's chain); makeRoot severs
+// that link so the board owns an independent history.
+void ChessBoard::makeRoot() {
+    m_parent = nullptr;
+    m_myMove = 0;
 }
 
 // convinient method to return pointer to first board

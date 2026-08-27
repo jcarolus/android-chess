@@ -3,6 +3,7 @@ package jwtc.android.chess.ics;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.ServiceConnection;
+import androidx.core.content.ContextCompat;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -38,6 +39,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import org.json.JSONArray;
@@ -308,7 +310,7 @@ public class ICSClient extends ChessBoardActivity implements
 
         _editConsole = (EditText) findViewById(R.id.EditICSConsole);
         if (_editConsole != null) {
-            _editConsole.setTextColor(getResources().getColor(android.R.color.white));
+            _editConsole.setTextColor(ContextCompat.getColor(this, android.R.color.white));
             _editConsole.setSingleLine(true);
             _editConsole.setOnKeyListener(okl);
         }
@@ -971,8 +973,8 @@ public class ICSClient extends ChessBoardActivity implements
         Log.d(TAG, "OnPlayGameStarted " + whiteHandle + blackHandle + whiteRating + blackRating);
         resetSelectedSquares();
         if (icsServer != null) {
-            if (icsServer.getHandle() == whiteHandle || icsServer.getHandle() == blackHandle) {
-                feedbackNewGame();
+            if (Objects.equals(icsServer.getHandle(), whiteHandle) || Objects.equals(icsServer.getHandle(), blackHandle)) {
+                feedbackNewGameStarted(icsServer.getHandle().equals(whiteHandle) ? BoardConstants.WHITE : BoardConstants.BLACK, null);
             }
         }
     }
@@ -1202,8 +1204,7 @@ public class ICSClient extends ChessBoardActivity implements
 
         if (!_bMyTimeWarningTriggered) {
             _bMyTimeWarningTriggered = true;
-            feedbackTimeWarning();
-            feedBackDescribeTimeWarning(remaining);
+            feedbackTimeWarning(remaining);
         }
     }
 

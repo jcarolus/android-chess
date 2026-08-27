@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.OpenableColumns;
@@ -343,6 +344,7 @@ public class ImportService extends Service {
         private WeakReference<ImportService> serverWeakReference;
 
         ThreadMessageHandler(ImportService importService) {
+            super(Looper.getMainLooper());
             this.serverWeakReference = new WeakReference<ImportService>(importService);
         }
 

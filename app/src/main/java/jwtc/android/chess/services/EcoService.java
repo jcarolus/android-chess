@@ -53,15 +53,16 @@ public class EcoService {
         ArrayList<Integer> moveToPositions = getAllMoves();
         ArrayList<Integer> retPositions = new ArrayList<Integer>();
         if (hashMap != null) {
+            jni.scratchSyncFromCurrent();
             for (Integer m : moveToPositions) {
-                if (jni.move(m) != 0) {
-                    long hash = jni.getHashKey();
+                if (jni.scratchMove(m) != 0) {
+                    long hash = jni.scratchGetHashKey();
                     String sEco = hashMap.get(hash);
                     if (sEco != null) {
                         retPositions.add(m);
                     }
 
-                    jni.undo();
+                    jni.scratchUndo();
                 }
             }
         }
@@ -73,12 +74,13 @@ public class EcoService {
         JSONArray jRet = new JSONArray();
 
         if (hashMap != null) {
+            jni.scratchSyncFromCurrent();
             for (Integer m : moveToPositions) {
-                if (jni.move(m) != 0) {
-                    long hash = jni.getHashKey();
+                if (jni.scratchMove(m) != 0) {
+                    long hash = jni.scratchGetHashKey();
                     String sEco = hashMap.get(hash);
                     if (sEco != null) {
-                        String sMove = jni.getMyMoveToString();
+                        String sMove = jni.scratchGetMyMoveToString();
                         try {
                             JSONObject jObj = new JSONObject();
                             jObj.put("name", sEco);
@@ -89,7 +91,7 @@ public class EcoService {
                         }
                     }
 
-                    jni.undo();
+                    jni.scratchUndo();
                 }
             }
         }

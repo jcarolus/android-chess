@@ -97,7 +97,7 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
             textViewMove = itemView.findViewById(R.id.TextViewMove);
 
             itemView.setOnClickListener(v -> {
-                int pos = getAdapterPosition();
+                int pos = getBindingAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && listener != null) {
                     listener.onMoveItemClick(pos);
                 }

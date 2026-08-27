@@ -1,2 +1,36 @@
-Spiele Schach gegen dein Android-Gerät oder online (Lichess, FICS). Mit Übungspositionen, Rätseln, Duck Chess, Schach960 und mehr. Du kannst auch eine Stellung auf dem Brett aufbauen, Partien speichern und bearbeiten, durch den Verlauf navigieren und per E-Mail oder Zwischenablage importieren/exportieren.
-Unterstützt Screenreader wie TalkBack.
+Schach für Android ist eine kostenlose Open-Source-Schach-App ohne Werbung – einfach nur Schach. Spiele offline, tritt online an, löse Aufgaben, studiere Stellungen und verwalte deine Partien an einem Ort.
+
+SPIELE, WIE DU MÖCHTEST
+
+• Spiele offline gegen die integrierte Schach-Engine.
+• Verbinde dich für Online-Partien mit Lichess oder FICS.
+• Erstelle oder akzeptiere Lichess-Herausforderungen und setze laufende Partien fort.
+• Wähle zwischen Standardschach, Schach960 und dem experimentellen Duck Chess.
+• Richte eigene Stellungen direkt auf dem Brett ein.
+
+TRAINIEREN UND VERBESSERN
+
+• Löse Aufgaben von Lichess.
+• Übe mit einer Sammlung von Matt-in-zwei-Aufgaben und Trainingsstellungen.
+• Erkunde Eröffnungen mit dem integrierten ECO-Eröffnungsexplorer.
+• Navigiere durch Züge und analysiere vollständige Partien.
+
+PARTIEN VERWALTEN
+
+Speichere Partien in einer lokalen Datenbank und suche nach Angaben wie Spieler, Turnier, Datum oder Ergebnis. Bearbeite gespeicherte Partien, importiere und exportiere Partiedateien und teile Stellungen oder Partien über andere Apps.
+
+BARRIEREFREIES SCHACH
+
+Schach für Android unterstützt Screenreader wie TalkBack. Brettfelder, Figuren, Züge und Bedienelemente stellen gesprochene Informationen bereit, damit Screenreader-Nutzer navigieren und spielen können.
+
+Der optionale Modus „Barrierefreies Ziehen“ bietet Spielern, denen herkömmliches Ziehen schwerfällt, eine alternative Möglichkeit, Figuren zu bewegen. Die Zeitsteuerung lässt sich an unterschiedliche Bedienbedürfnisse anpassen. Dieser separate Modus ist für die Verwendung ohne TalkBack vorgesehen.
+
+AUF EINEM GRÖSSEREN BILDSCHIRM SPIELEN
+
+Übertrage das Schachbrett auf einen Fernseher oder Bildschirm mit Chromecast, damit andere die Partie auf einem größeren Bildschirm verfolgen können.
+
+DEINE BEVORZUGTE ENGINE VERWENDEN
+
+Neben der integrierten Engine unterstützt Schach für Android das Open Exchange Protocol (OEX). Dadurch können installierte, kompatible Schach-Engines von Drittanbietern verwendet werden.
+
+Ob schnelle Offline-Partie, Online-Wettkampf über Lichess, Taktiktraining, barrierefreie Schachbedienung oder durchsuchbare Partiedatenbank: Schach für Android bietet dir überall ein vielseitiges Schachbrett.

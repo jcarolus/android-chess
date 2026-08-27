@@ -1,2 +1,36 @@
-Joacă șah împotriva Androidului tău sau online (Lichess, FICS). Include poziții de antrenament, puzzle-uri, Duck Chess, Șah 960 și multe altele. De asemenea, poți configura o poziție pe tablă, salva și edita partide, naviga prin istoric și importa/exporta prin e-mail sau clipboard.
-Compatibil cu cititoare de ecran precum TalkBack.
+Șah pentru Android este o aplicație de șah gratuită, open-source și fără reclame: doar șah. Joacă offline, concurează online, rezolvă puzzle-uri, studiază poziții și păstrează-ți partidele organizate într-un singur loc.
+
+JOACĂ AȘA CUM VREI
+
+• Joacă offline împotriva motorului de șah integrat.
+• Conectează-te la Lichess sau FICS pentru partide online.
+• Creează sau acceptă provocări Lichess și continuă partidele aflate în desfășurare.
+• Alege între șah standard, Șah960 sau varianta experimentală Duck Chess.
+• Configurează poziții personalizate direct pe tablă.
+
+ANTRENEAZĂ-TE ȘI PROGRESEAZĂ
+
+• Rezolvă puzzle-uri de pe Lichess.
+• Exersează cu o colecție de probleme de mat în două mutări și poziții de antrenament.
+• Explorează deschiderile cu exploratorul ECO integrat.
+• Parcurge mutările și analizează partide complete.
+
+GESTIONEAZĂ-ȚI PARTIDELE
+
+Salvează partidele într-o bază de date locală și caută după detalii precum jucător, eveniment, dată sau rezultat. Editează partidele salvate, importă și exportă fișiere de partide și partajează poziții sau partide prin alte aplicații.
+
+ȘAH ACCESIBIL
+
+Șah pentru Android este compatibil cu cititoare de ecran precum TalkBack. Câmpurile tablei, piesele, mutările și comenzile oferă informații rostite pentru a ajuta utilizatorii cititoarelor de ecran să navigheze și să joace.
+
+Modul opțional Glisare accesibilă oferă o altă modalitate de a muta piesele pentru jucătorii cărora le este dificilă glisarea obișnuită. Temporizarea poate fi adaptată diferitelor nevoi de interacțiune. Este un mod separat, destinat utilizării fără TalkBack.
+
+JOACĂ PE UN ECRAN MAI MARE
+
+Transmite tabla pe un televizor sau ecran compatibil Chromecast, astfel încât și alte persoane să poată urmări partida pe un ecran mai mare.
+
+FOLOSEȘTE MOTORUL PREFERAT
+
+Pe lângă motorul integrat, Șah pentru Android acceptă Open Exchange Protocol (OEX), permițând utilizarea motoarelor de șah terțe compatibile atunci când sunt instalate.
+
+Fie că vrei o partidă offline rapidă, competiție pe Lichess, antrenament tactic, comenzi de șah accesibile sau o bază de date în care poți căuta, Șah pentru Android îți oferă o tablă flexibilă oriunde te-ai afla.

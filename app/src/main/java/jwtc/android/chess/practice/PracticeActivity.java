@@ -271,8 +271,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     }
 
     @Override
-    public void OnMove(int move) {
-        super.OnMove(move);
+    public void onMoveApplied(int move) {
+        super.onMoveApplied(move);
 
         numMoved++;
 

@@ -29,8 +29,6 @@ import org.json.JSONArray;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -55,7 +53,6 @@ import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.chess.Move;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
@@ -292,56 +289,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
         lGameID = prefs.getLong("game_id", 0);
 
-        Log.d(TAG, "onResume => " + lGameID + " " + (sPGN != null ? "PGN " : " ") + (sFEN != null ? "FEN" : ""));
-
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            lGameID = 0;
-            Log.i("onResume", "action send with type " + type);
-            if ("application/x-chess-pgn".equals(type)) {
-                sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if (sPGN != null) {
-                    gameApi.loadPGN(sPGN);
-                    updateForNewGame();
-                }
-            } else {
-                sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if (sFEN != null) {
-                    sFEN = sFEN.trim();
-
-                    gameApi.initFEN(sFEN, true);
-                    updateForNewGame();
-                }
-            }
-        } else if (uri != null) {
-            lGameID = 0;
-            Log.i(TAG, "onResume opening " + uri.toString());
-
-            try {
-                InputStream is = getContentResolver().openInputStream(uri);
-                sPGN = PGNHelper.getPGNFromInputStream(is);
-                gameApi.loadPGN(sPGN);
-
-            } catch (Exception e) {
-                Log.e("onResume", "Failed " + e.toString());
-            }
-        } else {
-            if (lGameID > 0) {
-                Log.i("onResume", "loading saved game " + lGameID);
-                loadGame();
-            } else if (sPGN != null) {
-                Log.i("onResume", "pgn: " + sPGN);
-                gameApi.loadPGN(sPGN);
-            } else if (sFEN != null) {
-                // default, from prefs
-                Log.i("onResume", "FEN: " + sFEN);
-                lGameID = 0;
-                gameApi.initFEN(sFEN, true);
-                updateForNewGame();
-            } else {
-                gameApi.newGame();
-                updateForNewGame();
-            }
-        }
+        updateClockByPrefs(false);
+        updateGameSettingsByPrefs();
 
         flipBoard = prefs.getBoolean("flipBoard", false);
         switchFlip.setChecked(flipBoard);
@@ -350,15 +299,45 @@ public class PlayActivity extends ChessBoardActivity implements
         switchMinimal(switchMinimal.isChecked());
         applyCapturedPiecesVisibility();
 
-        updateClockByPrefs(false);
-        updateGameSettingsByPrefs();
-
         buttonEco.setEnabled(false);
 
-        new Handler(Looper.getMainLooper()).postDelayed(
-            this::updateGUI,
-            1000
-        );
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            Log.i("onResume", "action send with type " + type);
+            if ("application/x-chess-pgn".equals(type)) {
+                sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (sPGN != null) {
+                    lGameID = 0;
+                }
+            } else {
+                sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (sFEN != null) {
+                    sFEN = sFEN.trim();
+                    lGameID = 0;
+                }
+            }
+        } else if (uri != null) {
+            Log.i(TAG, "onResume opening " + uri.toString());
+
+            try {
+                InputStream is = getContentResolver().openInputStream(uri);
+                sPGN = PGNHelper.getPGNFromInputStream(is);
+                lGameID = 0;
+            } catch (Exception e) {
+                Log.e("onResume", "Failed " + e.toString());
+            }
+        }
+        Log.d(TAG, "onResume => " + lGameID + " " + (sPGN != null ? "PGN " : " ") + (sFEN != null ? "FEN" : ""));
+        if (lGameID > 0 && loadGame()) {
+            Log.d(TAG, "Loaded game " + lGameID);
+        } else if (sPGN != null) {
+            gameApi.loadPGN(sPGN);
+        } else if (sFEN != null) {
+            gameApi.initFEN(sFEN, true);
+        } else {
+            gameApi.newGame();
+        }
+
+        new Handler(Looper.getMainLooper()).postDelayed(this::playIfEngineMove, 500);
     }
 
     private void applyCapturedPiecesVisibility() {
@@ -504,8 +483,18 @@ public class PlayActivity extends ChessBoardActivity implements
 
 
     @Override
-    public void OnMove(int move) {
-        super.OnMove(move);
+    public void onMoveApplied(int move) {
+        super.onMoveApplied(move);
+
+        updateGUI();
+        updateLastMove();
+
+        playIfEngineMove();
+    }
+
+    @Override
+    public void onDuckMoveApplied(int duckMove) {
+        super.onDuckMoveApplied(duckMove);
 
         updateGUI();
 
@@ -513,12 +502,10 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     @Override
-    public void OnDuckMove(int duckMove) {
-        super.OnDuckMove(duckMove);
+    public void onHistoryPositionChanged(int boardNumber) {
+        super.onHistoryPositionChanged(boardNumber);
 
-        updateGUI();
-
-        playIfEngineMove();
+        updateLastMove();
     }
 
     @Override
@@ -570,6 +557,33 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     @Override
+    public void onNewGameStarted(int variant) {
+        super.onNewGameStarted(variant);
+
+        feedbackNewGameStarted(myTurn, textViewLastMove);
+
+        updateForNewGame();
+    }
+
+    @Override
+    public void onPlayerResigned(int color) {
+        Log.d(TAG, "onPlayerResigned " + color);
+        feedbackPlayerResigned(color, textViewLastMove);
+    }
+
+    @Override
+    public void onDrawAgreed() {
+        Log.d(TAG, "onDrawAgreed");
+        feedbackDrawAgreed(textViewLastMove);
+    }
+
+    @Override
+    public void onPlayerForfeitedOnTime(int color) {
+        Log.d(TAG, "onPlayerForfeitedOnTime " + color);
+        feedbackPlayerForfeitedOnTime(color, textViewLastMove);
+    }
+
+    @Override
     public void onMoveItemClick(int pos) {
         this.gameApi.jumpToBoardNum(pos + 1);
     }
@@ -580,7 +594,6 @@ public class PlayActivity extends ChessBoardActivity implements
         updateSeekBar();
         updateTurnSwitchers();
         updatePlayers();
-        updateLastMove();
         updateEco();
     }
 
@@ -720,11 +733,9 @@ public class PlayActivity extends ChessBoardActivity implements
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
                     lGameID = 0;
-                    updateForNewGame();
                 } else if (item.equals(getString(R.string.menu_new_duck))) {
                     gameApi.newGame(BoardConstants.VARIANT_DUCK);
                     lGameID = 0;
-                    updateForNewGame();
                 } else if (item.equals(getString(R.string.menu_new_960))) {
                     intent = new Intent();
                     intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupRandomFischerActivity.class);
@@ -747,11 +758,9 @@ public class PlayActivity extends ChessBoardActivity implements
                     String s = Clipboard.getStringFromClipboard(this);
                     if (gameApi.loadPGN(s)) {
                         lGameID = 0;
-                        updateForNewGame();
                     } else {
                         if (gameApi.initFEN(s, true)) {
                             lGameID = 0;
-                            updateForNewGame();
                         }
                     }
                 } else if (item.equals(getString(R.string.menu_clip_pgn))) {
@@ -781,6 +790,7 @@ public class PlayActivity extends ChessBoardActivity implements
             case REQUEST_GAME_SETTINGS:
                 updateGameSettingsByPrefs();
                 updateGUI();
+                playIfEngineMove();
                 break;
 
             case REQUEST_ECO:
@@ -820,7 +830,7 @@ public class PlayActivity extends ChessBoardActivity implements
     @Override
     public void OnTimeWarning(int turn, long remainingMillies) {
         if (turn == myTurn) {
-            feedBackDescribeTimeWarning(remainingMillies);
+            feedbackTimeWarning(remainingMillies);
         }
     }
 
@@ -847,9 +857,9 @@ public class PlayActivity extends ChessBoardActivity implements
         updateClockByPrefs(true);
         updateGameSettingsByPrefs();
 
-        feedbackNewGame();
         resetSelectedSquares();
-        updateLastMove();
+        updateGUI();
+
     }
 
     private String getPreferredEngineBackend() {
@@ -934,7 +944,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         int levelTime = prefs.getInt("level", 2);
         int levelPly = prefs.getInt("levelPly", 2);
-        int secs[] = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
+        int[] secs = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
 
         if (mode == EngineApi.LEVEL_TIME) {
             myEngine.setMsecs(secs[levelTime] * 1000);
@@ -946,8 +956,6 @@ public class PlayActivity extends ChessBoardActivity implements
 
         updateBoardRotation();
         updateLastMove();
-
-        playIfEngineMove();
     }
 
     public void saveGame() {
@@ -963,7 +971,7 @@ public class PlayActivity extends ChessBoardActivity implements
         }
     }
 
-    protected void loadGame() {
+    protected boolean loadGame() {
         if (lGameID > 0) {
             Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
             try {
@@ -984,17 +992,15 @@ public class PlayActivity extends ChessBoardActivity implements
 
                     c.close();
 
-                } else {
-                    Log.d(TAG, "Game not found: " + lGameID);
-                    lGameID = 0; // probably deleted
+                    return true;
                 }
+                Log.d(TAG, "Game not found: " + lGameID);
             } catch (Exception e) {
                 Log.d(TAG, "Caught exception loading game: " + lGameID + " " + e.getMessage());
-                lGameID = 0;
             }
-        } else {
-            lGameID = 0;
         }
+        lGameID = 0;
+        return false;
     }
 
     protected void playIfEngineMove() {

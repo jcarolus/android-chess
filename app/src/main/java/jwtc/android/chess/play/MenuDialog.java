@@ -10,8 +10,8 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 
-public class MenuDialog extends ResultDialog {
-    public MenuDialog(@NonNull Context context, ResultDialogListener listener, int requestCode) {
+public class MenuDialog extends ResultDialog<Bundle> {
+    public MenuDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode) {
         super(context, listener, requestCode);
 
         setTitle(R.string.title_menu);

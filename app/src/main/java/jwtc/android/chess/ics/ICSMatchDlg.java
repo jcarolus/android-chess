@@ -22,7 +22,7 @@ import com.google.android.material.button.MaterialButton;
 /**
  *
  */
-public class ICSMatchDlg extends ResultDialog {
+public class ICSMatchDlg extends ResultDialog<Bundle> {
 
     public static final String TAG = "ICSMatchDlg";
 

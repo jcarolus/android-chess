@@ -225,7 +225,10 @@ public class GamesListActivity extends ChessBoardActivity {
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
         }
-        initBoardLayoutSizing(findViewById(R.id.root_layout), boardAreaLayout, findViewById(R.id.ScrollView), null, null);
+        // The ScrollView's height is defined by its board-to-menu constraints. Passing it as the
+        // controls view would also assign a fixed runtime height that does not reserve LayoutMenu,
+        // over-constraining it and shifting its top edge over the board in portrait mode.
+        initBoardLayoutSizing(findViewById(R.id.root_layout), boardAreaLayout, null, null, null);
     }
 
     @Override

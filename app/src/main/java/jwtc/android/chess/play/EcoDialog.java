@@ -20,10 +20,10 @@ import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.services.EcoService;
 
-public class EcoDialog extends ResultDialog {
+public class EcoDialog extends ResultDialog<Bundle> {
     private static final String TAG = "EcoDialog";
 
-    public EcoDialog(@NonNull Context context, ResultDialogListener listener, int requestCode, String title, JSONArray jArray) {
+    public EcoDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, String title, JSONArray jArray) {
         super(context, listener, requestCode);
 
         setTitle(title);

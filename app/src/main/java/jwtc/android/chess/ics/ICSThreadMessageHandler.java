@@ -1,6 +1,7 @@
 package jwtc.android.chess.ics;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import java.lang.ref.WeakReference;
@@ -15,6 +16,7 @@ public class ICSThreadMessageHandler extends Handler {
     private Runnable runnable;
 
     ICSThreadMessageHandler(ICSServer icsServer) {
+        super(Looper.getMainLooper());
         this.serverWeakReference = new WeakReference<ICSServer>(icsServer);
         runnable = null;
     }

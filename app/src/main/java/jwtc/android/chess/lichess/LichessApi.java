@@ -12,11 +12,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.lichess.models.Challenge;
@@ -29,6 +29,10 @@ import jwtc.android.chess.lichess.models.PuzzleBatchSolveRequest;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveResponse;
 import jwtc.android.chess.lichess.models.PuzzleBatchSolveRound;
 import jwtc.android.chess.lichess.models.PuzzleGlicko;
+import jwtc.android.chess.lichess.models.SwissStanding;
+import jwtc.android.chess.lichess.models.SwissTournament;
+import jwtc.android.chess.lichess.models.Team;
+import jwtc.android.chess.lichess.models.TeamPaginator;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
@@ -37,49 +41,63 @@ import jwtc.chess.board.BoardConstants;
 public class LichessApi extends GameApi {
     private static final String TAG = "LichessApi";
     private static final String PUZZLE_ANGLE_DEFAULT = "mix";
+    public static final int VIEW_NONE = 0, VIEW_PLAY = 1, VIEW_PUZZLE = 2;
 
+    // Default no-op methods so each screen (lobby / game / swiss) overrides only the callbacks it
+    // owns. The single registered listener is always the foreground activity.
     public interface LichessApiListener {
-        void onAuthenticate(String user);
+        default void onAuthenticate(String user) {}
 
-        void onGameInit(String gameId);
+        default void onGameInit(String gameId, boolean boardCompatible) {}
 
-        void onGameUpdate(GameFull gameFull);
+        default void onGameUpdate(GameFull gameFull) {}
 
         // void onDrawAccepted(boolean accepted);
-        void onGameFinish();
+        default void onGameFinish() {}
 
-        void onGameDisconnected();
+        default void onGameDisconnected() {}
 
-        void onInvalidMove(String reason);
+        default void onInvalidMove(String reason) {}
 
-        void onNowPlaying(List<Game> games, String me);
+        default void onNowPlaying(List<Game> games, String me) {}
 
-        void onConnectionError();
+        default void onConnectionError() {}
 
-        void onChallenge(Challenge challenge);
+        default void onChallenge(Challenge challenge) {}
 
-        void onChallengeCancelled(Challenge challenge);
+        default void onChallengeCancelled(Challenge challenge) {}
 
-        void onChallengeDeclined(Challenge challenge);
+        default void onChallengeDeclined(Challenge challenge) {}
 
-        void onMyChallengeCancelled();
+        default void onMyChallengeCancelled() {}
 
-        void onMySeekCancelled();
+        default void onMySeekCancelled() {}
 
-        void onPuzzle(PuzzleAndGame puzzle);
-        void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko);
-        void onPuzzleMoveCorrect();
-        void onPuzzleUnexpectedMove(String sMove, int toPos);
-        void onPuzzleRetried();
-        void onPuzzleCompleted(int toPos);
+        default void onPuzzle(PuzzleAndGame puzzle) {}
+        default void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {}
+        default void onPuzzleMoveCorrect() {}
+        default void onPuzzleUnexpectedMove(String sMove, int toPos) {}
+        default void onPuzzleRetried() {}
+        default void onPuzzleCompleted(int toPos) {}
+
+        default void onMyTeams(List<Team> teams) {}
+        default void onAllTeams(List<Team> teams, int page, int nbPages) {}
+        default void onTeamJoined(String teamId) {}
+        default void onTeamLeft(String teamId) {}
+        default void onSwissList(List<SwissTournament> tournaments) {}
+        default void onSwissDetail(SwissTournament tournament, List<SwissStanding> standings) {}
+        default void onSwissJoined(String id) {}
+        default void onSwissError(String message) {}
     }
 
     protected int turn = 0;
     private int promotionPiece = BoardConstants.QUEEN;
     private Auth auth;
     private LichessApiListener apiListener;
+    private boolean eventStreamOpen = false;
 
     private GameFull ongoingGameFull;
+    private LichessGameStateSnapshot lastGameStateSnapshot;
     private PuzzleAndGame ongoingPuzzle;
     private int puzzleMoveIndex = 0;
     private String currentPuzzleAngle = PUZZLE_ANGLE_DEFAULT;
@@ -153,7 +171,12 @@ public class LichessApi extends GameApi {
         });
     }
 
+    /** Ensure the account event stream is running. Safe to call after every authentication. */
     public void event() {
+        if (eventStreamOpen || user == null) {
+            return;
+        }
+        eventStreamOpen = true;
         this.auth.event(new Auth.AuthResponseHandler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
@@ -162,8 +185,12 @@ public class LichessApi extends GameApi {
                 if (type.equals("gameStart")) {
                     Game ongoingGame = (new Gson()).fromJson(jsonObject.get("game").getAsJsonObject(), Game.class);
 
-                    if (apiListener != null) {
-                        apiListener.onGameInit(ongoingGame.gameId);
+                    // The Board API only streams/plays rapid, classical and correspondence games;
+                    // blitz/bullet (typical for swiss) come through with compat.board == false and would
+                    // 4xx on the game stream. Treat a missing compat as compatible so nothing else breaks.
+                    boolean boardCompatible = ongoingGame.compat == null || ongoingGame.compat.board;
+                    if (queuePendingGameStart(ongoingGame.gameId, boardCompatible) && apiListener != null) {
+                        apiListener.onGameInit(ongoingGame.gameId, boardCompatible);
                     }
                 } else if (type.equals("gameFinish")) {
                     onGameFinish();
@@ -188,6 +215,7 @@ public class LichessApi extends GameApi {
 
             @Override
             public void onClose(boolean success) {
+                eventStreamOpen = false;
                 Log.d(TAG, "event closed " + success);
                 if (apiListener != null && !success) {
                     apiListener.onConnectionError();
@@ -426,12 +454,217 @@ public class LichessApi extends GameApi {
     }
 
     private void handlePuzzleError(JsonObject e) {
-        String error = e.has("error") ? e.get("error").getAsString() : "";
+        handleScopeError(e);
+    }
+
+    /**
+     * Returns true when the error was a missing-scope error and a re-login was triggered.
+     */
+    private boolean handleScopeError(JsonObject e) {
+        String error = LichessJsonError.message(e);
         if (error.startsWith("Missing scope")) {
-            Log.d(TAG, "Puzzle scope missing — clearing token and forcing re-login");
+            Log.d(TAG, "Scope missing — clearing token and forcing re-login");
             auth.clearTokens();
             onAuthenticate(null);
+            return true;
         }
+        return false;
+    }
+
+    private String errorMessage(JsonObject e) {
+        return LichessJsonError.message(e);
+    }
+
+    // --- Teams & Swiss tournaments ---
+
+    public void fetchMyTeams() {
+        this.auth.teamsOfUser(user, new OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject>() {
+            @Override
+            public void onSuccess(JsonArray result) {
+                List<Team> teams = new ArrayList<>();
+                for (JsonElement element : result) {
+                    teams.add((new Gson()).fromJson(element.getAsJsonObject(), Team.class));
+                }
+                if (apiListener != null) {
+                    apiListener.onMyTeams(teams);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "fetchMyTeams onError " + e);
+                if (apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void fetchAllTeams(int page, String search) {
+        this.auth.allTeams(page, search, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                try {
+                    TeamPaginator paginator = (new Gson()).fromJson(result, TeamPaginator.class);
+                    List<Team> teams = paginator.currentPageResults != null ? paginator.currentPageResults : new ArrayList<>();
+                    if (apiListener != null) {
+                        apiListener.onAllTeams(teams, paginator.currentPage, paginator.nbPages);
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "fetchAllTeams parse error " + ex);
+                    if (apiListener != null) {
+                        apiListener.onSwissError("Could not parse teams");
+                    }
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "fetchAllTeams onError " + e);
+                if (apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void joinTeam(String teamId, String message, String password) {
+        Map<String, Object> body = new HashMap<>();
+        if (message != null && !message.isEmpty()) {
+            body.put("message", message);
+        }
+        if (password != null && !password.isEmpty()) {
+            body.put("password", password);
+        }
+        this.auth.joinTeam(teamId, body.isEmpty() ? null : body, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "joinTeam success " + teamId);
+                if (apiListener != null) {
+                    apiListener.onTeamJoined(teamId);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "joinTeam onError " + e);
+                if (!handleScopeError(e) && apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void quitTeam(String teamId) {
+        this.auth.quitTeam(teamId, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "quitTeam success " + teamId);
+                if (apiListener != null) {
+                    apiListener.onTeamLeft(teamId);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "quitTeam onError " + e);
+                if (!handleScopeError(e) && apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void fetchTeamSwiss(String teamId, String status) {
+        // Single-status fetch. Auth.teamSwiss cancels any in-flight stream, so switching
+        // the status filter safely aborts a pending request.
+        final List<SwissTournament> tournaments = new ArrayList<>();
+        this.auth.teamSwiss(teamId, status, new Auth.AuthResponseHandler() {
+            @Override
+            public void onResponse(JsonObject jsonObject) {
+                tournaments.add((new Gson()).fromJson(jsonObject, SwissTournament.class));
+            }
+
+            @Override
+            public void onClose(boolean success) {
+                Log.d(TAG, "fetchTeamSwiss " + status + " closed " + success + " count " + tournaments.size());
+                if (apiListener != null) {
+                    apiListener.onSwissList(tournaments);
+                }
+            }
+        });
+    }
+
+    public void fetchSwissDetail(String id) {
+        this.auth.swissInfo(id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                final SwissTournament tournament = (new Gson()).fromJson(result, SwissTournament.class);
+                final List<SwissStanding> standings = new ArrayList<>();
+                auth.swissResults(id, new Auth.AuthResponseHandler() {
+                    @Override
+                    public void onResponse(JsonObject jsonObject) {
+                        standings.add((new Gson()).fromJson(jsonObject, SwissStanding.class));
+                    }
+
+                    @Override
+                    public void onClose(boolean success) {
+                        if (apiListener != null) {
+                            apiListener.onSwissDetail(tournament, standings);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "fetchSwissDetail onError " + e);
+                if (apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void joinSwiss(String id, String password) {
+        Map<String, Object> body = new HashMap<>();
+        if (password != null && !password.isEmpty()) {
+            body.put("password", password);
+        }
+        this.auth.joinSwiss(id, body.isEmpty() ? null : body, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "joinSwiss success " + id);
+                if (apiListener != null) {
+                    apiListener.onSwissJoined(id);
+                }
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "joinSwiss onError " + e);
+                if (!handleScopeError(e) && apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
+    }
+
+    public void withdrawSwiss(String id) {
+        this.auth.withdrawSwiss(id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                Log.d(TAG, "withdrawSwiss success " + id);
+            }
+
+            @Override
+            public void onError(JsonObject e) {
+                Log.d(TAG, "withdrawSwiss onError " + e);
+                if (!handleScopeError(e) && apiListener != null) {
+                    apiListener.onSwissError(errorMessage(e));
+                }
+            }
+        });
     }
 
     public void cancelChallenge() {
@@ -576,7 +809,6 @@ public class LichessApi extends GameApi {
                 Log.d(TAG, "game " + jsonObject.get("type").getAsString());
                 if (type.equals("gameState") && ongoingGameFull != null) {
                     ongoingGameFull.state = (new Gson()).fromJson(jsonObject, GameState.class);
-                    ;
                 } else if (type.equals("gameFull")) {
                     ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
                     ongoingPuzzle = null;
@@ -598,6 +830,82 @@ public class LichessApi extends GameApi {
         return ongoingPuzzle != null ? ongoingPuzzle.puzzle.id : "";
     }
 
+    public int getViewMode() {
+        if (ongoingPuzzle != null) {
+            return VIEW_PUZZLE;
+        }
+        if (ongoingGameFull != null) {
+            return VIEW_PLAY;
+        }
+        return VIEW_NONE;
+    }
+
+    public String getOngoingGameId() {
+        return ongoingGameFull != null ? ongoingGameFull.id : null;
+    }
+
+    public boolean isOngoingGameInProgress() {
+        return ongoingGameFull != null && ongoingGameFull.state != null
+            && "started".equals(ongoingGameFull.state.status);
+    }
+
+    /** A gameStart retained until a foreground Lichess screen can act on it. */
+    public static final class PendingGameStart {
+        public final String gameId;
+        public final boolean boardCompatible;
+
+        private PendingGameStart(String gameId, boolean boardCompatible) {
+            this.gameId = gameId;
+            this.boardCompatible = boardCompatible;
+        }
+    }
+
+    // gameStart events auto-open the board, but the event stream re-emits gameStart for every
+    // ongoing game whenever it (re)connects. This state lives in the service-owned api so both the
+    // dedupe history and an event received between activity listeners survive screen transitions.
+    private final Set<String> autoOpenedGameIds = new HashSet<>();
+    private PendingGameStart pendingGameStart;
+    // Blocks a second gameStart while the first selected game is still loading and ongoingGameFull
+    // has not arrived yet. Once that game is known to be finished, the next pairing may replace it.
+    private String autoOpeningGameId;
+
+    private boolean queuePendingGameStart(String gameId, boolean boardCompatible) {
+        if (gameId == null || autoOpenedGameIds.contains(gameId)) {
+            return false;
+        }
+        if (pendingGameStart != null) {
+            return gameId.equals(pendingGameStart.gameId);
+        }
+        if (getViewMode() == VIEW_PUZZLE) {
+            return false;
+        }
+        if (isOngoingGameInProgress() && !gameId.equals(getOngoingGameId())) {
+            return false;
+        }
+        if (autoOpeningGameId != null && ongoingGameFull == null
+            && !gameId.equals(autoOpeningGameId)) {
+            return false;
+        }
+        pendingGameStart = new PendingGameStart(gameId, boardCompatible);
+        return true;
+    }
+
+    /**
+     * Consume the pending pairing, recording it so reconnects don't reopen the same board.
+     * Returns null when no foreground navigation is pending.
+     */
+    public PendingGameStart consumePendingGameStart() {
+        PendingGameStart result = pendingGameStart;
+        if (result != null) {
+            pendingGameStart = null;
+            autoOpenedGameIds.add(result.gameId);
+            if (result.boardCompatible) {
+                autoOpeningGameId = result.gameId;
+            }
+        }
+        return result;
+    }
+
     public int getMyTurn() {
         if (ongoingGameFull != null) {
             return ongoingGameFull.white != null && user != null && user.equals(ongoingGameFull.white.id) ? BoardConstants.WHITE : BoardConstants.BLACK;
@@ -617,6 +925,9 @@ public class LichessApi extends GameApi {
 
     private void onAuthenticate(String result) {
         user = result;
+        if (user != null) {
+            event();
+        }
         if (apiListener != null) {
             apiListener.onAuthenticate(user);
         }
@@ -632,16 +943,26 @@ public class LichessApi extends GameApi {
     private void processGameState() {
         Log.d(TAG, "processGameState");
         if (ongoingGameFull != null) {
+            LichessGameStateSnapshot snapshot = LichessGameStateSnapshot.from(ongoingGameFull);
+            LichessGameStateSnapshot.Transition transition =
+                snapshot.transitionFrom(lastGameStateSnapshot);
+
+            Log.d(TAG, transition.toString());
+
             // jni.initFEN(ongoingGame.fen);
             if (ongoingGameFull.initialFen.equals("startpos")) {
                 jni.newGame();
             } else {
                 jni.initFEN(ongoingGameFull.initialFen);
             }
-            String moves = ongoingGameFull.state.moves;
-
             resetForPGN();
-            processMoves(moves.isEmpty() ? Collections.emptyList() : Arrays.asList(moves.split(" ")));
+            boolean replayedEntireSnapshot = processMoves(snapshot.moves);
+
+            if (replayedEntireSnapshot) {
+                dispatchGameStateTransition(snapshot, transition);
+                lastGameStateSnapshot = snapshot;
+            }
+            dispatchState();
 
             if (apiListener != null) {
                 apiListener.onGameUpdate(ongoingGameFull);
@@ -671,7 +992,7 @@ public class LichessApi extends GameApi {
         }
     }
 
-    private void processMoves(List<String> moveList) {
+    private boolean processMoves(List<String> moveList) {
         for (String sMove : moveList) {
             if (sMove.length() >= 4) {
                 try {
@@ -687,21 +1008,54 @@ public class LichessApi extends GameApi {
 
                     if (jni.requestMove(from, to) == 0) {
                         Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
-                        break;
+                        return false;
                     } else {
                         addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
                     }
 
                 } catch (Exception e) {
                     Log.d(TAG, "Exception processing move " + sMove);
+                    return false;
                 }
             } else {
                 Log.d(TAG, "Invalid move length " + sMove);
+                return false;
             }
         }
+        return true;
+    }
 
-        dispatchMove(jni.getMyMove());
-        dispatchState();
+    private void dispatchGameStateTransition(
+        LichessGameStateSnapshot snapshot,
+        LichessGameStateSnapshot.Transition transition
+    ) {
+        if (transition.newGame) {
+            if (snapshot.isStarted()) {
+                dispatchNewGameStarted(jni.getVariant());
+            }
+            return;
+        }
+
+        if (transition.moveApplied && !snapshot.moves.isEmpty()) {
+            dispatchMove(jni.getMyMove());
+        } else if (transition.historyPositionChanged) {
+            dispatchHistoryPositionChanged(snapshot.moves.size());
+        }
+
+        if (transition.resignedColor != -1) {
+            dispatchPlayerResigned(transition.resignedColor);
+        }
+        if (transition.drawEnded && !isBoardDetectedDraw()) {
+            dispatchDrawAgreed();
+        }
+    }
+
+    private boolean isBoardDetectedDraw() {
+        int state = jni.getState();
+        return state == BoardConstants.DRAW_MATERIAL
+            || state == BoardConstants.DRAW_50
+            || state == BoardConstants.STALEMATE
+            || state == BoardConstants.DRAW_REPEAT;
     }
 
     public void retryWrongPuzzleMove() {

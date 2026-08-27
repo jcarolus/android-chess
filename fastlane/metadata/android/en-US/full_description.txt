@@ -1,5 +1,36 @@
-Play chess against your Android or online (Lichess, FICS). Featuring practice
-positions, puzzles, Duck chess, Chess 960 and more. It's also
-possible to set up a position on the board, save and edit games, navigate
-through history and import/export via e-mail or clipboard.
-Supports screenreaders like Talkback
+Chess for Android is a free, open-source chess app with no ads—just chess. Play offline, compete online, solve puzzles, study positions, and keep your games organized in one place.
+
+PLAY YOUR WAY
+
+• Play offline against the built-in chess engine.
+• Connect to Lichess or FICS for online games.
+• Create or accept Lichess challenges and continue your ongoing games.
+• Choose standard chess, Chess960, or experimental Duck Chess.
+• Set up custom positions directly on the board.
+
+TRAIN AND IMPROVE
+
+• Solve puzzles from Lichess.
+• Practice with a collection of mate-in-two puzzles and training positions.
+• Explore openings with the built-in ECO opening explorer.
+• Navigate through moves and review complete games.
+
+MANAGE YOUR GAMES
+
+Save games in a local game database and search by details such as player, event, date, or result. Edit saved games, import and export game files, and share positions or games through other apps.
+
+ACCESSIBLE CHESS
+
+Chess for Android supports screen readers such as TalkBack. Board squares, pieces, moves, and controls provide spoken information to help screen-reader users navigate and play.
+
+The optional Accessibility Drag mode provides another way to move pieces for players who find conventional dragging difficult. Its timing can be adjusted to suit different interaction needs. Accessibility Drag is a separate mode intended for use without TalkBack.
+
+PLAY ON A BIGGER SCREEN
+
+Cast the chessboard to a Chromecast-enabled TV or display, so other people can follow the game on a larger screen.
+
+USE YOUR PREFERRED ENGINE
+
+In addition to the built-in engine, Chess for Android supports the Open Exchange Protocol (OEX), allowing compatible third-party chess engines to be used when installed.
+
+Whether you want a quick offline game, online competition through Lichess, tactical training, accessible chess controls, or a searchable database for your games, Chess for Android gives you a flexible chessboard wherever you go.

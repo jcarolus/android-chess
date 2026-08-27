@@ -13,10 +13,17 @@ public class LichessService extends Service {
     protected static final String TAG = "LichessService";
 
     private Auth auth;
+    private LichessApi lichessApi;
     private final IBinder mBinder = new LichessService.LocalBinder();
 
     public Auth getAuth() {
         return auth;
+    }
+
+    // The single LichessApi (game/puzzle/auth state) is owned by the service so it survives
+    // activity transitions and rotation; all Lichess activities share this one instance.
+    public LichessApi getLichessApi() {
+        return lichessApi;
     }
 
     @Override
@@ -24,6 +31,8 @@ public class LichessService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate");
         auth = new Auth(this);
+        lichessApi = new LichessApi();
+        lichessApi.setAuth(auth);
     }
 
     @Nullable
@@ -48,6 +57,7 @@ public class LichessService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy");
+        lichessApi = null;
         if (auth != null) {
             auth.destroy();
             auth = null;

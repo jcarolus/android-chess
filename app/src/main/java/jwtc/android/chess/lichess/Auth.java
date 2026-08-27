@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -29,7 +30,7 @@ public class Auth {
     private static final String TAG = "lichess.Auth";
     private static final String LICHESS_HOST = "https://lichess.org";
     private static final String CLIENT_ID = "lichess-api-demo"; // "lichess-android-client";
-    private static final String[] SCOPES = new String[]{"board:play", "puzzle:read", "puzzle:write"};
+    private static final String[] SCOPES = new String[]{"board:play", "puzzle:read", "puzzle:write", "tournament:write", "team:write"};
     private static final String PREFS_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
@@ -44,7 +45,7 @@ public class Auth {
         .readTimeout(0, TimeUnit.MILLISECONDS) // infinite timeout
         .build();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    NdJsonStream.Stream eventStream, gameStream, challengeStream, seekStream;
+    NdJsonStream.Stream eventStream, gameStream, challengeStream, seekStream, swissListStream, swissResultsStream;
     private String accessToken, refreshToken;
     Long expiresAt;
 
@@ -221,6 +222,107 @@ public class Auth {
         });
     }
 
+    // --- Teams & Swiss tournaments ---
+
+    public void teamsOfUser(String username, OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject> callback) {
+        getArray("/api/team/of/" + username, callback);
+    }
+
+    public void allTeams(int page, String search, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        String path;
+        if (search != null && !search.trim().isEmpty()) {
+            String text;
+            try {
+                text = URLEncoder.encode(search.trim(), "UTF-8");
+            } catch (java.io.UnsupportedEncodingException e) {
+                text = search.trim();
+            }
+            path = "/api/team/search?text=" + text + "&page=" + page;
+        } else {
+            path = "/api/team/all?page=" + page;
+        }
+        get(path, callback);
+    }
+
+    public void joinTeam(String teamId, Map<String, Object> body, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        enqueueJsonResponse(
+            LichessWriteRequestFactory.teamJoin(LICHESS_HOST, accessToken, teamId, body),
+            callback
+        );
+    }
+
+    public void quitTeam(String teamId, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        enqueueJsonResponse(
+            LichessWriteRequestFactory.teamQuit(LICHESS_HOST, accessToken, teamId),
+            callback
+        );
+    }
+
+    public void teamSwiss(String teamId, String status, AuthResponseHandler responseHandler) {
+        if (swissListStream != null) {
+            swissListStream.close();
+        }
+        swissListStream = openStream("/api/team/" + teamId + "/swiss?status=" + status, null, new NdJsonStream.Handler() {
+            @Override
+            public void onResponse(JsonObject jsonObject) {
+                mainHandler.post(() -> {
+                    responseHandler.onResponse(jsonObject);
+                });
+            }
+
+            @Override
+            public void onClose(boolean success) {
+                mainHandler.post(() -> {
+                    // Clear the reference to this (now finished) stream first, so that if
+                    // responseHandler.onClose() chains a new stream into swissListStream
+                    // (as fetchTeamSwiss does), that reference survives and stays cancellable.
+                    swissListStream = null;
+                    responseHandler.onClose(success);
+                });
+            }
+        });
+    }
+
+    public void swissInfo(String id, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        get("/api/swiss/" + id, callback);
+    }
+
+    public void swissResults(String id, AuthResponseHandler responseHandler) {
+        if (swissResultsStream != null) {
+            swissResultsStream.close();
+        }
+        swissResultsStream = openStream("/api/swiss/" + id + "/results?nb=50", null, new NdJsonStream.Handler() {
+            @Override
+            public void onResponse(JsonObject jsonObject) {
+                mainHandler.post(() -> {
+                    responseHandler.onResponse(jsonObject);
+                });
+            }
+
+            @Override
+            public void onClose(boolean success) {
+                mainHandler.post(() -> {
+                    responseHandler.onClose(success);
+                    swissResultsStream = null;
+                });
+            }
+        });
+    }
+
+    public void joinSwiss(String id, Map<String, Object> body, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        enqueueJsonResponse(
+            LichessWriteRequestFactory.swissJoin(LICHESS_HOST, accessToken, id, body),
+            callback
+        );
+    }
+
+    public void withdrawSwiss(String id, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        enqueueJsonResponse(
+            LichessWriteRequestFactory.swissWithdraw(LICHESS_HOST, accessToken, id),
+            callback
+        );
+    }
+
     public void puzzleBatchSelect(
         String angle,
         Integer nb,
@@ -260,7 +362,11 @@ public class Auth {
         if (gameStream != null) {
             gameStream.close();
         }
-        gameStream = openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
+        // Track this stream's identity so that when it is deliberately replaced by a later game()
+        // call, the resulting (cancelled) onClose is ignored instead of being reported as a
+        // disconnect that would bounce the user back to the lobby.
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] = openStream("/api/board/game/stream/" + gameId, null, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 String type = jsonObject.get("type").getAsString();
@@ -274,11 +380,16 @@ public class Auth {
             @Override
             public void onClose(boolean sucess) {
                 mainHandler.post(() -> {
+                    if (gameStream != self[0]) {
+                        // Superseded by a newer game stream; this close is intentional.
+                        return;
+                    }
                     responseHandler.onClose(sucess);
                     gameStream = null;
                 });
             }
         });
+        gameStream = self[0];
     }
 
     public void move(String gameId, String move, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
@@ -378,6 +489,14 @@ public class Auth {
             seekStream.close();
             seekStream = null;
         }
+        if (swissListStream != null) {
+            swissListStream.close();
+            swissListStream = null;
+        }
+        if (swissResultsStream != null) {
+            swissResultsStream.close();
+            swissResultsStream = null;
+        }
     }
 
     public void destroy() {
@@ -410,7 +529,11 @@ public class Auth {
             reqBuilder.post(RequestBody.create(new byte[0]));
         }
 
-        httpClient.newCall(reqBuilder.build()).enqueue(new Callback() {
+        enqueueJsonResponse(reqBuilder.build(), callback);
+    }
+
+    private void enqueueJsonResponse(Request request, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
+        httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure " + e);
@@ -520,6 +643,43 @@ public class Auth {
                         // callback.onError(ex);
                         // @TODO another general error
                     });
+                }
+            }
+        });
+    }
+
+    public void getArray(String path, OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject> callback) {
+        Log.d(TAG, "getArray " + path);
+        Request req = new Request.Builder()
+            .url(LICHESS_HOST + path)
+            .addHeader("Accept", "*/*")
+            .addHeader("Authorization", "Bearer " + accessToken)
+            .get()
+            .build();
+
+        httpClient.newCall(req).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "getArray onFailure " + e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseBody = response.body().string();
+                if (!response.isSuccessful()) {
+                    try {
+                        JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
+                        mainHandler.post(() -> callback.onError(jsonObject));
+                    } catch (Exception ex) {
+                        Log.d(TAG, "getArray could not parse " + response.code() + " => " + responseBody);
+                    }
+                    return;
+                }
+                try {
+                    JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
+                    mainHandler.post(() -> callback.onSuccess(jsonArray));
+                } catch (Exception ex) {
+                    Log.d(TAG, "getArray parse error " + ex);
                 }
             }
         });
