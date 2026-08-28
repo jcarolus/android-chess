@@ -5,12 +5,15 @@ import androidx.core.graphics.ColorUtils;
 import jwtc.android.chess.R;
 
 public class ColorSchemes {
-    private static int[][] colorScheme = new int[9][4];
+    public static final int CUSTOM_COLOR_SCHEME = 9;
+    private static final int[][] colorScheme = new int[9][4];
     public static int selectedColorScheme = 0;
     public static boolean showCoords = false;
     public static boolean isRotated = false; // not ideal
     public static int selectedPattern = 0;
     public static float saturationFactor = 1.0f;
+    private static int customDarkColor = 0xffFAAE2F;
+    private static int customLightColor = 0xffFFCC78;
 
     static {
         colorScheme[0][0] = 0xeeFAAE2F;
@@ -60,11 +63,17 @@ public class ColorSchemes {
     }
 
     public static int getLight() {
-        return desaturateColor(colorScheme[selectedColorScheme][1], ColorSchemes.saturationFactor);
+        int color = selectedColorScheme == CUSTOM_COLOR_SCHEME
+            ? customLightColor
+            : colorScheme[selectedColorScheme][1];
+        return desaturateColor(color, ColorSchemes.saturationFactor);
     }
 
     public static int getDark() {
-        return desaturateColor(colorScheme[selectedColorScheme][0], ColorSchemes.saturationFactor);
+        int color = selectedColorScheme == CUSTOM_COLOR_SCHEME
+            ? customDarkColor
+            : colorScheme[selectedColorScheme][0];
+        return desaturateColor(color, ColorSchemes.saturationFactor);
     }
 
     public static int getHightlightColor() {
@@ -72,7 +81,23 @@ public class ColorSchemes {
     }
 
     public static int getSelectedColor() {
+        if (selectedColorScheme == CUSTOM_COLOR_SCHEME) {
+            return ColorUtils.blendARGB(customLightColor, customDarkColor, 0.35f);
+        }
         return colorScheme[selectedColorScheme][2];
+    }
+
+    public static void setCustomColors(int darkColor, int lightColor) {
+        customDarkColor = darkColor;
+        customLightColor = lightColor;
+    }
+
+    public static int getCustomDarkColor() {
+        return customDarkColor;
+    }
+
+    public static int getCustomLightColor() {
+        return customLightColor;
     }
 
     public static int getSelectedPatternDrawable() {

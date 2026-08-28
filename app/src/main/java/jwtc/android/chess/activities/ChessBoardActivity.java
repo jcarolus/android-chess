@@ -431,6 +431,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
         ColorSchemes.saturationFactor = prefs.getFloat("squareSaturation", 1.0f);
+        ColorSchemes.setCustomColors(
+            prefs.getInt("customDarkSquareColor", ColorSchemes.getCustomDarkColor()),
+            prefs.getInt("customLightSquareColor", ColorSchemes.getCustomLightColor()));
 
         skipReturn = prefs.getBoolean("skipReturn", true);
         keyboardBuffer = "";

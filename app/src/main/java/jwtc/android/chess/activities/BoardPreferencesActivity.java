@@ -1,11 +1,19 @@
 package jwtc.android.chess.activities;
 
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 
+import androidx.core.graphics.ColorUtils;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.Slider;
 
 import jwtc.android.chess.R;
@@ -20,6 +28,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
     private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode;
     private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
+    private LinearLayout customColorControls;
+    private MaterialButton buttonCustomDarkColor, buttonCustomLightColor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +51,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxHapticFeedback = findViewById(R.id.CheckBoxUseHapticFeedback);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
         sliderSaturation = findViewById(R.id.SliderSaturation);
+        customColorControls = findViewById(R.id.CustomColorControls);
+        buttonCustomDarkColor = findViewById(R.id.ButtonCustomDarkColor);
+        buttonCustomLightColor = findViewById(R.id.ButtonCustomLightColor);
 
         dropDownPieces.setItems(getResources().getStringArray(R.array.piecesetarray));
         dropDownPieces.setOnItemClickListener((parent, view, position, id) -> {
@@ -51,8 +64,14 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         dropDownColorScheme.setItems(getResources().getStringArray(R.array.colorschemes));
         dropDownColorScheme.setOnItemClickListener((parent, view, position, id) -> {
             ColorSchemes.selectedColorScheme = position;
+            updateCustomColorControls();
             chessBoardView.invalidateSquares();
         });
+
+        buttonCustomDarkColor.setOnClickListener(view -> showColorPicker(
+            R.string.choose_dark_square_color, ColorSchemes.getCustomDarkColor(), true));
+        buttonCustomLightColor.setOnClickListener(view -> showColorPicker(
+            R.string.choose_light_square_color, ColorSchemes.getCustomLightColor(), false));
 
         dropDownTileSet.setItems(getResources().getStringArray(R.array.tileArray));
         dropDownTileSet.setOnItemClickListener((parent, view, position, id) -> {
@@ -103,6 +122,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         sliderSaturation.setValue(prefs.getFloat("squareSaturation", 1.0f));
 
+        updateCustomColorControls();
         rebuildBoard();
     }
 
@@ -126,8 +146,75 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("useHapticFeedback", checkBoxHapticFeedback.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
         editor.putFloat("squareSaturation", sliderSaturation.getValue());
+        editor.putInt("customDarkSquareColor", ColorSchemes.getCustomDarkColor());
+        editor.putInt("customLightSquareColor", ColorSchemes.getCustomLightColor());
 
         editor.commit();
+    }
+
+    private void updateCustomColorControls() {
+        boolean customSelected = ColorSchemes.selectedColorScheme == ColorSchemes.CUSTOM_COLOR_SCHEME;
+        customColorControls.setVisibility(customSelected ? View.VISIBLE : View.GONE);
+        updateColorButton(buttonCustomDarkColor, ColorSchemes.getCustomDarkColor());
+        updateColorButton(buttonCustomLightColor, ColorSchemes.getCustomLightColor());
+    }
+
+    private void updateColorButton(MaterialButton button, int color) {
+        button.setBackgroundTintList(ColorStateList.valueOf(color));
+        button.setTextColor(ColorUtils.calculateLuminance(color) > 0.179
+            ? Color.BLACK
+            : Color.WHITE);
+    }
+
+    private void showColorPicker(int titleResource, int initialColor, boolean darkColor) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_color_picker, null);
+        View colorPreview = dialogView.findViewById(R.id.ColorPreview);
+        Slider hueSlider = dialogView.findViewById(R.id.SliderHue);
+        Slider saturationSlider = dialogView.findViewById(R.id.SliderColorSaturation);
+        Slider lightnessSlider = dialogView.findViewById(R.id.SliderLightness);
+
+        float[] hsl = new float[3];
+        ColorUtils.colorToHSL(initialColor, hsl);
+        hueSlider.setValue(hsl[0]);
+        saturationSlider.setValue(hsl[1]);
+        lightnessSlider.setValue(hsl[2]);
+
+        hueSlider.setLabelFormatter(value -> Math.round(value) + "°");
+        saturationSlider.setLabelFormatter(value -> Math.round(value * 100) + "%");
+        lightnessSlider.setLabelFormatter(value -> Math.round(value * 100) + "%");
+
+        final int[] selectedColor = {ColorUtils.HSLToColor(hsl)};
+        colorPreview.setBackgroundColor(selectedColor[0]);
+
+        Slider.OnChangeListener listener = (slider, value, fromUser) -> {
+            float[] selectedHsl = {
+                hueSlider.getValue(),
+                saturationSlider.getValue(),
+                lightnessSlider.getValue()
+            };
+            selectedColor[0] = ColorUtils.HSLToColor(selectedHsl);
+            colorPreview.setBackgroundColor(selectedColor[0]);
+        };
+        hueSlider.addOnChangeListener(listener);
+        saturationSlider.addOnChangeListener(listener);
+        lightnessSlider.addOnChangeListener(listener);
+
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(titleResource)
+            .setView(dialogView)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                int customDarkColor = darkColor
+                    ? selectedColor[0]
+                    : ColorSchemes.getCustomDarkColor();
+                int customLightColor = darkColor
+                    ? ColorSchemes.getCustomLightColor()
+                    : selectedColor[0];
+                ColorSchemes.setCustomColors(customDarkColor, customLightColor);
+                updateCustomColorControls();
+                chessBoardView.invalidateSquares();
+            })
+            .show();
     }
 
     @Override
