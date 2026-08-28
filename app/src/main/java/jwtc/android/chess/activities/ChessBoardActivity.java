@@ -47,6 +47,7 @@ import jwtc.chess.board.BoardConstants;
 abstract public class ChessBoardActivity extends BaseActivity implements GameListener {
     private static final String TAG = "ChessBoardActivity";
     private static final long MOVE_ANIMATION_DURATION_MS = 250L;
+    protected static final String PREF_USE_PIECE_ANIMATION = "pref_use_piece_animation";
 
     protected GameApi gameApi;
     protected MyDragListener myDragListener;
@@ -139,7 +140,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         final int from = Move.getFrom(move);
         final int to = Move.getTo(move);
         final boolean enteredByDragging = consumeDraggedMove(from, to);
-        final ChessPieceView originalPieceView = enteredByDragging
+        final boolean usePieceAnimation = getPrefs().getBoolean(PREF_USE_PIECE_ANIMATION, true);
+        final ChessPieceView originalPieceView = enteredByDragging || !usePieceAnimation
             ? null
             : getPieceViewOnPosition(from);
         final int animatedPieceColor = originalPieceView == null

@@ -91,6 +91,13 @@
             android:layout_margin="8dip" />
 
         <CheckBox
+            android:id="@+id/CheckBoxUsePieceAnimation"
+            android:text="@string/pref_use_piece_animation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip" />
+
+        <CheckBox
             android:id="@+id/CheckBoxShowCapturedPieces"
             android:text="@string/pref_show_captured_pieces"
             android:layout_width="match_parent"

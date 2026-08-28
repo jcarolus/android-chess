@@ -25,7 +25,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxUsePieceAnimation, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode;
     private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
     private LinearLayout customColorControls;
@@ -44,6 +44,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         dropDownTileSet = findViewById(R.id.DropdownTileSet);
         checkBoxCoordinates = findViewById(R.id.CheckBoxCoordinates);
         checkBoxShowMoves = findViewById(R.id.CheckBoxShowMoves);
+        checkBoxUsePieceAnimation = findViewById(R.id.CheckBoxUsePieceAnimation);
         checkBoxShowCapturedPieces = findViewById(R.id.CheckBoxShowCapturedPieces);
         checkBoxWakeLock = findViewById(R.id.CheckBoxUseWakeLock);
         checkBoxFullscreen = findViewById(R.id.CheckBoxFullscreen);
@@ -109,6 +110,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         checkBoxCoordinates.setChecked(prefs.getBoolean("showCoords", false));
         checkBoxShowMoves.setChecked(prefs.getBoolean("showMoves", true));
+        checkBoxUsePieceAnimation.setChecked(prefs.getBoolean(PREF_USE_PIECE_ANIMATION, true));
         checkBoxShowCapturedPieces.setChecked(prefs.getBoolean("showCapturedPieces", true));
         checkBoxWakeLock.setChecked(prefs.getBoolean("wakeLock", false));
         checkBoxFullscreen.setChecked(prefs.getBoolean("fullScreen", false));
@@ -139,6 +141,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putString("squarePattern", "" + dropDownTileSet.getSelectedItemPosition());
         editor.putBoolean("showCoords", checkBoxCoordinates.isChecked());
         editor.putBoolean("showMoves", checkBoxShowMoves.isChecked());
+        editor.putBoolean(PREF_USE_PIECE_ANIMATION, checkBoxUsePieceAnimation.isChecked());
         editor.putBoolean("showCapturedPieces", checkBoxShowCapturedPieces.isChecked());
         editor.putBoolean("wakeLock", checkBoxWakeLock.isChecked());
         editor.putBoolean("fullScreen", checkBoxFullscreen.isChecked());
