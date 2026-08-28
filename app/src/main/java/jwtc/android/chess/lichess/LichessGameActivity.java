@@ -629,6 +629,11 @@ public class LichessGameActivity extends ChessBoardActivity
     public void OnState() {
         super.OnState();
 
+        updateTurnState();
+    }
+
+    private void updateTurnState() {
+
         int myTurn = lichessApi.getMyTurn();
         int turn = lichessApi.getTurn();
         boolean isMyTurn = myTurn == turn;
@@ -654,6 +659,8 @@ public class LichessGameActivity extends ChessBoardActivity
     @Override
     public void onMoveApplied(int move) {
         super.onMoveApplied(move);
+
+        updateTurnState();
 
         String sMove = getLastMoveAndTurnDescription(true);
         updateTextViewOrSpeech(textViewLastMove, sMove, protectLastMoveSpeech);
