@@ -72,6 +72,15 @@
     <string name="color_scheme_purple">紫色</string>
     <string name="color_scheme_red">红色</string>
     <string name="color_scheme_yellow">黄色</string>
+    <string name="color_scheme_custom">自定义</string>
+    <string name="custom_square_colors">自定义棋盘格颜色</string>
+    <string name="custom_dark_square_color">深色棋盘格</string>
+    <string name="custom_light_square_color">浅色棋盘格</string>
+    <string name="choose_dark_square_color">选择深色棋盘格颜色</string>
+    <string name="choose_light_square_color">选择浅色棋盘格颜色</string>
+    <string name="color_hue">色相</string>
+    <string name="color_saturation">饱和度</string>
+    <string name="color_lightness">明度</string>
     <string name="copied_clipboard_success">对局已复制到剪贴板</string>
     <string name="gamepreferences">对局设置</string>
     <string name="globalpreferences">全局设置</string>

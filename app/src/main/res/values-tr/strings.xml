@@ -72,6 +72,15 @@
     <string name="color_scheme_purple">Mor</string>
     <string name="color_scheme_red">Kırmızı</string>
     <string name="color_scheme_yellow">Sarı</string>
+    <string name="color_scheme_custom">Özel</string>
+    <string name="custom_square_colors">Özel kare renkleri</string>
+    <string name="custom_dark_square_color">Koyu kare</string>
+    <string name="custom_light_square_color">Açık kare</string>
+    <string name="choose_dark_square_color">Koyu kare rengini seç</string>
+    <string name="choose_light_square_color">Açık kare rengini seç</string>
+    <string name="color_hue">Ton</string>
+    <string name="color_saturation">Doygunluk</string>
+    <string name="color_lightness">Açıklık</string>
     <string name="copied_clipboard_success">Oyun panoya kopyalandı</string>
     <string name="gamepreferences">Parti ayarları</string>
     <string name="globalpreferences">Genel ayarlar</string>

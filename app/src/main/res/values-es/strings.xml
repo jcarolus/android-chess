@@ -75,6 +75,15 @@
     <string name="color_scheme_purple">Púrpura</string>
     <string name="color_scheme_red">Rojo</string>
     <string name="color_scheme_yellow">Amarillo</string>
+    <string name="color_scheme_custom">Personalizado</string>
+    <string name="custom_square_colors">Colores personalizados de las casillas</string>
+    <string name="custom_dark_square_color">Casilla oscura</string>
+    <string name="custom_light_square_color">Casilla clara</string>
+    <string name="choose_dark_square_color">Elegir el color de la casilla oscura</string>
+    <string name="choose_light_square_color">Elegir el color de la casilla clara</string>
+    <string name="color_hue">Tono</string>
+    <string name="color_saturation">Saturación</string>
+    <string name="color_lightness">Luminosidad</string>
     <string name="copied_clipboard_success">Partida copiada al portapapeles con éxito</string>
     <string name="gamepreferences">Configuración de partida</string>
     <string name="globalpreferences">Configuración global</string>

@@ -72,6 +72,15 @@
     <string name="color_scheme_purple">Violet</string>
     <string name="color_scheme_red">Rouge</string>
     <string name="color_scheme_yellow">Jaune</string>
+    <string name="color_scheme_custom">Personnalisé</string>
+    <string name="custom_square_colors">Couleurs personnalisées des cases</string>
+    <string name="custom_dark_square_color">Case sombre</string>
+    <string name="custom_light_square_color">Case claire</string>
+    <string name="choose_dark_square_color">Choisir la couleur de la case sombre</string>
+    <string name="choose_light_square_color">Choisir la couleur de la case claire</string>
+    <string name="color_hue">Teinte</string>
+    <string name="color_saturation">Saturation</string>
+    <string name="color_lightness">Luminosité</string>
     <string name="copied_clipboard_success">Partie copiée dans le presse-papiers</string>
     <string name="gamepreferences">Paramètres de partie</string>
     <string name="globalpreferences">Paramètres globaux</string>

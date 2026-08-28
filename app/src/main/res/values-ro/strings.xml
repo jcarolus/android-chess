@@ -72,6 +72,15 @@
     <string name="color_scheme_purple">Mov</string>
     <string name="color_scheme_red">Roșu</string>
     <string name="color_scheme_yellow">Galben</string>
+    <string name="color_scheme_custom">Personalizat</string>
+    <string name="custom_square_colors">Culori personalizate pentru pătrate</string>
+    <string name="custom_dark_square_color">Pătrat închis</string>
+    <string name="custom_light_square_color">Pătrat deschis</string>
+    <string name="choose_dark_square_color">Alege culoarea pătratului închis</string>
+    <string name="choose_light_square_color">Alege culoarea pătratului deschis</string>
+    <string name="color_hue">Nuanță</string>
+    <string name="color_saturation">Saturație</string>
+    <string name="color_lightness">Luminozitate</string>
     <string name="copied_clipboard_success">Partida copiată în clipboard</string>
     <string name="gamepreferences">Setări partidă</string>
     <string name="globalpreferences">Setări globale</string>

@@ -75,6 +75,15 @@
     <string name="color_scheme_purple">Lila</string>
     <string name="color_scheme_red">Rot</string>
     <string name="color_scheme_yellow">Gelb</string>
+    <string name="color_scheme_custom">Benutzerdefiniert</string>
+    <string name="custom_square_colors">Benutzerdefinierte Feldfarben</string>
+    <string name="custom_dark_square_color">Dunkles Feld</string>
+    <string name="custom_light_square_color">Helles Feld</string>
+    <string name="choose_dark_square_color">Farbe für dunkles Feld auswählen</string>
+    <string name="choose_light_square_color">Farbe für helles Feld auswählen</string>
+    <string name="color_hue">Farbton</string>
+    <string name="color_saturation">Sättigung</string>
+    <string name="color_lightness">Helligkeit</string>
     <string name="copied_clipboard_success">Partie erfolgreich in Zwischenablage kopiert</string>
     <string name="gamepreferences">Partie-Einstellungen</string>
     <string name="globalpreferences">Globale Einstellungen</string>

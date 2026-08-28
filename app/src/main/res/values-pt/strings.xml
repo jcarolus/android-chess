@@ -72,6 +72,15 @@
     <string name="color_scheme_purple">Roxo</string>
     <string name="color_scheme_red">Vermelho</string>
     <string name="color_scheme_yellow">Amarelo</string>
+    <string name="color_scheme_custom">Personalizado</string>
+    <string name="custom_square_colors">Cores personalizadas das casas</string>
+    <string name="custom_dark_square_color">Casa escura</string>
+    <string name="custom_light_square_color">Casa clara</string>
+    <string name="choose_dark_square_color">Escolher a cor da casa escura</string>
+    <string name="choose_light_square_color">Escolher a cor da casa clara</string>
+    <string name="color_hue">Matiz</string>
+    <string name="color_saturation">Saturação</string>
+    <string name="color_lightness">Luminosidade</string>
     <string name="copied_clipboard_success">Partida copiada para a área de transferência</string>
     <string name="gamepreferences">Configurações da partida</string>
     <string name="globalpreferences">Configurações globais</string>
