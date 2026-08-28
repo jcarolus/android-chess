@@ -347,6 +347,7 @@
     <string name="pref_showCoords">إحداثيات</string>
     <string name="pref_show_blindfold">لعب معصوب العينين</string>
     <string name="pref_show_possible_moves">إظهار النقلات الممكنة</string>
+    <string name="pref_use_piece_animation">تحريك القطع</string>
     <string name="pref_show_captured_pieces">إظهار القطع المأخوذة عند التوفر</string>
     <string name="pref_show_pieces_descriptions">إظهار أوصاف مواقع القطع</string>
     <string name="pref_show_accessibility_drag_toggle">إظهار زر تبديل السحب لإمكانية الوصول</string>

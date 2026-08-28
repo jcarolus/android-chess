@@ -368,6 +368,7 @@
     <string name="pref_showCoords">مختصات</string>
     <string name="pref_show_blindfold">چشم‌بسته</string>
     <string name="pref_show_possible_moves">نمایش حرکت‌ها</string>
+    <string name="pref_use_piece_animation">متحرک‌سازی مهره‌ها</string>
     <string name="pref_show_captured_pieces">نمایش مهره‌های زده‌شده در صورت وجود</string>
     <string name="pref_show_pieces_descriptions">نمایش توضیح موقعیت مهره‌ها</string>
     <string name="pref_show_accessibility_drag_toggle">نمایش کلید کشیدن دسترس‌پذیر</string>
