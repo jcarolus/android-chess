@@ -1061,7 +1061,6 @@ public class LichessApi extends GameApi {
     public void retryWrongPuzzleMove() {
         hasPendingWrongMove = false;
         jni.undo();
-        dispatchMove(jni.getMyMove());
         dispatchState();
         if (apiListener != null) {
             apiListener.onPuzzleRetried();
