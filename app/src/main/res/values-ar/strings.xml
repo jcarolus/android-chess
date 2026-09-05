@@ -74,6 +74,15 @@
     <string name="color_scheme_purple">بنفسجي</string>
     <string name="color_scheme_red">أحمر</string>
     <string name="color_scheme_yellow">أصفر</string>
+    <string name="color_scheme_custom">مخصص</string>
+    <string name="custom_square_colors">ألوان مخصصة للمربعات</string>
+    <string name="custom_dark_square_color">مربع داكن</string>
+    <string name="custom_light_square_color">مربع فاتح</string>
+    <string name="choose_dark_square_color">اختر لون المربع الداكن</string>
+    <string name="choose_light_square_color">اختر لون المربع الفاتح</string>
+    <string name="color_hue">تدرج اللون</string>
+    <string name="color_saturation">التشبع</string>
+    <string name="color_lightness">الإضاءة</string>
     <string name="copied_clipboard_success">تم نسخ اللعبة إلى الحافظة بنجاح</string>
     <string name="gamepreferences">إعدادات اللعبة</string>
     <string name="globalpreferences">الإعدادات العامة</string>
@@ -338,6 +347,7 @@
     <string name="pref_showCoords">إحداثيات</string>
     <string name="pref_show_blindfold">لعب معصوب العينين</string>
     <string name="pref_show_possible_moves">إظهار النقلات الممكنة</string>
+    <string name="pref_use_piece_animation">تحريك القطع</string>
     <string name="pref_show_captured_pieces">إظهار القطع المأخوذة عند التوفر</string>
     <string name="pref_show_pieces_descriptions">إظهار أوصاف مواقع القطع</string>
     <string name="pref_show_accessibility_drag_toggle">إظهار زر تبديل السحب لإمكانية الوصول</string>

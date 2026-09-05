@@ -72,6 +72,15 @@
     <string name="color_scheme_purple">Viola</string>
     <string name="color_scheme_red">Rosso</string>
     <string name="color_scheme_yellow">Giallo</string>
+    <string name="color_scheme_custom">Personalizzato</string>
+    <string name="custom_square_colors">Colori personalizzati delle caselle</string>
+    <string name="custom_dark_square_color">Casella scura</string>
+    <string name="custom_light_square_color">Casella chiara</string>
+    <string name="choose_dark_square_color">Scegli il colore della casella scura</string>
+    <string name="choose_light_square_color">Scegli il colore della casella chiara</string>
+    <string name="color_hue">Tonalità</string>
+    <string name="color_saturation">Saturazione</string>
+    <string name="color_lightness">Luminosità</string>
     <string name="copied_clipboard_success">Partita copiata negli appunti</string>
     <string name="gamepreferences">Impostazioni partita</string>
     <string name="globalpreferences">Impostazioni globali</string>
@@ -324,6 +333,7 @@
     <string name="pref_showCoords">Coordinate</string>
     <string name="pref_show_blindfold">Alla cieca</string>
     <string name="pref_show_possible_moves">Mostra mosse</string>
+    <string name="pref_use_piece_animation">Anima i pezzi</string>
     <string name="pref_show_captured_pieces">Mostra i pezzi catturati quando disponibili</string>
     <string name="pref_show_pieces_descriptions">Mostra la descrizione della posizione dei pezzi</string>
     <string name="pref_show_accessibility_drag_toggle">Mostra interruttore trascinamento accessibilità</string>

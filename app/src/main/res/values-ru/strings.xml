@@ -72,6 +72,15 @@
     <string name="color_scheme_purple">Фиолетовый</string>
     <string name="color_scheme_red">Красный</string>
     <string name="color_scheme_yellow">Жёлтый</string>
+    <string name="color_scheme_custom">Пользовательская</string>
+    <string name="custom_square_colors">Пользовательские цвета клеток</string>
+    <string name="custom_dark_square_color">Тёмная клетка</string>
+    <string name="custom_light_square_color">Светлая клетка</string>
+    <string name="choose_dark_square_color">Выбрать цвет тёмной клетки</string>
+    <string name="choose_light_square_color">Выбрать цвет светлой клетки</string>
+    <string name="color_hue">Оттенок</string>
+    <string name="color_saturation">Насыщенность</string>
+    <string name="color_lightness">Светлота</string>
     <string name="copied_clipboard_success">Партия успешно скопирована в буфер</string>
     <string name="gamepreferences">Настройки партии</string>
     <string name="globalpreferences">Глобальные настройки</string>
@@ -324,6 +333,7 @@
     <string name="pref_showCoords">Координаты</string>
     <string name="pref_show_blindfold">Слепые шахматы</string>
     <string name="pref_show_possible_moves">Показывать ходы</string>
+    <string name="pref_use_piece_animation">Анимировать фигуры</string>
     <string name="pref_show_captured_pieces">Показывать взятые фигуры, если доступны</string>
     <string name="pref_show_pieces_descriptions">Показывать описание расположения фигур</string>
     <string name="pref_show_accessibility_drag_toggle">Показывать переключатель перетаскивания для специальных возможностей</string>

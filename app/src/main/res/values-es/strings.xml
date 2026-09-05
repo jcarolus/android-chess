@@ -75,6 +75,15 @@
     <string name="color_scheme_purple">Púrpura</string>
     <string name="color_scheme_red">Rojo</string>
     <string name="color_scheme_yellow">Amarillo</string>
+    <string name="color_scheme_custom">Personalizado</string>
+    <string name="custom_square_colors">Colores personalizados de las casillas</string>
+    <string name="custom_dark_square_color">Casilla oscura</string>
+    <string name="custom_light_square_color">Casilla clara</string>
+    <string name="choose_dark_square_color">Elegir el color de la casilla oscura</string>
+    <string name="choose_light_square_color">Elegir el color de la casilla clara</string>
+    <string name="color_hue">Tono</string>
+    <string name="color_saturation">Saturación</string>
+    <string name="color_lightness">Luminosidad</string>
     <string name="copied_clipboard_success">Partida copiada al portapapeles con éxito</string>
     <string name="gamepreferences">Configuración de partida</string>
     <string name="globalpreferences">Configuración global</string>
@@ -334,6 +343,7 @@
     <string name="pref_showCoords">Coordenadas</string>
     <string name="pref_show_blindfold">A ciegas</string>
     <string name="pref_show_possible_moves">Mostrar movimientos</string>
+    <string name="pref_use_piece_animation">Animar piezas</string>
     <string name="pref_show_captured_pieces">Mostrar piezas capturadas cuando estén disponibles</string>
     <string name="pref_show_pieces_descriptions">Mostrar descripción de la ubicación de las piezas</string>
     <string name="pref_show_accessibility_drag_toggle">Mostrar interruptor de arrastre de accesibilidad</string>

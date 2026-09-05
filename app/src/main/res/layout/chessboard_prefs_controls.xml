@@ -21,6 +21,44 @@
             android:layout_height="wrap_content"
             android:hint="@string/chessboard_hint_color_scheme" />
 
+        <LinearLayout
+            android:id="@+id/CustomColorControls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/custom_square_colors" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ButtonCustomDarkColor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/custom_dark_square_color" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ButtonCustomLightColor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1"
+                    android:text="@string/custom_light_square_color" />
+            </LinearLayout>
+        </LinearLayout>
+
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSaturation"
             android:layout_width="match_parent"
@@ -48,6 +86,13 @@
         <CheckBox
             android:id="@+id/CheckBoxShowMoves"
             android:text="@string/pref_show_possible_moves"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dip" />
+
+        <CheckBox
+            android:id="@+id/CheckBoxUsePieceAnimation"
+            android:text="@string/pref_use_piece_animation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dip" />

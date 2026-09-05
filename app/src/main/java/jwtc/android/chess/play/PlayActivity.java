@@ -606,7 +606,7 @@ public class PlayActivity extends ChessBoardActivity implements
         }
         String moveMessage = getLastMoveAndTurnDescription(false) + sState;
 
-        updateTextViewOrSpeech(textViewLastMove, moveMessage);
+        updateTextViewOrSpeech(textViewLastMove, moveMessage, protectLastMoveSpeech);
     }
 
     protected void updateSeekBar() {

@@ -1,5 +1,7 @@
 package jwtc.android.chess.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.ClipData;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -14,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -43,6 +46,8 @@ import jwtc.chess.board.BoardConstants;
 
 abstract public class ChessBoardActivity extends BaseActivity implements GameListener {
     private static final String TAG = "ChessBoardActivity";
+    private static final long MOVE_ANIMATION_DURATION_MS = 250L;
+    protected static final String PREF_USE_PIECE_ANIMATION = "pref_use_piece_animation";
 
     protected GameApi gameApi;
     protected MyDragListener myDragListener;
@@ -81,6 +86,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     private Runnable accessibilityDragDwellRunnable = null;
     private int accessibilityDragHoverPos = -1;
     private int accessibilityDragFromPos = -1;
+    private int pendingDraggedMoveFrom = -1;
+    private int pendingDraggedMoveTo = -1;
+    private long moveAnimationGeneration = 0L;
+    private ChessPieceView animatedMoveView = null;
+    private ChessPieceView hiddenMoveDestinationView = null;
     private ViewTreeObserver.OnGlobalLayoutListener boardLayoutListener = null;
     private View boardLayoutRoot = null;
 
@@ -125,11 +135,31 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         Log.d(TAG, "onMoveApplied " + Move.toDbgString(move));
         // selectPosition(-1);
 
+        cancelMoveAnimation();
+
+        final int from = Move.getFrom(move);
+        final int to = Move.getTo(move);
+        final boolean enteredByDragging = consumeDraggedMove(from, to);
+        final boolean usePieceAnimation = getPrefs().getBoolean(PREF_USE_PIECE_ANIMATION, true);
+        final ChessPieceView originalPieceView = enteredByDragging || !usePieceAnimation
+            ? null
+            : getPieceViewOnPosition(from);
+        final int animatedPieceColor = originalPieceView == null
+            ? BoardConstants.WHITE
+            : originalPieceView.getColor();
+        final int animatedPiece = originalPieceView == null
+            ? BoardConstants.FIELD
+            : originalPieceView.getPiece();
+
         moveToPositions.clear();
         highlightedPositions.clear();
 
         rebuildBoard();
         updatePieceDescriptions();
+
+        if (originalPieceView != null) {
+            startMoveAnimation(from, to, animatedPieceColor, animatedPiece);
+        }
 
         if (Move.isCheck(move)) {
             feedbackCheck();
@@ -163,6 +193,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onIllegalMoveAttempted() {
         Log.d(TAG, "OnIllegal");
+        clearPendingDraggedMove();
         rebuildBoard();
         feedbackIllegalMove();
     }
@@ -170,16 +201,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     @Override
     public void onHistoryPositionChanged(int boardNumber) {
         Log.d(TAG, "onHistoryPositionChanged " + boardNumber);
+        clearPendingDraggedMove();
     }
 
     @Override
     public void onNewGameStarted(int variant) {
         Log.d(TAG, "onNewGameStarted " + variant);
+        clearPendingDraggedMove();
     }
 
     @Override
     public void onGameLoaded() {
         Log.d(TAG, "onGameLoaded");
+        clearPendingDraggedMove();
     }
 
     @Override
@@ -431,6 +465,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
         ColorSchemes.saturationFactor = prefs.getFloat("squareSaturation", 1.0f);
+        ColorSchemes.setCustomColors(
+            prefs.getInt("customDarkSquareColor", ColorSchemes.getCustomDarkColor()),
+            prefs.getInt("customLightSquareColor", ColorSchemes.getCustomLightColor()));
 
         skipReturn = prefs.getBoolean("skipReturn", true);
         keyboardBuffer = "";
@@ -655,6 +692,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
 
+        cancelMoveAnimation();
         timeWarningSpeechHandler.removeCallbacksAndMessages(null);
 
         if (boardLayoutListener != null && boardLayoutRoot != null) {
@@ -685,6 +723,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     public void rebuildBoard() {
 
+        cancelMoveAnimation();
         chessBoardView.removePieces();
         chessBoardView.removeLabels();
 
@@ -765,6 +804,96 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
 
         updateSelectedSquares();
+    }
+
+    private void startMoveAnimation(int from, int to, int color, int piece) {
+        final ChessSquareView fromSquare = getSquareAt(from);
+        final ChessSquareView toSquare = getSquareAt(to);
+        final ChessPieceView destinationPieceView = getPieceViewOnPosition(to);
+        if (fromSquare == null || toSquare == null || destinationPieceView == null) {
+            return;
+        }
+
+        final ChessPieceView animationView = new ChessPieceView(this, color, piece, from);
+        destinationPieceView.setVisibility(View.INVISIBLE);
+        chessBoardView.addView(animationView);
+        chessBoardView.layoutChild(animationView);
+        animationView.bringToFront();
+
+        animatedMoveView = animationView;
+        hiddenMoveDestinationView = destinationPieceView;
+        final long generation = ++moveAnimationGeneration;
+        final float translationX = toSquare.getLeft() - fromSquare.getLeft();
+        final float translationY = toSquare.getTop() - fromSquare.getTop();
+
+        animationView.animate()
+            .translationX(translationX)
+            .translationY(translationY)
+            .setDuration(MOVE_ANIMATION_DURATION_MS)
+            .setInterpolator(new DecelerateInterpolator())
+            .setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    completeMoveAnimation(generation);
+                }
+            })
+            .start();
+    }
+
+    private void completeMoveAnimation(long generation) {
+        if (generation != moveAnimationGeneration) {
+            return;
+        }
+
+        final ChessPieceView animationView = animatedMoveView;
+        final ChessPieceView destinationPieceView = hiddenMoveDestinationView;
+        animatedMoveView = null;
+        hiddenMoveDestinationView = null;
+
+        if (animationView != null && animationView.getParent() == chessBoardView) {
+            chessBoardView.removeView(animationView);
+        }
+        if (destinationPieceView != null && destinationPieceView.getParent() == chessBoardView) {
+            destinationPieceView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void cancelMoveAnimation() {
+        moveAnimationGeneration++;
+
+        final ChessPieceView animationView = animatedMoveView;
+        final ChessPieceView destinationPieceView = hiddenMoveDestinationView;
+        animatedMoveView = null;
+        hiddenMoveDestinationView = null;
+
+        if (animationView != null) {
+            animationView.animate().setListener(null);
+            animationView.animate().cancel();
+            if (animationView.getParent() == chessBoardView) {
+                chessBoardView.removeView(animationView);
+            }
+        }
+        if (destinationPieceView != null && destinationPieceView.getParent() == chessBoardView) {
+            destinationPieceView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void markMoveEnteredByDragging(int from, int to) {
+        pendingDraggedMoveFrom = from;
+        pendingDraggedMoveTo = to;
+    }
+
+    private boolean consumeDraggedMove(int from, int to) {
+        if (pendingDraggedMoveFrom != from || pendingDraggedMoveTo != to) {
+            return false;
+        }
+        clearPendingDraggedMove();
+        return true;
+    }
+
+    private void clearPendingDraggedMove() {
+        pendingDraggedMoveFrom = -1;
+        pendingDraggedMoveTo = -1;
     }
 
     public void updateSelectedSquares() {
@@ -1190,6 +1319,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                                     // a click
                                     selectPosition(toPos);
                                 } else {
+                                    markMoveEnteredByDragging(fromPos, toPos);
                                     pieceViewFrom.setPos(toPos);
                                     chessBoardView.layoutChild(pieceViewFrom);
                                     requestMove(fromPos, toPos);
@@ -1344,6 +1474,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     break;
                 case DragEvent.ACTION_DROP:
                     if (accessibilityDragFromPos != -1 && accessibilityDragFromPos != pos) {
+                        markMoveEnteredByDragging(accessibilityDragFromPos, pos);
                         requestMove(accessibilityDragFromPos, pos);
                     }
                     selectPosition(-1);
@@ -1566,11 +1697,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected void handleMove(int pos) {
         Log.d(TAG, "handleMove " + selectedPosition + ", " + pos);
-        ChessPieceView pieceViewFrom = getPieceViewOnPosition(selectedPosition);
-        if (pieceViewFrom != null) {
-            pieceViewFrom.setPos(pos);
-            chessBoardView.layoutChild(pieceViewFrom);
-        }
         requestMove(selectedPosition, pos);
         selectedPosition = -1;
         ChessBoardActivity.this.updateSelectedSquares();

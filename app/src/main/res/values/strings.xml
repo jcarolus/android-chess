@@ -77,6 +77,15 @@
     <string name="color_scheme_orange">Orange</string>
     <string name="color_scheme_pink">Pink</string>
     <string name="color_scheme_purple">Purple</string>
+    <string name="color_scheme_custom">Custom</string>
+    <string name="custom_square_colors">Custom square colors</string>
+    <string name="custom_dark_square_color">Dark square</string>
+    <string name="custom_light_square_color">Light square</string>
+    <string name="choose_dark_square_color">Choose dark square color</string>
+    <string name="choose_light_square_color">Choose light square color</string>
+    <string name="color_hue">Hue</string>
+    <string name="color_saturation">Saturation</string>
+    <string name="color_lightness">Lightness</string>
     <string name="color_scheme_red">Red</string>
     <string name="color_scheme_yellow">Yellow</string>
     <string name="copied_clipboard_success">Game copied to clipboard successfully</string>
@@ -359,6 +368,7 @@
     <string name="pref_showCoords">Coordinates</string>
     <string name="pref_show_blindfold">Blindfold</string>
     <string name="pref_show_possible_moves">Show moves</string>
+    <string name="pref_use_piece_animation">Animate pieces</string>
     <string name="pref_show_captured_pieces">Show captured pieces when available</string>
     <string name="pref_show_pieces_descriptions">Show pieces location descriptions</string>
     <string name="pref_show_accessibility_drag_toggle">Show accessibility drag toggle</string>

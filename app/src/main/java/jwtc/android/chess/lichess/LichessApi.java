@@ -962,7 +962,12 @@ public class LichessApi extends GameApi {
                 dispatchGameStateTransition(snapshot, transition);
                 lastGameStateSnapshot = snapshot;
             }
-            dispatchState();
+            // A move notification already tells board listeners to render the resulting state.
+            // Dispatching OnState immediately afterwards would render it a second time and cancel
+            // any move animation started by onMoveApplied.
+            if (!replayedEntireSnapshot || !transition.moveApplied) {
+                dispatchState();
+            }
 
             if (apiListener != null) {
                 apiListener.onGameUpdate(ongoingGameFull);
@@ -1061,7 +1066,6 @@ public class LichessApi extends GameApi {
     public void retryWrongPuzzleMove() {
         hasPendingWrongMove = false;
         jni.undo();
-        dispatchMove(jni.getMyMove());
         dispatchState();
         if (apiListener != null) {
             apiListener.onPuzzleRetried();

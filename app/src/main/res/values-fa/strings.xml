@@ -79,6 +79,15 @@
     <string name="color_scheme_purple">بنفش</string>
     <string name="color_scheme_red">قرمز</string>
     <string name="color_scheme_yellow">زرد</string>
+    <string name="color_scheme_custom">سفارشی</string>
+    <string name="custom_square_colors">رنگ‌های سفارشی خانه‌ها</string>
+    <string name="custom_dark_square_color">خانه‌ی تیره</string>
+    <string name="custom_light_square_color">خانه‌ی روشن</string>
+    <string name="choose_dark_square_color">انتخاب رنگ خانه‌ی تیره</string>
+    <string name="choose_light_square_color">انتخاب رنگ خانه‌ی روشن</string>
+    <string name="color_hue">فام</string>
+    <string name="color_saturation">اشباع</string>
+    <string name="color_lightness">روشنایی</string>
     <string name="copied_clipboard_success">بازی با موفقیت در حافظه‌ی موقت کپی شد</string>
     <string name="gamepreferences">تنظیمات بازی</string>
     <string name="globalpreferences">تنظیمات کلی</string>
@@ -359,6 +368,7 @@
     <string name="pref_showCoords">مختصات</string>
     <string name="pref_show_blindfold">چشم‌بسته</string>
     <string name="pref_show_possible_moves">نمایش حرکت‌ها</string>
+    <string name="pref_use_piece_animation">متحرک‌سازی مهره‌ها</string>
     <string name="pref_show_captured_pieces">نمایش مهره‌های زده‌شده در صورت وجود</string>
     <string name="pref_show_pieces_descriptions">نمایش توضیح موقعیت مهره‌ها</string>
     <string name="pref_show_accessibility_drag_toggle">نمایش کلید کشیدن دسترس‌پذیر</string>
