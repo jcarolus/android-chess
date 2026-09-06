@@ -160,6 +160,20 @@ public class LichessGameActivity extends ChessBoardActivity
             findViewById(R.id.play_board_bottom)
         );
         afterCreate();
+
+        addAccessibilityDragControl(buttonResign);
+        addAccessibilityDragControl(buttonDraw);
+        addAccessibilityDragControl(buttonPuzzleShow);
+        addAccessibilityDragControl(buttonPuzzleRetry);
+        addAccessibilityDragControl(buttonPuzzleNext);
+        addAccessibilityDragControl(buttonCancelMove);
+        addAccessibilityDragControl(buttonConfirmMove);
+        addAccessibilityDragControl(buttonSaveToFile);
+        addAccessibilityDragControl(buttonSaveToDatabase);
+        addAccessibilityDragControl(switchConfirmMoves);
+        addAccessibilityDragControl(switchSound);
+        addAccessibilityDragControl(switchMoveToSpeech);
+        addAccessibilityDragControl(switchAccessibilityDrag);
     }
 
     // The single LichessApi is owned by LichessService and arrives asynchronously; the clock (which

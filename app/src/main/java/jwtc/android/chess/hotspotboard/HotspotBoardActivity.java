@@ -392,6 +392,18 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             buttonDraw.setEnabled(false);
         });
 
+        addAccessibilityDragControl(buttonConnect);
+        addAccessibilityDragControl(buttonDisconnect);
+        addAccessibilityDragControl(buttonCopyIp);
+        addAccessibilityDragControl(buttonResign);
+        addAccessibilityDragControl(buttonDraw);
+        addAccessibilityDragControl(findViewById(R.id.buttonWhite));
+        addAccessibilityDragControl(findViewById(R.id.buttonBlack));
+        addAccessibilityDragControl(buttonNew);
+        addAccessibilityDragControl(switchSound);
+        addAccessibilityDragControl(switchMoveToSpeech);
+        addAccessibilityDragControl(switchAccessibilityDrag);
+
         refreshConnectionControls();
     }
 

@@ -266,6 +266,29 @@ public class PlayActivity extends ChessBoardActivity implements
         moveAdapter = new MoveRecyclerAdapter(this, gameApi, this);
         historyRecyclerView.setAdapter(moveAdapter);
         historyRecyclerView.setHorizontalScrollBarEnabled(true);
+        historyRecyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+            @Override
+            public void onChildViewAttachedToWindow(View view) {
+                addAccessibilityDragControl(view);
+            }
+
+            @Override
+            public void onChildViewDetachedFromWindow(View view) {
+                // The listener stays on the recycled item and is reused when it is attached again.
+            }
+        });
+
+        addAccessibilityDragControl(playButton);
+        addAccessibilityDragControl(buttonMenu);
+        addAccessibilityDragControl(butPrev);
+        addAccessibilityDragControl(butNext);
+        addAccessibilityDragControl(buttonEco);
+        addAccessibilityDragControl(switchBlindfold);
+        addAccessibilityDragControl(switchFlip);
+        addAccessibilityDragControl(switchSound);
+        addAccessibilityDragControl(switchMoveToSpeech);
+        addAccessibilityDragControl(switchAccessibilityDrag);
+        addAccessibilityDragControl(switchMinimal);
 
         ecoService.load(getAssets());
     }

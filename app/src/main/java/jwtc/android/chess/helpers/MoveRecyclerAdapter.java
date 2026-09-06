@@ -126,6 +126,7 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
         }
         holder.textViewNumMove.setText(item.get("nr"));
         holder.textViewMove.setText(item.get("move"));
+        holder.itemView.setContentDescription(item.get("nr") + item.get("move"));
     }
 
     @Override
@@ -146,4 +147,3 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
         return true;
     }
 }
-

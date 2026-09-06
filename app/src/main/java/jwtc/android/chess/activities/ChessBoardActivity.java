@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.speech.tts.TextToSpeech;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.KeyEvent;
@@ -52,6 +53,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected GameApi gameApi;
     protected MyDragListener myDragListener;
     protected MyAccessibilityDragListener myAccessibilityDragListener;
+    protected MyAccessibilityControlDragListener myAccessibilityControlDragListener;
     protected MyTouchListener myTouchListener;
     protected MyClickListener myClickListener;
     protected JNI jni;
@@ -266,6 +268,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         myDragListener = new MyDragListener();
         myAccessibilityDragListener = new MyAccessibilityDragListener();
+        myAccessibilityControlDragListener = new MyAccessibilityControlDragListener();
         myTouchListener = new MyTouchListener();
         myClickListener = new MyClickListener();
 
@@ -1362,6 +1365,34 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
+    protected void addAccessibilityDragControl(View control) {
+        if (control != null) {
+            control.setOnDragListener(myAccessibilityControlDragListener);
+        }
+    }
+
+    private void leaveAccessibilitySquare() {
+        if (accessibilityDragDwellRunnable != null) {
+            accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
+            accessibilityDragDwellRunnable = null;
+        }
+        accessibilityDragHoverPos = -1;
+    }
+
+    private void speakAccessibilityDragControl(View control) {
+        if (textToSpeech == null || !textToSpeech.isEnabled()) {
+            return;
+        }
+
+        CharSequence description = control.getContentDescription();
+        if (TextUtils.isEmpty(description) && control instanceof TextView) {
+            description = ((TextView) control).getText();
+        }
+        if (!TextUtils.isEmpty(description)) {
+            textToSpeech.doSpeak(description.toString());
+        }
+    }
+
     private void resetAccessibilityDragState() {
         if (accessibilityDragDwellRunnable != null) {
             accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
@@ -1490,6 +1521,30 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     break;
             }
             return true;
+        }
+    }
+
+    protected class MyAccessibilityControlDragListener implements View.OnDragListener {
+        @Override
+        public boolean onDrag(View control, DragEvent event) {
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    return useAccessibilityDrag;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    leaveAccessibilitySquare();
+                    speakAccessibilityDragControl(control);
+                    return true;
+                case DragEvent.ACTION_DROP:
+                    resetAccessibilityDragState();
+                    selectPosition(-1);
+                    updateSelectedSquares();
+                    if (control.isEnabled() && control.isShown()) {
+                        control.performClick();
+                    }
+                    return true;
+                default:
+                    return true;
+            }
         }
     }
 
