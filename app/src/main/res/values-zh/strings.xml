@@ -73,6 +73,7 @@
     <string name="color_scheme_red">红色</string>
     <string name="color_scheme_yellow">黄色</string>
     <string name="color_scheme_custom">自定义</string>
+    <string name="color_scheme_eink">灰度（电子墨水）</string>
     <string name="custom_square_colors">自定义棋盘格颜色</string>
     <string name="custom_dark_square_color">深色棋盘格</string>
     <string name="custom_light_square_color">浅色棋盘格</string>
@@ -330,6 +331,14 @@
     <string name="pref_minimal">精简控件</string>
     <string name="pref_night_mode">夜间模式</string>
     <string name="pref_night_mode_desc">强制应用夜间模式</string>
+    <string name="pref_eink_mode">电子墨水模式</string>
+    <string name="pref_eink_mode_desc">适用于电子纸屏幕。开启下方三项设置，并选用 Alpha 棋子、灰度棋盘、无棋子动画、全屏和精简控件。每项设置仍可单独更改。关闭此模式会恢复之前的设置，但保留开启后手动更改的设置。</string>
+    <string name="pref_disable_drag">点按走棋</string>
+    <string name="pref_disable_drag_desc">先点按棋子，再点按目标格来走棋，无需拖动</string>
+    <string name="pref_eink_theme">电子墨水主题</string>
+    <string name="pref_eink_theme_desc">使用黑白界面和对话框，按钮带边框，无涟漪效果</string>
+    <string name="pref_reduce_animations">减少动画</string>
+    <string name="pref_reduce_animations_desc">关闭引擎进度条、按钮脉动和列表动画，避免在刷新较慢的屏幕上留下残影</string>
     <string name="pref_showCoords">坐标</string>
     <string name="pref_show_blindfold">盲棋</string>
     <string name="pref_show_possible_moves">显示可能走法</string>

@@ -73,6 +73,7 @@
     <string name="color_scheme_red">Rouge</string>
     <string name="color_scheme_yellow">Jaune</string>
     <string name="color_scheme_custom">Personnalisé</string>
+    <string name="color_scheme_eink">Niveaux de gris (encre électronique)</string>
     <string name="custom_square_colors">Couleurs personnalisées des cases</string>
     <string name="custom_dark_square_color">Case sombre</string>
     <string name="custom_light_square_color">Case claire</string>
@@ -330,6 +331,14 @@
     <string name="pref_minimal">Contrôles minimaux</string>
     <string name="pref_night_mode">Mode nuit</string>
     <string name="pref_night_mode_desc">Forcer l’application en mode nuit</string>
+    <string name="pref_eink_mode">Mode encre électronique</string>
+    <string name="pref_eink_mode_desc">Pour les écrans à encre électronique. Active les trois réglages ci-dessous et sélectionne les pièces Alpha, l’échiquier en niveaux de gris, les pièces sans animation, le plein écran et les commandes minimales. Chaque réglage reste modifiable séparément. La désactivation rétablit les réglages précédents, sauf ceux que vous avez modifiés depuis.</string>
+    <string name="pref_disable_drag">Toucher pour déplacer</string>
+    <string name="pref_disable_drag_desc">Déplacez les pièces en les touchant puis en touchant leur case de destination, au lieu de les faire glisser</string>
+    <string name="pref_eink_theme">Thème encre électronique</string>
+    <string name="pref_eink_theme_desc">Écrans et boîtes de dialogue en noir et blanc avec des boutons à contour et sans effets d’ondulation</string>
+    <string name="pref_reduce_animations">Réduire les animations</string>
+    <string name="pref_reduce_animations_desc">Supprime la barre de progression du moteur, les pulsations des boutons et les animations des listes, qui laissent des traces sur les écrans lents</string>
     <string name="pref_showCoords">Coordonnées</string>
     <string name="pref_show_blindfold">À l’aveugle</string>
     <string name="pref_show_possible_moves">Montrer les coups</string>

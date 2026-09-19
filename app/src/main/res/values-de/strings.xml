@@ -76,6 +76,7 @@
     <string name="color_scheme_red">Rot</string>
     <string name="color_scheme_yellow">Gelb</string>
     <string name="color_scheme_custom">Benutzerdefiniert</string>
+    <string name="color_scheme_eink">Graustufen (E-Ink)</string>
     <string name="custom_square_colors">Benutzerdefinierte Feldfarben</string>
     <string name="custom_dark_square_color">Dunkles Feld</string>
     <string name="custom_light_square_color">Helles Feld</string>
@@ -340,6 +341,14 @@
     <string name="pref_minimal">Minimale Bedienelemente</string>
     <string name="pref_night_mode">Nachtmodus</string>
     <string name="pref_night_mode_desc">Erzwingt den Nachtmodus in der App</string>
+    <string name="pref_eink_mode">E-Ink-Modus</string>
+    <string name="pref_eink_mode_desc">Für E-Paper-Bildschirme. Aktiviert die drei folgenden Einstellungen und wählt die Alpha-Figuren, das Graustufenbrett, keine Figurenanimation, Vollbild und minimale Bedienelemente. Jede Einstellung lässt sich weiterhin einzeln ändern. Beim Ausschalten werden die vorherigen Einstellungen wiederhergestellt, außer denen, die du seitdem geändert hast.</string>
+    <string name="pref_disable_drag">Tippen zum Ziehen</string>
+    <string name="pref_disable_drag_desc">Bewege Figuren, indem du erst auf die Figur und dann auf das Zielfeld tippst, statt sie zu ziehen</string>
+    <string name="pref_eink_theme">E-Ink-Design</string>
+    <string name="pref_eink_theme_desc">Schwarz-weiße Ansichten und Dialoge mit umrandeten Schaltflächen und ohne Welleneffekte</string>
+    <string name="pref_reduce_animations">Animationen reduzieren</string>
+    <string name="pref_reduce_animations_desc">Keine Engine-Fortschrittsanzeige, pulsierenden Schaltflächen oder Listenanimationen, die auf langsamen Bildschirmen Schlieren hinterlassen</string>
     <string name="pref_showCoords">Koordinaten</string>
     <string name="pref_show_blindfold">Blindschach</string>
     <string name="pref_show_possible_moves">Züge anzeigen</string>
