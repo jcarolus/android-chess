@@ -5,25 +5,22 @@ import androidx.core.graphics.ColorUtils;
 import jwtc.android.chess.R;
 
 public class ColorSchemes {
+
+    // The CUSTOM_COLOR_SCHEME row only supplies [3] to [5]; its square colours
+    // come from customDarkColor and customLightColor.
     public static final int CUSTOM_COLOR_SCHEME = 9;
+    public static final int EINK_COLOR_SCHEME = 10; // Greyscale scheme for e-ink screens
 
-    /**
-     * Greyscale scheme for e-ink screens, the last entry of the colour scheme
-     * dropdown. The saved "colorscheme" preference is a positional index into
-     * that list, so this must stay in step with the "colorschemes" array.
-     */
-    public static final int EINK = 10;
+    public static final int DARK_SQUARE = 0;
+    public static final int LIGHT_SQUARE = 1;
+    public static final int SELECTED_SQUARE = 2;
+    public static final int HIGHLIGHT = 3;
+    public static final int COORD_BACKGROUND = 4;
+    public static final int COORD_TEXT = 5;
 
-    /**
-     * Per scheme: [0] dark square, [1] light square, [2] selected square,
-     * [3] last-move / check highlight (drawn over the square, so translucent
-     * for the colour schemes), [4] coordinate label background,
-     * [5] coordinate label text.
-     *
-     * The CUSTOM_COLOR_SCHEME row only supplies [3] to [5]; its square colours
-     * come from customDarkColor and customLightColor.
-     */
-    private static final int[][] colorScheme = new int[EINK + 1][6];
+
+    // [color scheme index] x [color index]
+    private static final int[][] colorScheme = new int[11][6];
 
     private static final int DEFAULT_HIGHLIGHT = 0x66ffff00;
     private static final int DEFAULT_COORD_BACKGROUND = 0x99ffffff;
@@ -38,50 +35,77 @@ public class ColorSchemes {
     private static int customLightColor = 0xffFFCC78;
 
     static {
-        colorScheme[0][0] = 0xeeFAAE2F;
-        colorScheme[0][1] = 0xeeFFCC78;
-        colorScheme[0][2] = 0xffFFE1B0;
-        colorScheme[0][3] = 0xffFFE1B0;
+        colorScheme[0][DARK_SQUARE] = 0xeeFAAE2F;
+        colorScheme[0][LIGHT_SQUARE] = 0xeeFFCC78;
+        colorScheme[0][SELECTED_SQUARE] = 0xffFFE1B0;
+        colorScheme[0][HIGHLIGHT] = 0xffFFE1B0;
+        colorScheme[0][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[0][COORD_TEXT] = DEFAULT_COORD_TEXT;
 
-        colorScheme[1][0] = 0xee629EFC;
-        colorScheme[1][1] = 0xee93BBFA;
-        colorScheme[1][2] = 0xffCDEDF7;
-        colorScheme[1][3] = 0xffCDEDF7;
 
-        colorScheme[2][0] = 0xee488C1D;
-        colorScheme[2][1] = 0xee71B04A;
-        colorScheme[2][2] = 0xffB0E092;
-        colorScheme[2][3] = 0xffB0E092;
+        colorScheme[1][DARK_SQUARE] = 0xee629EFC;
+        colorScheme[1][LIGHT_SQUARE] = 0xee93BBFA;
+        colorScheme[1][SELECTED_SQUARE] = 0xffCDEDF7;
+        colorScheme[1][HIGHLIGHT] = 0xffCDEDF7;
+        colorScheme[1][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[1][COORD_TEXT] = DEFAULT_COORD_TEXT;
 
-        colorScheme[3][0] = 0xee444444;
-        colorScheme[3][1] = 0xee777777;
-        colorScheme[3][2] = 0xffCCCCCC;
-        colorScheme[3][3] = 0xffCCCCCC;
+        colorScheme[2][DARK_SQUARE] = 0xee488C1D;
+        colorScheme[2][LIGHT_SQUARE] = 0xee71B04A;
+        colorScheme[2][SELECTED_SQUARE] = 0xffB0E092;
+        colorScheme[2][HIGHLIGHT] = 0xffB0E092;
+        colorScheme[2][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[2][COORD_TEXT] = DEFAULT_COORD_TEXT;
 
-        colorScheme[4][0] = 0xeeAD5F2F;
-        colorScheme[4][1] = 0xeeBD8562;
-        colorScheme[4][2] = 0xffFFC5A1;
-        colorScheme[4][3] = 0xffFFC5A1;
+        colorScheme[3][DARK_SQUARE] = 0xee444444;
+        colorScheme[3][LIGHT_SQUARE] = 0xee777777;
+        colorScheme[3][SELECTED_SQUARE] = 0xffCCCCCC;
+        colorScheme[3][HIGHLIGHT] = 0xffCCCCCC;
+        colorScheme[3][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[3][COORD_TEXT] = DEFAULT_COORD_TEXT;
 
-        colorScheme[5][0] = 0xeeEB573D;
-        colorScheme[5][1] = 0xeeF77159;
-        colorScheme[5][2] = 0xffFFAB9C;
-        colorScheme[5][3] = 0xffFFAB9C;
+        colorScheme[4][DARK_SQUARE] = 0xeeAD5F2F;
+        colorScheme[4][LIGHT_SQUARE] = 0xeeBD8562;
+        colorScheme[4][SELECTED_SQUARE] = 0xffFFC5A1;
+        colorScheme[4][HIGHLIGHT] = 0xffFFC5A1;
+        colorScheme[4][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[4][COORD_TEXT] = DEFAULT_COORD_TEXT;
 
-        colorScheme[6][0] = 0xeeFC9432;
-        colorScheme[6][1] = 0xeeFCB26D;
-        colorScheme[6][2] = 0xffFFC894;
-        colorScheme[6][3] = 0xffFFC894;
+        colorScheme[5][DARK_SQUARE] = 0xeeEB573D;
+        colorScheme[5][LIGHT_SQUARE] = 0xeeF77159;
+        colorScheme[5][SELECTED_SQUARE] = 0xffFFAB9C;
+        colorScheme[5][HIGHLIGHT] = 0xffFFAB9C;
+        colorScheme[5][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[5][COORD_TEXT] = DEFAULT_COORD_TEXT;
 
-        colorScheme[7][0] = 0xeeF55FE3;
-        colorScheme[7][1] = 0xeeFA7FEB;
-        colorScheme[7][2] = 0xffFFB3F6;
-        colorScheme[7][3] = 0xffFFB3F6;
+        colorScheme[6][DARK_SQUARE] = 0xeeFC9432;
+        colorScheme[6][LIGHT_SQUARE] = 0xeeFCB26D;
+        colorScheme[6][SELECTED_SQUARE] = 0xffFFC894;
+        colorScheme[6][HIGHLIGHT] = 0xffFFC894;
+        colorScheme[6][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[6][COORD_TEXT] = DEFAULT_COORD_TEXT;
 
-        colorScheme[8][0] = 0xee805ad5;
-        colorScheme[8][1] = 0xeeac8eed;
-        colorScheme[8][2] = 0xffFCD2F7;
-        colorScheme[8][3] = 0xffFCD2F7;
+        colorScheme[7][DARK_SQUARE] = 0xeeF55FE3;
+        colorScheme[7][LIGHT_SQUARE] = 0xeeFA7FEB;
+        colorScheme[7][SELECTED_SQUARE] = 0xffFFB3F6;
+        colorScheme[7][HIGHLIGHT] = 0xffFFB3F6;
+        colorScheme[7][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[7][COORD_TEXT] = DEFAULT_COORD_TEXT;
+
+        colorScheme[8][DARK_SQUARE] = 0xee805ad5;
+        colorScheme[8][LIGHT_SQUARE] = 0xeeac8eed;
+        colorScheme[8][SELECTED_SQUARE] = 0xffFCD2F7;
+        colorScheme[8][HIGHLIGHT] = 0xffFCD2F7;
+        colorScheme[8][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[8][COORD_TEXT] = DEFAULT_COORD_TEXT;
+
+        // initialized, but not all are used
+        colorScheme[CUSTOM_COLOR_SCHEME][DARK_SQUARE] = 0xee805ad5;
+        colorScheme[CUSTOM_COLOR_SCHEME][LIGHT_SQUARE] = 0xeeac8eed;
+        colorScheme[CUSTOM_COLOR_SCHEME][SELECTED_SQUARE] = 0xffFCD2F7;
+        colorScheme[CUSTOM_COLOR_SCHEME][HIGHLIGHT] = DEFAULT_HIGHLIGHT;
+        colorScheme[CUSTOM_COLOR_SCHEME][COORD_BACKGROUND] = DEFAULT_COORD_BACKGROUND;
+        colorScheme[CUSTOM_COLOR_SCHEME][COORD_TEXT] = DEFAULT_COORD_TEXT;
 
         // Greyscale scheme for e-ink displays.
         //
@@ -91,47 +115,39 @@ public class ColorSchemes {
         // one of the 16 panel levels) rather than anything darker: Alpha black
         // pieces are solid #101010 with no light outline, so they lose contrast
         // against a dark square. Kept in step with @color/einkBoardDark.
-        colorScheme[EINK][0] = 0xffbbbbbb; // dark square
-        colorScheme[EINK][1] = 0xffffffff; // light square
-        colorScheme[EINK][2] = 0xff4d4d4d; // selected square
-        colorScheme[EINK][3] = 0x40000000; // last-move wash, darkens either square
-        colorScheme[EINK][4] = 0xffffffff; // coordinate background, opaque
-        colorScheme[EINK][5] = 0xff000000; // coordinate text, opaque
+        colorScheme[EINK_COLOR_SCHEME][DARK_SQUARE] = 0xffbbbbbb; // dark square
+        colorScheme[EINK_COLOR_SCHEME][LIGHT_SQUARE] = 0xffffffff; // light square
+        colorScheme[EINK_COLOR_SCHEME][SELECTED_SQUARE] = 0xff4d4d4d; // selected square
+        colorScheme[EINK_COLOR_SCHEME][HIGHLIGHT] = 0x40000000; // last-move wash, darkens either square
+        colorScheme[EINK_COLOR_SCHEME][COORD_BACKGROUND] = 0xffffffff; // coordinate background, opaque
+        colorScheme[EINK_COLOR_SCHEME][COORD_TEXT] = 0xff000000; // coordinate text, opaque
 
-        // The colour schemes, custom included, all shared one hardcoded
-        // highlight and one hardcoded pair of coordinate colours; keep those
-        // values so their appearance is unchanged.
-        for (int i = 0; i < EINK; i++) {
-            colorScheme[i][3] = DEFAULT_HIGHLIGHT;
-            colorScheme[i][4] = DEFAULT_COORD_BACKGROUND;
-            colorScheme[i][5] = DEFAULT_COORD_TEXT;
-        }
     }
 
     public static int getLight() {
         int color = selectedColorScheme == CUSTOM_COLOR_SCHEME
             ? customLightColor
-            : colorScheme[selectedColorScheme][1];
+            : colorScheme[selectedColorScheme][LIGHT_SQUARE];
         return desaturateColor(color, ColorSchemes.saturationFactor);
     }
 
     public static int getDark() {
         int color = selectedColorScheme == CUSTOM_COLOR_SCHEME
             ? customDarkColor
-            : colorScheme[selectedColorScheme][0];
+            : colorScheme[selectedColorScheme][DARK_SQUARE];
         return desaturateColor(color, ColorSchemes.saturationFactor);
     }
 
     public static int getHightlightColor() {
-        return colorScheme[selectedColorScheme][3];
+        return colorScheme[selectedColorScheme][HIGHLIGHT];
     }
 
     public static int getCoordBackgroundColor() {
-        return colorScheme[selectedColorScheme][4];
+        return colorScheme[selectedColorScheme][COORD_BACKGROUND];
     }
 
     public static int getCoordTextColor() {
-        return colorScheme[selectedColorScheme][5];
+        return colorScheme[selectedColorScheme][COORD_TEXT];
     }
 
     public static int getSelectedColor() {

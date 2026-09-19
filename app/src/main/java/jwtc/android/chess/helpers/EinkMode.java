@@ -65,7 +65,7 @@ public class EinkMode {
         // Alpha is the only flat, gradient-free set; the others lose detail in grey.
         new Setting("pieceset", String.valueOf(PieceSets.ALPHA), "0"),
         // Mid-grey and white; the coloured schemes collapse into similar greys.
-        new Setting("colorscheme", String.valueOf(ColorSchemes.EINK), "0"),
+        new Setting("colorscheme", String.valueOf(ColorSchemes.EINK_COLOR_SCHEME), "0"),
         // The tile patterns are alpha gradients.
         new Setting("squarePattern", "0", "0"),
         // The status bar keeps redrawing (clock, wifi, battery).
