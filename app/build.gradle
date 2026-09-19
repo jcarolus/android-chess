@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+    androidResources {
+        generateLocaleConfig true
+    }
+
     signingConfigs {
         config {
             storeFile file('../../android-keystore')
