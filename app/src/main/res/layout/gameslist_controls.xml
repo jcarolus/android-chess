@@ -79,21 +79,21 @@
                 android:text="Open"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEdit"
                 android:text="Edit"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDelete"
                 android:text="Delete"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <TextView

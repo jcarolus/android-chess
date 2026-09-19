@@ -12,7 +12,9 @@ public class ResultDialog<T> extends Dialog {
     protected ResultDialogListener<T> listener;
 
     public ResultDialog(@NonNull Context context, ResultDialogListener<T> listener, int requestCode) {
-        super(context, R.style.ChessDialogTheme);
+        // The dialog theme was hardcoded, so every dialog kept the colour palette
+        // even with the e-ink theme on.
+        super(context, EinkMode.isThemeEnabled() ? R.style.ChessDialogThemeEink : R.style.ChessDialogTheme);
 
         this.listener = listener;
         this.requestCode = requestCode;

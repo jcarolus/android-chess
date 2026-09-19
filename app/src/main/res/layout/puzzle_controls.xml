@@ -29,7 +29,7 @@
                 android:id="@+id/ButtonPuzzlePrevious"
                 app:icon="@drawable/ic_chevron_left"
                 android:contentDescription="@string/button_previous_position"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <View
                 android:layout_width="0dp"
@@ -40,13 +40,13 @@
                 android:id="@+id/ButtonPuzzleShow"
                 android:text="@string/puzzle_show"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleRetry"
                 app:icon="@drawable/ic_arrow_clockwise"
                 android:contentDescription="@string/button_reset_position"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <View
                 android:layout_width="0dp"
@@ -57,7 +57,7 @@
                 android:id="@+id/ButtonPuzzleNext"
                 app:icon="@drawable/ic_chevron_right"
                 android:contentDescription="@string/button_next_position"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
         </LinearLayout>
 

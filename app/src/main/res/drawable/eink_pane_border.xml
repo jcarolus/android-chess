@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Replaces the translucent paneBackgroundColor fill on e-ink. A 12% alpha
+    tint over white is a featureless light-grey slab on a reflective panel: it
+    reads as a mystery block rather than as a container. An outline delimits the
+    same area while leaving the interior white, so text inside keeps full
+    contrast and far fewer pixels change when the pane updates.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/einkForeground" />
+</shape>

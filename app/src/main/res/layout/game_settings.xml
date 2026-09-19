@@ -28,14 +28,18 @@
                     android:layout_height="wrap_content"
                     android:insetBottom="0dp"
                     android:text="@string/options_play_android"
-                    android:id="@+id/radioAndroid" />
+                    android:id="@+id/radioAndroid"
+                    style="?attr/chessToggleButtonStyle"
+                />
 
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:insetTop="0dp"
                     android:text="@string/options_play_human"
-                    android:id="@+id/radioHuman" />
+                    android:id="@+id/radioHuman"
+                    style="?attr/chessToggleButtonStyle"
+                />
             </com.google.android.material.button.MaterialButtonToggleGroup>
         </com.google.android.material.card.MaterialCardView>
 
@@ -54,14 +58,18 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/options_play_white"
-                    android:id="@+id/radioWhite" />
+                    android:id="@+id/radioWhite"
+                    style="?attr/chessToggleButtonStyle"
+                />
 
                 <com.google.android.material.button.MaterialButton
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="@string/options_play_black"
-                    android:id="@+id/radioBlack" />
+                    android:id="@+id/radioBlack"
+                    style="?attr/chessToggleButtonStyle"
+                />
             </com.google.android.material.button.MaterialButtonToggleGroup>
         </com.google.android.material.card.MaterialCardView>
 
@@ -97,14 +105,18 @@
                         android:text="@string/options_level_time"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        style="?attr/chessToggleButtonStyle"
+                    />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioOptionsPly"
                         android:text="@string/options_level_ply"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        style="?attr/chessToggleButtonStyle"
+                    />
                 </com.google.android.material.button.MaterialButtonToggleGroup>
 
                 <jwtc.android.chess.views.FixedDropdownView
@@ -134,21 +146,21 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonCancel"
                 android:text="@string/button_cancel"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="2dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonOk"
                 android:text="@string/button_ok"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="2dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

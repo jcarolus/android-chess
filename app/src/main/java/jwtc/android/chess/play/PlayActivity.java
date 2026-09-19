@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
@@ -230,6 +231,14 @@ public class PlayActivity extends ChessBoardActivity implements
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
         textViewEngineValue = findViewById(R.id.TextViewEngineValue);
+        if (EinkMode.isThemeEnabled()) {
+            // The evaluation is a bare number; a box around it just adds edges for
+            // the panel to render and reads as a control you can press. It carries
+            // no textColor of its own, so it also has to be pinned to black rather
+            // than inheriting a mid-grey default.
+            textViewEngineValue.setBackground(null);
+            textViewEngineValue.setTextColor(getResources().getColor(R.color.einkForeground, getTheme()));
+        }
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
         switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -266,6 +275,7 @@ public class PlayActivity extends ChessBoardActivity implements
         moveAdapter = new MoveRecyclerAdapter(this, gameApi, this);
         historyRecyclerView.setAdapter(moveAdapter);
         historyRecyclerView.setHorizontalScrollBarEnabled(true);
+        EinkMode.applyTo(historyRecyclerView);
 
         ecoService.load(getAssets());
     }
@@ -522,7 +532,10 @@ public class PlayActivity extends ChessBoardActivity implements
     @Override
     public void OnEngineInfo(String message, float value) {
         textViewEngineValue.setText(String.format("%.1f", value));
-        if (textViewInfoBalloon != null && textViewInfoBalloon.getParent() != null) {
+        // With reduced animations the balloon is left alone: a principal
+        // variation rewritten mid-search is a steady stream of e-ink panel
+        // updates for text that is obsolete before it has finished rendering.
+        if (!EinkMode.isReduceAnimations() && textViewInfoBalloon != null && textViewInfoBalloon.getParent() != null) {
             textViewInfoBalloon.setText(message);
         }
     }
@@ -657,14 +670,21 @@ public class PlayActivity extends ChessBoardActivity implements
         int piece, turnAt;
         for (turnAt = 0; turnAt < 2; turnAt++) {
             for (piece = 0; piece < 5; piece++) {
-                ChessSquareView square = new ChessSquareView(this, piece);
-                if (turnAt == BoardConstants.WHITE) {
-                    capturedWhitePieces.addView(square);
-                } else {
-                    capturedBlackPieces.addView(square);
+                int numCaptured = jni.getNumCaptured(turnAt, piece);
+
+                // The empty slots are placeholders painted in the board colours,
+                // which on a greyscale panel read as a row of unexplained blocks
+                // rather than as "nothing captured yet". Only show a slot once it
+                // actually holds a piece.
+                if (numCaptured > 0 || !EinkMode.isThemeEnabled()) {
+                    ChessSquareView square = new ChessSquareView(this, piece);
+                    if (turnAt == BoardConstants.WHITE) {
+                        capturedWhitePieces.addView(square);
+                    } else {
+                        capturedBlackPieces.addView(square);
+                    }
                 }
 
-                int numCaptured = jni.getNumCaptured(turnAt, piece);
 //                Log.d(TAG, "numCaptured for " + turnAt + " " + piece + " " + numCaptured);
                 if (numCaptured > 0) {
                     ChessPieceView capturedPiece = new ChessPieceView(this, turnAt, piece, piece);
@@ -706,7 +726,10 @@ public class PlayActivity extends ChessBoardActivity implements
         if (showProgress) {
             playButton.setIconResource(R.drawable.box_arrow_up_right);
             //playButton.setVisibility(View.GONE);
-            progressBarEngine.setVisibility(View.VISIBLE);
+            // The indeterminate bar loops for as long as the engine thinks, which
+            // on e-ink is an unbroken refresh cycle. The button icon above
+            // already says the engine is busy, so leave the bar hidden.
+            progressBarEngine.setVisibility(EinkMode.isReduceAnimations() ? View.INVISIBLE : View.VISIBLE);
         } else {
             playButton.setIconResource(R.drawable.ic_robot);
             progressBarEngine.setVisibility(View.INVISIBLE);
@@ -926,7 +949,11 @@ public class PlayActivity extends ChessBoardActivity implements
         layoutEco.setVisibility(minimal ? View.GONE : View.VISIBLE);
         switchBlindfold.setVisibility(minimal ? View.GONE : View.VISIBLE);
         switchFlip.setVisibility(minimal ? View.GONE : View.VISIBLE);
-        textViewLastMove.setVisibility(minimal ? View.GONE : View.VISIBLE);
+        // INVISIBLE, not GONE: this is the stretched column of the controls row
+        // (stretchColumns="2"), so removing it collapses the row and drags the
+        // menu button in from the right edge. It costs no height either way, the
+        // row is already as tall as the buttons.
+        textViewLastMove.setVisibility(minimal ? View.INVISIBLE : View.VISIBLE);
         textViewWhitePieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
         textViewBlackPieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
         requestBoardLayoutSizingUpdate();

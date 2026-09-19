@@ -1,5 +1,6 @@
 package jwtc.android.chess.ics;
 
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.*;
 
 import android.app.Dialog;
@@ -23,7 +24,7 @@ public class ICSGameOverDlg extends Dialog {
 
 
     public ICSGameOverDlg(Context context) {
-        super(context, R.style.ChessDialogTheme);
+        super(context, EinkMode.isThemeEnabled() ? R.style.ChessDialogThemeEink : R.style.ChessDialogTheme);
 
         _parent = (ICSClient) context;
 

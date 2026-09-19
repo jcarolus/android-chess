@@ -25,14 +25,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonClip"
-                style="@style/ChessImageButton"
+                style="?attr/chessImageButtonStyle"
                 app:icon="@drawable/ic_clipboard" />
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:text="@string/button_close"
                 android:id="@+id/ButtonClose"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </TableRow>
     </TableLayout>
 </LinearLayout>

@@ -6,7 +6,29 @@ import jwtc.android.chess.R;
 
 public class ColorSchemes {
     public static final int CUSTOM_COLOR_SCHEME = 9;
-    private static final int[][] colorScheme = new int[9][4];
+
+    /**
+     * Greyscale scheme for e-ink screens, the last entry of the colour scheme
+     * dropdown. The saved "colorscheme" preference is a positional index into
+     * that list, so this must stay in step with the "colorschemes" array.
+     */
+    public static final int EINK = 10;
+
+    /**
+     * Per scheme: [0] dark square, [1] light square, [2] selected square,
+     * [3] last-move / check highlight (drawn over the square, so translucent
+     * for the colour schemes), [4] coordinate label background,
+     * [5] coordinate label text.
+     *
+     * The CUSTOM_COLOR_SCHEME row only supplies [3] to [5]; its square colours
+     * come from customDarkColor and customLightColor.
+     */
+    private static final int[][] colorScheme = new int[EINK + 1][6];
+
+    private static final int DEFAULT_HIGHLIGHT = 0x66ffff00;
+    private static final int DEFAULT_COORD_BACKGROUND = 0x99ffffff;
+    private static final int DEFAULT_COORD_TEXT = 0x99000000;
+
     public static int selectedColorScheme = 0;
     public static boolean showCoords = false;
     public static boolean isRotated = false; // not ideal
@@ -60,6 +82,30 @@ public class ColorSchemes {
         colorScheme[8][1] = 0xeeac8eed;
         colorScheme[8][2] = 0xffFCD2F7;
         colorScheme[8][3] = 0xffFCD2F7;
+
+        // Greyscale scheme for e-ink displays.
+        //
+        // Squares are opaque (the colour schemes above are 0xee, which washes
+        // out on a reflective panel) and sit at levels an e-ink controller can
+        // hold cleanly. The dark square is deliberately a light grey (#bbbbbb,
+        // one of the 16 panel levels) rather than anything darker: Alpha black
+        // pieces are solid #101010 with no light outline, so they lose contrast
+        // against a dark square. Kept in step with @color/einkBoardDark.
+        colorScheme[EINK][0] = 0xffbbbbbb; // dark square
+        colorScheme[EINK][1] = 0xffffffff; // light square
+        colorScheme[EINK][2] = 0xff4d4d4d; // selected square
+        colorScheme[EINK][3] = 0x40000000; // last-move wash, darkens either square
+        colorScheme[EINK][4] = 0xffffffff; // coordinate background, opaque
+        colorScheme[EINK][5] = 0xff000000; // coordinate text, opaque
+
+        // The colour schemes, custom included, all shared one hardcoded
+        // highlight and one hardcoded pair of coordinate colours; keep those
+        // values so their appearance is unchanged.
+        for (int i = 0; i < EINK; i++) {
+            colorScheme[i][3] = DEFAULT_HIGHLIGHT;
+            colorScheme[i][4] = DEFAULT_COORD_BACKGROUND;
+            colorScheme[i][5] = DEFAULT_COORD_TEXT;
+        }
     }
 
     public static int getLight() {
@@ -77,7 +123,15 @@ public class ColorSchemes {
     }
 
     public static int getHightlightColor() {
-        return 0x66ffff00; // colorScheme[selectedColorScheme][3];
+        return colorScheme[selectedColorScheme][3];
+    }
+
+    public static int getCoordBackgroundColor() {
+        return colorScheme[selectedColorScheme][4];
+    }
+
+    public static int getCoordTextColor() {
+        return colorScheme[selectedColorScheme][5];
     }
 
     public static int getSelectedColor() {

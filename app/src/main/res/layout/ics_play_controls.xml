@@ -19,17 +19,17 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonICSExamineBackward"
                 app:icon="@drawable/ic_chevron_left"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonICSExamineForward"
                 app:icon="@drawable/ic_chevron_right"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonICSExamineRevert"
                 app:icon="@drawable/ic_backspace"
-                style="@style/ChessImageButton"
+                style="?attr/chessImageButtonStyle"
                 android:layout_marginEnd="30dp" />
         </LinearLayout>
 
@@ -46,7 +46,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDraw"
@@ -54,7 +54,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonFlag"
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <LinearLayout
@@ -73,17 +73,17 @@
                 android:layout_width="wrap_content"
                 android:text="@string/button_close"
                 android:id="@+id/ButtonClose"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonTakeBack"
                 app:icon="@drawable/ic_backspace"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonRefresh"
                 app:icon="@drawable/ic_arrow_clockwise"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
         </LinearLayout>
 
         <com.google.android.material.switchmaterial.SwitchMaterial

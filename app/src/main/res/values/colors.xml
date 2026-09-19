@@ -13,4 +13,17 @@
     <color name="primaryColorDisabled">#888888</color>
     <color name="wrongColor">#D96227</color>
     <color name="paneBackgroundColor">#20879FB6</color>
+
+    <!--
+        E-ink palette. Not under values-night: night mode keeps the saturated
+        blue and green accents, which is the opposite of what a reflective
+        greyscale panel needs. Opaque throughout, so nothing has to be dithered.
+    -->
+    <color name="einkBackground">#ffffff</color>
+    <color name="einkForeground">#000000</color>
+    <!--
+        Same grey as the dark board square in ColorSchemes.EINK; keep the two in
+        step. Currently not referenced by any drawable or colour state list.
+    -->
+    <color name="einkBoardDark">#bbbbbb</color>
 </resources>
