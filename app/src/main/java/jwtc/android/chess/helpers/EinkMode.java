@@ -96,6 +96,7 @@ public class EinkMode {
      */
     public static void applyPreset(SharedPreferences prefs) {
         prefs.edit()
+            .putBoolean("nightMode", false)
             .putBoolean("pref_use_piece_animation", false)
             .putString("pieceset", String.valueOf(PieceSets.ALPHA))
             .putString("colorscheme", String.valueOf(ColorSchemes.EINK_COLOR_SCHEME))

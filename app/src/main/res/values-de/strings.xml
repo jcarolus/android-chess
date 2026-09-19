@@ -342,7 +342,7 @@
     <string name="pref_night_mode">Nachtmodus</string>
     <string name="pref_night_mode_desc">Erzwingt den Nachtmodus in der App</string>
     <string name="pref_eink_mode">E-Ink-Einstellungen anwenden</string>
-    <string name="pref_eink_mode_desc">Für E-Paper-Bildschirme. Aktiviert die drei folgenden Einstellungen und wählt die Alpha-Figuren, das Graustufenbrett, keine Figurenanimation, Vollbild und minimale Bedienelemente. Jede Einstellung lässt sich weiterhin einzeln ändern.</string>
+    <string name="pref_eink_mode_desc">Für E-Paper-Bildschirme. Deaktiviert den Nachtmodus, aktiviert die drei folgenden Einstellungen und wählt die Alpha-Figuren, das Graustufenbrett, keine Figurenanimation, Vollbild und minimale Bedienelemente. Jede Einstellung lässt sich weiterhin einzeln ändern.</string>
     <string name="pref_disable_drag">Tippen zum Ziehen</string>
     <string name="pref_disable_drag_desc">Bewege Figuren, indem du erst auf die Figur und dann auf das Zielfeld tippst, statt sie zu ziehen</string>
     <string name="pref_eink_theme">E-Ink-Design</string>

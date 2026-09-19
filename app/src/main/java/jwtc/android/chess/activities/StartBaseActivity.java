@@ -71,7 +71,10 @@ public class StartBaseActivity extends AppCompatActivity {
             resources.updateConfiguration(configuration, displayMetrics);
         }
 
-        if (prefs.getBoolean("nightMode", false)) {
+        if (createdWithEinkTheme) {
+            // Following a dark system theme also conflicts with the e-ink palette.
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (prefs.getBoolean("nightMode", false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);

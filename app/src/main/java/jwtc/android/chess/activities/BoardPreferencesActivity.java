@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import androidx.core.graphics.ColorUtils;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -96,6 +97,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
             // Refresh controls before recreate() triggers onPause(), which saves
             // them and would otherwise overwrite the newly applied values.
             loadControls(getPrefs());
+            // Clear the active night configuration too; changing the saved
+            // preference alone leaves DayNight resources active until restart.
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             // Recreate to apply the theme selected during onCreate().
             recreate();
         });

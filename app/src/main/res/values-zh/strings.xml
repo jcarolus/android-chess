@@ -332,7 +332,7 @@
     <string name="pref_night_mode">夜间模式</string>
     <string name="pref_night_mode_desc">强制应用夜间模式</string>
     <string name="pref_eink_mode">应用电子墨水设置</string>
-    <string name="pref_eink_mode_desc">适用于电子纸屏幕。应用下方三项设置，并选用 Alpha 棋子、灰度棋盘、无棋子动画、全屏和精简控件。每项设置仍可单独更改。</string>
+    <string name="pref_eink_mode_desc">适用于电子纸屏幕。关闭夜间模式，应用下方三项设置，并选用 Alpha 棋子、灰度棋盘、无棋子动画、全屏和精简控件。每项设置仍可单独更改。</string>
     <string name="pref_disable_drag">点按走棋</string>
     <string name="pref_disable_drag_desc">先点按棋子，再点按目标格来走棋，无需拖动</string>
     <string name="pref_eink_theme">电子墨水主题</string>
