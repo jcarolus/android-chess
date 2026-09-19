@@ -201,6 +201,7 @@
     <string name="lichess_create_challenge_color_random">تصادفی</string>
     <string name="lichess_create_challenge_color_white">سفید</string>
     <string name="lichess_create_challenge_player">حریف</string>
+    <string name="lichess_create_challenge_player_required">ابتدا یک حریف وارد کنید.</string>
     <string name="lichess_create_challenge_rated">رتبه‌دار</string>
     <string name="lichess_create_challenge_time">زمان</string>
     <string name="lichess_create_challenge_time_control">کنترل زمان</string>

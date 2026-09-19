@@ -181,6 +181,7 @@
     <string name="lichess_create_challenge_color_random">Aleator</string>
     <string name="lichess_create_challenge_color_white">Alb</string>
     <string name="lichess_create_challenge_player">Adversar</string>
+    <string name="lichess_create_challenge_player_required">Introdu mai întâi un adversar.</string>
     <string name="lichess_create_challenge_rated">Cotată</string>
     <string name="lichess_create_challenge_time">Timp</string>
     <string name="lichess_create_challenge_time_control">Control timp</string>

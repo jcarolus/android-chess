@@ -181,6 +181,7 @@
     <string name="lichess_create_challenge_color_random">Случайно</string>
     <string name="lichess_create_challenge_color_white">Белые</string>
     <string name="lichess_create_challenge_player">Соперник</string>
+    <string name="lichess_create_challenge_player_required">Сначала введите имя соперника.</string>
     <string name="lichess_create_challenge_rated">Рейтинговая</string>
     <string name="lichess_create_challenge_time">Время</string>
     <string name="lichess_create_challenge_time_control">Контроль времени</string>

@@ -183,6 +183,7 @@
     <string name="lichess_create_challenge_color_random">عشوائي</string>
     <string name="lichess_create_challenge_color_white">أبيض</string>
     <string name="lichess_create_challenge_player">الخصم</string>
+    <string name="lichess_create_challenge_player_required">أدخل خصمًا أولاً.</string>
     <string name="lichess_create_challenge_rated">بتقييم</string>
     <string name="lichess_create_challenge_time">الوقت</string>
     <string name="lichess_create_challenge_time_control">التحكم بالوقت</string>

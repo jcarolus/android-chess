@@ -181,6 +181,7 @@
     <string name="lichess_create_challenge_color_random">Casuale</string>
     <string name="lichess_create_challenge_color_white">Bianco</string>
     <string name="lichess_create_challenge_player">Avversario</string>
+    <string name="lichess_create_challenge_player_required">Inserisci prima un avversario.</string>
     <string name="lichess_create_challenge_rated">Classificata</string>
     <string name="lichess_create_challenge_time">Tempo</string>
     <string name="lichess_create_challenge_time_control">Controllo del tempo</string>

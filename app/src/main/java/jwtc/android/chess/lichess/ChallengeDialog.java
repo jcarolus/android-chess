@@ -117,11 +117,14 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
             // username
             if (requestCode == REQUEST_CHALLENGE) {
-                String username = editTextPlayer.getText().toString();
-                if (!username.isEmpty()) {
-                    data.put("username", username);
-                    editor.putString("lichess_challenge_name", username);
+                String username = ChallengeRequest.normalizeUsername(editTextPlayer.getText().toString());
+                if (username == null) {
+                    editTextPlayer.setError(getContext().getString(R.string.lichess_create_challenge_player_required));
+                    return;
                 }
+                editTextPlayer.setError(null);
+                data.put("username", username);
+                editor.putString("lichess_challenge_name", username);
             }
 
             // timecontrol

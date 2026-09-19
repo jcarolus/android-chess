@@ -184,6 +184,7 @@
     <string name="lichess_create_challenge_color_random">Zufällig</string>
     <string name="lichess_create_challenge_color_white">Weiß</string>
     <string name="lichess_create_challenge_player">Gegner</string>
+    <string name="lichess_create_challenge_player_required">Gib zuerst einen Gegner ein.</string>
     <string name="lichess_create_challenge_rated">Gewertet</string>
     <string name="lichess_create_challenge_time">Zeit</string>
     <string name="lichess_create_challenge_time_control">Zeitkontrolle</string>

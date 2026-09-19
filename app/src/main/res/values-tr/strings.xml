@@ -181,6 +181,7 @@
     <string name="lichess_create_challenge_color_random">Rastgele</string>
     <string name="lichess_create_challenge_color_white">Beyaz</string>
     <string name="lichess_create_challenge_player">Rakip</string>
+    <string name="lichess_create_challenge_player_required">Önce bir rakip girin.</string>
     <string name="lichess_create_challenge_rated">Dereceli</string>
     <string name="lichess_create_challenge_time">Zaman</string>
     <string name="lichess_create_challenge_time_control">Zaman kontrolü</string>

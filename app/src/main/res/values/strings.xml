@@ -201,6 +201,7 @@
     <string name="lichess_create_challenge_color_random">Random</string>
     <string name="lichess_create_challenge_color_white">White</string>
     <string name="lichess_create_challenge_player">Opponent</string>
+    <string name="lichess_create_challenge_player_required">Enter an opponent first.</string>
     <string name="lichess_create_challenge_rated">Rated</string>
     <string name="lichess_create_challenge_time">Time</string>
     <string name="lichess_create_challenge_time_control">Time control</string>

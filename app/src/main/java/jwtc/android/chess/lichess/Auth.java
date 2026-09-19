@@ -131,14 +131,18 @@ public class Auth {
     }
 
     public void challenge(Map<String, Object> payload, AuthResponseHandler responseHandler) {
-        String username = (String) payload.get("username");
+        String challengePath = ChallengeRequest.pathFor(payload.get("username"));
+        if (challengePath == null) {
+            mainHandler.post(() -> responseHandler.onClose(false));
+            return;
+        }
         payload.remove("username");
         payload.put("keepAliveStream", true);
 
         if (challengeStream != null) {
             challengeStream.close();
         }
-        challengeStream = openStream("/api/challenge/" + username, payload, new NdJsonStream.Handler() {
+        challengeStream = openStream(challengePath, payload, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 mainHandler.post(() -> {

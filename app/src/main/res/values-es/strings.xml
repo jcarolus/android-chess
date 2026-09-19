@@ -184,6 +184,7 @@
     <string name="lichess_create_challenge_color_random">Aleatorio</string>
     <string name="lichess_create_challenge_color_white">Blancas</string>
     <string name="lichess_create_challenge_player">Oponente</string>
+    <string name="lichess_create_challenge_player_required">Introduce primero un oponente.</string>
     <string name="lichess_create_challenge_rated">Puntuada</string>
     <string name="lichess_create_challenge_time">Tiempo</string>
     <string name="lichess_create_challenge_time_control">Control de tiempo</string>

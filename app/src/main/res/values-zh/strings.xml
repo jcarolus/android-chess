@@ -181,6 +181,7 @@
     <string name="lichess_create_challenge_color_random">随机</string>
     <string name="lichess_create_challenge_color_white">白方</string>
     <string name="lichess_create_challenge_player">对手</string>
+    <string name="lichess_create_challenge_player_required">请先输入对手。</string>
     <string name="lichess_create_challenge_rated">有评级</string>
     <string name="lichess_create_challenge_time">时间</string>
     <string name="lichess_create_challenge_time_control">用时</string>
