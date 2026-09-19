@@ -118,7 +118,7 @@ public class ColorSchemes {
         colorScheme[EINK_COLOR_SCHEME][DARK_SQUARE] = 0xffbbbbbb; // dark square
         colorScheme[EINK_COLOR_SCHEME][LIGHT_SQUARE] = 0xffffffff; // light square
         colorScheme[EINK_COLOR_SCHEME][SELECTED_SQUARE] = 0xff4d4d4d; // selected square
-        colorScheme[EINK_COLOR_SCHEME][HIGHLIGHT] = 0x40000000; // last-move wash, darkens either square
+        colorScheme[EINK_COLOR_SCHEME][HIGHLIGHT] = 0xff666666; // last-move
         colorScheme[EINK_COLOR_SCHEME][COORD_BACKGROUND] = 0xffffffff; // coordinate background, opaque
         colorScheme[EINK_COLOR_SCHEME][COORD_TEXT] = 0xff000000; // coordinate text, opaque
 
