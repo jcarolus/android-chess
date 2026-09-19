@@ -366,8 +366,8 @@
     <string name="pref_minimal">Minimal controls</string>
     <string name="pref_night_mode">Night mode</string>
     <string name="pref_night_mode_desc">Force the app into night mode</string>
-    <string name="pref_eink_mode">E-ink mode</string>
-    <string name="pref_eink_mode_desc">For e-paper screens. Switches on the three settings below and picks the Alpha pieces, the greyscale board, no piece animation, full screen and minimal controls. Each can still be changed on its own. Switching it off puts back what you had before, except settings you have changed since.</string>
+    <string name="pref_eink_mode">Apply e-ink settings</string>
+    <string name="pref_eink_mode_desc">For e-paper screens. Switches on the three settings below and picks the Alpha pieces, the greyscale board, no piece animation, full screen and minimal controls. Each can still be changed on its own.</string>
     <string name="pref_disable_drag">Tap to move</string>
     <string name="pref_disable_drag_desc">Move pieces by tapping them and then their destination, instead of dragging</string>
     <string name="pref_eink_theme">E-ink theme</string>

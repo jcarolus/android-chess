@@ -26,7 +26,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxUsePieceAnimation, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode, checkBoxEinkMode, checkBoxDisableDrag, checkBoxEinkTheme, checkBoxReduceAnimations;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxUsePieceAnimation, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode, checkBoxDisableDrag, checkBoxEinkTheme, checkBoxReduceAnimations;
     private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
     private LinearLayout customColorControls;
@@ -52,7 +52,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
         checkBoxHapticFeedback = findViewById(R.id.CheckBoxUseHapticFeedback);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
-        checkBoxEinkMode = findViewById(R.id.CheckBoxEinkMode);
         checkBoxDisableDrag = findViewById(R.id.CheckBoxDisableDrag);
         checkBoxEinkTheme = findViewById(R.id.CheckBoxEinkTheme);
         checkBoxReduceAnimations = findViewById(R.id.CheckBoxReduceAnimations);
@@ -90,26 +89,14 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
             chessBoardView.invalidateSquares();
         });
 
-        checkBoxEinkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked == EinkMode.isEnabled()) {
-                // Fired by setChecked while restoring state, not by the user.
-                // Not tested with isPressed(): a TalkBack double-tap or a
-                // keyboard toggle is a real change but never presses the view.
-                return;
-            }
-            // Save first, so choices made on this screen are the ones the preset
-            // remembers and puts back later.
+        findViewById(R.id.ButtonApplyEinkSettings).setOnClickListener(view -> {
+            // Preserve edits to settings outside the preset before recreating.
             saveControls();
-            if (isChecked) {
-                EinkMode.applyPreset(getPrefs());
-            } else {
-                EinkMode.revertPreset(getPrefs());
-            }
-            // onPause runs again before the recreate and saves the controls; show
-            // the preset's values first, or the old ones would be written back.
+            EinkMode.applyPreset(getPrefs());
+            // Refresh controls before recreate() triggers onPause(), which saves
+            // them and would otherwise overwrite the newly applied values.
             loadControls(getPrefs());
-            // The theme decides the button, switch and pane styling and is chosen
-            // in onCreate, so this screen has to come back up to restyle itself.
+            // Recreate to apply the theme selected during onCreate().
             recreate();
         });
 
@@ -160,7 +147,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
         checkBoxHapticFeedback.setChecked(prefs.getBoolean("useHapticFeedback", false));
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
-        checkBoxEinkMode.setChecked(prefs.getBoolean(EinkMode.PREF_KEY, false));
         checkBoxDisableDrag.setChecked(prefs.getBoolean(EinkMode.PREF_DISABLE_DRAG, false));
         checkBoxEinkTheme.setChecked(prefs.getBoolean(EinkMode.PREF_THEME, false));
         checkBoxReduceAnimations.setChecked(prefs.getBoolean(EinkMode.PREF_REDUCE_ANIMATIONS, false));
@@ -198,8 +184,6 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
         editor.putBoolean("useHapticFeedback", checkBoxHapticFeedback.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
-        // Not einkMode: the preset is only ever switched through EinkMode, which
-        // also writes and restores the settings it covers.
         editor.putBoolean(EinkMode.PREF_DISABLE_DRAG, checkBoxDisableDrag.isChecked());
         editor.putBoolean(EinkMode.PREF_THEME, checkBoxEinkTheme.isChecked());
         editor.putBoolean(EinkMode.PREF_REDUCE_ANIMATIONS, checkBoxReduceAnimations.isChecked());

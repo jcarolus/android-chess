@@ -331,8 +331,8 @@
     <string name="pref_minimal">Controles mínimos</string>
     <string name="pref_night_mode">Modo noturno</string>
     <string name="pref_night_mode_desc">Forçar app em modo noturno</string>
-    <string name="pref_eink_mode">Modo de tinta eletrônica</string>
-    <string name="pref_eink_mode_desc">Para telas de papel eletrônico. Ativa as três configurações abaixo e seleciona as peças Alpha, o tabuleiro em tons de cinza, as peças sem animação, a tela cheia e os controles mínimos. Cada configuração ainda pode ser alterada individualmente. Ao desativar este modo, as configurações anteriores são restauradas, exceto as que você tiver alterado desde a ativação.</string>
+    <string name="pref_eink_mode">Aplicar configurações de tinta eletrônica</string>
+    <string name="pref_eink_mode_desc">Para telas de papel eletrônico. Ativa as três configurações abaixo e seleciona as peças Alpha, o tabuleiro em tons de cinza, as peças sem animação, a tela cheia e os controles mínimos. Cada configuração ainda pode ser alterada individualmente.</string>
     <string name="pref_disable_drag">Tocar para mover</string>
     <string name="pref_disable_drag_desc">Mova as peças tocando nelas e depois na casa de destino, em vez de arrastá-las</string>
     <string name="pref_eink_theme">Tema de tinta eletrônica</string>

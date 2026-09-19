@@ -331,8 +331,8 @@
     <string name="pref_minimal">Minimal kontroller</string>
     <string name="pref_night_mode">Gece modu</string>
     <string name="pref_night_mode_desc">Uygulamayı gece modunda zorla</string>
-    <string name="pref_eink_mode">E-mürekkep modu</string>
-    <string name="pref_eink_mode_desc">Elektronik kâğıt ekranlar için. Aşağıdaki üç ayarı etkinleştirir ve Alpha taşlarını, gri tonlamalı tahtayı, taş animasyonu olmamasını, tam ekranı ve asgari kontrolleri seçer. Her ayar yine ayrı ayrı değiştirilebilir. Bu mod kapatıldığında, açıldıktan sonra değiştirdiğiniz ayarlar dışında önceki ayarlar geri yüklenir.</string>
+    <string name="pref_eink_mode">E-mürekkep ayarlarını uygula</string>
+    <string name="pref_eink_mode_desc">Elektronik kâğıt ekranlar için. Aşağıdaki üç ayarı etkinleştirir ve Alpha taşlarını, gri tonlamalı tahtayı, taş animasyonu olmamasını, tam ekranı ve asgari kontrolleri seçer. Her ayar yine ayrı ayrı değiştirilebilir.</string>
     <string name="pref_disable_drag">Dokunarak hamle yap</string>
     <string name="pref_disable_drag_desc">Taşları sürüklemek yerine önce taşa, ardından hedef kareye dokunarak hareket ettirin</string>
     <string name="pref_eink_theme">E-mürekkep teması</string>

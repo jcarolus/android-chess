@@ -331,8 +331,8 @@
     <string name="pref_minimal">Contrôles minimaux</string>
     <string name="pref_night_mode">Mode nuit</string>
     <string name="pref_night_mode_desc">Forcer l’application en mode nuit</string>
-    <string name="pref_eink_mode">Mode encre électronique</string>
-    <string name="pref_eink_mode_desc">Pour les écrans à encre électronique. Active les trois réglages ci-dessous et sélectionne les pièces Alpha, l’échiquier en niveaux de gris, les pièces sans animation, le plein écran et les commandes minimales. Chaque réglage reste modifiable séparément. La désactivation rétablit les réglages précédents, sauf ceux que vous avez modifiés depuis.</string>
+    <string name="pref_eink_mode">Appliquer les réglages e-ink</string>
+    <string name="pref_eink_mode_desc">Pour les écrans à encre électronique. Active les trois réglages ci-dessous et sélectionne les pièces Alpha, l’échiquier en niveaux de gris, les pièces sans animation, le plein écran et les commandes minimales. Chaque réglage reste modifiable séparément.</string>
     <string name="pref_disable_drag">Toucher pour déplacer</string>
     <string name="pref_disable_drag_desc">Déplacez les pièces en les touchant puis en touchant leur case de destination, au lieu de les faire glisser</string>
     <string name="pref_eink_theme">Thème encre électronique</string>

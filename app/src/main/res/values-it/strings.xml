@@ -331,8 +331,8 @@
     <string name="pref_minimal">Controlli minimi</string>
     <string name="pref_night_mode">Modalità notturna</string>
     <string name="pref_night_mode_desc">Forza l’app in modalità notte</string>
-    <string name="pref_eink_mode">Modalità e-ink</string>
-    <string name="pref_eink_mode_desc">Per schermi a inchiostro elettronico. Attiva le tre impostazioni seguenti e seleziona i pezzi Alpha, la scacchiera in scala di grigi, nessuna animazione dei pezzi, lo schermo intero e i controlli minimi. Ogni impostazione può comunque essere modificata singolarmente. Disattivando questa modalità si ripristinano le impostazioni precedenti, tranne quelle modificate nel frattempo.</string>
+    <string name="pref_eink_mode">Applica impostazioni e-ink</string>
+    <string name="pref_eink_mode_desc">Per schermi a inchiostro elettronico. Attiva le tre impostazioni seguenti e seleziona i pezzi Alpha, la scacchiera in scala di grigi, nessuna animazione dei pezzi, lo schermo intero e i controlli minimi. Ogni impostazione può comunque essere modificata singolarmente.</string>
     <string name="pref_disable_drag">Tocca per muovere</string>
     <string name="pref_disable_drag_desc">Muovi i pezzi toccandoli e poi toccando la casella di destinazione, invece di trascinarli</string>
     <string name="pref_eink_theme">Tema e-ink</string>
