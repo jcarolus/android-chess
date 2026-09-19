@@ -531,7 +531,12 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void OnEngineInfo(String message, float value) {
-        textViewEngineValue.setText(String.format("%.1f", value));
+        // Engine updates often leave the score unchanged at one decimal, so only
+        // redraw it when the text actually changes.
+        final String scoreText = String.format("%.1f", value);
+        if (!scoreText.contentEquals(textViewEngineValue.getText())) {
+            textViewEngineValue.setText(scoreText);
+        }
         // With reduced animations the balloon is left alone: a principal
         // variation rewritten mid-search is a steady stream of e-ink panel
         // updates for text that is obsolete before it has finished rendering.
@@ -825,8 +830,17 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void OnClockTime() {
-        textViewWhiteClockTIme.setText(localClock.getWhiteRemainingTime());
-        textViewBlackClockTime.setText(localClock.getBlackRemainingTime());
+        // The clock thread ticks every 500 ms, the displayed time only changes once
+        // a second, and the clock of the side not to move does not change at all,
+        // so most of these setText calls redrew an unchanged string.
+        final String whiteTime = localClock.getWhiteRemainingTime();
+        final String blackTime = localClock.getBlackRemainingTime();
+        if (!whiteTime.contentEquals(textViewWhiteClockTIme.getText())) {
+            textViewWhiteClockTIme.setText(whiteTime);
+        }
+        if (!blackTime.contentEquals(textViewBlackClockTime.getText())) {
+            textViewBlackClockTime.setText(blackTime);
+        }
 
         if (localClock.isClockConfigured()) {
             long white = localClock.getWhiteRemaining();
