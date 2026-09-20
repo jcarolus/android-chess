@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
     android:versionCode="297"
-    android:versionName="10.5.0">
+    android:versionName="10.6.0">
     <queries>
         <intent>
             <action
