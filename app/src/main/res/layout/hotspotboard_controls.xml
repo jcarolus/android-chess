@@ -30,7 +30,7 @@
                 android:text="@string/hotspot_connect"
                 android:layout_width="wrap_content"
                 android:layout_margin="8dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <LinearLayout
@@ -52,7 +52,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonCopyIp"
-                style="@style/ChessImageButton"
+                style="?attr/chessImageButtonStyle"
                 android:contentDescription="@string/hotspot_copy_ip"
                 android:visibility="gone"
                 app:icon="@drawable/ic_clipboard" />
@@ -61,7 +61,7 @@
                 android:id="@+id/ButtonDisconnect"
                 android:text="@string/hotspot_disconnect"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <LinearLayout
@@ -75,14 +75,14 @@
                 android:id="@+id/ButtonResign"
                 android:text="@string/hotspot_resign"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDraw"
                 android:text="@string/hotspot_draw"
                 android:layout_width="wrap_content"
                 android:layout_marginStart="16dp"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <LinearLayout
@@ -119,7 +119,7 @@
                 android:id="@+id/ButtonNew"
                 android:text="@string/hotspot_new"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <com.google.android.flexbox.FlexboxLayout

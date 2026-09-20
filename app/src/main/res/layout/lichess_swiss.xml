@@ -20,19 +20,19 @@
                 android:text="@string/lichess_swiss_back"
                 android:id="@+id/ButtonSwissTeamsBack"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_swiss_my_teams"
                 android:id="@+id/ButtonSwissMyTeams"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_swiss_all_teams"
                 android:id="@+id/ButtonSwissAllTeams"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <LinearLayout
@@ -56,7 +56,7 @@
                 android:text="@string/lichess_team_search"
                 android:id="@+id/ButtonSwissSearch"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <TextView
@@ -96,7 +96,7 @@
                 android:text="@string/lichess_swiss_prev"
                 android:id="@+id/ButtonSwissPrevPage"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <TextView
                 android:id="@+id/TextViewSwissPage"
@@ -110,7 +110,7 @@
                 android:text="@string/lichess_swiss_next"
                 android:id="@+id/ButtonSwissNextPage"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
     </LinearLayout>
 
@@ -131,7 +131,7 @@
                 android:text="@string/lichess_swiss_back"
                 android:id="@+id/ButtonSwissListBack"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <TextView
                 android:id="@+id/TextViewSwissTeamName"
@@ -146,7 +146,7 @@
                 android:text="@string/lichess_team_join"
                 android:id="@+id/ButtonTeamJoinLeave"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <TextView
@@ -168,7 +168,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:checkable="true"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_swiss_status_started"
@@ -176,7 +176,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:checkable="true"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_swiss_status_finished"
@@ -184,7 +184,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:checkable="true"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <TextView
@@ -228,7 +228,7 @@
                 android:text="@string/lichess_swiss_back"
                 android:id="@+id/ButtonSwissDetailBack"
                 android:layout_width="wrap_content"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <TextView
                 android:id="@+id/TextViewSwissName"
@@ -258,14 +258,14 @@
                 android:id="@+id/ButtonSwissJoin"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="4dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_swiss_withdraw"
                 android:id="@+id/ButtonSwissWithdraw"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="4dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <ProgressBar

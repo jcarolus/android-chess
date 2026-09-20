@@ -73,6 +73,7 @@
     <string name="color_scheme_red">Rosso</string>
     <string name="color_scheme_yellow">Giallo</string>
     <string name="color_scheme_custom">Personalizzato</string>
+    <string name="color_scheme_eink">Scala di grigi (e-ink)</string>
     <string name="custom_square_colors">Colori personalizzati delle caselle</string>
     <string name="custom_dark_square_color">Casella scura</string>
     <string name="custom_light_square_color">Casella chiara</string>
@@ -330,6 +331,14 @@
     <string name="pref_minimal">Controlli minimi</string>
     <string name="pref_night_mode">Modalità notturna</string>
     <string name="pref_night_mode_desc">Forza l’app in modalità notte</string>
+    <string name="pref_eink_mode">Applica impostazioni e-ink</string>
+    <string name="pref_eink_mode_desc">Per schermi a inchiostro elettronico. Disattiva la modalità notturna, attiva le tre impostazioni seguenti e seleziona i pezzi Alpha, la scacchiera in scala di grigi, nessuna animazione dei pezzi, lo schermo intero e i controlli minimi. Ogni impostazione può comunque essere modificata singolarmente.</string>
+    <string name="pref_disable_drag">Tocca per muovere</string>
+    <string name="pref_disable_drag_desc">Muovi i pezzi toccandoli e poi toccando la casella di destinazione, invece di trascinarli</string>
+    <string name="pref_eink_theme">Tema e-ink</string>
+    <string name="pref_eink_theme_desc">Schermate e finestre di dialogo in bianco e nero con pulsanti contornati e senza effetti a onda</string>
+    <string name="pref_reduce_animations">Riduci le animazioni</string>
+    <string name="pref_reduce_animations_desc">Nessuna barra di avanzamento del motore, pulsazione dei pulsanti o animazione degli elenchi, che lasciano scie sugli schermi lenti</string>
     <string name="pref_showCoords">Coordinate</string>
     <string name="pref_show_blindfold">Alla cieca</string>
     <string name="pref_show_possible_moves">Mostra mosse</string>

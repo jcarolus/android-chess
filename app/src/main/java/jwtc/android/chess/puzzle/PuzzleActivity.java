@@ -118,7 +118,8 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
         }
-        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
+
+        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), findViewById(R.id.play_board_top), findViewById(R.id.play_board_bottom));
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
     }

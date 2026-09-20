@@ -53,7 +53,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDraw"
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <LinearLayout
@@ -77,7 +77,7 @@
                 android:text="@string/puzzle_show"
                 android:layout_width="wrap_content"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <View
                 android:layout_width="0dp"
@@ -89,14 +89,14 @@
                 app:icon="@drawable/ic_arrow_clockwise"
                 android:contentDescription="@string/button_reset_position"
                 android:layout_margin="1dip"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleNext"
                 app:icon="@drawable/ic_chevron_right"
                 android:contentDescription="@string/button_next_position"
                 android:layout_margin="1dip"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
         </LinearLayout>
 
@@ -114,7 +114,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonConfirmMove"
@@ -123,7 +123,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <LinearLayout
@@ -140,7 +140,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSaveToDatabase"
@@ -149,7 +149,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_margin="1dip"
-                style="@style/ChessButton" />
+                style="?attr/chessButtonStyle" />
         </LinearLayout>
 
         <com.google.android.flexbox.FlexboxLayout

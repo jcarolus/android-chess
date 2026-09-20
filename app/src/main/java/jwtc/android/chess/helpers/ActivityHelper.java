@@ -64,6 +64,12 @@ public class ActivityHelper {
     }
 
     public static void pulseAnimation(View v, float factor, int repeatCount) {
+        if (EinkMode.isReduceAnimations()) {
+            // A repeated grow/shrink is a continuous partial refresh on e-ink,
+            // which ghosts. The view stays put instead.
+            return;
+        }
+
         ScaleAnimation pulse = new ScaleAnimation(
             1f, factor,          // fromX, toX
             1f, factor,          // fromY, toY

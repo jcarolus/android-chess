@@ -62,7 +62,7 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonPrevious"
                         app:icon="@drawable/ic_chevron_left"
-                        style="@style/ChessImageButton" />
+                        style="?attr/chessImageButtonStyle" />
 
                     <SeekBar
                         android:id="@+id/seekbar"
@@ -73,7 +73,7 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonNext"
                         app:icon="@drawable/ic_chevron_right"
-                        style="@style/ChessImageButton" />
+                        style="?attr/chessImageButtonStyle" />
 
                     <TextView
                         android:id="@+id/TextViewSeed"
@@ -96,21 +96,21 @@
                         android:text="@string/button_cancel"
                         android:layout_width="wrap_content"
                         android:layout_marginEnd="2dp"
-                        style="@style/ChessButton" />
+                        style="?attr/chessButtonStyle" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsRandom"
                         android:text="@string/choice_random"
                         android:layout_width="wrap_content"
                         android:layout_margin="2dp"
-                        style="@style/ChessButton" />
+                        style="?attr/chessButtonStyle" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsOk"
                         android:text="@string/button_ok"
                         android:layout_width="wrap_content"
                         android:layout_marginStart="2dp"
-                        style="@style/ChessButton" />
+                        style="?attr/chessButtonStyle" />
                 </TableRow>
 
             </TableLayout>

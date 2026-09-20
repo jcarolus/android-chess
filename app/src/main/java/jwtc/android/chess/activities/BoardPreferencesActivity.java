@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import androidx.core.graphics.ColorUtils;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -20,12 +21,13 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxUsePieceAnimation, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode;
+    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxUsePieceAnimation, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode, checkBoxDisableDrag, checkBoxEinkTheme, checkBoxReduceAnimations;
     private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
     private LinearLayout customColorControls;
@@ -51,6 +53,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound = findViewById(R.id.CheckBoxUseSound);
         checkBoxHapticFeedback = findViewById(R.id.CheckBoxUseHapticFeedback);
         checkBoxNightMode = findViewById(R.id.CheckBoxForceNightMode);
+        checkBoxDisableDrag = findViewById(R.id.CheckBoxDisableDrag);
+        checkBoxEinkTheme = findViewById(R.id.CheckBoxEinkTheme);
+        checkBoxReduceAnimations = findViewById(R.id.CheckBoxReduceAnimations);
         sliderSaturation = findViewById(R.id.SliderSaturation);
         customColorControls = findViewById(R.id.CustomColorControls);
         buttonCustomDarkColor = findViewById(R.id.ButtonCustomDarkColor);
@@ -85,6 +90,29 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
             chessBoardView.invalidateSquares();
         });
 
+        findViewById(R.id.ButtonApplyEinkSettings).setOnClickListener(view -> {
+            // Preserve edits to settings outside the preset before recreating.
+            saveControls();
+            EinkMode.applyPreset(getPrefs());
+            // Refresh controls before recreate() triggers onPause(), which saves
+            // them and would otherwise overwrite the newly applied values.
+            loadControls(getPrefs());
+            // Clear the active night configuration too; changing the saved
+            // preference alone leaves DayNight resources active until restart.
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            // Recreate to apply the theme selected during onCreate().
+            recreate();
+        });
+
+        checkBoxEinkTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked == EinkMode.isThemeEnabled()) {
+                return;
+            }
+            saveControls();
+            EinkMode.load(getPrefs());
+            recreate();
+        });
+
         sliderSaturation.addOnChangeListener((s, value, fromUser) -> {
             ColorSchemes.saturationFactor = value;
             chessBoardView.invalidateSquares();
@@ -108,6 +136,12 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         jni.newGame();
 
+        loadControls(prefs);
+
+        rebuildBoard();
+    }
+
+    private void loadControls(SharedPreferences prefs) {
         checkBoxCoordinates.setChecked(prefs.getBoolean("showCoords", false));
         checkBoxShowMoves.setChecked(prefs.getBoolean("showMoves", true));
         checkBoxUsePieceAnimation.setChecked(prefs.getBoolean(PREF_USE_PIECE_ANIMATION, true));
@@ -117,6 +151,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxSound.setChecked(prefs.getBoolean("moveSounds", false));
         checkBoxHapticFeedback.setChecked(prefs.getBoolean("useHapticFeedback", false));
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
+        checkBoxDisableDrag.setChecked(prefs.getBoolean(EinkMode.PREF_DISABLE_DRAG, false));
+        checkBoxEinkTheme.setChecked(prefs.getBoolean(EinkMode.PREF_THEME, false));
+        checkBoxReduceAnimations.setChecked(prefs.getBoolean(EinkMode.PREF_REDUCE_ANIMATIONS, false));
 
         dropDownPieces.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
         dropDownColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
@@ -125,13 +162,16 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         sliderSaturation.setValue(prefs.getFloat("squareSaturation", 1.0f));
 
         updateCustomColorControls();
-        rebuildBoard();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
+        saveControls();
+    }
+
+    private void saveControls() {
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         Log.d(TAG, "onPause " + dropDownPieces.getSelectedItemPosition());
@@ -148,6 +188,9 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         editor.putBoolean("moveSounds", checkBoxSound.isChecked());
         editor.putBoolean("useHapticFeedback", checkBoxHapticFeedback.isChecked());
         editor.putBoolean("nightMode", checkBoxNightMode.isChecked());
+        editor.putBoolean(EinkMode.PREF_DISABLE_DRAG, checkBoxDisableDrag.isChecked());
+        editor.putBoolean(EinkMode.PREF_THEME, checkBoxEinkTheme.isChecked());
+        editor.putBoolean(EinkMode.PREF_REDUCE_ANIMATIONS, checkBoxReduceAnimations.isChecked());
         editor.putFloat("squareSaturation", sliderSaturation.getValue());
         editor.putInt("customDarkSquareColor", ColorSchemes.getCustomDarkColor());
         editor.putInt("customLightSquareColor", ColorSchemes.getCustomLightColor());

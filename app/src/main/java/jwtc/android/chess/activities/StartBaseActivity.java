@@ -26,6 +26,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.StartItem;
 import jwtc.android.chess.helpers.StartItemAdapter;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
 import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.lichess.LichessLobbyActivity;
@@ -40,14 +41,25 @@ public class StartBaseActivity extends AppCompatActivity {
     protected RecyclerView list;
     protected StartItemAdapter startItemAdapter;
     protected int layoutResource = R.layout.start;
+    private boolean createdWithEinkTheme;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
+
+        // Before super.onCreate: AppCompat resolves theme attributes while
+        // building its delegate, so a later setTheme leaves widgets styled from
+        // the previous theme after a recreate().
+        EinkMode.ensureInitialised(prefs);
+        EinkMode.load(prefs);
+        createdWithEinkTheme = EinkMode.isThemeEnabled();
+        if (createdWithEinkTheme) {
+            setTheme(R.style.ChessStartEink);
+        }
+
         super.onCreate(savedInstanceState);
 
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        SharedPreferences prefs = getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE);
 
         Resources resources = getResources();
         Configuration configuration = resources.getConfiguration();
@@ -59,7 +71,10 @@ public class StartBaseActivity extends AppCompatActivity {
             resources.updateConfiguration(configuration, displayMetrics);
         }
 
-        if (prefs.getBoolean("nightMode", false)) {
+        if (createdWithEinkTheme) {
+            // Following a dark system theme also conflicts with the e-ink palette.
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (prefs.getBoolean("nightMode", false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
@@ -104,6 +119,19 @@ public class StartBaseActivity extends AppCompatActivity {
         list = findViewById(R.id.startItemsRecycler);
         list.setLayoutManager(new GridLayoutManager(this, spanCount));
         list.setAdapter(startItemAdapter);
+        EinkMode.applyTo(list);
         list.requestFocus();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // The theme is chosen in onCreate, so an e-ink theme switched in board
+        // settings needs this screen rebuilt when it comes back to the front.
+        EinkMode.load(getSharedPreferences("ChessPlayer", Context.MODE_PRIVATE));
+        if (EinkMode.isThemeEnabled() != createdWithEinkTheme) {
+            recreate();
+        }
     }
 }

@@ -67,6 +67,7 @@
         <item>@string/color_scheme_pink</item>
         <item>@string/color_scheme_purple</item>
         <item>@string/color_scheme_custom</item>
+        <item>@string/color_scheme_eink</item>
     </string-array>
     <string-array name="colorscheme_indexes">
         <item>0</item>
@@ -79,6 +80,7 @@
         <item>7</item>
         <item>8</item>
         <item>9</item>
+        <item>10</item>
     </string-array>
     <string-array name="match_time_minutes">
         <item>0</item>

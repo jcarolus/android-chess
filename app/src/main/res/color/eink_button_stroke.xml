@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Outline colour. Disabled buttons drop the outline instead of turning grey,
+    so they still render as pure black/white/transparent on a 1-bit panel.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@android:color/transparent" android:state_enabled="false" />
+    <item android:color="@color/einkForeground" />
+</selector>

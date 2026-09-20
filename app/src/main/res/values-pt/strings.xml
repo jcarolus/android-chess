@@ -73,6 +73,7 @@
     <string name="color_scheme_red">Vermelho</string>
     <string name="color_scheme_yellow">Amarelo</string>
     <string name="color_scheme_custom">Personalizado</string>
+    <string name="color_scheme_eink">Tons de cinza (tinta eletrônica)</string>
     <string name="custom_square_colors">Cores personalizadas das casas</string>
     <string name="custom_dark_square_color">Casa escura</string>
     <string name="custom_light_square_color">Casa clara</string>
@@ -330,6 +331,14 @@
     <string name="pref_minimal">Controles mínimos</string>
     <string name="pref_night_mode">Modo noturno</string>
     <string name="pref_night_mode_desc">Forçar app em modo noturno</string>
+    <string name="pref_eink_mode">Aplicar configurações de tinta eletrônica</string>
+    <string name="pref_eink_mode_desc">Para telas de papel eletrônico. Desativa o modo noturno, ativa as três configurações abaixo e seleciona as peças Alpha, o tabuleiro em tons de cinza, as peças sem animação, a tela cheia e os controles mínimos. Cada configuração ainda pode ser alterada individualmente.</string>
+    <string name="pref_disable_drag">Tocar para mover</string>
+    <string name="pref_disable_drag_desc">Mova as peças tocando nelas e depois na casa de destino, em vez de arrastá-las</string>
+    <string name="pref_eink_theme">Tema de tinta eletrônica</string>
+    <string name="pref_eink_theme_desc">Telas e caixas de diálogo em preto e branco com botões com contorno e sem efeitos de ondulação</string>
+    <string name="pref_reduce_animations">Reduzir animações</string>
+    <string name="pref_reduce_animations_desc">Sem barra de progresso do motor, pulsações dos botões ou animações das listas, que deixam rastros nas telas lentas</string>
     <string name="pref_showCoords">Coordenadas</string>
     <string name="pref_show_blindfold">Às cegas</string>
     <string name="pref_show_possible_moves">Mostrar jogadas</string>

@@ -41,6 +41,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.play.MoveItem;
@@ -564,7 +565,7 @@ public class GamesListActivity extends ChessBoardActivity {
 
     private class FilterDialog extends Dialog {
         public FilterDialog(@NonNull Context context) {
-            super(context, R.style.ChessDialogTheme);
+            super(context, EinkMode.isThemeEnabled() ? R.style.ChessDialogThemeEink : R.style.ChessDialogTheme);
 
             setContentView(R.layout.gameslist_filters);
         }

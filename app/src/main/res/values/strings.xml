@@ -78,6 +78,7 @@
     <string name="color_scheme_pink">Pink</string>
     <string name="color_scheme_purple">Purple</string>
     <string name="color_scheme_custom">Custom</string>
+    <string name="color_scheme_eink">Greyscale (e-ink)</string>
     <string name="custom_square_colors">Custom square colors</string>
     <string name="custom_dark_square_color">Dark square</string>
     <string name="custom_light_square_color">Light square</string>
@@ -365,6 +366,14 @@
     <string name="pref_minimal">Minimal controls</string>
     <string name="pref_night_mode">Night mode</string>
     <string name="pref_night_mode_desc">Force the app into night mode</string>
+    <string name="pref_eink_mode">Apply e-ink settings</string>
+    <string name="pref_eink_mode_desc">For e-paper screens. Switches off night mode, switches on the three settings below and picks the Alpha pieces, the greyscale board, no piece animation, full screen and minimal controls. Each can still be changed on its own.</string>
+    <string name="pref_disable_drag">Tap to move</string>
+    <string name="pref_disable_drag_desc">Move pieces by tapping them and then their destination, instead of dragging</string>
+    <string name="pref_eink_theme">E-ink theme</string>
+    <string name="pref_eink_theme_desc">Black and white screens and dialogs with outlined buttons and no ripples</string>
+    <string name="pref_reduce_animations">Reduce animations</string>
+    <string name="pref_reduce_animations_desc">No engine progress bar, button pulse or list animations, which leave trails on slow screens</string>
     <string name="pref_showCoords">Coordinates</string>
     <string name="pref_show_blindfold">Blindfold</string>
     <string name="pref_show_possible_moves">Show moves</string>

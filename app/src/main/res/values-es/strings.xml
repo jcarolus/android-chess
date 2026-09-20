@@ -76,6 +76,7 @@
     <string name="color_scheme_red">Rojo</string>
     <string name="color_scheme_yellow">Amarillo</string>
     <string name="color_scheme_custom">Personalizado</string>
+    <string name="color_scheme_eink">Escala de grises (tinta electrónica)</string>
     <string name="custom_square_colors">Colores personalizados de las casillas</string>
     <string name="custom_dark_square_color">Casilla oscura</string>
     <string name="custom_light_square_color">Casilla clara</string>
@@ -340,6 +341,14 @@
     <string name="pref_minimal">Controles mínimos</string>
     <string name="pref_night_mode">Modo nocturno</string>
     <string name="pref_night_mode_desc">Forzar la app en modo nocturno</string>
+    <string name="pref_eink_mode">Aplicar ajustes de tinta electrónica</string>
+    <string name="pref_eink_mode_desc">Para pantallas de papel electrónico. Desactiva el modo nocturno, activa los tres ajustes siguientes y selecciona las piezas Alpha, el tablero en escala de grises, las piezas sin animación, la pantalla completa y los controles mínimos. Cada ajuste se puede seguir cambiando por separado.</string>
+    <string name="pref_disable_drag">Tocar para mover</string>
+    <string name="pref_disable_drag_desc">Mueve las piezas tocándolas y luego tocando la casilla de destino, en lugar de arrastrarlas</string>
+    <string name="pref_eink_theme">Tema de tinta electrónica</string>
+    <string name="pref_eink_theme_desc">Pantallas y diálogos en blanco y negro con botones de contorno y sin efectos de ondas</string>
+    <string name="pref_reduce_animations">Reducir animaciones</string>
+    <string name="pref_reduce_animations_desc">Sin barra de progreso del motor, pulsaciones de botones ni animaciones de listas, que dejan rastros en las pantallas lentas</string>
     <string name="pref_showCoords">Coordenadas</string>
     <string name="pref_show_blindfold">A ciegas</string>
     <string name="pref_show_possible_moves">Mostrar movimientos</string>

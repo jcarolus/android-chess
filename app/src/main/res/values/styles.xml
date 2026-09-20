@@ -10,6 +10,101 @@
         <item name="android:layout_margin">4dip</item>
     </style>
 
+    <!--
+        Toggle group children, colour mode. Identical to ChessButton minus the
+        layout_height and layout_margin items: those are inert when a style
+        arrives through materialButtonStyle, but a toggle child references this
+        with an explicit style=, which activates them and pushes the children
+        apart instead of leaving them flush.
+    -->
+    <style name="ChessToggleButton" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/surfaceTextColor</item>
+        <item name="android:tint">@color/primaryTextColor</item>
+        <item name="android:backgroundTint">@color/imagebutton_background</item>
+        <item name="rippleColor">@color/secondaryVariantColor</item>
+    </style>
+
+    <!--
+        E-ink buttons: white fill, black outline, black text/icons, nothing that
+        animates. A filled button is a solid block on a reflective panel that
+        swamps the glyph and leaves a large ghosting area on press.
+    -->
+    <style name="ChessImageButtonEink" parent="Widget.Material3.Button.OutlinedButton.Icon">
+        <item name="enforceMaterialTheme">true</item>
+        <item name="enforceTextAppearance">false</item>
+        <item name="android:textColor">@color/eink_button_foreground</item>
+        <item name="android:tint">@color/eink_button_foreground</item>
+        <item name="iconTint">@color/eink_button_foreground</item>
+        <item name="backgroundTint">@color/eink_button_background</item>
+        <item name="android:backgroundTint">@color/eink_button_background</item>
+        <item name="strokeColor">@color/eink_button_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="elevation">0dp</item>
+        <item name="android:layout_width">@dimen/imageButtonSize</item>
+        <item name="android:layout_height">@dimen/imageButtonSize</item>
+        <item name="android:padding">0dip</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="minWidth">0dp</item>
+        <item name="minHeight">0dp</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="android:layout_margin">4dip</item>
+    </style>
+
+    <!--
+        Standalone text buttons use the same paired state lists as icon buttons:
+        white fill and black labels normally, inverted while pressed. Keep the
+        Material backgroundTint attribute so the shape retains its black stroke.
+    -->
+    <style name="ChessButtonEink" parent="Widget.Material3.Button.OutlinedButton.Icon">
+        <item name="enforceMaterialTheme">true</item>
+        <item name="enforceTextAppearance">false</item>
+        <item name="android:textColor">@color/eink_button_foreground</item>
+        <item name="iconTint">@color/eink_button_foreground</item>
+        <item name="backgroundTint">@color/eink_button_background</item>
+        <item name="strokeColor">@color/eink_button_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="elevation">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:layout_height">@dimen/imageButtonSize</item>
+        <item name="android:layout_margin">4dip</item>
+    </style>
+
+    <!--
+        Toggle group children render correctly, so they keep the inverting
+        lists: white with a black label when unselected, black with a white
+        label when selected.
+    -->
+    <style name="ChessToggleButtonEink" parent="Widget.Material3.Button.OutlinedButton.Icon">
+        <item name="enforceMaterialTheme">true</item>
+        <item name="enforceTextAppearance">false</item>
+        <item name="android:textColor">@color/eink_button_foreground</item>
+        <item name="iconTint">@color/eink_button_foreground</item>
+        <item name="backgroundTint">@color/eink_button_background</item>
+        <item name="strokeColor">@color/eink_button_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="elevation">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
     <style name="ChessImageButton" parent="Widget.Material3.Button.Icon">
         <item name="enforceMaterialTheme">true</item>
         <item name="enforceTextAppearance">false</item>
@@ -89,7 +184,7 @@
 
     <style name="MyPaneTextStyle" parent="@style/MySmallTextStyle">
         <item name="android:padding">4dip</item>
-        <item name="android:background">@color/paneBackgroundColor</item>
+        <item name="android:background">?attr/paneBackground</item>
         <item name="android:scrollHorizontally">false</item>
     </style>
 
@@ -136,5 +231,32 @@
 
     <style name="MySwitchStyle" parent="Widget.MaterialComponents.CompoundButton.Switch">
         <item name="thumbTint">@color/switch_thumb_color</item>
+    </style>
+
+    <!-- Greyscale switch: state reads from thumb position and darkness, not hue. -->
+    <!--
+        Outlined monochrome switch. Tints are cleared and explicit track/thumb
+        drawables supplied, because a tint can only fill a shape, and a grey fill
+        is exactly what we are trying to avoid.
+    -->
+    <style name="MySwitchStyleEink" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@null</item>
+        <item name="trackTint">@null</item>
+        <item name="android:thumb">@drawable/eink_switch_thumb</item>
+        <item name="track">@drawable/eink_switch_track</item>
+        <item name="android:textColor">@color/einkForeground</item>
+        <item name="useMaterialThemeColors">false</item>
+        <!--
+            The stock Material track is a nine-patch carrying its own padding, so
+            the label never touched it. A plain shape has none, which left the
+            text butted against the outline.
+        -->
+        <!--
+            No android: prefix. SwitchMaterial extends SwitchCompat, which reads
+            switchPadding from its own styleable; the framework attribute of the
+            same name is silently ignored.
+        -->
+        <item name="switchPadding">10dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
     </style>
 </resources>
