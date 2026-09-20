@@ -16,6 +16,7 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -53,6 +54,16 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
+
+        // Following a dark system theme also conflicts with the e-ink palette,
+        // so e-ink always wins here regardless of which screen turned it on.
+        if (createdWithEinkTheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (getPrefs().getBoolean("nightMode", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        }
 
         this.am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
     }
