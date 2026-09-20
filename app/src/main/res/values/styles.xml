@@ -37,7 +37,7 @@
         <item name="iconTint">@color/eink_button_foreground</item>
         <item name="backgroundTint">@color/eink_button_background</item>
         <item name="android:backgroundTint">@color/eink_button_background</item>
-        <item name="strokeColor">@color/einkForeground</item>
+        <item name="strokeColor">@color/eink_button_stroke</item>
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@android:color/transparent</item>
         <item name="android:stateListAnimator">@null</item>
@@ -70,7 +70,7 @@
         <item name="android:textColor">@color/eink_button_foreground</item>
         <item name="iconTint">@color/eink_button_foreground</item>
         <item name="backgroundTint">@color/eink_button_background</item>
-        <item name="strokeColor">@color/einkForeground</item>
+        <item name="strokeColor">@color/eink_button_stroke</item>
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@android:color/transparent</item>
         <item name="android:stateListAnimator">@null</item>
@@ -94,7 +94,7 @@
         <item name="android:textColor">@color/eink_button_foreground</item>
         <item name="iconTint">@color/eink_button_foreground</item>
         <item name="backgroundTint">@color/eink_button_background</item>
-        <item name="strokeColor">@color/einkForeground</item>
+        <item name="strokeColor">@color/eink_button_stroke</item>
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@android:color/transparent</item>
         <item name="android:stateListAnimator">@null</item>
