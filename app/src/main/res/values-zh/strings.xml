@@ -506,7 +506,7 @@
     <string name="lichess_swiss_starts_at">开始于 %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · 第 %2$d/%3$d 轮 · %4$d 名棋手</string>
     <string name="lichess_swiss_no_teams">你尚未加入任何团队。点击“所有团队”查找可加入的团队。</string>
-    <string name="lichess_swiss_no_tournaments">此团队没有瑞士制锦标赛。</string>
+    <string name="lichess_swiss_no_tournaments">未找到锦标赛。</string>
     <string name="lichess_team_join_message_hint">留言（如果团队需要审核申请）</string>
     <string name="lichess_team_join_password_hint">密码（如果需要）</string>
     <string name="lichess_team_joined">已加入 %1$s</string>

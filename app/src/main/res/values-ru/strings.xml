@@ -506,7 +506,7 @@
     <string name="lichess_swiss_starts_at">Начало: %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · раунд %2$d/%3$d · %4$d игроков</string>
     <string name="lichess_swiss_no_teams">Вы пока не состоите ни в одной команде. Нажмите «Все команды», чтобы найти команду и вступить в неё.</string>
-    <string name="lichess_swiss_no_tournaments">У этой команды нет швейцарских турниров.</string>
+    <string name="lichess_swiss_no_tournaments">Турниры не найдены.</string>
     <string name="lichess_team_join_message_hint">Сообщение (если команда рассматривает заявки)</string>
     <string name="lichess_team_join_password_hint">Пароль (если требуется)</string>
     <string name="lichess_team_joined">Вы вступили в команду %1$s</string>

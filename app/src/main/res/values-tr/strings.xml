@@ -506,7 +506,7 @@
     <string name="lichess_swiss_starts_at">Başlangıç: %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · tur %2$d/%3$d · %4$d oyuncu</string>
     <string name="lichess_swiss_no_teams">Henüz hiçbir takımda değilsiniz. Katılacak bir takım bulmak için “Tüm takımlar”a dokunun.</string>
-    <string name="lichess_swiss_no_tournaments">Bu takımın İsviçre turnuvası yok.</string>
+    <string name="lichess_swiss_no_tournaments">Turnuva bulunamadı.</string>
     <string name="lichess_team_join_message_hint">Mesaj (takım başvuruları inceliyorsa)</string>
     <string name="lichess_team_join_password_hint">Parola (gerekiyorsa)</string>
     <string name="lichess_team_joined">%1$s takımına katıldınız</string>

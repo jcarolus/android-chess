@@ -515,7 +515,7 @@
     <string name="lichess_swiss_starts_at">تبدأ %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · الجولة %2$d/%3$d · %4$d لاعبين</string>
     <string name="lichess_swiss_no_teams">لست عضوًا في أي فريق بعد. اضغط على «كل الفرق» للعثور على فريق للانضمام إليه.</string>
-    <string name="lichess_swiss_no_tournaments">ليس لدى هذا الفريق بطولات سويسرية.</string>
+    <string name="lichess_swiss_no_tournaments">لم يتم العثور على بطولات.</string>
     <string name="lichess_team_join_message_hint">رسالة (إذا كان الفريق يراجع الطلبات)</string>
     <string name="lichess_team_join_password_hint">كلمة المرور (إذا كانت مطلوبة)</string>
     <string name="lichess_team_joined">انضممت إلى %1$s</string>

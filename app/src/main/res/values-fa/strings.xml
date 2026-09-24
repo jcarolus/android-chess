@@ -520,7 +520,7 @@
     <string name="lichess_swiss_starts_at">شروع %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · دور %2$d/%3$d · %4$d بازیکن</string>
     <string name="lichess_swiss_no_teams">هنوز در هیچ تیمی نیستید. برای یافتن تیمی برای پیوستن روی «همه‌ی تیم‌ها» ضربه بزنید.</string>
-    <string name="lichess_swiss_no_tournaments">این تیم هیچ تورنمنت سوئیسی ندارد.</string>
+    <string name="lichess_swiss_no_tournaments">هیچ تورنمنتی یافت نشد.</string>
     <string name="lichess_team_join_message_hint">پیام (اگر تیم درخواست‌ها را بررسی می‌کند)</string>
     <string name="lichess_team_join_password_hint">گذرواژه (در صورت نیاز)</string>
     <string name="lichess_team_joined">به %1$s پیوستید</string>

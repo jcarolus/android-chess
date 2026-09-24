@@ -506,7 +506,7 @@
     <string name="lichess_swiss_starts_at">Começa %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · ronda %2$d/%3$d · %4$d jogadores</string>
     <string name="lichess_swiss_no_teams">Ainda não pertence a nenhuma equipa. Toque em «Todas as equipas» para encontrar uma a que aderir.</string>
-    <string name="lichess_swiss_no_tournaments">Esta equipa não tem torneios suíços.</string>
+    <string name="lichess_swiss_no_tournaments">Nenhum torneio encontrado.</string>
     <string name="lichess_team_join_message_hint">Mensagem (se a equipa analisar os pedidos)</string>
     <string name="lichess_team_join_password_hint">Palavra-passe (se necessária)</string>
     <string name="lichess_team_joined">Aderiu a %1$s</string>

@@ -117,7 +117,7 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
             // username
             if (requestCode == REQUEST_CHALLENGE) {
-                String username = ChallengeRequest.normalizeUsername(editTextPlayer.getText().toString());
+                String username = Utils.getTrimmedOrNull(editTextPlayer.getText());
                 if (username == null) {
                     editTextPlayer.setError(getContext().getString(R.string.lichess_create_challenge_player_required));
                     return;

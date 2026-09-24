@@ -506,7 +506,7 @@
     <string name="lichess_swiss_starts_at">Începe %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · runda %2$d/%3$d · %4$d jucători</string>
     <string name="lichess_swiss_no_teams">Nu faci încă parte din nicio echipă. Atinge „Toate echipele” pentru a găsi una la care să te alături.</string>
-    <string name="lichess_swiss_no_tournaments">Această echipă nu are turnee elvețiene.</string>
+    <string name="lichess_swiss_no_tournaments">Nu s-au găsit turnee.</string>
     <string name="lichess_team_join_message_hint">Mesaj (dacă echipa verifică solicitările)</string>
     <string name="lichess_team_join_password_hint">Parolă (dacă este necesară)</string>
     <string name="lichess_team_joined">Te-ai alăturat echipei %1$s</string>

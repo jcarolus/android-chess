@@ -18,6 +18,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import jwtc.android.chess.helpers.Utils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -30,7 +31,7 @@ public class Auth {
     private static final String TAG = "lichess.Auth";
     private static final String LICHESS_HOST = "https://lichess.org";
     private static final String CLIENT_ID = "lichess-api-demo"; // "lichess-android-client";
-    private static final String[] SCOPES = new String[]{"board:play", "puzzle:read", "puzzle:write", "tournament:write", "team:write"};
+    private static final String[] SCOPES = new String[]{"board:play", "puzzle:read", "puzzle:write", "tournament:write", "team:read", "team:write"};
     private static final String PREFS_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
@@ -131,8 +132,10 @@ public class Auth {
     }
 
     public void challenge(Map<String, Object> payload, AuthResponseHandler responseHandler) {
-        String challengePath = ChallengeRequest.pathFor(payload.get("username"));
-        if (challengePath == null) {
+        Object usernameValue = payload.get("username");
+        String username = usernameValue instanceof String
+            ? Utils.getTrimmedOrNull((String) usernameValue) : null;
+        if (username == null) {
             mainHandler.post(() -> responseHandler.onClose(false));
             return;
         }
@@ -142,7 +145,7 @@ public class Auth {
         if (challengeStream != null) {
             challengeStream.close();
         }
-        challengeStream = openStream(challengePath, payload, new NdJsonStream.Handler() {
+        challengeStream = openStream("/api/challenge/" + username, payload, new NdJsonStream.Handler() {
             @Override
             public void onResponse(JsonObject jsonObject) {
                 mainHandler.post(() -> {
