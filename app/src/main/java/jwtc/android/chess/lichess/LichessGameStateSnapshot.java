@@ -39,8 +39,9 @@ final class LichessGameStateSnapshot {
     }
 
     Transition transitionFrom(LichessGameStateSnapshot previous) {
-        boolean newGame = previous == null || !Objects.equals(gameId, previous.gameId);
-        if (newGame) {
+        // A new baseline can belong to a game that is already in progress.
+        boolean gameLoaded = previous == null || !Objects.equals(gameId, previous.gameId);
+        if (gameLoaded) {
             return new Transition(true, false, false, false, -1);
         }
 
@@ -90,20 +91,20 @@ final class LichessGameStateSnapshot {
     }
 
     static final class Transition {
-        final boolean newGame;
+        final boolean gameLoaded;
         final boolean moveApplied;
         final boolean historyPositionChanged;
         final boolean drawEnded;
         final int resignedColor;
 
         private Transition(
-            boolean newGame,
+            boolean gameLoaded,
             boolean moveApplied,
             boolean historyPositionChanged,
             boolean drawEnded,
             int resignedColor
         ) {
-            this.newGame = newGame;
+            this.gameLoaded = gameLoaded;
             this.moveApplied = moveApplied;
             this.historyPositionChanged = historyPositionChanged;
             this.drawEnded = drawEnded;
@@ -113,7 +114,7 @@ final class LichessGameStateSnapshot {
         @Override
         public String toString() {
             return "Transition{" +
-                "newGame=" + newGame +
+                "gameLoaded=" + gameLoaded +
                 ", moveApplied=" + moveApplied +
                 ", historyPositionChanged=" + historyPositionChanged +
                 ", drawEnded=" + drawEnded +

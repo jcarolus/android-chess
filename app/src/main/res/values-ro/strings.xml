@@ -258,6 +258,8 @@
     <string name="msg_setup_turn">Tură</string>
     <string name="msg_setup_turn_black">negre</string>
     <string name="msg_setup_turn_white">albe</string>
+    <string name="game_ready_as_white">Jocul este pregătit. Joci cu piesele albe.</string>
+    <string name="game_ready_as_black">Jocul este pregătit. Joci cu piesele negre.</string>
     <string name="new_game_as_black">Joc nou, joci cu piesele negre</string>
     <string name="new_game_as_white">Joc nou, joci cu piesele albe</string>
     <string name="online_help"><![CDATA[

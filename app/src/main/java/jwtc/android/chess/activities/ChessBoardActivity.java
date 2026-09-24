@@ -606,16 +606,20 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackNewGameStarted(int color, TextView textView) {
+        feedbackGameReady(getString(color == BoardConstants.WHITE
+            ? R.string.new_game_as_white : R.string.new_game_as_black), textView);
+    }
+
+    protected void feedbackGameReady(int color, TextView textView) {
+        feedbackGameReady(getString(color == BoardConstants.WHITE
+            ? R.string.game_ready_as_white : R.string.game_ready_as_black), textView);
+    }
+
+    private void feedbackGameReady(String message, TextView textView) {
         final boolean speechEnabled = textToSpeech.isEnabled();
         sounds.playNewGame(() -> {
-            if (!speechEnabled) {
-                return;
-            }
-            final Runnable feedbackRunnable = () -> {
-                String message = getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black);
-                updateTextViewOrSpeech(textView, message);
-            };
-            if (textToSpeech.isReady()) {
+            final Runnable feedbackRunnable = () -> updateTextViewOrSpeech(textView, message);
+            if (!speechEnabled || textToSpeech.isReady()) {
                 feedbackRunnable.run();
             } else {
                 // TTS initialization is independent of sound playback completion.

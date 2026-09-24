@@ -675,10 +675,10 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     @Override
-    public void onNewGameStarted(int variant) {
-        super.onNewGameStarted(variant);
+    public void onGameLoaded() {
+        super.onGameLoaded();
 
-        feedbackNewGameStarted(lichessApi.getMyTurn(), textViewStatus);
+        feedbackGameReady(lichessApi.getMyTurn(), textViewStatus);
     }
 
     @Override

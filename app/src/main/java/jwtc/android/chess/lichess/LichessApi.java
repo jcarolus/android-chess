@@ -1034,9 +1034,9 @@ public class LichessApi extends GameApi {
         LichessGameStateSnapshot snapshot,
         LichessGameStateSnapshot.Transition transition
     ) {
-        if (transition.newGame) {
+        if (transition.gameLoaded) {
             if (snapshot.isStarted()) {
-                dispatchNewGameStarted(jni.getVariant());
+                dispatchGameLoaded();
             }
             return;
         }

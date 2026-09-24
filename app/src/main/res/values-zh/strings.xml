@@ -258,6 +258,8 @@
     <string name="msg_setup_turn">轮到</string>
     <string name="msg_setup_turn_black">黑方</string>
     <string name="msg_setup_turn_white">白方</string>
+    <string name="game_ready_as_white">对局已就绪。你执白棋。</string>
+    <string name="game_ready_as_black">对局已就绪。你执黑棋。</string>
     <string name="new_game_as_black">新对局，你执黑棋</string>
     <string name="new_game_as_white">新对局，你执白棋</string>
     <string name="online_help"><![CDATA[

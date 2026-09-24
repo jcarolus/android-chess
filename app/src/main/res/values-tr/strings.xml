@@ -258,6 +258,8 @@
     <string name="msg_setup_turn">Sıra</string>
     <string name="msg_setup_turn_black">siyah</string>
     <string name="msg_setup_turn_white">beyaz</string>
+    <string name="game_ready_as_white">Oyun hazır. Beyaz taşlarla oynuyorsunuz.</string>
+    <string name="game_ready_as_black">Oyun hazır. Siyah taşlarla oynuyorsunuz.</string>
     <string name="new_game_as_black">Yeni oyun, siyah taşlarla oynuyorsunuz</string>
     <string name="new_game_as_white">Yeni oyun, beyaz taşlarla oynuyorsunuz</string>
     <string name="online_help"><![CDATA[

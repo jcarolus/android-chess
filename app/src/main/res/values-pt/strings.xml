@@ -258,6 +258,8 @@
     <string name="msg_setup_turn">Vez</string>
     <string name="msg_setup_turn_black">pretas</string>
     <string name="msg_setup_turn_white">brancas</string>
+    <string name="game_ready_as_white">Partida pronta. Você joga com as peças brancas.</string>
+    <string name="game_ready_as_black">Partida pronta. Você joga com as peças pretas.</string>
     <string name="new_game_as_black">Nova partida, você joga com as peças pretas</string>
     <string name="new_game_as_white">Nova partida, você joga com as peças brancas</string>
     <string name="online_help"><![CDATA[
