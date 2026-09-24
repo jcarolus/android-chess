@@ -4,7 +4,7 @@
     app:layout_optimizationLevel="none"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/paneBackgroundColor"
+    android:background="?attr/paneBackground"
     android:padding="4dip">
 
     <TextView

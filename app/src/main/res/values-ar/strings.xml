@@ -75,6 +75,7 @@
     <string name="color_scheme_red">أحمر</string>
     <string name="color_scheme_yellow">أصفر</string>
     <string name="color_scheme_custom">مخصص</string>
+    <string name="color_scheme_eink">تدرجات الرمادي (الحبر الإلكتروني)</string>
     <string name="custom_square_colors">ألوان مخصصة للمربعات</string>
     <string name="custom_dark_square_color">مربع داكن</string>
     <string name="custom_light_square_color">مربع فاتح</string>
@@ -345,6 +346,14 @@
     <string name="pref_minimal">أدوات تحكم بسيطة</string>
     <string name="pref_night_mode">الوضع الليلي</string>
     <string name="pref_night_mode_desc">فرض التطبيق على الوضع الليلي</string>
+    <string name="pref_eink_mode">تطبيق إعدادات الحبر الإلكتروني</string>
+    <string name="pref_eink_mode_desc">للشاشات الورقية الإلكترونية. يوقف الوضع الليلي، ويفعّل الإعدادات الثلاثة أدناه ويختار قطع Alpha والرقعة بتدرجات الرمادي، ويوقف حركة القطع المتحركة، ويعتمد ملء الشاشة والحد الأدنى من عناصر التحكم. يظل بالإمكان تغيير كل إعداد على حدة.</string>
+    <string name="pref_disable_drag">النقر للتحريك</string>
+    <string name="pref_disable_drag_desc">حرّك القطع بالنقر عليها ثم على مربع الوجهة بدلاً من سحبها</string>
+    <string name="pref_eink_theme">مظهر الحبر الإلكتروني</string>
+    <string name="pref_eink_theme_desc">شاشات ومربعات حوار بالأبيض والأسود مع أزرار محددة بإطار وبدون تأثيرات التموج</string>
+    <string name="pref_reduce_animations">تقليل الرسوم المتحركة</string>
+    <string name="pref_reduce_animations_desc">يخفي شريط تقدم المحرك ويلغي نبض الأزرار وحركات القوائم التي تترك آثاراً على الشاشات البطيئة</string>
     <string name="pref_showCoords">إحداثيات</string>
     <string name="pref_show_blindfold">لعب معصوب العينين</string>
     <string name="pref_show_possible_moves">إظهار النقلات الممكنة</string>

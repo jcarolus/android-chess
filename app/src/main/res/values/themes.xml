@@ -1,6 +1,10 @@
 <resources>
 
     <style name="ChessTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="chessToggleButtonStyle">@style/ChessToggleButton</item>
+        <item name="chessButtonStyle">@style/ChessButton</item>
+        <item name="chessImageButtonStyle">@style/ChessImageButton</item>
+        <item name="paneBackground">@color/paneBackgroundColor</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:windowBackground">@color/backgroundColor</item>
         <item name="colorPrimary">@color/primaryColor</item>
@@ -19,6 +23,10 @@
     </style>
 
     <style name="ChessStart" parent="Theme.Material3.DayNight">
+        <item name="chessToggleButtonStyle">@style/ChessToggleButton</item>
+        <item name="chessButtonStyle">@style/ChessButton</item>
+        <item name="chessImageButtonStyle">@style/ChessImageButton</item>
+        <item name="paneBackground">@color/paneBackgroundColor</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryVariantColor</item>
@@ -41,6 +49,10 @@
     </style>
 
     <style name="ChessDialogTheme" parent="Theme.Material3.DayNight.Dialog">
+        <item name="chessToggleButtonStyle">@style/ChessToggleButton</item>
+        <item name="chessButtonStyle">@style/ChessButton</item>
+        <item name="chessImageButtonStyle">@style/ChessImageButton</item>
+        <item name="paneBackground">@color/paneBackgroundColor</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:windowMinWidthMajor">0%</item>
@@ -60,9 +72,123 @@
         <item name="materialButtonStyle">@style/ChessButton</item>
     </style>
 
+    <!--
+        E-ink theme. Applied on top of ChessTheme / ChessStart via setTheme() when
+        the einkTheme preference is on.
+
+        Everything is pure black on white: reflective panels have no backlight, so
+        mid-tone accents lose most of their contrast, and the saturated blues and
+        greens above collapse into near-identical greys. Ripples and state list
+        animators are removed because each is a short translucent animation that
+        leaves a ghost on every tap.
+    -->
+    <style name="ChessThemeEink" parent="ChessTheme">
+        <item name="chessToggleButtonStyle">@style/ChessToggleButtonEink</item>
+        <item name="materialAlertDialogTheme">@style/ChessAlertDialogThemeEink</item>
+        <item name="colorOutline">@color/einkForeground</item>
+        <item name="colorOutlineVariant">@color/einkForeground</item>
+        <item name="colorOnSurfaceVariant">@color/einkForeground</item>
+        <item name="colorSurfaceVariant">@color/einkBackground</item>
+        <item name="android:statusBarColor">@color/einkBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:textColorPrimary">@color/einkForeground</item>
+        <item name="android:textColorSecondary">@color/einkForeground</item>
+        <item name="android:textColorHint">@color/einkForeground</item>
+        <item name="switchStyle">@style/MySwitchStyleEink</item>
+        <item name="chessButtonStyle">@style/ChessButtonEink</item>
+        <item name="chessImageButtonStyle">@style/ChessImageButtonEink</item>
+        <item name="paneBackground">@drawable/eink_pane_border</item>
+        <item name="android:windowBackground">@color/einkBackground</item>
+        <item name="colorPrimary">@color/einkBackground</item>
+        <item name="colorPrimaryVariant">@color/einkBackground</item>
+        <item name="colorOnPrimary">@color/einkForeground</item>
+        <item name="colorSecondary">@color/einkBackground</item>
+        <item name="colorSecondaryVariant">@color/einkBackground</item>
+        <item name="colorOnSecondary">@color/einkForeground</item>
+        <item name="colorSurface">@color/einkBackground</item>
+        <item name="colorOnSurface">@color/einkForeground</item>
+        <item name="colorControlHighlight">@android:color/transparent</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="materialButtonStyle">@style/ChessButtonEink</item>
+    </style>
+
+    <style name="ChessStartEink" parent="ChessStart">
+        <item name="chessToggleButtonStyle">@style/ChessToggleButtonEink</item>
+        <item name="materialAlertDialogTheme">@style/ChessAlertDialogThemeEink</item>
+        <item name="colorOutline">@color/einkForeground</item>
+        <item name="colorOutlineVariant">@color/einkForeground</item>
+        <item name="colorOnSurfaceVariant">@color/einkForeground</item>
+        <item name="colorSurfaceVariant">@color/einkBackground</item>
+        <item name="android:statusBarColor">@color/einkBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:textColorPrimary">@color/einkForeground</item>
+        <item name="android:textColorSecondary">@color/einkForeground</item>
+        <item name="android:textColorHint">@color/einkForeground</item>
+        <item name="switchStyle">@style/MySwitchStyleEink</item>
+        <item name="chessButtonStyle">@style/ChessButtonEink</item>
+        <item name="chessImageButtonStyle">@style/ChessImageButtonEink</item>
+        <item name="paneBackground">@drawable/eink_pane_border</item>
+        <item name="colorPrimary">@color/einkBackground</item>
+        <item name="colorPrimaryVariant">@color/einkBackground</item>
+        <item name="colorOnPrimary">@color/einkForeground</item>
+        <item name="colorSecondary">@color/einkBackground</item>
+        <item name="colorSecondaryVariant">@color/einkBackground</item>
+        <item name="colorOnSecondary">@color/einkForeground</item>
+        <item name="colorSurface">@color/einkBackground</item>
+        <item name="colorOnSurface">@color/einkForeground</item>
+        <item name="colorControlHighlight">@android:color/transparent</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="materialButtonStyle">@style/ChessButtonEink</item>
+    </style>
+
+    <style name="ChessDialogThemeEink" parent="ChessDialogTheme">
+        <item name="chessToggleButtonStyle">@style/ChessToggleButtonEink</item>
+        <item name="materialAlertDialogTheme">@style/ChessAlertDialogThemeEink</item>
+        <item name="colorOutline">@color/einkForeground</item>
+        <item name="colorOutlineVariant">@color/einkForeground</item>
+        <item name="colorOnSurfaceVariant">@color/einkForeground</item>
+        <item name="colorSurfaceVariant">@color/einkBackground</item>
+        <item name="android:statusBarColor">@color/einkBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:textColorPrimary">@color/einkForeground</item>
+        <item name="android:textColorSecondary">@color/einkForeground</item>
+        <item name="android:textColorHint">@color/einkForeground</item>
+        <item name="paneBackground">@drawable/eink_pane_border</item>
+        <item name="chessButtonStyle">@style/ChessButtonEink</item>
+        <item name="chessImageButtonStyle">@style/ChessImageButtonEink</item>
+        <item name="android:windowBackground">@color/einkBackground</item>
+        <item name="colorPrimary">@color/einkBackground</item>
+        <item name="colorPrimaryVariant">@color/einkBackground</item>
+        <item name="colorOnPrimary">@color/einkForeground</item>
+        <item name="colorSecondary">@color/einkBackground</item>
+        <item name="colorSecondaryVariant">@color/einkBackground</item>
+        <item name="colorOnSecondary">@color/einkForeground</item>
+        <item name="colorSurface">@color/einkBackground</item>
+        <item name="colorOnSurface">@color/einkForeground</item>
+        <item name="colorControlHighlight">@android:color/transparent</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="switchStyle">@style/MySwitchStyleEink</item>
+        <item name="materialButtonStyle">@style/ChessButtonEink</item>
+    </style>
+
     <style name="ChessAlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/ChessButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/ChessButton</item>
         <item name="buttonBarNeutralButtonStyle">@style/ChessButton</item>
+    </style>
+
+    <!--
+        Both e-ink themes inherited materialAlertDialogTheme from their parents,
+        so every MaterialAlertDialog kept the colour button bar: the promotion
+        picker, the exit and castle confirms, the create-new-line confirm.
+    -->
+    <style name="ChessAlertDialogThemeEink" parent="ChessAlertDialogTheme">
+        <item name="buttonBarPositiveButtonStyle">@style/ChessButtonEink</item>
+        <item name="buttonBarNegativeButtonStyle">@style/ChessButtonEink</item>
+        <item name="buttonBarNeutralButtonStyle">@style/ChessButtonEink</item>
+        <item name="colorSurface">@color/einkBackground</item>
+        <item name="colorOnSurface">@color/einkForeground</item>
+        <item name="android:textColorPrimary">@color/einkForeground</item>
+        <item name="android:textColorSecondary">@color/einkForeground</item>
     </style>
 </resources>

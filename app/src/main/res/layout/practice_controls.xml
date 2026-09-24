@@ -19,14 +19,14 @@
                 app:icon="@drawable/ic_arrow_clockwise"
                 android:contentDescription="@string/button_reset_position"
                 android:layout_alignParentStart="true"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPracticeNext"
                 app:icon="@drawable/ic_chevron_right"
                 android:contentDescription="@string/button_next_position"
                 android:layout_alignParentEnd="true"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/percentBar"

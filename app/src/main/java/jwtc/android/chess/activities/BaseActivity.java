@@ -16,6 +16,7 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -27,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.play.SaveGameDialog;
@@ -36,10 +38,32 @@ import jwtc.chess.PGNColumns;
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     private AccessibilityManager am;
+    private boolean createdWithEinkTheme;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Before super.onCreate, not just before setContentView: AppCompat
+        // resolves theme attributes while creating its delegate, so a theme set
+        // afterwards is only partly honoured and widget styles from the previous
+        // theme survive a recreate().
+        EinkMode.ensureInitialised(getPrefs());
+        EinkMode.load(getPrefs());
+        createdWithEinkTheme = EinkMode.isThemeEnabled();
+        if (createdWithEinkTheme) {
+            setTheme(R.style.ChessThemeEink);
+        }
+
         super.onCreate(savedInstanceState);
+
+        // Following a dark system theme also conflicts with the e-ink palette,
+        // so e-ink always wins here regardless of which screen turned it on.
+        if (createdWithEinkTheme) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (getPrefs().getBoolean("nightMode", false)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        }
 
         this.am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
     }
@@ -48,6 +72,13 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
 
         SharedPreferences prefs = getPrefs();
+
+        // The theme is chosen in onCreate, so an e-ink theme switched in another
+        // screen (board settings) needs this one rebuilt when it comes back.
+        EinkMode.load(prefs);
+        if (EinkMode.isThemeEnabled() != createdWithEinkTheme) {
+            recreate();
+        }
 
         if (prefs.getBoolean("wakeLock", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

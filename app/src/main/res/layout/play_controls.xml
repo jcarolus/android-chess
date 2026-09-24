@@ -32,7 +32,7 @@
                         app:icon="@drawable/ic_robot"
                         android:contentDescription="@string/button_engine_play_description"
                         android:layout_alignParentTop="true"
-                        style="@style/ChessImageButton" />
+                        style="?attr/chessImageButtonStyle" />
 
                     <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/ProgressBarPlay"
@@ -48,7 +48,7 @@
                     android:id="@+id/TextViewEngineValue"
                     android:layout_width="40dip"
                     android:layout_height="40dip"
-                    android:background="@color/paneBackgroundColor"
+                    android:background="?attr/paneBackground"
                     android:gravity="center"
                     android:accessibilityLiveRegion="none" />
 
@@ -66,7 +66,7 @@
                     android:id="@+id/ButtonMenu"
                     app:icon="@drawable/ic_three_dots_vertical"
                     android:contentDescription="@string/button_menu_description"
-                    style="@style/ChessImageButton" />
+                    style="?attr/chessImageButtonStyle" />
 
             </TableRow>
         </TableLayout>
@@ -86,7 +86,7 @@
                     android:id="@+id/ButtonPrevious"
                     app:icon="@drawable/ic_chevron_left"
                     android:contentDescription="@string/button_previous_move_description"
-                    style="@style/ChessImageButton" />
+                    style="?attr/chessImageButtonStyle" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/HistoryRecyclerView"
@@ -98,14 +98,14 @@
                     android:orientation="horizontal"
                     android:scrollbars="horizontal"
                     android:fadeScrollbars="false"
-                    android:background="@color/paneBackgroundColor"
+                    android:background="?attr/paneBackground"
                     android:scrollbarAlwaysDrawHorizontalTrack="true" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonNext"
                     app:icon="@drawable/ic_chevron_right"
                     android:contentDescription="@string/button_next_move_description"
-                    style="@style/ChessImageButton" />
+                    style="?attr/chessImageButtonStyle" />
             </TableRow>
         </TableLayout>
 
@@ -120,7 +120,7 @@
                 android:id="@+id/ButtonEco"
                 app:icon="@drawable/ic_signpost_split"
                 android:contentDescription="ECO openings"
-                style="@style/ChessImageButton" />
+                style="?attr/chessImageButtonStyle" />
 
             <TextView
                 android:id="@+id/TextViewEco"

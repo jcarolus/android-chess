@@ -1,5 +1,6 @@
 package jwtc.android.chess.play;
 
+import jwtc.android.chess.helpers.EinkMode;
 import static jwtc.android.chess.helpers.PGNHelper.cleanPgnString;
 import static jwtc.android.chess.helpers.PGNHelper.regexPgnTag;
 
@@ -32,7 +33,7 @@ public class SaveGameDialog extends Dialog {
     private OnResultListener onResultListener;
 
     public SaveGameDialog(@NonNull Context context, GameApi gameApi, long lGameID, OnResultListener onResult) {
-        super(context, R.style.ChessDialogTheme);
+        super(context, EinkMode.isThemeEnabled() ? R.style.ChessDialogThemeEink : R.style.ChessDialogTheme);
 
         this.gameApi = gameApi;
         result = new SaveGameResult();

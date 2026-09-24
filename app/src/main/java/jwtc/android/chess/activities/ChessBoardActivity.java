@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.HapticFeedback;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.helpers.Sounds;
@@ -462,6 +463,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         wrongPosition = -1;
 
         SharedPreferences prefs = getPrefs();
+
+        EinkMode.load(prefs);
 
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
         ColorSchemes.saturationFactor = prefs.getFloat("squareSaturation", 1.0f);
@@ -1295,10 +1298,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DRAG_ENTERED:
-                        view.setSelected(true);
+                        // Repainting each square the finger crosses leaves a ghost
+                        // trail on e-ink.
+                        if (!EinkMode.isReduceAnimations()) {
+                            view.setSelected(true);
+                        }
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
-                        view.setSelected(false);
+                        if (!EinkMode.isReduceAnimations()) {
+                            view.setSelected(false);
+                        }
                         break;
                     case DragEvent.ACTION_DRAG_STARTED:
                         // all listeners allow drag started
@@ -1507,6 +1516,15 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     return true;
                 }
+            } else if (EinkMode.isDragDisabled() && view instanceof ChessPieceView) {
+                // Tap to move, no drag: the drag shadow is a translucent surface
+                // the compositor slides at touch frame rate, which smears across
+                // an e-ink panel. Tap to select, tap the destination to move.
+                if (action == MotionEvent.ACTION_UP) {
+                    ChessBoardActivity.this.selectPosition(((ChessPieceView) view).getPos());
+                    return true;
+                }
+                return action == MotionEvent.ACTION_DOWN;
             } else if (view instanceof ChessPieceView) {
                 if (action == MotionEvent.ACTION_DOWN) {
                     final ChessPieceView pieceView = (ChessPieceView) view;
@@ -1674,7 +1692,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
                 updateSelectedSquares();
             } else if (selectedPosition != pos) {
-                handleMove(pos);
+                if (EinkMode.isDragDisabled() && isReselectTap(pos)) {
+                    // Tapping another of your own pieces re-selects it instead of
+                    // attempting an illegal move. With tap to move there is no drag
+                    // to fall back on, and the rejected-move detour would cost two
+                    // more full board repaints before the user could try again.
+                    selectedPosition = pos;
+                    setMoveToPositions(pos);
+                    feedbackSelect();
+                    updateSelectedSquares();
+                } else {
+                    handleMove(pos);
+                }
             } else {
                 if (jni.isAmbiguousCastle(selectedPosition, pos) != 0) {
                     handleAmbiguousCastle(selectedPosition, pos);
@@ -1685,6 +1714,26 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 updateSelectedSquares();
             }
         }
+    }
+
+    /**
+     * Whether tapping pos while another square is selected means "select this
+     * piece instead" rather than a move attempt.
+     *
+     * Decided from the board alone, not from moveToPositions, which is only
+     * filled when "Show moves" is on and only for the side to move. A move
+     * onto a square holding one of your own pieces can only be castling, and
+     * the engine accepts a king move along its own rank as a castling request
+     * (Game::requestMove), including onto its own rook. In Chess960 the
+     * king's castling square can itself hold that rook.
+     */
+    private boolean isReselectTap(int pos) {
+        final int color = getSelectableColor();
+        if (pos == jni.getDuckPos() || jni.pieceAt(color, pos) == BoardConstants.FIELD) {
+            return false;
+        }
+        return !(jni.pieceAt(color, selectedPosition) == BoardConstants.KING
+            && Pos.row(selectedPosition) == Pos.row(pos));
     }
 
     /**

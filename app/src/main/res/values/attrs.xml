@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Background for the informational panes (engine evaluation, move history,
+        last move, ECO, game rows). A theme attribute rather than a direct colour
+        reference so e-ink mode can swap the translucent tint for an outline.
+    -->
+    <attr name="paneBackground" format="reference|color" />
+
+    <!--
+        Button styles as theme attributes. An explicit style="@style/ChessButton"
+        on a button always wins over the theme, so the e-ink theme could not
+        restyle it; style="?attr/chessButtonStyle" resolves through the theme
+        instead. The colour themes map these to the same styles the layouts
+        used to name directly, so their look is unchanged.
+
+        Text buttons once rendered black on black in the e-ink theme when styled
+        this way; that was later traced away from ?attr/ resolution itself (see
+        docs/EINK-NOTES.md, "The unsolved button defect").
+    -->
+    <attr name="chessButtonStyle" format="reference" />
+    <attr name="chessImageButtonStyle" format="reference" />
+
+    <!-- Toggle group children, which need to invert to show selection. -->
+    <attr name="chessToggleButtonStyle" format="reference" />
+</resources>

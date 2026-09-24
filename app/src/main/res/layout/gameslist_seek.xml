@@ -12,7 +12,7 @@
             android:id="@+id/ButtonPrevious"
             app:icon="@drawable/ic_chevron_left"
             android:contentDescription="Previous game"
-            style="@style/ChessImageButton" />
+            style="?attr/chessImageButtonStyle" />
 
         <SeekBar
             android:id="@+id/SeekBarGames"
@@ -30,6 +30,6 @@
             android:id="@+id/ButtonNext"
             app:icon="@drawable/ic_chevron_right"
             android:contentDescription="Next game"
-            style="@style/ChessImageButton" />
+            style="?attr/chessImageButtonStyle" />
     </TableRow>
 </TableLayout>

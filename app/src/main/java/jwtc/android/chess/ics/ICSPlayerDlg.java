@@ -1,5 +1,6 @@
 package jwtc.android.chess.ics;
 
+import jwtc.android.chess.helpers.EinkMode;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.InputFilter;
@@ -26,7 +27,7 @@ public class ICSPlayerDlg extends Dialog {
     private TextView _tvOpponentName;
 
     public ICSPlayerDlg(Context context) {
-        super(context, R.style.ChessDialogTheme);
+        super(context, EinkMode.isThemeEnabled() ? R.style.ChessDialogThemeEink : R.style.ChessDialogTheme);
 
         _parent = (ICSClient) context;
 

@@ -80,6 +80,7 @@
     <string name="color_scheme_red">قرمز</string>
     <string name="color_scheme_yellow">زرد</string>
     <string name="color_scheme_custom">سفارشی</string>
+    <string name="color_scheme_eink">طیف خاکستری (جوهر الکترونیکی)</string>
     <string name="custom_square_colors">رنگ‌های سفارشی خانه‌ها</string>
     <string name="custom_dark_square_color">خانه‌ی تیره</string>
     <string name="custom_light_square_color">خانه‌ی روشن</string>
@@ -366,6 +367,14 @@
     <string name="pref_minimal">کنترل‌های حداقلی</string>
     <string name="pref_night_mode">حالت شب</string>
     <string name="pref_night_mode_desc">برنامه را به‌اجبار در حالت شب قرار بده</string>
+    <string name="pref_eink_mode">اعمال تنظیمات جوهر الکترونیکی</string>
+    <string name="pref_eink_mode_desc">برای نمایشگرهای کاغذ الکترونیکی. حالت شب را خاموش می‌کند، سه تنظیم زیر را فعال می‌کند و مهره‌های Alpha، صفحهٔ شطرنج با طیف خاکستری، مهره‌های بدون پویانمایی، حالت تمام‌صفحه و حداقل کنترل‌ها را انتخاب می‌کند. هر تنظیم همچنان به‌صورت جداگانه قابل تغییر است.</string>
+    <string name="pref_disable_drag">حرکت با ضربه زدن</string>
+    <string name="pref_disable_drag_desc">به‌جای کشیدن مهره‌ها، ابتدا روی مهره و سپس روی خانهٔ مقصد ضربه بزنید</string>
+    <string name="pref_eink_theme">پوستهٔ جوهر الکترونیکی</string>
+    <string name="pref_eink_theme_desc">صفحه‌ها و کادرهای گفت‌وگوی سیاه‌وسفید با دکمه‌های حاشیه‌دار و بدون جلوهٔ موج</string>
+    <string name="pref_reduce_animations">کاهش پویانمایی‌ها</string>
+    <string name="pref_reduce_animations_desc">نوار پیشرفت موتور، جلوهٔ تپش دکمه‌ها و پویانمایی فهرست‌ها را که روی نمایشگرهای کند رد باقی می‌گذارند، حذف می‌کند</string>
     <string name="pref_showCoords">مختصات</string>
     <string name="pref_show_blindfold">چشم‌بسته</string>
     <string name="pref_show_possible_moves">نمایش حرکت‌ها</string>

@@ -43,5 +43,5 @@
         android:id="@+id/ButtonOpenFilters"
         app:icon="@drawable/sliders"
         android:checkable="true"
-        style="@style/ChessImageButton" />
+        style="?attr/chessImageButtonStyle" />
 </com.google.android.flexbox.FlexboxLayout>

@@ -73,6 +73,7 @@
     <string name="color_scheme_red">Красный</string>
     <string name="color_scheme_yellow">Жёлтый</string>
     <string name="color_scheme_custom">Пользовательская</string>
+    <string name="color_scheme_eink">Оттенки серого (E-ink)</string>
     <string name="custom_square_colors">Пользовательские цвета клеток</string>
     <string name="custom_dark_square_color">Тёмная клетка</string>
     <string name="custom_light_square_color">Светлая клетка</string>
@@ -331,6 +332,14 @@
     <string name="pref_minimal">Минимальные элементы управления</string>
     <string name="pref_night_mode">Ночной режим</string>
     <string name="pref_night_mode_desc">Включить приложение в ночном режиме</string>
+    <string name="pref_eink_mode">Применить настройки E-ink</string>
+    <string name="pref_eink_mode_desc">Для экранов на электронной бумаге. Выключает ночной режим, включает три настройки ниже и выбирает фигуры Alpha, доску в оттенках серого, отсутствие анимации фигур, полноэкранный режим и минимум элементов управления. Каждую настройку по-прежнему можно менять отдельно.</string>
+    <string name="pref_disable_drag">Ход касанием</string>
+    <string name="pref_disable_drag_desc">Перемещайте фигуры, касаясь сначала фигуры, а затем поля назначения, вместо перетаскивания</string>
+    <string name="pref_eink_theme">Тема E-ink</string>
+    <string name="pref_eink_theme_desc">Чёрно-белые экраны и диалоги с контурными кнопками и без эффекта ряби</string>
+    <string name="pref_reduce_animations">Уменьшить анимацию</string>
+    <string name="pref_reduce_animations_desc">Отключает индикатор прогресса движка, пульсацию кнопок и анимацию списков, которые оставляют следы на медленных экранах</string>
     <string name="pref_showCoords">Координаты</string>
     <string name="pref_show_blindfold">Слепые шахматы</string>
     <string name="pref_show_possible_moves">Показывать ходы</string>

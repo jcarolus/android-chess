@@ -63,14 +63,18 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/lichess_create_challenge_time_correspondence" />
+                        android:text="@string/lichess_create_challenge_time_correspondence"
+                        style="?attr/chessToggleButtonStyle"
+                    />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioButtonTimeControl"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/lichess_create_challenge_time_control" />
+                        android:text="@string/lichess_create_challenge_time_control"
+                        style="?attr/chessToggleButtonStyle"
+                    />
                 </com.google.android.material.button.MaterialButtonToggleGroup>
 
                 <LinearLayout
@@ -170,14 +174,18 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/lichess_create_challenge_variant_standard" />
+                        android:text="@string/lichess_create_challenge_variant_standard"
+                        style="?attr/chessToggleButtonStyle"
+                    />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioButtonChess960"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/lichess_create_challenge_variant_chess960" />
+                        android:text="@string/lichess_create_challenge_variant_chess960"
+                        style="?attr/chessToggleButtonStyle"
+                    />
                 </com.google.android.material.button.MaterialButtonToggleGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -208,21 +216,27 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/lichess_create_challenge_color_random" />
+                        android:text="@string/lichess_create_challenge_color_random"
+                        style="?attr/chessToggleButtonStyle"
+                    />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioButtonWhite"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/lichess_create_challenge_color_white" />
+                        android:text="@string/lichess_create_challenge_color_white"
+                        style="?attr/chessToggleButtonStyle"
+                    />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioButtonBlack"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/lichess_create_challenge_color_black" />
+                        android:text="@string/lichess_create_challenge_color_black"
+                        style="?attr/chessToggleButtonStyle"
+                    />
                 </com.google.android.material.button.MaterialButtonToggleGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -259,7 +273,7 @@
             android:orientation="horizontal"
             style="@style/MyFormLayout">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -267,7 +281,7 @@
                 android:id="@+id/ButtonChallengeCancel"
                 android:layout_margin="2dip" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

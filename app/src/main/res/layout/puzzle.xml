@@ -16,7 +16,7 @@
         app:layout_constraintBottom_toTopOf="@id/play_controls">
 
         <include
-            android:id="@+id/puzzle_board_top"
+            android:id="@+id/play_board_top"
             layout="@layout/puzzle_board_top"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -33,12 +33,12 @@
             android:layout_marginBottom="1dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/puzzle_board_top"
-            app:layout_constraintBottom_toTopOf="@id/puzzle_board_bottom"
+            app:layout_constraintTop_toBottomOf="@id/play_board_top"
+            app:layout_constraintBottom_toTopOf="@id/play_board_bottom"
             app:layout_constraintDimensionRatio="W,1:1" />
 
         <include
-            android:id="@+id/puzzle_board_bottom"
+            android:id="@+id/play_board_bottom"
             layout="@layout/puzzle_board_bottom"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
