@@ -420,9 +420,16 @@ public class LichessGameActivity extends ChessBoardActivity
         }
         updateGameStateMessage(stateMessage);
 
-        boolean isDrawOffer = playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw;
+        boolean isDrawOffer = isStarted && (playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw);
         if (isDrawOffer) {
-            updateTextViewOrSpeech(textViewOfferDraw, getString(R.string.lichess_opponent_offers_draw));
+            String message = getString(R.string.lichess_opponent_offers_draw);
+            if (!message.equals(textViewOfferDraw.getText().toString())) {
+                // Show the offer immediately; announce it once, after its sound finishes.
+                textViewOfferDraw.setAccessibilityLiveRegion(textToSpeech.isEnabled()
+                    ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
+                textViewOfferDraw.setText(message);
+                sounds.playNotification(() -> textToSpeech.queueSpeech(message));
+            }
             pulseAnimation(buttonDraw, 1.05f, 1);
             buttonDraw.setOnClickListener(v -> lichessApi.draw(true));
         } else {
@@ -438,6 +445,7 @@ public class LichessGameActivity extends ChessBoardActivity
 
     @Override
     public void onGameFinish() {
+        textViewOfferDraw.setText("");
         clearPremove();
         updateSelectedSquares();
         localClockApi.stopClock();
