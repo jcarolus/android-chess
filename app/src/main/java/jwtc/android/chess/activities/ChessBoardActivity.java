@@ -79,10 +79,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
     private String keyboardBuffer = "";
     private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
-    private final Handler timeWarningSpeechHandler = new Handler(Looper.getMainLooper());
-    // Delay before speaking a time warning when a warning sound is also playing,
-    // so the sound has time to finish before TTS starts.
-    private static final long TIME_WARNING_SPEECH_DELAY_MS = 700L;
+    private final Handler speechInitHandler = new Handler(Looper.getMainLooper());
     private static final long INIT_SPEECH_DELAY_MS = 1000L;
     private Runnable accessibilityDragDwellRunnable = null;
     private int accessibilityDragHoverPos = -1;
@@ -609,13 +606,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackNewGameStarted(int color, TextView textView) {
-        final boolean soundsEnabled = sounds.isEnabled();
         final boolean speechEnabled = textToSpeech.isEnabled();
-
-        if (soundsEnabled) {
-            sounds.playNewGame();
-        }
-        if (speechEnabled) {
+        sounds.playNewGame(() -> {
+            if (!speechEnabled) {
+                return;
+            }
             final Runnable feedbackRunnable = () -> {
                 String message = getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black);
                 updateTextViewOrSpeech(textView, message);
@@ -623,11 +618,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (textToSpeech.isReady()) {
                 feedbackRunnable.run();
             } else {
-                // @TODO should this be on status text?
-                // delay because speech not ready after Activity resume with new game
-                timeWarningSpeechHandler.postDelayed(feedbackRunnable, INIT_SPEECH_DELAY_MS);
+                // TTS initialization is independent of sound playback completion.
+                speechInitHandler.postDelayed(feedbackRunnable, INIT_SPEECH_DELAY_MS);
             }
-        }
+        });
     }
 
     public void feedbackTimeWarning(long millies) {
@@ -636,43 +630,27 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return;
         }
 
-        final boolean soundsEnabled = sounds.isEnabled();
         final boolean speechEnabled = textToSpeech.isEnabled();
-
-        if (soundsEnabled) {
-            if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
-                long minutes = remainingSeconds / 60;
-                if (minutes == 1) {
-                    sounds.playBell();
-                } else {
-                    sounds.playLowTime();
-                }
-            } else {
-                sounds.playStopWatch();
+        final boolean wholeMinutes = remainingSeconds >= 60 && remainingSeconds % 60 == 0;
+        final long minutes = remainingSeconds / 60;
+        final Runnable speak = () -> {
+            if (!speechEnabled) {
+                return;
             }
-        }
+            String message = wholeMinutes
+                ? getString(minutes == 1 ? R.string.time_warning_minutes_single : R.string.time_warning_minutes, minutes)
+                : getString(R.string.time_warning_seconds, remainingSeconds);
+            textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
+        };
 
-        if (speechEnabled) {
-            final Runnable speak = () -> {
-                if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
-                    long minutes = remainingSeconds / 60;
-                    if (minutes == 1) {
-                        textToSpeech.doSpeak(getString(R.string.time_warning_minutes_single, minutes), TextToSpeech.QUEUE_ADD);
-                    } else {
-                        textToSpeech.doSpeak(getString(R.string.time_warning_minutes, minutes), TextToSpeech.QUEUE_ADD);
-                    }
-                } else {
-                    textToSpeech.doSpeak(getString(R.string.time_warning_seconds, remainingSeconds), TextToSpeech.QUEUE_ADD);
-                }
-            };
-
-            // When a sound also plays, delay the speech a little so the sound can
-            // finish first instead of the two overlapping.
-            if (soundsEnabled) {
-                timeWarningSpeechHandler.postDelayed(speak, TIME_WARNING_SPEECH_DELAY_MS);
+        if (wholeMinutes) {
+            if (minutes == 1) {
+                sounds.playBell(speak);
             } else {
-                speak.run();
+                sounds.playLowTime(speak);
             }
+        } else {
+            sounds.playStopWatch(speak);
         }
     }
 
@@ -696,7 +674,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         Log.d(TAG, "onDestroy");
 
         cancelMoveAnimation();
-        timeWarningSpeechHandler.removeCallbacksAndMessages(null);
+        speechInitHandler.removeCallbacksAndMessages(null);
+        sounds.release();
 
         if (boardLayoutListener != null && boardLayoutRoot != null) {
             boardLayoutRoot.getViewTreeObserver().removeOnGlobalLayoutListener(boardLayoutListener);
