@@ -17,6 +17,29 @@ public abstract class EngineApi {
     public static final int LEVEL_TIME = 1;
     public static final int LEVEL_PLY = 2;
 
+    /** Search purpose, independent of whether the engine is currently searching. */
+    public enum Mode {
+        PLAY,
+        ANALYSIS
+    }
+
+    /** Implementations set this when accepting a search, before emitting callbacks. */
+    protected volatile Mode mode = Mode.PLAY;
+    private volatile long searchId = 0;
+
+    protected synchronized long beginSearch(Mode mode) {
+        this.mode = mode;
+        return ++searchId;
+    }
+
+    protected synchronized void discardSearchResults() {
+        ++searchId;
+    }
+
+    protected boolean isCurrentSearch(long id) {
+        return id == searchId;
+    }
+
     protected static final int MSG_MOVE = 1;
     protected static final int MSG_INFO = 2;
     protected static final int MSG_ERROR = 3;
@@ -29,7 +52,10 @@ public abstract class EngineApi {
     protected Handler updateHandler = new Handler(Looper.getMainLooper()) {
         // @Override
         public void handleMessage(Message msg) {
-            if (msg.what == MSG_MOVE) {
+            if (!isCurrentSearch(msg.getData().getLong("searchId"))) {
+                return;
+            }
+            if (msg.what == MSG_MOVE && mode == Mode.PLAY) {
                 int move = msg.getData().getInt("move");
                 int duckMove = msg.getData().getInt("duckMove");
                 int value = msg.getData().getInt("value");
@@ -55,9 +81,14 @@ public abstract class EngineApi {
     };
 
     public void sendMessageFromThread(String sText, float value) {
+        sendMessageFromThread(searchId, sText, value);
+    }
+
+    protected void sendMessageFromThread(long id, String sText, float value) {
         Message m = new Message();
         Bundle b = new Bundle();
         m.what = MSG_INFO;
+        b.putLong("searchId", id);
         b.putString("message", sText);
         b.putFloat("value", value);
         m.setData(b);
@@ -65,8 +96,13 @@ public abstract class EngineApi {
     }
 
     public void sendMoveMessageFromThread(int move, int duckMove, int value) {
+        sendMoveMessageFromThread(searchId, move, duckMove, value);
+    }
+
+    protected void sendMoveMessageFromThread(long id, int move, int duckMove, int value) {
         Message m = new Message();
         Bundle b = new Bundle();
+        b.putLong("searchId", id);
         b.putInt("move", move);
         b.putInt("duckMove", duckMove);
         b.putInt("value", value);
@@ -78,13 +114,59 @@ public abstract class EngineApi {
     public void sendErrorMessageFromThread() {
         Message m = new Message();
         m.what = MSG_ERROR;
+        m.getData().putLong("searchId", searchId);
         updateHandler.sendMessage(m);
     }
 
+    /**
+     * Starts a PLAY search of the current game position using the configured time or
+     * depth limit. A successful search may emit OnEngineMove.
+     */
     abstract public void play();
+
+    /** Whether this backend implements analysis; callers should check before displaying a score. */
+    abstract public boolean supportsAnalysis();
+
+    /**
+     * Analyses the supplied FEN snapshot with a positive timeMillis search budget.
+     * Ignores and preserves the PLAY time/depth settings. Reports OnEngineInfo only,
+     * never OnEngineMove, including after stop. Does not modify the live board.
+     * An unsupported backend reports an empty message with value zero without searching.
+     * Calls while busy are ignored; abort with a completion callback before replacing a search.
+     *
+     * @throws IllegalArgumentException if the budget is not positive or FEN is empty/multiline
+     */
+    abstract public void analyze(String fen, int timeMillis);
+
+    protected static void validateAnalysisRequest(String fen, int timeMillis) {
+        if (timeMillis <= 0) {
+            throw new IllegalArgumentException("Analysis timeMillis must be positive");
+        }
+        if (fen == null || fen.trim().isEmpty() || fen.indexOf('\n') >= 0 || fen.indexOf('\r') >= 0) {
+            throw new IllegalArgumentException("Analysis requires a single-line FEN");
+        }
+    }
+
+    /** Returns the purpose of the most recently accepted search; defaults to PLAY. */
+    public Mode getMode() {
+        return mode;
+    }
 
     abstract public boolean isReady();
 
+    /**
+     * Finishes the current search as soon as possible (UCI stop), retaining its final
+     * result. PLAY may emit OnEngineMove; ANALYSIS must only report information.
+     * Runs a non-null onDone on the main thread after search completion and result
+     * delivery, or immediately via the main-thread handler if already idle.
+     */
+    abstract public void stop(Runnable onDone);
+
+    /**
+     * Cancels the current search and discards its remaining results. Unlike stop,
+     * cancellation must not emit OnEngineMove. Runs a non-null onDone on the main
+     * thread once the old search can no longer deliver results and a new one may start.
+     */
     abstract public void abort(Runnable onDone);
 
     abstract public void destroy();
