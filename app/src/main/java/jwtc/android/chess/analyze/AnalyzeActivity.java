@@ -11,6 +11,7 @@ import android.util.Log;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.engine.EngineApi;
+import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
 import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -19,14 +20,21 @@ import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.board.BoardConstants;
+import jwtc.android.chess.views.EngineEvaluationView;
 
-public class AnalyzeActivity extends ChessBoardActivity {
+public class AnalyzeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "AnalyzeActivity";
     private EngineApi myEngine;
     private EngineApi localEngine;
     private OexEngine oexEngine;
     private final EcoService ecoService = new EcoService();
     private long lGameID;
+    private EngineEvaluationView evaluationView;
+    private boolean analysisActive;
+    private String analysisFen;
+    private int analysisTurn;
+    private int analysisGeneration;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +42,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         setContentView(R.layout.analyze);
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
+        evaluationView = findViewById(R.id.engine_evaluation);
         gameApi = new GameApi();
         switchSound = findViewById(R.id.SwitchSound);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
@@ -44,7 +53,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         chessBoardView.setNextFocusRightId(R.id.ButtonPrevious);
 
         initBoardLayoutSizing(findViewById(R.id.root_layout), findViewById(R.id.board_area),
-            findViewById(R.id.analyze_controls), null, null);
+            findViewById(R.id.analyze_controls), null, null, 24);
         findViewById(R.id.ButtonPrevious).setOnClickListener(v -> gameApi.undoMove());
         findViewById(R.id.ButtonNext).setOnClickListener(v -> gameApi.nextMove());
 
@@ -68,6 +77,7 @@ public class AnalyzeActivity extends ChessBoardActivity {
         oexEngine.setPreferredEngineId(getPrefs().getString("oexEngineId", null));
 
         myEngine = oexEngine; // @TODO
+        myEngine.addListener(this);
 
         lGameID = prefs.getLong("game_id", 0);
 
@@ -82,8 +92,72 @@ public class AnalyzeActivity extends ChessBoardActivity {
             gameApi.newGame();
         }
 
+        analysisActive = true;
+        analysisFen = null;
         rebuildBoard();
         updatePieceDescriptions();
+    }
+
+    @Override
+    public void rebuildBoard() {
+        super.rebuildBoard();
+        if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) {
+            return;
+        }
+        final String fen = jni.toFEN();
+        if (fen.equals(analysisFen)) {
+            return;
+        }
+        analysisFen = fen;
+        final int turn = jni.getTurn();
+        final int generation = ++analysisGeneration;
+        evaluationView.clearEvaluation();
+        myEngine.abort(() -> {
+            if (analysisActive && generation == analysisGeneration) {
+                analysisTurn = turn;
+                myEngine.analyze(fen, 1000);
+            }
+        });
+    }
+
+    @Override
+    public void OnEngineInfo(String message, float value) {
+        // UCI scores are relative to the side to move in the searched position.
+        if (analysisActive && message != null && message.contains(" score ")) {
+            evaluationView.setEvaluation(analysisTurn == BoardConstants.WHITE ? value : -value);
+        }
+    }
+
+    @Override
+    public void OnEngineError() {
+        evaluationView.clearEvaluation();
+    }
+
+    @Override
+    public void OnEngineMove(int move, int duckMove, int value) {
+        // Analysis must never play the engine's suggested move.
+    }
+
+    @Override
+    public void OnEngineStarted() {}
+
+    @Override
+    public void OnEngineAborted() {}
+
+    @Override
+    protected void onPause() {
+        analysisActive = false;
+        analysisGeneration++;
+        if (myEngine != null) {
+            myEngine.removeListener(this);
+        }
+        if (oexEngine != null) {
+            oexEngine.destroy();
+        }
+        if (localEngine != null) {
+            localEngine.destroy();
+        }
+        super.onPause();
     }
 
     // @TODO duplicate from PlayActivity

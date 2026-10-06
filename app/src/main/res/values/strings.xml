@@ -542,4 +542,6 @@
     <string name="pgn_return_main_line">Return to main line</string>
     <string name="pgn_promote_variation">Make preferred continuation</string>
     <string name="pgn_delete_variation">Delete variation</string>
+    <string name="engine_evaluation_score">Engine evaluation: %1$+.1f pawns (positive favors White)</string>
+    <string name="engine_evaluation_pending">Engine evaluation unavailable</string>
 </resources>

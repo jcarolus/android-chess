@@ -304,6 +304,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         View boardTopLayout,
         View boardBottomLayout
     ) {
+        initBoardLayoutSizing(rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout, 0);
+    }
+
+    protected void initBoardLayoutSizing(
+        View rootLayout, View boardAreaLayout, View controlsLayout,
+        View boardTopLayout, View boardBottomLayout, int boardSidePanelWidthDp
+    ) {
+        final int sidePanelWidth = dpToPx(boardSidePanelWidthDp);
         if (rootLayout == null || boardAreaLayout == null) {
             return;
         }
@@ -350,7 +358,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 final int boardTopHeight = measureDependentHeight(boardTopLayoutRef);
                 final int boardBottomHeight = measureDependentHeight(boardBottomLayoutRef);
                 final int reservedVerticalHeight = boardTopHeight + boardBottomHeight;
-                final int preferredBoardSide = rootAvailableWidth;
+                final int preferredBoardSide = Math.max(0, rootAvailableWidth - sidePanelWidth);
                 final int controlsHeightRemainingAfterPreferredBoard = rootAvailableHeight - reservedVerticalHeight - preferredBoardSide;
                 final int portraitBoardSide = Math.max(
                     0,
@@ -363,12 +371,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     rootAvailableHeight - reservedVerticalHeight - portraitBoardSide
                 );
                 final int landscapeBoardSide = Math.min(
-                    Math.max(0, rootAvailableWidth - minLandscapeControlsPx),
+                    Math.max(0, rootAvailableWidth - minLandscapeControlsPx - sidePanelWidth),
                     Math.max(0, rootAvailableHeight - reservedVerticalHeight)
                 );
 
                 if (lastRootWidth == rootWidth && lastRootHeight == rootHeight && lastOrientation == orientation
-                    && lastBoardSide == boardAreaLayout.getWidth()
+                    && lastBoardSide + sidePanelWidth == boardAreaLayout.getWidth()
                     && lastTopHeight == boardTopHeight && lastBottomHeight == boardBottomHeight
                     && (orientation == Configuration.ORIENTATION_PORTRAIT ? lastControlsHeight == portraitControlsHeight : true)
                 ) {
@@ -381,8 +389,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 lastBottomHeight = boardBottomHeight;
 
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    if (boardAreaParams.width != landscapeBoardSide) {
-                        boardAreaParams.width = landscapeBoardSide;
+                    if (boardAreaParams.width != landscapeBoardSide + sidePanelWidth) {
+                        boardAreaParams.width = landscapeBoardSide + sidePanelWidth;
                         boardAreaLayout.setLayoutParams(boardAreaParams);
                     }
                     if (boardViewParams != null
@@ -402,8 +410,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                 final int boardSide = portraitBoardSide;
                 final int controlsHeight = portraitControlsHeight;
-                if (boardAreaParams.width != boardSide) {
-                    boardAreaParams.width = boardSide;
+                if (boardAreaParams.width != boardSide + sidePanelWidth) {
+                    boardAreaParams.width = boardSide + sidePanelWidth;
                     boardAreaLayout.setLayoutParams(boardAreaParams);
                 }
                 if (boardViewParams != null && (boardViewParams.width != boardSide || boardViewParams.height != boardSide)) {
