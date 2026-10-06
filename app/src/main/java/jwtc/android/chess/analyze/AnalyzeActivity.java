@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.engine.EngineApi;
@@ -15,6 +18,8 @@ import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.LocalEngine;
 import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.EinkMode;
+import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.EcoService;
@@ -31,6 +36,8 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private final EcoService ecoService = new EcoService();
     private long lGameID;
     private EngineEvaluationView evaluationView;
+    private MoveRecyclerAdapter moveAdapter;
+    private RecyclerView historyRecyclerView;
     private boolean analysisActive;
     private String analysisFen;
     private int analysisTurn;
@@ -44,6 +51,18 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
         evaluationView = findViewById(R.id.engine_evaluation);
         gameApi = new GameApi();
+        historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
+        historyRecyclerView.setLayoutManager(
+            new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        moveAdapter = new MoveRecyclerAdapter(this, gameApi, position -> {
+            java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
+            if (position >= 0 && position < line.size()) {
+                gameApi.goTo(line.get(position));
+            }
+        });
+        historyRecyclerView.setAdapter(moveAdapter);
+        historyRecyclerView.setHorizontalScrollBarEnabled(true);
+        EinkMode.applyTo(historyRecyclerView);
         switchSound = findViewById(R.id.SwitchSound);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
@@ -101,6 +120,8 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void rebuildBoard() {
         super.rebuildBoard();
+        moveAdapter.update();
+        historyRecyclerView.scrollToPosition(jni.getNumBoard() - 1);
         if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) {
             return;
         }
