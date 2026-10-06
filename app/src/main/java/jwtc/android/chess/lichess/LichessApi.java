@@ -400,7 +400,7 @@ public class LichessApi extends GameApi {
         }
         if (hasPendingWrongMove) {
             hasPendingWrongMove = false;
-            jni.undo();
+            discardLastMove();
             if (apiListener != null) {
                 apiListener.onPuzzleRetried();
             }
@@ -984,7 +984,7 @@ public class LichessApi extends GameApi {
             hasPendingWrongMove = false;
             puzzleHandler.removeCallbacksAndMessages(null);
             jni.newGame();
-            pgnMoves.clear();
+            resetPGNHistory();
             String[] allMoves = ongoingPuzzle.game.pgn.split(" ");
             int limit = Math.min(ongoingPuzzle.puzzle.initialPly + 1, allMoves.length);
             for (int i = 0; i < limit; i++) {
@@ -1065,7 +1065,7 @@ public class LichessApi extends GameApi {
 
     public void retryWrongPuzzleMove() {
         hasPendingWrongMove = false;
-        jni.undo();
+        discardLastMove();
         dispatchState();
         if (apiListener != null) {
             apiListener.onPuzzleRetried();
@@ -1084,6 +1084,6 @@ public class LichessApi extends GameApi {
             pgnTags.put("FEN", jni.toFEN());
         }
 
-        pgnMoves.clear();
+        resetPGNHistory();
     }
 }

@@ -8,6 +8,10 @@ package jwtc.android.chess.services;
  * are notifications only and do not request or authorize game changes.</p>
  */
 public interface GameListener {
+    default void onPositionChanged(jwtc.chess.GameTree.Node node) {}
+
+    default void onGameTreeChanged() {}
+
     default void onMoveApplied(int move) {}
 
     default void onDuckMoveApplied(int duckMove) {}

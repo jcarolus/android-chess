@@ -300,11 +300,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             gameApi.move(move, duckMove);
             animateCorrect();
         } else {
-            int moveIndex = gameApi.getPGNSize() - 1;
-            String sMove = "";
-            if (moveIndex >= 0) {
-                sMove = gameApi.getPGNEntries().get(moveIndex).sMove + " ";
-            }
+            jwtc.chess.PGNEntry entry = gameApi.getCurrentNode().getEntry();
+            String sMove = entry == null ? "" : entry.sMove + " ";
 
             buttonRetry.setEnabled(true);
             numMoved--;

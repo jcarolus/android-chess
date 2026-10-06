@@ -157,7 +157,7 @@ public class PlayActivity extends ChessBoardActivity implements
         playButton.setOnClickListener(arg0 -> {
             if (!gameApi.isEnded()) {
                 if (myEngine.isReady()) {
-                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
+                    if (!gameApi.isAtLineEnd()) {
                         openConfirmDialog(
                             getString(R.string.title_create_new_line),
                             getString(R.string.alert_yes),
@@ -187,7 +187,8 @@ public class PlayActivity extends ChessBoardActivity implements
         MaterialButton butNext = findViewById(R.id.ButtonNext);
         butNext.setOnClickListener(v -> gameApi.nextMove());
         butNext.setOnLongClickListener(v -> {
-            gameApi.jumpToBoardNum(gameApi.getPGNSize());
+            java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
+            if (!line.isEmpty()) gameApi.goTo(line.get(line.size() - 1));
             return true;
         });
 
@@ -603,7 +604,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onMoveItemClick(int pos) {
-        this.gameApi.jumpToBoardNum(pos + 1);
+        java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
+        if (pos >= 0 && pos < line.size()) gameApi.goTo(line.get(pos));
     }
 
     protected void updateGUI() {
