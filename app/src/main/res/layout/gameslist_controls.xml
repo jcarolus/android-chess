@@ -82,6 +82,13 @@
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonAnalyze"
+                android:text="Analyze"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                style="?attr/chessButtonStyle" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEdit"
                 android:text="Edit"
                 android:layout_width="0dp"

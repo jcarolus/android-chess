@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="false"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingStart="4dip"
+    android:paddingEnd="4dip">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:id="@+id/LayoutHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/MyRowStyle">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ButtonPrevious"
+                    app:icon="@drawable/ic_chevron_left"
+                    android:contentDescription="@string/button_previous_move_description"
+                    style="?attr/chessImageButtonStyle" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ButtonNext"
+                    app:icon="@drawable/ic_chevron_right"
+                    android:contentDescription="@string/button_next_move_description"
+                    style="?attr/chessImageButtonStyle" />
+            </TableRow>
+        </TableLayout>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="center">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchSound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_sound"
+                android:checked="true" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchSpeech"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_speech"
+                android:checked="true" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchAccessibilityDrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/pref_accessibility_drag"
+                android:checked="false" />
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <TextView
+            android:id="@+id/TextViewWhitePieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
+            android:accessibilityLiveRegion="none" />
+
+        <TextView
+            android:id="@+id/TextViewBlackPieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dip"
+            android:layout_marginStart="8dip"
+            android:layout_marginEnd="8dip"
+            android:accessibilityLiveRegion="none" />
+    </LinearLayout>
+</ScrollView>

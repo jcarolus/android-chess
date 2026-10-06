@@ -40,6 +40,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.MyPGNProvider;
@@ -140,6 +141,10 @@ public class GamesListActivity extends ChessBoardActivity {
 
         MaterialButton buttonOpen = findViewById(R.id.ButtonOpen);
         buttonOpen.setOnClickListener(v -> openGame());
+
+        MaterialButton buttonAnalyze = findViewById(R.id.ButtonAnalyze);
+        buttonAnalyze.setOnClickListener(v -> analyzeGame());
+
 
         MaterialButton buttonEdit = findViewById(R.id.ButtonEdit);
         buttonEdit.setOnClickListener(v -> editGame());
@@ -429,6 +434,22 @@ public class GamesListActivity extends ChessBoardActivity {
 
         Intent i = new Intent();
         i.setClass(this, PlayActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        startActivity(i);
+    }
+
+    private void analyzeGame() {
+        long id =  Utils.getColumnLong(cursor, PGNColumns._ID);
+
+        Log.d(TAG, "openGame " + id);
+        SharedPreferences.Editor editor = getPrefs().edit();
+        editor.putLong("game_id", id);
+        editor.putBoolean("opponent", false);
+        editor.commit();
+
+        Intent i = new Intent();
+        i.setClass(this, AnalyzeActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
         startActivity(i);

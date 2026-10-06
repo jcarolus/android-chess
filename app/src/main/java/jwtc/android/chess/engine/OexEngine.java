@@ -108,6 +108,7 @@ public class OexEngine extends EngineApi {
     }
 
     private void startSearch(Mode mode, String fen, String command, int timeMillis) {
+        Log.d(TAG, "startSearch " + mode);
         Search requested = new Search(beginSearch(mode), mode, fen, command, timeMillis);
         search = requested;
         latestValue = 0;
