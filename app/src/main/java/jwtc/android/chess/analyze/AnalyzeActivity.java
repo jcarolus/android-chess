@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -35,6 +38,7 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
+import jwtc.chess.Move;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.board.BoardConstants;
 import jwtc.android.chess.views.EngineEvaluationView;
@@ -52,6 +56,19 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private TextView textViewAnalysisLine;
     private ImageView imageAnalysisTurn;
     private TextView textViewLastMove;
+    private TextView textViewEnginePreference;
+    private final LruCache<String, EngineRecommendation> engineRecommendations = new LruCache<>(128);
+    private final Map<Node, String> positionFens = new WeakHashMap<>();
+
+    private static class EngineRecommendation {
+        final int move;
+        final String san;
+
+        EngineRecommendation(int move, String san) {
+            this.move = move;
+            this.san = san;
+        }
+    }
     private View buttonBackToMain;
     private FlexboxLayout layoutVariations;
     private boolean analysisActive;
@@ -70,6 +87,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         layoutVariations = findViewById(R.id.LayoutVariations);
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
+        textViewEnginePreference = findViewById(R.id.TextViewEnginePreference);
         textViewAnalysisLine = findViewById(R.id.TextViewAnalysisLine);
         buttonBackToMain = findViewById(R.id.ButtonBackToMain);
         buttonBackToMain.setOnClickListener(v -> gameApi.returnToMainLine());
@@ -133,8 +151,12 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             gameApi.newGame();
         }
 
+        // Start at the game's root, including custom FEN starting positions.
+        gameApi.goTo(gameApi.getRootNode());
         analysisActive = true;
         analysisFen = null;
+        engineRecommendations.evictAll();
+        positionFens.clear();
         rebuildBoard();
         updatePieceDescriptions();
     }
@@ -164,10 +186,17 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             return;
         }
         final String fen = jni.toFEN();
+        positionFens.put(gameApi.getCurrentNode(), fen);
         if (fen.equals(analysisFen)) {
             return;
         }
         analysisFen = fen;
+        textViewEnginePreference.setText("");
+        textViewEnginePreference.setContentDescription(null);
+        String parentFen = positionFens.get(gameApi.getCurrentNode().getParent());
+        if (parentFen != null && jni.getVariant() == BoardConstants.VARIANT_DEFAULT) {
+            showEnginePreference(engineRecommendations.get(parentFen));
+        }
         final int turn = jni.getTurn();
         final int generation = ++analysisGeneration;
         evaluationView.clearEvaluation();
@@ -219,6 +248,48 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void OnEngineError() {
         evaluationView.clearEvaluation();
+    }
+
+    @Override
+    public void onAnalysisComplete(String fen, String bestMove) {
+        if (!analysisActive || !fen.equals(analysisFen) || !fen.equals(jni.toFEN())
+            || jni.getVariant() != BoardConstants.VARIANT_DEFAULT
+            || bestMove == null || !bestMove.matches("[a-h][1-8][a-h][1-8][qrbn]?")) return;
+        try {
+            int from = Pos.fromString(bestMove.substring(0, 2));
+            int to = Pos.fromString(bestMove.substring(2, 4));
+            int promotion = bestMove.length() == 5 ? "pnbrqk".indexOf(bestMove.charAt(4)) : -1;
+            for (int i = 0; i < jni.getMoveArraySize(); i++) {
+                int move = jni.getMoveArrayAt(i);
+                if (Move.getFrom(move) != from || Move.getTo(move) != to
+                    || (Move.isPromotionMove(move) ? Move.getPromotionPiece(move) : -1) != promotion) continue;
+                jni.scratchSyncFromCurrent();
+                if (jni.scratchMove(move) != 0) {
+                    try {
+                        engineRecommendations.put(fen,
+                            new EngineRecommendation(move, jni.scratchGetMyMoveToString()));
+                    } finally {
+                        jni.scratchUndo();
+                    }
+                }
+                return;
+            }
+        } catch (Exception ex) {
+            Log.w(TAG, "Unable to cache engine recommendation", ex);
+        }
+    }
+
+    private void showEnginePreference(EngineRecommendation recommendation) {
+        if (recommendation == null) return;
+        int lastMove = jni.getMyMove();
+        boolean matches = Move.equalPositions(lastMove, recommendation.move)
+            && Move.isPromotionMove(lastMove) == Move.isPromotionMove(recommendation.move)
+            && (!Move.isPromotionMove(lastMove)
+                || Move.getPromotionPiece(lastMove) == Move.getPromotionPiece(recommendation.move));
+        textViewEnginePreference.setText(matches ? "★"
+            : getString(R.string.analysis_engine_prefers, recommendation.san));
+        textViewEnginePreference.setContentDescription(matches
+            ? getString(R.string.analysis_engine_matches) : null);
     }
 
     @Override

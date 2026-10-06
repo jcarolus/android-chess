@@ -348,7 +348,16 @@ public class OexEngine extends EngineApi {
                 }
             });
         }
-        // In analysis even bestmove 0000/(none) simply completes the search.
+        if (!completed.cancelled && completed.mode == Mode.ANALYSIS) {
+            String[] parts = line.split("\\s+");
+            String bestMove = parts.length > 1 ? parts[1] : "";
+            updateHandler.post(() -> {
+                if (!isCurrentSearch(completed.id)) return;
+                for (EngineListener listener : listeners) {
+                    listener.onAnalysisComplete(completed.fen, bestMove);
+                }
+            });
+        }
         finishSearch();
     }
 

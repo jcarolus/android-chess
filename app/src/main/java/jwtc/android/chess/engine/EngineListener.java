@@ -10,4 +10,7 @@ public interface EngineListener {
     void OnEngineAborted();
 
     void OnEngineError();
+
+    /** Completed analysis result in UCI notation; never an instruction to play a move. */
+    default void onAnalysisComplete(String fen, String bestMove) {}
 }

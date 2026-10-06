@@ -540,6 +540,8 @@
     <string name="white_player_forfeits_on_time">White lost on time</string>
     <string name="white_player_resigned">White resigned</string>
     <string name="analysis_main_line">Main line</string>
+    <string name="analysis_engine_prefers">Engine prefers %1$s</string>
+    <string name="analysis_engine_matches">Last move matches the engine recommendation</string>
     <string name="analysis_white_to_move">White to move</string>
     <string name="analysis_black_to_move">Black to move</string>
     <string name="analysis_variation">Variation</string>
