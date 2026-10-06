@@ -12,6 +12,55 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/ImageAnalysisTurn"
+                android:layout_width="12dip"
+                android:layout_height="12dip"
+                android:layout_marginStart="8dip"
+                android:layout_marginEnd="8dip"
+                android:src="@drawable/turnwhite"
+                android:contentDescription="@string/analysis_white_to_move" />
+
+            <TextView
+                android:id="@+id/TextViewLastMove"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dip"
+                android:accessibilityLiveRegion="assertive" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/TextViewAnalysisLine"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dip"
+                android:text="@string/analysis_main_line"
+                android:accessibilityLiveRegion="polite" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonBackToMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/analysis_back_to_main"
+                android:visibility="invisible" />
+        </LinearLayout>
+
         <TableLayout
             android:id="@+id/LayoutHistory"
             android:layout_width="match_parent"

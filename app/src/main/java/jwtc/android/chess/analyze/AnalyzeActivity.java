@@ -7,6 +7,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +41,10 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private EngineEvaluationView evaluationView;
     private MoveRecyclerAdapter moveAdapter;
     private RecyclerView historyRecyclerView;
+    private TextView textViewAnalysisLine;
+    private ImageView imageAnalysisTurn;
+    private TextView textViewLastMove;
+    private View buttonBackToMain;
     private boolean analysisActive;
     private String analysisFen;
     private int analysisTurn;
@@ -51,6 +58,11 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
         evaluationView = findViewById(R.id.engine_evaluation);
         gameApi = new GameApi();
+        imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
+        textViewLastMove = findViewById(R.id.TextViewLastMove);
+        textViewAnalysisLine = findViewById(R.id.TextViewAnalysisLine);
+        buttonBackToMain = findViewById(R.id.ButtonBackToMain);
+        buttonBackToMain.setOnClickListener(v -> gameApi.returnToMainLine());
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
         historyRecyclerView.setLayoutManager(
             new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -120,6 +132,21 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void rebuildBoard() {
         super.rebuildBoard();
+        boolean whiteToMove = jni.getTurn() == BoardConstants.WHITE;
+        imageAnalysisTurn.setImageResource(whiteToMove ? R.drawable.turnwhite : R.drawable.turnblack);
+        imageAnalysisTurn.setContentDescription(getString(whiteToMove
+            ? R.string.analysis_white_to_move : R.string.analysis_black_to_move));
+        final int state = chessStateToR(gameApi.getState());
+        String stateDescription = "";
+        if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
+            stateDescription = ". " + getString(state);
+        }
+        updateTextViewOrSpeech(textViewLastMove,
+            getLastMoveAndTurnDescription(false) + stateDescription, protectLastMoveSpeech);
+        boolean onMainLine = gameApi.isOnMainLine();
+        textViewAnalysisLine.setText(onMainLine
+            ? R.string.analysis_main_line : R.string.analysis_variation);
+        buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
         moveAdapter.update();
         historyRecyclerView.scrollToPosition(jni.getNumBoard() - 1);
         if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) {
