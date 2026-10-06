@@ -100,6 +100,16 @@
         </TableLayout>
 
         <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/LayoutVariations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="center"
+            android:visibility="gone" />
+
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:flexDirection="row"

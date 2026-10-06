@@ -14,6 +14,11 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.flexbox.FlexboxLayout;
+
+import java.util.List;
+
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.engine.EngineApi;
@@ -28,6 +33,9 @@ import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.PGNEntry;
+import jwtc.chess.Pos;
+import jwtc.chess.GameTree.Node;
 import jwtc.chess.board.BoardConstants;
 import jwtc.android.chess.views.EngineEvaluationView;
 
@@ -45,6 +53,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private ImageView imageAnalysisTurn;
     private TextView textViewLastMove;
     private View buttonBackToMain;
+    private FlexboxLayout layoutVariations;
     private boolean analysisActive;
     private String analysisFen;
     private int analysisTurn;
@@ -58,6 +67,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
         evaluationView = findViewById(R.id.engine_evaluation);
         gameApi = new GameApi();
+        layoutVariations = findViewById(R.id.LayoutVariations);
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
         textViewAnalysisLine = findViewById(R.id.TextViewAnalysisLine);
@@ -149,6 +159,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
         moveAdapter.update();
         historyRecyclerView.scrollToPosition(jni.getNumBoard() - 1);
+        updateVariations();
         if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) {
             return;
         }
@@ -166,6 +177,35 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                 myEngine.analyze(fen, 1000);
             }
         });
+    }
+
+    private void updateVariations() {
+        layoutVariations.removeAllViews();
+        List<Node> continuations = gameApi.getContinuations(gameApi.getCurrentNode());
+        layoutVariations.setVisibility(continuations.size() > 1 ? View.VISIBLE : View.GONE);
+        if (continuations.size() < 2) {
+            return;
+        }
+        // Child zero is the preferred continuation already shown in the history.
+        for (int i = 1; i < continuations.size(); i++) {
+            Node continuation = continuations.get(i);
+            PGNEntry entry = continuation.getEntry();
+            String move = gameApi.getMoveNumber(continuation) + " " + entry.sMove;
+            if (entry.duckMove != -1) {
+                move += "@" + Pos.toString(entry.duckMove);
+            }
+            MaterialButton button = new MaterialButton(this);
+            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                FlexboxLayout.LayoutParams.WRAP_CONTENT, FlexboxLayout.LayoutParams.WRAP_CONTENT);
+            params.setMarginEnd(Math.round(4 * getResources().getDisplayMetrics().density));
+            button.setLayoutParams(params);
+            button.setMinWidth(0);
+            button.setMinimumWidth(0);
+            button.setText(move);
+            button.setAllCaps(false);
+            button.setOnClickListener(v -> gameApi.goTo(continuation));
+            layoutVariations.addView(button);
+        }
     }
 
     @Override
