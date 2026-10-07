@@ -443,13 +443,10 @@ public class GamesListActivity extends ChessBoardActivity {
         long id =  Utils.getColumnLong(cursor, PGNColumns._ID);
 
         Log.d(TAG, "openGame " + id);
-        SharedPreferences.Editor editor = getPrefs().edit();
-        editor.putLong("game_id", id);
-        editor.putBoolean("opponent", false);
-        editor.commit();
-
         Intent i = new Intent();
         i.setClass(this, AnalyzeActivity.class);
+        i.putExtra(AnalyzeActivity.EXTRA_GAME_ID, id);
+        i.putExtra(AnalyzeActivity.EXTRA_SESSION_ID, java.util.UUID.randomUUID().toString());
         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
         startActivity(i);

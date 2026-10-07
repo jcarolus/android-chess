@@ -1,6 +1,7 @@
 package jwtc.android.chess.analyze;
 
 import android.content.ContentUris;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +15,9 @@ import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.flexbox.FlexboxLayout;
 
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -40,11 +44,17 @@ import jwtc.android.chess.views.EngineEvaluationView;
 
 public class AnalyzeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "AnalyzeActivity";
+    public static final String EXTRA_GAME_ID = "analysisGameId";
+    public static final String EXTRA_SESSION_ID = "analysisSessionId";
+    private String sessionId;
+    private boolean sessionLoaded;
+    private Bundle restoredSession;
+    private String configuredEngine;
+    private int configuredSeconds;
     private EngineApi myEngine;
     private OexEngine oexEngine;
     private long lGameID;
     private EngineEvaluationView evaluationView;
-    private TextView textViewAnalysisLine;
     private ImageView imageAnalysisTurn;
     private TextView textViewLastMove;
     private TextView textViewAnalysisMove, textViewEngineLikes;
@@ -59,11 +69,20 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private static class PositionAnalysis {
         final PositionMove preferredMove;
         final EngineEvaluation evaluation;
+        final String bestMove;
 
         PositionAnalysis(PositionMove preferredMove, EngineEvaluation evaluation) {
+            this.bestMove = preferredMove == null ? null : preferredMove.uci;
             this.preferredMove = preferredMove;
             this.evaluation = evaluation;
         }
+        PositionAnalysis(Bundle saved) {
+            preferredMove = null;
+            bestMove = saved.getString("move");
+            evaluation = saved.containsKey("value") ? new EngineEvaluation(
+                saved.getBoolean("mate"), saved.getInt("value"), saved.getInt("depth")) : null;
+        }
+
     }
     private View buttonBackToMain;
     private FlexboxLayout layoutVariations;
@@ -76,6 +95,12 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        restoredSession = savedInstanceState == null ? null : savedInstanceState.getBundle("analysisSession");
+        sessionId = getIntent().getStringExtra(EXTRA_SESSION_ID);
+        if (sessionId == null) {
+            sessionId = UUID.randomUUID().toString();
+            getIntent().putExtra(EXTRA_SESSION_ID, sessionId);
+        }
         setContentView(R.layout.analyze);
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
@@ -90,7 +115,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         buttonEngineMove = findViewById(R.id.ButtonEngineMove);
         buttonNext = findViewById(R.id.ButtonNext);
         buttonNext.setEnabled(false);
-        textViewAnalysisLine = findViewById(R.id.TextViewAnalysisLine);
         buttonBackToMain = findViewById(R.id.ButtonBackToMain);
         buttonBackToMain.setOnClickListener(v -> gameApi.returnToMainLine());
         switchSound = findViewById(R.id.SwitchSound);
@@ -105,6 +129,8 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             findViewById(R.id.analyze_controls), null, null, 24);
         findViewById(R.id.ButtonPrevious).setOnClickListener(v -> gameApi.undoMove());
         buttonNext.setOnClickListener(v -> gameApi.nextMove());
+        findViewById(R.id.ButtonAnalysisSettings).setOnClickListener(v ->
+            AnalysisSettingsDialog.show(this, getPrefs(), this::restartAnalysis));
 
     }
 
@@ -114,38 +140,114 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
         SharedPreferences prefs = getPrefs();
 
-        String sPGN = prefs.getString("game_pgn", null);
-        String sFEN = prefs.getString("FEN", null);
-        oexEngine = new OexEngine(this, gameApi, prefs.getString("oexEngineId", null));
-        oexEngine.setPreferredEngineId(getPrefs().getString("oexEngineId", null));
-
-        myEngine = oexEngine; // @TODO
-        myEngine.addListener(this);
-
-        lGameID = prefs.getLong("game_id", 0);
-
-        Log.d(TAG, "onResume => " + lGameID + " " + (sPGN != null ? "PGN " : " ") + (sFEN != null ? "FEN" : ""));
-        if (lGameID > 0 && loadGame()) {
-            Log.d(TAG, "Loaded game " + lGameID);
-        } else if (sPGN != null) {
-            gameApi.loadPGN(sPGN);
-        } else if (sFEN != null) {
-            gameApi.initFEN(sFEN, true);
+        if (!sessionLoaded) {
+            lGameID = getIntent().getLongExtra(EXTRA_GAME_ID, prefs.getLong("game_id", 0));
+            String pgn = prefs.getString("game_pgn", null);
+            String fen = prefs.getString("FEN", null);
+            if (restoredSession != null && sessionId.equals(restoredSession.getString("id"))) {
+                gameApi.loadPGN(restoredSession.getString("pgn"));
+                Node node = gameApi.getRootNode();
+                int[] path = restoredSession.getIntArray("path");
+                if (path != null) for (int index : path) {
+                    List<Node> children = gameApi.getContinuations(node);
+                    if (index < 0 || index >= children.size()) break;
+                    node = children.get(index);
+                }
+                gameApi.goTo(node);
+            } else {
+                if (lGameID > 0 && loadGame()) {
+                    Log.d(TAG, "Loaded game " + lGameID);
+                } else if (!getIntent().hasExtra(EXTRA_GAME_ID) && pgn != null) {
+                    gameApi.loadPGN(pgn);
+                } else if (!getIntent().hasExtra(EXTRA_GAME_ID) && fen != null) {
+                    gameApi.initFEN(fen, true);
+                } else {
+                    gameApi.newGame();
+                }
+                gameApi.goTo(gameApi.getRootNode());
+            }
+            sessionLoaded = true;
         } else {
-            gameApi.newGame();
+            gameApi.restoreCurrentBoard();
         }
-
-        // Start at the game's root, including custom FEN starting positions.
-        gameApi.goTo(gameApi.getRootNode());
-        analysisActive = true;
+        String engineId = prefs.getString(AnalysisSettingsDialog.PREF_ENGINE, null);
+        int seconds = AnalysisSettingsDialog.getTimeSeconds(prefs);
+        if (!Objects.equals(engineId, configuredEngine) || seconds != configuredSeconds) {
+            positionAnalyses.evictAll();
+        }
+        if (restoredSession != null && sessionId.equals(restoredSession.getString("id"))
+            && Objects.equals(engineId, restoredSession.getString("engine"))
+            && seconds == restoredSession.getInt("seconds")) {
+            ArrayList<Bundle> results = restoredSession.getParcelableArrayList("results");
+            if (results != null) for (Bundle result : results) {
+                positionAnalyses.put(result.getString("fen"), new PositionAnalysis(result));
+            }
+        }
+        restoredSession = null;
+        configuredEngine = engineId;
+        configuredSeconds = seconds;
+        oexEngine = new OexEngine(this, gameApi, engineId);
+        myEngine = oexEngine;
+        myEngine.addListener(this);
         analysisFen = null;
-        positionAnalyses.evictAll();
-        positions.clear();
-        displayedNode = null;
         requestedPosition = null;
         analysisSwitchPending = false;
+        displayedNode = gameApi.getCurrentNode();
+        analysisActive = true;
         rebuildBoard();
         updatePieceDescriptions();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String incomingId = intent.getStringExtra(EXTRA_SESSION_ID);
+        if (incomingId != null && incomingId.equals(sessionId)) return;
+        setIntent(intent);
+        sessionId = incomingId == null ? UUID.randomUUID().toString() : incomingId;
+        intent.putExtra(EXTRA_SESSION_ID, sessionId);
+        analysisActive = false;
+        analysisGeneration++;
+        if (myEngine != null) myEngine.removeListener(this);
+        if (oexEngine != null) oexEngine.destroy();
+        sessionLoaded = false;
+        restoredSession = null;
+        positionAnalyses.evictAll();
+        positions.clear();
+        evaluationView.clearEvaluation();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (!sessionLoaded) return;
+        Bundle session = new Bundle();
+        session.putString("id", sessionId);
+        session.putString("pgn", gameApi.exportFullPGN());
+        ArrayList<Integer> reversed = new ArrayList<>();
+        for (Node node = gameApi.getCurrentNode(); node.getParent() != null; node = node.getParent()) {
+            reversed.add(gameApi.getContinuations(node.getParent()).indexOf(node));
+        }
+        int[] path = new int[reversed.size()];
+        for (int i = 0; i < path.length; i++) path[i] = reversed.get(path.length - 1 - i);
+        session.putIntArray("path", path);
+        session.putString("engine", configuredEngine);
+        session.putInt("seconds", configuredSeconds);
+        ArrayList<Bundle> results = new ArrayList<>();
+        for (Map.Entry<String, PositionAnalysis> entry : positionAnalyses.snapshot().entrySet()) {
+            PositionAnalysis analysis = entry.getValue();
+            Bundle result = new Bundle();
+            result.putString("fen", entry.getKey());
+            result.putString("move", analysis.bestMove);
+            if (analysis.evaluation != null) {
+                result.putBoolean("mate", analysis.evaluation.mate);
+                result.putInt("value", analysis.evaluation.value);
+                result.putInt("depth", analysis.evaluation.depth);
+            }
+            results.add(result);
+        }
+        session.putParcelableArrayList("results", results);
+        outState.putBundle("analysisSession", session);
     }
 
     @Override
@@ -163,8 +265,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         updateTextViewOrSpeech(textViewLastMove,
             getLastMoveAndTurnDescription(false) + stateDescription, protectLastMoveSpeech);
         boolean onMainLine = gameApi.isOnMainLine();
-        textViewAnalysisLine.setText(onMainLine
-            ? R.string.analysis_main_line : R.string.analysis_variation);
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
         boolean changed = displayedNode != gameApi.getCurrentNode();
         displayedNode = gameApi.getCurrentNode();
@@ -193,6 +293,30 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
     }
 
+    private void restartAnalysis() {
+        if (!analysisActive) return;
+        String engineId = getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null);
+        int seconds = AnalysisSettingsDialog.getTimeSeconds(getPrefs());
+        if (Objects.equals(engineId, configuredEngine) && seconds == configuredSeconds) return;
+        configuredEngine = engineId;
+        configuredSeconds = seconds;
+        analysisGeneration++;
+        myEngine.removeListener(this);
+        oexEngine.destroy();
+        oexEngine = new OexEngine(this, gameApi,
+            getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null));
+        myEngine = oexEngine;
+        myEngine.addListener(this);
+        analysisFen = null;
+        requestedPosition = null;
+        analysisSwitchPending = false;
+        positionAnalyses.evictAll();
+        evaluationView.clearEvaluation();
+        updateMoveSummary();
+        updateNextButton();
+        startNextAnalysis();
+    }
+
     private void rememberPosition(Node node) {
         if (positions.containsKey(node)) return;
         PositionSnapshot position = gameApi.getPositionSnapshot(node);
@@ -211,7 +335,12 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (position.state == BoardConstants.MATE) {
             return new PositionAnalysis(null, new EngineEvaluation(true, 0, 0));
         }
-        return positionAnalyses.get(position.fen);
+        PositionAnalysis result = positionAnalyses.get(position.fen);
+        if (result != null && result.preferredMove == null && result.bestMove != null) {
+            result = new PositionAnalysis(position.findMove(result.bestMove), result.evaluation);
+            positionAnalyses.put(position.fen, result);
+        }
+        return result;
     }
 
     private void startNextAnalysis() {
@@ -241,7 +370,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         requestedPosition = next;
         analysisFen = next.fen;
         analysisTurn = next.turn;
-        myEngine.analyze(next.fen, 1000);
+        myEngine.analyze(next.fen, AnalysisSettingsDialog.getTimeSeconds(getPrefs()) * 1000);
     }
 
     private void updateNextButton() {

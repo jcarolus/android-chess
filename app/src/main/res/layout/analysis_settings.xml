@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <jwtc.android.chess.views.FixedDropdownView
+        android:id="@+id/AnalysisEngine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/title_pick_engine" />
+
+    <TextView
+        android:id="@+id/AnalysisNoEngines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/options_engine_oex_unavailable"
+        android:visibility="gone" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/analysis_time_budget">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/AnalysisTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="7"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

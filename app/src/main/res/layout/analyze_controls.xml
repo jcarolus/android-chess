@@ -36,30 +36,12 @@
                 android:layout_marginEnd="8dip"
                 android:accessibilityLiveRegion="assertive" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/TextViewAnalysisLine"
-                style="@style/MyPaneTextStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dip"
-                android:text="@string/analysis_main_line"
-                android:accessibilityLiveRegion="polite" />
-
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/ButtonBackToMain"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/analysis_back_to_main"
-                android:visibility="invisible" />
+                android:id="@+id/ButtonAnalysisSettings"
+                style="?attr/chessImageButtonStyle"
+                app:icon="@drawable/sliders"
+                android:contentDescription="@string/analysis_settings" />
+
         </LinearLayout>
 
         <TableLayout
@@ -140,6 +122,13 @@
                 android:minWidth="0dp"
                 android:textAllCaps="false"
                 android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonBackToMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/analysis_back_to_main"
+                android:visibility="invisible" />
         </LinearLayout>
 
         <com.google.android.flexbox.FlexboxLayout

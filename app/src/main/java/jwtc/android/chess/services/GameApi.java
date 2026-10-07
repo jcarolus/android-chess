@@ -358,6 +358,11 @@ public class GameApi {
         return true;
     }
 
+    /** Rebuild this game's native board after another screen may have used the shared JNI. */
+    public void restoreCurrentBoard() {
+        restoreBoard(currentNode, pendingDuckMove);
+    }
+
     private void restoreBoard(Node target, PGNEntry pending) {
         if (!jni.initFEN(gameTree.getInitialFen())) throw new IllegalStateException("Cannot restore starting board");
         currentNode = gameTree.getRoot();
