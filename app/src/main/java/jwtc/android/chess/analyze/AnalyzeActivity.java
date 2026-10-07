@@ -326,12 +326,19 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         textViewEngineLikes.setVisibility(View.GONE);
         buttonEngineMove.setVisibility(View.GONE);
         buttonEngineMove.setOnClickListener(null);
-        if (entry == null || jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
+        if (jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
 
         PositionSnapshot parent = positions.get(current.getParent());
         PositionSnapshot position = positions.get(current);
         PositionAnalysis before = getAnalysis(parent);
         PositionAnalysis after = getAnalysis(position);
+        boolean hasEngineContinuation = gameApi.getContinuations(current).isEmpty()
+            && after != null && after.preferredMove != null;
+        if (hasEngineContinuation) {
+            showEngineMove(current, after.preferredMove);
+        }
+        if (entry == null) return;
+
         PositionMove recommendation = before == null ? null : before.preferredMove;
         boolean matches = recommendation != null && Move.equalPositions(entry.move, recommendation.move)
             && Move.isPromotionMove(entry.move) == Move.isPromotionMove(recommendation.move)
@@ -344,12 +351,16 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                 matches, parent.moves.size(), position.state == BoardConstants.MATE, isDraw(position.state));
         textViewMoveFeedback.setText(feedback != null ? feedbackText(feedback)
             : before == null || after == null ? R.string.analysis_move_pending : R.string.analysis_move_unavailable);
-        if (recommendation == null || matches) return;
+        if (hasEngineContinuation || recommendation == null || matches) return;
+        showEngineMove(current.getParent(), recommendation);
+    }
+
+    private void showEngineMove(Node branchPoint, PositionMove recommendation) {
         textViewEngineLikes.setVisibility(View.VISIBLE);
         buttonEngineMove.setVisibility(View.VISIBLE);
         buttonEngineMove.setText(recommendation.san);
         buttonEngineMove.setOnClickListener(v ->
-            gameApi.createVariation(current.getParent(), recommendation.san));
+            gameApi.createVariation(branchPoint, recommendation.san));
     }
 
     private static int feedbackText(MoveClassifier.Feedback feedback) {
