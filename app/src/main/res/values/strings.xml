@@ -542,6 +542,15 @@
     <string name="analysis_main_line">Main line</string>
     <string name="analysis_engine_likes">Engine likes:</string>
     <string name="analysis_engine_matches">Last move matches the engine recommendation</string>
+    <string name="analysis_move_best">Best</string>
+    <string name="analysis_move_excellent">Excellent</string>
+    <string name="analysis_move_okay">Okay</string>
+    <string name="analysis_move_inaccuracy">Inaccuracy</string>
+    <string name="analysis_move_mistake">Mistake</string>
+    <string name="analysis_move_blunder">Blunder</string>
+    <string name="analysis_move_forced">Forced</string>
+    <string name="analysis_move_pending">Analyzing move…</string>
+    <string name="analysis_move_unavailable">Analysis unavailable</string>
     <string name="analysis_white_to_move">White to move</string>
     <string name="analysis_black_to_move">Black to move</string>
     <string name="analysis_variation">Variation</string>

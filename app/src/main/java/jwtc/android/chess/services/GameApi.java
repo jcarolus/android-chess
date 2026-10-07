@@ -83,6 +83,65 @@ public class GameApi {
         return gameTree.contains(position) ? position.getChildren() : Collections.emptyList();
     }
 
+    /** Immutable input for asynchronous analysis, including notation for legal recommendations. */
+    public static final class PositionSnapshot {
+        public final String fen;
+        public final int turn;
+        public final int state;
+        public final List<PositionMove> moves;
+
+        private PositionSnapshot(String fen, int turn, int state, List<PositionMove> moves) {
+            this.fen = fen;
+            this.turn = turn;
+            this.state = state;
+            this.moves = Collections.unmodifiableList(moves);
+        }
+
+        public PositionMove findMove(String uci) {
+            for (PositionMove move : moves) if (move.uci.equals(uci)) return move;
+            return null;
+        }
+    }
+
+    public static final class PositionMove {
+        public final int move;
+        public final String uci;
+        public final String san;
+
+        private PositionMove(int move, String san) {
+            this.move = move;
+            this.san = san;
+            this.uci = Pos.toString(Move.getFrom(move)) + Pos.toString(Move.getTo(move))
+                + (Move.isPromotionMove(move) ? "pnbrqk".charAt(Move.getPromotionPiece(move)) : "");
+        }
+    }
+
+    /** Main-thread only. Inspect a recorded position without dispatching navigation or changing the tree. */
+    public PositionSnapshot getPositionSnapshot(Node node) {
+        if (pendingDuckMove != null || !gameTree.contains(node)) return null;
+        Node original = currentNode;
+        try {
+            if (!navigateTo(node)) return null;
+            List<PositionMove> moves = new ArrayList<>();
+            int count = jni.getMoveArraySize();
+            jni.scratchSyncFromCurrent();
+            for (int i = 0; i < count; i++) {
+                int move = jni.getMoveArrayAt(i);
+                if (jni.scratchMove(move) == 0) continue;
+                try {
+                    moves.add(new PositionMove(move, jni.scratchGetMyMoveToString()));
+                } finally {
+                    jni.scratchUndo();
+                }
+            }
+            return new PositionSnapshot(jni.toFEN(), jni.getTurn(), jni.getState(), moves);
+        } finally {
+            if (!navigateTo(original)) restoreBoard(original, null);
+            // JNI's move array is shared; restore it along with the board.
+            jni.getMoveArraySize();
+        }
+    }
+
     /** Call after the native board has been initialized, never merely to clear a move list. */
     protected final void resetPGNHistory() {
         resetPGNHistory(jni.toFEN());

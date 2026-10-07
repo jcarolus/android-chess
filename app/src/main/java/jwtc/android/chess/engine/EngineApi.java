@@ -129,7 +129,7 @@ public abstract class EngineApi {
 
     /**
      * Analyses the supplied FEN snapshot with a positive timeMillis search budget.
-     * Ignores and preserves the PLAY time/depth settings. Reports OnEngineInfo only,
+     * Ignores and preserves the PLAY time/depth settings. Reports OnEngineInfo and onAnalysisComplete,
      * never OnEngineMove, including after stop. Does not modify the live board.
      * An unsupported backend reports an empty message with value zero without searching.
      * Calls while busy are ignored; abort with a completion callback before replacing a search.

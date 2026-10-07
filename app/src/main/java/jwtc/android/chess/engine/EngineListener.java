@@ -11,6 +11,9 @@ public interface EngineListener {
 
     void OnEngineError();
 
-    /** Completed analysis result in UCI notation; never an instruction to play a move. */
-    default void onAnalysisComplete(String fen, String bestMove) {}
+    /**
+     * Completed analysis, never an instruction to play a move. Evaluation is the last exact
+     * principal-line score, from the searched side's perspective; null if none was received.
+     */
+    default void onAnalysisComplete(String fen, String bestMove, EngineEvaluation evaluation) {}
 }

@@ -56,6 +56,7 @@ public class OexEngine extends EngineApi {
         boolean sent;
         boolean stopping;
         boolean cancelled;
+        EngineEvaluation evaluation;
 
         Search(long id, Mode mode, String fen, String command, int timeMillis) {
             this.id = id;
@@ -308,6 +309,8 @@ public class OexEngine extends EngineApi {
     }
 
     private void parseInfo(String line) {
+        EngineEvaluation evaluation = EngineEvaluation.fromInfo(line);
+        if (evaluation != null) search.evaluation = evaluation;
         try {
             Matcher cpMatch = SCORE_CP_PATTERN.matcher(line);
             if (cpMatch.matches()) {
@@ -354,7 +357,7 @@ public class OexEngine extends EngineApi {
             updateHandler.post(() -> {
                 if (!isCurrentSearch(completed.id)) return;
                 for (EngineListener listener : listeners) {
-                    listener.onAnalysisComplete(completed.fen, bestMove);
+                    listener.onAnalysisComplete(completed.fen, bestMove, completed.evaluation);
                 }
             });
         }

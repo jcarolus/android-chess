@@ -89,15 +89,6 @@
                     app:flexWrap="wrap"
                     app:alignItems="center">
 
-                    <ImageView
-                        android:id="@+id/ImageEnginePreferred"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginEnd="4dp"
-                        android:src="@drawable/star"
-                        android:contentDescription="@string/analysis_engine_matches"
-                        android:visibility="gone" />
-
                     <TextView
                         android:id="@+id/TextViewAnalysisMove"
                         style="@style/MyPaneTextStyle"
@@ -106,21 +97,15 @@
                         android:layout_marginEnd="8dp" />
 
                     <TextView
-                        android:id="@+id/TextViewEngineLikes"
+                        android:id="@+id/TextViewMoveFeedback"
                         style="@style/MyPaneTextStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="4dp"
-                        android:text="@string/analysis_engine_likes"
+                        android:layout_marginEnd="8dp"
+                        android:textStyle="bold"
+                        android:accessibilityLiveRegion="polite"
                         android:visibility="gone" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/ButtonEngineMove"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minWidth="0dp"
-                        android:textAllCaps="false"
-                        android:visibility="gone" />
                 </com.google.android.flexbox.FlexboxLayout>
 
                 <com.google.android.material.button.MaterialButton
@@ -130,6 +115,32 @@
                     style="?attr/chessImageButtonStyle" />
             </TableRow>
         </TableLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/TextViewEngineLikes"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/analysis_engine_likes"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonEngineMove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/LayoutVariations"

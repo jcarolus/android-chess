@@ -22,11 +22,14 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
+import jwtc.android.chess.engine.EngineEvaluation;
 import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.GameApi.PositionSnapshot;
+import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
@@ -45,19 +48,21 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private ImageView imageAnalysisTurn;
     private TextView textViewLastMove;
     private TextView textViewAnalysisMove, textViewEngineLikes;
-    private ImageView imageEnginePreferred;
+    private TextView textViewMoveFeedback;
     private MaterialButton buttonEngineMove;
     private View buttonNext;
-    private final LruCache<String, EngineRecommendation> engineRecommendations = new LruCache<>(128);
-    private final Map<Node, String> positionFens = new WeakHashMap<>();
+    private final LruCache<String, PositionAnalysis> positionAnalyses = new LruCache<>(128);
+    private final Map<Node, PositionSnapshot> positions = new WeakHashMap<>();
+    private Node displayedNode;
+    private PositionSnapshot requestedPosition;
 
-    private static class EngineRecommendation {
-        final int move;
-        final String san;
+    private static class PositionAnalysis {
+        final PositionMove preferredMove;
+        final EngineEvaluation evaluation;
 
-        EngineRecommendation(int move, String san) {
-            this.move = move;
-            this.san = san;
+        PositionAnalysis(PositionMove preferredMove, EngineEvaluation evaluation) {
+            this.preferredMove = preferredMove;
+            this.evaluation = evaluation;
         }
     }
     private View buttonBackToMain;
@@ -66,6 +71,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private String analysisFen;
     private int analysisTurn;
     private int analysisGeneration;
+    private boolean analysisSwitchPending;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         textViewLastMove = findViewById(R.id.TextViewLastMove);
         textViewAnalysisMove = findViewById(R.id.TextViewAnalysisMove);
         textViewEngineLikes = findViewById(R.id.TextViewEngineLikes);
-        imageEnginePreferred = findViewById(R.id.ImageEnginePreferred);
+        textViewMoveFeedback = findViewById(R.id.TextViewMoveFeedback);
         buttonEngineMove = findViewById(R.id.ButtonEngineMove);
         buttonNext = findViewById(R.id.ButtonNext);
         buttonNext.setEnabled(false);
@@ -133,8 +139,11 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         gameApi.goTo(gameApi.getRootNode());
         analysisActive = true;
         analysisFen = null;
-        engineRecommendations.evictAll();
-        positionFens.clear();
+        positionAnalyses.evictAll();
+        positions.clear();
+        displayedNode = null;
+        requestedPosition = null;
+        analysisSwitchPending = false;
         rebuildBoard();
         updatePieceDescriptions();
     }
@@ -157,31 +166,87 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         textViewAnalysisLine.setText(onMainLine
             ? R.string.analysis_main_line : R.string.analysis_variation);
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
+        boolean changed = displayedNode != gameApi.getCurrentNode();
+        displayedNode = gameApi.getCurrentNode();
+        if (jni.getVariant() == BoardConstants.VARIANT_DEFAULT) {
+            rememberPosition(displayedNode);
+            if (displayedNode.getParent() != null) rememberPosition(displayedNode.getParent());
+        }
         updateMoveSummary();
         updateVariations();
         updateNextButton();
-        if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) {
-            return;
+        if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) return;
+        if (changed) {
+            analysisFen = null;
+            requestedPosition = null;
+            analysisSwitchPending = true;
+            final int generation = ++analysisGeneration;
+            evaluationView.clearEvaluation();
+            myEngine.abort(() -> {
+                if (analysisActive && generation == analysisGeneration) {
+                    analysisSwitchPending = false;
+                    startNextAnalysis();
+                }
+            });
+        } else if (analysisFen == null) {
+            startNextAnalysis();
         }
-        final String fen = jni.toFEN();
-        positionFens.put(gameApi.getCurrentNode(), fen);
-        if (fen.equals(analysisFen)) {
-            return;
+    }
+
+    private void rememberPosition(Node node) {
+        if (positions.containsKey(node)) return;
+        PositionSnapshot position = gameApi.getPositionSnapshot(node);
+        if (position != null) positions.put(node, position);
+    }
+
+    private static boolean isDraw(int state) {
+        return state == BoardConstants.STALEMATE || state == BoardConstants.DRAW_MATERIAL
+            || state == BoardConstants.DRAW_50 || state == BoardConstants.DRAW_REPEAT;
+    }
+
+    private PositionAnalysis getAnalysis(PositionSnapshot position) {
+        if (position == null) return null;
+        // Terminal outcomes come from the board, including repetition history absent from FEN.
+        if (isDraw(position.state)) return new PositionAnalysis(null, new EngineEvaluation(false, 0, 0));
+        if (position.state == BoardConstants.MATE) {
+            return new PositionAnalysis(null, new EngineEvaluation(true, 0, 0));
         }
-        analysisFen = fen;
-        final int turn = jni.getTurn();
-        final int generation = ++analysisGeneration;
-        evaluationView.clearEvaluation();
-        myEngine.abort(() -> {
-            if (analysisActive && generation == analysisGeneration) {
-                analysisTurn = turn;
-                myEngine.analyze(fen, 1000);
+        return positionAnalyses.get(position.fen);
+    }
+
+    private void startNextAnalysis() {
+        if (!analysisActive || analysisSwitchPending || analysisFen != null
+            || displayedNode != gameApi.getCurrentNode()) return;
+        PositionSnapshot current = positions.get(displayedNode);
+        if (current == null) return;
+        PositionSnapshot parent = positions.get(displayedNode.getParent());
+        // Fill a missing parent first when jumping into a variation or after cache eviction.
+        PositionSnapshot next = parent != null && getAnalysis(parent) == null ? parent
+            : getAnalysis(current) == null ? current : null;
+        if (next == null) {
+            PositionAnalysis result = getAnalysis(current);
+            if (result != null && result.evaluation != null) {
+                EngineEvaluation evaluation = result.evaluation;
+                float value = evaluation.mate
+                    ? (current.state == BoardConstants.MATE
+                        ? (current.turn == BoardConstants.WHITE ? -1000 : 1000)
+                        : evaluation.value > 0 ? 1000 : -1000)
+                    : evaluation.value / 100.0f;
+                evaluationView.setEvaluation(value);
             }
-        });
+            updateMoveSummary();
+            updateNextButton();
+            return;
+        }
+        requestedPosition = next;
+        analysisFen = next.fen;
+        analysisTurn = next.turn;
+        myEngine.analyze(next.fen, 1000);
     }
 
     private void updateNextButton() {
-        buttonNext.setEnabled(engineRecommendations.get(jni.toFEN()) != null
+        PositionAnalysis result = getAnalysis(positions.get(gameApi.getCurrentNode()));
+        buttonNext.setEnabled(result != null && result.preferredMove != null
             && !gameApi.getContinuations(gameApi.getCurrentNode()).isEmpty());
     }
 
@@ -217,7 +282,8 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void OnEngineInfo(String message, float value) {
         // UCI scores are relative to the side to move in the searched position.
-        if (analysisActive && message != null && message.contains(" score ")) {
+        if (analysisActive && analysisFen != null && analysisFen.equals(jni.toFEN())
+            && message != null && message.contains(" score ")) {
             evaluationView.setEvaluation(analysisTurn == BoardConstants.WHITE ? value : -value);
         }
     }
@@ -225,36 +291,29 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void OnEngineError() {
         evaluationView.clearEvaluation();
+        if (!analysisActive || analysisFen == null) return;
+        positionAnalyses.put(analysisFen, new PositionAnalysis(null, null));
+        analysisFen = null;
+        requestedPosition = null;
+        updateMoveSummary();
+        updateNextButton();
+        // Continue after the engine's error callback has unwound and released its search.
+        textViewMoveFeedback.post(this::startNextAnalysis);
     }
 
     @Override
-    public void onAnalysisComplete(String fen, String bestMove) {
-        if (!analysisActive || !fen.equals(analysisFen) || !fen.equals(jni.toFEN())
-            || jni.getVariant() != BoardConstants.VARIANT_DEFAULT
-            || bestMove == null || !bestMove.matches("[a-h][1-8][a-h][1-8][qrbn]?")) return;
-        try {
-            int from = Pos.fromString(bestMove.substring(0, 2));
-            int to = Pos.fromString(bestMove.substring(2, 4));
-            int promotion = bestMove.length() == 5 ? "pnbrqk".indexOf(bestMove.charAt(4)) : -1;
-            for (int i = 0; i < jni.getMoveArraySize(); i++) {
-                int move = jni.getMoveArrayAt(i);
-                if (Move.getFrom(move) != from || Move.getTo(move) != to
-                    || (Move.isPromotionMove(move) ? Move.getPromotionPiece(move) : -1) != promotion) continue;
-                jni.scratchSyncFromCurrent();
-                if (jni.scratchMove(move) != 0) {
-                    try {
-                        engineRecommendations.put(fen,
-                            new EngineRecommendation(move, jni.scratchGetMyMoveToString()));
-                    } finally {
-                        jni.scratchUndo();
-                    }
-                    updateNextButton();
-                }
-                return;
-            }
-        } catch (Exception ex) {
-            Log.w(TAG, "Unable to cache engine recommendation", ex);
-        }
+    public void onAnalysisComplete(String fen, String bestMove, EngineEvaluation evaluation) {
+        if (!analysisActive || !fen.equals(analysisFen) || requestedPosition == null
+            || displayedNode != gameApi.getCurrentNode()) return;
+        PositionMove preferredMove = requestedPosition.findMove(bestMove);
+        EngineEvaluation whiteEvaluation = evaluation == null ? null
+            : evaluation.forWhite(requestedPosition.turn == BoardConstants.WHITE);
+        positionAnalyses.put(fen, new PositionAnalysis(preferredMove, whiteEvaluation));
+        analysisFen = null;
+        requestedPosition = null;
+        updateNextButton();
+        updateMoveSummary();
+        startNextAnalysis();
     }
 
     private void updateMoveSummary() {
@@ -263,25 +322,47 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         String moveText = entry == null ? "" : gameApi.getMoveNumber(current) + " " + entry.sMove;
         if (entry != null && entry.duckMove != -1) moveText += "@" + Pos.toString(entry.duckMove);
         textViewAnalysisMove.setText(moveText);
-        imageEnginePreferred.setVisibility(View.GONE);
+        textViewMoveFeedback.setVisibility(View.GONE);
         textViewEngineLikes.setVisibility(View.GONE);
         buttonEngineMove.setVisibility(View.GONE);
         buttonEngineMove.setOnClickListener(null);
         if (entry == null || jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
 
-        String parentFen = positionFens.get(current.getParent());
-        EngineRecommendation recommendation = parentFen == null ? null : engineRecommendations.get(parentFen);
-        if (recommendation == null) return;
-        boolean matches = Move.equalPositions(entry.move, recommendation.move)
+        PositionSnapshot parent = positions.get(current.getParent());
+        PositionSnapshot position = positions.get(current);
+        PositionAnalysis before = getAnalysis(parent);
+        PositionAnalysis after = getAnalysis(position);
+        PositionMove recommendation = before == null ? null : before.preferredMove;
+        boolean matches = recommendation != null && Move.equalPositions(entry.move, recommendation.move)
             && Move.isPromotionMove(entry.move) == Move.isPromotionMove(recommendation.move)
             && (!Move.isPromotionMove(entry.move)
                 || Move.getPromotionPiece(entry.move) == Move.getPromotionPiece(recommendation.move));
-        imageEnginePreferred.setVisibility(matches ? View.VISIBLE : View.GONE);
-        textViewEngineLikes.setVisibility(matches ? View.GONE : View.VISIBLE);
-        buttonEngineMove.setVisibility(matches ? View.GONE : View.VISIBLE);
+        textViewMoveFeedback.setVisibility(View.VISIBLE);
+        MoveClassifier.Feedback feedback = parent == null || position == null ? null
+            : MoveClassifier.classify(before == null ? null : before.evaluation,
+                after == null ? null : after.evaluation, parent.turn == BoardConstants.WHITE,
+                matches, parent.moves.size(), position.state == BoardConstants.MATE, isDraw(position.state));
+        textViewMoveFeedback.setText(feedback != null ? feedbackText(feedback)
+            : before == null || after == null ? R.string.analysis_move_pending : R.string.analysis_move_unavailable);
+        if (recommendation == null || matches) return;
+        textViewEngineLikes.setVisibility(View.VISIBLE);
+        buttonEngineMove.setVisibility(View.VISIBLE);
         buttonEngineMove.setText(recommendation.san);
         buttonEngineMove.setOnClickListener(v ->
             gameApi.createVariation(current.getParent(), recommendation.san));
+    }
+
+    private static int feedbackText(MoveClassifier.Feedback feedback) {
+        switch (feedback) {
+            case BEST: return R.string.analysis_move_best;
+            case EXCELLENT: return R.string.analysis_move_excellent;
+            case OKAY: return R.string.analysis_move_okay;
+            case INACCURACY: return R.string.analysis_move_inaccuracy;
+            case MISTAKE: return R.string.analysis_move_mistake;
+            case BLUNDER: return R.string.analysis_move_blunder;
+            case FORCED: return R.string.analysis_move_forced;
+            default: throw new IllegalArgumentException("Unknown move feedback");
+        }
     }
 
     @Override
