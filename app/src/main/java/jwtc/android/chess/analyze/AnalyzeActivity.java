@@ -1,7 +1,6 @@
 package jwtc.android.chess.analyze;
 
 import android.content.ContentUris;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,9 +10,6 @@ import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.flexbox.FlexboxLayout;
@@ -26,14 +22,10 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
-import jwtc.android.chess.engine.LocalEngine;
 import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.EinkMode;
-import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.helpers.Utils;
-import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PGNEntry;
@@ -46,17 +38,16 @@ import jwtc.android.chess.views.EngineEvaluationView;
 public class AnalyzeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "AnalyzeActivity";
     private EngineApi myEngine;
-    private EngineApi localEngine;
     private OexEngine oexEngine;
-    private final EcoService ecoService = new EcoService();
     private long lGameID;
     private EngineEvaluationView evaluationView;
-    private MoveRecyclerAdapter moveAdapter;
-    private RecyclerView historyRecyclerView;
     private TextView textViewAnalysisLine;
     private ImageView imageAnalysisTurn;
     private TextView textViewLastMove;
-    private TextView textViewEnginePreference;
+    private TextView textViewAnalysisMove, textViewEngineLikes;
+    private ImageView imageEnginePreferred;
+    private MaterialButton buttonEngineMove;
+    private View buttonNext;
     private final LruCache<String, EngineRecommendation> engineRecommendations = new LruCache<>(128);
     private final Map<Node, String> positionFens = new WeakHashMap<>();
 
@@ -87,22 +78,15 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         layoutVariations = findViewById(R.id.LayoutVariations);
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
-        textViewEnginePreference = findViewById(R.id.TextViewEnginePreference);
+        textViewAnalysisMove = findViewById(R.id.TextViewAnalysisMove);
+        textViewEngineLikes = findViewById(R.id.TextViewEngineLikes);
+        imageEnginePreferred = findViewById(R.id.ImageEnginePreferred);
+        buttonEngineMove = findViewById(R.id.ButtonEngineMove);
+        buttonNext = findViewById(R.id.ButtonNext);
+        buttonNext.setEnabled(false);
         textViewAnalysisLine = findViewById(R.id.TextViewAnalysisLine);
         buttonBackToMain = findViewById(R.id.ButtonBackToMain);
         buttonBackToMain.setOnClickListener(v -> gameApi.returnToMainLine());
-        historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
-        historyRecyclerView.setLayoutManager(
-            new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        moveAdapter = new MoveRecyclerAdapter(this, gameApi, position -> {
-            java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
-            if (position >= 0 && position < line.size()) {
-                gameApi.goTo(line.get(position));
-            }
-        });
-        historyRecyclerView.setAdapter(moveAdapter);
-        historyRecyclerView.setHorizontalScrollBarEnabled(true);
-        EinkMode.applyTo(historyRecyclerView);
         switchSound = findViewById(R.id.SwitchSound);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
@@ -114,7 +98,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         initBoardLayoutSizing(findViewById(R.id.root_layout), findViewById(R.id.board_area),
             findViewById(R.id.analyze_controls), null, null, 24);
         findViewById(R.id.ButtonPrevious).setOnClickListener(v -> gameApi.undoMove());
-        findViewById(R.id.ButtonNext).setOnClickListener(v -> gameApi.nextMove());
+        buttonNext.setOnClickListener(v -> gameApi.nextMove());
 
     }
 
@@ -126,12 +110,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
         String sPGN = prefs.getString("game_pgn", null);
         String sFEN = prefs.getString("FEN", null);
-        final Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
-        Uri uri = intent.getData();
-
-        localEngine = new LocalEngine(gameApi);
         oexEngine = new OexEngine(this, gameApi, prefs.getString("oexEngineId", null));
         oexEngine.setPreferredEngineId(getPrefs().getString("oexEngineId", null));
 
@@ -179,9 +157,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         textViewAnalysisLine.setText(onMainLine
             ? R.string.analysis_main_line : R.string.analysis_variation);
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
-        moveAdapter.update();
-        historyRecyclerView.scrollToPosition(jni.getNumBoard() - 1);
+        updateMoveSummary();
         updateVariations();
+        buttonNext.setEnabled(engineRecommendations.get(jni.toFEN()) != null);
         if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) {
             return;
         }
@@ -191,12 +169,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             return;
         }
         analysisFen = fen;
-        textViewEnginePreference.setText("");
-        textViewEnginePreference.setContentDescription(null);
-        String parentFen = positionFens.get(gameApi.getCurrentNode().getParent());
-        if (parentFen != null && jni.getVariant() == BoardConstants.VARIANT_DEFAULT) {
-            showEnginePreference(engineRecommendations.get(parentFen));
-        }
         final int turn = jni.getTurn();
         final int generation = ++analysisGeneration;
         evaluationView.clearEvaluation();
@@ -215,7 +187,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (continuations.size() < 2) {
             return;
         }
-        // Child zero is the preferred continuation already shown in the history.
+        // Child zero is the preferred continuation reached with Next.
         for (int i = 1; i < continuations.size(); i++) {
             Node continuation = continuations.get(i);
             PGNEntry entry = continuation.getEntry();
@@ -271,6 +243,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                     } finally {
                         jni.scratchUndo();
                     }
+                    buttonNext.setEnabled(true);
                 }
                 return;
             }
@@ -279,17 +252,31 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
     }
 
-    private void showEnginePreference(EngineRecommendation recommendation) {
+    private void updateMoveSummary() {
+        Node current = gameApi.getCurrentNode();
+        PGNEntry entry = current.getEntry();
+        String moveText = entry == null ? "" : gameApi.getMoveNumber(current) + " " + entry.sMove;
+        if (entry != null && entry.duckMove != -1) moveText += "@" + Pos.toString(entry.duckMove);
+        textViewAnalysisMove.setText(moveText);
+        imageEnginePreferred.setVisibility(View.GONE);
+        textViewEngineLikes.setVisibility(View.GONE);
+        buttonEngineMove.setVisibility(View.GONE);
+        buttonEngineMove.setOnClickListener(null);
+        if (entry == null || jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
+
+        String parentFen = positionFens.get(current.getParent());
+        EngineRecommendation recommendation = parentFen == null ? null : engineRecommendations.get(parentFen);
         if (recommendation == null) return;
-        int lastMove = jni.getMyMove();
-        boolean matches = Move.equalPositions(lastMove, recommendation.move)
-            && Move.isPromotionMove(lastMove) == Move.isPromotionMove(recommendation.move)
-            && (!Move.isPromotionMove(lastMove)
-                || Move.getPromotionPiece(lastMove) == Move.getPromotionPiece(recommendation.move));
-        textViewEnginePreference.setText(matches ? "★"
-            : getString(R.string.analysis_engine_prefers, recommendation.san));
-        textViewEnginePreference.setContentDescription(matches
-            ? getString(R.string.analysis_engine_matches) : null);
+        boolean matches = Move.equalPositions(entry.move, recommendation.move)
+            && Move.isPromotionMove(entry.move) == Move.isPromotionMove(recommendation.move)
+            && (!Move.isPromotionMove(entry.move)
+                || Move.getPromotionPiece(entry.move) == Move.getPromotionPiece(recommendation.move));
+        imageEnginePreferred.setVisibility(matches ? View.VISIBLE : View.GONE);
+        textViewEngineLikes.setVisibility(matches ? View.GONE : View.VISIBLE);
+        buttonEngineMove.setVisibility(matches ? View.GONE : View.VISIBLE);
+        buttonEngineMove.setText(recommendation.san);
+        buttonEngineMove.setOnClickListener(v ->
+            gameApi.createVariation(current.getParent(), recommendation.san));
     }
 
     @Override
@@ -312,9 +299,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
         if (oexEngine != null) {
             oexEngine.destroy();
-        }
-        if (localEngine != null) {
-            localEngine.destroy();
         }
         super.onPause();
     }

@@ -36,15 +36,6 @@
                 android:layout_marginEnd="8dip"
                 android:accessibilityLiveRegion="assertive" />
 
-            <TextView
-                android:id="@+id/TextViewEnginePreference"
-                style="@style/MyPaneTextStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dip"
-                android:gravity="end"
-                android:accessibilityLiveRegion="polite" />
         </LinearLayout>
 
         <LinearLayout
@@ -88,18 +79,49 @@
                     android:contentDescription="@string/button_previous_move_description"
                     style="?attr/chessImageButtonStyle" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/HistoryRecyclerView"
+                <com.google.android.flexbox.FlexboxLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dip"
                     android:layout_marginEnd="8dip"
-                    android:orientation="horizontal"
-                    android:scrollbars="horizontal"
-                    android:fadeScrollbars="false"
-                    android:background="?attr/paneBackground"
-                    android:scrollbarAlwaysDrawHorizontalTrack="true" />
+                    app:flexDirection="row"
+                    app:flexWrap="wrap"
+                    app:alignItems="center">
+
+                    <ImageView
+                        android:id="@+id/ImageEnginePreferred"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/star"
+                        android:contentDescription="@string/analysis_engine_matches"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/TextViewAnalysisMove"
+                        style="@style/MyPaneTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/TextViewEngineLikes"
+                        style="@style/MyPaneTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/analysis_engine_likes"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/ButtonEngineMove"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="0dp"
+                        android:textAllCaps="false"
+                        android:visibility="gone" />
+                </com.google.android.flexbox.FlexboxLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonNext"
