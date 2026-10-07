@@ -159,7 +159,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
         updateMoveSummary();
         updateVariations();
-        buttonNext.setEnabled(engineRecommendations.get(jni.toFEN()) != null);
+        updateNextButton();
         if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) {
             return;
         }
@@ -178,6 +178,11 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                 myEngine.analyze(fen, 1000);
             }
         });
+    }
+
+    private void updateNextButton() {
+        buttonNext.setEnabled(engineRecommendations.get(jni.toFEN()) != null
+            && !gameApi.getContinuations(gameApi.getCurrentNode()).isEmpty());
     }
 
     private void updateVariations() {
@@ -243,7 +248,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                     } finally {
                         jni.scratchUndo();
                     }
-                    buttonNext.setEnabled(true);
+                    updateNextButton();
                 }
                 return;
             }
