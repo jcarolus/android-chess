@@ -9,6 +9,8 @@ import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +21,13 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 final class AnalysisSettingsDialog {
     static final String PREF_ENGINE = "analysisOexEngineId";
-    private static final String PREF_TIME = "analysisTimeSeconds";
+    private static final String PREF_TIME = "analysisTimeMillis";
+    private static final int MIN_MILLIS = 100;
     private static final int MAX_SECONDS = Integer.MAX_VALUE / 1000;
 
-    static int getTimeSeconds(SharedPreferences prefs) {
-        return Math.max(1, Math.min(MAX_SECONDS, prefs.getInt(PREF_TIME, 1)));
+    static int getTimeMillis(SharedPreferences prefs) {
+        return Math.max(MIN_MILLIS, Math.min(MAX_SECONDS * 1000,
+            prefs.getInt(PREF_TIME, 1000)));
     }
 
     static void show(Context context, SharedPreferences prefs, Runnable onSaved) {
@@ -43,7 +47,7 @@ final class AnalysisSettingsDialog {
         engine.setVisibility(engines.isEmpty() ? View.GONE : View.VISIBLE);
         content.findViewById(R.id.AnalysisNoEngines).setVisibility(
             engines.isEmpty() ? View.VISIBLE : View.GONE);
-        time.setText(String.valueOf(getTimeSeconds(prefs)));
+        time.setText(BigDecimal.valueOf(getTimeMillis(prefs), 3).stripTrailingZeros().toPlainString());
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(context)
             .setTitle(R.string.analysis_settings)
@@ -53,15 +57,20 @@ final class AnalysisSettingsDialog {
             .create();
         dialog.setOnShowListener(ignored -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             .setOnClickListener(v -> {
-                int seconds;
+                int millis;
                 try {
-                    seconds = Integer.parseInt(time.getText().toString().trim());
-                    if (seconds < 1 || seconds > MAX_SECONDS) throw new NumberFormatException();
-                } catch (NumberFormatException e) {
+                    BigDecimal seconds = new BigDecimal(time.getText().toString().trim());
+                    if (seconds.signum() < 0
+                        || seconds.compareTo(BigDecimal.valueOf(MAX_SECONDS)) > 0) {
+                        throw new NumberFormatException();
+                    }
+                    millis = Math.max(MIN_MILLIS,
+                        seconds.movePointRight(3).setScale(0, RoundingMode.HALF_UP).intValueExact());
+                } catch (NumberFormatException | ArithmeticException e) {
                     time.setError(context.getString(R.string.analysis_time_invalid, MAX_SECONDS));
                     return;
                 }
-                SharedPreferences.Editor editor = prefs.edit().putInt(PREF_TIME, seconds);
+                SharedPreferences.Editor editor = prefs.edit().putInt(PREF_TIME, millis);
                 if (!engines.isEmpty()) {
                     editor.putString(PREF_ENGINE,
                         engines.get(engine.getSelectedItemPosition()).getId());

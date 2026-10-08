@@ -562,5 +562,5 @@
     <string name="engine_evaluation_pending">Engine evaluation unavailable</string>
     <string name="analysis_settings">Analysis settings</string>
     <string name="analysis_time_budget">Time budget per position (seconds)</string>
-    <string name="analysis_time_invalid">Enter a whole number from 1 to %1$d.</string>
+    <string name="analysis_time_invalid">Enter a number from 0 to %1$d.</string>
 </resources>

@@ -28,8 +28,8 @@
             android:id="@+id/AnalysisTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:maxLength="7"
+            android:inputType="numberDecimal"
+            android:maxLength="11"
             android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

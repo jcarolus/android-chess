@@ -970,8 +970,6 @@ public class PlayActivity extends ChessBoardActivity implements
         // menu button in from the right edge. It costs no height either way, the
         // row is already as tall as the buttons.
         textViewLastMove.setVisibility(minimal ? View.INVISIBLE : View.VISIBLE);
-        textViewWhitePieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
-        textViewBlackPieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
         requestBoardLayoutSizingUpdate();
     }
 

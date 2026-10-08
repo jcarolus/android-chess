@@ -50,7 +50,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private boolean sessionLoaded;
     private Bundle restoredSession;
     private String configuredEngine;
-    private int configuredSeconds;
+    private int configuredMillis;
     private EngineApi myEngine;
     private OexEngine oexEngine;
     private long lGameID;
@@ -171,13 +171,13 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             gameApi.restoreCurrentBoard();
         }
         String engineId = prefs.getString(AnalysisSettingsDialog.PREF_ENGINE, null);
-        int seconds = AnalysisSettingsDialog.getTimeSeconds(prefs);
-        if (!Objects.equals(engineId, configuredEngine) || seconds != configuredSeconds) {
+        int millis = AnalysisSettingsDialog.getTimeMillis(prefs);
+        if (!Objects.equals(engineId, configuredEngine) || millis != configuredMillis) {
             positionAnalyses.evictAll();
         }
         if (restoredSession != null && sessionId.equals(restoredSession.getString("id"))
             && Objects.equals(engineId, restoredSession.getString("engine"))
-            && seconds == restoredSession.getInt("seconds")) {
+            && millis == restoredSession.getInt("millis")) {
             ArrayList<Bundle> results = restoredSession.getParcelableArrayList("results");
             if (results != null) for (Bundle result : results) {
                 positionAnalyses.put(result.getString("fen"), new PositionAnalysis(result));
@@ -185,7 +185,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
         restoredSession = null;
         configuredEngine = engineId;
-        configuredSeconds = seconds;
+        configuredMillis = millis;
         oexEngine = new OexEngine(this, gameApi, engineId);
         myEngine = oexEngine;
         myEngine.addListener(this);
@@ -232,7 +232,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         for (int i = 0; i < path.length; i++) path[i] = reversed.get(path.length - 1 - i);
         session.putIntArray("path", path);
         session.putString("engine", configuredEngine);
-        session.putInt("seconds", configuredSeconds);
+        session.putInt("millis", configuredMillis);
         ArrayList<Bundle> results = new ArrayList<>();
         for (Map.Entry<String, PositionAnalysis> entry : positionAnalyses.snapshot().entrySet()) {
             PositionAnalysis analysis = entry.getValue();
@@ -289,10 +289,10 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private void restartAnalysis() {
         if (!analysisActive) return;
         String engineId = getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null);
-        int seconds = AnalysisSettingsDialog.getTimeSeconds(getPrefs());
-        if (Objects.equals(engineId, configuredEngine) && seconds == configuredSeconds) return;
+        int millis = AnalysisSettingsDialog.getTimeMillis(getPrefs());
+        if (Objects.equals(engineId, configuredEngine) && millis == configuredMillis) return;
         configuredEngine = engineId;
-        configuredSeconds = seconds;
+        configuredMillis = millis;
         analysisGeneration++;
         myEngine.removeListener(this);
         oexEngine.destroy();
@@ -363,7 +363,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         requestedPosition = next;
         analysisFen = next.fen;
         analysisTurn = next.turn;
-        myEngine.analyze(next.fen, AnalysisSettingsDialog.getTimeSeconds(getPrefs()) * 1000);
+        myEngine.analyze(next.fen, AnalysisSettingsDialog.getTimeMillis(getPrefs()));
     }
 
     private void updateNextButton() {
