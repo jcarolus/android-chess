@@ -257,13 +257,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         imageAnalysisTurn.setImageResource(whiteToMove ? R.drawable.turnwhite : R.drawable.turnblack);
         imageAnalysisTurn.setContentDescription(getString(whiteToMove
             ? R.string.analysis_white_to_move : R.string.analysis_black_to_move));
-        final int state = chessStateToR(gameApi.getState());
-        String stateDescription = "";
-        if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
-            stateDescription = ". " + getString(state);
-        }
-        updateTextViewOrSpeech(textViewLastMove,
-            getLastMoveAndTurnDescription(false) + stateDescription, protectLastMoveSpeech);
         boolean onMainLine = gameApi.isOnMainLine();
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
         boolean changed = displayedNode != gameApi.getCurrentNode();
@@ -446,6 +439,28 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     }
 
     private void updateMoveSummary() {
+        updateAnalysisSummary();
+        if (jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
+        Node current = gameApi.getCurrentNode();
+        // Keep the previous announcement until all results needed for feedback are ready.
+        if (getAnalysis(positions.get(current)) == null
+            || (current.getParent() != null && getAnalysis(positions.get(current.getParent())) == null)) return;
+
+        final int state = chessStateToR(gameApi.getState());
+        String moveMessage = getLastMoveAndTurnDescription(false);
+        if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
+            moveMessage += ". " + getString(state);
+        }
+        if (textViewMoveFeedback.getVisibility() == View.VISIBLE) {
+            moveMessage += ". " + textViewMoveFeedback.getText();
+        }
+        if (textViewEngineLikes.getVisibility() == View.VISIBLE) {
+            moveMessage += ". " + getString(R.string.analysis_engine_likes) + " " + buttonEngineMove.getText();
+        }
+        updateTextViewOrSpeech(textViewLastMove, moveMessage, protectLastMoveSpeech);
+    }
+
+    private void updateAnalysisSummary() {
         Node current = gameApi.getCurrentNode();
         PGNEntry entry = current.getEntry();
         String moveText = entry == null ? "" : gameApi.getMoveNumber(current) + " " + entry.sMove;
