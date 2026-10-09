@@ -14,14 +14,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.chess.JNI;
 import jwtc.chess.GameTree;
 import jwtc.chess.GameTree.Node;
-import jwtc.chess.PGNTokenizer;
+import jwtc.chess.Pgn;
+import jwtc.chess.PgnDocument;
+import jwtc.chess.PgnSyntaxError;
 import jwtc.chess.Move;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
@@ -36,23 +37,7 @@ public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
     protected JNI jni;
-    private static Pattern patMove;
-    private static Pattern patCastling;
-    private static Pattern patGameResult;
-    private static Pattern patTag;
-
     public static final int MAX_PGN_SIZE = 500000;
-
-    static {
-        try {
-            patMove = Pattern.compile("(K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*");
-            patCastling = Pattern.compile("(O\\-O\\-O|O\\-O)(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?");
-            patGameResult = Pattern.compile("((\\*)|(1-0)|(0-1)|(1/2-1/2))");
-            patTag = Pattern.compile(PGNHelper.regexPgnTag);
-
-        } catch (Exception e) {
-        }
-    }
 
     public final HashMap<String, String> pgnTags; //
     private GameTree gameTree;
@@ -534,6 +519,13 @@ public class GameApi {
             lastPgnError = "PGN is missing or exceeds the size limit";
             return false;
         }
+        PgnDocument document;
+        try {
+            document = Pgn.parse(s);
+        } catch (PgnSyntaxError ex) {
+            lastPgnError = ex.getMessage();
+            return false;
+        }
         GameTree oldTree = gameTree;
         Node oldNode = currentNode;
         PGNEntry oldPending = pendingDuckMove;
@@ -544,14 +536,7 @@ public class GameApi {
         loadingPgn = true;
         try {
             pgnTags.clear();
-            PGNTokenizer lexer = new PGNTokenizer(s);
-            PGNTokenizer.Token token = lexer.next();
-            while (token.kind == PGNTokenizer.Kind.TAG) {
-                Matcher tag = Pattern.compile("\\[([A-Za-z0-9_]+)\\s+\"((?:\\\\.|[^\"\\\\])*)\"\\s*\\]").matcher(token.text);
-                if (!tag.matches()) throw PGNTokenizer.error("Invalid tag", token.offset);
-                pgnTags.put(tag.group(1), tag.group(2).replace("\\\"", "\"").replace("\\\\", "\\"));
-                token = lexer.next();
-            }
+            pgnTags.putAll(document.tags);
             if (pgnTags.containsKey("FEN")) {
                 if (!jni.initFEN(pgnTags.get("FEN"))) throw new IllegalArgumentException("Invalid FEN");
             } else {
@@ -559,14 +544,10 @@ public class GameApi {
                     ? BoardConstants.VARIANT_DUCK : BoardConstants.VARIANT_DEFAULT);
             }
             resetPGNHistory(pgnTags.getOrDefault("FEN", jni.toFEN()));
-            parseMovetext(lexer, token);
+            gameTree.setRootComment(document.rootComment);
+            replayLine(document.mainLine);
             if (!navigateTo(gameTree.mainLineEnd())) throw new IllegalArgumentException("Cannot restore main line");
-            String headerResult = pgnTags.get("Result");
-            if (headerResult != null && !patGameResult.matcher(headerResult).matches())
-                throw new IllegalArgumentException("Invalid Result tag");
-            if (importedResult != null && headerResult != null && !importedResult.equals(headerResult))
-                throw new IllegalArgumentException("Result tag and movetext disagree");
-            if (importedResult == null) importedResult = headerResult;
+            importedResult = document.result;
             if (jni.isEnded() == 0) {
                 if ("1-0".equals(importedResult)) finalState = BoardConstants.BLACK_RESIGNED;
                 else if ("0-1".equals(importedResult)) finalState = BoardConstants.WHITE_RESIGNED;
@@ -591,7 +572,7 @@ public class GameApi {
     }
 
     public static Matcher getMoveMatcher(String sMove) {
-        return patMove.matcher(sMove);
+        return Pgn.MOVE.matcher(sMove);
     }
 
     public boolean requestMove(String sMove) {
@@ -605,7 +586,7 @@ public class GameApi {
         if (sMove == null || pendingDuckMove != null) return false;
         Matcher match = getMoveMatcher(sMove.trim());
         if (match.matches()) return requestMove(match, null, "");
-        match = patCastling.matcher(sMove.trim().replace('0', 'O'));
+        match = Pgn.CASTLING.matcher(sMove.trim().replace('0', 'O'));
         return match.matches() && requestMove(match, match.group(1), "");
     }
 
@@ -899,92 +880,23 @@ public class GameApi {
         return true;
     }
 
-    public static void loadPGNHead(String s, HashMap<String, String> tagsMap) {
-        s = PGNHelper.cleanPgnString(s);
-        Matcher matcher = patTag.matcher(s);
-
-        tagsMap.clear();
-        while (matcher.find()) {
-            String name = matcher.group(1);
-            String value = matcher.group(2);
-            if (name != null && value != null) {
-                tagsMap.put(name, value);
+    /** Plays a document line from the current position; each variation is an alternative to the move it follows. */
+    private void replayLine(List<PgnDocument.Move> line) {
+        for (PgnDocument.Move move : line) {
+            if (!applyPGNMove(move.san))
+                throw new IllegalArgumentException("Illegal or unsupported move: " + move.san + " at character " + move.offset);
+            Node played = currentNode;
+            if (!move.leadingComment.isEmpty()) gameTree.setLeadingComment(played, move.leadingComment);
+            if (!move.comment.isEmpty()) gameTree.setAnnotation(played, move.comment);
+            for (int nag : move.nags) gameTree.addNag(played, nag);
+            for (List<PgnDocument.Move> variation : move.variations) {
+                if (!navigateTo(played.getParent()))
+                    throw new IllegalArgumentException("Cannot enter variation at character " + move.offset);
+                replayLine(variation);
             }
+            if (!move.variations.isEmpty() && !navigateTo(played))
+                throw new IllegalArgumentException("Cannot exit variation at character " + move.offset);
         }
-    }
-
-    private static final class VariationFrame {
-        final Node resume;
-        final Node branchPoint;
-        boolean hasMove;
-        String leadingComment = "";
-        VariationFrame(Node resume) { this.resume = resume; this.branchPoint = resume.getParent(); }
-    }
-
-    private void parseMovetext(PGNTokenizer lexer, PGNTokenizer.Token first) {
-        Deque<VariationFrame> stack = new ArrayDeque<>();
-        boolean ended = false;
-        for (PGNTokenizer.Token token = first; token.kind != PGNTokenizer.Kind.END; token = lexer.next()) {
-            if (ended && token.kind != PGNTokenizer.Kind.COMMENT)
-                throw PGNTokenizer.error("Unexpected token after result", token.offset);
-            switch (token.kind) {
-                case NUMBER: break;
-                case COMMENT:
-                    if (!stack.isEmpty() && !stack.peek().hasMove) {
-                        VariationFrame frame = stack.peek();
-                        frame.leadingComment = joinComments(frame.leadingComment, token.text);
-                    } else if (currentNode == gameTree.getRoot()) {
-                        gameTree.setRootComment(joinComments(gameTree.getRootComment(), token.text));
-                    } else {
-                        gameTree.setAnnotation(currentNode, joinComments(currentNode.getEntry().sAnnotation, token.text));
-                    }
-                    break;
-                case OPEN:
-                    if (stack.size() >= 128 || currentNode.getParent() == null
-                        || !stack.isEmpty() && !stack.peek().hasMove)
-                        throw PGNTokenizer.error("Variation must follow a move (maximum nesting 128)", token.offset);
-                    VariationFrame frame = new VariationFrame(currentNode);
-                    stack.push(frame);
-                    if (!navigateTo(frame.branchPoint)) throw PGNTokenizer.error("Cannot enter variation", token.offset);
-                    break;
-                case CLOSE:
-                    if (stack.isEmpty() || !stack.peek().hasMove)
-                        throw PGNTokenizer.error("Unmatched or empty variation", token.offset);
-                    if (!navigateTo(stack.pop().resume)) throw PGNTokenizer.error("Cannot exit variation", token.offset);
-                    break;
-                case NAG:
-                    if (!stack.isEmpty() && !stack.peek().hasMove)
-                        throw PGNTokenizer.error("NAG must follow a move", token.offset);
-                    try { gameTree.addNag(currentNode, Integer.parseInt(token.text)); }
-                    catch (IllegalArgumentException ex) { throw PGNTokenizer.error("Invalid NAG", token.offset); }
-                    break;
-                case SYMBOL:
-                    if (patGameResult.matcher(token.text).matches()) {
-                        if (!stack.isEmpty()) throw PGNTokenizer.error("Result inside variation", token.offset);
-                        importedResult = token.text;
-                        ended = true;
-                        break;
-                    }
-                    String san = token.text.replaceAll("[!?]+$", "");
-                    String glyph = token.text.substring(san.length());
-                    String[] glyphs = {"", "!", "?", "!!", "??", "!?", "?!"};
-                    int nag = java.util.Arrays.asList(glyphs).indexOf(glyph);
-                    if (nag < 0 || !applyPGNMove(san))
-                        throw PGNTokenizer.error("Illegal or unsupported move: " + token.text, token.offset);
-                    if (nag > 0) gameTree.addNag(currentNode, nag);
-                    if (!stack.isEmpty() && !stack.peek().hasMove) {
-                        stack.peek().hasMove = true;
-                        gameTree.setLeadingComment(currentNode, stack.peek().leadingComment);
-                    }
-                    break;
-                default: throw PGNTokenizer.error("Unexpected token: " + token.text, token.offset);
-            }
-        }
-        if (!stack.isEmpty()) throw new IllegalArgumentException("Unclosed variation at end of PGN");
-    }
-
-    private static String joinComments(String first, String second) {
-        return first.isEmpty() ? second : first + "\n" + second;
     }
 
     /** Compatibility entry point for subclasses that have just executed exactly one native move. */
@@ -1042,21 +954,7 @@ public class GameApi {
     public String exportFullPGN() {
         pgnTags.put("Result", gameResult());
         pgnTags.put("PlyCount", Integer.toString(getPGNSize()));
-        String[] roster = {"Event", "Site", "Date", "Round", "White", "Black", "Result"};
-        StringBuilder out = new StringBuilder();
-        for (String key : roster) appendTag(out, key, pgnTags.getOrDefault(key, "?"));
-        ArrayList<String> keys = new ArrayList<>(pgnTags.keySet());
-        Collections.sort(keys);
-        for (String key : keys) {
-            if (!java.util.Arrays.asList(roster).contains(key)) appendTag(out, key, pgnTags.get(key));
-        }
-        return out.append('\n').append(exportMovesPGN()).append(' ').append(gameResult()).append('\n').toString();
-    }
-
-    private static void appendTag(StringBuilder out, String name, String value) {
-        if (value != null) out.append('[').append(name).append(" \"")
-            .append(value.replace("\\", "\\\\").replace("\"", "\\\"").replace('\n', ' ').replace('\r', ' '))
-            .append("\"]\n");
+        return Pgn.writeTags(pgnTags) + '\n' + exportMovesPGN() + ' ' + gameResult() + '\n';
     }
 
     /** All lines, without a termination marker (exportFullPGN adds that marker). */

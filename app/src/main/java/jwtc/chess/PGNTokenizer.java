@@ -1,7 +1,7 @@
 package jwtc.chess;
 
 /** A sequential lexer: punctuation inside comments and quoted tags is never treated as movetext. */
-public final class PGNTokenizer {
+final class PGNTokenizer {
     public enum Kind { TAG, COMMENT, OPEN, CLOSE, NUMBER, NAG, SYMBOL, END }
 
     public static final class Token {
@@ -70,7 +70,7 @@ public final class PGNTokenizer {
         return new Token(Kind.SYMBOL, input.substring(start, cursor), start);
     }
 
-    public static IllegalArgumentException error(String message, int offset) {
-        return new IllegalArgumentException(message + " at character " + offset);
+    static PgnSyntaxError error(String message, int offset) {
+        return new PgnSyntaxError(message, offset);
     }
 }

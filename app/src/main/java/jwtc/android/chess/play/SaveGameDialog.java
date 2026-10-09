@@ -1,8 +1,6 @@
 package jwtc.android.chess.play;
 
 import jwtc.android.chess.helpers.EinkMode;
-import static jwtc.android.chess.helpers.PGNHelper.cleanPgnString;
-import static jwtc.android.chess.helpers.PGNHelper.regexPgnTag;
 
 import android.app.Dialog;
 import android.content.ContentValues;

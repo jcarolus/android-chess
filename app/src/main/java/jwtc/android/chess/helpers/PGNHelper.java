@@ -10,9 +10,6 @@ import java.util.regex.Pattern;
 
 public class PGNHelper {
 
-
-    public static final String regexPgnTag = "\\[(\\w+) \\\"([^\\]]*)\\\"\\]";
-
     public static String getPGNFromInputStream(InputStream is) throws Exception {
         StringBuilder sb = new StringBuilder();
         byte[] b = new byte[4096];
@@ -67,9 +64,5 @@ public class PGNHelper {
             }
         }
         return null;
-    }
-
-    public static String cleanPgnString(String s) {
-        return s.replaceAll("[\\r\\n\\t]+", " ").replaceAll(" {2,}", " ").trim();
     }
 }
