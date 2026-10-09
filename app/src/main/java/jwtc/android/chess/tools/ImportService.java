@@ -38,7 +38,6 @@ public class ImportService extends Service {
     public static final int IMPORT_GAMES = 2;
     public static final int IMPORT_PRACTICE = 3;
     public static final int IMPORT_OPENINGS = 4;
-    public static final int IMPORT_DATABASE = 5;
     public static final int PRACTICE_RESET = 8;
     public static final int EXPORT_GAME_DATABASE = 10;
     public static final int PICK_BINARY = 12;
@@ -49,7 +48,6 @@ public class ImportService extends Service {
     private GameImportProcessor gameImportProcessor = null;
     private PracticeImportProcessor practiceImportProcessor = null;
     private OpeningImportProcessor openingImportProcessor = null;
-    private PGNDbProcessor pgnDbProcessor = null;
 
     private ImportApi importApi;
     private final IBinder mBinder = new ImportService.LocalBinder();
@@ -158,22 +156,6 @@ public class ImportService extends Service {
                     }
                 }
                 break;
-            case IMPORT_DATABASE:
-                Log.d(TAG, "IMPORT_DATABASE");
-                if (uri != null) {
-                    if (pgnDbProcessor == null) {
-                        pgnDbProcessor = new PGNDbProcessor(mode, updateHandler, importApi);
-                    }
-                    try {
-                        InputStream isDatabase = getContentResolver().openInputStream(uri);
-                        pgnDbProcessor.processPGNFile(isDatabase);
-
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.toString());
-                        dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
-                    }
-                }
-                break;
             case PRACTICE_RESET:
                 Log.d(TAG, "PRACTICE_RESET");
                 try {
@@ -251,9 +233,6 @@ public class ImportService extends Service {
         }
         if (openingImportProcessor != null) {
             openingImportProcessor.stopProcessing();
-        }
-        if (pgnDbProcessor != null) {
-            pgnDbProcessor.stopProcessing();
         }
     }
 
