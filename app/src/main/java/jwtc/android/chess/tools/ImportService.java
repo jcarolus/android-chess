@@ -3,7 +3,6 @@ package jwtc.android.chess.tools;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
@@ -20,7 +19,8 @@ import androidx.annotation.Nullable;
 
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.Utils;
-import jwtc.android.chess.puzzle.MyPuzzleProvider;
+import jwtc.android.chess.matecollection.MateCollection;
+import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.services.HMap;
 
 
@@ -155,13 +155,7 @@ public class ImportService extends Service {
             case PRACTICE_RESET:
                 Log.d(TAG, "PRACTICE_RESET");
                 try {
-                    SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putInt("practicePos", 0);
-                    editor.putInt("practiceTicks", 0);
-                    editor.commit();
-
-                    getContentResolver().delete(MyPuzzleProvider.CONTENT_URI_PRACTICES, "1=1", null);
+                    MateCollection.clearCollection(this, MateKind.PRACTICE_POSITIONS);
 
                     dispatcher.OnImportFinished(mode);
 

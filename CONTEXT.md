@@ -44,6 +44,10 @@ A position from the bundled local "Mate in two" collection with a fixed solution
 **Practice Position**:
 A position from the local database where any move sequence that leads to mate counts as solved, shown in `PracticeActivity`.
 
+**Mate Collection**:
+One of the two local collections, Mate-in-Two Puzzles or Practice Positions, together with its saved position and solving rule. A reply counts as correct when the Engine scores it as mate within the ply budget; the source PGNs are trusted to hold the intended solution. Only the Practice Positions collection keeps a score (played and solved).
+_Avoid_: bare "puzzle collection"
+
 **Lichess Puzzle**:
 A puzzle fetched from the Lichess API, separate from Mate-in-Two Puzzles and Practice Positions. Can be **Rated** or unrated.
 _Avoid_: bare "puzzle" without saying which kind

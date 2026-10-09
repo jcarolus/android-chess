@@ -3,11 +3,7 @@ package jwtc.android.chess.practice;
 import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,33 +12,24 @@ import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
-import java.util.Timer;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.engine.EngineListener;
-import jwtc.android.chess.engine.EngineSession;
-import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.puzzle.MyPuzzleProvider;
+import jwtc.android.chess.matecollection.MateCollection;
+import jwtc.android.chess.matecollection.MateKind;
+import jwtc.android.chess.matecollection.MateScore;
+import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.tools.ImportActivity;
 import jwtc.android.chess.tools.ImportService;
 import jwtc.chess.board.BoardConstants;
 
-public class PracticeActivity extends ChessBoardActivity implements EngineListener {
+public class PracticeActivity extends ChessBoardActivity implements MateCollection.Listener {
     private static final String TAG = "PracticeActivity";
-    private final Handler handler = new Handler(Looper.getMainLooper());
-    private final Runnable delayedStartEngine = this::startEngine;
-    private EngineSession engineSession;
+    private MateCollection mateCollection;
     private TextView textViewPracticeMove, textViewPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
-    private int totalPuzzles, currentPos;
-    private Cursor cursor;
-    private Timer timer;
 
     private ImageView imageTurn, imgStatus;
-
-    private int myTurn, numMoved, numPlayed, numSolved;
 
     private LinearProgressIndicator percentBar;
 
@@ -54,7 +41,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
             return false;
         }
 
-        if (jni.getTurn() != myTurn) {
+        if (!mateCollection.isUsersTurn()) {
             rebuildBoard();
             return false;
         }
@@ -73,7 +60,8 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
-        gameApi = new PracticeApi();
+        gameApi = new GameApi();
+        mateCollection = new MateCollection(this, MateKind.PRACTICE_POSITIONS, gameApi, this);
 
         switchSound = findViewById(R.id.SwitchSound);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
@@ -87,22 +75,10 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         imgStatus = findViewById(R.id.ImageStatus);
         buttonNext = findViewById(R.id.ButtonPracticeNext);
 
-        buttonNext.setOnClickListener(arg0 -> {
-            if (currentPos + 1 < totalPuzzles) {
-                currentPos++;
-                buttonRetry.setEnabled(false);
-                startPuzzle();
-            } else {
-                // completed
-                setMessage("You completed all puzzles!!!");
-            }
-        });
+        buttonNext.setOnClickListener(arg0 -> mateCollection.next());
 
         buttonRetry = findViewById(R.id.ButtonPracticeRetry);
-        buttonRetry.setOnClickListener(arg0 -> {
-            buttonRetry.setEnabled(false);
-            startPuzzle();
-        });
+        buttonRetry.setOnClickListener(arg0 -> mateCollection.retry());
         buttonRetry.setEnabled(false);
 
         percentBar = findViewById(R.id.percentBar);
@@ -129,111 +105,72 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         Log.i(TAG, "onResume");
 
-        engineSession = EngineSession.forPuzzles(gameApi, this);
-
         useAccessibilityDrag = false;
         applySquareDragListeners();
 
         textToSpeech.setEnabled(false, getPrefs());
 
-        loadPuzzles();
+        mateCollection.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        handler.removeCallbacks(delayedStartEngine);
-
-        if (engineSession != null) {
-            engineSession.close();
-            engineSession = null;
-        }
-
-        SharedPreferences.Editor editor = this.getPrefs().edit();
-        if (timer != null) {
-            timer.cancel();
-        }
-        timer = null;
-
-        // ended with correct solution, advance position
-        if (gameApi.isEnded()) {
-            currentPos++;
-        }
-
-        editor.putInt("practicePos", currentPos);
-        editor.putInt("practiceNumPlayed", numPlayed);
-        editor.putInt("practiceSolved", numSolved);
-
-        editor.commit();
+        mateCollection.pause();
     }
 
-    protected void loadPuzzles() {
-        SharedPreferences prefs = getPrefs();
+    @Override
+    public void onPositionStarted(int position, int total, int usersColor) {
+        buttonRetry.setEnabled(false);
+        chessBoardView.setRotated(usersColor == BoardConstants.BLACK);
 
-        currentPos = prefs.getInt("practicePos", 0);
-        numPlayed = prefs.getInt("practiceNumPlayed", 0);
-        numSolved = prefs.getInt("practiceSolved", 0);
-        cursor = managedQuery(MyPuzzleProvider.CONTENT_URI_PRACTICES, MyPuzzleProvider.COLUMNS, null, null, "");
-
-        if (cursor != null) {
-            totalPuzzles = cursor.getCount();
-
-            if (totalPuzzles > 0) {
-                if (currentPos + 1 >= totalPuzzles) {
-                    currentPos = 0;
-                }
-                startPuzzle();
-            } else {
-                Intent intent = new Intent();
-                intent.setClass(PracticeActivity.this, ImportActivity.class);
-                intent.putExtra("mode", ImportService.IMPORT_PRACTICE);
-                startActivityForResult(intent, ImportService.IMPORT_PRACTICE);
-            }
-        }
-    }
-
-    protected void startPuzzle() {
-        cursor.moveToPosition(currentPos);
-
-        int pgnIndex = cursor.getColumnIndex(MyPuzzleProvider.COL_PGN);
-        String sPGN = pgnIndex >= 0 ? cursor.getString(pgnIndex) : "";
-
-        Log.i(TAG, "Start puzzle init: " + sPGN);
-
-        gameApi.loadPGN(sPGN);
-
-        gameApi.jumpToBoardNum(0);
-        myTurn = jni.getTurn();
-        numMoved = 0;
-
-        updateScore();
-
-        Log.i(TAG, " turn " + jni.getTurn() + ": " + numPlayed + ", " + numSolved);
-
-        chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
-
-        textViewPracticeMove.setText("# " + (currentPos + 1));
+        textViewPracticeMove.setText("# " + (position + 1));
         textViewSolution.setText("");
 
-        imageTurn.setImageResource(myTurn == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
+        imageTurn.setImageResource(usersColor == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
 
         imgStatus.setImageResource(R.drawable.ic_check_none);
     }
 
+    @Override
+    public void onEmptyCollection() {
+        Intent intent = new Intent();
+        intent.setClass(PracticeActivity.this, ImportActivity.class);
+        intent.putExtra("mode", ImportService.IMPORT_PRACTICE);
+        startActivityForResult(intent, ImportService.IMPORT_PRACTICE);
+    }
+
+    @Override
+    public void onEndOfCollection() {
+        setMessage("You completed all puzzles!!!");
+    }
+
+    @Override
+    public void onScore(MateScore score) {
+        textViewPercentage.setText(String.format("%d / %d = %.1f %%", score.solved, score.played, score.percentage()));
+        percentBar.setProgressCompat((int) score.percentage(), /*animated=*/true);
+    }
+
+    @Override
+    public void onOutcome(MateCollection.Outcome outcome, String lastMove) {
+        switch (outcome) {
+            case CORRECT_REPLY:
+                animateCorrect();
+                break;
+            case SOLVED:
+                buttonRetry.setEnabled(false);
+                animateCorrect();
+                break;
+            case WRONG_REPLY:
+                buttonRetry.setEnabled(true);
+                animateWrong((lastMove.isEmpty() ? "" : lastMove + " ") + getString(R.string.puzzle_not_correct_move));
+                break;
+        }
+    }
+
     public void setMessage(String sMsg) {
         updateTextViewOrSpeech(textViewSolution, sMsg);
-    }
-
-    public void setMessage(int res) {
-        textViewPracticeMove.setText(res);
-    }
-
-    protected void startEngine() {
-        if (engineSession == null) {
-            return;
-        }
-        engineSession.play(SearchLimit.ply(4 - numMoved));
     }
 
     public void animateCorrect() {
@@ -243,7 +180,6 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         if (sounds.isEnabled()) {
             sounds.playCorrect();
         }
-        updateScore();
     }
 
     public void animateWrong(String message) {
@@ -253,74 +189,12 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
         if (sounds.isEnabled()) {
             sounds.playError();
         }
-        updateScore();
-    }
-
-    public void updateScore() {
-        textViewPercentage.setText(formatPercentage());
-        int percentage = numPlayed > 0 ? (int) ((float) numSolved / numPlayed * 100) : 0;
-        Log.d(TAG, "Set per " + percentage);
-        percentBar.setProgressCompat(percentage, /*animated=*/true);
-    }
-
-    private String formatPercentage() {
-        return String.format("%d / %d = %.1f %%", numSolved, numPlayed, numPlayed > 0 ? ((float) numSolved / numPlayed) * 100 : 0.0f);
     }
 
     @Override
     public void onMoveApplied(int move) {
         super.onMoveApplied(move);
 
-        numMoved++;
-
         updateSelectedSquares();
-
-        if (!gameApi.isEnded() && jni.getTurn() != myTurn) {
-            handler.removeCallbacks(delayedStartEngine);
-            handler.postDelayed(delayedStartEngine, 1000);
-        }
-        if (gameApi.isEnded()) {
-            Log.d(TAG, "Solved ");
-
-            numPlayed++;
-            numSolved++;
-            buttonRetry.setEnabled(false);
-            animateCorrect();
-        }
-    }
-
-    @Override
-    public void OnEngineMove(int move, int duckMove, int value) {
-        Log.d(TAG, "OnEngineMove " + value);
-        boolean isMyTurn = myTurn == jni.getTurn();
-        if (value == BoardConstants.VALUATION_MATE * (isMyTurn ? 1 : -1)) {
-            gameApi.move(move, duckMove);
-            animateCorrect();
-        } else {
-            jwtc.chess.PGNEntry entry = gameApi.getCurrentNode().getEntry();
-            String sMove = entry == null ? "" : entry.sMove + " ";
-
-            buttonRetry.setEnabled(true);
-            numMoved--;
-            numPlayed++;
-
-            animateWrong(sMove + getString(R.string.puzzle_not_correct_move));
-        }
-    }
-
-    @Override
-    public void OnEngineInfo(String message, float value) {
-    }
-
-    @Override
-    public void OnEngineStarted() {
-    }
-
-    @Override
-    public void OnEngineAborted() {
-    }
-
-    @Override
-    public void OnEngineError() {
     }
 }
