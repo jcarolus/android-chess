@@ -3,7 +3,6 @@ package jwtc.android.chess.tools;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
 
 import java.util.TreeSet;
@@ -14,16 +13,16 @@ import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
-public class PracticeImportProcessor extends PGNProcessor {
-    private static final String TAG = "PracticeImportProcessor";
+/** Stores each mate in a game of an import file as a Practice Position; the same final position counts once per job. */
+public class PracticeImportHandler implements ImportHandler {
+    private static final String TAG = "PracticeImportHandler";
 
     private JNI jni;
     private GameApi gameApi;
     private ContentResolver contentResolver;
     private TreeSet<Long> _arrKeys;
 
-    public PracticeImportProcessor(int mode, Handler updateHandler, GameApi gameApi, ContentResolver contentResolver) {
-        super(mode, updateHandler);
+    public PracticeImportHandler(GameApi gameApi, ContentResolver contentResolver) {
         jni = JNI.getInstance();
         _arrKeys = new TreeSet<Long>();
         this.gameApi = gameApi;
@@ -31,7 +30,8 @@ public class PracticeImportProcessor extends PGNProcessor {
     }
 
     @Override
-    public boolean processPGN(String sPGN) {
+    public boolean handle(ImportItem item) {
+        String sPGN = item.pgn;
         // Log.d(TAG, "processPGN " + sPGN);
         if (gameApi.loadPGN(sPGN)) {
 
