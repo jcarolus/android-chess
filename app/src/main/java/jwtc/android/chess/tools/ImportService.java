@@ -24,12 +24,11 @@ import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 
-import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.HMap;
 
-import jwtc.chess.PGNColumns;
 
 
 public class ImportService extends Service {
@@ -310,23 +309,7 @@ public class ImportService extends Service {
     }
 
     protected String collectGameDatabaseAsPGN() {
-        String s = "";
-        Context context = this.getBaseContext();
-        Cursor cursor = context.getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, null, null, PGNColumns.DEFAULT_SORT_ORDER);
-        if (cursor != null) {
-
-            if (cursor.getCount() > 0) {
-
-                cursor.moveToFirst();
-
-                while (cursor.isAfterLast() == false) {
-                    s += Utils.getColumnString(cursor, PGNColumns.PGN) + "\n\n\n";
-                    cursor.moveToNext();
-                }
-
-            }
-        }
-        return s;
+        return new GameStore(getBaseContext().getContentResolver()).exportAllAsPgn();
     }
 
 

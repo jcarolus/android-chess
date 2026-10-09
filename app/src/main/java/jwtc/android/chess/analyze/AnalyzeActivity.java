@@ -1,10 +1,7 @@
 package jwtc.android.chess.analyze;
 
-import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.LruCache;
@@ -29,12 +26,11 @@ import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineEvaluation;
 import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.MyPGNProvider;
-import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionSnapshot;
 import jwtc.android.chess.services.GameApi.PositionMove;
-import jwtc.chess.PGNColumns;
+import jwtc.chess.GameRecord;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 import jwtc.chess.Move;
@@ -544,34 +540,14 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         super.onPause();
     }
 
-    // @TODO duplicate from PlayActivity
     protected boolean loadGame() {
         if (lGameID > 0) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
-            try {
-                Cursor c = getContentResolver().query(uri, PGNColumns.COLUMNS, null, null, null);
-                if (c != null && c.getCount() == 1) {
-
-                    c.moveToFirst();
-
-                    lGameID = Utils.getColumnLong(c, PGNColumns._ID);
-                    String sPGN = Utils.getColumnString(c, PGNColumns.PGN);
-
-                    gameApi.loadPGN(sPGN);
-
-                    gameApi.setPGNTag("Event", Utils.getColumnString(c, PGNColumns.EVENT));
-                    gameApi.setPGNTag("White", Utils.getColumnString(c, PGNColumns.WHITE));
-                    gameApi.setPGNTag("Black", Utils.getColumnString(c, PGNColumns.BLACK));
-                    gameApi.setDateLong(Utils.getColumnLong(c, PGNColumns.DATE));
-
-                    c.close();
-
-                    return true;
-                }
-                Log.d(TAG, "Game not found: " + lGameID);
-            } catch (Exception e) {
-                Log.d(TAG, "Caught exception loading game: " + lGameID + " " + e.getMessage());
+            GameRecord record = new GameStore(getContentResolver()).load(lGameID);
+            if (record != null && gameApi.loadGame(record)) {
+                lGameID = record.id;
+                return true;
             }
+            Log.d(TAG, "Game not loaded: " + lGameID);
         }
         lGameID = 0;
         return false;

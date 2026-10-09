@@ -1,10 +1,7 @@
 package jwtc.android.chess.play;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +25,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import org.json.JSONArray;
 
 import java.io.InputStream;
-import java.util.Date;
 import java.util.ArrayList;
 
 import jwtc.android.chess.GamesListActivity;
@@ -36,7 +32,6 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
-import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.PieceSets;
@@ -46,7 +41,7 @@ import jwtc.android.chess.engine.LocalEngine;
 import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
-import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
@@ -55,7 +50,7 @@ import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.chess.PGNColumns;
+import jwtc.chess.GameRecord;
 import jwtc.chess.board.BoardConstants;
 
 
@@ -390,17 +385,7 @@ public class PlayActivity extends ChessBoardActivity implements
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         if (lGameID > 0) {
-            ContentValues values = new ContentValues();
-
-            // @TODO - generic solution; +RESULT?
-            Date date = gameApi.getDate();
-            if (date != null) values.put(PGNColumns.DATE, date.getTime());
-            values.put(PGNColumns.WHITE, gameApi.getWhite());
-            values.put(PGNColumns.BLACK, gameApi.getBlack());
-            values.put(PGNColumns.PGN, gameApi.exportFullPGN());
-            values.put(PGNColumns.EVENT, gameApi.getPGNHeadProperty("Event"));
-
-            saveGame(values, false, lGameID);
+            saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);
 
             editor.putString("FEN", null);
         }
@@ -1016,31 +1001,12 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected boolean loadGame() {
         if (lGameID > 0) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
-            try {
-                Cursor c = getContentResolver().query(uri, PGNColumns.COLUMNS, null, null, null);
-                if (c != null && c.getCount() == 1) {
-
-                    c.moveToFirst();
-
-                    lGameID = Utils.getColumnLong(c, PGNColumns._ID);
-                    String sPGN = Utils.getColumnString(c, PGNColumns.PGN);
-
-                    gameApi.loadPGN(sPGN);
-
-                    gameApi.setPGNTag("Event", Utils.getColumnString(c, PGNColumns.EVENT));
-                    gameApi.setPGNTag("White", Utils.getColumnString(c, PGNColumns.WHITE));
-                    gameApi.setPGNTag("Black", Utils.getColumnString(c, PGNColumns.BLACK));
-                    gameApi.setDateLong(Utils.getColumnLong(c, PGNColumns.DATE));
-
-                    c.close();
-
-                    return true;
-                }
-                Log.d(TAG, "Game not found: " + lGameID);
-            } catch (Exception e) {
-                Log.d(TAG, "Caught exception loading game: " + lGameID + " " + e.getMessage());
+            GameRecord record = new GameStore(getContentResolver()).load(lGameID);
+            if (record != null && gameApi.loadGame(record)) {
+                lGameID = record.id;
+                return true;
             }
+            Log.d(TAG, "Game not loaded: " + lGameID);
         }
         lGameID = 0;
         return false;

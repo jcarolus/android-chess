@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 
+import jwtc.chess.GameRecord;
 import jwtc.chess.JNI;
 import jwtc.chess.GameTree;
 import jwtc.chess.GameTree.Node;
@@ -562,6 +564,18 @@ public class GameApi {
         }
         dispatchGameLoaded();
         dispatchState();
+        return true;
+    }
+
+    /**
+     * Loads a stored Game: its PGN, with the tags the user edits taken from the record's columns.
+     * Nothing is changed when the PGN cannot be loaded.
+     */
+    public boolean loadGame(GameRecord record) {
+        if (!loadPGN(record.pgn)) return false;
+        for (Map.Entry<String, String> tag : record.tagOverrides().entrySet()) {
+            setPGNTag(tag.getKey(), tag.getValue());
+        }
         return true;
     }
 

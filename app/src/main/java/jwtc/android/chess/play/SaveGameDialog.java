@@ -3,7 +3,6 @@ package jwtc.android.chess.play;
 import jwtc.android.chess.helpers.EinkMode;
 
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.widget.RatingBar;
 
@@ -19,7 +18,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.PGNDateView;
-import jwtc.chess.PGNColumns;
+import jwtc.chess.GameRecord;
 import jwtc.chess.PgnDate;
 
 public class SaveGameDialog extends Dialog {
@@ -96,20 +95,8 @@ public class SaveGameDialog extends Dialog {
         public long lGameID;
         public boolean createCopy = false;
 
-        public ContentValues getContentValues() {
-
-            ContentValues values = new ContentValues();
-
-            values.put(PGNColumns.EVENT, gameApi.pgnTags.get("Event"));
-            values.put(PGNColumns.WHITE, gameApi.pgnTags.get("White"));
-            values.put(PGNColumns.BLACK, gameApi.pgnTags.get("Black"));
-            Date date = PgnDate.parse(gameApi.pgnTags.get("Date"));
-            if (date != null) values.put(PGNColumns.DATE, date.getTime());
-            values.put(PGNColumns.RESULT, gameApi.pgnTags.get("Result"));
-            values.put(PGNColumns.RATING, result.rating);
-            values.put(PGNColumns.PGN, gameApi.exportFullPGN());
-
-            return values;
+        public GameRecord getRecord() {
+            return GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags).withRating(result.rating);
         }
     }
 

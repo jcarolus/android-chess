@@ -3,24 +3,20 @@ package jwtc.android.chess;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.app.Dialog;
 import android.app.UiModeManager;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +39,7 @@ import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.EinkMode;
-import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.play.MoveItem;
 import jwtc.android.chess.play.MoveItemAdapter;
@@ -54,6 +50,8 @@ import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.JNI;
+import jwtc.chess.GameFilter;
+import jwtc.chess.GameRecord;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.PgnDate;
 import jwtc.chess.PGNEntry;
@@ -376,28 +374,20 @@ public class GamesListActivity extends ChessBoardActivity {
         textViewTotal.setText(totalText);
         cursor.moveToPosition(position);
 
-        currentGameId = Utils.getColumnLong(cursor, PGNColumns._ID);
-        gameApi.loadPGN(Utils.getColumnString(cursor, PGNColumns.PGN));
+        GameRecord record = GameStore.fromCursor(cursor);
+        currentGameId = record.id;
+        gameApi.loadGame(record);
 
-        String event = Utils.getColumnString(cursor, PGNColumns.EVENT);
-        String white = Utils.getColumnString(cursor, PGNColumns.WHITE);
-        String black = Utils.getColumnString(cursor, PGNColumns.BLACK);
-        String date = PgnDate.format(Utils.getColumnDate(cursor, PGNColumns.DATE));
-        String result = Utils.getColumnString(cursor, PGNColumns.RESULT);
-        String rating = Float.toString(Utils.getColumnFloat(cursor, PGNColumns.RATING)) + "★";
+        String rating = Float.toString(record.rating == null ? 0f : record.rating) + "★";
 
-        textViewEvent.setText(event);
-        textViewPlayerWhite.setText(white);
-        textViewPlayerBlack.setText(black);
-        textViewDate.setText(date);
-        textViewResult.setText(result.equals("1/2-1/2") ? "½-½" : result);
+        textViewEvent.setText(record.event);
+        textViewPlayerWhite.setText(record.white);
+        textViewPlayerBlack.setText(record.black);
+        textViewDate.setText(PgnDate.format(record.date));
+        textViewResult.setText(record.result.equals("1/2-1/2") ? "½-½" : record.result);
         textViewRating.setText(rating);
 
-        gameApi.pgnTags.put("Event", event);
-        gameApi.pgnTags.put("White", white);
-        gameApi.pgnTags.put("Black", black);
-        gameApi.pgnTags.put("Date", date);
-        gameApi.pgnTags.put("Result", result);
+        gameApi.pgnTags.put("Result", record.result);
 
         textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
         textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));
@@ -460,8 +450,7 @@ public class GamesListActivity extends ChessBoardActivity {
         }
 
         openConfirmDialog(getString(R.string.title_delete_game), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, id);
-            getContentResolver().delete(uri, null, null);
+            new GameStore(getContentResolver()).delete(id);
             doFilterSort();
         }, null);
     }
@@ -478,64 +467,27 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private void doFilterSort() {
-        List<String> whereParts = new ArrayList<>();
-        List<String> args = new ArrayList<>();
+        GameFilter filter = new GameFilter();
 
-        String value = Utils.getTrimmedOrNull(editTextFilterWhite.getText());
-        if (value != null && switchFilterWhite.isChecked()) {
-            whereParts.add(PGNColumns.WHITE + " LIKE ?");
-            args.add("%" + value + "%");
-        }
-
-        value = Utils.getTrimmedOrNull(editTextFilterBlack.getText());
-        if (value != null && switchFilterBlack.isChecked()) {
-            whereParts.add(PGNColumns.BLACK + " LIKE ?");
-            args.add("%" + value + "%");
-        }
-
-        value = Utils.getTrimmedOrNull(editTextFilterEvent.getText());
-        if (value != null && switchFilterEvent.isChecked()) {
-            whereParts.add(PGNColumns.EVENT + " LIKE ?");
-            args.add("%" + value + "%");
-        }
-
-        Date dateAfter = pgnDateAfter.getDate();
-        if (dateAfter != null && switchFilterDateAfter.isChecked()) {
-            Log.d(TAG, "dateAfter " + dateAfter);
-            whereParts.add(PGNColumns.DATE + " >= ? ");
-            args.add(String.valueOf(dateAfter.getTime()));
-        }
-
-        Date dateBefore = pgnDateBefore.getDate();
-        if (dateBefore != null && switchFilterDateBefore.isChecked()) {
-            Log.d(TAG, "dateBefore " + dateBefore);
-            whereParts.add(PGNColumns.DATE + " <= ? ");
-            args.add(String.valueOf(dateBefore.getTime()));
-        }
-
-        String result = Utils.getTrimmedOrNull(dropDownResult.getSelectionText());
-        if (result != null && switchFilterResult.isChecked()) {
-            whereParts.add(PGNColumns.RESULT + " = ?");
-            args.add(result);
-        }
-
-        String selection = whereParts.isEmpty() ? null : TextUtils.join(" AND ", whereParts);
-        String[] selectionArgs = args.isEmpty() ? null : args.toArray(new String[0]);
+        if (switchFilterWhite.isChecked()) filter.white(Utils.getTrimmedOrNull(editTextFilterWhite.getText()));
+        if (switchFilterBlack.isChecked()) filter.black(Utils.getTrimmedOrNull(editTextFilterBlack.getText()));
+        if (switchFilterEvent.isChecked()) filter.event(Utils.getTrimmedOrNull(editTextFilterEvent.getText()));
+        if (switchFilterDateAfter.isChecked()) filter.after(pgnDateAfter.getDate());
+        if (switchFilterDateBefore.isChecked()) filter.before(pgnDateBefore.getDate());
+        if (switchFilterResult.isChecked()) filter.result(dropDownResult.getSelectionText());
 
         sortBy = Utils.getTrimmedOrDefault(dropDownOrderBy.getSelectionText(), PGNColumns.DATE);
         sortOrder = Utils.getTrimmedOrDefault(dropDownOrderDirection.getSelectionText(), "DESC");
+        filter.orderBy(sortBy, sortOrder);
 
-        String dbgArgs = selectionArgs == null ? "" : TextUtils.join("|", selectionArgs);
-        Log.i(TAG, "runQuery " + selection + " " + dbgArgs + " BY " + sortBy + " " + sortOrder);
+        Log.i(TAG, "runQuery " + filter.selection() + " BY " + filter.orderBy());
 
-        buttonFilters.setChecked(selectionArgs != null && selectionArgs.length > 0);
+        buttonFilters.setChecked(!filter.isEmpty());
 
         final int generation = ++queryGeneration;
-        final String selectionFinal = selection;
-        final String[] selectionArgsFinal = selectionArgs;
-        final String sortFinal = sortBy + " " + sortOrder;
+        final GameStore store = new GameStore(getContentResolver());
         queryExecutor.execute(() -> {
-            Cursor newCursor = getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, selectionFinal, selectionArgsFinal, sortFinal);
+            Cursor newCursor = store.query(filter);
             mainHandler.post(() -> {
                 if (generation != queryGeneration) {
                     if (newCursor != null && !newCursor.isClosed()) {
