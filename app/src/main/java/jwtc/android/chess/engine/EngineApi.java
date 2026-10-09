@@ -124,6 +124,12 @@ public abstract class EngineApi {
      */
     abstract public void play();
 
+    /** Starts a PLAY search limited by the given request instead of the configured limit. */
+    public void play(SearchLimit limit) {
+        limit.applyTo(this);
+        play();
+    }
+
     /** Whether this backend implements analysis; callers should check before displaying a score. */
     abstract public boolean supportsAnalysis();
 

@@ -17,9 +17,9 @@ import com.google.android.material.button.MaterialButton;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
-import jwtc.android.chess.engine.LocalEngine;
+import jwtc.android.chess.engine.EngineSession;
+import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.tools.ImportActivity;
@@ -28,7 +28,7 @@ import jwtc.chess.board.BoardConstants;
 
 public class PuzzleActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "PuzzleActivity";
-    private EngineApi myEngine;
+    private EngineSession engineSession;
     private Cursor cursor = null;
     private TextView textViewPuzzleText, textViewSolution;
     private ImageView imageTurn;
@@ -105,8 +105,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
             //rebuildBoard();
             if (!gameApi.isEnded()) {
                 Log.d(TAG, "show " + numMoved);
-                myEngine.setPly(4 - numMoved);
-                myEngine.play();
+                engineSession.play(SearchLimit.ply(4 - numMoved));
             }
         });
 
@@ -129,9 +128,7 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
         super.onResume();
         Log.i(TAG, "onResume");
 
-        myEngine = new LocalEngine(gameApi);
-        myEngine.setQuiescentSearchOn(false);
-        myEngine.addListener(this);
+        engineSession = EngineSession.forPuzzles(gameApi, this);
 
         useAccessibilityDrag = false;
         applySquareDragListeners();
@@ -144,6 +141,11 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     @Override
     protected void onPause() {
         super.onPause();
+
+        if (engineSession != null) {
+            engineSession.close();
+            engineSession = null;
+        }
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
@@ -221,8 +223,10 @@ public class PuzzleActivity extends ChessBoardActivity implements EngineListener
     }
 
     protected void startEngine() {
-        myEngine.setPly(4 - numMoved);
-        myEngine.play();
+        if (engineSession == null) {
+            return;
+        }
+        engineSession.play(SearchLimit.ply(4 - numMoved));
     }
 
     public void animateCorrect() {

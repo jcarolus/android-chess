@@ -20,9 +20,9 @@ import java.util.Timer;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
-import jwtc.android.chess.engine.LocalEngine;
+import jwtc.android.chess.engine.EngineSession;
+import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.tools.ImportActivity;
@@ -33,7 +33,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     private static final String TAG = "PracticeActivity";
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable delayedStartEngine = this::startEngine;
-    private EngineApi myEngine;
+    private EngineSession engineSession;
     private TextView textViewPracticeMove, textViewPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
     private int totalPuzzles, currentPos;
@@ -129,9 +129,7 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         Log.i(TAG, "onResume");
 
-        myEngine = new LocalEngine(gameApi);
-        myEngine.setQuiescentSearchOn(false);
-        myEngine.addListener(this);
+        engineSession = EngineSession.forPuzzles(gameApi, this);
 
         useAccessibilityDrag = false;
         applySquareDragListeners();
@@ -147,12 +145,9 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
 
         handler.removeCallbacks(delayedStartEngine);
 
-        if (myEngine != null) {
-            myEngine.abort(() -> {
-            });
-            myEngine.removeListener(this);
-            myEngine.destroy();
-            myEngine = null;
+        if (engineSession != null) {
+            engineSession.close();
+            engineSession = null;
         }
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
@@ -235,8 +230,10 @@ public class PracticeActivity extends ChessBoardActivity implements EngineListen
     }
 
     protected void startEngine() {
-        myEngine.setPly(4 - numMoved);
-        myEngine.play();
+        if (engineSession == null) {
+            return;
+        }
+        engineSession.play(SearchLimit.ply(4 - numMoved));
     }
 
     public void animateCorrect() {
