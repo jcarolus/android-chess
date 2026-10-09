@@ -98,7 +98,7 @@ The user's logged-in identity, proven by an OAuth2 (PKCE) token. The token may b
 A flag saying whether an outcome counts toward the Lichess Account's rating. For Lichess Puzzles, rated requests send the token and unrated requests send none. Also applies to Challenges and Seeks.
 
 **Rating**:
-Always a Lichess rating. The app has no local ratings.
+A player's Lichess rating; the app has no local player ratings. Unrelated to the `rating` of a saved Game in the Game Database, which is the user's own mark for how good that Game is.
 
 **Challenge**, **Seek**, **Swiss**:
 Lichess terms for a request to a specific player, a lobby request, and a Swiss tournament. FICS uses different words.
