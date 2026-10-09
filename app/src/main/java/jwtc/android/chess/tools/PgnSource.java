@@ -29,6 +29,11 @@ public final class PgnSource implements ImportSource {
     }
 
     @Override
+    public void close() throws IOException {
+        in.close();
+    }
+
+    @Override
     public void forEach(Sink sink) throws IOException {
         try (InputStream stream = in) {
             if (!zip) {

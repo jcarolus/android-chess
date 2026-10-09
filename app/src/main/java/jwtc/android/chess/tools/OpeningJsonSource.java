@@ -15,6 +15,11 @@ public final class OpeningJsonSource implements ImportSource {
     }
 
     @Override
+    public void close() throws java.io.IOException {
+        in.close();
+    }
+
+    @Override
     public void forEach(Sink sink) throws Exception {
         String json;
         try (InputStream stream = in) {

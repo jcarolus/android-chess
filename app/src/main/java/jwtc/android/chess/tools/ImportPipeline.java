@@ -30,6 +30,11 @@ public final class ImportPipeline {
     public boolean start(ImportJob job) {
         synchronized (this) {
             if (running) {
+                try {
+                    job.source.close();
+                } catch (Exception e) {
+                    Log.e(TAG, "Could not close the source of a rejected job " + e);
+                }
                 mainHandler.post(() -> listener.OnImportFatalError(job.mode));
                 return false;
             }
