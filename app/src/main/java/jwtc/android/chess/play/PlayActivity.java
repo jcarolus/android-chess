@@ -37,8 +37,8 @@ import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
-import jwtc.android.chess.engine.LocalEngine;
-import jwtc.android.chess.engine.OexEngine;
+import jwtc.android.chess.engine.EngineSession;
+import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.helpers.GameStore;
@@ -73,9 +73,8 @@ public class PlayActivity extends ChessBoardActivity implements
     public static final int REQUEST_OPEN_GAME_FILE = 12;
 
     private LocalClockApi localClock;
-    private EngineApi myEngine;
-    private EngineApi localEngine;
-    private OexEngine oexEngine;
+    private EngineSession engineSession;
+    private SearchLimit searchLimit = SearchLimit.millis(1000);
     private final EcoService ecoService = new EcoService();
     private long lGameID;
     private LinearProgressIndicator progressBarEngine;
@@ -152,7 +151,7 @@ public class PlayActivity extends ChessBoardActivity implements
         playButton = findViewById(R.id.ButtonPlay);
         playButton.setOnClickListener(arg0 -> {
             if (!gameApi.isEnded()) {
-                if (myEngine.isReady()) {
+                if (engineSession.isReady()) {
                     if (!gameApi.isAtLineEnd()) {
                         openConfirmDialog(
                             getString(R.string.title_create_new_line),
@@ -165,7 +164,7 @@ public class PlayActivity extends ChessBoardActivity implements
                         playIfEngineCanMove();
                     }
                 } else {
-                    myEngine.abort(() -> {});
+                    engineSession.abort(() -> {});
                 }
             }
         });
@@ -290,9 +289,7 @@ public class PlayActivity extends ChessBoardActivity implements
         String type = intent.getType();
         Uri uri = intent.getData();
 
-        localEngine = new LocalEngine(gameApi);
-        oexEngine = new OexEngine(this, gameApi, prefs.getString("oexEngineId", null));
-        myEngine = null;
+        engineSession = EngineSession.forPlay(this, gameApi, this);
 
         lGameID = prefs.getLong("game_id", 0);
 
@@ -365,19 +362,9 @@ public class PlayActivity extends ChessBoardActivity implements
     protected void onPause() {
         super.onPause();
 
-        if (myEngine != null) {
-            myEngine.abort(() -> {
-            });
-            myEngine.removeListener(this);
-            myEngine = null;
-        }
-        if (localEngine != null) {
-            localEngine.destroy();
-            localEngine = null;
-        }
-        if (oexEngine != null) {
-            oexEngine.destroy();
-            oexEngine = null;
+        if (engineSession != null) {
+            engineSession.close();
+            engineSession = null;
         }
 
         localClock.stopClock();
@@ -892,40 +879,16 @@ public class PlayActivity extends ChessBoardActivity implements
         return getPrefs().getString("engineBackend", "builtin");
     }
 
-    private EngineApi resolveEngineByPrefsAndVariant() {
-        boolean isDuck = jni.getVariant() == BoardConstants.VARIANT_DUCK;
-        boolean wantsOex = "oex".equals(getPreferredEngineBackend());
-        if (wantsOex && !OexEngine.hasAvailableEngines(this)) {
-            wantsOex = false;
-        }
-        return wantsOex && !isDuck ? oexEngine : localEngine;
-    }
-
     private void updateActiveEngine() {
-        if (localEngine == null) {
-            localEngine = new LocalEngine(gameApi);
+        if (engineSession == null) {
+            engineSession = EngineSession.forPlay(this, gameApi, this);
         }
-        if (oexEngine == null) {
-            oexEngine = new OexEngine(this, gameApi, getPrefs().getString("oexEngineId", null));
-        } else {
-            oexEngine.setPreferredEngineId(getPrefs().getString("oexEngineId", null));
-        }
-
-        EngineApi selectedEngine = resolveEngineByPrefsAndVariant();
-        if (selectedEngine == null) {
-            selectedEngine = localEngine;
-        }
-        if (selectedEngine == myEngine) {
-            return;
-        }
-
-        if (myEngine != null) {
-            myEngine.abort(() -> {
-            });
-            myEngine.removeListener(this);
-        }
-        myEngine = selectedEngine;
-        myEngine.addListener(this);
+        SharedPreferences prefs = getPrefs();
+        engineSession.selectForPlay(
+            "oex".equals(getPreferredEngineBackend()),
+            prefs.getString("oexEngineId", null),
+            jni.getVariant() == BoardConstants.VARIANT_DUCK,
+            prefs.getBoolean("quiescentSearchOn", true));
     }
 
     protected void updateBoardRotation() {
@@ -974,13 +937,9 @@ public class PlayActivity extends ChessBoardActivity implements
         int levelPly = prefs.getInt("levelPly", 2);
         int[] secs = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
 
-        if (mode == EngineApi.LEVEL_TIME) {
-            myEngine.setMsecs(secs[levelTime] * 1000);
-        } else {
-            myEngine.setPly(levelPly);
-        }
-
-        myEngine.setQuiescentSearchOn(prefs.getBoolean("quiescentSearchOn", true));
+        searchLimit = mode == EngineApi.LEVEL_TIME
+            ? SearchLimit.millis(secs[levelTime] * 1000)
+            : SearchLimit.ply(levelPly);
 
         updateBoardRotation();
         updateLastMove();
@@ -1014,14 +973,14 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected void playIfEngineMove() {
         Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
-        if (myEngine != null && myTurn != jni.getTurn() && vsCPU) {
+        if (engineSession != null && myTurn != jni.getTurn() && vsCPU) {
             playIfEngineCanMove();
         }
     }
 
     protected void playIfEngineCanMove() {
         Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
-        if (myEngine != null && myEngine.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+        if (engineSession != null && engineSession.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 
@@ -1031,7 +990,7 @@ public class PlayActivity extends ChessBoardActivity implements
                 gameApi.move(moves.get(r), -1);
                 // textViewEngineValue.setText("From opening book");
             } else {
-                myEngine.play();
+                engineSession.play(searchLimit);
             }
         }
     }

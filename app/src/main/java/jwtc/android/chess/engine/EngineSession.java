@@ -8,18 +8,22 @@ import jwtc.android.chess.services.GameApi;
  * The Engines one Mode uses: picks the Engine for that Mode, owns its lifecycle and the
  * registration of the listener, and takes the search limit per request.
  * <p>
- * Once closed, a session ignores further searches, so a delayed callback that fires after
+ * Once closed, a session ignores further requests, so a delayed callback that fires after
  * the screen has paused cannot start a search on a destroyed Engine.
  */
 public final class EngineSession {
-    private final EngineApi engine;
+    private final Context context;
+    private final GameApi gameApi;
     private final EngineListener listener;
+    private LocalEngine local;
+    private OexEngine oex;
+    private EngineApi current;
     private boolean closed = false;
 
-    private EngineSession(EngineApi engine, EngineListener listener) {
-        this.engine = engine;
+    private EngineSession(Context context, GameApi gameApi, EngineListener listener) {
+        this.context = context;
+        this.gameApi = gameApi;
         this.listener = listener;
-        engine.addListener(listener);
     }
 
     /**
@@ -27,9 +31,11 @@ public final class EngineSession {
      * quiescence search off so a forced mate is found at the shallow depth the caller asks for.
      */
     public static EngineSession forPuzzles(GameApi gameApi, EngineListener listener) {
-        EngineApi engine = new LocalEngine(gameApi);
-        engine.setQuiescentSearchOn(false);
-        return new EngineSession(engine, listener);
+        EngineSession session = new EngineSession(null, gameApi, listener);
+        session.local = new LocalEngine(gameApi);
+        session.local.setQuiescentSearchOn(false);
+        session.use(session.local);
+        return session;
     }
 
     /**
@@ -38,20 +44,77 @@ public final class EngineSession {
      */
     public static EngineSession forAnalysis(Context context, GameApi gameApi, EngineListener listener,
                                             String oexEngineId) {
-        return new EngineSession(new OexEngine(context, gameApi, oexEngineId), listener);
+        EngineSession session = new EngineSession(context, gameApi, listener);
+        session.oex = new OexEngine(context, gameApi, oexEngineId);
+        session.use(session.oex);
+        return session;
     }
 
-    /** Whether the Engine behind this session can analyse; false once closed. */
+    /** Session for Play; no Engine is active until {@link #selectForPlay}. */
+    public static EngineSession forPlay(Context context, GameApi gameApi, EngineListener listener) {
+        return new EngineSession(context, gameApi, listener);
+    }
+
+    /**
+     * Picks the Engine for Play from the user's settings and the Variant (see
+     * {@link EnginePolicy#forPlay}). Switching Engines cancels the running search and moves the
+     * listener over; selecting the same Engine again leaves it running.
+     */
+    public void selectForPlay(boolean prefersOex, String oexEngineId, boolean duckVariant,
+                              boolean quiescentSearch) {
+        if (closed) {
+            return;
+        }
+        if (local == null) {
+            local = new LocalEngine(gameApi);
+        }
+        if (oex == null) {
+            oex = new OexEngine(context, gameApi, oexEngineId);
+        } else {
+            oex.setPreferredEngineId(oexEngineId);
+        }
+        boolean oexAvailable = prefersOex && OexEngine.hasAvailableEngines(context);
+        EngineApi target = EnginePolicy.forPlay(prefersOex, oexAvailable, duckVariant)
+                == EnginePolicy.Backend.OEX ? oex : local;
+        if (target != current) {
+            if (current != null) {
+                current.abort(null);
+                current.removeListener(listener);
+            }
+            use(target);
+        }
+        target.setQuiescentSearchOn(quiescentSearch);
+    }
+
+    private void use(EngineApi engine) {
+        current = engine;
+        engine.addListener(listener);
+    }
+
+    /** Whether an Engine is selected and not searching; false once closed. */
+    public boolean isReady() {
+        return !closed && current != null && current.isReady();
+    }
+
+    /** Whether the active Engine can analyse; false once closed. */
     public boolean supportsAnalysis() {
-        return !closed && engine.supportsAnalysis();
+        return !closed && current != null && current.supportsAnalysis();
+    }
+
+    /** Starts a PLAY search of the current position; the result arrives at the listener. */
+    public void play(SearchLimit limit) {
+        if (closed || current == null) {
+            return;
+        }
+        current.play(limit);
     }
 
     /** Starts an ANALYSIS search of the given FEN; results arrive at the listener. */
     public void analyze(String fen, int timeMillis) {
-        if (closed) {
+        if (closed || current == null) {
             return;
         }
-        engine.analyze(fen, timeMillis);
+        current.analyze(fen, timeMillis);
     }
 
     /**
@@ -59,28 +122,27 @@ public final class EngineSession {
      * once a new search may start. Does nothing once closed.
      */
     public void abort(Runnable onDone) {
-        if (closed) {
+        if (closed || current == null) {
             return;
         }
-        engine.abort(onDone);
+        current.abort(onDone);
     }
 
-    /** Starts a PLAY search of the current position; the result arrives at the listener. */
-    public void play(SearchLimit limit) {
-        if (closed) {
-            return;
-        }
-        engine.play(limit);
-    }
-
-    /** Cancels any search and releases the Engine. Safe to call more than once. */
+    /** Cancels any search and releases every Engine. Safe to call more than once. */
     public void close() {
         if (closed) {
             return;
         }
         closed = true;
-        engine.abort(null);
-        engine.removeListener(listener);
-        engine.destroy();
+        if (current != null) {
+            current.abort(null);
+            current.removeListener(listener);
+        }
+        if (local != null) {
+            local.destroy();
+        }
+        if (oex != null) {
+            oex.destroy();
+        }
     }
 }
