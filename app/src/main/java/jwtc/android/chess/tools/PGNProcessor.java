@@ -2,12 +2,17 @@ package jwtc.android.chess.tools;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.*;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import jwtc.chess.PgnSplitter;
 
 
 public abstract class PGNProcessor {
@@ -43,23 +48,14 @@ public abstract class PGNProcessor {
                     while ((entry = zis.getNextEntry()) != null) {
                         if (entry.isDirectory() || (false == entry.getName().endsWith(".pgn"))) {
                             continue;
-                        } else {
-
-                            Log.d(TAG, "hasEntry " + entry.getName());
-
-                            StringBuffer sb = new StringBuffer();
-                            byte[] buffer = new byte[2048];
-                            int len;
-
-                            while ((len = zis.read(buffer, 0, buffer.length)) != -1) {
-                                sb.append(new String(buffer, 0, len));
-                            }
-
-                            processPGNPart(sb);
-
-                            sendMessage(MSG_FINISHED);
                         }
+
+                        Log.d(TAG, "hasEntry " + entry.getName());
+
+                        // the reader is not closed, that would close the zip stream with the entries still to read
+                        processGames(new InputStreamReader(zis, StandardCharsets.UTF_8));
                     }
+                    sendMessage(MSG_FINISHED);
                 } catch (IOException e) {
                     sendMessage(MSG_FATAL_ERROR);
 
@@ -84,16 +80,7 @@ public abstract class PGNProcessor {
             public void run() {
                 sendMessage(MSG_STARTED);
                 try {
-
-                    StringBuffer sb = new StringBuffer();
-                    int len;
-                    byte[] buffer = new byte[2048];
-
-                    while ((len = is.read(buffer, 0, buffer.length)) != -1) {
-                        sb.append(new String(buffer, 0, len));
-
-                        processPGNPart(sb);
-                    }
+                    processGames(new InputStreamReader(is, StandardCharsets.UTF_8));
 
                     sendMessage(MSG_FINISHED);
 
@@ -106,27 +93,17 @@ public abstract class PGNProcessor {
         }).start();
     }
 
-    public void processPGNPart(final StringBuffer sb) {
-        int pos1 = 0, pos2 = 0;
-        String s;
-        pos1 = sb.indexOf("[Event \"");
-        while (pos1 >= 0) {
-            pos2 = sb.indexOf("[Event \"", pos1 + 10);
-            if (pos2 == -1)
-                break;
-            s = sb.substring(pos1, pos2);
-
-            if (processPGN(s)) {
+    private void processGames(Reader reader) throws IOException {
+        PgnSplitter splitter = new PgnSplitter(reader);
+        String game;
+        while ((game = splitter.next()) != null) {
+            if (processPGN(game)) {
                 successCount++;
                 sendMessage(MSG_PROCESSED_PGN);
             } else {
                 failCount++;
                 sendMessage(MSG_FAILED_PGN);
             }
-
-            sb.delete(0, pos2);
-
-            pos1 = sb.indexOf("[Event \"");
         }
     }
 
