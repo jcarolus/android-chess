@@ -234,6 +234,8 @@ public final class MateCollection {
             return;
         }
         gameApi.loadPGN(pgn);
+        // The source game's resignation must not end the position before checkmate.
+        gameApi.resetForfeitTime();
         numMoved = 0;
         solvedPendingAdvance = false;
         gameApi.jumpToBoardNum(0);
