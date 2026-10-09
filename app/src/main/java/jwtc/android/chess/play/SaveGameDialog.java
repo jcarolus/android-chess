@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.widget.RatingBar;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
@@ -15,11 +16,11 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import jwtc.android.chess.R;
-import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.PgnDate;
 
 public class SaveGameDialog extends Dialog {
 
@@ -73,7 +74,7 @@ public class SaveGameDialog extends Dialog {
         editTextWhite.setText(gameApi.pgnTags.get("White"));
         editTextBlack.setText(gameApi.pgnTags.get("Black"));
 
-        dateView.setDate(PGNHelper.getDate(gameApi.pgnTags.get("Event")));
+        dateView.setDate(PgnDate.parse(gameApi.pgnTags.get("Date")));
 
         _butSaveCopy.setEnabled(lGameID != 0);
     }
@@ -83,7 +84,7 @@ public class SaveGameDialog extends Dialog {
         gameApi.pgnTags.put("Event", Utils.getTrimmedOrDefault(editTextEvent.getText(), "Event?"));
         gameApi.pgnTags.put("White", Utils.getTrimmedOrDefault(editTextWhite.getText(), "White?"));
         gameApi.pgnTags.put("Black", Utils.getTrimmedOrDefault(editTextBlack.getText(), "Black?"));
-        gameApi.pgnTags.put("Date", Utils.formatDate(dateView.getDate()));
+        gameApi.pgnTags.put("Date", PgnDate.format(dateView.getDate()));
         result.rating = ratingBarRating.getRating();
         result.createCopy = bCopy;
 
@@ -102,7 +103,8 @@ public class SaveGameDialog extends Dialog {
             values.put(PGNColumns.EVENT, gameApi.pgnTags.get("Event"));
             values.put(PGNColumns.WHITE, gameApi.pgnTags.get("White"));
             values.put(PGNColumns.BLACK, gameApi.pgnTags.get("Black"));
-            values.put(PGNColumns.DATE, PGNHelper.getDate(gameApi.pgnTags.get("Date")).getTime());
+            Date date = PgnDate.parse(gameApi.pgnTags.get("Date"));
+            if (date != null) values.put(PGNColumns.DATE, date.getTime());
             values.put(PGNColumns.RESULT, gameApi.pgnTags.get("Result"));
             values.put(PGNColumns.RATING, result.rating);
             values.put(PGNColumns.PGN, gameApi.exportFullPGN());

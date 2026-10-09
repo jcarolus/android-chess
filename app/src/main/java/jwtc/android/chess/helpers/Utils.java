@@ -3,7 +3,6 @@ package jwtc.android.chess.helpers;
 import android.database.Cursor;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Utils {
@@ -29,11 +28,6 @@ public class Utils {
         }
         String s = cs.toString().trim();
         return s.isEmpty() ? sDefault : s;
-    }
-
-    public static String formatDate(Date d) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-        return d == null ? "" : formatter.format(d);
     }
 
     public static String getColumnString(Cursor cursor, String column) {

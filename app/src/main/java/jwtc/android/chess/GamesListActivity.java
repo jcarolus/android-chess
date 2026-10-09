@@ -55,6 +55,7 @@ import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.android.chess.views.PGNDateView;
 import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
+import jwtc.chess.PgnDate;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
@@ -199,7 +200,7 @@ public class GamesListActivity extends ChessBoardActivity {
             }
             int nDateIndex = cursor.getColumnIndex(PGNColumns.DATE);
             if (nDateIndex == columnIndex) {
-                ((TextView) view).setText(Utils.formatDate(Utils.getColumnDate(cursor, PGNColumns.DATE)));
+                ((TextView) view).setText(PgnDate.format(Utils.getColumnDate(cursor, PGNColumns.DATE)));
                 return true;
             }
             int nResultIndex = cursor.getColumnIndex(PGNColumns.RESULT);
@@ -381,7 +382,7 @@ public class GamesListActivity extends ChessBoardActivity {
         String event = Utils.getColumnString(cursor, PGNColumns.EVENT);
         String white = Utils.getColumnString(cursor, PGNColumns.WHITE);
         String black = Utils.getColumnString(cursor, PGNColumns.BLACK);
-        String date = Utils.formatDate(Utils.getColumnDate(cursor, PGNColumns.DATE));
+        String date = PgnDate.format(Utils.getColumnDate(cursor, PGNColumns.DATE));
         String result = Utils.getColumnString(cursor, PGNColumns.RESULT);
         String rating = Float.toString(Utils.getColumnFloat(cursor, PGNColumns.RATING)) + "★";
 

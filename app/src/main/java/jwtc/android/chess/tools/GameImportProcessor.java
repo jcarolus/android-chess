@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.net.Uri;
 import android.os.Handler;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import jwtc.android.chess.services.GameApi;
@@ -39,12 +38,9 @@ public class GameImportProcessor extends PGNProcessor {
             values.put(PGNColumns.RATING, 2.5F);
             values.put(PGNColumns.RESULT, result);
 
-            // todo date goes wrong #################################
-            Date dd = gameApi.getDate();
-            if (dd == null) {
-                dd = Calendar.getInstance().getTime();
-            }
-            values.put(PGNColumns.DATE, dd.getTime());
+            // without a date the provider stores the time of import
+            Date date = gameApi.getDate();
+            if (date != null) values.put(PGNColumns.DATE, date.getTime());
 
             Uri uri = Uri.parse("content://jwtc.android.chess.helpers.MyPGNProvider/games");
             Uri uriInsert = contentResolver.insert(uri, values);

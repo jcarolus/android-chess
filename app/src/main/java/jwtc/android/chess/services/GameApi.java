@@ -3,22 +3,20 @@ package jwtc.android.chess.services;
 import android.content.res.Resources;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import java.util.Collections;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 
-import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.chess.JNI;
 import jwtc.chess.GameTree;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.Pgn;
+import jwtc.chess.PgnDate;
 import jwtc.chess.PgnDocument;
 import jwtc.chess.PgnSyntaxError;
 import jwtc.chess.Move;
@@ -435,8 +433,6 @@ public class GameApi {
     }
 
     public void newGame(int variant) {
-        Date d = Calendar.getInstance().getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
 
         pgnTags.clear();
         pgnTags.put("Event", "?");
@@ -444,7 +440,7 @@ public class GameApi {
         pgnTags.put("Round", "?");
         pgnTags.put("White", "?");
         pgnTags.put("Black", "?");
-        pgnTags.put("Date", formatter.format(d));
+        pgnTags.put("Date", PgnDate.format(new Date()));
 
         jni.newGame(variant);
         resetPGNHistory();
@@ -851,11 +847,7 @@ public class GameApi {
     }
 
     public void setDateLong(long lTime) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(lTime);
-        Date d = cal.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
-        setPGNTag("Date", formatter.format(d));
+        setPGNTag("Date", PgnDate.format(new Date(lTime)));
     }
 
     public String getPGNHeadProperty(String sProp) {
@@ -875,7 +867,7 @@ public class GameApi {
 
     public Date getDate() {
         String s = getPGNHeadProperty("Date");
-        return PGNHelper.getDate(s);
+        return PgnDate.parse(s);
     }
 
     public boolean hasAnyPieceOnPosition(int pos) {

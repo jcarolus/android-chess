@@ -28,6 +28,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import org.json.JSONArray;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.ArrayList;
 
 import jwtc.android.chess.GamesListActivity;
@@ -392,7 +393,8 @@ public class PlayActivity extends ChessBoardActivity implements
             ContentValues values = new ContentValues();
 
             // @TODO - generic solution; +RESULT?
-            values.put(PGNColumns.DATE, gameApi.getDate().getTime());
+            Date date = gameApi.getDate();
+            if (date != null) values.put(PGNColumns.DATE, date.getTime());
             values.put(PGNColumns.WHITE, gameApi.getWhite());
             values.put(PGNColumns.BLACK, gameApi.getBlack());
             values.put(PGNColumns.PGN, gameApi.exportFullPGN());
