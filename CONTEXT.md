@@ -53,8 +53,12 @@ _Avoid_: bare "puzzle" without saying which kind
 **Engine**:
 A move-search implementation behind `EngineApi`: the **Local Engine** (bundled, native) or an **OEX Engine** (third-party, via the Open Exchange Protocol).
 
+**Engine session**:
+What a Mode holds to use Engines: it picks the Engine for that Mode (Play follows the user's choice and Variant, Analysis needs an Engine that supports it, Mate-in-Two Puzzles and Practice Positions always use the Local Engine), owns its lifecycle and listener registration, and takes the search limit per request. Not a Lichess Session.
+_Avoid_: bare "session"
+
 **Search Purpose**:
-Why an Engine is searching: PLAY (choose a move to play) or ANALYSIS (evaluate a position). Currently `EngineApi.Mode` in code, a candidate rename.
+Why an Engine is searching: PLAY (choose a move to play) or ANALYSIS (evaluate a position). `EngineApi.SearchPurpose` in code.
 _Avoid_: Mode
 
 **Evaluation**:

@@ -31,7 +31,7 @@ public class LocalEngine extends EngineApi {
             return;
         }
 
-        long id = beginSearch(Mode.PLAY);
+        long id = beginSearch(SearchPurpose.PLAY);
         engineSearchThread = new Thread(new RunnableSearch(id, ply, msecs, quiescentSearchOn));
         engineSearchThread.start();
 
@@ -53,7 +53,7 @@ public class LocalEngine extends EngineApi {
         if (engineSearchThread != null) {
             return;
         }
-        long id = beginSearch(Mode.ANALYSIS);
+        long id = beginSearch(SearchPurpose.ANALYSIS);
         // Placeholder only: do not touch the JNI board or start a native search.
         sendMessageFromThread(id, "", 0.0F);
     }

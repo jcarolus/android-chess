@@ -18,17 +18,17 @@ public abstract class EngineApi {
     public static final int LEVEL_PLY = 2;
 
     /** Search purpose, independent of whether the engine is currently searching. */
-    public enum Mode {
+    public enum SearchPurpose {
         PLAY,
         ANALYSIS
     }
 
     /** Implementations set this when accepting a search, before emitting callbacks. */
-    protected volatile Mode mode = Mode.PLAY;
+    protected volatile SearchPurpose purpose = SearchPurpose.PLAY;
     private volatile long searchId = 0;
 
-    protected synchronized long beginSearch(Mode mode) {
-        this.mode = mode;
+    protected synchronized long beginSearch(SearchPurpose purpose) {
+        this.purpose = purpose;
         return ++searchId;
     }
 
@@ -55,7 +55,7 @@ public abstract class EngineApi {
             if (!isCurrentSearch(msg.getData().getLong("searchId"))) {
                 return;
             }
-            if (msg.what == MSG_MOVE && mode == Mode.PLAY) {
+            if (msg.what == MSG_MOVE && purpose == SearchPurpose.PLAY) {
                 int move = msg.getData().getInt("move");
                 int duckMove = msg.getData().getInt("duckMove");
                 int value = msg.getData().getInt("value");
@@ -148,8 +148,8 @@ public abstract class EngineApi {
     }
 
     /** Returns the purpose of the most recently accepted search; defaults to PLAY. */
-    public Mode getMode() {
-        return mode;
+    public SearchPurpose getSearchPurpose() {
+        return purpose;
     }
 
     abstract public boolean isReady();

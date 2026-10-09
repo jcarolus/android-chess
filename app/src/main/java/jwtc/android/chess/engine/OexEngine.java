@@ -49,7 +49,7 @@ public class OexEngine extends EngineApi {
 
     private static class Search {
         final long id;
-        final Mode mode;
+        final SearchPurpose purpose;
         final String fen;
         final String command;
         final int timeMillis;
@@ -58,9 +58,9 @@ public class OexEngine extends EngineApi {
         boolean cancelled;
         EngineEvaluation evaluation;
 
-        Search(long id, Mode mode, String fen, String command, int timeMillis) {
+        Search(long id, SearchPurpose purpose, String fen, String command, int timeMillis) {
             this.id = id;
-            this.mode = mode;
+            this.purpose = purpose;
             this.fen = fen;
             this.command = command;
             this.timeMillis = timeMillis;
@@ -95,7 +95,7 @@ public class OexEngine extends EngineApi {
             sendErrorMessageFromThread();
             return;
         }
-        startSearch(Mode.PLAY, jni.toFEN(), ply > 0 ? "go depth " + ply : "go movetime " + msecs,
+        startSearch(SearchPurpose.PLAY, jni.toFEN(), ply > 0 ? "go depth " + ply : "go movetime " + msecs,
                 ply > 0 ? 0 : msecs);
     }
 
@@ -105,12 +105,12 @@ public class OexEngine extends EngineApi {
         if (search != null) {
             return;
         }
-        startSearch(Mode.ANALYSIS, fen.trim(), "go movetime " + timeMillis, timeMillis);
+        startSearch(SearchPurpose.ANALYSIS, fen.trim(), "go movetime " + timeMillis, timeMillis);
     }
 
-    private void startSearch(Mode mode, String fen, String command, int timeMillis) {
-        Log.d(TAG, "startSearch " + mode);
-        Search requested = new Search(beginSearch(mode), mode, fen, command, timeMillis);
+    private void startSearch(SearchPurpose purpose, String fen, String command, int timeMillis) {
+        Log.d(TAG, "startSearch " + purpose);
+        Search requested = new Search(beginSearch(purpose), purpose, fen, command, timeMillis);
         search = requested;
         latestValue = 0;
         for (EngineListener listener : listeners) {
@@ -332,7 +332,7 @@ public class OexEngine extends EngineApi {
     private void parseBestMove(String line) {
         Search completed = search;
         int value = latestValue;
-        if (!completed.cancelled && completed.mode == Mode.PLAY) {
+        if (!completed.cancelled && completed.purpose == SearchPurpose.PLAY) {
             String[] parts = line.split("\\s+");
             String uciMove = parts.length > 1 ? parts[1] : "";
             // Resolve against the live board on the main thread, only if it still
@@ -351,7 +351,7 @@ public class OexEngine extends EngineApi {
                 }
             });
         }
-        if (!completed.cancelled && completed.mode == Mode.ANALYSIS) {
+        if (!completed.cancelled && completed.purpose == SearchPurpose.ANALYSIS) {
             String[] parts = line.split("\\s+");
             String bestMove = parts.length > 1 ? parts[1] : "";
             updateHandler.post(() -> {
