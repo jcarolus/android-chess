@@ -38,6 +38,7 @@ import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
@@ -1213,7 +1214,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getLastMoveDescription(boolean forTTS) {
         int move = jni.getMyMove();
         if (move != 0) {
-            return GameApi.moveToSpeechString(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move, useLongMoveFormat);
+            return MoveSpeech.describe(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move, useLongMoveFormat);
         }
         return "";
     }
