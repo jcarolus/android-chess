@@ -14,13 +14,19 @@ Default label names: needs-triage, needs-info, ready-for-agent, ready-for-human,
 
 Single-context: one `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
+## Deprecated
+
+### FICS
+
+Everything regarding FICS is deprecated. It will not be maintained and no new functionality will be added. Do not extend, refactor or fix FICS code unless explicitly asked.
+
 ## Coding standards
 
 ### Unit tests
 
 - **Write unit tests for** pure logic such as PGN parsing, and for the local engine C++ code.
 - **Do not write unit tests for** Activities, dialogs and layout.
-- **Online code (Lichess, FICS):** do not add fake `LichessApi` seams or other test doubles to make it testable.
+- **Online code (Lichess):** do not add fake `LichessApi` seams or other test doubles to make it testable.
 
 ### Comments
 
