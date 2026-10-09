@@ -21,10 +21,9 @@ import java.util.WeakHashMap;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
-import jwtc.android.chess.engine.EngineApi;
+import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineEvaluation;
-import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.services.GameApi;
@@ -47,8 +46,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private Bundle restoredSession;
     private String configuredEngine;
     private int configuredMillis;
-    private EngineApi myEngine;
-    private OexEngine oexEngine;
+    private EngineSession engineSession;
     private long lGameID;
     private EngineEvaluationView evaluationView;
     private ImageView imageAnalysisTurn;
@@ -182,9 +180,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         restoredSession = null;
         configuredEngine = engineId;
         configuredMillis = millis;
-        oexEngine = new OexEngine(this, gameApi, engineId);
-        myEngine = oexEngine;
-        myEngine.addListener(this);
+        engineSession = EngineSession.forAnalysis(this, gameApi, this, engineId);
         analysisFen = null;
         requestedPosition = null;
         analysisSwitchPending = false;
@@ -204,8 +200,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         intent.putExtra(EXTRA_SESSION_ID, sessionId);
         analysisActive = false;
         analysisGeneration++;
-        if (myEngine != null) myEngine.removeListener(this);
-        if (oexEngine != null) oexEngine.destroy();
+        closeEngineSession();
         sessionLoaded = false;
         restoredSession = null;
         positionAnalyses.evictAll();
@@ -264,14 +259,14 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         updateMoveSummary();
         updateVariations();
         updateNextButton();
-        if (!analysisActive || myEngine == null || !myEngine.supportsAnalysis()) return;
+        if (!analysisActive || engineSession == null || !engineSession.supportsAnalysis()) return;
         if (changed) {
             analysisFen = null;
             requestedPosition = null;
             analysisSwitchPending = true;
             final int generation = ++analysisGeneration;
             evaluationView.clearEvaluation();
-            myEngine.abort(() -> {
+            engineSession.abort(() -> {
                 if (analysisActive && generation == analysisGeneration) {
                     analysisSwitchPending = false;
                     startNextAnalysis();
@@ -290,12 +285,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         configuredEngine = engineId;
         configuredMillis = millis;
         analysisGeneration++;
-        myEngine.removeListener(this);
-        oexEngine.destroy();
-        oexEngine = new OexEngine(this, gameApi,
+        closeEngineSession();
+        engineSession = EngineSession.forAnalysis(this, gameApi, this,
             getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null));
-        myEngine = oexEngine;
-        myEngine.addListener(this);
         analysisFen = null;
         requestedPosition = null;
         analysisSwitchPending = false;
@@ -359,7 +351,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         requestedPosition = next;
         analysisFen = next.fen;
         analysisTurn = next.turn;
-        myEngine.analyze(next.fen, AnalysisSettingsDialog.getTimeMillis(getPrefs()));
+        engineSession.analyze(next.fen, AnalysisSettingsDialog.getTimeMillis(getPrefs()));
     }
 
     private void updateNextButton() {
@@ -531,13 +523,15 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     protected void onPause() {
         analysisActive = false;
         analysisGeneration++;
-        if (myEngine != null) {
-            myEngine.removeListener(this);
-        }
-        if (oexEngine != null) {
-            oexEngine.destroy();
-        }
+        closeEngineSession();
         super.onPause();
+    }
+
+    private void closeEngineSession() {
+        if (engineSession != null) {
+            engineSession.close();
+            engineSession = null;
+        }
     }
 
     protected boolean loadGame() {

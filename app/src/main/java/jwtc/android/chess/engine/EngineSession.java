@@ -1,5 +1,7 @@
 package jwtc.android.chess.engine;
 
+import android.content.Context;
+
 import jwtc.android.chess.services.GameApi;
 
 /**
@@ -28,6 +30,39 @@ public final class EngineSession {
         EngineApi engine = new LocalEngine(gameApi);
         engine.setQuiescentSearchOn(false);
         return new EngineSession(engine, listener);
+    }
+
+    /**
+     * Session for Analysis: the OEX Engine chosen by the user. The Local Engine does not
+     * support analysis yet; once it does, this is where it becomes a candidate.
+     */
+    public static EngineSession forAnalysis(Context context, GameApi gameApi, EngineListener listener,
+                                            String oexEngineId) {
+        return new EngineSession(new OexEngine(context, gameApi, oexEngineId), listener);
+    }
+
+    /** Whether the Engine behind this session can analyse; false once closed. */
+    public boolean supportsAnalysis() {
+        return !closed && engine.supportsAnalysis();
+    }
+
+    /** Starts an ANALYSIS search of the given FEN; results arrive at the listener. */
+    public void analyze(String fen, int timeMillis) {
+        if (closed) {
+            return;
+        }
+        engine.analyze(fen, timeMillis);
+    }
+
+    /**
+     * Cancels the current search without emitting a move, then runs onDone on the main thread
+     * once a new search may start. Does nothing once closed.
+     */
+    public void abort(Runnable onDone) {
+        if (closed) {
+            return;
+        }
+        engine.abort(onDone);
     }
 
     /** Starts a PLAY search of the current position; the result arrives at the listener. */
