@@ -235,8 +235,8 @@ public class LocalClockApi implements GameListener {
 
     @Override
     public void onMoveApplied(int move) {
-        // only if on top of move stack
-        if (this.gameApi.isAtEndOfPGN()) {
+        // Account for play at the end of whichever line is selected.
+        if (this.gameApi.isAtLineEnd()) {
             switchTurn();
         }
     }

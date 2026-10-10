@@ -6,6 +6,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import jwtc.chess.GameTree.Node;
+import jwtc.chess.board.BoardConstants;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -111,5 +112,47 @@ public class GameTreeTest {
     @Test(expected = IllegalArgumentException.class)
     public void rejectsNagsOutOfRange() {
         tree.addNag(add(tree.getRoot(), "e4", 1), 256);
+    }
+
+    @Test
+    public void terminalResultsStayWithTheirLineWhenPromotedOrResumed() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        Node d4 = add(tree.getRoot(), "d4", 2);
+        assertTrue(tree.setFinalState(e4, BoardConstants.BLACK_RESIGNED));
+        assertTrue(tree.setFinalState(d4, BoardConstants.WHITE_FORFEIT_TIME));
+        assertEquals(BoardConstants.BLACK_RESIGNED, tree.mainLineEnd().getFinalState());
+
+        assertTrue(tree.promoteVariation(d4));
+        assertEquals(BoardConstants.WHITE_FORFEIT_TIME, tree.mainLineEnd().getFinalState());
+        assertEquals(BoardConstants.BLACK_RESIGNED, e4.getFinalState());
+
+        assertTrue(tree.setFinalState(d4, -1));
+        assertEquals(-1, d4.getFinalState());
+        assertEquals(BoardConstants.BLACK_RESIGNED, e4.getFinalState());
+    }
+
+    @Test
+    public void extendingALineClearsItsOldResult() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        tree.setFinalState(e4, BoardConstants.BLACK_RESIGNED);
+        Node e5 = add(e4, "e5", 2);
+        assertEquals(-1, e4.getFinalState());
+        assertEquals(-1, e5.getFinalState());
+        assertFalse(tree.setFinalState(e4, BoardConstants.WHITE_FORFEIT_TIME));
+        tree.removeContinuation(e5);
+        assertEquals(-1, e4.getFinalState());
+    }
+
+    @Test
+    public void anEmptyGameCanHaveATerminalResult() {
+        assertTrue(tree.setFinalState(tree.getRoot(), BoardConstants.WHITE_FORFEIT_TIME));
+        assertEquals(BoardConstants.WHITE_FORFEIT_TIME, tree.getRoot().getFinalState());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsResultsOnDetachedNodes() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        tree.removeContinuation(e4);
+        tree.setFinalState(e4, BoardConstants.WHITE_FORFEIT_TIME);
     }
 }

@@ -14,6 +14,7 @@ public final class GameTree {
         private final int ply;
         private final int boardState;
         private final int turn;
+        private int finalState = -1;
         private final ArrayList<Node> children = new ArrayList<>();
         private final ArrayList<Integer> nags = new ArrayList<>();
         private String leadingComment = "";
@@ -30,6 +31,7 @@ public final class GameTree {
         public int getPly() { return ply; }
         public int getBoardState() { return boardState; }
         public int getTurn() { return turn; }
+        public int getFinalState() { return finalState; }
         public PGNEntry getEntry() { return copy(entry); }
         public List<Node> getChildren() { return Collections.unmodifiableList(children); }
         public List<Integer> getNags() { return Collections.unmodifiableList(nags); }
@@ -73,8 +75,17 @@ public final class GameTree {
             }
         }
         Node child = new Node(parent, entry, boardState, turn);
+        parent.finalState = -1;
         parent.children.add(child);
         return child;
+    }
+
+    /** Resignation, time forfeit or agreed draw belongs to one line's endpoint. */
+    public boolean setFinalState(Node node, int state) {
+        requireMember(node);
+        if (node.getNext() != null) return false;
+        node.finalState = state;
+        return true;
     }
 
     public void setAnnotation(Node node, String text) {

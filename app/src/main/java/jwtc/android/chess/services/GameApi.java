@@ -41,7 +41,6 @@ public class GameApi {
     private GameTree gameTree;
     private Node currentNode;
     private PGNEntry pendingDuckMove;
-    private int finalState = -1;
     private String importedResult;
     private String lastPgnError;
     private boolean loadingPgn;
@@ -134,7 +133,6 @@ public class GameApi {
         gameTree = new GameTree(initialFen, jni.getState(), jni.getTurn());
         currentNode = gameTree.getRoot();
         pendingDuckMove = null;
-        finalState = -1;
         importedResult = null;
         treeChanged = true;
     }
@@ -175,13 +173,12 @@ public class GameApi {
     }
 
     public int getFinalState() {
-        return pendingDuckMove == null && currentNode == gameTree.mainLineEnd() ? finalState : -1;
+        return isAtLineEnd() ? currentNode.getFinalState() : -1;
     }
 
     public boolean setFinalState(int state) {
-        if (pendingDuckMove != null || currentNode != gameTree.mainLineEnd()) return false;
-        finalState = state;
-        importedResult = null;
+        if (!isAtLineEnd() || !gameTree.setFinalState(currentNode, state)) return false;
+        if (isOnMainLine()) importedResult = null;
         if (state == BoardConstants.WHITE_FORFEIT_TIME) dispatchPlayerForfeitedOnTime(BoardConstants.WHITE);
         else if (state == BoardConstants.BLACK_FORFEIT_TIME) dispatchPlayerForfeitedOnTime(BoardConstants.BLACK);
         dispatchState();
@@ -400,7 +397,6 @@ public class GameApi {
 
     public boolean promoteVariation(Node variationRoot) {
         if (pendingDuckMove != null || !gameTree.promoteVariation(variationRoot)) return false;
-        finalState = -1;
         importedResult = null;
         treeChanged = true;
         dispatchNavigation();
@@ -525,7 +521,6 @@ public class GameApi {
         GameTree oldTree = gameTree;
         Node oldNode = currentNode;
         PGNEntry oldPending = pendingDuckMove;
-        int oldFinalState = finalState;
         String oldResult = importedResult;
         boolean oldChanged = treeChanged;
         HashMap<String, String> oldTags = new HashMap<>(pgnTags);
@@ -545,14 +540,13 @@ public class GameApi {
             if (!navigateTo(gameTree.mainLineEnd())) throw new IllegalArgumentException("Cannot restore main line");
             importedResult = document.result;
             if (jni.isEnded() == 0) {
-                if ("1-0".equals(importedResult)) finalState = BoardConstants.BLACK_RESIGNED;
-                else if ("0-1".equals(importedResult)) finalState = BoardConstants.WHITE_RESIGNED;
-                else if ("1/2-1/2".equals(importedResult)) finalState = BoardConstants.DRAW_AGREEMENT;
+                if ("1-0".equals(importedResult)) gameTree.setFinalState(currentNode, BoardConstants.BLACK_RESIGNED);
+                else if ("0-1".equals(importedResult)) gameTree.setFinalState(currentNode, BoardConstants.WHITE_RESIGNED);
+                else if ("1/2-1/2".equals(importedResult)) gameTree.setFinalState(currentNode, BoardConstants.DRAW_AGREEMENT);
             }
         } catch (IllegalArgumentException ex) {
             lastPgnError = ex.getMessage();
             gameTree = oldTree;
-            finalState = oldFinalState;
             importedResult = oldResult;
             pgnTags.clear();
             pgnTags.putAll(oldTags);
@@ -599,10 +593,11 @@ public class GameApi {
     }
 
     public void resetForfeitTime() {
+        int finalState = getFinalState();
         if (finalState == BoardConstants.WHITE_FORFEIT_TIME || finalState == BoardConstants.BLACK_FORFEIT_TIME
             || finalState == BoardConstants.WHITE_RESIGNED || finalState == BoardConstants.BLACK_RESIGNED) {
-            finalState = -1;
-            importedResult = null;
+            gameTree.setFinalState(currentNode, -1);
+            if (isOnMainLine()) importedResult = null;
             dispatchGameResumed();
             dispatchState();
         }
@@ -787,7 +782,6 @@ public class GameApi {
         int previousChildren = old.getChildren().size();
         currentNode = gameTree.append(old, entry, jni.getState(), jni.getTurn(), !loadingPgn);
         if (old.getChildren().size() != previousChildren && gameTree.isMainLine(currentNode)) {
-            finalState = -1;
             if (!loadingPgn) importedResult = null;
         }
         treeChanged |= old.getChildren().size() != previousChildren;
@@ -808,7 +802,7 @@ public class GameApi {
     private String gameResult() {
         if (importedResult != null) return importedResult;
         Node end = gameTree.mainLineEnd();
-        int state = finalState == -1 ? end.getBoardState() : finalState;
+        int state = end.getFinalState() == -1 ? end.getBoardState() : end.getFinalState();
         switch (state) {
             case BoardConstants.DRAW_50:
             case BoardConstants.DRAW_AGREEMENT:
