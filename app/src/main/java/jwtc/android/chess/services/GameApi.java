@@ -45,6 +45,14 @@ public class GameApi {
     private String lastPgnError;
     private boolean loadingPgn;
     private boolean treeChanged;
+    private boolean overwriteContinuation;
+
+    /** Local play replaces future moves; analysis and imports retain variations. */
+    public void setOverwriteContinuation(boolean overwrite) { overwriteContinuation = overwrite; }
+
+    public boolean hasContinuationToOverwrite() {
+        return pendingDuckMove == null && currentNode.getNext() != null;
+    }
 
     public Node getRootNode() { return gameTree.getRoot(); }
     public Node getCurrentNode() { return currentNode; }
@@ -780,6 +788,12 @@ public class GameApi {
     private void recordEntry(PGNEntry entry) {
         Node old = currentNode;
         int previousChildren = old.getChildren().size();
+        if (overwriteContinuation && !loadingPgn) {
+            currentNode = gameTree.replaceContinuation(old, entry, jni.getState(), jni.getTurn());
+            importedResult = null;
+            treeChanged = true;
+            return;
+        }
         currentNode = gameTree.append(old, entry, jni.getState(), jni.getTurn(), !loadingPgn);
         if (old.getChildren().size() != previousChildren && gameTree.isMainLine(currentNode)) {
             if (!loadingPgn) importedResult = null;

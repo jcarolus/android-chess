@@ -80,6 +80,13 @@ public final class GameTree {
         return child;
     }
 
+    /** Replace all future moves at this position with a new preferred continuation. */
+    public Node replaceContinuation(Node parent, PGNEntry entry, int boardState, int turn) {
+        requireMember(parent);
+        parent.children.clear();
+        return append(parent, entry, boardState, turn, false);
+    }
+
     /** Resignation, time forfeit or agreed draw belongs to one line's endpoint. */
     public boolean setFinalState(Node node, int state) {
         requireMember(node);

@@ -43,6 +43,47 @@ public class GameTreeTest {
     }
 
     @Test
+    public void replacingContinuationRemovesFutureBranchesAndKeepsEarlierMoves() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        Node d4 = add(tree.getRoot(), "d4", 4);
+        Node e5 = add(e4, "e5", 2);
+        Node nf3 = add(e5, "Nf3", 3);
+        Node c5 = add(e4, "c5", 5);
+        tree.setFinalState(nf3, BoardConstants.DRAW_AGREEMENT);
+
+        Node replacement = tree.replaceContinuation(e4, new PGNEntry("c6", "", 6, -1), 0, 0);
+
+        assertTrue(tree.isMainLine(replacement));
+        assertSame(replacement, tree.mainLineEnd());
+        assertSame(e4, replacement.getParent());
+        assertTrue(tree.contains(d4));
+        assertFalse(tree.contains(e5));
+        assertFalse(tree.contains(nf3));
+        assertFalse(tree.contains(c5));
+        assertEquals("1. e4 ( 1. d4 ) 1... c6", tree.exportMoves());
+    }
+
+    @Test
+    public void replacingWithTheSameMoveStillDiscardsItsFuture() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        add(e4, "e5", 2);
+        Node replacement = tree.replaceContinuation(tree.getRoot(),
+            new PGNEntry("e4", "", 1, -1), 0, 0);
+        assertFalse(tree.contains(e4));
+        assertSame(replacement, tree.mainLineEnd());
+        assertEquals("1. e4", tree.exportMoves());
+    }
+
+    @Test
+    public void replacingAtAnEndpointClearsItsResult() {
+        Node e4 = add(tree.getRoot(), "e4", 1);
+        tree.setFinalState(e4, BoardConstants.DRAW_AGREEMENT);
+        Node e5 = tree.replaceContinuation(e4, new PGNEntry("e5", "", 2, -1), 0, 0);
+        assertEquals(-1, e4.getFinalState());
+        assertSame(e5, tree.mainLineEnd());
+    }
+
+    @Test
     public void exportsCommentsAndNags() {
         tree.setRootComment("start");
         Node e4 = add(tree.getRoot(), "e4", 1);

@@ -442,7 +442,7 @@
     <string name="time_warning_seconds_single">A rămas %1$d secundă</string>
     <string name="title_castle">Rocadă?</string>
     <string name="title_challenge">Provocare</string>
-    <string name="title_create_new_line">Creezi o variantă nouă?</string>
+    <string name="title_overwrite_main_line">Suprascrii linia principală din această poziție?</string>
     <string name="title_delete_game">Șterge partida</string>
     <string name="title_edit_command">Editează comanda</string>
     <string name="title_edit_or_delete">Editează sau șterge?</string>

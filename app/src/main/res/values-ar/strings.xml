@@ -460,7 +460,7 @@
     <string name="title_castle">تبييت؟</string>
     <string name="title_pick_engine">المحرك</string>
     <string name="title_challenge">تحدي</string>
-    <string name="title_create_new_line">إنشاء سطر جديد؟</string>
+    <string name="title_overwrite_main_line">هل تريد استبدال الخط الرئيسي من هذا الوضع؟</string>
     <string name="title_delete_game">حذف اللعبة</string>
     <string name="title_edit_command">تعديل الأمر</string>
     <string name="title_edit_or_delete">تعديل أو حذف؟</string>

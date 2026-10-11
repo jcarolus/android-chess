@@ -452,7 +452,7 @@
     <string name="time_warning_seconds_single">%1$d Sekunde verbleibend</string>
     <string name="title_castle">Rochieren?</string>
     <string name="title_challenge">Herausforderung</string>
-    <string name="title_create_new_line">Neue Variante erstellen?</string>
+    <string name="title_overwrite_main_line">Hauptvariante ab dieser Stellung überschreiben?</string>
     <string name="title_delete_game">Partie löschen</string>
     <string name="title_edit_command">Befehl bearbeiten</string>
     <string name="title_edit_or_delete">Bearbeiten oder löschen?</string>

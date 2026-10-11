@@ -481,7 +481,7 @@
     <string name="title_castle">قلعه؟</string>
     <string name="title_pick_engine">موتور</string>
     <string name="title_challenge">چالش</string>
-    <string name="title_create_new_line">خط جدیدی ساخته شود؟</string>
+    <string name="title_overwrite_main_line">خط اصلی از این موقعیت بازنویسی شود؟</string>
     <string name="title_delete_game">حذف بازی</string>
     <string name="title_edit_command">ویرایش فرمان</string>
     <string name="title_edit_or_delete">ویرایش یا حذف؟</string>

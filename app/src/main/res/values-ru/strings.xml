@@ -442,7 +442,7 @@
     <string name="time_warning_seconds_single">Осталась %1$d секунда</string>
     <string name="title_castle">Рокировка?</string>
     <string name="title_challenge">Вызов</string>
-    <string name="title_create_new_line">Создать новую линию?</string>
+    <string name="title_overwrite_main_line">Перезаписать основную линию с этой позиции?</string>
     <string name="title_delete_game">Удалить партию</string>
     <string name="title_edit_command">Изменить команду</string>
     <string name="title_edit_or_delete">Изменить или удалить?</string>

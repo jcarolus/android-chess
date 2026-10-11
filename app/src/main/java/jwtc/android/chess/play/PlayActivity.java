@@ -99,17 +99,13 @@ public class PlayActivity extends ChessBoardActivity implements
     @Override
     public boolean requestMove(final int from, final int to) {
         if (!gameApi.isEnded() && (jni.getTurn() == myTurn || vsCPU == false)) {
-            // @TODO check if override new line
-
-            /*
-            openConfirmDialog(
-                            getString(R.string.title_create_new_line),
-                            getString(R.string.alert_yes),
-                            getString(R.string.alert_no),
-                            this::playIfEngineCanMove,
-                            null
-                    );
-             */
+            if (gameApi.hasContinuationToOverwrite()) {
+                confirmOverwrite(() -> {
+                    if (!super.requestMove(from, to)) rebuildBoard();
+                });
+                rebuildBoard();
+                return true;
+            }
 
             if (super.requestMove(from, to)) {
                 return true;
@@ -117,6 +113,21 @@ public class PlayActivity extends ChessBoardActivity implements
         }
         rebuildBoard();
         return false;
+    }
+
+    private void confirmOverwrite(Runnable action) {
+        if (gameApi.hasContinuationToOverwrite()) {
+            openConfirmDialog(getString(R.string.title_overwrite_main_line),
+                getString(R.string.alert_yes), getString(R.string.alert_no),
+                action, this::rebuildBoard);
+        } else {
+            action.run();
+        }
+    }
+
+    @Override
+    protected void handleAmbiguousCastle(int from, int to) {
+        confirmOverwrite(() -> super.handleAmbiguousCastle(from, to));
     }
 
     @Override
@@ -128,6 +139,7 @@ public class PlayActivity extends ChessBoardActivity implements
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         gameApi = new GameApi();
+        gameApi.setOverwriteContinuation(true);
         localClock = new LocalClockApi(gameApi);
 
         localClock.addListener(this);
@@ -153,17 +165,7 @@ public class PlayActivity extends ChessBoardActivity implements
         playButton.setOnClickListener(arg0 -> {
             if (!gameApi.isEnded()) {
                 if (engineSession.isReady()) {
-                    if (!gameApi.isAtLineEnd()) {
-                        openConfirmDialog(
-                            getString(R.string.title_create_new_line),
-                            getString(R.string.alert_yes),
-                            getString(R.string.alert_no),
-                            this::resumeEnginePlay,
-                            null
-                        );
-                    } else {
-                        resumeEnginePlay();
-                    }
+                    confirmOverwrite(this::resumeEnginePlay);
                 } else {
                     engineSession.abort(() -> {});
                 }
@@ -471,6 +473,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onMoveApplied(int move) {
+        enginePausedForHistory = false;
         super.onMoveApplied(move);
 
         updateGUI();
@@ -824,7 +827,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
             case REQUEST_ECO:
                 item = data.getString("item");
-                gameApi.requestMove(item);
+                final String openingMove = item;
+                confirmOverwrite(() -> gameApi.requestMove(openingMove));
                 break;
         }
     }

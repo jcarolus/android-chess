@@ -481,7 +481,7 @@
     <string name="title_castle">Castle?</string>
     <string name="title_pick_engine">Engine</string>
     <string name="title_challenge">Challenge</string>
-    <string name="title_create_new_line">Create new line?</string>
+    <string name="title_overwrite_main_line">Overwrite main line from this position?</string>
     <string name="title_delete_game">Delete game</string>
     <string name="title_edit_command">Edit command</string>
     <string name="title_edit_or_delete">Edit or delete?</string>

@@ -442,7 +442,7 @@
     <string name="time_warning_seconds_single">Resta %1$d secondo</string>
     <string name="title_castle">Arroccare?</string>
     <string name="title_challenge">Sfida</string>
-    <string name="title_create_new_line">Creare nuova variante?</string>
+    <string name="title_overwrite_main_line">Sovrascrivere la linea principale da questa posizione?</string>
     <string name="title_delete_game">Elimina partita</string>
     <string name="title_edit_command">Modifica comando</string>
     <string name="title_edit_or_delete">Modificare o eliminare?</string>
