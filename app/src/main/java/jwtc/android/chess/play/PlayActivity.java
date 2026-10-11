@@ -495,6 +495,13 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     @Override
+    public void onGameLoaded() {
+        super.onGameLoaded();
+
+        updateLastMove();
+    }
+
+    @Override
     public void OnEngineMove(int move, int duckMove, int value) {
         toggleEngineProgress(false);
         hideInfoBalloon();
