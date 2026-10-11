@@ -51,7 +51,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private EngineEvaluationView evaluationView;
     private ImageView imageAnalysisTurn;
     private TextView textViewLastMove;
-    private TextView textViewAnalysisMove, textViewEngineLikes;
+    private TextView textViewAnalysisMove;
     private TextView textViewMoveFeedback;
     private MaterialButton buttonEngineMove;
     private View buttonNext;
@@ -104,7 +104,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
         textViewAnalysisMove = findViewById(R.id.TextViewAnalysisMove);
-        textViewEngineLikes = findViewById(R.id.TextViewEngineLikes);
         textViewMoveFeedback = findViewById(R.id.TextViewMoveFeedback);
         buttonEngineMove = findViewById(R.id.ButtonEngineMove);
         buttonNext = findViewById(R.id.ButtonNext);
@@ -442,7 +441,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (textViewMoveFeedback.getVisibility() == View.VISIBLE) {
             moveMessage += ". " + textViewMoveFeedback.getText();
         }
-        if (textViewEngineLikes.getVisibility() == View.VISIBLE) {
+        if (buttonEngineMove.getVisibility() == View.VISIBLE) {
             moveMessage += ". " + getString(R.string.analysis_engine_likes) + " " + buttonEngineMove.getText();
         }
         updateTextViewOrSpeech(textViewLastMove, moveMessage, protectLastMoveSpeech);
@@ -455,7 +454,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (entry != null && entry.duckMove != -1) moveText += "@" + Pos.toString(entry.duckMove);
         textViewAnalysisMove.setText(moveText);
         textViewMoveFeedback.setVisibility(View.GONE);
-        textViewEngineLikes.setVisibility(View.GONE);
         buttonEngineMove.setVisibility(View.GONE);
         buttonEngineMove.setOnClickListener(null);
         if (jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
@@ -488,7 +486,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     }
 
     private void showEngineMove(Node branchPoint, PositionMove recommendation) {
-        textViewEngineLikes.setVisibility(View.VISIBLE);
         buttonEngineMove.setVisibility(View.VISIBLE);
         buttonEngineMove.setText(recommendation.san);
         buttonEngineMove.setOnClickListener(v ->

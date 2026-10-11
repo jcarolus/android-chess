@@ -85,7 +85,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:textStyle="bold"
-                        android:accessibilityLiveRegion="polite"
+                        android:accessibilityLiveRegion="none"
                         android:visibility="gone" />
 
                 </com.google.android.flexbox.FlexboxLayout>
@@ -105,15 +105,6 @@
             android:layout_marginEnd="8dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/TextViewEngineLikes"
-                style="@style/MyPaneTextStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/analysis_engine_likes"
-                android:visibility="gone" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEngineMove"
