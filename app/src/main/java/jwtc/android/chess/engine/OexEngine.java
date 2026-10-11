@@ -338,7 +338,9 @@ public class OexEngine extends EngineApi {
             // Resolve against the live board on the main thread, only if it still
             // matches this PLAY search. ANALYSIS never touches JNI move resolution.
             updateHandler.post(() -> {
-                if (!isCurrentSearch(completed.id) || !completed.fen.equals(jni.toFEN())) {
+                if (!isCurrentSearch(completed.id)) return;
+                if (!completed.fen.equals(jni.toFEN())) {
+                    for (EngineListener listener : listeners) listener.OnEngineAborted();
                     return;
                 }
                 int move = resolveMove(uciMove);

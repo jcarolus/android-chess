@@ -74,6 +74,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     private LocalClockApi localClock;
     private EngineSession engineSession;
+    private boolean enginePausedForHistory;
     private SearchLimit searchLimit = SearchLimit.millis(1000);
     private final EcoService ecoService = new EcoService();
     private long lGameID;
@@ -157,11 +158,11 @@ public class PlayActivity extends ChessBoardActivity implements
                             getString(R.string.title_create_new_line),
                             getString(R.string.alert_yes),
                             getString(R.string.alert_no),
-                            this::playIfEngineCanMove,
+                            this::resumeEnginePlay,
                             null
                         );
                     } else {
-                        playIfEngineCanMove();
+                        resumeEnginePlay();
                     }
                 } else {
                     engineSession.abort(() -> {});
@@ -180,18 +181,18 @@ public class PlayActivity extends ChessBoardActivity implements
         bottomPieces = findViewById(R.id.bottomPieces);
 
         MaterialButton butNext = findViewById(R.id.ButtonNext);
-        butNext.setOnClickListener(v -> gameApi.nextMove());
+        butNext.setOnClickListener(v -> navigateHistory(() -> gameApi.nextMove()));
         butNext.setOnLongClickListener(v -> {
             java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
-            if (!line.isEmpty()) gameApi.goTo(line.get(line.size() - 1));
+            if (!line.isEmpty()) navigateHistory(() -> gameApi.goTo(line.get(line.size() - 1)));
             return true;
         });
 
         MaterialButton butPrev = findViewById(R.id.ButtonPrevious);
-        butPrev.setOnClickListener(v -> gameApi.undoMove());
+        butPrev.setOnClickListener(v -> navigateHistory(() -> gameApi.undoMove()));
 
         butPrev.setOnLongClickListener(v -> {
-            gameApi.jumpToBoardNum(1);
+            navigateHistory(() -> gameApi.jumpToBoardNum(1));
             return true;
         });
 
@@ -496,6 +497,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onGameLoaded() {
+        enginePausedForHistory = false;
         super.onGameLoaded();
 
         updateLastMove();
@@ -559,6 +561,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onNewGameStarted(int variant) {
+        enginePausedForHistory = false;
         super.onNewGameStarted(variant);
 
         feedbackNewGameStarted(myTurn, textViewLastMove);
@@ -587,7 +590,21 @@ public class PlayActivity extends ChessBoardActivity implements
     @Override
     public void onMoveItemClick(int pos) {
         java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
-        if (pos >= 0 && pos < line.size()) gameApi.goTo(line.get(pos));
+        if (pos >= 0 && pos < line.size()) navigateHistory(() -> gameApi.goTo(line.get(pos)));
+    }
+
+    private void navigateHistory(Runnable navigation) {
+        enginePausedForHistory = true;
+        // Abort also invalidates results already queued for delivery on the main thread.
+        if (engineSession != null) engineSession.abort(null);
+        toggleEngineProgress(false);
+        hideInfoBalloon();
+        navigation.run();
+    }
+
+    private void resumeEnginePlay() {
+        enginePausedForHistory = false;
+        playIfEngineCanMove();
     }
 
     protected void updateGUI() {
@@ -981,7 +998,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected void playIfEngineMove() {
         Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
-        if (engineSession != null && myTurn != jni.getTurn() && vsCPU) {
+        if (!enginePausedForHistory && engineSession != null && myTurn != jni.getTurn() && vsCPU) {
             playIfEngineCanMove();
         }
     }
