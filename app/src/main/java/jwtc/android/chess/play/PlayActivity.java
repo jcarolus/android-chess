@@ -293,7 +293,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         lGameID = prefs.getLong("game_id", 0);
 
-        updateClockByPrefs(false);
+        updateClockByPrefs(false, prefs.getInt("clockActivePlayer", jni.getTurn()));
         updateGameSettingsByPrefs();
 
         flipBoard = prefs.getBoolean("flipBoard", false);
@@ -367,6 +367,7 @@ public class PlayActivity extends ChessBoardActivity implements
             engineSession = null;
         }
 
+        final long pauseTime = System.currentTimeMillis();
         localClock.stopClock();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
@@ -382,9 +383,9 @@ public class PlayActivity extends ChessBoardActivity implements
         editor.putString("FEN", jni.toFEN());
         editor.putString("setupFEN", null);
 
-        final long pauseTime = System.currentTimeMillis();
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
+        editor.putInt("clockActivePlayer", localClock.getActivePlayer());
         editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : pauseTime);
         editor.putBoolean("flipBoard", flipBoard);
         editor.putBoolean("minimal", switchMinimal.isChecked());
@@ -787,7 +788,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
                 break;
             case REQUEST_CLOCK:
-                updateClockByPrefs(false);
+                updateClockByPrefs(false, localClock.getActivePlayer());
                 gameApi.resetForfeitTime();
                 break;
 
@@ -847,7 +848,7 @@ public class PlayActivity extends ChessBoardActivity implements
         }
     }
 
-    protected void updateClockByPrefs(boolean newGame) {
+    protected void updateClockByPrefs(boolean newGame, int activePlayer) {
         SharedPreferences prefs = getPrefs();
         long increment = prefs.getLong("clockIncrement", 0);
         long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
@@ -861,13 +862,13 @@ public class PlayActivity extends ChessBoardActivity implements
         if (startTime > 0 && newGame) {
             startTime = System.currentTimeMillis();
         }
-        localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
+        localClock.startClock(increment, whiteRemaining, blackRemaining, activePlayer, startTime);
     }
 
     protected void updateForNewGame() {
         Log.d(TAG, "updateForNewGame");
 
-        updateClockByPrefs(true);
+        updateClockByPrefs(true, jni.getTurn());
         updateGameSettingsByPrefs();
 
         resetSelectedSquares();
