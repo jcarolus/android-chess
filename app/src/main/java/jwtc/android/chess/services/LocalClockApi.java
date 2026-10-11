@@ -194,7 +194,10 @@ public class LocalClockApi implements GameListener {
     public void onMoveApplied(int move) {
         // Account for play at the end of whichever line is selected.
         if (this.gameApi.isAtLineEnd()) {
-            switchTurn();
+            int turn = clock.activePlayer();
+            if (this.gameApi.getTurn() != turn) {
+                switchTurn();
+            }
         }
     }
 
