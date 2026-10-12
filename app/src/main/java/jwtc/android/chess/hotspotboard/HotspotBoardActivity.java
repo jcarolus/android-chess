@@ -54,7 +54,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private MaterialButton buttonResign, buttonDraw, buttonNew;
     private LinearLayout layoutGameButtons, layoutNewGameButtons;
     private TextView textPlayer, textOpponent;
-    private TextView textStatus, textSessionSummary;
+    private TextView textStatus, textSessionSummary, textViewLastMove;
     private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
     private final Handler statusHandler = new Handler(Looper.getMainLooper());
     private int overrideGameState = 0; // @TODO
@@ -95,6 +95,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Log.d(TAG, "OnMove " + move);
 
         String lastMovePgn = getLastMoveDescription(false);
+        updateLastMove(lastMovePgn);
 
         Message msg = Message.obtain(null, HotspotBoardService.MSG_SEND_GAME_UPDATE);
         Bundle bundle = new Bundle();
@@ -212,6 +213,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
                         switch (message.type) {
                             case GameMessage.TYPE_SHARE_SNAPSHOT:
+                                clearLastMove();
                                 isObserving = true;
                                 updateObservingState(true);
                                 break;
@@ -225,7 +227,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                     highlightedPositions.add(Move.getTo(message.lastMove));
                                     updateSelectedSquares();
 
-                                    updateTextViewOrSpeech(textStatus, message.lastMovePgn);
+                                    // Loading a FEN resets engine move history, so use the transmitted description.
+                                    updateLastMove(message.lastMovePgn);
+                                } else {
+                                    clearLastMove();
                                 }
                                 buttonDraw.setEnabled(true);
                                 break;
@@ -321,6 +326,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         configuredName = prefs.getString("hotspotboardName", "");
         configuredHostIp = prefs.getString("hotspotboardHostIp", "");
         gameApi = new HotspotBoardApi();
+        if (savedInstanceState != null) {
+            String fen = savedInstanceState.getString("hotspotPosition");
+            if (fen != null) {
+                gameApi.initFEN(fen, true);
+            }
+        }
         setContentView(R.layout.hotspotboard);
 
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
@@ -362,6 +373,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonCopyIp = findViewById(R.id.ButtonCopyIp);
         textStatus = findViewById(R.id.TextStatus);
         textSessionSummary = findViewById(R.id.TextSessionSummary);
+        textViewLastMove = findViewById(R.id.TextViewLastMove);
+        if (savedInstanceState != null) {
+            textViewLastMove.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
+            textViewLastMove.setText(savedInstanceState.getString("hotspotLastMove", ""));
+        }
         textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
         textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
 
@@ -398,6 +414,13 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("hotspotLastMove", textViewLastMove.getText().toString());
+        outState.putString("hotspotPosition", gameApi.getFEN());
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -426,6 +449,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void newGame() {
+        clearLastMove();
         gameApi.newGame();
         overrideGameState = 0;
         ((HotspotBoardApi) gameApi).setPlayingAsWhite(isPlayAsWhite);
@@ -434,6 +458,30 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         rebuildBoard();
         updateNewGameButtonVisibility(false);
         updateGameButtonsVisibility(true);
+    }
+
+    private void clearLastMove() {
+        textViewLastMove.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
+        textViewLastMove.setText("");
+    }
+
+    private void updateLastMove(String description) {
+        if (description == null || description.isEmpty()) {
+            clearLastMove();
+            return;
+        }
+
+        String message = description;
+        if (!gameApi.isEnded()) {
+            message = getString(jni.getTurn() == BoardConstants.BLACK
+                ? R.string.last_white_move_description
+                : R.string.last_black_move_description, description);
+        }
+        final int state = chessStateToR(gameApi.getState());
+        if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
+            message += ". " + getString(state);
+        }
+        updateTextViewOrSpeech(textViewLastMove, message, protectLastMoveSpeech);
     }
 
     private void updateStatus(String status) {
