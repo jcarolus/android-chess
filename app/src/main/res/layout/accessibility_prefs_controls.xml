@@ -24,6 +24,13 @@
             android:text="@string/pref_user_long_move_descriptions" />
 
         <CheckBox
+            android:id="@+id/CheckBoxAddTurnInMoveDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/control_gap"
+            android:text="@string/pref_add_turn_in_move_description" />
+
+        <CheckBox
             android:id="@+id/CheckBoxIncludeAttackersAndDefendersDescriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -74,6 +74,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean fieldColorDescriptions = false;
     protected boolean announceLastMoveWhenOverEmptySquare = false;
     protected boolean useLongMoveFormat = false;
+    protected boolean addTurnInMoveDescription = true;
     protected boolean includeAttackersAndDefendersInFieldDescription = false;
     // shared views
     protected TextView textViewWhitePieces, textViewBlackPieces;
@@ -526,6 +527,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         fieldColorDescriptions = prefs.getBoolean("field_color_descriptions", false);
         announceLastMoveWhenOverEmptySquare = prefs.getBoolean("announce_last_move_when_over_empty_square", false);
         useLongMoveFormat = prefs.getBoolean("use_long_move_description", false);
+        addTurnInMoveDescription = prefs.getBoolean("add_turn_in_move_description", true);
         includeAttackersAndDefendersInFieldDescription = prefs.getBoolean("include_attackers_defenders_in_field_description", false);
 
         if (textViewWhitePieces != null && textViewBlackPieces != null) {
@@ -1221,7 +1223,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getLastMoveAndTurnDescription(boolean forTTS) {
         String sMove = getLastMoveDescription(forTTS);
         if (!sMove.isEmpty()) {
-            if (gameApi.isEnded()) {
+            if (!addTurnInMoveDescription || gameApi.isEnded()) {
                 return sMove;
             }
             return jni.getTurn() == BoardConstants.BLACK
