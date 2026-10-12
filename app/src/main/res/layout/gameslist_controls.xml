@@ -15,7 +15,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="White"
+                    android:text="@string/savegame_white"
                     android:id="@+id/TextViewPlayerWhite"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
@@ -23,7 +23,7 @@
                     style="@style/MyHeaderTextStyle" />
 
                 <TextView
-                    android:text="Black"
+                    android:text="@string/savegame_black"
                     android:id="@+id/TextViewPlayerBlack"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
@@ -31,7 +31,7 @@
                     style="@style/MyHeaderTextStyle" />
 
                 <TextView
-                    android:text="1-0"
+                    android:text="@string/gameslist_result_placeholder"
                     android:id="@+id/TextViewResult"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="Event"
+                    android:text="@string/savegame_event"
                     android:id="@+id/TextViewEvent"
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
@@ -53,13 +53,13 @@
 
                 <TextView
                     android:id="@+id/TextViewDate"
-                    android:text="YYYY.MM.DD"
+                    android:text="@string/gameslist_date_placeholder"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     style="@style/MyHeaderTextStyle" />
 
                 <TextView
-                    android:text="3.5"
+                    android:text="@string/gameslist_rating_placeholder"
                     android:id="@+id/TextViewRating"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -76,28 +76,28 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonOpen"
-                android:text="Open"
+                android:text="@string/gameslist_open"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonAnalyze"
-                android:text="Analyze"
+                android:text="@string/gameslist_analyze"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEdit"
-                android:text="Edit"
+                android:text="@string/choice_edit"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDelete"
-                android:text="Delete"
+                android:text="@string/choice_delete"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 style="?attr/chessButtonStyle" />
