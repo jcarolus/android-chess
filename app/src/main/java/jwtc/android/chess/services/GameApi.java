@@ -146,8 +146,14 @@ public class GameApi {
     }
 
     public GameApi() {
+        this(false);
+    }
+
+    protected GameApi(boolean preservePosition) {
         jni = JNI.getInstance();
-        jni.newGame();
+        if (!preservePosition) {
+            jni.newGame();
+        }
         pgnTags = new HashMap<String, String>();
         resetPGNHistory();
     }

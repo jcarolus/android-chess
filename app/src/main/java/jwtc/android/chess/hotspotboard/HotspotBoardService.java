@@ -12,6 +12,7 @@ import org.json.JSONException;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.android.chess.services.SocketConnectService;
 import jwtc.chess.JNI;
+import jwtc.chess.board.BoardConstants;
 
 public class HotspotBoardService extends SocketConnectService {
     protected static final String TAG = "HotspotBoardService";
@@ -26,6 +27,8 @@ public class HotspotBoardService extends SocketConnectService {
     public static final int MSG_SET_PLAYER_COLOR = 8;
     public static final int MSG_STOP_SESSION = 9;
     public static final int MSG_SOCKET_LISTENING = 10;
+    public static final int MSG_SESSION_STATE = 11;
+    public static final int MSG_ACTIVITY_DISCONNECTED = 12;
     public static final String KEY_CONNECTION_MODE = "connectionMode";
     public static final String KEY_HOST_IP = "hostIp";
     public static final String KEY_HOST_MODE = "hostMode";
@@ -51,6 +54,51 @@ public class HotspotBoardService extends SocketConnectService {
     private String hostIpAddress = null;
     private String lastBroadcastFen = null;
     private boolean isListening = false;
+    private String playerName = "";
+    private GameMessage currentPosition;
+    private int gameResult = 0;
+    private boolean observing = false;
+
+    private void rememberGame(String data, boolean incoming) {
+        try {
+            GameMessage message = GameMessage.fromJson(data);
+            if (message.type == GameMessage.TYPE_MOVE || message.type == GameMessage.TYPE_SHARE_SNAPSHOT) {
+                currentPosition = message;
+                observing = incoming && message.type == GameMessage.TYPE_SHARE_SNAPSHOT;
+                gameResult = 0;
+            } else if (message.type == GameMessage.TYPE_RESIGN) {
+                boolean white = playerName.equals(message.white);
+                if (incoming) white = !white;
+                gameResult = white ? BoardConstants.WHITE_RESIGNED
+                    : BoardConstants.BLACK_RESIGNED;
+            } else if (message.type == GameMessage.TYPE_DRAW_ACCEPT) {
+                gameResult = BoardConstants.DRAW_AGREEMENT;
+            }
+        } catch (JSONException e) {
+            Log.w(TAG, "Invalid game update", e);
+        }
+    }
+
+    private void sendSessionState() {
+        Bundle state = new Bundle();
+        state.putBoolean("connected", hasConnectedSockets());
+        state.putBoolean("listening", isHost && isListening && !hasConnectedSockets());
+        state.putBoolean("host", isHost);
+        state.putBoolean("share", hostMode == HOST_MODE_SHARE);
+        state.putBoolean("observing", observing);
+        state.putString("name", playerName);
+        state.putInt(KEY_CONNECTION_MODE, connectionMode);
+        state.putString(KEY_HOST_IP, hostIpAddress);
+        state.putInt("result", gameResult);
+        if (currentPosition != null) {
+            try {
+                state.putString("position", currentPosition.toJsonString());
+            } catch (JSONException e) {
+                Log.w(TAG, "Cannot serialize position", e);
+            }
+        }
+        notifyActivity(MSG_SESSION_STATE, state);
+    }
 
     @Override
     protected String getLogTag() {
@@ -63,12 +111,19 @@ public class HotspotBoardService extends SocketConnectService {
         switch (msg.what) {
             case MSG_ACTIVITY_CONNECTED:
                 registerActivityMessenger(msg.replyTo);
-                notifyCurrentConnectionState(false);
+                sendSessionState();
+                break;
+            case MSG_ACTIVITY_DISCONNECTED:
+                unregisterActivityMessenger(msg.replyTo);
                 break;
             case MSG_START_SESSION:
                 isHost = msg.arg1 == 1;
+                currentPosition = null;
+                gameResult = 0;
+                observing = false;
                 Bundle sessionData = msg.getData();
                 if (sessionData != null) {
+                    playerName = sessionData.getString("name", "");
                     connectionMode = sessionData.getInt(KEY_CONNECTION_MODE, CONNECTION_MODE_HOTSPOT);
                     hostIpAddress = sessionData.getString(KEY_HOST_IP, null);
                     hostMode = sessionData.getInt(KEY_HOST_MODE, HOST_MODE_PLAY);
@@ -82,6 +137,7 @@ public class HotspotBoardService extends SocketConnectService {
                     String gameUpdate = msg.getData().getString("data", null);
                     Log.d(TAG, "Trying to write to socket: " + gameUpdate);
                     if (gameUpdate != null) {
+                        rememberGame(gameUpdate, false);
                         broadcastLine(gameUpdate);
                     }
                 }
@@ -94,6 +150,7 @@ public class HotspotBoardService extends SocketConnectService {
 
     private void notifyActivityGameUpdate(String data) {
         Log.d(TAG, "notifyActivityGameUpdate: " + data);
+        rememberGame(data, true);
         Bundle bundle = new Bundle();
         bundle.putString("data", data);
         notifyActivity(MSG_RECEIVED_GAME_UPDATE, bundle);
@@ -101,6 +158,10 @@ public class HotspotBoardService extends SocketConnectService {
 
     @Override
     protected void onClientConnected(ClientConnection connection, boolean outgoingConnection) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            pollHandler.post(() -> onClientConnected(connection, outgoingConnection));
+            return;
+        }
         Log.d(TAG, "client connected " + connection.clientId + ", outgoing=" + outgoingConnection);
 
         if (isHost && hostMode == HOST_MODE_SHARE) {
@@ -116,6 +177,10 @@ public class HotspotBoardService extends SocketConnectService {
 
     @Override
     protected void onClientDisconnected(ClientConnection connection, boolean outgoingConnection) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            pollHandler.post(() -> onClientDisconnected(connection, outgoingConnection));
+            return;
+        }
         Log.d(TAG, "client disconnected " + connection.clientId + ", outgoing=" + outgoingConnection);
 
         if (connection == activePlayingConnection) {
@@ -127,6 +192,10 @@ public class HotspotBoardService extends SocketConnectService {
 
     @Override
     protected void onLineReceived(ClientConnection connection, String line) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            pollHandler.post(() -> onLineReceived(connection, line));
+            return;
+        }
         Log.d(TAG, "Received from socket: " + line + ", clientId=" + connection.clientId);
         if (isHost && hostMode == HOST_MODE_SHARE) {
             notifyActivityGameUpdate(line);
@@ -144,6 +213,10 @@ public class HotspotBoardService extends SocketConnectService {
 
     @Override
     protected void onSocketError(Exception exception) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            pollHandler.post(() -> onSocketError(exception));
+            return;
+        }
         Log.d(TAG, exception.toString());
         notifyCurrentConnectionState(true);
     }

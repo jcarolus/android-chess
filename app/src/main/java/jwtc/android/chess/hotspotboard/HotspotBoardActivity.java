@@ -60,6 +60,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private int overrideGameState = 0; // @TODO
     private boolean isServiceBound = false;
     private boolean hasActiveSession = false;
+    private boolean isConnected = false;
+    private Bundle pendingSavedState;
+    private boolean restoringState;
     private String configuredName = "";
     private String configuredHostIp = "";
 
@@ -120,9 +123,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public boolean requestMove(final int from, final int to) {
         Log.d(TAG, "requestMove");
-        if (isObserving || isShareMode) {
+        if (!isConnected || overrideGameState != 0 || isObserving || isShareMode) {
             rebuildBoard();
-            Log.d(TAG, "requestMove observing or sharing");
+            Log.d(TAG, "requestMove unavailable");
             return false;
         }
         if (((HotspotBoardApi) gameApi).isMyTurn()) {
@@ -141,6 +144,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         Log.d(TAG, "startSession called " + isHost);
         isObserving = false;
         hasActiveSession = true;
+        isConnected = false;
+        hasReceivedGameUpdate = false;
         isListening = isHost;
         updateConnectedState(false);
         updateStatus(isHost
@@ -152,6 +157,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 Log.d(TAG, "startMsg " + (startMsg == null ? "null" : "object"));
                 startMsg.arg1 = isHost ? 1 : 0; // boolean isHost
                 Bundle sessionData = new Bundle();
+                sessionData.putString("name", configuredName);
                 sessionData.putInt(HotspotBoardService.KEY_CONNECTION_MODE, connectionMode);
                 sessionData.putString(HotspotBoardService.KEY_HOST_IP, configuredHostIp);
                 sessionData.putInt(HotspotBoardService.KEY_HOST_MODE, isShareMode
@@ -196,7 +202,9 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == HotspotBoardService.MSG_RECEIVED_GAME_UPDATE) {
+            if (msg.what == HotspotBoardService.MSG_SESSION_STATE) {
+                restoreSessionState(msg.getData());
+            } else if (msg.what == HotspotBoardService.MSG_RECEIVED_GAME_UPDATE) {
                 String data = msg.getData().getString("data");
                 Log.d(TAG, "Received from service: " + data);
                 // Update UI here
@@ -209,6 +217,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                             hasReceivedGameUpdate = true;
                         }
 
+                        if (message.type == GameMessage.TYPE_MOVE) {
+                            overrideGameState = 0;
+                            isObserving = false;
+                        } else if (message.type == GameMessage.TYPE_SHARE_SNAPSHOT) {
+                            isObserving = true;
+                        }
                         ((HotspotBoardApi) gameApi).onGameUpdate(message);
 
                         switch (message.type) {
@@ -244,6 +258,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 break;
                             case GameMessage.TYPE_DRAW_OFFER:
                                 openConfirmDialog("Draw Offer", "Accept", "Decline", () -> {
+                                    overrideGameState = BoardConstants.DRAW_AGREEMENT;
                                     sendGameMessage(GameMessage.TYPE_DRAW_ACCEPT, 0, "");
                                     showGameResult("Game Over", "The game is a draw.");
                                 }, () -> {
@@ -265,6 +280,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                 }
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_LISTENING) {
                 hasActiveSession = true;
+                isConnected = false;
                 isListening = true;
                 updateConnectedState(false);
                 updateStatus(getString(isShareMode
@@ -272,6 +288,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     : R.string.hotspot_status_waiting));
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_CONNECTED) {
                 hasActiveSession = true;
+                isConnected = true;
                 isListening = false;
                 updateConnectedState(true);
 
@@ -280,6 +297,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                     : R.string.hotspot_status_opponent_connected_client));
             } else if (msg.what == HotspotBoardService.MSG_SOCKET_DISCONNECTED) {
                 hasActiveSession = false;
+                isConnected = false;
                 isListening = false;
                 isObserving = false;
                 hasReceivedGameUpdate = false;
@@ -307,6 +325,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
             // This might not be sent if the service is already disconnected.
             // The opponent will see a socket disconnection message.
         }
+        if (messengerFromService != null) {
+            Message detach = Message.obtain(null, HotspotBoardService.MSG_ACTIVITY_DISCONNECTED);
+            detach.replyTo = messengerToService;
+            try {
+                messengerFromService.send(detach);
+            } catch (RemoteException e) {
+                Log.w(TAG, "Could not detach activity", e);
+            }
+        }
         if (isServiceBound) {
             unbindService(connection);
             isServiceBound = false;
@@ -326,11 +353,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         configuredName = prefs.getString("hotspotboardName", "");
         configuredHostIp = prefs.getString("hotspotboardHostIp", "");
         gameApi = new HotspotBoardApi();
+        pendingSavedState = savedInstanceState;
+        HotspotBoardApi api = (HotspotBoardApi) gameApi;
+        api.setMyName(configuredName);
         if (savedInstanceState != null) {
-            String fen = savedInstanceState.getString("hotspotPosition");
-            if (fen != null) {
-                gameApi.initFEN(fen, true);
-            }
+            api.restorePlayers(configuredName, savedInstanceState.getString("opponent", ""),
+                savedInstanceState.getBoolean("playingWhite", true));
+            isObserving = savedInstanceState.getBoolean("observing");
+            hasReceivedGameUpdate = savedInstanceState.getBoolean("receivedGame");
+            overrideGameState = savedInstanceState.getInt("result");
         }
         setContentView(R.layout.hotspotboard);
 
@@ -350,8 +381,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         colorToggleGroup = findViewById(R.id.colorToggleGroup);
 
-        // Set default selection to White
-        colorToggleGroup.check(R.id.buttonWhite);
+        isPlayAsWhite = savedInstanceState == null || savedInstanceState.getBoolean("selectedWhite", true);
+        colorToggleGroup.check(isPlayAsWhite ? R.id.buttonWhite : R.id.buttonBlack);
         colorToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
                 isPlayAsWhite = checkedId == R.id.buttonWhite;
@@ -411,6 +442,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         });
 
         refreshConnectionControls();
+        refreshRestoredBoard();
     }
 
     @Override
@@ -418,6 +450,13 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.onSaveInstanceState(outState);
         outState.putString("hotspotLastMove", textViewLastMove.getText().toString());
         outState.putString("hotspotPosition", gameApi.getFEN());
+        HotspotBoardApi api = (HotspotBoardApi) gameApi;
+        outState.putString("opponent", api.getOpponentName());
+        outState.putBoolean("playingWhite", api.isPlayingAsWhite());
+        outState.putBoolean("selectedWhite", isPlayAsWhite);
+        outState.putBoolean("observing", isObserving);
+        outState.putBoolean("receivedGame", hasReceivedGameUpdate);
+        outState.putInt("result", overrideGameState);
     }
 
     @Override
@@ -429,8 +468,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         SharedPreferences prefs = getPrefs();
         configuredName = prefs.getString("hotspotboardName", configuredName);
         configuredHostIp = prefs.getString("hotspotboardHostIp", configuredHostIp);
-        refreshConnectionControls();
         syncRestoredSessionUi();
+        refreshRestoredBoard();
     }
 
     @Override
@@ -451,6 +490,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private void newGame() {
         clearLastMove();
         gameApi.newGame();
+        hasReceivedGameUpdate = true;
         overrideGameState = 0;
         ((HotspotBoardApi) gameApi).setPlayingAsWhite(isPlayAsWhite);
         sendGameMessage(GameMessage.TYPE_MOVE, 0, ""); // send initial state
@@ -466,6 +506,10 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void updateLastMove(String description) {
+        updateLastMove(description, true);
+    }
+
+    private void updateLastMove(String description, boolean announce) {
         if (description == null || description.isEmpty()) {
             clearLastMove();
             return;
@@ -481,7 +525,12 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
             message += ". " + getString(state);
         }
-        updateTextViewOrSpeech(textViewLastMove, message, protectLastMoveSpeech);
+        if (announce) {
+            updateTextViewOrSpeech(textViewLastMove, message, protectLastMoveSpeech);
+        } else {
+            textViewLastMove.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_NONE);
+            textViewLastMove.setText(message);
+        }
     }
 
     private void updateStatus(String status) {
@@ -493,7 +542,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
     private void updateConnectedState(boolean isConnected) {
         boolean effectiveListening = isListeningSessionRestored();
-        boolean effectiveConnected = isConnected || isShareHostSessionRestored() || isObservingSessionRestored();
+        boolean effectiveConnected = isConnected || this.isConnected || isShareHostSessionRestored() || isObservingSessionRestored();
         boolean showSessionSummary = hasActiveSession || effectiveConnected || effectiveListening;
         layoutConnect.setVisibility(showSessionSummary ? View.GONE : View.VISIBLE);
         layoutSessionSummary.setVisibility(showSessionSummary ? View.VISIBLE : View.GONE);
@@ -722,7 +771,76 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         isServiceBound = bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
     }
 
+    private void restoreSessionState(Bundle state) {
+        isConnected = state.getBoolean("connected");
+        isListening = state.getBoolean("listening");
+        hasActiveSession = isConnected || isListening;
+        isObserving = hasActiveSession && state.getBoolean("observing");
+        if (hasActiveSession) {
+            isHost = state.getBoolean("host");
+            isShareMode = state.getBoolean("share");
+            configuredName = state.getString("name", configuredName);
+            configuredHostIp = state.getString(HotspotBoardService.KEY_HOST_IP, "");
+            connectionMode = state.getInt(HotspotBoardService.KEY_CONNECTION_MODE);
+        }
+        HotspotBoardApi api = (HotspotBoardApi) gameApi;
+        api.setMyName(configuredName);
+        String position = state.getString("position");
+        if (position != null) {
+            try {
+                GameMessage message = GameMessage.fromJson(position);
+                hasReceivedGameUpdate = message.type != GameMessage.TYPE_SHARE_SNAPSHOT;
+                overrideGameState = state.getInt("result");
+                restoringState = true;
+                try {
+                    api.onGameUpdate(message);
+                } finally {
+                    restoringState = false;
+                }
+                highlightedPositions.clear();
+                if (message.lastMove != 0) {
+                    highlightedPositions.add(Move.getFrom(message.lastMove));
+                    highlightedPositions.add(Move.getTo(message.lastMove));
+                }
+                updateSelectedSquares();
+                updateLastMove(message.lastMovePgn, false);
+            } catch (org.json.JSONException e) {
+                Log.w(TAG, "Cannot restore game", e);
+            }
+        }
+        if (position == null && !hasActiveSession && pendingSavedState != null) {
+            String fen = pendingSavedState.getString("hotspotPosition");
+            if (fen != null) {
+                restoringState = true;
+                try {
+                    gameApi.initFEN(fen, true);
+                } finally {
+                    restoringState = false;
+                }
+            }
+        }
+        pendingSavedState = null;
+        syncRestoredSessionUi();
+        refreshRestoredBoard();
+    }
+
+    private void refreshRestoredBoard() {
+        restoringState = true;
+        try {
+            rebuildBoard();
+            updatePieceDescriptions();
+        } finally {
+            restoringState = false;
+        }
+    }
+
     private void syncRestoredSessionUi() {
+        if (isConnected && !isObserving && !isShareMode) {
+            updateConnectedState(true);
+            updateObservingState(false);
+            updateGameButtonsVisibility(hasReceivedGameUpdate && overrideGameState == 0 && !gameApi.isEnded());
+            return;
+        }
         if (isShareHostSessionRestored()) {
             updateConnectedState(true);
             updateObservingState(false);
@@ -759,6 +877,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     private void stopSharing() {
+        isConnected = false;
         hasActiveSession = false;
         isListening = false;
         isObserving = false;
@@ -825,24 +944,25 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         }
 
         if (!isObserving && !isShareMode && hasReceivedGameUpdate) {
-            if (state == BoardConstants.MATE) {
+            if (!restoringState && state == BoardConstants.MATE) {
                 // if it's white's turn, white is mated (and loses)
                 if ((turn == BoardConstants.WHITE && amIWhite) || (turn == BoardConstants.BLACK && !amIWhite)) {
                     showGameResult("Defeat", "You lost by checkmate.");
                 } else {
                     showGameResult("Victory!", "You won by checkmate.");
                 }
-            } else if (state == BoardConstants.STALEMATE) {
+            } else if (!restoringState && state == BoardConstants.STALEMATE) {
                 showGameResult("Game Over", "The game is a draw by stalemate.");
-            } else if (state == BoardConstants.DRAW_REPEAT) {
+            } else if (!restoringState && state == BoardConstants.DRAW_REPEAT) {
                 showGameResult("Game Over", "The game is a draw by 3-fold repetition.");
-            } else if (state == BoardConstants.DRAW_50) {
+            } else if (!restoringState && state == BoardConstants.DRAW_50) {
                 showGameResult("Game Over", "The game is a draw by the 50-move rule.");
-            } else if (state == BoardConstants.DRAW_MATERIAL) {
+            } else if (!restoringState && state == BoardConstants.DRAW_MATERIAL) {
                 showGameResult("Game Over", "The game is a draw by insufficient material.");
             }
 
-            updateGameButtonsVisibility(state == BoardConstants.PLAY || state == BoardConstants.CHECK);
+            updateGameButtonsVisibility(isConnected && overrideGameState == 0
+                && (state == BoardConstants.PLAY || state == BoardConstants.CHECK));
         } else {
             updateGameButtonsVisibility(false);
         }

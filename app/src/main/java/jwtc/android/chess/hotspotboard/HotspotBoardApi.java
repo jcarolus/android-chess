@@ -10,6 +10,17 @@ public class HotspotBoardApi extends GameApi {
     protected String myName = "", opponentName = "";
     protected boolean isPlayingAsWhite = true;
 
+    public HotspotBoardApi() {
+        // The service and other board screens share the native position.
+        super(true);
+    }
+
+    public void restorePlayers(String name, String opponent, boolean white) {
+        myName = name;
+        opponentName = opponent;
+        isPlayingAsWhite = white;
+    }
+
     public void setMyName(String myName) {
         this.myName = myName;
     }
