@@ -4,7 +4,7 @@
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="4dp">
+    android:padding="@dimen/board_screen_padding">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/board_area"
@@ -28,9 +28,9 @@
             layout="@layout/chessboard"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="4dp"
+            android:layout_marginTop="@dimen/board_row_gap"
+            android:layout_marginBottom="@dimen/board_row_gap"
+            android:layout_marginLeft="@dimen/board_control_gap"
             app:layout_constraintLeft_toRightOf="@id/engine_evaluation"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"

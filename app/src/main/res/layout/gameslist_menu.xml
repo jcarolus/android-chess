@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dip"
+    android:padding="@dimen/control_padding"
     app:flexDirection="row"
     app:flexWrap="wrap"
     app:justifyContent="flex_start"
@@ -12,7 +12,7 @@
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/ButtonToggleGroupView"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/imageButtonSize"
+        android:layout_height="@dimen/image_button_size"
         android:layout_gravity="center"
         app:singleSelection="true"
         app:selectionRequired="true">
@@ -21,21 +21,21 @@
             android:id="@+id/ButtonToggleBoard"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/imageButtonSize"
+            android:layout_height="@dimen/image_button_size"
             android:text="Board" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonTogglePgn"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/imageButtonSize"
+            android:layout_height="@dimen/image_button_size"
             android:text="PGN" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonToggleList"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/imageButtonSize"
+            android:layout_height="@dimen/image_button_size"
             android:text="List" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 

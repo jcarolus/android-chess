@@ -7,41 +7,41 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dip">
+        android:padding="@dimen/panel_padding">
 
         <CheckBox
             android:id="@+id/CheckBoxShowPiecesDescriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/pref_show_pieces_descriptions" />
 
         <CheckBox
             android:id="@+id/CheckBoxUseLongMoveDescriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/pref_user_long_move_descriptions" />
 
         <CheckBox
             android:id="@+id/CheckBoxIncludeAttackersAndDefendersDescriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/pref_include_attackers_defenders_descriptions" />
 
         <CheckBox
             android:id="@+id/CheckBoxFieldColorDescriptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/pref_field_color_descriptions" />
 
         <CheckBox
             android:id="@+id/CheckBoxProtectLastMoveSpeech"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/pref_protect_last_move_speech" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -49,8 +49,8 @@
             android:layout_height="wrap_content"
             android:text="@string/pref_speech_rate_desc"
             android:labelFor="@id/SliderSpeechRate"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"/>
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent"/>
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSpeechRate"
             android:layout_width="match_parent"
@@ -59,16 +59,16 @@
             android:valueFrom="0.5"
             android:valueTo="5.0"
             android:stepSize="0.25"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp" />
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pref_speech_pitch_desc"
             android:labelFor="@id/SliderSpeechPitch"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"/>
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent"/>
 
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderSpeechPitch"
@@ -78,30 +78,30 @@
             android:valueFrom="0.5"
             android:valueTo="2.0"
             android:stepSize="0.25"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp" />
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent" />
 
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropDownSpeechEngine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent"
             android:hint="@string/pref_speech_engine" />
 
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropDownSpeechVoice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent"
             android:hint="@string/pref_speech_voice" />
 
         <CheckBox
             android:id="@+id/CheckBoxShowAccessibilityDrag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/pref_show_accessibility_drag_toggle" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -109,8 +109,8 @@
             android:layout_height="wrap_content"
             android:text="@string/pref_accessibility_drag_delay_desc"
             android:labelFor="@id/SliderSpeechRate"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"/>
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent"/>
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderAccessibilityDragDelay"
             android:layout_width="match_parent"
@@ -119,21 +119,21 @@
             android:valueFrom="200"
             android:valueTo="1500"
             android:stepSize="100"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp" />
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent" />
         <CheckBox
             android:id="@+id/CheckBoxLastMoveWhenOverEmptySquare"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/pref_last_move_over_empty_square" />
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pref_accessibility_drag_last_move_delay_desc"
             android:labelFor="@id/SliderAccessibilityDragLastMoveDelay"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"/>
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent"/>
 
         <com.google.android.material.slider.Slider
             android:id="@+id/SliderAccessibilityDragLastMoveDelay"
@@ -143,7 +143,7 @@
             android:valueFrom="600"
             android:valueTo="2000"
             android:stepSize="200"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp" />
+            android:layout_marginEnd="@dimen/preference_indent"
+            android:layout_marginStart="@dimen/preference_indent" />
     </LinearLayout>
 </ScrollView>

@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:padding="8dip">
+        android:padding="@dimen/panel_padding">
 
         <TableLayout
             android:layout_width="wrap_content"
@@ -140,7 +140,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="8dip"
+                android:layout_marginEnd="@dimen/control_gap"
                 android:hint="Order by" />
 
             <jwtc.android.chess.views.FixedDropdownView
@@ -161,7 +161,7 @@
                 android:id="@+id/TextViewFilterInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dip"
+                android:layout_marginEnd="@dimen/section_gap"
                 android:text="0" />
 
             <com.google.android.material.button.MaterialButton

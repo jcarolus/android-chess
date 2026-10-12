@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dip"
+    android:layout_margin="@dimen/control_gap"
     android:gravity="center">
 
     <TableLayout
@@ -12,9 +12,9 @@
         android:background="?attr/paneBackground">
 
         <TableRow
-            android:paddingTop="8dip"
-            android:paddingBottom="4dip"
-            android:paddingStart="4dip"
+            android:paddingTop="@dimen/row_padding"
+            android:paddingBottom="@dimen/compact_row_padding"
+            android:paddingStart="@dimen/compact_row_padding"
             android:gravity="center">
 
             <ImageView
@@ -22,7 +22,7 @@
                 android:src="@drawable/turnempty"
                 android:layout_height="12dip"
                 android:layout_width="12dip"
-                android:padding="2dp" />
+                android:padding="@dimen/compact_control_padding" />
 
             <TextView
                 android:id="@+id/text_time_white"
@@ -30,7 +30,7 @@
                 android:text="00:00"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dip" />
+                android:layout_marginStart="@dimen/compact_control_gap" />
 
             <TextView
                 android:id="@+id/text_white"
@@ -41,9 +41,9 @@
         </TableRow>
 
         <TableRow
-            android:paddingTop="4dip"
-            android:paddingBottom="8dip"
-            android:paddingStart="4dip"
+            android:paddingTop="@dimen/compact_row_padding"
+            android:paddingBottom="@dimen/row_padding"
+            android:paddingStart="@dimen/compact_row_padding"
             android:gravity="center">
 
             <ImageView
@@ -51,7 +51,7 @@
                 android:src="@drawable/turnempty"
                 android:layout_height="12dip"
                 android:layout_width="12dip"
-                android:padding="2dp" />
+                android:padding="@dimen/compact_control_padding" />
 
             <TextView
                 android:id="@+id/text_time_black"
@@ -59,7 +59,7 @@
                 android:text="00:00"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dip" />
+                android:layout_marginStart="@dimen/compact_control_gap" />
 
             <TextView
                 android:id="@+id/text_black"

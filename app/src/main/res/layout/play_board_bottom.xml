@@ -3,7 +3,7 @@
     android:id="@+id/LayoutBoardBottom"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="4dip">
+    android:padding="@dimen/compact_row_padding">
 
     <TableRow android:gravity="center_vertical">
 
@@ -12,8 +12,8 @@
             android:src="@drawable/turnempty"
             android:layout_height="12dip"
             android:layout_width="12dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <TextView
             android:id="@+id/TextViewBottomClockTime"
@@ -37,7 +37,7 @@
         <jwtc.android.chess.views.ChessPiecesStackView
             android:layout_width="wrap_content"
             android:layout_height="24dip"
-            android:layout_marginEnd="1dip"
+            android:layout_marginEnd="@dimen/board_row_gap"
             android:id="@+id/bottomPieces" />
     </TableRow>
 </TableLayout>

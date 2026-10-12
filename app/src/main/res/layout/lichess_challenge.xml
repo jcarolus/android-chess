@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="16dip">
+    android:padding="@dimen/screen_padding">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dip">
+                android:padding="@dimen/control_padding">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/InputMatchOpponent"
@@ -43,7 +43,7 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dip">
+                android:padding="@dimen/control_padding">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -154,7 +154,7 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dip">
+                android:padding="@dimen/control_padding">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -196,7 +196,7 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dip">
+                android:padding="@dimen/control_padding">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -279,7 +279,7 @@
                 android:layout_weight="1"
                 android:text="@string/button_cancel"
                 android:id="@+id/ButtonChallengeCancel"
-                android:layout_margin="2dip" />
+                android:layout_margin="@dimen/tiny_control_gap" />
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="0dp"
@@ -287,7 +287,7 @@
                 android:layout_weight="1"
                 android:text="@string/button_ok"
                 android:id="@+id/ButtonChallengeOk"
-                android:layout_margin="2dip" />
+                android:layout_margin="@dimen/tiny_control_gap" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

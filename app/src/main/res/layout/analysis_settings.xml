@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="@dimen/dialog_padding">
 
     <jwtc.android.chess.views.FixedDropdownView
         android:id="@+id/AnalysisEngine"
@@ -21,7 +21,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/section_gap"
         android:hint="@string/analysis_time_budget">
 
         <com.google.android.material.textfield.TextInputEditText

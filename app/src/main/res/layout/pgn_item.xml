@@ -1,7 +1,7 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="8dip">
+    android:padding="@dimen/row_padding">
 
     <TableRow
         style="@style/MyRowStyle"
@@ -11,8 +11,8 @@
         <TextView
             android:id="@+id/TextViewNumMove"
             android:text="1."
-            android:paddingStart="4dip"
-            android:paddingEnd="4dip"
+            android:paddingStart="@dimen/compact_row_padding"
+            android:paddingEnd="@dimen/compact_row_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:importantForAccessibility="no" />
@@ -20,16 +20,16 @@
         <TextView
             android:id="@+id/TextViewMove"
             android:text="..."
-            android:paddingStart="4dip"
-            android:paddingEnd="4dip"
+            android:paddingStart="@dimen/compact_row_padding"
+            android:paddingEnd="@dimen/compact_row_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/TextViewAnnotation"
             android:text=""
-            android:paddingStart="4dip"
-            android:paddingEnd="4dip"
+            android:paddingStart="@dimen/compact_row_padding"
+            android:paddingEnd="@dimen/compact_row_padding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"

@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:fillViewport="false"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingStart="4dip"
-    android:paddingEnd="4dip">
+    android:paddingStart="@dimen/control_padding"
+    android:paddingEnd="@dimen/control_padding">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,8 +22,8 @@
                 android:id="@+id/ImageAnalysisTurn"
                 android:layout_width="12dip"
                 android:layout_height="12dip"
-                android:layout_marginStart="8dip"
-                android:layout_marginEnd="8dip"
+                android:layout_marginStart="@dimen/control_gap"
+                android:layout_marginEnd="@dimen/control_gap"
                 android:src="@drawable/turnwhite"
                 android:contentDescription="@string/analysis_white_to_move" />
 
@@ -33,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="8dip"
+                android:layout_marginEnd="@dimen/control_gap"
                 android:accessibilityLiveRegion="assertive" />
 
             <com.google.android.material.button.MaterialButton
@@ -65,8 +65,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="8dip"
-                    android:layout_marginEnd="8dip"
+                    android:layout_marginStart="@dimen/control_gap"
+                    android:layout_marginEnd="@dimen/control_gap"
                     app:flexDirection="row"
                     app:flexWrap="wrap"
                     app:alignItems="center">
@@ -76,14 +76,14 @@
                         style="@style/MyPaneTextStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_marginEnd="@dimen/control_gap" />
 
                     <TextView
                         android:id="@+id/TextViewMoveFeedback"
                         style="@style/MyPaneTextStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="@dimen/control_gap"
                         android:textStyle="bold"
                         android:accessibilityLiveRegion="none"
                         android:visibility="gone" />
@@ -101,8 +101,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
@@ -149,7 +149,7 @@
                 android:id="@+id/SwitchSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_margin="@dimen/board_control_gap"
                 android:text="@string/pref_sound"
                 android:checked="true" />
 
@@ -157,7 +157,7 @@
                 android:id="@+id/SwitchSpeech"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_margin="@dimen/board_control_gap"
                 android:text="@string/pref_speech"
                 android:checked="true" />
 
@@ -165,7 +165,7 @@
                 android:id="@+id/SwitchAccessibilityDrag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_margin="@dimen/board_control_gap"
                 android:text="@string/pref_accessibility_drag"
                 android:checked="false" />
 
@@ -176,9 +176,9 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -186,9 +186,9 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>
