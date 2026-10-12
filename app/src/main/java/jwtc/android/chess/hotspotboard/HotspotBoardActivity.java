@@ -362,6 +362,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonCopyIp = findViewById(R.id.ButtonCopyIp);
         textStatus = findViewById(R.id.TextStatus);
         textSessionSummary = findViewById(R.id.TextSessionSummary);
+        textViewWhitePieces = findViewById(R.id.TextViewWhitePieces);
+        textViewBlackPieces = findViewById(R.id.TextViewBlackPieces);
 
         // default rotation
         imageTurnWhite = imageBottomTurn;
