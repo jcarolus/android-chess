@@ -67,41 +67,39 @@
             </TableRow>
         </TableLayout>
 
-        <LinearLayout
-            android:id="@+id/LayoutResignDraw"
-            android:orientation="horizontal"
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/control_gap">
+            android:layout_marginTop="@dimen/control_gap"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="center">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonOpen"
                 android:text="@string/gameslist_open"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonAnalyze"
                 android:text="@string/gameslist_analyze"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonEdit"
                 android:text="@string/choice_edit"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDelete"
                 android:text="@string/choice_delete"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 style="?attr/chessButtonStyle" />
-        </LinearLayout>
+        </com.google.android.flexbox.FlexboxLayout>
 
         <TextView
             android:id="@+id/TextViewWhitePieces"
