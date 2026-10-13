@@ -1213,12 +1213,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return "";
     }
 
-    protected String getLastMoveDescription(boolean forTTS) {
-        int move = jni.getMyMove();
+    protected String getMoveDescription(boolean forTTS, String sMove, int move) {
         if (move != 0) {
-            return MoveSpeech.describe(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move, useLongMoveFormat);
+            return MoveSpeech.describe(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), sMove, move, useLongMoveFormat);
         }
         return "";
+    }
+    protected String getLastMoveDescription(boolean forTTS) {
+        return getMoveDescription(forTTS, jni.getMyMoveToString(), jni.getMyMove());
     }
     protected String getLastMoveAndTurnDescription(boolean forTTS) {
         String sMove = getLastMoveDescription(forTTS);

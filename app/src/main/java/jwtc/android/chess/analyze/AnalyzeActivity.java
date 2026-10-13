@@ -58,6 +58,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private TextView textViewAnalysisMove;
     private TextView textViewMoveFeedback;
     private MaterialButton buttonEngineMove;
+    private PositionMove displayedEngineMove;
     private View buttonNext;
     private SeekBar moveSeekBar;
     private List<Node> navigationLine = new ArrayList<>();
@@ -500,8 +501,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (textViewMoveFeedback.getVisibility() == View.VISIBLE) {
             moveMessage += ". " + textViewMoveFeedback.getText();
         }
-        if (buttonEngineMove.getVisibility() == View.VISIBLE) {
-            moveMessage += ". " + getString(R.string.analysis_engine_likes) + " " + buttonEngineMove.getText();
+        if (displayedEngineMove != null) {
+            moveMessage += ". " + getString(R.string.analysis_engine_likes) + " "
+                + getMoveDescription(false, displayedEngineMove.san, displayedEngineMove.move);
         }
         updateTextViewOrSpeech(textViewLastMove, moveMessage, protectLastMoveSpeech);
     }
@@ -513,6 +515,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (entry != null && entry.duckMove != -1) moveText += "@" + Pos.toString(entry.duckMove);
         textViewAnalysisMove.setText(moveText);
         textViewMoveFeedback.setVisibility(View.GONE);
+        displayedEngineMove = null;
         buttonEngineMove.setVisibility(View.GONE);
         buttonEngineMove.setOnClickListener(null);
         if (jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
@@ -545,6 +548,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     }
 
     private void showEngineMove(Node branchPoint, PositionMove recommendation) {
+        displayedEngineMove = recommendation;
         buttonEngineMove.setVisibility(View.VISIBLE);
         buttonEngineMove.setText(recommendation.san);
         buttonEngineMove.setOnClickListener(v ->
