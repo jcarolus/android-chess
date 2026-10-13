@@ -3,10 +3,13 @@ package jwtc.android.chess.analyze;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
@@ -39,6 +42,7 @@ import jwtc.android.chess.views.EngineEvaluationView;
 
 public class AnalyzeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "AnalyzeActivity";
+    private static final long ANALYSIS_DEBOUNCE_MILLIS = 200;
     public static final String EXTRA_GAME_ID = "analysisGameId";
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
     private String sessionId;
@@ -55,6 +59,14 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private TextView textViewMoveFeedback;
     private MaterialButton buttonEngineMove;
     private View buttonNext;
+    private SeekBar moveSeekBar;
+    private List<Node> navigationLine = new ArrayList<>();
+    private final Handler analysisHandler = new Handler(Looper.getMainLooper());
+    private boolean analysisDebouncing;
+    private final Runnable resumeAnalysis = () -> {
+        analysisDebouncing = false;
+        startNextAnalysis();
+    };
     private final LruCache<String, PositionAnalysis> positionAnalyses = new LruCache<>(128);
     private final Map<Node, PositionSnapshot> positions = new WeakHashMap<>();
     private Node displayedNode;
@@ -107,9 +119,24 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         textViewMoveFeedback = findViewById(R.id.TextViewMoveFeedback);
         buttonEngineMove = findViewById(R.id.ButtonEngineMove);
         buttonNext = findViewById(R.id.ButtonNext);
-        buttonNext.setEnabled(false);
+        moveSeekBar = findViewById(R.id.SeekBarAnalysisMove);
+        moveSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser && progress < navigationLine.size()) gameApi.goTo(navigationLine.get(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
         buttonBackToMain = findViewById(R.id.ButtonBackToMain);
-        buttonBackToMain.setOnClickListener(v -> gameApi.returnToMainLine());
+        buttonBackToMain.setOnClickListener(v -> {
+            navigationLine = new ArrayList<>();
+            gameApi.returnToMainLine();
+        });
         switchSound = findViewById(R.id.SwitchSound);
         switchMoveToSpeech = findViewById(R.id.SwitchSpeech);
         switchAccessibilityDrag = findViewById(R.id.SwitchAccessibilityDrag);
@@ -121,7 +148,10 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         initBoardLayoutSizing(findViewById(R.id.root_layout), findViewById(R.id.board_area),
             findViewById(R.id.analyze_controls), null, null, 24);
         findViewById(R.id.ButtonPrevious).setOnClickListener(v -> gameApi.undoMove());
-        buttonNext.setOnClickListener(v -> gameApi.nextMove());
+        buttonNext.setOnClickListener(v -> {
+            int index = navigationLine.indexOf(gameApi.getCurrentNode());
+            if (index >= 0 && index + 1 < navigationLine.size()) gameApi.goTo(navigationLine.get(index + 1));
+        });
         findViewById(R.id.ButtonAnalysisSettings).setOnClickListener(v ->
             AnalysisSettingsDialog.show(this, getPrefs(), this::restartAnalysis));
 
@@ -204,6 +234,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         restoredSession = null;
         positionAnalyses.evictAll();
         positions.clear();
+        navigationLine = new ArrayList<>();
         evaluationView.clearEvaluation();
     }
 
@@ -257,23 +288,48 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
         updateMoveSummary();
         updateVariations();
-        updateNextButton();
+        updateNavigation();
         if (!analysisActive || engineSession == null || !engineSession.supportsAnalysis()) return;
         if (changed) {
-            analysisFen = null;
-            requestedPosition = null;
-            analysisSwitchPending = true;
-            final int generation = ++analysisGeneration;
             evaluationView.clearEvaluation();
-            engineSession.abort(() -> {
-                if (analysisActive && generation == analysisGeneration) {
-                    analysisSwitchPending = false;
-                    startNextAnalysis();
-                }
-            });
-        } else if (analysisFen == null) {
-            startNextAnalysis();
+            analysisHandler.removeCallbacks(resumeAnalysis);
+            analysisDebouncing = true;
+            analysisHandler.postDelayed(resumeAnalysis, ANALYSIS_DEBOUNCE_MILLIS);
+            // A search remains useful while it belongs to either position needed for feedback.
+            PositionSnapshot current = positions.get(displayedNode);
+            PositionSnapshot parent = positions.get(displayedNode.getParent());
+            if (analysisFen != null && !matchesAnalysis(current) && !matchesAnalysis(parent)) {
+                analysisFen = null;
+                requestedPosition = null;
+                analysisSwitchPending = true;
+                final int generation = ++analysisGeneration;
+                engineSession.abort(() -> {
+                    if (analysisActive && generation == analysisGeneration) {
+                        analysisSwitchPending = false;
+                        startNextAnalysis();
+                    }
+                });
+            }
         }
+        showCachedEvaluation();
+        startNextAnalysis();
+    }
+
+    private boolean matchesAnalysis(PositionSnapshot position) {
+        return position != null && position.fen.equals(analysisFen);
+    }
+
+    private void showCachedEvaluation() {
+        PositionSnapshot current = positions.get(displayedNode);
+        PositionAnalysis result = getAnalysis(current);
+        if (result == null || result.evaluation == null) return;
+        EngineEvaluation evaluation = result.evaluation;
+        float value = evaluation.mate
+            ? (current.state == BoardConstants.MATE
+                ? (current.turn == BoardConstants.WHITE ? -1000 : 1000)
+                : evaluation.value > 0 ? 1000 : -1000)
+            : evaluation.value / 100.0f;
+        evaluationView.setEvaluation(value);
     }
 
     private void restartAnalysis() {
@@ -293,7 +349,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         positionAnalyses.evictAll();
         evaluationView.clearEvaluation();
         updateMoveSummary();
-        updateNextButton();
+        updateNavigation();
         startNextAnalysis();
     }
 
@@ -324,27 +380,19 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     }
 
     private void startNextAnalysis() {
-        if (!analysisActive || analysisSwitchPending || analysisFen != null
+        if (!analysisActive || analysisDebouncing || analysisSwitchPending || analysisFen != null
+            || engineSession == null || !engineSession.supportsAnalysis()
             || displayedNode != gameApi.getCurrentNode()) return;
         PositionSnapshot current = positions.get(displayedNode);
         if (current == null) return;
         PositionSnapshot parent = positions.get(displayedNode.getParent());
-        // Fill a missing parent first when jumping into a variation or after cache eviction.
+        // Feedback needs both sides of the move, even when navigation skips uncached positions.
         PositionSnapshot next = parent != null && getAnalysis(parent) == null ? parent
             : getAnalysis(current) == null ? current : null;
         if (next == null) {
-            PositionAnalysis result = getAnalysis(current);
-            if (result != null && result.evaluation != null) {
-                EngineEvaluation evaluation = result.evaluation;
-                float value = evaluation.mate
-                    ? (current.state == BoardConstants.MATE
-                        ? (current.turn == BoardConstants.WHITE ? -1000 : 1000)
-                        : evaluation.value > 0 ? 1000 : -1000)
-                    : evaluation.value / 100.0f;
-                evaluationView.setEvaluation(value);
-            }
+            showCachedEvaluation();
             updateMoveSummary();
-            updateNextButton();
+            updateNavigation();
             return;
         }
         requestedPosition = next;
@@ -353,10 +401,20 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         engineSession.analyze(next.fen, AnalysisSettingsDialog.getTimeMillis(getPrefs()));
     }
 
-    private void updateNextButton() {
-        PositionAnalysis result = getAnalysis(positions.get(gameApi.getCurrentNode()));
-        buttonNext.setEnabled(result != null && result.preferredMove != null
-            && !gameApi.getContinuations(gameApi.getCurrentNode()).isEmpty());
+    private void updateNavigation() {
+        Node current = gameApi.getCurrentNode();
+        // Retain the selected variation when scrubbing back across its branch point.
+        if (!navigationLine.contains(current)) {
+            navigationLine = new ArrayList<>();
+            navigationLine.add(gameApi.getRootNode());
+            navigationLine.addAll(gameApi.getCurrentLineNodes());
+        }
+        int index = navigationLine.indexOf(current);
+        moveSeekBar.setMax(Math.max(0, navigationLine.size() - 1));
+        moveSeekBar.setProgress(Math.max(0, index));
+        moveSeekBar.setEnabled(navigationLine.size() > 1);
+        findViewById(R.id.ButtonPrevious).setEnabled(current.getParent() != null);
+        buttonNext.setEnabled(index >= 0 && index + 1 < navigationLine.size());
     }
 
     private void updateVariations() {
@@ -366,7 +424,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (continuations.size() < 2) {
             return;
         }
-        // Child zero is the preferred continuation reached with Next.
+        // Child zero is the preferred continuation; the remaining children are variations.
         for (int i = 1; i < continuations.size(); i++) {
             Node continuation = continuations.get(i);
             PGNEntry entry = continuation.getEntry();
@@ -405,7 +463,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         analysisFen = null;
         requestedPosition = null;
         updateMoveSummary();
-        updateNextButton();
+        updateNavigation();
         // Continue after the engine's error callback has unwound and released its search.
         textViewMoveFeedback.post(this::startNextAnalysis);
     }
@@ -420,8 +478,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         positionAnalyses.put(fen, new PositionAnalysis(preferredMove, whiteEvaluation));
         analysisFen = null;
         requestedPosition = null;
-        updateNextButton();
+        updateNavigation();
         updateMoveSummary();
+        showCachedEvaluation();
         startNextAnalysis();
     }
 
@@ -525,6 +584,8 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     }
 
     private void closeEngineSession() {
+        analysisHandler.removeCallbacks(resumeAnalysis);
+        analysisDebouncing = false;
         if (engineSession != null) {
             engineSession.close();
             engineSession = null;

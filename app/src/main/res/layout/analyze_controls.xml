@@ -61,34 +61,13 @@
                     android:contentDescription="@string/button_previous_move_description"
                     style="?attr/chessImageButtonStyle" />
 
-                <com.google.android.flexbox.FlexboxLayout
+                <SeekBar
+                    android:id="@+id/SeekBarAnalysisMove"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:layout_marginStart="@dimen/control_gap"
-                    android:layout_marginEnd="@dimen/control_gap"
-                    app:flexDirection="row"
-                    app:flexWrap="wrap"
-                    app:alignItems="center">
-
-                    <TextView
-                        android:id="@+id/TextViewAnalysisMove"
-                        style="@style/MyPaneTextStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/control_gap" />
-
-                    <TextView
-                        android:id="@+id/TextViewMoveFeedback"
-                        style="@style/MyPaneTextStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/control_gap"
-                        android:textStyle="bold"
-                        android:accessibilityLiveRegion="none"
-                        android:visibility="gone" />
-
-                </com.google.android.flexbox.FlexboxLayout>
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/analysis_move_position" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonNext"
@@ -97,6 +76,34 @@
                     style="?attr/chessImageButtonStyle" />
             </TableRow>
         </TableLayout>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:alignItems="center">
+
+            <TextView
+                android:id="@+id/TextViewAnalysisMove"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/control_gap" />
+
+            <TextView
+                android:id="@+id/TextViewMoveFeedback"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/control_gap"
+                android:textStyle="bold"
+                android:accessibilityLiveRegion="none"
+                android:visibility="gone" />
+
+        </com.google.android.flexbox.FlexboxLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
