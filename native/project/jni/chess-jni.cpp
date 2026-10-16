@@ -83,6 +83,21 @@ JNIEXPORT jlong JNICALL Java_jwtc_chess_JNI_prepareSearch(JNIEnv* env, jobject t
     std::lock_guard<std::mutex> lock(g_liveMutex);
     return g_search.prepare(*Game::getInstance(), g_liveRevision, depth, millis, quiescentOn != 0);
 }
+JNIEXPORT jlong JNICALL Java_jwtc_chess_JNI_prepareHistorySearch(JNIEnv* env, jobject thiz,
+        jstring fen, jintArray history, jint millis, jint quiescentOn) {
+    if (fen == nullptr || history == nullptr) return 0;
+    const char* initialFen = env->GetStringUTFChars(fen, nullptr);
+    if (initialFen == nullptr) return 0;
+    std::vector<jint> moves(env->GetArrayLength(history));
+    env->GetIntArrayRegion(history, 0, moves.size(), moves.data());
+    uint64_t id = 0;
+    if (!env->ExceptionCheck()) {
+        id = g_search.prepareHistory(initialFen, std::vector<int>(moves.begin(), moves.end()),
+                                     millis, quiescentOn != 0);
+    }
+    env->ReleaseStringUTFChars(fen, initialFen);
+    return id;
+}
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_runSearch(JNIEnv* env, jobject thiz, jlong id) {
     g_search.run(id);
 }
@@ -92,13 +107,15 @@ JNIEXPORT jboolean JNICALL Java_jwtc_chess_JNI_isSearchCurrent(JNIEnv* env, jobj
 }
 JNIEXPORT jintArray JNICALL Java_jwtc_chess_JNI_getSearchResult(JNIEnv* env, jobject thiz, jlong id) {
     const SearchResult snapshot = g_search.result(id);
-    jint values[45] = {snapshot.move, snapshot.duckMove, snapshot.value, snapshot.depth, snapshot.evaluations};
+    jint values[47] = {snapshot.move, snapshot.duckMove, snapshot.value, snapshot.depth, snapshot.evaluations};
     for (int i = 0; i < 20; ++i) {
         values[5 + i] = snapshot.moves[i];
         values[25 + i] = snapshot.duckMoves[i];
     }
-    jintArray result = env->NewIntArray(45);
-    if (result != nullptr) env->SetIntArrayRegion(result, 0, 45, values);
+    values[45] = snapshot.hasEvaluation ? 1 : 0;
+    values[46] = snapshot.completedDepth;
+    jintArray result = env->NewIntArray(47);
+    if (result != nullptr) env->SetIntArrayRegion(result, 0, 47, values);
     return result;
 }
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMove(JNIEnv* env, jobject thiz) {
@@ -376,6 +393,7 @@ static JNINativeMethod sMethods[] = {
     {"mewGameFromFEN", "(Ljava/lang/String)I", (void*) Java_jwtc_chess_JNI_newGameFromFEN},
     {"putPiece", "(III)V", (void*) Java_jwtc_chess_JNI_putPiece},
     {"prepareSearch", "(III)J", (void*) Java_jwtc_chess_JNI_prepareSearch},
+    {"prepareHistorySearch", "(Ljava/lang/String;[III)J", (void*) Java_jwtc_chess_JNI_prepareHistorySearch},
     {"runSearch", "(J)V", (void*) Java_jwtc_chess_JNI_runSearch},
     {"isSearchCurrent", "(J)Z", (void*) Java_jwtc_chess_JNI_isSearchCurrent},
     {"getSearchResult", "(J)[I", (void*) Java_jwtc_chess_JNI_getSearchResult},

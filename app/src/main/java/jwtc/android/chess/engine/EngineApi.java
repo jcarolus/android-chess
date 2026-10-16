@@ -139,6 +139,12 @@ public abstract class EngineApi {
     /** Whether this backend implements analysis; callers should check before displaying a score. */
     abstract public boolean supportsAnalysis();
 
+    /** Analyses the current position with its recorded repetition history. Main-thread only. */
+    abstract public void analyzeCurrentPosition(int timeMillis);
+
+    /** Analyses an immutable recorded position, including the path that reached it. */
+    abstract public void analyze(jwtc.android.chess.services.GameApi.PositionSnapshot position, int timeMillis);
+
     /**
      * Analyses the supplied FEN snapshot with a positive timeMillis search budget.
      * Ignores and preserves the PLAY time/depth settings. Reports OnEngineInfo and onAnalysisComplete,

@@ -253,13 +253,16 @@ public class JNI {
     /** Capture the live position before dispatching the worker; zero means busy or invalid limits. */
     public native long prepareSearch(int depth, int millis, int quiescentOn);
 
+    public native long prepareHistorySearch(String initialFen, int[] moves, int millis, int quiescentOn);
+
     public native void runSearch(long id);
 
     public native void interruptSearch(long id);
 
     public native boolean isSearchCurrent(long id);
 
-    /** One coherent publication: move, duck, value, depth, evaluations, 20 PV moves, 20 duck moves. */
+    /** One coherent publication: move, duck, value, depth, evaluations, 20 PV moves, 20 duck moves,
+     * evaluation available, completed depth. */
     public native int[] getSearchResult(long id);
 
     public void searchMove(int millis, int quiescentOn) {

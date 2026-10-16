@@ -148,6 +148,20 @@ public final class GameTree {
         return path;
     }
 
+    /** UCI input and cache identity include only the selected path, preserving repetition history. */
+    public String positionCommand(Node node) {
+        List<Node> path = pathTo(node);
+        StringBuilder command = new StringBuilder("position fen ").append(initialFen);
+        if (!path.isEmpty()) command.append(" moves");
+        for (Node step : path) {
+            int move = step.entry.move;
+            command.append(' ').append(Pos.toString(Move.getFrom(move)))
+                .append(Pos.toString(Move.getTo(move)));
+            if (Move.isPromotionMove(move)) command.append("pnbrqk".charAt(Move.getPromotionPiece(move)));
+        }
+        return command.toString();
+    }
+
     public boolean deleteVariation(Node node) {
         if (!contains(node) || node == root || node.parent.getNext() == node) return false;
         return node.parent.children.remove(node);

@@ -52,6 +52,8 @@ class Game {
     boolean putPieceHouse(const int pos, const int piece, const boolean allowAttack);
     int getSearchDepth() const;
     int getEvalCount() const;
+    bool hasEvaluation() const { return m_hasEvaluation; }
+    int completedDepth() const { return m_completedDepth; }
     void interruptSearch();
 
     std::atomic_bool m_bSearching;
@@ -60,6 +62,8 @@ class Game {
    protected:
     MoveAndValue m_bestMoveAndValue;
     int m_evalCount;
+    bool m_hasEvaluation = false;
+    int m_completedDepth = 0;
 
     static Game* game;
     static const int MAX_DEPTH = 20;

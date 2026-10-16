@@ -12,6 +12,7 @@ import jwtc.android.chess.services.GameApi;
  * the screen has paused cannot start a search on a destroyed Engine.
  */
 public final class EngineSession {
+    public static final String LOCAL_ENGINE_ID = "local";
     private final Context context;
     private final GameApi gameApi;
     private final EngineListener listener;
@@ -39,14 +40,18 @@ public final class EngineSession {
     }
 
     /**
-     * Session for Analysis: the OEX Engine chosen by the user. The Local Engine does not
-     * support analysis yet; once it does, this is where it becomes a candidate.
+     * Session for Analysis, falling back to the Local Engine if no OEX engine is available.
      */
     public static EngineSession forAnalysis(Context context, GameApi gameApi, EngineListener listener,
                                             String oexEngineId) {
         EngineSession session = new EngineSession(context, gameApi, listener);
-        session.oex = new OexEngine(context, gameApi, oexEngineId);
-        session.use(session.oex);
+        if (LOCAL_ENGINE_ID.equals(oexEngineId) || !OexEngine.hasAvailableEngines(context)) {
+            session.local = new LocalEngine(gameApi);
+            session.use(session.local);
+        } else {
+            session.oex = new OexEngine(context, gameApi, oexEngineId);
+            session.use(session.oex);
+        }
         return session;
     }
 
@@ -115,6 +120,14 @@ public final class EngineSession {
             return;
         }
         current.analyze(fen, timeMillis);
+    }
+
+    public void analyzeCurrentPosition(int timeMillis) {
+        if (!closed && current != null) current.analyzeCurrentPosition(timeMillis);
+    }
+
+    public void analyze(GameApi.PositionSnapshot position, int timeMillis) {
+        if (!closed && current != null) current.analyze(position, timeMillis);
     }
 
     /**

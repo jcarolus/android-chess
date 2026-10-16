@@ -30,6 +30,7 @@ JNIEXPORT int JNICALL Java_jwtc_chess_JNI_newGameFromFEN(JNIEnv* env, jobject th
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_putPiece(JNIEnv* env, jobject thiz, jint pos, jint piece, jint turn);
 JNIEXPORT jintArray JNICALL Java_jwtc_chess_JNI_getSearchResult(JNIEnv* env, jobject thiz, jlong id);
 JNIEXPORT jlong JNICALL Java_jwtc_chess_JNI_prepareSearch(JNIEnv* env, jobject thiz, jint depth, jint millis, jint quiescentOn);
+JNIEXPORT jlong JNICALL Java_jwtc_chess_JNI_prepareHistorySearch(JNIEnv* env, jobject thiz, jstring fen, jintArray history, jint millis, jint quiescentOn);
 JNIEXPORT void JNICALL Java_jwtc_chess_JNI_runSearch(JNIEnv* env, jobject thiz, jlong id);
 JNIEXPORT jboolean JNICALL Java_jwtc_chess_JNI_isSearchCurrent(JNIEnv* env, jobject thiz, jlong id);
 JNIEXPORT int JNICALL Java_jwtc_chess_JNI_getMove(JNIEnv* env, jobject thiz);

@@ -76,11 +76,23 @@ public class GameApi {
     /** Immutable input for asynchronous analysis, including notation for legal recommendations. */
     public static final class PositionSnapshot {
         public final String fen;
+        public final String initialFen;
+        public final String positionCommand;
+        private final int[] history;
+
+        public int[] getHistory() { return history.clone(); }
         public final int turn;
         public final int state;
         public final List<PositionMove> moves;
 
-        private PositionSnapshot(String fen, int turn, int state, List<PositionMove> moves) {
+        private PositionSnapshot(String fen, int turn, int state, List<PositionMove> moves,
+                                 String initialFen, List<Node> path, String positionCommand) {
+            this.initialFen = initialFen;
+            history = new int[path.size()];
+            for (int i = 0; i < path.size(); i++) {
+                history[i] = path.get(i).getEntry().move;
+            }
+            this.positionCommand = positionCommand;
             this.fen = fen;
             this.turn = turn;
             this.state = state;
@@ -91,6 +103,12 @@ public class GameApi {
             for (PositionMove move : moves) if (move.uci.equals(uci)) return move;
             return null;
         }
+    }
+
+    /** Main-thread only; both placement and history must match before cloning the live board. */
+    public boolean isCurrentPosition(PositionSnapshot position) {
+        return pendingDuckMove == null && position.fen.equals(jni.toFEN())
+            && position.positionCommand.equals(gameTree.positionCommand(currentNode));
     }
 
     public static final class PositionMove {
@@ -124,7 +142,8 @@ public class GameApi {
                     jni.scratchUndo();
                 }
             }
-            return new PositionSnapshot(jni.toFEN(), jni.getTurn(), jni.getState(), moves);
+            return new PositionSnapshot(jni.toFEN(), jni.getTurn(), jni.getState(), moves,
+                gameTree.getInitialFen(), gameTree.pathTo(node), gameTree.positionCommand(node));
         } finally {
             if (!navigateTo(original)) restoreBoard(original, null);
             // JNI's move array is shared; restore it along with the board.

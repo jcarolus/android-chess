@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jwtc.android.chess.R;
+import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.oex.OexEngineDescriptor;
 import jwtc.android.chess.engine.oex.OexEngineResolver;
 import jwtc.android.chess.views.FixedDropdownView;
@@ -37,16 +38,17 @@ final class AnalysisSettingsDialog {
         List<OexEngineDescriptor> engines = new OexEngineResolver(context).resolveEngines();
         List<String> labels = new ArrayList<>();
         String preferred = prefs.getString(PREF_ENGINE, null);
-        int selected = 0;
+        int selected = EngineSession.LOCAL_ENGINE_ID.equals(preferred) ? engines.size() : 0;
         for (int i = 0; i < engines.size(); i++) {
             labels.add(engines.get(i).getName());
             if (engines.get(i).getId().equals(preferred)) selected = i;
         }
+        labels.add(context.getString(R.string.options_engine_builtin));
         engine.setItems(labels);
         engine.setSelection(selected);
-        engine.setVisibility(engines.isEmpty() ? View.GONE : View.VISIBLE);
+        engine.setVisibility(View.VISIBLE);
         content.findViewById(R.id.AnalysisNoEngines).setVisibility(
-            engines.isEmpty() ? View.VISIBLE : View.GONE);
+            View.GONE);
         time.setText(BigDecimal.valueOf(getTimeMillis(prefs), 3).stripTrailingZeros().toPlainString());
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(context)
@@ -71,7 +73,9 @@ final class AnalysisSettingsDialog {
                     return;
                 }
                 SharedPreferences.Editor editor = prefs.edit().putInt(PREF_TIME, millis);
-                if (!engines.isEmpty()) {
+                if (engine.getSelectedItemPosition() == engines.size()) {
+                    editor.putString(PREF_ENGINE, EngineSession.LOCAL_ENGINE_ID);
+                } else {
                     editor.putString(PREF_ENGINE,
                         engines.get(engine.getSelectedItemPosition()).getId());
                 }

@@ -61,6 +61,9 @@ A move-search implementation behind `EngineApi`: the **Local Engine** (bundled, 
 What a Mode holds to use Engines: it picks the Engine for that Mode (Play follows the user's choice and Variant, Analysis needs an Engine that supports it, Mate-in-Two Puzzles and Practice Positions always use the Local Engine), owns its lifecycle and listener registration, and takes the search limit per request. Not a Lichess Session.
 _Avoid_: bare "session"
 
+**Analysis history**:
+Analysis requests preserve the Starting Position and the selected move path, including repetitions. Local current-position analysis deep-clones the live board history; recorded-position analysis replays the path on a private worker. OEX receives the Starting Position plus moves. Cached analysis is keyed by the full path, because equal FENs can have different repetition histories. The built-in Local Engine is available in Analysis settings and is the fallback when no OEX Engine is installed.
+
 **Search Purpose**:
 Why an Engine is searching: PLAY (choose a move to play) or ANALYSIS (evaluate a position). `EngineApi.SearchPurpose` in code.
 _Avoid_: Mode

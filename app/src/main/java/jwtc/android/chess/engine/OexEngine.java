@@ -52,13 +52,15 @@ public class OexEngine extends EngineApi {
         final SearchPurpose purpose;
         final String fen;
         final String command;
+        final String positionCommand;
         final int timeMillis;
         boolean sent;
         boolean stopping;
         boolean cancelled;
         EngineEvaluation evaluation;
 
-        Search(long id, SearchPurpose purpose, String fen, String command, int timeMillis) {
+        Search(long id, SearchPurpose purpose, String fen, String command, int timeMillis, String positionCommand) {
+            this.positionCommand = positionCommand;
             this.id = id;
             this.purpose = purpose;
             this.fen = fen;
@@ -108,9 +110,28 @@ public class OexEngine extends EngineApi {
         startSearch(SearchPurpose.ANALYSIS, fen.trim(), "go movetime " + timeMillis, timeMillis);
     }
 
+    @Override
+    public synchronized void analyzeCurrentPosition(int timeMillis) {
+        analyze(gameApi.getPositionSnapshot(gameApi.getCurrentNode()), timeMillis);
+    }
+
+    @Override
+    public synchronized void analyze(GameApi.PositionSnapshot position, int timeMillis) {
+        if (position == null) throw new IllegalArgumentException("Missing position");
+        validateAnalysisRequest(position.fen, timeMillis);
+        if (search != null) return;
+        startSearch(SearchPurpose.ANALYSIS, position.fen, "go movetime " + timeMillis,
+            timeMillis, position.positionCommand);
+    }
+
     private void startSearch(SearchPurpose purpose, String fen, String command, int timeMillis) {
+        startSearch(purpose, fen, command, timeMillis, "position fen " + fen);
+    }
+
+    private void startSearch(SearchPurpose purpose, String fen, String command, int timeMillis,
+                             String positionCommand) {
         Log.d(TAG, "startSearch " + purpose);
-        Search requested = new Search(beginSearch(purpose), purpose, fen, command, timeMillis);
+        Search requested = new Search(beginSearch(purpose), purpose, fen, command, timeMillis, positionCommand);
         search = requested;
         latestValue = 0;
         for (EngineListener listener : listeners) {
@@ -298,7 +319,7 @@ public class OexEngine extends EngineApi {
         }
         cancelTimeout();
         search.sent = true;
-        if (!sendCommand("position fen " + search.fen) || !sendCommand(search.command)) {
+        if (!sendCommand(search.positionCommand) || !sendCommand(search.command)) {
             return;
         }
         if (search.timeMillis > 0) {

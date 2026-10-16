@@ -196,4 +196,36 @@ public class GameTreeTest {
         tree.removeContinuation(e4);
         tree.setFinalState(e4, BoardConstants.WHITE_FORFEIT_TIME);
     }
+
+    @Test
+    public void enginePositionIncludesOnlySelectedVariationAndItsAncestors() throws Exception {
+        Node e4 = add(tree.getRoot(), "e4", Move.makeMove(Pos.fromString("e2"), Pos.fromString("e4")));
+        add(e4, "e5", Move.makeMove(Pos.fromString("e7"), Pos.fromString("e5")));
+        Node c5 = add(e4, "c5", Move.makeMove(Pos.fromString("c7"), Pos.fromString("c5")));
+        add(c5, "Nf3", Move.makeMove(Pos.fromString("g1"), Pos.fromString("f3")));
+        assertEquals("position fen " + START, tree.positionCommand(tree.getRoot()));
+        assertEquals("position fen " + START + " moves e2e4 c7c5", tree.positionCommand(c5));
+    }
+
+    @Test
+    public void enginePositionRetainsRepeatedMovesInCacheIdentity() throws Exception {
+        Node node = tree.getRoot();
+        String[] moves = {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"};
+        for (String move : moves) {
+            node = add(node, "", Move.makeMove(Pos.fromString(move.substring(0, 2)),
+                Pos.fromString(move.substring(2))));
+        }
+        assertEquals("position fen " + START + " moves " + String.join(" ", moves),
+            tree.positionCommand(node));
+        assertFalse(tree.positionCommand(node).equals(tree.positionCommand(tree.getRoot())));
+    }
+
+    @Test
+    public void enginePositionPreservesCustomStartAndUnderpromotion() throws Exception {
+        String fen = "7k/P7/8/8/8/8/8/7K w - - 0 1";
+        tree = new GameTree(fen, 0, BoardConstants.WHITE);
+        Node promoted = add(tree.getRoot(), "a8=N", Move.makeMovePromotion(
+            Pos.fromString("a7"), Pos.fromString("a8"), BoardConstants.KNIGHT, false));
+        assertEquals("position fen " + fen + " moves a7a8n", tree.positionCommand(promoted));
+    }
 }

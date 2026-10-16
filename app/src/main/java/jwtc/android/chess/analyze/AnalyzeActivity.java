@@ -204,7 +204,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             && millis == restoredSession.getInt("millis")) {
             ArrayList<Bundle> results = restoredSession.getParcelableArrayList("results");
             if (results != null) for (Bundle result : results) {
-                positionAnalyses.put(result.getString("fen"), new PositionAnalysis(result));
+                if (result.containsKey("position")) positionAnalyses.put(result.getString("position"), new PositionAnalysis(result));
             }
         }
         restoredSession = null;
@@ -259,7 +259,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         for (Map.Entry<String, PositionAnalysis> entry : positionAnalyses.snapshot().entrySet()) {
             PositionAnalysis analysis = entry.getValue();
             Bundle result = new Bundle();
-            result.putString("fen", entry.getKey());
+            result.putString("position", entry.getKey());
             result.putString("move", analysis.bestMove);
             if (analysis.evaluation != null) {
                 result.putBoolean("mate", analysis.evaluation.mate);
@@ -317,7 +317,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     }
 
     private boolean matchesAnalysis(PositionSnapshot position) {
-        return position != null && position.fen.equals(analysisFen);
+        return position != null && requestedPosition != null && position.positionCommand.equals(requestedPosition.positionCommand);
     }
 
     private void showCachedEvaluation() {
@@ -372,10 +372,10 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (position.state == BoardConstants.MATE) {
             return new PositionAnalysis(null, new EngineEvaluation(true, 0, 0));
         }
-        PositionAnalysis result = positionAnalyses.get(position.fen);
+        PositionAnalysis result = positionAnalyses.get(position.positionCommand);
         if (result != null && result.preferredMove == null && result.bestMove != null) {
             result = new PositionAnalysis(position.findMove(result.bestMove), result.evaluation);
-            positionAnalyses.put(position.fen, result);
+            positionAnalyses.put(position.positionCommand, result);
         }
         return result;
     }
@@ -399,7 +399,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         requestedPosition = next;
         analysisFen = next.fen;
         analysisTurn = next.turn;
-        engineSession.analyze(next.fen, AnalysisSettingsDialog.getTimeMillis(getPrefs()));
+        engineSession.analyze(next, AnalysisSettingsDialog.getTimeMillis(getPrefs()));
     }
 
     private void updateNavigation() {
@@ -450,7 +450,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void OnEngineInfo(String message, float value) {
         // UCI scores are relative to the side to move in the searched position.
-        if (analysisActive && analysisFen != null && analysisFen.equals(jni.toFEN())
+        if (analysisActive && analysisFen != null && matchesAnalysis(positions.get(displayedNode))
             && message != null && message.contains(" score ")) {
             evaluationView.setEvaluation(analysisTurn == BoardConstants.WHITE ? value : -value);
         }
@@ -460,7 +460,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     public void OnEngineError() {
         evaluationView.clearEvaluation();
         if (!analysisActive || analysisFen == null) return;
-        positionAnalyses.put(analysisFen, new PositionAnalysis(null, null));
+        positionAnalyses.put(requestedPosition.positionCommand, new PositionAnalysis(null, null));
         analysisFen = null;
         requestedPosition = null;
         updateMoveSummary();
@@ -476,7 +476,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         PositionMove preferredMove = requestedPosition.findMove(bestMove);
         EngineEvaluation whiteEvaluation = evaluation == null ? null
             : evaluation.forWhite(requestedPosition.turn == BoardConstants.WHITE);
-        positionAnalyses.put(fen, new PositionAnalysis(preferredMove, whiteEvaluation));
+        positionAnalyses.put(requestedPosition.positionCommand, new PositionAnalysis(preferredMove, whiteEvaluation));
         analysisFen = null;
         requestedPosition = null;
         updateNavigation();

@@ -17,7 +17,28 @@ uint64_t SearchController::prepare(const Game& source, uint64_t revision, int de
         m_worker.setSearchTime(millis);
     }
     m_result = SearchResult();
+    m_liveSource = true;
     m_revision = revision;
+    m_interrupted = false;
+    m_state = State::Prepared;
+    return ++m_id;
+}
+
+uint64_t SearchController::prepareHistory(const char* initialFen, const std::vector<int>& moves,
+                                          int millis, bool quiescent) {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (m_state == State::Prepared || m_state == State::Running) return 0;
+    if (millis <= 0) return 0;
+    // Failed replay must not leave a previous token associated with a changed worker.
+    m_state = State::Idle;
+    m_result = SearchResult();
+    if (!m_worker.newGameFromFEN(initialFen)) return 0;
+    for (int move : moves) {
+        if (!m_worker.move(move)) return 0;
+    }
+    m_worker.setQuiescentOn(quiescent);
+    m_worker.setSearchTime(millis);
+    m_liveSource = false;
     m_interrupted = false;
     m_state = State::Prepared;
     return ++m_id;
@@ -50,6 +71,8 @@ void SearchController::publish() {
     // begin() clears the worker's interrupt flag. Reapply an interruption that
     // arrived between reservation and search startup before exploring any moves.
     if (m_interrupted) m_worker.interruptSearch();
+    m_result.hasEvaluation = m_worker.hasEvaluation();
+    m_result.completedDepth = m_worker.completedDepth();
     m_result.move = m_worker.getBestMove();
     m_result.duckMove = m_worker.getBestDuckMove();
     m_result.value = m_worker.getBestValue();
@@ -85,7 +108,7 @@ bool SearchController::done() const {
 
 bool SearchController::matches(uint64_t id, uint64_t revision) const {
     std::lock_guard<std::mutex> lock(m_mutex);
-    return id != 0 && id == m_id && revision == m_revision && m_state != State::Idle;
+    return m_liveSource && id != 0 && id == m_id && revision == m_revision && m_state != State::Idle;
 }
 
 SearchResult SearchController::result(uint64_t id) const {

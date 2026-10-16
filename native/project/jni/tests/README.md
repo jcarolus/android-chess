@@ -29,3 +29,14 @@ Run a single test (e.g. 17):
 ## NDK
 
 - Android `ndkBuild` integration (`Android.mk`)
+
+## JNI export regression check
+
+After building an APK, check that every Java native method has an unmangled
+export in each packaged ABI. This catches missing declarations in the
+`extern "C"` block of `chess-jni.hpp`, which ordinary compilation does not catch.
+Run from the repository root, using the installed NDK's `llvm-nm`:
+
+```sh
+python3 scripts/check-jni-exports.py path/to/app.apk --nm path/to/ndk/toolchains/llvm/prebuilt/host/bin/llvm-nm
+```

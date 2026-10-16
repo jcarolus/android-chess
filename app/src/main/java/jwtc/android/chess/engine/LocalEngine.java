@@ -53,18 +53,50 @@ public class LocalEngine extends EngineApi {
 
     @Override
     public boolean supportsAnalysis() {
-        return false;
+        return true;
     }
 
     @Override
     public synchronized void analyze(String fen, int timeMillis) {
         validateAnalysisRequest(fen, timeMillis);
-        if (engineSearchThread != null) {
+        if (engineSearchThread != null) return;
+        startAnalysis(fen, JNI.getInstance().prepareHistorySearch(fen, new int[0],
+            timeMillis, quiescentSearchOn ? 1 : 0));
+    }
+
+    @Override
+    public synchronized void analyzeCurrentPosition(int timeMillis) {
+        String fen = JNI.getInstance().toFEN();
+        validateAnalysisRequest(fen, timeMillis);
+        if (engineSearchThread != null) return;
+        startAnalysis(fen, JNI.getInstance().prepareSearch(0, timeMillis, quiescentSearchOn ? 1 : 0));
+    }
+
+    @Override
+    public synchronized void analyze(GameApi.PositionSnapshot position, int timeMillis) {
+        if (position == null) throw new IllegalArgumentException("Missing position");
+        validateAnalysisRequest(position.fen, timeMillis);
+        if (engineSearchThread != null) return;
+        if (gameApi.isCurrentPosition(position)) {
+            analyzeCurrentPosition(timeMillis);
             return;
         }
+        startAnalysis(position.fen, JNI.getInstance().prepareHistorySearch(position.initialFen,
+            position.getHistory(), timeMillis, quiescentSearchOn ? 1 : 0));
+    }
+
+    private void startAnalysis(String fen, long token) {
+        if (token == 0) {
+            sendErrorMessageFromThread();
+            return;
+        }
+        nativeSearchId = token;
         long id = beginSearch(SearchPurpose.ANALYSIS);
-        // Placeholder only: do not touch the JNI board or start a native search.
-        sendMessageFromThread(id, "", 0.0F);
+        engineSearchThread = new Thread(new RunnableSearch(id, token, fen));
+        engineSearchThread.start();
+        enginePeekThread = new Thread(new RunnablePeeker(id, token));
+        enginePeekThread.start();
+        for (EngineListener listener : listeners) listener.OnEngineStarted();
     }
 
     @Override
@@ -111,14 +143,21 @@ public class LocalEngine extends EngineApi {
     private class RunnableSearch implements Runnable {
         private final long id;
         private final long token;
+        private final String analysisFen;
 
         RunnableSearch(long id, long token) {
+            this(id, token, null);
+        }
+
+        RunnableSearch(long id, long token, String analysisFen) {
+            this.analysisFen = analysisFen;
             this.id = id;
             this.token = token;
         }
 
         @Override
         public void run() {
+            Runnable analysisComplete = null;
             try {
                 JNI jni = JNI.getInstance();
                 long lMillies = System.currentTimeMillis();
@@ -128,7 +167,7 @@ public class LocalEngine extends EngineApi {
                 int[] result = jni.getSearchResult(token);
                 int move = result[0];
                 int value = result[2];
-                if (move != 0) {
+                if (analysisFen == null && move != 0) {
                     sendMoveMessageFromThread(id, move, result[1], value);
                 }
 
@@ -150,14 +189,34 @@ public class LocalEngine extends EngineApi {
                     s += "\n\t" + String.format("%.2f", fValue);
                 }
                 sendMessageFromThread(id, s, fValue);
+                if (analysisFen != null) {
+                    String bestMove = move == 0 ? "" : Pos.toString(Move.getFrom(move))
+                        + Pos.toString(Move.getTo(move))
+                        + (Move.isPromotionMove(move) ? "pnbrqk".charAt(Move.getPromotionPiece(move)) : "");
+                    // Native mate scores carry no distance; do not invent a UCI mate-in-N.
+                    EngineEvaluation evaluation = result[45] == 0
+                        || Math.abs(value) >= jwtc.chess.board.BoardConstants.VALUATION_MATE
+                        ? null : new EngineEvaluation(false, value, result[46]);
+                    analysisComplete = () -> {
+                        if (!isCurrentSearch(id)) return;
+                        for (EngineListener listener : listeners) {
+                            listener.onAnalysisComplete(analysisFen, bestMove, evaluation);
+                        }
+                    };
+                }
 
             } catch (Exception ex) {
-                ex.printStackTrace(System.out);
+                Log.e(TAG, "Search failed", ex);
+                analysisComplete = () -> {
+                    if (!isCurrentSearch(id)) return;
+                    for (EngineListener listener : listeners) listener.OnEngineError();
+                };
             } finally {
                 finishPeek();
                 synchronized (LocalEngine.this) {
                     engineSearchThread = null;
                     stopping = false;
+                    if (analysisComplete != null) updateHandler.post(analysisComplete);
                     for (Runnable callback : completionCallbacks) {
                         updateHandler.post(callback);
                     }
@@ -209,6 +268,13 @@ public class LocalEngine extends EngineApi {
                         }
                     }
 
+                    if (purpose == SearchPurpose.ANALYSIS) {
+                        if (result[45] == 0 || Math.abs(value) >= jwtc.chess.board.BoardConstants.VALUATION_MATE) {
+                            Thread.sleep(iSleep);
+                            continue;
+                        }
+                        s = "info depth " + result[46] + " score cp " + value + " pv " + s;
+                    }
                     sendMessageFromThread(id, s, fValue);
 
                     Thread.sleep(iSleep);

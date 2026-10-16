@@ -41,6 +41,8 @@ void Game::search(const std::function<void()>& publish) {
 
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     m_evalCount = 0;
+    m_hasEvaluation = false;
+    m_completedDepth = 0;
     m_searchSession.begin();
     if (publish) publish();
 
@@ -48,6 +50,8 @@ void Game::search(const std::function<void()>& publish) {
     board->calcState(m_searchWorkspace.refurbish());
 
     if (board->isEnded()) {
+        m_bestMoveAndValue.value = board->getState() == ChessBoard::MATE ? -ChessBoard::VALUATION_MATE : 0;
+        m_hasEvaluation = true;
         return;
     }
 
@@ -94,6 +98,8 @@ void Game::search(const std::function<void()>& publish) {
             }
 
             m_bestMoveAndValue = m_arrBestMoves[0];
+            m_hasEvaluation = true;
+            m_completedDepth = searchDepth;
             if (publish) publish();
             if (m_bestMoveAndValue.value == ChessBoard::VALUATION_MATE) {
                 for (int i = 0; i < MAX_DEPTH; i++) {
@@ -127,6 +133,8 @@ void Game::search(const std::function<void()>& publish) {
                           ChessBoard::VALUATION_MATE);
         }
         m_bestMoveAndValue = m_arrBestMoves[0];
+        m_hasEvaluation = !m_searchSession.interrupted();
+        if (m_hasEvaluation) m_completedDepth = m_searchSession.searchLimit();
     }
 
     if (m_searchSession.interrupted()) {

@@ -4,6 +4,7 @@
 #include <condition_variable>
 #include <cstdint>
 #include <mutex>
+#include <vector>
 
 #include "Game.h"
 
@@ -13,6 +14,8 @@ struct SearchResult {
     int value = 0;
     int depth = 0;
     int evaluations = 0;
+    bool hasEvaluation = false;
+    int completedDepth = 0;
     std::array<int, 20> moves{};
     std::array<int, 20> duckMoves;
 
@@ -25,6 +28,7 @@ class SearchController {
    public:
     ~SearchController();
     uint64_t prepare(const Game& source, uint64_t revision, int depth, int millis, bool quiescent);
+    uint64_t prepareHistory(const char* initialFen, const std::vector<int>& moves, int millis, bool quiescent);
     void run(uint64_t id);
     void interrupt(uint64_t id = 0);
     void cancelAndWait();
@@ -43,5 +47,6 @@ class SearchController {
     uint64_t m_id = 0;
     uint64_t m_revision = 0;
     bool m_interrupted = false;
+    bool m_liveSource = true;
     SearchResult m_result;
 };
