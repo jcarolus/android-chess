@@ -6,6 +6,8 @@
 
 class ChessBoard {
    public:
+    ChessBoard();
+
 #pragma region Statics
     // variants
     static const int VARIANT_DEFAULT = 1;
@@ -246,7 +248,7 @@ class ChessBoard {
 
     // trailing zeros precalculated on 8bit numbers
     static const char TRAILING_ZEROS_8_BITS[256];
-    // filled by instantiation of a Game object
+    // initialized once before the first board is used
     static char TRAILING_ZEROS_16_BITS[65536];
     // precalculated bitcounts
     static char BIT_COUNT_16_BITS[65536];

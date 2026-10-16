@@ -18,7 +18,6 @@ Game::~Game(void) {
 // the non thread safe solution; assumption is that getInsance is called before any threads are created
 Game *Game::getInstance() {
     if (Game::game == nullptr) {
-        ChessBoard::initStatics();
         Game::game = new Game();
     }
     return Game::game;

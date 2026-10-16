@@ -25,6 +25,7 @@ target_compile_definitions(chess_engine PUBLIC TERMINAL)
 add_executable(chess_engine_tests
     chess-test.cpp
     engine_tests.cpp
+    initialization_tests.cpp
 )
 
 target_link_libraries(chess_engine_tests

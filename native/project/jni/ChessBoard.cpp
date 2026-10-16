@@ -1,6 +1,11 @@
 #include "ChessBoard.h"
 
 #include <math.h>
+#include <mutex>
+
+ChessBoard::ChessBoard() {
+    initStatics();
+}
 
 #pragma region Attack functions
 
@@ -2276,13 +2281,16 @@ int ChessBoard::ARRVALUATION[64];
 #pragma region Initialize statics
 
 void ChessBoard::initStatics() {
-    initBitCount();
-    initMoveArrays();
-    initTrailingZeros();
-    initDistance();
-    initHashKeys();
-    initPassedPawnMask();
-    initPawnRange();
+    static std::once_flag initialized;
+    std::call_once(initialized, [] {
+        initBitCount();
+        initMoveArrays();
+        initTrailingZeros();
+        initDistance();
+        initHashKeys();
+        initPassedPawnMask();
+        initPawnRange();
+    });
 }
 
 void ChessBoard::initValuation() {
