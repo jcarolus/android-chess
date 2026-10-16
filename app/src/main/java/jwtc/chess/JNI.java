@@ -250,9 +250,32 @@ public class JNI {
 
     public native void putPiece(int pos, int piece, int turn);
 
-    public native void searchMove(int secs, int quiescentOn);
+    /** Capture the live position before dispatching the worker; zero means busy or invalid limits. */
+    public native long prepareSearch(int depth, int millis, int quiescentOn);
 
-    public native void searchDepth(int depth, int quiescentOn);
+    public native void runSearch(long id);
+
+    public native void interruptSearch(long id);
+
+    public native boolean isSearchCurrent(long id);
+
+    /** One coherent publication: move, duck, value, depth, evaluations, 20 PV moves, 20 duck moves. */
+    public native int[] getSearchResult(long id);
+
+    public void searchMove(int millis, int quiescentOn) {
+        runPreparedSearch(prepareSearch(0, millis, quiescentOn));
+    }
+
+    public void searchDepth(int depth, int quiescentOn) {
+        runPreparedSearch(prepareSearch(depth, 0, quiescentOn));
+    }
+
+    private void runPreparedSearch(long id) {
+        if (id == 0) {
+            throw new IllegalStateException("Search is busy or has no positive limit");
+        }
+        runSearch(id);
+    }
 
     public native int getMove();
 

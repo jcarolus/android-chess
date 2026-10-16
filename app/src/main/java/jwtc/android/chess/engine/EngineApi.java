@@ -40,6 +40,11 @@ public abstract class EngineApi {
         return id == searchId;
     }
 
+    /** Checked on the delivery thread immediately before notifying move listeners. */
+    protected boolean canDeliverMove(long id) {
+        return true;
+    }
+
     protected static final int MSG_MOVE = 1;
     protected static final int MSG_INFO = 2;
     protected static final int MSG_ERROR = 3;
@@ -56,6 +61,7 @@ public abstract class EngineApi {
                 return;
             }
             if (msg.what == MSG_MOVE && purpose == SearchPurpose.PLAY) {
+                if (!canDeliverMove(msg.getData().getLong("searchId"))) return;
                 int move = msg.getData().getInt("move");
                 int duckMove = msg.getData().getInt("duckMove");
                 int value = msg.getData().getInt("value");

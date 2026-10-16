@@ -7,6 +7,7 @@ find_package(GTest CONFIG REQUIRED)
 
 add_library(chess_engine STATIC
     ../BoardStack.cpp
+    ../SearchController.cpp
     ../SearchSession.cpp
     ../SearchWorkspace.cpp
     ../Pos.cpp
@@ -25,6 +26,7 @@ target_compile_definitions(chess_engine PUBLIC TERMINAL)
 add_executable(chess_engine_tests
     chess-test.cpp
     engine_tests.cpp
+    search_controller_tests.cpp
     initialization_tests.cpp
 )
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <functional>
 
 #include "common.h"
 #include "BoardStack.h"
@@ -24,6 +25,8 @@ class Game {
     static void* search_wrapper(void* arg);
 
     void reset();
+    // Both games must be idle and source access serialized by the caller.
+    void copyPositionFrom(const Game& source);
     boolean newGameFromFEN(const char* sFEN);
     void commitBoard();
     ChessBoard* getBoard();
@@ -41,7 +44,7 @@ class Game {
     void setQuiescentOn(boolean on);
     void setSearchTime(int secs);
     void setSearchLimit(int depth);
-    void search();
+    void search(const std::function<void()>& publish = {});
     int alphaBeta(ChessBoard* board, const int depth, int alpha, const int beta);
     int alphaBetaDuck(ChessBoard* board, const int depth, int alpha, const int beta);
     int quiesce(ChessBoard* board, const int depth, int alpha, const int beta);

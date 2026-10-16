@@ -17,6 +17,7 @@ public class LocalEngine extends EngineApi {
     private Thread engineSearchThread = null;
     private final ArrayList<Runnable> completionCallbacks = new ArrayList<>();
     private boolean stopping = false;
+    private volatile long nativeSearchId = 0;
 
     public LocalEngine(GameApi gameApi) {
         this.gameApi = gameApi;
@@ -31,15 +32,23 @@ public class LocalEngine extends EngineApi {
             return;
         }
 
+        long token = JNI.getInstance().prepareSearch(ply, msecs, quiescentSearchOn ? 1 : 0);
+        if (token == 0) return;
+        nativeSearchId = token;
         long id = beginSearch(SearchPurpose.PLAY);
-        engineSearchThread = new Thread(new RunnableSearch(id, ply, msecs, quiescentSearchOn));
+        engineSearchThread = new Thread(new RunnableSearch(id, token));
         engineSearchThread.start();
 
-        enginePeekThread = new Thread(new RunnablePeeker(id));
+        enginePeekThread = new Thread(new RunnablePeeker(id, token));
         enginePeekThread.start();
         for (EngineListener listener : listeners) {
             listener.OnEngineStarted();
         }
+    }
+
+    @Override
+    protected boolean canDeliverMove(long id) {
+        return isCurrentSearch(id) && JNI.getInstance().isSearchCurrent(nativeSearchId);
     }
 
     @Override
@@ -78,24 +87,7 @@ public class LocalEngine extends EngineApi {
             return;
         }
         stopping = true;
-        final Thread search = engineSearchThread;
-        // Native begin() resets the interrupt flag. Repeat until completion so a stop
-        // requested just before entering JNI cannot be lost during native startup.
-        new Thread(() -> {
-            try {
-                while (true) {
-                    synchronized (LocalEngine.this) {
-                        if (engineSearchThread != search) {
-                            return;
-                        }
-                        JNI.getInstance().interrupt();
-                    }
-                    search.join(20);
-                }
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-        }, "LocalEngine-stop").start();
+        JNI.getInstance().interruptSearch(nativeSearchId);
     }
 
     @Override
@@ -118,44 +110,30 @@ public class LocalEngine extends EngineApi {
 
     private class RunnableSearch implements Runnable {
         private final long id;
-        private final int searchPly;
-        private final int searchMillis;
-        private final boolean quiescent;
+        private final long token;
 
-        RunnableSearch(long id, int searchPly, int searchMillis, boolean quiescent) {
+        RunnableSearch(long id, long token) {
             this.id = id;
-            this.searchPly = searchPly;
-            this.searchMillis = searchMillis;
-            this.quiescent = quiescent;
+            this.token = token;
         }
 
         @Override
         public void run() {
             try {
                 JNI jni = JNI.getInstance();
-                if (!isCurrentSearch(id) || gameApi.isEnded()) {
-                    Log.d(TAG, "search called while game was ended");
-                    return;
-                }
                 long lMillies = System.currentTimeMillis();
-                if (searchPly > 0) {
-                    jni.searchDepth(searchPly, quiescent ? 1 : 0);
-                } else if (searchMillis > 0) {
-                    jni.searchMove(searchMillis, quiescent ? 1 : 0);
-                } else {
-                    Log.d(TAG, "No ply and no msecs to work with");
-                    return;
-                }
+                jni.runSearch(token);
 
                 finishPeek();
-                int move = jni.getMove();
-                int value = jni.peekSearchBestValue();
+                int[] result = jni.getSearchResult(token);
+                int move = result[0];
+                int value = result[2];
                 if (move != 0) {
-                    sendMoveMessageFromThread(id, move, jni.getDuckMove(), value);
+                    sendMoveMessageFromThread(id, move, result[1], value);
                 }
 
                 float fValue = (float) value / 100.0F;
-                int evalCnt = jni.getEvalCount();
+                int evalCnt = result[4];
 
                 String s;
                 if (evalCnt == 0) {
@@ -192,8 +170,11 @@ public class LocalEngine extends EngineApi {
     private class RunnablePeeker implements Runnable {
         private final long id;
 
-        RunnablePeeker(long id) {
+        private final long token;
+
+        RunnablePeeker(long id, long token) {
             this.id = id;
+            this.token = token;
         }
 
         @Override
@@ -206,9 +187,9 @@ public class LocalEngine extends EngineApi {
                 String s;
                 float fValue;
                 while (isCurrentSearch(id) && jni.peekSearchDone() == 0 && !Thread.currentThread().isInterrupted()) {
-                    ply = jni.peekSearchDepth();
-
-                    value = jni.peekSearchBestValue();
+                    int[] result = jni.getSearchResult(token);
+                    ply = result[3];
+                    value = result[2];
                     fValue = (float) value / 100.0F;
 
                     s = "";
@@ -217,10 +198,10 @@ public class LocalEngine extends EngineApi {
                         ply = 5;
                     }
                     for (j = 0; j < ply; j++) {
-                        move = jni.peekSearchBestMove(j);
+                        move = result[5 + j];
                         if (move != 0) {
                             s += Move.toDbgString(move).replace("[", "").replace("]", "");
-                            duckMove = jni.peekSearchBestDuckMove(j);
+                            duckMove = result[25 + j];
                             if (duckMove != -1) {
                                 s += "@" + Pos.toString(duckMove);
                             }

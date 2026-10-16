@@ -66,10 +66,13 @@ public class PracticeImportHandler implements ImportHandler {
                         }
                         String sFEN = jni.toFEN();
 
-                        jni.searchDepth(plies, 0);
-
-                        int move = jni.getMove();
-                        int value = jni.peekSearchBestValue();
+                        long searchId = jni.prepareSearch(plies, 0, 0);
+                        if (searchId == 0) return false;
+                        jni.runSearch(searchId);
+                        if (!jni.isSearchCurrent(searchId)) return false;
+                        int[] result = jni.getSearchResult(searchId);
+                        int move = result[0];
+                        int value = result[2];
 
                         //Log.i(TAG, moves + ", Move " + Move.toDbgString(move) + " val: " + value + " at plies " + plies);
 

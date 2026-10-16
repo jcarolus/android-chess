@@ -5,6 +5,7 @@
 #include "Move.h"
 
 class ChessBoard {
+    friend class BoardStack;
    public:
     ChessBoard();
 

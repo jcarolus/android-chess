@@ -14,6 +14,7 @@ class BoardStack {
 
     ChessBoard* current() const;
     void clearHistory();
+    void cloneFrom(const BoardStack& source);
     boolean undo();
     boolean promoteOrDiscard(std::unique_ptr<ChessBoard> nextBoard, boolean success);
 

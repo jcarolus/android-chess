@@ -2,9 +2,10 @@
 
 #include <gtest/gtest.h>
 
-void ChessTest::startSearchThread() {
+void ChessTest::startSearchThread(Game* game) {
     pthread_t tid;
-    pthread_create(&tid, nullptr, &Game::search_wrapper, nullptr);
+    pthread_create(&tid, nullptr, &Game::search_wrapper, game);
+    pthread_join(tid, nullptr);
 }
 
 bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
@@ -16,11 +17,7 @@ bool ChessTest::expectEngineMove(EngineInOutFEN scenario) {
     ChessBoard *board;
     int movesPerformed = 0;
     while (movesPerformed < scenario.numMoves) {
-        ChessTest::startSearchThread();
-        sleep(1);
-        while (scenario.game->m_bSearching.load()) {
-            sleep(1);
-        }
+        ChessTest::startSearchThread(scenario.game);
 
         int m = scenario.game->getBestMove();
         int d = scenario.game->getBestDuckMove();

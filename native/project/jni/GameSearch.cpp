@@ -1,7 +1,7 @@
 #include "Game.h"
 
 void *Game::search_wrapper(void *arg) {
-    Game::getInstance()->search();
+    static_cast<Game*>(arg)->search();
     return 0;
 }
 
@@ -28,7 +28,7 @@ void Game::setSearchLimit(int depth) {
     m_searchSession.configureDepthLimit(depth, MAX_DEPTH - QUIESCE_DEPTH);
 }
 
-void Game::search() {
+void Game::search(const std::function<void()>& publish) {
     bool expected = false;
     if (!m_bSearching.compare_exchange_strong(expected, true)) {
         DEBUG_PRINT("Already searching!");
@@ -42,6 +42,7 @@ void Game::search() {
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
     m_evalCount = 0;
     m_searchSession.begin();
+    if (publish) publish();
 
     ChessBoard *board = getBoard();
     board->calcState(m_searchWorkspace.refurbish());
@@ -93,6 +94,7 @@ void Game::search() {
             }
 
             m_bestMoveAndValue = m_arrBestMoves[0];
+            if (publish) publish();
             if (m_bestMoveAndValue.value == ChessBoard::VALUATION_MATE) {
                 for (int i = 0; i < MAX_DEPTH; i++) {
                     int moveAt = getBestMoveAt(i);
