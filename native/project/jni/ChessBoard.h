@@ -244,10 +244,6 @@ class ChessBoard {
     static BITBOARD HASH_OOO[2];
     static BITBOARD HASH_TURN;
 
-    // default starting column positions for the rooks - these are changed for random Fischer chess.
-    static int COL_AROOK;
-    static int COL_HROOK;
-
     // trailing zeros precalculated on 8bit numbers
     static const char TRAILING_ZEROS_8_BITS[256];
     // filled by instantiation of a Game object
@@ -446,6 +442,9 @@ class ChessBoard {
     BITBOARD m_hashKey;
     // for each turn an int that holds bitmask of move of "short rook", king and "long rook".
     int m_castlings[2];
+    // Original rook columns used for castling, indexed by colour.
+    int m_queenSideRookCol[2];
+    int m_kingSideRookCol[2];
 
     // the array of possible moves
     int m_arrMoves[MAX_MOVES];

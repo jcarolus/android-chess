@@ -302,9 +302,9 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
 
     // administration for castling
     if (pieceFrom == ROOK) {
-        if (COL[from] == ChessBoard::COL_AROOK) {
+        if (COL[from] == m_queenSideRookCol[m_turn]) {
             ret->m_castlings[m_turn] = m_castlings[m_turn] | MASK_AROOK;
-        } else if (COL[from] == ChessBoard::COL_HROOK) {
+        } else if (COL[from] == m_kingSideRookCol[m_turn]) {
             ret->m_castlings[m_turn] = m_castlings[m_turn] | MASK_HROOK;
         }
     }
@@ -398,10 +398,10 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
         ret->m_castlings[m_turn] = m_castlings[m_turn] | MASK_CASTLED | MASK_KING;
         if (m_turn == WHITE) {
             int rookFrom = h1;
-            if (ChessBoard::COL_HROOK != 7) {  // random Fisher castling
+            if (m_kingSideRookCol[m_turn] != 7) {  // random Fisher castling
                 rookFrom = from + 1;
                 while (rookFrom <= h1) {
-                    if (COL[rookFrom] == ChessBoard::COL_HROOK) {
+                    if (COL[rookFrom] == m_kingSideRookCol[m_turn]) {
                         break;
                     }
                     rookFrom++;
@@ -430,10 +430,10 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
             ret->m_hashKey ^= HASH_OO[WHITE];
         } else {
             int rookFrom = h8;
-            if (ChessBoard::COL_HROOK != 7) {  // random Fisher castling
+            if (m_kingSideRookCol[m_turn] != 7) {  // random Fisher castling
                 rookFrom = from + 1;
                 while (rookFrom <= h8) {
-                    if (COL[rookFrom] == ChessBoard::COL_HROOK) {
+                    if (COL[rookFrom] == m_kingSideRookCol[m_turn]) {
                         break;
                     }
                     rookFrom++;
@@ -466,10 +466,10 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
         ret->m_castlings[m_turn] = m_castlings[m_turn] | MASK_CASTLED | MASK_KING;
         if (m_turn == WHITE) {
             int rookFrom = a1;
-            if (ChessBoard::COL_AROOK != 0) {  // random Fisher castling
+            if (m_queenSideRookCol[m_turn] != 0) {  // random Fisher castling
                 rookFrom = from - 1;
                 while (rookFrom >= a1) {
-                    if (COL[rookFrom] == ChessBoard::COL_AROOK) {
+                    if (COL[rookFrom] == m_queenSideRookCol[m_turn]) {
                         break;
                     }
                     rookFrom--;
@@ -498,10 +498,10 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
             ret->m_hashKey ^= HASH_OOO[WHITE];
         } else {
             int rookFrom = a8;
-            if (ChessBoard::COL_AROOK != 0) {  // random Fisher castling
+            if (m_queenSideRookCol[m_turn] != 0) {  // random Fisher castling
                 rookFrom = from - 1;
                 while (rookFrom >= a8) {
-                    if (COL[rookFrom] == ChessBoard::COL_AROOK) {
+                    if (COL[rookFrom] == m_queenSideRookCol[m_turn]) {
                         break;
                     }
                     rookFrom--;
@@ -838,7 +838,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
     if (m_turn == WHITE) {
         if (hasOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
-            if (pos == e1 && ChessBoard::COL_HROOK == 7) {
+            if (pos == e1 && m_kingSideRookCol[m_turn] == 7) {
                 if (!isSquareAttacked(m_turn, f1) && !isSquareAttacked(m_turn, g1) && isPosFree(f1) && isPosFree(g1) &&
                     (m_bitbPieces[WHITE][ROOK] & BITS[h1]) != 0) {
                     addKingMove(Move_makeMoveOO(pos, g1));
@@ -852,7 +852,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
                 if (posRook <= h1) {  // the rook is to the right of the king
                     // check if we found the rook and if it's on its original rank
-                    if (COL[posRook] == ChessBoard::COL_HROOK && (m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
+                    if (COL[posRook] == m_kingSideRookCol[m_turn] && (m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
                         // can we castle
                         if (isPosFree(f1) && isPosFree(g1) ||  // both squares free
                             posRook == f1 && isPosFree(g1) ||  // rook allready on f1, g1 free
@@ -869,7 +869,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
         }
         if (hasOOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
-            if (pos == e1 && ChessBoard::COL_AROOK == 0) {
+            if (pos == e1 && m_queenSideRookCol[m_turn] == 0) {
                 if (!isSquareAttacked(m_turn, d1) && !isSquareAttacked(m_turn, c1) && isPosFree(d1) && isPosFree(c1) &&
                     isPosFree(b1) && (m_bitbPieces[WHITE][ROOK] & BITS[a1]) != 0) {
                     addKingMove(Move_makeMoveOOO(pos, c1));
@@ -883,7 +883,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
                 if (posRook >= a1) {
                     // check if we found the rook
-                    if (COL[posRook] == ChessBoard::COL_AROOK && (m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
+                    if (COL[posRook] == m_queenSideRookCol[m_turn] && (m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
                         // can we castle
                         if (isPosFree(d1) && isPosFree(c1) ||  // d1 and c1 free
                             posRook == d1 && isPosFree(c1) ||  // rook allready on d1, c1 free
@@ -901,12 +901,12 @@ void ChessBoard::genExtraKingMoves(const int pos) {
     } else {
         if (hasOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
-            if (pos == e8 && ChessBoard::COL_HROOK == 7) {
+            if (pos == e8 && m_kingSideRookCol[m_turn] == 7) {
                 if (!isSquareAttacked(m_turn, f8) && !isSquareAttacked(m_turn, g8) && isPosFree(f8) && isPosFree(g8) &&
                     (m_bitbPieces[BLACK][ROOK] & BITS[h8]) != 0) {
                     addKingMove(Move_makeMoveOO(pos, g8));
                 }
-            } else if (ChessBoard::COL_HROOK != 5)  // random Fischer chess
+            } else if (m_kingSideRookCol[m_turn] != 5)  // random Fischer chess
             {
                 // start looking from the king to the rook
                 int posRook = pos + 1;
@@ -915,7 +915,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
                 if (posRook <= h8) {
                     // check if we found the rook
-                    if (COL[posRook] == ChessBoard::COL_HROOK && (m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
+                    if (COL[posRook] == m_kingSideRookCol[m_turn] && (m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
                         // can we castle
                         if (isPosFree(f8) && isPosFree(g8) || posRook == f8 && isPosFree(g8) ||
                             posRook == g8 && pos == f8 || posRook == g8 && isPosFree(f8) ||  // rook in place of king
@@ -928,7 +928,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
         }
         if (hasOOO(m_turn) && !isSquareAttacked(m_turn, pos)) {
             // default starting position of rook and king, default chess rules apply
-            if (pos == e8 && ChessBoard::COL_AROOK == 0) {
+            if (pos == e8 && m_queenSideRookCol[m_turn] == 0) {
                 if (!isSquareAttacked(m_turn, d8) && !isSquareAttacked(m_turn, c8) && isPosFree(d8) && isPosFree(c8) &&
                     isPosFree(b8) && (m_bitbPieces[BLACK][ROOK] & BITS[a8]) != 0) {
                     addKingMove(Move_makeMoveOOO(pos, c8));
@@ -942,7 +942,7 @@ void ChessBoard::genExtraKingMoves(const int pos) {
                 }
                 if (posRook >= a8) {
                     // check if we found the rook
-                    if (COL[posRook] == ChessBoard::COL_AROOK && (m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
+                    if (COL[posRook] == m_queenSideRookCol[m_turn] && (m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
                         // can we castle
                         if (isPosFree(d8) && isPosFree(c8) || posRook == d8 && isPosFree(c8) ||
                             posRook == c8 && pos == d8 || pos == c8 && isPosFree(d8) || pos == d8 && isPosFree(c8) ||
@@ -1151,8 +1151,8 @@ void ChessBoard::reset() {
         m_bitbPieces[WHITE][i] = 0L;
     }
 
-    // COL_AROOK = 0;
-    // COL_HROOK = 7;
+    m_queenSideRookCol[BLACK] = m_queenSideRookCol[WHITE] = 0;
+    m_kingSideRookCol[BLACK] = m_kingSideRookCol[WHITE] = 7;
 }
 
 // after pieces have been added, commit the board; and do necassary calc
@@ -1304,8 +1304,8 @@ int ChessBoard::getIndex(const int col, const int row) {
 void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, boolean bccs, int ep, int r50) {
     m_ep = ep;
     m_50RuleCount = r50;
-    COL_AROOK = 0;
-    COL_HROOK = 7;
+    m_queenSideRookCol[BLACK] = m_queenSideRookCol[WHITE] = 0;
+    m_kingSideRookCol[BLACK] = m_kingSideRookCol[WHITE] = 7;
 
     m_castlings[BLACK] = 0;
     m_castlings[WHITE] = 0;
@@ -1315,7 +1315,7 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
         int posRook = m_kingPositions[WHITE] - 1;
         while (posRook >= a1) {
             if ((m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
-                COL_AROOK = COL[posRook];
+                m_queenSideRookCol[WHITE] = COL[posRook];
                 hasARook = true;
             }
             posRook--;
@@ -1331,7 +1331,7 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
         int posRook = m_kingPositions[WHITE] + 1;
         while (posRook <= h1) {
             if ((m_bitbPieces[WHITE][ROOK] & BITS[posRook]) != 0) {
-                COL_HROOK = COL[posRook];
+                m_kingSideRookCol[WHITE] = COL[posRook];
                 hasHRook = true;
             }
             posRook++;
@@ -1352,7 +1352,7 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
         int posRook = m_kingPositions[BLACK] - 1;
         while (posRook >= a8) {
             if ((m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
-                COL_AROOK = COL[posRook];
+                m_queenSideRookCol[BLACK] = COL[posRook];
                 hasARook = true;
             }
             posRook--;
@@ -1368,7 +1368,7 @@ void ChessBoard::setCastlingsEPAnd50(boolean wccl, boolean wccs, boolean bccl, b
         int posRook = m_kingPositions[BLACK] + 1;
         while (posRook <= h8) {
             if ((m_bitbPieces[BLACK][ROOK] & BITS[posRook]) != 0) {
-                COL_HROOK = COL[posRook];
+                m_kingSideRookCol[BLACK] = COL[posRook];
                 hasHRook = true;
             }
             posRook++;
@@ -2261,8 +2261,6 @@ int ChessBoard::bitCount(const BITBOARD bb) {
 
 int ChessBoard::DISTANCE[64][64];
 int ChessBoard::HOOK_DISTANCE[64][64];
-int ChessBoard::COL_AROOK = 0;
-int ChessBoard::COL_HROOK = 7;
 BITBOARD ChessBoard::HASH_KEYS[773];
 BITBOARD ChessBoard::RANK_MOVES[64][256];
 BITBOARD ChessBoard::DIAG_45_MOVES[64][256];
