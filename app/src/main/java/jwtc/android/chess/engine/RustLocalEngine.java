@@ -3,56 +3,62 @@ package jwtc.android.chess.engine;
 import android.util.Log;
 import java.util.ArrayList;
 import jwtc.android.chess.services.GameApi;
+import jwtc.chess.Pos;
 
-/** Internal Standard backend. Every search owns its replayed Rust position. */
+/** Built-in search backend. Every search owns its replayed Rust position. */
 public final class RustLocalEngine extends EngineApi {
     private final GameApi gameApi;
     private final ArrayList<Runnable> completions = new ArrayList<>();
     private Thread worker;
     private long handle;
     private boolean destroyed;
+    private GameApi.PositionSnapshot deliveryPosition;
 
     public RustLocalEngine(GameApi gameApi) { this.gameApi = gameApi; }
 
     @Override public synchronized void play() {
-        if (destroyed || worker != null || gameApi.isEnded()) return;
+        if (destroyed || worker != null || gameApi.isEnded() || gameApi.hasPendingDuckMove()) return;
         start(gameApi.getPositionSnapshot(gameApi.getCurrentNode()), SearchPurpose.PLAY, ply, msecs);
     }
     @Override public boolean supportsAnalysis() { return true; }
     @Override public synchronized void analyzeCurrentPosition(int millis) {
-        analyze(gameApi.getPositionSnapshot(gameApi.getCurrentNode()), millis);
+        if (!gameApi.hasPendingDuckMove()) analyze(gameApi.getPositionSnapshot(gameApi.getCurrentNode()), millis);
     }
     @Override public synchronized void analyze(GameApi.PositionSnapshot position, int millis) {
+        if (gameApi.hasPendingDuckMove()) return;
         if (position == null) throw new IllegalArgumentException("Missing position");
         validateAnalysisRequest(position.fen, millis);
         if (!destroyed && worker == null) start(position, SearchPurpose.ANALYSIS, 0, millis);
     }
     @Override public synchronized void analyze(String fen, int millis) {
         validateAnalysisRequest(fen, millis);
-        if (destroyed || worker != null) return;
+        if (destroyed || worker != null || gameApi.hasPendingDuckMove()) return;
         long id = beginSearch(SearchPurpose.ANALYSIS);
-        RustSearchRequest.Variant variant = gameApi.isChess960Variant()
-            ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+        RustSearchRequest.Variant variant = variant();
         launch(new RustSearchRequest(id, variant, fen, new String[0],
             0, millis, quiescentSearchOn), null, fen);
     }
     private void start(GameApi.PositionSnapshot position, SearchPurpose purpose, int depth, int millis) {
         long id = beginSearch(purpose);
         try {
-            boolean chess960 = gameApi.isChess960Variant();
-            if (position == null || !gameApi.isStandardVariant() && !chess960) {
-                throw new IllegalArgumentException("Rust currently supports Standard and Chess 960 only");
-            }
-            RustSearchRequest.Variant variant = chess960
-                ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+            if (position == null) throw new IllegalArgumentException("Missing position");
+            RustSearchRequest.Variant variant = variant();
             launch(RustSearchRequest.fromSnapshot(id, position, depth, millis, quiescentSearchOn, variant),
                 position, position.fen);
         } catch (RuntimeException | LinkageError error) {
             reportError(id, error);
         }
     }
+    private RustSearchRequest.Variant variant() {
+        return gameApi.isDuckVariant() ? RustSearchRequest.Variant.DUCK
+            : gameApi.isChess960Variant() ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+    }
+    private boolean positionIsCurrent() {
+        return deliveryPosition != null && gameApi.isCurrentPosition(deliveryPosition);
+    }
     private void launch(RustSearchRequest request, GameApi.PositionSnapshot snapshot, String fen) {
         try {
+            deliveryPosition = gameApi.getPositionSnapshot(gameApi.getCurrentNode());
             handle = RustNative.create();
             if (handle == 0) throw new IllegalStateException("Rust search allocation failed");
             final long ownedHandle = handle;
@@ -91,7 +97,7 @@ public final class RustLocalEngine extends EngineApi {
     private synchronized void finish(long id, GameApi.PositionSnapshot snapshot, String fen,
                                      RustSearchRequest.Variant variant, RustSearchResult result, Throwable error) {
         try {
-            if (!isCurrentSearch(id) || destroyed) return;
+            if (!isCurrentSearch(id) || destroyed || !positionIsCurrent()) return;
             if (error != null || result == null || result.searchId != id) {
                 deliverError(id, error == null ? new IllegalStateException("Invalid Rust result") : error);
                 return;
@@ -107,11 +113,18 @@ public final class RustLocalEngine extends EngineApi {
                     listener.onAnalysisComplete(fen, bestMove, evaluation);
                 }
             } else if (snapshot != null && gameApi.isCurrentPosition(snapshot) && !bestMove.isEmpty()) {
-                GameApi.PositionMove move = snapshot.findMove(bestMove);
+                String[] turn = bestMove.split("@", -1);
+                GameApi.PositionMove move = snapshot.findMove(turn[0]);
+                int duck = -1;
+                if (turn.length == 2) {
+                    try { duck = Pos.fromString(turn[1]); }
+                    catch (Exception invalid) { deliverError(id, invalid); return; }
+                }
+                if (turn.length > 2) { deliverError(id, new IllegalStateException("Invalid Duck turn")); return; }
                 if (move == null) deliverError(id, new IllegalStateException("Rust returned an illegal move"));
                 else for (EngineListener listener : new ArrayList<>(listeners)) {
                     if (!isCurrentSearch(id) || destroyed || !gameApi.isCurrentPosition(snapshot)) break;
-                    listener.OnEngineMove(move.move, -1, result.score);
+                    listener.OnEngineMove(move.move, duck, result.score);
                 }
             }
         } finally {
@@ -124,7 +137,7 @@ public final class RustLocalEngine extends EngineApi {
     }
     private synchronized void deliverProgress(long id, GameApi.PositionSnapshot snapshot, String fen,
                                               RustSearchRequest.Variant variant, RustSearchResult result) {
-        if (!isCurrentSearch(id) || destroyed || result.searchId != id
+        if (!isCurrentSearch(id) || destroyed || !positionIsCurrent() || result.searchId != id
             || purpose == SearchPurpose.PLAY && snapshot != null && !gameApi.isCurrentPosition(snapshot)) return;
         long nps = result.elapsedMicros == 0 ? 0 : result.nodes * 1_000_000 / result.elapsedMicros;
         String pv = resolvePrincipalVariation(result.principalVariation, variant, fen);

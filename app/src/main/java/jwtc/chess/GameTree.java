@@ -158,6 +158,7 @@ public final class GameTree {
             command.append(' ').append(Pos.toString(Move.getFrom(move)))
                 .append(Pos.toString(Move.getTo(move)));
             if (Move.isPromotionMove(move)) command.append("pnbrqk".charAt(Move.getPromotionPiece(move)));
+            if (step.entry.duckMove != -1) command.append('@').append(Pos.toString(step.entry.duckMove));
         }
         return command.toString();
     }

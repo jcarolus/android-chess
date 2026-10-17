@@ -54,6 +54,9 @@ public class GameApi {
         return pendingDuckMove == null && currentNode.getNext() != null;
     }
 
+    public boolean hasPendingDuckMove() { return pendingDuckMove != null; }
+    public boolean isDuckVariant() { return jni.getVariant() == BoardConstants.VARIANT_DUCK; }
+
     public Node getRootNode() { return gameTree.getRoot(); }
     public Node getCurrentNode() { return currentNode; }
     public int getCurrentPly() { return currentNode.getPly() + (pendingDuckMove == null ? 0 : 1); }
@@ -79,8 +82,10 @@ public class GameApi {
         public final String initialFen;
         public final String positionCommand;
         private final int[] history;
+        private final int[] duckHistory;
 
         public int[] getHistory() { return history.clone(); }
+        public int[] getDuckHistory() { return duckHistory.clone(); }
         public final int turn;
         public final int state;
         public final List<PositionMove> moves;
@@ -89,8 +94,10 @@ public class GameApi {
                                  String initialFen, List<Node> path, String positionCommand) {
             this.initialFen = initialFen;
             history = new int[path.size()];
+            duckHistory = new int[path.size()];
             for (int i = 0; i < path.size(); i++) {
                 history[i] = path.get(i).getEntry().move;
+                duckHistory[i] = path.get(i).getEntry().duckMove;
             }
             this.positionCommand = positionCommand;
             this.fen = fen;

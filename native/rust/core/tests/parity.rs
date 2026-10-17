@@ -9,7 +9,11 @@ fn compare(variant: Variant, fen: &str, history: &[&str], depth: u8, quiescence:
             fen,
             &depth.to_string(),
             if quiescence { "1" } else { "0" },
-            if variant == Variant::Chess960 { "1" } else { "0" },
+            match variant {
+                Variant::Standard => "0",
+                Variant::Chess960 => "1",
+                Variant::Duck => "2",
+            },
         ])
         .args(history)
         .output()
@@ -135,7 +139,13 @@ fn native_regression_fixtures() {
     );
     // b1 attacked but not occupied: queenside castling only requires c1/d1
     // (the king's own transit) to be safe, not the whole span to the rook.
-    compare(Variant::Standard, "1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1", &[], 1, false);
+    compare(
+        Variant::Standard,
+        "1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1",
+        &[],
+        1,
+        false,
+    );
 }
 #[test]
 #[ignore = "requires the C++ reference executable; run via scripts/test-rust-engine.sh"]
@@ -164,10 +174,22 @@ fn chess960_castling_fixtures() {
         true,
     );
     // King and rook swap places.
-    compare(Variant::Chess960, "4k3/8/8/8/8/8/8/5KR1 w K - 0 1", &[], 2, true);
+    compare(
+        Variant::Chess960,
+        "4k3/8/8/8/8/8/8/5KR1 w K - 0 1",
+        &[],
+        2,
+        true,
+    );
     // Classical king/rook squares declared Chess 960: still only the king's
     // own transit (c1/d1) needs to be unattacked, not the full span to a1.
-    compare(Variant::Chess960, "1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1", &[], 1, false);
+    compare(
+        Variant::Chess960,
+        "1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1",
+        &[],
+        1,
+        false,
+    );
     // Independent rook columns per colour, both castling in one line.
     compare(
         Variant::Chess960,
@@ -208,4 +230,56 @@ fn deterministic_playouts() {
             true,
         );
     }
+}
+
+#[test]
+#[ignore = "requires the C++ reference executable"]
+fn duck_complete_turn_parity() {
+    for fen in [
+        START,
+        "4k3/P7/8/8/8/8/7p/4K3 w - - 0 1",
+        "4k3/4R3/8/3$4/8/8/8/4K3 w - - 0 1",
+        "r3k2r/8/8/3$4/8/8/8/R3K2R w KQkq - 0 1",
+        "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1",
+    ] {
+        for depth in 1..=2 {
+            for q in [false, true] {
+                compare(Variant::Duck, fen, &[], depth, q);
+            }
+        }
+    }
+    compare(Variant::Duck, START, &["e2e4@d5", "e7e5@e2"], 2, true);
+    compare(
+        Variant::Duck,
+        "4k3/4R3/8/3$4/8/8/8/4K3 w - - 0 1",
+        &["e7e8"],
+        2,
+        true,
+    );
+}
+
+#[test]
+#[ignore = "requires the C++ reference executable"]
+fn duck_deterministic_playout() {
+    let mut p = Position::from_fen(Variant::Duck, START).unwrap();
+    let mut history = Vec::new();
+    let mut seed = 252u64;
+    for _ in 0..16 {
+        let moves = p.legal_moves();
+        if moves.is_empty() {
+            break;
+        }
+        seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+        let m = moves[(seed as usize) % moves.len()].to_string();
+        p.apply(&m).unwrap();
+        history.push(m);
+        compare(
+            Variant::Duck,
+            START,
+            &history.iter().map(String::as_str).collect::<Vec<_>>(),
+            2,
+            true,
+        );
+    }
+    compare(Variant::Duck, START, &[], 3, false);
 }

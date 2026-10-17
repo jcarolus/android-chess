@@ -21,8 +21,8 @@ public class EnginePolicyTest {
     }
 
     @Test
-    public void duckChessAlwaysUsesLocal() {
-        assertEquals(EnginePolicy.Backend.LOCAL, EnginePolicy.forPlay(true, true, true));
+    public void duckChessAlwaysUsesRust() {
+        assertEquals(EnginePolicy.Backend.RUST, EnginePolicy.forPlay(true, true, true));
     }
 
     @Test
@@ -36,12 +36,12 @@ public class EnginePolicyTest {
     }
 
     @Test
-    public void analysisFallsBackToLocalForDuckWithoutOex() {
+    public void analysisFallsBackToLocalForUnsupportedVariantWithoutOex() {
         assertEquals(EnginePolicy.Backend.LOCAL, EnginePolicy.forAnalysis(false, false));
     }
 
     @Test
-    public void analysisPrefersOexEvenForDuck() {
+    public void analysisPrefersOexForUnsupportedRustVariant() {
         assertEquals(EnginePolicy.Backend.OEX, EnginePolicy.forAnalysis(true, false));
     }
 }

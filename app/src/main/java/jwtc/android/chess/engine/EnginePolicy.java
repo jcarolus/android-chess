@@ -12,16 +12,16 @@ public final class EnginePolicy {
 
     /**
      * Play follows the user's choice, but falls back to the Local Engine when no OEX Engine is
-     * installed, and always uses it for Duck chess, which OEX Engines do not support.
+     * installed. Duck uses Rust because OEX Engines do not support it.
      */
     public static Backend forPlay(boolean prefersOex, boolean oexAvailable, boolean duckVariant) {
-        return prefersOex && oexAvailable && !duckVariant ? Backend.OEX : Backend.LOCAL;
+        if (duckVariant) return Backend.RUST;
+        return prefersOex && oexAvailable ? Backend.OEX : Backend.LOCAL;
     }
 
     /**
      * Analysis uses an available OEX Engine unless the built-in Engine was picked or none is
-     * installed. The built-in choice is the Rust Engine for Standard and Chess 960 games; Duck,
-     * which Rust does not yet support, falls back to the Local (C++) Engine.
+     * installed. The built-in choice is Rust for supported variants. Callers exclude OEX for Duck.
      */
     public static Backend forAnalysis(boolean oexAvailable, boolean rustEligibleVariant) {
         if (oexAvailable) return Backend.OEX;

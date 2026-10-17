@@ -11,8 +11,8 @@ pub struct NativeResult {
     elapsed_micros: u64,
     has_evaluation: i32,
     interrupted: i32,
-    best: [u8; 6],
-    pv: [u8; 128],
+    best: [u8; 9],
+    pv: [u8; 160],
     error: [u8; 256],
 }
 #[no_mangle]
@@ -73,8 +73,8 @@ pub unsafe extern "C" fn rust_chess_search(
         elapsed_micros: 0,
         has_evaluation: 0,
         interrupted: 0,
-        best: [0; 6],
-        pv: [0; 128],
+        best: [0; 9],
+        pv: [0; 160],
         error: [0; 256],
     };
     let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {

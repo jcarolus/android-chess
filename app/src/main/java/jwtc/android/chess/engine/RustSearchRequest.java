@@ -37,6 +37,7 @@ public final class RustSearchRequest {
     static RustSearchRequest fromSnapshot(long id, GameApi.PositionSnapshot position,
                                           int depth, int millis, boolean quiescence, Variant variant) {
         int[] packed = position.getHistory();
+        int[] ducks = position.getDuckHistory();
         String[] coordinates = new String[packed.length];
         boolean whiteToMoveFirst = position.initialFen.split("\\s+")[1].equals("w");
         int[] whiteFiles = variant == Variant.CHESS_960 ? chess960Files(position.initialFen, true) : null;
@@ -44,7 +45,7 @@ public final class RustSearchRequest {
         for (int i = 0; i < packed.length; i++) {
             int move = packed[i];
             boolean whiteMoved = i % 2 == 0 == whiteToMoveFirst;
-            coordinates[i] = toRustCoordinate(move, whiteMoved ? whiteFiles : blackFiles);
+            coordinates[i] = toRustCoordinate(move, whiteMoved ? whiteFiles : blackFiles, ducks[i]);
         }
         return new RustSearchRequest(id, variant, position.initialFen,
             coordinates, depth, millis, quiescence);
@@ -55,6 +56,10 @@ public final class RustSearchRequest {
      * castling (see {@link #chess960Files}), unchanged otherwise (including Standard castling,
      * which stays king-to-destination).
      */
+    static String toRustCoordinate(int move, int[] files, int duck) {
+        return toRustCoordinate(move, files) + (duck < 0 ? "" : "@" + Pos.toString(duck));
+    }
+
     static String toRustCoordinate(int move, int[] files) {
         int from = Move.getFrom(move);
         String base = Pos.toString(from) + Pos.toString(Move.getTo(move))

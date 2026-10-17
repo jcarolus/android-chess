@@ -30,9 +30,13 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionSuppressQueued(true);
             sessionAnalysisAndError();
             sessionForAnalysisSelectsRustForStandardHistory();
-            sessionForAnalysisFallsBackToLocalForDuck();
+            sessionForAnalysisUsesRustForDuck();
             sessionForAnalysisUsesRustForChess960Castling();
             sessionPlaysAChess960Game();
+            sessionDuckTurns(false);
+            sessionDuckTurns(true);
+            sessionDuckPendingAndStale();
+            duckPositionIdentity();
             report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors and Analysis backend selection (Standard, Duck, Chess 960) passed\n");
             finish(-1, report);
         } catch (Throwable error) {
@@ -52,11 +56,17 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 START, new String[]{"e2e5"}, 1, 0, true)); }
             catch (IllegalArgumentException expected) { failed = true; }
             check(failed, "Invalid history was accepted");
+            RustSearchResult duck = RustNative.search(handle, new RustSearchRequest(250, RustSearchRequest.Variant.DUCK,
+                START, new String[]{"e2e4@d5", "e7e5"}, 1, 0, true));
+            RustSearchResult completeDuck = RustNative.search(handle, new RustSearchRequest(250, RustSearchRequest.Variant.DUCK,
+                START, new String[]{"e2e4@d5"}, 1, 0, true));
+            check(duck.bestMove.equals(completeDuck.bestMove) && duck.score == completeDuck.score
+                && duck.bestMove.contains("@"), "Pending history not prepared at complete position");
             failed = false;
             try { RustNative.search(handle, new RustSearchRequest(250, RustSearchRequest.Variant.DUCK,
-                START, new String[0], 1, 0, true)); }
+                START, new String[]{"e2e4", "e7e5@d5"}, 1, 0, true)); }
             catch (IllegalArgumentException expected) { failed = true; }
-            check(failed, "Unsupported variant was accepted");
+            check(failed, "Incomplete middle history accepted");
             RustSearchResult chess960 = RustNative.search(handle, new RustSearchRequest(251,
                 RustSearchRequest.Variant.CHESS_960, "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", new String[0], 2, 0, true));
             check(chess960.searchId == 251 && chess960.hasEvaluation && !chess960.bestMove.isEmpty(),
@@ -279,24 +289,30 @@ public final class RustEngineInstrumentation extends Instrumentation {
         await(done, failure, session);
     }
     /** Duck is not yet Rust-eligible and must keep using the Local (C++) Engine. */
-    private void sessionForAnalysisFallsBackToLocalForDuck() throws Exception {
+    private void sessionForAnalysisUsesRustForDuck() throws Exception {
         CountDownLatch done = new CountDownLatch(1);
         AtomicReference<Throwable> failure = new AtomicReference<>();
         EngineSession[] session = new EngineSession[1];
         runOnMainSync(() -> {
             GameApi game = new GameApi();
             game.newGame(BoardConstants.VARIANT_DUCK);
+            check(game.requestMove("e4@d5"), "Duck recorded turn");
+            String original = JNI.getInstance().toFEN();
             check(!game.isStandardVariant(), "Duck game was reported as Standard");
             session[0] = EngineSession.forAnalysis(getContext(), game, new Listener() {
                 @Override public void OnEngineMove(int move, int duck, int score) {
                     failure.set(new AssertionError("Analysis delivered a Play move"));
                 }
                 @Override public void onAnalysisComplete(String fen, String best, EngineEvaluation evaluation) {
-                    done.countDown();
+                    try {
+                        check(best.contains("@"), "Duck analysis omitted placement");
+                        check(JNI.getInstance().toFEN().equals(original), "Analysis mutated Duck board");
+                    } catch (Throwable error) { failure.set(error); }
+                    finally { done.countDown(); }
                 }
                 @Override public void OnEngineError() { failure.set(new AssertionError("Duck analysis failed")); done.countDown(); }
             }, EngineSession.LOCAL_ENGINE_ID);
-            session[0].analyzeCurrentPosition(500);
+            session[0].analyze(game.getPositionSnapshot(game.getRootNode()), 500);
         });
         await(done, failure, session);
     }
@@ -353,6 +369,89 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 @Override public void OnEngineError() { failure.set(new AssertionError("Chess 960 Play search failed")); done.countDown(); }
             });
             session[0].play(SearchLimit.ply(2));
+        });
+        await(done, failure, session);
+    }
+    private void duckPositionIdentity() {
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            game.newGame(BoardConstants.VARIANT_DUCK);
+            check(game.requestMove("e4@d5") && game.requestMove("e5@e2"), "First Duck path");
+            GameApi.PositionSnapshot original = game.getPositionSnapshot(game.getCurrentNode());
+            game.undoMove(); game.undoMove();
+            check(game.requestMove("e4@a5") && game.requestMove("e5@e2"), "Second Duck path");
+            check(original.fen.equals(JNI.getInstance().toFEN()), "Expected equal final FENs");
+            check(!game.isCurrentPosition(original), "Duck history identity lost");
+        });
+    }
+    private void sessionDuckTurns(boolean terminal) throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        EngineSession[] session = new EngineSession[1];
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            game.newGame(BoardConstants.VARIANT_DUCK);
+            if (terminal) check(game.initFEN("4k3/4R3/8/3$4/8/8/8/4K3 w - - 0 1", true), "Duck terminal setup");
+            session[0] = EngineSession.forPlay(getContext(), game, new Listener() {
+                @Override public void OnEngineMove(int move, int duck, int score) {
+                    try {
+                        check(terminal ? duck == -1 : duck >= 0, "Duck result placement");
+                        check(game.applyMove(move, duck), "Duck result application");
+                        check(!game.hasPendingDuckMove(), "Engine left incomplete turn");
+                        GameApi.PositionSnapshot snapshot = game.getPositionSnapshot(game.getCurrentNode());
+                        RustSearchRequest request = RustSearchRequest.fromSnapshot(252, snapshot, 1, 0, false,
+                            RustSearchRequest.Variant.DUCK);
+                        check(request.getHistory().length == 1, "Duck history length");
+                        check(terminal ? request.getHistory()[0].equals("e7e8")
+                            : request.getHistory()[0].contains("@"), "Duck history coordinate");
+                        if (terminal) check(game.isEnded(), "King capture did not end game");
+                        else {
+                            String fen = snapshot.fen;
+                            game.undoMove();
+                            game.nextMove();
+                            check(JNI.getInstance().toFEN().equals(fen), "History lost duck placement");
+                        }
+                    } catch (Throwable error) { failure.set(error); }
+                    finally { done.countDown(); }
+                }
+                @Override public void OnEngineError() { failure.set(new AssertionError("Duck Play failed")); done.countDown(); }
+            });
+            session[0].selectForPlay(false, EngineSession.LOCAL_ENGINE_ID, true, false);
+            session[0].play(SearchLimit.ply(2));
+        });
+        await(done, failure, session);
+    }
+    private void sessionDuckPendingAndStale() throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        EngineSession[] session = new EngineSession[1];
+        AtomicInteger callbacks = new AtomicInteger();
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            game.newGame(BoardConstants.VARIANT_DUCK);
+            GameApi.PositionSnapshot root = game.getPositionSnapshot(game.getCurrentNode());
+            session[0] = EngineSession.forAnalysis(getContext(), game, new Listener() {
+                @Override public void OnEngineStarted() { callbacks.incrementAndGet(); }
+                @Override public void OnEngineMove(int move, int duck, int score) { failure.set(new AssertionError("Stale Duck move")); }
+                @Override public void onAnalysisComplete(String fen, String best, EngineEvaluation value) { failure.set(new AssertionError("Stale Duck analysis")); }
+                @Override public void OnEngineError() { failure.set(new AssertionError("Pending Duck error")); }
+            }, EngineSession.LOCAL_ENGINE_ID);
+            check(game.requestMove(52, 36), "Interactive piece move");
+            String pending = JNI.getInstance().toFEN();
+            session[0].play(SearchLimit.ply(1));
+            session[0].analyzeCurrentPosition(100);
+            session[0].analyze(root, 100);
+            session[0].analyze(START, 100);
+            check(session[0].isReady() && JNI.getInstance().toFEN().equals(pending), "Pending request changed board or dispatched");
+            new Handler(Looper.getMainLooper()).post(() -> {
+                try {
+                    check(callbacks.get() == 0, "Pending search dispatched");
+                    check(game.requestDuckMove(27), "Complete interactive placement");
+                    session[0].analyzeCurrentPosition(100);
+                    game.undoMove();
+                    session[0].stop(done::countDown);
+                } catch (Throwable error) { failure.set(error); done.countDown(); }
+            });
         });
         await(done, failure, session);
     }

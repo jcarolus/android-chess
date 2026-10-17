@@ -39,15 +39,29 @@ int main(int argc, char** argv) {
     Game game;
     if (!game.newGameFromFEN(argv[1])) return 3;
     bool chess960 = std::stoi(argv[4]) == 1;
+    bool duck = std::stoi(argv[4]) == 2;
+    if (duck) {
+        game.getBoard()->setVariant(ChessBoard::VARIANT_DUCK);
+        ChessBoard scratch;
+        game.getBoard()->calcState(&scratch);
+    }
     for (int i = 5; i < argc; ++i) {
         std::string text = argv[i];
+        auto at = text.find('@');
+        std::string piece = text.substr(0, at);
         bool applied = false;
         ChessBoard* board = game.getBoard();
         for (int j = 0; j < board->getNumMoves(); ++j) {
             int move = board->getMoveAt(j);
-            if (coordinate(move, board, chess960) == text) { applied = game.move(move); break; }
+            if (coordinate(move, board, chess960) == piece) { applied = game.move(move); break; }
         }
         if (!applied) return 4;
+        if (at != std::string::npos) {
+            int square = ('8' - text[at + 2]) * 8 + text[at + 1] - 'a';
+            if (!game.getBoard()->requestDuckMove(square)) return 5;
+            ChessBoard scratch;
+            game.getBoard()->calcState(&scratch);
+        } else if (duck && !game.getBoard()->isEnded()) return 6;
     }
     ChessBoard* board = game.getBoard();
     char fen[256];
@@ -57,11 +71,29 @@ int main(int argc, char** argv) {
         int move = board->getMoveAt(i);
         ChessBoard child;
         board->makeMove(move, &child);
-        child.toFEN(fen);
-        std::cout << "MOVE\t" << coordinate(move, board, chess960) << '\t' << fen << '\t' << child.boardValue() << '\n';
+        std::string piece = coordinate(move, board, chess960);
+        if (duck && !child.isEnded()) {
+            for (int square = 0; square < 64; ++square) {
+                if (!child.isPosFree(square) || square == board->getDuckPos()) continue;
+                ChessBoard placed;
+                child.duplicate(&placed);
+                if (!placed.requestDuckMove(square)) continue;
+                char name[4];
+                Pos::toString(square, name);
+                placed.toFEN(fen);
+                std::cout << "MOVE\t" << piece << '@' << name << '\t' << fen << '\t' << placed.boardValue() << '\n';
+            }
+        } else {
+            child.toFEN(fen);
+            std::cout << "MOVE\t" << piece << '\t' << fen << '\t' << child.boardValue() << '\n';
+        }
     }
     game.setSearchLimit(std::stoi(argv[2]));
     game.setQuiescentOn(std::stoi(argv[3]));
     game.search();
-    std::cout << "RESULT\t" << coordinate(game.getBestMove(), board, chess960) << '\t' << game.getBestValue() << '\t' << game.completedDepth() << '\t' << game.getEvalCount() << '\n';
+    std::string best = coordinate(game.getBestMove(), board, chess960);
+    if (duck && game.getBestDuckMove() >= 0) {
+        char name[4]; Pos::toString(game.getBestDuckMove(), name); best += std::string("@") + name;
+    }
+    std::cout << "RESULT\t" << best << '\t' << game.getBestValue() << '\t' << game.completedDepth() << '\t' << game.getEvalCount() << '\n';
 }

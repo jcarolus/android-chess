@@ -21,14 +21,21 @@ pub(crate) fn invalid(s: &str) -> Error {
 pub struct CoordinateMove(String);
 impl CoordinateMove {
     pub fn parse(s: &str) -> Result<Self, Error> {
-        let b = s.as_bytes();
-        if !s.is_ascii() || !(b.len() == 4 || b.len() == 5) || square(&s[..2.min(s.len())]).is_err()
-        {
-            return Err(invalid("Invalid Standard coordinate move"));
+        let (piece, duck) = match s.split_once('@') {
+            Some((piece, duck)) => (piece, Some(duck)),
+            None => (s, None),
+        };
+        let b = piece.as_bytes();
+        if !piece.is_ascii() || !(b.len() == 4 || b.len() == 5) {
+            return Err(invalid("Invalid coordinate move"));
         }
-        if !s.is_ascii() || square(&s[2..4]).is_err() || (b.len() == 5 && !b"qrbn".contains(&b[4]))
-        {
-            return Err(invalid("Invalid Standard coordinate move"));
+        square(&piece[..2])?;
+        square(&piece[2..4])?;
+        if b.len() == 5 && !b"qrbn".contains(&b[4]) {
+            return Err(invalid("Invalid promotion"));
+        }
+        if let Some(duck) = duck {
+            square(duck)?;
         }
         Ok(Self(s.into()))
     }
@@ -123,6 +130,7 @@ pub(crate) struct Move {
     pub castle: bool,
     pub double: bool,
     pub check: bool,
+    pub duck: Option<usize>,
 }
 impl Move {
     fn new(from: usize, to: usize) -> Self {
@@ -135,15 +143,19 @@ impl Move {
             castle: false,
             double: false,
             check: false,
+            duck: None,
         }
     }
     pub fn coordinate(self) -> CoordinateMove {
         CoordinateMove(format!(
-            "{}{}{}",
+            "{}{}{}{}",
             name(self.from),
             name(self.to),
             self.promotion
                 .map(|p| (b"pnbrqk"[p] as char).to_string())
+                .unwrap_or_default(),
+            self.duck
+                .map(|s| format!("@{}", name(s)))
                 .unwrap_or_default()
         ))
     }
@@ -162,7 +174,8 @@ pub struct Position {
     pub(crate) castling: [u8; 2],
     /// Original rook file per colour, `[queenside, kingside]`; fixed for the game.
     pub(crate) rook_file: [[usize; 2]; 2],
-    variant: Variant,
+    pub(crate) variant: Variant,
+    pub(crate) duck: Option<usize>,
     ep: Option<usize>,
     halfmove: u32,
     pub(crate) ply: usize,
@@ -172,9 +185,6 @@ pub struct Position {
 }
 impl Position {
     pub fn from_fen(variant: Variant, fen: &str) -> Result<Self, Error> {
-        if variant == Variant::Duck {
-            return Err(invalid("Only Standard and Chess 960 are supported"));
-        }
         let fields: Vec<_> = fen.split_whitespace().collect();
         if fields.len() != 6 || !fen.is_ascii() {
             return Err(invalid("Expected six-field Standard FEN"));
@@ -185,6 +195,7 @@ impl Position {
             castling: [0; 2],
             rook_file: [[0, 7], [0, 7]],
             variant,
+            duck: None,
             ep: None,
             halfmove: 0,
             ply: 0,
@@ -201,6 +212,9 @@ impl Position {
             for b in rank.bytes() {
                 if (b'1'..=b'8').contains(&b) {
                     c += (b - b'0') as usize;
+                } else if b == b'$' && variant == Variant::Duck && p.duck.is_none() && c < 8 {
+                    p.duck = Some(r * 8 + c);
+                    c += 1;
                 } else {
                     let piece = b"pnbrqk"
                         .iter()
@@ -231,18 +245,22 @@ impl Position {
             return Err(invalid("Invalid castling rights"));
         }
         for t in 0..2 {
-            if p.pieces[t][KING].count_ones() != 1
+            if (p.pieces[t][KING].count_ones() != 1
+                && !(variant == Variant::Duck && p.pieces[t][KING] == 0))
                 || p.pieces[t][PAWN] & 0xff000000000000ff != 0
                 || p.pieces[t][PAWN].count_ones() > 8
             {
                 return Err(invalid("Invalid kings or pawns"));
             }
         }
+        if p.pieces.iter().all(|p| p[KING] == 0) {
+            return Err(invalid("Both kings are missing"));
+        }
         for t in 0..2 {
             let long = fields[2].contains(if t == 1 { 'Q' } else { 'q' });
             let short = fields[2].contains(if t == 1 { 'K' } else { 'k' });
             let base = if t == 1 { 56 } else { 0 };
-            if variant == Variant::Standard {
+            if variant != Variant::Chess960 {
                 if (long || short) && p.pieces[t][KING] != bit(base + 4) {
                     return Err(invalid("Non-Standard castling king"));
                 }
@@ -291,7 +309,7 @@ impl Position {
                 return Err(invalid("Invalid en-passant rank"));
             }
             let pawn = if p.turn == 1 { ep + 8 } else { ep - 8 };
-            if p.occupied() & bit(ep) != 0 || p.pieces[p.turn ^ 1][PAWN] & bit(pawn) == 0 {
+            if (p.own(0) | p.own(1)) & bit(ep) != 0 || p.pieces[p.turn ^ 1][PAWN] & bit(pawn) == 0 {
                 return Err(invalid("Invalid en-passant square"));
             }
         }
@@ -304,7 +322,7 @@ impl Position {
         if full == 0 || p.halfmove > 1_000_000 {
             return Err(invalid("Invalid move counters"));
         }
-        if p.attacked(p.turn ^ 1, p.king(p.turn ^ 1)) {
+        if variant != Variant::Duck && p.attacked(p.turn ^ 1, p.king(p.turn ^ 1)) {
             return Err(invalid("Side not to move is in check"));
         }
         p.last_check = p.in_check();
@@ -320,7 +338,7 @@ impl Position {
         self.pieces[t].iter().fold(0, |a, b| a | b)
     }
     pub(crate) fn occupied(&self) -> u64 {
-        self.own(0) | self.own(1)
+        self.own(0) | self.own(1) | self.duck.map(bit).unwrap_or(0)
     }
     pub(crate) fn king(&self, t: usize) -> usize {
         self.pieces[t][KING].trailing_zeros() as usize
@@ -381,15 +399,24 @@ impl Position {
         result
     }
     pub(crate) fn mobility(&self, p: usize, t: usize, s: usize) -> u64 {
-        self.range(p, t, s) & !self.own(t)
+        self.range(p, t, s)
+            & !(self.own(t)
+                | if t == self.turn {
+                    self.duck.map(bit).unwrap_or(0)
+                } else {
+                    0
+                })
     }
     pub(crate) fn attacked(&self, t: usize, s: usize) -> bool {
+        if s >= 64 {
+            return false;
+        }
         (0..6).any(|p| {
             squares(self.pieces[t ^ 1][p]).any(|from| self.range(p, t ^ 1, from) & bit(s) != 0)
         })
     }
     pub fn in_check(&self) -> bool {
-        self.attacked(self.turn, self.king(self.turn))
+        self.variant != Variant::Duck && self.attacked(self.turn, self.king(self.turn))
     }
     pub(crate) fn pseudo_moves(&self) -> Vec<Move> {
         let mut moves = Vec::new();
@@ -439,6 +466,7 @@ impl Position {
                             m.double = group == 1;
                         } else {
                             if (from % 8).abs_diff(to % 8) != 1
+                                || self.duck == Some(to)
                                 || (self.own(t ^ 1) & bit(to) == 0 && self.ep != Some(to))
                             {
                                 continue;
@@ -462,7 +490,8 @@ impl Position {
             } else {
                 for from in squares(self.pieces[t][piece]) {
                     for to in squares(self.mobility(piece, t, from)) {
-                        if self.pieces[t ^ 1][KING] & bit(to) != 0 {
+                        if self.variant != Variant::Duck && self.pieces[t ^ 1][KING] & bit(to) != 0
+                        {
                             break;
                         }
                         let mut m = Move::new(from, to);
@@ -470,7 +499,7 @@ impl Position {
                         moves.push(m);
                     }
                 }
-                if piece == KING && !self.in_check() {
+                if piece == KING && !self.attacked(t, self.king(t)) {
                     let base = if t == 1 { 56 } else { 0 };
                     let king = self.king(t);
                     for (mask, dir, bound, short) in
@@ -491,8 +520,11 @@ impl Position {
                             // only need to be vacant (matches the native reference engine's
                             // dedicated fast path, which the general scan below does not
                             // reproduce exactly).
-                            let transit: &[usize] =
-                                if short { &[base + 5, base + 6] } else { &[base + 2, base + 3] };
+                            let transit: &[usize] = if short {
+                                &[base + 5, base + 6]
+                            } else {
+                                &[base + 2, base + 3]
+                            };
                             let clear: &[usize] = if short {
                                 &[base + 5, base + 6]
                             } else {
@@ -552,6 +584,9 @@ impl Position {
     }
     pub(crate) fn legal_internal(&self) -> Vec<Move> {
         let mut moves = self.pseudo_moves();
+        if self.variant == Variant::Duck {
+            return moves;
+        }
         let mut i = 0;
         while i < moves.len() {
             let next = self.make(moves[i]);
@@ -565,22 +600,80 @@ impl Position {
         moves
     }
     pub fn legal_moves(&self) -> Vec<CoordinateMove> {
+        if self.variant == Variant::Duck {
+            if self.game_state() != GameState::Play {
+                return vec![];
+            }
+            let mut turns = Vec::new();
+            for m in self.legal_internal() {
+                let next = self.make(m);
+                if next.game_state() != GameState::Play {
+                    turns.push(self.external(self.turn, m));
+                } else {
+                    for duck in 0..64 {
+                        if next.occupied() & bit(duck) == 0 {
+                            let mut turn = m;
+                            turn.duck = Some(duck);
+                            turns.push(self.external(self.turn, turn));
+                        }
+                    }
+                }
+            }
+            return turns;
+        }
         self.legal_internal()
             .into_iter()
             .map(|m| self.external(self.turn, m))
             .collect()
     }
     pub fn apply(&mut self, coordinate: &str) -> Result<(), Error> {
+        self.apply_input(coordinate, false).map(|_| ())
+    }
+    /// A pending trailing piece move is validated but leaves this owned position unchanged.
+    pub(crate) fn apply_input(
+        &mut self,
+        coordinate: &str,
+        omit_pending: bool,
+    ) -> Result<bool, Error> {
         let coordinate = CoordinateMove::parse(coordinate)?;
+        if self.variant == Variant::Duck && self.game_state() != GameState::Play {
+            return Err(invalid("Game has ended"));
+        }
+        let (piece, duck) = coordinate
+            .as_str()
+            .split_once('@')
+            .map(|(p, d)| (p, Some(d)))
+            .unwrap_or((coordinate.as_str(), None));
+        if duck.is_some() && self.variant != Variant::Duck {
+            return Err(invalid("Duck placement in another variant"));
+        }
         let m = self
             .legal_internal()
             .into_iter()
-            .find(|m| self.external(self.turn, *m) == coordinate)
+            .find(|m| self.external(self.turn, *m).as_str() == piece)
             .ok_or_else(|| invalid("Illegal move"))?;
         let mut next = self.make(m);
+        if self.variant == Variant::Duck {
+            match duck {
+                Some(d) => {
+                    let d = square(d)?;
+                    if next.game_state() != GameState::Play || next.occupied() & bit(d) != 0 {
+                        return Err(invalid("Illegal duck placement"));
+                    }
+                    next.duck = Some(d);
+                }
+                None if next.game_state() == GameState::Play => {
+                    if omit_pending {
+                        return Ok(false);
+                    }
+                    return Err(invalid("Missing duck placement"));
+                }
+                None => {}
+            }
+        }
         next.history.push(coordinate.0);
         *self = next;
-        Ok(())
+        Ok(true)
     }
     /// The rook's current square for a castle move, found by its tracked file
     /// (scanning outward from the king's pre-move square, as the native
@@ -695,6 +788,9 @@ impl Position {
         n.ply += 1;
         n.turn ^= 1;
         n.last_check = m.check;
+        if m.duck.is_some() {
+            n.duck = m.duck;
+        }
         n
     }
     pub(crate) fn drawn_in_search(&self) -> bool {
@@ -707,6 +803,9 @@ impl Position {
                 >= 2
     }
     pub fn game_state(&self) -> GameState {
+        if self.variant == Variant::Duck && self.pieces.iter().any(|p| p[KING] == 0) {
+            return GameState::Mate;
+        }
         if self.halfmove == 100 {
             return GameState::DrawFiftyMove;
         }
@@ -730,6 +829,9 @@ impl Position {
         {
             return GameState::DrawMaterial;
         }
+        if self.variant == Variant::Duck {
+            return GameState::Play;
+        }
         let check = self.in_check();
         if self.legal_internal().is_empty() {
             if check {
@@ -750,7 +852,13 @@ impl Position {
             for c in 0..8 {
                 let sq = r * 8 + c;
                 let piece = (0..2).find_map(|t| self.piece(t, sq).map(|p| (t, p)));
-                if let Some((t, p)) = piece {
+                if self.duck == Some(sq) {
+                    if empty > 0 {
+                        s.push(char::from(b'0' + empty));
+                        empty = 0;
+                    }
+                    s.push('$');
+                } else if let Some((t, p)) = piece {
                     if empty > 0 {
                         s.push(char::from(b'0' + empty));
                         empty = 0;

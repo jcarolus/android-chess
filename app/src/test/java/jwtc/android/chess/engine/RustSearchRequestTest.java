@@ -9,6 +9,13 @@ import org.junit.Test;
 
 public class RustSearchRequestTest {
     @Test
+    public void duckTurnsCarryPlacementAndTerminalMovesDoNotInventOne() throws Exception {
+        int move = Move.makeMove(Pos.fromString("e2"), Pos.fromString("e4"));
+        assertEquals("e2e4@d5", RustSearchRequest.toRustCoordinate(move, null, Pos.fromString("d5")));
+        assertEquals("e2e4", RustSearchRequest.toRustCoordinate(move, null, -1));
+    }
+
+    @Test
     public void chess960FilesLocatesTheOutermostRookOnEachSide() {
         int[] files = RustSearchRequest.chess960Files("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true);
         assertArrayEquals(new int[] {4, 1, 6}, files);

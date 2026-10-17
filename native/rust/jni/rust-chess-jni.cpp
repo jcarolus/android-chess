@@ -8,7 +8,7 @@ struct NativeResult {
     int32_t score, depth;
     uint64_t nodes, elapsedMicros;
     int32_t hasEvaluation, interrupted;
-    char best[6], pv[128], error[256];
+    char best[9], pv[160], error[256];
 };
 extern "C" {
 void* rust_chess_create();

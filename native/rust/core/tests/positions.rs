@@ -71,7 +71,6 @@ fn invalid_requests_do_not_change_position() {
     ] {
         assert!(Position::from_fen(Variant::Standard, fen).is_err());
     }
-    assert!(Position::from_fen(Variant::Duck, START).is_err());
 }
 
 #[test]

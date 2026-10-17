@@ -221,6 +221,15 @@ public class GameTreeTest {
     }
 
     @Test
+    public void enginePositionDistinguishesDuckPlacements() throws Exception {
+        int e4 = Move.makeMove(Pos.fromString("e2"), Pos.fromString("e4"));
+        Node d5 = tree.append(tree.getRoot(), new PGNEntry("e4", "", e4, Pos.fromString("d5")), 0, 0, false);
+        Node a5 = tree.append(tree.getRoot(), new PGNEntry("e4", "", e4, Pos.fromString("a5")), 0, 0, false);
+        assertEquals("position fen " + START + " moves e2e4@d5", tree.positionCommand(d5));
+        assertEquals("position fen " + START + " moves e2e4@a5", tree.positionCommand(a5));
+    }
+
+    @Test
     public void enginePositionPreservesCustomStartAndUnderpromotion() throws Exception {
         String fen = "7k/P7/8/8/8/8/8/7K w - - 0 1";
         tree = new GameTree(fen, 0, BoardConstants.WHITE);

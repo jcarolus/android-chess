@@ -23,6 +23,12 @@ impl Position {
     pub fn evaluate(&self) -> i32 {
         let t = self.turn;
         let other = t ^ 1;
+        if self.pieces[t][KING] == 0 {
+            return -100000;
+        }
+        if self.pieces[other][KING] == 0 {
+            return 100000;
+        }
         if self.own(t) == self.pieces[t][KING] {
             return -self.against_lone_king(other);
         }
@@ -131,7 +137,16 @@ impl Position {
                 if s % 8 == previous % 8 {
                     value += 5;
                 }
-                if ((!self.own(t)) | (p[ROOK] & !bit(s))) & self.range(ROOK, t, s) != 0 {
+                if ((!(self.own(t)
+                    | if t == self.turn {
+                        self.duck.map(bit).unwrap_or(0)
+                    } else {
+                        0
+                    }))
+                    | (p[ROOK] & !bit(s)))
+                    & self.range(ROOK, t, s)
+                    != 0
+                {
                     value += 30;
                 }
             } else {

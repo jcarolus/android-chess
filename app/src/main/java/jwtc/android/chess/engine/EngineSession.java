@@ -43,13 +43,13 @@ public final class EngineSession {
     /**
      * Session for Analysis: an available OEX Engine unless the built-in Engine was picked or
      * none is installed (see {@link EnginePolicy#forAnalysis}). The built-in choice is the Rust
-     * Engine for Standard and Chess 960 games, falling back to the Local (C++) Engine for Duck.
+     * Engine for Standard, Chess 960 and Duck games.
      */
     public static EngineSession forAnalysis(Context context, GameApi gameApi, EngineListener listener,
                                             String oexEngineId) {
         EngineSession session = new EngineSession(context, gameApi, listener);
-        boolean oexAvailable = !LOCAL_ENGINE_ID.equals(oexEngineId) && OexEngine.hasAvailableEngines(context);
-        boolean rustEligible = gameApi.isStandardVariant() || gameApi.isChess960Variant();
+        boolean oexAvailable = !gameApi.isDuckVariant() && !LOCAL_ENGINE_ID.equals(oexEngineId) && OexEngine.hasAvailableEngines(context);
+        boolean rustEligible = gameApi.isStandardVariant() || gameApi.isChess960Variant() || gameApi.isDuckVariant();
         switch (EnginePolicy.forAnalysis(oexAvailable, rustEligible)) {
             case OEX:
                 session.oex = new OexEngine(context, gameApi, oexEngineId);
@@ -90,17 +90,23 @@ public final class EngineSession {
         if (closed) {
             return;
         }
-        if (local == null) {
-            local = new LocalEngine(gameApi);
+        boolean oexAvailable = !duckVariant && prefersOex && OexEngine.hasAvailableEngines(context);
+        EngineApi target;
+        switch (EnginePolicy.forPlay(prefersOex, oexAvailable, duckVariant)) {
+            case RUST:
+                if (rust == null) rust = new RustLocalEngine(gameApi);
+                target = rust;
+                break;
+            case OEX:
+                if (oex == null) oex = new OexEngine(context, gameApi, oexEngineId);
+                else oex.setPreferredEngineId(oexEngineId);
+                target = oex;
+                break;
+            default:
+                if (local == null) local = new LocalEngine(gameApi);
+                target = local;
+                break;
         }
-        if (oex == null) {
-            oex = new OexEngine(context, gameApi, oexEngineId);
-        } else {
-            oex.setPreferredEngineId(oexEngineId);
-        }
-        boolean oexAvailable = prefersOex && OexEngine.hasAvailableEngines(context);
-        EngineApi target = EnginePolicy.forPlay(prefersOex, oexAvailable, duckVariant)
-                == EnginePolicy.Backend.OEX ? oex : local;
         if (target != current) {
             if (current != null) {
                 current.abort(null);
@@ -128,7 +134,7 @@ public final class EngineSession {
 
     /** Starts a PLAY search of the current position; the result arrives at the listener. */
     public void play(SearchLimit limit) {
-        if (closed || current == null) {
+        if (closed || current == null || gameApi.hasPendingDuckMove()) {
             return;
         }
         current.play(limit);
@@ -136,18 +142,18 @@ public final class EngineSession {
 
     /** Starts an ANALYSIS search of the given FEN; results arrive at the listener. */
     public void analyze(String fen, int timeMillis) {
-        if (closed || current == null) {
+        if (closed || current == null || gameApi.hasPendingDuckMove()) {
             return;
         }
         current.analyze(fen, timeMillis);
     }
 
     public void analyzeCurrentPosition(int timeMillis) {
-        if (!closed && current != null) current.analyzeCurrentPosition(timeMillis);
+        if (!closed && current != null && !gameApi.hasPendingDuckMove()) current.analyzeCurrentPosition(timeMillis);
     }
 
     public void analyze(GameApi.PositionSnapshot position, int timeMillis) {
-        if (!closed && current != null) current.analyze(position, timeMillis);
+        if (!closed && current != null && !gameApi.hasPendingDuckMove()) current.analyze(position, timeMillis);
     }
 
     /** Stops the current search, delivering its completed result before onDone. */

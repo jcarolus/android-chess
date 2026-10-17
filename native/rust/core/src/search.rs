@@ -33,8 +33,8 @@ impl SearchRequest {
             _ => return Err(invalid("Depth must be 1..15 or time must be positive")),
         }
         let mut position = Position::from_fen(variant, starting_position)?;
-        for m in history {
-            position.apply(m.as_str())?;
+        for (index, m) in history.iter().enumerate() {
+            position.apply_input(m.as_str(), index + 1 == history.len())?;
         }
         Ok(Self {
             id,
@@ -87,6 +87,100 @@ struct Worker<'a> {
     pv: [Vec<Move>; 20],
 }
 impl Worker<'_> {
+    fn alpha_beta_duck(
+        &mut self,
+        p: &Position,
+        moves: &mut Vec<Move>,
+        depth: u8,
+        ply: usize,
+        mut alpha: i32,
+        beta: i32,
+    ) -> i32 {
+        self.pv[ply].clear();
+        if self.stopped() {
+            return alpha;
+        }
+        if p.drawn_in_search() {
+            return 0;
+        }
+        if depth == 0 {
+            self.nodes += 1;
+            return p.evaluate();
+        }
+        // C++ orders piece moves using the previous best piece move at this ply.
+        let mut scores: Vec<_> = moves
+            .iter()
+            .map(|m| {
+                let mut previous = self.best[ply];
+                if let Some(ref mut previous) = previous {
+                    previous.duck = None;
+                }
+                if previous == Some(*m) {
+                    100000
+                } else {
+                    score_move(p, *m)
+                }
+            })
+            .collect();
+        let mut best = -MATE - 1;
+        for index in 0..moves.len() {
+            pick(moves, &mut scores, index);
+            let mut m = moves[index];
+            let next = p.make(m);
+            let children = next.pseudo_moves();
+            let mut line = Vec::new();
+            let value = if next.pieces.iter().any(|p| p[KING] == 0) {
+                -next.evaluate()
+            } else {
+                let mut best_duck = -MATE - 1;
+                // Preserve native candidates, their order and duplicates: destinations
+                // of the opponent's non-capturing piece moves, not every empty square.
+                for candidate in &children {
+                    if candidate.capture || next.occupied() & bit(candidate.to) != 0 {
+                        continue;
+                    }
+                    let mut duck_board = next.clone();
+                    duck_board.duck = Some(candidate.to);
+                    let mut replies = duck_board.pseudo_moves();
+                    let value = -self.alpha_beta_duck(
+                        &duck_board,
+                        &mut replies,
+                        depth - 1,
+                        ply + 1,
+                        -beta,
+                        -alpha,
+                    );
+                    if value > best_duck {
+                        best_duck = value;
+                        m.duck = Some(candidate.to);
+                        line = self.pv[ply + 1].clone();
+                    }
+                    alpha = alpha.max(best_duck);
+                    if best_duck >= beta || self.interrupted {
+                        break;
+                    }
+                }
+                best_duck
+            };
+            if value > best && !self.interrupted {
+                best = value;
+                self.best[ply] = Some(m);
+                self.values[ply] = value;
+                self.pv[ply] = vec![m];
+                self.pv[ply].extend(line);
+            }
+            alpha = alpha.max(best);
+            if best >= beta || self.interrupted {
+                break;
+            }
+        }
+        if moves.is_empty() {
+            self.nodes += 1;
+            return -MATE;
+        }
+        best
+    }
+
     fn stopped(&mut self) -> bool {
         if self.control.stopped.load(Ordering::Relaxed)
             || self.nodes.is_multiple_of(1000)
@@ -298,7 +392,11 @@ pub fn search_with_progress(
         _ => 1..=14,
     };
     for depth in depths {
-        worker.alpha_beta(p, &mut moves, depth, 0, -MATE, MATE);
+        if p.variant == Variant::Duck {
+            worker.alpha_beta_duck(p, &mut moves, depth, 0, -MATE, MATE);
+        } else {
+            worker.alpha_beta(p, &mut moves, depth, 0, -MATE, MATE);
+        }
         if worker.interrupted {
             break;
         }
