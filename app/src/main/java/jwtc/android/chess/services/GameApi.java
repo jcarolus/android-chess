@@ -227,6 +227,11 @@ public class GameApi {
             && jni.pieceAt(turn, rookSquare) == BoardConstants.ROOK;
     }
 
+    /** Whether this Game is Chess 960, as opposed to Standard or Duck (see {@link #isStandardVariant}). */
+    public boolean isChess960Variant() {
+        return jni.getVariant() != BoardConstants.VARIANT_DUCK && !isStandardVariant();
+    }
+
     public int getState() {
         int finalState = getFinalState();
         if (finalState != -1) {

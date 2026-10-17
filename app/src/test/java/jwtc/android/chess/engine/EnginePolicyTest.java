@@ -31,17 +31,17 @@ public class EnginePolicyTest {
     }
 
     @Test
-    public void analysisUsesRustForStandardWithoutOex() {
+    public void analysisUsesRustForStandardOrChess960WithoutOex() {
         assertEquals(EnginePolicy.Backend.RUST, EnginePolicy.forAnalysis(false, true));
     }
 
     @Test
-    public void analysisFallsBackToLocalForNonStandardWithoutOex() {
+    public void analysisFallsBackToLocalForDuckWithoutOex() {
         assertEquals(EnginePolicy.Backend.LOCAL, EnginePolicy.forAnalysis(false, false));
     }
 
     @Test
-    public void analysisPrefersOexEvenForNonStandard() {
+    public void analysisPrefersOexEvenForDuck() {
         assertEquals(EnginePolicy.Backend.OEX, EnginePolicy.forAnalysis(true, false));
     }
 }

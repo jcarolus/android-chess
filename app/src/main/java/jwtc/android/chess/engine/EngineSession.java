@@ -43,13 +43,14 @@ public final class EngineSession {
     /**
      * Session for Analysis: an available OEX Engine unless the built-in Engine was picked or
      * none is installed (see {@link EnginePolicy#forAnalysis}). The built-in choice is the Rust
-     * Engine for Standard games, falling back to the Local (C++) Engine for Chess 960 and Duck.
+     * Engine for Standard and Chess 960 games, falling back to the Local (C++) Engine for Duck.
      */
     public static EngineSession forAnalysis(Context context, GameApi gameApi, EngineListener listener,
                                             String oexEngineId) {
         EngineSession session = new EngineSession(context, gameApi, listener);
         boolean oexAvailable = !LOCAL_ENGINE_ID.equals(oexEngineId) && OexEngine.hasAvailableEngines(context);
-        switch (EnginePolicy.forAnalysis(oexAvailable, gameApi.isStandardVariant())) {
+        boolean rustEligible = gameApi.isStandardVariant() || gameApi.isChess960Variant();
+        switch (EnginePolicy.forAnalysis(oexAvailable, rustEligible)) {
             case OEX:
                 session.oex = new OexEngine(context, gameApi, oexEngineId);
                 session.use(session.oex);

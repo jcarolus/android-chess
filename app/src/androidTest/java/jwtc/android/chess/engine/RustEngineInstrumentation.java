@@ -31,8 +31,9 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionAnalysisAndError();
             sessionForAnalysisSelectsRustForStandardHistory();
             sessionForAnalysisFallsBackToLocalForDuck();
-            sessionForAnalysisTreatsOffSquareCastlingRightsAsNonStandard();
-            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors and Analysis backend selection (Standard, Duck, off-square castling) passed\n");
+            sessionForAnalysisUsesRustForChess960Castling();
+            sessionPlaysAChess960Game();
+            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors and Analysis backend selection (Standard, Duck, Chess 960) passed\n");
             finish(-1, report);
         } catch (Throwable error) {
             report.putString("stream", "FAIL: " + error + "\n");
@@ -56,6 +57,10 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 START, new String[0], 1, 0, true)); }
             catch (IllegalArgumentException expected) { failed = true; }
             check(failed, "Unsupported variant was accepted");
+            RustSearchResult chess960 = RustNative.search(handle, new RustSearchRequest(251,
+                RustSearchRequest.Variant.CHESS_960, "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", new String[0], 2, 0, true));
+            check(chess960.searchId == 251 && chess960.hasEvaluation && !chess960.bestMove.isEmpty(),
+                "Chess 960 variant was rejected by the native search");
         } finally { RustNative.destroy(handle); }
     }
     private void sessionMove() throws Exception {
@@ -273,7 +278,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         });
         await(done, failure, session);
     }
-    /** Chess 960 and Duck are not yet Rust-eligible and must keep using the Local (C++) Engine. */
+    /** Duck is not yet Rust-eligible and must keep using the Local (C++) Engine. */
     private void sessionForAnalysisFallsBackToLocalForDuck() throws Exception {
         CountDownLatch done = new CountDownLatch(1);
         AtomicReference<Throwable> failure = new AtomicReference<>();
@@ -295,25 +300,59 @@ public final class RustEngineInstrumentation extends Instrumentation {
         });
         await(done, failure, session);
     }
-    /** A FEN-only position can carry Chess 960 castling rights with no Variant tag at all. */
-    private void sessionForAnalysisTreatsOffSquareCastlingRightsAsNonStandard() throws Exception {
+    /**
+     * A FEN-only position can carry Chess 960 castling rights with no Variant tag at all, and
+     * such a game is now Rust-eligible: it must resolve to a move the live board still recognizes.
+     */
+    private void sessionForAnalysisUsesRustForChess960Castling() throws Exception {
         CountDownLatch done = new CountDownLatch(1);
         AtomicReference<Throwable> failure = new AtomicReference<>();
         EngineSession[] session = new EngineSession[1];
         runOnMainSync(() -> {
             GameApi game = new GameApi();
-            check(game.initFEN("4k3/8/8/8/8/8/8/RK6 w Q - 0 1", true), "Could not load a Chess 960-shaped FEN");
-            check(!game.isStandardVariant(), "Off-square castling rights were reported as Standard");
+            check(game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true), "Could not load a Chess 960-shaped FEN");
+            check(game.isChess960Variant(), "Off-square castling rights were not reported as Chess 960");
             session[0] = EngineSession.forAnalysis(getContext(), game, new Listener() {
                 @Override public void OnEngineMove(int move, int duck, int score) {
                     failure.set(new AssertionError("Analysis delivered a Play move"));
                 }
                 @Override public void onAnalysisComplete(String fen, String best, EngineEvaluation evaluation) {
-                    done.countDown();
+                    try {
+                        check(best != null && !best.isEmpty(), "Chess 960 analysis produced no move");
+                        GameApi.PositionMove move = game.getPositionSnapshot(game.getCurrentNode()).findMove(best);
+                        check(move != null, "Resolved Chess 960 move " + best + " did not match a legal move");
+                    } catch (Throwable error) { failure.set(error); }
+                    finally { done.countDown(); }
                 }
-                @Override public void OnEngineError() { failure.set(new AssertionError("Chess 960-shaped analysis failed")); done.countDown(); }
+                @Override public void OnEngineError() { failure.set(new AssertionError("Chess 960 analysis failed")); done.countDown(); }
             }, EngineSession.LOCAL_ENGINE_ID);
             session[0].analyzeCurrentPosition(500);
+        });
+        await(done, failure, session);
+    }
+    /**
+     * Drives a full Chess 960 Play search through {@link RustLocalEngine} (not yet the production
+     * Play routing — see {@link EnginePolicy#forPlay} — but the same request/response path): the
+     * returned move, castling or not, must resolve and apply through the live board.
+     */
+    private void sessionPlaysAChess960Game() throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        EngineSession[] session = new EngineSession[1];
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            check(game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true), "Could not load a Chess 960-shaped FEN");
+            session[0] = EngineSession.forRustTesting(game, new Listener() {
+                @Override public void OnEngineMove(int move, int duck, int score) {
+                    try {
+                        check(game.applyMove(move, duck) && game.getCurrentPly() == 1,
+                            "Chess 960 move could not be applied through GameApi");
+                    } catch (Throwable error) { failure.set(error); }
+                    finally { done.countDown(); }
+                }
+                @Override public void OnEngineError() { failure.set(new AssertionError("Chess 960 Play search failed")); done.countDown(); }
+            });
+            session[0].play(SearchLimit.ply(2));
         });
         await(done, failure, session);
     }

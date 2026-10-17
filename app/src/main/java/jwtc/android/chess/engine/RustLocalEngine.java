@@ -31,16 +31,21 @@ public final class RustLocalEngine extends EngineApi {
         validateAnalysisRequest(fen, millis);
         if (destroyed || worker != null) return;
         long id = beginSearch(SearchPurpose.ANALYSIS);
-        launch(new RustSearchRequest(id, RustSearchRequest.Variant.STANDARD, fen, new String[0],
+        RustSearchRequest.Variant variant = gameApi.isChess960Variant()
+            ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+        launch(new RustSearchRequest(id, variant, fen, new String[0],
             0, millis, quiescentSearchOn), null, fen);
     }
     private void start(GameApi.PositionSnapshot position, SearchPurpose purpose, int depth, int millis) {
         long id = beginSearch(purpose);
         try {
-            if (position == null || !gameApi.isStandardVariant()) {
-                throw new IllegalArgumentException("Rust currently supports Standard only");
+            boolean chess960 = gameApi.isChess960Variant();
+            if (position == null || !gameApi.isStandardVariant() && !chess960) {
+                throw new IllegalArgumentException("Rust currently supports Standard and Chess 960 only");
             }
-            launch(RustSearchRequest.fromSnapshot(id, position, depth, millis, quiescentSearchOn),
+            RustSearchRequest.Variant variant = chess960
+                ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+            launch(RustSearchRequest.fromSnapshot(id, position, depth, millis, quiescentSearchOn, variant),
                 position, position.fen);
         } catch (RuntimeException | LinkageError error) {
             reportError(id, error);
@@ -56,7 +61,7 @@ public final class RustLocalEngine extends EngineApi {
                 Throwable failure = null;
                 try {
                     result = RustNative.search(ownedHandle, request,
-                        progress -> updateHandler.post(() -> deliverProgress(request.searchId, snapshot, fen, progress)));
+                        progress -> updateHandler.post(() -> deliverProgress(request.searchId, snapshot, fen, request.variant, progress)));
                 }
                 catch (RuntimeException | LinkageError error) { failure = error; }
                 finally {
@@ -67,7 +72,7 @@ public final class RustLocalEngine extends EngineApi {
                 }
                 final RustSearchResult completed = result;
                 final Throwable error = failure;
-                updateHandler.post(() -> finish(request.searchId, snapshot, fen, completed, error));
+                updateHandler.post(() -> finish(request.searchId, snapshot, fen, request.variant, completed, error));
             }, "RustLocalEngine");
             updateHandler.post(() -> {
                 if (isCurrentSearch(request.searchId) && !destroyed)
@@ -84,24 +89,25 @@ public final class RustLocalEngine extends EngineApi {
         }
     }
     private synchronized void finish(long id, GameApi.PositionSnapshot snapshot, String fen,
-                                     RustSearchResult result, Throwable error) {
+                                     RustSearchRequest.Variant variant, RustSearchResult result, Throwable error) {
         try {
             if (!isCurrentSearch(id) || destroyed) return;
             if (error != null || result == null || result.searchId != id) {
                 deliverError(id, error == null ? new IllegalStateException("Invalid Rust result") : error);
                 return;
             }
-            deliverProgress(id, snapshot, fen, result);
+            deliverProgress(id, snapshot, fen, variant, result);
             if (!isCurrentSearch(id) || destroyed) return;
+            String bestMove = resolveCoordinate(result.bestMove, variant, fen);
             if (purpose == SearchPurpose.ANALYSIS) {
                 EngineEvaluation evaluation = !result.hasEvaluation || Math.abs(result.score) >= 100000
                     ? null : new EngineEvaluation(false, analysisScore(fen, result.score), result.completedDepth);
                 for (EngineListener listener : new ArrayList<>(listeners)) {
                     if (!isCurrentSearch(id) || destroyed) break;
-                    listener.onAnalysisComplete(fen, result.bestMove, evaluation);
+                    listener.onAnalysisComplete(fen, bestMove, evaluation);
                 }
-            } else if (snapshot != null && gameApi.isCurrentPosition(snapshot) && !result.bestMove.isEmpty()) {
-                GameApi.PositionMove move = snapshot.findMove(result.bestMove);
+            } else if (snapshot != null && gameApi.isCurrentPosition(snapshot) && !bestMove.isEmpty()) {
+                GameApi.PositionMove move = snapshot.findMove(bestMove);
                 if (move == null) deliverError(id, new IllegalStateException("Rust returned an illegal move"));
                 else for (EngineListener listener : new ArrayList<>(listeners)) {
                     if (!isCurrentSearch(id) || destroyed || !gameApi.isCurrentPosition(snapshot)) break;
@@ -116,22 +122,45 @@ public final class RustLocalEngine extends EngineApi {
             for (Runnable callback : callbacks) updateHandler.post(callback);
         }
     }
-    private synchronized void deliverProgress(long id, GameApi.PositionSnapshot snapshot, String fen, RustSearchResult result) {
+    private synchronized void deliverProgress(long id, GameApi.PositionSnapshot snapshot, String fen,
+                                              RustSearchRequest.Variant variant, RustSearchResult result) {
         if (!isCurrentSearch(id) || destroyed || result.searchId != id
             || purpose == SearchPurpose.PLAY && snapshot != null && !gameApi.isCurrentPosition(snapshot)) return;
         long nps = result.elapsedMicros == 0 ? 0 : result.nodes * 1_000_000 / result.elapsedMicros;
-        String message = "depth " + result.completedDepth + " " + result.principalVariation
+        String pv = resolvePrincipalVariation(result.principalVariation, variant, fen);
+        String message = "depth " + result.completedDepth + " " + pv
             + "\n" + result.nodes + " N, " + nps + " N/s (" + result.elapsedMicros / 1000 + " ms)";
         int score = purpose == SearchPurpose.ANALYSIS ? analysisScore(fen, result.score) : result.score;
         if (purpose == SearchPurpose.ANALYSIS && result.hasEvaluation && Math.abs(score) < 100000) {
             message = "info depth " + result.completedDepth + " score cp " + score
-                + " pv " + result.principalVariation + "\n" + message;
+                + " pv " + pv + "\n" + message;
         }
         if (result.hasEvaluation) message += "\n" + String.format("%.2f", score / 100.0);
         for (EngineListener listener : new ArrayList<>(listeners)) {
             if (!isCurrentSearch(id) || destroyed) break;
             listener.OnEngineInfo(message, score / 100.0f);
         }
+    }
+    /** Rewrites a Chess 960 king-to-rook result from the position at {@code fen} back to
+     * GameApi's king-to-destination convention; every other move/variant is unchanged. */
+    private static String resolveCoordinate(String uci, RustSearchRequest.Variant variant, String fen) {
+        if (variant != RustSearchRequest.Variant.CHESS_960 || uci.isEmpty()) return uci;
+        boolean whiteToMove = fen.split("\\s+")[1].equals("w");
+        return RustSearchRequest.fromRustCoordinate(uci, RustSearchRequest.chess960Files(fen, whiteToMove));
+    }
+    private static String resolvePrincipalVariation(String pv, RustSearchRequest.Variant variant, String fen) {
+        if (variant != RustSearchRequest.Variant.CHESS_960 || pv.isEmpty()) return pv;
+        boolean whiteToMoveFirst = fen.split("\\s+")[1].equals("w");
+        int[] whiteFiles = RustSearchRequest.chess960Files(fen, true);
+        int[] blackFiles = RustSearchRequest.chess960Files(fen, false);
+        String[] moves = pv.split(" ");
+        StringBuilder resolved = new StringBuilder();
+        for (int i = 0; i < moves.length; i++) {
+            if (i > 0) resolved.append(' ');
+            boolean whiteMoved = i % 2 == 0 == whiteToMoveFirst;
+            resolved.append(RustSearchRequest.fromRustCoordinate(moves[i], whiteMoved ? whiteFiles : blackFiles));
+        }
+        return resolved.toString();
     }
     // Analysis listeners consume side-to-move scores and convert to White at the view boundary.
     private static int analysisScore(String fen, int whiteScore) {
