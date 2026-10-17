@@ -107,7 +107,7 @@ public final class RustLocalEngine extends EngineApi {
             String bestMove = resolvePrincipalVariation(result.bestMove, variant, fen);
             if (purpose == SearchPurpose.ANALYSIS) {
                 EngineEvaluation evaluation = !result.hasEvaluation || Math.abs(result.score) >= 100000
-                    ? null : new EngineEvaluation(false, analysisScore(fen, result.score), result.completedDepth);
+                    ? null : new EngineEvaluation(false, sideToMoveScore(fen, result.score), result.completedDepth);
                 for (EngineListener listener : new ArrayList<>(listeners)) {
                     if (!isCurrentSearch(id) || destroyed) break;
                     listener.onAnalysisComplete(fen, bestMove, evaluation);
@@ -124,7 +124,7 @@ public final class RustLocalEngine extends EngineApi {
                 if (move == null) deliverError(id, new IllegalStateException("Rust returned an illegal move"));
                 else for (EngineListener listener : new ArrayList<>(listeners)) {
                     if (!isCurrentSearch(id) || destroyed || !gameApi.isCurrentPosition(snapshot)) break;
-                    listener.OnEngineMove(move.move, duck, result.score);
+                    listener.OnEngineMove(move.move, duck, sideToMoveScore(fen, result.score));
                 }
             }
         } finally {
@@ -143,7 +143,7 @@ public final class RustLocalEngine extends EngineApi {
         String pv = resolvePrincipalVariation(result.principalVariation, variant, fen);
         String message = "depth " + result.completedDepth + " " + pv
             + "\n" + result.nodes + " N, " + nps + " N/s (" + result.elapsedMicros / 1000 + " ms)";
-        int score = purpose == SearchPurpose.ANALYSIS ? analysisScore(fen, result.score) : result.score;
+        int score = sideToMoveScore(fen, result.score);
         if (purpose == SearchPurpose.ANALYSIS && result.hasEvaluation && Math.abs(score) < 100000) {
             message = "info depth " + result.completedDepth + " score cp " + score
                 + " pv " + pv + "\n" + message;
@@ -176,8 +176,8 @@ public final class RustLocalEngine extends EngineApi {
         }
         return resolved.toString();
     }
-    // Analysis listeners consume side-to-move scores and convert to White at the view boundary.
-    private static int analysisScore(String fen, int whiteScore) {
+    // Listeners consume side-to-move scores; Analysis converts to White at the view boundary.
+    private static int sideToMoveScore(String fen, int whiteScore) {
         return fen.trim().split("\\s+")[1].equals("w") ? whiteScore : -whiteScore;
     }
     private void reportError(long id, Throwable error) {

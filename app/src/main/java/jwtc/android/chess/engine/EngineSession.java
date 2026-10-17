@@ -16,7 +16,6 @@ public final class EngineSession {
     private final Context context;
     private final GameApi gameApi;
     private final EngineListener listener;
-    private LocalEngine local;
     private OexEngine oex;
     private RustLocalEngine rust;
     private EngineApi current;
@@ -29,45 +28,37 @@ public final class EngineSession {
     }
 
     /**
-     * Session for Mate-in-Two Puzzles and Practice Positions: always the Local Engine, with
-     * quiescence search off so a forced mate is found at the shallow depth the caller asks for.
+     * Session for Mate-in-Two Puzzles and Practice Positions: always the built-in Rust Engine,
+     * with quiescence search off so a forced mate is found at the shallow depth the caller asks for.
      */
     public static EngineSession forPuzzles(GameApi gameApi, EngineListener listener) {
         EngineSession session = new EngineSession(null, gameApi, listener);
-        session.local = new LocalEngine(gameApi);
-        session.local.setQuiescentSearchOn(false);
-        session.use(session.local);
+        session.rust = new RustLocalEngine(gameApi);
+        session.rust.setQuiescentSearchOn(false);
+        session.use(session.rust);
         return session;
     }
 
     /**
      * Session for Analysis: an available OEX Engine unless the built-in Engine was picked or
      * none is installed (see {@link EnginePolicy#forAnalysis}). The built-in choice is the Rust
-     * Engine for Standard, Chess 960 and Duck games.
+     * Engine.
      */
     public static EngineSession forAnalysis(Context context, GameApi gameApi, EngineListener listener,
                                             String oexEngineId) {
         EngineSession session = new EngineSession(context, gameApi, listener);
         boolean oexAvailable = !gameApi.isDuckVariant() && !LOCAL_ENGINE_ID.equals(oexEngineId) && OexEngine.hasAvailableEngines(context);
-        boolean rustEligible = gameApi.isStandardVariant() || gameApi.isChess960Variant() || gameApi.isDuckVariant();
-        switch (EnginePolicy.forAnalysis(oexAvailable, rustEligible)) {
-            case OEX:
-                session.oex = new OexEngine(context, gameApi, oexEngineId);
-                session.use(session.oex);
-                break;
-            case RUST:
-                session.rust = new RustLocalEngine(gameApi);
-                session.use(session.rust);
-                break;
-            case LOCAL:
-                session.local = new LocalEngine(gameApi);
-                session.use(session.local);
-                break;
+        if (EnginePolicy.forAnalysis(oexAvailable) == EnginePolicy.Backend.OEX) {
+            session.oex = new OexEngine(context, gameApi, oexEngineId);
+            session.use(session.oex);
+        } else {
+            session.rust = new RustLocalEngine(gameApi);
+            session.use(session.rust);
         }
         return session;
     }
 
-    /** Internal integration entry point; never selected by production preferences. */
+    /** Integration entry point for device tests that need a Rust-only session. */
     static EngineSession forRustTesting(GameApi gameApi, EngineListener listener) {
         EngineSession session = new EngineSession(null, gameApi, listener);
         session.rust = new RustLocalEngine(gameApi);
@@ -92,20 +83,13 @@ public final class EngineSession {
         }
         boolean oexAvailable = !duckVariant && prefersOex && OexEngine.hasAvailableEngines(context);
         EngineApi target;
-        switch (EnginePolicy.forPlay(prefersOex, oexAvailable, duckVariant)) {
-            case RUST:
-                if (rust == null) rust = new RustLocalEngine(gameApi);
-                target = rust;
-                break;
-            case OEX:
-                if (oex == null) oex = new OexEngine(context, gameApi, oexEngineId);
-                else oex.setPreferredEngineId(oexEngineId);
-                target = oex;
-                break;
-            default:
-                if (local == null) local = new LocalEngine(gameApi);
-                target = local;
-                break;
+        if (EnginePolicy.forPlay(prefersOex, oexAvailable, duckVariant) == EnginePolicy.Backend.OEX) {
+            if (oex == null) oex = new OexEngine(context, gameApi, oexEngineId);
+            else oex.setPreferredEngineId(oexEngineId);
+            target = oex;
+        } else {
+            if (rust == null) rust = new RustLocalEngine(gameApi);
+            target = rust;
         }
         if (target != current) {
             if (current != null) {
@@ -181,9 +165,6 @@ public final class EngineSession {
         if (current != null) {
             current.abort(null);
             current.removeListener(listener);
-        }
-        if (local != null) {
-            local.destroy();
         }
         if (oex != null) {
             oex.destroy();

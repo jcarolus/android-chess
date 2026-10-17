@@ -14,9 +14,11 @@ position in `SearchRequest::position`; unfinished moves earlier in history fail.
 `jni/rust-chess-jni.cpp` adapter packages that static Rust library as
 `librust-chess-jni.so`. The existing `libchess-jni.so` continues to manage the app's
 board. `EngineSession.forRustTesting` is a separate internal Java integration entry
-used only by device tests. Production Analysis selects Rust for Standard, Chess 960 and Duck games
-through `EngineSession.forAnalysis` (see `EnginePolicy.forAnalysis`). Duck Play
-also selects Rust; other built-in Play still uses C++. OEX is excluded for Duck.
+used only by device tests. Rust is the built-in Local Engine for every Mode and
+Variant: Play (`EnginePolicy.forPlay`), Analysis (`EnginePolicy.forAnalysis`) and
+Mate-in-Two Puzzles and Practice Positions (`EngineSession.forPuzzles`, quiescence
+off). OEX Engines are used only when selected and available, and never for Duck.
+The C++ `LocalEngine` class is kept but no Mode selects it.
 Interactive pending placement gates all EngineSession search entry points and
 RustLocalEngine itself. Snapshots include piece and duck history. Results are
 checked against the live position captured at dispatch, even when analyzing a

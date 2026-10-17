@@ -288,7 +288,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         });
         await(done, failure, session);
     }
-    /** Duck is not yet Rust-eligible and must keep using the Local (C++) Engine. */
+    /** Duck Analysis uses the Rust Engine. */
     private void sessionForAnalysisUsesRustForDuck() throws Exception {
         CountDownLatch done = new CountDownLatch(1);
         AtomicReference<Throwable> failure = new AtomicReference<>();
@@ -347,9 +347,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
         await(done, failure, session);
     }
     /**
-     * Drives a full Chess 960 Play search through {@link RustLocalEngine} (not yet the production
-     * Play routing — see {@link EnginePolicy#forPlay} — but the same request/response path): the
-     * returned move, castling or not, must resolve and apply through the live board.
+     * Drives a full Chess 960 Play search through {@link RustLocalEngine}: the returned move,
+     * castling or not, must resolve and apply through the live board.
      */
     private void sessionPlaysAChess960Game() throws Exception {
         CountDownLatch done = new CountDownLatch(1);
