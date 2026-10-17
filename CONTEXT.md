@@ -62,7 +62,7 @@ What a Mode holds to use Engines: it picks the Engine for that Mode (Play follow
 _Avoid_: bare "session"
 
 **Analysis history**:
-Analysis requests preserve the Starting Position and the selected move path, including repetitions. OEX receives the Starting Position plus moves. Cached analysis is keyed by the full path, because equal FENs can have different repetition histories. The built-in Engine is available in Analysis settings and is the fallback when no OEX Engine is installed: the Rust Engine for Standard and Chess 960 games, replaying the Starting Position plus full move history on a private worker for both current and recorded positions; the Local Engine for Duck, which Rust does not yet support, deep-cloning the live board for a current position and replaying the path on a private worker for a recorded one.
+Analysis requests preserve the Starting Position and the selected move path, including repetitions. OEX receives the Starting Position plus moves. Cached analysis is keyed by the full path, because equal FENs can have different repetition histories. The built-in Engine is available in Analysis settings and is the fallback when no OEX Engine is installed: the Rust Engine, for Standard, Chess 960 and Duck games alike, replaying the Starting Position plus full move history on a private worker for both current and recorded positions.
 
 **Search Purpose**:
 Why an Engine is searching: PLAY (choose a move to play) or ANALYSIS (evaluate a position). `EngineApi.SearchPurpose` in code.
