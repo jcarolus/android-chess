@@ -7,16 +7,20 @@ public final class RustSearchResult {
     public final int score;
     public final int completedDepth;
     public final long nodes;
+    public final long elapsedMicros;
+    public final String principalVariation;
     public final boolean hasEvaluation;
     public final boolean interrupted;
 
     public RustSearchResult(long searchId, String bestMove, int score, int completedDepth,
-                            long nodes, boolean hasEvaluation, boolean interrupted) {
+                            long nodes, long elapsedMicros, String principalVariation, boolean hasEvaluation, boolean interrupted) {
         this.searchId = searchId;
         this.bestMove = bestMove;
         this.score = score;
         this.completedDepth = completedDepth;
         this.nodes = nodes;
+        this.elapsedMicros = elapsedMicros;
+        this.principalVariation = principalVariation;
         this.hasEvaluation = hasEvaluation;
         this.interrupted = interrupted;
     }

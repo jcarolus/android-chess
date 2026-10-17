@@ -60,13 +60,20 @@ impl SearchControl {
 pub struct SearchResult {
     pub search_id: u64,
     pub best_move: Option<CoordinateMove>,
-    /// Centipawns from White's perspective, or +/-100000 for mate without a distance.
+    /// Centipawns from the searched side's perspective; +/-100000 is mate without a distance.
     pub score: i32,
     pub completed_depth: u8,
     pub has_evaluation: bool,
     pub nodes: u64,
     pub pv: Vec<CoordinateMove>,
     pub interrupted: bool,
+    pub elapsed_micros: u64,
+}
+/// One event per completed iteration, followed by exactly one final event.
+#[derive(Clone, Debug)]
+pub enum SearchEvent {
+    Progress(SearchResult),
+    Finished(SearchResult),
 }
 struct Worker<'a> {
     control: &'a SearchControl,
@@ -77,6 +84,7 @@ struct Worker<'a> {
     interrupted: bool,
     best: [Option<Move>; 20],
     values: [i32; 20],
+    pv: [Vec<Move>; 20],
 }
 impl Worker<'_> {
     fn stopped(&mut self) -> bool {
@@ -97,6 +105,7 @@ impl Worker<'_> {
         mut alpha: i32,
         beta: i32,
     ) -> i32 {
+        self.pv[ply].clear();
         if self.stopped() {
             return alpha;
         }
@@ -135,6 +144,11 @@ impl Worker<'_> {
                 best = value;
                 self.best[ply] = Some(m);
                 self.values[ply] = value;
+                self.pv[ply] = vec![m];
+                if depth > 1 {
+                    let continuation = self.pv[ply + 1].clone();
+                    self.pv[ply].extend(continuation);
+                }
             }
             alpha = alpha.max(best);
             if best >= beta || self.interrupted {
@@ -232,6 +246,15 @@ fn score_move(p: &Position, m: Move) -> i32 {
     }
 }
 pub fn search(request: &SearchRequest, control: &SearchControl) -> Result<SearchResult, Error> {
+    search_with_progress(request, control, |_| {})
+}
+
+pub fn search_with_progress(
+    request: &SearchRequest,
+    control: &SearchControl,
+    mut publish: impl FnMut(SearchEvent),
+) -> Result<SearchResult, Error> {
+    let start = Instant::now();
     let p = &request.position;
     let mut result = SearchResult {
         search_id: request.id,
@@ -242,20 +265,15 @@ pub fn search(request: &SearchRequest, control: &SearchControl) -> Result<Search
         nodes: 0,
         pv: vec![],
         interrupted: false,
+        elapsed_micros: 0,
     };
     match p.game_state() {
         GameState::Play | GameState::Check => {}
         state => {
-            result.score = if state == GameState::Mate {
-                if p.turn == 1 {
-                    -MATE
-                } else {
-                    MATE
-                }
-            } else {
-                0
-            };
+            result.score = if state == GameState::Mate { -MATE } else { 0 };
             result.has_evaluation = true;
+            result.elapsed_micros = start.elapsed().as_micros() as u64;
+            publish(SearchEvent::Finished(result.clone()));
             return Ok(result);
         }
     }
@@ -265,13 +283,14 @@ pub fn search(request: &SearchRequest, control: &SearchControl) -> Result<Search
     };
     let mut worker = Worker {
         control,
-        start: Instant::now(),
+        start,
         budget,
         quiescence: request.options.quiescence,
         nodes: 1,
         interrupted: false,
         best: [None; 20],
         values: [0; 20],
+        pv: std::array::from_fn(|_| Vec::new()),
     };
     let mut moves = p.legal_internal();
     let depths = match request.limit {
@@ -286,15 +305,19 @@ pub fn search(request: &SearchRequest, control: &SearchControl) -> Result<Search
         result.best_move = worker.best[0].map(Move::coordinate);
         result.completed_depth = depth;
         result.has_evaluation = true;
-        result.score = worker.values[0] * if p.turn == 1 { 1 } else { -1 };
-        // The native per-ply best array is an ordering heuristic, not a complete PV.
-        // Only expose its verified root move as a principal-variation prefix.
-        result.pv = result.best_move.iter().cloned().collect();
+        result.score = worker.values[0];
+        // Track the selected line independently of the native ordering heuristic.
+        result.pv = worker.pv[0].iter().copied().map(Move::coordinate).collect();
+        result.nodes = worker.nodes;
+        result.elapsed_micros = start.elapsed().as_micros() as u64;
+        publish(SearchEvent::Progress(result.clone()));
         if worker.values[0] == MATE || budget.is_some_and(|b| worker.start.elapsed() > b / 3) {
             break;
         }
     }
     result.interrupted = worker.interrupted;
     result.nodes = worker.nodes;
+    result.elapsed_micros = start.elapsed().as_micros() as u64;
+    publish(SearchEvent::Finished(result.clone()));
     Ok(result)
 }

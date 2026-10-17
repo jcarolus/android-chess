@@ -13,14 +13,35 @@ values but are rejected in this Standard-only slice.
 board. `EngineSession.forRustTesting` is the internal Java integration entry;
 production engine preferences do not select Rust.
 
-Scores are White-perspective centipawns, with +/-100000 indicating mate without a
-mate distance. Fixed-depth limits are 1–15; quiescence has the native five-ply
+Core scores are searched-side centipawns, with +/-100000 indicating mate without a
+mate distance. The C ABI converts scores to White's perspective. Java adapts
+analysis callbacks back to the existing side-to-move listener contract; the
+Analysis view performs its usual White-perspective conversion. Fixed-depth limits are 1–15; quiescence has the native five-ply
 limit. Timed searches retain only a completed iteration. Stop interrupts the
 owned worker; abort also invalidates Java result delivery. A native failure or
 invalid request reports an error and never falls back to C++.
 
-The Rust result includes a verified one-move PV prefix. The C++ per-ply best-move
-array is retained for ordering parity, but it is not a trustworthy full PV.
+`search_with_progress` emits a typed progress event after each completed depth
+and exactly one final event, including terminal and interrupted searches. Events
+carry search identity, evaluation availability, completed depth, evaluation count,
+principal variation and monotonic elapsed microseconds. The C ABI calls JNI
+synchronously on the search worker for progress and returns the final result;
+Java posts both to the main thread in order, without polling JNI. N/s and display
+text are calculated in Java, never in the core. Evaluation counts follow C++:
+one initial root count, each quiescence evaluation and terminal alpha-beta leaf.
+
+The principal variation tracks the selected line separately from the C++ per-ply
+best-move ordering heuristic, without changing move ordering or tie-breaking.
+It includes searched main-line plies, excluding quiescence continuations.
+
+Stop retains the last completed depth (no move if interrupted before completion).
+Abort invalidates the search identity before stopping. A worker destroys its
+native handle under the same lock used by cancellation, only after native search
+returns. The engine remains busy through main-thread final delivery; completion
+callbacks run afterward, when a replacement can safely start. Queued progress and
+results check identity and destruction, and Play checks the captured Game position
+again before each move listener. Closing EngineSession removes its listener and
+invalidates delivery immediately; native teardown finishes on the worker.
 Like the reference engine, FEN fullmove counters are rebased to 1 at the Starting
 Position, and the early-queen heuristic counts plies from that position.
 
@@ -50,10 +71,12 @@ adb shell am instrument -w jwtc.android.chess.test/jwtc.android.chess.engine.Rus
 
 The host runner requires CMake and GoogleTest. It compares ordered legal moves,
 resulting FENs, static evaluations, terminal states, completed depth and exact
-best moves against the compiled C++ implementation. Fixtures cover native
+best moves and evaluation counts against the compiled C++ implementation. Fixtures cover native
 regressions and a seeded 32-ply game path, with quiescence on and off. Perft and
 invalid-input tests exercise the core independently of search. Device tests use
-the real JNI, EngineSession and GameApi without an Activity or test doubles.
+the real JNI, EngineSession and GameApi without an Activity or test doubles,
+covering progress, stop ordering, abort/restart, pre-depth interruption, stale
+navigation, queued results on teardown, terminal positions and errors.
 
 ## Parity decisions
 

@@ -3,4 +3,7 @@ mod position;
 pub use position::{CoordinateMove, Error, GameState, Position, Variant};
 mod evaluation;
 mod search;
-pub use search::{search, SearchControl, SearchLimit, SearchOptions, SearchRequest, SearchResult};
+pub use search::{
+    search, search_with_progress, SearchControl, SearchEvent, SearchLimit, SearchOptions,
+    SearchRequest, SearchResult,
+};

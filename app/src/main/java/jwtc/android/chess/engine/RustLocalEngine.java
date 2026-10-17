@@ -55,7 +55,10 @@ public final class RustLocalEngine extends EngineApi {
             worker = new Thread(() -> {
                 RustSearchResult result = null;
                 Throwable failure = null;
-                try { result = RustNative.search(ownedHandle, request); }
+                try {
+                    result = RustNative.search(ownedHandle, request,
+                        progress -> updateHandler.post(() -> deliverProgress(request.searchId, snapshot, fen, progress)));
+                }
                 catch (RuntimeException | LinkageError error) { failure = error; }
                 finally {
                     synchronized (RustLocalEngine.this) {
@@ -67,7 +70,13 @@ public final class RustLocalEngine extends EngineApi {
                 final Throwable error = failure;
                 updateHandler.post(() -> finish(request.searchId, snapshot, fen, completed, error));
             }, "RustLocalEngine");
-            for (EngineListener listener : listeners) listener.OnEngineStarted();
+            updateHandler.post(() -> {
+                if (isCurrentSearch(request.searchId) && !destroyed)
+                    for (EngineListener listener : new ArrayList<>(listeners)) {
+                        if (!isCurrentSearch(request.searchId) || destroyed) break;
+                        listener.OnEngineStarted();
+                    }
+            });
             worker.start();
         } catch (RuntimeException | LinkageError error) {
             if (handle != 0) { RustNative.destroy(handle); handle = 0; }
@@ -77,29 +86,68 @@ public final class RustLocalEngine extends EngineApi {
     }
     private synchronized void finish(long id, GameApi.PositionSnapshot snapshot, String fen,
                                      RustSearchResult result, Throwable error) {
-        worker = null;
-        ArrayList<Runnable> callbacks = new ArrayList<>(completions);
-        completions.clear();
-        if (isCurrentSearch(id) && !destroyed) {
+        try {
+            if (!isCurrentSearch(id) || destroyed) return;
             if (error != null || result == null || result.searchId != id) {
-                reportError(id, error == null ? new IllegalStateException("Invalid Rust result") : error);
-            } else if (purpose == SearchPurpose.ANALYSIS) {
+                deliverError(id, error == null ? new IllegalStateException("Invalid Rust result") : error);
+                return;
+            }
+            deliverProgress(id, snapshot, fen, result);
+            if (!isCurrentSearch(id) || destroyed) return;
+            if (purpose == SearchPurpose.ANALYSIS) {
                 EngineEvaluation evaluation = !result.hasEvaluation || Math.abs(result.score) >= 100000
-                    ? null : new EngineEvaluation(false, result.score, result.completedDepth);
-                for (EngineListener listener : listeners) listener.onAnalysisComplete(fen, result.bestMove, evaluation);
+                    ? null : new EngineEvaluation(false, analysisScore(fen, result.score), result.completedDepth);
+                for (EngineListener listener : new ArrayList<>(listeners)) {
+                    if (!isCurrentSearch(id) || destroyed) break;
+                    listener.onAnalysisComplete(fen, result.bestMove, evaluation);
+                }
             } else if (snapshot != null && gameApi.isCurrentPosition(snapshot) && !result.bestMove.isEmpty()) {
                 GameApi.PositionMove move = snapshot.findMove(result.bestMove);
-                if (move == null) reportError(id, new IllegalStateException("Rust returned an illegal move"));
-                else for (EngineListener listener : listeners) listener.OnEngineMove(move.move, -1, result.score);
+                if (move == null) deliverError(id, new IllegalStateException("Rust returned an illegal move"));
+                else for (EngineListener listener : new ArrayList<>(listeners)) {
+                    if (!isCurrentSearch(id) || destroyed || !gameApi.isCurrentPosition(snapshot)) break;
+                    listener.OnEngineMove(move.move, -1, result.score);
+                }
             }
+        } finally {
+            // A replacement may start only after final delivery and native destruction.
+            worker = null;
+            ArrayList<Runnable> callbacks = new ArrayList<>(completions);
+            completions.clear();
+            for (Runnable callback : callbacks) updateHandler.post(callback);
         }
-        for (Runnable callback : callbacks) updateHandler.post(callback);
+    }
+    private synchronized void deliverProgress(long id, GameApi.PositionSnapshot snapshot, String fen, RustSearchResult result) {
+        if (!isCurrentSearch(id) || destroyed || result.searchId != id
+            || purpose == SearchPurpose.PLAY && snapshot != null && !gameApi.isCurrentPosition(snapshot)) return;
+        long nps = result.elapsedMicros == 0 ? 0 : result.nodes * 1_000_000 / result.elapsedMicros;
+        String message = "depth " + result.completedDepth + " " + result.principalVariation
+            + "\n" + result.nodes + " N, " + nps + " N/s (" + result.elapsedMicros / 1000 + " ms)";
+        int score = purpose == SearchPurpose.ANALYSIS ? analysisScore(fen, result.score) : result.score;
+        if (purpose == SearchPurpose.ANALYSIS && result.hasEvaluation && Math.abs(score) < 100000) {
+            message = "info depth " + result.completedDepth + " score cp " + score
+                + " pv " + result.principalVariation + "\n" + message;
+        }
+        if (result.hasEvaluation) message += "\n" + String.format("%.2f", score / 100.0);
+        for (EngineListener listener : new ArrayList<>(listeners)) {
+            if (!isCurrentSearch(id) || destroyed) break;
+            listener.OnEngineInfo(message, score / 100.0f);
+        }
+    }
+    // Analysis listeners consume side-to-move scores and convert to White at the view boundary.
+    private static int analysisScore(String fen, int whiteScore) {
+        return fen.trim().split("\\s+")[1].equals("w") ? whiteScore : -whiteScore;
     }
     private void reportError(long id, Throwable error) {
+        updateHandler.post(() -> deliverError(id, error));
+    }
+    private void deliverError(long id, Throwable error) {
+        if (!isCurrentSearch(id) || destroyed) return;
         Log.e("RustLocalEngine", "Search failed", error);
-        updateHandler.post(() -> {
-            if (isCurrentSearch(id) && !destroyed) for (EngineListener listener : listeners) listener.OnEngineError();
-        });
+        for (EngineListener listener : new ArrayList<>(listeners)) {
+            if (!isCurrentSearch(id) || destroyed) break;
+            listener.OnEngineError();
+        }
     }
     @Override public synchronized boolean isReady() { return !destroyed && worker == null; }
     @Override public synchronized void stop(Runnable onDone) {
@@ -110,7 +158,9 @@ public final class RustLocalEngine extends EngineApi {
     @Override public synchronized void abort(Runnable onDone) {
         discardSearchResults();
         stop(onDone);
-        if (worker != null) for (EngineListener listener : listeners) listener.OnEngineAborted();
+        if (worker != null && !destroyed) updateHandler.post(() -> {
+            if (!destroyed) for (EngineListener listener : new ArrayList<>(listeners)) listener.OnEngineAborted();
+        });
     }
     @Override public synchronized void destroy() { destroyed = true; abort(null); }
 }

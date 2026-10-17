@@ -139,6 +139,11 @@ public final class EngineSession {
         if (!closed && current != null) current.analyze(position, timeMillis);
     }
 
+    /** Stops the current search, delivering its completed result before onDone. */
+    public void stop(Runnable onDone) {
+        if (!closed && current != null) current.stop(onDone);
+    }
+
     /**
      * Cancels the current search without emitting a move, then runs onDone on the main thread
      * once a new search may start. Does nothing once closed.

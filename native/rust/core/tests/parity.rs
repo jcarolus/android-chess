@@ -76,11 +76,15 @@ fn compare(fen: &str, history: &[&str], depth: u8, quiescence: bool) {
     );
     let native: i32 = fields[2].parse().unwrap();
     assert_eq!(
-        result.score,
-        native * if p.white_to_move() { 1 } else { -1 },
+        result.score, native,
         "score {fen} {history:?} depth={depth} q={quiescence}"
     );
     assert_eq!(result.completed_depth.to_string(), fields[3]);
+    assert_eq!(
+        result.nodes.to_string(),
+        fields[4],
+        "evaluation count {fen} {history:?}"
+    );
 }
 #[test]
 #[ignore = "requires the C++ reference executable; run via scripts/test-rust-engine.sh"]

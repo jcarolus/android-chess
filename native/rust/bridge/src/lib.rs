@@ -1,6 +1,6 @@
 //! C ABI owned by the Android adapter. The reusable core contains no FFI or JNI.
 use chess_core::*;
-use std::ffi::{c_char, CStr};
+use std::ffi::{c_char, c_void, CStr};
 use std::panic::{catch_unwind, AssertUnwindSafe};
 #[repr(C)]
 pub struct NativeResult {
@@ -8,9 +8,11 @@ pub struct NativeResult {
     score: i32,
     depth: i32,
     nodes: u64,
+    elapsed_micros: u64,
     has_evaluation: i32,
     interrupted: i32,
     best: [u8; 6],
+    pv: [u8; 128],
     error: [u8; 256],
 }
 #[no_mangle]
@@ -56,6 +58,8 @@ pub unsafe extern "C" fn rust_chess_search(
     millis: i32,
     quiescence: i32,
     out: *mut NativeResult,
+    progress: Option<unsafe extern "C" fn(*mut c_void, *const NativeResult)>,
+    context: *mut c_void,
 ) {
     if out.is_null() {
         return;
@@ -66,12 +70,14 @@ pub unsafe extern "C" fn rust_chess_search(
         score: 0,
         depth: 0,
         nodes: 0,
+        elapsed_micros: 0,
         has_evaluation: 0,
         interrupted: 0,
         best: [0; 6],
+        pv: [0; 128],
         error: [0; 256],
     };
-    let result = catch_unwind(AssertUnwindSafe(|| -> Result<SearchResult, Error> {
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
         let control = control
             .as_ref()
             .ok_or_else(|| Error("Missing search handle".into()))?;
@@ -105,20 +111,47 @@ pub unsafe extern "C" fn rust_chess_search(
                 quiescence: quiescence != 0,
             },
         )?;
-        search(&request, control)
-    }));
-    match result {
-        Ok(Ok(result)) => {
-            output.score = result.score;
+        // The C ABI is the application boundary: expose White-perspective scores here.
+        let sign = if request.position().white_to_move() {
+            1
+        } else {
+            -1
+        };
+        search_with_progress(&request, control, |event| {
+            let (result, finished) = match event {
+                SearchEvent::Progress(result) => (result, false),
+                SearchEvent::Finished(result) => (result, true),
+            };
+            output.score = result.score * sign;
             output.depth = result.completed_depth as i32;
             output.nodes = result.nodes;
+            output.elapsed_micros = result.elapsed_micros;
             output.has_evaluation = i32::from(result.has_evaluation);
             output.interrupted = i32::from(result.interrupted);
+            output.best.fill(0);
             if let Some(m) = result.best_move {
                 let bytes = m.as_str().as_bytes();
                 output.best[..bytes.len()].copy_from_slice(bytes);
             }
-        }
+            output.pv.fill(0);
+            let pv = result
+                .pv
+                .iter()
+                .map(CoordinateMove::as_str)
+                .collect::<Vec<_>>()
+                .join(" ");
+            let bytes = pv.as_bytes();
+            output.pv[..bytes.len()].copy_from_slice(bytes);
+            if !finished {
+                if let Some(callback) = progress {
+                    callback(context, output);
+                }
+            }
+        })?;
+        Ok(())
+    }));
+    match result {
+        Ok(Ok(())) => {}
         error => {
             let message = match error {
                 Ok(Err(e)) => e.to_string(),

@@ -40,5 +40,5 @@ int main(int argc, char** argv) {
     game.setSearchLimit(std::stoi(argv[2]));
     game.setQuiescentOn(std::stoi(argv[3]));
     game.search();
-    std::cout << "RESULT\t" << coordinate(game.getBestMove()) << '\t' << game.getBestValue() << '\t' << game.completedDepth() << '\n';
+    std::cout << "RESULT\t" << coordinate(game.getBestMove()) << '\t' << game.getBestValue() << '\t' << game.completedDepth() << '\t' << game.getEvalCount() << '\n';
 }
