@@ -302,12 +302,17 @@ pub fn search_with_progress(
         if worker.interrupted {
             break;
         }
-        result.best_move = worker.best[0].map(Move::coordinate);
+        result.best_move = worker.best[0].map(|m| p.external(p.turn, m));
         result.completed_depth = depth;
         result.has_evaluation = true;
         result.score = worker.values[0];
         // Track the selected line independently of the native ordering heuristic.
-        result.pv = worker.pv[0].iter().copied().map(Move::coordinate).collect();
+        // Movers alternate along the line, starting with the root's side to move.
+        result.pv = worker.pv[0]
+            .iter()
+            .enumerate()
+            .map(|(i, m)| p.external(p.turn ^ (i % 2), *m))
+            .collect();
         result.nodes = worker.nodes;
         result.elapsed_micros = start.elapsed().as_micros() as u64;
         publish(SearchEvent::Progress(result.clone()));

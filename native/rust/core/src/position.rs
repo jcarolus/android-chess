@@ -148,6 +148,9 @@ pub struct Position {
     pub(crate) pieces: [[u64; 6]; 2],
     pub(crate) turn: usize,
     pub(crate) castling: [u8; 2],
+    /// Original rook file per colour, `[queenside, kingside]`; fixed for the game.
+    pub(crate) rook_file: [[usize; 2]; 2],
+    variant: Variant,
     ep: Option<usize>,
     halfmove: u32,
     pub(crate) ply: usize,
@@ -157,8 +160,8 @@ pub struct Position {
 }
 impl Position {
     pub fn from_fen(variant: Variant, fen: &str) -> Result<Self, Error> {
-        if variant != Variant::Standard {
-            return Err(invalid("Only Standard is supported"));
+        if variant == Variant::Duck {
+            return Err(invalid("Only Standard and Chess 960 are supported"));
         }
         let fields: Vec<_> = fen.split_whitespace().collect();
         if fields.len() != 6 || !fen.is_ascii() {
@@ -168,6 +171,8 @@ impl Position {
             pieces: [[0; 6]; 2],
             turn: 1,
             castling: [0; 2],
+            rook_file: [[0, 7], [0, 7]],
+            variant,
             ep: None,
             halfmove: 0,
             ply: 0,
@@ -214,24 +219,65 @@ impl Position {
             return Err(invalid("Invalid castling rights"));
         }
         for t in 0..2 {
-            let long = fields[2].contains(if t == 1 { 'Q' } else { 'q' });
-            let short = fields[2].contains(if t == 1 { 'K' } else { 'k' });
-            let base = if t == 1 { 56 } else { 0 };
-            if (long || short) && p.pieces[t][KING] != bit(base + 4) {
-                return Err(invalid("Non-Standard castling king"));
-            }
-            if long && p.pieces[t][ROOK] & bit(base) == 0
-                || short && p.pieces[t][ROOK] & bit(base + 7) == 0
-            {
-                return Err(invalid("Missing castling rook"));
-            }
-            p.castling[t] =
-                u8::from(!long) | (u8::from(!short) << 1) | (if !long && !short { 4 } else { 0 });
             if p.pieces[t][KING].count_ones() != 1
                 || p.pieces[t][PAWN] & 0xff000000000000ff != 0
                 || p.pieces[t][PAWN].count_ones() > 8
             {
                 return Err(invalid("Invalid kings or pawns"));
+            }
+        }
+        for t in 0..2 {
+            let long = fields[2].contains(if t == 1 { 'Q' } else { 'q' });
+            let short = fields[2].contains(if t == 1 { 'K' } else { 'k' });
+            let base = if t == 1 { 56 } else { 0 };
+            if variant == Variant::Standard {
+                if (long || short) && p.pieces[t][KING] != bit(base + 4) {
+                    return Err(invalid("Non-Standard castling king"));
+                }
+                if long && p.pieces[t][ROOK] & bit(base) == 0
+                    || short && p.pieces[t][ROOK] & bit(base + 7) == 0
+                {
+                    return Err(invalid("Missing castling rook"));
+                }
+                p.castling[t] = u8::from(!long)
+                    | (u8::from(!short) << 1)
+                    | (if !long && !short { 4 } else { 0 });
+            } else {
+                // Chess 960: scan outward from the king along the back rank for the
+                // outermost rook on each side; a claimed right that resolves to no
+                // rook is dropped silently, matching the native reference engine's
+                // setCastlingsEPAnd50.
+                let king = p.king(t);
+                let mut lost = 0u8;
+                if long {
+                    let mut found = None;
+                    for s in (base..king).rev() {
+                        if p.pieces[t][ROOK] & bit(s) != 0 {
+                            found = Some(s % 8);
+                        }
+                    }
+                    match found {
+                        Some(file) => p.rook_file[t][0] = file,
+                        None => lost |= 1,
+                    }
+                } else {
+                    lost |= 1;
+                }
+                if short {
+                    let mut found = None;
+                    for s in king + 1..=base + 7 {
+                        if p.pieces[t][ROOK] & bit(s) != 0 {
+                            found = Some(s % 8);
+                        }
+                    }
+                    match found {
+                        Some(file) => p.rook_file[t][1] = file,
+                        None => lost |= 2,
+                    }
+                } else {
+                    lost |= 2;
+                }
+                p.castling[t] = lost | (if lost & 3 == 3 { 4 } else { 0 });
             }
         }
         p.ep = if fields[3] == "-" {
@@ -424,32 +470,54 @@ impl Position {
                         moves.push(m);
                     }
                 }
-                if piece == KING {
+                if piece == KING && !self.in_check() {
                     let base = if t == 1 { 56 } else { 0 };
-                    for (mask, to, rook, path, empty) in [
-                        (
-                            6,
-                            base + 6,
-                            base + 7,
-                            vec![base + 5, base + 6],
-                            vec![base + 5, base + 6],
-                        ),
-                        (
-                            5,
-                            base + 2,
-                            base,
-                            vec![base + 3, base + 2],
-                            vec![base + 1, base + 2, base + 3],
-                        ),
-                    ] {
-                        if self.castling[t] & mask == 0
-                            && self.king(t) == base + 4
-                            && self.pieces[t][ROOK] & bit(rook) != 0
-                            && !self.in_check()
-                            && empty.iter().all(|s| occ & bit(*s) == 0)
-                            && path.iter().all(|s| !self.attacked(t, *s))
-                        {
-                            let mut m = Move::new(base + 4, to);
+                    let king = self.king(t);
+                    for (mask, dir, bound, short) in
+                        [(6u8, 1i32, base + 7, true), (5u8, -1i32, base, false)]
+                    {
+                        if self.castling[t] & mask != 0 {
+                            continue;
+                        }
+                        let target_file = self.rook_file[t][usize::from(short)];
+                        let mut s = king as i32;
+                        let mut rook = None;
+                        loop {
+                            let next = s + dir;
+                            if dir > 0 {
+                                if next as usize > bound {
+                                    break;
+                                }
+                            } else if next < bound as i32 {
+                                break;
+                            }
+                            s = next;
+                            let sq = s as usize;
+                            if occ & bit(sq) != 0 {
+                                if self.pieces[t][ROOK] & bit(sq) != 0 && sq % 8 == target_file {
+                                    rook = Some(sq);
+                                }
+                                break;
+                            }
+                            if self.attacked(t, sq) {
+                                break;
+                            }
+                        }
+                        let Some(rook) = rook else { continue };
+                        let (to, rook_to) = if short {
+                            (base + 6, base + 5)
+                        } else {
+                            (base + 2, base + 3)
+                        };
+                        let free = |sq: usize| occ & bit(sq) == 0;
+                        let legal = (free(rook_to) && free(to))
+                            || (rook == rook_to && free(to))
+                            || (rook == to && king == rook_to)
+                            || (rook == to && free(rook_to))
+                            || (king == to && free(rook_to))
+                            || (king == rook_to && free(to));
+                        if legal {
+                            let mut m = Move::new(king, to);
                             m.castle = true;
                             moves.push(m);
                         }
@@ -476,7 +544,7 @@ impl Position {
     pub fn legal_moves(&self) -> Vec<CoordinateMove> {
         self.legal_internal()
             .into_iter()
-            .map(Move::coordinate)
+            .map(|m| self.external(self.turn, m))
             .collect()
     }
     pub fn apply(&mut self, coordinate: &str) -> Result<(), Error> {
@@ -484,12 +552,39 @@ impl Position {
         let m = self
             .legal_internal()
             .into_iter()
-            .find(|m| m.coordinate() == coordinate)
+            .find(|m| self.external(self.turn, *m) == coordinate)
             .ok_or_else(|| invalid("Illegal move"))?;
         let mut next = self.make(m);
         next.history.push(coordinate.0);
         *self = next;
         Ok(())
+    }
+    /// The rook's current square for a castle move, found by its tracked file
+    /// (scanning outward from the king's pre-move square, as the native
+    /// reference engine does when it relocates the rook).
+    fn castling_rook_square(&self, t: usize, king_from: usize, short: bool) -> usize {
+        let target_file = self.rook_file[t][usize::from(short)];
+        let mut s = king_from;
+        loop {
+            s = if short { s + 1 } else { s - 1 };
+            if s % 8 == target_file {
+                return s;
+            }
+        }
+    }
+    /// The coordinate move crossing the Rust boundary: king-to-destination for
+    /// Standard, king-to-original-rook for Chess 960 castling (UCI_Chess960
+    /// convention); every other move is unchanged. `t` is the move's mover,
+    /// which is `self.turn` only when `m` is played directly from `self` (a
+    /// later ply, e.g. in a principal variation, has the opposite mover).
+    pub(crate) fn external(&self, t: usize, m: Move) -> CoordinateMove {
+        if m.castle && self.variant == Variant::Chess960 {
+            let short = m.to % 8 == 6;
+            let rook = self.castling_rook_square(t, m.from, short);
+            CoordinateMove(format!("{}{}", name(m.from), name(rook)))
+        } else {
+            m.coordinate()
+        }
     }
     fn rights(&self) -> [u8; 2] {
         [
@@ -530,10 +625,11 @@ impl Position {
         if m.capture {
             let back_rank = if t == WHITE { 0 } else { 7 };
             if self.piece(t ^ 1, m.to) == Some(ROOK) && m.to / 8 == back_rank {
-                if m.to.is_multiple_of(8) {
+                let file = m.to % 8;
+                if file == self.rook_file[t ^ 1][0] {
                     n.castling[t ^ 1] |= 1;
                 }
-                if m.to % 8 == 7 {
+                if file == self.rook_file[t ^ 1][1] {
                     n.castling[t ^ 1] |= 2;
                 }
             }
@@ -552,9 +648,10 @@ impl Position {
         }
         n.pieces[t][m.promotion.unwrap_or(p)] |= bit(m.to);
         if p == ROOK {
-            if m.from.is_multiple_of(8) {
+            let file = m.from % 8;
+            if file == self.rook_file[t][0] {
                 n.castling[t] |= 1;
-            } else if m.from % 8 == 7 {
+            } else if file == self.rook_file[t][1] {
                 n.castling[t] |= 2;
             }
         }
@@ -563,12 +660,10 @@ impl Position {
         }
         if m.castle {
             let base = if t == 1 { 56 } else { 0 };
-            let (from, to) = if m.to % 8 == 6 {
-                (base + 7, base + 5)
-            } else {
-                (base, base + 3)
-            };
-            n.pieces[t][ROOK] = (n.pieces[t][ROOK] & !bit(from)) | bit(to);
+            let short = m.to % 8 == 6;
+            let rook_from = self.castling_rook_square(t, m.from, short);
+            let rook_to = if short { base + 5 } else { base + 3 };
+            n.pieces[t][ROOK] = (n.pieces[t][ROOK] & !bit(rook_from)) | bit(rook_to);
             n.castling[t] |= 8;
         }
         n.ep = if m.double {
