@@ -69,8 +69,15 @@ public final class RustSearchRequest {
      * The reverse of {@link #toRustCoordinate}: rewrites a Chess 960 king-to-rook result back to
      * the king-to-destination form {@link GameApi.PositionMove#uci} uses, so it can be resolved
      * via {@link GameApi.PositionSnapshot#findMove}. Leaves every other move unchanged.
+     * <p>
+     * {@code backRank} (the row {@code files}' king/rook squares were found on, top-down: 0 for
+     * Black, 7 for White) is required: on a fixed back rank, a file uniquely identifies a square,
+     * so pairing it with {@code files[0]} (the king's file) establishes that {@code from} is
+     * actually the king's own square, not merely any piece sharing its file on some other rank —
+     * which a king can reach only by stepping onto the tracked rook's own square, impossible for
+     * an ordinary (non-castling) move.
      */
-    static String fromRustCoordinate(String uci, int[] files) {
+    static String fromRustCoordinate(String uci, int[] files, int backRank) {
         if (files == null || uci.length() < 4) return uci;
         int from, to;
         try {
@@ -79,11 +86,11 @@ public final class RustSearchRequest {
         } catch (Exception e) {
             return uci;
         }
-        if (Pos.col(from) != files[0] || Pos.row(from) != Pos.row(to)) return uci;
+        if (Pos.row(from) != backRank || Pos.col(from) != files[0] || Pos.row(to) != backRank) return uci;
         int toFile = Pos.col(to);
         int destinationFile = toFile == files[2] ? 6 : toFile == files[1] ? 2 : -1;
         if (destinationFile < 0) return uci;
-        return Pos.toString(from) + Pos.toString(Pos.fromColAndRow(destinationFile, Pos.row(from)));
+        return Pos.toString(from) + Pos.toString(Pos.fromColAndRow(destinationFile, backRank));
     }
 
     /**

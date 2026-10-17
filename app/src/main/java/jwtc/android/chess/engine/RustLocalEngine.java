@@ -98,7 +98,7 @@ public final class RustLocalEngine extends EngineApi {
             }
             deliverProgress(id, snapshot, fen, variant, result);
             if (!isCurrentSearch(id) || destroyed) return;
-            String bestMove = resolveCoordinate(result.bestMove, variant, fen);
+            String bestMove = resolvePrincipalVariation(result.bestMove, variant, fen);
             if (purpose == SearchPurpose.ANALYSIS) {
                 EngineEvaluation evaluation = !result.hasEvaluation || Math.abs(result.score) >= 100000
                     ? null : new EngineEvaluation(false, analysisScore(fen, result.score), result.completedDepth);
@@ -141,13 +141,12 @@ public final class RustLocalEngine extends EngineApi {
             listener.OnEngineInfo(message, score / 100.0f);
         }
     }
-    /** Rewrites a Chess 960 king-to-rook result from the position at {@code fen} back to
-     * GameApi's king-to-destination convention; every other move/variant is unchanged. */
-    private static String resolveCoordinate(String uci, RustSearchRequest.Variant variant, String fen) {
-        if (variant != RustSearchRequest.Variant.CHESS_960 || uci.isEmpty()) return uci;
-        boolean whiteToMove = fen.split("\\s+")[1].equals("w");
-        return RustSearchRequest.fromRustCoordinate(uci, RustSearchRequest.chess960Files(fen, whiteToMove));
-    }
+    /**
+     * Rewrites Chess 960 king-to-rook results from the position at {@code fen} back to GameApi's
+     * king-to-destination convention; every other move/variant is unchanged. Handles a bare best
+     * move the same way as a space-separated principal variation (a single move is a one-move PV),
+     * with movers alternating from {@code fen}'s side to move.
+     */
     private static String resolvePrincipalVariation(String pv, RustSearchRequest.Variant variant, String fen) {
         if (variant != RustSearchRequest.Variant.CHESS_960 || pv.isEmpty()) return pv;
         boolean whiteToMoveFirst = fen.split("\\s+")[1].equals("w");
@@ -158,7 +157,9 @@ public final class RustLocalEngine extends EngineApi {
         for (int i = 0; i < moves.length; i++) {
             if (i > 0) resolved.append(' ');
             boolean whiteMoved = i % 2 == 0 == whiteToMoveFirst;
-            resolved.append(RustSearchRequest.fromRustCoordinate(moves[i], whiteMoved ? whiteFiles : blackFiles));
+            int backRank = whiteMoved ? 7 : 0;
+            resolved.append(RustSearchRequest.fromRustCoordinate(
+                moves[i], whiteMoved ? whiteFiles : blackFiles, backRank));
         }
         return resolved.toString();
     }

@@ -133,6 +133,9 @@ fn native_regression_fixtures() {
         2,
         true,
     );
+    // b1 attacked but not occupied: queenside castling only requires c1/d1
+    // (the king's own transit) to be safe, not the whole span to the rook.
+    compare(Variant::Standard, "1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1", &[], 1, false);
 }
 #[test]
 #[ignore = "requires the C++ reference executable; run via scripts/test-rust-engine.sh"]
@@ -162,6 +165,9 @@ fn chess960_castling_fixtures() {
     );
     // King and rook swap places.
     compare(Variant::Chess960, "4k3/8/8/8/8/8/8/5KR1 w K - 0 1", &[], 2, true);
+    // Classical king/rook squares declared Chess 960: still only the king's
+    // own transit (c1/d1) needs to be unattacked, not the full span to a1.
+    compare(Variant::Chess960, "1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1", &[], 1, false);
     // Independent rook columns per colour, both castling in one line.
     compare(
         Variant::Chess960,

@@ -94,6 +94,18 @@ pub(crate) fn square(s: &str) -> Result<usize, Error> {
 pub(crate) fn distance(a: usize, b: usize) -> i32 {
     (a / 8).abs_diff(b / 8) as i32 + (a % 8).abs_diff(b % 8) as i32
 }
+/// The file of the outermost rook along `squares` (walked from the king outward), matching the
+/// native reference engine's setCastlingsEPAnd50: later matches overwrite earlier ones, so the
+/// result is whichever rook sits closest to the board edge.
+fn outermost_rook_file(rooks: u64, squares: impl Iterator<Item = usize>) -> Option<usize> {
+    let mut found = None;
+    for s in squares {
+        if rooks & bit(s) != 0 {
+            found = Some(s % 8);
+        }
+    }
+    found
+}
 pub(crate) fn advance(t: usize, s: usize) -> i32 {
     if t == WHITE {
         7 - (s / 8) as i32
@@ -250,13 +262,7 @@ impl Position {
                 let king = p.king(t);
                 let mut lost = 0u8;
                 if long {
-                    let mut found = None;
-                    for s in (base..king).rev() {
-                        if p.pieces[t][ROOK] & bit(s) != 0 {
-                            found = Some(s % 8);
-                        }
-                    }
-                    match found {
+                    match outermost_rook_file(p.pieces[t][ROOK], (base..king).rev()) {
                         Some(file) => p.rook_file[t][0] = file,
                         None => lost |= 1,
                     }
@@ -264,13 +270,7 @@ impl Position {
                     lost |= 1;
                 }
                 if short {
-                    let mut found = None;
-                    for s in king + 1..=base + 7 {
-                        if p.pieces[t][ROOK] & bit(s) != 0 {
-                            found = Some(s % 8);
-                        }
-                    }
-                    match found {
+                    match outermost_rook_file(p.pieces[t][ROOK], king + 1..=base + 7) {
                         Some(file) => p.rook_file[t][1] = file,
                         None => lost |= 2,
                     }
@@ -480,6 +480,34 @@ impl Position {
                             continue;
                         }
                         let target_file = self.rook_file[t][usize::from(short)];
+                        let (to, rook_to) = if short {
+                            (base + 6, base + 5)
+                        } else {
+                            (base + 2, base + 3)
+                        };
+                        if king == base + 4 && target_file == if short { 7 } else { 0 } {
+                            // The classical king/rook squares: only the king's own transit
+                            // squares need be unattacked; squares further toward the rook
+                            // only need to be vacant (matches the native reference engine's
+                            // dedicated fast path, which the general scan below does not
+                            // reproduce exactly).
+                            let transit: &[usize] =
+                                if short { &[base + 5, base + 6] } else { &[base + 2, base + 3] };
+                            let clear: &[usize] = if short {
+                                &[base + 5, base + 6]
+                            } else {
+                                &[base + 1, base + 2, base + 3]
+                            };
+                            if self.pieces[t][ROOK] & bit(base + target_file) != 0
+                                && clear.iter().all(|s| occ & bit(*s) == 0)
+                                && transit.iter().all(|s| !self.attacked(t, *s))
+                            {
+                                let mut m = Move::new(king, to);
+                                m.castle = true;
+                                moves.push(m);
+                            }
+                            continue;
+                        }
                         let mut s = king as i32;
                         let mut rook = None;
                         loop {
@@ -504,11 +532,6 @@ impl Position {
                             }
                         }
                         let Some(rook) = rook else { continue };
-                        let (to, rook_to) = if short {
-                            (base + 6, base + 5)
-                        } else {
-                            (base + 2, base + 3)
-                        };
                         let free = |sq: usize| occ & bit(sq) == 0;
                         let legal = (free(rook_to) && free(to))
                             || (rook == rook_to && free(to))
@@ -563,14 +586,7 @@ impl Position {
     /// (scanning outward from the king's pre-move square, as the native
     /// reference engine does when it relocates the rook).
     fn castling_rook_square(&self, t: usize, king_from: usize, short: bool) -> usize {
-        let target_file = self.rook_file[t][usize::from(short)];
-        let mut s = king_from;
-        loop {
-            s = if short { s + 1 } else { s - 1 };
-            if s % 8 == target_file {
-                return s;
-            }
-        }
+        king_from - king_from % 8 + self.rook_file[t][usize::from(short)]
     }
     /// The coordinate move crossing the Rust boundary: king-to-destination for
     /// Standard, king-to-original-rook for Chess 960 castling (UCI_Chess960

@@ -188,3 +188,20 @@ fn chess960_fen_drops_a_claimed_right_with_no_matching_rook() {
     assert!(!legal.contains(&"e1h1".to_string()), "{legal:?}");
     assert!(p.fen().contains(" Q "), "{}", p.fen());
 }
+
+#[test]
+fn standard_queenside_castle_only_requires_the_kings_own_transit_to_be_safe() {
+    // b1 is attacked but not occupied; FIDE castling only requires c1/d1 (the
+    // king's own path) to be unattacked, matching the native reference
+    // engine's fast path for classical king/rook squares.
+    let p = Position::from_fen(Variant::Standard, "1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1").unwrap();
+    let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
+    assert!(legal.contains(&"e1c1".to_string()), "{legal:?}");
+}
+
+#[test]
+fn chess960_queenside_castle_only_requires_the_kings_own_transit_to_be_safe() {
+    let p = Position::from_fen(Variant::Chess960, "1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1").unwrap();
+    let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
+    assert!(legal.contains(&"e1a1".to_string()), "{legal:?}");
+}

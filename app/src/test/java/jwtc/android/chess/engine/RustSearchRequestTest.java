@@ -47,15 +47,23 @@ public class RustSearchRequestTest {
     @Test
     public void fromRustCoordinateRewritesKingToRookBackToDestination() {
         int[] files = {4, 0, 7};
-        assertEquals("e1g1", RustSearchRequest.fromRustCoordinate("e1h1", files));
-        assertEquals("e1c1", RustSearchRequest.fromRustCoordinate("e1a1", files));
+        assertEquals("e1g1", RustSearchRequest.fromRustCoordinate("e1h1", files, 7));
+        assertEquals("e1c1", RustSearchRequest.fromRustCoordinate("e1a1", files, 7));
     }
 
     @Test
     public void fromRustCoordinateLeavesOrdinaryMovesUnchanged() {
         int[] files = {4, 0, 7};
-        assertEquals("e2e4", RustSearchRequest.fromRustCoordinate("e2e4", files));
-        assertEquals("e1d1", RustSearchRequest.fromRustCoordinate("e1d1", files));
+        assertEquals("e2e4", RustSearchRequest.fromRustCoordinate("e2e4", files, 7));
+        assertEquals("e1d1", RustSearchRequest.fromRustCoordinate("e1d1", files, 7));
+    }
+
+    @Test
+    public void fromRustCoordinateIgnoresAPieceThatOnlyCoincidentallySharesFiles() {
+        // Files for the back rank (king on e, rook on h); a queen elsewhere on the e-file
+        // sliding to the h-file on its OWN rank must not be reinterpreted as e1h1's castle.
+        int[] files = {4, 0, 7};
+        assertEquals("e5h5", RustSearchRequest.fromRustCoordinate("e5h5", files, 7));
     }
 
     @Test
@@ -63,7 +71,7 @@ public class RustSearchRequestTest {
         int[] files = {4, 1, 6};
         int shortCastle = Move.makeMoveOO(Pos.fromString("e1"), Pos.fromString("g1"));
         String rust = RustSearchRequest.toRustCoordinate(shortCastle, files);
-        assertEquals("e1g1", RustSearchRequest.fromRustCoordinate(rust, files));
+        assertEquals("e1g1", RustSearchRequest.fromRustCoordinate(rust, files, 7));
     }
 
 }
