@@ -33,6 +33,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionForAnalysisUsesRustForDuck();
             sessionForAnalysisUsesRustForChess960Castling();
             sessionPlaysAChess960Game();
+            sessionPuzzleMateScoreIsSideToMove();
             sessionDuckTurns(false);
             sessionDuckTurns(true);
             sessionDuckPendingAndStale();
@@ -366,6 +367,29 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     finally { done.countDown(); }
                 }
                 @Override public void OnEngineError() { failure.set(new AssertionError("Chess 960 Play search failed")); done.countDown(); }
+            });
+            session[0].play(SearchLimit.ply(2));
+        });
+        await(done, failure, session);
+    }
+    /** Black to move mates in one: the puzzle session must deliver the side-to-move mate score. */
+    private void sessionPuzzleMateScoreIsSideToMove() throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        EngineSession[] session = new EngineSession[1];
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            check(game.initFEN("rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq g3 0 2", true),
+                "Could not load the Black-to-move mate position");
+            session[0] = EngineSession.forPuzzles(game, new Listener() {
+                @Override public void OnEngineMove(int move, int duck, int score) {
+                    try {
+                        check(score == BoardConstants.VALUATION_MATE,
+                            "Expected the side-to-move mate score but got " + score);
+                    } catch (Throwable error) { failure.set(error); }
+                    finally { done.countDown(); }
+                }
+                @Override public void OnEngineError() { failure.set(new AssertionError("Puzzle search failed")); done.countDown(); }
             });
             session[0].play(SearchLimit.ply(2));
         });
