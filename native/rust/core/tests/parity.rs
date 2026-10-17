@@ -1,11 +1,16 @@
 use chess_core::*;
 use std::process::Command;
 const START: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-fn compare(fen: &str, history: &[&str], depth: u8, quiescence: bool) {
+fn compare(variant: Variant, fen: &str, history: &[&str], depth: u8, quiescence: bool) {
     let reference = std::env::var("CHESS_REFERENCE")
         .expect("Set CHESS_REFERENCE to the built chess_parity_reference executable");
     let output = Command::new(reference)
-        .args([fen, &depth.to_string(), if quiescence { "1" } else { "0" }])
+        .args([
+            fen,
+            &depth.to_string(),
+            if quiescence { "1" } else { "0" },
+            if variant == Variant::Chess960 { "1" } else { "0" },
+        ])
         .args(history)
         .output()
         .unwrap();
@@ -16,7 +21,7 @@ fn compare(fen: &str, history: &[&str], depth: u8, quiescence: bool) {
     let text = String::from_utf8(output.stdout).unwrap();
     let request = SearchRequest::new(
         1,
-        Variant::Standard,
+        variant,
         fen,
         history
             .iter()
@@ -106,11 +111,12 @@ fn native_regression_fixtures() {
     for fen in fixtures {
         for depth in 1..=3 {
             for q in [false, true] {
-                compare(fen, &[], depth, q);
+                compare(Variant::Standard, fen, &[], depth, q);
             }
         }
     }
     compare(
+        Variant::Standard,
         START,
         &[
             "g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8",
@@ -119,10 +125,56 @@ fn native_regression_fixtures() {
         true,
     );
     compare(
+        Variant::Standard,
         "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
         &[
             "e1e2", "e8e7", "e2e1", "e7e8", "e1e2", "e8e7", "e2e1", "e7e8",
         ],
+        2,
+        true,
+    );
+}
+#[test]
+#[ignore = "requires the C++ reference executable; run via scripts/test-rust-engine.sh"]
+fn chess960_castling_fixtures() {
+    // King on e1, rooks flanking at b1/g1 (native/project/jni/tests/engine_tests.cpp).
+    let king_between_rooks = "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1";
+    for depth in 1..=3 {
+        for q in [false, true] {
+            compare(Variant::Chess960, king_between_rooks, &[], depth, q);
+        }
+    }
+    // Rook already on its destination square.
+    compare(
+        Variant::Chess960,
+        "4k3/8/8/8/8/8/8/3RK2R w KQ - 0 1",
+        &[],
+        2,
+        true,
+    );
+    // King already on its destination square.
+    compare(
+        Variant::Chess960,
+        "4k3/8/8/8/8/8/8/R1K4R w KQ - 0 1",
+        &[],
+        2,
+        true,
+    );
+    // King and rook swap places.
+    compare(Variant::Chess960, "4k3/8/8/8/8/8/8/5KR1 w K - 0 1", &[], 2, true);
+    // Independent rook columns per colour, both castling in one line.
+    compare(
+        Variant::Chess960,
+        "r3k3/8/8/8/8/8/8/4K1R1 w Kq - 0 1",
+        &["e1g1", "e8a8"],
+        2,
+        true,
+    );
+    // Rights lost when the rook moves away and are not restored when it returns.
+    compare(
+        Variant::Chess960,
+        "4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1",
+        &["a1a5", "e8e7", "a5a1", "e7e8"],
         2,
         true,
     );
@@ -143,6 +195,7 @@ fn deterministic_playouts() {
         p.apply(&m).unwrap();
         history.push(m);
         compare(
+            Variant::Standard,
             START,
             &history.iter().map(String::as_str).collect::<Vec<_>>(),
             2,
