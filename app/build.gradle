@@ -14,6 +14,7 @@ android {
     buildToolsVersion '36'
     defaultConfig {
         applicationId "jwtc.android.chess"
+        testInstrumentationRunner "jwtc.android.chess.engine.RustEngineInstrumentation"
         minSdkVersion 24
         targetSdkVersion 36
         resourceConfigurations += ['en', 'zh', 'it', 'pt', 'es', 'ru', 'de', 'fr', 'tr', 'ro', 'ar', 'fa']
@@ -61,4 +62,18 @@ dependencies {
     implementation 'net.openid:appauth:0.11.1'
     playStoreImplementation 'com.google.android.gms:play-services-cast:22.1.0'
     testImplementation 'junit:junit:4.13.2'
+}
+
+// Both engines are packaged; Rust is reachable only through internal selection.
+def buildRustEngines = tasks.register('buildRustEngines', Exec) {
+    inputs.files(fileTree('../native/rust') { exclude 'target/**' })
+    inputs.file('../scripts/build-rust-android.sh')
+    outputs.dir('../native/rust/target/android')
+    environment 'ANDROID_NDK_HOME', "${androidComponents.sdkComponents.sdkDirectory.get().asFile}/ndk/${android.ndkVersion}"
+    commandLine 'bash', file('../scripts/build-rust-android.sh').absolutePath
+}
+tasks.configureEach {
+    if (name.startsWith('configureNdkBuild') || name.startsWith('buildNdkBuild')) {
+        dependsOn(buildRustEngines)
+    }
 }

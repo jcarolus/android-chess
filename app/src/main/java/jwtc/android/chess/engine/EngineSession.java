@@ -18,6 +18,7 @@ public final class EngineSession {
     private final EngineListener listener;
     private LocalEngine local;
     private OexEngine oex;
+    private RustLocalEngine rust;
     private EngineApi current;
     private boolean closed = false;
 
@@ -52,6 +53,14 @@ public final class EngineSession {
             session.oex = new OexEngine(context, gameApi, oexEngineId);
             session.use(session.oex);
         }
+        return session;
+    }
+
+    /** Internal integration entry point; never selected by production preferences. */
+    static EngineSession forRustTesting(GameApi gameApi, EngineListener listener) {
+        EngineSession session = new EngineSession(null, gameApi, listener);
+        session.rust = new RustLocalEngine(gameApi);
+        session.use(session.rust);
         return session;
     }
 
@@ -157,5 +166,6 @@ public final class EngineSession {
         if (oex != null) {
             oex.destroy();
         }
+        if (rust != null) rust.destroy();
     }
 }

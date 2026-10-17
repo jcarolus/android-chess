@@ -304,6 +304,8 @@ class ChessBoard {
     boolean areKingsOnTheBoard();
     boolean isEnded();
     boolean checkEnded();
+    boolean sameRepetitionPosition(ChessBoard& other);
+    int repetitionEnPassant();
     int ambigiousMove();
     boolean requestMove(const int from, const int to, ChessBoard* board, ChessBoard* tmpBoard, int promoPiece);
     int isAmbiguousCastle(const int from, const int to);

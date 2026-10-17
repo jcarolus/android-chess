@@ -704,4 +704,59 @@ TEST_F(GameTest, CountAttackersToTreatsDuckAsBlocker) {
     testCountAttackersToTreatsDuckAsBlocker();
 }
 
+TEST_F(GameTest, SingleBishopMobilityUsesItsSquare) {
+    ChessBoard board;
+    ASSERT_TRUE(board.parseFEN("4k3/8/8/8/3B4/8/8/4K3 w - - 0 1"));
+    // A bishop on d4 reaches thirteen squares on an otherwise empty diagonal.
+    EXPECT_EQ(65, board.bishopValueExtension(ChessBoard::WHITE));
+}
+
+TEST_F(GameTest, PromotionMaterialMatchesRecalculatedMaterial) {
+    Game game;
+    ASSERT_TRUE(game.newGameFromFEN("4k3/P7/8/8/8/8/7p/4K3 w - - 0 1"));
+    ASSERT_TRUE(game.requestMove(ChessBoard::a7, ChessBoard::a8));
+    const int before = game.getBoard()->boardValue();
+    game.getBoard()->calcQuality();
+    EXPECT_EQ(before, game.getBoard()->boardValue());
+}
+
+TEST_F(GameTest, PassedPawnMasksCoverForwardAdjacentFilesSymmetrically) {
+    EXPECT_EQ(0x0000000007070707ULL, ChessBoard::PASSED_PAWN_MASK[ChessBoard::WHITE][ChessBoard::b4]);
+    EXPECT_EQ(0x0707070700000000ULL, ChessBoard::PASSED_PAWN_MASK[ChessBoard::BLACK][ChessBoard::b5]);
+}
+
+TEST_F(GameTest, ReturningKingDoesNotRestoreRepetitionRights) {
+    Game game;
+    ASSERT_TRUE(game.newGameFromFEN("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1"));
+    for (int cycle = 0; cycle < 2; ++cycle) {
+        ASSERT_TRUE(game.requestMove(ChessBoard::e1, ChessBoard::e2));
+        ASSERT_TRUE(game.requestMove(ChessBoard::e8, ChessBoard::e7));
+        ASSERT_TRUE(game.requestMove(ChessBoard::e2, ChessBoard::e1));
+        ASSERT_TRUE(game.requestMove(ChessBoard::e7, ChessBoard::e8));
+    }
+    EXPECT_NE(static_cast<int>(ChessBoard::DRAW_REPEAT), game.getBoard()->getState());
+}
+
+TEST_F(GameTest, RepetitionComparesOnlyLegalEnPassantAvailability) {
+    ChessBoard withEp, withoutEp;
+    ASSERT_TRUE(withEp.parseFEN("4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1"));
+    ASSERT_TRUE(withoutEp.parseFEN("4k3/8/8/3pP3/8/8/8/4K3 w - - 0 1"));
+    EXPECT_FALSE(withEp.sameRepetitionPosition(withoutEp));
+    ASSERT_TRUE(withEp.parseFEN("4k3/8/8/3p4/8/8/8/4K3 w - d6 0 1"));
+    ASSERT_TRUE(withoutEp.parseFEN("4k3/8/8/3p4/8/8/8/4K3 w - - 0 1"));
+    EXPECT_TRUE(withEp.sameRepetitionPosition(withoutEp));
+    ASSERT_TRUE(withEp.parseFEN("4k3/8/8/r4pPK/8/8/8/8 w - f6 0 1"));
+    ASSERT_TRUE(withoutEp.parseFEN("4k3/8/8/r4pPK/8/8/8/8 w - - 0 1"));
+    EXPECT_TRUE(withEp.sameRepetitionPosition(withoutEp));
+}
+
+TEST_F(GameTest, CapturedRookLosesCastlingRights) {
+    Game game;
+    ASSERT_TRUE(game.newGameFromFEN("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1"));
+    ASSERT_TRUE(game.requestMove(ChessBoard::a1, ChessBoard::a8));
+    char fen[256];
+    game.getBoard()->toFEN(fen);
+    EXPECT_STREQ("R3k2r/8/8/8/8/8/8/4K2R b Kk - 0 1", fen);
+}
+
 }  // namespace

@@ -347,6 +347,10 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
         } else {
             // normal hit
             const int pieceTo = pieceAt(m_o_turn, to);
+            if (pieceTo == ROOK && ROW[to] == (m_o_turn == WHITE ? 7 : 0)) {
+                if (COL[to] == m_queenSideRookCol[m_o_turn]) ret->m_castlings[m_o_turn] |= MASK_AROOK;
+                if (COL[to] == m_kingSideRookCol[m_o_turn]) ret->m_castlings[m_o_turn] |= MASK_HROOK;
+            }
             ret->m_hashKey ^= HASH_KEY[m_o_turn][pieceTo][to];
             ret->m_qualities[m_o_turn] = m_qualities[m_o_turn] - ChessBoard::PIECE_VALUES[pieceTo];
             ret->m_bitbPieces[m_o_turn][pieceTo] &= NOT_BITS[to];
@@ -391,7 +395,7 @@ void ChessBoard::makeMove(const int move, ChessBoard* ret) {
 
     // replace promotion piece
     if (Move_isPromotionMove(move)) {
-        ret->m_qualities[m_turn] += ChessBoard::PIECE_VALUES[Move_getPromotionPiece(move)];
+        ret->m_qualities[m_turn] += ChessBoard::PIECE_VALUES[Move_getPromotionPiece(move)] - ChessBoard::PIECE_VALUES[PAWN];
         ret->m_bitbPieces[m_turn][Move_getPromotionPiece(move)] |= BITS[to];
         ret->m_bitbPieces[m_turn][PAWN] &= NOT_BITS[to];
         ret->m_hashKey ^= HASH_KEY[m_turn][PAWN][to];
@@ -3321,33 +3325,16 @@ void ChessBoard::initPawnRange() {
     }
 }
 void ChessBoard::initPassedPawnMask() {
-    int i, j;
-    for (i = 55; i < 23; i--) {
-        PASSED_PAWN_MASK[WHITE][i] |= BITS[i];
-        j = 1;
-        while (ROW[i - j * 8] > 0) {
-            PASSED_PAWN_MASK[WHITE][i] |= BITS[i - j * 8];
-            if (COL[i] > 1) {
-                PASSED_PAWN_MASK[WHITE][i] |= BITS[i - j * 8 - 1];
+    for (int turn = BLACK; turn <= WHITE; ++turn) {
+        for (int pos = 0; pos < 64; ++pos) {
+            BITBOARD mask = 0;
+            const int step = turn == WHITE ? -1 : 1;
+            for (int row = ROW[pos] + step; row >= 0 && row < 8; row += step) {
+                for (int col = COL[pos] - 1; col <= COL[pos] + 1; ++col) {
+                    if (col >= 0 && col < 8) mask |= BITS[row * 8 + col];
+                }
             }
-            if (COL[i] < 7) {
-                PASSED_PAWN_MASK[WHITE][i] |= BITS[i - j * 8 + 1];
-            }
-            j++;
-        }
-    }
-    for (i = 8; i < 48; i++) {
-        PASSED_PAWN_MASK[BLACK][i] |= BITS[i];
-        j = 1;
-        while (ROW[i + j * 8] < 7) {
-            PASSED_PAWN_MASK[BLACK][i] |= BITS[i + j * 8];
-            if (COL[i] > 1) {
-                PASSED_PAWN_MASK[BLACK][i] |= BITS[i + j * 8 - 1];
-            }
-            if (COL[i] < 7) {
-                PASSED_PAWN_MASK[BLACK][i] |= BITS[i + j * 8 + 1];
-            }
-            j++;
+            PASSED_PAWN_MASK[turn][pos] = mask;
         }
     }
 }

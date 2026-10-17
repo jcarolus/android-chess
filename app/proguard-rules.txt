@@ -22,3 +22,6 @@
 
 # Google Play Services Cast (playStore flavor)
 -dontwarn com.google.android.gms.**
+
+-keep class jwtc.android.chess.engine.RustNative { *; }
+-keep class jwtc.android.chess.engine.RustSearchResult { *; }

@@ -1,0 +1,676 @@
+use std::fmt;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Variant {
+    Standard,
+    Chess960,
+    Duck,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Error(pub String);
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+impl std::error::Error for Error {}
+pub(crate) fn invalid(s: &str) -> Error {
+    Error(s.into())
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CoordinateMove(String);
+impl CoordinateMove {
+    pub fn parse(s: &str) -> Result<Self, Error> {
+        let b = s.as_bytes();
+        if !s.is_ascii() || !(b.len() == 4 || b.len() == 5) || square(&s[..2.min(s.len())]).is_err()
+        {
+            return Err(invalid("Invalid Standard coordinate move"));
+        }
+        if !s.is_ascii() || square(&s[2..4]).is_err() || (b.len() == 5 && !b"qrbn".contains(&b[4]))
+        {
+            return Err(invalid("Invalid Standard coordinate move"));
+        }
+        Ok(Self(s.into()))
+    }
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+impl fmt::Display for CoordinateMove {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum GameState {
+    Play,
+    Check,
+    Mate,
+    Stalemate,
+    DrawMaterial,
+    DrawFiftyMove,
+    DrawRepetition,
+}
+pub(crate) const VALUES: [i32; 6] = [100, 320, 340, 500, 900, 50000];
+pub(crate) const PAWN: usize = 0;
+pub(crate) const KNIGHT: usize = 1;
+pub(crate) const BISHOP: usize = 2;
+pub(crate) const ROOK: usize = 3;
+pub(crate) const QUEEN: usize = 4;
+pub(crate) const KING: usize = 5;
+pub(crate) const WHITE: usize = 1;
+pub(crate) fn bit(s: usize) -> u64 {
+    1u64 << s
+}
+pub(crate) fn squares(mut b: u64) -> impl Iterator<Item = usize> {
+    std::iter::from_fn(move || {
+        if b == 0 {
+            None
+        } else {
+            let s = if b >> 32 != 0 {
+                32 + (b >> 32).trailing_zeros() as usize
+            } else {
+                b.trailing_zeros() as usize
+            };
+            b &= !bit(s);
+            Some(s)
+        }
+    })
+}
+pub(crate) fn name(s: usize) -> String {
+    format!(
+        "{}{}",
+        (b'a' + (s % 8) as u8) as char,
+        (b'8' - (s / 8) as u8) as char
+    )
+}
+pub(crate) fn square(s: &str) -> Result<usize, Error> {
+    let b = s.as_bytes();
+    if b.len() != 2 || !(b'a'..=b'h').contains(&b[0]) || !(b'1'..=b'8').contains(&b[1]) {
+        return Err(invalid("Invalid square"));
+    }
+    Ok((b'8' - b[1]) as usize * 8 + (b[0] - b'a') as usize)
+}
+pub(crate) fn distance(a: usize, b: usize) -> i32 {
+    (a / 8).abs_diff(b / 8) as i32 + (a % 8).abs_diff(b % 8) as i32
+}
+pub(crate) fn advance(t: usize, s: usize) -> i32 {
+    if t == WHITE {
+        7 - (s / 8) as i32
+    } else {
+        (s / 8) as i32
+    }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct Move {
+    pub from: usize,
+    pub to: usize,
+    pub promotion: Option<usize>,
+    pub capture: bool,
+    pub ep: bool,
+    pub castle: bool,
+    pub double: bool,
+    pub check: bool,
+}
+impl Move {
+    fn new(from: usize, to: usize) -> Self {
+        Self {
+            from,
+            to,
+            promotion: None,
+            capture: false,
+            ep: false,
+            castle: false,
+            double: false,
+            check: false,
+        }
+    }
+    pub fn coordinate(self) -> CoordinateMove {
+        CoordinateMove(format!(
+            "{}{}{}",
+            name(self.from),
+            name(self.to),
+            self.promotion
+                .map(|p| (b"pnbrqk"[p] as char).to_string())
+                .unwrap_or_default()
+        ))
+    }
+}
+#[derive(Clone, PartialEq, Eq)]
+struct Repetition {
+    pieces: [[u64; 6]; 2],
+    turn: usize,
+    rights: [u8; 2],
+    ep: Option<usize>,
+}
+#[derive(Clone)]
+pub struct Position {
+    pub(crate) pieces: [[u64; 6]; 2],
+    pub(crate) turn: usize,
+    pub(crate) castling: [u8; 2],
+    ep: Option<usize>,
+    halfmove: u32,
+    pub(crate) ply: usize,
+    history: Vec<String>,
+    previous: Vec<Repetition>,
+    pub(crate) last_check: bool,
+}
+impl Position {
+    pub fn from_fen(variant: Variant, fen: &str) -> Result<Self, Error> {
+        if variant != Variant::Standard {
+            return Err(invalid("Only Standard is supported"));
+        }
+        let fields: Vec<_> = fen.split_whitespace().collect();
+        if fields.len() != 6 || !fen.is_ascii() {
+            return Err(invalid("Expected six-field Standard FEN"));
+        }
+        let mut p = Self {
+            pieces: [[0; 6]; 2],
+            turn: 1,
+            castling: [0; 2],
+            ep: None,
+            halfmove: 0,
+            ply: 0,
+            history: vec![],
+            previous: vec![],
+            last_check: false,
+        };
+        let ranks: Vec<_> = fields[0].split('/').collect();
+        if ranks.len() != 8 {
+            return Err(invalid("Expected eight ranks"));
+        }
+        for (r, rank) in ranks.iter().enumerate() {
+            let mut c = 0;
+            for b in rank.bytes() {
+                if (b'1'..=b'8').contains(&b) {
+                    c += (b - b'0') as usize;
+                } else {
+                    let piece = b"pnbrqk"
+                        .iter()
+                        .position(|v| *v == b.to_ascii_lowercase())
+                        .ok_or_else(|| invalid("Invalid piece"))?;
+                    if c >= 8 {
+                        return Err(invalid("Rank overflow"));
+                    }
+                    p.pieces[usize::from(b.is_ascii_uppercase())][piece] |= bit(r * 8 + c);
+                    c += 1;
+                }
+            }
+            if c != 8 {
+                return Err(invalid("Invalid rank width"));
+            }
+        }
+        p.turn = match fields[1] {
+            "w" => 1,
+            "b" => 0,
+            _ => return Err(invalid("Invalid side to move")),
+        };
+        if fields[2] != "-"
+            && (!fields[2].bytes().all(|b| b"KQkq".contains(&b))
+                || fields[2]
+                    .bytes()
+                    .any(|b| fields[2].bytes().filter(|v| *v == b).count() != 1))
+        {
+            return Err(invalid("Invalid castling rights"));
+        }
+        for t in 0..2 {
+            let long = fields[2].contains(if t == 1 { 'Q' } else { 'q' });
+            let short = fields[2].contains(if t == 1 { 'K' } else { 'k' });
+            let base = if t == 1 { 56 } else { 0 };
+            if (long || short) && p.pieces[t][KING] != bit(base + 4) {
+                return Err(invalid("Non-Standard castling king"));
+            }
+            if long && p.pieces[t][ROOK] & bit(base) == 0
+                || short && p.pieces[t][ROOK] & bit(base + 7) == 0
+            {
+                return Err(invalid("Missing castling rook"));
+            }
+            p.castling[t] =
+                u8::from(!long) | (u8::from(!short) << 1) | (if !long && !short { 4 } else { 0 });
+            if p.pieces[t][KING].count_ones() != 1
+                || p.pieces[t][PAWN] & 0xff000000000000ff != 0
+                || p.pieces[t][PAWN].count_ones() > 8
+            {
+                return Err(invalid("Invalid kings or pawns"));
+            }
+        }
+        p.ep = if fields[3] == "-" {
+            None
+        } else {
+            Some(square(fields[3])?)
+        };
+        if let Some(ep) = p.ep {
+            let expected = if p.turn == 1 { 2 } else { 5 };
+            if ep / 8 != expected {
+                return Err(invalid("Invalid en-passant rank"));
+            }
+            let pawn = if p.turn == 1 { ep + 8 } else { ep - 8 };
+            if p.occupied() & bit(ep) != 0 || p.pieces[p.turn ^ 1][PAWN] & bit(pawn) == 0 {
+                return Err(invalid("Invalid en-passant square"));
+            }
+        }
+        p.halfmove = fields[4]
+            .parse()
+            .map_err(|_| invalid("Invalid halfmove clock"))?;
+        let full: u32 = fields[5]
+            .parse()
+            .map_err(|_| invalid("Invalid fullmove number"))?;
+        if full == 0 || p.halfmove > 1_000_000 {
+            return Err(invalid("Invalid move counters"));
+        }
+        if p.attacked(p.turn ^ 1, p.king(p.turn ^ 1)) {
+            return Err(invalid("Side not to move is in check"));
+        }
+        p.last_check = p.in_check();
+        Ok(p)
+    }
+    pub fn history(&self) -> &[String] {
+        &self.history
+    }
+    pub fn white_to_move(&self) -> bool {
+        self.turn == 1
+    }
+    pub(crate) fn own(&self, t: usize) -> u64 {
+        self.pieces[t].iter().fold(0, |a, b| a | b)
+    }
+    pub(crate) fn occupied(&self) -> u64 {
+        self.own(0) | self.own(1)
+    }
+    pub(crate) fn king(&self, t: usize) -> usize {
+        self.pieces[t][KING].trailing_zeros() as usize
+    }
+    pub(crate) fn piece(&self, t: usize, s: usize) -> Option<usize> {
+        (0..6).find(|&p| self.pieces[t][p] & bit(s) != 0)
+    }
+    pub(crate) fn material(&self, t: usize) -> i32 {
+        (0..6)
+            .map(|p| self.pieces[t][p].count_ones() as i32 * VALUES[p])
+            .sum()
+    }
+    pub(crate) fn range(&self, p: usize, t: usize, s: usize) -> u64 {
+        let dirs: &[(i32, i32)] = match p {
+            PAWN => {
+                if t == 1 {
+                    &[(-1, -1), (-1, 1)]
+                } else {
+                    &[(1, -1), (1, 1)]
+                }
+            }
+            KNIGHT => &[
+                (-2, -1),
+                (-2, 1),
+                (-1, -2),
+                (-1, 2),
+                (1, -2),
+                (1, 2),
+                (2, -1),
+                (2, 1),
+            ],
+            BISHOP => &[(-1, -1), (-1, 1), (1, -1), (1, 1)],
+            ROOK => &[(-1, 0), (1, 0), (0, -1), (0, 1)],
+            _ => &[
+                (-1, -1),
+                (-1, 1),
+                (1, -1),
+                (1, 1),
+                (-1, 0),
+                (1, 0),
+                (0, -1),
+                (0, 1),
+            ],
+        };
+        let mut result = 0;
+        for &(dr, dc) in dirs {
+            let (mut r, mut c) = (s as i32 / 8 + dr, s as i32 % 8 + dc);
+            while (0..8).contains(&r) && (0..8).contains(&c) {
+                let b = bit((r * 8 + c) as usize);
+                result |= b;
+                if p == PAWN || p == KNIGHT || p == KING || self.occupied() & b != 0 {
+                    break;
+                }
+                r += dr;
+                c += dc;
+            }
+        }
+        result
+    }
+    pub(crate) fn mobility(&self, p: usize, t: usize, s: usize) -> u64 {
+        self.range(p, t, s) & !self.own(t)
+    }
+    pub(crate) fn attacked(&self, t: usize, s: usize) -> bool {
+        (0..6).any(|p| {
+            squares(self.pieces[t ^ 1][p]).any(|from| self.range(p, t ^ 1, from) & bit(s) != 0)
+        })
+    }
+    pub fn in_check(&self) -> bool {
+        self.attacked(self.turn, self.king(self.turn))
+    }
+    pub(crate) fn pseudo_moves(&self) -> Vec<Move> {
+        let mut moves = Vec::new();
+        let t = self.turn;
+        let occ = self.occupied();
+        for piece in [KNIGHT, BISHOP, PAWN, ROOK, QUEEN, KING] {
+            if piece == PAWN {
+                let step = if t == 1 { -8i32 } else { 8 };
+                // Pawn groups and destination order match the native move generator.
+                for group in 0..4 {
+                    let mut group_moves = Vec::new();
+                    for from in squares(self.pieces[t][PAWN]) {
+                        let delta = match group {
+                            0 => step,
+                            1 => step * 2,
+                            2 => {
+                                if t == 1 {
+                                    -9
+                                } else {
+                                    9
+                                }
+                            }
+                            _ => {
+                                if t == 1 {
+                                    -7
+                                } else {
+                                    7
+                                }
+                            }
+                        };
+                        let to = from as i32 + delta;
+                        if !(0..64).contains(&to) {
+                            continue;
+                        }
+                        let to = to as usize;
+                        let mut m = Move::new(from, to);
+                        if group < 2 {
+                            if occ & bit(to) != 0 {
+                                continue;
+                            }
+                            if group == 1
+                                && (advance(t, from) != 1
+                                    || occ & bit((from as i32 + step) as usize) != 0)
+                            {
+                                continue;
+                            }
+                            m.double = group == 1;
+                        } else {
+                            if (from % 8).abs_diff(to % 8) != 1
+                                || (self.own(t ^ 1) & bit(to) == 0 && self.ep != Some(to))
+                            {
+                                continue;
+                            }
+                            m.capture = true;
+                            m.ep = self.ep == Some(to);
+                        }
+                        if advance(t, to) == 7 {
+                            for promo in [QUEEN, ROOK, BISHOP, KNIGHT] {
+                                let mut promotion = m;
+                                promotion.promotion = Some(promo);
+                                group_moves.push(promotion);
+                            }
+                        } else {
+                            group_moves.push(m);
+                        }
+                    }
+                    group_moves.sort_by_key(|m| (m.to + 32) % 64);
+                    moves.extend(group_moves);
+                }
+            } else {
+                for from in squares(self.pieces[t][piece]) {
+                    for to in squares(self.mobility(piece, t, from)) {
+                        if self.pieces[t ^ 1][KING] & bit(to) != 0 {
+                            break;
+                        }
+                        let mut m = Move::new(from, to);
+                        m.capture = self.own(t ^ 1) & bit(to) != 0;
+                        moves.push(m);
+                    }
+                }
+                if piece == KING {
+                    let base = if t == 1 { 56 } else { 0 };
+                    for (mask, to, rook, path, empty) in [
+                        (
+                            6,
+                            base + 6,
+                            base + 7,
+                            vec![base + 5, base + 6],
+                            vec![base + 5, base + 6],
+                        ),
+                        (
+                            5,
+                            base + 2,
+                            base,
+                            vec![base + 3, base + 2],
+                            vec![base + 1, base + 2, base + 3],
+                        ),
+                    ] {
+                        if self.castling[t] & mask == 0
+                            && self.king(t) == base + 4
+                            && self.pieces[t][ROOK] & bit(rook) != 0
+                            && !self.in_check()
+                            && empty.iter().all(|s| occ & bit(*s) == 0)
+                            && path.iter().all(|s| !self.attacked(t, *s))
+                        {
+                            let mut m = Move::new(base + 4, to);
+                            m.castle = true;
+                            moves.push(m);
+                        }
+                    }
+                }
+            }
+        }
+        moves
+    }
+    pub(crate) fn legal_internal(&self) -> Vec<Move> {
+        let mut moves = self.pseudo_moves();
+        let mut i = 0;
+        while i < moves.len() {
+            let next = self.make(moves[i]);
+            if next.attacked(self.turn, next.king(self.turn)) {
+                moves.swap_remove(i);
+            } else {
+                moves[i].check = next.in_check();
+                i += 1;
+            }
+        }
+        moves
+    }
+    pub fn legal_moves(&self) -> Vec<CoordinateMove> {
+        self.legal_internal()
+            .into_iter()
+            .map(Move::coordinate)
+            .collect()
+    }
+    pub fn apply(&mut self, coordinate: &str) -> Result<(), Error> {
+        let coordinate = CoordinateMove::parse(coordinate)?;
+        let m = self
+            .legal_internal()
+            .into_iter()
+            .find(|m| m.coordinate() == coordinate)
+            .ok_or_else(|| invalid("Illegal move"))?;
+        let mut next = self.make(m);
+        next.history.push(coordinate.0);
+        *self = next;
+        Ok(())
+    }
+    fn rights(&self) -> [u8; 2] {
+        [
+            u8::from(self.castling[0] & 5 == 0) | (u8::from(self.castling[0] & 6 == 0) << 1),
+            u8::from(self.castling[1] & 5 == 0) | (u8::from(self.castling[1] & 6 == 0) << 1),
+        ]
+    }
+    fn repetition(&self) -> Repetition {
+        let ep = self.ep.filter(|&to| {
+            squares(self.pieces[self.turn][PAWN]).any(|from| {
+                if self.range(PAWN, self.turn, from) & bit(to) == 0 {
+                    return false;
+                }
+                let mut m = Move::new(from, to);
+                m.capture = true;
+                m.ep = true;
+                let next = self.make(m);
+                !next.attacked(self.turn, next.king(self.turn))
+            })
+        });
+        Repetition {
+            pieces: self.pieces,
+            turn: self.turn,
+            rights: self.rights(),
+            ep,
+        }
+    }
+    pub(crate) fn make(&self, m: Move) -> Self {
+        let mut n = self.clone();
+        let t = self.turn;
+        let p = self.piece(t, m.from).unwrap();
+        if p == PAWN || m.capture {
+            n.previous.clear();
+        } else {
+            n.previous.push(self.repetition());
+        }
+        n.pieces[t][p] &= !bit(m.from);
+        if m.capture {
+            let back_rank = if t == WHITE { 0 } else { 7 };
+            if self.piece(t ^ 1, m.to) == Some(ROOK) && m.to / 8 == back_rank {
+                if m.to.is_multiple_of(8) {
+                    n.castling[t ^ 1] |= 1;
+                }
+                if m.to % 8 == 7 {
+                    n.castling[t ^ 1] |= 2;
+                }
+            }
+            let target = if m.ep {
+                if t == 1 {
+                    m.to + 8
+                } else {
+                    m.to - 8
+                }
+            } else {
+                m.to
+            };
+            for b in &mut n.pieces[t ^ 1] {
+                *b &= !bit(target);
+            }
+        }
+        n.pieces[t][m.promotion.unwrap_or(p)] |= bit(m.to);
+        if p == ROOK {
+            if m.from.is_multiple_of(8) {
+                n.castling[t] |= 1;
+            } else if m.from % 8 == 7 {
+                n.castling[t] |= 2;
+            }
+        }
+        if p == KING {
+            n.castling[t] |= 4;
+        }
+        if m.castle {
+            let base = if t == 1 { 56 } else { 0 };
+            let (from, to) = if m.to % 8 == 6 {
+                (base + 7, base + 5)
+            } else {
+                (base, base + 3)
+            };
+            n.pieces[t][ROOK] = (n.pieces[t][ROOK] & !bit(from)) | bit(to);
+            n.castling[t] |= 8;
+        }
+        n.ep = if m.double {
+            Some((m.from + m.to) / 2)
+        } else {
+            None
+        };
+        n.halfmove = if p == PAWN || m.capture {
+            0
+        } else {
+            self.halfmove + 1
+        };
+        n.ply += 1;
+        n.turn ^= 1;
+        n.last_check = m.check;
+        n
+    }
+    pub(crate) fn drawn_in_search(&self) -> bool {
+        self.halfmove == 100
+            || self
+                .previous
+                .iter()
+                .filter(|p| **p == self.repetition())
+                .count()
+                >= 2
+    }
+    pub fn game_state(&self) -> GameState {
+        if self.halfmove == 100 {
+            return GameState::DrawFiftyMove;
+        }
+        if self
+            .previous
+            .iter()
+            .filter(|p| **p == self.repetition())
+            .count()
+            >= 2
+        {
+            return GameState::DrawRepetition;
+        }
+        if self
+            .pieces
+            .iter()
+            .all(|p| p[PAWN] | p[ROOK] | p[QUEEN] == 0)
+            && self.material(0) <= 50340
+            && self.material(1) <= 50340
+            && ![0, 7, 56, 63].contains(&self.king(0))
+            && ![0, 7, 56, 63].contains(&self.king(1))
+        {
+            return GameState::DrawMaterial;
+        }
+        let check = self.in_check();
+        if self.legal_internal().is_empty() {
+            if check {
+                GameState::Mate
+            } else {
+                GameState::Stalemate
+            }
+        } else if check {
+            GameState::Check
+        } else {
+            GameState::Play
+        }
+    }
+    pub fn fen(&self) -> String {
+        let mut s = String::new();
+        for r in 0..8 {
+            let mut empty = 0;
+            for c in 0..8 {
+                let sq = r * 8 + c;
+                let piece = (0..2).find_map(|t| self.piece(t, sq).map(|p| (t, p)));
+                if let Some((t, p)) = piece {
+                    if empty > 0 {
+                        s.push(char::from(b'0' + empty));
+                        empty = 0;
+                    }
+                    let b = b"pnbrqk"[p];
+                    s.push(if t == 1 { b.to_ascii_uppercase() } else { b } as char);
+                } else {
+                    empty += 1;
+                }
+            }
+            if empty > 0 {
+                s.push(char::from(b'0' + empty));
+            }
+            if r < 7 {
+                s.push('/');
+            }
+        }
+        s.push_str(if self.turn == 1 { " w " } else { " b " });
+        let mut rights = String::new();
+        for (t, mask, ch) in [(1, 6, 'K'), (1, 5, 'Q'), (0, 6, 'k'), (0, 5, 'q')] {
+            if self.castling[t] & mask == 0 {
+                rights.push(ch);
+            }
+        }
+        s.push_str(if rights.is_empty() { "-" } else { &rights });
+        format!(
+            "{} {} {} {}",
+            s,
+            self.ep.map(name).unwrap_or_else(|| "-".into()),
+            self.halfmove,
+            self.ply / 2 + 1
+        )
+    }
+}

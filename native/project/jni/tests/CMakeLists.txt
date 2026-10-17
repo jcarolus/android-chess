@@ -38,3 +38,6 @@ target_link_libraries(chess_engine_tests
 )
 
 gtest_discover_tests(chess_engine_tests)
+
+add_executable(chess_parity_reference parity_runner.cpp)
+target_link_libraries(chess_parity_reference PRIVATE chess_engine Threads::Threads)

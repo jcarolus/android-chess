@@ -1,0 +1,300 @@
+use crate::position::*;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::{Duration, Instant};
+const MATE: i32 = 100000;
+#[derive(Clone, Copy, Debug)]
+pub enum SearchLimit {
+    Depth(u8),
+    TimeMillis(u32),
+}
+#[derive(Clone, Copy, Debug)]
+pub struct SearchOptions {
+    pub quiescence: bool,
+}
+/// Validated immutable search input; no references to a live game or native board.
+#[derive(Clone)]
+pub struct SearchRequest {
+    id: u64,
+    position: Position,
+    limit: SearchLimit,
+    options: SearchOptions,
+}
+impl SearchRequest {
+    pub fn new(
+        id: u64,
+        variant: Variant,
+        starting_position: &str,
+        history: Vec<CoordinateMove>,
+        limit: SearchLimit,
+        options: SearchOptions,
+    ) -> Result<Self, Error> {
+        match limit {
+            SearchLimit::Depth(1..=15) | SearchLimit::TimeMillis(1..) => {}
+            _ => return Err(invalid("Depth must be 1..15 or time must be positive")),
+        }
+        let mut position = Position::from_fen(variant, starting_position)?;
+        for m in history {
+            position.apply(m.as_str())?;
+        }
+        Ok(Self {
+            id,
+            position,
+            limit,
+            options,
+        })
+    }
+    pub fn position(&self) -> &Position {
+        &self.position
+    }
+}
+#[derive(Default)]
+pub struct SearchControl {
+    stopped: AtomicBool,
+}
+impl SearchControl {
+    pub fn stop(&self) {
+        self.stopped.store(true, Ordering::Relaxed);
+    }
+}
+#[derive(Clone, Debug)]
+pub struct SearchResult {
+    pub search_id: u64,
+    pub best_move: Option<CoordinateMove>,
+    /// Centipawns from White's perspective, or +/-100000 for mate without a distance.
+    pub score: i32,
+    pub completed_depth: u8,
+    pub has_evaluation: bool,
+    pub nodes: u64,
+    pub pv: Vec<CoordinateMove>,
+    pub interrupted: bool,
+}
+struct Worker<'a> {
+    control: &'a SearchControl,
+    start: Instant,
+    budget: Option<Duration>,
+    quiescence: bool,
+    nodes: u64,
+    interrupted: bool,
+    best: [Option<Move>; 20],
+    values: [i32; 20],
+}
+impl Worker<'_> {
+    fn stopped(&mut self) -> bool {
+        if self.control.stopped.load(Ordering::Relaxed)
+            || self.nodes.is_multiple_of(1000)
+                && self.budget.is_some_and(|b| self.start.elapsed() > b)
+        {
+            self.interrupted = true;
+        }
+        self.interrupted
+    }
+    fn alpha_beta(
+        &mut self,
+        p: &Position,
+        moves: &mut Vec<Move>,
+        depth: u8,
+        ply: usize,
+        mut alpha: i32,
+        beta: i32,
+    ) -> i32 {
+        if self.stopped() {
+            return alpha;
+        }
+        if p.drawn_in_search() {
+            return 0;
+        }
+        let mut scores: Vec<_> = moves
+            .iter()
+            .map(|m| {
+                if Some(*m) == self.best[ply] {
+                    100000
+                } else {
+                    score_move(p, *m)
+                }
+            })
+            .collect();
+        let mut best = -MATE - 1;
+        let mut index = 0;
+        while index < moves.len() {
+            pick(moves, &mut scores, index);
+            let mut m = moves[index];
+            let mut next = p.make(m);
+            if next.attacked(p.turn, next.king(p.turn)) {
+                moves.swap_remove(index);
+                continue;
+            }
+            let mut children = next.pseudo_moves();
+            m.check = next.in_check();
+            next.last_check = m.check;
+            let value = if depth == 1 {
+                -self.quiesce(&next, &mut children, 5, -beta, -alpha)
+            } else {
+                -self.alpha_beta(&next, &mut children, depth - 1, ply + 1, -beta, -alpha)
+            };
+            if value > best && !self.interrupted {
+                best = value;
+                self.best[ply] = Some(m);
+                self.values[ply] = value;
+            }
+            alpha = alpha.max(best);
+            if best >= beta || self.interrupted {
+                break;
+            }
+            index += 1;
+        }
+        if moves.is_empty() {
+            self.nodes += 1;
+            return if p.last_check { -MATE } else { 0 };
+        }
+        best
+    }
+    fn quiesce(
+        &mut self,
+        p: &Position,
+        moves: &mut Vec<Move>,
+        depth: u8,
+        mut alpha: i32,
+        beta: i32,
+    ) -> i32 {
+        if self.stopped() {
+            return alpha;
+        }
+        self.nodes += 1;
+        let value = p.evaluate();
+        if !p.last_check && value >= beta {
+            return beta;
+        }
+        if depth == 0 || !self.quiescence {
+            return value;
+        }
+        if value >= beta {
+            return beta;
+        }
+        alpha = alpha.max(value);
+        let mut scores: Vec<_> = moves.iter().map(|m| score_move(p, *m)).collect();
+        let mut index = 0;
+        while index < moves.len() {
+            pick(moves, &mut scores, index);
+            let m = moves[index];
+            let mut next = p.make(m);
+            if next.attacked(p.turn, next.king(p.turn)) {
+                moves.swap_remove(index);
+                continue;
+            }
+            next.last_check = next.in_check();
+            if m.capture || m.promotion.is_some() || next.last_check {
+                let mut children = next.pseudo_moves();
+                let value = -self.quiesce(&next, &mut children, depth - 1, -beta, -alpha);
+                if value > alpha {
+                    alpha = value;
+                    if value >= beta {
+                        return beta;
+                    }
+                }
+            }
+            index += 1;
+        }
+        if moves.is_empty() {
+            return if p.last_check { -MATE } else { 0 };
+        }
+        alpha
+    }
+}
+fn pick(moves: &mut [Move], scores: &mut [i32], index: usize) {
+    let mut best = -1;
+    let mut at = index;
+    for (i, score) in scores.iter().enumerate().take(moves.len()).skip(index) {
+        if *score > best {
+            best = *score;
+            at = i;
+        }
+    }
+    moves.swap(index, at);
+    scores.swap(index, at);
+}
+fn score_move(p: &Position, m: Move) -> i32 {
+    let piece = p.piece(p.turn, m.from).unwrap();
+    if m.capture {
+        return if m.ep {
+            30000
+        } else {
+            30000 + VALUES[p.piece(p.turn ^ 1, m.to).unwrap()] - VALUES[piece]
+        };
+    }
+    if m.promotion.is_some() {
+        return 25000;
+    }
+    match piece {
+        KING => 0,
+        KNIGHT => 2000 + distance(m.from, 27) - distance(m.to, 36),
+        PAWN => 1900 + advance(p.turn, m.to) + distance(m.from, 27) - distance(m.to, 36),
+        _ => 1000 + advance(p.turn, m.to),
+    }
+}
+pub fn search(request: &SearchRequest, control: &SearchControl) -> Result<SearchResult, Error> {
+    let p = &request.position;
+    let mut result = SearchResult {
+        search_id: request.id,
+        best_move: None,
+        score: 0,
+        completed_depth: 0,
+        has_evaluation: false,
+        nodes: 0,
+        pv: vec![],
+        interrupted: false,
+    };
+    match p.game_state() {
+        GameState::Play | GameState::Check => {}
+        state => {
+            result.score = if state == GameState::Mate {
+                if p.turn == 1 {
+                    -MATE
+                } else {
+                    MATE
+                }
+            } else {
+                0
+            };
+            result.has_evaluation = true;
+            return Ok(result);
+        }
+    }
+    let budget = match request.limit {
+        SearchLimit::TimeMillis(ms) => Some(Duration::from_millis(ms as u64)),
+        _ => None,
+    };
+    let mut worker = Worker {
+        control,
+        start: Instant::now(),
+        budget,
+        quiescence: request.options.quiescence,
+        nodes: 1,
+        interrupted: false,
+        best: [None; 20],
+        values: [0; 20],
+    };
+    let mut moves = p.legal_internal();
+    let depths = match request.limit {
+        SearchLimit::Depth(depth) => depth..=depth,
+        _ => 1..=14,
+    };
+    for depth in depths {
+        worker.alpha_beta(p, &mut moves, depth, 0, -MATE, MATE);
+        if worker.interrupted {
+            break;
+        }
+        result.best_move = worker.best[0].map(Move::coordinate);
+        result.completed_depth = depth;
+        result.has_evaluation = true;
+        result.score = worker.values[0] * if p.turn == 1 { 1 } else { -1 };
+        // The native per-ply best array is an ordering heuristic, not a complete PV.
+        // Only expose its verified root move as a principal-variation prefix.
+        result.pv = result.best_move.iter().cloned().collect();
+        if worker.values[0] == MATE || budget.is_some_and(|b| worker.start.elapsed() > b / 3) {
+            break;
+        }
+    }
+    result.interrupted = worker.interrupted;
+    result.nodes = worker.nodes;
+    Ok(result)
+}
