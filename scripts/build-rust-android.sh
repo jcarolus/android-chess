@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
+# GUI-launched tools (Android Studio) don't inherit the PATH a login shell
+# gets from .zshrc/.bash_profile, so rustup's cargo is otherwise invisible.
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 ndk="${ANDROID_NDK_HOME:?Set ANDROID_NDK_HOME to the Android NDK directory}"
 cargo="${CARGO:-cargo}"
 case "$(uname -s)" in
