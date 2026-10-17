@@ -19,8 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import jwtc.android.chess.R;
-import jwtc.android.chess.helpers.PGNHelper;
-import jwtc.android.chess.helpers.Utils;
+import jwtc.chess.PgnDate;
 
 public class PGNDateView extends LinearLayout {
     private static final String TAG = "PGNDateView";
@@ -73,7 +72,7 @@ public class PGNDateView extends LinearLayout {
                     return;
                 }
 
-                if (PGNHelper.getDate(input) == null) {
+                if (PgnDate.parse(input) == null) {
                     textInputEditText.setError("Invalid date");
                 } else {
                     textInputEditText.setError(null);
@@ -122,6 +121,6 @@ public class PGNDateView extends LinearLayout {
 
     private void updateText() {
         datePickerDialog.getDatePicker().updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-        textInputEditText.setText(Utils.formatDate(calendar.getTime()));
+        textInputEditText.setText(PgnDate.format(calendar.getTime()));
     }
 }

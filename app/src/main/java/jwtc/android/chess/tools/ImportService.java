@@ -3,33 +3,25 @@ package jwtc.android.chess.tools;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.IBinder;
-import android.os.Message;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 
-import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.Utils;
-import jwtc.android.chess.puzzle.MyPuzzleProvider;
+import jwtc.android.chess.matecollection.MateCollection;
+import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.services.HMap;
-
-import jwtc.chess.PGNColumns;
 
 
 public class ImportService extends Service {
@@ -39,22 +31,46 @@ public class ImportService extends Service {
     public static final int IMPORT_GAMES = 2;
     public static final int IMPORT_PRACTICE = 3;
     public static final int IMPORT_OPENINGS = 4;
-    public static final int IMPORT_DATABASE = 5;
     public static final int PRACTICE_RESET = 8;
     public static final int EXPORT_GAME_DATABASE = 10;
     public static final int PICK_BINARY = 12;
 
     protected ArrayList<ImportListener> listeners = new ArrayList<>();
 
-    private PuzzleImportProcessor puzzleImportProcessor = null;
-    private GameImportProcessor gameImportProcessor = null;
-    private PracticeImportProcessor practiceImportProcessor = null;
-    private OpeningImportProcessor openingImportProcessor = null;
-    private PGNDbProcessor pgnDbProcessor = null;
-
     private ImportApi importApi;
     private final IBinder mBinder = new ImportService.LocalBinder();
-    private Handler updateHandler = new ImportService.ThreadMessageHandler(this);
+
+    private final ImportListener dispatcher = new ImportListener() {
+        @Override
+        public void OnImportStarted(int mode) {
+            for (ImportListener listener : listeners) {
+                listener.OnImportStarted(mode);
+            }
+        }
+
+        @Override
+        public void OnImportProgress(int mode, int succeeded, int failed) {
+            for (ImportListener listener : listeners) {
+                listener.OnImportProgress(mode, succeeded, failed);
+            }
+        }
+
+        @Override
+        public void OnImportFinished(int mode) {
+            for (ImportListener listener : listeners) {
+                listener.OnImportFinished(mode);
+            }
+        }
+
+        @Override
+        public void OnImportFatalError(int mode) {
+            for (ImportListener listener : listeners) {
+                listener.OnImportFatalError(mode);
+            }
+        }
+    };
+
+    private final ImportPipeline pipeline = new ImportPipeline(dispatcher);
 
     public void addListener(ImportListener listener) {
         this.listeners.add(listener);
@@ -88,109 +104,64 @@ public class ImportService extends Service {
         switch (mode) {
             case IMPORT_PUZZLES:
                 Log.d(TAG, "IMPORT_PUZZLES");
-                if (puzzleImportProcessor == null) {
-                    puzzleImportProcessor = new PuzzleImportProcessor(mode, updateHandler, importApi, getContentResolver());
-                }
-                InputStream isPuzzles;
                 try {
-                    if (uri == null) {
-                        isPuzzles = getAssets().open("puzzles.pgn");
-                    } else {
-                        isPuzzles = getContentResolver().openInputStream(uri);
-                    }
-                    puzzleImportProcessor.processPGNFile(isPuzzles);
+                    pipeline.start(new ImportJob(mode,
+                        PgnSource.file(openInput(uri, "puzzles.pgn")),
+                        new PuzzleImportHandler(importApi, getContentResolver())));
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
-                    dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
+                    dispatcher.OnImportFatalError(mode);
                 }
-
                 break;
 
             case IMPORT_GAMES:
                 Log.d(TAG, "IMPORT_GAMES");
                 if (uri != null) {
-                    if (gameImportProcessor == null) {
-                        gameImportProcessor = new GameImportProcessor(mode, updateHandler, importApi, getContentResolver());
-                    }
                     try {
-                        InputStream isGames = getContentResolver().openInputStream(uri);
-                        if (uri.getPath().lastIndexOf(".zip") > 0) {
-                            gameImportProcessor.processZipFile(isGames);
-                        } else {
-                            gameImportProcessor.processPGNFile(isGames);
-                        }
+                        InputStream in = getContentResolver().openInputStream(uri);
+                        pipeline.start(new ImportJob(mode,
+                            uri.getPath().lastIndexOf(".zip") > 0 ? PgnSource.zip(in) : PgnSource.file(in),
+                            new GameImportHandler(importApi, getContentResolver())));
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
-                        dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 0);
+                        dispatcher.OnImportFatalError(mode);
                     }
                 }
                 break;
             case IMPORT_PRACTICE:
                 Log.d(TAG, "IMPORT_PRACTICE");
-                if (practiceImportProcessor == null) {
-                    practiceImportProcessor = new PracticeImportProcessor(mode, updateHandler, importApi, getContentResolver());
-                }
                 try {
-                    InputStream isPractice;
-                    if (uri == null) {
-                        isPractice = getAssets().open("practice.pgn");
-                    } else {
-                        isPractice = getContentResolver().openInputStream(uri);
-                    }
-                    practiceImportProcessor.processPGNFile(isPractice);
+                    pipeline.start(new ImportJob(mode,
+                        PgnSource.file(openInput(uri, "practice.pgn")),
+                        new PracticeImportHandler(importApi, getContentResolver())));
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
-                    dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 0);
+                    dispatcher.OnImportFatalError(mode);
                 }
                 break;
             case IMPORT_OPENINGS:
                 Log.d(TAG, "IMPORT_OPENINGS " + uri);
                 if (uri != null) {
-                    if (openingImportProcessor == null) {
-                        openingImportProcessor = new OpeningImportProcessor(mode, updateHandler, importApi);
-                    }
                     try {
-                        InputStream isOpenings = getContentResolver().openInputStream(uri);
-                        openingImportProcessor.processPGNFile(isOpenings);
-
+                        pipeline.start(new ImportJob(mode,
+                            new OpeningJsonSource(getContentResolver().openInputStream(uri)),
+                            new OpeningImportHandler(importApi)));
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
-                        dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 0);
-                    }
-                }
-                break;
-            case IMPORT_DATABASE:
-                Log.d(TAG, "IMPORT_DATABASE");
-                if (uri != null) {
-                    if (pgnDbProcessor == null) {
-                        pgnDbProcessor = new PGNDbProcessor(mode, updateHandler, importApi);
-                    }
-                    try {
-                        InputStream isDatabase = getContentResolver().openInputStream(uri);
-                        pgnDbProcessor.processPGNFile(isDatabase);
-
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.toString());
-                        dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
+                        dispatcher.OnImportFatalError(mode);
                     }
                 }
                 break;
             case PRACTICE_RESET:
                 Log.d(TAG, "PRACTICE_RESET");
                 try {
-                    SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putInt("practicePos", 0);
-                    editor.putInt("practiceTicks", 0);
-                    editor.commit();
+                    MateCollection.clearCollection(this, MateKind.PRACTICE_POSITIONS);
 
-                    getContentResolver().delete(MyPuzzleProvider.CONTENT_URI_PRACTICES, "1=1", null);
-
-                    dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
+                    dispatcher.OnImportFinished(mode);
 
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
-                    dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
+                    dispatcher.OnImportFatalError(mode);
                 }
                 break;
             case EXPORT_GAME_DATABASE:
@@ -203,11 +174,11 @@ public class ImportService extends Service {
                         fos.flush();
                         fos.close();
 
-                        dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
+                        dispatcher.OnImportFinished(mode);
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
-                    dispatchEvent(PGNProcessor.MSG_FATAL_ERROR, mode, 0, 1);
+                    dispatcher.OnImportFatalError(mode);
                 }
                 break;
             case PICK_BINARY:
@@ -231,61 +202,26 @@ public class ImportService extends Service {
                     Log.d(TAG, "No hashmap");
                 }
 
-                dispatchEvent(PGNProcessor.MSG_FINISHED, mode, 1, 0);
+                dispatcher.OnImportFinished(mode);
 
                 break;
         }
     }
 
+    /** The file the user picked, or the bundled asset when none was picked. */
+    private InputStream openInput(@Nullable Uri uri, String assetName) throws java.io.IOException {
+        return uri == null ? getAssets().open(assetName) : getContentResolver().openInputStream(uri);
+    }
+
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy");
-
-        if (puzzleImportProcessor != null) {
-            puzzleImportProcessor.stopProcessing();
-        }
-        if (gameImportProcessor != null) {
-            gameImportProcessor.stopProcessing();
-        }
-        if (practiceImportProcessor != null) {
-            practiceImportProcessor.stopProcessing();
-        }
-        if (openingImportProcessor != null) {
-            openingImportProcessor.stopProcessing();
-        }
-        if (pgnDbProcessor != null) {
-            pgnDbProcessor.stopProcessing();
-        }
-    }
-
-    public void handleThreadMessage(Message msg) {
-        Bundle data = msg.getData();
-        final int mode = data.getInt("mode", -1);
-        final int successCount = data.getInt("successCount", 0);
-        final int failCount = data.getInt("failCount", 0);
-        dispatchEvent(msg.what, mode, successCount, failCount);
+        pipeline.cancel();
     }
 
     public class LocalBinder extends Binder {
         public ImportService getService() {
             return ImportService.this;
-        }
-    }
-
-    protected void dispatchEvent(final int what, final int mode, final int successCount, final int failCount) {
-        for (ImportListener listener : listeners) {
-            switch (what) {
-                case PGNProcessor.MSG_PROCESSED_PGN:
-                    listener.OnImportProgress(mode, successCount, failCount);
-                    break;
-                case PGNProcessor.MSG_FINISHED:
-                    // @TODO some final task (e.g. opening process write keys)
-                    listener.OnImportFinished(mode);
-                    break;
-                case PGNProcessor.MSG_FATAL_ERROR:
-                    listener.OnImportFatalError(mode);
-                    break;
-            }
         }
     }
 
@@ -310,23 +246,7 @@ public class ImportService extends Service {
     }
 
     protected String collectGameDatabaseAsPGN() {
-        String s = "";
-        Context context = this.getBaseContext();
-        Cursor cursor = context.getContentResolver().query(MyPGNProvider.CONTENT_URI, PGNColumns.COLUMNS, null, null, PGNColumns.DEFAULT_SORT_ORDER);
-        if (cursor != null) {
-
-            if (cursor.getCount() > 0) {
-
-                cursor.moveToFirst();
-
-                while (cursor.isAfterLast() == false) {
-                    s += Utils.getColumnString(cursor, PGNColumns.PGN) + "\n\n\n";
-                    cursor.moveToNext();
-                }
-
-            }
-        }
-        return s;
+        return new GameStore(getBaseContext().getContentResolver()).exportAllAsPgn();
     }
 
 
@@ -339,24 +259,4 @@ public class ImportService extends Service {
             Log.d(TAG, "An error during writing of hash map " + e.getMessage());
         }
     }
-
-    private class ThreadMessageHandler extends Handler {
-        private WeakReference<ImportService> serverWeakReference;
-
-        ThreadMessageHandler(ImportService importService) {
-            super(Looper.getMainLooper());
-            this.serverWeakReference = new WeakReference<ImportService>(importService);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            ImportService importService = serverWeakReference.get();
-            if (importService != null) {
-                importService.handleThreadMessage(msg);
-                super.handleMessage(msg);
-            }
-        }
-    }
-
-
 }

@@ -14,9 +14,9 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dip"
-            android:layout_marginStart="4dip"
-            android:layout_marginEnd="4dip"
+            android:layout_marginTop="@dimen/board_control_gap"
+            android:layout_marginStart="@dimen/board_control_gap"
+            android:layout_marginEnd="@dimen/board_control_gap"
             android:accessibilityLiveRegion="assertive" />
 
         <LinearLayout
@@ -64,7 +64,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/puzzle_help" />
 
         <com.google.android.flexbox.FlexboxLayout
@@ -78,14 +78,14 @@
                 android:id="@+id/SwitchSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_margin="@dimen/board_control_gap"
                 android:text="@string/pref_sound"
                 android:checked="true" />
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchSpeech"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_margin="@dimen/board_control_gap"
                 android:text="@string/pref_speech"
                 android:checked="true" />
         </com.google.android.flexbox.FlexboxLayout>
@@ -95,9 +95,9 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -105,9 +105,9 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

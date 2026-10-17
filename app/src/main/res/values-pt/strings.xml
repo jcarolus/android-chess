@@ -182,6 +182,7 @@
     <string name="lichess_create_challenge_color_random">Aleatório</string>
     <string name="lichess_create_challenge_color_white">Brancas</string>
     <string name="lichess_create_challenge_player">Adversário</string>
+    <string name="lichess_create_challenge_player_required">Digite primeiro um adversário.</string>
     <string name="lichess_create_challenge_rated">Classificada</string>
     <string name="lichess_create_challenge_time">Tempo</string>
     <string name="lichess_create_challenge_time_control">Controle de tempo</string>
@@ -257,6 +258,8 @@
     <string name="msg_setup_turn">Vez</string>
     <string name="msg_setup_turn_black">pretas</string>
     <string name="msg_setup_turn_white">brancas</string>
+    <string name="game_ready_as_white">Partida pronta. Você joga com as peças brancas.</string>
+    <string name="game_ready_as_black">Partida pronta. Você joga com as peças pretas.</string>
     <string name="new_game_as_black">Nova partida, você joga com as peças pretas</string>
     <string name="new_game_as_white">Nova partida, você joga com as peças brancas</string>
     <string name="online_help"><![CDATA[
@@ -439,7 +442,7 @@
     <string name="time_warning_seconds_single">Falta %1$d segundo</string>
     <string name="title_castle">Roque?</string>
     <string name="title_challenge">Desafio</string>
-    <string name="title_create_new_line">Criar nova linha?</string>
+    <string name="title_overwrite_main_line">Sobrescrever a linha principal a partir desta posição?</string>
     <string name="title_delete_game">Excluir partida</string>
     <string name="title_edit_command">Editar comando</string>
     <string name="title_edit_or_delete">Editar ou excluir?</string>
@@ -505,7 +508,7 @@
     <string name="lichess_swiss_starts_at">Começa %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · ronda %2$d/%3$d · %4$d jogadores</string>
     <string name="lichess_swiss_no_teams">Ainda não pertence a nenhuma equipa. Toque em «Todas as equipas» para encontrar uma a que aderir.</string>
-    <string name="lichess_swiss_no_tournaments">Esta equipa não tem torneios suíços.</string>
+    <string name="lichess_swiss_no_tournaments">Nenhum torneio encontrado.</string>
     <string name="lichess_team_join_message_hint">Mensagem (se a equipa analisar os pedidos)</string>
     <string name="lichess_team_join_password_hint">Palavra-passe (se necessária)</string>
     <string name="lichess_team_joined">Aderiu a %1$s</string>
@@ -519,4 +522,31 @@
     <string name="players_agreed_draw">Empate por acordo</string>
     <string name="white_player_forfeits_on_time">As brancas perderam por tempo</string>
     <string name="white_player_resigned">As brancas desistiram</string>
+    <string name="pref_add_turn_in_move_description">Incluir de quem é a vez nas descrições das jogadas</string>
+    <string name="gameslist_open">Abrir</string>
+    <string name="gameslist_analyze">Analisar</string>
+    <string name="analysis_main_line">Linha principal</string>
+    <string name="analysis_engine_likes">O mecanismo recomenda:</string>
+    <string name="analysis_engine_matches">A última jogada corresponde à recomendação do mecanismo</string>
+    <string name="analysis_move_best">Melhor</string>
+    <string name="analysis_move_excellent">Excelente</string>
+    <string name="analysis_move_okay">Aceitável</string>
+    <string name="analysis_move_inaccuracy">Imprecisão</string>
+    <string name="analysis_move_mistake">Erro</string>
+    <string name="analysis_move_blunder">Erro grave</string>
+    <string name="analysis_move_forced">Forçada</string>
+    <string name="analysis_move_pending">Analisando jogada…</string>
+    <string name="analysis_move_unavailable">Análise indisponível</string>
+    <string name="analysis_white_to_move">Vez das brancas</string>
+    <string name="analysis_black_to_move">Vez das pretas</string>
+    <string name="analysis_variation">Variante</string>
+    <string name="analysis_back_to_main">Voltar à linha principal</string>
+    <string name="pgn_return_main_line">Voltar à linha principal</string>
+    <string name="pgn_promote_variation">Definir como continuação preferida</string>
+    <string name="pgn_delete_variation">Excluir variante</string>
+    <string name="engine_evaluation_score">Avaliação do mecanismo: %1$+.1f peões (valores positivos favorecem as brancas)</string>
+    <string name="engine_evaluation_pending">Avaliação do mecanismo indisponível</string>
+    <string name="analysis_settings">Configurações de análise</string>
+    <string name="analysis_time_budget">Tempo por posição (segundos)</string>
+    <string name="analysis_time_invalid">Digite um número de 0 a %1$d.</string>
 </resources>

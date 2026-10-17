@@ -18,7 +18,6 @@ Game::~Game(void) {
 // the non thread safe solution; assumption is that getInsance is called before any threads are created
 Game *Game::getInstance() {
     if (Game::game == nullptr) {
-        ChessBoard::initStatics();
         Game::game = new Game();
     }
     return Game::game;
@@ -43,7 +42,6 @@ void Game::reset() {
 
     ChessBoard *board = getBoard();
     board->reset();
-    board->calcState(m_searchWorkspace.refurbish());
     m_searchWorkspace.reset();
 
     m_bestMoveAndValue = (MoveAndValue){.value = 0, .move = 0, .duckMove = -1};
@@ -203,4 +201,11 @@ boolean Game::putPieceHouse(const int pos, const int piece, const boolean allowA
     ChessBoard *board = getBoard();
     boolean moved = board->putHouse(pos, piece, nextBoard.get(), m_searchWorkspace.refurbish(), allowAttack);
     return m_boardStack.promoteOrDiscard(std::move(nextBoard), moved);
+}
+
+void Game::copyPositionFrom(const Game& source) {
+    if (this == &source) return;
+    reset();
+    m_boardStack.cloneFrom(source.m_boardStack);
+    m_promotionPiece = source.m_promotionPiece;
 }

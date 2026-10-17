@@ -185,7 +185,7 @@ boolean ChessBoard::isEnded() {
         ChessBoard* tmpBoard = m_parent;
         int repeatCount = 0;
         while (tmpBoard != nullptr) {
-            if (tmpBoard->m_hashKey == m_hashKey) {
+            if (sameRepetitionPosition(*tmpBoard)) {
                 repeatCount++;
             }
             if (repeatCount == 2) {
@@ -214,7 +214,7 @@ boolean ChessBoard::checkEnded() {
         ChessBoard* tmpBoard = m_parent->m_parent;
         int repeatCount = 0;
         while (tmpBoard != nullptr) {
-            if (tmpBoard->m_hashKey == m_hashKey) {
+            if (sameRepetitionPosition(*tmpBoard)) {
                 repeatCount++;
             }
             if (repeatCount == 2) {
@@ -229,4 +229,30 @@ boolean ChessBoard::checkEnded() {
         }
     }
     return false;
+}
+
+// Opening-book hashes retain their historical format. Repetition compares the
+// actual position and legal options, independently of that incremental hash.
+boolean ChessBoard::sameRepetitionPosition(ChessBoard& other) {
+    if (m_turn != other.m_turn || memcmp(m_bitbPieces, other.m_bitbPieces, sizeof(m_bitbPieces)) != 0) return false;
+    for (int turn = BLACK; turn <= WHITE; ++turn) {
+        if (((m_castlings[turn] & (MASK_KING | MASK_AROOK)) == 0) !=
+            ((other.m_castlings[turn] & (MASK_KING | MASK_AROOK)) == 0)) return false;
+        if (((m_castlings[turn] & (MASK_KING | MASK_HROOK)) == 0) !=
+            ((other.m_castlings[turn] & (MASK_KING | MASK_HROOK)) == 0)) return false;
+    }
+    return repetitionEnPassant() == other.repetitionEnPassant();
+}
+
+int ChessBoard::repetitionEnPassant() {
+    if (m_ep < 0) return -1;
+    BITBOARD pawns = m_bitbPieces[m_turn][PAWN] & PAWN_RANGE[m_o_turn][m_ep];
+    while (pawns != 0) {
+        int from = trailingZeros(pawns);
+        pawns &= NOT_BITS[from];
+        ChessBoard next;
+        makeMove(Move_makeMoveEP(from, m_ep), &next);
+        if (!next.checkInSelfCheck()) return m_ep;
+    }
+    return -1;
 }

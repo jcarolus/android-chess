@@ -1,0 +1,3 @@
+[workspace]
+members = ["core", "bridge"]
+resolver = "2"

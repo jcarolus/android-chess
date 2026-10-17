@@ -18,7 +18,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import jwtc.android.chess.services.GameApi;
 
 public class PGNProvider extends ContentProvider {
 
@@ -143,7 +142,6 @@ public class PGNProvider extends ContentProvider {
                 final int idIndex = c.getColumnIndexOrThrow(PGNColumns._ID);
                 final int pgnIndex = c.getColumnIndexOrThrow(PGNColumns.PGN);
 
-                HashMap<String, String> pgnTags = new HashMap<>();
                 ContentValues contentValues = new ContentValues();
 
                 while (c.moveToNext()) {
@@ -152,8 +150,7 @@ public class PGNProvider extends ContentProvider {
                     try {
                         String sPGN = c.isNull(pgnIndex) ? null : c.getString(pgnIndex);
 
-                        GameApi.loadPGNHead(sPGN, pgnTags);
-                        String result = pgnTags.get("Result");
+                        String result = Pgn.readTags(sPGN).get("Result");
 
                         contentValues.clear();
                         contentValues.put(PGNColumns.RESULT, result);

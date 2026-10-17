@@ -7,6 +7,10 @@ import android.view.Window;
 import android.widget.GridView;
 
 import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import jwtc.chess.GameTree.Node;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import androidx.annotation.NonNull;
 
@@ -15,7 +19,6 @@ import com.google.android.material.button.MaterialButton;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 
@@ -29,8 +32,6 @@ public class PGNDialog extends Dialog {
 
         setContentView(R.layout.full_pgn);
 
-        final JNI jni = JNI.getInstance();
-
         ArrayList<MoveItem> mapMoves = new ArrayList<MoveItem>();
         MoveItemAdapter adapterMoves = new MoveItemAdapter(context, mapMoves);
 
@@ -38,30 +39,56 @@ public class PGNDialog extends Dialog {
 
         contentLayout.setAdapter(adapterMoves);
 
-        ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
-
-        for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove = pgnEntries.get(i).sMove;
-            if (pgnEntries.get(i).duckMove != -1) {
-                sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
+        // Show complete branches in one column; node identity distinguishes equal ply numbers.
+        contentLayout.setNumColumns(1);
+        ArrayList<Node> nodes = new ArrayList<>();
+        Runnable refresh = () -> {
+            nodes.clear();
+            mapMoves.clear();
+            Deque<Node> remaining = new ArrayDeque<>();
+            for (int i = gameApi.getRootNode().getChildren().size() - 1; i >= 0; i--)
+                remaining.push(gameApi.getRootNode().getChildren().get(i));
+            while (!remaining.isEmpty()) {
+                Node node = remaining.pop();
+                nodes.add(node);
+                PGNEntry entry = node.getEntry();
+                String move = entry.sMove;
+                if (entry.duckMove != -1) move += "@" + Pos.toString(entry.duckMove);
+                StringBuilder prefix = new StringBuilder();
+                for (Node ancestor = node; ancestor.getParent() != null; ancestor = ancestor.getParent()) {
+                    if (ancestor.getParent().getNext() != ancestor) prefix.append("  ↳ ");
+                }
+                String annotation = entry.sAnnotation;
+                if (!node.getLeadingComment().isEmpty()) annotation = node.getLeadingComment() + " " + annotation;
+                for (int nag : node.getNags()) annotation += " $" + nag;
+                mapMoves.add(new MoveItem(prefix + gameApi.getMoveNumber(node) + " ", move, entry.move,
+                    annotation, node == gameApi.getCurrentNode() ? R.drawable.turnblack : 0));
+                for (int i = node.getChildren().size() - 1; i >= 0; i--) remaining.push(node.getChildren().get(i));
             }
-            String nr = i % 2 == 0 ? ((i / 2 + 1) + ". ") : " ";
-            String annotation = pgnEntries.get(i).sAnnotation;
-            int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
-
-            mapMoves.add(new MoveItem(nr, sMove, pgnEntries.get(i).move, annotation, turn));
-
-        }
-
-        adapterMoves.notifyDataSetChanged();
-        contentLayout.smoothScrollToPosition(adapterMoves.getCount());
-
+            adapterMoves.notifyDataSetChanged();
+        };
+        refresh.run();
+        contentLayout.smoothScrollToPosition(Math.max(0, nodes.indexOf(gameApi.getCurrentNode())));
         contentLayout.setOnItemClickListener((parent, view, position, id) -> {
-            if (jni.getNumBoard() > position) {
-                position++;
+            if (gameApi.goTo(nodes.get(position))) dismiss();
+        });
+        contentLayout.setOnItemLongClickListener((parent, view, position, id) -> {
+            Node node = nodes.get(position);
+            boolean alternative = node.getParent().getNext() != node;
+            ArrayList<String> actions = new ArrayList<>();
+            actions.add(context.getString(R.string.pgn_return_main_line));
+            if (alternative) {
+                actions.add(context.getString(R.string.pgn_promote_variation));
+                actions.add(context.getString(R.string.pgn_delete_variation));
             }
-            gameApi.jumpToBoardNum(position);
-            dismiss();
+            new MaterialAlertDialogBuilder(context)
+                .setItems(actions.toArray(new String[0]), (dialog, which) -> {
+                    if (which == 0) gameApi.returnToMainLine();
+                    else if (which == 1) gameApi.promoteVariation(node);
+                    else gameApi.deleteVariation(node);
+                    refresh.run();
+                }).show();
+            return true;
         });
 
         MaterialButton buttonClip = findViewById(R.id.ButtonClip);

@@ -74,7 +74,7 @@ class ChessTest {
     ChessTest(void);
     ~ChessTest(void);
 
-    static void startSearchThread();
+    static void startSearchThread(Game* game);
     static bool expectEngineMove(EngineInOutFEN scenario);
     static bool expectSequence(SequenceInOutFEN scenario);
     static bool expectNonSequence(NonSequenceInFEN scenario);

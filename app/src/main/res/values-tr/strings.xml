@@ -182,6 +182,7 @@
     <string name="lichess_create_challenge_color_random">Rastgele</string>
     <string name="lichess_create_challenge_color_white">Beyaz</string>
     <string name="lichess_create_challenge_player">Rakip</string>
+    <string name="lichess_create_challenge_player_required">Önce bir rakip girin.</string>
     <string name="lichess_create_challenge_rated">Dereceli</string>
     <string name="lichess_create_challenge_time">Zaman</string>
     <string name="lichess_create_challenge_time_control">Zaman kontrolü</string>
@@ -257,6 +258,8 @@
     <string name="msg_setup_turn">Sıra</string>
     <string name="msg_setup_turn_black">siyah</string>
     <string name="msg_setup_turn_white">beyaz</string>
+    <string name="game_ready_as_white">Oyun hazır. Beyaz taşlarla oynuyorsunuz.</string>
+    <string name="game_ready_as_black">Oyun hazır. Siyah taşlarla oynuyorsunuz.</string>
     <string name="new_game_as_black">Yeni oyun, siyah taşlarla oynuyorsunuz</string>
     <string name="new_game_as_white">Yeni oyun, beyaz taşlarla oynuyorsunuz</string>
     <string name="online_help"><![CDATA[
@@ -439,7 +442,7 @@
     <string name="time_warning_seconds_single">%1$d saniye kaldı</string>
     <string name="title_castle">Rok mu?</string>
     <string name="title_challenge">Meydan okuma</string>
-    <string name="title_create_new_line">Yeni varyant oluşturulsun mu?</string>
+    <string name="title_overwrite_main_line">Bu konumdan itibaren ana hattın üzerine yazılsın mı?</string>
     <string name="title_delete_game">Oyunu sil</string>
     <string name="title_edit_command">Komutu düzenle</string>
     <string name="title_edit_or_delete">Düzenle veya sil?</string>
@@ -505,7 +508,7 @@
     <string name="lichess_swiss_starts_at">Başlangıç: %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · tur %2$d/%3$d · %4$d oyuncu</string>
     <string name="lichess_swiss_no_teams">Henüz hiçbir takımda değilsiniz. Katılacak bir takım bulmak için “Tüm takımlar”a dokunun.</string>
-    <string name="lichess_swiss_no_tournaments">Bu takımın İsviçre turnuvası yok.</string>
+    <string name="lichess_swiss_no_tournaments">Turnuva bulunamadı.</string>
     <string name="lichess_team_join_message_hint">Mesaj (takım başvuruları inceliyorsa)</string>
     <string name="lichess_team_join_password_hint">Parola (gerekiyorsa)</string>
     <string name="lichess_team_joined">%1$s takımına katıldınız</string>
@@ -519,4 +522,31 @@
     <string name="players_agreed_draw">Anlaşmalı beraberlik</string>
     <string name="white_player_forfeits_on_time">Beyaz süre aşımından kaybetti</string>
     <string name="white_player_resigned">Beyaz pes etti</string>
+    <string name="pref_add_turn_in_move_description">Hamle açıklamalarına sıranın kimde olduğunu ekle</string>
+    <string name="gameslist_open">Aç</string>
+    <string name="gameslist_analyze">Analiz et</string>
+    <string name="analysis_main_line">Ana hat</string>
+    <string name="analysis_engine_likes">Motorun önerisi:</string>
+    <string name="analysis_engine_matches">Son hamle motorun önerisiyle eşleşiyor</string>
+    <string name="analysis_move_best">En iyi</string>
+    <string name="analysis_move_excellent">Mükemmel</string>
+    <string name="analysis_move_okay">Kabul edilebilir</string>
+    <string name="analysis_move_inaccuracy">İsabetsizlik</string>
+    <string name="analysis_move_mistake">Hata</string>
+    <string name="analysis_move_blunder">Büyük hata</string>
+    <string name="analysis_move_forced">Zorunlu</string>
+    <string name="analysis_move_pending">Hamle analiz ediliyor…</string>
+    <string name="analysis_move_unavailable">Analiz kullanılamıyor</string>
+    <string name="analysis_white_to_move">Beyazın sırası</string>
+    <string name="analysis_black_to_move">Siyahın sırası</string>
+    <string name="analysis_variation">Varyant</string>
+    <string name="analysis_back_to_main">Ana hatta dön</string>
+    <string name="pgn_return_main_line">Ana hatta dön</string>
+    <string name="pgn_promote_variation">Tercih edilen devam yolu yap</string>
+    <string name="pgn_delete_variation">Varyantı sil</string>
+    <string name="engine_evaluation_score">Motor değerlendirmesi: %1$+.1f piyon (pozitif değerler beyazın lehinedir)</string>
+    <string name="engine_evaluation_pending">Motor değerlendirmesi kullanılamıyor</string>
+    <string name="analysis_settings">Analiz ayarları</string>
+    <string name="analysis_time_budget">Konum başına süre (saniye)</string>
+    <string name="analysis_time_invalid">0 ile %1$d arasında bir sayı girin.</string>
 </resources>

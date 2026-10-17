@@ -182,6 +182,7 @@
     <string name="lichess_create_challenge_color_random">Случайно</string>
     <string name="lichess_create_challenge_color_white">Белые</string>
     <string name="lichess_create_challenge_player">Соперник</string>
+    <string name="lichess_create_challenge_player_required">Сначала введите имя соперника.</string>
     <string name="lichess_create_challenge_rated">Рейтинговая</string>
     <string name="lichess_create_challenge_time">Время</string>
     <string name="lichess_create_challenge_time_control">Контроль времени</string>
@@ -257,6 +258,8 @@
     <string name="msg_setup_turn">Ход</string>
     <string name="msg_setup_turn_black">чёрные</string>
     <string name="msg_setup_turn_white">белые</string>
+    <string name="game_ready_as_white">Игра готова. Вы играете белыми фигурами.</string>
+    <string name="game_ready_as_black">Игра готова. Вы играете чёрными фигурами.</string>
     <string name="new_game_as_black">Новая игра, вы играете чёрными фигурами</string>
     <string name="new_game_as_white">Новая игра, вы играете белыми фигурами</string>
     <string name="online_help"><![CDATA[
@@ -439,7 +442,7 @@
     <string name="time_warning_seconds_single">Осталась %1$d секунда</string>
     <string name="title_castle">Рокировка?</string>
     <string name="title_challenge">Вызов</string>
-    <string name="title_create_new_line">Создать новую линию?</string>
+    <string name="title_overwrite_main_line">Перезаписать основную линию с этой позиции?</string>
     <string name="title_delete_game">Удалить партию</string>
     <string name="title_edit_command">Изменить команду</string>
     <string name="title_edit_or_delete">Изменить или удалить?</string>
@@ -505,7 +508,7 @@
     <string name="lichess_swiss_starts_at">Начало: %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · раунд %2$d/%3$d · %4$d игроков</string>
     <string name="lichess_swiss_no_teams">Вы пока не состоите ни в одной команде. Нажмите «Все команды», чтобы найти команду и вступить в неё.</string>
-    <string name="lichess_swiss_no_tournaments">У этой команды нет швейцарских турниров.</string>
+    <string name="lichess_swiss_no_tournaments">Турниры не найдены.</string>
     <string name="lichess_team_join_message_hint">Сообщение (если команда рассматривает заявки)</string>
     <string name="lichess_team_join_password_hint">Пароль (если требуется)</string>
     <string name="lichess_team_joined">Вы вступили в команду %1$s</string>
@@ -519,4 +522,31 @@
     <string name="players_agreed_draw">Ничья по соглашению</string>
     <string name="white_player_forfeits_on_time">Белые проиграли по времени</string>
     <string name="white_player_resigned">Белые сдались</string>
+    <string name="pref_add_turn_in_move_description">Указывать, чей ход, в описаниях ходов</string>
+    <string name="gameslist_open">Открыть</string>
+    <string name="gameslist_analyze">Анализировать</string>
+    <string name="analysis_main_line">Основная линия</string>
+    <string name="analysis_engine_likes">Движок рекомендует:</string>
+    <string name="analysis_engine_matches">Последний ход совпадает с рекомендацией движка</string>
+    <string name="analysis_move_best">Лучший</string>
+    <string name="analysis_move_excellent">Отличный</string>
+    <string name="analysis_move_okay">Приемлемый</string>
+    <string name="analysis_move_inaccuracy">Неточность</string>
+    <string name="analysis_move_mistake">Ошибка</string>
+    <string name="analysis_move_blunder">Грубая ошибка</string>
+    <string name="analysis_move_forced">Вынужденный</string>
+    <string name="analysis_move_pending">Анализ хода…</string>
+    <string name="analysis_move_unavailable">Анализ недоступен</string>
+    <string name="analysis_white_to_move">Ход белых</string>
+    <string name="analysis_black_to_move">Ход черных</string>
+    <string name="analysis_variation">Вариант</string>
+    <string name="analysis_back_to_main">К основной линии</string>
+    <string name="pgn_return_main_line">Вернуться к основной линии</string>
+    <string name="pgn_promote_variation">Сделать предпочтительным продолжением</string>
+    <string name="pgn_delete_variation">Удалить вариант</string>
+    <string name="engine_evaluation_score">Оценка движка: %1$+.1f пешек (положительные значения в пользу белых)</string>
+    <string name="engine_evaluation_pending">Оценка движка недоступна</string>
+    <string name="analysis_settings">Настройки анализа</string>
+    <string name="analysis_time_budget">Время на позицию (секунды)</string>
+    <string name="analysis_time_invalid">Введите число от 0 до %1$d.</string>
 </resources>

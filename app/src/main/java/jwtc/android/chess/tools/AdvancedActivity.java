@@ -4,7 +4,9 @@ import java.io.File;
 
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.GameStore;
+import jwtc.android.chess.matecollection.MateCollection;
+import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.R;
 
 import android.app.Activity;
@@ -60,7 +62,7 @@ public class AdvancedActivity extends BaseActivity {
             } else if (arrString[arg2].equals(getString(R.string.pgntool_delete_explanation))) {
 
                 openConfirmDialog(getString(R.string.pgntool_confirm_delete), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
-                    AdvancedActivity.this.getContentResolver().delete(MyPGNProvider.CONTENT_URI, "1=1", null);
+                    new GameStore(AdvancedActivity.this.getContentResolver()).deleteAll();
                     doToast(getString(R.string.pgntool_deleted));
                 }, null);
 
@@ -103,12 +105,7 @@ public class AdvancedActivity extends BaseActivity {
             } else if (arrString[arg2].equals(getString(R.string.pgntool_reset_practice))) {
 
                 openConfirmDialog(getString(R.string.pgntool_confirm_practice_reset), getString(R.string.button_ok), getString(R.string.button_cancel), () -> {
-                    SharedPreferences prefs = getSharedPreferences("ChessPlayer", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putInt("practicePos", 0);
-                    editor.putInt("practiceNumPlayed", 0);
-                    editor.putInt("practiceSolved", 0);
-                    editor.commit();
+                    MateCollection.resetProgress(this, MateKind.PRACTICE_POSITIONS);
 
                     doToast(getString(R.string.practice_set_reset));
                 }, null);

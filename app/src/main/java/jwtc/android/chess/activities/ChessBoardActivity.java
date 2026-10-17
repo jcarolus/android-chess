@@ -38,6 +38,7 @@ import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.services.GameListener;
 import jwtc.chess.JNI;
 import jwtc.chess.Move;
@@ -73,16 +74,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean fieldColorDescriptions = false;
     protected boolean announceLastMoveWhenOverEmptySquare = false;
     protected boolean useLongMoveFormat = false;
+    protected boolean addTurnInMoveDescription = true;
     protected boolean includeAttackersAndDefendersInFieldDescription = false;
     // shared views
     protected TextView textViewWhitePieces, textViewBlackPieces;
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
     private String keyboardBuffer = "";
     private final Handler accessibilityDragHandler = new Handler(Looper.getMainLooper());
-    private final Handler timeWarningSpeechHandler = new Handler(Looper.getMainLooper());
-    // Delay before speaking a time warning when a warning sound is also playing,
-    // so the sound has time to finish before TTS starts.
-    private static final long TIME_WARNING_SPEECH_DELAY_MS = 700L;
+    private final Handler speechInitHandler = new Handler(Looper.getMainLooper());
     private static final long INIT_SPEECH_DELAY_MS = 1000L;
     private Runnable accessibilityDragDwellRunnable = null;
     private int accessibilityDragHoverPos = -1;
@@ -307,6 +306,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         View boardTopLayout,
         View boardBottomLayout
     ) {
+        initBoardLayoutSizing(rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout, 0);
+    }
+
+    protected void initBoardLayoutSizing(
+        View rootLayout, View boardAreaLayout, View controlsLayout,
+        View boardTopLayout, View boardBottomLayout, int boardSidePanelWidthDp
+    ) {
+        final int sidePanelWidth = dpToPx(boardSidePanelWidthDp);
         if (rootLayout == null || boardAreaLayout == null) {
             return;
         }
@@ -353,7 +360,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 final int boardTopHeight = measureDependentHeight(boardTopLayoutRef);
                 final int boardBottomHeight = measureDependentHeight(boardBottomLayoutRef);
                 final int reservedVerticalHeight = boardTopHeight + boardBottomHeight;
-                final int preferredBoardSide = rootAvailableWidth;
+                final int preferredBoardSide = Math.max(0, rootAvailableWidth - sidePanelWidth);
                 final int controlsHeightRemainingAfterPreferredBoard = rootAvailableHeight - reservedVerticalHeight - preferredBoardSide;
                 final int portraitBoardSide = Math.max(
                     0,
@@ -366,12 +373,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     rootAvailableHeight - reservedVerticalHeight - portraitBoardSide
                 );
                 final int landscapeBoardSide = Math.min(
-                    Math.max(0, rootAvailableWidth - minLandscapeControlsPx),
+                    Math.max(0, rootAvailableWidth - minLandscapeControlsPx - sidePanelWidth),
                     Math.max(0, rootAvailableHeight - reservedVerticalHeight)
                 );
 
                 if (lastRootWidth == rootWidth && lastRootHeight == rootHeight && lastOrientation == orientation
-                    && lastBoardSide == boardAreaLayout.getWidth()
+                    && lastBoardSide + sidePanelWidth == boardAreaLayout.getWidth()
                     && lastTopHeight == boardTopHeight && lastBottomHeight == boardBottomHeight
                     && (orientation == Configuration.ORIENTATION_PORTRAIT ? lastControlsHeight == portraitControlsHeight : true)
                 ) {
@@ -384,8 +391,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 lastBottomHeight = boardBottomHeight;
 
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    if (boardAreaParams.width != landscapeBoardSide) {
-                        boardAreaParams.width = landscapeBoardSide;
+                    if (boardAreaParams.width != landscapeBoardSide + sidePanelWidth) {
+                        boardAreaParams.width = landscapeBoardSide + sidePanelWidth;
                         boardAreaLayout.setLayoutParams(boardAreaParams);
                     }
                     if (boardViewParams != null
@@ -405,8 +412,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                 final int boardSide = portraitBoardSide;
                 final int controlsHeight = portraitControlsHeight;
-                if (boardAreaParams.width != boardSide) {
-                    boardAreaParams.width = boardSide;
+                if (boardAreaParams.width != boardSide + sidePanelWidth) {
+                    boardAreaParams.width = boardSide + sidePanelWidth;
                     boardAreaLayout.setLayoutParams(boardAreaParams);
                 }
                 if (boardViewParams != null && (boardViewParams.width != boardSide || boardViewParams.height != boardSide)) {
@@ -520,6 +527,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         fieldColorDescriptions = prefs.getBoolean("field_color_descriptions", false);
         announceLastMoveWhenOverEmptySquare = prefs.getBoolean("announce_last_move_when_over_empty_square", false);
         useLongMoveFormat = prefs.getBoolean("use_long_move_description", false);
+        addTurnInMoveDescription = prefs.getBoolean("add_turn_in_move_description", true);
         includeAttackersAndDefendersInFieldDescription = prefs.getBoolean("include_attackers_defenders_in_field_description", false);
 
         if (textViewWhitePieces != null && textViewBlackPieces != null) {
@@ -609,25 +617,26 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackNewGameStarted(int color, TextView textView) {
-        final boolean soundsEnabled = sounds.isEnabled();
-        final boolean speechEnabled = textToSpeech.isEnabled();
+        feedbackGameReady(getString(color == BoardConstants.WHITE
+            ? R.string.new_game_as_white : R.string.new_game_as_black), textView);
+    }
 
-        if (soundsEnabled) {
-            sounds.playNewGame();
-        }
-        if (speechEnabled) {
-            final Runnable feedbackRunnable = () -> {
-                String message = getString(color == BoardConstants.WHITE ? R.string.new_game_as_white : R.string.new_game_as_black);
-                updateTextViewOrSpeech(textView, message);
-            };
-            if (textToSpeech.isReady()) {
+    protected void feedbackGameReady(int color, TextView textView) {
+        feedbackGameReady(getString(color == BoardConstants.WHITE
+            ? R.string.game_ready_as_white : R.string.game_ready_as_black), textView);
+    }
+
+    private void feedbackGameReady(String message, TextView textView) {
+        final boolean speechEnabled = textToSpeech.isEnabled();
+        sounds.playNewGame(() -> {
+            final Runnable feedbackRunnable = () -> updateTextViewOrSpeech(textView, message);
+            if (!speechEnabled || textToSpeech.isReady()) {
                 feedbackRunnable.run();
             } else {
-                // @TODO should this be on status text?
-                // delay because speech not ready after Activity resume with new game
-                timeWarningSpeechHandler.postDelayed(feedbackRunnable, INIT_SPEECH_DELAY_MS);
+                // TTS initialization is independent of sound playback completion.
+                speechInitHandler.postDelayed(feedbackRunnable, INIT_SPEECH_DELAY_MS);
             }
-        }
+        });
     }
 
     public void feedbackTimeWarning(long millies) {
@@ -636,43 +645,27 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return;
         }
 
-        final boolean soundsEnabled = sounds.isEnabled();
         final boolean speechEnabled = textToSpeech.isEnabled();
-
-        if (soundsEnabled) {
-            if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
-                long minutes = remainingSeconds / 60;
-                if (minutes == 1) {
-                    sounds.playBell();
-                } else {
-                    sounds.playLowTime();
-                }
-            } else {
-                sounds.playStopWatch();
+        final boolean wholeMinutes = remainingSeconds >= 60 && remainingSeconds % 60 == 0;
+        final long minutes = remainingSeconds / 60;
+        final Runnable speak = () -> {
+            if (!speechEnabled) {
+                return;
             }
-        }
+            String message = wholeMinutes
+                ? getString(minutes == 1 ? R.string.time_warning_minutes_single : R.string.time_warning_minutes, minutes)
+                : getString(R.string.time_warning_seconds, remainingSeconds);
+            textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
+        };
 
-        if (speechEnabled) {
-            final Runnable speak = () -> {
-                if (remainingSeconds >= 60 && remainingSeconds % 60 == 0) {
-                    long minutes = remainingSeconds / 60;
-                    if (minutes == 1) {
-                        textToSpeech.doSpeak(getString(R.string.time_warning_minutes_single, minutes), TextToSpeech.QUEUE_ADD);
-                    } else {
-                        textToSpeech.doSpeak(getString(R.string.time_warning_minutes, minutes), TextToSpeech.QUEUE_ADD);
-                    }
-                } else {
-                    textToSpeech.doSpeak(getString(R.string.time_warning_seconds, remainingSeconds), TextToSpeech.QUEUE_ADD);
-                }
-            };
-
-            // When a sound also plays, delay the speech a little so the sound can
-            // finish first instead of the two overlapping.
-            if (soundsEnabled) {
-                timeWarningSpeechHandler.postDelayed(speak, TIME_WARNING_SPEECH_DELAY_MS);
+        if (wholeMinutes) {
+            if (minutes == 1) {
+                sounds.playBell(speak);
             } else {
-                speak.run();
+                sounds.playLowTime(speak);
             }
+        } else {
+            sounds.playStopWatch(speak);
         }
     }
 
@@ -696,7 +689,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         Log.d(TAG, "onDestroy");
 
         cancelMoveAnimation();
-        timeWarningSpeechHandler.removeCallbacksAndMessages(null);
+        speechInitHandler.removeCallbacksAndMessages(null);
+        sounds.release();
 
         if (boardLayoutListener != null && boardLayoutRoot != null) {
             boardLayoutRoot.getViewTreeObserver().removeOnGlobalLayoutListener(boardLayoutListener);
@@ -1219,17 +1213,19 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return "";
     }
 
-    protected String getLastMoveDescription(boolean forTTS) {
-        int move = jni.getMyMove();
+    protected String getMoveDescription(boolean forTTS, String sMove, int move) {
         if (move != 0) {
-            return GameApi.moveToSpeechString(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), jni.getMyMoveToString(), move, useLongMoveFormat);
+            return MoveSpeech.describe(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), sMove, move, useLongMoveFormat);
         }
         return "";
+    }
+    protected String getLastMoveDescription(boolean forTTS) {
+        return getMoveDescription(forTTS, jni.getMyMoveToString(), jni.getMyMove());
     }
     protected String getLastMoveAndTurnDescription(boolean forTTS) {
         String sMove = getLastMoveDescription(forTTS);
         if (!sMove.isEmpty()) {
-            if (gameApi.isEnded()) {
+            if (!addTurnInMoveDescription || gameApi.isEnded()) {
                 return sMove;
             }
             return jni.getTurn() == BoardConstants.BLACK

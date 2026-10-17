@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="4dp"
+    android:padding="@dimen/board_screen_padding"
     android:id="@+id/LayoutMain">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,7 +23,7 @@
             layout="@layout/chessboard"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="@dimen/board_control_gap"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
         android:id="@+id/play_controls"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/control_gap"
         android:minWidth="320dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -46,13 +46,13 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="4dp">
+            android:padding="@dimen/control_padding">
 
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:stretchColumns="1"
-                android:layout_marginTop="4dp">
+                android:layout_marginTop="@dimen/board_control_gap">
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -86,7 +86,7 @@
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/board_control_gap"
                 android:stretchColumns="*">
 
                 <TableRow style="@style/MyRowStyle">
@@ -95,21 +95,21 @@
                         android:id="@+id/ButtonSetupOptionsCancel"
                         android:text="@string/button_cancel"
                         android:layout_width="wrap_content"
-                        android:layout_marginEnd="2dp"
+                        android:layout_marginEnd="@dimen/tiny_control_gap"
                         style="?attr/chessButtonStyle" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsRandom"
                         android:text="@string/choice_random"
                         android:layout_width="wrap_content"
-                        android:layout_margin="2dp"
+                        android:layout_margin="@dimen/tiny_control_gap"
                         style="?attr/chessButtonStyle" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/ButtonSetupOptionsOk"
                         android:text="@string/button_ok"
                         android:layout_width="wrap_content"
-                        android:layout_marginStart="2dp"
+                        android:layout_marginStart="@dimen/tiny_control_gap"
                         style="?attr/chessButtonStyle" />
                 </TableRow>
 

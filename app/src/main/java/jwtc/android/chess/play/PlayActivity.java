@@ -1,10 +1,7 @@
 package jwtc.android.chess.play;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,17 +32,16 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
-import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
-import jwtc.android.chess.engine.LocalEngine;
-import jwtc.android.chess.engine.OexEngine;
+import jwtc.android.chess.engine.EngineSession;
+import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
-import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
@@ -54,7 +50,7 @@ import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.chess.PGNColumns;
+import jwtc.chess.GameRecord;
 import jwtc.chess.board.BoardConstants;
 
 
@@ -77,9 +73,9 @@ public class PlayActivity extends ChessBoardActivity implements
     public static final int REQUEST_OPEN_GAME_FILE = 12;
 
     private LocalClockApi localClock;
-    private EngineApi myEngine;
-    private EngineApi localEngine;
-    private OexEngine oexEngine;
+    private EngineSession engineSession;
+    private boolean enginePausedForHistory;
+    private SearchLimit searchLimit = SearchLimit.millis(1000);
     private final EcoService ecoService = new EcoService();
     private long lGameID;
     private LinearProgressIndicator progressBarEngine;
@@ -103,17 +99,13 @@ public class PlayActivity extends ChessBoardActivity implements
     @Override
     public boolean requestMove(final int from, final int to) {
         if (!gameApi.isEnded() && (jni.getTurn() == myTurn || vsCPU == false)) {
-            // @TODO check if override new line
-
-            /*
-            openConfirmDialog(
-                            getString(R.string.title_create_new_line),
-                            getString(R.string.alert_yes),
-                            getString(R.string.alert_no),
-                            this::playIfEngineCanMove,
-                            null
-                    );
-             */
+            if (gameApi.hasContinuationToOverwrite()) {
+                confirmOverwrite(() -> {
+                    if (!super.requestMove(from, to)) rebuildBoard();
+                });
+                rebuildBoard();
+                return true;
+            }
 
             if (super.requestMove(from, to)) {
                 return true;
@@ -121,6 +113,21 @@ public class PlayActivity extends ChessBoardActivity implements
         }
         rebuildBoard();
         return false;
+    }
+
+    private void confirmOverwrite(Runnable action) {
+        if (gameApi.hasContinuationToOverwrite()) {
+            openConfirmDialog(getString(R.string.title_overwrite_main_line),
+                getString(R.string.alert_yes), getString(R.string.alert_no),
+                action, this::rebuildBoard);
+        } else {
+            action.run();
+        }
+    }
+
+    @Override
+    protected void handleAmbiguousCastle(int from, int to) {
+        confirmOverwrite(() -> super.handleAmbiguousCastle(from, to));
     }
 
     @Override
@@ -132,6 +139,7 @@ public class PlayActivity extends ChessBoardActivity implements
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         gameApi = new GameApi();
+        gameApi.setOverwriteContinuation(true);
         localClock = new LocalClockApi(gameApi);
 
         localClock.addListener(this);
@@ -156,20 +164,10 @@ public class PlayActivity extends ChessBoardActivity implements
         playButton = findViewById(R.id.ButtonPlay);
         playButton.setOnClickListener(arg0 -> {
             if (!gameApi.isEnded()) {
-                if (myEngine.isReady()) {
-                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
-                        openConfirmDialog(
-                            getString(R.string.title_create_new_line),
-                            getString(R.string.alert_yes),
-                            getString(R.string.alert_no),
-                            this::playIfEngineCanMove,
-                            null
-                        );
-                    } else {
-                        playIfEngineCanMove();
-                    }
+                if (engineSession.isReady()) {
+                    confirmOverwrite(this::resumeEnginePlay);
                 } else {
-                    myEngine.abort(() -> {});
+                    engineSession.abort(() -> {});
                 }
             }
         });
@@ -185,17 +183,18 @@ public class PlayActivity extends ChessBoardActivity implements
         bottomPieces = findViewById(R.id.bottomPieces);
 
         MaterialButton butNext = findViewById(R.id.ButtonNext);
-        butNext.setOnClickListener(v -> gameApi.nextMove());
+        butNext.setOnClickListener(v -> navigateHistory(() -> gameApi.nextMove()));
         butNext.setOnLongClickListener(v -> {
-            gameApi.jumpToBoardNum(gameApi.getPGNSize());
+            java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
+            if (!line.isEmpty()) navigateHistory(() -> gameApi.goTo(line.get(line.size() - 1)));
             return true;
         });
 
         MaterialButton butPrev = findViewById(R.id.ButtonPrevious);
-        butPrev.setOnClickListener(v -> gameApi.undoMove());
+        butPrev.setOnClickListener(v -> navigateHistory(() -> gameApi.undoMove()));
 
         butPrev.setOnLongClickListener(v -> {
-            gameApi.jumpToBoardNum(1);
+            navigateHistory(() -> gameApi.jumpToBoardNum(1));
             return true;
         });
 
@@ -293,13 +292,11 @@ public class PlayActivity extends ChessBoardActivity implements
         String type = intent.getType();
         Uri uri = intent.getData();
 
-        localEngine = new LocalEngine(gameApi);
-        oexEngine = new OexEngine(this, gameApi, prefs.getString("oexEngineId", null));
-        myEngine = null;
+        engineSession = EngineSession.forPlay(this, gameApi, this);
 
         lGameID = prefs.getLong("game_id", 0);
 
-        updateClockByPrefs(false);
+        updateClockByPrefs(false, prefs.getInt("clockActivePlayer", jni.getTurn()));
         updateGameSettingsByPrefs();
 
         flipBoard = prefs.getBoolean("flipBoard", false);
@@ -368,36 +365,18 @@ public class PlayActivity extends ChessBoardActivity implements
     protected void onPause() {
         super.onPause();
 
-        if (myEngine != null) {
-            myEngine.abort(() -> {
-            });
-            myEngine.removeListener(this);
-            myEngine = null;
-        }
-        if (localEngine != null) {
-            localEngine.destroy();
-            localEngine = null;
-        }
-        if (oexEngine != null) {
-            oexEngine.destroy();
-            oexEngine = null;
+        if (engineSession != null) {
+            engineSession.close();
+            engineSession = null;
         }
 
+        final long pauseTime = System.currentTimeMillis();
         localClock.stopClock();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         if (lGameID > 0) {
-            ContentValues values = new ContentValues();
-
-            // @TODO - generic solution; +RESULT?
-            values.put(PGNColumns.DATE, gameApi.getDate().getTime());
-            values.put(PGNColumns.WHITE, gameApi.getWhite());
-            values.put(PGNColumns.BLACK, gameApi.getBlack());
-            values.put(PGNColumns.PGN, gameApi.exportFullPGN());
-            values.put(PGNColumns.EVENT, gameApi.getPGNHeadProperty("Event"));
-
-            saveGame(values, false, lGameID);
+            saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);
 
             editor.putString("FEN", null);
         }
@@ -407,9 +386,9 @@ public class PlayActivity extends ChessBoardActivity implements
         editor.putString("FEN", jni.toFEN());
         editor.putString("setupFEN", null);
 
-        final long pauseTime = System.currentTimeMillis();
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
+        editor.putInt("clockActivePlayer", localClock.getActivePlayer());
         editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : pauseTime);
         editor.putBoolean("flipBoard", flipBoard);
         editor.putBoolean("minimal", switchMinimal.isChecked());
@@ -494,6 +473,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onMoveApplied(int move) {
+        enginePausedForHistory = false;
         super.onMoveApplied(move);
 
         updateGUI();
@@ -514,6 +494,14 @@ public class PlayActivity extends ChessBoardActivity implements
     @Override
     public void onHistoryPositionChanged(int boardNumber) {
         super.onHistoryPositionChanged(boardNumber);
+
+        updateLastMove();
+    }
+
+    @Override
+    public void onGameLoaded() {
+        enginePausedForHistory = false;
+        super.onGameLoaded();
 
         updateLastMove();
     }
@@ -576,6 +564,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onNewGameStarted(int variant) {
+        enginePausedForHistory = false;
         super.onNewGameStarted(variant);
 
         feedbackNewGameStarted(myTurn, textViewLastMove);
@@ -603,7 +592,22 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onMoveItemClick(int pos) {
-        this.gameApi.jumpToBoardNum(pos + 1);
+        java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
+        if (pos >= 0 && pos < line.size()) navigateHistory(() -> gameApi.goTo(line.get(pos)));
+    }
+
+    private void navigateHistory(Runnable navigation) {
+        enginePausedForHistory = true;
+        // Abort also invalidates results already queued for delivery on the main thread.
+        if (engineSession != null) engineSession.abort(null);
+        toggleEngineProgress(false);
+        hideInfoBalloon();
+        navigation.run();
+    }
+
+    private void resumeEnginePlay() {
+        enginePausedForHistory = false;
+        playIfEngineCanMove();
     }
 
     protected void updateGUI() {
@@ -811,7 +815,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
                 break;
             case REQUEST_CLOCK:
-                updateClockByPrefs(false);
+                updateClockByPrefs(false, localClock.getActivePlayer());
                 gameApi.resetForfeitTime();
                 break;
 
@@ -823,7 +827,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
             case REQUEST_ECO:
                 item = data.getString("item");
-                gameApi.requestMove(item);
+                final String openingMove = item;
+                confirmOverwrite(() -> gameApi.requestMove(openingMove));
                 break;
         }
     }
@@ -871,7 +876,7 @@ public class PlayActivity extends ChessBoardActivity implements
         }
     }
 
-    protected void updateClockByPrefs(boolean newGame) {
+    protected void updateClockByPrefs(boolean newGame, int activePlayer) {
         SharedPreferences prefs = getPrefs();
         long increment = prefs.getLong("clockIncrement", 0);
         long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
@@ -885,13 +890,13 @@ public class PlayActivity extends ChessBoardActivity implements
         if (startTime > 0 && newGame) {
             startTime = System.currentTimeMillis();
         }
-        localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
+        localClock.startClock(increment, whiteRemaining, blackRemaining, activePlayer, startTime);
     }
 
     protected void updateForNewGame() {
         Log.d(TAG, "updateForNewGame");
 
-        updateClockByPrefs(true);
+        updateClockByPrefs(true, jni.getTurn());
         updateGameSettingsByPrefs();
 
         resetSelectedSquares();
@@ -903,40 +908,16 @@ public class PlayActivity extends ChessBoardActivity implements
         return getPrefs().getString("engineBackend", "builtin");
     }
 
-    private EngineApi resolveEngineByPrefsAndVariant() {
-        boolean isDuck = jni.getVariant() == BoardConstants.VARIANT_DUCK;
-        boolean wantsOex = "oex".equals(getPreferredEngineBackend());
-        if (wantsOex && !OexEngine.hasAvailableEngines(this)) {
-            wantsOex = false;
-        }
-        return wantsOex && !isDuck ? oexEngine : localEngine;
-    }
-
     private void updateActiveEngine() {
-        if (localEngine == null) {
-            localEngine = new LocalEngine(gameApi);
+        if (engineSession == null) {
+            engineSession = EngineSession.forPlay(this, gameApi, this);
         }
-        if (oexEngine == null) {
-            oexEngine = new OexEngine(this, gameApi, getPrefs().getString("oexEngineId", null));
-        } else {
-            oexEngine.setPreferredEngineId(getPrefs().getString("oexEngineId", null));
-        }
-
-        EngineApi selectedEngine = resolveEngineByPrefsAndVariant();
-        if (selectedEngine == null) {
-            selectedEngine = localEngine;
-        }
-        if (selectedEngine == myEngine) {
-            return;
-        }
-
-        if (myEngine != null) {
-            myEngine.abort(() -> {
-            });
-            myEngine.removeListener(this);
-        }
-        myEngine = selectedEngine;
-        myEngine.addListener(this);
+        SharedPreferences prefs = getPrefs();
+        engineSession.selectForPlay(
+            "oex".equals(getPreferredEngineBackend()),
+            prefs.getString("oexEngineId", null),
+            jni.getVariant() == BoardConstants.VARIANT_DUCK,
+            prefs.getBoolean("quiescentSearchOn", true));
     }
 
     protected void updateBoardRotation() {
@@ -968,8 +949,6 @@ public class PlayActivity extends ChessBoardActivity implements
         // menu button in from the right edge. It costs no height either way, the
         // row is already as tall as the buttons.
         textViewLastMove.setVisibility(minimal ? View.INVISIBLE : View.VISIBLE);
-        textViewWhitePieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
-        textViewBlackPieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
         requestBoardLayoutSizingUpdate();
     }
 
@@ -987,13 +966,9 @@ public class PlayActivity extends ChessBoardActivity implements
         int levelPly = prefs.getInt("levelPly", 2);
         int[] secs = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
 
-        if (mode == EngineApi.LEVEL_TIME) {
-            myEngine.setMsecs(secs[levelTime] * 1000);
-        } else {
-            myEngine.setPly(levelPly);
-        }
-
-        myEngine.setQuiescentSearchOn(prefs.getBoolean("quiescentSearchOn", true));
+        searchLimit = mode == EngineApi.LEVEL_TIME
+            ? SearchLimit.millis(secs[levelTime] * 1000)
+            : SearchLimit.ply(levelPly);
 
         updateBoardRotation();
         updateLastMove();
@@ -1014,31 +989,12 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected boolean loadGame() {
         if (lGameID > 0) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
-            try {
-                Cursor c = getContentResolver().query(uri, PGNColumns.COLUMNS, null, null, null);
-                if (c != null && c.getCount() == 1) {
-
-                    c.moveToFirst();
-
-                    lGameID = Utils.getColumnLong(c, PGNColumns._ID);
-                    String sPGN = Utils.getColumnString(c, PGNColumns.PGN);
-
-                    gameApi.loadPGN(sPGN);
-
-                    gameApi.setPGNTag("Event", Utils.getColumnString(c, PGNColumns.EVENT));
-                    gameApi.setPGNTag("White", Utils.getColumnString(c, PGNColumns.WHITE));
-                    gameApi.setPGNTag("Black", Utils.getColumnString(c, PGNColumns.BLACK));
-                    gameApi.setDateLong(Utils.getColumnLong(c, PGNColumns.DATE));
-
-                    c.close();
-
-                    return true;
-                }
-                Log.d(TAG, "Game not found: " + lGameID);
-            } catch (Exception e) {
-                Log.d(TAG, "Caught exception loading game: " + lGameID + " " + e.getMessage());
+            GameRecord record = new GameStore(getContentResolver()).load(lGameID);
+            if (record != null && gameApi.loadGame(record)) {
+                lGameID = record.id;
+                return true;
             }
+            Log.d(TAG, "Game not loaded: " + lGameID);
         }
         lGameID = 0;
         return false;
@@ -1046,14 +1002,14 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected void playIfEngineMove() {
         Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
-        if (myEngine != null && myTurn != jni.getTurn() && vsCPU) {
+        if (!enginePausedForHistory && engineSession != null && myTurn != jni.getTurn() && vsCPU) {
             playIfEngineCanMove();
         }
     }
 
     protected void playIfEngineCanMove() {
         Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
-        if (myEngine != null && myEngine.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+        if (engineSession != null && engineSession.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 
@@ -1063,7 +1019,7 @@ public class PlayActivity extends ChessBoardActivity implements
                 gameApi.move(moves.get(r), -1);
                 // textViewEngineValue.setText("From opening book");
             } else {
-                myEngine.play();
+                engineSession.play(searchLimit);
             }
         }
     }

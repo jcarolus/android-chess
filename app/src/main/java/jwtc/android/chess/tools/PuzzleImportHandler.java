@@ -2,30 +2,24 @@ package jwtc.android.chess.tools;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.net.Uri;
-import android.os.Handler;
-import android.util.Log;
 
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;
 
-public class PuzzleImportProcessor extends PGNProcessor {
-    private static final String TAG = "PuzzleImportProcessor";
+/** Stores each game of an import file as a Mate-in-Two Puzzle, if it loads on the board. */
+public class PuzzleImportHandler implements ImportHandler {
+    private final GameApi gameApi;
+    private final ContentResolver contentResolver;
 
-    private GameApi gameApi;
-    private ContentResolver contentResolver;
-
-    public PuzzleImportProcessor(int mode, Handler updateHandler, GameApi gameApi, ContentResolver contentResolver) {
-        super(mode, updateHandler);
+    public PuzzleImportHandler(GameApi gameApi, ContentResolver contentResolver) {
         this.gameApi = gameApi;
         this.contentResolver = contentResolver;
     }
 
     @Override
-    public synchronized boolean processPGN(final String sPGN) {
-
-        if (gameApi.loadPGN(sPGN)) {
+    public boolean handle(ImportItem item) {
+        if (gameApi.loadPGN(item.pgn)) {
             ContentValues values = new ContentValues();
             values.put(PGNColumns.PGN, gameApi.exportFullPGN());
 

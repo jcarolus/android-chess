@@ -182,6 +182,7 @@
     <string name="lichess_create_challenge_color_random">Casuale</string>
     <string name="lichess_create_challenge_color_white">Bianco</string>
     <string name="lichess_create_challenge_player">Avversario</string>
+    <string name="lichess_create_challenge_player_required">Inserisci prima un avversario.</string>
     <string name="lichess_create_challenge_rated">Classificata</string>
     <string name="lichess_create_challenge_time">Tempo</string>
     <string name="lichess_create_challenge_time_control">Controllo del tempo</string>
@@ -257,6 +258,8 @@
     <string name="msg_setup_turn">Turno</string>
     <string name="msg_setup_turn_black">neri</string>
     <string name="msg_setup_turn_white">bianchi</string>
+    <string name="game_ready_as_white">La partita è pronta. Giochi con i pezzi bianchi.</string>
+    <string name="game_ready_as_black">La partita è pronta. Giochi con i pezzi neri.</string>
     <string name="new_game_as_black">Nuova partita, giochi con i pezzi neri</string>
     <string name="new_game_as_white">Nuova partita, giochi con i pezzi bianchi</string>
     <string name="online_help"><![CDATA[
@@ -439,7 +442,7 @@
     <string name="time_warning_seconds_single">Resta %1$d secondo</string>
     <string name="title_castle">Arroccare?</string>
     <string name="title_challenge">Sfida</string>
-    <string name="title_create_new_line">Creare nuova variante?</string>
+    <string name="title_overwrite_main_line">Sovrascrivere la linea principale da questa posizione?</string>
     <string name="title_delete_game">Elimina partita</string>
     <string name="title_edit_command">Modifica comando</string>
     <string name="title_edit_or_delete">Modificare o eliminare?</string>
@@ -505,7 +508,7 @@
     <string name="lichess_swiss_starts_at">Inizia %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · turno %2$d/%3$d · %4$d giocatori</string>
     <string name="lichess_swiss_no_teams">Non fai ancora parte di nessuna squadra. Tocca «Tutte le squadre» per trovarne una a cui unirti.</string>
-    <string name="lichess_swiss_no_tournaments">Questa squadra non ha tornei svizzeri.</string>
+    <string name="lichess_swiss_no_tournaments">Nessun torneo trovato.</string>
     <string name="lichess_team_join_message_hint">Messaggio (se la squadra esamina le richieste)</string>
     <string name="lichess_team_join_password_hint">Password (se richiesta)</string>
     <string name="lichess_team_joined">Ti sei unito a %1$s</string>
@@ -519,4 +522,31 @@
     <string name="players_agreed_draw">Patta per accordo</string>
     <string name="white_player_forfeits_on_time">Il Bianco ha perso per tempo</string>
     <string name="white_player_resigned">Il Bianco si è arreso</string>
+    <string name="pref_add_turn_in_move_description">Includi di chi è il turno nelle descrizioni delle mosse</string>
+    <string name="gameslist_open">Apri</string>
+    <string name="gameslist_analyze">Analizza</string>
+    <string name="analysis_main_line">Linea principale</string>
+    <string name="analysis_engine_likes">Il motore consiglia:</string>
+    <string name="analysis_engine_matches">L\'ultima mossa corrisponde alla raccomandazione del motore</string>
+    <string name="analysis_move_best">Migliore</string>
+    <string name="analysis_move_excellent">Eccellente</string>
+    <string name="analysis_move_okay">Accettabile</string>
+    <string name="analysis_move_inaccuracy">Imprecisione</string>
+    <string name="analysis_move_mistake">Errore</string>
+    <string name="analysis_move_blunder">Errore grave</string>
+    <string name="analysis_move_forced">Forzata</string>
+    <string name="analysis_move_pending">Analisi della mossa…</string>
+    <string name="analysis_move_unavailable">Analisi non disponibile</string>
+    <string name="analysis_white_to_move">Tocca al Bianco</string>
+    <string name="analysis_black_to_move">Tocca al Nero</string>
+    <string name="analysis_variation">Variante</string>
+    <string name="analysis_back_to_main">Torna alla linea principale</string>
+    <string name="pgn_return_main_line">Torna alla linea principale</string>
+    <string name="pgn_promote_variation">Imposta come continuazione preferita</string>
+    <string name="pgn_delete_variation">Elimina variante</string>
+    <string name="engine_evaluation_score">Valutazione del motore: %1$+.1f pedoni (i valori positivi favoriscono il Bianco)</string>
+    <string name="engine_evaluation_pending">Valutazione del motore non disponibile</string>
+    <string name="analysis_settings">Impostazioni di analisi</string>
+    <string name="analysis_time_budget">Tempo per posizione (secondi)</string>
+    <string name="analysis_time_invalid">Inserisci un numero da 0 a %1$d.</string>
 </resources>

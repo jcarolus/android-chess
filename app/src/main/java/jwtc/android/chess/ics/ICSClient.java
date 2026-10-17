@@ -1,10 +1,8 @@
 package jwtc.android.chess.ics;
 
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.ServiceConnection;
 import androidx.core.content.ContextCompat;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -48,12 +46,11 @@ import org.json.JSONException;
 import jwtc.android.chess.*;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.MyPGNProvider;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.LocalClockApi;
-import jwtc.chess.PGNColumns;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
@@ -798,16 +795,7 @@ public class ICSClient extends ChessBoardActivity implements
     }
 
     public void saveGameFromResult(SaveGameDialog.SaveGameResult result) {
-        ContentValues values = result.getContentValues();
-
-        Uri uri = MyPGNProvider.CONTENT_URI;
-        Uri uriInsert = getContentResolver().insert(uri, values);
-        if (uriInsert != null) {
-            Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
-            if (c != null) {
-                c.close();
-            }
-        }
+        new GameStore(getContentResolver()).insert(result.getRecord());
     }
 
     @Override

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="298"
-    android:versionName="10.6.0">
+    android:versionCode="304"
+    android:versionName="10.6.6">
     <queries>
         <intent>
             <action
@@ -66,6 +66,15 @@
             android:name=".activities.AccessibilityPreferences"
             android:label="@string/globalpreferences"
             android:exported="true"></activity>
+        <activity
+            android:name=".analyze.AnalyzeActivity"
+            android:label="@string/app_name"
+            android:exported="false">
+            <layout android:minWidth="300dp" android:minHeight="460dp" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".start" />
+        </activity>
         <activity
             android:name=".play.PlayActivity"
             android:label="@string/app_name_play"

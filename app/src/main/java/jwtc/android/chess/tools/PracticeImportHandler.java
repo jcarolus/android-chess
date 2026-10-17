@@ -3,7 +3,6 @@ package jwtc.android.chess.tools;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
 
 import java.util.TreeSet;
@@ -14,16 +13,16 @@ import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
-public class PracticeImportProcessor extends PGNProcessor {
-    private static final String TAG = "PracticeImportProcessor";
+/** Stores each mate in a game of an import file as a Practice Position; the same final position counts once per job. */
+public class PracticeImportHandler implements ImportHandler {
+    private static final String TAG = "PracticeImportHandler";
 
     private JNI jni;
     private GameApi gameApi;
     private ContentResolver contentResolver;
     private TreeSet<Long> _arrKeys;
 
-    public PracticeImportProcessor(int mode, Handler updateHandler, GameApi gameApi, ContentResolver contentResolver) {
-        super(mode, updateHandler);
+    public PracticeImportHandler(GameApi gameApi, ContentResolver contentResolver) {
         jni = JNI.getInstance();
         _arrKeys = new TreeSet<Long>();
         this.gameApi = gameApi;
@@ -31,7 +30,8 @@ public class PracticeImportProcessor extends PGNProcessor {
     }
 
     @Override
-    public boolean processPGN(String sPGN) {
+    public boolean handle(ImportItem item) {
+        String sPGN = item.pgn;
         // Log.d(TAG, "processPGN " + sPGN);
         if (gameApi.loadPGN(sPGN)) {
 
@@ -66,15 +66,17 @@ public class PracticeImportProcessor extends PGNProcessor {
                         }
                         String sFEN = jni.toFEN();
 
-                        jni.searchDepth(plies, 0);
-
-                        int move = jni.getMove();
-                        int value = jni.peekSearchBestValue();
+                        long searchId = jni.prepareSearch(plies, 0, 0);
+                        if (searchId == 0) return false;
+                        jni.runSearch(searchId);
+                        if (!jni.isSearchCurrent(searchId)) return false;
+                        int[] result = jni.getSearchResult(searchId);
+                        int move = result[0];
+                        int value = result[2];
 
                         //Log.i(TAG, moves + ", Move " + Move.toDbgString(move) + " val: " + value + " at plies " + plies);
 
-                        if (value == BoardConstants.VALUATION_MATE * (plies % 2 == 0 ? 1 : -1) && jni.move(move) != 0) {
-                            gameApi.addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
+                        if (value == BoardConstants.VALUATION_MATE * (plies % 2 == 0 ? 1 : -1) && gameApi.applyMove(move, -1)) {
 
                             // save when it's our move
                             if (plies % 2 == 0) {

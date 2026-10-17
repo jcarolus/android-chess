@@ -72,6 +72,12 @@ public abstract class SocketConnectService extends Service {
         activityMessenger = messenger;
     }
 
+    protected void unregisterActivityMessenger(Messenger messenger) {
+        if (activityMessenger != null && activityMessenger.equals(messenger)) {
+            activityMessenger = null;
+        }
+    }
+
     protected void notifyActivity(int what) {
         notifyActivity(what, null);
     }

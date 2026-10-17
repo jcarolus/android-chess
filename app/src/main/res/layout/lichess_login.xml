@@ -3,12 +3,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center"
-    android:padding="8dip">
+    android:padding="@dimen/panel_padding">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="320dip"
         android:layout_height="wrap_content"
-        android:padding="8dip">
+        android:padding="@dimen/panel_padding">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,13 +20,13 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/lichess"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dip"
-                android:layout_marginBottom="16dip" />
+                android:layout_marginTop="@dimen/section_gap"
+                android:layout_marginBottom="@dimen/section_gap" />
 
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_margin="8dip"
+                android:layout_margin="@dimen/control_gap"
                 android:lines="2"
                 android:minLines="2"
                 android:maxLines="10"

@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import jwtc.chess.GameTree.Node;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.services.GameApi;
@@ -42,17 +44,17 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
     public void update() {
         final JNI jni = JNI.getInstance();
         ArrayList<HashMap<String, String>> newMapMoves = new ArrayList<HashMap<String, String>>();
-        ArrayList<PGNEntry> pgnEntries = gameApi.getPGNEntries();
+        List<Node> nodes = gameApi.getCurrentLineNodes();
 
-        for (int i = 0; i < pgnEntries.size(); i++) {
-            String sMove = pgnEntries.get(i).sMove;
-            if (pgnEntries.get(i).duckMove != -1) {
-                sMove += "@" + Pos.toString(pgnEntries.get(i).duckMove);
+        for (int i = 0; i < nodes.size(); i++) {
+            String sMove = nodes.get(i).getEntry().sMove;
+            if (nodes.get(i).getEntry().duckMove != -1) {
+                sMove += "@" + Pos.toString(nodes.get(i).getEntry().duckMove);
             }
             HashMap<String, String> item = new HashMap<String, String>();
-            item.put("nr", i % 2 == 0 ? ((i / 2 + 1) + ". ") : " ");
+            item.put("nr", gameApi.getMoveNumber(nodes.get(i)) + " ");
             item.put("move", sMove);
-            item.put("turn", jni.getNumBoard() - 1 == i ? "yes" : "no");
+            item.put("turn", gameApi.getCurrentNode() == nodes.get(i) ? "yes" : "no");
 
             newMapMoves.add(item);
         }

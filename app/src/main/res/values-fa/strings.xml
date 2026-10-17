@@ -202,6 +202,7 @@
     <string name="lichess_create_challenge_color_random">تصادفی</string>
     <string name="lichess_create_challenge_color_white">سفید</string>
     <string name="lichess_create_challenge_player">حریف</string>
+    <string name="lichess_create_challenge_player_required">ابتدا یک حریف وارد کنید.</string>
     <string name="lichess_create_challenge_rated">رتبه‌دار</string>
     <string name="lichess_create_challenge_time">زمان</string>
     <string name="lichess_create_challenge_time_control">کنترل زمان</string>
@@ -277,6 +278,8 @@
     <string name="msg_setup_turn">نوبت</string>
     <string name="msg_setup_turn_black">سیاه</string>
     <string name="msg_setup_turn_white">سفید</string>
+    <string name="game_ready_as_white">بازی آماده است. شما با مهره‌های سفید بازی می‌کنید.</string>
+    <string name="game_ready_as_black">بازی آماده است. شما با مهره‌های سیاه بازی می‌کنید.</string>
     <string name="new_game_as_black">بازی جدید، شما با مهره‌های سیاه بازی می‌کنید</string>
     <string name="new_game_as_white">بازی جدید، شما با مهره‌های سفید بازی می‌کنید</string>
     <string name="online_help">
@@ -478,7 +481,7 @@
     <string name="title_castle">قلعه؟</string>
     <string name="title_pick_engine">موتور</string>
     <string name="title_challenge">چالش</string>
-    <string name="title_create_new_line">خط جدیدی ساخته شود؟</string>
+    <string name="title_overwrite_main_line">خط اصلی از این موقعیت بازنویسی شود؟</string>
     <string name="title_delete_game">حذف بازی</string>
     <string name="title_edit_command">ویرایش فرمان</string>
     <string name="title_edit_or_delete">ویرایش یا حذف؟</string>
@@ -519,7 +522,7 @@
     <string name="lichess_swiss_starts_at">شروع %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · دور %2$d/%3$d · %4$d بازیکن</string>
     <string name="lichess_swiss_no_teams">هنوز در هیچ تیمی نیستید. برای یافتن تیمی برای پیوستن روی «همه‌ی تیم‌ها» ضربه بزنید.</string>
-    <string name="lichess_swiss_no_tournaments">این تیم هیچ تورنمنت سوئیسی ندارد.</string>
+    <string name="lichess_swiss_no_tournaments">هیچ تورنمنتی یافت نشد.</string>
     <string name="lichess_team_join_message_hint">پیام (اگر تیم درخواست‌ها را بررسی می‌کند)</string>
     <string name="lichess_team_join_password_hint">گذرواژه (در صورت نیاز)</string>
     <string name="lichess_team_joined">به %1$s پیوستید</string>
@@ -536,4 +539,31 @@
     <string name="players_agreed_draw">مساوی با توافق</string>
     <string name="white_player_forfeits_on_time">سفید به‌دلیل اتمام وقت باخت</string>
     <string name="white_player_resigned">سفید تسلیم شد</string>
+    <string name="pref_add_turn_in_move_description">ذکر نوبت بازیکن در توضیحات حرکت‌ها</string>
+    <string name="gameslist_open">باز کردن</string>
+    <string name="gameslist_analyze">تحلیل</string>
+    <string name="analysis_main_line">خط اصلی</string>
+    <string name="analysis_engine_likes">پیشنهاد موتور:</string>
+    <string name="analysis_engine_matches">آخرین حرکت با پیشنهاد موتور مطابقت دارد</string>
+    <string name="analysis_move_best">بهترین</string>
+    <string name="analysis_move_excellent">عالی</string>
+    <string name="analysis_move_okay">قابل قبول</string>
+    <string name="analysis_move_inaccuracy">بی‌دقتی</string>
+    <string name="analysis_move_mistake">اشتباه</string>
+    <string name="analysis_move_blunder">اشتباه فاحش</string>
+    <string name="analysis_move_forced">اجباری</string>
+    <string name="analysis_move_pending">در حال تحلیل حرکت…</string>
+    <string name="analysis_move_unavailable">تحلیل در دسترس نیست</string>
+    <string name="analysis_white_to_move">نوبت سفید</string>
+    <string name="analysis_black_to_move">نوبت سیاه</string>
+    <string name="analysis_variation">شاخه</string>
+    <string name="analysis_back_to_main">بازگشت به خط اصلی</string>
+    <string name="pgn_return_main_line">بازگشت به خط اصلی</string>
+    <string name="pgn_promote_variation">تعیین به‌عنوان ادامهٔ ترجیحی</string>
+    <string name="pgn_delete_variation">حذف شاخه</string>
+    <string name="engine_evaluation_score">ارزیابی موتور: %1$+.1f پیاده (مقادیر مثبت به سود سفید است)</string>
+    <string name="engine_evaluation_pending">ارزیابی موتور در دسترس نیست</string>
+    <string name="analysis_settings">تنظیمات تحلیل</string>
+    <string name="analysis_time_budget">زمان اختصاص‌یافته به هر موقعیت (ثانیه)</string>
+    <string name="analysis_time_invalid">عددی از 0 تا %1$d وارد کنید.</string>
 </resources>

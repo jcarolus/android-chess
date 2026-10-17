@@ -182,6 +182,7 @@
     <string name="lichess_create_challenge_color_random">Aleator</string>
     <string name="lichess_create_challenge_color_white">Alb</string>
     <string name="lichess_create_challenge_player">Adversar</string>
+    <string name="lichess_create_challenge_player_required">Introdu mai întâi un adversar.</string>
     <string name="lichess_create_challenge_rated">Cotată</string>
     <string name="lichess_create_challenge_time">Timp</string>
     <string name="lichess_create_challenge_time_control">Control timp</string>
@@ -257,6 +258,8 @@
     <string name="msg_setup_turn">Tură</string>
     <string name="msg_setup_turn_black">negre</string>
     <string name="msg_setup_turn_white">albe</string>
+    <string name="game_ready_as_white">Jocul este pregătit. Joci cu piesele albe.</string>
+    <string name="game_ready_as_black">Jocul este pregătit. Joci cu piesele negre.</string>
     <string name="new_game_as_black">Joc nou, joci cu piesele negre</string>
     <string name="new_game_as_white">Joc nou, joci cu piesele albe</string>
     <string name="online_help"><![CDATA[
@@ -439,7 +442,7 @@
     <string name="time_warning_seconds_single">A rămas %1$d secundă</string>
     <string name="title_castle">Rocadă?</string>
     <string name="title_challenge">Provocare</string>
-    <string name="title_create_new_line">Creezi o variantă nouă?</string>
+    <string name="title_overwrite_main_line">Suprascrii linia principală din această poziție?</string>
     <string name="title_delete_game">Șterge partida</string>
     <string name="title_edit_command">Editează comanda</string>
     <string name="title_edit_or_delete">Editează sau șterge?</string>
@@ -505,7 +508,7 @@
     <string name="lichess_swiss_starts_at">Începe %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · runda %2$d/%3$d · %4$d jucători</string>
     <string name="lichess_swiss_no_teams">Nu faci încă parte din nicio echipă. Atinge „Toate echipele” pentru a găsi una la care să te alături.</string>
-    <string name="lichess_swiss_no_tournaments">Această echipă nu are turnee elvețiene.</string>
+    <string name="lichess_swiss_no_tournaments">Nu s-au găsit turnee.</string>
     <string name="lichess_team_join_message_hint">Mesaj (dacă echipa verifică solicitările)</string>
     <string name="lichess_team_join_password_hint">Parolă (dacă este necesară)</string>
     <string name="lichess_team_joined">Te-ai alăturat echipei %1$s</string>
@@ -519,4 +522,31 @@
     <string name="players_agreed_draw">Remiză prin acord</string>
     <string name="white_player_forfeits_on_time">Albul a pierdut la timp</string>
     <string name="white_player_resigned">Albul a abandonat</string>
+    <string name="pref_add_turn_in_move_description">Include cine este la mutare în descrierile mutărilor</string>
+    <string name="gameslist_open">Deschide</string>
+    <string name="gameslist_analyze">Analizează</string>
+    <string name="analysis_main_line">Linia principală</string>
+    <string name="analysis_engine_likes">Motorul recomandă:</string>
+    <string name="analysis_engine_matches">Ultima mutare corespunde recomandării motorului</string>
+    <string name="analysis_move_best">Cea mai bună</string>
+    <string name="analysis_move_excellent">Excelentă</string>
+    <string name="analysis_move_okay">Acceptabilă</string>
+    <string name="analysis_move_inaccuracy">Inexactitate</string>
+    <string name="analysis_move_mistake">Greșeală</string>
+    <string name="analysis_move_blunder">Greșeală gravă</string>
+    <string name="analysis_move_forced">Forțată</string>
+    <string name="analysis_move_pending">Se analizează mutarea…</string>
+    <string name="analysis_move_unavailable">Analiză indisponibilă</string>
+    <string name="analysis_white_to_move">Albul la mutare</string>
+    <string name="analysis_black_to_move">Negrul la mutare</string>
+    <string name="analysis_variation">Variantă</string>
+    <string name="analysis_back_to_main">Înapoi la linia principală</string>
+    <string name="pgn_return_main_line">Revino la linia principală</string>
+    <string name="pgn_promote_variation">Setează drept continuare preferată</string>
+    <string name="pgn_delete_variation">Șterge varianta</string>
+    <string name="engine_evaluation_score">Evaluarea motorului: %1$+.1f pioni (valorile pozitive favorizează albul)</string>
+    <string name="engine_evaluation_pending">Evaluarea motorului nu este disponibilă</string>
+    <string name="analysis_settings">Setări de analiză</string>
+    <string name="analysis_time_budget">Timp alocat pe poziție (secunde)</string>
+    <string name="analysis_time_invalid">Introdu un număr de la 0 la %1$d.</string>
 </resources>

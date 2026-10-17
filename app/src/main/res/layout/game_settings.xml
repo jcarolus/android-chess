@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dip"
+    android:layout_margin="@dimen/control_gap"
     android:layout_gravity="center">
 
     <LinearLayout
@@ -19,7 +19,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dip"
+                android:layout_margin="@dimen/compact_control_gap"
                 app:selectionRequired="true"
                 app:singleSelection="true">
 
@@ -49,7 +49,7 @@
                 android:id="@+id/ToggleColorGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dip"
+                android:layout_margin="@dimen/compact_control_gap"
                 app:selectionRequired="true"
                 app:singleSelection="true">
 
@@ -79,7 +79,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="4dip">
+                android:padding="@dimen/control_padding">
                 <jwtc.android.chess.views.FixedDropdownView
                     android:id="@+id/SpinnerOptionsEngine"
                     android:layout_width="match_parent"
@@ -90,7 +90,7 @@
                     android:id="@+id/TextViewEngineBackendHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="4dip"
+                    android:paddingTop="@dimen/control_padding"
                     android:textSize="12sp"
                     android:visibility="gone" />
                 <com.google.android.material.button.MaterialButtonToggleGroup
@@ -135,7 +135,7 @@
                     android:id="@+id/ToggleQuiescent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dip"
+                    android:layout_margin="@dimen/compact_control_gap"
                     android:checked="true"
                     android:text="@string/options_quiescent_on" />
             </LinearLayout>
@@ -151,7 +151,7 @@
                 android:text="@string/button_cancel"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_margin="2dip"
+                android:layout_margin="@dimen/tiny_control_gap"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
@@ -159,7 +159,7 @@
                 android:text="@string/button_ok"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_margin="2dip"
+                android:layout_margin="@dimen/tiny_control_gap"
                 style="?attr/chessButtonStyle" />
         </LinearLayout>
     </LinearLayout>

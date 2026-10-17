@@ -252,7 +252,7 @@ int ChessBoard::bishopValueExtension(const int turn) {
         if (ChessBoard::bitCount(bbPiece) == 1) {
             iPos = ChessBoard::trailingZeros(bbPiece);
 
-            val += ChessBoard::bitCount(bishopAttacks(turn, iPos)) * 5;
+            val += ChessBoard::bitCount(bishopMoves(turn, iPos)) * 5;
             if (iPos % 2 == 0) {
                 val -= ChessBoard::bitCount(WHITE_SQUARES & m_bitbPieces[turn][PAWN]);
             } else {

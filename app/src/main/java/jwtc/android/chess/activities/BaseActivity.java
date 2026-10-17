@@ -1,12 +1,9 @@
 package jwtc.android.chess.activities;
 
 import android.app.Activity;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,10 +26,9 @@ import java.nio.charset.StandardCharsets;
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.EinkMode;
-import jwtc.android.chess.helpers.MyPGNProvider;
-import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.play.SaveGameDialog;
-import jwtc.chess.PGNColumns;
+import jwtc.chess.GameRecord;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -145,31 +141,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
-        saveGame(result.getContentValues(), result.createCopy, result.lGameID);
+        saveGame(result.getRecord(), result.createCopy, result.lGameID);
     }
 
-    protected long saveGame(ContentValues values, boolean bCopy, long lGameID) {
-
-        if (lGameID > 0 && (bCopy == false)) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
-            getContentResolver().update(uri, values, null, null);
-        } else {
-            Uri uri = MyPGNProvider.CONTENT_URI;
-            Uri uriInsert = getContentResolver().insert(uri, values);
-            if (uriInsert != null) {
-                try {
-                    Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
-                    if (c != null && c.getCount() == 1) {
-                        c.moveToFirst();
-                        lGameID = Utils.getColumnLong(c, PGNColumns._ID);
-                        c.close();
-                    }
-                } catch (Exception ex) {
-                    Log.d(TAG, "Could not insert game " + ex.getMessage());
-                }
-            }
-        }
-        return lGameID;
+    protected long saveGame(GameRecord record, boolean bCopy, long lGameID) {
+        return new GameStore(getContentResolver()).save(record, bCopy, lGameID);
     }
 
     public void shareString(String s) {

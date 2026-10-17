@@ -184,6 +184,7 @@
     <string name="lichess_create_challenge_color_random">عشوائي</string>
     <string name="lichess_create_challenge_color_white">أبيض</string>
     <string name="lichess_create_challenge_player">الخصم</string>
+    <string name="lichess_create_challenge_player_required">أدخل خصمًا أولاً.</string>
     <string name="lichess_create_challenge_rated">بتقييم</string>
     <string name="lichess_create_challenge_time">الوقت</string>
     <string name="lichess_create_challenge_time_control">التحكم بالوقت</string>
@@ -259,6 +260,8 @@
     <string name="msg_setup_turn">دور</string>
     <string name="msg_setup_turn_black">أسود</string>
     <string name="msg_setup_turn_white">أبيض</string>
+    <string name="game_ready_as_white">اللعبة جاهزة. أنت تلعب بالقطع البيضاء.</string>
+    <string name="game_ready_as_black">اللعبة جاهزة. أنت تلعب بالقطع السوداء.</string>
     <string name="new_game_as_black">لعبة جديدة، أنت تلعب بالقطع السوداء</string>
     <string name="new_game_as_white">لعبة جديدة، أنت تلعب بالقطع البيضاء</string>
     <string name="online_help">
@@ -457,7 +460,7 @@
     <string name="title_castle">تبييت؟</string>
     <string name="title_pick_engine">المحرك</string>
     <string name="title_challenge">تحدي</string>
-    <string name="title_create_new_line">إنشاء سطر جديد؟</string>
+    <string name="title_overwrite_main_line">هل تريد استبدال الخط الرئيسي من هذا الوضع؟</string>
     <string name="title_delete_game">حذف اللعبة</string>
     <string name="title_edit_command">تعديل الأمر</string>
     <string name="title_edit_or_delete">تعديل أو حذف؟</string>
@@ -514,7 +517,7 @@
     <string name="lichess_swiss_starts_at">تبدأ %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · الجولة %2$d/%3$d · %4$d لاعبين</string>
     <string name="lichess_swiss_no_teams">لست عضوًا في أي فريق بعد. اضغط على «كل الفرق» للعثور على فريق للانضمام إليه.</string>
-    <string name="lichess_swiss_no_tournaments">ليس لدى هذا الفريق بطولات سويسرية.</string>
+    <string name="lichess_swiss_no_tournaments">لم يتم العثور على بطولات.</string>
     <string name="lichess_team_join_message_hint">رسالة (إذا كان الفريق يراجع الطلبات)</string>
     <string name="lichess_team_join_password_hint">كلمة المرور (إذا كانت مطلوبة)</string>
     <string name="lichess_team_joined">انضممت إلى %1$s</string>
@@ -528,4 +531,31 @@
     <string name="players_agreed_draw">تعادل بالاتفاق</string>
     <string name="white_player_forfeits_on_time">خسر الأبيض بسبب انتهاء الوقت</string>
     <string name="white_player_resigned">استسلم الأبيض</string>
+    <string name="pref_add_turn_in_move_description">تضمين صاحب الدور في أوصاف النقلات</string>
+    <string name="gameslist_open">فتح</string>
+    <string name="gameslist_analyze">تحليل</string>
+    <string name="analysis_main_line">الخط الرئيسي</string>
+    <string name="analysis_engine_likes">يوصي المحرك بـ:</string>
+    <string name="analysis_engine_matches">النقلة الأخيرة تطابق توصية المحرك</string>
+    <string name="analysis_move_best">الأفضل</string>
+    <string name="analysis_move_excellent">ممتازة</string>
+    <string name="analysis_move_okay">مقبولة</string>
+    <string name="analysis_move_inaccuracy">عدم دقة</string>
+    <string name="analysis_move_mistake">خطأ</string>
+    <string name="analysis_move_blunder">خطأ فادح</string>
+    <string name="analysis_move_forced">إجبارية</string>
+    <string name="analysis_move_pending">جارٍ تحليل النقلة…</string>
+    <string name="analysis_move_unavailable">التحليل غير متاح</string>
+    <string name="analysis_white_to_move">دور الأبيض</string>
+    <string name="analysis_black_to_move">دور الأسود</string>
+    <string name="analysis_variation">تفرع</string>
+    <string name="analysis_back_to_main">العودة إلى الخط الرئيسي</string>
+    <string name="pgn_return_main_line">العودة إلى الخط الرئيسي</string>
+    <string name="pgn_promote_variation">تعيين كاستمرار مفضل</string>
+    <string name="pgn_delete_variation">حذف التفرع</string>
+    <string name="engine_evaluation_score">تقييم المحرك: %1$+.1f بيدق (القيم الموجبة لصالح الأبيض)</string>
+    <string name="engine_evaluation_pending">تقييم المحرك غير متاح</string>
+    <string name="analysis_settings">إعدادات التحليل</string>
+    <string name="analysis_time_budget">الوقت المخصص لكل وضع (بالثواني)</string>
+    <string name="analysis_time_invalid">أدخل رقمًا من 0 إلى %1$d.</string>
 </resources>

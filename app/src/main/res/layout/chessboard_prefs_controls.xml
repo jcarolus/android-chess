@@ -7,7 +7,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dip">
+        android:padding="@dimen/panel_padding">
 
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropdownPieceSet"
@@ -25,15 +25,15 @@
             android:id="@+id/CustomColorControls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
             android:orientation="vertical"
             android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/control_gap"
                 android:text="@string/custom_square_colors" />
 
             <LinearLayout
@@ -45,7 +45,7 @@
                     android:id="@+id/ButtonCustomDarkColor"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginEnd="@dimen/compact_control_gap"
                     android:layout_weight="1"
                     android:text="@string/custom_dark_square_color" />
 
@@ -53,7 +53,7 @@
                     android:id="@+id/ButtonCustomLightColor"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="@dimen/compact_control_gap"
                     android:layout_weight="1"
                     android:text="@string/custom_light_square_color" />
             </LinearLayout>
@@ -67,8 +67,8 @@
             android:valueFrom="0.5"
             android:valueTo="1.0"
             android:stepSize="0.05"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp" />
+            android:layout_marginEnd="@dimen/preference_control_inset"
+            android:layout_marginStart="@dimen/preference_control_inset" />
 
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropdownTileSet"
@@ -80,7 +80,7 @@
             android:id="@+id/CheckBoxCoordinates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip"
+            android:layout_margin="@dimen/control_gap"
             android:text="@string/pref_showCoords" />
 
         <CheckBox
@@ -88,57 +88,57 @@
             android:text="@string/pref_show_possible_moves"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip" />
+            android:layout_margin="@dimen/control_gap" />
 
         <CheckBox
             android:id="@+id/CheckBoxUsePieceAnimation"
             android:text="@string/pref_use_piece_animation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dip" />
+            android:layout_margin="@dimen/control_gap" />
 
         <CheckBox
             android:id="@+id/CheckBoxShowCapturedPieces"
             android:text="@string/pref_show_captured_pieces"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <CheckBox
             android:id="@+id/CheckBoxUseSound"
             android:text="@string/pref_sound"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <CheckBox
             android:id="@+id/CheckBoxUseHapticFeedback"
             android:text="@string/pref_haptic_feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <CheckBox
             android:id="@+id/CheckBoxUseWakeLock"
             android:text="@string/pref_wakelock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dip"
-            android:layout_marginEnd="8dip"
-            android:layout_marginBottom="8dip"
+            android:layout_marginStart="@dimen/preference_indent"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:layout_marginBottom="@dimen/control_gap"
             android:text="@string/pref_wakelock_desc" />
 
         <CheckBox
@@ -146,16 +146,16 @@
             android:text="@string/pref_fullscreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dip"
-            android:layout_marginEnd="8dip"
-            android:layout_marginBottom="8dip"
+            android:layout_marginStart="@dimen/preference_indent"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:layout_marginBottom="@dimen/control_gap"
             android:text="@string/pref_fullscreen_desc" />
 
         <CheckBox
@@ -163,16 +163,16 @@
             android:text="@string/pref_night_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dip"
-            android:layout_marginEnd="8dip"
-            android:layout_marginBottom="8dip"
+            android:layout_marginStart="@dimen/preference_indent"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:layout_marginBottom="@dimen/control_gap"
             android:text="@string/pref_night_mode_desc" />
 
         <com.google.android.material.button.MaterialButton
@@ -180,16 +180,16 @@
             android:text="@string/pref_eink_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dip"
-            android:layout_marginEnd="8dip"
-            android:layout_marginBottom="8dip"
+            android:layout_marginStart="@dimen/preference_indent"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:layout_marginBottom="@dimen/control_gap"
             android:text="@string/pref_eink_mode_desc" />
 
         <CheckBox
@@ -197,16 +197,16 @@
             android:text="@string/pref_disable_drag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dip"
-            android:layout_marginEnd="8dip"
-            android:layout_marginBottom="8dip"
+            android:layout_marginStart="@dimen/preference_indent"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:layout_marginBottom="@dimen/control_gap"
             android:text="@string/pref_disable_drag_desc" />
 
         <CheckBox
@@ -214,16 +214,16 @@
             android:text="@string/pref_eink_theme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dip"
-            android:layout_marginEnd="8dip"
-            android:layout_marginBottom="8dip"
+            android:layout_marginStart="@dimen/preference_indent"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:layout_marginBottom="@dimen/control_gap"
             android:text="@string/pref_eink_theme_desc" />
 
         <CheckBox
@@ -231,16 +231,16 @@
             android:text="@string/pref_reduce_animations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip" />
+            android:layout_marginTop="@dimen/control_gap"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dip"
-            android:layout_marginEnd="8dip"
-            android:layout_marginBottom="8dip"
+            android:layout_marginStart="@dimen/preference_indent"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:layout_marginBottom="@dimen/control_gap"
             android:text="@string/pref_reduce_animations_desc" />
     </LinearLayout>
 </ScrollView>
