@@ -10,8 +10,10 @@ values but are rejected in this Standard-only slice.
 `bridge` exposes an owned search handle and a small C ABI. The separate
 `jni/rust-chess-jni.cpp` adapter packages that static Rust library as
 `librust-chess-jni.so`. The existing `libchess-jni.so` continues to manage the app's
-board. `EngineSession.forRustTesting` is the internal Java integration entry;
-production engine preferences do not select Rust.
+board. `EngineSession.forRustTesting` is a separate internal Java integration entry
+used only by device tests. Production Analysis selects Rust for Standard games
+through `EngineSession.forAnalysis` (see `EnginePolicy.forAnalysis`); Play, and
+Analysis for Chess 960 or Duck games, still use the Local (C++) Engine.
 
 Core scores are searched-side centipawns, with +/-100000 indicating mate without a
 mate distance. The C ABI converts scores to White's perspective. Java adapts

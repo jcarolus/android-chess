@@ -197,6 +197,36 @@ public class GameApi {
         return getFinalState() != -1 || jni.isEnded() != 0;
     }
 
+    private static final int SQUARE_A1 = Pos.fromColAndRow(0, 7);
+    private static final int SQUARE_E1 = Pos.fromColAndRow(4, 7);
+    private static final int SQUARE_H1 = Pos.fromColAndRow(7, 7);
+    private static final int SQUARE_A8 = Pos.fromColAndRow(0, 0);
+    private static final int SQUARE_E8 = Pos.fromColAndRow(4, 0);
+    private static final int SQUARE_H8 = Pos.fromColAndRow(7, 0);
+
+    /**
+     * Whether this Game is Standard chess, as opposed to Duck or Chess 960. Duck is tracked by
+     * the native board variant rather than the Variant tag, which only carries "Duck" for a game
+     * loaded from PGN. Chess 960 has no native variant of its own and the Variant tag is only set
+     * by {@link #newGameRandomFischer}, so a Chess 960 position reached through a raw FEN (e.g. a
+     * Setup handoff) is recognized instead by a castling right whose king or rook sits off its
+     * classical home square; a Standard game can never retain a right once either has moved.
+     */
+    public boolean isStandardVariant() {
+        if (jni.getVariant() == BoardConstants.VARIANT_DUCK) return false;
+        String variant = pgnTags.get("Variant");
+        if (variant != null && !variant.equalsIgnoreCase("Standard")) return false;
+        return (jni.getWhiteCanCastleShort() == 0 || isKingAndRookAt(BoardConstants.WHITE, SQUARE_E1, SQUARE_H1))
+            && (jni.getWhiteCanCastleLong() == 0 || isKingAndRookAt(BoardConstants.WHITE, SQUARE_E1, SQUARE_A1))
+            && (jni.getBlackCanCastleShort() == 0 || isKingAndRookAt(BoardConstants.BLACK, SQUARE_E8, SQUARE_H8))
+            && (jni.getBlackCanCastleLong() == 0 || isKingAndRookAt(BoardConstants.BLACK, SQUARE_E8, SQUARE_A8));
+    }
+
+    private boolean isKingAndRookAt(int turn, int kingSquare, int rookSquare) {
+        return jni.pieceAt(turn, kingSquare) == BoardConstants.KING
+            && jni.pieceAt(turn, rookSquare) == BoardConstants.ROOK;
+    }
+
     public int getState() {
         int finalState = getFinalState();
         if (finalState != -1) {

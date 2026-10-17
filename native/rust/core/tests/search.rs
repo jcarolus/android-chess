@@ -1,4 +1,13 @@
-use chess_core::{search, SearchControl, SearchLimit, SearchOptions, SearchRequest, Variant};
+use chess_core::{
+    search, CoordinateMove, SearchControl, SearchLimit, SearchOptions, SearchRequest, Variant,
+};
+
+fn history(moves: &[&str]) -> Vec<CoordinateMove> {
+    moves
+        .iter()
+        .map(|m| CoordinateMove::parse(m).unwrap())
+        .collect()
+}
 #[test]
 fn fixed_depth_matches_native_starting_position() {
     let request = SearchRequest::new(
@@ -96,6 +105,50 @@ fn interruption_before_depth_completion_has_no_fabricated_move_or_score() {
     assert_eq!(result.completed_depth, 0);
     assert_eq!(events.len(), 1);
     assert!(matches!(events[0], SearchEvent::Finished(_)));
+}
+
+#[test]
+fn a_history_reaching_threefold_repetition_finishes_as_an_immediate_draw() {
+    use chess_core::{search_with_progress, SearchEvent};
+    let request = SearchRequest::new(
+        11,
+        Variant::Standard,
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        history(&[
+            "g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8",
+        ]),
+        SearchLimit::TimeMillis(100),
+        SearchOptions { quiescence: true },
+    )
+    .unwrap();
+    let mut events = Vec::new();
+    let result = search_with_progress(&request, &SearchControl::default(), |event| {
+        events.push(event)
+    })
+    .unwrap();
+    assert_eq!(result.score, 0);
+    assert!(result.has_evaluation);
+    assert!(result.best_move.is_none());
+    assert_eq!(result.nodes, 0);
+    assert_eq!(events.len(), 1);
+    assert!(matches!(events[0], SearchEvent::Finished(_)));
+}
+
+#[test]
+fn the_same_position_reached_without_a_third_repetition_is_not_a_draw() {
+    let request = SearchRequest::new(
+        12,
+        Variant::Standard,
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        history(&["g1f3", "g8f6", "f3g1", "f6g8"]),
+        SearchLimit::Depth(2),
+        SearchOptions { quiescence: false },
+    )
+    .unwrap();
+    let result = search(&request, &SearchControl::default()).unwrap();
+    assert!(result.best_move.is_some());
+    assert_eq!(result.completed_depth, 2);
+    assert!(result.nodes > 0);
 }
 
 #[test]

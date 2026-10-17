@@ -37,8 +37,7 @@ public final class RustLocalEngine extends EngineApi {
     private void start(GameApi.PositionSnapshot position, SearchPurpose purpose, int depth, int millis) {
         long id = beginSearch(purpose);
         try {
-            String variant = gameApi.pgnTags.get("Variant");
-            if (position == null || variant != null && !variant.equalsIgnoreCase("Standard")) {
+            if (position == null || !gameApi.isStandardVariant()) {
                 throw new IllegalArgumentException("Rust currently supports Standard only");
             }
             launch(RustSearchRequest.fromSnapshot(id, position, depth, millis, quiescentSearchOn),

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.JNI;
+import jwtc.chess.board.BoardConstants;
 
 /** Device smoke test of the real JNI and EngineSession path, with no Activity. */
 public final class RustEngineInstrumentation extends Instrumentation {
@@ -28,7 +29,10 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionSuppressQueued(false);
             sessionSuppressQueued(true);
             sessionAnalysisAndError();
-            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal and errors passed\n");
+            sessionForAnalysisSelectsRustForStandardHistory();
+            sessionForAnalysisFallsBackToLocalForDuck();
+            sessionForAnalysisTreatsOffSquareCastlingRightsAsNonStandard();
+            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors and Analysis backend selection (Standard, Duck, off-square castling) passed\n");
             finish(-1, report);
         } catch (Throwable error) {
             report.putString("stream", "FAIL: " + error + "\n");
@@ -235,6 +239,81 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 }
             });
             session[0].analyze("7k/6Q1/5K2/8/8/8/8/8 b - - 0 1", 100);
+        });
+        await(done, failure, session);
+    }
+    /** Exercises the production EngineSession.forAnalysis entry point, not forRustTesting. */
+    private void sessionForAnalysisSelectsRustForStandardHistory() throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        EngineSession[] session = new EngineSession[1];
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            game.newGame();
+            GameApi.PositionMove e4 = game.getPositionSnapshot(game.getCurrentNode()).findMove("e2e4");
+            game.applyMove(e4.move, -1);
+            GameApi.PositionMove e5 = game.getPositionSnapshot(game.getCurrentNode()).findMove("e7e5");
+            game.applyMove(e5.move, -1);
+            check(game.isStandardVariant(), "Fresh game was not Standard");
+            session[0] = EngineSession.forAnalysis(getContext(), game, new Listener() {
+                @Override public void OnEngineMove(int move, int duck, int score) {
+                    failure.set(new AssertionError("Analysis delivered a Play move"));
+                }
+                @Override public void onAnalysisComplete(String fen, String best, EngineEvaluation evaluation) {
+                    try {
+                        check(fen.equals(game.getPositionSnapshot(game.getCurrentNode()).fen), "Wrong position reported");
+                        check(best != null && !best.isEmpty(), "Standard analysis with history produced no move");
+                    } catch (Throwable error) { failure.set(error); }
+                    finally { done.countDown(); }
+                }
+                @Override public void OnEngineError() { failure.set(new AssertionError("Standard analysis failed")); done.countDown(); }
+            }, EngineSession.LOCAL_ENGINE_ID);
+            check(session[0].supportsAnalysis(), "Built-in Analysis session did not support analysis");
+            session[0].analyzeCurrentPosition(500);
+        });
+        await(done, failure, session);
+    }
+    /** Chess 960 and Duck are not yet Rust-eligible and must keep using the Local (C++) Engine. */
+    private void sessionForAnalysisFallsBackToLocalForDuck() throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        EngineSession[] session = new EngineSession[1];
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            game.newGame(BoardConstants.VARIANT_DUCK);
+            check(!game.isStandardVariant(), "Duck game was reported as Standard");
+            session[0] = EngineSession.forAnalysis(getContext(), game, new Listener() {
+                @Override public void OnEngineMove(int move, int duck, int score) {
+                    failure.set(new AssertionError("Analysis delivered a Play move"));
+                }
+                @Override public void onAnalysisComplete(String fen, String best, EngineEvaluation evaluation) {
+                    done.countDown();
+                }
+                @Override public void OnEngineError() { failure.set(new AssertionError("Duck analysis failed")); done.countDown(); }
+            }, EngineSession.LOCAL_ENGINE_ID);
+            session[0].analyzeCurrentPosition(500);
+        });
+        await(done, failure, session);
+    }
+    /** A FEN-only position can carry Chess 960 castling rights with no Variant tag at all. */
+    private void sessionForAnalysisTreatsOffSquareCastlingRightsAsNonStandard() throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        EngineSession[] session = new EngineSession[1];
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            check(game.initFEN("4k3/8/8/8/8/8/8/RK6 w Q - 0 1", true), "Could not load a Chess 960-shaped FEN");
+            check(!game.isStandardVariant(), "Off-square castling rights were reported as Standard");
+            session[0] = EngineSession.forAnalysis(getContext(), game, new Listener() {
+                @Override public void OnEngineMove(int move, int duck, int score) {
+                    failure.set(new AssertionError("Analysis delivered a Play move"));
+                }
+                @Override public void onAnalysisComplete(String fen, String best, EngineEvaluation evaluation) {
+                    done.countDown();
+                }
+                @Override public void OnEngineError() { failure.set(new AssertionError("Chess 960-shaped analysis failed")); done.countDown(); }
+            }, EngineSession.LOCAL_ENGINE_ID);
+            session[0].analyzeCurrentPosition(500);
         });
         await(done, failure, session);
     }
