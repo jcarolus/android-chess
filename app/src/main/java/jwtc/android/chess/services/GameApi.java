@@ -761,6 +761,26 @@ public class GameApi {
         return jni.getMoveArrayAt(index);
     }
 
+    public void scratchSyncFromCurrent() {
+        jni.scratchSyncFromCurrent();
+    }
+
+    public int scratchMove(int move) {
+        return jni.scratchMove(move);
+    }
+
+    public long scratchGetHashKey() {
+        return jni.scratchGetHashKey();
+    }
+
+    public String scratchGetMyMoveToString() {
+        return jni.scratchGetMyMoveToString();
+    }
+
+    public int scratchUndo() {
+        return jni.scratchUndo();
+    }
+
     public String getFEN() {
         return jni.toFEN();
     }

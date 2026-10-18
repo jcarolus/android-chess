@@ -8,16 +8,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import jwtc.chess.JNI;
-
 
 public class EcoService {
     private static final String TAG = "EcoService";
     private HMap hashMap = null;
-    JNI jni;
+    private final GameApi gameApi;
 
-    public EcoService() {
-        jni = JNI.getInstance();
+    public EcoService(GameApi gameApi) {
+        this.gameApi = gameApi;
     }
 
     public void load(final AssetManager assetManager) {
@@ -53,16 +51,16 @@ public class EcoService {
         ArrayList<Integer> moveToPositions = getAllMoves();
         ArrayList<Integer> retPositions = new ArrayList<Integer>();
         if (hashMap != null) {
-            jni.scratchSyncFromCurrent();
+            gameApi.scratchSyncFromCurrent();
             for (Integer m : moveToPositions) {
-                if (jni.scratchMove(m) != 0) {
-                    long hash = jni.scratchGetHashKey();
+                if (gameApi.scratchMove(m) != 0) {
+                    long hash = gameApi.scratchGetHashKey();
                     String sEco = hashMap.get(hash);
                     if (sEco != null) {
                         retPositions.add(m);
                     }
 
-                    jni.scratchUndo();
+                    gameApi.scratchUndo();
                 }
             }
         }
@@ -74,13 +72,13 @@ public class EcoService {
         JSONArray jRet = new JSONArray();
 
         if (hashMap != null) {
-            jni.scratchSyncFromCurrent();
+            gameApi.scratchSyncFromCurrent();
             for (Integer m : moveToPositions) {
-                if (jni.scratchMove(m) != 0) {
-                    long hash = jni.scratchGetHashKey();
+                if (gameApi.scratchMove(m) != 0) {
+                    long hash = gameApi.scratchGetHashKey();
                     String sEco = hashMap.get(hash);
                     if (sEco != null) {
-                        String sMove = jni.scratchGetMyMoveToString();
+                        String sMove = gameApi.scratchGetMyMoveToString();
                         try {
                             JSONObject jObj = new JSONObject();
                             jObj.put("name", sEco);
@@ -91,7 +89,7 @@ public class EcoService {
                         }
                     }
 
-                    jni.scratchUndo();
+                    gameApi.scratchUndo();
                 }
             }
         }
@@ -100,11 +98,11 @@ public class EcoService {
     }
 
     private ArrayList<Integer> getAllMoves() {
-        int size = jni.getMoveArraySize();
+        int size = gameApi.getMoveArraySize();
         ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
         int move;
         for (int i = 0; i < size; i++) {
-            move = jni.getMoveArrayAt(i);
+            move = gameApi.getMoveArrayAt(i);
 
             moveToPositions.add(move);
         }

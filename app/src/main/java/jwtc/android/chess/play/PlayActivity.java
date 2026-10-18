@@ -76,7 +76,7 @@ public class PlayActivity extends ChessBoardActivity implements
     private EngineSession engineSession;
     private boolean enginePausedForHistory;
     private SearchLimit searchLimit = SearchLimit.millis(1000);
-    private final EcoService ecoService = new EcoService();
+    private EcoService ecoService;
     private long lGameID;
     private LinearProgressIndicator progressBarEngine;
     private MaterialButton playButton;
@@ -140,6 +140,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         gameApi = new GameApi();
         gameApi.setOverwriteContinuation(true);
+        ecoService = new EcoService(gameApi);
         localClock = new LocalClockApi(gameApi);
 
         localClock.addListener(this);
