@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -583,6 +584,68 @@ public class GameApi {
 
     public long getHashKey() {
         return jni.getHashKey();
+    }
+
+    /** Captures the live position before dispatching the search worker; zero means busy or invalid limits. */
+    public long prepareSearch(int ply, int msecs, int quiescentOn) {
+        return jni.prepareSearch(ply, msecs, quiescentOn);
+    }
+
+    public void runSearch(long searchId) {
+        jni.runSearch(searchId);
+    }
+
+    public boolean isSearchCurrent(long searchId) {
+        return jni.isSearchCurrent(searchId);
+    }
+
+    public SearchResult getSearchResult(long searchId) {
+        return SearchResult.decode(jni.getSearchResult(searchId));
+    }
+
+    /** Decoded view of the native engine's packed {@code getSearchResult} array. */
+    public static final class SearchResult {
+        private static final int PV_LENGTH = 20;
+        private static final int PV_OFFSET = 5;
+        private static final int DUCK_PV_OFFSET = PV_OFFSET + PV_LENGTH;
+        private static final int HAS_EVALUATION_INDEX = DUCK_PV_OFFSET + PV_LENGTH;
+        private static final int COMPLETED_DEPTH_INDEX = HAS_EVALUATION_INDEX + 1;
+
+        public final int move;
+        public final int duckMove;
+        public final int score;
+        public final int depth;
+        public final int evalCount;
+        public final int[] principalVariation;
+        public final int[] principalDuckVariation;
+        public final boolean hasEvaluation;
+        public final int completedDepth;
+
+        private SearchResult(int move, int duckMove, int score, int depth, int evalCount,
+                             int[] principalVariation, int[] principalDuckVariation,
+                             boolean hasEvaluation, int completedDepth) {
+            this.move = move;
+            this.duckMove = duckMove;
+            this.score = score;
+            this.depth = depth;
+            this.evalCount = evalCount;
+            this.principalVariation = principalVariation;
+            this.principalDuckVariation = principalDuckVariation;
+            this.hasEvaluation = hasEvaluation;
+            this.completedDepth = completedDepth;
+        }
+
+        /**
+         * Decodes the raw array: move, duck, value, depth, evaluations, 20 PV moves, 20 duck
+         * moves, evaluation-available flag, completed depth.
+         */
+        public static SearchResult decode(int[] raw) {
+            int pvLength = Math.max(0, Math.min(raw[3], PV_LENGTH));
+            return new SearchResult(raw[0], raw[1], raw[2], raw[3], raw[4],
+                Arrays.copyOfRange(raw, PV_OFFSET, PV_OFFSET + pvLength),
+                Arrays.copyOfRange(raw, DUCK_PV_OFFSET, DUCK_PV_OFFSET + pvLength),
+                raw[HAS_EVALUATION_INDEX] != 0, raw[COMPLETED_DEPTH_INDEX]);
+        }
     }
 
     public int getDuckPos() {

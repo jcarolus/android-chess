@@ -9,7 +9,6 @@ import java.util.TreeSet;
 
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.JNI;
 import jwtc.chess.PGNColumns;
 import jwtc.chess.board.BoardConstants;
 
@@ -17,13 +16,11 @@ import jwtc.chess.board.BoardConstants;
 public class PracticeImportHandler implements ImportHandler {
     private static final String TAG = "PracticeImportHandler";
 
-    private JNI jni;
     private GameApi gameApi;
     private ContentResolver contentResolver;
     private TreeSet<Long> _arrKeys;
 
     public PracticeImportHandler(GameApi gameApi, ContentResolver contentResolver) {
-        jni = JNI.getInstance();
         _arrKeys = new TreeSet<Long>();
         this.gameApi = gameApi;
         this.contentResolver = contentResolver;
@@ -35,9 +32,9 @@ public class PracticeImportHandler implements ImportHandler {
         // Log.d(TAG, "processPGN " + sPGN);
         if (gameApi.loadPGN(sPGN)) {
 
-            if (jni.getState() == BoardConstants.MATE) {
+            if (gameApi.getState() == BoardConstants.MATE) {
 
-                long lKey = jni.getHashKey();
+                long lKey = gameApi.getHashKey();
 
                 if (false == _arrKeys.contains(lKey)) {
                     _arrKeys.add(lKey);
@@ -64,15 +61,15 @@ public class PracticeImportHandler implements ImportHandler {
                             gameApi.undoMove();
                             undos++;
                         }
-                        String sFEN = jni.toFEN();
+                        String sFEN = gameApi.getFEN();
 
-                        long searchId = jni.prepareSearch(plies, 0, 0);
+                        long searchId = gameApi.prepareSearch(plies, 0, 0);
                         if (searchId == 0) return false;
-                        jni.runSearch(searchId);
-                        if (!jni.isSearchCurrent(searchId)) return false;
-                        int[] result = jni.getSearchResult(searchId);
-                        int move = result[0];
-                        int value = result[2];
+                        gameApi.runSearch(searchId);
+                        if (!gameApi.isSearchCurrent(searchId)) return false;
+                        GameApi.SearchResult result = gameApi.getSearchResult(searchId);
+                        int move = result.move;
+                        int value = result.score;
 
                         //Log.i(TAG, moves + ", Move " + Move.toDbgString(move) + " val: " + value + " at plies " + plies);
 
