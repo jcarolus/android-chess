@@ -9,9 +9,9 @@ import android.util.Log;
 
 import org.json.JSONException;
 
+import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.android.chess.services.SocketConnectService;
-import jwtc.chess.JNI;
 import jwtc.chess.board.BoardConstants;
 
 public class HotspotBoardService extends SocketConnectService {
@@ -45,7 +45,7 @@ public class HotspotBoardService extends SocketConnectService {
             pollHandler.postDelayed(this, POLL_INTERVAL_MS);
         }
     };
-    private final JNI jni = JNI.getInstance();
+    private final GameApi gameApi = new GameApi(true);
 
     private boolean isHost = false;
     private ClientConnection activePlayingConnection = null;
@@ -292,7 +292,7 @@ public class HotspotBoardService extends SocketConnectService {
     }
 
     private void broadcastSnapshotIfChanged() {
-        String fen = jni.toFEN();
+        String fen = gameApi.getFEN();
         if (fen == null || fen.equals(lastBroadcastFen)) {
             return;
         }
@@ -300,7 +300,7 @@ public class HotspotBoardService extends SocketConnectService {
     }
 
     private void broadcastSnapshot(boolean force) {
-        String fen = jni.toFEN();
+        String fen = gameApi.getFEN();
         if (!force && (fen == null || fen.equals(lastBroadcastFen))) {
             return;
         }
@@ -320,7 +320,7 @@ public class HotspotBoardService extends SocketConnectService {
 
     private void sendSnapshot(ClientConnection connection) {
         try {
-            String fen = jni.toFEN();
+            String fen = gameApi.getFEN();
             if (fen == null) {
                 return;
             }

@@ -13,7 +13,6 @@ import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
-import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
 
 /**
@@ -163,7 +162,7 @@ public final class MateCollection {
 
     /** Whether the side to move is the user's, the only time the board takes a move. */
     public boolean isUsersTurn() {
-        return JNI.getInstance().getTurn() == usersColor;
+        return gameApi.getTurn() == usersColor;
     }
 
     public void next() {
@@ -239,7 +238,7 @@ public final class MateCollection {
         numMoved = 0;
         solvedPendingAdvance = false;
         gameApi.jumpToBoardNum(0);
-        usersColor = JNI.getInstance().getTurn();
+        usersColor = gameApi.getTurn();
 
         listener.onPositionStarted(position, total, usersColor);
         if (kind.hasScore()) {

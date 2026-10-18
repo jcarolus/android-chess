@@ -13,7 +13,6 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.chess.JNI;
 
 
 public class SetupRandomFischerActivity extends ChessBoardActivity {
@@ -104,7 +103,6 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
     public void afterCreate() {
         Log.d(TAG, " afterCreate");
 
-        jni = JNI.getInstance();
         chessBoardView = findViewById(R.id.includeboard);
         chessBoardView.setFocusable(false);
 
@@ -125,7 +123,7 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
         Log.d(TAG, "commitFEN");
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
-        editor.putString("FEN", jni.toFEN());
+        editor.putString("FEN", gameApi.getFEN());
         editor.putString("game_pgn", null);
         editor.putInt("boardNum", 0);
         editor.putLong("game_id", 0);

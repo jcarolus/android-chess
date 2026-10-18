@@ -1,7 +1,8 @@
 package jwtc.android.chess;
 
+import jwtc.android.chess.services.GameApi;
+
 import jwtc.android.chess.activities.StartBaseActivity;
-import jwtc.chess.JNI;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -52,7 +53,7 @@ public class start extends StartBaseActivity {
     private boolean mWaitingForReconnect;
     private String mSessionId;
 
-    private JNI _jni;
+    private GameApi gameApi;
     private Timer _timer;
     private String _lastMessage;
 
@@ -63,7 +64,7 @@ public class start extends StartBaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        _jni = JNI.getInstance();
+        gameApi = new GameApi(true);
 
         _lastMessage = "";
 
@@ -71,7 +72,7 @@ public class start extends StartBaseActivity {
         _timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                sendMessage(_jni.toFEN());
+                sendMessage(gameApi.getFEN());
             }
         }, 1000, 500);
 

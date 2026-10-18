@@ -56,7 +56,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected MyAccessibilityDragListener myAccessibilityDragListener;
     protected MyTouchListener myTouchListener;
     protected MyClickListener myClickListener;
-    protected JNI jni;
+    protected JNI jni = JNI.getInstance();
     protected ChessBoardView chessBoardView;
     protected Sounds sounds;
     protected HapticFeedback hapticFeedback;
@@ -239,7 +239,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     public void afterCreate() {
         Log.d(TAG, " afterCreate");
 
-        jni = JNI.getInstance();
         chessBoardView = findViewById(R.id.includeboard);
         chessBoardView.setNextFocusRightId(R.id.ButtonPlay);
 

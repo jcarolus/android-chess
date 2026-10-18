@@ -49,7 +49,6 @@ import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.android.chess.views.FixedDropdownView;
 import jwtc.android.chess.views.PGNDateView;
-import jwtc.chess.JNI;
 import jwtc.chess.GameFilter;
 import jwtc.chess.GameRecord;
 import jwtc.chess.PGNColumns;
@@ -240,7 +239,6 @@ public class GamesListActivity extends ChessBoardActivity {
     public void afterCreate() {
         Log.d(TAG, " afterCreate");
 
-        jni = JNI.getInstance();
         chessBoardView = findViewById(R.id.includeboard);
         chessBoardView.setFocusable(false);
 
@@ -404,7 +402,7 @@ public class GamesListActivity extends ChessBoardActivity {
             }
             String nr = i % 2 == 0 ? ((i / 2 + 1) + ". ") : " ";
             String annotation = pgnEntries.get(i).sAnnotation;
-            int turn = (jni.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
+            int turn = (gameApi.getNumBoard() - 1 == i ? R.drawable.turnblack : 0);
 
             mapMoves.add(new MoveItem(nr, sMove, pgnEntries.get(i).move, annotation, turn));
 

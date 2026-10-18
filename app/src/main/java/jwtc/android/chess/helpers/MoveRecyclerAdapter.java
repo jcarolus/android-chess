@@ -20,7 +20,6 @@ import jwtc.chess.GameTree.Node;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.JNI;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 
@@ -42,7 +41,6 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
     }
 
     public void update() {
-        final JNI jni = JNI.getInstance();
         ArrayList<HashMap<String, String>> newMapMoves = new ArrayList<HashMap<String, String>>();
         List<Node> nodes = gameApi.getCurrentLineNodes();
 

@@ -175,7 +175,8 @@ public class GameApi {
         this(false);
     }
 
-    protected GameApi(boolean preservePosition) {
+    /** @param preservePosition keep the shared native board instead of starting a new game */
+    public GameApi(boolean preservePosition) {
         jni = JNI.getInstance();
         if (!preservePosition) {
             jni.newGame();
@@ -552,6 +553,22 @@ public class GameApi {
         }
         restoreBoard(oldNode, oldPending);
         return false;
+    }
+
+    public int getNumBoard() {
+        return jni.getNumBoard();
+    }
+
+    public long getHashKey() {
+        return jni.getHashKey();
+    }
+
+    public int getMoveArraySize() {
+        return jni.getMoveArraySize();
+    }
+
+    public int getMoveArrayAt(int index) {
+        return jni.getMoveArrayAt(index);
     }
 
     public String getFEN() {

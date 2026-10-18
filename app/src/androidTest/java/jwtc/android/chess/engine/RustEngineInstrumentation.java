@@ -10,7 +10,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.JNI;
 import jwtc.chess.board.BoardConstants;
 
 /** Device smoke test of the real JNI and EngineSession path, with no Activity. */
@@ -83,7 +82,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             session[0] = EngineSession.forRustTesting(game, new Listener() {
                 @Override public void OnEngineMove(int move, int duck, int score) {
                     try {
-                        check(game.getCurrentPly() == 0 && JNI.getInstance().toFEN().equals(START),
+                        check(game.getCurrentPly() == 0 && game.getFEN().equals(START),
                             "Rust changed the live board during search");
                         check(game.applyMove(move, duck) && game.getCurrentPly() == 1,
                             "Rust move could not be applied through GameApi");
@@ -298,7 +297,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             GameApi game = new GameApi();
             game.newGame(BoardConstants.VARIANT_DUCK);
             check(game.requestMove("e4@d5"), "Duck recorded turn");
-            String original = JNI.getInstance().toFEN();
+            String original = game.getFEN();
             check(!game.isStandardVariant(), "Duck game was reported as Standard");
             session[0] = EngineSession.forAnalysis(getContext(), game, new Listener() {
                 @Override public void OnEngineMove(int move, int duck, int score) {
@@ -307,7 +306,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 @Override public void onAnalysisComplete(String fen, String best, EngineEvaluation evaluation) {
                     try {
                         check(best.contains("@"), "Duck analysis omitted placement");
-                        check(JNI.getInstance().toFEN().equals(original), "Analysis mutated Duck board");
+                        check(game.getFEN().equals(original), "Analysis mutated Duck board");
                     } catch (Throwable error) { failure.set(error); }
                     finally { done.countDown(); }
                 }
@@ -403,7 +402,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             GameApi.PositionSnapshot original = game.getPositionSnapshot(game.getCurrentNode());
             game.undoMove(); game.undoMove();
             check(game.requestMove("e4@a5") && game.requestMove("e5@e2"), "Second Duck path");
-            check(original.fen.equals(JNI.getInstance().toFEN()), "Expected equal final FENs");
+            check(original.fen.equals(game.getFEN()), "Expected equal final FENs");
             check(!game.isCurrentPosition(original), "Duck history identity lost");
         });
     }
@@ -432,7 +431,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             String fen = snapshot.fen;
                             game.undoMove();
                             game.nextMove();
-                            check(JNI.getInstance().toFEN().equals(fen), "History lost duck placement");
+                            check(game.getFEN().equals(fen), "History lost duck placement");
                         }
                     } catch (Throwable error) { failure.set(error); }
                     finally { done.countDown(); }
@@ -460,12 +459,12 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 @Override public void OnEngineError() { failure.set(new AssertionError("Pending Duck error")); }
             }, EngineSession.LOCAL_ENGINE_ID);
             check(game.requestMove(52, 36), "Interactive piece move");
-            String pending = JNI.getInstance().toFEN();
+            String pending = game.getFEN();
             session[0].play(SearchLimit.ply(1));
             session[0].analyzeCurrentPosition(100);
             session[0].analyze(root, 100);
             session[0].analyze(START, 100);
-            check(session[0].isReady() && JNI.getInstance().toFEN().equals(pending), "Pending request changed board or dispatched");
+            check(session[0].isReady() && game.getFEN().equals(pending), "Pending request changed board or dispatched");
             new Handler(Looper.getMainLooper()).post(() -> {
                 try {
                     check(callbacks.get() == 0, "Pending search dispatched");

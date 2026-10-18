@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import jwtc.android.chess.engine.oex.OexEngineDescriptor;
 import jwtc.android.chess.engine.oex.OexEngineResolver;
 import jwtc.android.chess.services.GameApi;
-import jwtc.chess.JNI;
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
@@ -32,7 +31,6 @@ public class OexEngine extends EngineApi {
 
     private final GameApi gameApi;
     private final OexEngineResolver resolver;
-    private final JNI jni = JNI.getInstance();
     private final ArrayList<Runnable> completionCallbacks = new ArrayList<>();
 
     private String preferredEngineId;
@@ -97,7 +95,7 @@ public class OexEngine extends EngineApi {
             sendErrorMessageFromThread();
             return;
         }
-        startSearch(SearchPurpose.PLAY, jni.toFEN(), ply > 0 ? "go depth " + ply : "go movetime " + msecs,
+        startSearch(SearchPurpose.PLAY, gameApi.getFEN(), ply > 0 ? "go depth " + ply : "go movetime " + msecs,
                 ply > 0 ? 0 : msecs);
     }
 
@@ -360,7 +358,7 @@ public class OexEngine extends EngineApi {
             // matches this PLAY search. ANALYSIS never touches JNI move resolution.
             updateHandler.post(() -> {
                 if (!isCurrentSearch(completed.id)) return;
-                if (!completed.fen.equals(jni.toFEN())) {
+                if (!completed.fen.equals(gameApi.getFEN())) {
                     for (EngineListener listener : listeners) listener.OnEngineAborted();
                     return;
                 }
@@ -438,9 +436,9 @@ public class OexEngine extends EngineApi {
             int to = Pos.fromString(matcher.group(2));
             int promotionPiece = promotionPieceFromUci(matcher.group(3));
 
-            int size = jni.getMoveArraySize();
+            int size = gameApi.getMoveArraySize();
             for (int i = 0; i < size; i++) {
-                int move = jni.getMoveArrayAt(i);
+                int move = gameApi.getMoveArrayAt(i);
                 if (Move.getFrom(move) != from || Move.getTo(move) != to) {
                     continue;
                 }
