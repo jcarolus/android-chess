@@ -567,6 +567,38 @@ public class GameApi {
         return jni.getHashKey();
     }
 
+    public int getDuckPos() {
+        return jni.getDuckPos();
+    }
+
+    public int getMyDuckPos() {
+        return jni.getMyDuckPos();
+    }
+
+    public void setPromo(int piece) {
+        jni.setPromo(piece);
+    }
+
+    public int pieceAt(int turn, int pos) {
+        return jni.pieceAt(turn, pos);
+    }
+
+    public int getMyMove() {
+        return jni.getMyMove();
+    }
+
+    public String getMyMoveToString() {
+        return jni.getMyMoveToString();
+    }
+
+    public int[] getAttackerPositionsTo(int pos, int byTurn) {
+        return jni.getAttackerPositionsTo(pos, byTurn);
+    }
+
+    public int isAmbiguousCastle(int from, int to) {
+        return jni.isAmbiguousCastle(from, to);
+    }
+
     public int getMoveArraySize() {
         return jni.getMoveArraySize();
     }

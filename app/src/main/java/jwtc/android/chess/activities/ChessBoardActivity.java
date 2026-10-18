@@ -103,7 +103,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public boolean requestMove(final int from, final int to) {
-        if (jni.getDuckPos() == from) {
+        if (gameApi.getDuckPos() == from) {
             return gameApi.requestDuckMove(to);
         } else if (gameApi.isPromotionMove(from, to)) {
 
@@ -114,7 +114,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             builder.setCancelable(false);
             builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
                 dialog.dismiss();
-                jni.setPromo(4 - item);
+                gameApi.setPromo(4 - item);
                 if (!gameApi.requestMove(from, to)) {
                     rebuildBoard();
                 }
@@ -724,8 +724,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         chessBoardView.removeLabels();
 
         final int state = gameApi.getState();
-        final int turn = jni.getTurn();
-        final int duckPos = jni.getDuckPos();
+        final int turn = gameApi.getTurn();
+        final int duckPos = gameApi.getDuckPos();
 
         Log.d(TAG, "state " + state);
 
@@ -768,10 +768,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         for (int i = 0; i < 64; i++) {
             int color = turn == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK;
-            int piece = i == duckPos ? BoardConstants.DUCK : jni.pieceAt(color, i);
+            int piece = i == duckPos ? BoardConstants.DUCK : gameApi.pieceAt(color, i);
             if (piece == BoardConstants.FIELD) {
                 color = turn;
-                piece = jni.pieceAt(color, i);
+                piece = gameApi.pieceAt(color, i);
             }
 
             if (piece != BoardConstants.FIELD) {
@@ -893,7 +893,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void updateSelectedSquares() {
-        int move = jni.getMyMove();
+        int move = gameApi.getMyMove();
         int lastMoveFrom = -1, lastMoveTo = -1;
         if (move != 0) {
             lastMoveFrom = Move.getFrom(move);
@@ -911,7 +911,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 squareView.setFocussed(pos == dpadPos);
                 squareView.setHighlighted(pos == lastMoveFrom || pos == lastMoveTo || highlightedPositions.contains(pos));
                 squareView.setMove(moveToPositions.contains(i));
-                int piece = jni.pieceAt(jni.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
+                int piece = gameApi.pieceAt(gameApi.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
                 String nextDescription = getFieldDescription(pos);
                 // Log.d(TAG, "next " + nextDescription);
@@ -1078,11 +1078,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         // The JNI move array only describes the side whose turn it currently is. Activities that
         // allow selecting the other side (for example, while preparing a pre-move) must not show
         // those destinations as if they applied to the selected piece.
-        if (showMoves && getSelectableColor() == jni.getTurn()) {
-            int size = jni.getMoveArraySize();
+        if (showMoves && getSelectableColor() == gameApi.getTurn()) {
+            int size = gameApi.getMoveArraySize();
             int move;
             for (int i = 0; i < size; i++) {
-                move = jni.getMoveArrayAt(i);
+                move = gameApi.getMoveArrayAt(i);
                 if (Move.getFrom(move) == from) {
                     moveToPositions.add(Move.getTo(move));
                 }
@@ -1123,9 +1123,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getFieldDescription(int pos) {
         String sPos = Pos.toString(pos).toUpperCase();
         if (PieceSets.selectedBlindfoldMode != PieceSets.BLINDFOLD_HIDE_PIECES) {
-            int whitePiece = jni.pieceAt(BoardConstants.WHITE, pos);
-            int blackPiece = jni.pieceAt(BoardConstants.BLACK, pos);
-            int duckPos = jni.getDuckPos();
+            int whitePiece = gameApi.pieceAt(BoardConstants.WHITE, pos);
+            int blackPiece = gameApi.pieceAt(BoardConstants.BLACK, pos);
+            int duckPos = gameApi.getDuckPos();
 
             if (whitePiece != BoardConstants.FIELD) {
                 if (selectedPosition == pos) {
@@ -1176,11 +1176,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getAttackersAndDefendersDescription(int pos) {
         String sRet = "";
         if (includeAttackersAndDefendersInFieldDescription) {
-            int[] positions = jni.getAttackerPositionsTo(pos, jni.getTurn() == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK);
+            int[] positions = gameApi.getAttackerPositionsTo(pos, gameApi.getTurn() == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK);
             if (positions.length > 0) {
                 sRet += ". " + getString(R.string.attacked_by_pieces, getPieceDescriptionsForPosition(positions));
             }
-            positions = jni.getAttackerPositionsTo(pos, jni.getTurn());
+            positions = gameApi.getAttackerPositionsTo(pos, gameApi.getTurn());
             if (positions.length > 0) {
                 sRet += ". " + getString(R.string.defended_by_pieces, getPieceDescriptionsForPosition(positions));
             }
@@ -1193,9 +1193,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (positions.length > 0) {
             StringBuilder pieceDescriptions = new StringBuilder();
             for (int i = 0; i < positions.length; i++) {
-                int piece = jni.pieceAt(BoardConstants.WHITE, positions[i]);
+                int piece = gameApi.pieceAt(BoardConstants.WHITE, positions[i]);
                 if (piece == BoardConstants.FIELD) {
-                    piece = jni.pieceAt(BoardConstants.BLACK, positions[i]);
+                    piece = gameApi.pieceAt(BoardConstants.BLACK, positions[i]);
                 }
                 if (piece != BoardConstants.FIELD) {
                     String sPos = Pos.toString(positions[i]).toUpperCase();
@@ -1219,7 +1219,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         return "";
     }
     protected String getLastMoveDescription(boolean forTTS) {
-        return getMoveDescription(forTTS, jni.getMyMoveToString(), jni.getMyMove());
+        return getMoveDescription(forTTS, gameApi.getMyMoveToString(), gameApi.getMyMove());
     }
     protected String getLastMoveAndTurnDescription(boolean forTTS) {
         String sMove = getLastMoveDescription(forTTS);
@@ -1227,7 +1227,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (!addTurnInMoveDescription || gameApi.isEnded()) {
                 return sMove;
             }
-            return jni.getTurn() == BoardConstants.BLACK
+            return gameApi.getTurn() == BoardConstants.BLACK
                 ? getString(R.string.last_white_move_description, sMove)
                 : getString(R.string.last_black_move_description, sMove);
         }
@@ -1250,7 +1250,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             for (int col = 0; col < 8; col++) {
                 for (int row = 0; row < 8; row++) {
                     int pos = Pos.fromColAndRow(col, row);
-                    if (jni.pieceAt(turn, pos) == piece) {
+                    if (gameApi.pieceAt(turn, pos) == piece) {
                         positions.add(pos);
                     }
                 }
@@ -1389,7 +1389,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (gameApi.isEnded()) {
                 return;
             }
-            int piece = jni.pieceAt(getSelectableColor(), pos);
+            int piece = gameApi.pieceAt(getSelectableColor(), pos);
             if (piece != BoardConstants.FIELD) {
                 accessibilityDragFromPos = pos;
                 selectedPosition = pos;
@@ -1434,16 +1434,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (emitCrossingHaptic) {
                 boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
                 boolean isDarkSquare = Pos.getFieldColor(pos) == BoardConstants.BLACK;
-                boolean isBlackPiece = jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+                boolean isBlackPiece = gameApi.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
                 hapticFeedbackTick(hasPiece, isDarkSquare, isBlackPiece);
             }
             if (textToSpeech.isEnabled()) {
                 textToSpeech.doSpeak(getFieldDescription(pos));
             }
             boolean hasPiece =
-                pos == jni.getDuckPos() ||
-                jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
-                jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+                pos == gameApi.getDuckPos() ||
+                gameApi.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
+                gameApi.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
             if (hasPiece) {
                 scheduleAccessibilityDwellSelection(pos);
             } else {
@@ -1575,7 +1575,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected void dpadFocus(boolean hasFocus) {
         if (hasFocus) {
-            dpadPos = jni.getTurn() == BoardConstants.BLACK ? BoardConstants.e8 : BoardConstants.e1;
+            dpadPos = gameApi.getTurn() == BoardConstants.BLACK ? BoardConstants.e8 : BoardConstants.e1;
             updateSelectedSquares();
         } else {
             dpadPos = -1;
@@ -1674,8 +1674,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             if (selectedPosition == -1) {
                 boolean isStartMove =
-                    pos == jni.getDuckPos() ||
-                    jni.pieceAt(getSelectableColor(), pos) != BoardConstants.FIELD;
+                    pos == gameApi.getDuckPos() ||
+                    gameApi.pieceAt(getSelectableColor(), pos) != BoardConstants.FIELD;
 
                 if (isStartMove) {
                     selectedPosition = pos;
@@ -1700,7 +1700,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     handleMove(pos);
                 }
             } else {
-                if (jni.isAmbiguousCastle(selectedPosition, pos) != 0) {
+                if (gameApi.isAmbiguousCastle(selectedPosition, pos) != 0) {
                     handleAmbiguousCastle(selectedPosition, pos);
                 }
                 selectedPosition = -1;
@@ -1724,10 +1724,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
      */
     private boolean isReselectTap(int pos) {
         final int color = getSelectableColor();
-        if (pos == jni.getDuckPos() || jni.pieceAt(color, pos) == BoardConstants.FIELD) {
+        if (pos == gameApi.getDuckPos() || gameApi.pieceAt(color, pos) == BoardConstants.FIELD) {
             return false;
         }
-        return !(jni.pieceAt(color, selectedPosition) == BoardConstants.KING
+        return !(gameApi.pieceAt(color, selectedPosition) == BoardConstants.KING
             && Pos.row(selectedPosition) == Pos.row(pos));
     }
 
@@ -1736,7 +1736,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
      * online activities may override it while collecting a pre-move.
      */
     protected int getSelectableColor() {
-        return jni.getTurn();
+        return gameApi.getTurn();
     }
 
     protected void handleMove(int pos) {
