@@ -254,6 +254,19 @@ public class GameApi {
         return resolved;
     }
 
+    /** Generate piece-move SAN from the preceding position, undoing the move if Rust rejects it. */
+    private String appliedMoveSan(String previousFen, RustSearchRequest.Variant variant) {
+        int[] files = variant == RustSearchRequest.Variant.CHESS_960
+            ? RustSearchRequest.chess960Files(previousFen, previousFen.split("\\s+")[1].equals("w")) : null;
+        String coordinate = RustSearchRequest.toRustCoordinate(jni.getMyMove(), files);
+        try {
+            return RustBoardNative.san(variant, previousFen, NO_RUST_HISTORY, coordinate).san;
+        } catch (IllegalArgumentException ex) {
+            jni.undo();
+            return null;
+        }
+    }
+
     /** Main-thread only. Inspect a recorded position without dispatching navigation or changing the tree. */
     public PositionSnapshot getPositionSnapshot(Node node) {
         if (pendingDuckMove != null || !gameTree.contains(node)) return null;
@@ -418,13 +431,17 @@ public class GameApi {
             return false;
         }
 
+        String previousFen = jni.toFEN();
+        RustSearchRequest.Variant variant = rustVariant();
         if (jni.doCastleMove(from, to) == 0) {
             dispatchIllegalMove();
             return false;
         }
         final int move = jni.getMyMove();
 
-        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", move, -1);
+        String san = appliedMoveSan(previousFen, variant);
+        if (san == null) return false;
+        addPGNEntry(jni.getNumBoard(), san, "", move, -1);
 
         dispatchMove(move);
 
@@ -465,12 +482,17 @@ public class GameApi {
 
     /** Applies and records a move without notifications; used by importers and engine batches. */
     public boolean applyMove(int move, int duckMove) {
-        if (pendingDuckMove != null || jni.move(move) == 0) return false;
+        if (pendingDuckMove != null) return false;
+        String previousFen = jni.toFEN();
+        RustSearchRequest.Variant variant = rustVariant();
+        if (jni.move(move) == 0) return false;
+        String san = appliedMoveSan(previousFen, variant);
+        if (san == null) return false;
         if (duckMove != -1 && jni.requestDuckMove(duckMove) == 0) {
             jni.undo();
             return false;
         }
-        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), duckMove);
+        addPGNEntry(jni.getNumBoard(), san, "", jni.getMyMove(), duckMove);
         return true;
     }
 
@@ -871,7 +893,8 @@ public class GameApi {
     }
 
     public String getMyMoveToString() {
-        return jni.getMyMoveToString();
+        PGNEntry entry = pendingDuckMove != null ? pendingDuckMove : currentNode.getEntry();
+        return entry == null ? "" : entry.sMove;
     }
 
     public int[] getAttackerPositionsTo(int pos, int byTurn) {
@@ -1242,12 +1265,14 @@ public class GameApi {
         if (promotionPiece != null) jni.setPromo(promotionPiece);
         // A SAN token is a complete half-move. Reject missing/invalid duck placements atomically below.
         if (jni.requestMove(from, to) == 0) return false;
+        String san = appliedMoveSan(fen, variant);
+        if (san == null) return false;
         if (duck != null && jni.requestDuckMove(duckSquare) == 0
             || duck == null && jni.getVariant() == BoardConstants.VARIANT_DUCK && jni.isEnded() == 0) {
             jni.undo();
             return false;
         }
-        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), annotation, jni.getMyMove(), duckSquare);
+        addPGNEntry(jni.getNumBoard(), san, annotation, jni.getMyMove(), duckSquare);
         return true;
     }
 
