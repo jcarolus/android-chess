@@ -56,11 +56,11 @@ public final class RustSearchRequest {
      * castling (see {@link #chess960Files}), unchanged otherwise (including Standard castling,
      * which stays king-to-destination).
      */
-    static String toRustCoordinate(int move, int[] files, int duck) {
+    public static String toRustCoordinate(int move, int[] files, int duck) {
         return toRustCoordinate(move, files) + (duck < 0 ? "" : "@" + Pos.toString(duck));
     }
 
-    static String toRustCoordinate(int move, int[] files) {
+    public static String toRustCoordinate(int move, int[] files) {
         int from = Move.getFrom(move);
         String base = Pos.toString(from) + Pos.toString(Move.getTo(move))
             + (Move.isPromotionMove(move) ? "pnbrqk".charAt(Move.getPromotionPiece(move)) : "");
@@ -103,7 +103,7 @@ public final class RustSearchRequest {
      * read from a FEN's piece-placement field. The outermost rook on each side of the king is the
      * one Chess 960 castling tracks, matching the native reference engine's setCastlingsEPAnd50.
      */
-    static int[] chess960Files(String fen, boolean white) {
+    public static int[] chess960Files(String fen, boolean white) {
         String[] ranks = fen.split("\\s+")[0].split("/");
         String rank = expandRank(white ? ranks[7] : ranks[0]);
         char king = white ? 'K' : 'k';

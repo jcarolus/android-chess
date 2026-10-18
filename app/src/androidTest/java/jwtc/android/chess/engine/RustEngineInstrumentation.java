@@ -38,7 +38,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionDuckTurns(true);
             sessionDuckPendingAndStale();
             duckPositionIdentity();
-            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors, Analysis backend selection (Standard, Duck, Chess 960) and the stateless board-operations API passed\n");
+            gameApiSanDisambiguationUsesRustBoardApi();
+            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors, Analysis backend selection (Standard, Duck, Chess 960), the stateless board-operations API, and GameApi SAN disambiguation passed\n");
             finish(-1, report);
         } catch (Throwable error) {
             report.putString("stream", "FAIL: " + error + "\n");
@@ -433,6 +434,34 @@ public final class RustEngineInstrumentation extends Instrumentation {
             session[0].play(SearchLimit.ply(2));
         });
         await(done, failure, session);
+    }
+    /**
+     * {@code GameApi.requestMove(String)}'s SAN-token disambiguation is Rust-board-backed: a
+     * pinned piece sharing a destination with another of the same kind must not count as a
+     * second candidate, and Chess 960 castling SAN must still resolve and apply.
+     */
+    private void gameApiSanDisambiguationUsesRustBoardApi() {
+        runOnMainSync(() -> {
+            GameApi pinned = new GameApi();
+            check(pinned.initFEN("8/8/1N2k3/8/4n3/1n6/8/3KQ3 b - - 0 1", true), "Could not load the pin position");
+            check(pinned.requestMove("Nc5"), "Nc5 should resolve to the sole legal, unpinned knight");
+            check(pinned.getFEN().startsWith("8/8/1Nn1k3/8/8/8/8/3KQ3"), "Wrong knight moved for Nc5: " + pinned.getFEN());
+
+            GameApi capture = new GameApi();
+            check(capture.requestMove("e4") && capture.requestMove("d5") && capture.requestMove("exd5"),
+                "Capturing SAN token should resolve via Rust's reported capture flag");
+
+            GameApi promotion = new GameApi();
+            check(promotion.initFEN("8/P6k/8/8/8/8/7K/8 w - - 0 1", true), "Could not load the promotion position");
+            check(promotion.requestMove("a8=Q"), "Promotion SAN token should resolve and apply");
+            check(promotion.getFEN().startsWith("Q7/7k"), "Wrong promotion result: " + promotion.getFEN());
+
+            GameApi castle960 = new GameApi();
+            check(castle960.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true), "Could not load a Chess 960-shaped FEN");
+            check(castle960.isChess960Variant(), "Off-square castling rights were not reported as Chess 960");
+            check(castle960.requestMove("O-O"), "Chess 960 O-O should resolve via the Rust board API");
+            check(castle960.getCurrentPly() == 1, "Castling move was not recorded");
+        });
     }
     private void duckPositionIdentity() {
         runOnMainSync(() -> {

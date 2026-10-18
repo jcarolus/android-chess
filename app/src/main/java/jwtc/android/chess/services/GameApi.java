@@ -7,13 +7,18 @@ import java.util.ArrayList;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.regex.Matcher;
 
+import jwtc.android.chess.engine.RustBoardNative;
+import jwtc.android.chess.engine.RustBoardResult;
+import jwtc.android.chess.engine.RustSearchRequest;
 import jwtc.chess.GameRecord;
 import jwtc.chess.JNI;
 import jwtc.chess.GameTree;
@@ -132,30 +137,59 @@ public class GameApi {
         }
     }
 
+    private static final String[] NO_RUST_HISTORY = new String[0];
+
+    private RustSearchRequest.Variant rustVariant() {
+        return isDuckVariant() ? RustSearchRequest.Variant.DUCK
+            : isChess960Variant() ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+    }
+
+    /**
+     * Each legal move's UCI and SAN, sourced from the Rust board API; paired with the matching
+     * legacy packed move, since move application itself still goes through the legacy engine.
+     * A Duck turn's coordinate carries a duck square too ({@code e2e4@d5}); only the piece-move
+     * part is kept here, once per distinct piece move.
+     */
+    private List<PositionMove> rustLegalMoves(String fen, RustSearchRequest.Variant variant) {
+        int[] files = variant == RustSearchRequest.Variant.CHESS_960
+            ? RustSearchRequest.chess960Files(fen, jni.getTurn() == BoardConstants.WHITE) : null;
+        Map<String, Integer> packedByCoordinate = new HashMap<>();
+        int count = jni.getMoveArraySize();
+        for (int i = 0; i < count; i++) {
+            int move = jni.getMoveArrayAt(i);
+            packedByCoordinate.put(RustSearchRequest.toRustCoordinate(move, files), move);
+        }
+        RustBoardResult legal = RustBoardNative.legalMoves(variant, fen, NO_RUST_HISTORY);
+        List<PositionMove> moves = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
+        for (String coordinate : RustBoardResult.words(legal.moves)) {
+            String pieceMove = pieceMoveOf(coordinate);
+            if (!seen.add(pieceMove)) continue;
+            Integer packed = packedByCoordinate.get(pieceMove);
+            if (packed == null) continue;
+            String san = RustBoardNative.san(variant, fen, NO_RUST_HISTORY, pieceMove).san;
+            moves.add(new PositionMove(packed, san));
+        }
+        return moves;
+    }
+
+    private static String pieceMoveOf(String coordinate) {
+        int at = coordinate.indexOf('@');
+        return at < 0 ? coordinate : coordinate.substring(0, at);
+    }
+
     /** Main-thread only. Inspect a recorded position without dispatching navigation or changing the tree. */
     public PositionSnapshot getPositionSnapshot(Node node) {
         if (pendingDuckMove != null || !gameTree.contains(node)) return null;
         Node original = currentNode;
         try {
             if (!navigateTo(node)) return null;
-            List<PositionMove> moves = new ArrayList<>();
-            int count = jni.getMoveArraySize();
-            jni.scratchSyncFromCurrent();
-            for (int i = 0; i < count; i++) {
-                int move = jni.getMoveArrayAt(i);
-                if (jni.scratchMove(move) == 0) continue;
-                try {
-                    moves.add(new PositionMove(move, jni.scratchGetMyMoveToString()));
-                } finally {
-                    jni.scratchUndo();
-                }
-            }
-            return new PositionSnapshot(jni.toFEN(), jni.getTurn(), jni.getState(), moves,
+            String fen = jni.toFEN();
+            List<PositionMove> moves = rustLegalMoves(fen, rustVariant());
+            return new PositionSnapshot(fen, jni.getTurn(), jni.getState(), moves,
                 gameTree.getInitialFen(), gameTree.pathTo(node), gameTree.positionCommand(node));
         } finally {
             if (!navigateTo(original)) restoreBoard(original, null);
-            // JNI's move array is shared; restore it along with the board.
-            jni.getMoveArraySize();
         }
     }
 
@@ -999,8 +1033,74 @@ public class GameApi {
         return true;
     }
 
+    private static int promotionPieceFromSuffix(String suffix) {
+        return "=Q".equals(suffix) ? BoardConstants.QUEEN
+            : "=R".equals(suffix) ? BoardConstants.ROOK
+            : "=B".equals(suffix) ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
+    }
+
+    private static int promotionPieceFromLetter(char letter) {
+        return letter == 'q' ? BoardConstants.QUEEN
+            : letter == 'r' ? BoardConstants.ROOK
+            : letter == 'b' ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
+    }
+
+    private static boolean pieceMatches(char fenPieceChar, int piece) {
+        switch (Character.toLowerCase(fenPieceChar)) {
+            case 'k': return piece == BoardConstants.KING;
+            case 'q': return piece == BoardConstants.QUEEN;
+            case 'r': return piece == BoardConstants.ROOK;
+            case 'b': return piece == BoardConstants.BISHOP;
+            case 'n': return piece == BoardConstants.KNIGHT;
+            default: return piece == BoardConstants.PAWN;
+        }
+    }
+
+    /**
+     * The square of the single legal move's piece matching a SAN move token's piece letter,
+     * destination, capture flag, promotion and disambiguating file/rank - or -1 when zero or
+     * more than one legal move matches. Sourced from the Rust board API's legal-move list.
+     */
+    private int resolveDisambiguatedFrom(Matcher match, int destination, String fen, RustSearchRequest.Variant variant) {
+        String pieceName = match.group(1);
+        int piece = pieceName == null ? BoardConstants.PAWN
+            : "K".equals(pieceName) ? BoardConstants.KING
+            : "Q".equals(pieceName) ? BoardConstants.QUEEN
+            : "R".equals(pieceName) ? BoardConstants.ROOK
+            : "B".equals(pieceName) ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
+        boolean capture = match.group(4) != null;
+        String promotion = match.group(7);
+        Integer promoted = promotion == null ? null : promotionPieceFromSuffix(promotion);
+        RustBoardResult legal = RustBoardNative.legalMoves(variant, fen, NO_RUST_HISTORY);
+        int candidate = -1, matches = 0;
+        Set<String> seen = new HashSet<>();
+        for (String coordinate : RustBoardResult.words(legal.moves)) {
+            String pieceMove = pieceMoveOf(coordinate);
+            if (pieceMove.length() < 4 || !seen.add(pieceMove)) continue;
+            int from, to;
+            try {
+                from = Pos.fromString(pieceMove.substring(0, 2));
+                to = Pos.fromString(pieceMove.substring(2, 4));
+            } catch (Exception ex) {
+                continue;
+            }
+            if (to != destination) continue;
+            boolean isPromotion = pieceMove.length() > 4;
+            if ((promoted != null) != isPromotion) continue;
+            if (promoted != null && promotionPieceFromLetter(pieceMove.charAt(4)) != promoted) continue;
+            char pieceChar = RustBoardNative.pieceAt(variant, fen, NO_RUST_HISTORY, pieceMove.substring(0, 2)).piece;
+            if (!pieceMatches(pieceChar, piece)) continue;
+            String san = RustBoardNative.san(variant, fen, NO_RUST_HISTORY, pieceMove).san;
+            if (san.indexOf('x') >= 0 != capture) continue;
+            if (match.group(2) != null && !match.group(2).equals(Pos.colToString(from))) continue;
+            if (match.group(3) != null && !match.group(3).equals(Pos.rowToString(from))) continue;
+            candidate = from;
+            matches++;
+        }
+        return matches == 1 ? candidate : -1;
+    }
+
     private synchronized boolean requestMove(Matcher match, String castle, String annotation) {
-        int candidate = 0, matches = 0;
         String duck = match.group(castle == null ? 8 : 2);
         final int destination, duckSquare;
         try {
@@ -1009,38 +1109,26 @@ public class GameApi {
         } catch (Exception ex) {
             return false;
         }
-        // A SAN token is a complete half-move. Reject missing/invalid duck placements atomically below.
-        for (int i = 0; i < jni.getMoveArraySize(); i++) {
-            int move = jni.getMoveArrayAt(i);
-            if (castle != null) {
-                if (!("O-O".equals(castle) && Move.isOO(move)
-                    || "O-O-O".equals(castle) && Move.isOOO(move))) continue;
-            } else {
-                String pieceName = match.group(1);
-                int piece = pieceName == null ? BoardConstants.PAWN
-                    : "K".equals(pieceName) ? BoardConstants.KING
-                    : "Q".equals(pieceName) ? BoardConstants.QUEEN
-                    : "R".equals(pieceName) ? BoardConstants.ROOK
-                    : "B".equals(pieceName) ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
-                int from = Move.getFrom(move);
-                if (jni.pieceAt(jni.getTurn(), from) != piece
-                    || Move.getTo(move) != destination) continue;
-                if ((match.group(4) != null) != Move.isHIT(move)) continue;
-                if (match.group(2) != null && !match.group(2).equals(Pos.colToString(from))) continue;
-                if (match.group(3) != null && !match.group(3).equals(Pos.rowToString(from))) continue;
-                String promotion = match.group(7);
-                if ((promotion != null) != Move.isPromotionMove(move)) continue;
-                if (promotion != null) {
-                    int promoted = "=Q".equals(promotion) ? BoardConstants.QUEEN
-                        : "=R".equals(promotion) ? BoardConstants.ROOK
-                        : "=B".equals(promotion) ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
-                    if (Move.getPromotionPiece(move) != promoted) continue;
-                }
-            }
-            candidate = move;
-            matches++;
+        String fen = jni.toFEN();
+        boolean whiteToMove = fen.trim().split("\\s+")[1].equals("w");
+        RustSearchRequest.Variant variant = rustVariant();
+        int from, to;
+        Integer promotionPiece = null;
+        if (castle != null) {
+            int[] files = RustSearchRequest.chess960Files(fen, whiteToMove);
+            if (files[0] < 0) return false;
+            from = Pos.fromColAndRow(files[0], whiteToMove ? 7 : 0);
+            to = Pos.fromColAndRow("O-O".equals(castle) ? 6 : 2, whiteToMove ? 7 : 0);
+        } else {
+            from = resolveDisambiguatedFrom(match, destination, fen, variant);
+            if (from < 0) return false;
+            to = destination;
+            String promotion = match.group(7);
+            if (promotion != null) promotionPiece = promotionPieceFromSuffix(promotion);
         }
-        if (matches != 1 || jni.move(candidate) == 0) return false;
+        if (promotionPiece != null) jni.setPromo(promotionPiece);
+        // A SAN token is a complete half-move. Reject missing/invalid duck placements atomically below.
+        if (jni.requestMove(from, to) == 0) return false;
         if (duck != null && jni.requestDuckMove(duckSquare) == 0
             || duck == null && jni.getVariant() == BoardConstants.VARIANT_DUCK && jni.isEnded() == 0) {
             jni.undo();
