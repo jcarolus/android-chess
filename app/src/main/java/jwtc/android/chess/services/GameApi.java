@@ -286,6 +286,19 @@ public class GameApi {
         return true;
     }
 
+    /**
+     * Applies and records a server move without notifying listeners or checking the recorded
+     * final state. A null promotion leaves the engine's promotion selection unchanged.
+     * Returns the applied move, or zero if the engine rejects it.
+     */
+    public int applyServerMove(int from, int to, Integer promo) {
+        if (promo != null) setPromo(promo);
+        if (jni.requestMove(from, to) == 0) return 0;
+        int move = getMyMove();
+        addPGNEntry(getNumBoard(), getMyMoveToString(), "", move, -1);
+        return move;
+    }
+
     public boolean requestMoveCastle(int from, int to) {
         if (pendingDuckMove != null || isEnded()) {
             return false;

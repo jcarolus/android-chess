@@ -374,11 +374,9 @@ public class LichessApi extends GameApi {
         try {
             int from = Pos.fromString(uciMove.substring(0, 2));
             int to = Pos.fromString(uciMove.substring(2, 4));
-            if (uciMove.length() == 5) {
-                jni.setPromo(Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase()));
-            }
-            if (jni.requestMove(from, to) != 0) {
-                addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
+            Integer promo = uciMove.length() == 5
+                ? Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase()) : null;
+            if (applyServerMove(from, to, promo) != 0) {
                 return true;
             } else {
                 Log.d(TAG, "applyUciMoveToBoard failed: " + uciMove);
@@ -417,7 +415,7 @@ public class LichessApi extends GameApi {
             dispatchState();
             return;
         }
-        int move = jni.getMyMove();
+        int move = getMyMove();
         dispatchMove(move);
         puzzleMoveIndex++;
 
@@ -443,7 +441,7 @@ public class LichessApi extends GameApi {
                 dispatchState();
                 return;
             }
-            int cpuMove = jni.getMyMove();
+            int cpuMove = getMyMove();
             dispatchMove(cpuMove);
             puzzleMoveIndex++;
             dispatchState();
@@ -738,7 +736,7 @@ public class LichessApi extends GameApi {
                 puzzleSolvedCleanly = false;
                 if (applyUciMoveToBoard(uciMove)) {
                     hasPendingWrongMove = true;
-                    dispatchMove(jni.getMyMove());
+                    dispatchMove(getMyMove());
                     dispatchState();
                     if (apiListener != null) {
                         String displayMove = uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
@@ -800,7 +798,7 @@ public class LichessApi extends GameApi {
     }
 
     public void game(String gameId) {
-        jni.reset();
+        reset();
         dispatchState();
         this.auth.game(gameId, new Auth.AuthResponseHandler() {
             @Override
@@ -915,10 +913,6 @@ public class LichessApi extends GameApi {
         return BoardConstants.WHITE;
     }
 
-    public int getTurn() {
-        return jni.getTurn();
-    }
-
     public String getUser() {
         return user;
     }
@@ -949,11 +943,10 @@ public class LichessApi extends GameApi {
 
             Log.d(TAG, transition.toString());
 
-            // jni.initFEN(ongoingGame.fen);
             if (ongoingGameFull.initialFen.equals("startpos")) {
-                jni.newGame();
+                resetToStandardPositionWithoutHistory();
             } else {
-                jni.initFEN(ongoingGameFull.initialFen);
+                loadFENWithoutHistory(ongoingGameFull.initialFen);
             }
             resetForPGN();
             boolean replayedEntireSnapshot = processMoves(snapshot.moves);
@@ -983,7 +976,7 @@ public class LichessApi extends GameApi {
             puzzleComputerMovePending = false;
             hasPendingWrongMove = false;
             puzzleHandler.removeCallbacksAndMessages(null);
-            jni.newGame();
+            resetToStandardPositionWithoutHistory();
             resetPGNHistory();
             String[] allMoves = ongoingPuzzle.game.pgn.split(" ");
             int limit = Math.min(ongoingPuzzle.puzzle.initialPly + 1, allMoves.length);
@@ -992,7 +985,7 @@ public class LichessApi extends GameApi {
                     Log.d(TAG, "processPuzzle: skipped token " + allMoves[i]);
                 }
             }
-            dispatchMove(jni.getMyMove());
+            dispatchMove(getMyMove());
             dispatchState();
         }
     }
@@ -1006,16 +999,12 @@ public class LichessApi extends GameApi {
                     int from = Pos.fromString(sFrom);
                     int to = Pos.fromString(sTo);
 
-                    if (sMove.length() == 5) {
-                        String promo = sMove.substring(4, 5).toLowerCase();
-                        jni.setPromo(Piece.fromUCIPromo(promo));
-                    }
+                    Integer promo = sMove.length() == 5
+                        ? Piece.fromUCIPromo(sMove.substring(4, 5).toLowerCase()) : null;
 
-                    if (jni.requestMove(from, to) == 0) {
+                    if (applyServerMove(from, to, promo) == 0) {
                         Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
                         return false;
-                    } else {
-                        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
                     }
 
                 } catch (Exception e) {
@@ -1042,7 +1031,7 @@ public class LichessApi extends GameApi {
         }
 
         if (transition.moveApplied && !snapshot.moves.isEmpty()) {
-            dispatchMove(jni.getMyMove());
+            dispatchMove(getMyMove());
         } else if (transition.historyPositionChanged) {
             dispatchHistoryPositionChanged(snapshot.moves.size());
         }
@@ -1056,7 +1045,7 @@ public class LichessApi extends GameApi {
     }
 
     private boolean isBoardDetectedDraw() {
-        int state = jni.getState();
+        int state = getEngineState();
         return state == BoardConstants.DRAW_MATERIAL
             || state == BoardConstants.DRAW_50
             || state == BoardConstants.STALEMATE
@@ -1081,7 +1070,7 @@ public class LichessApi extends GameApi {
         if (ongoingGameFull.variant.key.equals("chess960")) {
             pgnTags.put("Variant", "Fischerandom");
             pgnTags.put("Setup", "1");
-            pgnTags.put("FEN", jni.toFEN());
+            pgnTags.put("FEN", getFEN());
         }
 
         resetPGNHistory();
