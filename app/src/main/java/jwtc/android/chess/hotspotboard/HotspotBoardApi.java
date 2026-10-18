@@ -54,7 +54,7 @@ public class HotspotBoardApi extends GameApi {
     }
 
     public boolean isMyTurn() {
-        int turn = jni.getTurn();
+        int turn = getTurn();
         return turn == BoardConstants.WHITE && isPlayingAsWhite || turn == BoardConstants.BLACK && !isPlayingAsWhite;
     }
 

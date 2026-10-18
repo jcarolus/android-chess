@@ -122,7 +122,7 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         SharedPreferences prefs = getPrefs();
         textToSpeech.setEnabled(true, prefs);
 
-        jni.newGame();
+        gameApi.newGame();
 
         checkBoxShowPiecesDescriptions.setChecked(prefs.getBoolean("show_pieces_descriptions", true));
 

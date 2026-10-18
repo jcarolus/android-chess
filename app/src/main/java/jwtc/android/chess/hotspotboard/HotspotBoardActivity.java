@@ -517,7 +517,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         String message = description;
         if (!gameApi.isEnded()) {
-            message = getString(jni.getTurn() == BoardConstants.BLACK
+            message = getString(gameApi.getTurn() == BoardConstants.BLACK
                 ? R.string.last_white_move_description
                 : R.string.last_black_move_description, description);
         }
@@ -893,7 +893,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     }
 
     protected void updateTurnSwitchers() {
-        final int currentTurn = jni.getTurn();
+        final int currentTurn = gameApi.getTurn();
         boolean amIWhite = ((HotspotBoardApi) gameApi).isPlayingAsWhite();
 
         imageTurnWhite.setImageResource(currentTurn == BoardConstants.WHITE
@@ -929,7 +929,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.rebuildBoard();
 
         final int state = gameApi.getState();
-        int turn = jni.getTurn();
+        int turn = gameApi.getTurn();
         boolean amIWhite = ((HotspotBoardApi) gameApi).isPlayingAsWhite();
         chessBoardView.setRotated(!amIWhite);
 

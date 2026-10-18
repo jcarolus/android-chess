@@ -589,7 +589,7 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     private boolean isMyPieceAt(int position) {
-        return jni.pieceAt(lichessApi.getMyTurn(), position) != BoardConstants.FIELD;
+        return gameApi.pieceAt(lichessApi.getMyTurn(), position) != BoardConstants.FIELD;
     }
 
     private void executePremoveIfReady() {

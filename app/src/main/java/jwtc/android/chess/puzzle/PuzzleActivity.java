@@ -179,9 +179,9 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
     }
 
     public void solutionMessage() {
-        int move = jni.getMyMove();
+        int move = gameApi.getMyMove();
         if (move != 0) {
-            String sMove = MoveSpeech.describe(getResources(), jni.getMyMoveToString(), move, useLongMoveFormat);
+            String sMove = MoveSpeech.describe(getResources(), gameApi.getMyMoveToString(), move, useLongMoveFormat);
             textViewSolution.setText(sMove);
         }
     }

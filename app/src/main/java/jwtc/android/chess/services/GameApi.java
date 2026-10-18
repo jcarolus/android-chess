@@ -559,6 +559,10 @@ public class GameApi {
         return jni.getNumBoard();
     }
 
+    public int getNumCaptured(int turnAt, int piece) {
+        return jni.getNumCaptured(turnAt, piece);
+    }
+
     public long getHashKey() {
         return jni.getHashKey();
     }

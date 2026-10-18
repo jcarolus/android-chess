@@ -134,7 +134,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         SharedPreferences prefs = getPrefs();
 
-        jni.newGame();
+        gameApi.newGame();
 
         loadControls(prefs);
 

@@ -98,7 +98,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public boolean requestMove(final int from, final int to) {
-        if (!gameApi.isEnded() && (jni.getTurn() == myTurn || vsCPU == false)) {
+        if (!gameApi.isEnded() && (gameApi.getTurn() == myTurn || vsCPU == false)) {
             if (gameApi.hasContinuationToOverwrite()) {
                 confirmOverwrite(() -> {
                     if (!super.requestMove(from, to)) rebuildBoard();
@@ -296,7 +296,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         lGameID = prefs.getLong("game_id", 0);
 
-        updateClockByPrefs(false, prefs.getInt("clockActivePlayer", jni.getTurn()));
+        updateClockByPrefs(false, prefs.getInt("clockActivePlayer", gameApi.getTurn()));
         updateGameSettingsByPrefs();
 
         flipBoard = prefs.getBoolean("flipBoard", false);
@@ -383,7 +383,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
         editor.putLong("game_id", lGameID);
         editor.putString("game_pgn", gameApi.exportFullPGN());
-        editor.putString("FEN", jni.toFEN());
+        editor.putString("FEN", gameApi.getFEN());
         editor.putString("setupFEN", null);
 
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
@@ -633,7 +633,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected void updateSeekBar() {
         moveAdapter.update();
-        historyRecyclerView.scrollToPosition(jni.getNumBoard() - 1);
+        historyRecyclerView.scrollToPosition(gameApi.getNumBoard() - 1);
     }
 
     protected void updatePlayers() {
@@ -642,7 +642,7 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void updateEco() {
-        String ecoName = ecoService.getEcoNameByHash(jni.getHashKey());
+        String ecoName = ecoService.getEcoNameByHash(gameApi.getHashKey());
         JSONArray jArray = ecoService.getAvailable();
         Log.d(TAG, "eco by hash " + ecoName + " :: " + jArray.length());
 
@@ -679,7 +679,7 @@ public class PlayActivity extends ChessBoardActivity implements
         int piece, turnAt;
         for (turnAt = 0; turnAt < 2; turnAt++) {
             for (piece = 0; piece < 5; piece++) {
-                int numCaptured = jni.getNumCaptured(turnAt, piece);
+                int numCaptured = gameApi.getNumCaptured(turnAt, piece);
 
                 // The empty slots are placeholders painted in the board colours,
                 // which on a greyscale panel read as a row of unexplained blocks
@@ -716,7 +716,7 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void updateTurnSwitchers() {
-        final int currentTurn = jni.getTurn();
+        final int currentTurn = gameApi.getTurn();
 
         imageTurnWhite.setImageResource(currentTurn == BoardConstants.WHITE
             ? R.drawable.turnwhite
@@ -759,7 +759,7 @@ public class PlayActivity extends ChessBoardActivity implements
                         this,
                         REQUEST_GAME_SETTINGS,
                         getPrefs(),
-                        jni.getVariant() == BoardConstants.VARIANT_DUCK
+                        gameApi.isDuckVariant()
                     );
                     settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
@@ -896,7 +896,7 @@ public class PlayActivity extends ChessBoardActivity implements
     protected void updateForNewGame() {
         Log.d(TAG, "updateForNewGame");
 
-        updateClockByPrefs(true, jni.getTurn());
+        updateClockByPrefs(true, gameApi.getTurn());
         updateGameSettingsByPrefs();
 
         resetSelectedSquares();
@@ -916,7 +916,7 @@ public class PlayActivity extends ChessBoardActivity implements
         engineSession.selectForPlay(
             "oex".equals(getPreferredEngineBackend()),
             prefs.getString("oexEngineId", null),
-            jni.getVariant() == BoardConstants.VARIANT_DUCK,
+            gameApi.isDuckVariant(),
             prefs.getBoolean("quiescentSearchOn", true));
     }
 
@@ -1001,19 +1001,19 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void playIfEngineMove() {
-        Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
-        if (!enginePausedForHistory && engineSession != null && myTurn != jni.getTurn() && vsCPU) {
+        Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + gameApi.getTurn() + " vsCPU " + vsCPU);
+        if (!enginePausedForHistory && engineSession != null && myTurn != gameApi.getTurn() && vsCPU) {
             playIfEngineCanMove();
         }
     }
 
     protected void playIfEngineCanMove() {
-        Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
-        if (engineSession != null && engineSession.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+        Log.d(TAG, "playIfEngineCanMove t " + gameApi.getTurn() + " myt " + myTurn + " duck " + gameApi.getDuckPos() + " - " + gameApi.getMyDuckPos());
+        if (engineSession != null && engineSession.isReady() && !gameApi.isEnded() && (gameApi.getDuckPos() == -1 || gameApi.getDuckPos() != -1 && gameApi.getMyDuckPos() != -1)) {
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 
-            if (jni.getVariant() != BoardConstants.VARIANT_DUCK && moves.size() > 0) {
+            if (!gameApi.isDuckVariant() && moves.size() > 0) {
                 int r = (int) (Math.random() * moves.size());
                 Log.d(TAG, "Eco moves " + moves.size() + ", " + r);
                 gameApi.move(moves.get(r), -1);

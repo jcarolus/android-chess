@@ -275,7 +275,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void rebuildBoard() {
         super.rebuildBoard();
-        boolean whiteToMove = jni.getTurn() == BoardConstants.WHITE;
+        boolean whiteToMove = gameApi.getTurn() == BoardConstants.WHITE;
         imageAnalysisTurn.setImageResource(whiteToMove ? R.drawable.turnwhite : R.drawable.turnblack);
         imageAnalysisTurn.setContentDescription(getString(whiteToMove
             ? R.string.analysis_white_to_move : R.string.analysis_black_to_move));
@@ -283,7 +283,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
         boolean changed = displayedNode != gameApi.getCurrentNode();
         displayedNode = gameApi.getCurrentNode();
-        if (jni.getVariant() == BoardConstants.VARIANT_DEFAULT) {
+        if (!gameApi.isDuckVariant()) {
             rememberPosition(displayedNode);
             if (displayedNode.getParent() != null) rememberPosition(displayedNode.getParent());
         }
@@ -487,7 +487,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
     private void updateMoveSummary() {
         updateAnalysisSummary();
-        if (jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
+        if (gameApi.isDuckVariant()) return;
         Node current = gameApi.getCurrentNode();
         // Keep the previous announcement until all results needed for feedback are ready.
         if (getAnalysis(positions.get(current)) == null
@@ -518,7 +518,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         displayedEngineMove = null;
         buttonEngineMove.setVisibility(View.GONE);
         buttonEngineMove.setOnClickListener(null);
-        if (jni.getVariant() != BoardConstants.VARIANT_DEFAULT) return;
+        if (gameApi.isDuckVariant()) return;
 
         PositionSnapshot parent = positions.get(current.getParent());
         PositionSnapshot position = positions.get(current);
