@@ -579,6 +579,79 @@ public class GameApi {
         jni.setPromo(piece);
     }
 
+    /** Raw board edits leave PGN history, tags and listeners untouched. */
+    public void reset() {
+        jni.reset();
+    }
+
+    public void putPiece(int pos, int piece, int color) {
+        jni.putPiece(pos, piece, color);
+    }
+
+    public void removePiece(int turn, int pos) {
+        jni.removePiece(turn, pos);
+    }
+
+    public void setTurn(int turn) {
+        jni.setTurn(turn);
+    }
+
+    public void setCastlingsEPAnd50(int wccl, int wccs, int bccl, int bccs, int ep, int r50) {
+        jni.setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
+    }
+
+    public void commitBoard() {
+        jni.commitBoard();
+    }
+
+    public int isLegalPosition() {
+        return jni.isLegalPosition();
+    }
+
+    public int getWhiteCanCastleLong() {
+        return jni.getWhiteCanCastleLong();
+    }
+
+    public int getWhiteCanCastleShort() {
+        return jni.getWhiteCanCastleShort();
+    }
+
+    public int getBlackCanCastleLong() {
+        return jni.getBlackCanCastleLong();
+    }
+
+    public int getBlackCanCastleShort() {
+        return jni.getBlackCanCastleShort();
+    }
+
+    public int getEnpassantPosition() {
+        return jni.getEnpassantPosition();
+    }
+
+    public void setVariant(int variant) {
+        jni.setVariant(variant);
+    }
+
+    /** Places the duck directly, without recording a move or dispatching events. */
+    public int placeDuck(int pos) {
+        return jni.requestDuckMove(pos);
+    }
+
+    /** Checks only the native position, ignoring the recorded game's final state. */
+    public boolean isPositionEnded() {
+        return jni.isEnded() != 0;
+    }
+
+    /** Resets the native board to standard chess without changing PGN data or dispatching events. */
+    public void resetToStandardPositionWithoutHistory() {
+        jni.newGame();
+    }
+
+    /** Loads the native board without changing PGN data or dispatching events. */
+    public boolean loadFENWithoutHistory(String fen) {
+        return jni.initFEN(fen);
+    }
+
     public int pieceAt(int turn, int pos) {
         return jni.pieceAt(turn, pos);
     }
