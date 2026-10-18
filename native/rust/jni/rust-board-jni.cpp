@@ -9,7 +9,7 @@ struct BoardResult {
     int32_t castling;
     uint32_t captured[10];
     uint8_t piece;
-    char fen[96], san[24], moves[8192], attackers[256], error[256];
+    char fen[96], san[24], moves[32768], attackers[256], error[256];
 };
 extern "C" {
 void rust_board_query(int32_t, const char*, const char* const*, size_t, BoardResult*);
