@@ -1,0 +1,42 @@
+package jwtc.android.chess.engine;
+
+/**
+ * Stateless board-operations JNI adapter: every call rebuilds the position from a starting FEN
+ * plus coordinate history and returns a result, with nothing persisted between calls.
+ */
+final class RustBoardNative {
+    static { System.loadLibrary("rust-chess-jni"); }
+
+    private static native RustBoardResult query(int variant, String fen, String[] history);
+    private static native RustBoardResult legalMoves(int variant, String fen, String[] history);
+    private static native RustBoardResult applyMove(int variant, String fen, String[] history, String move);
+    private static native RustBoardResult san(int variant, String fen, String[] history, String move);
+    private static native RustBoardResult pieceAt(int variant, String fen, String[] history, String square);
+    private static native RustBoardResult attackers(int variant, String fen, String[] history, boolean byWhite, String square);
+
+    static RustBoardResult query(RustSearchRequest.Variant variant, String fen, String[] history) {
+        return query(variant.ordinal(), fen, history);
+    }
+
+    static RustBoardResult legalMoves(RustSearchRequest.Variant variant, String fen, String[] history) {
+        return legalMoves(variant.ordinal(), fen, history);
+    }
+
+    static RustBoardResult applyMove(RustSearchRequest.Variant variant, String fen, String[] history, String move) {
+        return applyMove(variant.ordinal(), fen, history, move);
+    }
+
+    static RustBoardResult san(RustSearchRequest.Variant variant, String fen, String[] history, String move) {
+        return san(variant.ordinal(), fen, history, move);
+    }
+
+    static RustBoardResult pieceAt(RustSearchRequest.Variant variant, String fen, String[] history, String square) {
+        return pieceAt(variant.ordinal(), fen, history, square);
+    }
+
+    static RustBoardResult attackers(RustSearchRequest.Variant variant, String fen, String[] history, boolean byWhite, String square) {
+        return attackers(variant.ordinal(), fen, history, byWhite, square);
+    }
+
+    private RustBoardNative() {}
+}

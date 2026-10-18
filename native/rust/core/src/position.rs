@@ -892,4 +892,129 @@ impl Position {
             self.ply / 2 + 1
         )
     }
+    pub fn halfmove_clock(&self) -> u32 {
+        self.halfmove
+    }
+    /// Count of identical positions (same pieces, turn, rights and en-passant
+    /// target) seen earlier in this game, per the threefold-repetition rule.
+    pub fn repetition_count(&self) -> usize {
+        let current = self.repetition();
+        self.previous.iter().filter(|p| **p == current).count()
+    }
+    /// `[white kingside, white queenside, black kingside, black queenside]`.
+    pub fn castling_rights(&self) -> [bool; 4] {
+        let r = self.rights();
+        [r[1] & 2 != 0, r[1] & 1 != 0, r[0] & 2 != 0, r[0] & 1 != 0]
+    }
+    /// FEN piece character at `square` (uppercase for White), `$` for the duck, or `None` if empty.
+    pub fn piece_at(&self, square: &str) -> Result<Option<char>, Error> {
+        let s = self::square(square)?;
+        if self.duck == Some(s) {
+            return Ok(Some('$'));
+        }
+        for t in 0..2 {
+            if let Some(p) = self.piece(t, s) {
+                let b = b"pnbrqk"[p];
+                return Ok(Some(if t == WHITE {
+                    b.to_ascii_uppercase() as char
+                } else {
+                    b as char
+                }));
+            }
+        }
+        Ok(None)
+    }
+    /// Squares holding a `by_white` piece that attacks `square`.
+    pub fn attackers(&self, by_white: bool, square: &str) -> Result<Vec<String>, Error> {
+        let target = self::square(square)?;
+        let t = usize::from(by_white);
+        Ok((0..6)
+            .flat_map(|p| {
+                squares(self.pieces[t][p])
+                    .filter(move |&from| self.range(p, t, from) & bit(target) != 0)
+                    .map(name)
+            })
+            .collect())
+    }
+    /// Pieces missing from each side relative to the opening set, `[pawn, knight, bishop, rook, queen]`.
+    pub fn captured(&self, white: bool) -> [u32; 5] {
+        const STARTING: [u32; 5] = [8, 2, 2, 2, 1];
+        let t = usize::from(white);
+        let mut result = [0u32; 5];
+        for (p, count) in result.iter_mut().enumerate() {
+            *count = STARTING[p].saturating_sub(self.pieces[t][p].count_ones());
+        }
+        result
+    }
+    /// Standard Algebraic Notation for the legal move matching `coordinate`.
+    pub fn to_san(&self, coordinate: &str) -> Result<String, Error> {
+        let coordinate = CoordinateMove::parse(coordinate)?;
+        let (piece_str, duck) = coordinate
+            .as_str()
+            .split_once('@')
+            .map_or((coordinate.as_str(), None), |(p, d)| (p, Some(d)));
+        let legal = self.legal_internal();
+        let t = self.turn;
+        let m = legal
+            .iter()
+            .copied()
+            .find(|m| self.external(t, *m).as_str() == piece_str)
+            .ok_or_else(|| invalid("Illegal move"))?;
+        let piece = self.piece(t, m.from).unwrap();
+        let mut san = String::new();
+        if m.castle {
+            san.push_str(if m.to % 8 == 6 { "O-O" } else { "O-O-O" });
+        } else if piece == PAWN {
+            if m.capture {
+                san.push((b'a' + (m.from % 8) as u8) as char);
+                san.push('x');
+            }
+            san.push_str(&name(m.to));
+            if let Some(promo) = m.promotion {
+                san.push('=');
+                san.push((b"pnbrqk"[promo]).to_ascii_uppercase() as char);
+            }
+        } else {
+            san.push(b"pnbrqk"[piece].to_ascii_uppercase() as char);
+            let others: Vec<_> = legal
+                .iter()
+                .filter(|other| {
+                    other.to == m.to
+                        && other.from != m.from
+                        && self.piece(t, other.from) == Some(piece)
+                })
+                .collect();
+            if !others.is_empty() {
+                let same_file = others.iter().any(|o| o.from % 8 == m.from % 8);
+                let same_rank = others.iter().any(|o| o.from / 8 == m.from / 8);
+                if !same_file {
+                    san.push((b'a' + (m.from % 8) as u8) as char);
+                } else if !same_rank {
+                    san.push((b'8' - (m.from / 8) as u8) as char);
+                } else {
+                    san.push_str(&name(m.from));
+                }
+            }
+            if m.capture {
+                san.push('x');
+            }
+            san.push_str(&name(m.to));
+        }
+        if let Some(d) = duck {
+            let d = square(d)?;
+            let next = self.make(m);
+            if next.occupied() & bit(d) != 0 {
+                return Err(invalid("Illegal duck placement"));
+            }
+            san.push('@');
+            san.push_str(&name(d));
+        } else if self.variant != Variant::Duck && m.check {
+            san.push(if self.make(m).legal_internal().is_empty() {
+                '#'
+            } else {
+                '+'
+            });
+        }
+        Ok(san)
+    }
 }

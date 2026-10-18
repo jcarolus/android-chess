@@ -81,12 +81,7 @@ pub unsafe extern "C" fn rust_chess_search(
         let control = control
             .as_ref()
             .ok_or_else(|| Error("Missing search handle".into()))?;
-        let variant = match variant {
-            0 => Variant::Standard,
-            1 => Variant::Chess960,
-            2 => Variant::Duck,
-            _ => return Err(Error("Unknown variant".into())),
-        };
+        let variant = parse_variant(variant)?;
         if count > 100000 || count != 0 && history.is_null() {
             return Err(Error("Invalid history".into()));
         }
@@ -162,4 +157,288 @@ pub unsafe extern "C" fn rust_chess_search(
             output.error[..count].copy_from_slice(&bytes[..count]);
         }
     }
+}
+/// Stateless board-operations result: a snapshot query, a move's SAN, the legal moves from a
+/// snapshot, or the attackers of a square. Every call fills only the fields its name promises;
+/// the rest are left at their zero/empty default.
+#[repr(C)]
+pub struct BoardResult {
+    turn_white: i32,
+    game_state: i32,
+    in_check: i32,
+    halfmove_clock: u32,
+    repetition_count: u32,
+    castling: i32,
+    captured: [u32; 10],
+    piece: u8,
+    fen: [u8; 96],
+    san: [u8; 24],
+    moves: [u8; 32768],
+    attackers: [u8; 256],
+    error: [u8; 256],
+}
+fn default_board_result() -> BoardResult {
+    BoardResult {
+        turn_white: 0,
+        game_state: 0,
+        in_check: 0,
+        halfmove_clock: 0,
+        repetition_count: 0,
+        castling: 0,
+        captured: [0; 10],
+        piece: 0,
+        fen: [0; 96],
+        san: [0; 24],
+        moves: [0; 32768],
+        attackers: [0; 256],
+        error: [0; 256],
+    }
+}
+fn parse_variant(variant: i32) -> Result<Variant, Error> {
+    match variant {
+        0 => Ok(Variant::Standard),
+        1 => Ok(Variant::Chess960),
+        2 => Ok(Variant::Duck),
+        _ => Err(Error("Unknown variant".into())),
+    }
+}
+/// Writes `s` into `dst` (already zeroed by the caller), leaving a trailing zero byte to
+/// terminate the C string. Returns `false`, writing nothing, if `s` does not fit: a truncated
+/// result would silently misrepresent the position rather than signal the problem.
+fn write_capped(dst: &mut [u8], s: &str) -> bool {
+    if s.len() >= dst.len() {
+        return false;
+    }
+    dst[..s.len()].copy_from_slice(s.as_bytes());
+    true
+}
+/// Truncates `s` to fit `dst` (already zeroed by the caller), always leaving a trailing zero
+/// byte. Used only for the error message, where a truncated explanation beats none at all.
+fn write_truncated(dst: &mut [u8], s: &str) {
+    let max = dst.len().saturating_sub(1);
+    let n = s.len().min(max);
+    dst[..n].copy_from_slice(&s.as_bytes()[..n]);
+}
+fn game_state_code(state: GameState) -> i32 {
+    match state {
+        GameState::Play => 0,
+        GameState::Check => 1,
+        GameState::Mate => 2,
+        GameState::Stalemate => 3,
+        GameState::DrawMaterial => 4,
+        GameState::DrawFiftyMove => 5,
+        GameState::DrawRepetition => 6,
+    }
+}
+/// # Safety
+/// `fen` must be NUL-terminated; `history` has `count` NUL-terminated elements.
+unsafe fn rebuild(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+) -> Result<Position, Error> {
+    if count > 100000 || (count != 0 && history.is_null()) {
+        return Err(Error("Invalid history".into()));
+    }
+    let variant = parse_variant(variant)?;
+    let mut position = Position::from_fen(variant, text(fen)?)?;
+    for i in 0..count {
+        position.apply(text(*history.add(i))?)?;
+    }
+    Ok(position)
+}
+/// Fills the whole-position fields shared by a query and a post-move result.
+fn fill_query(position: &Position, out: &mut BoardResult) -> Result<(), Error> {
+    out.turn_white = i32::from(position.white_to_move());
+    out.game_state = game_state_code(position.game_state());
+    out.in_check = i32::from(position.in_check());
+    out.halfmove_clock = position.halfmove_clock();
+    out.repetition_count = position.repetition_count() as u32;
+    let rights = position.castling_rights();
+    out.castling = rights
+        .iter()
+        .enumerate()
+        .fold(0, |acc, (i, &r)| acc | (i32::from(r) << i));
+    for (t, white) in [(0, false), (1, true)] {
+        let captured = position.captured(white);
+        out.captured[t * 5..t * 5 + 5].copy_from_slice(&captured);
+    }
+    if !write_capped(&mut out.fen, &position.fen()) {
+        return Err(Error("FEN exceeds buffer capacity".into()));
+    }
+    Ok(())
+}
+fn report(output: &mut BoardResult, result: std::thread::Result<Result<(), Error>>) {
+    if let Err(e) = result.unwrap_or_else(|_| Err(Error("Rust board call panicked".into()))) {
+        write_truncated(&mut output.error, &e.to_string());
+    }
+}
+/// A snapshot query: game state, turn, check, castling rights, captured pieces, FEN and the
+/// draw/repetition counters.
+///
+/// # Safety
+/// All strings must be NUL-terminated and live for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_query(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let position = rebuild(variant, fen, history, count)?;
+        fill_query(&position, output)
+    }));
+    report(output, result);
+}
+/// The legal moves from a snapshot, space-separated in `moves`.
+///
+/// # Safety
+/// All strings must be NUL-terminated and live for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_legal_moves(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let position = rebuild(variant, fen, history, count)?;
+        let moves = position
+            .legal_moves()
+            .iter()
+            .map(CoordinateMove::as_str)
+            .collect::<Vec<_>>()
+            .join(" ");
+        if !write_capped(&mut output.moves, &moves) {
+            return Err(Error("Legal moves exceed buffer capacity".into()));
+        }
+        Ok(())
+    }));
+    report(output, result);
+}
+/// Applies one coordinate move to a snapshot and reports the resulting position, matching
+/// `rust_board_query`'s fields. The snapshot itself is never mutated.
+///
+/// # Safety
+/// All strings must be NUL-terminated and live for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_apply_move(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+    coordinate: *const c_char,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let mut position = rebuild(variant, fen, history, count)?;
+        position.apply(text(coordinate)?)?;
+        fill_query(&position, output)
+    }));
+    report(output, result);
+}
+/// Standard Algebraic Notation for one legal move from a snapshot, written to `san`.
+///
+/// # Safety
+/// All strings must be NUL-terminated and live for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_san(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+    coordinate: *const c_char,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let position = rebuild(variant, fen, history, count)?;
+        let san = position.to_san(text(coordinate)?)?;
+        if !write_capped(&mut output.san, &san) {
+            return Err(Error("SAN exceeds buffer capacity".into()));
+        }
+        Ok(())
+    }));
+    report(output, result);
+}
+/// The FEN piece character at one square of a snapshot, written to `piece` (0 means empty).
+///
+/// # Safety
+/// All strings must be NUL-terminated and live for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_piece_at(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+    square: *const c_char,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let position = rebuild(variant, fen, history, count)?;
+        output.piece = position
+            .piece_at(text(square)?)?
+            .map(|c| c as u8)
+            .unwrap_or(0);
+        Ok(())
+    }));
+    report(output, result);
+}
+/// Squares of the given colour that attack a square of a snapshot, space-separated in
+/// `attackers`.
+///
+/// # Safety
+/// All strings must be NUL-terminated and live for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_attackers(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+    by_white: i32,
+    square: *const c_char,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let position = rebuild(variant, fen, history, count)?;
+        let attackers = position.attackers(by_white != 0, text(square)?)?.join(" ");
+        if !write_capped(&mut output.attackers, &attackers) {
+            return Err(Error("Attackers exceed buffer capacity".into()));
+        }
+        Ok(())
+    }));
+    report(output, result);
 }

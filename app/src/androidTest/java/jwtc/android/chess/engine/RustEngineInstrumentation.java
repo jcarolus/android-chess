@@ -20,6 +20,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         Bundle report = new Bundle();
         try {
             nativeContract();
+            nativeBoardContract();
             sessionMove();
             sessionAbort();
             nativeProgress();
@@ -37,7 +38,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionDuckTurns(true);
             sessionDuckPendingAndStale();
             duckPositionIdentity();
-            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors and Analysis backend selection (Standard, Duck, Chess 960) passed\n");
+            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors, Analysis backend selection (Standard, Duck, Chess 960) and the stateless board-operations API passed\n");
             finish(-1, report);
         } catch (Throwable error) {
             report.putString("stream", "FAIL: " + error + "\n");
@@ -72,6 +73,45 @@ public final class RustEngineInstrumentation extends Instrumentation {
             check(chess960.searchId == 251 && chess960.hasEvaluation && !chess960.bestMove.isEmpty(),
                 "Chess 960 variant was rejected by the native search");
         } finally { RustNative.destroy(handle); }
+    }
+    /** Round-trips a snapshot through every RustBoardNative entry point, without touching GameApi. */
+    private void nativeBoardContract() {
+        RustBoardResult query = RustBoardNative.query(RustSearchRequest.Variant.STANDARD, START, new String[0]);
+        check(query.turnWhite && query.gameState == 0 && !query.inCheck && query.halfmoveClock == 0
+            && query.repetitionCount == 0 && query.castleWhiteKingside && query.castleWhiteQueenside
+            && query.castleBlackKingside && query.castleBlackQueenside && query.fen.equals(START),
+            "Board query did not reproduce the starting position");
+        for (int count : query.captured) check(count == 0, "Opening position reported a capture");
+
+        RustBoardResult legal = RustBoardNative.legalMoves(RustSearchRequest.Variant.STANDARD, START, new String[0]);
+        String[] moves = RustBoardResult.words(legal.moves);
+        check(moves.length == 20, "Expected 20 legal moves from the starting position, got " + moves.length);
+        boolean hasE4 = false;
+        for (String move : moves) if (move.equals("e2e4")) hasE4 = true;
+        check(hasE4, "Legal moves omitted e2e4");
+
+        RustBoardResult san = RustBoardNative.san(RustSearchRequest.Variant.STANDARD, START, new String[0], "e2e4");
+        check(san.san.equals("e4"), "Wrong SAN for e2e4: " + san.san);
+
+        RustBoardResult applied = RustBoardNative.applyMove(RustSearchRequest.Variant.STANDARD, START, new String[0], "e2e4");
+        check(!applied.turnWhite && applied.gameState == 0
+            && applied.fen.equals("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"),
+            "Move application did not advance the position: " + applied.fen);
+
+        RustBoardResult king = RustBoardNative.pieceAt(RustSearchRequest.Variant.STANDARD, START, new String[0], "e1");
+        check(king.piece == 'K', "Expected a White king on e1");
+        RustBoardResult empty = RustBoardNative.pieceAt(RustSearchRequest.Variant.STANDARD, START, new String[0], "e4");
+        check(empty.piece == 0, "Expected e4 to be empty on the starting position");
+
+        String attackersFen = "4k3/8/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1";
+        RustBoardResult attackers = RustBoardNative.attackers(RustSearchRequest.Variant.STANDARD, attackersFen, new String[0], true, "d3");
+        String[] attackerSquares = RustBoardResult.words(attackers.attackers);
+        check(attackerSquares.length == 2, "Expected two attackers of d3, got " + attackerSquares.length);
+
+        boolean failed = false;
+        try { RustBoardNative.query(RustSearchRequest.Variant.STANDARD, "not a fen", new String[0]); }
+        catch (IllegalArgumentException expected) { failed = true; }
+        check(failed, "Invalid FEN was accepted");
     }
     private void sessionMove() throws Exception {
         CountDownLatch done = new CountDownLatch(1);
