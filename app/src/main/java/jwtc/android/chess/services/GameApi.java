@@ -35,7 +35,7 @@ Deals with some parts of move notation
 public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
-    protected JNI jni;
+    private JNI jni;
     public static final int MAX_PGN_SIZE = 500000;
 
     public final HashMap<String, String> pgnTags; //

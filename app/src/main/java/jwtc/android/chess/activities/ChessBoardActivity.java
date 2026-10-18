@@ -40,7 +40,6 @@ import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.services.GameListener;
-import jwtc.chess.JNI;
 import jwtc.chess.Move;
 import jwtc.android.chess.constants.Piece;
 import jwtc.chess.Pos;
@@ -56,7 +55,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected MyAccessibilityDragListener myAccessibilityDragListener;
     protected MyTouchListener myTouchListener;
     protected MyClickListener myClickListener;
-    protected JNI jni = JNI.getInstance();
     protected ChessBoardView chessBoardView;
     protected Sounds sounds;
     protected HapticFeedback hapticFeedback;
