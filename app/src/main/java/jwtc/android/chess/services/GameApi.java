@@ -47,6 +47,7 @@ public class GameApi {
     private GameTree gameTree;
     private Node currentNode;
     private PGNEntry pendingDuckMove;
+    private int promotionPiece = BoardConstants.QUEEN;
     private String importedResult;
     private String lastPgnError;
     private boolean loadingPgn;
@@ -178,6 +179,41 @@ public class GameApi {
         return at < 0 ? coordinate : coordinate.substring(0, at);
     }
 
+    /**
+     * The sole legal move from {@code from} to {@code to} for the currently selected promotion
+     * piece, sourced from the Rust board API's legal-move list; null when none matches.
+     */
+    private PositionMove resolveLegalMove(int from, int to, String fen, RustSearchRequest.Variant variant) {
+        for (PositionMove candidate : rustLegalMoves(fen, variant)) {
+            int move = candidate.move;
+            if (Move.getFrom(move) != from || Move.getTo(move) != to) continue;
+            if (Move.isPromotionMove(move) && Move.getPromotionPiece(move) != promotionPiece) continue;
+            return candidate;
+        }
+        return null;
+    }
+
+    /**
+     * Resolves a from/to move via the Rust board API and applies it there, then commits the
+     * same already-resolved move onto the live board so the rest of GameApi (ply bookkeeping,
+     * undo, search) keeps working from it. Null when no legal move matches.
+     */
+    private PositionMove applyRustMove(int from, int to) {
+        String fen = jni.toFEN();
+        RustSearchRequest.Variant variant = rustVariant();
+        PositionMove resolved = resolveLegalMove(from, to, fen, variant);
+        if (resolved == null) return null;
+        int[] files = variant == RustSearchRequest.Variant.CHESS_960
+            ? RustSearchRequest.chess960Files(fen, jni.getTurn() == BoardConstants.WHITE) : null;
+        String coordinate = RustSearchRequest.toRustCoordinate(resolved.move, files);
+        RustBoardResult applied = RustBoardNative.applyMove(variant, fen, NO_RUST_HISTORY, coordinate);
+        if (jni.move(resolved.move) == 0) return null;
+        if (!applied.fen.equals(jni.toFEN()))
+            Log.w(TAG, "Rust and legacy engine disagreed after " + coordinate
+                + ": " + applied.fen + " vs " + jni.toFEN());
+        return resolved;
+    }
+
     /** Main-thread only. Inspect a recorded position without dispatching navigation or changing the tree. */
     public PositionSnapshot getPositionSnapshot(Node node) {
         if (pendingDuckMove != null || !gameTree.contains(node)) return null;
@@ -307,14 +343,15 @@ public class GameApi {
             return false;
         }
 
-        if (jni.requestMove(from, to) == 0) {
+        PositionMove resolved = applyRustMove(from, to);
+        if (resolved == null) {
             dispatchIllegalMove();
             return false;
         }
 
         final int move = jni.getMyMove();
 
-        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", move, -1);
+        addPGNEntry(jni.getNumBoard(), resolved.san, "", move, -1);
 
         dispatchMove(move);
 
@@ -328,9 +365,10 @@ public class GameApi {
      */
     public int applyServerMove(int from, int to, Integer promo) {
         if (promo != null) setPromo(promo);
-        if (jni.requestMove(from, to) == 0) return 0;
-        int move = getMyMove();
-        addPGNEntry(getNumBoard(), getMyMoveToString(), "", move, -1);
+        PositionMove resolved = applyRustMove(from, to);
+        if (resolved == null) return 0;
+        int move = jni.getMyMove();
+        addPGNEntry(jni.getNumBoard(), resolved.san, "", move, -1);
         return move;
     }
 
@@ -690,8 +728,9 @@ public class GameApi {
         return jni.getMyDuckPos();
     }
 
+    /** Selects the piece {@link #requestMove} and {@link #applyServerMove} promote a pawn to. */
     public void setPromo(int piece) {
-        jni.setPromo(piece);
+        promotionPiece = piece;
     }
 
     /** Raw board edits leave PGN history, tags and listeners untouched. */
