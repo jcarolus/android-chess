@@ -25,6 +25,8 @@
 
 -keep class jwtc.android.chess.engine.RustNative { *; }
 -keep class jwtc.android.chess.engine.RustSearchResult { *; }
+-keep class jwtc.android.chess.engine.RustBoardNative { *; }
+-keep class jwtc.android.chess.engine.RustBoardResult { *; }
 
 -keep interface jwtc.android.chess.engine.RustNative$ProgressListener { *; }
 -keepclassmembers class * implements jwtc.android.chess.engine.RustNative$ProgressListener { public void onProgress(jwtc.android.chess.engine.RustSearchResult); }
