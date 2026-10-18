@@ -248,6 +248,11 @@ public class GameApi {
         return jni.getState();
     }
 
+    /** Returns the native engine state without the recorded game's final state. */
+    public int getEngineState() {
+        return jni.getState();
+    }
+
     public int getFinalState() {
         return isAtLineEnd() ? currentNode.getFinalState() : -1;
     }

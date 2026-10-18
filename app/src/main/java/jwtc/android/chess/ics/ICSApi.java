@@ -31,7 +31,7 @@ public class ICSApi extends GameApi {
             //<12> rnbqkb-r pppppppp -----n-- -------- ----P--- -------- PPPPKPPP RNBQ-BNR B -1 0 0 1 1 0 7 Newton Einstein 1 2 12 39 39 119 122 2 K/e1-e2 (0:06) Ke2 0
             //<12> ----k--r -npn-ppp -p---r-- ---Pp--- BPP-P-Pb -----R-- ---BN-P- -R-K---- B -1 0 0 1 0 2 1227 Lingo DoctorYona 0 3 0 25 25 81 80 29 B/c2-a4 (0:02) Ba4 0
 
-            jni.reset();
+            reset();
 
             int p = 0, t = 0, index = -1; // !!
 
@@ -61,7 +61,7 @@ public class ICSApi extends GameApi {
                         t = (c == 'p' ? BoardConstants.BLACK : BoardConstants.WHITE);
                     } else
                         continue;
-                    jni.putPiece(i, p, t);
+                    putPiece(i, p, t);
                 }
             } // loop 64
             index++;
@@ -73,10 +73,10 @@ public class ICSApi extends GameApi {
             String _sTurn = st.nextToken();  // _sTurn is "W" or "B"
             turn = BoardConstants.WHITE;  //  _iTurn is  1  or  0
             if (_sTurn.equals("B")) {
-                jni.setTurn(BoardConstants.BLACK);
+                setTurn(BoardConstants.BLACK);
                 turn = BoardConstants.BLACK;
             } else {
-                jni.setTurn(BoardConstants.WHITE);
+                setTurn(BoardConstants.WHITE);
             }
             // -1 none, or 0-7 for column indicates double pawn push
             int iEPColumn = Integer.parseInt(st.nextToken());
@@ -185,11 +185,11 @@ public class ICSApi extends GameApi {
             }
 
             //
-            jni.setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
+            setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
 
-            jni.commitBoard();
+            commitBoard();
 
-            Log.d(TAG, "FEN " + jni.toFEN() + "  " + jni.getState());
+            Log.d(TAG, "FEN " + getFEN() + "  " + getEngineState());
 
             // _board
             dispatchState();
