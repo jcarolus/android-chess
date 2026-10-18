@@ -26,6 +26,15 @@ C++ `LocalEngine` is unreachable from any Mode (`EngineSession` only ever constr
 
 - The fixed-position regressions already in `parity.rs` for Standard and Chess 960, including the
   existing C++ castling/repetition regressions.
+- The stateless board-operations API (#264, `chess_core::Position`'s legal-move generation, move
+  application, SAN generation and board/game-state queries, exposed to Android as the C ABI
+  functions in `native/rust/bridge/src/lib.rs` prefixed `rust_board_*`): `parity.rs`'s `compare`
+  now also asserts SAN-string equality for every legal move against `sanFor` in
+  `native/project/jni/tests/parity_runner.cpp` (which calls the C++ reference's
+  `ChessBoard::myMoveToString`), on top of the legal-move-list and game-state/repetition/draw
+  comparisons it already made for the search port. This runs across the same fixed-position,
+  Chess 960 castling, Duck and generated-history coverage listed below, so no new test functions
+  were needed — only the per-move comparison itself was extended.
 - `generated_histories`: deterministic seeded random walks from starting positions chosen to make
   repetition, promotion, castling-under-pressure and draw/terminal detection likely, across
   Standard, Chess 960 and Duck, comparing full engine state after every ply (not only the final
@@ -43,11 +52,21 @@ C++ `LocalEngine` is unreachable from any Mode (`EngineSession` only ever constr
   queued results after close, pending-Duck-move suppressing search, navigation (undo/redo
   preserving Duck placement and position identity) and error reporting.
 
-**No C++ bugs or behavioural exceptions were found**: the full comparison suite passes with no
-known unexplained mismatch. There is nothing to record as an approved exception at this time; if a
-future run captures a genuine mismatch, promote its fixture into `tests/fixtures/regressions/` and
-add a decision to this ADR (fix both engines, or document why one side's behaviour is accepted)
-before treating the suite as green again.
+**One C++ bug was found and fixed** by the SAN comparison above: `ChessBoard::ambigiousMove()`
+picked its disambiguating candidate from `genMoves()`'s pseudo-legal list without checking that the
+candidate's own move was actually legal, so a piece pinned to its king (unable to legally reach the
+shared destination) still triggered a needless file/rank prefix (e.g. `Nbc5` where only one knight
+could legally reach `c5`, the other being pinned on the e-file). Fixed in `ChessBoard::ambigiousMove`
+(`native/project/jni/ChessBoard.cpp`) by rejecting a candidate that leaves its own king in check,
+matching `chess_core::Position::to_san`'s use of the fully-legal move list for disambiguation.
+`generated_histories`' fixed seeds reach this position deterministically, so the fixture that
+caught it did not need promoting into `tests/fixtures/regressions/` for future replay — the fixed
+behaviour is already exercised on every run.
+
+**Otherwise no C++ bugs or behavioural exceptions were found**: the full comparison suite passes
+with no known unexplained mismatch. If a future run captures a genuine mismatch, promote its
+fixture into `tests/fixtures/regressions/` and add a decision to this ADR (fix both engines, or
+document why one side's behaviour is accepted) before treating the suite as green again.
 
 **Deferred until #253 is implemented**:
 

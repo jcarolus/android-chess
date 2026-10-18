@@ -276,6 +276,14 @@ void testMoves() {
          .expectedMoveCount = 1,
          .expectedMoves = {"exd6"},
          .all = false},
+        // The e4 knight is pinned to its king on the open e-file by the white
+        // queen on e1, so it cannot legally reach c5; only the b3 knight can,
+        // and its move is unambiguous ("Nc5", not "Nbc5").
+        {.game = Game::getInstance(),
+         .sInFEN = "8/8/1N2k3/8/4n3/1n6/8/3KQ3 b - - 0 1",
+         .expectedMoveCount = 1,
+         .expectedMoves = {"Nc5"},
+         .all = false},
     };
 
     for (const MovesForFEN &scenario : scenarios) {

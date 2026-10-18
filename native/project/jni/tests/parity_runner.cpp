@@ -34,6 +34,23 @@ std::string coordinate(int move, ChessBoard* board, bool chess960) {
     return result;
 }
 
+// Standard Algebraic Notation for the move that produced @child, matching
+// chess_core::Position::to_san: Duck never carries a check/mate suffix, since
+// placing the duck can still answer a check the piece move alone leaves.
+std::string sanFor(ChessBoard& child, bool duck) {
+    if (!duck) {
+        ChessBoard scratch;
+        child.calcState(&scratch);
+    }
+    char buf[20];
+    child.myMoveToString(buf);
+    std::string san(buf);
+    if (duck && !san.empty() && (san.back() == '+' || san.back() == '#')) {
+        san.pop_back();
+    }
+    return san;
+}
+
 int main(int argc, char** argv) {
     if (argc < 5) return 2;
     Game game;
@@ -72,6 +89,7 @@ int main(int argc, char** argv) {
         ChessBoard child;
         board->makeMove(move, &child);
         std::string piece = coordinate(move, board, chess960);
+        std::string pieceSan = sanFor(child, duck);
         if (duck && !child.isEnded()) {
             for (int square = 0; square < 64; ++square) {
                 if (!child.isPosFree(square) || square == board->getDuckPos()) continue;
@@ -81,11 +99,12 @@ int main(int argc, char** argv) {
                 char name[4];
                 Pos::toString(square, name);
                 placed.toFEN(fen);
-                std::cout << "MOVE\t" << piece << '@' << name << '\t' << fen << '\t' << placed.boardValue() << '\n';
+                std::cout << "MOVE\t" << piece << '@' << name << '\t' << fen << '\t' << placed.boardValue() << '\t'
+                          << pieceSan << '@' << name << '\n';
             }
         } else {
             child.toFEN(fen);
-            std::cout << "MOVE\t" << piece << '\t' << fen << '\t' << child.boardValue() << '\n';
+            std::cout << "MOVE\t" << piece << '\t' << fen << '\t' << child.boardValue() << '\t' << pieceSan << '\n';
         }
     }
     game.setSearchLimit(std::stoi(argv[2]));

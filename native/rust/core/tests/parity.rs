@@ -125,6 +125,8 @@ fn compare(variant: Variant, fen: &str, history: &[&str], depth: u8, quiescence:
             child.apply(m.as_str()).unwrap();
             check(variant, fen, history, depth, quiescence, &format!("child_fen[{i}]"), child.fen(), fields[2]);
             check(variant, fen, history, depth, quiescence, &format!("child_eval[{i}]"), child.evaluate(), fields[3]);
+            let san = p.to_san(m.as_str()).unwrap();
+            check(variant, fen, history, depth, quiescence, &format!("san[{i}]"), san, fields[4]);
         }
     }
     let result = search(&request, &SearchControl::default()).unwrap();

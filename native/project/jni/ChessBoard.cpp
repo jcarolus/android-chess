@@ -140,15 +140,18 @@ int ChessBoard::countAttackersTo(const int pos, const int byTurn) {
 #pragma region Move related methods
 
 // return 0 when move is not ambigious, otherwise the ambigious move.
-// ambigous when pieces of the same kind move to the same destination
+// ambigous when pieces of the same kind move to the same destination; a
+// pseudo-legal candidate that leaves its own king in check (e.g. a pinned
+// piece) is not a real alternative, so it is not counted as an ambiguity.
 int ChessBoard::ambigiousMove() {
     if (m_parent != nullptr) {
         ChessBoard tmpBoard;
         m_parent->duplicate(&tmpBoard);
 
         tmpBoard.m_indexMoves = 0;
-        tmpBoard.genMoves();  // NEW, all (illegal) moves
+        tmpBoard.genMoves();  // NEW, all (pseudo-legal) moves
         int m2;
+        ChessBoard probe;
         while (tmpBoard.hasMoreMoves()) {
             m2 = tmpBoard.getNextMove();
             if (m_myMove != m2 && Move_equalTos(m2, m_myMove)) {
@@ -156,7 +159,10 @@ int ChessBoard::ambigiousMove() {
                     (tmpBoard.m_bitbPieces[m_o_turn][PAWN] & BITS[Move_getFrom(m_myMove)]) == 0) {
                     if (tmpBoard.pieceAt(m_o_turn, Move_getFrom(m_myMove)) ==
                         tmpBoard.pieceAt(m_o_turn, Move_getFrom(m2))) {
-                        return m2;
+                        tmpBoard.makeMove(m2, &probe);
+                        if (!probe.isSquareAttacked(probe.m_o_turn, probe.m_kingPositions[probe.m_o_turn])) {
+                            return m2;
+                        }
                     }
                 }
             }
