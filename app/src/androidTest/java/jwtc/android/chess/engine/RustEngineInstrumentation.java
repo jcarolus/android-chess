@@ -10,15 +10,31 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.EcoService;
+import jwtc.android.chess.services.HMap;
+import jwtc.chess.JNI;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import jwtc.chess.board.BoardConstants;
 
 /** Device smoke test of the real JNI and EngineSession path, with no Activity. */
 public final class RustEngineInstrumentation extends Instrumentation {
     private static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    @Override public void onCreate(Bundle arguments) { super.onCreate(arguments); start(); }
+    private boolean ecoOnly;
+    @Override public void onCreate(Bundle arguments) {
+        super.onCreate(arguments);
+        ecoOnly = arguments != null && "eco".equals(arguments.getString("suite"));
+        start();
+    }
     @Override public void onStart() {
         Bundle report = new Bundle();
         try {
+            if (ecoOnly) {
+                ecoLookupPreservesLivePosition();
+                report.putString("stream", "ECO lookup, legacy hash/SAN parity, and live-position preservation passed\n");
+                finish(-1, report);
+                return;
+            }
             nativeContract();
             nativeBoardContract();
             sessionMove();
@@ -39,7 +55,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
             sessionDuckPendingAndStale();
             duckPositionIdentity();
             gameApiSanDisambiguationUsesRustBoardApi();
-            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors, Analysis backend selection (Standard, Duck, Chess 960), the stateless board-operations API, and GameApi SAN disambiguation passed\n");
+            ecoLookupPreservesLivePosition();
+            report.putString("stream", "Rust engine: replay, progress, timing, stop ordering, abort/restart, navigation, teardown, terminal, errors, Analysis backend selection (Standard, Duck, Chess 960), the stateless board-operations API, GameApi SAN disambiguation, and ECO lookup/non-mutation passed\n");
             finish(-1, report);
         } catch (Throwable error) {
             report.putString("stream", "FAIL: " + error + "\n");
@@ -463,6 +480,82 @@ public final class RustEngineInstrumentation extends Instrumentation {
             check(castle960.getCurrentPly() == 1, "Castling move was not recorded");
         });
     }
+    private void ecoLookupPreservesLivePosition() throws Exception {
+        GameApi[] game = new GameApi[1];
+        EcoService[] eco = new EcoService[1];
+        HMap book = HMap.read(getTargetContext().getAssets(), "hashmap.bin");
+        runOnMainSync(() -> {
+            game[0] = new GameApi();
+            eco[0] = new EcoService(game[0]);
+            check(eco[0].getAvailableMoves().isEmpty(), "Unloaded ECO book should be empty");
+            eco[0].load(getTargetContext().getAssets());
+        });
+        long deadline = android.os.SystemClock.uptimeMillis() + 10000;
+        boolean[] loaded = {false};
+        while (!loaded[0] && android.os.SystemClock.uptimeMillis() < deadline) {
+            Thread.sleep(100);
+            runOnMainSync(() -> loaded[0] = !eco[0].getAvailableMoves().isEmpty());
+        }
+        check(loaded[0], "ECO book did not load");
+        runOnMainSync(() -> {
+            assertEcoMatchesNative(game[0], eco[0], book);
+            for (String san : new String[]{"e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6"}) {
+                check(game[0].requestMove(san), "Could not play opening move " + san);
+                assertEcoMatchesNative(game[0], eco[0], book);
+            }
+            check(game[0].requestMove("O-O"), "Could not castle in opening");
+            assertEcoMatchesNative(game[0], eco[0], book);
+            check(game[0].goTo(game[0].getRootNode()), "Could not navigate to opening root");
+            assertEcoMatchesNative(game[0], eco[0], book);
+            check(game[0].initFEN(START.replace("0 1", "100 1"), true), "Could not load drawn position");
+            assertEcoMatchesNative(game[0], eco[0], book);
+            game[0].newGame(BoardConstants.VARIANT_DUCK);
+            assertEcoMatchesNative(game[0], eco[0], book);
+            check(game[0].requestMove("e4@d5"), "Could not play Duck turn");
+            assertEcoMatchesNative(game[0], eco[0], book);
+            check(game[0].initFEN("4k3/8/8/8/8/8/8/R5KR w KQ - 0 1", true), "Could not load Chess 960");
+            assertEcoMatchesNative(game[0], eco[0], book);
+        });
+    }
+
+    private void assertEcoMatchesNative(GameApi game, EcoService eco, HMap book) {
+        JNI nativeBoard = JNI.getInstance();
+        String fen = game.getFEN();
+        long hash = game.getHashKey();
+        Object node = game.getCurrentNode();
+        int ply = game.getCurrentPly();
+        ArrayList<Integer> legal = new ArrayList<>();
+        for (int i = 0; i < game.getMoveArraySize(); i++) legal.add(game.getMoveArrayAt(i));
+        ArrayList<Integer> expectedMoves = new ArrayList<>();
+        JSONArray expectedEntries = new JSONArray();
+        for (int move : legal) {
+            if (nativeBoard.move(move) == 0) continue;
+            try {
+                String name = book.get(nativeBoard.getHashKey());
+                if (name != null) {
+                    expectedMoves.add(move);
+                    JSONObject entry = new JSONObject();
+                    entry.put("name", name);
+                    entry.put("move", nativeBoard.getMyMoveToString());
+                    expectedEntries.put(entry);
+                }
+            } catch (Exception error) {
+                throw new AssertionError(error);
+            } finally {
+                nativeBoard.undo();
+            }
+        }
+        check(expectedMoves.equals(eco.getAvailableMoves()), "ECO move/hash mismatch at " + fen);
+        check(expectedEntries.toString().equals(eco.getAvailable().toString()), "ECO name/SAN mismatch at " + fen);
+        check(expectedMoves.equals(eco.getAvailableMoves()), "Repeated ECO probe changed results");
+        check(fen.equals(game.getFEN()) && hash == game.getHashKey(), "ECO probe mutated live position");
+        check(node == game.getCurrentNode() && ply == game.getCurrentPly(), "ECO probe changed navigation");
+        check(legal.size() == game.getMoveArraySize(), "ECO probe changed legal moves");
+        for (int i = 0; i < legal.size(); i++) {
+            check(legal.get(i) == game.getMoveArrayAt(i), "ECO probe changed move ordering");
+        }
+    }
+
     private void duckPositionIdentity() {
         runOnMainSync(() -> {
             GameApi game = new GameApi();

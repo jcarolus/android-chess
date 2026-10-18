@@ -166,7 +166,7 @@ public class GameApi {
         }
     }
 
-    private RustSearchRequest.Variant rustVariant() {
+    RustSearchRequest.Variant rustVariant() {
         return isDuckVariant() ? RustSearchRequest.Variant.DUCK
             : isChess960Variant() ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
     }
@@ -928,26 +928,6 @@ public class GameApi {
 
     public int getMoveArrayAt(int index) {
         return jni.getMoveArrayAt(index);
-    }
-
-    public void scratchSyncFromCurrent() {
-        jni.scratchSyncFromCurrent();
-    }
-
-    public int scratchMove(int move) {
-        return jni.scratchMove(move);
-    }
-
-    public long scratchGetHashKey() {
-        return jni.scratchGetHashKey();
-    }
-
-    public String scratchGetMyMoveToString() {
-        return jni.scratchGetMyMoveToString();
-    }
-
-    public int scratchUndo() {
-        return jni.scratchUndo();
     }
 
     public String getFEN() {
