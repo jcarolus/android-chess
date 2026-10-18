@@ -140,9 +140,49 @@ public class GameApi {
 
     private static final String[] NO_RUST_HISTORY = new String[0];
 
+    /** {@link RustBoardResult#gameState} (Play/Check/Mate/Stalemate/DrawMaterial/DrawFiftyMove/DrawRepetition), indexed by its ordinal, mapped to {@link BoardConstants}'s legacy numbering. */
+    private static final int[] LEGACY_STATE_FOR_RUST_CODE = {
+        BoardConstants.PLAY, BoardConstants.CHECK, BoardConstants.MATE, BoardConstants.STALEMATE,
+        BoardConstants.DRAW_MATERIAL, BoardConstants.DRAW_50, BoardConstants.DRAW_REPEAT,
+    };
+
+    static int legacyGameState(int rustGameStateCode) {
+        return LEGACY_STATE_FOR_RUST_CODE[rustGameStateCode];
+    }
+
+    /** The {@link BoardConstants} piece at a square owned by {@code turn}, or {@link BoardConstants#FIELD}. */
+    static int legacyPieceAt(char rustPieceChar, int turn) {
+        if (rustPieceChar == 0 || Character.isUpperCase(rustPieceChar) != (turn == BoardConstants.WHITE)) {
+            return BoardConstants.FIELD;
+        }
+        switch (Character.toLowerCase(rustPieceChar)) {
+            case 'p': return BoardConstants.PAWN;
+            case 'n': return BoardConstants.KNIGHT;
+            case 'b': return BoardConstants.BISHOP;
+            case 'r': return BoardConstants.ROOK;
+            case 'q': return BoardConstants.QUEEN;
+            case 'k': return BoardConstants.KING;
+            default: return BoardConstants.FIELD; // the duck marker '$'
+        }
+    }
+
     private RustSearchRequest.Variant rustVariant() {
         return isDuckVariant() ? RustSearchRequest.Variant.DUCK
             : isChess960Variant() ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+    }
+
+    /**
+     * The current position's query result, sourced from the live legacy board's FEN, or
+     * {@code null} for a position Rust's {@code from_fen} rejects. Board setup freely leaves the
+     * native board in such states (no king, two kings of one colour) while pieces are added and
+     * removed one at a time; callers fall back to the legacy engine for exactly those positions.
+     */
+    private RustBoardResult rustQueryOrNull() {
+        try {
+            return RustBoardNative.query(rustVariant(), jni.toFEN(), NO_RUST_HISTORY);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     /**
@@ -273,7 +313,7 @@ public class GameApi {
     }
 
     public boolean isEnded() {
-        return getFinalState() != -1 || jni.isEnded() != 0;
+        return getFinalState() != -1 || isPositionEnded();
     }
 
     private static final int SQUARE_A1 = Pos.fromColAndRow(0, 7);
@@ -316,12 +356,13 @@ public class GameApi {
         if (finalState != -1) {
             return finalState;
         }
-        return jni.getState();
+        return getEngineState();
     }
 
     /** Returns the native engine state without the recorded game's final state. */
     public int getEngineState() {
-        return jni.getState();
+        RustBoardResult result = rustQueryOrNull();
+        return result == null ? jni.getState() : legacyGameState(result.gameState);
     }
 
     public int getFinalState() {
@@ -651,9 +692,13 @@ public class GameApi {
     }
 
     public int getNumCaptured(int turnAt, int piece) {
-        return jni.getNumCaptured(turnAt, piece);
+        RustBoardResult result = rustQueryOrNull();
+        if (result == null) return jni.getNumCaptured(turnAt, piece);
+        // captured[] holds 5 pieces (pawn/knight/bishop/rook/queen) per side, Black (turn 0) then White (turn 1).
+        return result.captured[turnAt * 5 + piece];
     }
 
+    /** No Rust equivalent exists for the legacy Zobrist hash, the ECO opening book's lookup key. */
     public long getHashKey() {
         return jni.getHashKey();
     }
@@ -763,19 +808,23 @@ public class GameApi {
     }
 
     public int getWhiteCanCastleLong() {
-        return jni.getWhiteCanCastleLong();
+        RustBoardResult result = rustQueryOrNull();
+        return result == null ? jni.getWhiteCanCastleLong() : (result.castleWhiteQueenside ? 1 : 0);
     }
 
     public int getWhiteCanCastleShort() {
-        return jni.getWhiteCanCastleShort();
+        RustBoardResult result = rustQueryOrNull();
+        return result == null ? jni.getWhiteCanCastleShort() : (result.castleWhiteKingside ? 1 : 0);
     }
 
     public int getBlackCanCastleLong() {
-        return jni.getBlackCanCastleLong();
+        RustBoardResult result = rustQueryOrNull();
+        return result == null ? jni.getBlackCanCastleLong() : (result.castleBlackQueenside ? 1 : 0);
     }
 
     public int getBlackCanCastleShort() {
-        return jni.getBlackCanCastleShort();
+        RustBoardResult result = rustQueryOrNull();
+        return result == null ? jni.getBlackCanCastleShort() : (result.castleBlackKingside ? 1 : 0);
     }
 
     public int getEnpassantPosition() {
@@ -793,7 +842,8 @@ public class GameApi {
 
     /** Checks only the native position, ignoring the recorded game's final state. */
     public boolean isPositionEnded() {
-        return jni.isEnded() != 0;
+        int state = getEngineState();
+        return state != BoardConstants.PLAY && state != BoardConstants.CHECK;
     }
 
     /** Resets the native board to standard chess without changing PGN data or dispatching events. */
@@ -807,7 +857,13 @@ public class GameApi {
     }
 
     public int pieceAt(int turn, int pos) {
-        return jni.pieceAt(turn, pos);
+        try {
+            char piece = RustBoardNative.pieceAt(rustVariant(), jni.toFEN(), NO_RUST_HISTORY, Pos.toString(pos)).piece;
+            return legacyPieceAt(piece, turn);
+        } catch (IllegalArgumentException ex) {
+            // Board setup can leave the native board in a state Rust's from_fen rejects.
+            return jni.pieceAt(turn, pos);
+        }
     }
 
     public int getMyMove() {
@@ -819,7 +875,24 @@ public class GameApi {
     }
 
     public int[] getAttackerPositionsTo(int pos, int byTurn) {
-        return jni.getAttackerPositionsTo(pos, byTurn);
+        RustBoardResult result;
+        try {
+            result = RustBoardNative.attackers(rustVariant(), jni.toFEN(), NO_RUST_HISTORY,
+                byTurn == BoardConstants.WHITE, Pos.toString(pos));
+        } catch (IllegalArgumentException ex) {
+            // Board setup can leave the native board in a state Rust's from_fen rejects.
+            return jni.getAttackerPositionsTo(pos, byTurn);
+        }
+        String[] squares = RustBoardResult.words(result.attackers);
+        int[] positions = new int[squares.length];
+        for (int i = 0; i < squares.length; i++) {
+            try {
+                positions[i] = Pos.fromString(squares[i]);
+            } catch (Exception ex) {
+                throw new IllegalStateException("Invalid square from Rust board API: " + squares[i], ex);
+            }
+        }
+        return positions;
     }
 
     public int isAmbiguousCastle(int from, int to) {
@@ -855,7 +928,8 @@ public class GameApi {
     }
 
     public String getFEN() {
-        return jni.toFEN();
+        RustBoardResult result = rustQueryOrNull();
+        return result == null ? jni.toFEN() : result.fen;
     }
 
     public int newGameRandomFischer(int seed) {
