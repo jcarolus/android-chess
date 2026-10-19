@@ -12,8 +12,7 @@ position in `SearchRequest::position`; unfinished moves earlier in history fail.
 
 `bridge` exposes an owned search handle and a small C ABI. The separate
 `jni/rust-chess-jni.cpp` adapter packages that static Rust library as
-`librust-chess-jni.so`. The existing `libchess-jni.so` continues to manage the app's
-board. `EngineSession.forRustTesting` is a separate internal Java integration entry
+`librust-chess-jni.so`. `EngineSession.forRustTesting` is a separate internal Java integration entry
 used only by device tests. Rust is the built-in Local Engine for every Mode and
 Variant: Play (`EnginePolicy.forPlay`), Analysis (`EnginePolicy.forAnalysis`) and
 Mate-in-Two Puzzles and Practice Positions (`EngineSession.forPuzzles`, quiescence

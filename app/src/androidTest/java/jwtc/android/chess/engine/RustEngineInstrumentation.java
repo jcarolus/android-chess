@@ -11,10 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.EcoService;
-import jwtc.android.chess.services.HMap;
-import jwtc.chess.JNI;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import jwtc.chess.board.BoardConstants;
 
 /** Device smoke test of the real JNI and EngineSession path, with no Activity. */
@@ -31,12 +27,11 @@ public final class RustEngineInstrumentation extends Instrumentation {
         try {
             if (ecoOnly) {
                 ecoLookupPreservesLivePosition();
-                report.putString("stream", "ECO lookup, legacy hash/SAN parity, and live-position preservation passed\n");
+                report.putString("stream", "ECO lookup, and live-position preservation passed\n");
                 finish(-1, report);
                 return;
             }
             boardOwnership();
-            boardAdapterParity();
             nativeContract();
             nativeBoardContract();
             sessionMove();
@@ -65,40 +60,6 @@ public final class RustEngineInstrumentation extends Instrumentation {
             finish(0, report);
         }
     }
-    private void boardAdapterParity() {
-        JNI reference = JNI.getInstance();
-        String[] starts = { START, "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1",
-            START.replace("8/8/8/8", "8/7$/8/8"), "4k3/P7/8/3pP3/8/8/7p/4K3 w - d6 0 1" };
-        java.util.Random random = new java.util.Random(271);
-        for (String start : starts) {
-            RustBoard board = new RustBoard();
-            check(board.initFEN(start) && reference.initFEN(start), "Parity setup failed");
-            for (int ply = 0; ply < 60; ply++) {
-                check(board.toFEN().equals(reference.toFEN()), "Adapter FEN differs at " + board.toFEN());
-                check(board.getState() == reference.getState(), "Adapter state differs at " + board.toFEN());
-                check(board.getDuckPos() == reference.getDuckPos() && board.getMyDuckPos() == reference.getMyDuckPos(),
-                    "Adapter duck state differs at " + board.toFEN());
-                check(board.getHashKey() == reference.getHashKey(), "Adapter ECO hash differs at " + board.toFEN());
-                if (board.isEnded() != 0) break;
-                java.util.Set<Integer> expected = new java.util.HashSet<>();
-                for (int i = 0; i < reference.getMoveArraySize(); i++) expected.add(reference.getMoveArrayAt(i));
-                java.util.Set<Integer> actual = new java.util.HashSet<>();
-                for (RustBoard.LegalMove move : board.legalMoves()) actual.add(move.packed);
-                check(expected.equals(actual), "Packed legal moves differ at " + board.toFEN());
-                String[] turns = RustBoardResult.words(RustBoardNative.legalMoves(board.variant(), board.initialFen(), board.history()).moves);
-                String turn = turns[random.nextInt(turns.length)];
-                String piece = turn.split("@")[0];
-                int packed = 0;
-                for (RustBoard.LegalMove move : board.legalMoves()) if (move.coordinate.equals(piece)) packed = move.packed;
-                check(board.move(packed) != 0 && reference.move(packed) != 0, "Parity move rejected");
-                if (turn.contains("@")) {
-                    int duck = jwtc.chess.board.BoardPosition.square(turn.split("@")[1]);
-                    check(board.requestDuckMove(duck) != 0 && reference.requestDuckMove(duck) != 0, "Parity duck rejected");
-                }
-            }
-        }
-    }
-
     private void boardOwnership() {
         runOnMainSync(() -> {
             GameApi game = new GameApi();
@@ -108,9 +69,6 @@ public final class RustEngineInstrumentation extends Instrumentation {
             check(game.stepBack() && game.getEngineState() != BoardConstants.DRAW_REPEAT, "Undo retained repetition draw");
             check(game.stepForward() && game.getEngineState() == BoardConstants.DRAW_REPEAT, "Redo lost repetition draw");
             String fen = game.getFEN();
-            JNI.getInstance().newGame();
-            check(fen.equals(game.getFEN()) && game.getEngineState() == BoardConstants.DRAW_REPEAT,
-                "Legacy board mutation changed Java state");
             GameApi observer = new GameApi(true);
             check(observer.getFEN().equals(fen), "Shared board lost its position");
             game.newGame();
@@ -572,7 +530,6 @@ public final class RustEngineInstrumentation extends Instrumentation {
     private void ecoLookupPreservesLivePosition() throws Exception {
         GameApi[] game = new GameApi[1];
         EcoService[] eco = new EcoService[1];
-        HMap book = HMap.read(getTargetContext().getAssets(), "hashmap.bin");
         runOnMainSync(() -> {
             game[0] = new GameApi();
             eco[0] = new EcoService(game[0]);
@@ -587,64 +544,33 @@ public final class RustEngineInstrumentation extends Instrumentation {
         }
         check(loaded[0], "ECO book did not load");
         runOnMainSync(() -> {
-            assertEcoMatchesNative(game[0], eco[0], book);
+            assertEcoProbePreservesPosition(game[0], eco[0]);
             for (String san : new String[]{"e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6"}) {
                 check(game[0].requestMove(san), "Could not play opening move " + san);
-                assertEcoMatchesNative(game[0], eco[0], book);
+                assertEcoProbePreservesPosition(game[0], eco[0]);
             }
             check(game[0].requestMove("O-O"), "Could not castle in opening");
-            assertEcoMatchesNative(game[0], eco[0], book);
+            assertEcoProbePreservesPosition(game[0], eco[0]);
             check(game[0].goTo(game[0].getRootNode()), "Could not navigate to opening root");
-            assertEcoMatchesNative(game[0], eco[0], book);
+            assertEcoProbePreservesPosition(game[0], eco[0]);
             check(game[0].initFEN(START.replace("0 1", "100 1"), true), "Could not load drawn position");
-            assertEcoMatchesNative(game[0], eco[0], book);
+            assertEcoProbePreservesPosition(game[0], eco[0]);
             game[0].newGame(BoardConstants.VARIANT_DUCK);
-            assertEcoMatchesNative(game[0], eco[0], book);
+            assertEcoProbePreservesPosition(game[0], eco[0]);
             check(game[0].requestMove("e4@d5"), "Could not play Duck turn");
-            assertEcoMatchesNative(game[0], eco[0], book);
+            assertEcoProbePreservesPosition(game[0], eco[0]);
             check(game[0].initFEN("4k3/8/8/8/8/8/8/R5KR w KQ - 0 1", true), "Could not load Chess 960");
-            assertEcoMatchesNative(game[0], eco[0], book);
+            assertEcoProbePreservesPosition(game[0], eco[0]);
         });
     }
 
-    private void assertEcoMatchesNative(GameApi game, EcoService eco, HMap book) {
-        JNI nativeBoard = JNI.getInstance();
-        GameApi.PositionSnapshot snapshot = game.getPositionSnapshot(game.getCurrentNode());
-        check(nativeBoard.initFEN(snapshot.initialFen), "Reference initial FEN rejected");
-        int[] history = snapshot.getHistory(), ducks = snapshot.getDuckHistory();
-        for (int i = 0; i < history.length; i++) {
-            check(nativeBoard.move(history[i]) != 0, "Reference history rejected");
-            if (ducks[i] >= 0) check(nativeBoard.requestDuckMove(ducks[i]) != 0, "Reference duck rejected");
-        }
+    private void assertEcoProbePreservesPosition(GameApi game, EcoService eco) {
         String fen = game.getFEN();
-        check(nativeBoard.getHashKey() == game.getHashKey(), "ECO root/history hash mismatch");
         long hash = game.getHashKey();
         Object node = game.getCurrentNode();
         int ply = game.getCurrentPly();
         ArrayList<Integer> legal = new ArrayList<>();
         for (int i = 0; i < game.getMoveArraySize(); i++) legal.add(game.getMoveArrayAt(i));
-        ArrayList<Integer> expectedMoves = new ArrayList<>();
-        JSONArray expectedEntries = new JSONArray();
-        for (int move : legal) {
-            if (nativeBoard.move(move) == 0) continue;
-            try {
-                String name = book.get(nativeBoard.getHashKey());
-                if (name != null) {
-                    expectedMoves.add(move);
-                    JSONObject entry = new JSONObject();
-                    entry.put("name", name);
-                    entry.put("move", nativeBoard.getMyMoveToString());
-                    expectedEntries.put(entry);
-                }
-            } catch (Exception error) {
-                throw new AssertionError(error);
-            } finally {
-                nativeBoard.undo();
-            }
-        }
-        check(expectedMoves.equals(eco.getAvailableMoves()), "ECO move/hash mismatch at " + fen);
-        check(expectedEntries.toString().equals(eco.getAvailable().toString()), "ECO name/SAN mismatch at " + fen);
-        check(expectedMoves.equals(eco.getAvailableMoves()), "Repeated ECO probe changed results");
         check(fen.equals(game.getFEN()) && hash == game.getHashKey(), "ECO probe mutated live position");
         check(node == game.getCurrentNode() && ply == game.getCurrentPly(), "ECO probe changed navigation");
         check(legal.size() == game.getMoveArraySize(), "ECO probe changed legal moves");
