@@ -9,6 +9,7 @@ public final class RustBoardNative {
 
     private static native RustBoardResult query(int variant, String fen, String[] history);
     private static native RustBoardResult legalMoves(int variant, String fen, String[] history);
+    private static native RustBoardResult legalTurns(int variant, String fen, String[] history);
     private static native RustBoardResult applyMove(int variant, String fen, String[] history, String move);
     private static native RustBoardResult san(int variant, String fen, String[] history, String move);
     private static native RustBoardResult pieceAt(int variant, String fen, String[] history, String square);
@@ -22,7 +23,12 @@ public final class RustBoardNative {
         return legalMoves(variant.ordinal(), fen, history);
     }
 
-    /** A Duck piece-only move returns a detached preview; record history only after placement. */
+    /** Legal moves with their SAN in {@link RustBoardResult#turns}, from a single replay of the history. */
+    public static RustBoardResult legalTurns(RustSearchRequest.Variant variant, String fen, String[] history) {
+        return legalTurns(variant.ordinal(), fen, history);
+    }
+
+    /** A Duck piece-only move returns a detached preview; record history only after placement. Otherwise {@link RustBoardResult#turns} holds the resulting position's legal moves. */
     public static RustBoardResult applyMove(RustSearchRequest.Variant variant, String fen, String[] history, String move) {
         return applyMove(variant.ordinal(), fen, history, move);
     }

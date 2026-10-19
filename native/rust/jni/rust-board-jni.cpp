@@ -9,11 +9,12 @@ struct BoardResult {
     int32_t castling;
     uint32_t captured[10];
     uint8_t piece;
-    char fen[96], san[24], moves[32768], attackers[256], error[256];
+    char fen[96], san[24], moves[32768], attackers[256], turns[8192], error[256];
 };
 extern "C" {
 void rust_board_query(int32_t, const char*, const char* const*, size_t, BoardResult*);
 void rust_board_legal_moves(int32_t, const char*, const char* const*, size_t, BoardResult*);
+void rust_board_legal_turns(int32_t, const char*, const char* const*, size_t, BoardResult*);
 void rust_board_apply_move(int32_t, const char*, const char* const*, size_t, const char*, BoardResult*);
 void rust_board_san(int32_t, const char*, const char* const*, size_t, const char*, BoardResult*);
 void rust_board_piece_at(int32_t, const char*, const char* const*, size_t, const char*, BoardResult*);
@@ -52,7 +53,7 @@ static jobject toJava(JNIEnv* env, const BoardResult& result) {
     jclass type = env->FindClass("jwtc/android/chess/engine/RustBoardResult");
     if (!type) return nullptr;
     jmethodID constructor = env->GetMethodID(type, "<init>",
-        "(ZIZJJZZZZ[ICLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+        "(ZIZJJZZZZ[ICLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
     if (!constructor) return nullptr;
     jintArray captured = env->NewIntArray(10);
     if (!captured) return nullptr;
@@ -63,18 +64,20 @@ static jobject toJava(JNIEnv* env, const BoardResult& result) {
     jstring san = env->NewStringUTF(result.san);
     jstring moves = env->NewStringUTF(result.moves);
     jstring attackers = env->NewStringUTF(result.attackers);
-    if (!fen || !san || !moves || !attackers) return nullptr;
+    jstring turns = env->NewStringUTF(result.turns);
+    if (!fen || !san || !moves || !attackers || !turns) return nullptr;
     jobject value = env->NewObject(type, constructor,
         static_cast<jboolean>(result.turnWhite), result.gameState, static_cast<jboolean>(result.inCheck),
         static_cast<jlong>(result.halfmoveClock), static_cast<jlong>(result.repetitionCount),
         static_cast<jboolean>((result.castling & 1) != 0), static_cast<jboolean>((result.castling & 2) != 0),
         static_cast<jboolean>((result.castling & 4) != 0), static_cast<jboolean>((result.castling & 8) != 0),
-        captured, static_cast<jchar>(result.piece), fen, san, moves, attackers);
+        captured, static_cast<jchar>(result.piece), fen, san, moves, attackers, turns);
     env->DeleteLocalRef(captured);
     env->DeleteLocalRef(fen);
     env->DeleteLocalRef(san);
     env->DeleteLocalRef(moves);
     env->DeleteLocalRef(attackers);
+    env->DeleteLocalRef(turns);
     return value;
 }
 extern "C" JNIEXPORT jobject JNICALL
@@ -98,6 +101,18 @@ Java_jwtc_android_chess_engine_RustBoardNative_legalMoves(JNIEnv* env, jclass, j
     if (!readHistory(env, history, moves, pointers)) return nullptr;
     BoardResult result{};
     rust_board_legal_moves(variant, startingPosition.c_str(), pointers.data(), pointers.size(), &result);
+    if (result.error[0]) { fail(env, result.error); return nullptr; }
+    return toJava(env, result);
+}
+extern "C" JNIEXPORT jobject JNICALL
+Java_jwtc_android_chess_engine_RustBoardNative_legalTurns(JNIEnv* env, jclass, jint variant, jstring fen, jobjectArray history) {
+    std::string startingPosition;
+    if (!text(env, fen, startingPosition)) return nullptr;
+    std::vector<std::string> moves;
+    std::vector<const char*> pointers;
+    if (!readHistory(env, history, moves, pointers)) return nullptr;
+    BoardResult result{};
+    rust_board_legal_turns(variant, startingPosition.c_str(), pointers.data(), pointers.size(), &result);
     if (result.error[0]) { fail(env, result.error); return nullptr; }
     return toJava(env, result);
 }

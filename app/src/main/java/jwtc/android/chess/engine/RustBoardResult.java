@@ -25,11 +25,13 @@ public final class RustBoardResult {
     public final String san;
     public final String moves;
     public final String attackers;
+    /** Space-separated {@code coordinate=san} pairs: the legal moves of the resulting position. */
+    public final String turns;
 
     public RustBoardResult(boolean turnWhite, int gameState, boolean inCheck, long halfmoveClock,
                            long repetitionCount, boolean castleWhiteKingside, boolean castleWhiteQueenside,
                            boolean castleBlackKingside, boolean castleBlackQueenside, int[] captured,
-                           char piece, String fen, String san, String moves, String attackers) {
+                           char piece, String fen, String san, String moves, String attackers, String turns) {
         this.turnWhite = turnWhite;
         this.gameState = gameState;
         this.inCheck = inCheck;
@@ -45,6 +47,7 @@ public final class RustBoardResult {
         this.san = san;
         this.moves = moves;
         this.attackers = attackers;
+        this.turns = turns;
     }
 
     /** {@link RustBoardResult#gameState} (Play/Check/Mate/Stalemate/DrawMaterial/DrawFiftyMove/DrawRepetition), indexed by its ordinal, mapped to {@link BoardConstants}'s legacy numbering. */

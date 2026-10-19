@@ -1,7 +1,6 @@
 package jwtc.android.chess.engine;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import jwtc.chess.Move;
@@ -121,19 +120,20 @@ public final class RustBoard {
     }
     public synchronized List<LegalMove> legalMoves() {
         if (legal != null) return legal;
-        LinkedHashMap<String, LegalMove> moves = new LinkedHashMap<>();
-        if (query() != null && !current().pending) {
-            BoardPosition position = new BoardPosition(toFEN());
-            String[] history = history();
-            for (String turn : RustBoardResult.words(RustBoardNative.legalMoves(variant, initialFen, history).moves)) {
-                String coordinate = turn.split("@")[0];
-                if (moves.containsKey(coordinate)) continue;
-                String san = RustBoardNative.san(variant, initialFen, history, coordinate).san;
-                moves.put(coordinate, new LegalMove(position.packedMove(coordinate, san), coordinate, san));
-            }
-        }
-        legal = java.util.Collections.unmodifiableList(new ArrayList<>(moves.values()));
+        if (query() == null || current().pending) legal = java.util.Collections.emptyList();
+        else legal = parseTurns(RustBoardNative.legalTurns(variant, initialFen, history()).turns, toFEN());
         return legal;
+    }
+    /** Parses {@code coordinate=san} pairs for the position {@code fen} into packed legal moves. */
+    private static List<LegalMove> parseTurns(String turns, String fen) {
+        BoardPosition position = new BoardPosition(fen);
+        List<LegalMove> moves = new ArrayList<>();
+        for (String pair : RustBoardResult.words(turns)) {
+            int separator = pair.indexOf('=');
+            String coordinate = pair.substring(0, separator), san = pair.substring(separator + 1);
+            moves.add(new LegalMove(position.packedMove(coordinate, san), coordinate, san));
+        }
+        return java.util.Collections.unmodifiableList(moves);
     }
     public synchronized int getMoveArraySize() { return legalMoves().size(); }
     public synchronized int getMoveArrayAt(int i) { return legalMoves().get(i).packed; }
@@ -161,7 +161,7 @@ public final class RustBoard {
             boolean pending = variant == RustSearchRequest.Variant.DUCK && result.gameState == 0;
             frames.add(new Frame(result.fen, move.coordinate, packed, -1,
                 EcoHash.afterMove(getHashKey(), toFEN(), result.fen, packed), result, pending));
-            legal = null;
+            legal = pending ? java.util.Collections.emptyList() : parseTurns(result.turns, result.fen);
             return 1;
         }
         return 0;
@@ -175,7 +175,7 @@ public final class RustBoard {
         try { result = RustBoardNative.applyMove(variant, initialFen, history(), coordinate); }
         catch (IllegalArgumentException ex) { return 0; }
         frames.set(frames.size() - 1, new Frame(result.fen, coordinate, pending.move, square, pending.hash, result, false));
-        legal = null;
+        legal = parseTurns(result.turns, result.fen);
         return 1;
     }
     public synchronized void undo() {

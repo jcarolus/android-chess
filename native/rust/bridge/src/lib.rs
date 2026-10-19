@@ -159,7 +159,7 @@ pub unsafe extern "C" fn rust_chess_search(
     }
 }
 /// Stateless board-operations result: a snapshot query, a move's SAN, the legal moves from a
-/// snapshot, or the attackers of a square. Every call fills only the fields its name promises;
+/// snapshot (optionally with SAN in `turns`), or the attackers of a square. Every call fills only the fields its name promises;
 /// the rest are left at their zero/empty default.
 #[repr(C)]
 pub struct BoardResult {
@@ -175,6 +175,7 @@ pub struct BoardResult {
     san: [u8; 24],
     moves: [u8; 32768],
     attackers: [u8; 256],
+    turns: [u8; 8192],
     error: [u8; 256],
 }
 fn default_board_result() -> BoardResult {
@@ -191,6 +192,7 @@ fn default_board_result() -> BoardResult {
         san: [0; 24],
         moves: [0; 32768],
         attackers: [0; 256],
+        turns: [0; 8192],
         error: [0; 256],
     }
 }
@@ -269,6 +271,28 @@ fn fill_query(position: &Position, out: &mut BoardResult) -> Result<(), Error> {
     }
     Ok(())
 }
+/// Writes the legal moves of `position` to `out.turns` as space-separated `coordinate=san` pairs.
+/// Duck turns are reduced to their piece move, since SAN and move selection ignore the placement.
+fn fill_turns(position: &Position, out: &mut BoardResult) -> Result<(), Error> {
+    let mut seen = std::collections::HashSet::new();
+    let mut turns = String::new();
+    for turn in position.legal_moves() {
+        let piece = turn.as_str().split('@').next().unwrap_or("");
+        if !seen.insert(piece.to_string()) {
+            continue;
+        }
+        if !turns.is_empty() {
+            turns.push(' ');
+        }
+        turns.push_str(piece);
+        turns.push('=');
+        turns.push_str(&position.to_san(piece)?);
+    }
+    if !write_capped(&mut out.turns, &turns) {
+        return Err(Error("Legal turns exceed buffer capacity".into()));
+    }
+    Ok(())
+}
 fn report(output: &mut BoardResult, result: std::thread::Result<Result<(), Error>>) {
     if let Err(e) = result.unwrap_or_else(|_| Err(Error("Rust board call panicked".into()))) {
         write_truncated(&mut output.error, &e.to_string());
@@ -330,8 +354,32 @@ pub unsafe extern "C" fn rust_board_legal_moves(
     }));
     report(output, result);
 }
+/// The legal moves from a snapshot with their SAN, as `coordinate=san` pairs in `turns`.
+///
+/// # Safety
+/// All strings must be NUL-terminated and live for the call; `out` must be writable.
+#[no_mangle]
+pub unsafe extern "C" fn rust_board_legal_turns(
+    variant: i32,
+    fen: *const c_char,
+    history: *const *const c_char,
+    count: usize,
+    out: *mut BoardResult,
+) {
+    if out.is_null() {
+        return;
+    }
+    let output = &mut *out;
+    *output = default_board_result();
+    let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
+        let position = rebuild(variant, fen, history, count)?;
+        fill_turns(&position, output)
+    }));
+    report(output, result);
+}
 /// Applies one coordinate move to a snapshot and reports the resulting position, matching
-/// `rust_board_query`'s fields. A Duck piece-only coordinate produces a detached preview;
+/// `rust_board_query`'s fields, plus the new position's legal moves in `turns` (empty for a
+/// Duck preview). A Duck piece-only coordinate produces a detached preview;
 /// complete recorded turns require a placement unless the piece move ends the game.
 /// The snapshot itself is never mutated.
 ///
@@ -354,12 +402,17 @@ pub unsafe extern "C" fn rust_board_apply_move(
     let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
         let mut position = rebuild(variant, fen, history, count)?;
         let coordinate = text(coordinate)?;
-        if parse_variant(variant)? == Variant::Duck && !coordinate.contains('@') {
+        let preview = parse_variant(variant)? == Variant::Duck && !coordinate.contains('@');
+        if preview {
             position = position.preview_piece(coordinate)?;
         } else {
             position.apply(coordinate)?;
         }
-        fill_query(&position, output)
+        fill_query(&position, output)?;
+        if !preview {
+            fill_turns(&position, output)?;
+        }
+        Ok(())
     }));
     report(output, result);
 }
@@ -448,4 +501,108 @@ pub unsafe extern "C" fn rust_board_attackers(
         Ok(())
     }));
     report(output, result);
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::ffi::CString;
+    const START: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    fn c(s: &str) -> CString {
+        CString::new(s).unwrap()
+    }
+    fn text_of(bytes: &[u8]) -> String {
+        let end = bytes.iter().position(|&b| b == 0).unwrap_or(bytes.len());
+        String::from_utf8(bytes[..end].to_vec()).unwrap()
+    }
+    /// Runs `call` against the history's C representation and returns the filled result.
+    fn with_history(
+        history: &[String],
+        call: impl FnOnce(*const *const c_char, usize, &mut BoardResult),
+    ) -> Box<BoardResult> {
+        let owned: Vec<CString> = history.iter().map(|m| c(m)).collect();
+        let pointers: Vec<*const c_char> = owned.iter().map(|m| m.as_ptr()).collect();
+        let mut out = Box::new(default_board_result());
+        call(pointers.as_ptr(), pointers.len(), &mut out);
+        assert_eq!(text_of(&out.error), "");
+        out
+    }
+    fn legal_turns(history: &[String]) -> String {
+        let fen = c(START);
+        let out = with_history(history, |h, n, out| unsafe {
+            rust_board_legal_turns(0, fen.as_ptr(), h, n, out)
+        });
+        text_of(&out.turns)
+    }
+    fn apply(history: &[String], coordinate: &str) -> Box<BoardResult> {
+        let fen = c(START);
+        let coordinate = c(coordinate);
+        with_history(history, |h, n, out| unsafe {
+            rust_board_apply_move(0, fen.as_ptr(), h, n, coordinate.as_ptr(), out)
+        })
+    }
+    #[test]
+    fn legal_turns_pair_each_move_with_its_san() {
+        let turns = legal_turns(&[]);
+        assert_eq!(turns.split(' ').count(), 20);
+        assert!(turns.split(' ').any(|t| t == "e2e4=e4"));
+        assert!(turns.split(' ').any(|t| t == "g1f3=Nf3"));
+    }
+    #[test]
+    fn apply_move_reports_the_next_positions_turns() {
+        let history = vec!["e2e4".to_string()];
+        let applied = apply(&[], "e2e4");
+        assert_eq!(text_of(&applied.turns), legal_turns(&history));
+    }
+    /// A game of `plies` moves, always taking the move at a rotating index of the legal list.
+    fn game(plies: usize) -> Vec<String> {
+        let mut history: Vec<String> = Vec::new();
+        for i in 0..plies {
+            let turns = legal_turns(&history);
+            if turns.is_empty() {
+                break;
+            }
+            let all: Vec<&str> = turns.split(' ').collect();
+            history.push(all[(i * 7) % all.len()].split('=').next().unwrap().to_string());
+        }
+        history
+    }
+    /// `cargo test --release --manifest-path native/rust/Cargo.toml -p rust-chess-bridge import_cost -- --ignored --nocapture`
+    #[test]
+    #[ignore]
+    fn import_cost() {
+        let moves = game(80);
+        let fen = c(START);
+        let started = std::time::Instant::now();
+        let mut calls = 0;
+        for i in 0..moves.len() {
+            let history = &moves[..i];
+            let out = with_history(history, |h, n, out| unsafe {
+                rust_board_legal_moves(0, fen.as_ptr(), h, n, out)
+            });
+            calls += 1;
+            for coordinate in text_of(&out.moves).split(' ') {
+                let coordinate = c(coordinate);
+                with_history(history, |h, n, out| unsafe {
+                    rust_board_san(0, fen.as_ptr(), h, n, coordinate.as_ptr(), out)
+                });
+                calls += 1;
+            }
+            apply(history, &moves[i]);
+            calls += 1;
+        }
+        let before = started.elapsed();
+        let started = std::time::Instant::now();
+        for i in 0..moves.len() {
+            apply(&moves[..i], &moves[i]);
+        }
+        let after = started.elapsed();
+        println!(
+            "{} plies: per-move SAN calls {} native calls in {:?}; batched {} native calls in {:?}",
+            moves.len(),
+            calls,
+            before,
+            moves.len(),
+            after
+        );
+    }
 }
