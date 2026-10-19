@@ -138,8 +138,6 @@ public class GameApi {
         }
     }
 
-    private static final String[] NO_RUST_HISTORY = new String[0];
-
     RustSearchRequest.Variant rustVariant() {
         return board.variant();
     }
@@ -148,11 +146,6 @@ public class GameApi {
         List<PositionMove> moves = new ArrayList<>();
         for (RustBoard.LegalMove move : board.legalMoves()) moves.add(new PositionMove(move.packed, move.san));
         return moves;
-    }
-
-    private static String pieceMoveOf(String coordinate) {
-        int at = coordinate.indexOf('@');
-        return at < 0 ? coordinate : coordinate.substring(0, at);
     }
 
     /** Resolves the selected promotion and castling gesture through Rust's legal moves. */
@@ -165,19 +158,6 @@ public class GameApi {
     private PositionMove applyRustMove(int from, int to) {
         PositionMove resolved = resolveLegalMove(from, to);
         return resolved != null && board.move(resolved.move) != 0 ? resolved : null;
-    }
-
-    /** Generate piece-move SAN from the preceding position, undoing the move if Rust rejects it. */
-    private String appliedMoveSan(String previousFen, RustSearchRequest.Variant variant) {
-        int[] files = variant == RustSearchRequest.Variant.CHESS_960
-            ? RustSearchRequest.chess960Files(previousFen, previousFen.split("\\s+")[1].equals("w")) : null;
-        String coordinate = RustSearchRequest.toRustCoordinate(board.getMyMove(), files);
-        try {
-            return RustBoardNative.san(variant, previousFen, NO_RUST_HISTORY, coordinate).san;
-        } catch (IllegalArgumentException ex) {
-            board.undo();
-            return null;
-        }
     }
 
     /** Main-thread only. Inspect a recorded position without dispatching navigation or changing the tree. */
@@ -317,17 +297,13 @@ public class GameApi {
             return false;
         }
 
-        String previousFen = board.toFEN();
-        RustSearchRequest.Variant variant = rustVariant();
         if (board.doCastleMove(from, to) == 0) {
             dispatchIllegalMove();
             return false;
         }
         final int move = board.getMyMove();
 
-        String san = appliedMoveSan(previousFen, variant);
-        if (san == null) return false;
-        addPGNEntry(board.getNumBoard(), san, "", move, -1);
+        addPGNEntry(board.getNumBoard(), board.getMySan(), "", move, -1);
 
         dispatchMove(move);
 
@@ -369,11 +345,8 @@ public class GameApi {
     /** Applies and records a move without notifications; used by importers and engine batches. */
     public boolean applyMove(int move, int duckMove) {
         if (pendingDuckMove != null) return false;
-        String previousFen = board.toFEN();
-        RustSearchRequest.Variant variant = rustVariant();
         if (board.move(move) == 0) return false;
-        String san = appliedMoveSan(previousFen, variant);
-        if (san == null) return false;
+        String san = board.getMySan();
         if (duckMove != -1 && board.requestDuckMove(duckMove) == 0) {
             board.undo();
             return false;
@@ -964,38 +937,21 @@ public class GameApi {
             : letter == 'b' ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
     }
 
-    private static boolean pieceMatches(char fenPieceChar, int piece) {
-        switch (Character.toLowerCase(fenPieceChar)) {
-            case 'k': return piece == BoardConstants.KING;
-            case 'q': return piece == BoardConstants.QUEEN;
-            case 'r': return piece == BoardConstants.ROOK;
-            case 'b': return piece == BoardConstants.BISHOP;
-            case 'n': return piece == BoardConstants.KNIGHT;
-            default: return piece == BoardConstants.PAWN;
-        }
-    }
-
     /**
      * The square of the single legal move's piece matching a SAN move token's piece letter,
      * destination, capture flag, promotion and disambiguating file/rank - or -1 when zero or
-     * more than one legal move matches. Sourced from the Rust board API's legal-move list.
+     * more than one legal move matches. Sourced from the board's cached legal moves.
      */
-    private int resolveDisambiguatedFrom(Matcher match, int destination, String fen, RustSearchRequest.Variant variant) {
+    private int resolveDisambiguatedFrom(Matcher match, int destination) {
         String pieceName = match.group(1);
-        int piece = pieceName == null ? BoardConstants.PAWN
-            : "K".equals(pieceName) ? BoardConstants.KING
-            : "Q".equals(pieceName) ? BoardConstants.QUEEN
-            : "R".equals(pieceName) ? BoardConstants.ROOK
-            : "B".equals(pieceName) ? BoardConstants.BISHOP : BoardConstants.KNIGHT;
+        char piece = pieceName == null ? 'P' : pieceName.charAt(0);
         boolean capture = match.group(4) != null;
         String promotion = match.group(7);
         Integer promoted = promotion == null ? null : promotionPieceFromSuffix(promotion);
-        RustBoardResult legal = RustBoardNative.legalMoves(variant, fen, NO_RUST_HISTORY);
         int candidate = -1, matches = 0;
-        Set<String> seen = new HashSet<>();
-        for (String coordinate : RustBoardResult.words(legal.moves)) {
-            String pieceMove = pieceMoveOf(coordinate);
-            if (pieceMove.length() < 4 || !seen.add(pieceMove)) continue;
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            String pieceMove = move.coordinate;
+            if (pieceMove.length() < 4) continue;
             int from, to;
             try {
                 from = Pos.fromString(pieceMove.substring(0, 2));
@@ -1007,16 +963,20 @@ public class GameApi {
             boolean isPromotion = pieceMove.length() > 4;
             if ((promoted != null) != isPromotion) continue;
             if (promoted != null && promotionPieceFromLetter(pieceMove.charAt(4)) != promoted) continue;
-            char pieceChar = RustBoardNative.pieceAt(variant, fen, NO_RUST_HISTORY, pieceMove.substring(0, 2)).piece;
-            if (!pieceMatches(pieceChar, piece)) continue;
-            String san = RustBoardNative.san(variant, fen, NO_RUST_HISTORY, pieceMove).san;
-            if (san.indexOf('x') >= 0 != capture) continue;
+            if (sanPiece(move.san) != piece) continue;
+            if (move.san.indexOf('x') >= 0 != capture) continue;
             if (match.group(2) != null && !match.group(2).equals(Pos.colToString(from))) continue;
             if (match.group(3) != null && !match.group(3).equals(Pos.rowToString(from))) continue;
             candidate = from;
             matches++;
         }
         return matches == 1 ? candidate : -1;
+    }
+
+    /** The moving piece's letter in a legal move's SAN: pawn moves have none and castling is the king's. */
+    private static char sanPiece(String san) {
+        char first = san.charAt(0);
+        return first == 'O' ? 'K' : Character.isUpperCase(first) ? first : 'P';
     }
 
     private synchronized boolean requestMove(Matcher match, String castle, String annotation) {
@@ -1039,7 +999,7 @@ public class GameApi {
             from = Pos.fromColAndRow(files[0], whiteToMove ? 7 : 0);
             to = Pos.fromColAndRow("O-O".equals(castle) ? 6 : 2, whiteToMove ? 7 : 0);
         } else {
-            from = resolveDisambiguatedFrom(match, destination, fen, variant);
+            from = resolveDisambiguatedFrom(match, destination);
             if (from < 0) return false;
             to = destination;
             String promotion = match.group(7);
@@ -1048,8 +1008,7 @@ public class GameApi {
         if (promotionPiece != null) board.setPromo(promotionPiece);
         // A SAN token is a complete half-move. Reject missing/invalid duck placements atomically below.
         if ((castle == null ? board.requestMove(from, to) : board.doCastleMove(from, to)) == 0) return false;
-        String san = appliedMoveSan(fen, variant);
-        if (san == null) return false;
+        String san = board.getMySan();
         if (duck != null && board.requestDuckMove(duckSquare) == 0
             || duck == null && board.getVariant() == BoardConstants.VARIANT_DUCK && board.isEnded() == 0) {
             board.undo();

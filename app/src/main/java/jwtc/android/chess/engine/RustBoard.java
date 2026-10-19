@@ -22,13 +22,13 @@ public final class RustBoard {
     private List<LegalMove> legal;
 
     private static final class Frame {
-        final String fen, coordinate;
+        final String fen, coordinate, san;
         final int move, duck;
         final long hash;
         final RustBoardResult result;
         final boolean pending;
-        Frame(String fen, String coordinate, int move, int duck, long hash, RustBoardResult result, boolean pending) {
-            this.fen = fen; this.coordinate = coordinate; this.move = move; this.duck = duck;
+        Frame(String fen, String coordinate, String san, int move, int duck, long hash, RustBoardResult result, boolean pending) {
+            this.fen = fen; this.coordinate = coordinate; this.san = san; this.move = move; this.duck = duck;
             this.hash = hash; this.result = result; this.pending = pending;
         }
     }
@@ -50,12 +50,39 @@ public final class RustBoard {
         for (int i = 1; i < frames.size(); i++) if (!frames.get(i).pending) history.add(frames.get(i).coordinate);
         return history.toArray(new String[0]);
     }
+    /**
+     * Index of the frame Rust calls replay from. Positions before the latest pawn move or capture
+     * (halfmove clock 0) can never repeat, so the replay starts there rather than at the initial
+     * position; replay cost then depends on the reversible tail, not the length of the game.
+     */
+    private int replayBase() {
+        for (int i = frames.size() - 1; i > 0; i--) {
+            Frame frame = frames.get(i);
+            if (!frame.pending && frame.result != null && frame.result.halfmoveClock == 0) return i;
+        }
+        return 0;
+    }
+    /**
+     * Rust numbers the fullmove from the start of the history it replayed. Replaying from a later
+     * base would restart that count, so the FEN is renumbered from the game's own ply.
+     */
+    private static String numbered(String fen, int ply) {
+        return fen.substring(0, fen.lastIndexOf(' ') + 1) + (ply / 2 + 1);
+    }
+    private String replayFen() { return frames.get(replayBase()).fen; }
+    private String[] replayHistory() {
+        List<String> history = new ArrayList<>();
+        for (int i = replayBase() + 1; i < frames.size(); i++) if (!frames.get(i).pending) history.add(frames.get(i).coordinate);
+        return history.toArray(new String[0]);
+    }
     public synchronized RustBoardResult query() { return current().result; }
     public synchronized String toFEN() { return current().fen; }
     public synchronized int getNumBoard() { return frames.size() - 1; }
     public synchronized int getTurn() { return new BoardPosition(toFEN()).white ? BoardConstants.WHITE : BoardConstants.BLACK; }
     public synchronized int getVariant() { return variant == RustSearchRequest.Variant.DUCK ? BoardConstants.VARIANT_DUCK : BoardConstants.VARIANT_DEFAULT; }
     public synchronized int getMyMove() { return current().move; }
+    /** SAN of the move that produced the current position; empty at a starting position. */
+    public synchronized String getMySan() { return current().san; }
     public synchronized int getMyDuckPos() { return current().duck; }
     public synchronized int getDuckPos() { return new BoardPosition(toFEN()).duck(); }
     public synchronized long getHashKey() { return current().hash; }
@@ -106,7 +133,7 @@ public final class RustBoard {
         if (result != null) fen = result.fen;
         initialFen = fen;
         frames.clear();
-        frames.add(new Frame(fen, "", 0, new BoardPosition(fen).duck(), EcoHash.initial(fen), result, false));
+        frames.add(new Frame(fen, "", "", 0, new BoardPosition(fen).duck(), EcoHash.initial(fen), result, false));
         legal = null;
     }
     public synchronized void newGame() { newGame(BoardConstants.VARIANT_DEFAULT); }
@@ -121,7 +148,7 @@ public final class RustBoard {
     public synchronized List<LegalMove> legalMoves() {
         if (legal != null) return legal;
         if (query() == null || current().pending) legal = java.util.Collections.emptyList();
-        else legal = parseTurns(RustBoardNative.legalTurns(variant, initialFen, history()).turns, toFEN());
+        else legal = parseTurns(RustBoardNative.legalTurns(variant, replayFen(), replayHistory()).turns, toFEN());
         return legal;
     }
     /** Parses {@code coordinate=san} pairs for the position {@code fen} into packed legal moves. */
@@ -157,10 +184,11 @@ public final class RustBoard {
     public synchronized int move(int packed) {
         for (LegalMove move : legalMoves()) {
             if (move.packed != packed) continue;
-            RustBoardResult result = RustBoardNative.applyMove(variant, initialFen, history(), move.coordinate);
+            RustBoardResult result = RustBoardNative.applyMove(variant, replayFen(), replayHistory(), move.coordinate);
             boolean pending = variant == RustSearchRequest.Variant.DUCK && result.gameState == 0;
-            frames.add(new Frame(result.fen, move.coordinate, packed, -1,
-                EcoHash.afterMove(getHashKey(), toFEN(), result.fen, packed), result, pending));
+            String fen = numbered(result.fen, frames.size());
+            frames.add(new Frame(fen, move.coordinate, move.san, packed, -1,
+                EcoHash.afterMove(getHashKey(), toFEN(), fen, packed), result, pending));
             legal = pending ? java.util.Collections.emptyList() : parseTurns(result.turns, result.fen);
             return 1;
         }
@@ -172,9 +200,9 @@ public final class RustBoard {
         Frame pending = current();
         String coordinate = pending.coordinate + "@" + Pos.toString(square);
         final RustBoardResult result;
-        try { result = RustBoardNative.applyMove(variant, initialFen, history(), coordinate); }
+        try { result = RustBoardNative.applyMove(variant, replayFen(), replayHistory(), coordinate); }
         catch (IllegalArgumentException ex) { return 0; }
-        frames.set(frames.size() - 1, new Frame(result.fen, coordinate, pending.move, square, pending.hash, result, false));
+        frames.set(frames.size() - 1, new Frame(numbered(result.fen, frames.size() - 1), coordinate, pending.san, pending.move, square, pending.hash, result, false));
         legal = parseTurns(result.turns, result.fen);
         return 1;
     }

@@ -553,6 +553,27 @@ mod tests {
         let applied = apply(&[], "e2e4");
         assert_eq!(text_of(&applied.turns), legal_turns(&history));
     }
+    /// Replaying from the last pawn move gives the same repetition result as the full history.
+    #[test]
+    fn windowed_history_keeps_repetition_detection() {
+        let shuffle = ["g1f3", "g8f6", "f3g1", "f6g8"];
+        let mut full = vec!["e2e4".to_string(), "e7e5".to_string()];
+        full.extend(shuffle.iter().map(|m| m.to_string()));
+        full.extend(shuffle.iter().map(|m| m.to_string()));
+        let fen = c(START);
+        let whole = with_history(&full, |h, n, out| unsafe {
+            rust_board_query(0, fen.as_ptr(), h, n, out)
+        });
+        let base = apply(&["e2e4".to_string()], "e7e5");
+        let base_fen = c(&text_of(&base.fen));
+        let tail: Vec<String> = full[2..].to_vec();
+        let windowed = with_history(&tail, |h, n, out| unsafe {
+            rust_board_query(0, base_fen.as_ptr(), h, n, out)
+        });
+        assert_eq!(whole.game_state, 6);
+        assert_eq!(windowed.game_state, whole.game_state);
+        assert_eq!(windowed.repetition_count, whole.repetition_count);
+    }
     /// A game of `plies` moves, always taking the move at a rotating index of the legal list.
     fn game(plies: usize) -> Vec<String> {
         let mut history: Vec<String> = Vec::new();
@@ -596,13 +617,30 @@ mod tests {
             apply(&moves[..i], &moves[i]);
         }
         let after = started.elapsed();
+        // Replay from the latest pawn move or capture (halfmove clock 0), as `RustBoard` does.
+        let started = std::time::Instant::now();
+        let mut base_fen = START.to_string();
+        let mut tail: Vec<String> = Vec::new();
+        for m in &moves {
+            let base = c(&base_fen);
+            let out = with_history(&tail, |h, n, out| unsafe {
+                rust_board_apply_move(0, base.as_ptr(), h, n, c(m).as_ptr(), out)
+            });
+            tail.push(m.clone());
+            if out.halfmove_clock == 0 {
+                base_fen = text_of(&out.fen);
+                tail.clear();
+            }
+        }
+        let windowed = started.elapsed();
         println!(
-            "{} plies: per-move SAN calls {} native calls in {:?}; batched {} native calls in {:?}",
+            "{} plies: per-move SAN calls {} native calls in {:?}; batched {} calls in {:?}; windowed in {:?}",
             moves.len(),
             calls,
             before,
             moves.len(),
-            after
+            after,
+            windowed
         );
     }
 }
