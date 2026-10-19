@@ -82,6 +82,10 @@ struct Worker<'a> {
     quiescence: bool,
     nodes: u64,
     interrupted: bool,
+    /// Positions seen along the current line, from the game history onwards.
+    seen: Vec<Repetition>,
+    /// Entries of `seen` before this index precede an irreversible move.
+    seen_from: usize,
     best: [Option<Move>; 20],
     values: [i32; 20],
     pv: [Vec<Move>; 20],
@@ -100,7 +104,7 @@ impl Worker<'_> {
         if self.stopped() {
             return alpha;
         }
-        if p.drawn_in_search() {
+        if p.drawn_in_search(&self.seen[self.seen_from..]) {
             return 0;
         }
         if depth == 0 {
@@ -126,9 +130,10 @@ impl Worker<'_> {
         for index in 0..moves.len() {
             pick(moves, &mut scores, index);
             let mut m = moves[index];
-            let next = p.make(m);
+            let next = p.make_unrecorded(m);
             let children = next.pseudo_moves();
             let mut line = Vec::new();
+            let seen_from = self.enter(p, m);
             let value = if next.pieces.iter().any(|p| p[KING] == 0) {
                 -next.evaluate()
             } else {
@@ -162,6 +167,7 @@ impl Worker<'_> {
                 }
                 best_duck
             };
+            self.leave(p, m, seen_from);
             if value > best && !self.interrupted {
                 best = value;
                 self.best[ply] = Some(m);
@@ -181,6 +187,23 @@ impl Worker<'_> {
         best
     }
 
+    /// Records `p` as seen before `m` and returns the previous `seen_from`,
+    /// to be handed back to `leave`.
+    fn enter(&mut self, p: &Position, m: Move) -> usize {
+        let from = self.seen_from;
+        if p.is_irreversible(m) {
+            self.seen_from = self.seen.len();
+        } else {
+            self.seen.push(p.repetition());
+        }
+        from
+    }
+    fn leave(&mut self, p: &Position, m: Move, seen_from: usize) {
+        if !p.is_irreversible(m) {
+            self.seen.pop();
+        }
+        self.seen_from = seen_from;
+    }
     fn stopped(&mut self) -> bool {
         if self.control.stopped.load(Ordering::Relaxed)
             || self.nodes.is_multiple_of(1000)
@@ -203,7 +226,7 @@ impl Worker<'_> {
         if self.stopped() {
             return alpha;
         }
-        if p.drawn_in_search() {
+        if p.drawn_in_search(&self.seen[self.seen_from..]) {
             return 0;
         }
         let mut scores: Vec<_> = moves
@@ -221,7 +244,7 @@ impl Worker<'_> {
         while index < moves.len() {
             pick(moves, &mut scores, index);
             let mut m = moves[index];
-            let mut next = p.make(m);
+            let mut next = p.make_unrecorded(m);
             if next.attacked(p.turn, next.king(p.turn)) {
                 moves.swap_remove(index);
                 continue;
@@ -229,19 +252,22 @@ impl Worker<'_> {
             let mut children = next.pseudo_moves();
             m.check = next.in_check();
             next.last_check = m.check;
+            let seen_from = self.enter(p, m);
             let value = if depth == 1 {
                 -self.quiesce(&next, &mut children, 5, -beta, -alpha)
             } else {
                 -self.alpha_beta(&next, &mut children, depth - 1, ply + 1, -beta, -alpha)
             };
+            self.leave(p, m, seen_from);
             if value > best && !self.interrupted {
                 best = value;
                 self.best[ply] = Some(m);
                 self.values[ply] = value;
-                self.pv[ply] = vec![m];
+                self.pv[ply].clear();
+                self.pv[ply].push(m);
                 if depth > 1 {
-                    let continuation = self.pv[ply + 1].clone();
-                    self.pv[ply].extend(continuation);
+                    let (line, deeper) = self.pv.split_at_mut(ply + 1);
+                    line[ply].extend_from_slice(&deeper[0]);
                 }
             }
             alpha = alpha.max(best);
@@ -284,7 +310,7 @@ impl Worker<'_> {
         while index < moves.len() {
             pick(moves, &mut scores, index);
             let m = moves[index];
-            let mut next = p.make(m);
+            let mut next = p.make_unrecorded(m);
             if next.attacked(p.turn, next.king(p.turn)) {
                 moves.swap_remove(index);
                 continue;
@@ -311,7 +337,7 @@ impl Worker<'_> {
 fn pick(moves: &mut [Move], scores: &mut [i32], index: usize) {
     let mut best = -1;
     let mut at = index;
-    for (i, score) in scores.iter().enumerate().take(moves.len()).skip(index) {
+    for (i, score) in scores[..moves.len()].iter().enumerate().skip(index) {
         if *score > best {
             best = *score;
             at = i;
@@ -382,6 +408,8 @@ pub fn search_with_progress(
         quiescence: request.options.quiescence,
         nodes: 1,
         interrupted: false,
+        seen: p.repetitions().to_vec(),
+        seen_from: 0,
         best: [None; 20],
         values: [0; 20],
         pv: std::array::from_fn(|_| Vec::new()),

@@ -16,6 +16,33 @@ const KBNK: [[i32; 64]; 2] = [
         60, 50, 10, 20, 30, 40, 50, 60, 70, 60, 0, 10, 20, 30, 40, 50, 60, 70,
     ],
 ];
+/// Squares in front of a pawn, on its own and the adjacent files, indexed by
+/// colour and square; white (1) advances towards lower squares.
+const PASSED_PAWN_AREA: [[u64; 64]; 2] = {
+    let mut table = [[0u64; 64]; 2];
+    let mut t = 0;
+    while t < 2 {
+        let mut s = 0;
+        while s < 64 {
+            let mut row = 0;
+            while row < 8 {
+                if (t == 1 && row < s / 8) || (t == 0 && row > s / 8) {
+                    let mut col = 0;
+                    while col < 8 {
+                        if col + 1 >= s % 8 && col <= s % 8 + 1 {
+                            table[t][s] |= 1u64 << (row * 8 + col);
+                        }
+                        col += 1;
+                    }
+                }
+                row += 1;
+            }
+            s += 1;
+        }
+        t += 1;
+    }
+    table
+};
 const CENTER: u64 = 0x00003C3C3C3C0000;
 const WHITE_SQUARES: u64 = 0x55AA55AA55AA55AA;
 impl Position {
@@ -62,6 +89,7 @@ impl Position {
     }
     fn extensions(&self, t: usize) -> i32 {
         let p = self.pieces[t];
+        let occ = self.occupied();
         let pawns = p[PAWN];
         let opp_pawns = self.pieces[t ^ 1][PAWN];
         let mut value = if self.castling[t] & 8 != 0 {
@@ -71,7 +99,7 @@ impl Position {
         } else {
             -100
         };
-        value += (self.range(KING, t, self.king(t)) & pawns).count_ones() as i32 * 5;
+        value += (self.range_with(KING, t, self.king(t), occ) & pawns).count_ones() as i32 * 5;
         if pawns
             & if t == 1 {
                 bit(51) | bit(52)
@@ -83,21 +111,12 @@ impl Position {
             value -= 30;
         }
         for s in squares(pawns) {
-            let mut passed = 0;
-            for row in 0..8 {
-                if (t == 1 && row < s / 8) || (t == 0 && row > s / 8) {
-                    for col in 0usize..8 {
-                        if col.abs_diff(s % 8) <= 1 {
-                            passed |= bit(row * 8 + col);
-                        }
-                    }
-                }
-            }
+            let passed = PASSED_PAWN_AREA[t][s];
             value += advance(t, s) * 5;
             if passed & pawns != 0 {
                 value += 5;
             }
-            if self.range(PAWN, t, s) & pawns != 0 {
+            if self.range_with(PAWN, t, s, occ) & pawns != 0 {
                 value += 5;
             }
             if (0x0101010101010101u64 << (s % 8)) & (pawns & !bit(s)) != 0 {
@@ -109,11 +128,11 @@ impl Position {
         }
         value += (p[KNIGHT] & CENTER).count_ones() as i32 * 5;
         for s in squares(p[KNIGHT]) {
-            value += self.mobility(KNIGHT, t, s).count_ones() as i32 * 5;
+            value += self.mobility_with(KNIGHT, t, s, occ).count_ones() as i32 * 5;
         }
         if p[BISHOP].count_ones() == 1 {
             let s = p[BISHOP].trailing_zeros() as usize;
-            value += self.mobility(BISHOP, t, s).count_ones() as i32 * 5;
+            value += self.mobility_with(BISHOP, t, s, occ).count_ones() as i32 * 5;
             value -= (pawns
                 & if s.is_multiple_of(2) {
                     WHITE_SQUARES
@@ -124,12 +143,12 @@ impl Position {
         } else if p[BISHOP] != 0 {
             value += 20;
             for s in squares(p[BISHOP]) {
-                value += self.mobility(BISHOP, t, s).count_ones() as i32 * 7;
+                value += self.mobility_with(BISHOP, t, s, occ).count_ones() as i32 * 7;
             }
         }
         let mut first = None;
         for s in squares(p[ROOK]) {
-            value += self.mobility(ROOK, t, s).count_ones() as i32 * 8;
+            value += self.mobility_with(ROOK, t, s, occ).count_ones() as i32 * 8;
             if let Some(previous) = first {
                 if s / 8 == previous / 8 {
                     value += 5;
@@ -144,7 +163,7 @@ impl Position {
                         0
                     }))
                     | (p[ROOK] & !bit(s)))
-                    & self.range(ROOK, t, s)
+                    & self.range_with(ROOK, t, s, occ)
                     != 0
                 {
                     value += 30;
@@ -161,8 +180,8 @@ impl Position {
                 }
             } else {
                 for s in squares(p[QUEEN]) {
-                    value += self.mobility(ROOK, t, s).count_ones() as i32 * 8
-                        + self.mobility(BISHOP, t, s).count_ones() as i32 * 7;
+                    value += self.mobility_with(ROOK, t, s, occ).count_ones() as i32 * 8
+                        + self.mobility_with(BISHOP, t, s, occ).count_ones() as i32 * 7;
                 }
             }
         }

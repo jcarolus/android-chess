@@ -84,7 +84,9 @@ int main(int argc, char** argv) {
     char fen[256];
     board->toFEN(fen);
     std::cout << "POSITION\t" << fen << '\t' << board->boardValue() << '\t' << board->getState() << '\n';
-    for (int i = 0; i < board->getNumMoves(); ++i) {
+    // An ended position has no playable moves, so there are no children to list.
+    bool playable = board->getState() == ChessBoard::PLAY || board->getState() == ChessBoard::CHECK;
+    for (int i = 0; playable && i < board->getNumMoves(); ++i) {
         int move = board->getMoveAt(i);
         ChessBoard child;
         board->makeMove(move, &child);

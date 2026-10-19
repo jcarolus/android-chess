@@ -380,7 +380,7 @@ class ChessBoard {
     BITBOARD bitb();
     BITBOARD bitbAttacked();
     BITBOARD bitbTurnPiece(const int t, const int p);
-    inline boolean isPosFree(const int p);
+    boolean isPosFree(const int p);
     boolean isPosFriend(const int p);
     boolean isPosEnemy(const int p);
     int pieceAt(const int t, const int p);

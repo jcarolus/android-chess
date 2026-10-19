@@ -66,6 +66,98 @@ pub(crate) const ROOK: usize = 3;
 pub(crate) const QUEEN: usize = 4;
 pub(crate) const KING: usize = 5;
 pub(crate) const WHITE: usize = 1;
+const fn leaper<const N: usize>(deltas: [(i32, i32); N]) -> [u64; 64] {
+    let mut table = [0u64; 64];
+    let mut s = 0;
+    while s < 64 {
+        let mut i = 0;
+        while i < N {
+            let r = s as i32 / 8 + deltas[i].0;
+            let c = s as i32 % 8 + deltas[i].1;
+            if r >= 0 && r < 8 && c >= 0 && c < 8 {
+                table[s] |= 1u64 << (r * 8 + c);
+            }
+            i += 1;
+        }
+        s += 1;
+    }
+    table
+}
+const KNIGHT_MOVES: [u64; 64] = leaper([
+    (-2, -1),
+    (-2, 1),
+    (-1, -2),
+    (-1, 2),
+    (1, -2),
+    (1, 2),
+    (2, -1),
+    (2, 1),
+]);
+const KING_MOVES: [u64; 64] = leaper([
+    (-1, -1),
+    (-1, 1),
+    (1, -1),
+    (1, 1),
+    (-1, 0),
+    (1, 0),
+    (0, -1),
+    (0, 1),
+]);
+/// Indexed by the capturing side: white (1) captures towards lower squares.
+const PAWN_ATTACKS: [[u64; 64]; 2] = [leaper([(1, -1), (1, 1)]), leaper([(-1, -1), (-1, 1)])];
+/// Slider directions: the four diagonals first, then the four straights.
+const DIRECTIONS: [(i32, i32); 8] = [
+    (-1, -1),
+    (-1, 1),
+    (1, -1),
+    (1, 1),
+    (-1, 0),
+    (1, 0),
+    (0, -1),
+    (0, 1),
+];
+/// Whether the square index grows along the direction.
+const ASCENDING: [bool; 8] = [false, false, true, true, false, true, false, true];
+/// Every square from `s` outwards along each direction, ignoring blockers.
+const RAYS: [[u64; 64]; 8] = {
+    let mut rays = [[0u64; 64]; 8];
+    let mut d = 0;
+    while d < 8 {
+        let mut s = 0;
+        while s < 64 {
+            let mut r = s as i32 / 8 + DIRECTIONS[d].0;
+            let mut c = s as i32 % 8 + DIRECTIONS[d].1;
+            while r >= 0 && r < 8 && c >= 0 && c < 8 {
+                rays[d][s] |= 1u64 << (r * 8 + c);
+                r += DIRECTIONS[d].0;
+                c += DIRECTIONS[d].1;
+            }
+            s += 1;
+        }
+        d += 1;
+    }
+    rays
+};
+/// Squares a slider on `s` reaches along the given directions: each ray up to
+/// and including the first occupied square.
+fn slide(directions: std::ops::Range<usize>, occupied: u64, s: usize) -> u64 {
+    let mut result = 0;
+    for d in directions {
+        let ray = RAYS[d][s];
+        let blockers = ray & occupied;
+        result |= if blockers == 0 {
+            ray
+        } else {
+            let first = if ASCENDING[d] {
+                blockers.trailing_zeros()
+            } else {
+                63 - blockers.leading_zeros()
+            };
+            ray & !RAYS[d][first as usize]
+        };
+    }
+    result
+}
 pub(crate) fn bit(s: usize) -> u64 {
     1u64 << s
 }
@@ -161,7 +253,7 @@ impl Move {
     }
 }
 #[derive(Clone, PartialEq, Eq)]
-struct Repetition {
+pub(crate) struct Repetition {
     pieces: [[u64; 6]; 2],
     turn: usize,
     rights: [u8; 2],
@@ -352,54 +444,24 @@ impl Position {
             .sum()
     }
     pub(crate) fn range(&self, p: usize, t: usize, s: usize) -> u64 {
-        let dirs: &[(i32, i32)] = match p {
-            PAWN => {
-                if t == 1 {
-                    &[(-1, -1), (-1, 1)]
-                } else {
-                    &[(1, -1), (1, 1)]
-                }
-            }
-            KNIGHT => &[
-                (-2, -1),
-                (-2, 1),
-                (-1, -2),
-                (-1, 2),
-                (1, -2),
-                (1, 2),
-                (2, -1),
-                (2, 1),
-            ],
-            BISHOP => &[(-1, -1), (-1, 1), (1, -1), (1, 1)],
-            ROOK => &[(-1, 0), (1, 0), (0, -1), (0, 1)],
-            _ => &[
-                (-1, -1),
-                (-1, 1),
-                (1, -1),
-                (1, 1),
-                (-1, 0),
-                (1, 0),
-                (0, -1),
-                (0, 1),
-            ],
-        };
-        let mut result = 0;
-        for &(dr, dc) in dirs {
-            let (mut r, mut c) = (s as i32 / 8 + dr, s as i32 % 8 + dc);
-            while (0..8).contains(&r) && (0..8).contains(&c) {
-                let b = bit((r * 8 + c) as usize);
-                result |= b;
-                if p == PAWN || p == KNIGHT || p == KING || self.occupied() & b != 0 {
-                    break;
-                }
-                r += dr;
-                c += dc;
-            }
-        }
-        result
+        self.range_with(p, t, s, self.occupied())
     }
-    pub(crate) fn mobility(&self, p: usize, t: usize, s: usize) -> u64 {
-        self.range(p, t, s)
+    /// `range` for callers that already hold `self.occupied()`.
+    pub(crate) fn range_with(&self, p: usize, t: usize, s: usize, occupied: u64) -> u64 {
+        if s >= 64 {
+            return 0;
+        }
+        match p {
+            PAWN => PAWN_ATTACKS[t][s],
+            KNIGHT => KNIGHT_MOVES[s],
+            KING => KING_MOVES[s],
+            BISHOP => slide(0..4, occupied, s),
+            ROOK => slide(4..8, occupied, s),
+            _ => slide(0..8, occupied, s),
+        }
+    }
+    pub(crate) fn mobility_with(&self, p: usize, t: usize, s: usize, occupied: u64) -> u64 {
+        self.range_with(p, t, s, occupied)
             & !(self.own(t)
                 | if t == self.turn {
                     self.duck.map(bit).unwrap_or(0)
@@ -411,15 +473,20 @@ impl Position {
         if s >= 64 {
             return false;
         }
-        (0..6).any(|p| {
-            squares(self.pieces[t ^ 1][p]).any(|from| self.range(p, t ^ 1, from) & bit(s) != 0)
-        })
+        // Looking outward from `s` finds the same attackers as expanding each
+        // enemy piece: knight, king and slider reach is symmetric, and an enemy
+        // pawn attacks `s` exactly when it stands where a pawn of `t` on `s`
+        // would capture.
+        let occupied = self.occupied();
+        (0..6).any(|p| self.pieces[t ^ 1][p] & self.range_with(p, t, s, occupied) != 0)
     }
     pub fn in_check(&self) -> bool {
         self.variant != Variant::Duck && self.attacked(self.turn, self.king(self.turn))
     }
     pub(crate) fn pseudo_moves(&self) -> Vec<Move> {
-        let mut moves = Vec::new();
+        // Positions rarely have more than 64 pseudo-legal moves, so one
+        // allocation covers a node.
+        let mut moves = Vec::with_capacity(64);
         let t = self.turn;
         let occ = self.occupied();
         for piece in [KNIGHT, BISHOP, PAWN, ROOK, QUEEN, KING] {
@@ -427,7 +494,7 @@ impl Position {
                 let step = if t == 1 { -8i32 } else { 8 };
                 // Pawn groups and destination order match the native move generator.
                 for group in 0..4 {
-                    let mut group_moves = Vec::new();
+                    let group_start = moves.len();
                     for from in squares(self.pieces[t][PAWN]) {
                         let delta = match group {
                             0 => step,
@@ -478,18 +545,17 @@ impl Position {
                             for promo in [QUEEN, ROOK, BISHOP, KNIGHT] {
                                 let mut promotion = m;
                                 promotion.promotion = Some(promo);
-                                group_moves.push(promotion);
+                                moves.push(promotion);
                             }
                         } else {
-                            group_moves.push(m);
+                            moves.push(m);
                         }
                     }
-                    group_moves.sort_by_key(|m| (m.to + 32) % 64);
-                    moves.extend(group_moves);
+                    moves[group_start..].sort_by_key(|m| (m.to + 32) % 64);
                 }
             } else {
                 for from in squares(self.pieces[t][piece]) {
-                    for to in squares(self.mobility(piece, t, from)) {
+                    for to in squares(self.mobility_with(piece, t, from, occ)) {
                         if self.variant != Variant::Duck && self.pieces[t ^ 1][KING] & bit(to) != 0
                         {
                             break;
@@ -589,7 +655,7 @@ impl Position {
         }
         let mut i = 0;
         while i < moves.len() {
-            let next = self.make(moves[i]);
+            let next = self.make_unrecorded(moves[i]);
             if next.attacked(self.turn, next.king(self.turn)) {
                 moves.swap_remove(i);
             } else {
@@ -717,7 +783,7 @@ impl Position {
             u8::from(self.castling[1] & 5 == 0) | (u8::from(self.castling[1] & 6 == 0) << 1),
         ]
     }
-    fn repetition(&self) -> Repetition {
+    pub(crate) fn repetition(&self) -> Repetition {
         let ep = self.ep.filter(|&to| {
             squares(self.pieces[self.turn][PAWN]).any(|from| {
                 if self.range(PAWN, self.turn, from) & bit(to) == 0 {
@@ -726,7 +792,7 @@ impl Position {
                 let mut m = Move::new(from, to);
                 m.capture = true;
                 m.ep = true;
-                let next = self.make(m);
+                let next = self.make_unrecorded(m);
                 !next.attacked(self.turn, next.king(self.turn))
             })
         });
@@ -737,15 +803,45 @@ impl Position {
             ep,
         }
     }
+    /// A copy of the board state that leaves out the game history and the
+    /// repetition list, so it never allocates.
+    fn without_records(&self) -> Self {
+        Self {
+            pieces: self.pieces,
+            turn: self.turn,
+            castling: self.castling,
+            rook_file: self.rook_file,
+            variant: self.variant,
+            duck: self.duck,
+            ep: self.ep,
+            halfmove: self.halfmove,
+            ply: self.ply,
+            history: Vec::new(),
+            previous: Vec::new(),
+            last_check: self.last_check,
+        }
+    }
+    /// Whether the move resets the repetition list (a pawn move or a capture).
+    pub(crate) fn is_irreversible(&self, m: Move) -> bool {
+        m.capture || self.piece(self.turn, m.from) == Some(PAWN)
+    }
+    /// The position after the move, with the game history and the repetition
+    /// list carried over. Search uses `make_unrecorded` and tracks repetitions
+    /// on its own stack instead.
     pub(crate) fn make(&self, m: Move) -> Self {
-        let mut n = self.clone();
-        let t = self.turn;
-        let p = self.piece(t, m.from).unwrap();
-        if p == PAWN || m.capture {
-            n.previous.clear();
-        } else {
+        let mut n = self.make_unrecorded(m);
+        n.history = self.history.clone();
+        if !self.is_irreversible(m) {
+            n.previous = self.previous.clone();
             n.previous.push(self.repetition());
         }
+        n
+    }
+    /// The position after the move, without history or repetition list.
+    pub(crate) fn make_unrecorded(&self, m: Move) -> Self {
+        let mut n = self.without_records();
+        let t = self.turn;
+        let p = self.piece(t, m.from).unwrap();
         n.pieces[t][p] &= !bit(m.from);
         if m.capture {
             let back_rank = if t == WHITE { 0 } else { 7 };
@@ -809,14 +905,17 @@ impl Position {
         }
         n
     }
-    pub(crate) fn drawn_in_search(&self) -> bool {
-        self.halfmove == 100
-            || self
-                .previous
-                .iter()
-                .filter(|p| **p == self.repetition())
-                .count()
-                >= 2
+    /// The repetition list the search starts from.
+    pub(crate) fn repetitions(&self) -> &[Repetition] {
+        &self.previous
+    }
+    /// Fifty-move or threefold-repetition draw, given the positions seen since
+    /// the last irreversible move.
+    pub(crate) fn drawn_in_search(&self, seen: &[Repetition]) -> bool {
+        self.halfmove == 100 || {
+            let current = self.repetition();
+            seen.iter().filter(|p| **p == current).count() >= 2
+        }
     }
     pub fn game_state(&self) -> GameState {
         if self.variant == Variant::Duck && self.pieces.iter().any(|p| p[KING] == 0) {
@@ -825,13 +924,8 @@ impl Position {
         if self.halfmove == 100 {
             return GameState::DrawFiftyMove;
         }
-        if self
-            .previous
-            .iter()
-            .filter(|p| **p == self.repetition())
-            .count()
-            >= 2
-        {
+        let current = self.repetition();
+        if self.previous.iter().filter(|p| **p == current).count() >= 2 {
             return GameState::DrawRepetition;
         }
         if self
