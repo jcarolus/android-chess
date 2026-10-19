@@ -355,7 +355,7 @@ public class OexEngine extends EngineApi {
             String[] parts = line.split("\\s+");
             String uciMove = parts.length > 1 ? parts[1] : "";
             // Resolve against the live board on the main thread, only if it still
-            // matches this PLAY search. ANALYSIS never touches JNI move resolution.
+            // matches this PLAY search. ANALYSIS never touches board move resolution.
             updateHandler.post(() -> {
                 if (!isCurrentSearch(completed.id)) return;
                 if (!completed.fen.equals(gameApi.getFEN())) {

@@ -35,6 +35,8 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 finish(-1, report);
                 return;
             }
+            boardOwnership();
+            boardAdapterParity();
             nativeContract();
             nativeBoardContract();
             sessionMove();
@@ -63,6 +65,93 @@ public final class RustEngineInstrumentation extends Instrumentation {
             finish(0, report);
         }
     }
+    private void boardAdapterParity() {
+        JNI reference = JNI.getInstance();
+        String[] starts = { START, "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1",
+            START.replace("8/8/8/8", "8/7$/8/8"), "4k3/P7/8/3pP3/8/8/7p/4K3 w - d6 0 1" };
+        java.util.Random random = new java.util.Random(271);
+        for (String start : starts) {
+            RustBoard board = new RustBoard();
+            check(board.initFEN(start) && reference.initFEN(start), "Parity setup failed");
+            for (int ply = 0; ply < 60; ply++) {
+                check(board.toFEN().equals(reference.toFEN()), "Adapter FEN differs at " + board.toFEN());
+                check(board.getState() == reference.getState(), "Adapter state differs at " + board.toFEN());
+                check(board.getDuckPos() == reference.getDuckPos() && board.getMyDuckPos() == reference.getMyDuckPos(),
+                    "Adapter duck state differs at " + board.toFEN());
+                check(board.getHashKey() == reference.getHashKey(), "Adapter ECO hash differs at " + board.toFEN());
+                if (board.isEnded() != 0) break;
+                java.util.Set<Integer> expected = new java.util.HashSet<>();
+                for (int i = 0; i < reference.getMoveArraySize(); i++) expected.add(reference.getMoveArrayAt(i));
+                java.util.Set<Integer> actual = new java.util.HashSet<>();
+                for (RustBoard.LegalMove move : board.legalMoves()) actual.add(move.packed);
+                check(expected.equals(actual), "Packed legal moves differ at " + board.toFEN());
+                String[] turns = RustBoardResult.words(RustBoardNative.legalMoves(board.variant(), board.initialFen(), board.history()).moves);
+                String turn = turns[random.nextInt(turns.length)];
+                String piece = turn.split("@")[0];
+                int packed = 0;
+                for (RustBoard.LegalMove move : board.legalMoves()) if (move.coordinate.equals(piece)) packed = move.packed;
+                check(board.move(packed) != 0 && reference.move(packed) != 0, "Parity move rejected");
+                if (turn.contains("@")) {
+                    int duck = jwtc.chess.board.BoardPosition.square(turn.split("@")[1]);
+                    check(board.requestDuckMove(duck) != 0 && reference.requestDuckMove(duck) != 0, "Parity duck rejected");
+                }
+            }
+        }
+    }
+
+    private void boardOwnership() {
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            for (String san : new String[]{"Nf3", "Nf6", "Ng1", "Ng8", "Nf3", "Nf6", "Ng1", "Ng8"})
+                check(game.requestMove(san), "Repetition move failed: " + san);
+            check(game.getEngineState() == BoardConstants.DRAW_REPEAT, "Queries lost repetition history");
+            check(game.stepBack() && game.getEngineState() != BoardConstants.DRAW_REPEAT, "Undo retained repetition draw");
+            check(game.stepForward() && game.getEngineState() == BoardConstants.DRAW_REPEAT, "Redo lost repetition draw");
+            String fen = game.getFEN();
+            JNI.getInstance().newGame();
+            check(fen.equals(game.getFEN()) && game.getEngineState() == BoardConstants.DRAW_REPEAT,
+                "Legacy board mutation changed Java state");
+            GameApi observer = new GameApi(true);
+            check(observer.getFEN().equals(fen), "Shared board lost its position");
+            game.newGame();
+            check(observer.getFEN().equals(START), "Board sharing stopped observing changes");
+            check(game.loadPGN("1. e4 e5 (1... c5 2. Nf3) 2. Nf3 *"), "Variation import failed");
+            String pgn = game.exportFullPGN();
+            fen = game.getFEN();
+            check(!game.loadPGN("1. e4 e5 2. Ke4 *"), "Illegal PGN accepted");
+            check(fen.equals(game.getFEN()) && pgn.equals(game.exportFullPGN()), "Failed import changed game");
+            game.newGameRandomFischer(518);
+            check(game.isChess960Variant(), "Chess960 seed 518 lost its variant");
+            game.restoreCurrentBoard();
+            check(game.isChess960Variant(), "Restoring Chess960 lost its variant");
+            check(game.initFEN("4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1", true), "Chess960 setup failed");
+            check(game.requestMove("O-O") && game.isChess960Variant(), "Castling lost Chess960 variant");
+            game.restoreCurrentBoard();
+            check(game.isChess960Variant(), "Restored castled position lost Chess960 variant");
+            check(game.initFEN("4k3/8/8/8/8/8/8/R5KR w KQ - 0 1", true), "Stationary king setup failed");
+            check(game.isAmbiguousCastle(62, 62) != 0 && game.requestMoveCastle(62, 62), "Stationary king castle failed");
+            check(game.initFEN("4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", true), "King-to-rook setup failed");
+            check(game.requestMove(60, 63), "King-to-rook castle request failed");
+            game.reset();
+            check(game.isLegalPosition() == 0 && game.getMoveArraySize() == 0, "Empty setup accepted");
+            game.putPiece(60, BoardConstants.KING, BoardConstants.WHITE);
+            game.putPiece(4, BoardConstants.KING, BoardConstants.BLACK);
+            game.commitBoard();
+            check(game.isLegalPosition() == 1, "Valid edited board rejected");
+            game.newGame(BoardConstants.VARIANT_DUCK);
+            check(game.getMyDuckPos() == game.getDuckPos(), "Starting Duck position appears unfinished");
+            String start = game.getFEN();
+            check(game.requestMove(52, 36), "Duck piece preview failed");
+            check(game.hasPendingDuckMove() && game.getMyDuckPos() == -1 && game.pieceAt(BoardConstants.WHITE, 36) == BoardConstants.PAWN,
+                "Duck preview not displayed");
+            check(!game.requestDuckMove(36), "Duck placed on occupied square");
+            check(game.stepBack() && start.equals(game.getFEN()), "Duck preview undo failed");
+            check(game.requestMove(52, 36) && game.requestDuckMove(27), "Duck completion failed");
+            fen = game.getFEN();
+            check(game.stepBack() && game.stepForward() && fen.equals(game.getFEN()), "Duck replay failed");
+        });
+    }
+
     private void nativeContract() {
         long handle = RustNative.create();
         try {
@@ -462,7 +551,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             GameApi pinned = new GameApi();
             check(pinned.initFEN("8/8/1N2k3/8/4n3/1n6/8/3KQ3 b - - 0 1", true), "Could not load the pin position");
             check(pinned.requestMove("Nc5"), "Nc5 should resolve to the sole legal, unpinned knight");
-            check(pinned.getFEN().startsWith("8/8/1Nn1k3/8/8/8/8/3KQ3"), "Wrong knight moved for Nc5: " + pinned.getFEN());
+            check(pinned.getFEN().startsWith("8/8/1N2k3/2n5/4n3/8/8/3KQ3"), "Wrong knight moved for Nc5: " + pinned.getFEN());
 
             GameApi capture = new GameApi();
             check(capture.requestMove("e4") && capture.requestMove("d5") && capture.requestMove("exd5"),
@@ -520,7 +609,15 @@ public final class RustEngineInstrumentation extends Instrumentation {
 
     private void assertEcoMatchesNative(GameApi game, EcoService eco, HMap book) {
         JNI nativeBoard = JNI.getInstance();
+        GameApi.PositionSnapshot snapshot = game.getPositionSnapshot(game.getCurrentNode());
+        check(nativeBoard.initFEN(snapshot.initialFen), "Reference initial FEN rejected");
+        int[] history = snapshot.getHistory(), ducks = snapshot.getDuckHistory();
+        for (int i = 0; i < history.length; i++) {
+            check(nativeBoard.move(history[i]) != 0, "Reference history rejected");
+            if (ducks[i] >= 0) check(nativeBoard.requestDuckMove(ducks[i]) != 0, "Reference duck rejected");
+        }
         String fen = game.getFEN();
+        check(nativeBoard.getHashKey() == game.getHashKey(), "ECO root/history hash mismatch");
         long hash = game.getHashKey();
         Object node = game.getCurrentNode();
         int ply = game.getCurrentPly();

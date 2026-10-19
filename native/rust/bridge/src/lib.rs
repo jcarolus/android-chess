@@ -331,7 +331,9 @@ pub unsafe extern "C" fn rust_board_legal_moves(
     report(output, result);
 }
 /// Applies one coordinate move to a snapshot and reports the resulting position, matching
-/// `rust_board_query`'s fields. The snapshot itself is never mutated.
+/// `rust_board_query`'s fields. A Duck piece-only coordinate produces a detached preview;
+/// complete recorded turns require a placement unless the piece move ends the game.
+/// The snapshot itself is never mutated.
 ///
 /// # Safety
 /// All strings must be NUL-terminated and live for the call; `out` must be writable.
@@ -351,7 +353,12 @@ pub unsafe extern "C" fn rust_board_apply_move(
     *output = default_board_result();
     let result = catch_unwind(AssertUnwindSafe(|| -> Result<(), Error> {
         let mut position = rebuild(variant, fen, history, count)?;
-        position.apply(text(coordinate)?)?;
+        let coordinate = text(coordinate)?;
+        if parse_variant(variant)? == Variant::Duck && !coordinate.contains('@') {
+            position = position.preview_piece(coordinate)?;
+        } else {
+            position.apply(coordinate)?;
+        }
         fill_query(&position, output)
     }));
     report(output, result);

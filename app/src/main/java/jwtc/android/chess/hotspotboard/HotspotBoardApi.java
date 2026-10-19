@@ -11,7 +11,7 @@ public class HotspotBoardApi extends GameApi {
     protected boolean isPlayingAsWhite = true;
 
     public HotspotBoardApi() {
-        // The service and other board screens share the native position.
+        // The service and other board screens share the Java-owned position.
         super(true);
     }
 

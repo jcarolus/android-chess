@@ -10,6 +10,11 @@ import java.util.TreeSet;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;
+import jwtc.android.chess.engine.RustNative;
+import jwtc.android.chess.engine.RustSearchRequest;
+import jwtc.android.chess.engine.RustSearchResult;
+import jwtc.android.chess.engine.RustBoardNative;
+import jwtc.chess.board.BoardPosition;
 import jwtc.chess.board.BoardConstants;
 
 /** Stores each mate in a game of an import file as a Practice Position; the same final position counts once per job. */
@@ -63,17 +68,20 @@ public class PracticeImportHandler implements ImportHandler {
                         }
                         String sFEN = gameApi.getFEN();
 
-                        long searchId = gameApi.prepareSearch(plies, 0, 0);
-                        if (searchId == 0) return false;
-                        gameApi.runSearch(searchId);
-                        if (!gameApi.isSearchCurrent(searchId)) return false;
-                        GameApi.SearchResult result = gameApi.getSearchResult(searchId);
-                        int move = result.move;
-                        int value = result.score;
+                        GameApi.PositionSnapshot snapshot = gameApi.getPositionSnapshot(gameApi.getCurrentNode());
+                        RustSearchRequest.Variant variant = gameApi.isDuckVariant() ? RustSearchRequest.Variant.DUCK
+                            : gameApi.isChess960Variant() ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+                        RustSearchResult result = RustNative.search(RustSearchRequest.fromSnapshot(1, snapshot, plies, 0, false, variant));
+                        if (!result.hasEvaluation || result.bestMove.isEmpty() || !gameApi.isCurrentPosition(snapshot)) return false;
+                        String san = RustBoardNative.san(variant, snapshot.fen, new String[0], result.bestMove).san;
+                        int move = new BoardPosition(snapshot.fen).packedMove(result.bestMove, san);
+                        int duckAt = result.bestMove.indexOf('@');
+                        int duck = duckAt < 0 ? -1 : BoardPosition.square(result.bestMove.substring(duckAt + 1));
+                        int value = result.score * (snapshot.turn == BoardConstants.WHITE ? 1 : -1);
 
                         //Log.i(TAG, moves + ", Move " + Move.toDbgString(move) + " val: " + value + " at plies " + plies);
 
-                        if (value == BoardConstants.VALUATION_MATE * (plies % 2 == 0 ? 1 : -1) && gameApi.applyMove(move, -1)) {
+                        if (value == BoardConstants.VALUATION_MATE * (plies % 2 == 0 ? 1 : -1) && gameApi.applyMove(move, duck)) {
 
                             // save when it's our move
                             if (plies % 2 == 0) {

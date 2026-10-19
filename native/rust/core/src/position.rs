@@ -629,6 +629,22 @@ impl Position {
     pub fn apply(&mut self, coordinate: &str) -> Result<(), Error> {
         self.apply_input(coordinate, false).map(|_| ())
     }
+    /// Board UI preview of a Duck piece move. Complete turns still use `apply`, which
+    /// rejects missing placements; a preview must never enter recorded search history.
+    pub fn preview_piece(&self, coordinate: &str) -> Result<Self, Error> {
+        if self.variant != Variant::Duck || coordinate.contains('@') {
+            return Err(invalid("Expected a Duck piece move"));
+        }
+        if self.game_state() != GameState::Play {
+            return Err(invalid("Game has ended"));
+        }
+        let m = self
+            .legal_internal()
+            .into_iter()
+            .find(|m| self.external(self.turn, *m).as_str() == coordinate)
+            .ok_or_else(|| invalid("Illegal move"))?;
+        Ok(self.make(m))
+    }
     /// A pending trailing piece move is validated but leaves this owned position unchanged.
     pub(crate) fn apply_input(
         &mut self,

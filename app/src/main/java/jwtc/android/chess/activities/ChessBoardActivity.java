@@ -1073,7 +1073,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected void setMoveToPositions(int from) {
         // Log.d(TAG, "setMoveToPositions " + from);
         moveToPositions.clear();
-        // The JNI move array only describes the side whose turn it currently is. Activities that
+        // The legal-move array only describes the side whose turn it currently is. Activities that
         // allow selecting the other side (for example, while preparing a pre-move) must not show
         // those destinations as if they applied to the selected piece.
         if (showMoves && getSelectableColor() == gameApi.getTurn()) {
@@ -1717,7 +1717,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
      * filled when "Show moves" is on and only for the side to move. A move
      * onto a square holding one of your own pieces can only be castling, and
      * the engine accepts a king move along its own rank as a castling request
-     * (Game::requestMove), including onto its own rook. In Chess960 the
+     * (GameApi.requestMove), including onto its own rook. In Chess960 the
      * king's castling square can itself hold that rook.
      */
     private boolean isReselectTap(int pos) {

@@ -1,7 +1,7 @@
 package jwtc.android.chess.engine;
 
-/** Search-only JNI adapter. Handles are confined to one RustLocalEngine worker. */
-final class RustNative {
+/** Search-only JNI adapter. Each search handle is confined to its owning worker. */
+public final class RustNative {
     static { System.loadLibrary("rust-chess-jni"); }
     static native long create();
     static native void stop(long handle);
@@ -15,6 +15,12 @@ final class RustNative {
     static RustSearchResult search(long handle, RustSearchRequest request, ProgressListener listener) {
         return search(handle, request.searchId, request.variant.ordinal(), request.startingPosition,
             request.getHistory(), request.depth, request.timeMillis, request.quiescence, listener);
+    }
+    /** Blocking search for import jobs; the caller owns the worker thread. */
+    public static RustSearchResult search(RustSearchRequest request) {
+        long handle = create();
+        try { return search(handle, request); }
+        finally { destroy(handle); }
     }
     private RustNative() {}
 }

@@ -34,7 +34,7 @@ public final class RustSearchRequest {
 
     public String[] getHistory() { return history.clone(); }
 
-    static RustSearchRequest fromSnapshot(long id, GameApi.PositionSnapshot position,
+    public static RustSearchRequest fromSnapshot(long id, GameApi.PositionSnapshot position,
                                           int depth, int millis, boolean quiescence, Variant variant) {
         int[] packed = position.getHistory();
         int[] ducks = position.getDuckHistory();

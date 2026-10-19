@@ -1,5 +1,7 @@
 package jwtc.android.chess.engine;
 
+import jwtc.chess.board.BoardConstants;
+
 /**
  * Result of a stateless board-operations call. Each {@link RustBoardNative} method fills only
  * the fields its name promises; the rest are left at their zero/empty default.
@@ -43,6 +45,16 @@ public final class RustBoardResult {
         this.san = san;
         this.moves = moves;
         this.attackers = attackers;
+    }
+
+    /** {@link RustBoardResult#gameState} (Play/Check/Mate/Stalemate/DrawMaterial/DrawFiftyMove/DrawRepetition), indexed by its ordinal, mapped to {@link BoardConstants}'s legacy numbering. */
+    private static final int[] LEGACY_STATE_FOR_RUST_CODE = {
+        BoardConstants.PLAY, BoardConstants.CHECK, BoardConstants.MATE, BoardConstants.STALEMATE,
+        BoardConstants.DRAW_MATERIAL, BoardConstants.DRAW_50, BoardConstants.DRAW_REPEAT,
+    };
+
+    public static int boardState(int rustGameStateCode) {
+        return LEGACY_STATE_FOR_RUST_CODE[rustGameStateCode];
     }
 
     /** Splits {@link #moves} (or {@link #attackers}) on its separating spaces. */

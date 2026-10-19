@@ -131,3 +131,20 @@ fn malformed_duck_positions_are_rejected() {
         assert!(CoordinateMove::parse(token).is_err());
     }
 }
+
+#[test]
+fn piece_preview_is_detached_and_complete_turns_still_require_placement() {
+    let mut p = Position::from_fen(Variant::Duck, START).unwrap();
+    let preview = p.preview_piece("e2e4").unwrap();
+    assert_eq!(p.fen(), START);
+    assert_eq!(preview.piece_at("e4").unwrap(), Some('P'));
+    assert_eq!(preview.piece_at("e2").unwrap(), None);
+    assert!(!preview.white_to_move());
+    assert!(p.apply("e2e4").is_err());
+    assert!(p.preview_piece("e2e5").is_err());
+    assert!(p.preview_piece("e2e4@d5").is_err());
+    p.apply("e2e4@d5").unwrap();
+    assert_eq!(p.history(), &["e2e4@d5"]);
+    let capture = Position::from_fen(Variant::Duck, "4k3/4R3/8/3$4/8/8/8/4K3 w - - 0 1").unwrap();
+    assert_eq!(capture.preview_piece("e7e8").unwrap().game_state(), GameState::Mate);
+}

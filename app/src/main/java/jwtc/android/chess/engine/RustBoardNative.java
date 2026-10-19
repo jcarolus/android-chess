@@ -22,6 +22,7 @@ public final class RustBoardNative {
         return legalMoves(variant.ordinal(), fen, history);
     }
 
+    /** A Duck piece-only move returns a detached preview; record history only after placement. */
     public static RustBoardResult applyMove(RustSearchRequest.Variant variant, String fen, String[] history, String move) {
         return applyMove(variant.ordinal(), fen, history, move);
     }

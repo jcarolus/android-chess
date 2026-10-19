@@ -6,6 +6,13 @@ import jwtc.chess.Move;
 public final class EcoHash {
     private EcoHash() {}
 
+    /** Initial hash follows the book's historical convention, regardless of FEN turn/rights. */
+    public static long initial(String fen) {
+        long hash = pieces(fen);
+        for (int i = 768; i <= 772; i++) hash ^= BoardHashKeys.HASH_KEY[i];
+        return hash;
+    }
+
     public static long afterMove(long hash, String beforeFen, String afterFen, int move) {
         boolean castle = Move.isOO(move) || Move.isOOO(move);
         if (castle) {

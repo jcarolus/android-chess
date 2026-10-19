@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +19,7 @@ import jwtc.android.chess.engine.RustBoardNative;
 import jwtc.android.chess.engine.RustBoardResult;
 import jwtc.android.chess.engine.RustSearchRequest;
 import jwtc.chess.GameRecord;
-import jwtc.chess.JNI;
+import jwtc.android.chess.engine.RustBoard;
 import jwtc.chess.GameTree;
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.Pgn;
@@ -33,18 +32,19 @@ import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
 /*
-Wraps the JNI Java Native Interface
+Owns game history and coordinates Rust-backed board operations
 Implements PGN functionality
 Deals with some parts of move notation
  */
 public class GameApi {
     private static final String TAG = "GameApi";
     protected ArrayList<GameListener> listeners = new ArrayList<>();
-    private JNI jni;
+    private final RustBoard board;
     public static final int MAX_PGN_SIZE = 500000;
 
     public final HashMap<String, String> pgnTags; //
     private GameTree gameTree;
+    private RustSearchRequest.Variant gameVariant;
     private Node currentNode;
     private PGNEntry pendingDuckMove;
     private int promotionPiece = BoardConstants.QUEEN;
@@ -62,7 +62,7 @@ public class GameApi {
     }
 
     public boolean hasPendingDuckMove() { return pendingDuckMove != null; }
-    public boolean isDuckVariant() { return jni.getVariant() == BoardConstants.VARIANT_DUCK; }
+    public boolean isDuckVariant() { return board.getVariant() == BoardConstants.VARIANT_DUCK; }
 
     public Node getRootNode() { return gameTree.getRoot(); }
     public Node getCurrentNode() { return currentNode; }
@@ -121,7 +121,7 @@ public class GameApi {
 
     /** Main-thread only; both placement and history must match before cloning the live board. */
     public boolean isCurrentPosition(PositionSnapshot position) {
-        return pendingDuckMove == null && position.fen.equals(jni.toFEN())
+        return pendingDuckMove == null && position.fen.equals(board.toFEN())
             && position.positionCommand.equals(gameTree.positionCommand(currentNode));
     }
 
@@ -140,77 +140,13 @@ public class GameApi {
 
     private static final String[] NO_RUST_HISTORY = new String[0];
 
-    /** {@link RustBoardResult#gameState} (Play/Check/Mate/Stalemate/DrawMaterial/DrawFiftyMove/DrawRepetition), indexed by its ordinal, mapped to {@link BoardConstants}'s legacy numbering. */
-    private static final int[] LEGACY_STATE_FOR_RUST_CODE = {
-        BoardConstants.PLAY, BoardConstants.CHECK, BoardConstants.MATE, BoardConstants.STALEMATE,
-        BoardConstants.DRAW_MATERIAL, BoardConstants.DRAW_50, BoardConstants.DRAW_REPEAT,
-    };
-
-    static int legacyGameState(int rustGameStateCode) {
-        return LEGACY_STATE_FOR_RUST_CODE[rustGameStateCode];
-    }
-
-    /** The {@link BoardConstants} piece at a square owned by {@code turn}, or {@link BoardConstants#FIELD}. */
-    static int legacyPieceAt(char rustPieceChar, int turn) {
-        if (rustPieceChar == 0 || Character.isUpperCase(rustPieceChar) != (turn == BoardConstants.WHITE)) {
-            return BoardConstants.FIELD;
-        }
-        switch (Character.toLowerCase(rustPieceChar)) {
-            case 'p': return BoardConstants.PAWN;
-            case 'n': return BoardConstants.KNIGHT;
-            case 'b': return BoardConstants.BISHOP;
-            case 'r': return BoardConstants.ROOK;
-            case 'q': return BoardConstants.QUEEN;
-            case 'k': return BoardConstants.KING;
-            default: return BoardConstants.FIELD; // the duck marker '$'
-        }
-    }
-
     RustSearchRequest.Variant rustVariant() {
-        return isDuckVariant() ? RustSearchRequest.Variant.DUCK
-            : isChess960Variant() ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
+        return board.variant();
     }
 
-    /**
-     * The current position's query result, sourced from the live legacy board's FEN, or
-     * {@code null} for a position Rust's {@code from_fen} rejects. Board setup freely leaves the
-     * native board in such states (no king, two kings of one colour) while pieces are added and
-     * removed one at a time; callers fall back to the legacy engine for exactly those positions.
-     */
-    private RustBoardResult rustQueryOrNull() {
-        try {
-            return RustBoardNative.query(rustVariant(), jni.toFEN(), NO_RUST_HISTORY);
-        } catch (IllegalArgumentException ex) {
-            return null;
-        }
-    }
-
-    /**
-     * Each legal move's UCI and SAN, sourced from the Rust board API; paired with the matching
-     * legacy packed move, since move application itself still goes through the legacy engine.
-     * A Duck turn's coordinate carries a duck square too ({@code e2e4@d5}); only the piece-move
-     * part is kept here, once per distinct piece move.
-     */
-    private List<PositionMove> rustLegalMoves(String fen, RustSearchRequest.Variant variant) {
-        int[] files = variant == RustSearchRequest.Variant.CHESS_960
-            ? RustSearchRequest.chess960Files(fen, jni.getTurn() == BoardConstants.WHITE) : null;
-        Map<String, Integer> packedByCoordinate = new HashMap<>();
-        int count = jni.getMoveArraySize();
-        for (int i = 0; i < count; i++) {
-            int move = jni.getMoveArrayAt(i);
-            packedByCoordinate.put(RustSearchRequest.toRustCoordinate(move, files), move);
-        }
-        RustBoardResult legal = RustBoardNative.legalMoves(variant, fen, NO_RUST_HISTORY);
+    private List<PositionMove> rustLegalMoves() {
         List<PositionMove> moves = new ArrayList<>();
-        Set<String> seen = new HashSet<>();
-        for (String coordinate : RustBoardResult.words(legal.moves)) {
-            String pieceMove = pieceMoveOf(coordinate);
-            if (!seen.add(pieceMove)) continue;
-            Integer packed = packedByCoordinate.get(pieceMove);
-            if (packed == null) continue;
-            String san = RustBoardNative.san(variant, fen, NO_RUST_HISTORY, pieceMove).san;
-            moves.add(new PositionMove(packed, san));
-        }
+        for (RustBoard.LegalMove move : board.legalMoves()) moves.add(new PositionMove(move.packed, move.san));
         return moves;
     }
 
@@ -219,50 +155,27 @@ public class GameApi {
         return at < 0 ? coordinate : coordinate.substring(0, at);
     }
 
-    /**
-     * The sole legal move from {@code from} to {@code to} for the currently selected promotion
-     * piece, sourced from the Rust board API's legal-move list; null when none matches.
-     */
-    private PositionMove resolveLegalMove(int from, int to, String fen, RustSearchRequest.Variant variant) {
-        for (PositionMove candidate : rustLegalMoves(fen, variant)) {
-            int move = candidate.move;
-            if (Move.getFrom(move) != from || Move.getTo(move) != to) continue;
-            if (Move.isPromotionMove(move) && Move.getPromotionPiece(move) != promotionPiece) continue;
-            return candidate;
-        }
-        return null;
+    /** Resolves the selected promotion and castling gesture through Rust's legal moves. */
+    private PositionMove resolveLegalMove(int from, int to) {
+        RustBoard.LegalMove resolved = board.resolveMove(from, to, promotionPiece);
+        return resolved == null ? null : new PositionMove(resolved.packed, resolved.san);
     }
 
-    /**
-     * Resolves a from/to move via the Rust board API and applies it there, then commits the
-     * same already-resolved move onto the live board so the rest of GameApi (ply bookkeeping,
-     * undo, search) keeps working from it. Null when no legal move matches.
-     */
+    /** Resolves and applies a legal move to the Java-owned snapshot history. */
     private PositionMove applyRustMove(int from, int to) {
-        String fen = jni.toFEN();
-        RustSearchRequest.Variant variant = rustVariant();
-        PositionMove resolved = resolveLegalMove(from, to, fen, variant);
-        if (resolved == null) return null;
-        int[] files = variant == RustSearchRequest.Variant.CHESS_960
-            ? RustSearchRequest.chess960Files(fen, jni.getTurn() == BoardConstants.WHITE) : null;
-        String coordinate = RustSearchRequest.toRustCoordinate(resolved.move, files);
-        RustBoardResult applied = RustBoardNative.applyMove(variant, fen, NO_RUST_HISTORY, coordinate);
-        if (jni.move(resolved.move) == 0) return null;
-        if (!applied.fen.equals(jni.toFEN()))
-            Log.w(TAG, "Rust and legacy engine disagreed after " + coordinate
-                + ": " + applied.fen + " vs " + jni.toFEN());
-        return resolved;
+        PositionMove resolved = resolveLegalMove(from, to);
+        return resolved != null && board.move(resolved.move) != 0 ? resolved : null;
     }
 
     /** Generate piece-move SAN from the preceding position, undoing the move if Rust rejects it. */
     private String appliedMoveSan(String previousFen, RustSearchRequest.Variant variant) {
         int[] files = variant == RustSearchRequest.Variant.CHESS_960
             ? RustSearchRequest.chess960Files(previousFen, previousFen.split("\\s+")[1].equals("w")) : null;
-        String coordinate = RustSearchRequest.toRustCoordinate(jni.getMyMove(), files);
+        String coordinate = RustSearchRequest.toRustCoordinate(board.getMyMove(), files);
         try {
             return RustBoardNative.san(variant, previousFen, NO_RUST_HISTORY, coordinate).san;
         } catch (IllegalArgumentException ex) {
-            jni.undo();
+            board.undo();
             return null;
         }
     }
@@ -273,22 +186,23 @@ public class GameApi {
         Node original = currentNode;
         try {
             if (!navigateTo(node)) return null;
-            String fen = jni.toFEN();
-            List<PositionMove> moves = rustLegalMoves(fen, rustVariant());
-            return new PositionSnapshot(fen, jni.getTurn(), jni.getState(), moves,
+            String fen = board.toFEN();
+            List<PositionMove> moves = rustLegalMoves();
+            return new PositionSnapshot(fen, board.getTurn(), board.getState(), moves,
                 gameTree.getInitialFen(), gameTree.pathTo(node), gameTree.positionCommand(node));
         } finally {
             if (!navigateTo(original)) restoreBoard(original, null);
         }
     }
 
-    /** Call after the native board has been initialized, never merely to clear a move list. */
+    /** Call after the board has been initialized, never merely to clear a move list. */
     protected final void resetPGNHistory() {
-        resetPGNHistory(jni.toFEN());
+        resetPGNHistory(board.toFEN());
     }
 
     private void resetPGNHistory(String initialFen) {
-        gameTree = new GameTree(initialFen, jni.getState(), jni.getTurn());
+        gameVariant = board.variant();
+        gameTree = new GameTree(initialFen, board.getState(), board.getTurn());
         currentNode = gameTree.getRoot();
         pendingDuckMove = null;
         importedResult = null;
@@ -299,11 +213,11 @@ public class GameApi {
         this(false);
     }
 
-    /** @param preservePosition keep the shared native board instead of starting a new game */
+    /** @param preservePosition keep the shared Java board instead of starting a new game */
     public GameApi(boolean preservePosition) {
-        jni = JNI.getInstance();
+        board = RustBoard.shared();
         if (!preservePosition) {
-            jni.newGame();
+            board.newGame();
         }
         pgnTags = new HashMap<String, String>();
         resetPGNHistory();
@@ -329,39 +243,12 @@ public class GameApi {
         return getFinalState() != -1 || isPositionEnded();
     }
 
-    private static final int SQUARE_A1 = Pos.fromColAndRow(0, 7);
-    private static final int SQUARE_E1 = Pos.fromColAndRow(4, 7);
-    private static final int SQUARE_H1 = Pos.fromColAndRow(7, 7);
-    private static final int SQUARE_A8 = Pos.fromColAndRow(0, 0);
-    private static final int SQUARE_E8 = Pos.fromColAndRow(4, 0);
-    private static final int SQUARE_H8 = Pos.fromColAndRow(7, 0);
-
-    /**
-     * Whether this Game is Standard chess, as opposed to Duck or Chess 960. Duck is tracked by
-     * the native board variant rather than the Variant tag, which only carries "Duck" for a game
-     * loaded from PGN. Chess 960 has no native variant of its own and the Variant tag is only set
-     * by {@link #newGameRandomFischer}, so a Chess 960 position reached through a raw FEN (e.g. a
-     * Setup handoff) is recognized instead by a castling right whose king or rook sits off its
-     * classical home square; a Standard game can never retain a right once either has moved.
-     */
     public boolean isStandardVariant() {
-        if (jni.getVariant() == BoardConstants.VARIANT_DUCK) return false;
-        String variant = pgnTags.get("Variant");
-        if (variant != null && !variant.equalsIgnoreCase("Standard")) return false;
-        return (jni.getWhiteCanCastleShort() == 0 || isKingAndRookAt(BoardConstants.WHITE, SQUARE_E1, SQUARE_H1))
-            && (jni.getWhiteCanCastleLong() == 0 || isKingAndRookAt(BoardConstants.WHITE, SQUARE_E1, SQUARE_A1))
-            && (jni.getBlackCanCastleShort() == 0 || isKingAndRookAt(BoardConstants.BLACK, SQUARE_E8, SQUARE_H8))
-            && (jni.getBlackCanCastleLong() == 0 || isKingAndRookAt(BoardConstants.BLACK, SQUARE_E8, SQUARE_A8));
+        return board.variant() == RustSearchRequest.Variant.STANDARD;
     }
 
-    private boolean isKingAndRookAt(int turn, int kingSquare, int rookSquare) {
-        return jni.pieceAt(turn, kingSquare) == BoardConstants.KING
-            && jni.pieceAt(turn, rookSquare) == BoardConstants.ROOK;
-    }
-
-    /** Whether this Game is Chess 960, as opposed to Standard or Duck (see {@link #isStandardVariant}). */
     public boolean isChess960Variant() {
-        return jni.getVariant() != BoardConstants.VARIANT_DUCK && !isStandardVariant();
+        return board.variant() == RustSearchRequest.Variant.CHESS_960;
     }
 
     public int getState() {
@@ -372,10 +259,9 @@ public class GameApi {
         return getEngineState();
     }
 
-    /** Returns the native engine state without the recorded game's final state. */
+    /** Returns the board state without the recorded game's final state. */
     public int getEngineState() {
-        RustBoardResult result = rustQueryOrNull();
-        return result == null ? jni.getState() : legacyGameState(result.gameState);
+        return board.getState();
     }
 
     public int getFinalState() {
@@ -403,9 +289,9 @@ public class GameApi {
             return false;
         }
 
-        final int move = jni.getMyMove();
+        final int move = board.getMyMove();
 
-        addPGNEntry(jni.getNumBoard(), resolved.san, "", move, -1);
+        addPGNEntry(board.getNumBoard(), resolved.san, "", move, -1);
 
         dispatchMove(move);
 
@@ -421,8 +307,8 @@ public class GameApi {
         if (promo != null) setPromo(promo);
         PositionMove resolved = applyRustMove(from, to);
         if (resolved == null) return 0;
-        int move = jni.getMyMove();
-        addPGNEntry(jni.getNumBoard(), resolved.san, "", move, -1);
+        int move = board.getMyMove();
+        addPGNEntry(board.getNumBoard(), resolved.san, "", move, -1);
         return move;
     }
 
@@ -431,17 +317,17 @@ public class GameApi {
             return false;
         }
 
-        String previousFen = jni.toFEN();
+        String previousFen = board.toFEN();
         RustSearchRequest.Variant variant = rustVariant();
-        if (jni.doCastleMove(from, to) == 0) {
+        if (board.doCastleMove(from, to) == 0) {
             dispatchIllegalMove();
             return false;
         }
-        final int move = jni.getMyMove();
+        final int move = board.getMyMove();
 
         String san = appliedMoveSan(previousFen, variant);
         if (san == null) return false;
-        addPGNEntry(jni.getNumBoard(), san, "", move, -1);
+        addPGNEntry(board.getNumBoard(), san, "", move, -1);
 
         dispatchMove(move);
 
@@ -462,15 +348,15 @@ public class GameApi {
     }
 
     public boolean isPromotionMove(int from, int to) {
-        if (jni.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
+        if (board.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN &&
             BoardConstants.ROW_TURN[BoardConstants.WHITE][from] == 6 &&
             BoardConstants.ROW_TURN[BoardConstants.WHITE][to] == 7 &&
-            jni.getTurn() == BoardConstants.WHITE
+            board.getTurn() == BoardConstants.WHITE
             ||
-            jni.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
+            board.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN &&
                 BoardConstants.ROW_TURN[BoardConstants.BLACK][from] == 6 &&
                 BoardConstants.ROW_TURN[BoardConstants.BLACK][to] == 7 &&
-                jni.getTurn() == BoardConstants.BLACK) {
+                board.getTurn() == BoardConstants.BLACK) {
             return true;
         }
         return false;
@@ -483,16 +369,16 @@ public class GameApi {
     /** Applies and records a move without notifications; used by importers and engine batches. */
     public boolean applyMove(int move, int duckMove) {
         if (pendingDuckMove != null) return false;
-        String previousFen = jni.toFEN();
+        String previousFen = board.toFEN();
         RustSearchRequest.Variant variant = rustVariant();
-        if (jni.move(move) == 0) return false;
+        if (board.move(move) == 0) return false;
         String san = appliedMoveSan(previousFen, variant);
         if (san == null) return false;
-        if (duckMove != -1 && jni.requestDuckMove(duckMove) == 0) {
-            jni.undo();
+        if (duckMove != -1 && board.requestDuckMove(duckMove) == 0) {
+            board.undo();
             return false;
         }
-        addPGNEntry(jni.getNumBoard(), san, "", jni.getMyMove(), duckMove);
+        addPGNEntry(board.getNumBoard(), san, "", board.getMyMove(), duckMove);
         return true;
     }
 
@@ -501,7 +387,7 @@ public class GameApi {
 
     public boolean stepBack() {
         if (pendingDuckMove != null) {
-            jni.undo();
+            board.undo();
             pendingDuckMove = null;
             dispatchNavigation();
             return true;
@@ -541,9 +427,9 @@ public class GameApi {
         while (other.getPly() > common.getPly()) other = other.getParent();
         while (common != other) { common = common.getParent(); other = other.getParent(); }
         while (currentNode != common) {
-            int ply = jni.getNumBoard();
-            jni.undo();
-            if (jni.getNumBoard() != ply - 1) return false;
+            int ply = board.getNumBoard();
+            board.undo();
+            if (board.getNumBoard() != ply - 1) return false;
             currentNode = currentNode.getParent();
         }
         Deque<Node> path = new ArrayDeque<>();
@@ -560,21 +446,21 @@ public class GameApi {
     }
 
     private boolean replay(PGNEntry entry) {
-        if (jni.move(entry.move) == 0) return false;
-        if (entry.duckMove != -1 && jni.requestDuckMove(entry.duckMove) == 0) {
-            jni.undo();
+        if (board.move(entry.move) == 0) return false;
+        if (entry.duckMove != -1 && board.requestDuckMove(entry.duckMove) == 0) {
+            board.undo();
             return false;
         }
         return true;
     }
 
-    /** Rebuild this game's native board after another screen may have used the shared JNI. */
+    /** Rebuild this game's board after another screen may have used the shared board. */
     public void restoreCurrentBoard() {
         restoreBoard(currentNode, pendingDuckMove);
     }
 
     private void restoreBoard(Node target, PGNEntry pending) {
-        if (!jni.initFEN(gameTree.getInitialFen())) throw new IllegalStateException("Cannot restore starting board");
+        if (!board.initFEN(gameTree.getInitialFen(), gameVariant)) throw new IllegalStateException("Cannot restore starting board");
         currentNode = gameTree.getRoot();
         for (Node node : gameTree.pathTo(target)) {
             if (!replay(node.getEntry())) throw new IllegalStateException("Cannot restore recorded move");
@@ -645,10 +531,10 @@ public class GameApi {
 
     public synchronized boolean isLegalMove(int from, int to) {
         int checkMove = Move.makeMove(from, to);
-        int size = jni.getMoveArraySize();
+        int size = board.getMoveArraySize();
         int move;
         for (int i = 0; i < size; i++) {
-            move = jni.getMoveArrayAt(i);
+            move = board.getMoveArrayAt(i);
             if (Move.equalPositions(checkMove, move)) {
                 return true;
             }
@@ -670,12 +556,12 @@ public class GameApi {
         pgnTags.put("Black", "?");
         pgnTags.put("Date", PgnDate.format(new Date()));
 
-        jni.newGame(variant);
+        board.newGame(variant);
         resetPGNHistory();
 
         if (variant == BoardConstants.VARIANT_DUCK) {
             pgnTags.put("Setup", "1");
-            pgnTags.put("FEN", jni.toFEN());
+            pgnTags.put("FEN", board.toFEN());
         }
 
         dispatchNewGameStarted(variant);
@@ -686,7 +572,7 @@ public class GameApi {
     public boolean initFEN(String sFEN, boolean resetHead) {
         Node oldNode = currentNode;
         PGNEntry oldPending = pendingDuckMove;
-        if (jni.initFEN(sFEN)) {
+        if (board.initFEN(sFEN)) {
 
             if (resetHead) {
                 pgnTags.clear();
@@ -710,186 +596,112 @@ public class GameApi {
     }
 
     public int getNumBoard() {
-        return jni.getNumBoard();
+        return board.getNumBoard();
     }
 
     public int getNumCaptured(int turnAt, int piece) {
-        RustBoardResult result = rustQueryOrNull();
-        if (result == null) return jni.getNumCaptured(turnAt, piece);
-        // captured[] holds 5 pieces (pawn/knight/bishop/rook/queen) per side, Black (turn 0) then White (turn 1).
-        return result.captured[turnAt * 5 + piece];
+        return board.getNumCaptured(turnAt, piece);
     }
 
-    /** No Rust equivalent exists for the legacy Zobrist hash, the ECO opening book's lookup key. */
+    /** Incremental compatibility hash for the existing ECO opening book. */
     public long getHashKey() {
-        return jni.getHashKey();
-    }
-
-    /** Captures the live position before dispatching the search worker; zero means busy or invalid limits. */
-    public long prepareSearch(int ply, int msecs, int quiescentOn) {
-        return jni.prepareSearch(ply, msecs, quiescentOn);
-    }
-
-    public void runSearch(long searchId) {
-        jni.runSearch(searchId);
-    }
-
-    public boolean isSearchCurrent(long searchId) {
-        return jni.isSearchCurrent(searchId);
-    }
-
-    public SearchResult getSearchResult(long searchId) {
-        return SearchResult.decode(jni.getSearchResult(searchId));
-    }
-
-    /** Decoded view of the native engine's packed {@code getSearchResult} array. */
-    public static final class SearchResult {
-        private static final int PV_LENGTH = 20;
-        private static final int PV_OFFSET = 5;
-        private static final int DUCK_PV_OFFSET = PV_OFFSET + PV_LENGTH;
-        private static final int HAS_EVALUATION_INDEX = DUCK_PV_OFFSET + PV_LENGTH;
-        private static final int COMPLETED_DEPTH_INDEX = HAS_EVALUATION_INDEX + 1;
-
-        public final int move;
-        public final int duckMove;
-        public final int score;
-        public final int depth;
-        public final int evalCount;
-        public final int[] principalVariation;
-        public final int[] principalDuckVariation;
-        public final boolean hasEvaluation;
-        public final int completedDepth;
-
-        private SearchResult(int move, int duckMove, int score, int depth, int evalCount,
-                             int[] principalVariation, int[] principalDuckVariation,
-                             boolean hasEvaluation, int completedDepth) {
-            this.move = move;
-            this.duckMove = duckMove;
-            this.score = score;
-            this.depth = depth;
-            this.evalCount = evalCount;
-            this.principalVariation = principalVariation;
-            this.principalDuckVariation = principalDuckVariation;
-            this.hasEvaluation = hasEvaluation;
-            this.completedDepth = completedDepth;
-        }
-
-        /**
-         * Decodes the raw array: move, duck, value, depth, evaluations, 20 PV moves, 20 duck
-         * moves, evaluation-available flag, completed depth.
-         */
-        public static SearchResult decode(int[] raw) {
-            int pvLength = Math.max(0, Math.min(raw[3], PV_LENGTH));
-            return new SearchResult(raw[0], raw[1], raw[2], raw[3], raw[4],
-                Arrays.copyOfRange(raw, PV_OFFSET, PV_OFFSET + pvLength),
-                Arrays.copyOfRange(raw, DUCK_PV_OFFSET, DUCK_PV_OFFSET + pvLength),
-                raw[HAS_EVALUATION_INDEX] != 0, raw[COMPLETED_DEPTH_INDEX]);
-        }
+        return board.getHashKey();
     }
 
     public int getDuckPos() {
-        return jni.getDuckPos();
+        return board.getDuckPos();
     }
 
     public int getMyDuckPos() {
-        return jni.getMyDuckPos();
+        return board.getMyDuckPos();
     }
 
     /** Selects the piece {@link #requestMove} and {@link #applyServerMove} promote a pawn to. */
     public void setPromo(int piece) {
         promotionPiece = piece;
+        board.setPromo(piece);
     }
 
     /** Raw board edits leave PGN history, tags and listeners untouched. */
     public void reset() {
-        jni.reset();
+        board.reset();
     }
 
     public void putPiece(int pos, int piece, int color) {
-        jni.putPiece(pos, piece, color);
+        board.putPiece(pos, piece, color);
     }
 
     public void removePiece(int turn, int pos) {
-        jni.removePiece(turn, pos);
+        board.removePiece(turn, pos);
     }
 
     public void setTurn(int turn) {
-        jni.setTurn(turn);
+        board.setTurn(turn);
     }
 
     public void setCastlingsEPAnd50(int wccl, int wccs, int bccl, int bccs, int ep, int r50) {
-        jni.setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
+        board.setCastlingsEPAnd50(wccl, wccs, bccl, bccs, ep, r50);
     }
 
     public void commitBoard() {
-        jni.commitBoard();
+        board.commitBoard();
     }
 
     public int isLegalPosition() {
-        return jni.isLegalPosition();
+        return board.isLegalPosition();
     }
 
     public int getWhiteCanCastleLong() {
-        RustBoardResult result = rustQueryOrNull();
-        return result == null ? jni.getWhiteCanCastleLong() : (result.castleWhiteQueenside ? 1 : 0);
+        return board.getWhiteCanCastleLong();
     }
 
     public int getWhiteCanCastleShort() {
-        RustBoardResult result = rustQueryOrNull();
-        return result == null ? jni.getWhiteCanCastleShort() : (result.castleWhiteKingside ? 1 : 0);
+        return board.getWhiteCanCastleShort();
     }
 
     public int getBlackCanCastleLong() {
-        RustBoardResult result = rustQueryOrNull();
-        return result == null ? jni.getBlackCanCastleLong() : (result.castleBlackQueenside ? 1 : 0);
+        return board.getBlackCanCastleLong();
     }
 
     public int getBlackCanCastleShort() {
-        RustBoardResult result = rustQueryOrNull();
-        return result == null ? jni.getBlackCanCastleShort() : (result.castleBlackKingside ? 1 : 0);
+        return board.getBlackCanCastleShort();
     }
 
     public int getEnpassantPosition() {
-        return jni.getEnpassantPosition();
+        return board.getEnpassantPosition();
     }
 
     public void setVariant(int variant) {
-        jni.setVariant(variant);
+        board.setVariant(variant);
     }
 
     /** Places the duck directly, without recording a move or dispatching events. */
     public int placeDuck(int pos) {
-        return jni.requestDuckMove(pos);
+        return board.placeDuck(pos);
     }
 
-    /** Checks only the native position, ignoring the recorded game's final state. */
+    /** Checks only the board position, ignoring the recorded game's final state. */
     public boolean isPositionEnded() {
         int state = getEngineState();
         return state != BoardConstants.PLAY && state != BoardConstants.CHECK;
     }
 
-    /** Resets the native board to standard chess without changing PGN data or dispatching events. */
+    /** Resets the board to standard chess without changing PGN data or dispatching events. */
     public void resetToStandardPositionWithoutHistory() {
-        jni.newGame();
+        board.newGame();
     }
 
-    /** Loads the native board without changing PGN data or dispatching events. */
+    /** Loads the board without changing PGN data or dispatching events. */
     public boolean loadFENWithoutHistory(String fen) {
-        return jni.initFEN(fen);
+        return board.initFEN(fen);
     }
 
     public int pieceAt(int turn, int pos) {
-        try {
-            char piece = RustBoardNative.pieceAt(rustVariant(), jni.toFEN(), NO_RUST_HISTORY, Pos.toString(pos)).piece;
-            return legacyPieceAt(piece, turn);
-        } catch (IllegalArgumentException ex) {
-            // Board setup can leave the native board in a state Rust's from_fen rejects.
-            return jni.pieceAt(turn, pos);
-        }
+        return board.pieceAt(turn, pos);
     }
 
     public int getMyMove() {
-        return jni.getMyMove();
+        return board.getMyMove();
     }
 
     public String getMyMoveToString() {
@@ -898,46 +710,28 @@ public class GameApi {
     }
 
     public int[] getAttackerPositionsTo(int pos, int byTurn) {
-        RustBoardResult result;
-        try {
-            result = RustBoardNative.attackers(rustVariant(), jni.toFEN(), NO_RUST_HISTORY,
-                byTurn == BoardConstants.WHITE, Pos.toString(pos));
-        } catch (IllegalArgumentException ex) {
-            // Board setup can leave the native board in a state Rust's from_fen rejects.
-            return jni.getAttackerPositionsTo(pos, byTurn);
-        }
-        String[] squares = RustBoardResult.words(result.attackers);
-        int[] positions = new int[squares.length];
-        for (int i = 0; i < squares.length; i++) {
-            try {
-                positions[i] = Pos.fromString(squares[i]);
-            } catch (Exception ex) {
-                throw new IllegalStateException("Invalid square from Rust board API: " + squares[i], ex);
-            }
-        }
-        return positions;
+        return board.getAttackerPositionsTo(pos, byTurn);
     }
 
     public int isAmbiguousCastle(int from, int to) {
-        return jni.isAmbiguousCastle(from, to);
+        return board.isAmbiguousCastle(from, to);
     }
 
     public int getMoveArraySize() {
-        return jni.getMoveArraySize();
+        return board.getMoveArraySize();
     }
 
     public int getMoveArrayAt(int index) {
-        return jni.getMoveArrayAt(index);
+        return board.getMoveArrayAt(index);
     }
 
     public String getFEN() {
-        RustBoardResult result = rustQueryOrNull();
-        return result == null ? jni.toFEN() : result.fen;
+        return board.toFEN();
     }
 
     public int newGameRandomFischer(int seed) {
 
-        int ret = jni.initRandomFisher(seed);
+        int ret = board.initRandomFisher(seed);
 
         pgnTags.clear();
         pgnTags.put("Event", "?");
@@ -948,11 +742,11 @@ public class GameApi {
 
         pgnTags.put("Variant", "Fischerandom");
         pgnTags.put("Setup", "1");
-        pgnTags.put("FEN", jni.toFEN());
+        pgnTags.put("FEN", board.toFEN());
 
         resetPGNHistory();
 
-        dispatchNewGameStarted(jni.getVariant());
+        dispatchNewGameStarted(board.getVariant());
         dispatchState();
         return ret;
     }
@@ -971,6 +765,7 @@ public class GameApi {
             return false;
         }
         GameTree oldTree = gameTree;
+        RustSearchRequest.Variant oldVariant = gameVariant;
         Node oldNode = currentNode;
         PGNEntry oldPending = pendingDuckMove;
         String oldResult = importedResult;
@@ -980,18 +775,25 @@ public class GameApi {
         try {
             pgnTags.clear();
             pgnTags.putAll(document.tags);
-            if (pgnTags.containsKey("FEN")) {
-                if (!jni.initFEN(pgnTags.get("FEN"))) throw new IllegalArgumentException("Invalid FEN");
-            } else {
-                jni.newGame("Duck".equalsIgnoreCase(pgnTags.get("Variant"))
+            String fen = pgnTags.get("FEN");
+            String variantTag = pgnTags.get("Variant");
+            if (fen == null) {
+                board.newGame("Duck".equalsIgnoreCase(variantTag)
                     ? BoardConstants.VARIANT_DUCK : BoardConstants.VARIANT_DEFAULT);
+            } else {
+                boolean loaded;
+                if ("Duck".equalsIgnoreCase(variantTag)) loaded = board.initFEN(fen, RustSearchRequest.Variant.DUCK);
+                else if ("Fischerandom".equalsIgnoreCase(variantTag) || "Chess960".equalsIgnoreCase(variantTag))
+                    loaded = board.initFEN(fen, RustSearchRequest.Variant.CHESS_960);
+                else loaded = board.initFEN(fen);
+                if (!loaded) throw new IllegalArgumentException("Invalid FEN");
             }
-            resetPGNHistory(pgnTags.getOrDefault("FEN", jni.toFEN()));
+            resetPGNHistory(pgnTags.getOrDefault("FEN", board.toFEN()));
             gameTree.setRootComment(document.rootComment);
             replayLine(document.mainLine);
             if (!navigateTo(gameTree.mainLineEnd())) throw new IllegalArgumentException("Cannot restore main line");
             importedResult = document.result;
-            if (jni.isEnded() == 0) {
+            if (board.isEnded() == 0) {
                 if ("1-0".equals(importedResult)) gameTree.setFinalState(currentNode, BoardConstants.BLACK_RESIGNED);
                 else if ("0-1".equals(importedResult)) gameTree.setFinalState(currentNode, BoardConstants.WHITE_RESIGNED);
                 else if ("1/2-1/2".equals(importedResult)) gameTree.setFinalState(currentNode, BoardConstants.DRAW_AGREEMENT);
@@ -999,6 +801,7 @@ public class GameApi {
         } catch (IllegalArgumentException ex) {
             lastPgnError = ex.getMessage();
             gameTree = oldTree;
+            gameVariant = oldVariant;
             importedResult = oldResult;
             pgnTags.clear();
             pgnTags.putAll(oldTags);
@@ -1031,7 +834,7 @@ public class GameApi {
 
     public boolean requestMove(String sMove) {
         if (isEnded() || !applyPGNMove(sMove)) return false;
-        dispatchMove(jni.getMyMove());
+        dispatchMove(board.getMyMove());
         return true;
     }
 
@@ -1141,7 +944,7 @@ public class GameApi {
     }
 
     private boolean moveDuck(int duckMove) {
-        if (pendingDuckMove == null || jni.requestDuckMove(duckMove) == 0) return false;
+        if (pendingDuckMove == null || board.requestDuckMove(duckMove) == 0) return false;
         PGNEntry entry = pendingDuckMove;
         pendingDuckMove = null;
         entry.duckMove = duckMove;
@@ -1225,7 +1028,7 @@ public class GameApi {
         } catch (Exception ex) {
             return false;
         }
-        String fen = jni.toFEN();
+        String fen = board.toFEN();
         boolean whiteToMove = fen.trim().split("\\s+")[1].equals("w");
         RustSearchRequest.Variant variant = rustVariant();
         int from, to;
@@ -1242,17 +1045,17 @@ public class GameApi {
             String promotion = match.group(7);
             if (promotion != null) promotionPiece = promotionPieceFromSuffix(promotion);
         }
-        if (promotionPiece != null) jni.setPromo(promotionPiece);
+        if (promotionPiece != null) board.setPromo(promotionPiece);
         // A SAN token is a complete half-move. Reject missing/invalid duck placements atomically below.
-        if (jni.requestMove(from, to) == 0) return false;
+        if ((castle == null ? board.requestMove(from, to) : board.doCastleMove(from, to)) == 0) return false;
         String san = appliedMoveSan(fen, variant);
         if (san == null) return false;
-        if (duck != null && jni.requestDuckMove(duckSquare) == 0
-            || duck == null && jni.getVariant() == BoardConstants.VARIANT_DUCK && jni.isEnded() == 0) {
-            jni.undo();
+        if (duck != null && board.requestDuckMove(duckSquare) == 0
+            || duck == null && board.getVariant() == BoardConstants.VARIANT_DUCK && board.isEnded() == 0) {
+            board.undo();
             return false;
         }
-        addPGNEntry(jni.getNumBoard(), san, annotation, jni.getMyMove(), duckSquare);
+        addPGNEntry(board.getNumBoard(), san, annotation, board.getMyMove(), duckSquare);
         return true;
     }
 
@@ -1275,12 +1078,12 @@ public class GameApi {
         }
     }
 
-    /** Compatibility entry point for subclasses that have just executed exactly one native move. */
+    /** Compatibility entry point for subclasses that have just executed exactly one board move. */
     public void addPGNEntry(int ply, String san, String annotation, int move, int duckMove) {
-        if (pendingDuckMove != null || ply != currentNode.getPly() + 1 || ply != jni.getNumBoard())
+        if (pendingDuckMove != null || ply != currentNode.getPly() + 1 || ply != board.getNumBoard())
             throw new IllegalStateException("Move must follow the current tree position");
         PGNEntry entry = new PGNEntry(san, annotation == null ? "" : annotation, move, duckMove);
-        if (jni.getVariant() == BoardConstants.VARIANT_DUCK && duckMove == -1 && jni.isEnded() == 0)
+        if (board.getVariant() == BoardConstants.VARIANT_DUCK && duckMove == -1 && board.isEnded() == 0)
             pendingDuckMove = entry;
         else recordEntry(entry);
     }
@@ -1289,12 +1092,12 @@ public class GameApi {
         Node old = currentNode;
         int previousChildren = old.getChildren().size();
         if (overwriteContinuation && !loadingPgn) {
-            currentNode = gameTree.replaceContinuation(old, entry, jni.getState(), jni.getTurn());
+            currentNode = gameTree.replaceContinuation(old, entry, board.getState(), board.getTurn());
             importedResult = null;
             treeChanged = true;
             return;
         }
-        currentNode = gameTree.append(old, entry, jni.getState(), jni.getTurn(), !loadingPgn);
+        currentNode = gameTree.append(old, entry, board.getState(), board.getTurn(), !loadingPgn);
         if (old.getChildren().size() != previousChildren && gameTree.isMainLine(currentNode)) {
             if (!loadingPgn) importedResult = null;
         }
@@ -1377,7 +1180,7 @@ public class GameApi {
     }
 
     public int getTurn() {
-        return jni.getTurn();
+        return board.getTurn();
     }
     public String getWhite() {
         return getPGNHeadProperty("White");
@@ -1393,9 +1196,9 @@ public class GameApi {
     }
 
     public boolean hasAnyPieceOnPosition(int pos) {
-        return pos == jni.getDuckPos() ||
-            jni.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
-            jni.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+        return pos == board.getDuckPos() ||
+            board.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
+            board.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
     }
 
 }
