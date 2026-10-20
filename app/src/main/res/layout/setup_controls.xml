@@ -166,6 +166,12 @@
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonSetupOptionsAnalyse"
+                android:text="@string/gameslist_analyze"
+                android:layout_width="wrap_content"
+                style="?attr/chessButtonStyle" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSetupOptionsOk"
                 android:text="@string/button_ok"
                 android:layout_width="wrap_content"

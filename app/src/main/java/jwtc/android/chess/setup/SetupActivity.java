@@ -1,6 +1,7 @@
 package jwtc.android.chess.setup;
 
 import android.content.ClipData;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import java.util.Random;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
@@ -79,6 +81,12 @@ public class SetupActivity extends ChessBoardActivity {
 
         MaterialButton buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
         buttonOk.setOnClickListener(v -> onSave());
+
+        findViewById(R.id.ButtonSetupOptionsAnalyse).setOnClickListener(v -> preparePosition(() -> {
+            Intent intent = new Intent(this, AnalyzeActivity.class);
+            intent.putExtra(AnalyzeActivity.EXTRA_FEN, gameApi.getFEN());
+            startActivity(intent);
+        }));
 
         MaterialButton buttonCancel = findViewById(R.id.ButtonSetupOptionsCancel);
         buttonCancel.setOnClickListener(v -> {
@@ -149,6 +157,13 @@ public class SetupActivity extends ChessBoardActivity {
 
 
     protected void onSave() {
+        preparePosition(() -> {
+            commitFEN();
+            finish();
+        });
+    }
+
+    private void preparePosition(Runnable onReady) {
 
         final int turn = toggleTurnGroup.getCheckedButtonId() == R.id.RadioSetupTurnWhite ? 1 : 0;
 
@@ -165,13 +180,9 @@ public class SetupActivity extends ChessBoardActivity {
         gameApi.commitBoard();
 
         if (gameApi.isLegalPosition() == 0) {
-            openConfirmDialog("Use illegal position?", getString(R.string.alert_yes), getString(R.string.alert_no), () -> {
-                commitFEN();
-                SetupActivity.this.finish();
-            }, null);
+            openConfirmDialog("Use illegal position?", getString(R.string.alert_yes), getString(R.string.alert_no), onReady, null);
         } else {
-            commitFEN();
-            finish();
+            onReady.run();
         }
     }
 

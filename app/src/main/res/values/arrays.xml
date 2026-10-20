@@ -10,7 +10,7 @@
         <item>@string/start_boardpreferences</item>
         <item>@string/start_pgn</item>
     </string-array>
-
+    <string-array name="play_menu">
         <item>@string/menu_game_settings</item>
         <item>@string/menu_set_clock</item>
         <item>@string/menu_new</item>
