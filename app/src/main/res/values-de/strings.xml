@@ -256,7 +256,7 @@
     <string name="msg_setup_castle_white">Weiß</string>
     <string name="msg_setup_clear">Leeren</string>
     <string name="msg_setup_enpassant">En-passant-Feld</string>
-    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_random">Zufällig</string>
     <string name="msg_setup_reset">Zurücksetzen</string>
     <string name="msg_setup_turn">Am Zug</string>
     <string name="msg_setup_turn_black">Schwarz</string>
@@ -559,4 +559,9 @@
     <string name="analysis_settings">Analyseeinstellungen</string>
     <string name="analysis_time_budget">Zeitbudget pro Stellung (Sekunden)</string>
     <string name="analysis_time_invalid">Gib eine Zahl von 0 bis %1$d ein.</string>
+    <string name="analysis_move_position">Zugposition</string>
+    <string name="analysis_builtin_warning">Installiere für eine bessere Analyse eine OEX-kompatible Schachengine.</string>
+    <string name="analysis_dont_show_again">Nicht mehr anzeigen</string>
+    <string name="analysis_continue">Weiter</string>
+    <string name="analysis_duck_unsupported">Die Analyse von Entenschach wird nicht unterstützt.</string>
 </resources>

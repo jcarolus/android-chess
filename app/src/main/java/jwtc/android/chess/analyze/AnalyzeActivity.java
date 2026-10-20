@@ -9,6 +9,10 @@ import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.CheckBox;
+
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -45,6 +49,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private static final long ANALYSIS_DEBOUNCE_MILLIS = 200;
     public static final String EXTRA_GAME_ID = "analysisGameId";
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
+    private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
+    private boolean engineWarningAcknowledged;
+    private AlertDialog analysisDialog;
     private String sessionId;
     private boolean sessionLoaded;
     private Bundle restoredSession;
@@ -102,6 +109,8 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        engineWarningAcknowledged = savedInstanceState != null
+            && savedInstanceState.getBoolean("engineWarningAcknowledged");
         restoredSession = savedInstanceState == null ? null : savedInstanceState.getBundle("analysisSession");
         sessionId = getIntent().getStringExtra(EXTRA_SESSION_ID);
         if (sessionId == null) {
@@ -194,6 +203,18 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         } else {
             gameApi.restoreCurrentBoard();
         }
+        if (gameApi.isDuckVariant()) {
+            analysisActive = false;
+            closeEngineSession();
+            if (analysisDialog == null) {
+                analysisDialog = new MaterialAlertDialogBuilder(this)
+                    .setMessage(R.string.analysis_duck_unsupported)
+                    .setPositiveButton(R.string.button_ok, (dialog, which) -> finish())
+                    .setOnCancelListener(dialog -> finish())
+                    .show();
+            }
+            return;
+        }
         String engineId = prefs.getString(AnalysisSettingsDialog.PREF_ENGINE, null);
         int millis = AnalysisSettingsDialog.getTimeMillis(prefs);
         if (!Objects.equals(engineId, configuredEngine) || millis != configuredMillis) {
@@ -211,6 +232,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         configuredEngine = engineId;
         configuredMillis = millis;
         engineSession = EngineSession.forAnalysis(this, gameApi, this, engineId);
+        showEngineWarning();
         analysisFen = null;
         requestedPosition = null;
         analysisSwitchPending = false;
@@ -232,6 +254,11 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         analysisGeneration++;
         closeEngineSession();
         sessionLoaded = false;
+        engineWarningAcknowledged = false;
+        if (analysisDialog != null) {
+            analysisDialog.dismiss();
+            analysisDialog = null;
+        }
         restoredSession = null;
         positionAnalyses.evictAll();
         positions.clear();
@@ -242,6 +269,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putBoolean("engineWarningAcknowledged", engineWarningAcknowledged);
         if (!sessionLoaded) return;
         Bundle session = new Bundle();
         session.putString("id", sessionId);
@@ -344,6 +372,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         closeEngineSession();
         engineSession = EngineSession.forAnalysis(this, gameApi, this,
             getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null));
+        showEngineWarning();
         analysisFen = null;
         requestedPosition = null;
         analysisSwitchPending = false;
@@ -352,6 +381,33 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         updateMoveSummary();
         updateNavigation();
         startNextAnalysis();
+    }
+
+    private void showEngineWarning() {
+        if (!engineSession.isBuiltin() || engineWarningAcknowledged || analysisDialog != null
+            || getPrefs().getBoolean(PREF_HIDE_ENGINE_WARNING, false)) return;
+        View content = getLayoutInflater().inflate(R.layout.analysis_engine_warning, null);
+        CheckBox dontShowAgain = content.findViewById(R.id.AnalysisDontShowAgain);
+        analysisDialog = new MaterialAlertDialogBuilder(this)
+            .setView(content)
+            .setPositiveButton(R.string.analysis_continue, (dialog, which) -> {
+                engineWarningAcknowledged = true;
+                if (dontShowAgain.isChecked()) {
+                    getPrefs().edit().putBoolean(PREF_HIDE_ENGINE_WARNING, true).apply();
+                }
+            })
+            .setCancelable(false)
+            .setOnDismissListener(dialog -> analysisDialog = null)
+            .show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (analysisDialog != null) {
+            analysisDialog.dismiss();
+            analysisDialog = null;
+        }
+        super.onDestroy();
     }
 
     private void rememberPosition(Node node) {

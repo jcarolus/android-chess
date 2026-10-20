@@ -253,7 +253,7 @@
     <string name="msg_setup_castle_white">Beyaz</string>
     <string name="msg_setup_clear">Temizle</string>
     <string name="msg_setup_enpassant">En passant karesi</string>
-    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_random">Rastgele</string>
     <string name="msg_setup_reset">Sıfırla</string>
     <string name="msg_setup_turn">Sıra</string>
     <string name="msg_setup_turn_black">siyah</string>
@@ -549,4 +549,9 @@
     <string name="analysis_settings">Analiz ayarları</string>
     <string name="analysis_time_budget">Konum başına süre (saniye)</string>
     <string name="analysis_time_invalid">0 ile %1$d arasında bir sayı girin.</string>
+    <string name="analysis_move_position">Hamle konumu</string>
+    <string name="analysis_builtin_warning">Daha iyi analiz için OEX uyumlu bir satranç motoru yükleyin.</string>
+    <string name="analysis_dont_show_again">Bir daha gösterme</string>
+    <string name="analysis_continue">Devam et</string>
+    <string name="analysis_duck_unsupported">Ördek satrancı için analiz desteklenmiyor.</string>
 </resources>

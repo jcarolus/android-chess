@@ -558,4 +558,9 @@
     <string name="analysis_settings">إعدادات التحليل</string>
     <string name="analysis_time_budget">الوقت المخصص لكل وضع (بالثواني)</string>
     <string name="analysis_time_invalid">أدخل رقمًا من 0 إلى %1$d.</string>
+    <string name="analysis_move_position">موضع النقلة</string>
+    <string name="analysis_builtin_warning">لتحليل أفضل، ثبّت محرك شطرنج متوافقًا مع OEX.</string>
+    <string name="analysis_dont_show_again">عدم الإظهار مجددًا</string>
+    <string name="analysis_continue">متابعة</string>
+    <string name="analysis_duck_unsupported">تحليل شطرنج البطة غير مدعوم.</string>
 </resources>

@@ -253,7 +253,7 @@
     <string name="msg_setup_castle_white">Albe</string>
     <string name="msg_setup_clear">Curăță</string>
     <string name="msg_setup_enpassant">Căsuță en passant</string>
-    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_random">Aleator</string>
     <string name="msg_setup_reset">Resetează</string>
     <string name="msg_setup_turn">Tură</string>
     <string name="msg_setup_turn_black">negre</string>
@@ -549,4 +549,9 @@
     <string name="analysis_settings">Setări de analiză</string>
     <string name="analysis_time_budget">Timp alocat pe poziție (secunde)</string>
     <string name="analysis_time_invalid">Introdu un număr de la 0 la %1$d.</string>
+    <string name="analysis_move_position">Poziția mutării</string>
+    <string name="analysis_builtin_warning">Pentru o analiză mai bună, instalează un motor de șah compatibil cu OEX.</string>
+    <string name="analysis_dont_show_again">Nu mai afișa</string>
+    <string name="analysis_continue">Continuă</string>
+    <string name="analysis_duck_unsupported">Analiza pentru șahul cu rața nu este acceptată.</string>
 </resources>

@@ -253,7 +253,7 @@
     <string name="msg_setup_castle_white">Blancs</string>
     <string name="msg_setup_clear">Effacer</string>
     <string name="msg_setup_enpassant">Case en passant</string>
-    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_random">Aléatoire</string>
     <string name="msg_setup_reset">Réinitialiser</string>
     <string name="msg_setup_turn">Tour</string>
     <string name="msg_setup_turn_black">noirs</string>
@@ -549,4 +549,9 @@
     <string name="analysis_settings">Paramètres d\'analyse</string>
     <string name="analysis_time_budget">Temps par position (secondes)</string>
     <string name="analysis_time_invalid">Saisissez un nombre de 0 à %1$d.</string>
+    <string name="analysis_move_position">Position du coup</string>
+    <string name="analysis_builtin_warning">Pour une meilleure analyse, installez un moteur d’échecs compatible avec OEX.</string>
+    <string name="analysis_dont_show_again">Ne plus afficher</string>
+    <string name="analysis_continue">Continuer</string>
+    <string name="analysis_duck_unsupported">L’analyse des échecs canard n’est pas prise en charge.</string>
 </resources>

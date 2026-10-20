@@ -253,7 +253,7 @@
     <string name="msg_setup_castle_white">Белые</string>
     <string name="msg_setup_clear">Очистить</string>
     <string name="msg_setup_enpassant">Поле en passant</string>
-    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_random">Случайно</string>
     <string name="msg_setup_reset">Сбросить</string>
     <string name="msg_setup_turn">Ход</string>
     <string name="msg_setup_turn_black">чёрные</string>
@@ -549,4 +549,9 @@
     <string name="analysis_settings">Настройки анализа</string>
     <string name="analysis_time_budget">Время на позицию (секунды)</string>
     <string name="analysis_time_invalid">Введите число от 0 до %1$d.</string>
+    <string name="analysis_move_position">Позиция хода</string>
+    <string name="analysis_builtin_warning">Для более качественного анализа установите шахматный движок, совместимый с OEX.</string>
+    <string name="analysis_dont_show_again">Больше не показывать</string>
+    <string name="analysis_continue">Продолжить</string>
+    <string name="analysis_duck_unsupported">Анализ шахмат с уткой не поддерживается.</string>
 </resources>

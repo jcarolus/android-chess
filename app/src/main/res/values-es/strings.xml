@@ -256,7 +256,7 @@
     <string name="msg_setup_castle_white">Blancas</string>
     <string name="msg_setup_clear">Limpiar</string>
     <string name="msg_setup_enpassant">Casilla de captura al paso</string>
-    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_random">Aleatorio</string>
     <string name="msg_setup_reset">Restablecer</string>
     <string name="msg_setup_turn">Turno</string>
     <string name="msg_setup_turn_black">negras</string>
@@ -559,4 +559,9 @@
     <string name="analysis_settings">Ajustes de análisis</string>
     <string name="analysis_time_budget">Tiempo por posición (segundos)</string>
     <string name="analysis_time_invalid">Introduce un número de 0 a %1$d.</string>
+    <string name="analysis_move_position">Posición de la jugada</string>
+    <string name="analysis_builtin_warning">Para un mejor análisis, instala un motor de ajedrez compatible con OEX.</string>
+    <string name="analysis_dont_show_again">No volver a mostrar</string>
+    <string name="analysis_continue">Continuar</string>
+    <string name="analysis_duck_unsupported">No se admite el análisis de ajedrez pato.</string>
 </resources>

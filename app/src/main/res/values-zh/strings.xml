@@ -253,7 +253,7 @@
     <string name="msg_setup_castle_white">白方</string>
     <string name="msg_setup_clear">清除</string>
     <string name="msg_setup_enpassant">吃过路兵格</string>
-    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_random">随机</string>
     <string name="msg_setup_reset">重置</string>
     <string name="msg_setup_turn">轮到</string>
     <string name="msg_setup_turn_black">黑方</string>
@@ -549,4 +549,9 @@
     <string name="analysis_settings">分析设置</string>
     <string name="analysis_time_budget">每个局面的分析时间（秒）</string>
     <string name="analysis_time_invalid">请输入 0 到 %1$d 之间的数字。</string>
+    <string name="analysis_move_position">着法位置</string>
+    <string name="analysis_builtin_warning">为获得更好的分析，请安装兼容 OEX 的国际象棋引擎。</string>
+    <string name="analysis_dont_show_again">不再显示</string>
+    <string name="analysis_continue">继续</string>
+    <string name="analysis_duck_unsupported">不支持鸭子棋分析。</string>
 </resources>

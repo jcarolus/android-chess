@@ -106,6 +106,10 @@ public final class EngineSession {
         engine.addListener(listener);
     }
 
+    public boolean isBuiltin() {
+        return !closed && current != null && current == rust;
+    }
+
     /** Whether an Engine is selected and not searching; false once closed. */
     public boolean isReady() {
         return !closed && current != null && current.isReady();

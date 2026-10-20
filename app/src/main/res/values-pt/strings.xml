@@ -253,7 +253,7 @@
     <string name="msg_setup_castle_white">Brancas</string>
     <string name="msg_setup_clear">Limpar</string>
     <string name="msg_setup_enpassant">Casa en passant</string>
-    <string name="msg_setup_random">Random</string>
+    <string name="msg_setup_random">Aleatório</string>
     <string name="msg_setup_reset">Redefinir</string>
     <string name="msg_setup_turn">Vez</string>
     <string name="msg_setup_turn_black">pretas</string>
@@ -549,4 +549,9 @@
     <string name="analysis_settings">Configurações de análise</string>
     <string name="analysis_time_budget">Tempo por posição (segundos)</string>
     <string name="analysis_time_invalid">Digite um número de 0 a %1$d.</string>
+    <string name="analysis_move_position">Posição do lance</string>
+    <string name="analysis_builtin_warning">Para uma análise melhor, instale um motor de xadrez compatível com OEX.</string>
+    <string name="analysis_dont_show_again">Não mostrar novamente</string>
+    <string name="analysis_continue">Continuar</string>
+    <string name="analysis_duck_unsupported">A análise de xadrez de pato não é suportada.</string>
 </resources>

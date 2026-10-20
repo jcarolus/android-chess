@@ -570,4 +570,8 @@
     <string name="analysis_time_budget">Time budget per position (seconds)</string>
     <string name="analysis_time_invalid">Enter a number from 0 to %1$d.</string>
     <string name="analysis_move_position">Move position</string>
+    <string name="analysis_builtin_warning">For better analysis, install an OEX-compatible chess engine.</string>
+    <string name="analysis_dont_show_again">Don\'t show again</string>
+    <string name="analysis_continue">Continue</string>
+    <string name="analysis_duck_unsupported">Analysis for Duck chess is not supported.</string>
 </resources>
