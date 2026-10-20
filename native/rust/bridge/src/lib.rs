@@ -201,6 +201,7 @@ fn parse_variant(variant: i32) -> Result<Variant, Error> {
         0 => Ok(Variant::Standard),
         1 => Ok(Variant::Chess960),
         2 => Ok(Variant::Duck),
+        3 => Ok(Variant::KingOfTheHill),
         _ => Err(Error("Unknown variant".into())),
     }
 }
@@ -230,6 +231,7 @@ fn game_state_code(state: GameState) -> i32 {
         GameState::DrawMaterial => 4,
         GameState::DrawFiftyMove => 5,
         GameState::DrawRepetition => 6,
+        GameState::HillWin => 7,
     }
 }
 /// # Safety

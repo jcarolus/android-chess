@@ -77,6 +77,7 @@ fn compare(variant: Variant, fen: &str, history: &[&str], depth: u8, quiescence:
                 Variant::Standard => "0",
                 Variant::Chess960 => "1",
                 Variant::Duck => "2",
+                Variant::KingOfTheHill => panic!("The C++ reference does not support King of the Hill"),
             },
         ])
         .args(history)
@@ -112,6 +113,7 @@ fn compare(variant: Variant, fen: &str, history: &[&str], depth: u8, quiescence:
         GameState::Mate => 6,
         GameState::Stalemate => 7,
         GameState::DrawRepetition => 8,
+        GameState::HillWin => panic!("The C++ reference does not support hill wins"),
     };
     check(variant, fen, history, depth, quiescence, "state", state, parts[3]);
     if state == 1 || state == 2 {

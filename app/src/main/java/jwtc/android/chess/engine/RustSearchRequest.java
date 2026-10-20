@@ -6,7 +6,7 @@ import jwtc.chess.Pos;
 
 /** Immutable coordinate-based input. Packed moves never cross the Rust boundary. */
 public final class RustSearchRequest {
-    public enum Variant { STANDARD, CHESS_960, DUCK }
+    public enum Variant { STANDARD, CHESS_960, DUCK, KING_OF_THE_HILL }
     public final long searchId;
     public final Variant variant;
     public final String startingPosition;

@@ -7,6 +7,7 @@ import jwtc.chess.Valuation;
 public class BoardConstants {
     public static final int VARIANT_DEFAULT = 1;
     public static final int VARIANT_DUCK = 2;
+    public static final int VARIANT_KING_OF_THE_HILL = 3;
 
     // states of the game ////////////////////////////////////////////////////////////////////////////
     public static final int PLAY = 1;
@@ -22,6 +23,7 @@ public class BoardConstants {
     public static final int WHITE_RESIGNED = 11;
     public static final int BLACK_RESIGNED = 12;
     public static final int DRAW_AGREEMENT = 13;
+    public static final int HILL_WIN = 14;
 
     // array index of data memebers that hold data for either black or white. these must be 0 and 1 cause arrays are of length 2
     public static final int BLACK = 0;

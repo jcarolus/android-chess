@@ -1,6 +1,6 @@
 # Rust Local Engine
 
-The `core` crate owns Standard, Chess 960 and Duck positions, coordinate move history, legal move
+The `core` crate owns Standard, Chess 960, Duck and King of the Hill positions, coordinate move history, legal move
 validation/application, game state, static evaluation and search. It has no JNI,
 Android, C++ or external crate dependency. `SearchRequest::new` validates and
 replays a Starting Position and complete history before search. Requests are
@@ -18,6 +18,14 @@ Variant: Play (`EnginePolicy.forPlay`), Analysis (`EnginePolicy.forAnalysis`) an
 Mate-in-Two Puzzles and Practice Positions (`EngineSession.forPuzzles`, quiescence
 off). OEX Engines are used only when selected and available, and never for Duck.
 The C++ `LocalEngine` class is kept but no Mode selects it.
+
+King of the Hill is exposed only in Play, with the built-in Engine or two humans on
+one device. PGN uses `[Variant "King of the Hill"]`; Analysis and Setup are unavailable.
+A legal king move to d4, e4, d5 or e5 wins after the fifty-move and repetition draw
+checks. Insufficient material is not a draw. Search bypasses the opening book and
+uses a phase-independent 40-centipawn bonus per king step towards the nearest hill
+square, with a 10-centipawn penalty per attacked adjacent square instead of the
+standard castling/pawn-shelter terms and lone-king mating heuristic.
 Interactive pending placement gates all EngineSession search entry points and
 RustLocalEngine itself. Snapshots include piece and duck history. Results are
 checked against the live position captured at dispatch, even when analyzing a

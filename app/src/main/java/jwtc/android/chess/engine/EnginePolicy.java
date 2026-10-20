@@ -11,10 +11,10 @@ public final class EnginePolicy {
 
     /**
      * Play follows the user's choice, but uses the built-in Rust Engine when no OEX Engine is
-     * installed. Duck always uses it because OEX Engines do not support Duck.
+     * installed. Duck and King of the Hill always use it.
      */
-    public static Backend forPlay(boolean prefersOex, boolean oexAvailable, boolean duckVariant) {
-        return !duckVariant && prefersOex && oexAvailable ? Backend.OEX : Backend.RUST;
+    public static Backend forPlay(boolean prefersOex, boolean oexAvailable, boolean requiresBuiltinEngine) {
+        return !requiresBuiltinEngine && prefersOex && oexAvailable ? Backend.OEX : Backend.RUST;
     }
 
     /**

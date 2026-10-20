@@ -15,6 +15,7 @@
         <item>@string/menu_set_clock</item>
         <item>@string/menu_new</item>
         <item>@string/menu_new_duck</item>
+        <item>@string/menu_new_king_of_the_hill</item>
         <item>@string/menu_new_960</item>
         <item>@string/menu_setup</item>
         <item>@string/menu_analyse_game</item>

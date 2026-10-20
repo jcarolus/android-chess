@@ -62,6 +62,8 @@ public class GameApi {
     }
 
     public boolean hasPendingDuckMove() { return pendingDuckMove != null; }
+    public boolean isKingOfTheHillVariant() { return board.variant() == RustSearchRequest.Variant.KING_OF_THE_HILL; }
+    public boolean requiresBuiltinEngine() { return isDuckVariant() || isKingOfTheHillVariant(); }
     public boolean isDuckVariant() { return board.getVariant() == BoardConstants.VARIANT_DUCK; }
 
     public Node getRootNode() { return gameTree.getRoot(); }
@@ -531,6 +533,7 @@ public class GameApi {
 
         board.newGame(variant);
         resetPGNHistory();
+        if (variant == BoardConstants.VARIANT_KING_OF_THE_HILL) pgnTags.put("Variant", "King of the Hill");
 
         if (variant == BoardConstants.VARIANT_DUCK) {
             pgnTags.put("Setup", "1");
@@ -752,10 +755,12 @@ public class GameApi {
             String variantTag = pgnTags.get("Variant");
             if (fen == null) {
                 board.newGame("Duck".equalsIgnoreCase(variantTag)
-                    ? BoardConstants.VARIANT_DUCK : BoardConstants.VARIANT_DEFAULT);
+                    ? BoardConstants.VARIANT_DUCK : "King of the Hill".equalsIgnoreCase(variantTag)
+                        ? BoardConstants.VARIANT_KING_OF_THE_HILL : BoardConstants.VARIANT_DEFAULT);
             } else {
                 boolean loaded;
                 if ("Duck".equalsIgnoreCase(variantTag)) loaded = board.initFEN(fen, RustSearchRequest.Variant.DUCK);
+                else if ("King of the Hill".equalsIgnoreCase(variantTag)) loaded = board.initFEN(fen, RustSearchRequest.Variant.KING_OF_THE_HILL);
                 else if ("Fischerandom".equalsIgnoreCase(variantTag) || "Chess960".equalsIgnoreCase(variantTag))
                     loaded = board.initFEN(fen, RustSearchRequest.Variant.CHESS_960);
                 else loaded = board.initFEN(fen);
@@ -1085,6 +1090,7 @@ public class GameApi {
             case BoardConstants.DRAW_MATERIAL:
             case BoardConstants.DRAW_REPEAT:
             case BoardConstants.STALEMATE: return "1/2-1/2";
+            case BoardConstants.HILL_WIN:
             case BoardConstants.MATE: return end.getTurn() == BoardConstants.WHITE ? "0-1" : "1-0";
             case BoardConstants.BLACK_RESIGNED:
             case BoardConstants.BLACK_FORFEIT_TIME: return "1-0";

@@ -179,7 +179,10 @@ public class PlayActivity extends ChessBoardActivity implements
         final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU);
 
         MaterialButton buttonMenu = findViewById(R.id.ButtonMenu);
-        buttonMenu.setOnClickListener(v -> menuDialog.show());
+        buttonMenu.setOnClickListener(v -> {
+            menuDialog.setKingOfTheHill(gameApi.isKingOfTheHillVariant());
+            menuDialog.show();
+        });
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
@@ -761,11 +764,14 @@ public class PlayActivity extends ChessBoardActivity implements
                         this,
                         REQUEST_GAME_SETTINGS,
                         getPrefs(),
-                        gameApi.isDuckVariant()
+                        gameApi.requiresBuiltinEngine()
                     );
                     settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
                     gameApi.newGame();
+                    lGameID = 0;
+                } else if (item.equals(getString(R.string.menu_new_king_of_the_hill))) {
+                    gameApi.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
                     lGameID = 0;
                 } else if (item.equals(getString(R.string.menu_new_duck))) {
                     gameApi.newGame(BoardConstants.VARIANT_DUCK);
@@ -779,6 +785,7 @@ public class PlayActivity extends ChessBoardActivity implements
                     intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
                     startActivityForResult(intent, REQUEST_SETUP);
                 } else if (item.equals(getString(R.string.menu_analyse_game))) {
+                    if (gameApi.isKingOfTheHillVariant()) return;
                     intent = new Intent(this, AnalyzeActivity.class);
                     intent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
                     startActivity(intent);
@@ -922,7 +929,7 @@ public class PlayActivity extends ChessBoardActivity implements
         engineSession.selectForPlay(
             "oex".equals(getPreferredEngineBackend()),
             prefs.getString("oexEngineId", null),
-            gameApi.isDuckVariant(),
+            gameApi.requiresBuiltinEngine(),
             prefs.getBoolean("quiescentSearchOn", true));
     }
 
@@ -1019,7 +1026,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 
-            if (!gameApi.isDuckVariant() && moves.size() > 0) {
+            if (!gameApi.requiresBuiltinEngine() && moves.size() > 0) {
                 int r = (int) (Math.random() * moves.size());
                 Log.d(TAG, "Eco moves " + moves.size() + ", " + r);
                 gameApi.move(moves.get(r), -1);

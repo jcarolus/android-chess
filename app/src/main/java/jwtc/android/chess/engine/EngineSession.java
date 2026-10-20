@@ -76,14 +76,14 @@ public final class EngineSession {
      * {@link EnginePolicy#forPlay}). Switching Engines cancels the running search and moves the
      * listener over; selecting the same Engine again leaves it running.
      */
-    public void selectForPlay(boolean prefersOex, String oexEngineId, boolean duckVariant,
+    public void selectForPlay(boolean prefersOex, String oexEngineId, boolean requiresBuiltinEngine,
                               boolean quiescentSearch) {
         if (closed) {
             return;
         }
-        boolean oexAvailable = !duckVariant && prefersOex && OexEngine.hasAvailableEngines(context);
+        boolean oexAvailable = !requiresBuiltinEngine && prefersOex && OexEngine.hasAvailableEngines(context);
         EngineApi target;
-        if (EnginePolicy.forPlay(prefersOex, oexAvailable, duckVariant) == EnginePolicy.Backend.OEX) {
+        if (EnginePolicy.forPlay(prefersOex, oexAvailable, requiresBuiltinEngine) == EnginePolicy.Backend.OEX) {
             if (oex == null) oex = new OexEngine(context, gameApi, oexEngineId);
             else oex.setPreferredEngineId(oexEngineId);
             target = oex;

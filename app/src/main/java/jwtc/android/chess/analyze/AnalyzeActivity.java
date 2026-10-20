@@ -209,12 +209,12 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         } else {
             gameApi.restoreCurrentBoard();
         }
-        if (gameApi.isDuckVariant()) {
+        if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
             analysisActive = false;
             closeEngineSession();
             if (analysisDialog == null) {
                 analysisDialog = new MaterialAlertDialogBuilder(this)
-                    .setMessage(R.string.analysis_duck_unsupported)
+                    .setMessage(gameApi.isKingOfTheHillVariant() ? R.string.analysis_king_of_the_hill_unsupported : R.string.analysis_duck_unsupported)
                     .setPositiveButton(R.string.button_ok, (dialog, which) -> finish())
                     .setOnCancelListener(dialog -> finish())
                     .show();

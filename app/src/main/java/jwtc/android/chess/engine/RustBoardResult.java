@@ -50,10 +50,10 @@ public final class RustBoardResult {
         this.turns = turns;
     }
 
-    /** {@link RustBoardResult#gameState} (Play/Check/Mate/Stalemate/DrawMaterial/DrawFiftyMove/DrawRepetition), indexed by its ordinal, mapped to {@link BoardConstants}'s legacy numbering. */
+    /** {@link RustBoardResult#gameState} (Play/Check/Mate/Stalemate/DrawMaterial/DrawFiftyMove/DrawRepetition/HillWin), indexed by its ordinal, mapped to {@link BoardConstants}'s legacy numbering. */
     private static final int[] LEGACY_STATE_FOR_RUST_CODE = {
         BoardConstants.PLAY, BoardConstants.CHECK, BoardConstants.MATE, BoardConstants.STALEMATE,
-        BoardConstants.DRAW_MATERIAL, BoardConstants.DRAW_50, BoardConstants.DRAW_REPEAT,
+        BoardConstants.DRAW_MATERIAL, BoardConstants.DRAW_50, BoardConstants.DRAW_REPEAT, BoardConstants.HILL_WIN,
     };
 
     public static int boardState(int rustGameStateCode) {

@@ -84,7 +84,8 @@ public final class RustBoard {
     public synchronized String toFEN() { return current().fen; }
     public synchronized int getNumBoard() { return frames.size() - 1; }
     public synchronized int getTurn() { return current().position.white ? BoardConstants.WHITE : BoardConstants.BLACK; }
-    public synchronized int getVariant() { return variant == RustSearchRequest.Variant.DUCK ? BoardConstants.VARIANT_DUCK : BoardConstants.VARIANT_DEFAULT; }
+    public synchronized int getVariant() { return variant == RustSearchRequest.Variant.KING_OF_THE_HILL ? BoardConstants.VARIANT_KING_OF_THE_HILL
+        : variant == RustSearchRequest.Variant.DUCK ? BoardConstants.VARIANT_DUCK : BoardConstants.VARIANT_DEFAULT; }
     public synchronized int getMyMove() { return current().move; }
     /** SAN of the move that produced the current position; empty at a starting position. */
     public synchronized String getMySan() { return current().san; }
@@ -143,7 +144,8 @@ public final class RustBoard {
     }
     public synchronized void newGame() { newGame(BoardConstants.VARIANT_DEFAULT); }
     public synchronized void newGame(int variant) {
-        initFEN(variant == BoardConstants.VARIANT_DUCK ? START.replace("8/8/8/8", "8/7$/8/8") : START);
+        if (variant == BoardConstants.VARIANT_KING_OF_THE_HILL) load(START, RustSearchRequest.Variant.KING_OF_THE_HILL);
+        else initFEN(variant == BoardConstants.VARIANT_DUCK ? START.replace("8/8/8/8", "8/7$/8/8") : START);
     }
     public synchronized int initRandomFisher(int seed) {
         if (seed < 0) seed = ThreadLocalRandom.current().nextInt(960);
@@ -262,7 +264,8 @@ public final class RustBoard {
     public synchronized void setVariant(int value) {
         BoardPosition position = new BoardPosition(toFEN());
         if (value != BoardConstants.VARIANT_DUCK && position.duck() >= 0) position.squares[position.duck()] = 0;
-        load(position.fen(), value == BoardConstants.VARIANT_DUCK ? RustSearchRequest.Variant.DUCK
+        load(position.fen(), value == BoardConstants.VARIANT_KING_OF_THE_HILL ? RustSearchRequest.Variant.KING_OF_THE_HILL
+            : value == BoardConstants.VARIANT_DUCK ? RustSearchRequest.Variant.DUCK
             : position.chess960() ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD);
     }
     public synchronized int placeDuck(int square) {

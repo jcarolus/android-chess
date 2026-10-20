@@ -17,7 +17,7 @@ Any board state during a Game, identified by a FEN.
 The Position a Game begins from: the standard setup, a Chess 960 arrangement or a custom Setup.
 
 **Variant**:
-The rule set a Game is played under: Standard, Chess 960 or Duck chess. Duck chess is experimental and supported only by the Local Engine (not OEX Engines, not Lichess).
+The rule set a Game is played under: Standard, Chess 960, Duck chess or King of the Hill. Duck chess is experimental and supported only by the Local Engine (not OEX Engines, not Lichess). King of the Hill is supported only in Play, against the Local Engine or another person on the same device; it supports PGN persistence but not Analysis or Setup. A legal king move onto d4, e4, d5 or e5 wins, after checking the existing 50-move and repetition draw rules. Insufficient material does not draw this Variant.
 _Avoid_: Chess960 (spell it "Chess 960")
 
 **PGN**:

@@ -575,4 +575,8 @@
     <string name="analysis_continue">Continue</string>
     <string name="analysis_duck_unsupported">Analysis for Duck chess is not supported.</string>
     <string name="menu_analyse_game">Analyse game</string>
+    <string name="menu_new_king_of_the_hill">New King of the Hill game</string>
+    <string name="state_hill_win">King reached the hill</string>
+    <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
+    <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
 </resources>

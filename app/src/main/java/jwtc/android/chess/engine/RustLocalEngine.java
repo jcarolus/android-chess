@@ -50,7 +50,8 @@ public final class RustLocalEngine extends EngineApi {
         }
     }
     private RustSearchRequest.Variant variant() {
-        return gameApi.isDuckVariant() ? RustSearchRequest.Variant.DUCK
+        return gameApi.isKingOfTheHillVariant() ? RustSearchRequest.Variant.KING_OF_THE_HILL
+            : gameApi.isDuckVariant() ? RustSearchRequest.Variant.DUCK
             : gameApi.isChess960Variant() ? RustSearchRequest.Variant.CHESS_960 : RustSearchRequest.Variant.STANDARD;
     }
     private boolean positionIsCurrent() {

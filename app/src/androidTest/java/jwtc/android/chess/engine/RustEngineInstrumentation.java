@@ -34,6 +34,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
             }
             boardSnapshots();
             boardOwnership();
+            kingOfTheHillPersistence();
             nativeContract();
             nativeBoardContract();
             sessionMove();
@@ -62,6 +63,36 @@ public final class RustEngineInstrumentation extends Instrumentation {
             finish(0, report);
         }
     }
+    private void kingOfTheHillPersistence() throws Exception {
+        runOnMainSync(() -> {
+            GameApi game = new GameApi();
+            game.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
+            check(game.isKingOfTheHillVariant() && game.requiresBuiltinEngine(), "Hill variant not selected");
+            EngineSession session = EngineSession.forPlay(getTargetContext(), game, new Listener());
+            session.selectForPlay(true, null, game.requiresBuiltinEngine(), true);
+            check(session.isBuiltin(), "Hill game selected an OEX engine");
+            session.close();
+            check(game.requestMove("e4") && game.requestMove("e5"), "Hill opening failed");
+            String saved = game.exportFullPGN();
+            check(saved.contains("[Variant \"King of the Hill\"]"), "Missing variant tag");
+            game.newGame();
+            check(game.loadPGN(saved) && game.isKingOfTheHillVariant(), "Hill PGN reload failed");
+            game.restoreCurrentBoard();
+            check(game.isKingOfTheHillVariant(), "Restore lost hill rules");
+            check(game.loadPGN("[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 0 1\"]\n\n*"), "Hill FEN import failed");
+            check(game.requestMove("Kd4"), "Hill move failed");
+            check(game.getState() == BoardConstants.HILL_WIN && game.isEnded(), "Hill move did not end game");
+            saved = game.exportFullPGN();
+            check(saved.contains("[Result \"1-0\"]"), "Hill winner not exported");
+            check(game.stepBack() && !game.isEnded() && game.isKingOfTheHillVariant(), "Hill undo failed");
+            check(game.stepForward() && game.getState() == BoardConstants.HILL_WIN, "Hill redo failed");
+            check(game.loadPGN(saved) && game.getState() == BoardConstants.HILL_WIN, "Completed hill PGN reload failed");
+            check(game.loadPGN("[Variant \"King of the Hill\"]\n[FEN \"7k/8/8/8/8/3K4/8/8 w - - 99 1\"]\n\n*"), "Draw position import failed");
+            check(game.requestMove("Kd4") && game.getState() == BoardConstants.DRAW_50, "Hill overrode fifty-move draw");
+            check(game.exportFullPGN().contains("[Result \"1/2-1/2\"]"), "Draw result not exported");
+        });
+    }
+
     private void boardSnapshots() {
         RustBoard board = new RustBoard();
         assertSnapshot(board);

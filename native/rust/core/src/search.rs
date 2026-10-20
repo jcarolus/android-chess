@@ -229,13 +229,17 @@ impl Worker<'_> {
         if p.drawn_in_search(&self.seen[self.seen_from..]) {
             return 0;
         }
+        if p.hill_won() {
+            return -MATE;
+        }
         let mut scores: Vec<_> = moves
             .iter()
             .map(|m| {
+                let score = score_move(p, *m);
                 if Some(*m) == self.best[ply] {
-                    100000
+                    score.max(100000)
                 } else {
-                    score_move(p, *m)
+                    score
                 }
             })
             .collect();
@@ -294,6 +298,14 @@ impl Worker<'_> {
             return alpha;
         }
         self.nodes += 1;
+        if p.variant == Variant::KingOfTheHill {
+            if p.drawn_in_search(&self.seen[self.seen_from..]) {
+                return 0;
+            }
+            if p.hill_won() {
+                return -MATE;
+            }
+        }
         let value = p.evaluate();
         if !p.last_check && value >= beta {
             return beta;
@@ -316,9 +328,11 @@ impl Worker<'_> {
                 continue;
             }
             next.last_check = next.in_check();
-            if m.capture || m.promotion.is_some() || next.last_check {
+            if m.capture || m.promotion.is_some() || next.last_check || next.hill_won() {
                 let mut children = next.pseudo_moves();
+                let seen_from = self.enter(p, m);
                 let value = -self.quiesce(&next, &mut children, depth - 1, -beta, -alpha);
+                self.leave(p, m, seen_from);
                 if value > alpha {
                     alpha = value;
                     if value >= beta {
@@ -348,6 +362,9 @@ fn pick(moves: &mut [Move], scores: &mut [i32], index: usize) {
 }
 fn score_move(p: &Position, m: Move) -> i32 {
     let piece = p.piece(p.turn, m.from).unwrap();
+    if p.variant == Variant::KingOfTheHill && piece == KING && [27, 28, 35, 36].contains(&m.to) {
+        return 200000;
+    }
     if m.capture {
         return if m.ep {
             30000
@@ -390,7 +407,11 @@ pub fn search_with_progress(
     match p.game_state() {
         GameState::Play | GameState::Check => {}
         state => {
-            result.score = if state == GameState::Mate { -MATE } else { 0 };
+            result.score = if matches!(state, GameState::Mate | GameState::HillWin) {
+                -MATE
+            } else {
+                0
+            };
             result.has_evaluation = true;
             result.elapsed_micros = start.elapsed().as_micros() as u64;
             publish(SearchEvent::Finished(result.clone()));

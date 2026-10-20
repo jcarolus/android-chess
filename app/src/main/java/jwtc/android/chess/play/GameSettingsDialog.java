@@ -24,7 +24,7 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.views.FixedDropdownView;
 
 public class GameSettingsDialog extends ResultDialog<Bundle> {
-    public GameSettingsDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, final SharedPreferences prefs, boolean isDuckGame) {
+    public GameSettingsDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, final SharedPreferences prefs, boolean requiresBuiltinEngine) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.game_settings);
@@ -67,7 +67,7 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
         List<OexEngineDescriptor> oexEngines = new OexEngineResolver(context).resolveEngines();
         for (OexEngineDescriptor descriptor : oexEngines) {
             String label = context.getString(R.string.options_engine_oex) + ": " + descriptor.getName();
-            boolean selectable = !isDuckGame;
+            boolean selectable = !requiresBuiltinEngine;
             if (!selectable) {
                 label += " (" + context.getString(R.string.options_engine_unavailable_short) + ")";
             }
@@ -76,9 +76,9 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
         }
         spinnerEngine.setItems(engineLabels);
 
-        if (isDuckGame && oexEngines.size() > 0) {
+        if (requiresBuiltinEngine && oexEngines.size() > 0) {
             textEngineBackendHint.setVisibility(View.VISIBLE);
-            textEngineBackendHint.setText(R.string.options_engine_oex_duck_disabled);
+            textEngineBackendHint.setText(R.string.options_engine_oex_variant_disabled);
         } else if (oexEngines.isEmpty()) {
             textEngineBackendHint.setVisibility(View.VISIBLE);
             textEngineBackendHint.setText(R.string.options_engine_oex_unavailable);

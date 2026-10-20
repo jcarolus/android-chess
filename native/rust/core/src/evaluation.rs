@@ -56,6 +56,10 @@ impl Position {
         if self.pieces[other][KING] == 0 {
             return 100000;
         }
+        if self.variant == Variant::KingOfTheHill {
+            return self.material(t) - self.material(other) + self.extensions(t)
+                - self.extensions(other);
+        }
         if self.own(t) == self.pieces[t][KING] {
             return -self.against_lone_king(other);
         }
@@ -92,14 +96,28 @@ impl Position {
         let occ = self.occupied();
         let pawns = p[PAWN];
         let opp_pawns = self.pieces[t ^ 1][PAWN];
-        let mut value = if self.castling[t] & 8 != 0 {
+        let mut value = if self.variant == Variant::KingOfTheHill {
+            // A fixed bonus per king step towards the nearest hill square.
+            let king = self.king(t);
+            let steps = [27usize, 28, 35, 36]
+                .iter()
+                .map(|&s| (king / 8).abs_diff(s / 8).max((king % 8).abs_diff(s % 8)) as i32)
+                .min()
+                .unwrap();
+            let danger = squares(self.range_with(KING, t, king, occ))
+                .filter(|&s| self.attacked(t, s))
+                .count() as i32;
+            -40 * steps - 10 * danger
+        } else if self.castling[t] & 8 != 0 {
             60
         } else if self.castling[t] == 0 {
             -60
         } else {
             -100
         };
-        value += (self.range_with(KING, t, self.king(t), occ) & pawns).count_ones() as i32 * 5;
+        if self.variant != Variant::KingOfTheHill {
+            value += (self.range_with(KING, t, self.king(t), occ) & pawns).count_ones() as i32 * 5;
+        }
         if pawns
             & if t == 1 {
                 bit(51) | bit(52)

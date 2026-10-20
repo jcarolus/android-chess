@@ -730,6 +730,7 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         String labelForWhiteKing = null;
         String labelForBlackKing = null;
         switch (state) {
+            case BoardConstants.HILL_WIN:
             case BoardConstants.MATE:
                 labelForWhiteKing = turn == BoardConstants.BLACK ? ChessPieceLabelView.MATE_WINNER : ChessPieceLabelView.MATE_LOSER;
                 labelForBlackKing = turn == BoardConstants.WHITE ? ChessPieceLabelView.MATE_WINNER : ChessPieceLabelView.MATE_LOSER;
@@ -1544,6 +1545,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     public static int chessStateToR(int s) {
         switch (s) {
+            case BoardConstants.HILL_WIN:
+                return R.string.state_hill_win;
             case BoardConstants.MATE:
                 return R.string.state_mate;
             case BoardConstants.DRAW_MATERIAL:

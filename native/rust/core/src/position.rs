@@ -5,6 +5,7 @@ pub enum Variant {
     Standard,
     Chess960,
     Duck,
+    KingOfTheHill,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Error(pub String);
@@ -57,6 +58,7 @@ pub enum GameState {
     DrawMaterial,
     DrawFiftyMove,
     DrawRepetition,
+    HillWin,
 }
 pub(crate) const VALUES: [i32; 6] = [100, 320, 340, 500, 900, 50000];
 pub(crate) const PAWN: usize = 0;
@@ -666,6 +668,11 @@ impl Position {
         moves
     }
     pub fn legal_moves(&self) -> Vec<CoordinateMove> {
+        if self.variant == Variant::KingOfTheHill
+            && !matches!(self.game_state(), GameState::Play | GameState::Check)
+        {
+            return vec![];
+        }
         if self.variant == Variant::Duck {
             if self.game_state() != GameState::Play {
                 return vec![];
@@ -717,6 +724,11 @@ impl Position {
         coordinate: &str,
         omit_pending: bool,
     ) -> Result<bool, Error> {
+        if self.variant == Variant::KingOfTheHill
+            && !matches!(self.game_state(), GameState::Play | GameState::Check)
+        {
+            return Err(invalid("Game has ended"));
+        }
         let coordinate = CoordinateMove::parse(coordinate)?;
         if self.variant == Variant::Duck && self.game_state() != GameState::Play {
             return Err(invalid("Game has ended"));
@@ -917,6 +929,10 @@ impl Position {
             seen.iter().filter(|p| **p == current).count() >= 2
         }
     }
+    pub(crate) fn hill_won(&self) -> bool {
+        self.variant == Variant::KingOfTheHill
+            && self.pieces[self.turn ^ 1][KING] & (bit(27) | bit(28) | bit(35) | bit(36)) != 0
+    }
     pub fn game_state(&self) -> GameState {
         if self.variant == Variant::Duck && self.pieces.iter().any(|p| p[KING] == 0) {
             return GameState::Mate;
@@ -928,10 +944,14 @@ impl Position {
         if self.previous.iter().filter(|p| **p == current).count() >= 2 {
             return GameState::DrawRepetition;
         }
-        if self
-            .pieces
-            .iter()
-            .all(|p| p[PAWN] | p[ROOK] | p[QUEEN] == 0)
+        if self.hill_won() {
+            return GameState::HillWin;
+        }
+        if self.variant != Variant::KingOfTheHill
+            && self
+                .pieces
+                .iter()
+                .all(|p| p[PAWN] | p[ROOK] | p[QUEEN] == 0)
             && self.material(0) <= 50340
             && self.material(1) <= 50340
             && ![0, 7, 56, 63].contains(&self.king(0))
@@ -1058,6 +1078,11 @@ impl Position {
     }
     /// Standard Algebraic Notation for the legal move matching `coordinate`.
     pub fn to_san(&self, coordinate: &str) -> Result<String, Error> {
+        if self.variant == Variant::KingOfTheHill
+            && !matches!(self.game_state(), GameState::Play | GameState::Check)
+        {
+            return Err(invalid("Game has ended"));
+        }
         let coordinate = CoordinateMove::parse(coordinate)?;
         let (piece_str, duck) = coordinate
             .as_str()
