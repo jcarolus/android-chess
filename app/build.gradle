@@ -44,7 +44,7 @@ android {
 
     externalNativeBuild {
         ndkBuild {
-            path file('../native/project/jni/Android.mk')
+            path file('../native/rust/jni/Android.mk')
         }
     }
     namespace 'jwtc.android.chess'
@@ -64,7 +64,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 }
 
-// Both engines are packaged; Rust is reachable only through internal selection.
+// Build the Rust libraries before packaging the JNI adapters.
 def buildRustEngines = tasks.register('buildRustEngines', Exec) {
     inputs.files(fileTree('../native/rust') { exclude 'target/**' })
     inputs.file('../scripts/build-rust-android.sh')

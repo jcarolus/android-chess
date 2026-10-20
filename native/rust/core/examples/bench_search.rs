@@ -1,8 +1,7 @@
 use chess_core::{search, SearchControl, SearchLimit, SearchOptions, SearchRequest, Variant};
 use std::time::Instant;
 
-// Runs a timed search from a FEN and prints the node count and N/s, in the
-// same format as the C++ engine's chess_bench_search.
+// Runs a search from a FEN and prints the node count and N/s.
 fn main() {
     let mut args = std::env::args().skip(1);
     let fen = args

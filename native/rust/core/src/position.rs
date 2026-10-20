@@ -195,8 +195,8 @@ pub(crate) fn square(s: &str) -> Result<usize, Error> {
 pub(crate) fn distance(a: usize, b: usize) -> i32 {
     (a / 8).abs_diff(b / 8) as i32 + (a % 8).abs_diff(b % 8) as i32
 }
-/// The file of the outermost rook along `squares` (walked from the king outward), matching the
-/// native reference engine's setCastlingsEPAnd50: later matches overwrite earlier ones, so the
+/// The file of the outermost rook along `squares` (walked from the king outward).
+/// Later matches overwrite earlier ones, so the
 /// result is whichever rook sits closest to the board edge.
 fn outermost_rook_file(rooks: u64, squares: impl Iterator<Item = usize>) -> Option<usize> {
     let mut found = None;
@@ -369,8 +369,7 @@ impl Position {
             } else {
                 // Chess 960: scan outward from the king along the back rank for the
                 // outermost rook on each side; a claimed right that resolves to no
-                // rook is dropped silently, matching the native reference engine's
-                // setCastlingsEPAnd50.
+                // rook is dropped silently.
                 let king = p.king(t);
                 let mut lost = 0u8;
                 if long {
@@ -585,9 +584,7 @@ impl Position {
                         if king == base + 4 && target_file == if short { 7 } else { 0 } {
                             // The classical king/rook squares: only the king's own transit
                             // squares need be unattacked; squares further toward the rook
-                            // only need to be vacant (matches the native reference engine's
-                            // dedicated fast path, which the general scan below does not
-                            // reproduce exactly).
+                            // only need to be vacant.
                             let transit: &[usize] = if short {
                                 &[base + 5, base + 6]
                             } else {
@@ -769,9 +766,7 @@ impl Position {
         *self = next;
         Ok(true)
     }
-    /// The rook's current square for a castle move, found by its tracked file
-    /// (scanning outward from the king's pre-move square, as the native
-    /// reference engine does when it relocates the rook).
+    /// The rook's current square for a castle move, found by its tracked file.
     fn castling_rook_square(&self, t: usize, king_from: usize, short: bool) -> usize {
         king_from - king_from % 8 + self.rook_file[t][usize::from(short)]
     }

@@ -24,7 +24,7 @@ Everything regarding FICS is deprecated. It will not be maintained and no new fu
 
 ### Unit tests
 
-- **Write unit tests for** pure logic such as PGN parsing, and for the local engine C++ code.
+- **Write unit tests for** pure logic such as PGN parsing, and for the local engine Rust code.
 - **Do not write unit tests for** Activities, dialogs and layout.
 - **Online code (Lichess):** do not add fake `LichessApi` seams or other test doubles to make it testable.
 

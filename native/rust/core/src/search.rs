@@ -111,7 +111,7 @@ impl Worker<'_> {
             self.nodes += 1;
             return p.evaluate();
         }
-        // C++ orders piece moves using the previous best piece move at this ply.
+        // Order piece moves using the previous best piece move at this ply.
         let mut scores: Vec<_> = moves
             .iter()
             .map(|m| {

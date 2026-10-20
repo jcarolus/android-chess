@@ -1,6 +1,6 @@
 APP_ABI          := all
 APP_PLATFORM     := 21
 
-# The engine uses the C++ runtime for synchronization and owned containers.
+# The JNI adapters use the C++ runtime.
 APP_STL := c++_static
 APP_CPPFLAGS += -std=c++17

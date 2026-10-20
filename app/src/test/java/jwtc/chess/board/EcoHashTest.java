@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class EcoHashTest {
-    // Expected hashes and packed moves come from the C++ board, not the Java calculation.
+    // Expected hashes and packed moves verify compatibility with the opening-book format.
     @Test public void doublePawnPushMatchesNativeOpeningHash() {
         assertEquals(-2196248314007145541L, EcoHash.afterMove(-8567268772865283918L,
             "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",

@@ -17,7 +17,6 @@ used only by device tests. Rust is the built-in Local Engine for every Mode and
 Variant: Play (`EnginePolicy.forPlay`), Analysis (`EnginePolicy.forAnalysis`) and
 Mate-in-Two Puzzles and Practice Positions (`EngineSession.forPuzzles`, quiescence
 off). OEX Engines are used only when selected and available, and never for Duck.
-The C++ `LocalEngine` class is kept but no Mode selects it.
 
 King of the Hill is exposed only in Play, with the built-in Engine or two humans on
 one device. PGN uses `[Variant "King of the Hill"]`; Analysis and Setup are unavailable.
@@ -37,7 +36,7 @@ analysis callbacks back to the existing side-to-move listener contract; the
 Analysis view performs its usual White-perspective conversion. Fixed-depth limits are 1–15; quiescence has the native five-ply
 limit. Timed searches retain only a completed iteration. Stop interrupts the
 owned worker; abort also invalidates Java result delivery. A native failure or
-invalid request reports an error and never falls back to C++.
+invalid request reports an error.
 
 `search_with_progress` emits a typed progress event after each completed depth
 and exactly one final event, including terminal and interrupted searches. Events
@@ -45,7 +44,7 @@ carry search identity, evaluation availability, completed depth, evaluation coun
 principal variation and monotonic elapsed microseconds. The C ABI calls JNI
 synchronously on the search worker for progress and returns the final result;
 Java posts both to the main thread in order, without polling JNI. N/s and display
-text are calculated in Java, never in the core. Evaluation counts follow C++:
+text are calculated in Java, never in the core. Evaluation counts include
 one initial root count, each quiescence evaluation and terminal alpha-beta leaf.
 Duck preserves the separate native alpha-beta algorithm: depth counts full turns,
 quiescence is unused, and placement candidates are the opponent’s non-capturing
@@ -53,7 +52,7 @@ move destinations in their original order, including duplicates. Legal turn
 generation still exposes every valid empty placement square. The JNI result
 buffers accommodate promotion-plus-placement coordinates and fifteen full PV turns.
 
-The principal variation tracks the selected line separately from the C++ per-ply
+The principal variation tracks the selected line separately from the per-ply
 best-move ordering heuristic, without changing move ordering or tie-breaking.
 It includes searched main-line plies, excluding quiescence continuations.
 
@@ -65,7 +64,7 @@ callbacks run afterward, when a replacement can safely start. Queued progress an
 results check identity and destruction, and Play checks the captured Game position
 again before each move listener. Closing EngineSession removes its listener and
 invalidates delivery immediately; native teardown finishes on the worker.
-Like the reference engine, FEN fullmove counters are rebased to 1 at the Starting
+FEN fullmove counters are rebased to 1 at the Starting
 Position, and the early-queen heuristic counts plies from that position.
 
 ## Build
@@ -92,37 +91,14 @@ adb install -r app/build/outputs/apk/androidTest/foss/debug/app-foss-debug-andro
 adb shell am instrument -w jwtc.android.chess.test/jwtc.android.chess.engine.RustEngineInstrumentation
 ```
 
-The host runner requires CMake and GoogleTest. It compares ordered legal moves,
-resulting FENs, static evaluations, terminal states, completed depth and exact
-best moves and evaluation counts against the compiled C++ implementation. Fixtures cover native
-regressions and a seeded 32-ply game path, with quiescence on and off. Perft and
-invalid-input tests exercise the core independently of search. Device tests use
+The host runner executes the Rust workspace tests, including board queries, variant
+rules, evaluation, search, perft and invalid-input validation. Device tests use
 the real JNI, EngineSession and GameApi without an Activity or test doubles,
 covering progress, stop ordering, abort/restart, pre-depth interruption, stale
 navigation, queued results on teardown, terminal positions and errors.
 
-## Parity decisions
+## Known Duck repetition limitation
 
-The following C++ bugs were found during the port and approved for correction in
-both engines before establishing the parity baseline:
-
-- Single-bishop mobility passed a square index to a bitboard-taking function.
-- Promotion added the promoted piece without subtracting the pawn's value.
-- Passed-pawn masks were absent for White and malformed for Black.
-- Capturing an original rook did not clear its castling right.
-- Repetition used an incremental opening-book hash that did not represent
-  castling rights or legal en-passant availability. Repetition now compares
-  position fields directly; the historical opening-book hash remains unchanged.
-
-Other native evaluation and search behavior is preserved, including square
-iteration order (upper 32 bits first), swap-based move ordering, quiescence
-stand-pat behavior while in check, and the material-draw heuristic. Performance
-is informational; exact deterministic agreement is the acceptance gate.
-
-### Known Duck repetition limitation
-
-C++ `sameRepetitionPosition` does not compare the duck square. Different Duck
-placements can therefore count as the same position. Rust reproduces this so both
-engines agree, and the Rust repetition regression records that behavior. Castling attack
-checks, asymmetric duck occupancy in mobility evaluation, candidate ordering and
-draw/depth behavior likewise follow the native implementation.
+Repetition does not compare the duck square. Different Duck placements can
+therefore count as the same position; the Rust repetition regression records
+that behavior.

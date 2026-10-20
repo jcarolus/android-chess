@@ -101,7 +101,7 @@ public final class RustSearchRequest {
     /**
      * The king file and the queen-side/king-side rook files (each -1 if absent) for one colour,
      * read from a FEN's piece-placement field. The outermost rook on each side of the king is the
-     * one Chess 960 castling tracks, matching the native reference engine's setCastlingsEPAnd50.
+     * one Chess 960 castling tracks.
      */
     public static int[] chess960Files(String fen, boolean white) {
         String[] ranks = fen.split("\\s+")[0].split("/");
