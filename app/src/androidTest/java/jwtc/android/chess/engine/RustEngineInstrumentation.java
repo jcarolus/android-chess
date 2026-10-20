@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.EcoService;
 import jwtc.chess.board.BoardConstants;
+import jwtc.chess.board.BoardPosition;
 
 /** Device smoke test of the real JNI and EngineSession path, with no Activity. */
 public final class RustEngineInstrumentation extends Instrumentation {
@@ -31,6 +32,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 finish(-1, report);
                 return;
             }
+            boardSnapshots();
             boardOwnership();
             nativeContract();
             nativeBoardContract();
@@ -60,6 +62,68 @@ public final class RustEngineInstrumentation extends Instrumentation {
             finish(0, report);
         }
     }
+    private void boardSnapshots() {
+        RustBoard board = new RustBoard();
+        assertSnapshot(board);
+        check(board.requestMove(52, 36) != 0, "Snapshot e4 failed");
+        String afterE4 = board.toFEN();
+        assertSnapshot(board);
+        check(board.requestMove(12, 28) != 0, "Snapshot e5 failed");
+        assertSnapshot(board);
+        board.undo();
+        check(afterE4.equals(board.toFEN()), "Undo lost snapshot");
+        assertSnapshot(board);
+        board.removePiece(BoardConstants.WHITE, 36);
+        check(board.pieceAt(BoardConstants.WHITE, 36) == BoardConstants.FIELD, "Edit retained piece");
+        assertSnapshot(board);
+        board.putPiece(36, BoardConstants.QUEEN, BoardConstants.WHITE);
+        board.setTurn(BoardConstants.WHITE);
+        board.setCastlingsEPAnd50(0, 0, 0, 0, -1, 0);
+        board.commitBoard();
+        assertSnapshot(board);
+        check(board.getWhiteCanCastleShort() == 0 && board.getTurn() == BoardConstants.WHITE,
+            "Setup retained old metadata");
+        board.reset();
+        assertSnapshot(board);
+        board.initRandomFisher(42);
+        assertSnapshot(board);
+        board.newGame(BoardConstants.VARIANT_DUCK);
+        String duckStart = board.toFEN();
+        assertSnapshot(board);
+        check(board.requestMove(52, 36) != 0, "Snapshot Duck preview failed");
+        assertSnapshot(board);
+        check(board.requestDuckMove(27) != 0, "Snapshot Duck placement failed");
+        check(board.getDuckPos() == 27, "Duck snapshot retained old square");
+        assertSnapshot(board);
+        board.undo();
+        check(duckStart.equals(board.toFEN()), "Duck undo mutated earlier snapshot");
+        assertSnapshot(board);
+        board.setVariant(BoardConstants.VARIANT_DEFAULT);
+        check(board.getDuckPos() == -1, "Variant change retained duck");
+        assertSnapshot(board);
+        check(board.initFEN(START), "Snapshot load failed");
+        check(!board.initFEN("invalid"), "Invalid FEN accepted");
+        check(START.equals(board.toFEN()), "Invalid load changed snapshot");
+        assertSnapshot(board);
+    }
+
+    private void assertSnapshot(RustBoard board) {
+        BoardPosition expected = new BoardPosition(board.toFEN());
+        check(board.getTurn() == (expected.white ? BoardConstants.WHITE : BoardConstants.BLACK), "Snapshot turn mismatch");
+        check(board.getDuckPos() == expected.duck(), "Snapshot duck mismatch");
+        check(board.getEnpassantPosition() == expected.ep, "Snapshot en passant mismatch");
+        check(board.getWhiteCanCastleLong() == (expected.castling.contains("Q") ? 1 : 0), "Snapshot white long castle mismatch");
+        check(board.getWhiteCanCastleShort() == (expected.castling.contains("K") ? 1 : 0), "Snapshot white short castle mismatch");
+        check(board.getBlackCanCastleLong() == (expected.castling.contains("q") ? 1 : 0), "Snapshot black long castle mismatch");
+        check(board.getBlackCanCastleShort() == (expected.castling.contains("k") ? 1 : 0), "Snapshot black short castle mismatch");
+        for (int square = 0; square < 64; square++) {
+            for (int colour : new int[]{BoardConstants.WHITE, BoardConstants.BLACK}) {
+                check(board.pieceAt(colour, square) == BoardPosition.pieceType(expected.squares[square], colour),
+                    "Snapshot piece mismatch at " + square);
+            }
+        }
+    }
+
     private void boardOwnership() {
         runOnMainSync(() -> {
             GameApi game = new GameApi();

@@ -23,6 +23,9 @@ public final class RustBoard {
 
     private static final class Frame {
         final String fen, coordinate, san;
+        // Private read-only snapshot; setup edits always parse a separate position.
+        final BoardPosition position;
+        final int duckPosition;
         final int move, duck;
         final long hash;
         final RustBoardResult result;
@@ -30,6 +33,8 @@ public final class RustBoard {
         Frame(String fen, String coordinate, String san, int move, int duck, long hash, RustBoardResult result, boolean pending) {
             this.fen = fen; this.coordinate = coordinate; this.san = san; this.move = move; this.duck = duck;
             this.hash = hash; this.result = result; this.pending = pending;
+            this.position = new BoardPosition(fen);
+            this.duckPosition = position.duck();
         }
     }
 
@@ -78,13 +83,13 @@ public final class RustBoard {
     public synchronized RustBoardResult query() { return current().result; }
     public synchronized String toFEN() { return current().fen; }
     public synchronized int getNumBoard() { return frames.size() - 1; }
-    public synchronized int getTurn() { return new BoardPosition(toFEN()).white ? BoardConstants.WHITE : BoardConstants.BLACK; }
+    public synchronized int getTurn() { return current().position.white ? BoardConstants.WHITE : BoardConstants.BLACK; }
     public synchronized int getVariant() { return variant == RustSearchRequest.Variant.DUCK ? BoardConstants.VARIANT_DUCK : BoardConstants.VARIANT_DEFAULT; }
     public synchronized int getMyMove() { return current().move; }
     /** SAN of the move that produced the current position; empty at a starting position. */
     public synchronized String getMySan() { return current().san; }
     public synchronized int getMyDuckPos() { return current().duck; }
-    public synchronized int getDuckPos() { return new BoardPosition(toFEN()).duck(); }
+    public synchronized int getDuckPos() { return current().duckPosition; }
     public synchronized long getHashKey() { return current().hash; }
     public synchronized int getState() {
         RustBoardResult result = query();
@@ -98,18 +103,18 @@ public final class RustBoard {
         return placement.indexOf('K') >= 0 && placement.indexOf('k') >= 0 ? 1 : 0;
     }
     public synchronized int pieceAt(int colour, int square) {
-        char c = new BoardPosition(toFEN()).squares[square];
+        char c = current().position.squares[square];
         return BoardPosition.pieceType(c, colour);
     }
     public synchronized int getNumCaptured(int colour, int piece) {
         return query() == null || piece < 0 || piece >= 5 ? 0 : query().captured[colour * 5 + piece];
     }
-    private int right(char c) { return new BoardPosition(toFEN()).castling.indexOf(c) < 0 ? 0 : 1; }
+    private int right(char c) { return current().position.castling.indexOf(c) < 0 ? 0 : 1; }
     public synchronized int getWhiteCanCastleLong() { return right('Q'); }
     public synchronized int getWhiteCanCastleShort() { return right('K'); }
     public synchronized int getBlackCanCastleLong() { return right('q'); }
     public synchronized int getBlackCanCastleShort() { return right('k'); }
-    public synchronized int getEnpassantPosition() { return new BoardPosition(toFEN()).ep; }
+    public synchronized int getEnpassantPosition() { return current().position.ep; }
 
     /** Structurally valid but illegal setup positions can be displayed and edited. */
     public synchronized boolean initFEN(String fen) {
