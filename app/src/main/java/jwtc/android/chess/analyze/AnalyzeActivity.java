@@ -47,6 +47,7 @@ import jwtc.android.chess.views.EngineEvaluationView;
 public class AnalyzeActivity extends ChessBoardActivity implements EngineListener {
     private static final String TAG = "AnalyzeActivity";
     private static final long ANALYSIS_DEBOUNCE_MILLIS = 200;
+    public static final String EXTRA_PGN = "analysisPgn";
     public static final String EXTRA_GAME_ID = "analysisGameId";
     public static final String EXTRA_SESSION_ID = "analysisSessionId";
     private static final String PREF_HIDE_ENGINE_WARNING = "analysisHideBuiltinWarning";
@@ -174,8 +175,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         SharedPreferences prefs = getPrefs();
 
         if (!sessionLoaded) {
-            lGameID = getIntent().getLongExtra(EXTRA_GAME_ID, prefs.getLong("game_id", 0));
-            String pgn = prefs.getString("game_pgn", null);
+            lGameID = getIntent().getLongExtra(EXTRA_GAME_ID, 0);
+            String pgn = getIntent().getStringExtra(EXTRA_PGN);
+            if (pgn == null) pgn = prefs.getString("game_pgn", null);
             String fen = prefs.getString("FEN", null);
             if (restoredSession != null && sessionId.equals(restoredSession.getString("id"))) {
                 gameApi.loadPGN(restoredSession.getString("pgn"));

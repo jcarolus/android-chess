@@ -34,6 +34,7 @@ import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
@@ -777,6 +778,10 @@ public class PlayActivity extends ChessBoardActivity implements
                     intent = new Intent();
                     intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
                     startActivityForResult(intent, REQUEST_SETUP);
+                } else if (item.equals(getString(R.string.menu_analyse_game))) {
+                    intent = new Intent(this, AnalyzeActivity.class);
+                    intent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
+                    startActivity(intent);
                 } else if (item.equals(getString(R.string.menu_save_game))) {
                     saveGame();
                 } else if (item.equals(getString(R.string.menu_load_game))) {

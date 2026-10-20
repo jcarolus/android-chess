@@ -126,9 +126,11 @@
                 style="?attr/chessButtonStyle" />
         </LinearLayout>
 
-        <LinearLayout
+        <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/LayoutSave"
-            android:orientation="horizontal"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:alignItems="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/board_row_gap">
@@ -137,8 +139,7 @@
                 android:id="@+id/ButtonSaveToFile"
                 app:icon="@drawable/save"
                 android:text="@string/lichess_save_game_to_file"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
 
@@ -146,11 +147,17 @@
                 android:id="@+id/ButtonSaveToDatabase"
                 app:icon="@drawable/database"
                 android:text="@string/lichess_save_game_to_database"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
-        </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonAnalyseGame"
+                app:icon="@drawable/ic_search"
+                android:text="@string/menu_analyse_game"
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/board_row_gap"
+                style="?attr/chessButtonStyle" />
+        </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"

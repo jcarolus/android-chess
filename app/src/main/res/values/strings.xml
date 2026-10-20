@@ -574,4 +574,5 @@
     <string name="analysis_dont_show_again">Don\'t show again</string>
     <string name="analysis_continue">Continue</string>
     <string name="analysis_duck_unsupported">Analysis for Duck chess is not supported.</string>
+    <string name="menu_analyse_game">Analyse game</string>
 </resources>

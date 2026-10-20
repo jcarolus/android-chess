@@ -13,12 +13,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.android.chess.lichess.models.PuzzleAndGame;
@@ -51,7 +53,8 @@ public class LichessGameActivity extends ChessBoardActivity
     private LichessApi lichessApi;
     private LocalClockApi localClockApi;
 
-    private LinearLayout layoutConfirm, layoutResignDraw, layoutSave, layoutPuzzleControls;
+    private LinearLayout layoutConfirm, layoutResignDraw, layoutPuzzleControls;
+    private FlexboxLayout layoutSave;
     private SwitchMaterial switchConfirmMoves;
     private ImageView imageTurnOpp, imageTurnMe;
     private TextView textViewClockOpp, textViewPlayerOpp, textViewRatingOpp;
@@ -112,6 +115,12 @@ public class LichessGameActivity extends ChessBoardActivity
         buttonSaveToDatabase.setOnClickListener(v -> {
             SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, 0, this::saveGameFromDialog);
             saveDialog.show();
+        });
+
+        findViewById(R.id.ButtonAnalyseGame).setOnClickListener(v -> {
+            Intent analysisIntent = new Intent(this, AnalyzeActivity.class);
+            analysisIntent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
+            startActivity(analysisIntent);
         });
 
         switchConfirmMoves = findViewById(R.id.SwitchConfirmMoves);
