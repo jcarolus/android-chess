@@ -1,10 +1,9 @@
 package jwtc.android.chess.tools;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.InputStream;
 import java.util.Scanner;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /** The named openings of a JSON file: an array of objects with "name" and "moves". */
 public final class OpeningJsonSource implements ImportSource {
@@ -31,8 +30,10 @@ public final class OpeningJsonSource implements ImportSource {
             ImportItem item;
             try {
                 JSONObject object = array.getJSONObject(i);
-                String pgn = "[Event \"Event\"]\n[White \"white\"]\n[Black \"black\"]\n"
-                    + object.getString("moves") + "\n\n";
+                String pgn =
+                        "[Event \"Event\"]\n[White \"white\"]\n[Black \"black\"]\n"
+                                + object.getString("moves")
+                                + "\n\n";
                 item = new ImportItem(pgn, object.getString("name"));
             } catch (Exception malformed) {
                 continue;

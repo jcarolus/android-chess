@@ -121,34 +121,48 @@ fn chess960_kingside_castle_relocates_the_tracked_rook() {
     let mut p =
         Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1").unwrap();
     p.apply("e1g1").unwrap();
-    assert!(p.fen().starts_with("4k3/8/8/8/8/8/8/1R3RK1 b - "), "{}", p.fen());
+    assert!(
+        p.fen().starts_with("4k3/8/8/8/8/8/8/1R3RK1 b - "),
+        "{}",
+        p.fen()
+    );
 }
 
 #[test]
 fn chess960_castle_where_the_rook_already_sits_on_its_destination() {
-    let mut p =
-        Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/3RK2R w KQ - 0 1").unwrap();
+    let mut p = Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/3RK2R w KQ - 0 1").unwrap();
     let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
     assert!(legal.contains(&"e1d1".to_string()), "{legal:?}");
     p.apply("e1d1").unwrap();
-    assert!(p.fen().starts_with("4k3/8/8/8/8/8/8/2KR3R b - "), "{}", p.fen());
+    assert!(
+        p.fen().starts_with("4k3/8/8/8/8/8/8/2KR3R b - "),
+        "{}",
+        p.fen()
+    );
 }
 
 #[test]
 fn chess960_castle_where_the_king_already_sits_on_its_destination() {
-    let mut p =
-        Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/R1K4R w KQ - 0 1").unwrap();
+    let mut p = Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/R1K4R w KQ - 0 1").unwrap();
     let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
     assert!(legal.contains(&"c1a1".to_string()), "{legal:?}");
     p.apply("c1a1").unwrap();
-    assert!(p.fen().starts_with("4k3/8/8/8/8/8/8/2KR3R b - "), "{}", p.fen());
+    assert!(
+        p.fen().starts_with("4k3/8/8/8/8/8/8/2KR3R b - "),
+        "{}",
+        p.fen()
+    );
 }
 
 #[test]
 fn chess960_castle_swaps_an_adjacent_king_and_rook() {
     let mut p = Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/5KR1 w K - 0 1").unwrap();
     p.apply("f1g1").unwrap();
-    assert!(p.fen().starts_with("4k3/8/8/8/8/8/8/5RK1 b - "), "{}", p.fen());
+    assert!(
+        p.fen().starts_with("4k3/8/8/8/8/8/8/5RK1 b - "),
+        "{}",
+        p.fen()
+    );
 }
 
 #[test]
@@ -163,13 +177,16 @@ fn chess960_tracks_independent_rook_columns_per_colour() {
     let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
     assert!(legal.contains(&"e8a8".to_string()), "{legal:?}");
     p.apply("e8a8").unwrap();
-    assert!(p.fen().starts_with("2kr4/8/8/8/8/8/8/5RK1 w - "), "{}", p.fen());
+    assert!(
+        p.fen().starts_with("2kr4/8/8/8/8/8/8/5RK1 w - "),
+        "{}",
+        p.fen()
+    );
 }
 
 #[test]
 fn chess960_rights_do_not_restore_once_the_rook_returns() {
-    let mut p =
-        Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1").unwrap();
+    let mut p = Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1").unwrap();
     for m in ["a1a5", "e8e7", "a5a1", "e7e8"] {
         p.apply(m).unwrap();
     }

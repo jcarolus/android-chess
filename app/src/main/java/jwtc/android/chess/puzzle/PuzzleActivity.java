@@ -8,9 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.android.material.button.MaterialButton;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -91,7 +89,12 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
             boardAreaLayout = findViewById(R.id.includeboard);
         }
 
-        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), findViewById(R.id.play_board_top), findViewById(R.id.play_board_bottom));
+        initBoardLayoutSizing(
+                findViewById(R.id.LayoutMain),
+                boardAreaLayout,
+                findViewById(R.id.play_controls),
+                findViewById(R.id.play_board_top),
+                findViewById(R.id.play_board_bottom));
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPuzzlePrevious);
     }
@@ -122,7 +125,8 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
         imgStatus.setImageResource(R.drawable.ic_check_none);
         butShow.setEnabled(true);
 
-        imageTurn.setImageResource(usersColor == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
+        imageTurn.setImageResource(
+                usersColor == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
 
         String sWhite = gameApi.getWhite();
         if (sWhite == null) {
@@ -144,12 +148,10 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
     }
 
     @Override
-    public void onScore(MateScore score) {
-    }
+    public void onScore(MateScore score) {}
 
     @Override
-    public void onEndOfCollection() {
-    }
+    public void onEndOfCollection() {}
 
     @Override
     public void onOutcome(MateCollection.Outcome outcome, String lastMove) {
@@ -162,7 +164,9 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
                 butShow.setEnabled(false);
                 break;
             case WRONG_REPLY:
-                setMessage((lastMove.isEmpty() ? "" : lastMove + " ") + getString(R.string.puzzle_not_correct_move));
+                setMessage(
+                        (lastMove.isEmpty() ? "" : lastMove + " ")
+                                + getString(R.string.puzzle_not_correct_move));
                 imgStatus.setImageResource(R.drawable.ic_exclamation_triangle);
                 break;
         }
@@ -181,7 +185,9 @@ public class PuzzleActivity extends ChessBoardActivity implements MateCollection
     public void solutionMessage() {
         int move = gameApi.getMyMove();
         if (move != 0) {
-            String sMove = MoveSpeech.describe(getResources(), gameApi.getMyMoveToString(), move, useLongMoveFormat);
+            String sMove =
+                    MoveSpeech.describe(
+                            getResources(), gameApi.getMyMoveToString(), move, useLongMoveFormat);
             textViewSolution.setText(sMove);
         }
     }

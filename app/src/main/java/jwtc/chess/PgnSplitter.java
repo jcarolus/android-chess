@@ -50,7 +50,10 @@ public final class PgnSplitter {
 
     private void fill() throws IOException {
         int read = reader.read(chunk);
-        if (read < 0) eof = true;
-        else buffer.append(chunk, 0, read);
+        if (read < 0) {
+            eof = true;
+        } else {
+            buffer.append(chunk, 0, read);
+        }
     }
 }

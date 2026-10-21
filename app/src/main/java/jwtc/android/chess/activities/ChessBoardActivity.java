@@ -18,34 +18,31 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-
+import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
+import jwtc.android.chess.constants.Piece;
+import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.HapticFeedback;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.helpers.Sounds;
+import jwtc.android.chess.services.GameApi;
+import jwtc.android.chess.services.GameListener;
+import jwtc.android.chess.services.MoveSpeech;
 import jwtc.android.chess.services.TextToSpeechApi;
 import jwtc.android.chess.views.ChessBoardView;
 import jwtc.android.chess.views.ChessPieceLabelView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.android.chess.R;
-import jwtc.android.chess.constants.PieceSets;
-import jwtc.android.chess.services.GameApi;
-import jwtc.android.chess.services.MoveSpeech;
-import jwtc.android.chess.services.GameListener;
 import jwtc.chess.Move;
-import jwtc.android.chess.constants.Piece;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
-abstract public class ChessBoardActivity extends BaseActivity implements GameListener {
+public abstract class ChessBoardActivity extends BaseActivity implements GameListener {
     private static final String TAG = "ChessBoardActivity";
     private static final long MOVE_ANIMATION_DURATION_MS = 250L;
     protected static final String PREF_USE_PIECE_ANIMATION = "pref_use_piece_animation";
@@ -65,7 +62,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected ArrayList<Integer> highlightedPositions = new ArrayList<Integer>();
     protected ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
 
-    protected boolean skipReturn = true, showMoves = false, isBackGestureBlocked = false, minimalControls = false;
+    protected boolean skipReturn = true,
+            showMoves = false,
+            isBackGestureBlocked = false,
+            minimalControls = false;
     protected boolean useAccessibilityDrag = false, protectLastMoveSpeech = false;
     protected int accessibilityDragDwellMs = 300;
     protected int accessibilityDragLastMoveDelayMs = 1000;
@@ -110,18 +110,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setTitle(R.string.title_pick_promo);
             builder.setCancelable(false);
-            builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
-                dialog.dismiss();
-                gameApi.setPromo(4 - item);
-                if (!gameApi.requestMove(from, to)) {
-                    rebuildBoard();
-                }
-            });
+            builder.setSingleChoiceItems(
+                    items,
+                    0,
+                    (dialog, item) -> {
+                        dialog.dismiss();
+                        gameApi.setPromo(4 - item);
+                        if (!gameApi.requestMove(from, to)) {
+                            rebuildBoard();
+                        }
+                    });
             builder.create().show();
 
-//            if (_vibrator != null) {
-//                _vibrator.vibrate(40L);
-//            }
+            //            if (_vibrator != null) {
+            //                _vibrator.vibrate(40L);
+            //            }
 
             return true;
         }
@@ -139,15 +142,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         final int to = Move.getTo(move);
         final boolean enteredByDragging = consumeDraggedMove(from, to);
         final boolean usePieceAnimation = getPrefs().getBoolean(PREF_USE_PIECE_ANIMATION, true);
-        final ChessPieceView originalPieceView = enteredByDragging || !usePieceAnimation
-            ? null
-            : getPieceViewOnPosition(from);
-        final int animatedPieceColor = originalPieceView == null
-            ? BoardConstants.WHITE
-            : originalPieceView.getColor();
-        final int animatedPiece = originalPieceView == null
-            ? BoardConstants.FIELD
-            : originalPieceView.getPiece();
+        final ChessPieceView originalPieceView =
+                enteredByDragging || !usePieceAnimation ? null : getPieceViewOnPosition(from);
+        final int animatedPieceColor =
+                originalPieceView == null ? BoardConstants.WHITE : originalPieceView.getColor();
+        final int animatedPiece =
+                originalPieceView == null ? BoardConstants.FIELD : originalPieceView.getPiece();
 
         moveToPositions.clear();
         highlightedPositions.clear();
@@ -165,7 +165,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             feedbackCapture();
         } else {
             feedbackMove();
-
         }
     }
 
@@ -176,7 +175,6 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         rebuildBoard();
     }
-
 
     @Override
     public void OnState() {
@@ -241,22 +239,27 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         chessBoardView.setNextFocusRightId(R.id.ButtonPlay);
 
         if (switchSound != null) {
-            switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                sounds.setEnabled(switchSound.isChecked());
-            });
+            switchSound.setOnCheckedChangeListener(
+                    (buttonView, isChecked) -> {
+                        sounds.setEnabled(switchSound.isChecked());
+                    });
         }
 
         if (switchMoveToSpeech != null) {
-            switchMoveToSpeech.setOnCheckedChangeListener((buttonView, isChecked) -> textToSpeech.setEnabled(switchMoveToSpeech.isChecked(), getPrefs()));
+            switchMoveToSpeech.setOnCheckedChangeListener(
+                    (buttonView, isChecked) ->
+                            textToSpeech.setEnabled(switchMoveToSpeech.isChecked(), getPrefs()));
         }
         if (switchAccessibilityDrag != null) {
-            switchAccessibilityDrag.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                useAccessibilityDrag = switchAccessibilityDrag.isChecked();
-                applySquareDragListeners();
-                if (isChecked && buttonView.isPressed() && textToSpeech != null) {
-                    textToSpeech.doSpeak(getString(R.string.pref_accessibility_drag_talkback_reminder));
-                }
-            });
+            switchAccessibilityDrag.setOnCheckedChangeListener(
+                    (buttonView, isChecked) -> {
+                        useAccessibilityDrag = switchAccessibilityDrag.isChecked();
+                        applySquareDragListeners();
+                        if (isChecked && buttonView.isPressed() && textToSpeech != null) {
+                            textToSpeech.doSpeak(
+                                    getString(R.string.pref_accessibility_drag_talkback_reminder));
+                        }
+                    });
         }
 
         initDirectionalPad();
@@ -297,19 +300,22 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void initBoardLayoutSizing(
-        View rootLayout,
-        View boardAreaLayout,
-        View controlsLayout,
-        View boardTopLayout,
-        View boardBottomLayout
-    ) {
-        initBoardLayoutSizing(rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout, 0);
+            View rootLayout,
+            View boardAreaLayout,
+            View controlsLayout,
+            View boardTopLayout,
+            View boardBottomLayout) {
+        initBoardLayoutSizing(
+                rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout, 0);
     }
 
     protected void initBoardLayoutSizing(
-        View rootLayout, View boardAreaLayout, View controlsLayout,
-        View boardTopLayout, View boardBottomLayout, int boardSidePanelWidthDp
-    ) {
+            View rootLayout,
+            View boardAreaLayout,
+            View controlsLayout,
+            View boardTopLayout,
+            View boardBottomLayout,
+            int boardSidePanelWidthDp) {
         final int sidePanelWidth = dpToPx(boardSidePanelWidthDp);
         if (rootLayout == null || boardAreaLayout == null) {
             return;
@@ -320,112 +326,144 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         final View boardBottomLayoutRef = boardBottomLayout;
 
         boardLayoutRoot = rootLayout;
-        boardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-            private int lastRootWidth = -1;
-            private int lastRootHeight = -1;
-            private int lastOrientation = -1;
-            private int lastBoardSide = -1;
-            private int lastTopHeight = -1;
-            private int lastBottomHeight = -1;
-            private int lastControlsHeight = -1;
+        boardLayoutListener =
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    private int lastRootWidth = -1;
+                    private int lastRootHeight = -1;
+                    private int lastOrientation = -1;
+                    private int lastBoardSide = -1;
+                    private int lastTopHeight = -1;
+                    private int lastBottomHeight = -1;
+                    private int lastControlsHeight = -1;
 
-            @Override
-            public void onGlobalLayout() {
-                final int orientation = getResources().getConfiguration().orientation;
-                final int rootWidth = rootLayout.getWidth();
-                final int rootHeight = rootLayout.getHeight();
-                final int minLandscapeControlsPx = dpToPx(minimalControls ? 200 : 320);
-                final int minPortraitControlsPx = dpToPx(64);
+                    @Override
+                    public void onGlobalLayout() {
+                        final int orientation = getResources().getConfiguration().orientation;
+                        final int rootWidth = rootLayout.getWidth();
+                        final int rootHeight = rootLayout.getHeight();
+                        final int minLandscapeControlsPx = dpToPx(minimalControls ? 200 : 320);
+                        final int minPortraitControlsPx = dpToPx(64);
 
-                if (rootWidth <= 0 || rootHeight <= 0) {
-                    return;
-                }
+                        if (rootWidth <= 0 || rootHeight <= 0) {
+                            return;
+                        }
 
-                final int rootAvailableWidth = rootWidth - rootLayout.getPaddingLeft() - rootLayout.getPaddingRight();
-                if (rootAvailableWidth <= 0) {
-                    return;
-                }
-                final int rootAvailableHeight = rootHeight - rootLayout.getPaddingTop() - rootLayout.getPaddingBottom();
-                if (rootAvailableHeight <= 0) {
-                    return;
-                }
+                        final int rootAvailableWidth =
+                                rootWidth
+                                        - rootLayout.getPaddingLeft()
+                                        - rootLayout.getPaddingRight();
+                        if (rootAvailableWidth <= 0) {
+                            return;
+                        }
+                        final int rootAvailableHeight =
+                                rootHeight
+                                        - rootLayout.getPaddingTop()
+                                        - rootLayout.getPaddingBottom();
+                        if (rootAvailableHeight <= 0) {
+                            return;
+                        }
 
-                final ViewGroup.LayoutParams boardAreaParams = boardAreaLayout.getLayoutParams();
-                final View boardView = boardAreaLayout.findViewById(R.id.includeboard);
-                final ViewGroup.LayoutParams boardViewParams = boardView == null ? null : boardView.getLayoutParams();
-                final ViewGroup.LayoutParams controlsParams = controlsLayoutRef == null ? null : controlsLayoutRef.getLayoutParams();
-                final int boardTopHeight = measureDependentHeight(boardTopLayoutRef);
-                final int boardBottomHeight = measureDependentHeight(boardBottomLayoutRef);
-                final int reservedVerticalHeight = boardTopHeight + boardBottomHeight;
-                final int preferredBoardSide = Math.max(0, rootAvailableWidth - sidePanelWidth);
-                final int controlsHeightRemainingAfterPreferredBoard = rootAvailableHeight - reservedVerticalHeight - preferredBoardSide;
-                final int portraitBoardSide = Math.max(
-                    0,
-                    controlsHeightRemainingAfterPreferredBoard < minPortraitControlsPx
-                        ? rootAvailableHeight - reservedVerticalHeight - minPortraitControlsPx
-                        : preferredBoardSide
-                );
-                final int portraitControlsHeight = Math.max(
-                    minPortraitControlsPx,
-                    rootAvailableHeight - reservedVerticalHeight - portraitBoardSide
-                );
-                final int landscapeBoardSide = Math.min(
-                    Math.max(0, rootAvailableWidth - minLandscapeControlsPx - sidePanelWidth),
-                    Math.max(0, rootAvailableHeight - reservedVerticalHeight)
-                );
+                        final ViewGroup.LayoutParams boardAreaParams =
+                                boardAreaLayout.getLayoutParams();
+                        final View boardView = boardAreaLayout.findViewById(R.id.includeboard);
+                        final ViewGroup.LayoutParams boardViewParams =
+                                boardView == null ? null : boardView.getLayoutParams();
+                        final ViewGroup.LayoutParams controlsParams =
+                                controlsLayoutRef == null
+                                        ? null
+                                        : controlsLayoutRef.getLayoutParams();
+                        final int boardTopHeight = measureDependentHeight(boardTopLayoutRef);
+                        final int boardBottomHeight = measureDependentHeight(boardBottomLayoutRef);
+                        final int reservedVerticalHeight = boardTopHeight + boardBottomHeight;
+                        final int preferredBoardSide =
+                                Math.max(0, rootAvailableWidth - sidePanelWidth);
+                        final int controlsHeightRemainingAfterPreferredBoard =
+                                rootAvailableHeight - reservedVerticalHeight - preferredBoardSide;
+                        final int portraitBoardSide =
+                                Math.max(
+                                        0,
+                                        controlsHeightRemainingAfterPreferredBoard
+                                                        < minPortraitControlsPx
+                                                ? rootAvailableHeight
+                                                        - reservedVerticalHeight
+                                                        - minPortraitControlsPx
+                                                : preferredBoardSide);
+                        final int portraitControlsHeight =
+                                Math.max(
+                                        minPortraitControlsPx,
+                                        rootAvailableHeight
+                                                - reservedVerticalHeight
+                                                - portraitBoardSide);
+                        final int landscapeBoardSide =
+                                Math.min(
+                                        Math.max(
+                                                0,
+                                                rootAvailableWidth
+                                                        - minLandscapeControlsPx
+                                                        - sidePanelWidth),
+                                        Math.max(0, rootAvailableHeight - reservedVerticalHeight));
 
-                if (lastRootWidth == rootWidth && lastRootHeight == rootHeight && lastOrientation == orientation
-                    && lastBoardSide + sidePanelWidth == boardAreaLayout.getWidth()
-                    && lastTopHeight == boardTopHeight && lastBottomHeight == boardBottomHeight
-                    && (orientation == Configuration.ORIENTATION_PORTRAIT ? lastControlsHeight == portraitControlsHeight : true)
-                ) {
-                    return;
-                }
-                lastRootWidth = rootWidth;
-                lastRootHeight = rootHeight;
-                lastOrientation = orientation;
-                lastTopHeight = boardTopHeight;
-                lastBottomHeight = boardBottomHeight;
+                        if (lastRootWidth == rootWidth
+                                && lastRootHeight == rootHeight
+                                && lastOrientation == orientation
+                                && lastBoardSide + sidePanelWidth == boardAreaLayout.getWidth()
+                                && lastTopHeight == boardTopHeight
+                                && lastBottomHeight == boardBottomHeight
+                                && (orientation == Configuration.ORIENTATION_PORTRAIT
+                                        ? lastControlsHeight == portraitControlsHeight
+                                        : true)) {
+                            return;
+                        }
+                        lastRootWidth = rootWidth;
+                        lastRootHeight = rootHeight;
+                        lastOrientation = orientation;
+                        lastTopHeight = boardTopHeight;
+                        lastBottomHeight = boardBottomHeight;
 
-                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    if (boardAreaParams.width != landscapeBoardSide + sidePanelWidth) {
-                        boardAreaParams.width = landscapeBoardSide + sidePanelWidth;
-                        boardAreaLayout.setLayoutParams(boardAreaParams);
+                        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            if (boardAreaParams.width != landscapeBoardSide + sidePanelWidth) {
+                                boardAreaParams.width = landscapeBoardSide + sidePanelWidth;
+                                boardAreaLayout.setLayoutParams(boardAreaParams);
+                            }
+                            if (boardViewParams != null
+                                    && (boardViewParams.width != landscapeBoardSide
+                                            || boardViewParams.height != landscapeBoardSide)) {
+                                boardViewParams.width = landscapeBoardSide;
+                                boardViewParams.height = landscapeBoardSide;
+                                boardView.setLayoutParams(boardViewParams);
+                            }
+                            if (controlsParams != null
+                                    && controlsParams.height
+                                            != ViewGroup.LayoutParams.MATCH_PARENT) {
+                                controlsParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                                controlsLayoutRef.setLayoutParams(controlsParams);
+                            }
+                            lastBoardSide = landscapeBoardSide;
+                            lastControlsHeight = -1;
+                            return;
+                        }
+
+                        final int boardSide = portraitBoardSide;
+                        final int controlsHeight = portraitControlsHeight;
+                        if (boardAreaParams.width != boardSide + sidePanelWidth) {
+                            boardAreaParams.width = boardSide + sidePanelWidth;
+                            boardAreaLayout.setLayoutParams(boardAreaParams);
+                        }
+                        if (boardViewParams != null
+                                && (boardViewParams.width != boardSide
+                                        || boardViewParams.height != boardSide)) {
+                            boardViewParams.width = boardSide;
+                            boardViewParams.height = boardSide;
+                            boardView.setLayoutParams(boardViewParams);
+                        }
+                        if (controlsParams != null && controlsParams.height != controlsHeight) {
+                            controlsParams.height = controlsHeight;
+                            controlsLayoutRef.setLayoutParams(controlsParams);
+                        }
+                        lastBoardSide = boardSide;
+                        lastControlsHeight = controlsHeight;
                     }
-                    if (boardViewParams != null
-                        && (boardViewParams.width != landscapeBoardSide || boardViewParams.height != landscapeBoardSide)) {
-                        boardViewParams.width = landscapeBoardSide;
-                        boardViewParams.height = landscapeBoardSide;
-                        boardView.setLayoutParams(boardViewParams);
-                    }
-                    if (controlsParams != null && controlsParams.height != ViewGroup.LayoutParams.MATCH_PARENT) {
-                        controlsParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                        controlsLayoutRef.setLayoutParams(controlsParams);
-                    }
-                    lastBoardSide = landscapeBoardSide;
-                    lastControlsHeight = -1;
-                    return;
-                }
-
-                final int boardSide = portraitBoardSide;
-                final int controlsHeight = portraitControlsHeight;
-                if (boardAreaParams.width != boardSide + sidePanelWidth) {
-                    boardAreaParams.width = boardSide + sidePanelWidth;
-                    boardAreaLayout.setLayoutParams(boardAreaParams);
-                }
-                if (boardViewParams != null && (boardViewParams.width != boardSide || boardViewParams.height != boardSide)) {
-                    boardViewParams.width = boardSide;
-                    boardViewParams.height = boardSide;
-                    boardView.setLayoutParams(boardViewParams);
-                }
-                if (controlsParams != null && controlsParams.height != controlsHeight) {
-                    controlsParams.height = controlsHeight;
-                    controlsLayoutRef.setLayoutParams(controlsParams);
-                }
-                lastBoardSide = boardSide;
-                lastControlsHeight = controlsHeight;
-            }
-        };
+                };
         rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(boardLayoutListener);
     }
 
@@ -473,15 +511,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         ColorSchemes.showCoords = prefs.getBoolean("showCoords", false);
         ColorSchemes.saturationFactor = prefs.getFloat("squareSaturation", 1.0f);
         ColorSchemes.setCustomColors(
-            prefs.getInt("customDarkSquareColor", ColorSchemes.getCustomDarkColor()),
-            prefs.getInt("customLightSquareColor", ColorSchemes.getCustomLightColor()));
+                prefs.getInt("customDarkSquareColor", ColorSchemes.getCustomDarkColor()),
+                prefs.getInt("customLightSquareColor", ColorSchemes.getCustomLightColor()));
 
         skipReturn = prefs.getBoolean("skipReturn", true);
         keyboardBuffer = "";
 
         try {
             PieceSets.selectedSet = Integer.parseInt(prefs.getString("pieceset", "0"));
-            ColorSchemes.selectedColorScheme = Integer.parseInt(prefs.getString("colorscheme", "0"));
+            ColorSchemes.selectedColorScheme =
+                    Integer.parseInt(prefs.getString("colorscheme", "0"));
             ColorSchemes.selectedPattern = Integer.parseInt(prefs.getString("squarePattern", "0"));
 
         } catch (NumberFormatException ex) {
@@ -522,13 +561,16 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
         protectLastMoveSpeech = prefs.getBoolean("pref_protect_last_move_speech", false);
         fieldColorDescriptions = prefs.getBoolean("field_color_descriptions", false);
-        announceLastMoveWhenOverEmptySquare = prefs.getBoolean("announce_last_move_when_over_empty_square", false);
+        announceLastMoveWhenOverEmptySquare =
+                prefs.getBoolean("announce_last_move_when_over_empty_square", false);
         useLongMoveFormat = prefs.getBoolean("use_long_move_description", false);
         addTurnInMoveDescription = prefs.getBoolean("add_turn_in_move_description", true);
-        includeAttackersAndDefendersInFieldDescription = prefs.getBoolean("include_attackers_defenders_in_field_description", false);
+        includeAttackersAndDefendersInFieldDescription =
+                prefs.getBoolean("include_attackers_defenders_in_field_description", false);
 
         if (textViewWhitePieces != null && textViewBlackPieces != null) {
-            int visibilityPiecesDescriptions = prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
+            int visibilityPiecesDescriptions =
+                    prefs.getBoolean("show_pieces_descriptions", true) ? View.VISIBLE : View.GONE;
             textViewWhitePieces.setVisibility(visibilityPiecesDescriptions);
             textViewBlackPieces.setVisibility(visibilityPiecesDescriptions);
         }
@@ -614,26 +656,36 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackNewGameStarted(int color, TextView textView) {
-        feedbackGameReady(getString(color == BoardConstants.WHITE
-            ? R.string.new_game_as_white : R.string.new_game_as_black), textView);
+        feedbackGameReady(
+                getString(
+                        color == BoardConstants.WHITE
+                                ? R.string.new_game_as_white
+                                : R.string.new_game_as_black),
+                textView);
     }
 
     protected void feedbackGameReady(int color, TextView textView) {
-        feedbackGameReady(getString(color == BoardConstants.WHITE
-            ? R.string.game_ready_as_white : R.string.game_ready_as_black), textView);
+        feedbackGameReady(
+                getString(
+                        color == BoardConstants.WHITE
+                                ? R.string.game_ready_as_white
+                                : R.string.game_ready_as_black),
+                textView);
     }
 
     private void feedbackGameReady(String message, TextView textView) {
         final boolean speechEnabled = textToSpeech.isEnabled();
-        sounds.playNewGame(() -> {
-            final Runnable feedbackRunnable = () -> updateTextViewOrSpeech(textView, message);
-            if (!speechEnabled || textToSpeech.isReady()) {
-                feedbackRunnable.run();
-            } else {
-                // TTS initialization is independent of sound playback completion.
-                speechInitHandler.postDelayed(feedbackRunnable, INIT_SPEECH_DELAY_MS);
-            }
-        });
+        sounds.playNewGame(
+                () -> {
+                    final Runnable feedbackRunnable =
+                            () -> updateTextViewOrSpeech(textView, message);
+                    if (!speechEnabled || textToSpeech.isReady()) {
+                        feedbackRunnable.run();
+                    } else {
+                        // TTS initialization is independent of sound playback completion.
+                        speechInitHandler.postDelayed(feedbackRunnable, INIT_SPEECH_DELAY_MS);
+                    }
+                });
     }
 
     public void feedbackTimeWarning(long millies) {
@@ -645,15 +697,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         final boolean speechEnabled = textToSpeech.isEnabled();
         final boolean wholeMinutes = remainingSeconds >= 60 && remainingSeconds % 60 == 0;
         final long minutes = remainingSeconds / 60;
-        final Runnable speak = () -> {
-            if (!speechEnabled) {
-                return;
-            }
-            String message = wholeMinutes
-                ? getString(minutes == 1 ? R.string.time_warning_minutes_single : R.string.time_warning_minutes, minutes)
-                : getString(R.string.time_warning_seconds, remainingSeconds);
-            textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
-        };
+        final Runnable speak =
+                () -> {
+                    if (!speechEnabled) {
+                        return;
+                    }
+                    String message =
+                            wholeMinutes
+                                    ? getString(
+                                            minutes == 1
+                                                    ? R.string.time_warning_minutes_single
+                                                    : R.string.time_warning_minutes,
+                                            minutes)
+                                    : getString(R.string.time_warning_seconds, remainingSeconds);
+                    textToSpeech.doSpeak(message, TextToSpeech.QUEUE_ADD);
+                };
 
         if (wholeMinutes) {
             if (minutes == 1) {
@@ -667,7 +725,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackPlayerResigned(int color, TextView textView) {
-        String message = getString(color == BoardConstants.WHITE ? R.string.white_player_resigned : R.string.black_player_resigned);
+        String message =
+                getString(
+                        color == BoardConstants.WHITE
+                                ? R.string.white_player_resigned
+                                : R.string.black_player_resigned);
         updateTextViewOrSpeech(textView, message);
     }
 
@@ -677,7 +739,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     public void feedbackPlayerForfeitedOnTime(int color, TextView textView) {
-        String message = getString(color == BoardConstants.WHITE ? R.string.white_player_forfeits_on_time : R.string.black_player_forfeits_on_time);
+        String message =
+                getString(
+                        color == BoardConstants.WHITE
+                                ? R.string.white_player_forfeits_on_time
+                                : R.string.black_player_forfeits_on_time);
         updateTextViewOrSpeech(textView, message);
     }
 
@@ -709,7 +775,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                isBackGestureBlocked = chessBoardView.findPieceViewAt(ev.getX() - chessBoardView.getX(), ev.getY() - chessBoardView.getY()) != null;
+                isBackGestureBlocked =
+                        chessBoardView.findPieceViewAt(
+                                        ev.getX() - chessBoardView.getX(),
+                                        ev.getY() - chessBoardView.getY())
+                                != null;
                 break;
         }
         return super.dispatchTouchEvent(ev);
@@ -732,8 +802,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         switch (state) {
             case BoardConstants.HILL_WIN:
             case BoardConstants.MATE:
-                labelForWhiteKing = turn == BoardConstants.BLACK ? ChessPieceLabelView.MATE_WINNER : ChessPieceLabelView.MATE_LOSER;
-                labelForBlackKing = turn == BoardConstants.WHITE ? ChessPieceLabelView.MATE_WINNER : ChessPieceLabelView.MATE_LOSER;
+                labelForWhiteKing =
+                        turn == BoardConstants.BLACK
+                                ? ChessPieceLabelView.MATE_WINNER
+                                : ChessPieceLabelView.MATE_LOSER;
+                labelForBlackKing =
+                        turn == BoardConstants.WHITE
+                                ? ChessPieceLabelView.MATE_WINNER
+                                : ChessPieceLabelView.MATE_LOSER;
                 break;
             case BoardConstants.BLACK_RESIGNED:
             case BoardConstants.BLACK_FORFEIT_TIME:
@@ -781,18 +857,22 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
                 if (piece == BoardConstants.KING) {
                     if (color == BoardConstants.WHITE && labelForWhiteKing != null) {
-                        ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, labelForWhiteKing);
+                        ChessPieceLabelView labelView =
+                                new ChessPieceLabelView(this, i, color, labelForWhiteKing);
                         chessBoardView.addView(labelView);
                     } else if (color == BoardConstants.BLACK && labelForBlackKing != null) {
-                        ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, labelForBlackKing);
+                        ChessPieceLabelView labelView =
+                                new ChessPieceLabelView(this, i, color, labelForBlackKing);
                         chessBoardView.addView(labelView);
                     }
                 }
                 if (correctPosition == i) {
-                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, ChessPieceLabelView.CORRECT);
+                    ChessPieceLabelView labelView =
+                            new ChessPieceLabelView(this, i, color, ChessPieceLabelView.CORRECT);
                     chessBoardView.addView(labelView);
                 } else if (wrongPosition == i) {
-                    ChessPieceLabelView labelView = new ChessPieceLabelView(this, i, color, ChessPieceLabelView.WRONG);
+                    ChessPieceLabelView labelView =
+                            new ChessPieceLabelView(this, i, color, ChessPieceLabelView.WRONG);
                     chessBoardView.addView(labelView);
                 }
             }
@@ -821,18 +901,20 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         final float translationX = toSquare.getLeft() - fromSquare.getLeft();
         final float translationY = toSquare.getTop() - fromSquare.getTop();
 
-        animationView.animate()
-            .translationX(translationX)
-            .translationY(translationY)
-            .setDuration(MOVE_ANIMATION_DURATION_MS)
-            .setInterpolator(new DecelerateInterpolator())
-            .setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    completeMoveAnimation(generation);
-                }
-            })
-            .start();
+        animationView
+                .animate()
+                .translationX(translationX)
+                .translationY(translationY)
+                .setDuration(MOVE_ANIMATION_DURATION_MS)
+                .setInterpolator(new DecelerateInterpolator())
+                .setListener(
+                        new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                completeMoveAnimation(generation);
+                            }
+                        })
+                .start();
     }
 
     private void completeMoveAnimation(long generation) {
@@ -908,14 +990,23 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 final int pos = squareView.getPos();
                 squareView.setSelected(pos == selectedPosition);
                 squareView.setFocussed(pos == dpadPos);
-                squareView.setHighlighted(pos == lastMoveFrom || pos == lastMoveTo || highlightedPositions.contains(pos));
+                squareView.setHighlighted(
+                        pos == lastMoveFrom
+                                || pos == lastMoveTo
+                                || highlightedPositions.contains(pos));
                 squareView.setMove(moveToPositions.contains(i));
-                int piece = gameApi.pieceAt(gameApi.getTurn() == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE, pos);
+                int piece =
+                        gameApi.pieceAt(
+                                gameApi.getTurn() == BoardConstants.WHITE
+                                        ? BoardConstants.BLACK
+                                        : BoardConstants.WHITE,
+                                pos);
                 squareView.setBelowPiece(piece != BoardConstants.FIELD);
                 String nextDescription = getFieldDescription(pos);
                 // Log.d(TAG, "next " + nextDescription);
                 CharSequence currentDescription = squareView.getContentDescription();
-                if (currentDescription == null || !nextDescription.contentEquals(currentDescription)) {
+                if (currentDescription == null
+                        || !nextDescription.contentEquals(currentDescription)) {
                     squareView.setContentDescription(nextDescription);
                 }
             }
@@ -939,33 +1030,33 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         }
     }
 
-
-//    @Override
-//    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten in certain appcompat versions
-//    public boolean dispatchKeyEvent(KeyEvent event) {
-//        int keyCode = event.getKeyCode();
-//        int action = event.getAction();
-//        boolean isDown = action == 0;
-//
-//        if (skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
-//            return true;
-//        }
-//
-//        if (keyCode == KeyEvent.KEYCODE_MENU) {
-//            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
-//        }
-//
-//        return super.dispatchKeyEvent(event);
-//    }
+    //    @Override
+    //    // bug report - dispatchKeyEvent is called before onKeyDown and some keys are overwritten
+    // in certain appcompat versions
+    //    public boolean dispatchKeyEvent(KeyEvent event) {
+    //        int keyCode = event.getKeyCode();
+    //        int action = event.getAction();
+    //        boolean isDown = action == 0;
+    //
+    //        if (skipReturn && keyCode == KeyEvent.KEYCODE_ENTER) {  // skip enter key
+    //            return true;
+    //        }
+    //
+    //        if (keyCode == KeyEvent.KEYCODE_MENU) {
+    //            return isDown ? this.onKeyDown(keyCode, event) : this.onKeyUp(keyCode, event);
+    //        }
+    //
+    //        return super.dispatchKeyEvent(event);
+    //    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        //View v = getWindow().getCurrentFocus();
+        // View v = getWindow().getCurrentFocus();
         int c = (event.getUnicodeChar());
         Log.i(TAG, "onKeyDown " + keyCode + " = " + (char) c);
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            //showMenu();
+            // showMenu();
             return true;
         }
 
@@ -988,12 +1079,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (keyboardBuffer.length() >= 2) {
             Log.i(TAG, "handleClickFromPositionString " + keyboardBuffer);
             // @TODO
-            //_chessView.handleClickFromPositionString(keyboardBuffer);
+            // _chessView.handleClickFromPositionString(keyboardBuffer);
             /*
-              int index = Pos.fromString(keyboardBuffer);
+             int index = Pos.fromString(keyboardBuffer);
 
-                return handleMove(index);
-             */
+               return handleMove(index);
+            */
             keyboardBuffer = "";
         }
 
@@ -1006,42 +1097,45 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return;
         }
 
-        if (languageStatus == TextToSpeech.LANG_MISSING_DATA || languageStatus == TextToSpeech.LANG_NOT_SUPPORTED) {
+        if (languageStatus == TextToSpeech.LANG_MISSING_DATA
+                || languageStatus == TextToSpeech.LANG_NOT_SUPPORTED) {
             doToast(getString(R.string.tts_locale_not_supported));
         }
     }
 
     protected void initDirectionalPad() {
-        chessBoardView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                Log.d(TAG, "onFocusChange " + hasFocus);
-                dpadFocus(hasFocus);
-            }
-        });
-
-        chessBoardView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    Log.d(TAG, "onKey " + keyCode);
-                    switch (keyCode) {
-                        case KeyEvent.KEYCODE_DPAD_CENTER:
-                        case KeyEvent.KEYCODE_ENTER:
-                            return dpadSelect();
-                        case KeyEvent.KEYCODE_DPAD_DOWN:
-                            return chessBoardView.isRotated() ? dpadUp() : dpadDown();
-                        case KeyEvent.KEYCODE_DPAD_LEFT:
-                            return chessBoardView.isRotated() ? dpadRight() : dpadLeft();
-                        case KeyEvent.KEYCODE_DPAD_RIGHT:
-                            return chessBoardView.isRotated() ? dpadLeft() : dpadRight();
-                        case KeyEvent.KEYCODE_DPAD_UP:
-                            return chessBoardView.isRotated() ? dpadDown() : dpadUp();
+        chessBoardView.setOnFocusChangeListener(
+                new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        Log.d(TAG, "onFocusChange " + hasFocus);
+                        dpadFocus(hasFocus);
                     }
-                }
-                return false;
-            }
-        });
+                });
+
+        chessBoardView.setOnKeyListener(
+                new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                            Log.d(TAG, "onKey " + keyCode);
+                            switch (keyCode) {
+                                case KeyEvent.KEYCODE_DPAD_CENTER:
+                                case KeyEvent.KEYCODE_ENTER:
+                                    return dpadSelect();
+                                case KeyEvent.KEYCODE_DPAD_DOWN:
+                                    return chessBoardView.isRotated() ? dpadUp() : dpadDown();
+                                case KeyEvent.KEYCODE_DPAD_LEFT:
+                                    return chessBoardView.isRotated() ? dpadRight() : dpadLeft();
+                                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                    return chessBoardView.isRotated() ? dpadLeft() : dpadRight();
+                                case KeyEvent.KEYCODE_DPAD_UP:
+                                    return chessBoardView.isRotated() ? dpadDown() : dpadUp();
+                            }
+                        }
+                        return false;
+                    }
+                });
     }
 
     protected void setPremove(int from, int to) {
@@ -1129,45 +1223,62 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (whitePiece != BoardConstants.FIELD) {
                 if (selectedPosition == pos) {
                     return getString(
-                        R.string.square_selected_with_piece_description,
-                        sPos,
-                        getString(R.string.piece_white),
-                        getString(Piece.toResource(whitePiece))
-                    ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
+                                    R.string.square_selected_with_piece_description,
+                                    sPos,
+                                    getString(R.string.piece_white),
+                                    getString(Piece.toResource(whitePiece)))
+                            + getFieldColorDescription(pos)
+                            + getAttackersAndDefendersDescription(pos);
                 }
                 return getString(
-                    R.string.square_with_color_and_piece_description,
-                    sPos,
-                    getString(R.string.piece_white),
-                    getString(Piece.toResource(whitePiece))
-                ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
+                                R.string.square_with_color_and_piece_description,
+                                sPos,
+                                getString(R.string.piece_white),
+                                getString(Piece.toResource(whitePiece)))
+                        + getFieldColorDescription(pos)
+                        + getAttackersAndDefendersDescription(pos);
             } else if (blackPiece != BoardConstants.FIELD) {
                 if (selectedPosition == pos) {
                     return getString(
-                        R.string.square_selected_with_piece_description,
-                        sPos,
-                        getString(R.string.piece_black),
-                        getString(Piece.toResource(blackPiece))
-                    ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
+                                    R.string.square_selected_with_piece_description,
+                                    sPos,
+                                    getString(R.string.piece_black),
+                                    getString(Piece.toResource(blackPiece)))
+                            + getFieldColorDescription(pos)
+                            + getAttackersAndDefendersDescription(pos);
                 }
                 return getString(
-                    R.string.square_with_color_and_piece_description,
-                    sPos,
-                    getString(R.string.piece_black),
-                    getString(Piece.toResource(blackPiece))
-                ) + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
+                                R.string.square_with_color_and_piece_description,
+                                sPos,
+                                getString(R.string.piece_black),
+                                getString(Piece.toResource(blackPiece)))
+                        + getFieldColorDescription(pos)
+                        + getAttackersAndDefendersDescription(pos);
             } else if (duckPos != -1) {
-                return (getString(selectedPosition == pos ? R.string.square_selected_with_duck_description : R.string.square_with_duck_description, getString(Piece.toResource(BoardConstants.DUCK)), Pos.toString(pos))) + getFieldColorDescription(pos);
+                return (getString(
+                                selectedPosition == pos
+                                        ? R.string.square_selected_with_duck_description
+                                        : R.string.square_with_duck_description,
+                                getString(Piece.toResource(BoardConstants.DUCK)),
+                                Pos.toString(pos)))
+                        + getFieldColorDescription(pos);
             }
         }
 
-        String selectedMessage = selectedPosition == pos ? getString(R.string.tts_selected) + " " : "";
-        return selectedMessage + sPos + getFieldColorDescription(pos) + getAttackersAndDefendersDescription(pos);
+        String selectedMessage =
+                selectedPosition == pos ? getString(R.string.tts_selected) + " " : "";
+        return selectedMessage
+                + sPos
+                + getFieldColorDescription(pos)
+                + getAttackersAndDefendersDescription(pos);
     }
 
     protected String getFieldColorDescription(int pos) {
         if (fieldColorDescriptions) {
-            return ". " + (Pos.getFieldColor(pos) == BoardConstants.WHITE ? getString(R.string.square_color_description_light) : getString(R.string.square_color_description_dark));
+            return ". "
+                    + (Pos.getFieldColor(pos) == BoardConstants.WHITE
+                            ? getString(R.string.square_color_description_light)
+                            : getString(R.string.square_color_description_dark));
         }
         return "";
     }
@@ -1175,13 +1286,26 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     protected String getAttackersAndDefendersDescription(int pos) {
         String sRet = "";
         if (includeAttackersAndDefendersInFieldDescription) {
-            int[] positions = gameApi.getAttackerPositionsTo(pos, gameApi.getTurn() == BoardConstants.BLACK ? BoardConstants.WHITE : BoardConstants.BLACK);
+            int[] positions =
+                    gameApi.getAttackerPositionsTo(
+                            pos,
+                            gameApi.getTurn() == BoardConstants.BLACK
+                                    ? BoardConstants.WHITE
+                                    : BoardConstants.BLACK);
             if (positions.length > 0) {
-                sRet += ". " + getString(R.string.attacked_by_pieces, getPieceDescriptionsForPosition(positions));
+                sRet +=
+                        ". "
+                                + getString(
+                                        R.string.attacked_by_pieces,
+                                        getPieceDescriptionsForPosition(positions));
             }
             positions = gameApi.getAttackerPositionsTo(pos, gameApi.getTurn());
             if (positions.length > 0) {
-                sRet += ". " + getString(R.string.defended_by_pieces, getPieceDescriptionsForPosition(positions));
+                sRet +=
+                        ". "
+                                + getString(
+                                        R.string.defended_by_pieces,
+                                        getPieceDescriptionsForPosition(positions));
             }
         }
 
@@ -1199,7 +1323,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 if (piece != BoardConstants.FIELD) {
                     String sPos = Pos.toString(positions[i]).toUpperCase();
                     String sPiece = getString(Piece.toResource(piece));
-                    pieceDescriptions.append(getString(R.string.square_with_piece_description, sPiece, sPos));
+                    pieceDescriptions.append(
+                            getString(R.string.square_with_piece_description, sPiece, sPos));
                     if (i < positions.length - 1) {
                         pieceDescriptions.append(", ");
                     }
@@ -1213,13 +1338,21 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected String getMoveDescription(boolean forTTS, String sMove, int move) {
         if (move != 0) {
-            return MoveSpeech.describe(forTTS && textToSpeech.isReady() ? textToSpeech.getLocalizedResources() : getResources(), sMove, move, useLongMoveFormat);
+            return MoveSpeech.describe(
+                    forTTS && textToSpeech.isReady()
+                            ? textToSpeech.getLocalizedResources()
+                            : getResources(),
+                    sMove,
+                    move,
+                    useLongMoveFormat);
         }
         return "";
     }
+
     protected String getLastMoveDescription(boolean forTTS) {
         return getMoveDescription(forTTS, gameApi.getMyMoveToString(), gameApi.getMyMove());
     }
+
     protected String getLastMoveAndTurnDescription(boolean forTTS) {
         String sMove = getLastMoveDescription(forTTS);
         if (!sMove.isEmpty()) {
@@ -1227,8 +1360,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 return sMove;
             }
             return gameApi.getTurn() == BoardConstants.BLACK
-                ? getString(R.string.last_white_move_description, sMove)
-                : getString(R.string.last_black_move_description, sMove);
+                    ? getString(R.string.last_white_move_description, sMove)
+                    : getString(R.string.last_black_move_description, sMove);
         }
         return "";
     }
@@ -1255,15 +1388,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                 }
             }
             if (positions.size() > 0) {
-                ret += Piece.toString(piece)
-                    + " " + positions
-                    .stream()
-                    .map(Pos::toString)
-                    .collect(Collectors.joining(", "))
-                    + ". ";
+                ret +=
+                        Piece.toString(piece)
+                                + " "
+                                + positions.stream()
+                                        .map(Pos::toString)
+                                        .collect(Collectors.joining(", "))
+                                + ". ";
             }
         }
-        return getString(turn == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black) + ": " + ret;
+        return getString(turn == BoardConstants.WHITE ? R.string.piece_white : R.string.piece_black)
+                + ": "
+                + ret;
     }
 
     protected class MyClickListener implements View.OnClickListener {
@@ -1308,44 +1444,48 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                         break;
                     case DragEvent.ACTION_DRAG_LOCATION:
                         break;
-                    case DragEvent.ACTION_DROP: {
-                        View fromView = (View) event.getLocalState();
-                        if (fromView != null) {
-                            fromView.setVisibility(View.VISIBLE);
+                    case DragEvent.ACTION_DROP:
+                        {
+                            View fromView = (View) event.getLocalState();
+                            if (fromView != null) {
+                                fromView.setVisibility(View.VISIBLE);
 
-                            if (fromView instanceof ChessPieceView) {
-                                ChessPieceView pieceViewFrom = (ChessPieceView) fromView;
-                                final int toPos = ((ChessSquareView) view).getPos();
-                                final int fromPos = pieceViewFrom.getPos();
+                                if (fromView instanceof ChessPieceView) {
+                                    ChessPieceView pieceViewFrom = (ChessPieceView) fromView;
+                                    final int toPos = ((ChessSquareView) view).getPos();
+                                    final int fromPos = pieceViewFrom.getPos();
 
-                                if (toPos == fromPos) {
-                                    // a click
-                                    selectPosition(toPos);
-                                } else {
-                                    markMoveEnteredByDragging(fromPos, toPos);
-                                    pieceViewFrom.setPos(toPos);
-                                    chessBoardView.layoutChild(pieceViewFrom);
-                                    requestMove(fromPos, toPos);
-                                    selectPosition(-1);
+                                    if (toPos == fromPos) {
+                                        // a click
+                                        selectPosition(toPos);
+                                    } else {
+                                        markMoveEnteredByDragging(fromPos, toPos);
+                                        pieceViewFrom.setPos(toPos);
+                                        chessBoardView.layoutChild(pieceViewFrom);
+                                        requestMove(fromPos, toPos);
+                                        selectPosition(-1);
+                                    }
+                                    ChessBoardActivity.this.updateSelectedSquares();
                                 }
-                                ChessBoardActivity.this.updateSelectedSquares();
                             }
-                        }
 
-                        break;
-                    }
-                    case DragEvent.ACTION_DRAG_ENDED: {
-                        final View droppedView = (View) event.getLocalState();
-                        if (droppedView != null && droppedView.getVisibility() != View.VISIBLE) {
-                            droppedView.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    droppedView.setVisibility(View.VISIBLE);
-                                }
-                            });
+                            break;
                         }
-                        break;
-                    }
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        {
+                            final View droppedView = (View) event.getLocalState();
+                            if (droppedView != null
+                                    && droppedView.getVisibility() != View.VISIBLE) {
+                                droppedView.post(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                droppedView.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+                            }
+                            break;
+                        }
                     default:
                         break;
                 }
@@ -1360,7 +1500,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         for (int i = 0; i < count; i++) {
             final View child = chessBoardView.getChildAt(i);
             if (child instanceof ChessSquareView) {
-                child.setOnDragListener(useAccessibilityDrag ? myAccessibilityDragListener : myDragListener);
+                child.setOnDragListener(
+                        useAccessibilityDrag ? myAccessibilityDragListener : myDragListener);
             }
         }
     }
@@ -1381,46 +1522,50 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         if (accessibilityDragDwellRunnable != null) {
             accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
         }
-        accessibilityDragDwellRunnable = () -> {
-            if (accessibilityDragFromPos != -1 || accessibilityDragHoverPos != pos) {
-                return;
-            }
-            if (gameApi.isEnded()) {
-                return;
-            }
-            int piece = gameApi.pieceAt(getSelectableColor(), pos);
-            if (piece != BoardConstants.FIELD) {
-                accessibilityDragFromPos = pos;
-                selectedPosition = pos;
-                setMoveToPositions(pos);
-                updateSelectedSquares();
-                feedbackSelect();
-                if (textToSpeech.isEnabled()) {
-                    textToSpeech.doSpeak(getFieldDescription(pos));
-                }
-            }
-        };
-        accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragDwellMs);
+        accessibilityDragDwellRunnable =
+                () -> {
+                    if (accessibilityDragFromPos != -1 || accessibilityDragHoverPos != pos) {
+                        return;
+                    }
+                    if (gameApi.isEnded()) {
+                        return;
+                    }
+                    int piece = gameApi.pieceAt(getSelectableColor(), pos);
+                    if (piece != BoardConstants.FIELD) {
+                        accessibilityDragFromPos = pos;
+                        selectedPosition = pos;
+                        setMoveToPositions(pos);
+                        updateSelectedSquares();
+                        feedbackSelect();
+                        if (textToSpeech.isEnabled()) {
+                            textToSpeech.doSpeak(getFieldDescription(pos));
+                        }
+                    }
+                };
+        accessibilityDragHandler.postDelayed(
+                accessibilityDragDwellRunnable, accessibilityDragDwellMs);
     }
 
     private void scheduleAccessibilityDwellLastMoveRepeat(final int pos) {
         if (accessibilityDragDwellRunnable != null) {
             accessibilityDragHandler.removeCallbacks(accessibilityDragDwellRunnable);
         }
-        accessibilityDragDwellRunnable = () -> {
-            if (!announceLastMoveWhenOverEmptySquare || accessibilityDragHoverPos != pos) {
-                return;
-            }
-            boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
-            if (hasPiece || !textToSpeech.isEnabled()) {
-                return;
-            }
-            String lastMoveDescription = getLastMoveDescription(true);
-            if (!lastMoveDescription.isEmpty()) {
-                textToSpeech.doSpeak(lastMoveDescription, TextToSpeech.QUEUE_ADD);
-            }
-        };
-        accessibilityDragHandler.postDelayed(accessibilityDragDwellRunnable, accessibilityDragLastMoveDelayMs);
+        accessibilityDragDwellRunnable =
+                () -> {
+                    if (!announceLastMoveWhenOverEmptySquare || accessibilityDragHoverPos != pos) {
+                        return;
+                    }
+                    boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
+                    if (hasPiece || !textToSpeech.isEnabled()) {
+                        return;
+                    }
+                    String lastMoveDescription = getLastMoveDescription(true);
+                    if (!lastMoveDescription.isEmpty()) {
+                        textToSpeech.doSpeak(lastMoveDescription, TextToSpeech.QUEUE_ADD);
+                    }
+                };
+        accessibilityDragHandler.postDelayed(
+                accessibilityDragDwellRunnable, accessibilityDragLastMoveDelayMs);
     }
 
     private void handleAccessibilitySquareEntered(int pos, boolean emitCrossingHaptic) {
@@ -1433,16 +1578,17 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             if (emitCrossingHaptic) {
                 boolean hasPiece = gameApi.hasAnyPieceOnPosition(pos);
                 boolean isDarkSquare = Pos.getFieldColor(pos) == BoardConstants.BLACK;
-                boolean isBlackPiece = gameApi.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+                boolean isBlackPiece =
+                        gameApi.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
                 hapticFeedbackTick(hasPiece, isDarkSquare, isBlackPiece);
             }
             if (textToSpeech.isEnabled()) {
                 textToSpeech.doSpeak(getFieldDescription(pos));
             }
             boolean hasPiece =
-                pos == gameApi.getDuckPos() ||
-                gameApi.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD ||
-                gameApi.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
+                    pos == gameApi.getDuckPos()
+                            || gameApi.pieceAt(BoardConstants.WHITE, pos) != BoardConstants.FIELD
+                            || gameApi.pieceAt(BoardConstants.BLACK, pos) != BoardConstants.FIELD;
             if (hasPiece) {
                 scheduleAccessibilityDwellSelection(pos);
             } else {
@@ -1464,9 +1610,11 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
                     resetAccessibilityDragState();
                     final View fromView = (View) event.getLocalState();
                     if (fromView instanceof ChessSquareView) {
-                        handleAccessibilitySquareEntered(((ChessSquareView) fromView).getPos(), false);
+                        handleAccessibilitySquareEntered(
+                                ((ChessSquareView) fromView).getPos(), false);
                     } else if (fromView instanceof ChessPieceView) {
-                        handleAccessibilitySquareEntered(((ChessPieceView) fromView).getPos(), false);
+                        handleAccessibilitySquareEntered(
+                                ((ChessPieceView) fromView).getPos(), false);
                     }
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
@@ -1501,7 +1649,8 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             int action = motionEvent.getAction();
             if (hasPremoved()) {
                 resetPremove();
-            } else if (useAccessibilityDrag && (view instanceof ChessPieceView || view instanceof ChessSquareView)) {
+            } else if (useAccessibilityDrag
+                    && (view instanceof ChessPieceView || view instanceof ChessSquareView)) {
                 if (action == MotionEvent.ACTION_DOWN) {
                     ClipData data = ClipData.newPlainText("", "");
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
@@ -1576,7 +1725,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
 
     protected void dpadFocus(boolean hasFocus) {
         if (hasFocus) {
-            dpadPos = gameApi.getTurn() == BoardConstants.BLACK ? BoardConstants.e8 : BoardConstants.e1;
+            dpadPos =
+                    gameApi.getTurn() == BoardConstants.BLACK
+                            ? BoardConstants.e8
+                            : BoardConstants.e1;
             updateSelectedSquares();
         } else {
             dpadPos = -1;
@@ -1648,13 +1800,18 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     protected void handleAmbiguousCastle(int from, int to) {
-        openConfirmDialog(getString(R.string.title_castle), getString(R.string.alert_yes), getString(R.string.alert_no), () -> {
-            gameApi.requestMoveCastle(from, to);
-        }, () -> {
-            if (from != to) {
-                gameApi.requestMove(from, to);
-            }
-        });
+        openConfirmDialog(
+                getString(R.string.title_castle),
+                getString(R.string.alert_yes),
+                getString(R.string.alert_no),
+                () -> {
+                    gameApi.requestMoveCastle(from, to);
+                },
+                () -> {
+                    if (from != to) {
+                        gameApi.requestMove(from, to);
+                    }
+                });
     }
 
     protected void selectPosition(int pos) {
@@ -1675,8 +1832,9 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             if (selectedPosition == -1) {
                 boolean isStartMove =
-                    pos == gameApi.getDuckPos() ||
-                    gameApi.pieceAt(getSelectableColor(), pos) != BoardConstants.FIELD;
+                        pos == gameApi.getDuckPos()
+                                || gameApi.pieceAt(getSelectableColor(), pos)
+                                        != BoardConstants.FIELD;
 
                 if (isStartMove) {
                     selectedPosition = pos;
@@ -1713,15 +1871,14 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
     }
 
     /**
-     * Whether tapping pos while another square is selected means "select this
-     * piece instead" rather than a move attempt.
+     * Whether tapping pos while another square is selected means "select this piece instead" rather
+     * than a move attempt.
      *
-     * Decided from the board alone, not from moveToPositions, which is only
-     * filled when "Show moves" is on and only for the side to move. A move
-     * onto a square holding one of your own pieces can only be castling, and
-     * the engine accepts a king move along its own rank as a castling request
-     * (GameApi.requestMove), including onto its own rook. In Chess960 the
-     * king's castling square can itself hold that rook.
+     * <p>Decided from the board alone, not from moveToPositions, which is only filled when "Show
+     * moves" is on and only for the side to move. A move onto a square holding one of your own
+     * pieces can only be castling, and the engine accepts a king move along its own rank as a
+     * castling request (GameApi.requestMove), including onto its own rook. In Chess960 the king's
+     * castling square can itself hold that rook.
      */
     private boolean isReselectTap(int pos) {
         final int color = getSelectableColor();
@@ -1729,12 +1886,12 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
             return false;
         }
         return !(gameApi.pieceAt(color, selectedPosition) == BoardConstants.KING
-            && Pos.row(selectedPosition) == Pos.row(pos));
+                && Pos.row(selectedPosition) == Pos.row(pos));
     }
 
     /**
-     * Color whose pieces can start a board interaction. Normally this is the side to move;
-     * online activities may override it while collecting a pre-move.
+     * Color whose pieces can start a board interaction. Normally this is the side to move; online
+     * activities may override it while collecting a pre-move.
      */
     protected int getSelectableColor() {
         return gameApi.getTurn();
@@ -1760,7 +1917,10 @@ abstract public class ChessBoardActivity extends BaseActivity implements GameLis
         } else {
             String currentMessage = textView.getText().toString();
             if (!currentMessage.equals(text)) {
-                textView.setAccessibilityLiveRegion(textToSpeech.isEnabled() ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
+                textView.setAccessibilityLiveRegion(
+                        textToSpeech.isEnabled()
+                                ? View.ACCESSIBILITY_LIVE_REGION_NONE
+                                : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
                 textView.setText(text);
 
                 speakIfEnabled(text, protectSpeech);

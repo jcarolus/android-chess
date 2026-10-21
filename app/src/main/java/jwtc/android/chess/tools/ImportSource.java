@@ -10,7 +10,10 @@ public interface ImportSource extends java.io.Closeable {
     /** Reads until the file ends or the sink returns false, then closes the underlying stream. */
     void forEach(Sink sink) throws Exception;
 
-    /** Closes the underlying stream of a source that was never read; closing a read source does nothing more. */
+    /**
+     * Closes the underlying stream of a source that was never read; closing a read source does
+     * nothing more.
+     */
     @Override
     void close() throws java.io.IOException;
 }

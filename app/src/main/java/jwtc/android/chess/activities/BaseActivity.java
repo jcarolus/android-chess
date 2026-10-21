@@ -11,25 +11,20 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.play.SaveGameDialog;
 import jwtc.chess.GameRecord;
-
 
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
@@ -91,26 +86,39 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    protected void openConfirmDialog(String message, String positiveText, String negativeText, Runnable onPositive, Runnable onNegative) {
+    protected void openConfirmDialog(
+            String message,
+            String positiveText,
+            String negativeText,
+            Runnable onPositive,
+            Runnable onNegative) {
         new MaterialAlertDialogBuilder(BaseActivity.this)
-            .setMessage(message)
-            .setPositiveButton(positiveText, (dialog, which) -> {
-                dialog.dismiss();
-                onPositive.run();
-            })
-            .setNegativeButton(negativeText, (dialog, which) -> {
-                dialog.dismiss();
-                if (onNegative != null) {
-                    onNegative.run();
-                }
-            })
-            .show();
+                .setMessage(message)
+                .setPositiveButton(
+                        positiveText,
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            onPositive.run();
+                        })
+                .setNegativeButton(
+                        negativeText,
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            if (onNegative != null) {
+                                onNegative.run();
+                            }
+                        })
+                .show();
     }
-
 
     public void showExitConfirmationDialog() {
         if (needExitConfirmationDialog()) {
-            openConfirmDialog(getString(R.string.menu_abort), getString(R.string.alert_yes), getString(R.string.alert_no), this::finish, null);
+            openConfirmDialog(
+                    getString(R.string.menu_abort),
+                    getString(R.string.alert_yes),
+                    getString(R.string.alert_no),
+                    this::finish,
+                    null);
         } else {
             finish();
         }
@@ -157,7 +165,6 @@ public class BaseActivity extends AppCompatActivity {
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
     }
-
 
     public void showHelp(int resource) {
         Intent i = new Intent();

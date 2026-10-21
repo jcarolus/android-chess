@@ -1,7 +1,6 @@
 package jwtc.android.chess.hotspotboard;
 
 import android.util.Log;
-
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.board.BoardConstants;
 
@@ -55,7 +54,8 @@ public class HotspotBoardApi extends GameApi {
 
     public boolean isMyTurn() {
         int turn = getTurn();
-        return turn == BoardConstants.WHITE && isPlayingAsWhite || turn == BoardConstants.BLACK && !isPlayingAsWhite;
+        return turn == BoardConstants.WHITE && isPlayingAsWhite
+                || turn == BoardConstants.BLACK && !isPlayingAsWhite;
     }
 
     public boolean isPlayingAsWhite() {

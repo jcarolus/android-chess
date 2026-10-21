@@ -9,15 +9,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
-
 import androidx.annotation.Nullable;
-
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-
 import java.util.Calendar;
 import java.util.Date;
-
 import jwtc.android.chess.R;
 import jwtc.chess.PgnDate;
 
@@ -27,7 +23,6 @@ public class PGNDateView extends LinearLayout {
     private TextInputEditText textInputEditText;
     private final Calendar calendar = Calendar.getInstance();
     private DatePickerDialog datePickerDialog;
-
 
     public PGNDateView(Context context) {
         super(context);
@@ -51,48 +46,50 @@ public class PGNDateView extends LinearLayout {
         textInputLayout = findViewById(R.id.TextInputLayout);
         textInputEditText = findViewById(R.id.TextInputEditText);
 
-        textInputEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+        textInputEditText.addTextChangedListener(
+                new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(
+                            CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String input = editable.toString();
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        String input = editable.toString();
 
-                Log.d(TAG, input);
-                Log.d(TAG, textInputLayout == null ? "null" : "not null");
+                        Log.d(TAG, input);
+                        Log.d(TAG, textInputLayout == null ? "null" : "not null");
 
-                if (input.isEmpty()) {
-                    textInputEditText.setError(null);
-                    return;
-                }
+                        if (input.isEmpty()) {
+                            textInputEditText.setError(null);
+                            return;
+                        }
 
-                if (PgnDate.parse(input) == null) {
-                    textInputEditText.setError("Invalid date");
-                } else {
-                    textInputEditText.setError(null);
-                }
-            }
-        });
+                        if (PgnDate.parse(input) == null) {
+                            textInputEditText.setError("Invalid date");
+                        } else {
+                            textInputEditText.setError(null);
+                        }
+                    }
+                });
 
         datePickerDialog = new DatePickerDialog(context);
 
-        datePickerDialog.setOnDateSetListener((view, year, monthOfYear, dayOfMonth) -> {
-            calendar.set(year, monthOfYear, dayOfMonth);
-            updateText();
-        });
+        datePickerDialog.setOnDateSetListener(
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    calendar.set(year, monthOfYear, dayOfMonth);
+                    updateText();
+                });
 
-        textInputEditText.setOnClickListener(v -> {
-            datePickerDialog.show();
-        });
+        textInputEditText.setOnClickListener(
+                v -> {
+                    datePickerDialog.show();
+                });
 
         if (attrs != null) {
-            TypedArray a = context.obtainStyledAttributes(attrs, new int[]{android.R.attr.hint});
+            TypedArray a = context.obtainStyledAttributes(attrs, new int[] {android.R.attr.hint});
             CharSequence hint = a.getText(0);
             a.recycle();
 
@@ -120,7 +117,12 @@ public class PGNDateView extends LinearLayout {
     }
 
     private void updateText() {
-        datePickerDialog.getDatePicker().updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog
+                .getDatePicker()
+                .updateDate(
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH));
         textInputEditText.setText(PgnDate.format(calendar.getTime()));
     }
 }

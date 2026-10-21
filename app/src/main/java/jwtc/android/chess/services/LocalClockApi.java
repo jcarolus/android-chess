@@ -4,9 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
-
 import java.util.ArrayList;
-
 import jwtc.chess.board.BoardConstants;
 
 public class LocalClockApi implements GameListener {
@@ -44,15 +42,20 @@ public class LocalClockApi implements GameListener {
     }
 
     private final Handler updateHandler = new Handler(Looper.getMainLooper());
-    private final Runnable updateClock = new Runnable() {
-        @Override
-        public void run() {
-            if (!updatesEnabled) return;
-            checkAndDispatchTimeWarning();
-            dispatchClockTime();
-            if (updatesEnabled) updateHandler.postDelayed(this, 500);
-        }
-    };
+    private final Runnable updateClock =
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (!updatesEnabled) {
+                        return;
+                    }
+                    checkAndDispatchTimeWarning();
+                    dispatchClockTime();
+                    if (updatesEnabled) {
+                        updateHandler.postDelayed(this, 500);
+                    }
+                }
+            };
 
     public void addListener(ClockListener listener) {
         this.listeners.add(listener);
@@ -66,19 +69,38 @@ public class LocalClockApi implements GameListener {
         return clock.remaining(turn, SystemClock.elapsedRealtime());
     }
 
-    public void startClock(long increment, long whiteRemaining, long blackRemaining, int turn, long startTime) {
-        Log.d(TAG, "startClock " + increment + " " + whiteRemaining + " " + blackRemaining + " " + turn + " " + startTime);
+    public void startClock(
+            long increment, long whiteRemaining, long blackRemaining, int turn, long startTime) {
+        Log.d(
+                TAG,
+                "startClock "
+                        + increment
+                        + " "
+                        + whiteRemaining
+                        + " "
+                        + blackRemaining
+                        + " "
+                        + turn
+                        + " "
+                        + startTime);
 
         updateHandler.removeCallbacks(updateClock);
         long elapsed = startTime > 0 ? Math.max(0, System.currentTimeMillis() - startTime) : 0;
-        clock.start(increment, whiteRemaining, blackRemaining, turn,
-            SystemClock.elapsedRealtime() - elapsed, startTime > 0);
+        clock.start(
+                increment,
+                whiteRemaining,
+                blackRemaining,
+                turn,
+                SystemClock.elapsedRealtime() - elapsed,
+                startTime > 0);
         whiteWarningMask = 0;
         blackWarningMask = 0;
         whitePreviousWarningCheck = getWhiteRemaining() - TIME_WARNING_LEAD_MILLIES;
         blackPreviousWarningCheck = getBlackRemaining() - TIME_WARNING_LEAD_MILLIES;
         updatesEnabled = startTime > 0;
-        if (updatesEnabled) updateHandler.post(updateClock);
+        if (updatesEnabled) {
+            updateHandler.post(updateClock);
+        }
     }
 
     public void stopClock() {
@@ -157,7 +179,9 @@ public class LocalClockApi implements GameListener {
         for (int i = 0; i < TIME_WARNING_THRESHOLDS_MILLIES.length; i++) {
             long threshold = TIME_WARNING_THRESHOLDS_MILLIES[i];
             int warningBit = 1 << i;
-            if (previous > threshold && remaining <= threshold && (getWarningMask(turn) & warningBit) == 0) {
+            if (previous > threshold
+                    && remaining <= threshold
+                    && (getWarningMask(turn) & warningBit) == 0) {
                 setWarningMask(turn, getWarningMask(turn) | warningBit);
                 dispatchTimeWarning(turn, remaining);
             }

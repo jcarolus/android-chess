@@ -1,7 +1,6 @@
 package jwtc.android.chess.tools;
 
 import android.content.ContentResolver;
-
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.GameRecord;

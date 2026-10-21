@@ -5,9 +5,7 @@ import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Looper;
-
 import java.util.EnumMap;
-
 import jwtc.android.chess.R;
 
 public class Sounds {
@@ -128,8 +126,10 @@ public class Sounds {
     }
 
     public void playTick(boolean isDarkSquare, Runnable onComplete) {
-        play(isDarkSquare ? Sound.TickBlack : Sound.Tick,
-            isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE, onComplete);
+        play(
+                isDarkSquare ? Sound.TickBlack : Sound.Tick,
+                isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE,
+                onComplete);
     }
 
     public void playError() {
@@ -153,8 +153,10 @@ public class Sounds {
     }
 
     public void playTickPiece(boolean isDarkSquare, boolean isBlackPiece, Runnable onComplete) {
-        play(isBlackPiece ? Sound.TickPieceBlack : Sound.TickPiece,
-            isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE, onComplete);
+        play(
+                isBlackPiece ? Sound.TickPieceBlack : Sound.TickPiece,
+                isDarkSquare ? RATE_DARK_SQUARE : RATE_LIGHT_SQUARE,
+                onComplete);
     }
 
     public void playUnselect() {
@@ -201,17 +203,21 @@ public class Sounds {
         if (soundPool != null || released) {
             return;
         }
-        AudioAttributes audioAttributes = new AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_GAME)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build();
-        soundPool = new SoundPool.Builder()
-            .setMaxStreams(8)
-            .setAudioAttributes(audioAttributes)
-            .build();
+        AudioAttributes audioAttributes =
+                new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_GAME)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+        soundPool =
+                new SoundPool.Builder()
+                        .setMaxStreams(8)
+                        .setAudioAttributes(audioAttributes)
+                        .build();
         for (Sound sound : Sound.values()) {
             try {
-                soundIds.put(sound, soundPool.load(context, sound.resourceId, sound == Sound.Check ? 2 : 1));
+                soundIds.put(
+                        sound,
+                        soundPool.load(context, sound.resourceId, sound == Sound.Check ? 2 : 1));
             } catch (Exception e) {
                 soundIds.put(sound, 0);
             }
@@ -219,9 +225,9 @@ public class Sounds {
     }
 
     /**
-     * Completion is estimated from duration and playback rate, not reported by SoundPool.
-     * Disabled, unloaded or failed sounds complete immediately. Callbacks run on the main
-     * thread, and release cancels pending callbacks. Other audio is not blocked by this timer.
+     * Completion is estimated from duration and playback rate, not reported by SoundPool. Disabled,
+     * unloaded or failed sounds complete immediately. Callbacks run on the main thread, and release
+     * cancels pending callbacks. Other audio is not blocked by this timer.
      */
     private void play(Sound sound, float rate, Runnable onComplete) {
         if (released) {
@@ -234,7 +240,8 @@ public class Sounds {
         }
         if (onComplete != null) {
             if (streamId != 0) {
-                completionHandler.postDelayed(onComplete, Math.round(sound.durationMs / (double) rate));
+                completionHandler.postDelayed(
+                        onComplete, Math.round(sound.durationMs / (double) rate));
             } else if (Looper.myLooper() == Looper.getMainLooper()) {
                 onComplete.run();
             } else {

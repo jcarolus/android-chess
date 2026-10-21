@@ -7,7 +7,6 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import jwtc.chess.PgnSplitter;
 
 /** The games of a PGN file, or of every .pgn entry in a zip file. */
@@ -46,7 +45,8 @@ public final class PgnSource implements ImportSource {
                 if (entry.isDirectory() || !entry.getName().endsWith(".pgn")) {
                     continue;
                 }
-                // the reader is not closed, that would close the zip stream with the entries still to read
+                // the reader is not closed, that would close the zip stream with the entries still
+                // to read
                 if (!readGames(new InputStreamReader(zis, StandardCharsets.UTF_8), sink)) {
                     return;
                 }
@@ -54,7 +54,9 @@ public final class PgnSource implements ImportSource {
         }
     }
 
-    /** @return false when the sink asked to stop */
+    /**
+     * @return false when the sink asked to stop
+     */
     private static boolean readGames(Reader reader, Sink sink) throws IOException {
         PgnSplitter splitter = new PgnSplitter(reader);
         String game;

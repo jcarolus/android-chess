@@ -6,14 +6,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 import com.google.android.material.button.MaterialButton;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.views.ChessSquareView;
-
 
 public class SetupRandomFischerActivity extends ChessBoardActivity {
     private static final String TAG = "SetupRandomFischer";
@@ -35,41 +32,47 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
         }
-        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
+        initBoardLayoutSizing(
+                findViewById(R.id.LayoutMain),
+                boardAreaLayout,
+                findViewById(R.id.play_controls),
+                null,
+                null);
 
         textViewSeed = findViewById(R.id.TextViewSeed);
         seekBar = findViewById(R.id.seekbar);
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                onUpdateProgress(progress);
-            }
+        seekBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        onUpdateProgress(progress);
+                    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {}
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {}
+                });
 
         MaterialButton butNext = findViewById(R.id.ButtonNext);
-        butNext.setOnClickListener(v -> {
-            int progress = seekBar.getProgress();
-            if (progress < 959) {
-                seekBar.setProgress(progress + 1);
-            }
-        });
+        butNext.setOnClickListener(
+                v -> {
+                    int progress = seekBar.getProgress();
+                    if (progress < 959) {
+                        seekBar.setProgress(progress + 1);
+                    }
+                });
 
         MaterialButton butPrev = findViewById(R.id.ButtonPrevious);
-        butPrev.setOnClickListener(v -> {
-            int progress = seekBar.getProgress();
-            if (progress > 0) {
-                seekBar.setProgress(progress - 1);
-            }
-        });
+        butPrev.setOnClickListener(
+                v -> {
+                    int progress = seekBar.getProgress();
+                    if (progress > 0) {
+                        seekBar.setProgress(progress - 1);
+                    }
+                });
 
         MaterialButton buttonOk = findViewById(R.id.ButtonSetupOptionsOk);
         buttonOk.setOnClickListener(v -> commitFEN());
@@ -78,11 +81,12 @@ public class SetupRandomFischerActivity extends ChessBoardActivity {
         buttonCancel.setOnClickListener(v -> finish());
 
         MaterialButton buttonRandom = findViewById(R.id.ButtonSetupOptionsRandom);
-        buttonRandom.setOnClickListener(v -> {
-            int seed = (int) (Math.random() * 960);
-            seekBar.setProgress(seed);
-            commitFEN();
-        });
+        buttonRandom.setOnClickListener(
+                v -> {
+                    int seed = (int) (Math.random() * 960);
+                    seekBar.setProgress(seed);
+                    commitFEN();
+                });
     }
 
     @Override

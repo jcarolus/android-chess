@@ -585,7 +585,13 @@ mod tests {
                 break;
             }
             let all: Vec<&str> = turns.split(' ').collect();
-            history.push(all[(i * 7) % all.len()].split('=').next().unwrap().to_string());
+            history.push(
+                all[(i * 7) % all.len()]
+                    .split('=')
+                    .next()
+                    .unwrap()
+                    .to_string(),
+            );
         }
         history
     }

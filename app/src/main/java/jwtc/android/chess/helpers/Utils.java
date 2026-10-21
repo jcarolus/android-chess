@@ -2,7 +2,6 @@ package jwtc.android.chess.helpers;
 
 import android.database.Cursor;
 import android.util.Log;
-
 import java.util.Date;
 
 public class Utils {
@@ -17,7 +16,9 @@ public class Utils {
     }
 
     public static String getTrimmedOrNull(CharSequence cs) {
-        if (cs == null) return null;
+        if (cs == null) {
+            return null;
+        }
         String s = cs.toString().trim();
         return s.isEmpty() ? null : s;
     }

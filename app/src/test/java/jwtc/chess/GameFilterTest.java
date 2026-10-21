@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
-
 import org.junit.Test;
 
 public class GameFilterTest {
@@ -29,7 +28,7 @@ public class GameFilterTest {
     public void namesAndEventMatchAnywhereInTheText() {
         GameFilter filter = new GameFilter().white(" Kasparov ").black("Deep").event("Wijk");
         assertEquals("white LIKE ? AND black LIKE ? AND event LIKE ?", filter.selection());
-        assertArrayEquals(new String[]{"%Kasparov%", "%Deep%", "%Wijk%"}, filter.selectionArgs());
+        assertArrayEquals(new String[] {"%Kasparov%", "%Deep%", "%Wijk%"}, filter.selectionArgs());
         assertFalse(filter.isEmpty());
     }
 
@@ -37,21 +36,22 @@ public class GameFilterTest {
     public void resultMatchesExactly() {
         GameFilter filter = new GameFilter().result("1/2-1/2");
         assertEquals("result = ?", filter.selection());
-        assertArrayEquals(new String[]{"1/2-1/2"}, filter.selectionArgs());
+        assertArrayEquals(new String[] {"1/2-1/2"}, filter.selectionArgs());
     }
 
     @Test
     public void dateBoundsAreInclusiveAndInMilliseconds() {
         GameFilter filter = new GameFilter().after(new Date(1000)).before(new Date(2000));
         assertEquals("date >= ? AND date <= ?", filter.selection());
-        assertArrayEquals(new String[]{"1000", "2000"}, filter.selectionArgs());
+        assertArrayEquals(new String[] {"1000", "2000"}, filter.selectionArgs());
     }
 
     @Test
     public void argumentsFollowThePlaceholders() {
-        GameFilter filter = new GameFilter().result("0-1").before(new Date(5)).white("A").after(new Date(3));
+        GameFilter filter =
+                new GameFilter().result("0-1").before(new Date(5)).white("A").after(new Date(3));
         assertEquals("white LIKE ? AND date >= ? AND date <= ? AND result = ?", filter.selection());
-        assertArrayEquals(new String[]{"%A%", "3", "5", "0-1"}, filter.selectionArgs());
+        assertArrayEquals(new String[] {"%A%", "3", "5", "0-1"}, filter.selectionArgs());
     }
 
     @Test
@@ -75,7 +75,9 @@ public class GameFilterTest {
 
     @Test
     public void orderByRejectsAnythingElse() {
-        assertEquals("date DESC", new GameFilter().orderBy("pgn; DROP TABLE games", "ASC; --").orderBy());
+        assertEquals(
+                "date DESC",
+                new GameFilter().orderBy("pgn; DROP TABLE games", "ASC; --").orderBy());
         assertEquals("date DESC", new GameFilter().orderBy("rating", "sideways").orderBy());
         assertEquals("date DESC", new GameFilter().orderBy(null, null).orderBy());
     }

@@ -6,21 +6,19 @@ import jwtc.chess.board.BoardConstants;
 final class MateRules {
     private static final int SOLUTION_PLY = 4;
 
-    private MateRules() {
-    }
+    private MateRules() {}
 
     /**
-     * Search depth in ply for the Engine's next reply. Each move already played brings the
-     * mate one ply closer.
+     * Search depth in ply for the Engine's next reply. Each move already played brings the mate one
+     * ply closer.
      */
     static int plyBudget(int numMoved) {
         return SOLUTION_PLY - numMoved;
     }
 
     /**
-     * Whether the Engine's score proves the position is still won for the user. The Engine
-     * scores from the side to move: mate when it is the user's turn, mated when it is the
-     * opponent's.
+     * Whether the Engine's score proves the position is still won for the user. The Engine scores
+     * from the side to move: mate when it is the user's turn, mated when it is the opponent's.
      */
     static boolean isMateReply(int value, boolean usersTurn) {
         return value == BoardConstants.VALUATION_MATE * (usersTurn ? 1 : -1);

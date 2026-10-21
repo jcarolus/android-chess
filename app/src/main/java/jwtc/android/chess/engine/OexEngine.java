@@ -2,7 +2,6 @@ package jwtc.android.chess.engine;
 
 import android.content.Context;
 import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import jwtc.android.chess.engine.oex.OexEngineDescriptor;
 import jwtc.android.chess.engine.oex.OexEngineResolver;
 import jwtc.android.chess.services.GameApi;
@@ -23,11 +21,15 @@ import jwtc.chess.board.BoardConstants;
 public class OexEngine extends EngineApi {
     private static final String TAG = "OexEngine";
     private static final long RESPONSE_TIMEOUT_MILLIS = 5000;
-    private static final Pattern MOVE_PATTERN = Pattern.compile("^([a-h][1-8])([a-h][1-8])([qrbn])?$");
-    private static final Pattern SCORE_CP_PATTERN = Pattern.compile(".*\\bscore\\s+cp\\s+(-?\\d+).*");
-    private static final Pattern SCORE_MATE_PATTERN = Pattern.compile(".*\\bscore\\s+mate\\s+(-?\\d+).*");
-    private static final Pattern MOBILE_OPTION_PATTERN = Pattern.compile(
-            "option name (Threads|MultiPV) type spin default \\d+ min (\\d+) max (\\d+)");
+    private static final Pattern MOVE_PATTERN =
+            Pattern.compile("^([a-h][1-8])([a-h][1-8])([qrbn])?$");
+    private static final Pattern SCORE_CP_PATTERN =
+            Pattern.compile(".*\\bscore\\s+cp\\s+(-?\\d+).*");
+    private static final Pattern SCORE_MATE_PATTERN =
+            Pattern.compile(".*\\bscore\\s+mate\\s+(-?\\d+).*");
+    private static final Pattern MOBILE_OPTION_PATTERN =
+            Pattern.compile(
+                    "option name (Threads|MultiPV) type spin default \\d+ min (\\d+) max (\\d+)");
 
     private final GameApi gameApi;
     private final OexEngineResolver resolver;
@@ -57,7 +59,13 @@ public class OexEngine extends EngineApi {
         boolean cancelled;
         EngineEvaluation evaluation;
 
-        Search(long id, SearchPurpose purpose, String fen, String command, int timeMillis, String positionCommand) {
+        Search(
+                long id,
+                SearchPurpose purpose,
+                String fen,
+                String command,
+                int timeMillis,
+                String positionCommand) {
             this.positionCommand = positionCommand;
             this.id = id;
             this.purpose = purpose;
@@ -95,7 +103,10 @@ public class OexEngine extends EngineApi {
             sendErrorMessageFromThread();
             return;
         }
-        startSearch(SearchPurpose.PLAY, gameApi.getFEN(), ply > 0 ? "go depth " + ply : "go movetime " + msecs,
+        startSearch(
+                SearchPurpose.PLAY,
+                gameApi.getFEN(),
+                ply > 0 ? "go depth " + ply : "go movetime " + msecs,
                 ply > 0 ? 0 : msecs);
     }
 
@@ -115,21 +126,35 @@ public class OexEngine extends EngineApi {
 
     @Override
     public synchronized void analyze(GameApi.PositionSnapshot position, int timeMillis) {
-        if (position == null) throw new IllegalArgumentException("Missing position");
+        if (position == null) {
+            throw new IllegalArgumentException("Missing position");
+        }
         validateAnalysisRequest(position.fen, timeMillis);
-        if (search != null) return;
-        startSearch(SearchPurpose.ANALYSIS, position.fen, "go movetime " + timeMillis,
-            timeMillis, position.positionCommand);
+        if (search != null) {
+            return;
+        }
+        startSearch(
+                SearchPurpose.ANALYSIS,
+                position.fen,
+                "go movetime " + timeMillis,
+                timeMillis,
+                position.positionCommand);
     }
 
     private void startSearch(SearchPurpose purpose, String fen, String command, int timeMillis) {
         startSearch(purpose, fen, command, timeMillis, "position fen " + fen);
     }
 
-    private void startSearch(SearchPurpose purpose, String fen, String command, int timeMillis,
-                             String positionCommand) {
+    private void startSearch(
+            SearchPurpose purpose,
+            String fen,
+            String command,
+            int timeMillis,
+            String positionCommand) {
         Log.d(TAG, "startSearch " + purpose);
-        Search requested = new Search(beginSearch(purpose), purpose, fen, command, timeMillis, positionCommand);
+        Search requested =
+                new Search(
+                        beginSearch(purpose), purpose, fen, command, timeMillis, positionCommand);
         search = requested;
         latestValue = 0;
         for (EngineListener listener : listeners) {
@@ -146,7 +171,8 @@ public class OexEngine extends EngineApi {
         } else if (engineReady) {
             sendSearch();
         } else {
-            scheduleTimeout(() -> failSearch("UCI initialization timed out"), RESPONSE_TIMEOUT_MILLIS);
+            scheduleTimeout(
+                    () -> failSearch("UCI initialization timed out"), RESPONSE_TIMEOUT_MILLIS);
         }
     }
 
@@ -175,7 +201,8 @@ public class OexEngine extends EngineApi {
             closeProcess();
             finishSearch();
         } else if (sendCommand("stop")) {
-            scheduleTimeout(() -> failSearch("Engine did not acknowledge stop"), RESPONSE_TIMEOUT_MILLIS);
+            scheduleTimeout(
+                    () -> failSearch("Engine did not acknowledge stop"), RESPONSE_TIMEOUT_MILLIS);
         }
     }
 
@@ -202,7 +229,9 @@ public class OexEngine extends EngineApi {
     }
 
     private boolean ensureProcess() {
-        if (process != null && preferredEngineId != null && !preferredEngineId.equals(runningEngineId)) {
+        if (process != null
+                && preferredEngineId != null
+                && !preferredEngineId.equals(runningEngineId)) {
             closeProcess();
         }
         if (process != null) {
@@ -216,8 +245,10 @@ public class OexEngine extends EngineApi {
             }
             runningEngineId = engine.getId();
             // Drain stderr along with stdout so a verbose engine cannot block on a full pipe.
-            process = new ProcessBuilder(resolver.ensureLocalCopy(engine).getAbsolutePath())
-                    .redirectErrorStream(true).start();
+            process =
+                    new ProcessBuilder(resolver.ensureLocalCopy(engine).getAbsolutePath())
+                            .redirectErrorStream(true)
+                            .start();
             writer = new PrintWriter(new OutputStreamWriter(process.getOutputStream()));
             startReaderThread(process);
             return sendCommand("uci");
@@ -247,27 +278,32 @@ public class OexEngine extends EngineApi {
     }
 
     private void startReaderThread(Process owner) {
-        new Thread(() -> {
-            try (BufferedReader input = new BufferedReader(new InputStreamReader(owner.getInputStream()))) {
-                String line;
-                while ((line = input.readLine()) != null) {
-                    synchronized (OexEngine.this) {
-                        if (process != owner) {
-                            return;
-                        }
-                        parseLine(line.trim());
-                    }
-                }
-            } catch (IOException ex) {
-                Log.d(TAG, "Engine output closed", ex);
-            } finally {
-                synchronized (OexEngine.this) {
-                    if (process == owner) {
-                        failSearch("Engine exited unexpectedly");
-                    }
-                }
-            }
-        }, "OexEngine-output").start();
+        new Thread(
+                        () -> {
+                            try (BufferedReader input =
+                                    new BufferedReader(
+                                            new InputStreamReader(owner.getInputStream()))) {
+                                String line;
+                                while ((line = input.readLine()) != null) {
+                                    synchronized (OexEngine.this) {
+                                        if (process != owner) {
+                                            return;
+                                        }
+                                        parseLine(line.trim());
+                                    }
+                                }
+                            } catch (IOException ex) {
+                                Log.d(TAG, "Engine output closed", ex);
+                            } finally {
+                                synchronized (OexEngine.this) {
+                                    if (process == owner) {
+                                        failSearch("Engine exited unexpectedly");
+                                    }
+                                }
+                            }
+                        },
+                        "OexEngine-output")
+                .start();
     }
 
     private void parseLine(String line) {
@@ -275,7 +311,8 @@ public class OexEngine extends EngineApi {
             Matcher option = MOBILE_OPTION_PATTERN.matcher(line);
             if (option.matches()) {
                 try {
-                    if (Long.parseLong(option.group(2)) <= 1 && Long.parseLong(option.group(3)) >= 1) {
+                    if (Long.parseLong(option.group(2)) <= 1
+                            && Long.parseLong(option.group(3)) >= 1) {
                         if ("Threads".equals(option.group(1))) {
                             supportsThreads = true;
                         } else {
@@ -329,7 +366,9 @@ public class OexEngine extends EngineApi {
 
     private void parseInfo(String line) {
         EngineEvaluation evaluation = EngineEvaluation.fromInfo(line);
-        if (evaluation != null) search.evaluation = evaluation;
+        if (evaluation != null) {
+            search.evaluation = evaluation;
+        }
         try {
             Matcher cpMatch = SCORE_CP_PATTERN.matcher(line);
             if (cpMatch.matches()) {
@@ -338,8 +377,13 @@ public class OexEngine extends EngineApi {
                 Matcher mateMatch = SCORE_MATE_PATTERN.matcher(line);
                 if (mateMatch.matches()) {
                     int mateIn = Integer.parseInt(mateMatch.group(1));
-                    int distance = (int) Math.min(Math.abs((long) mateIn), BoardConstants.VALUATION_MATE - 1);
-                    latestValue = (mateIn >= 0 ? 1 : -1) * (BoardConstants.VALUATION_MATE - distance);
+                    int distance =
+                            (int)
+                                    Math.min(
+                                            Math.abs((long) mateIn),
+                                            BoardConstants.VALUATION_MATE - 1);
+                    latestValue =
+                            (mateIn >= 0 ? 1 : -1) * (BoardConstants.VALUATION_MATE - distance);
                 }
             }
             sendMessageFromThread(search.id, line, (float) latestValue / 100.0F);
@@ -356,31 +400,40 @@ public class OexEngine extends EngineApi {
             String uciMove = parts.length > 1 ? parts[1] : "";
             // Resolve against the live board on the main thread, only if it still
             // matches this PLAY search. ANALYSIS never touches board move resolution.
-            updateHandler.post(() -> {
-                if (!isCurrentSearch(completed.id)) return;
-                if (!completed.fen.equals(gameApi.getFEN())) {
-                    for (EngineListener listener : listeners) listener.OnEngineAborted();
-                    return;
-                }
-                int move = resolveMove(uciMove);
-                for (EngineListener listener : listeners) {
-                    if (move != 0) {
-                        listener.OnEngineMove(move, -1, value);
-                    } else {
-                        listener.OnEngineError();
-                    }
-                }
-            });
+            updateHandler.post(
+                    () -> {
+                        if (!isCurrentSearch(completed.id)) {
+                            return;
+                        }
+                        if (!completed.fen.equals(gameApi.getFEN())) {
+                            for (EngineListener listener : listeners) {
+                                listener.OnEngineAborted();
+                            }
+                            return;
+                        }
+                        int move = resolveMove(uciMove);
+                        for (EngineListener listener : listeners) {
+                            if (move != 0) {
+                                listener.OnEngineMove(move, -1, value);
+                            } else {
+                                listener.OnEngineError();
+                            }
+                        }
+                    });
         }
         if (!completed.cancelled && completed.purpose == SearchPurpose.ANALYSIS) {
             String[] parts = line.split("\\s+");
             String bestMove = parts.length > 1 ? parts[1] : "";
-            updateHandler.post(() -> {
-                if (!isCurrentSearch(completed.id)) return;
-                for (EngineListener listener : listeners) {
-                    listener.onAnalysisComplete(completed.fen, bestMove, completed.evaluation);
-                }
-            });
+            updateHandler.post(
+                    () -> {
+                        if (!isCurrentSearch(completed.id)) {
+                            return;
+                        }
+                        for (EngineListener listener : listeners) {
+                            listener.onAnalysisComplete(
+                                    completed.fen, bestMove, completed.evaluation);
+                        }
+                    });
         }
         finishSearch();
     }
@@ -403,18 +456,19 @@ public class OexEngine extends EngineApi {
 
     private void scheduleTimeout(Runnable action, long delayMillis) {
         cancelTimeout();
-        timeout = new Runnable() {
-            @Override
-            public void run() {
-                synchronized (OexEngine.this) {
-                    if (timeout != this) {
-                        return;
+        timeout =
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        synchronized (OexEngine.this) {
+                            if (timeout != this) {
+                                return;
+                            }
+                            timeout = null;
+                            action.run();
+                        }
                     }
-                    timeout = null;
-                    action.run();
-                }
-            }
-        };
+                };
         updateHandler.postDelayed(timeout, delayMillis);
     }
 
@@ -443,7 +497,8 @@ public class OexEngine extends EngineApi {
                     continue;
                 }
                 if (promotionPiece != -1) {
-                    if (!Move.isPromotionMove(move) || Move.getPromotionPiece(move) != promotionPiece) {
+                    if (!Move.isPromotionMove(move)
+                            || Move.getPromotionPiece(move) != promotionPiece) {
                         continue;
                     }
                 }

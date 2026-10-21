@@ -1,21 +1,18 @@
 package jwtc.android.chess.activities;
 
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.EngineInfo;
 import android.speech.tts.Voice;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-
 import com.google.android.material.slider.Slider;
-
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.List;
-
+import java.util.Objects;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.services.GameApi;
@@ -23,8 +20,18 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class AccessibilityPreferences extends ChessBoardActivity {
     private static final String TAG = "AccessibilityPreferences";
-    private CheckBox checkBoxShowPiecesDescriptions, checkBoxShowAccessibilityDrag, checkBoxFieldColorDescriptions, checkBoxLastMoveWhenOverEmptySquare, checkBoxUseLongMoveDescriptions, checkBoxAddTurnInMoveDescription, checkBoxIncludeAttackersAndDefenders, checkBoxProtectLastMoveSpeech;
-    private Slider sliderSpeechRate, sliderSpeechPitch, sliderAccessibilityDelay, sliderAccessibilityLastMoveDelay;
+    private CheckBox checkBoxShowPiecesDescriptions,
+            checkBoxShowAccessibilityDrag,
+            checkBoxFieldColorDescriptions,
+            checkBoxLastMoveWhenOverEmptySquare,
+            checkBoxUseLongMoveDescriptions,
+            checkBoxAddTurnInMoveDescription,
+            checkBoxIncludeAttackersAndDefenders,
+            checkBoxProtectLastMoveSpeech;
+    private Slider sliderSpeechRate,
+            sliderSpeechPitch,
+            sliderAccessibilityDelay,
+            sliderAccessibilityLastMoveDelay;
     private FixedDropdownView dropDownSpeechVoice, dropDownSpeechEngine;
     private final ArrayList<String> speechVoiceNames = new ArrayList<>();
     private final ArrayList<String> speechEnginePackages = new ArrayList<>();
@@ -40,10 +47,12 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         checkBoxShowPiecesDescriptions = findViewById(R.id.CheckBoxShowPiecesDescriptions);
         checkBoxShowAccessibilityDrag = findViewById(R.id.CheckBoxShowAccessibilityDrag);
         checkBoxFieldColorDescriptions = findViewById(R.id.CheckBoxFieldColorDescriptions);
-        checkBoxLastMoveWhenOverEmptySquare = findViewById(R.id.CheckBoxLastMoveWhenOverEmptySquare);
+        checkBoxLastMoveWhenOverEmptySquare =
+                findViewById(R.id.CheckBoxLastMoveWhenOverEmptySquare);
         checkBoxUseLongMoveDescriptions = findViewById(R.id.CheckBoxUseLongMoveDescriptions);
         checkBoxAddTurnInMoveDescription = findViewById(R.id.CheckBoxAddTurnInMoveDescription);
-        checkBoxIncludeAttackersAndDefenders = findViewById(R.id.CheckBoxIncludeAttackersAndDefendersDescriptions);
+        checkBoxIncludeAttackersAndDefenders =
+                findViewById(R.id.CheckBoxIncludeAttackersAndDefendersDescriptions);
         checkBoxProtectLastMoveSpeech = findViewById(R.id.CheckBoxProtectLastMoveSpeech);
         sliderSpeechRate = findViewById(R.id.SliderSpeechRate);
         sliderSpeechPitch = findViewById(R.id.SliderSpeechPitch);
@@ -52,58 +61,66 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         dropDownSpeechVoice = findViewById(R.id.DropDownSpeechVoice);
         dropDownSpeechEngine = findViewById(R.id.DropDownSpeechEngine);
 
-        sliderSpeechRate.addOnChangeListener((s, value, fromUser) -> {
-            textToSpeech.setSpeechRate(value);
-            textToSpeech.doSpeak(getPreviewMove());
-        });
+        sliderSpeechRate.addOnChangeListener(
+                (s, value, fromUser) -> {
+                    textToSpeech.setSpeechRate(value);
+                    textToSpeech.doSpeak(getPreviewMove());
+                });
 
-        sliderSpeechPitch.addOnChangeListener((s, value, fromUser) -> {
-            textToSpeech.setSpeechPitch(value);
-            textToSpeech.doSpeak(getPreviewMove());
-        });
+        sliderSpeechPitch.addOnChangeListener(
+                (s, value, fromUser) -> {
+                    textToSpeech.setSpeechPitch(value);
+                    textToSpeech.doSpeak(getPreviewMove());
+                });
 
-        sliderAccessibilityDelay.addOnChangeListener((s, value, fromUser) -> {
-            accessibilityDragDwellMs = (int)value;
-        });
-        sliderAccessibilityLastMoveDelay.addOnChangeListener((s, value, fromUser) -> {
-            accessibilityDragLastMoveDelayMs = (int)value;
-        });
+        sliderAccessibilityDelay.addOnChangeListener(
+                (s, value, fromUser) -> {
+                    accessibilityDragDwellMs = (int) value;
+                });
+        sliderAccessibilityLastMoveDelay.addOnChangeListener(
+                (s, value, fromUser) -> {
+                    accessibilityDragLastMoveDelayMs = (int) value;
+                });
 
-        dropDownSpeechVoice.setOnItemClickListener((AdapterView<?> parent, android.view.View view, int position, long id) -> {
-            if (position >= 0 && position < speechVoiceNames.size() && textToSpeech != null) {
-                String voiceName = speechVoiceNames.get(position);
-                if (voiceName == null) {
-                    textToSpeech.useSystemDefaultVoice();
-                } else {
-                    textToSpeech.setVoiceByName(voiceName);
-                }
-                textToSpeech.doSpeak(getPreviewMove());
-            }
-        });
+        dropDownSpeechVoice.setOnItemClickListener(
+                (AdapterView<?> parent, android.view.View view, int position, long id) -> {
+                    if (position >= 0
+                            && position < speechVoiceNames.size()
+                            && textToSpeech != null) {
+                        String voiceName = speechVoiceNames.get(position);
+                        if (voiceName == null) {
+                            textToSpeech.useSystemDefaultVoice();
+                        } else {
+                            textToSpeech.setVoiceByName(voiceName);
+                        }
+                        textToSpeech.doSpeak(getPreviewMove());
+                    }
+                });
 
-        dropDownSpeechEngine.setOnItemClickListener((AdapterView<?> parent, android.view.View view, int position, long id) -> {
-            if (position < 0 || position >= speechEnginePackages.size()) {
-                return;
-            }
+        dropDownSpeechEngine.setOnItemClickListener(
+                (AdapterView<?> parent, android.view.View view, int position, long id) -> {
+                    if (position < 0 || position >= speechEnginePackages.size()) {
+                        return;
+                    }
 
-            String selectedEnginePackage = speechEnginePackages.get(position);
-            String currentEnginePackage = getPrefs().getString("speechEngine", null);
-            if (Objects.equals(selectedEnginePackage, currentEnginePackage)) {
-                return;
-            }
+                    String selectedEnginePackage = speechEnginePackages.get(position);
+                    String currentEnginePackage = getPrefs().getString("speechEngine", null);
+                    if (Objects.equals(selectedEnginePackage, currentEnginePackage)) {
+                        return;
+                    }
 
-            SharedPreferences.Editor editor = getPrefs().edit();
-            if (selectedEnginePackage == null) {
-                editor.remove("speechEngine");
-            } else {
-                editor.putString("speechEngine", selectedEnginePackage);
-            }
-            editor.remove("speechVoice");
-            editor.apply();
+                    SharedPreferences.Editor editor = getPrefs().edit();
+                    if (selectedEnginePackage == null) {
+                        editor.remove("speechEngine");
+                    } else {
+                        editor.putString("speechEngine", selectedEnginePackage);
+                    }
+                    editor.remove("speechVoice");
+                    editor.apply();
 
-            textToSpeech.shutdown();
-            textToSpeech.setEnabled(true, getPrefs());
-        });
+                    textToSpeech.shutdown();
+                    textToSpeech.setEnabled(true, getPrefs());
+                });
 
         gameApi = new GameApi();
 
@@ -112,7 +129,12 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
         }
-        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
+        initBoardLayoutSizing(
+                findViewById(R.id.LayoutMain),
+                boardAreaLayout,
+                findViewById(R.id.play_controls),
+                null,
+                null);
     }
 
     @Override
@@ -124,7 +146,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
         gameApi.newGame();
 
-        checkBoxShowPiecesDescriptions.setChecked(prefs.getBoolean("show_pieces_descriptions", true));
+        checkBoxShowPiecesDescriptions.setChecked(
+                prefs.getBoolean("show_pieces_descriptions", true));
 
         accessibilityDragDwellMs = prefs.getInt("accessibilityDragDelay", 300);
         accessibilityDragLastMoveDelayMs = prefs.getInt("accessibilityDragLastMoveDelay", 1000);
@@ -133,13 +156,20 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         sliderAccessibilityDelay.setValue(accessibilityDragDwellMs);
         sliderAccessibilityLastMoveDelay.setValue(accessibilityDragLastMoveDelayMs);
 
-        checkBoxShowAccessibilityDrag.setChecked(prefs.getBoolean("show_accessibility_drag_toggle", false));
-        checkBoxFieldColorDescriptions.setChecked(prefs.getBoolean("field_color_descriptions", false));
-        checkBoxLastMoveWhenOverEmptySquare.setChecked(prefs.getBoolean("announce_last_move_when_over_empty_square", false));
-        checkBoxUseLongMoveDescriptions.setChecked(prefs.getBoolean("use_long_move_description", false));
-        checkBoxAddTurnInMoveDescription.setChecked(prefs.getBoolean("add_turn_in_move_description", true));
-        checkBoxIncludeAttackersAndDefenders.setChecked(prefs.getBoolean("include_attackers_defenders_in_field_description", false));
-        checkBoxProtectLastMoveSpeech.setChecked(prefs.getBoolean("pref_protect_last_move_speech", false));
+        checkBoxShowAccessibilityDrag.setChecked(
+                prefs.getBoolean("show_accessibility_drag_toggle", false));
+        checkBoxFieldColorDescriptions.setChecked(
+                prefs.getBoolean("field_color_descriptions", false));
+        checkBoxLastMoveWhenOverEmptySquare.setChecked(
+                prefs.getBoolean("announce_last_move_when_over_empty_square", false));
+        checkBoxUseLongMoveDescriptions.setChecked(
+                prefs.getBoolean("use_long_move_description", false));
+        checkBoxAddTurnInMoveDescription.setChecked(
+                prefs.getBoolean("add_turn_in_move_description", true));
+        checkBoxIncludeAttackersAndDefenders.setChecked(
+                prefs.getBoolean("include_attackers_defenders_in_field_description", false));
+        checkBoxProtectLastMoveSpeech.setChecked(
+                prefs.getBoolean("pref_protect_last_move_speech", false));
         useAccessibilityDrag = true;
         applySquareDragListeners();
 
@@ -155,19 +185,28 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         editor.putBoolean("show_pieces_descriptions", checkBoxShowPiecesDescriptions.isChecked());
         editor.putFloat("speechRate", sliderSpeechRate.getValue());
         editor.putFloat("speechPitch", sliderSpeechPitch.getValue());
-        editor.putBoolean("show_accessibility_drag_toggle", checkBoxShowAccessibilityDrag.isChecked());
+        editor.putBoolean(
+                "show_accessibility_drag_toggle", checkBoxShowAccessibilityDrag.isChecked());
         if (!checkBoxShowAccessibilityDrag.isChecked()) {
             editor.putBoolean("useAccessibilityDrag", false);
         }
         editor.putBoolean("field_color_descriptions", checkBoxFieldColorDescriptions.isChecked());
-        editor.putBoolean("announce_last_move_when_over_empty_square", checkBoxLastMoveWhenOverEmptySquare.isChecked());
+        editor.putBoolean(
+                "announce_last_move_when_over_empty_square",
+                checkBoxLastMoveWhenOverEmptySquare.isChecked());
         editor.putBoolean("use_long_move_description", checkBoxUseLongMoveDescriptions.isChecked());
-        editor.putBoolean("add_turn_in_move_description", checkBoxAddTurnInMoveDescription.isChecked());
-        editor.putBoolean("include_attackers_defenders_in_field_description", checkBoxIncludeAttackersAndDefenders.isChecked());
-        editor.putBoolean("pref_protect_last_move_speech", checkBoxProtectLastMoveSpeech.isChecked());
+        editor.putBoolean(
+                "add_turn_in_move_description", checkBoxAddTurnInMoveDescription.isChecked());
+        editor.putBoolean(
+                "include_attackers_defenders_in_field_description",
+                checkBoxIncludeAttackersAndDefenders.isChecked());
+        editor.putBoolean(
+                "pref_protect_last_move_speech", checkBoxProtectLastMoveSpeech.isChecked());
 
-        editor.putInt("accessibilityDragDelay", (int)sliderAccessibilityDelay.getValue());
-        editor.putInt("accessibilityDragLastMoveDelay", (int)sliderAccessibilityLastMoveDelay.getValue());
+        editor.putInt("accessibilityDragDelay", (int) sliderAccessibilityDelay.getValue());
+        editor.putInt(
+                "accessibilityDragLastMoveDelay",
+                (int) sliderAccessibilityLastMoveDelay.getValue());
         int selectedVoicePosition = dropDownSpeechVoice.getSelectedItemPosition();
         if (selectedVoicePosition >= 0 && selectedVoicePosition < speechVoiceNames.size()) {
             String selectedVoice = speechVoiceNames.get(selectedVoicePosition);
@@ -199,10 +238,13 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         if (textToSpeech == null) {
             return;
         }
-        new Thread(() -> {
-            List<Voice> supportedVoices = textToSpeech.getSupportedVoices();
-            runOnUiThread(() -> populateSpeechVoiceDropdown(supportedVoices));
-        }, "tts-voice-load").start();
+        new Thread(
+                        () -> {
+                            List<Voice> supportedVoices = textToSpeech.getSupportedVoices();
+                            runOnUiThread(() -> populateSpeechVoiceDropdown(supportedVoices));
+                        },
+                        "tts-voice-load")
+                .start();
     }
 
     private void populateSpeechVoiceDropdown(List<Voice> supportedVoices) {
@@ -245,10 +287,13 @@ public class AccessibilityPreferences extends ChessBoardActivity {
         if (textToSpeech == null) {
             return;
         }
-        new Thread(() -> {
-            List<EngineInfo> engines = textToSpeech.getInstalledEngines();
-            runOnUiThread(() -> populateSpeechEngineDropdown(engines));
-        }, "tts-engine-load").start();
+        new Thread(
+                        () -> {
+                            List<EngineInfo> engines = textToSpeech.getInstalledEngines();
+                            runOnUiThread(() -> populateSpeechEngineDropdown(engines));
+                        },
+                        "tts-engine-load")
+                .start();
     }
 
     private void populateSpeechEngineDropdown(List<EngineInfo> engines) {
@@ -290,7 +335,8 @@ public class AccessibilityPreferences extends ChessBoardActivity {
 
     private String getPreviewMove() {
         Resources resources = textToSpeech.getLocalizedResources();
-        return resources != null ? resources.getString(R.string.tts_example_move) : getString(R.string.tts_example_move);
+        return resources != null
+                ? resources.getString(R.string.tts_example_move)
+                : getString(R.string.tts_example_move);
     }
-
 }

@@ -104,8 +104,9 @@ fn request_omits_only_a_legal_unfinished_trailing_piece_move() {
 #[test]
 fn duck_repetition_preserves_native_position_identity() {
     let mut p = Position::from_fen(Variant::Duck, START).unwrap();
-    for m in ["g1f3@a3", "g8f6@a4", "f3g1@a5", "f6g8@a6",
-              "g1f3@b3", "g8f6@b4", "f3g1@b5", "f6g8"] {
+    for m in [
+        "g1f3@a3", "g8f6@a4", "f3g1@a5", "f6g8@a6", "g1f3@b3", "g8f6@b4", "f3g1@b5", "f6g8",
+    ] {
         p.apply(m).unwrap();
     }
     assert_eq!(p.game_state(), GameState::DrawRepetition);
@@ -113,18 +114,29 @@ fn duck_repetition_preserves_native_position_identity() {
 
 #[test]
 fn a_draw_ending_piece_move_is_not_discarded_as_pending() {
-    let request = SearchRequest::new(10, Variant::Duck,
+    let request = SearchRequest::new(
+        10,
+        Variant::Duck,
         "4k3/8/8/8/8/8/4P3/4K3 b - - 99 1",
-        vec![CoordinateMove::parse("e8d8").unwrap()], SearchLimit::Depth(1),
-        SearchOptions { quiescence: false }).unwrap();
+        vec![CoordinateMove::parse("e8d8").unwrap()],
+        SearchLimit::Depth(1),
+        SearchOptions { quiescence: false },
+    )
+    .unwrap();
     assert_eq!(request.position().history(), &["e8d8"]);
     assert_eq!(request.position().game_state(), GameState::DrawFiftyMove);
-    assert!(search(&request, &SearchControl::default()).unwrap().best_move.is_none());
+    assert!(search(&request, &SearchControl::default())
+        .unwrap()
+        .best_move
+        .is_none());
 }
 
 #[test]
 fn malformed_duck_positions_are_rejected() {
-    for fen in ["8/8/8/8/8/8/8/8 w - - 0 1", "4k3/8/8/3$$3/8/8/8/4K3 w - - 0 1"] {
+    for fen in [
+        "8/8/8/8/8/8/8/8 w - - 0 1",
+        "4k3/8/8/3$$3/8/8/8/4K3 w - - 0 1",
+    ] {
         assert!(Position::from_fen(Variant::Duck, fen).is_err());
     }
     for token in ["@d5", "e2e4@d5@a3", "e2e4@", "e2e4@é", "a7a8k@d5"] {
@@ -146,5 +158,8 @@ fn piece_preview_is_detached_and_complete_turns_still_require_placement() {
     p.apply("e2e4@d5").unwrap();
     assert_eq!(p.history(), &["e2e4@d5"]);
     let capture = Position::from_fen(Variant::Duck, "4k3/4R3/8/3$4/8/8/8/4K3 w - - 0 1").unwrap();
-    assert_eq!(capture.preview_piece("e7e8").unwrap().game_state(), GameState::Mate);
+    assert_eq!(
+        capture.preview_piece("e7e8").unwrap().game_state(),
+        GameState::Mate
+    );
 }

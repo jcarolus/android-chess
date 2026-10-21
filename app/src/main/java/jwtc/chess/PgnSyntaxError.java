@@ -1,6 +1,9 @@
 package jwtc.chess;
 
-/** A PGN text that is not well formed. The offset is the character position of the offending token, or -1 when unknown. */
+/**
+ * A PGN text that is not well formed. The offset is the character position of the offending token,
+ * or -1 when unknown.
+ */
 public final class PgnSyntaxError extends IllegalArgumentException {
     private final int offset;
 
@@ -14,5 +17,7 @@ public final class PgnSyntaxError extends IllegalArgumentException {
         this.offset = -1;
     }
 
-    public int getOffset() { return offset; }
+    public int getOffset() {
+        return offset;
+    }
 }

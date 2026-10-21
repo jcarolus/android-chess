@@ -2,7 +2,6 @@ package jwtc.android.chess.tools;
 
 import android.util.Log;
 
-
 /** Collects the final position of each opening under its name, skipping positions seen before. */
 public class OpeningImportHandler implements ImportHandler {
     private static final String TAG = "OpeningImportHandler";

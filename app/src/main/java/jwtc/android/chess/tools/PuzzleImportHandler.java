@@ -2,7 +2,6 @@ package jwtc.android.chess.tools;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.PGNColumns;

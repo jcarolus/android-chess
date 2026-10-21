@@ -28,8 +28,11 @@ fn castling_rights_reflect_the_fen_and_are_lost_after_a_king_move() {
 
 #[test]
 fn attackers_lists_every_square_of_the_given_colour_attacking_the_target() {
-    let p = Position::from_fen(Variant::Standard, "4k3/8/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1")
-        .unwrap();
+    let p = Position::from_fen(
+        Variant::Standard,
+        "4k3/8/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1",
+    )
+    .unwrap();
     let mut attackers = p.attackers(true, "d3").unwrap();
     attackers.sort();
     assert_eq!(attackers, vec!["c2", "e2"]);

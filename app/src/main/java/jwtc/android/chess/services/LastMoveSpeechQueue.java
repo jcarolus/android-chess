@@ -9,8 +9,8 @@ final class LastMoveSpeechQueue {
     private final Set<String> protectedIds = new HashSet<>();
 
     /**
-     * Adds an utterance and returns whether it should be appended to an existing
-     * last-move sequence. A false result means it starts a new sequence.
+     * Adds an utterance and returns whether it should be appended to an existing last-move
+     * sequence. A false result means it starts a new sequence.
      */
     boolean start(String utteranceId, boolean protectSpeech) {
         boolean append = !pendingIds.isEmpty();

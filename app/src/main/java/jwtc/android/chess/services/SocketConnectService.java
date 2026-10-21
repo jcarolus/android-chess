@@ -10,9 +10,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-
 import androidx.annotation.Nullable;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -26,12 +24,14 @@ import java.util.List;
 public abstract class SocketConnectService extends Service {
     private final Object connectionLock = new Object();
     private final ArrayList<ClientConnection> clientConnections = new ArrayList<>();
-    private final Messenger messengerFromActivity = new Messenger(new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            onActivityMessage(msg);
-        }
-    });
+    private final Messenger messengerFromActivity =
+            new Messenger(
+                    new Handler(Looper.getMainLooper()) {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            onActivityMessage(msg);
+                        }
+                    });
 
     private Messenger activityMessenger = null;
     private Thread acceptThread = null;
@@ -42,9 +42,11 @@ public abstract class SocketConnectService extends Service {
 
     protected abstract void onActivityMessage(Message msg);
 
-    protected abstract void onClientConnected(ClientConnection connection, boolean outgoingConnection);
+    protected abstract void onClientConnected(
+            ClientConnection connection, boolean outgoingConnection);
 
-    protected abstract void onClientDisconnected(ClientConnection connection, boolean outgoingConnection);
+    protected abstract void onClientDisconnected(
+            ClientConnection connection, boolean outgoingConnection);
 
     protected abstract void onLineReceived(ClientConnection connection, String line);
 
@@ -102,37 +104,43 @@ public abstract class SocketConnectService extends Service {
     protected void startHosting(final int port) {
         stopConnections();
         shuttingDown = false;
-        acceptThread = new Thread(() -> {
-            try {
-                serverSocket = new ServerSocket(port);
-                Log.d(getLogTag(), "ServerSocket created on port " + port);
-                while (!shuttingDown && serverSocket != null && !serverSocket.isClosed()) {
-                    Socket acceptedSocket = serverSocket.accept();
-                    attachSocket(acceptedSocket, false);
-                }
-            } catch (IOException e) {
-                if (!shuttingDown) {
-                    Log.d(getLogTag(), "Host loop failed", e);
-                    onSocketError(e);
-                }
-            }
-        });
+        acceptThread =
+                new Thread(
+                        () -> {
+                            try {
+                                serverSocket = new ServerSocket(port);
+                                Log.d(getLogTag(), "ServerSocket created on port " + port);
+                                while (!shuttingDown
+                                        && serverSocket != null
+                                        && !serverSocket.isClosed()) {
+                                    Socket acceptedSocket = serverSocket.accept();
+                                    attachSocket(acceptedSocket, false);
+                                }
+                            } catch (IOException e) {
+                                if (!shuttingDown) {
+                                    Log.d(getLogTag(), "Host loop failed", e);
+                                    onSocketError(e);
+                                }
+                            }
+                        });
         acceptThread.start();
     }
 
     protected void startClient(final String hostIp, final int port) {
         stopConnections();
         shuttingDown = false;
-        connectThread = new Thread(() -> {
-            try {
-                attachSocket(new Socket(hostIp, port), true);
-            } catch (IOException e) {
-                if (!shuttingDown) {
-                    Log.d(getLogTag(), "Client connect failed", e);
-                    onSocketError(e);
-                }
-            }
-        });
+        connectThread =
+                new Thread(
+                        () -> {
+                            try {
+                                attachSocket(new Socket(hostIp, port), true);
+                            } catch (IOException e) {
+                                if (!shuttingDown) {
+                                    Log.d(getLogTag(), "Client connect failed", e);
+                                    onSocketError(e);
+                                }
+                            }
+                        });
         connectThread.start();
     }
 
@@ -168,14 +176,16 @@ public abstract class SocketConnectService extends Service {
             return;
         }
 
-        new Thread(() -> {
-            try {
-                connection.writeLine(line);
-            } catch (IOException e) {
-                Log.d(getLogTag(), "Could not write to socket", e);
-                closeClientConnection(connection);
-            }
-        }).start();
+        new Thread(
+                        () -> {
+                            try {
+                                connection.writeLine(line);
+                            } catch (IOException e) {
+                                Log.d(getLogTag(), "Could not write to socket", e);
+                                closeClientConnection(connection);
+                            }
+                        })
+                .start();
     }
 
     protected void broadcastLine(String line) {
@@ -207,7 +217,8 @@ public abstract class SocketConnectService extends Service {
     }
 
     private void attachSocket(Socket socket, boolean outgoingConnection) throws IOException {
-        ClientConnection connection = new ClientConnection(nextClientId++, socket, outgoingConnection);
+        ClientConnection connection =
+                new ClientConnection(nextClientId++, socket, outgoingConnection);
         synchronized (connectionLock) {
             clientConnections.add(connection);
         }
@@ -252,7 +263,8 @@ public abstract class SocketConnectService extends Service {
         private Thread readerThread = null;
         private boolean closed = false;
 
-        ClientConnection(int clientId, Socket socket, boolean outgoingConnection) throws IOException {
+        ClientConnection(int clientId, Socket socket, boolean outgoingConnection)
+                throws IOException {
             this.clientId = clientId;
             this.socket = socket;
             this.outgoingConnection = outgoingConnection;

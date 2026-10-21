@@ -1,7 +1,5 @@
 package jwtc.chess;
 
-import java.util.HashMap;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -15,6 +13,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import java.util.HashMap;
 
 public class ChessPuzzleProvider extends ContentProvider {
 
@@ -44,19 +43,13 @@ public class ChessPuzzleProvider extends ContentProvider {
     public static final String COL_PGN = "PGN";
     public static final String COL_TYPE = "PUZZLE_TYPE";
 
-    public static final String[] COLUMNS = {
-        COL_ID,
-        COL_TYPE,
-        COL_PGN
-    };
+    public static final String[] COLUMNS = {COL_ID, COL_TYPE, COL_PGN};
 
     public static final String DEFAULT_SORT_ORDER = "_ID ASC";
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.jwtc.chesspuzzle";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.jwtc.chesspuzzle";
 
-    /**
-     * This class helps open, create, and upgrade the database file.
-     */
+    /** This class helps open, create, and upgrade the database file. */
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
         DatabaseHelper(Context context) {
@@ -64,17 +57,27 @@ public class ChessPuzzleProvider extends ContentProvider {
         }
 
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + GAMES_TABLE_NAME + " ("
-                + COL_ID + " INTEGER PRIMARY KEY,"
-                + COL_TYPE + " INTEGER,"
-                + COL_PGN + " TEXT"
-                + ");");
-
+            db.execSQL(
+                    "CREATE TABLE "
+                            + GAMES_TABLE_NAME
+                            + " ("
+                            + COL_ID
+                            + " INTEGER PRIMARY KEY,"
+                            + COL_TYPE
+                            + " INTEGER,"
+                            + COL_PGN
+                            + " TEXT"
+                            + ");");
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                + newVersion + ", which will destroy all old data");
+            Log.w(
+                    TAG,
+                    "Upgrading database from version "
+                            + oldVersion
+                            + " to "
+                            + newVersion
+                            + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + GAMES_TABLE_NAME);
             onCreate(db);
         }
@@ -89,8 +92,12 @@ public class ChessPuzzleProvider extends ContentProvider {
         return true;
     }
 
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
-                        String sortOrder) {
+    public Cursor query(
+            Uri uri,
+            String[] projection,
+            String selection,
+            String[] selectionArgs,
+            String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         switch (sUriMatcher.match(uri)) {
@@ -116,7 +123,6 @@ public class ChessPuzzleProvider extends ContentProvider {
                 qb.setProjectionMap(sGamesProjectionMap);
                 qb.appendWhere(COL_ID + "=" + uri.getPathSegments().get(1));
                 break;
-
 
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -173,20 +179,21 @@ public class ChessPuzzleProvider extends ContentProvider {
 
         Long now = Long.valueOf(System.currentTimeMillis());
 
-        if (iType == PUZZLES)
+        if (iType == PUZZLES) {
             values.put(COL_TYPE, TYPE_PUZZLE);
-        else if (iType == PRACTICES)
+        } else if (iType == PRACTICES) {
             values.put(COL_TYPE, TYPE_PRACTICE);
-
+        }
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         long rowId = db.insert(GAMES_TABLE_NAME, null, values);
         if (rowId > 0) {
             Uri myUri;
-            if (iType == PUZZLES)
+            if (iType == PUZZLES) {
                 myUri = ContentUris.withAppendedId(CONTENT_URI_PUZZLES, rowId);
-            else
+            } else {
                 myUri = ContentUris.withAppendedId(CONTENT_URI_PRACTICES, rowId);
+            }
 
             getContext().getContentResolver().notifyChange(myUri, null);
             return myUri;
@@ -201,25 +208,49 @@ public class ChessPuzzleProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case PUZZLES:
-                count = db.delete(GAMES_TABLE_NAME, COL_TYPE + "=" + TYPE_PUZZLE
-                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                count =
+                        db.delete(
+                                GAMES_TABLE_NAME,
+                                COL_TYPE
+                                        + "="
+                                        + TYPE_PUZZLE
+                                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+                                whereArgs);
                 break;
 
             case PUZZLES_ID:
                 String puzzleId = uri.getPathSegments().get(1);
-                count = db.delete(GAMES_TABLE_NAME, COL_ID + "=" + puzzleId
-                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                count =
+                        db.delete(
+                                GAMES_TABLE_NAME,
+                                COL_ID
+                                        + "="
+                                        + puzzleId
+                                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+                                whereArgs);
                 break;
 
             case PRACTICES:
-                count = db.delete(GAMES_TABLE_NAME, COL_TYPE + "=" + TYPE_PRACTICE
-                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                count =
+                        db.delete(
+                                GAMES_TABLE_NAME,
+                                COL_TYPE
+                                        + "="
+                                        + TYPE_PRACTICE
+                                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+                                whereArgs);
                 break;
 
             case PRACTICES_ID:
                 String practiceId = uri.getPathSegments().get(1);
-                count = db.delete(GAMES_TABLE_NAME, COL_ID + "=" + practiceId
-                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                count =
+                        db.delete(
+                                GAMES_TABLE_NAME,
+                                COL_ID
+                                        + "="
+                                        + practiceId
+                                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+                                whereArgs);
                 break;
 
             default:
@@ -238,8 +269,15 @@ public class ChessPuzzleProvider extends ContentProvider {
             case PUZZLES_ID:
             case PRACTICES_ID:
                 String gameId = uri.getPathSegments().get(1);
-                count = db.update(GAMES_TABLE_NAME, values, COL_ID + "=" + gameId
-                    + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+                count =
+                        db.update(
+                                GAMES_TABLE_NAME,
+                                values,
+                                COL_ID
+                                        + "="
+                                        + gameId
+                                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+                                whereArgs);
                 break;
 
             default:

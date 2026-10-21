@@ -27,7 +27,9 @@ final class LocalClockState {
     }
 
     void completeTurn(long now) {
-        if (!running) return;
+        if (!running) {
+            return;
+        }
         remaining[activePlayer] = remaining(activePlayer, now);
         measuredAt = now;
         if (remaining[activePlayer] == 0) {
@@ -35,7 +37,8 @@ final class LocalClockState {
             return;
         }
         remaining[activePlayer] += increment;
-        activePlayer = activePlayer == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE;
+        activePlayer =
+                activePlayer == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE;
     }
 
     void stop(long now) {
@@ -44,7 +47,15 @@ final class LocalClockState {
         running = false;
     }
 
-    int activePlayer() { return activePlayer; }
-    boolean isConfigured() { return configured; }
-    boolean isRunning() { return running; }
+    int activePlayer() {
+        return activePlayer;
+    }
+
+    boolean isConfigured() {
+        return configured;
+    }
+
+    boolean isRunning() {
+        return running;
+    }
 }

@@ -12,7 +12,6 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 
 public class PgnSplitterTest {
@@ -20,16 +19,22 @@ public class PgnSplitterTest {
     private static final String GAME_2 = "[Event \"Two\"]\n[White \"B\"]\n\n1. d4 d5 0-1\n\n";
     private static final String GAME_3 = "[Event \"Three\"]\n\n1. c4 *";
 
-    /** A reader that hands out a single character per read, to put every boundary on a chunk edge. */
+    /**
+     * A reader that hands out a single character per read, to put every boundary on a chunk edge.
+     */
     private static final class OneCharReader extends Reader {
         private final String text;
         private int pos;
 
-        OneCharReader(String text) { this.text = text; }
+        OneCharReader(String text) {
+            this.text = text;
+        }
 
         @Override
         public int read(char[] buffer, int offset, int length) {
-            if (pos >= text.length()) return -1;
+            if (pos >= text.length()) {
+                return -1;
+            }
             buffer[offset] = text.charAt(pos++);
             return 1;
         }
@@ -41,10 +46,14 @@ public class PgnSplitterTest {
     private static final class OneByteStream extends InputStream {
         private final ByteArrayInputStream source;
 
-        OneByteStream(byte[] bytes) { source = new ByteArrayInputStream(bytes); }
+        OneByteStream(byte[] bytes) {
+            source = new ByteArrayInputStream(bytes);
+        }
 
         @Override
-        public int read() { return source.read(); }
+        public int read() {
+            return source.read();
+        }
 
         @Override
         public int read(byte[] buffer, int offset, int length) throws IOException {
@@ -55,7 +64,9 @@ public class PgnSplitterTest {
     private static List<String> split(Reader reader) throws IOException {
         PgnSplitter splitter = new PgnSplitter(reader);
         List<String> games = new ArrayList<>();
-        for (String game = splitter.next(); game != null; game = splitter.next()) games.add(game);
+        for (String game = splitter.next(); game != null; game = splitter.next()) {
+            games.add(game);
+        }
         return games;
     }
 
@@ -133,7 +144,9 @@ public class PgnSplitterTest {
     @Test
     public void gamesLargerThanOneReadAreKeptWhole() throws IOException {
         StringBuilder moves = new StringBuilder();
-        for (int i = 0; i < 5000; i++) moves.append("{comment ").append(i).append("} ");
+        for (int i = 0; i < 5000; i++) {
+            moves.append("{comment ").append(i).append("} ");
+        }
         String big = "[Event \"Big\"]\n\n1. e4 " + moves + "*\n\n";
         List<String> games = split(big + GAME_2);
         assertEquals(2, games.size());
@@ -143,12 +156,16 @@ public class PgnSplitterTest {
 
     @Test
     public void multibyteCharactersSurviveAnyChunking() throws IOException {
-        String text = "[Event \"Ünïcödé\"]\n[White \"Jörg Müller\"]\n[Black \"李小龙\"]\n\n1. e4 *\n\n"
-            + "[Event \"Zwei\"]\n[White \"Søren\"]\n\n1. d4 *\n";
+        String text =
+                "[Event \"Ünïcödé\"]\n[White \"Jörg Müller\"]\n[Black \"李小龙\"]\n\n1. e4 *\n\n"
+                        + "[Event \"Zwei\"]\n[White \"Søren\"]\n\n1. d4 *\n";
         byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
-        List<String> games = split(new InputStreamReader(new OneByteStream(bytes), StandardCharsets.UTF_8));
+        List<String> games =
+                split(new InputStreamReader(new OneByteStream(bytes), StandardCharsets.UTF_8));
         assertEquals(2, games.size());
         assertEquals(text, games.get(0) + games.get(1));
-        assertEquals("[Event \"Ünïcödé\"]\n[White \"Jörg Müller\"]\n[Black \"李小龙\"]\n\n1. e4 *\n\n", games.get(0));
+        assertEquals(
+                "[Event \"Ünïcödé\"]\n[White \"Jörg Müller\"]\n[Black \"李小龙\"]\n\n1. e4 *\n\n",
+                games.get(0));
     }
 }

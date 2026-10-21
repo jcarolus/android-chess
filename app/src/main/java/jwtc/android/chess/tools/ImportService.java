@@ -9,20 +9,16 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.provider.OpenableColumns;
 import android.util.Log;
-
+import androidx.annotation.Nullable;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-
-import androidx.annotation.Nullable;
-
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.matecollection.MateCollection;
 import jwtc.android.chess.matecollection.MateKind;
 import jwtc.android.chess.services.HMap;
-
 
 public class ImportService extends Service {
     private static final String TAG = "ImportService";
@@ -40,35 +36,36 @@ public class ImportService extends Service {
     private ImportApi importApi;
     private final IBinder mBinder = new ImportService.LocalBinder();
 
-    private final ImportListener dispatcher = new ImportListener() {
-        @Override
-        public void OnImportStarted(int mode) {
-            for (ImportListener listener : listeners) {
-                listener.OnImportStarted(mode);
-            }
-        }
+    private final ImportListener dispatcher =
+            new ImportListener() {
+                @Override
+                public void OnImportStarted(int mode) {
+                    for (ImportListener listener : listeners) {
+                        listener.OnImportStarted(mode);
+                    }
+                }
 
-        @Override
-        public void OnImportProgress(int mode, int succeeded, int failed) {
-            for (ImportListener listener : listeners) {
-                listener.OnImportProgress(mode, succeeded, failed);
-            }
-        }
+                @Override
+                public void OnImportProgress(int mode, int succeeded, int failed) {
+                    for (ImportListener listener : listeners) {
+                        listener.OnImportProgress(mode, succeeded, failed);
+                    }
+                }
 
-        @Override
-        public void OnImportFinished(int mode) {
-            for (ImportListener listener : listeners) {
-                listener.OnImportFinished(mode);
-            }
-        }
+                @Override
+                public void OnImportFinished(int mode) {
+                    for (ImportListener listener : listeners) {
+                        listener.OnImportFinished(mode);
+                    }
+                }
 
-        @Override
-        public void OnImportFatalError(int mode) {
-            for (ImportListener listener : listeners) {
-                listener.OnImportFatalError(mode);
-            }
-        }
-    };
+                @Override
+                public void OnImportFatalError(int mode) {
+                    for (ImportListener listener : listeners) {
+                        listener.OnImportFatalError(mode);
+                    }
+                }
+            };
 
     private final ImportPipeline pipeline = new ImportPipeline(dispatcher);
 
@@ -105,9 +102,11 @@ public class ImportService extends Service {
             case IMPORT_PUZZLES:
                 Log.d(TAG, "IMPORT_PUZZLES");
                 try {
-                    pipeline.start(new ImportJob(mode,
-                        PgnSource.file(openInput(uri, "puzzles.pgn")),
-                        new PuzzleImportHandler(importApi, getContentResolver())));
+                    pipeline.start(
+                            new ImportJob(
+                                    mode,
+                                    PgnSource.file(openInput(uri, "puzzles.pgn")),
+                                    new PuzzleImportHandler(importApi, getContentResolver())));
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
                     dispatcher.OnImportFatalError(mode);
@@ -119,9 +118,13 @@ public class ImportService extends Service {
                 if (uri != null) {
                     try {
                         InputStream in = getContentResolver().openInputStream(uri);
-                        pipeline.start(new ImportJob(mode,
-                            uri.getPath().lastIndexOf(".zip") > 0 ? PgnSource.zip(in) : PgnSource.file(in),
-                            new GameImportHandler(importApi, getContentResolver())));
+                        pipeline.start(
+                                new ImportJob(
+                                        mode,
+                                        uri.getPath().lastIndexOf(".zip") > 0
+                                                ? PgnSource.zip(in)
+                                                : PgnSource.file(in),
+                                        new GameImportHandler(importApi, getContentResolver())));
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
                         dispatcher.OnImportFatalError(mode);
@@ -131,9 +134,11 @@ public class ImportService extends Service {
             case IMPORT_PRACTICE:
                 Log.d(TAG, "IMPORT_PRACTICE");
                 try {
-                    pipeline.start(new ImportJob(mode,
-                        PgnSource.file(openInput(uri, "practice.pgn")),
-                        new PracticeImportHandler(importApi, getContentResolver())));
+                    pipeline.start(
+                            new ImportJob(
+                                    mode,
+                                    PgnSource.file(openInput(uri, "practice.pgn")),
+                                    new PracticeImportHandler(importApi, getContentResolver())));
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());
                     dispatcher.OnImportFatalError(mode);
@@ -143,9 +148,12 @@ public class ImportService extends Service {
                 Log.d(TAG, "IMPORT_OPENINGS " + uri);
                 if (uri != null) {
                     try {
-                        pipeline.start(new ImportJob(mode,
-                            new OpeningJsonSource(getContentResolver().openInputStream(uri)),
-                            new OpeningImportHandler(importApi)));
+                        pipeline.start(
+                                new ImportJob(
+                                        mode,
+                                        new OpeningJsonSource(
+                                                getContentResolver().openInputStream(uri)),
+                                        new OpeningImportHandler(importApi)));
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
                         dispatcher.OnImportFatalError(mode);
@@ -189,7 +197,11 @@ public class ImportService extends Service {
                     Log.d(TAG, "Pick binary " + hashMap.size());
 
                     try {
-                        getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getContentResolver()
+                                .takePersistableUriPermission(
+                                        uri,
+                                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                         writeHMapToDownloads(uri, hashMap);
 
@@ -210,7 +222,9 @@ public class ImportService extends Service {
 
     /** The file the user picked, or the bundled asset when none was picked. */
     private InputStream openInput(@Nullable Uri uri, String assetName) throws java.io.IOException {
-        return uri == null ? getAssets().open(assetName) : getContentResolver().openInputStream(uri);
+        return uri == null
+                ? getAssets().open(assetName)
+                : getContentResolver().openInputStream(uri);
     }
 
     @Override
@@ -248,7 +262,6 @@ public class ImportService extends Service {
     protected String collectGameDatabaseAsPGN() {
         return new GameStore(getBaseContext().getContentResolver()).exportAllAsPgn();
     }
-
 
     public void writeHMapToDownloads(Uri uri, ArrayList<HMap.Pair> list) {
         Log.d(TAG, "write Hashmap with size:" + list.size());

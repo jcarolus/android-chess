@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
 import org.junit.Test;
 
 public class PgnDateTest {

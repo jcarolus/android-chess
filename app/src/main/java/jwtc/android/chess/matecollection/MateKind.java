@@ -1,7 +1,6 @@
 package jwtc.android.chess.matecollection;
 
 import android.net.Uri;
-
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 
 /** The two local Mate Collections and how they differ. */
@@ -26,6 +25,8 @@ public enum MateKind {
     }
 
     Uri uri() {
-        return this == PRACTICE_POSITIONS ? MyPuzzleProvider.CONTENT_URI_PRACTICES : MyPuzzleProvider.CONTENT_URI_PUZZLES;
+        return this == PRACTICE_POSITIONS
+                ? MyPuzzleProvider.CONTENT_URI_PRACTICES
+                : MyPuzzleProvider.CONTENT_URI_PUZZLES;
     }
 }

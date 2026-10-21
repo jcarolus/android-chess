@@ -22,8 +22,8 @@ public final class ImportPipeline {
     }
 
     /**
-     * Starts the job. While another job runs, the new one is reported as a fatal error for its
-     * mode and the running job carries on.
+     * Starts the job. While another job runs, the new one is reported as a fatal error for its mode
+     * and the running job carries on.
      *
      * @return whether the job started
      */
@@ -55,36 +55,40 @@ public final class ImportPipeline {
         final int[] counts = new int[2]; // succeeded, failed
         mainHandler.post(() -> listener.OnImportStarted(mode));
         try {
-            job.source.forEach(item -> {
-                if (cancelled) {
-                    return false;
-                }
-                if (job.handler.handle(item)) {
-                    counts[0]++;
-                } else {
-                    counts[1]++;
-                }
-                final int succeeded = counts[0];
-                final int failed = counts[1];
-                mainHandler.post(() -> {
-                    if (!cancelled) {
-                        listener.OnImportProgress(mode, succeeded, failed);
-                    }
-                });
-                return true;
-            });
-            mainHandler.post(() -> {
-                if (!cancelled) {
-                    listener.OnImportFinished(mode);
-                }
-            });
+            job.source.forEach(
+                    item -> {
+                        if (cancelled) {
+                            return false;
+                        }
+                        if (job.handler.handle(item)) {
+                            counts[0]++;
+                        } else {
+                            counts[1]++;
+                        }
+                        final int succeeded = counts[0];
+                        final int failed = counts[1];
+                        mainHandler.post(
+                                () -> {
+                                    if (!cancelled) {
+                                        listener.OnImportProgress(mode, succeeded, failed);
+                                    }
+                                });
+                        return true;
+                    });
+            mainHandler.post(
+                    () -> {
+                        if (!cancelled) {
+                            listener.OnImportFinished(mode);
+                        }
+                    });
         } catch (Exception e) {
             Log.e(TAG, "Import failed " + e);
-            mainHandler.post(() -> {
-                if (!cancelled) {
-                    listener.OnImportFatalError(mode);
-                }
-            });
+            mainHandler.post(
+                    () -> {
+                        if (!cancelled) {
+                            listener.OnImportFatalError(mode);
+                        }
+                    });
         } finally {
             synchronized (this) {
                 running = false;

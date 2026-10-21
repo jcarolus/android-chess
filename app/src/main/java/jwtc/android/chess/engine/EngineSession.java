@@ -1,15 +1,14 @@
 package jwtc.android.chess.engine;
 
 import android.content.Context;
-
 import jwtc.android.chess.services.GameApi;
 
 /**
  * The Engines one Mode uses: picks the Engine for that Mode, owns its lifecycle and the
  * registration of the listener, and takes the search limit per request.
- * <p>
- * Once closed, a session ignores further requests, so a delayed callback that fires after
- * the screen has paused cannot start a search on a destroyed Engine.
+ *
+ * <p>Once closed, a session ignores further requests, so a delayed callback that fires after the
+ * screen has paused cannot start a search on a destroyed Engine.
  */
 public final class EngineSession {
     public static final String LOCAL_ENGINE_ID = "local";
@@ -28,8 +27,8 @@ public final class EngineSession {
     }
 
     /**
-     * Session for Mate-in-Two Puzzles and Practice Positions: always the built-in Rust Engine,
-     * with quiescence search off so a forced mate is found at the shallow depth the caller asks for.
+     * Session for Mate-in-Two Puzzles and Practice Positions: always the built-in Rust Engine, with
+     * quiescence search off so a forced mate is found at the shallow depth the caller asks for.
      */
     public static EngineSession forPuzzles(GameApi gameApi, EngineListener listener) {
         EngineSession session = new EngineSession(null, gameApi, listener);
@@ -40,14 +39,16 @@ public final class EngineSession {
     }
 
     /**
-     * Session for Analysis: an available OEX Engine unless the built-in Engine was picked or
-     * none is installed (see {@link EnginePolicy#forAnalysis}). The built-in choice is the Rust
-     * Engine.
+     * Session for Analysis: an available OEX Engine unless the built-in Engine was picked or none
+     * is installed (see {@link EnginePolicy#forAnalysis}). The built-in choice is the Rust Engine.
      */
-    public static EngineSession forAnalysis(Context context, GameApi gameApi, EngineListener listener,
-                                            String oexEngineId) {
+    public static EngineSession forAnalysis(
+            Context context, GameApi gameApi, EngineListener listener, String oexEngineId) {
         EngineSession session = new EngineSession(context, gameApi, listener);
-        boolean oexAvailable = !gameApi.isDuckVariant() && !LOCAL_ENGINE_ID.equals(oexEngineId) && OexEngine.hasAvailableEngines(context);
+        boolean oexAvailable =
+                !gameApi.isDuckVariant()
+                        && !LOCAL_ENGINE_ID.equals(oexEngineId)
+                        && OexEngine.hasAvailableEngines(context);
         if (EnginePolicy.forAnalysis(oexAvailable) == EnginePolicy.Backend.OEX) {
             session.oex = new OexEngine(context, gameApi, oexEngineId);
             session.use(session.oex);
@@ -72,23 +73,33 @@ public final class EngineSession {
     }
 
     /**
-     * Picks the Engine for Play from the user's settings and the Variant (see
-     * {@link EnginePolicy#forPlay}). Switching Engines cancels the running search and moves the
-     * listener over; selecting the same Engine again leaves it running.
+     * Picks the Engine for Play from the user's settings and the Variant (see {@link
+     * EnginePolicy#forPlay}). Switching Engines cancels the running search and moves the listener
+     * over; selecting the same Engine again leaves it running.
      */
-    public void selectForPlay(boolean prefersOex, String oexEngineId, boolean requiresBuiltinEngine,
-                              boolean quiescentSearch) {
+    public void selectForPlay(
+            boolean prefersOex,
+            String oexEngineId,
+            boolean requiresBuiltinEngine,
+            boolean quiescentSearch) {
         if (closed) {
             return;
         }
-        boolean oexAvailable = !requiresBuiltinEngine && prefersOex && OexEngine.hasAvailableEngines(context);
+        boolean oexAvailable =
+                !requiresBuiltinEngine && prefersOex && OexEngine.hasAvailableEngines(context);
         EngineApi target;
-        if (EnginePolicy.forPlay(prefersOex, oexAvailable, requiresBuiltinEngine) == EnginePolicy.Backend.OEX) {
-            if (oex == null) oex = new OexEngine(context, gameApi, oexEngineId);
-            else oex.setPreferredEngineId(oexEngineId);
+        if (EnginePolicy.forPlay(prefersOex, oexAvailable, requiresBuiltinEngine)
+                == EnginePolicy.Backend.OEX) {
+            if (oex == null) {
+                oex = new OexEngine(context, gameApi, oexEngineId);
+            } else {
+                oex.setPreferredEngineId(oexEngineId);
+            }
             target = oex;
         } else {
-            if (rust == null) rust = new RustLocalEngine(gameApi);
+            if (rust == null) {
+                rust = new RustLocalEngine(gameApi);
+            }
             target = rust;
         }
         if (target != current) {
@@ -137,21 +148,27 @@ public final class EngineSession {
     }
 
     public void analyzeCurrentPosition(int timeMillis) {
-        if (!closed && current != null && !gameApi.hasPendingDuckMove()) current.analyzeCurrentPosition(timeMillis);
+        if (!closed && current != null && !gameApi.hasPendingDuckMove()) {
+            current.analyzeCurrentPosition(timeMillis);
+        }
     }
 
     public void analyze(GameApi.PositionSnapshot position, int timeMillis) {
-        if (!closed && current != null && !gameApi.hasPendingDuckMove()) current.analyze(position, timeMillis);
+        if (!closed && current != null && !gameApi.hasPendingDuckMove()) {
+            current.analyze(position, timeMillis);
+        }
     }
 
     /** Stops the current search, delivering its completed result before onDone. */
     public void stop(Runnable onDone) {
-        if (!closed && current != null) current.stop(onDone);
+        if (!closed && current != null) {
+            current.stop(onDone);
+        }
     }
 
     /**
-     * Cancels the current search without emitting a move, then runs onDone on the main thread
-     * once a new search may start. Does nothing once closed.
+     * Cancels the current search without emitting a move, then runs onDone on the main thread once
+     * a new search may start. Does nothing once closed.
      */
     public void abort(Runnable onDone) {
         if (closed || current == null) {
@@ -173,6 +190,8 @@ public final class EngineSession {
         if (oex != null) {
             oex.destroy();
         }
-        if (rust != null) rust.destroy();
+        if (rust != null) {
+            rust.destroy();
+        }
     }
 }

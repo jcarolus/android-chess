@@ -4,9 +4,9 @@ use std::time::Instant;
 // Runs a search from a FEN and prints the node count and N/s.
 fn main() {
     let mut args = std::env::args().skip(1);
-    let fen = args
-        .next()
-        .unwrap_or_else(|| "r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1RK1 w - - 0 1".into());
+    let fen = args.next().unwrap_or_else(|| {
+        "r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQ1RK1 w - - 0 1".into()
+    });
     // The limit is milliseconds ("10000") or a fixed depth ("d5").
     let limit = match args.next() {
         None => SearchLimit::TimeMillis(10_000),

@@ -11,13 +11,14 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
 
 public class PgnTest {
     private static List<String> sans(List<PgnDocument.Move> line) {
         List<String> out = new ArrayList<>();
-        for (PgnDocument.Move move : line) out.add(move.san);
+        for (PgnDocument.Move move : line) {
+            out.add(move.san);
+        }
         return out;
     }
 
@@ -50,7 +51,8 @@ public class PgnTest {
 
     @Test
     public void unescapesTagValues() {
-        PgnDocument doc = Pgn.parse("[White \"Joe \\\"The Rook\\\" Smith\"]\n[Site \"C:\\\\x\"]\n*");
+        PgnDocument doc =
+                Pgn.parse("[White \"Joe \\\"The Rook\\\" Smith\"]\n[Site \"C:\\\\x\"]\n*");
         assertEquals("Joe \"The Rook\" Smith", doc.tags.get("White"));
         assertEquals("C:\\x", doc.tags.get("Site"));
     }
@@ -113,8 +115,9 @@ public class PgnTest {
 
     @Test
     public void castlingAcceptsLettersAndZeros() {
-        assertEquals(Arrays.asList("O-O", "0-0-0", "O-O-O+"),
-            sans(Pgn.parse("1. O-O 0-0-0 2. O-O-O+ *").mainLine));
+        assertEquals(
+                Arrays.asList("O-O", "0-0-0", "O-O-O+"),
+                sans(Pgn.parse("1. O-O 0-0-0 2. O-O-O+ *").mainLine));
     }
 
     @Test
@@ -136,41 +139,69 @@ public class PgnTest {
 
     @Test
     public void rejectsDisagreeingOrInvalidResult() {
-        assertEquals("Result tag and movetext disagree", syntaxError("[Result \"1-0\"]\n1. e4 0-1").getMessage());
+        assertEquals(
+                "Result tag and movetext disagree",
+                syntaxError("[Result \"1-0\"]\n1. e4 0-1").getMessage());
         assertEquals("Invalid Result tag", syntaxError("[Result \"win\"]\n1. e4").getMessage());
     }
 
     @Test
     public void rejectsMalformedVariations() {
         assertTrue(syntaxError("1. e4 (1. d4 e5").getMessage().startsWith("Unclosed variation"));
-        assertTrue(syntaxError("1. e4 ) e5").getMessage().startsWith("Unmatched or empty variation"));
-        assertTrue(syntaxError("1. e4 e5 ()").getMessage().startsWith("Unmatched or empty variation"));
-        assertTrue(syntaxError("(1. d4) 1. e4").getMessage().startsWith("Variation must follow a move"));
-        assertTrue(syntaxError("1. e4 ((1. d4) 1. c4)").getMessage().startsWith("Variation must follow a move"));
-        assertTrue(syntaxError("1. e4 e5 (1... c5 1-0)").getMessage().startsWith("Result inside variation"));
+        assertTrue(
+                syntaxError("1. e4 ) e5").getMessage().startsWith("Unmatched or empty variation"));
+        assertTrue(
+                syntaxError("1. e4 e5 ()").getMessage().startsWith("Unmatched or empty variation"));
+        assertTrue(
+                syntaxError("(1. d4) 1. e4")
+                        .getMessage()
+                        .startsWith("Variation must follow a move"));
+        assertTrue(
+                syntaxError("1. e4 ((1. d4) 1. c4)")
+                        .getMessage()
+                        .startsWith("Variation must follow a move"));
+        assertTrue(
+                syntaxError("1. e4 e5 (1... c5 1-0)")
+                        .getMessage()
+                        .startsWith("Result inside variation"));
     }
 
     @Test
     public void rejectsVariationsNestedTooDeeply() {
         StringBuilder deep = new StringBuilder("1. e4 e5 ");
-        for (int i = 0; i < 129; i++) deep.append("(1... c5 ");
-        assertTrue(syntaxError(deep.toString()).getMessage().startsWith("Variation must follow a move"));
+        for (int i = 0; i < 129; i++) {
+            deep.append("(1... c5 ");
+        }
+        assertTrue(
+                syntaxError(deep.toString())
+                        .getMessage()
+                        .startsWith("Variation must follow a move"));
 
         StringBuilder ok = new StringBuilder("1. e4 e5 ");
-        for (int i = 0; i < 128; i++) ok.append("(1... c5 ");
-        for (int i = 0; i < 128; i++) ok.append(")");
+        for (int i = 0; i < 128; i++) {
+            ok.append("(1... c5 ");
+        }
+        for (int i = 0; i < 128; i++) {
+            ok.append(")");
+        }
         assertEquals(1, Pgn.parse(ok.toString()).mainLine.get(1).variations.size());
     }
 
     @Test
     public void rejectsMisplacedAnnotationsAndTokens() {
         assertTrue(syntaxError("$1 1. e4").getMessage().startsWith("Invalid NAG"));
-        assertTrue(syntaxError("1. e4 ($1 1. d4)").getMessage().startsWith("NAG must follow a move"));
+        assertTrue(
+                syntaxError("1. e4 ($1 1. d4)").getMessage().startsWith("NAG must follow a move"));
         assertTrue(syntaxError("1. e4 $256").getMessage().startsWith("Invalid NAG"));
         assertTrue(syntaxError("1. e4 $").getMessage().startsWith("Invalid NAG"));
-        assertTrue(syntaxError("1. e4 1-0 e5").getMessage().startsWith("Unexpected token after result"));
-        assertTrue(syntaxError("1. e4 [Event \"late\"]").getMessage().startsWith("Unexpected token"));
-        assertTrue(syntaxError("1. Zz9").getMessage().startsWith("Illegal or unsupported move: Zz9"));
+        assertTrue(
+                syntaxError("1. e4 1-0 e5")
+                        .getMessage()
+                        .startsWith("Unexpected token after result"));
+        assertTrue(
+                syntaxError("1. e4 [Event \"late\"]").getMessage().startsWith("Unexpected token"));
+        assertTrue(
+                syntaxError("1. Zz9").getMessage().startsWith("Illegal or unsupported move: Zz9"));
         assertTrue(syntaxError("1. e4!!!").getMessage().startsWith("Illegal or unsupported move"));
         assertTrue(syntaxError("[Event \"x\"").getMessage().startsWith("Unclosed tag"));
         assertTrue(syntaxError("{no end").getMessage().startsWith("Unclosed comment"));
@@ -192,7 +223,8 @@ public class PgnTest {
 
     @Test
     public void readTagsIsLenient() {
-        Map<String, String> tags = Pgn.readTags("[Event \"a]b\"]\n[White \"x \\\"y\\\"\"]\n[Broken\n1. e4 e5");
+        Map<String, String> tags =
+                Pgn.readTags("[Event \"a]b\"]\n[White \"x \\\"y\\\"\"]\n[Broken\n1. e4 e5");
         assertEquals("a]b", tags.get("Event"));
         assertEquals("x \"y\"", tags.get("White"));
         assertEquals(2, tags.size());
@@ -200,7 +232,9 @@ public class PgnTest {
 
     @Test
     public void readTagsSkipsLeadingJunkAndStopsAtMovetext() {
-        Map<String, String> tags = Pgn.readTags("\uFEFF; exported\n[Event \"x\"]\n[Result \"1-0\"]\n\n1. e4 {[Site \"no\"]} 1-0");
+        Map<String, String> tags =
+                Pgn.readTags(
+                        "\uFEFF; exported\n[Event \"x\"]\n[Result \"1-0\"]\n\n1. e4 {[Site \"no\"]} 1-0");
         assertEquals(Arrays.asList("Event", "Result"), new ArrayList<>(tags.keySet()));
     }
 
@@ -222,8 +256,10 @@ public class PgnTest {
         tags.put("PlyCount", "4");
         tags.put("White", "A");
         tags.put("ECO", "C20");
-        assertEquals("[Event \"?\"]\n[Site \"?\"]\n[Date \"?\"]\n[Round \"?\"]\n[White \"A\"]\n[Black \"?\"]\n"
-            + "[Result \"?\"]\n[ECO \"C20\"]\n[PlyCount \"4\"]\n", Pgn.writeTags(tags));
+        assertEquals(
+                "[Event \"?\"]\n[Site \"?\"]\n[Date \"?\"]\n[Round \"?\"]\n[White \"A\"]\n[Black \"?\"]\n"
+                        + "[Result \"?\"]\n[ECO \"C20\"]\n[PlyCount \"4\"]\n",
+                Pgn.writeTags(tags));
     }
 
     @Test

@@ -2,26 +2,29 @@ package jwtc.android.chess.services;
 
 import android.content.res.Resources;
 import android.util.Log;
-
 import java.util.Locale;
 import java.util.regex.Matcher;
-
 import jwtc.android.chess.R;
 import jwtc.chess.Move;
 import jwtc.chess.Pgn;
 import jwtc.chess.Pos;
 
-/** Spells out a SAN move for text to speech and content descriptions, e.g. "Knight F 3" or "castle short". */
+/**
+ * Spells out a SAN move for text to speech and content descriptions, e.g. "Knight F 3" or "castle
+ * short".
+ */
 public final class MoveSpeech {
     private static final String TAG = "MoveSpeech";
 
     private MoveSpeech() {}
 
     /**
-     * @param move the encoded move, used for the from-square and en passant; sMove supplies the rest
+     * @param move the encoded move, used for the from-square and en passant; sMove supplies the
+     *     rest
      * @param resources localized strings; the system resources are used when null
      */
-    public static String describe(Resources resources, String sMove, int move, boolean useLongMove) {
+    public static String describe(
+            Resources resources, String sMove, int move, boolean useLongMove) {
         if (resources == null) {
             resources = Resources.getSystem();
         }
@@ -30,7 +33,8 @@ public final class MoveSpeech {
         // check regular move
         Matcher matchToken = Pgn.MOVE.matcher(sMove);
         if (matchToken.matches()) {
-            // 1            2                 3                 4   5                6                7             8             9       10
+            // 1            2                 3                 4   5                6
+            //  7             8             9       10
             // (K|Q|R|B|N)?(a|b|c|d|e|f|g|h)?(1|2|3|4|5|6|7|8)?(x)?(a|b|c|d|e|f|g|h)(1|2|3|4|5|6|7|8)(=Q|=R|=B|=N)?(@[a-h][1-8])?(\\+|#)?([\\?\\!]*)?[\\s]*")
             String piece = matchToken.group(1);
             if (piece != null) {
@@ -56,58 +60,78 @@ public final class MoveSpeech {
             }
 
             if (matchToken.group(4) != null) {
-                sMoveSpeech.append(getString(resources, R.string.tts_move_takes, "takes")).append(" ");
+                sMoveSpeech
+                        .append(getString(resources, R.string.tts_move_takes, "takes"))
+                        .append(" ");
             }
             sFile = matchToken.group(5);
             sRow = matchToken.group(6);
             if (sFile != null && sRow != null) {
-                sMoveSpeech.append(getString(
-                    resources,
-                    R.string.tts_move_square,
-                    "%1$s%2$s",
-                    sFile.toUpperCase(Locale.ROOT),
-                    sRow
-                )).append(" ");
+                sMoveSpeech
+                        .append(
+                                getString(
+                                        resources,
+                                        R.string.tts_move_square,
+                                        "%1$s%2$s",
+                                        sFile.toUpperCase(Locale.ROOT),
+                                        sRow))
+                        .append(" ");
             }
 
             if (Move.isEP(move)) {
-                sMoveSpeech.append(getString(resources, R.string.tts_move_en_passant, "en passant")).append(" ");
+                sMoveSpeech
+                        .append(getString(resources, R.string.tts_move_en_passant, "en passant"))
+                        .append(" ");
             }
 
             String sPromote = matchToken.group(7);
             if (sPromote != null && sPromote.length() > 1) {
-                sMoveSpeech.append(getString(
-                    resources,
-                    R.string.tts_move_promotes_to,
-                    "promotes to %1$s",
-                    getPieceName(resources, sPromote.substring(1))
-                )).append(" ");
+                sMoveSpeech
+                        .append(
+                                getString(
+                                        resources,
+                                        R.string.tts_move_promotes_to,
+                                        "promotes to %1$s",
+                                        getPieceName(resources, sPromote.substring(1))))
+                        .append(" ");
             }
             // ignore Duck for now
 
             String sSpecial = matchToken.group(9);
             if (sSpecial != null) {
                 if (sSpecial.equals("+")) {
-                    sMoveSpeech.append(getString(resources, R.string.state_check, "check")).append(" ");
+                    sMoveSpeech
+                            .append(getString(resources, R.string.state_check, "check"))
+                            .append(" ");
                 } else if (sSpecial.equals("#")) {
-                    sMoveSpeech.append(getString(resources, R.string.tts_move_checkmate, "checkmate")).append(" ");
+                    sMoveSpeech
+                            .append(getString(resources, R.string.tts_move_checkmate, "checkmate"))
+                            .append(" ");
                 }
             }
         } else if (sMove.contains("O-O-O")) {
-            sMoveSpeech.append(getString(resources, R.string.tts_move_castle_long, "castle long")).append(" ");
+            sMoveSpeech
+                    .append(getString(resources, R.string.tts_move_castle_long, "castle long"))
+                    .append(" ");
             if (sMove.contains("+")) {
                 sMoveSpeech.append(getString(resources, R.string.state_check, "check")).append(" ");
             }
             if (sMove.contains("#")) {
-                sMoveSpeech.append(getString(resources, R.string.tts_move_checkmate, "checkmate")).append(" ");
+                sMoveSpeech
+                        .append(getString(resources, R.string.tts_move_checkmate, "checkmate"))
+                        .append(" ");
             }
         } else if (sMove.contains("O-O")) {
-            sMoveSpeech.append(getString(resources, R.string.tts_move_castle_short, "castle short")).append(" ");
+            sMoveSpeech
+                    .append(getString(resources, R.string.tts_move_castle_short, "castle short"))
+                    .append(" ");
             if (sMove.contains("+")) {
                 sMoveSpeech.append(getString(resources, R.string.state_check, "check")).append(" ");
             }
             if (sMove.contains("#")) {
-                sMoveSpeech.append(getString(resources, R.string.tts_move_checkmate, "checkmate")).append(" ");
+                sMoveSpeech
+                        .append(getString(resources, R.string.tts_move_checkmate, "checkmate"))
+                        .append(" ");
             }
         } else {
             Log.d(TAG, "Did not parse move " + sMove);
@@ -146,7 +170,8 @@ public final class MoveSpeech {
         return fallback;
     }
 
-    private static String getString(Resources resources, int resourceId, String fallback, Object... args) {
+    private static String getString(
+            Resources resources, int resourceId, String fallback, Object... args) {
         if (resources != null) {
             try {
                 return resources.getString(resourceId, args);

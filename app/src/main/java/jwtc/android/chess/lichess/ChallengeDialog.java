@@ -7,15 +7,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.card.MaterialCardView;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
@@ -27,19 +23,27 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
     public static final int REQUEST_CHALLENGE = 1;
     public static final int REQUEST_SEEK = 2;
 
-    public ChallengeDialog(Context context, ResultDialogListener<Map<String, Object>> listener, int requestCode, final SharedPreferences prefs) {
+    public ChallengeDialog(
+            Context context,
+            ResultDialogListener<Map<String, Object>> listener,
+            int requestCode,
+            final SharedPreferences prefs) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.lichess_challenge);
 
-        setTitle(requestCode == REQUEST_CHALLENGE ? R.string.lichess_create_challenge_title : R.string.lichess_create_seek_title);
+        setTitle(
+                requestCode == REQUEST_CHALLENGE
+                        ? R.string.lichess_create_challenge_title
+                        : R.string.lichess_create_seek_title);
 
         final MaterialCardView playerView = findViewById(R.id.CardViewPlayer);
         playerView.setVisibility(requestCode == REQUEST_CHALLENGE ? View.VISIBLE : View.GONE);
 
         final EditText editTextPlayer = findViewById(R.id.EditTextMatchOpponent);
 
-        final MaterialButtonToggleGroup toggleTimeControl = findViewById(R.id.ToggleTimeControlGroup);
+        final MaterialButtonToggleGroup toggleTimeControl =
+                findViewById(R.id.ToggleTimeControlGroup);
 
         final LinearLayout layoutDays = findViewById(R.id.LayoutDays);
         final LinearLayout layoutMinutes = findViewById(R.id.LayoutMinutes);
@@ -78,9 +82,8 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         }
 
         String variant = prefs.getString("lichess_challenge_variant", "standard");
-        toggleVariant.check(variant.equals("standard")
-            ? R.id.RadioButtonStandard
-            : R.id.RadioButtonChess960);
+        toggleVariant.check(
+                variant.equals("standard") ? R.id.RadioButtonStandard : R.id.RadioButtonChess960);
 
         String color = prefs.getString("lichess_challenge_color", "random");
         if (color.equals("white")) {
@@ -94,100 +97,106 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
         checkBoxRated.setChecked(prefs.getBoolean("lichess_challenge_rated", false));
 
         // toggle group behaviour
-        toggleTimeControl.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (!isChecked) {
-                return;
-            }
-            if (checkedId == R.id.RadioButtonUnlimitedTime) {
-                layoutDays.setVisibility(View.VISIBLE);
-                layoutMinutes.setVisibility(View.INVISIBLE);
-                layoutIncrement.setVisibility(View.GONE);
-            } else if (checkedId == R.id.RadioButtonTimeControl) {
-                layoutDays.setVisibility(View.GONE);
-                layoutMinutes.setVisibility(View.VISIBLE);
-                layoutIncrement.setVisibility(View.VISIBLE);
-            }
-        });
+        toggleTimeControl.addOnButtonCheckedListener(
+                (group, checkedId, isChecked) -> {
+                    if (!isChecked) {
+                        return;
+                    }
+                    if (checkedId == R.id.RadioButtonUnlimitedTime) {
+                        layoutDays.setVisibility(View.VISIBLE);
+                        layoutMinutes.setVisibility(View.INVISIBLE);
+                        layoutIncrement.setVisibility(View.GONE);
+                    } else if (checkedId == R.id.RadioButtonTimeControl) {
+                        layoutDays.setVisibility(View.GONE);
+                        layoutMinutes.setVisibility(View.VISIBLE);
+                        layoutIncrement.setVisibility(View.VISIBLE);
+                    }
+                });
 
         final Button buttonOk = findViewById(R.id.ButtonChallengeOk);
-        buttonOk.setOnClickListener(v -> {
+        buttonOk.setOnClickListener(
+                v -> {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    Map<String, Object> data = new HashMap<>();
 
-            SharedPreferences.Editor editor = prefs.edit();
-            Map<String, Object> data = new HashMap<>();
-
-            // username
-            if (requestCode == REQUEST_CHALLENGE) {
-                String username = Utils.getTrimmedOrNull(editTextPlayer.getText());
-                if (username == null) {
-                    editTextPlayer.setError(getContext().getString(R.string.lichess_create_challenge_player_required));
-                    return;
-                }
-                editTextPlayer.setError(null);
-                data.put("username", username);
-                editor.putString("lichess_challenge_name", username);
-            }
-
-            // timecontrol
-            if (toggleTimeControl.getCheckedButtonId() == R.id.RadioButtonTimeControl) {
-
-                int editMinutes = Utils.parseInt(editTextTime.getText().toString(), 5);
-                int increment = Utils.parseInt(editTextIncrement.getText().toString(), 0);
-
-                editor.putBoolean("lichess_challenge_timetcontrol", true);
-                editor.putInt("lichess_challenge_minutes", editMinutes);
-                editor.putInt("lichess_challenge_increment", increment);
-
-                if (editMinutes >= 3) {
-                    editTextTime.setError(null);
-
+                    // username
                     if (requestCode == REQUEST_CHALLENGE) {
-                        data.put("clock.limit", editMinutes * 60);
-                        data.put("clock.increment", increment);
-                    } else {
-                        data.put("time", editMinutes);
-                        data.put("increment", increment);
+                        String username = Utils.getTrimmedOrNull(editTextPlayer.getText());
+                        if (username == null) {
+                            editTextPlayer.setError(
+                                    getContext()
+                                            .getString(
+                                                    R.string
+                                                            .lichess_create_challenge_player_required));
+                            return;
+                        }
+                        editTextPlayer.setError(null);
+                        data.put("username", username);
+                        editor.putString("lichess_challenge_name", username);
                     }
-                } else {
-                    editTextTime.setError("Number must be greater than 2");
-                    return;
-                }
-            } else {
-                int editDays = Utils.parseInt(editTextDays.getText().toString(), 1);
-                editor.putBoolean("lichess_challenge_timetcontrol", false);
-                editor.putInt("lichess_challenge_days", editDays);
-                data.put("days", editDays);
-            }
 
-            // variant
-            String editVariant = toggleVariant.getCheckedButtonId() == R.id.RadioButtonStandard
-                ? "standard"
-                : "chess960";
-            editor.putString("lichess_challenge_variant", editVariant);
-            data.put("variant", editVariant);
+                    // timecontrol
+                    if (toggleTimeControl.getCheckedButtonId() == R.id.RadioButtonTimeControl) {
 
-            // color
-            int selectedColor = toggleColor.getCheckedButtonId();
-            String editColor = selectedColor == R.id.RadioButtonWhite
-                ? "white"
-                : selectedColor == R.id.RadioButtonBlack
-                ? "black"
-                : "random";
+                        int editMinutes = Utils.parseInt(editTextTime.getText().toString(), 5);
+                        int increment = Utils.parseInt(editTextIncrement.getText().toString(), 0);
 
-            editor.putString("lichess_challenge_color", editColor);
-            data.put("color", editColor);
+                        editor.putBoolean("lichess_challenge_timetcontrol", true);
+                        editor.putInt("lichess_challenge_minutes", editMinutes);
+                        editor.putInt("lichess_challenge_increment", increment);
 
-            editor.putBoolean("lichess_challenge_rated", checkBoxRated.isChecked());
-            data.put("rated", checkBoxRated.isChecked());
+                        if (editMinutes >= 3) {
+                            editTextTime.setError(null);
 
-            editor.apply();
+                            if (requestCode == REQUEST_CHALLENGE) {
+                                data.put("clock.limit", editMinutes * 60);
+                                data.put("clock.increment", increment);
+                            } else {
+                                data.put("time", editMinutes);
+                                data.put("increment", increment);
+                            }
+                        } else {
+                            editTextTime.setError("Number must be greater than 2");
+                            return;
+                        }
+                    } else {
+                        int editDays = Utils.parseInt(editTextDays.getText().toString(), 1);
+                        editor.putBoolean("lichess_challenge_timetcontrol", false);
+                        editor.putInt("lichess_challenge_days", editDays);
+                        data.put("days", editDays);
+                    }
 
-            ChallengeDialog.this.dismiss();
-            setResult(data);
-        });
+                    // variant
+                    String editVariant =
+                            toggleVariant.getCheckedButtonId() == R.id.RadioButtonStandard
+                                    ? "standard"
+                                    : "chess960";
+                    editor.putString("lichess_challenge_variant", editVariant);
+                    data.put("variant", editVariant);
+
+                    // color
+                    int selectedColor = toggleColor.getCheckedButtonId();
+                    String editColor =
+                            selectedColor == R.id.RadioButtonWhite
+                                    ? "white"
+                                    : selectedColor == R.id.RadioButtonBlack ? "black" : "random";
+
+                    editor.putString("lichess_challenge_color", editColor);
+                    data.put("color", editColor);
+
+                    editor.putBoolean("lichess_challenge_rated", checkBoxRated.isChecked());
+                    data.put("rated", checkBoxRated.isChecked());
+
+                    editor.apply();
+
+                    ChallengeDialog.this.dismiss();
+                    setResult(data);
+                });
         final Button buttonCancel = findViewById(R.id.ButtonChallengeCancel);
-        buttonCancel.setOnClickListener(v -> {
-            ChallengeDialog.this.dismiss();
-            setResult(null);
-        });
+        buttonCancel.setOnClickListener(
+                v -> {
+                    ChallengeDialog.this.dismiss();
+                    setResult(null);
+                });
     }
 }

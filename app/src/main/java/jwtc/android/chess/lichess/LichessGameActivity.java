@@ -4,7 +4,6 @@ import static jwtc.android.chess.helpers.ActivityHelper.pulseAnimation;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,12 +11,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.analyze.AnalyzeActivity;
@@ -35,8 +32,8 @@ import jwtc.chess.board.BoardConstants;
 /**
  * The board screen for both online play and puzzles (they share one layout and differ only in the
  * visible control strip). Launched by the lobby with either {@link #EXTRA_GAME_ID} or the puzzle
- * extras; on a bare relaunch it restores from the shared api's view mode. Extends
- * {@link ChessBoardActivity} for the board plumbing and reuses {@link LichessSession} for the
+ * extras; on a bare relaunch it restores from the shared api's view mode. Extends {@link
+ * ChessBoardActivity} for the board plumbing and reuses {@link LichessSession} for the
  * service-owned api.
  */
 public class LichessGameActivity extends ChessBoardActivity
@@ -83,45 +80,58 @@ public class LichessGameActivity extends ChessBoardActivity
 
         freshLaunch = savedInstanceState == null;
         Intent intent = getIntent();
-        // currentGameId can change after launch (round N+1), so prefer the saved value on recreation.
-        currentGameId = savedInstanceState != null && savedInstanceState.containsKey(EXTRA_GAME_ID)
-            ? savedInstanceState.getString(EXTRA_GAME_ID)
-            : intent.getStringExtra(EXTRA_GAME_ID);
+        // currentGameId can change after launch (round N+1), so prefer the saved value on
+        // recreation.
+        currentGameId =
+                savedInstanceState != null && savedInstanceState.containsKey(EXTRA_GAME_ID)
+                        ? savedInstanceState.getString(EXTRA_GAME_ID)
+                        : intent.getStringExtra(EXTRA_GAME_ID);
         puzzleAngle = intent.getStringExtra(EXTRA_PUZZLE_ANGLE);
         puzzleDifficulty = intent.getStringExtra(EXTRA_PUZZLE_DIFFICULTY);
         puzzleRated = intent.getBooleanExtra(EXTRA_PUZZLE_RATED, false);
 
         buttonResign = findViewById(R.id.ButtonResign);
-        buttonResign.setOnClickListener(v ->
-            openConfirmDialog(getString(R.string.lichess_confirm_resign),
-                getString(R.string.lichess_play_button_resign),
-                getString(R.string.button_cancel),
-                () -> lichessApi.resign(), null));
+        buttonResign.setOnClickListener(
+                v ->
+                        openConfirmDialog(
+                                getString(R.string.lichess_confirm_resign),
+                                getString(R.string.lichess_play_button_resign),
+                                getString(R.string.button_cancel),
+                                () -> lichessApi.resign(),
+                                null));
 
         MaterialButton buttonCancelMove = findViewById(R.id.ButtonCancelMove);
-        buttonCancelMove.setOnClickListener(v -> {
-            layoutConfirm.setVisibility(View.GONE);
-            layoutResignDraw.setVisibility(View.VISIBLE);
-            rebuildBoard();
-        });
+        buttonCancelMove.setOnClickListener(
+                v -> {
+                    layoutConfirm.setVisibility(View.GONE);
+                    layoutResignDraw.setVisibility(View.VISIBLE);
+                    rebuildBoard();
+                });
 
         buttonDraw = findViewById(R.id.ButtonDraw);
         buttonConfirmMove = findViewById(R.id.ButtonConfirmMove);
 
         MaterialButton buttonSaveToFile = findViewById(R.id.ButtonSaveToFile);
-        buttonSaveToFile.setOnClickListener(v ->
-            startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE));
+        buttonSaveToFile.setOnClickListener(
+                v ->
+                        startIntentForSaveDocument(
+                                "application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE));
         MaterialButton buttonSaveToDatabase = findViewById(R.id.ButtonSaveToDatabase);
-        buttonSaveToDatabase.setOnClickListener(v -> {
-            SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, 0, this::saveGameFromDialog);
-            saveDialog.show();
-        });
+        buttonSaveToDatabase.setOnClickListener(
+                v -> {
+                    SaveGameDialog saveDialog =
+                            new SaveGameDialog(this, gameApi, 0, this::saveGameFromDialog);
+                    saveDialog.show();
+                });
 
-        findViewById(R.id.ButtonAnalyseGame).setOnClickListener(v -> {
-            Intent analysisIntent = new Intent(this, AnalyzeActivity.class);
-            analysisIntent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
-            startActivity(analysisIntent);
-        });
+        findViewById(R.id.ButtonAnalyseGame)
+                .setOnClickListener(
+                        v -> {
+                            Intent analysisIntent = new Intent(this, AnalyzeActivity.class);
+                            analysisIntent.putExtra(
+                                    AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
+                            startActivity(analysisIntent);
+                        });
 
         switchConfirmMoves = findViewById(R.id.SwitchConfirmMoves);
         switchSound = findViewById(R.id.SwitchSound);
@@ -162,12 +172,11 @@ public class LichessGameActivity extends ChessBoardActivity
             boardAreaLayout = findViewById(R.id.includeboard);
         }
         initBoardLayoutSizing(
-            findViewById(R.id.ICSPlay),
-            boardAreaLayout,
-            findViewById(R.id.play_controls),
-            findViewById(R.id.play_board_top),
-            findViewById(R.id.play_board_bottom)
-        );
+                findViewById(R.id.ICSPlay),
+                boardAreaLayout,
+                findViewById(R.id.play_controls),
+                findViewById(R.id.play_board_top),
+                findViewById(R.id.play_board_bottom));
         afterCreate();
     }
 
@@ -395,7 +404,8 @@ public class LichessGameActivity extends ChessBoardActivity
         if (gameStart.boardCompatible) {
             openGame(gameStart.gameId);
         } else {
-            Toast.makeText(this, R.string.lichess_game_not_board_compatible, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.lichess_game_not_board_compatible, Toast.LENGTH_LONG)
+                    .show();
         }
     }
 
@@ -412,11 +422,18 @@ public class LichessGameActivity extends ChessBoardActivity
         textViewPlayerOpp.setText(playAsWhite ? gameFull.black.name : gameFull.white.name);
         textViewPlayerMe.setText(playAsWhite ? gameFull.white.name : gameFull.black.name);
 
-        textViewRatingOpp.setText("" + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
-        textViewRatingMe.setText("" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
+        textViewRatingOpp.setText(
+                "" + (playAsWhite ? gameFull.black.rating : gameFull.white.rating));
+        textViewRatingMe.setText(
+                "" + (playAsWhite ? gameFull.white.rating : gameFull.black.rating));
 
         if (gameFull.clock != null && isStarted) {
-            localClockApi.startClock(gameFull.clock.increment, gameFull.state.wtime, gameFull.state.btime, turn, System.currentTimeMillis());
+            localClockApi.startClock(
+                    gameFull.clock.increment,
+                    gameFull.state.wtime,
+                    gameFull.state.btime,
+                    turn,
+                    System.currentTimeMillis());
         }
         buttonDraw.setEnabled(isStarted);
         buttonResign.setEnabled(isStarted);
@@ -429,13 +446,16 @@ public class LichessGameActivity extends ChessBoardActivity
         }
         updateGameStateMessage(stateMessage);
 
-        boolean isDrawOffer = isStarted && (playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw);
+        boolean isDrawOffer =
+                isStarted && (playAsWhite ? gameFull.state.bdraw : gameFull.state.wdraw);
         if (isDrawOffer) {
             String message = getString(R.string.lichess_opponent_offers_draw);
             if (!message.equals(textViewOfferDraw.getText().toString())) {
                 // Show the offer immediately; announce it once, after its sound finishes.
-                textViewOfferDraw.setAccessibilityLiveRegion(textToSpeech.isEnabled()
-                    ? View.ACCESSIBILITY_LIVE_REGION_NONE : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
+                textViewOfferDraw.setAccessibilityLiveRegion(
+                        textToSpeech.isEnabled()
+                                ? View.ACCESSIBILITY_LIVE_REGION_NONE
+                                : View.ACCESSIBILITY_LIVE_REGION_ASSERTIVE);
                 textViewOfferDraw.setText(message);
                 sounds.playNotification(() -> textToSpeech.queueSpeech(message));
             }
@@ -443,12 +463,14 @@ public class LichessGameActivity extends ChessBoardActivity
             buttonDraw.setOnClickListener(v -> lichessApi.draw(true));
         } else {
             textViewOfferDraw.setText("");
-            buttonDraw.setOnClickListener(v ->
-                openConfirmDialog(getString(R.string.lichess_confirm_offer_draw),
-                    getString(R.string.lichess_play_button_draw),
-                    getString(R.string.button_cancel),
-                    () -> lichessApi.draw(true),
-                    null));
+            buttonDraw.setOnClickListener(
+                    v ->
+                            openConfirmDialog(
+                                    getString(R.string.lichess_confirm_offer_draw),
+                                    getString(R.string.lichess_play_button_draw),
+                                    getString(R.string.button_cancel),
+                                    () -> lichessApi.draw(true),
+                                    null));
         }
     }
 
@@ -480,14 +502,19 @@ public class LichessGameActivity extends ChessBoardActivity
     }
 
     @Override
-    public void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {
+    public void onPuzzleSolve(
+            PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {
         onPuzzle(nextPuzzle);
         if (glicko != null) {
             textViewRatingMe.setText("" + (int) glicko.rating);
-            String diffStr = solveRound.ratingDiff >= 0 ? "+" + solveRound.ratingDiff : "" + solveRound.ratingDiff;
-            String msg = solveRound.win
-                ? getString(R.string.lichess_puzzle_solved_rated, diffStr)
-                : getString(R.string.lichess_puzzle_solved_hint_rated, diffStr);
+            String diffStr =
+                    solveRound.ratingDiff >= 0
+                            ? "+" + solveRound.ratingDiff
+                            : "" + solveRound.ratingDiff;
+            String msg =
+                    solveRound.win
+                            ? getString(R.string.lichess_puzzle_solved_rated, diffStr)
+                            : getString(R.string.lichess_puzzle_solved_hint_rated, diffStr);
             updateGameStateMessage(msg);
         }
     }
@@ -549,25 +576,27 @@ public class LichessGameActivity extends ChessBoardActivity
 
     private boolean submitMove(int from, int to) {
         if (lichessApi.isPromotionMove(from, to)) {
-            showPromotionPicker(piece -> {
-                lichessApi.setPromotionPiece(piece);
-                lichessApi.move(from, to);
-            });
+            showPromotionPicker(
+                    piece -> {
+                        lichessApi.setPromotionPiece(piece);
+                        lichessApi.move(from, to);
+                    });
             return true;
         }
         if (switchConfirmMoves.isChecked()) {
             layoutConfirm.setVisibility(View.VISIBLE);
             layoutResignDraw.setVisibility(View.GONE);
-            buttonConfirmMove.setText(getString(
-                R.string.lichess_game_confirm_move,
-                Pos.toString(from) + " " + Pos.toString(to)
-            ));
+            buttonConfirmMove.setText(
+                    getString(
+                            R.string.lichess_game_confirm_move,
+                            Pos.toString(from) + " " + Pos.toString(to)));
             pulseAnimation(buttonConfirmMove, 1.05f, 1);
-            buttonConfirmMove.setOnClickListener(v -> {
-                lichessApi.move(from, to);
-                layoutConfirm.setVisibility(View.GONE);
-                layoutResignDraw.setVisibility(View.VISIBLE);
-            });
+            buttonConfirmMove.setOnClickListener(
+                    v -> {
+                        lichessApi.move(from, to);
+                        layoutConfirm.setVisibility(View.GONE);
+                        layoutResignDraw.setVisibility(View.VISIBLE);
+                    });
         } else {
             lichessApi.move(from, to);
         }
@@ -590,10 +619,13 @@ public class LichessGameActivity extends ChessBoardActivity
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.title_pick_promo);
         builder.setCancelable(false);
-        builder.setSingleChoiceItems(items, 0, (dialog, item) -> {
-            dialog.dismiss();
-            listener.onPromotionPieceSelected(4 - item);
-        });
+        builder.setSingleChoiceItems(
+                items,
+                0,
+                (dialog, item) -> {
+                    dialog.dismiss();
+                    listener.onPromotionPieceSelected(4 - item);
+                });
         builder.create().show();
     }
 
@@ -606,9 +638,9 @@ public class LichessGameActivity extends ChessBoardActivity
             return;
         }
         if (lichessApi.getViewMode() != LichessApi.VIEW_PLAY
-            || !lichessApi.isOngoingGameInProgress()
-            || premoveGameId == null
-            || !premoveGameId.equals(lichessApi.getOngoingGameId())) {
+                || !lichessApi.isOngoingGameInProgress()
+                || premoveGameId == null
+                || !premoveGameId.equals(lichessApi.getOngoingGameId())) {
             clearPremove();
             updateSelectedSquares();
             return;
@@ -628,9 +660,9 @@ public class LichessGameActivity extends ChessBoardActivity
     @Override
     protected int getSelectableColor() {
         if (lichessApi != null
-            && lichessApi.getViewMode() == LichessApi.VIEW_PLAY
-            && lichessApi.isOngoingGameInProgress()
-            && lichessApi.getMyTurn() != lichessApi.getTurn()) {
+                && lichessApi.getViewMode() == LichessApi.VIEW_PLAY
+                && lichessApi.isOngoingGameInProgress()
+                && lichessApi.getMyTurn() != lichessApi.getTurn()) {
             return lichessApi.getMyTurn();
         }
         return super.getSelectableColor();
@@ -654,19 +686,17 @@ public class LichessGameActivity extends ChessBoardActivity
         int myTurn = lichessApi.getMyTurn();
         int turn = lichessApi.getTurn();
         boolean isMyTurn = myTurn == turn;
-        imageTurnOpp.setImageResource(isMyTurn
-            ? R.drawable.turnempty
-            : turn == BoardConstants.BLACK
-            ? R.drawable.turnblack
-            : R.drawable.turnwhite
-        );
+        imageTurnOpp.setImageResource(
+                isMyTurn
+                        ? R.drawable.turnempty
+                        : turn == BoardConstants.BLACK
+                                ? R.drawable.turnblack
+                                : R.drawable.turnwhite);
 
-        imageTurnMe.setImageResource(isMyTurn
-            ? turn == BoardConstants.BLACK
-            ? R.drawable.turnblack
-            : R.drawable.turnwhite
-            : R.drawable.turnempty
-        );
+        imageTurnMe.setImageResource(
+                isMyTurn
+                        ? turn == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite
+                        : R.drawable.turnempty);
 
         chessBoardView.setRotated(myTurn == BoardConstants.BLACK);
 

@@ -12,8 +12,16 @@ public final class RustSearchResult {
     public final boolean hasEvaluation;
     public final boolean interrupted;
 
-    public RustSearchResult(long searchId, String bestMove, int score, int completedDepth,
-                            long nodes, long elapsedMicros, String principalVariation, boolean hasEvaluation, boolean interrupted) {
+    public RustSearchResult(
+            long searchId,
+            String bestMove,
+            int score,
+            int completedDepth,
+            long nodes,
+            long elapsedMicros,
+            String principalVariation,
+            boolean hasEvaluation,
+            boolean interrupted) {
         this.searchId = searchId;
         this.bestMove = bestMove;
         this.score = score;

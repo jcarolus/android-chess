@@ -8,10 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
@@ -28,7 +26,6 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
     private MateCollection mateCollection;
     private TextView textViewPracticeMove, textViewPercentage, textViewSolution;
     private MaterialButton buttonNext, buttonRetry;
-
     private ImageView imageTurn, imgStatus;
 
     private LinearProgressIndicator percentBar;
@@ -89,12 +86,11 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
             boardAreaLayout = findViewById(R.id.includeboard);
         }
         initBoardLayoutSizing(
-            findViewById(R.id.root_layout),
-            boardAreaLayout,
-            findViewById(R.id.play_controls),
-            findViewById(R.id.play_board_top),
-            findViewById(R.id.play_board_bottom)
-        );
+                findViewById(R.id.root_layout),
+                boardAreaLayout,
+                findViewById(R.id.play_controls),
+                findViewById(R.id.play_board_top),
+                findViewById(R.id.play_board_bottom));
 
         chessBoardView.setNextFocusRightId(R.id.ButtonPracticeNext);
     }
@@ -128,7 +124,8 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
         textViewPracticeMove.setText("# " + (position + 1));
         textViewSolution.setText("");
 
-        imageTurn.setImageResource(usersColor == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
+        imageTurn.setImageResource(
+                usersColor == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnwhite);
 
         imgStatus.setImageResource(R.drawable.ic_check_none);
     }
@@ -148,8 +145,9 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
 
     @Override
     public void onScore(MateScore score) {
-        textViewPercentage.setText(String.format("%d / %d = %.1f %%", score.solved, score.played, score.percentage()));
-        percentBar.setProgressCompat((int) score.percentage(), /*animated=*/true);
+        textViewPercentage.setText(
+                String.format("%d / %d = %.1f %%", score.solved, score.played, score.percentage()));
+        percentBar.setProgressCompat((int) score.percentage(), /* animated= */ true);
     }
 
     @Override
@@ -164,7 +162,9 @@ public class PracticeActivity extends ChessBoardActivity implements MateCollecti
                 break;
             case WRONG_REPLY:
                 buttonRetry.setEnabled(true);
-                animateWrong((lastMove.isEmpty() ? "" : lastMove + " ") + getString(R.string.puzzle_not_correct_move));
+                animateWrong(
+                        (lastMove.isEmpty() ? "" : lastMove + " ")
+                                + getString(R.string.puzzle_not_correct_move));
                 break;
         }
     }

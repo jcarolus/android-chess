@@ -12,21 +12,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
-
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.StartItem;
 import jwtc.android.chess.helpers.StartItemAdapter;
-import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
 import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.lichess.LichessLobbyActivity;
@@ -34,7 +30,6 @@ import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
 import jwtc.android.chess.tools.AdvancedActivity;
-
 
 public class StartBaseActivity extends AppCompatActivity {
     public static final String TAG = "StartBaseActivity";
@@ -91,29 +86,55 @@ public class StartBaseActivity extends AppCompatActivity {
 
         setContentView(layoutResource);
 
-        List<StartItem> startItemList = List.of(
-            new StartItem(R.drawable.start_play, R.string.start_play, PlayActivity.class),
-            new StartItem(R.drawable.lichess, R.string.start_lichess, LichessLobbyActivity.class),
-            new StartItem(R.drawable.fics, R.string.start_ics, ICSClient.class),
-            new StartItem(R.drawable.percent, R.string.start_practice, PracticeActivity.class),
-            new StartItem(R.drawable.puzzle, R.string.start_puzzles, PuzzleActivity.class),
-            new StartItem(R.drawable.wifi, R.string.start_wifiboard, HotspotBoardActivity.class),
-            new StartItem(R.drawable.database, R.string.start_database, GamesListActivity.class),
-            new StartItem(R.drawable.sliders, R.string.start_boardpreferences, BoardPreferencesActivity.class),
-            new StartItem(R.drawable.eye, R.string.start_accessibility_preferences, AccessibilityPreferences.class),
-            new StartItem(R.drawable.tools, R.string.start_pgn, AdvancedActivity.class),
-            new StartItem(R.drawable.link, R.string.start_website, null)
-        );
-        startItemAdapter = new StartItemAdapter(startItemList, (item, pos) -> {
-            if (item.cls != null) {
-                Intent i = new Intent();
-                i.setClass(StartBaseActivity.this, item.cls);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(i);
-            } else {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.jwtc.nl/")));
-            }
-        });
+        List<StartItem> startItemList =
+                List.of(
+                        new StartItem(
+                                R.drawable.start_play, R.string.start_play, PlayActivity.class),
+                        new StartItem(
+                                R.drawable.lichess,
+                                R.string.start_lichess,
+                                LichessLobbyActivity.class),
+                        new StartItem(R.drawable.fics, R.string.start_ics, ICSClient.class),
+                        new StartItem(
+                                R.drawable.percent,
+                                R.string.start_practice,
+                                PracticeActivity.class),
+                        new StartItem(
+                                R.drawable.puzzle, R.string.start_puzzles, PuzzleActivity.class),
+                        new StartItem(
+                                R.drawable.wifi,
+                                R.string.start_wifiboard,
+                                HotspotBoardActivity.class),
+                        new StartItem(
+                                R.drawable.database,
+                                R.string.start_database,
+                                GamesListActivity.class),
+                        new StartItem(
+                                R.drawable.sliders,
+                                R.string.start_boardpreferences,
+                                BoardPreferencesActivity.class),
+                        new StartItem(
+                                R.drawable.eye,
+                                R.string.start_accessibility_preferences,
+                                AccessibilityPreferences.class),
+                        new StartItem(R.drawable.tools, R.string.start_pgn, AdvancedActivity.class),
+                        new StartItem(R.drawable.link, R.string.start_website, null));
+        startItemAdapter =
+                new StartItemAdapter(
+                        startItemList,
+                        (item, pos) -> {
+                            if (item.cls != null) {
+                                Intent i = new Intent();
+                                i.setClass(StartBaseActivity.this, item.cls);
+                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                startActivity(i);
+                            } else {
+                                startActivity(
+                                        new Intent(
+                                                Intent.ACTION_VIEW,
+                                                Uri.parse("https://www.jwtc.nl/")));
+                            }
+                        });
 
         int spanCount = getResources().getInteger(R.integer.start_span_count);
         list = findViewById(R.id.startItemsRecycler);

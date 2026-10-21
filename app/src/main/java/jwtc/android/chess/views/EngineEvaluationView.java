@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
-
 import jwtc.android.chess.R;
 
 /** White-relative evaluation in pawns; black fills the top, white the bottom. */
@@ -27,7 +26,8 @@ public class EngineEvaluationView extends View {
         }
         // Smoothly map an unbounded pawn score into [0, 1], balanced at zero.
         whiteFraction = (float) (0.5 + 0.5 * Math.tanh(whitePawns / 4.0));
-        setContentDescription(getResources().getString(R.string.engine_evaluation_score, whitePawns));
+        setContentDescription(
+                getResources().getString(R.string.engine_evaluation_score, whitePawns));
         invalidate();
     }
 

@@ -5,8 +5,7 @@ import com.google.gson.JsonObject;
 
 /** Extracts readable text from both primitive and structured Lichess error responses. */
 final class LichessJsonError {
-    private LichessJsonError() {
-    }
+    private LichessJsonError() {}
 
     static String message(JsonObject response) {
         if (response == null) {

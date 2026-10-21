@@ -3,10 +3,8 @@ package jwtc.android.chess.views;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import jwtc.android.chess.R;
 
 public class ChessPiecesStackView extends ViewGroup {
@@ -34,9 +32,7 @@ public class ChessPiecesStackView extends ViewGroup {
         }
     }
 
-    /**
-     * Any layout manager that doesn't scroll will want this.
-     */
+    /** Any layout manager that doesn't scroll will want this. */
     @Override
     public boolean shouldDelayChildPressedState() {
         return false;
@@ -51,11 +47,12 @@ public class ChessPiecesStackView extends ViewGroup {
             final View child = getChildAt(i);
 
             if (child.getVisibility() != GONE) {
-                final int pos = child instanceof ChessSquareView
-                    ? ((ChessSquareView) child).getPos()
-                    : (child instanceof ChessPieceView
-                    ? ((ChessPieceView) child).getPos()
-                    : ((CapturedCountView) child).getPiece());
+                final int pos =
+                        child instanceof ChessSquareView
+                                ? ((ChessSquareView) child).getPos()
+                                : (child instanceof ChessPieceView
+                                        ? ((ChessPieceView) child).getPos()
+                                        : ((CapturedCountView) child).getPiece());
                 layoutChild(child, pos, height);
             }
         }
@@ -73,7 +70,11 @@ public class ChessPiecesStackView extends ViewGroup {
 
     public void layoutChild(View child, int index, int height) {
         if (child instanceof CapturedCountView) {
-            child.layout(index * height + height/2, height/2, index * height + height - 4, height - 4);
+            child.layout(
+                    index * height + height / 2,
+                    height / 2,
+                    index * height + height - 4,
+                    height - 4);
         } else {
             child.layout(index * height, 0, index * height + height, height);
         }

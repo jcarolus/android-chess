@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.engine.SearchLimit;
@@ -16,14 +15,14 @@ import jwtc.android.chess.services.GameListener;
 import jwtc.chess.PGNEntry;
 
 /**
- * One Mate Collection for one screen: loads Positions from the collection, runs the turn flow
- * (the opponent's reply after each of the user's moves, judged by the Local Engine) and keeps
- * the saved position and, for Practice Positions, the score.
- * <p>
- * The screen owns the {@link GameApi} and its board, and calls {@link #resume} and
- * {@link #pause} from its lifecycle. The user's moves are applied to the GameApi by the
- * screen; the module notices them through the GameApi and answers with a delayed reply.
- * Everything is on the main thread, and the listener hears nothing after {@link #pause}.
+ * One Mate Collection for one screen: loads Positions from the collection, runs the turn flow (the
+ * opponent's reply after each of the user's moves, judged by the Local Engine) and keeps the saved
+ * position and, for Practice Positions, the score.
+ *
+ * <p>The screen owns the {@link GameApi} and its board, and calls {@link #resume} and {@link
+ * #pause} from its lifecycle. The user's moves are applied to the GameApi by the screen; the module
+ * notices them through the GameApi and answers with a delayed reply. Everything is on the main
+ * thread, and the listener hears nothing after {@link #pause}.
  */
 public final class MateCollection {
     private static final String TAG = "MateCollection";
@@ -49,7 +48,9 @@ public final class MateCollection {
         /** Practice Positions only. */
         void onScore(MateScore score);
 
-        /** @param lastMove the move the Engine judged, as the GameApi recorded it; empty if none */
+        /**
+         * @param lastMove the move the Engine judged, as the GameApi recorded it; empty if none
+         */
         void onOutcome(Outcome outcome, String lastMove);
 
         /** {@link #next} was asked at the last Position. */
@@ -63,35 +64,33 @@ public final class MateCollection {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable requestReply = this::requestReply;
 
-    private final GameListener gameListener = new GameListener() {
-        @Override
-        public void onMoveApplied(int move) {
-            moveApplied();
-        }
-    };
+    private final GameListener gameListener =
+            new GameListener() {
+                @Override
+                public void onMoveApplied(int move) {
+                    moveApplied();
+                }
+            };
 
-    private final EngineListener engineListener = new EngineListener() {
-        @Override
-        public void OnEngineMove(int move, int duckMove, int value) {
-            judgeReply(move, duckMove, value);
-        }
+    private final EngineListener engineListener =
+            new EngineListener() {
+                @Override
+                public void OnEngineMove(int move, int duckMove, int value) {
+                    judgeReply(move, duckMove, value);
+                }
 
-        @Override
-        public void OnEngineInfo(String message, float value) {
-        }
+                @Override
+                public void OnEngineInfo(String message, float value) {}
 
-        @Override
-        public void OnEngineStarted() {
-        }
+                @Override
+                public void OnEngineStarted() {}
 
-        @Override
-        public void OnEngineAborted() {
-        }
+                @Override
+                public void OnEngineAborted() {}
 
-        @Override
-        public void OnEngineError() {
-        }
-    };
+                @Override
+                public void OnEngineError() {}
+            };
 
     private EngineSession engineSession;
     private Cursor cursor;
@@ -120,7 +119,9 @@ public final class MateCollection {
             score = new MateScore(prefs.getInt(kind.playedKey, 0), prefs.getInt(kind.solvedKey, 0));
         }
 
-        cursor = context.getContentResolver().query(kind.uri(), MyPuzzleProvider.COLUMNS, null, null, "");
+        cursor =
+                context.getContentResolver()
+                        .query(kind.uri(), MyPuzzleProvider.COLUMNS, null, null, "");
         total = cursor == null ? 0 : cursor.getCount();
         if (total == 0) {
             listener.onEmptyCollection();
@@ -194,8 +195,8 @@ public final class MateCollection {
     }
 
     /**
-     * Plays the Engine's move for the user, one move per call. The opponent's reply then
-     * follows like after any move of the user.
+     * Plays the Engine's move for the user, one move per call. The opponent's reply then follows
+     * like after any move of the user.
      */
     public void showSolution() {
         gameApi.jumpToBoardNum(numMoved);

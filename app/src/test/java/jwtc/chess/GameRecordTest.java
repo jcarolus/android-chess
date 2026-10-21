@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
 
 public class GameRecordTest {
@@ -64,9 +63,12 @@ public class GameRecordTest {
 
     @Test
     public void tagOverridesCarryTheColumnsInOrder() {
-        GameRecord record = GameRecord.stored(7, "pgn", "Wijk", "A", "B", date(2023, 5, 17), "1-0", 3f);
+        GameRecord record =
+                GameRecord.stored(7, "pgn", "Wijk", "A", "B", date(2023, 5, 17), "1-0", 3f);
         Map<String, String> overrides = record.tagOverrides();
-        assertEquals(Arrays.asList("Event", "White", "Black", "Date"), Arrays.asList(overrides.keySet().toArray()));
+        assertEquals(
+                Arrays.asList("Event", "White", "Black", "Date"),
+                Arrays.asList(overrides.keySet().toArray()));
         assertEquals("2023.05.17", overrides.get("Date"));
         assertEquals("A", overrides.get("White"));
     }

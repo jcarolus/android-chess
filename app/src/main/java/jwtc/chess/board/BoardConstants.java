@@ -2,17 +2,18 @@ package jwtc.chess.board;
 
 // "split" object for ChessBoard. contains the constants of the board object
 
-import jwtc.chess.Valuation;
-
 public class BoardConstants {
     public static final int VARIANT_DEFAULT = 1;
     public static final int VARIANT_DUCK = 2;
     public static final int VARIANT_KING_OF_THE_HILL = 3;
 
-    // states of the game ////////////////////////////////////////////////////////////////////////////
+    // states of the game
+    // ////////////////////////////////////////////////////////////////////////////
     public static final int PLAY = 1;
     public static final int CHECK = 2;
-    public static final int INVALID = 3; // only occurs when king can be hit or when invalid number of pieces is on the board (more than one king). can be used when setting up a new position
+    public static final int INVALID =
+            3; // only occurs when king can be hit or when invalid number of pieces is on the board
+    // (more than one king). can be used when setting up a new position
     public static final int DRAW_MATERIAL = 4; // no one can win (ie KING against KING)
     public static final int DRAW_50 = 5; // after 25 full moves no hit or pawnmove occured
     public static final int MATE = 6;
@@ -25,7 +26,8 @@ public class BoardConstants {
     public static final int DRAW_AGREEMENT = 13;
     public static final int HILL_WIN = 14;
 
-    // array index of data memebers that hold data for either black or white. these must be 0 and 1 cause arrays are of length 2
+    // array index of data memebers that hold data for either black or white. these must be 0 and 1
+    // cause arrays are of length 2
     public static final int BLACK = 0;
     public static final int WHITE = 1;
 
@@ -52,7 +54,8 @@ public class BoardConstants {
     public static final int a2 = 48, b2 = 49, c2 = 50, d2 = 51, e2 = 52, f2 = 53, g2 = 54, h2 = 55;
     public static final int a1 = 56, b1 = 57, c1 = 58, d1 = 59, e1 = 60, f1 = 61, g1 = 62, h1 = 63;
 
-    /// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // instead of calling a method row(pos), position is index on array for the rows
     public static final int[] ROW = {
@@ -63,7 +66,8 @@ public class BoardConstants {
         4, 4, 4, 4, 4, 4, 4, 4,
         5, 5, 5, 5, 5, 5, 5, 5,
         6, 6, 6, 6, 6, 6, 6, 6,
-        7, 7, 7, 7, 7, 7, 7, 7};
+        7, 7, 7, 7, 7, 7, 7, 7
+    };
     // as with ROW, but for column
     public static final int[] COL = {
         0, 1, 2, 3, 4, 5, 6, 7,
@@ -73,28 +77,22 @@ public class BoardConstants {
         0, 1, 2, 3, 4, 5, 6, 7,
         0, 1, 2, 3, 4, 5, 6, 7,
         0, 1, 2, 3, 4, 5, 6, 7,
-        0, 1, 2, 3, 4, 5, 6, 7};
-
-    // the row or rank seen from the oposite colors is mirrored, so also convenient use from an array
-    // first index color, second index position
-    public static final int[][] ROW_TURN = {
-        {0, 0, 0, 0, 0, 0, 0, 0,
-            1, 1, 1, 1, 1, 1, 1, 1,
-            2, 2, 2, 2, 2, 2, 2, 2,
-            3, 3, 3, 3, 3, 3, 3, 3,
-            4, 4, 4, 4, 4, 4, 4, 4,
-            5, 5, 5, 5, 5, 5, 5, 5,
-            6, 6, 6, 6, 6, 6, 6, 6,
-            7, 7, 7, 7, 7, 7, 7, 7}
-        ,
-        {7, 7, 7, 7, 7, 7, 7, 7,
-            6, 6, 6, 6, 6, 6, 6, 6,
-            5, 5, 5, 5, 5, 5, 5, 5,
-            4, 4, 4, 4, 4, 4, 4, 4,
-            3, 3, 3, 3, 3, 3, 3, 3,
-            2, 2, 2, 2, 2, 2, 2, 2,
-            1, 1, 1, 1, 1, 1, 1, 1,
-            0, 0, 0, 0, 0, 0, 0, 0}
+        0, 1, 2, 3, 4, 5, 6, 7
     };
 
+    // the row or rank seen from the oposite colors is mirrored, so also convenient use from an
+    // array
+    // first index color, second index position
+    public static final int[][] ROW_TURN = {
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3,
+            3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7,
+            7, 7, 7, 7, 7, 7
+        },
+        {
+            7, 7, 7, 7, 7, 7, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4,
+            4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+            0, 0, 0, 0, 0, 0
+        }
+    };
 }

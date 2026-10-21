@@ -1,18 +1,15 @@
 package jwtc.android.chess.hotspotboard;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-
-import org.json.JSONException;
-
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.android.chess.services.SocketConnectService;
 import jwtc.chess.board.BoardConstants;
+import org.json.JSONException;
 
 public class HotspotBoardService extends SocketConnectService {
     protected static final String TAG = "HotspotBoardService";
@@ -38,13 +35,14 @@ public class HotspotBoardService extends SocketConnectService {
     public static final int HOST_MODE_SHARE = 1;
 
     private final Handler pollHandler = new Handler(Looper.getMainLooper());
-    private final Runnable pollRunnable = new Runnable() {
-        @Override
-        public void run() {
-            broadcastSnapshotIfChanged();
-            pollHandler.postDelayed(this, POLL_INTERVAL_MS);
-        }
-    };
+    private final Runnable pollRunnable =
+            new Runnable() {
+                @Override
+                public void run() {
+                    broadcastSnapshotIfChanged();
+                    pollHandler.postDelayed(this, POLL_INTERVAL_MS);
+                }
+            };
     private final GameApi gameApi = new GameApi(true);
 
     private boolean isHost = false;
@@ -62,15 +60,17 @@ public class HotspotBoardService extends SocketConnectService {
     private void rememberGame(String data, boolean incoming) {
         try {
             GameMessage message = GameMessage.fromJson(data);
-            if (message.type == GameMessage.TYPE_MOVE || message.type == GameMessage.TYPE_SHARE_SNAPSHOT) {
+            if (message.type == GameMessage.TYPE_MOVE
+                    || message.type == GameMessage.TYPE_SHARE_SNAPSHOT) {
                 currentPosition = message;
                 observing = incoming && message.type == GameMessage.TYPE_SHARE_SNAPSHOT;
                 gameResult = 0;
             } else if (message.type == GameMessage.TYPE_RESIGN) {
                 boolean white = playerName.equals(message.white);
-                if (incoming) white = !white;
-                gameResult = white ? BoardConstants.WHITE_RESIGNED
-                    : BoardConstants.BLACK_RESIGNED;
+                if (incoming) {
+                    white = !white;
+                }
+                gameResult = white ? BoardConstants.WHITE_RESIGNED : BoardConstants.BLACK_RESIGNED;
             } else if (message.type == GameMessage.TYPE_DRAW_ACCEPT) {
                 gameResult = BoardConstants.DRAW_AGREEMENT;
             }
@@ -124,7 +124,8 @@ public class HotspotBoardService extends SocketConnectService {
                 Bundle sessionData = msg.getData();
                 if (sessionData != null) {
                     playerName = sessionData.getString("name", "");
-                    connectionMode = sessionData.getInt(KEY_CONNECTION_MODE, CONNECTION_MODE_HOTSPOT);
+                    connectionMode =
+                            sessionData.getInt(KEY_CONNECTION_MODE, CONNECTION_MODE_HOTSPOT);
                     hostIpAddress = sessionData.getString(KEY_HOST_IP, null);
                     hostMode = sessionData.getInt(KEY_HOST_MODE, HOST_MODE_PLAY);
                 }
@@ -181,7 +182,9 @@ public class HotspotBoardService extends SocketConnectService {
             pollHandler.post(() -> onClientDisconnected(connection, outgoingConnection));
             return;
         }
-        Log.d(TAG, "client disconnected " + connection.clientId + ", outgoing=" + outgoingConnection);
+        Log.d(
+                TAG,
+                "client disconnected " + connection.clientId + ", outgoing=" + outgoingConnection);
 
         if (connection == activePlayingConnection) {
             activePlayingConnection = null;
@@ -228,7 +231,9 @@ public class HotspotBoardService extends SocketConnectService {
     }
 
     public void startSession(boolean isHost, final int port) {
-        Log.d(TAG, "startSession " + (isHost ? " as host" : " as client") + ", hostMode=" + hostMode);
+        Log.d(
+                TAG,
+                "startSession " + (isHost ? " as host" : " as client") + ", hostMode=" + hostMode);
         activePlayingConnection = null;
         lastBroadcastFen = null;
         isListening = false;
@@ -310,7 +315,9 @@ public class HotspotBoardService extends SocketConnectService {
 
         try {
             // int type, String FEN, String white, String black, int lastMove, String lastMovePgn
-            String payload = new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "","", 0, "").toJsonString();
+            String payload =
+                    new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "", "", 0, "")
+                            .toJsonString();
             lastBroadcastFen = fen;
             broadcastLine(payload);
         } catch (JSONException e) {
@@ -324,14 +331,19 @@ public class HotspotBoardService extends SocketConnectService {
             if (fen == null) {
                 return;
             }
-            sendLine(connection, new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "", "", 0, "").toJsonString());
+            sendLine(
+                    connection,
+                    new GameMessage(GameMessage.TYPE_SHARE_SNAPSHOT, fen, "", "", 0, "")
+                            .toJsonString());
         } catch (JSONException e) {
             Log.d(TAG, "Could not send share snapshot", e);
         }
     }
 
     private String resolveRemoteHostIp() {
-        if (connectionMode == CONNECTION_MODE_LOCAL_WIFI && hostIpAddress != null && hostIpAddress.trim().length() > 0) {
+        if (connectionMode == CONNECTION_MODE_LOCAL_WIFI
+                && hostIpAddress != null
+                && hostIpAddress.trim().length() > 0) {
             return hostIpAddress.trim();
         }
         return NetworkAddressHelper.getWifiGatewayIp(this);

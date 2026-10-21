@@ -11,7 +11,8 @@ public class RustSearchRequestTest {
     @Test
     public void duckTurnsCarryPlacementAndTerminalMovesDoNotInventOne() throws Exception {
         int move = Move.makeMove(Pos.fromString("e2"), Pos.fromString("e4"));
-        assertEquals("e2e4@d5", RustSearchRequest.toRustCoordinate(move, null, Pos.fromString("d5")));
+        assertEquals(
+                "e2e4@d5", RustSearchRequest.toRustCoordinate(move, null, Pos.fromString("d5")));
         assertEquals("e2e4", RustSearchRequest.toRustCoordinate(move, null, -1));
     }
 
@@ -80,5 +81,4 @@ public class RustSearchRequestTest {
         String rust = RustSearchRequest.toRustCoordinate(shortCastle, files);
         assertEquals("e1g1", RustSearchRequest.fromRustCoordinate(rust, files, 7));
     }
-
 }

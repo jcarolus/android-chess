@@ -2,9 +2,9 @@ package jwtc.android.chess.services;
 
 import static org.junit.Assert.assertEquals;
 
+import jwtc.android.chess.engine.RustBoardResult;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
-import jwtc.android.chess.engine.RustBoardResult;
 import org.junit.Test;
 
 public class GameApiQueryMappingTest {

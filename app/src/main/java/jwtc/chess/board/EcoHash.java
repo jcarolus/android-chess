@@ -9,7 +9,9 @@ public final class EcoHash {
     /** Initial hash follows the book's historical convention, regardless of FEN turn/rights. */
     public static long initial(String fen) {
         long hash = pieces(fen);
-        for (int i = 768; i <= 772; i++) hash ^= BoardHashKeys.HASH_KEY[i];
+        for (int i = 768; i <= 772; i++) {
+            hash ^= BoardHashKeys.HASH_KEY[i];
+        }
         return hash;
     }
 
@@ -22,7 +24,9 @@ public final class EcoHash {
             // The historical hash moves only the king, even when castling moves the rook.
             // A stationary Chess 960 king is XORed once by the native implementation.
             hash ^= BoardHashKeys.HASH_KEY[colour * 384 + 5 * 64 + to];
-            if (from != to) hash ^= BoardHashKeys.HASH_KEY[colour * 384 + 5 * 64 + from];
+            if (from != to) {
+                hash ^= BoardHashKeys.HASH_KEY[colour * 384 + 5 * 64 + from];
+            }
             hash ^= BoardHashKeys.HASH_KEY[(Move.isOO(move) ? 768 : 770) + colour];
         } else {
             hash ^= pieces(beforeFen) ^ pieces(afterFen);
@@ -35,7 +39,9 @@ public final class EcoHash {
         int square = 0;
         for (int i = 0; i < fen.length() && fen.charAt(i) != ' '; i++) {
             char symbol = fen.charAt(i);
-            if (symbol == '/') continue;
+            if (symbol == '/') {
+                continue;
+            }
             if (symbol >= '1' && symbol <= '8') {
                 square += symbol - '0';
             } else {

@@ -3,7 +3,6 @@ package jwtc.android.chess.lichess;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.lichess.models.Challenge;
@@ -11,14 +10,14 @@ import jwtc.android.chess.lichess.models.Challenge;
 /**
  * Shared base for the boardless Lichess screens (lobby, swiss). It binds {@link LichessService},
  * adopts the single service-owned {@link LichessApi}, and registers/unregisters itself as the
- * foreground api listener. The board-bearing game screen can't extend this (it needs
- * {@code ChessBoardActivity}), so it reuses the same {@link LichessSession} helper directly.
+ * foreground api listener. The board-bearing game screen can't extend this (it needs {@code
+ * ChessBoardActivity}), so it reuses the same {@link LichessSession} helper directly.
  *
  * <p>Subclasses receive the connected, authenticated api via {@link #onLichessApiConnected} and
  * override only the {@link LichessApi.LichessApiListener} callbacks they care about (the rest are
  * default no-ops on the interface).
  */
-abstract public class LichessBaseActivity extends BaseActivity
+public abstract class LichessBaseActivity extends BaseActivity
         implements LichessApi.LichessApiListener, LichessSession.Callbacks {
 
     private static final String TAG = "LichessBaseActivity";
@@ -94,8 +93,7 @@ abstract public class LichessBaseActivity extends BaseActivity
     }
 
     /** The shared api is connected and authenticated. Subclasses load their data here. */
-    protected void onLichessApiConnected(LichessApi api) {
-    }
+    protected void onLichessApiConnected(LichessApi api) {}
 
     @Override
     public void onGameInit(String gameId, boolean boardCompatible) {
@@ -130,24 +128,35 @@ abstract public class LichessBaseActivity extends BaseActivity
     @Override
     public void onChallenge(Challenge challenge) {
         int minutes = challenge.timeControl.limit / 60;
-        String message = challenge.challenger.name
-            + (challenge.rated
-                ? " " + getString(R.string.lichess_challenge_dialog_message_rating) + "\n"
-                : "\n")
-            + getString(R.string.lichess_challenge_dialog_message_variant, challenge.variant.name) + "\n"
-            + getString(R.string.lichess_challenge_dialog_message_time_control, challenge.timeControl.type) + "\n"
-            + (challenge.timeControl.limit > 0
-                ? " " + minutes + "+" + challenge.timeControl.increment
-                : "")
-            + "\n"
-            + (challenge.rated
-                ? getString(R.string.lichess_challenge_dialog_message_rated)
-                : getString(R.string.lichess_challenge_dialog_message_unrated));
+        String message =
+                challenge.challenger.name
+                        + (challenge.rated
+                                ? " "
+                                        + getString(
+                                                R.string.lichess_challenge_dialog_message_rating)
+                                        + "\n"
+                                : "\n")
+                        + getString(
+                                R.string.lichess_challenge_dialog_message_variant,
+                                challenge.variant.name)
+                        + "\n"
+                        + getString(
+                                R.string.lichess_challenge_dialog_message_time_control,
+                                challenge.timeControl.type)
+                        + "\n"
+                        + (challenge.timeControl.limit > 0
+                                ? " " + minutes + "+" + challenge.timeControl.increment
+                                : "")
+                        + "\n"
+                        + (challenge.rated
+                                ? getString(R.string.lichess_challenge_dialog_message_rated)
+                                : getString(R.string.lichess_challenge_dialog_message_unrated));
 
-        openConfirmDialog(message,
-            getString(R.string.lichess_challenge_dialog_button_accept),
-            getString(R.string.lichess_challenge_dialog_button_decline),
-            () -> lichessApi.acceptChallenge(challenge),
-            () -> lichessApi.declineChallenge(challenge));
+        openConfirmDialog(
+                message,
+                getString(R.string.lichess_challenge_dialog_button_accept),
+                getString(R.string.lichess_challenge_dialog_button_decline),
+                () -> lichessApi.acceptChallenge(challenge),
+                () -> lichessApi.declineChallenge(challenge));
     }
 }

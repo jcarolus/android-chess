@@ -7,11 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import androidx.core.content.ContextCompat;
-
 import java.util.List;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.services.MoveSpeech;
 
@@ -61,7 +58,8 @@ public class MoveItemAdapter extends BaseAdapter {
 
         textNr.setText(move.nr);
         textMove.setText(move.sMove);
-        textMove.setContentDescription(MoveSpeech.describe(context.getResources(), move.sMove, move.move, false));
+        textMove.setContentDescription(
+                MoveSpeech.describe(context.getResources(), move.sMove, move.move, false));
         textAnnotation.setText(move.annotation);
 
         return convertView;

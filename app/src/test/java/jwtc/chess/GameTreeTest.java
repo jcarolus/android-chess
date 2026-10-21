@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import jwtc.chess.GameTree.Node;
 import jwtc.chess.board.BoardConstants;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,8 +66,8 @@ public class GameTreeTest {
     public void replacingWithTheSameMoveStillDiscardsItsFuture() {
         Node e4 = add(tree.getRoot(), "e4", 1);
         add(e4, "e5", 2);
-        Node replacement = tree.replaceContinuation(tree.getRoot(),
-            new PGNEntry("e4", "", 1, -1), 0, 0);
+        Node replacement =
+                tree.replaceContinuation(tree.getRoot(), new PGNEntry("e4", "", 1, -1), 0, 0);
         assertFalse(tree.contains(e4));
         assertSame(replacement, tree.mainLineEnd());
         assertEquals("1. e4", tree.exportMoves());
@@ -92,7 +91,8 @@ public class GameTreeTest {
         tree.setAnnotation(e4, "the {best} move");
         Node alt = add(tree.getRoot(), "d4", 4);
         tree.setLeadingComment(alt, "other");
-        assertEquals("{start} 1. e4 $1 $14 {the [best] move} ( {other} 1. d4 )", tree.exportMoves());
+        assertEquals(
+                "{start} 1. e4 $1 $14 {the [best] move} ( {other} 1. d4 )", tree.exportMoves());
     }
 
     @Test
@@ -199,7 +199,11 @@ public class GameTreeTest {
 
     @Test
     public void enginePositionIncludesOnlySelectedVariationAndItsAncestors() throws Exception {
-        Node e4 = add(tree.getRoot(), "e4", Move.makeMove(Pos.fromString("e2"), Pos.fromString("e4")));
+        Node e4 =
+                add(
+                        tree.getRoot(),
+                        "e4",
+                        Move.makeMove(Pos.fromString("e2"), Pos.fromString("e4")));
         add(e4, "e5", Move.makeMove(Pos.fromString("e7"), Pos.fromString("e5")));
         Node c5 = add(e4, "c5", Move.makeMove(Pos.fromString("c7"), Pos.fromString("c5")));
         add(c5, "Nf3", Move.makeMove(Pos.fromString("g1"), Pos.fromString("f3")));
@@ -212,19 +216,37 @@ public class GameTreeTest {
         Node node = tree.getRoot();
         String[] moves = {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"};
         for (String move : moves) {
-            node = add(node, "", Move.makeMove(Pos.fromString(move.substring(0, 2)),
-                Pos.fromString(move.substring(2))));
+            node =
+                    add(
+                            node,
+                            "",
+                            Move.makeMove(
+                                    Pos.fromString(move.substring(0, 2)),
+                                    Pos.fromString(move.substring(2))));
         }
-        assertEquals("position fen " + START + " moves " + String.join(" ", moves),
-            tree.positionCommand(node));
+        assertEquals(
+                "position fen " + START + " moves " + String.join(" ", moves),
+                tree.positionCommand(node));
         assertFalse(tree.positionCommand(node).equals(tree.positionCommand(tree.getRoot())));
     }
 
     @Test
     public void enginePositionDistinguishesDuckPlacements() throws Exception {
         int e4 = Move.makeMove(Pos.fromString("e2"), Pos.fromString("e4"));
-        Node d5 = tree.append(tree.getRoot(), new PGNEntry("e4", "", e4, Pos.fromString("d5")), 0, 0, false);
-        Node a5 = tree.append(tree.getRoot(), new PGNEntry("e4", "", e4, Pos.fromString("a5")), 0, 0, false);
+        Node d5 =
+                tree.append(
+                        tree.getRoot(),
+                        new PGNEntry("e4", "", e4, Pos.fromString("d5")),
+                        0,
+                        0,
+                        false);
+        Node a5 =
+                tree.append(
+                        tree.getRoot(),
+                        new PGNEntry("e4", "", e4, Pos.fromString("a5")),
+                        0,
+                        0,
+                        false);
         assertEquals("position fen " + START + " moves e2e4@d5", tree.positionCommand(d5));
         assertEquals("position fen " + START + " moves e2e4@a5", tree.positionCommand(a5));
     }
@@ -233,8 +255,15 @@ public class GameTreeTest {
     public void enginePositionPreservesCustomStartAndUnderpromotion() throws Exception {
         String fen = "7k/P7/8/8/8/8/8/7K w - - 0 1";
         tree = new GameTree(fen, 0, BoardConstants.WHITE);
-        Node promoted = add(tree.getRoot(), "a8=N", Move.makeMovePromotion(
-            Pos.fromString("a7"), Pos.fromString("a8"), BoardConstants.KNIGHT, false));
+        Node promoted =
+                add(
+                        tree.getRoot(),
+                        "a8=N",
+                        Move.makeMovePromotion(
+                                Pos.fromString("a7"),
+                                Pos.fromString("a8"),
+                                BoardConstants.KNIGHT,
+                                false));
         assertEquals("position fen " + fen + " moves a7a8n", tree.positionCommand(promoted));
     }
 }

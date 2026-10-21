@@ -4,6 +4,7 @@ package jwtc.android.chess.tools;
 public final class ImportJob {
     /** One of the {@link ImportService} modes, reported back with every event. */
     public final int mode;
+
     public final ImportSource source;
     public final ImportHandler handler;
 

@@ -1,7 +1,5 @@
 package jwtc.android.chess.helpers;
 
-import android.util.Log;
-
 import java.io.InputStream;
 
 public class PGNHelper {
