@@ -18,11 +18,13 @@ import jwtc.chess.board.BoardPosition;
 public final class RustEngineInstrumentation extends Instrumentation {
     private static final String START = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     private boolean ecoOnly;
+    private boolean analysisOnly;
 
     @Override
     public void onCreate(Bundle arguments) {
         super.onCreate(arguments);
         ecoOnly = arguments != null && "eco".equals(arguments.getString("suite"));
+        analysisOnly = arguments != null && "analysis".equals(arguments.getString("suite"));
         start();
     }
 
@@ -33,6 +35,13 @@ public final class RustEngineInstrumentation extends Instrumentation {
             if (ecoOnly) {
                 ecoLookupPreservesLivePosition();
                 report.putString("stream", "ECO lookup, and live-position preservation passed\n");
+                finish(-1, report);
+                return;
+            }
+            sessionSequentialAnalysis(false);
+            sessionSequentialAnalysis(true);
+            if (analysisOnly) {
+                report.putString("stream", "Sequential analysis passed\n");
                 finish(-1, report);
                 return;
             }
@@ -762,6 +771,55 @@ public final class RustEngineInstrumentation extends Instrumentation {
                                 game.getPositionSnapshot(game.getCurrentNode()).findMove("e2e4");
                         game.applyMove(move.move, -1);
                         session[0].stop(done::countDown);
+                    }
+                });
+        await(done, failure, session);
+    }
+
+    private void sessionSequentialAnalysis(boolean navigate) throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        EngineSession[] session = new EngineSession[1];
+        AtomicInteger completed = new AtomicInteger();
+        runOnMainSync(
+                () -> {
+                    GameApi game = new GameApi();
+                    game.newGame();
+                    GameApi.PositionSnapshot parent =
+                            game.getPositionSnapshot(game.getCurrentNode());
+                    game.applyMove(parent.findMove("e2e4").move, -1);
+                    GameApi.PositionSnapshot current =
+                            game.getPositionSnapshot(game.getCurrentNode());
+                    session[0] =
+                            EngineSession.forRustTesting(
+                                    game,
+                                    new Listener() {
+                                        @Override
+                                        public void onAnalysisComplete(
+                                                String fen, String best, EngineEvaluation value) {
+                                            if (completed.incrementAndGet() == 1) {
+                                                new Handler(Looper.getMainLooper())
+                                                        .post(
+                                                                () ->
+                                                                        session[0].analyze(
+                                                                                current, 100));
+                                            } else {
+                                                done.countDown();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void OnEngineError() {
+                                            failure.set(
+                                                    new AssertionError(
+                                                            "Sequential analysis failed"));
+                                            done.countDown();
+                                        }
+                                    });
+                    session[0].analyze(parent, 100);
+                    if (navigate) {
+                        game.undoMove();
+                        session[0].abort(() -> session[0].analyze(parent, 100));
                     }
                 });
         await(done, failure, session);

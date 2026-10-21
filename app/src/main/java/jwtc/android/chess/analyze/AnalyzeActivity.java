@@ -66,6 +66,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private PositionMove displayedEngineMove;
     private View buttonNext;
     private SeekBar moveSeekBar;
+    private boolean trackingMoveSeekBar;
     private List<Node> navigationLine = new ArrayList<>();
     private final Handler analysisHandler = new Handler(Looper.getMainLooper());
     private boolean analysisDebouncing;
@@ -142,15 +143,24 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (fromUser && progress < navigationLine.size()) {
-                            gameApi.goTo(navigationLine.get(progress));
+                            textViewLastMove.setText(
+                                    gameApi.getMoveNumber(navigationLine.get(progress)));
                         }
                     }
 
                     @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {}
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        trackingMoveSeekBar = true;
+                    }
 
                     @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {}
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        trackingMoveSeekBar = false;
+                        int progress = seekBar.getProgress();
+                        if (progress < navigationLine.size()) {
+                            gameApi.goTo(navigationLine.get(progress));
+                        }
+                    }
                 });
         buttonBackToMain = findViewById(R.id.ButtonBackToMain);
         buttonBackToMain.setOnClickListener(
@@ -377,10 +387,12 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             analysisHandler.removeCallbacks(resumeAnalysis);
             analysisDebouncing = true;
             analysisHandler.postDelayed(resumeAnalysis, ANALYSIS_DEBOUNCE_MILLIS);
-            // A search remains useful while it belongs to either position needed for feedback.
+            // Rust drops results after navigation; OEX can retain searches needed for feedback.
             PositionSnapshot current = positions.get(displayedNode);
             PositionSnapshot parent = positions.get(displayedNode.getParent());
-            if (analysisFen != null && !matchesAnalysis(current) && !matchesAnalysis(parent)) {
+            if (analysisFen != null
+                    && (engineSession.isBuiltin()
+                            || (!matchesAnalysis(current) && !matchesAnalysis(parent)))) {
                 analysisFen = null;
                 requestedPosition = null;
                 analysisSwitchPending = true;
@@ -565,7 +577,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
         int index = navigationLine.indexOf(current);
         moveSeekBar.setMax(Math.max(0, navigationLine.size() - 1));
-        moveSeekBar.setProgress(Math.max(0, index));
+        if (!trackingMoveSeekBar) {
+            moveSeekBar.setProgress(Math.max(0, index));
+        }
         moveSeekBar.setEnabled(navigationLine.size() > 1);
         findViewById(R.id.ButtonPrevious).setEnabled(current.getParent() != null);
         buttonNext.setEnabled(index >= 0 && index + 1 < navigationLine.size());
@@ -650,12 +664,13 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         updateNavigation();
         updateMoveSummary();
         showCachedEvaluation();
-        startNextAnalysis();
+        // The engine releases its completed search after this callback returns.
+        analysisHandler.post(this::startNextAnalysis);
     }
 
     private void updateMoveSummary() {
         updateAnalysisSummary();
-        if (gameApi.isDuckVariant()) {
+        if (trackingMoveSeekBar || gameApi.isDuckVariant()) {
             return;
         }
         Node current = gameApi.getCurrentNode();
