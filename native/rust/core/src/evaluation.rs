@@ -174,14 +174,8 @@ impl Position {
                 if s % 8 == previous % 8 {
                     value += 5;
                 }
-                if ((!(self.own(t)
-                    | if t == self.turn {
-                        self.duck.map(bit).unwrap_or(0)
-                    } else {
-                        0
-                    }))
-                    | (p[ROOK] & !bit(s)))
-                    & self.range_with(ROOK, t, s, occ)
+                if self.mobility_with(ROOK, t, s, occ)
+                    | (self.range_with(ROOK, t, s, occ) & p[ROOK] & !bit(s))
                     != 0
                 {
                     value += 30;

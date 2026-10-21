@@ -99,7 +99,11 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public boolean requestMove(final int from, final int to) {
-        if (!gameApi.isEnded() && (gameApi.getTurn() == myTurn || vsCPU == false)) {
+        // A Duck piece preview reports the next side to move before placement completes the turn.
+        boolean isMyTurn = gameApi.hasPendingDuckMove()
+            ? gameApi.getTurn() != myTurn && from == gameApi.getDuckPos()
+            : gameApi.getTurn() == myTurn;
+        if (!gameApi.isEnded() && (isMyTurn || !vsCPU)) {
             if (gameApi.hasContinuationToOverwrite()) {
                 confirmOverwrite(() -> {
                     if (!super.requestMove(from, to)) rebuildBoard();
