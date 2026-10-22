@@ -184,8 +184,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/control_gap"
-            android:layout_marginStart="@dimen/control_gap"
-            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -194,8 +192,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/control_gap"
-            android:layout_marginStart="@dimen/control_gap"
-            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

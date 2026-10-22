@@ -57,14 +57,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/board_control_gap"
-            android:layout_marginStart="@dimen/board_control_gap"
-            android:layout_marginEnd="@dimen/board_control_gap"
             android:accessibilityLiveRegion="assertive" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/control_gap"
+            android:layout_marginTop="@dimen/control_gap"
             android:text="@string/practice_help" />
 
         <com.google.android.flexbox.FlexboxLayout
@@ -96,8 +94,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/control_gap"
-            android:layout_marginStart="@dimen/control_gap"
-            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -106,8 +102,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/control_gap"
-            android:layout_marginStart="@dimen/control_gap"
-            android:layout_marginEnd="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>
