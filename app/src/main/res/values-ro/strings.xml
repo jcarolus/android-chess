@@ -554,4 +554,8 @@
     <string name="analysis_dont_show_again">Nu mai afișa</string>
     <string name="analysis_continue">Continuă</string>
     <string name="analysis_duck_unsupported">Analiza pentru șahul cu rața nu este acceptată.</string>
+    <string name="new_game_variant_standard">Standard</string>
+    <string name="new_game_variant_duck">Duck (experimental)</string>
+    <string name="new_game_variant_king_of_the_hill">Regele dealului</string>
+    <string name="new_game_variant_chess960">Fischer aleator / 960</string>
 </resources>

@@ -554,4 +554,8 @@
     <string name="analysis_dont_show_again">不再显示</string>
     <string name="analysis_continue">继续</string>
     <string name="analysis_duck_unsupported">不支持鸭子棋分析。</string>
+    <string name="new_game_variant_standard">标准</string>
+    <string name="new_game_variant_duck">Duck (实验性)</string>
+    <string name="new_game_variant_king_of_the_hill">占山为王</string>
+    <string name="new_game_variant_chess960">费舍尔随机棋 / 960</string>
 </resources>

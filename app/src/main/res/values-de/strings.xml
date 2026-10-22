@@ -564,4 +564,8 @@
     <string name="analysis_dont_show_again">Nicht mehr anzeigen</string>
     <string name="analysis_continue">Weiter</string>
     <string name="analysis_duck_unsupported">Die Analyse von Entenschach wird nicht unterstützt.</string>
+    <string name="new_game_variant_standard">Standard</string>
+    <string name="new_game_variant_duck">Duck (experimentell)</string>
+    <string name="new_game_variant_king_of_the_hill">König des Hügels</string>
+    <string name="new_game_variant_chess960">Fischer-Zufallsschach / 960</string>
 </resources>

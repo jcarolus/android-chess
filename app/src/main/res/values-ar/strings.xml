@@ -563,4 +563,8 @@
     <string name="analysis_dont_show_again">عدم الإظهار مجددًا</string>
     <string name="analysis_continue">متابعة</string>
     <string name="analysis_duck_unsupported">تحليل شطرنج البطة غير مدعوم.</string>
+    <string name="new_game_variant_standard">قياسي</string>
+    <string name="new_game_variant_duck">البطة (تجريبي)</string>
+    <string name="new_game_variant_king_of_the_hill">ملك التل</string>
+    <string name="new_game_variant_chess960">فيشر العشوائي / 960</string>
 </resources>

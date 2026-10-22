@@ -564,4 +564,8 @@
     <string name="analysis_dont_show_again">No volver a mostrar</string>
     <string name="analysis_continue">Continuar</string>
     <string name="analysis_duck_unsupported">No se admite el análisis de ajedrez pato.</string>
+    <string name="new_game_variant_standard">Estándar</string>
+    <string name="new_game_variant_duck">Duck (experimental)</string>
+    <string name="new_game_variant_king_of_the_hill">Rey de la colina</string>
+    <string name="new_game_variant_chess960">Fischer aleatorio / 960</string>
 </resources>

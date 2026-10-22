@@ -571,4 +571,8 @@
     <string name="analysis_dont_show_again">دیگر نشان نده</string>
     <string name="analysis_continue">ادامه</string>
     <string name="analysis_duck_unsupported">تحلیل شطرنج اردک پشتیبانی نمی‌شود.</string>
+    <string name="new_game_variant_standard">استاندارد</string>
+    <string name="new_game_variant_duck">اردک (آزمایشی)</string>
+    <string name="new_game_variant_king_of_the_hill">شاه تپه</string>
+    <string name="new_game_variant_chess960">فیشر تصادفی / ۹۶۰</string>
 </resources>

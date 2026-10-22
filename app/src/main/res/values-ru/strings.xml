@@ -554,4 +554,8 @@
     <string name="analysis_dont_show_again">Больше не показывать</string>
     <string name="analysis_continue">Продолжить</string>
     <string name="analysis_duck_unsupported">Анализ шахмат с уткой не поддерживается.</string>
+    <string name="new_game_variant_standard">Стандарт</string>
+    <string name="new_game_variant_duck">Duck (экспериментально)</string>
+    <string name="new_game_variant_king_of_the_hill">Царь горы</string>
+    <string name="new_game_variant_chess960">Шахматы Фишера / 960</string>
 </resources>

@@ -554,4 +554,8 @@
     <string name="analysis_dont_show_again">Bir daha gösterme</string>
     <string name="analysis_continue">Devam et</string>
     <string name="analysis_duck_unsupported">Ördek satrancı için analiz desteklenmiyor.</string>
+    <string name="new_game_variant_standard">Standart</string>
+    <string name="new_game_variant_duck">Duck (deneysel)</string>
+    <string name="new_game_variant_king_of_the_hill">Tepenin Şahı</string>
+    <string name="new_game_variant_chess960">Rastgele Fischer / 960</string>
 </resources>

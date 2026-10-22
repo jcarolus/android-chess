@@ -554,4 +554,8 @@
     <string name="analysis_dont_show_again">Não mostrar novamente</string>
     <string name="analysis_continue">Continuar</string>
     <string name="analysis_duck_unsupported">A análise de xadrez de pato não é suportada.</string>
+    <string name="new_game_variant_standard">Padrão</string>
+    <string name="new_game_variant_duck">Duck (experimental)</string>
+    <string name="new_game_variant_king_of_the_hill">Rei da colina</string>
+    <string name="new_game_variant_chess960">Fischer aleatório / 960</string>
 </resources>

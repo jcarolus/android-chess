@@ -554,4 +554,8 @@
     <string name="analysis_dont_show_again">Non mostrare più</string>
     <string name="analysis_continue">Continua</string>
     <string name="analysis_duck_unsupported">L’analisi degli scacchi con l’anatra non è supportata.</string>
+    <string name="new_game_variant_standard">Standard</string>
+    <string name="new_game_variant_duck">Duck (sperimentale)</string>
+    <string name="new_game_variant_king_of_the_hill">Re della collina</string>
+    <string name="new_game_variant_chess960">Fischer casuale / 960</string>
 </resources>
