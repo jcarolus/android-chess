@@ -2,16 +2,10 @@ package jwtc.android.chess.views;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.widget.TextView;
-
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.content.ContextCompat;
-
 import jwtc.android.chess.R;
-import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.board.BoardConstants;
 
 public class CapturedCountView extends AppCompatTextView {

@@ -1,8 +1,6 @@
 package jwtc.android.chess.ics;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 public interface ICSListener {
@@ -26,7 +24,8 @@ public interface ICSListener {
 
     void OnSeekNotAvailable();
 
-    void OnPlayGameStarted(String whiteHandle, String blackHandle, String whiteRating, String blackRating);
+    void OnPlayGameStarted(
+            String whiteHandle, String blackHandle, String whiteRating, String blackRating);
 
     void OnGameNumberUpdated(int number);
 

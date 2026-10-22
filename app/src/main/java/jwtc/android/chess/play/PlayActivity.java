@@ -1,10 +1,7 @@
 package jwtc.android.chess.play;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,35 +14,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import org.json.JSONArray;
-
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import jwtc.android.chess.GamesListActivity;
-import jwtc.android.chess.helpers.ActivityHelper;
-import jwtc.android.chess.helpers.Clipboard;
-import jwtc.android.chess.helpers.EinkMode;
-import jwtc.android.chess.helpers.MoveRecyclerAdapter;
-import jwtc.android.chess.helpers.MyPGNProvider;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
+import jwtc.android.chess.analyze.AnalyzeActivity;
 import jwtc.android.chess.constants.PieceSets;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.EngineListener;
-import jwtc.android.chess.engine.LocalEngine;
-import jwtc.android.chess.engine.OexEngine;
+import jwtc.android.chess.engine.EngineSession;
+import jwtc.android.chess.engine.SearchLimit;
+import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.Clipboard;
+import jwtc.android.chess.helpers.EinkMode;
+import jwtc.android.chess.helpers.GameStore;
+import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
-import jwtc.android.chess.helpers.Utils;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
@@ -54,14 +45,15 @@ import jwtc.android.chess.views.CapturedCountView;
 import jwtc.android.chess.views.ChessPieceView;
 import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
-import jwtc.chess.PGNColumns;
+import jwtc.chess.GameRecord;
 import jwtc.chess.board.BoardConstants;
+import org.json.JSONArray;
 
-
-public class PlayActivity extends ChessBoardActivity implements
-    EngineListener,
-    ResultDialogListener<Bundle>,
-    ClockListener, MoveRecyclerAdapter.OnItemClickListener {
+public class PlayActivity extends ChessBoardActivity
+        implements EngineListener,
+                ResultDialogListener<Bundle>,
+                ClockListener,
+                MoveRecyclerAdapter.OnItemClickListener {
     private static final String TAG = "PlayActivity";
     public static final int REQUEST_SETUP = 1;
     public static final int REQUEST_OPEN = 2;
@@ -75,12 +67,13 @@ public class PlayActivity extends ChessBoardActivity implements
     public static final int REQUEST_SAVE_POSITION_TO_FILE = 10;
     public static final int REQUEST_OPEN_POSITION_FILE = 11;
     public static final int REQUEST_OPEN_GAME_FILE = 12;
+    public static final int REQUEST_NEW_GAME = 13;
 
     private LocalClockApi localClock;
-    private EngineApi myEngine;
-    private EngineApi localEngine;
-    private OexEngine oexEngine;
-    private final EcoService ecoService = new EcoService();
+    private EngineSession engineSession;
+    private boolean enginePausedForHistory;
+    private SearchLimit searchLimit = SearchLimit.millis(1000);
+    private EcoService ecoService;
     private long lGameID;
     private LinearProgressIndicator progressBarEngine;
     private MaterialButton playButton;
@@ -90,7 +83,14 @@ public class PlayActivity extends ChessBoardActivity implements
     private ChessPiecesStackView topPieces, capturedWhitePieces;
     private ChessPiecesStackView bottomPieces, capturedBlackPieces;
     private ImageView imageBottomTurn, imageTopTurn, imageTurnWhite, imageTurnBlack;
-    private TextView textViewTopPlayer, textViewBottomPlayer, textViewTopClockTime, textViewBottomClockTime, textViewWhitePlayer, textViewBlackPlayer, textViewWhiteClockTIme, textViewBlackClockTime;
+    private TextView textViewTopPlayer,
+            textViewBottomPlayer,
+            textViewTopClockTime,
+            textViewBottomClockTime,
+            textViewWhitePlayer,
+            textViewBlackPlayer,
+            textViewWhiteClockTIme,
+            textViewBlackClockTime;
     private TextView textViewLastMove, textViewEco;
     private TextView textViewInfoBalloon, textViewEngineValue;
     private MaterialButton buttonEco;
@@ -102,18 +102,22 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public boolean requestMove(final int from, final int to) {
-        if (!gameApi.isEnded() && (jni.getTurn() == myTurn || vsCPU == false)) {
-            // @TODO check if override new line
-
-            /*
-            openConfirmDialog(
-                            getString(R.string.title_create_new_line),
-                            getString(R.string.alert_yes),
-                            getString(R.string.alert_no),
-                            this::playIfEngineCanMove,
-                            null
-                    );
-             */
+        // A Duck piece preview reports the next side to move before placement completes the turn.
+        boolean isMyTurn =
+                gameApi.hasPendingDuckMove()
+                        ? gameApi.getTurn() != myTurn && from == gameApi.getDuckPos()
+                        : gameApi.getTurn() == myTurn;
+        if (!gameApi.isEnded() && (isMyTurn || !vsCPU)) {
+            if (gameApi.hasContinuationToOverwrite()) {
+                confirmOverwrite(
+                        () -> {
+                            if (!super.requestMove(from, to)) {
+                                rebuildBoard();
+                            }
+                        });
+                rebuildBoard();
+                return true;
+            }
 
             if (super.requestMove(from, to)) {
                 return true;
@@ -121,6 +125,24 @@ public class PlayActivity extends ChessBoardActivity implements
         }
         rebuildBoard();
         return false;
+    }
+
+    private void confirmOverwrite(Runnable action) {
+        if (gameApi.hasContinuationToOverwrite()) {
+            openConfirmDialog(
+                    getString(R.string.title_overwrite_main_line),
+                    getString(R.string.alert_yes),
+                    getString(R.string.alert_no),
+                    action,
+                    this::rebuildBoard);
+        } else {
+            action.run();
+        }
+    }
+
+    @Override
+    protected void handleAmbiguousCastle(int from, int to) {
+        confirmOverwrite(() -> super.handleAmbiguousCastle(from, to));
     }
 
     @Override
@@ -132,6 +154,8 @@ public class PlayActivity extends ChessBoardActivity implements
         ActivityHelper.fixPaddings(this, findViewById(R.id.root_layout));
 
         gameApi = new GameApi();
+        gameApi.setOverwriteContinuation(true);
+        ecoService = new EcoService(gameApi);
         localClock = new LocalClockApi(gameApi);
 
         localClock.addListener(this);
@@ -151,62 +175,63 @@ public class PlayActivity extends ChessBoardActivity implements
         layoutHistory = findViewById(R.id.LayoutHistory);
         layoutEco = findViewById(R.id.LayoutEco);
 
-        initBoardLayoutSizing(rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout);
+        initBoardLayoutSizing(
+                rootLayout, boardAreaLayout, controlsLayout, boardTopLayout, boardBottomLayout);
 
         playButton = findViewById(R.id.ButtonPlay);
-        playButton.setOnClickListener(arg0 -> {
-            if (!gameApi.isEnded()) {
-                if (myEngine.isReady()) {
-                    if (jni.getNumBoard() < gameApi.getPGNSize()) {
-                        openConfirmDialog(
-                            getString(R.string.title_create_new_line),
-                            getString(R.string.alert_yes),
-                            getString(R.string.alert_no),
-                            this::playIfEngineCanMove,
-                            null
-                        );
-                    } else {
-                        playIfEngineCanMove();
+        playButton.setOnClickListener(
+                arg0 -> {
+                    if (!gameApi.isEnded()) {
+                        if (engineSession.isReady()) {
+                            confirmOverwrite(this::resumeEnginePlay);
+                        } else {
+                            engineSession.abort(() -> {});
+                        }
                     }
-                } else {
-                    myEngine.abort(() -> {});
-                }
-            }
-        });
+                });
 
         progressBarEngine = findViewById(R.id.ProgressBarPlay);
 
         final MenuDialog menuDialog = new MenuDialog(this, this, REQUEST_MENU);
 
         MaterialButton buttonMenu = findViewById(R.id.ButtonMenu);
-        buttonMenu.setOnClickListener(v -> menuDialog.show());
+        buttonMenu.setOnClickListener(
+                v -> {
+                    menuDialog.setKingOfTheHill(gameApi.isKingOfTheHillVariant());
+                    menuDialog.show();
+                });
 
         topPieces = findViewById(R.id.topPieces);
         bottomPieces = findViewById(R.id.bottomPieces);
 
         MaterialButton butNext = findViewById(R.id.ButtonNext);
-        butNext.setOnClickListener(v -> gameApi.nextMove());
-        butNext.setOnLongClickListener(v -> {
-            gameApi.jumpToBoardNum(gameApi.getPGNSize());
-            return true;
-        });
+        butNext.setOnClickListener(v -> navigateHistory(() -> gameApi.nextMove()));
+        butNext.setOnLongClickListener(
+                v -> {
+                    java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
+                    if (!line.isEmpty()) {
+                        navigateHistory(() -> gameApi.goTo(line.get(line.size() - 1)));
+                    }
+                    return true;
+                });
 
         MaterialButton butPrev = findViewById(R.id.ButtonPrevious);
-        butPrev.setOnClickListener(v -> gameApi.undoMove());
+        butPrev.setOnClickListener(v -> navigateHistory(() -> gameApi.undoMove()));
 
-        butPrev.setOnLongClickListener(v -> {
-            gameApi.jumpToBoardNum(1);
-            return true;
-        });
+        butPrev.setOnLongClickListener(
+                v -> {
+                    navigateHistory(() -> gameApi.jumpToBoardNum(1));
+                    return true;
+                });
 
-//        ImageButton butPgn = findViewById(R.id.ButtonPGN);
-//        butPgn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                PGNDialog dialog = new PGNDialog(PlayActivity.this, gameApi);
-//                dialog.show();
-//            }
-//        });
+        //        ImageButton butPgn = findViewById(R.id.ButtonPGN);
+        //        butPgn.setOnClickListener(new View.OnClickListener() {
+        //            @Override
+        //            public void onClick(View v) {
+        //                PGNDialog dialog = new PGNDialog(PlayActivity.this, gameApi);
+        //                dialog.show();
+        //            }
+        //        });
 
         imageBottomTurn = findViewById(R.id.ImageBottomTurn);
         imageTopTurn = findViewById(R.id.ImageTopTurn);
@@ -237,38 +262,42 @@ public class PlayActivity extends ChessBoardActivity implements
             // no textColor of its own, so it also has to be pinned to black rather
             // than inheriting a mid-grey default.
             textViewEngineValue.setBackground(null);
-            textViewEngineValue.setTextColor(getResources().getColor(R.color.einkForeground, getTheme()));
+            textViewEngineValue.setTextColor(
+                    getResources().getColor(R.color.einkForeground, getTheme()));
         }
 
         switchBlindfold = findViewById(R.id.SwitchBlindfold);
-        switchBlindfold.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (switchBlindfold.isChecked()) {
-                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
-            } else {
-                PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
-            }
-            rebuildBoard();
-            applyCapturedPiecesVisibility();
-            capturedWhitePieces.invalidatePieces();
-            capturedBlackPieces.invalidatePieces();
-        });
+        switchBlindfold.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    if (switchBlindfold.isChecked()) {
+                        PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_HIDE_PIECES;
+                    } else {
+                        PieceSets.selectedBlindfoldMode = PieceSets.BLINDFOLD_SHOW_PIECES;
+                    }
+                    rebuildBoard();
+                    applyCapturedPiecesVisibility();
+                    capturedWhitePieces.invalidatePieces();
+                    capturedBlackPieces.invalidatePieces();
+                });
 
         switchFlip = findViewById(R.id.SwitchFlip);
-        switchFlip.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            flipBoard = switchFlip.isChecked();
-            updateBoardRotation();
-        });
+        switchFlip.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    flipBoard = switchFlip.isChecked();
+                    updateBoardRotation();
+                });
 
         switchMinimal = findViewById(R.id.SwitchMinimal);
-        switchMinimal.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            switchMinimal(isChecked);
-        });
+        switchMinimal.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    switchMinimal(isChecked);
+                });
 
         historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
 
         // Horizontal layout manager
         LinearLayoutManager layoutManager =
-            new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         historyRecyclerView.setLayoutManager(layoutManager);
 
         // Set adapter
@@ -293,13 +322,11 @@ public class PlayActivity extends ChessBoardActivity implements
         String type = intent.getType();
         Uri uri = intent.getData();
 
-        localEngine = new LocalEngine(gameApi);
-        oexEngine = new OexEngine(this, gameApi, prefs.getString("oexEngineId", null));
-        myEngine = null;
+        engineSession = EngineSession.forPlay(this, gameApi, this);
 
         lGameID = prefs.getLong("game_id", 0);
 
-        updateClockByPrefs(false);
+        updateClockByPrefs(false, prefs.getInt("clockActivePlayer", gameApi.getTurn()));
         updateGameSettingsByPrefs();
 
         flipBoard = prefs.getBoolean("flipBoard", false);
@@ -336,7 +363,13 @@ public class PlayActivity extends ChessBoardActivity implements
                 Log.e("onResume", "Failed " + e.toString());
             }
         }
-        Log.d(TAG, "onResume => " + lGameID + " " + (sPGN != null ? "PGN " : " ") + (sFEN != null ? "FEN" : ""));
+        Log.d(
+                TAG,
+                "onResume => "
+                        + lGameID
+                        + " "
+                        + (sPGN != null ? "PGN " : " ")
+                        + (sFEN != null ? "FEN" : ""));
         if (lGameID > 0 && loadGame()) {
             Log.d(TAG, "Loaded game " + lGameID);
         } else if (sPGN != null) {
@@ -363,53 +396,34 @@ public class PlayActivity extends ChessBoardActivity implements
         bottomPieces.setVisibility(visibility);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
 
-        if (myEngine != null) {
-            myEngine.abort(() -> {
-            });
-            myEngine.removeListener(this);
-            myEngine = null;
-        }
-        if (localEngine != null) {
-            localEngine.destroy();
-            localEngine = null;
-        }
-        if (oexEngine != null) {
-            oexEngine.destroy();
-            oexEngine = null;
+        if (engineSession != null) {
+            engineSession.close();
+            engineSession = null;
         }
 
+        final long pauseTime = System.currentTimeMillis();
         localClock.stopClock();
 
         SharedPreferences.Editor editor = this.getPrefs().edit();
 
         if (lGameID > 0) {
-            ContentValues values = new ContentValues();
-
-            // @TODO - generic solution; +RESULT?
-            values.put(PGNColumns.DATE, gameApi.getDate().getTime());
-            values.put(PGNColumns.WHITE, gameApi.getWhite());
-            values.put(PGNColumns.BLACK, gameApi.getBlack());
-            values.put(PGNColumns.PGN, gameApi.exportFullPGN());
-            values.put(PGNColumns.EVENT, gameApi.getPGNHeadProperty("Event"));
-
-            saveGame(values, false, lGameID);
+            saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);
 
             editor.putString("FEN", null);
         }
 
         editor.putLong("game_id", lGameID);
         editor.putString("game_pgn", gameApi.exportFullPGN());
-        editor.putString("FEN", jni.toFEN());
+        editor.putString("FEN", gameApi.getFEN());
         editor.putString("setupFEN", null);
 
-        final long pauseTime = System.currentTimeMillis();
         editor.putLong("clockWhiteMillies", localClock.getWhiteRemaining());
         editor.putLong("clockBlackMillies", localClock.getBlackRemaining());
+        editor.putInt("clockActivePlayer", localClock.getActivePlayer());
         editor.putLong("clockStartTime", gameApi.isEnded() ? 0 : pauseTime);
         editor.putBoolean("flipBoard", flipBoard);
         editor.putBoolean("minimal", switchMinimal.isChecked());
@@ -444,7 +458,7 @@ public class PlayActivity extends ChessBoardActivity implements
             } else if (requestCode == REQUEST_FROM_QR_CODE) {
                 if (resultCode == RESULT_OK) {
                     String contents = data.getStringExtra("SCAN_RESULT");
-                    //String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+                    // String format = data.getStringExtra("SCAN_RESULT_FORMAT");
 
                     SharedPreferences.Editor editor = this.getPrefs().edit();
                     editor.putLong("game_id", 0);
@@ -491,9 +505,9 @@ public class PlayActivity extends ChessBoardActivity implements
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
     @Override
     public void onMoveApplied(int move) {
+        enginePausedForHistory = false;
         super.onMoveApplied(move);
 
         updateGUI();
@@ -514,6 +528,14 @@ public class PlayActivity extends ChessBoardActivity implements
     @Override
     public void onHistoryPositionChanged(int boardNumber) {
         super.onHistoryPositionChanged(boardNumber);
+
+        updateLastMove();
+    }
+
+    @Override
+    public void onGameLoaded() {
+        enginePausedForHistory = false;
+        super.onGameLoaded();
 
         updateLastMove();
     }
@@ -540,7 +562,9 @@ public class PlayActivity extends ChessBoardActivity implements
         // With reduced animations the balloon is left alone: a principal
         // variation rewritten mid-search is a steady stream of e-ink panel
         // updates for text that is obsolete before it has finished rendering.
-        if (!EinkMode.isReduceAnimations() && textViewInfoBalloon != null && textViewInfoBalloon.getParent() != null) {
+        if (!EinkMode.isReduceAnimations()
+                && textViewInfoBalloon != null
+                && textViewInfoBalloon.getParent() != null) {
             textViewInfoBalloon.setText(message);
         }
     }
@@ -576,6 +600,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onNewGameStarted(int variant) {
+        enginePausedForHistory = false;
         super.onNewGameStarted(variant);
 
         feedbackNewGameStarted(myTurn, textViewLastMove);
@@ -603,7 +628,26 @@ public class PlayActivity extends ChessBoardActivity implements
 
     @Override
     public void onMoveItemClick(int pos) {
-        this.gameApi.jumpToBoardNum(pos + 1);
+        java.util.List<jwtc.chess.GameTree.Node> line = gameApi.getCurrentLineNodes();
+        if (pos >= 0 && pos < line.size()) {
+            navigateHistory(() -> gameApi.goTo(line.get(pos)));
+        }
+    }
+
+    private void navigateHistory(Runnable navigation) {
+        enginePausedForHistory = true;
+        // Abort also invalidates results already queued for delivery on the main thread.
+        if (engineSession != null) {
+            engineSession.abort(null);
+        }
+        toggleEngineProgress(false);
+        hideInfoBalloon();
+        navigation.run();
+    }
+
+    private void resumeEnginePlay() {
+        enginePausedForHistory = false;
+        playIfEngineCanMove();
     }
 
     protected void updateGUI() {
@@ -619,7 +663,9 @@ public class PlayActivity extends ChessBoardActivity implements
         final int state = chessStateToR(gameApi.getState());
         String sState = "";
         // in play or mate are clear from last move.
-        if (state != R.string.state_play && state != R.string.state_mate && state != R.string.state_check) {
+        if (state != R.string.state_play
+                && state != R.string.state_mate
+                && state != R.string.state_check) {
             sState = ". " + getString(state);
         }
         String moveMessage = getLastMoveAndTurnDescription(false) + sState;
@@ -629,7 +675,7 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected void updateSeekBar() {
         moveAdapter.update();
-        historyRecyclerView.scrollToPosition(jni.getNumBoard() - 1);
+        historyRecyclerView.scrollToPosition(gameApi.getNumBoard() - 1);
     }
 
     protected void updatePlayers() {
@@ -638,7 +684,7 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void updateEco() {
-        String ecoName = ecoService.getEcoNameByHash(jni.getHashKey());
+        String ecoName = ecoService.getEcoNameByHash(gameApi.getHashKey());
         JSONArray jArray = ecoService.getAvailable();
         Log.d(TAG, "eco by hash " + ecoName + " :: " + jArray.length());
 
@@ -655,13 +701,20 @@ public class PlayActivity extends ChessBoardActivity implements
             if (jArray != null && jArray.length() > 0) {
                 final String title = ecoName;
                 buttonEco.setEnabled(true);
-                buttonEco.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        EcoDialog dialog = new EcoDialog(PlayActivity.this, PlayActivity.this, REQUEST_ECO, title, jArray);
-                        dialog.show();
-                    }
-                });
+                buttonEco.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                EcoDialog dialog =
+                                        new EcoDialog(
+                                                PlayActivity.this,
+                                                PlayActivity.this,
+                                                REQUEST_ECO,
+                                                title,
+                                                jArray);
+                                dialog.show();
+                            }
+                        });
             } else {
                 buttonEco.setEnabled(false);
             }
@@ -675,7 +728,7 @@ public class PlayActivity extends ChessBoardActivity implements
         int piece, turnAt;
         for (turnAt = 0; turnAt < 2; turnAt++) {
             for (piece = 0; piece < 5; piece++) {
-                int numCaptured = jni.getNumCaptured(turnAt, piece);
+                int numCaptured = gameApi.getNumCaptured(turnAt, piece);
 
                 // The empty slots are placeholders painted in the board colours,
                 // which on a greyscale panel read as a row of unexplained blocks
@@ -690,10 +743,14 @@ public class PlayActivity extends ChessBoardActivity implements
                     }
                 }
 
-//                Log.d(TAG, "numCaptured for " + turnAt + " " + piece + " " + numCaptured);
+                //                Log.d(TAG, "numCaptured for " + turnAt + " " + piece + " " +
+                // numCaptured);
                 if (numCaptured > 0) {
                     ChessPieceView capturedPiece = new ChessPieceView(this, turnAt, piece, piece);
-                    CapturedCountView capturedCountView = numCaptured > 1 ? new CapturedCountView(this, numCaptured, piece, turnAt) : null;
+                    CapturedCountView capturedCountView =
+                            numCaptured > 1
+                                    ? new CapturedCountView(this, numCaptured, piece, turnAt)
+                                    : null;
 
                     if (turnAt == BoardConstants.BLACK) {
                         capturedBlackPieces.addView(capturedPiece);
@@ -712,33 +769,29 @@ public class PlayActivity extends ChessBoardActivity implements
     }
 
     protected void updateTurnSwitchers() {
-        final int currentTurn = jni.getTurn();
+        final int currentTurn = gameApi.getTurn();
 
-        imageTurnWhite.setImageResource(currentTurn == BoardConstants.WHITE
-            ? R.drawable.turnwhite
-            : R.drawable.turnempty
-        );
+        imageTurnWhite.setImageResource(
+                currentTurn == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnempty);
 
-        imageTurnBlack.setImageResource(currentTurn == BoardConstants.BLACK
-            ? R.drawable.turnblack
-            : R.drawable.turnempty
-        );
+        imageTurnBlack.setImageResource(
+                currentTurn == BoardConstants.BLACK ? R.drawable.turnblack : R.drawable.turnempty);
     }
-
 
     protected void toggleEngineProgress(boolean showProgress) {
         Log.d(TAG, "toggleEngineProgress " + showProgress);
         if (showProgress) {
             playButton.setIconResource(R.drawable.box_arrow_up_right);
-            //playButton.setVisibility(View.GONE);
+            // playButton.setVisibility(View.GONE);
             // The indeterminate bar loops for as long as the engine thinks, which
             // on e-ink is an unbroken refresh cycle. The button icon above
             // already says the engine is busy, so leave the bar hidden.
-            progressBarEngine.setVisibility(EinkMode.isReduceAnimations() ? View.INVISIBLE : View.VISIBLE);
+            progressBarEngine.setVisibility(
+                    EinkMode.isReduceAnimations() ? View.INVISIBLE : View.VISIBLE);
         } else {
             playButton.setIconResource(R.drawable.ic_robot);
             progressBarEngine.setVisibility(View.INVISIBLE);
-            //playButton.setVisibility(View.VISIBLE);
+            // playButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -750,28 +803,28 @@ public class PlayActivity extends ChessBoardActivity implements
                 String item = data.getString("item");
 
                 if (item.equals(getString(R.string.menu_game_settings))) {
-                    GameSettingsDialog settingsDialog = new GameSettingsDialog(
-                        this,
-                        this,
-                        REQUEST_GAME_SETTINGS,
-                        getPrefs(),
-                        jni.getVariant() == BoardConstants.VARIANT_DUCK
-                    );
+                    GameSettingsDialog settingsDialog =
+                            new GameSettingsDialog(
+                                    this,
+                                    this,
+                                    REQUEST_GAME_SETTINGS,
+                                    getPrefs(),
+                                    gameApi.requiresBuiltinEngine());
                     settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
-                    gameApi.newGame();
-                    lGameID = 0;
-                } else if (item.equals(getString(R.string.menu_new_duck))) {
-                    gameApi.newGame(BoardConstants.VARIANT_DUCK);
-                    lGameID = 0;
-                } else if (item.equals(getString(R.string.menu_new_960))) {
-                    intent = new Intent();
-                    intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupRandomFischerActivity.class);
-                    startActivityForResult(intent, REQUEST_RANDOM_FISCHER);
+                    new NewGameDialog(this, this, REQUEST_NEW_GAME, getPrefs()).show();
                 } else if (item.equals(getString(R.string.menu_setup))) {
                     intent = new Intent();
-                    intent.setClass(PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
+                    intent.setClass(
+                            PlayActivity.this, jwtc.android.chess.setup.SetupActivity.class);
                     startActivityForResult(intent, REQUEST_SETUP);
+                } else if (item.equals(getString(R.string.menu_analyse_game))) {
+                    if (gameApi.isKingOfTheHillVariant()) {
+                        return;
+                    }
+                    intent = new Intent(this, AnalyzeActivity.class);
+                    intent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
+                    startActivity(intent);
                 } else if (item.equals(getString(R.string.menu_save_game))) {
                     saveGame();
                 } else if (item.equals(getString(R.string.menu_load_game))) {
@@ -780,7 +833,8 @@ public class PlayActivity extends ChessBoardActivity implements
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                 } else if (item.equals(getString(R.string.menu_set_clock))) {
-                    final ClockDialog menuDialog = new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
+                    final ClockDialog menuDialog =
+                            new ClockDialog(this, this, REQUEST_CLOCK, getPrefs());
                     menuDialog.show();
                 } else if (item.equals(getString(R.string.menu_fromclip))) {
                     String s = Clipboard.getStringFromClipboard(this);
@@ -792,11 +846,18 @@ public class PlayActivity extends ChessBoardActivity implements
                         }
                     }
                 } else if (item.equals(getString(R.string.menu_clip_pgn))) {
-                    Clipboard.stringToClipboard(this, gameApi.exportFullPGN(), getString(R.string.copied_clipboard_success));
+                    Clipboard.stringToClipboard(
+                            this,
+                            gameApi.exportFullPGN(),
+                            getString(R.string.copied_clipboard_success));
                 } else if (item.equals(getString(R.string.menu_save_game_to_file))) {
-                    startIntentForSaveDocument("application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
+                    startIntentForSaveDocument(
+                            "application/x-chess-pgn", "game.pgn", REQUEST_SAVE_GAME_TO_FILE);
                 } else if (item.equals(getString(R.string.menu_save_position_to_file))) {
-                    startIntentForSaveDocument("application/x-chess-fen", "position.fen", REQUEST_SAVE_POSITION_TO_FILE);
+                    startIntentForSaveDocument(
+                            "application/x-chess-fen",
+                            "position.fen",
+                            REQUEST_SAVE_POSITION_TO_FILE);
                 } else if (item.equals(getString(R.string.menu_open_position_file))) {
                     Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -811,8 +872,28 @@ public class PlayActivity extends ChessBoardActivity implements
 
                 break;
             case REQUEST_CLOCK:
-                updateClockByPrefs(false);
+                updateClockByPrefs(false, localClock.getActivePlayer());
                 gameApi.resetForfeitTime();
+                break;
+
+            case REQUEST_NEW_GAME:
+                if (data.getBoolean(NewGameDialog.EXTRA_CHESS960)) {
+                    Intent setupIntent =
+                            new Intent(
+                                    this,
+                                    jwtc.android.chess.setup.SetupRandomFischerActivity.class);
+                    startActivityForResult(setupIntent, REQUEST_RANDOM_FISCHER);
+                } else {
+                    myTurn =
+                            getPrefs().getBoolean("myTurn", true)
+                                    ? BoardConstants.WHITE
+                                    : BoardConstants.BLACK;
+                    lGameID = 0;
+                    gameApi.newGame(
+                            data.getInt(
+                                    NewGameDialog.EXTRA_VARIANT, BoardConstants.VARIANT_DEFAULT));
+                    playIfEngineMove();
+                }
                 break;
 
             case REQUEST_GAME_SETTINGS:
@@ -823,7 +904,8 @@ public class PlayActivity extends ChessBoardActivity implements
 
             case REQUEST_ECO:
                 item = data.getString("item");
-                gameApi.requestMove(item);
+                final String openingMove = item;
+                confirmOverwrite(() -> gameApi.requestMove(openingMove));
                 break;
         }
     }
@@ -855,13 +937,14 @@ public class PlayActivity extends ChessBoardActivity implements
             }
         }
 
-//        long remaining = myTurn == BoardConstants.WHITE ? localClock.getWhiteRemaining() : localClock.getBlackRemaining();
-//        if (remaining < _TimeWarning * 1000) {
-//            textViewMyClock.setBackgroundColor(0xCCFF0000);
-//            // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
-//        } else {
-//            textViewMyClock.setBackgroundColor(Color.TRANSPARENT);
-//        }
+        //        long remaining = myTurn == BoardConstants.WHITE ? localClock.getWhiteRemaining() :
+        // localClock.getBlackRemaining();
+        //        if (remaining < _TimeWarning * 1000) {
+        //            textViewMyClock.setBackgroundColor(0xCCFF0000);
+        //            // @TODO spSound.play(soundTickTock, fVolume, fVolume, 1, 0, 1);
+        //        } else {
+        //            textViewMyClock.setBackgroundColor(Color.TRANSPARENT);
+        //        }
     }
 
     @Override
@@ -871,7 +954,7 @@ public class PlayActivity extends ChessBoardActivity implements
         }
     }
 
-    protected void updateClockByPrefs(boolean newGame) {
+    protected void updateClockByPrefs(boolean newGame, int activePlayer) {
         SharedPreferences prefs = getPrefs();
         long increment = prefs.getLong("clockIncrement", 0);
         long whiteRemaining = prefs.getLong("clockWhiteMillies", 0);
@@ -885,62 +968,39 @@ public class PlayActivity extends ChessBoardActivity implements
         if (startTime > 0 && newGame) {
             startTime = System.currentTimeMillis();
         }
-        localClock.startClock(increment, whiteRemaining, blackRemaining, jni.getTurn(), startTime);
+        localClock.startClock(increment, whiteRemaining, blackRemaining, activePlayer, startTime);
     }
 
     protected void updateForNewGame() {
         Log.d(TAG, "updateForNewGame");
 
-        updateClockByPrefs(true);
+        updateClockByPrefs(true, gameApi.getTurn());
         updateGameSettingsByPrefs();
 
         resetSelectedSquares();
         updateGUI();
-
     }
 
     private String getPreferredEngineBackend() {
         return getPrefs().getString("engineBackend", "builtin");
     }
 
-    private EngineApi resolveEngineByPrefsAndVariant() {
-        boolean isDuck = jni.getVariant() == BoardConstants.VARIANT_DUCK;
-        boolean wantsOex = "oex".equals(getPreferredEngineBackend());
-        if (wantsOex && !OexEngine.hasAvailableEngines(this)) {
-            wantsOex = false;
-        }
-        return wantsOex && !isDuck ? oexEngine : localEngine;
-    }
-
     private void updateActiveEngine() {
-        if (localEngine == null) {
-            localEngine = new LocalEngine(gameApi);
+        if (engineSession == null) {
+            engineSession = EngineSession.forPlay(this, gameApi, this);
         }
-        if (oexEngine == null) {
-            oexEngine = new OexEngine(this, gameApi, getPrefs().getString("oexEngineId", null));
-        } else {
-            oexEngine.setPreferredEngineId(getPrefs().getString("oexEngineId", null));
-        }
-
-        EngineApi selectedEngine = resolveEngineByPrefsAndVariant();
-        if (selectedEngine == null) {
-            selectedEngine = localEngine;
-        }
-        if (selectedEngine == myEngine) {
-            return;
-        }
-
-        if (myEngine != null) {
-            myEngine.abort(() -> {
-            });
-            myEngine.removeListener(this);
-        }
-        myEngine = selectedEngine;
-        myEngine.addListener(this);
+        SharedPreferences prefs = getPrefs();
+        engineSession.selectForPlay(
+                "oex".equals(getPreferredEngineBackend()),
+                prefs.getString("oexEngineId", null),
+                gameApi.requiresBuiltinEngine(),
+                prefs.getBoolean("quiescentSearchOn", true));
     }
 
     protected void updateBoardRotation() {
-        boolean isRotated = flipBoard && myTurn == BoardConstants.WHITE || !flipBoard && myTurn == BoardConstants.BLACK;
+        boolean isRotated =
+                flipBoard && myTurn == BoardConstants.WHITE
+                        || !flipBoard && myTurn == BoardConstants.BLACK;
         chessBoardView.setRotated(isRotated);
 
         imageTurnWhite = isRotated ? imageTopTurn : imageBottomTurn;
@@ -968,8 +1028,6 @@ public class PlayActivity extends ChessBoardActivity implements
         // menu button in from the right edge. It costs no height either way, the
         // row is already as tall as the buttons.
         textViewLastMove.setVisibility(minimal ? View.INVISIBLE : View.VISIBLE);
-        textViewWhitePieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
-        textViewBlackPieces.setVisibility(minimal ? View.GONE : View.VISIBLE);
         requestBoardLayoutSizingUpdate();
     }
 
@@ -985,22 +1043,22 @@ public class PlayActivity extends ChessBoardActivity implements
 
         int levelTime = prefs.getInt("level", 2);
         int levelPly = prefs.getInt("levelPly", 2);
-        int[] secs = {1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800}; // 1 offset, so 3 extra 1 unused secs
+        int[] secs = {
+            1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800
+        }; // 1 offset, so 3 extra 1 unused secs
 
-        if (mode == EngineApi.LEVEL_TIME) {
-            myEngine.setMsecs(secs[levelTime] * 1000);
-        } else {
-            myEngine.setPly(levelPly);
-        }
-
-        myEngine.setQuiescentSearchOn(prefs.getBoolean("quiescentSearchOn", true));
+        searchLimit =
+                mode == EngineApi.LEVEL_TIME
+                        ? SearchLimit.millis(secs[levelTime] * 1000)
+                        : SearchLimit.ply(levelPly);
 
         updateBoardRotation();
         updateLastMove();
     }
 
     public void saveGame() {
-        SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, lGameID, this::saveGameFromDialog);
+        SaveGameDialog saveDialog =
+                new SaveGameDialog(this, gameApi, lGameID, this::saveGameFromDialog);
         saveDialog.show();
     }
 
@@ -1014,75 +1072,73 @@ public class PlayActivity extends ChessBoardActivity implements
 
     protected boolean loadGame() {
         if (lGameID > 0) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
-            try {
-                Cursor c = getContentResolver().query(uri, PGNColumns.COLUMNS, null, null, null);
-                if (c != null && c.getCount() == 1) {
-
-                    c.moveToFirst();
-
-                    lGameID = Utils.getColumnLong(c, PGNColumns._ID);
-                    String sPGN = Utils.getColumnString(c, PGNColumns.PGN);
-
-                    gameApi.loadPGN(sPGN);
-
-                    gameApi.setPGNTag("Event", Utils.getColumnString(c, PGNColumns.EVENT));
-                    gameApi.setPGNTag("White", Utils.getColumnString(c, PGNColumns.WHITE));
-                    gameApi.setPGNTag("Black", Utils.getColumnString(c, PGNColumns.BLACK));
-                    gameApi.setDateLong(Utils.getColumnLong(c, PGNColumns.DATE));
-
-                    c.close();
-
-                    return true;
-                }
-                Log.d(TAG, "Game not found: " + lGameID);
-            } catch (Exception e) {
-                Log.d(TAG, "Caught exception loading game: " + lGameID + " " + e.getMessage());
+            GameRecord record = new GameStore(getContentResolver()).load(lGameID);
+            if (record != null && gameApi.loadGame(record)) {
+                lGameID = record.id;
+                return true;
             }
+            Log.d(TAG, "Game not loaded: " + lGameID);
         }
         lGameID = 0;
         return false;
     }
 
     protected void playIfEngineMove() {
-        Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + jni.getTurn() + " vsCPU " + vsCPU);
-        if (myEngine != null && myTurn != jni.getTurn() && vsCPU) {
+        Log.d(TAG, "playIfEngineMove " + myTurn + " vs " + gameApi.getTurn() + " vsCPU " + vsCPU);
+        if (!enginePausedForHistory
+                && engineSession != null
+                && myTurn != gameApi.getTurn()
+                && vsCPU) {
             playIfEngineCanMove();
         }
     }
 
     protected void playIfEngineCanMove() {
-        Log.d(TAG, "playIfEngineCanMove t " + jni.getTurn() + " myt " + myTurn + " duck " + jni.getDuckPos() + " - " + jni.getMyDuckPos());
-        if (myEngine != null && myEngine.isReady() && !gameApi.isEnded() && (jni.getDuckPos() == -1 || jni.getDuckPos() != -1 && jni.getMyDuckPos() != -1)) {
+        Log.d(
+                TAG,
+                "playIfEngineCanMove t "
+                        + gameApi.getTurn()
+                        + " myt "
+                        + myTurn
+                        + " duck "
+                        + gameApi.getDuckPos()
+                        + " - "
+                        + gameApi.getMyDuckPos());
+        if (engineSession != null
+                && engineSession.isReady()
+                && !gameApi.isEnded()
+                && (gameApi.getDuckPos() == -1
+                        || gameApi.getDuckPos() != -1 && gameApi.getMyDuckPos() != -1)) {
 
             ArrayList<Integer> moves = ecoService.getAvailableMoves();
 
-            if (jni.getVariant() != BoardConstants.VARIANT_DUCK && moves.size() > 0) {
+            if (!gameApi.requiresBuiltinEngine() && moves.size() > 0) {
                 int r = (int) (Math.random() * moves.size());
                 Log.d(TAG, "Eco moves " + moves.size() + ", " + r);
                 gameApi.move(moves.get(r), -1);
                 // textViewEngineValue.setText("From opening book");
             } else {
-                myEngine.play();
+                engineSession.play(searchLimit);
             }
         }
     }
 
     protected void showInfoBalloon(View anchor) {
-        View viewInfoBalloon = LayoutInflater.from(anchor.getContext()).inflate(R.layout.info_balloon, null);
+        View viewInfoBalloon =
+                LayoutInflater.from(anchor.getContext()).inflate(R.layout.info_balloon, null);
 
         textViewInfoBalloon = viewInfoBalloon.findViewById(R.id.TextViewInfo);
         textViewInfoBalloon.setText("");
 
-        popupWindowInfoBalloon = new PopupWindow(
-            viewInfoBalloon,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            false
-        );
+        popupWindowInfoBalloon =
+                new PopupWindow(
+                        viewInfoBalloon,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        false);
 
         popupWindowInfoBalloon.setOutsideTouchable(false);
-        //popupWindowInfoBalloon.setElevation(10f);
+        // popupWindowInfoBalloon.setElevation(10f);
         popupWindowInfoBalloon.setTouchable(false);
         popupWindowInfoBalloon.setClippingEnabled(false);
         popupWindowInfoBalloon.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
@@ -1091,10 +1147,7 @@ public class PlayActivity extends ChessBoardActivity implements
         int[] location = new int[2];
         anchor.getLocationOnScreen(location);
 
-        viewInfoBalloon.measure(
-            View.MeasureSpec.UNSPECIFIED,
-            View.MeasureSpec.UNSPECIFIED
-        );
+        viewInfoBalloon.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 
         int x = location[0] + anchor.getWidth();
         int y = location[1] /*+ (anchor.getHeight() / 2)

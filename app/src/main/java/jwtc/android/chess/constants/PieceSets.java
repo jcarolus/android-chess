@@ -36,69 +36,121 @@ public class PieceSets {
         PIECES[ALPHA][BoardConstants.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_alpha_wk;
 
         PIECES[MERIDA][BoardConstants.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_merida_bp;
-        PIECES[MERIDA][BoardConstants.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_merida_bn;
-        PIECES[MERIDA][BoardConstants.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_merida_bb;
+        PIECES[MERIDA][BoardConstants.BLACK][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_merida_bn;
+        PIECES[MERIDA][BoardConstants.BLACK][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_merida_bb;
         PIECES[MERIDA][BoardConstants.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_merida_br;
         PIECES[MERIDA][BoardConstants.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_merida_bq;
         PIECES[MERIDA][BoardConstants.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_merida_bk;
         PIECES[MERIDA][BoardConstants.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_merida_wp;
-        PIECES[MERIDA][BoardConstants.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_merida_wn;
-        PIECES[MERIDA][BoardConstants.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_merida_wb;
+        PIECES[MERIDA][BoardConstants.WHITE][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_merida_wn;
+        PIECES[MERIDA][BoardConstants.WHITE][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_merida_wb;
         PIECES[MERIDA][BoardConstants.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_merida_wr;
         PIECES[MERIDA][BoardConstants.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_merida_wq;
         PIECES[MERIDA][BoardConstants.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_merida_wk;
 
-        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_leipzig_bp;
-        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_leipzig_bn;
-        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_leipzig_bb;
-        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_leipzig_br;
-        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_leipzig_bq;
-        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_leipzig_bk;
-        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_leipzig_wp;
-        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_leipzig_wn;
-        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_leipzig_wb;
-        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_leipzig_wr;
-        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_leipzig_wq;
-        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_leipzig_wk;
+        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_leipzig_bp;
+        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_leipzig_bn;
+        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_leipzig_bb;
+        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_leipzig_br;
+        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_leipzig_bq;
+        PIECES[LEIPZIG][BoardConstants.BLACK][BoardConstants.KING] =
+                R.drawable.ic_pieces_leipzig_bk;
+        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_leipzig_wp;
+        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_leipzig_wn;
+        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_leipzig_wb;
+        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_leipzig_wr;
+        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_leipzig_wq;
+        PIECES[LEIPZIG][BoardConstants.WHITE][BoardConstants.KING] =
+                R.drawable.ic_pieces_leipzig_wk;
 
-        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_california_bp;
-        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_california_bn;
-        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_california_bb;
-        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_california_br;
-        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_california_bq;
-        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_california_bk;
-        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_california_wp;
-        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_california_wn;
-        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_california_wb;
-        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_california_wr;
-        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_california_wq;
-        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_california_wk;
+        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_california_bp;
+        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_california_bn;
+        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_california_bb;
+        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_california_br;
+        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_california_bq;
+        PIECES[CALIFORNIA][BoardConstants.BLACK][BoardConstants.KING] =
+                R.drawable.ic_pieces_california_bk;
+        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_california_wp;
+        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_california_wn;
+        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_california_wb;
+        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_california_wr;
+        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_california_wq;
+        PIECES[CALIFORNIA][BoardConstants.WHITE][BoardConstants.KING] =
+                R.drawable.ic_pieces_california_wk;
 
-        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_companion_bp;
-        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_companion_bn;
-        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_companion_bb;
-        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_companion_br;
-        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_companion_bq;
-        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_companion_bk;
-        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_companion_wp;
-        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_companion_wn;
-        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_companion_wb;
-        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_companion_wr;
-        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_companion_wq;
-        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_companion_wk;
+        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_companion_bp;
+        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_companion_bn;
+        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_companion_bb;
+        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_companion_br;
+        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_companion_bq;
+        PIECES[COMPANION][BoardConstants.BLACK][BoardConstants.KING] =
+                R.drawable.ic_pieces_companion_bk;
+        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_companion_wp;
+        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_companion_wn;
+        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_companion_wb;
+        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_companion_wr;
+        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_companion_wq;
+        PIECES[COMPANION][BoardConstants.WHITE][BoardConstants.KING] =
+                R.drawable.ic_pieces_companion_wk;
 
-        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_chessnut_bp;
-        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_chessnut_bn;
-        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_chessnut_bb;
-        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_chessnut_br;
-        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_chessnut_bq;
-        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_chessnut_bk;
-        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_chessnut_wp;
-        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_chessnut_wn;
-        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_chessnut_wb;
-        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_chessnut_wr;
-        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_chessnut_wq;
-        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_chessnut_wk;
+        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_chessnut_bp;
+        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_chessnut_bn;
+        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_chessnut_bb;
+        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_chessnut_br;
+        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_chessnut_bq;
+        PIECES[CHESSNUT][BoardConstants.BLACK][BoardConstants.KING] =
+                R.drawable.ic_pieces_chessnut_bk;
+        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_chessnut_wp;
+        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_chessnut_wn;
+        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_chessnut_wb;
+        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_chessnut_wr;
+        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_chessnut_wq;
+        PIECES[CHESSNUT][BoardConstants.WHITE][BoardConstants.KING] =
+                R.drawable.ic_pieces_chessnut_wk;
 
         PIECES[KOSAL][BoardConstants.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_kosal_bp;
         PIECES[KOSAL][BoardConstants.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_kosal_bn;
@@ -113,17 +165,29 @@ public class PieceSets {
         PIECES[KOSAL][BoardConstants.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_kosal_wq;
         PIECES[KOSAL][BoardConstants.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_kosal_wk;
 
-        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.PAWN] = R.drawable.ic_pieces_staunty_bp;
-        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.KNIGHT] = R.drawable.ic_pieces_staunty_bn;
-        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.BISHOP] = R.drawable.ic_pieces_staunty_bb;
-        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.ROOK] = R.drawable.ic_pieces_staunty_br;
-        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.QUEEN] = R.drawable.ic_pieces_staunty_bq;
-        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.KING] = R.drawable.ic_pieces_staunty_bk;
-        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.PAWN] = R.drawable.ic_pieces_staunty_wp;
-        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.KNIGHT] = R.drawable.ic_pieces_staunty_wn;
-        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.BISHOP] = R.drawable.ic_pieces_staunty_wb;
-        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.ROOK] = R.drawable.ic_pieces_staunty_wr;
-        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.QUEEN] = R.drawable.ic_pieces_staunty_wq;
-        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.KING] = R.drawable.ic_pieces_staunty_wk;
+        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_staunty_bp;
+        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_staunty_bn;
+        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_staunty_bb;
+        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_staunty_br;
+        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_staunty_bq;
+        PIECES[STAUNTY][BoardConstants.BLACK][BoardConstants.KING] =
+                R.drawable.ic_pieces_staunty_bk;
+        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.PAWN] =
+                R.drawable.ic_pieces_staunty_wp;
+        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.KNIGHT] =
+                R.drawable.ic_pieces_staunty_wn;
+        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.BISHOP] =
+                R.drawable.ic_pieces_staunty_wb;
+        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.ROOK] =
+                R.drawable.ic_pieces_staunty_wr;
+        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.QUEEN] =
+                R.drawable.ic_pieces_staunty_wq;
+        PIECES[STAUNTY][BoardConstants.WHITE][BoardConstants.KING] =
+                R.drawable.ic_pieces_staunty_wk;
     }
 }

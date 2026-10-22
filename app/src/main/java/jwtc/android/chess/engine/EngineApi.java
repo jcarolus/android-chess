@@ -5,9 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-
 import java.util.ArrayList;
-
 import jwtc.chess.Move;
 import jwtc.chess.Pos;
 
@@ -16,6 +14,35 @@ public abstract class EngineApi {
 
     public static final int LEVEL_TIME = 1;
     public static final int LEVEL_PLY = 2;
+
+    /** Search purpose, independent of whether the engine is currently searching. */
+    public enum SearchPurpose {
+        PLAY,
+        ANALYSIS
+    }
+
+    /** Implementations set this when accepting a search, before emitting callbacks. */
+    protected volatile SearchPurpose purpose = SearchPurpose.PLAY;
+
+    private volatile long searchId = 0;
+
+    protected synchronized long beginSearch(SearchPurpose purpose) {
+        this.purpose = purpose;
+        return ++searchId;
+    }
+
+    protected synchronized void discardSearchResults() {
+        ++searchId;
+    }
+
+    protected boolean isCurrentSearch(long id) {
+        return id == searchId;
+    }
+
+    /** Checked on the delivery thread immediately before notifying move listeners. */
+    protected boolean canDeliverMove(long id) {
+        return true;
+    }
 
     protected static final int MSG_MOVE = 1;
     protected static final int MSG_INFO = 2;
@@ -26,38 +53,55 @@ public abstract class EngineApi {
 
     protected ArrayList<EngineListener> listeners = new ArrayList<>();
 
-    protected Handler updateHandler = new Handler(Looper.getMainLooper()) {
-        // @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == MSG_MOVE) {
-                int move = msg.getData().getInt("move");
-                int duckMove = msg.getData().getInt("duckMove");
-                int value = msg.getData().getInt("value");
-                Log.d(TAG, "handleMessage MOVE " + Move.toDbgString(move) + " :: " + Pos.toString(duckMove));
-                for (EngineListener listener : listeners) {
-                    listener.OnEngineMove(move, duckMove, value);
-                }
+    protected Handler updateHandler =
+            new Handler(Looper.getMainLooper()) {
+                // @Override
+                public void handleMessage(Message msg) {
+                    if (!isCurrentSearch(msg.getData().getLong("searchId"))) {
+                        return;
+                    }
+                    if (msg.what == MSG_MOVE && purpose == SearchPurpose.PLAY) {
+                        if (!canDeliverMove(msg.getData().getLong("searchId"))) {
+                            return;
+                        }
+                        int move = msg.getData().getInt("move");
+                        int duckMove = msg.getData().getInt("duckMove");
+                        int value = msg.getData().getInt("value");
+                        Log.d(
+                                TAG,
+                                "handleMessage MOVE "
+                                        + Move.toDbgString(move)
+                                        + " :: "
+                                        + Pos.toString(duckMove));
+                        for (EngineListener listener : listeners) {
+                            listener.OnEngineMove(move, duckMove, value);
+                        }
 
-            } else if (msg.what == MSG_INFO) {
-                String message = msg.getData().getString("message");
-                float value = msg.getData().getFloat("value");
-                // Log.d(TAG, "handleMessage INFO " + message);
-                for (EngineListener listener : listeners) {
-                    listener.OnEngineInfo(message, value);
+                    } else if (msg.what == MSG_INFO) {
+                        String message = msg.getData().getString("message");
+                        float value = msg.getData().getFloat("value");
+                        // Log.d(TAG, "handleMessage INFO " + message);
+                        for (EngineListener listener : listeners) {
+                            listener.OnEngineInfo(message, value);
+                        }
+                    } else if (msg.what == MSG_ERROR) {
+                        for (EngineListener listener : listeners) {
+                            listener.OnEngineError();
+                        }
+                    }
+                    super.handleMessage(msg);
                 }
-            } else if (msg.what == MSG_ERROR) {
-                for (EngineListener listener : listeners) {
-                    listener.OnEngineError();
-                }
-            }
-            super.handleMessage(msg);
-        }
-    };
+            };
 
     public void sendMessageFromThread(String sText, float value) {
+        sendMessageFromThread(searchId, sText, value);
+    }
+
+    protected void sendMessageFromThread(long id, String sText, float value) {
         Message m = new Message();
         Bundle b = new Bundle();
         m.what = MSG_INFO;
+        b.putLong("searchId", id);
         b.putString("message", sText);
         b.putFloat("value", value);
         m.setData(b);
@@ -65,8 +109,13 @@ public abstract class EngineApi {
     }
 
     public void sendMoveMessageFromThread(int move, int duckMove, int value) {
+        sendMoveMessageFromThread(searchId, move, duckMove, value);
+    }
+
+    protected void sendMoveMessageFromThread(long id, int move, int duckMove, int value) {
         Message m = new Message();
         Bundle b = new Bundle();
+        b.putLong("searchId", id);
         b.putInt("move", move);
         b.putInt("duckMove", duckMove);
         b.putInt("value", value);
@@ -78,16 +127,78 @@ public abstract class EngineApi {
     public void sendErrorMessageFromThread() {
         Message m = new Message();
         m.what = MSG_ERROR;
+        m.getData().putLong("searchId", searchId);
         updateHandler.sendMessage(m);
     }
 
-    abstract public void play();
+    /**
+     * Starts a PLAY search of the current game position using the configured time or depth limit. A
+     * successful search may emit OnEngineMove.
+     */
+    public abstract void play();
 
-    abstract public boolean isReady();
+    /** Starts a PLAY search limited by the given request instead of the configured limit. */
+    public void play(SearchLimit limit) {
+        limit.applyTo(this);
+        play();
+    }
 
-    abstract public void abort(Runnable onDone);
+    /** Whether this backend implements analysis; callers should check before displaying a score. */
+    public abstract boolean supportsAnalysis();
 
-    abstract public void destroy();
+    /** Analyses the current position with its recorded repetition history. Main-thread only. */
+    public abstract void analyzeCurrentPosition(int timeMillis);
+
+    /** Analyses an immutable recorded position, including the path that reached it. */
+    public abstract void analyze(
+            jwtc.android.chess.services.GameApi.PositionSnapshot position, int timeMillis);
+
+    /**
+     * Analyses the supplied FEN snapshot with a positive timeMillis search budget. Ignores and
+     * preserves the PLAY time/depth settings. Reports OnEngineInfo and onAnalysisComplete, never
+     * OnEngineMove, including after stop. Does not modify the live board. An unsupported backend
+     * reports an empty message with value zero without searching. Calls while busy are ignored;
+     * abort with a completion callback before replacing a search.
+     *
+     * @throws IllegalArgumentException if the budget is not positive or FEN is empty/multiline
+     */
+    public abstract void analyze(String fen, int timeMillis);
+
+    protected static void validateAnalysisRequest(String fen, int timeMillis) {
+        if (timeMillis <= 0) {
+            throw new IllegalArgumentException("Analysis timeMillis must be positive");
+        }
+        if (fen == null
+                || fen.trim().isEmpty()
+                || fen.indexOf('\n') >= 0
+                || fen.indexOf('\r') >= 0) {
+            throw new IllegalArgumentException("Analysis requires a single-line FEN");
+        }
+    }
+
+    /** Returns the purpose of the most recently accepted search; defaults to PLAY. */
+    public SearchPurpose getSearchPurpose() {
+        return purpose;
+    }
+
+    public abstract boolean isReady();
+
+    /**
+     * Finishes the current search as soon as possible (UCI stop), retaining its final result. PLAY
+     * may emit OnEngineMove; ANALYSIS must only report information. Runs a non-null onDone on the
+     * main thread after search completion and result delivery, or immediately via the main-thread
+     * handler if already idle.
+     */
+    public abstract void stop(Runnable onDone);
+
+    /**
+     * Cancels the current search and discards its remaining results. Unlike stop, cancellation must
+     * not emit OnEngineMove. Runs a non-null onDone on the main thread once the old search can no
+     * longer deliver results and a new one may start.
+     */
+    public abstract void abort(Runnable onDone);
+
+    public abstract void destroy();
 
     public void setMsecs(int msecs) {
         Log.d(TAG, "setMsecs " + msecs);

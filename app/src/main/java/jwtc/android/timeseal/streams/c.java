@@ -36,14 +36,16 @@ public class c {
     }
 
     synchronized int jdField_case() {
-        if (this.jdField_if)
+        if (this.jdField_if) {
             return 0;
+        }
         return jdField_int();
     }
 
     private final int jdField_int() {
-        if (this.jdField_char >= this.jdField_goto)
+        if (this.jdField_char >= this.jdField_goto) {
             return this.jdField_char - this.jdField_goto;
+        }
         return this.jdField_char + this.jdField_for.length - this.jdField_goto;
     }
 
@@ -58,48 +60,58 @@ public class c {
         this.jdField_for = arrayOfByte;
     }
 
-    synchronized void a(int paramInt)
-        throws IOException {
+    synchronized void a(int paramInt) throws IOException {
         synchronized (this.a) {
-            if ((this.jdField_if) || (this.jdField_int))
+            if ((this.jdField_if) || (this.jdField_int)) {
                 throw new IOException("Stream closed");
-            while (a() == 0)
-                if (this.jdField_byte)
+            }
+            while (a() == 0) {
+                if (this.jdField_byte) {
                     jdField_do(1);
-                else
+                } else {
                     try {
                         wait();
                     } catch (InterruptedException localInterruptedException) {
                         throw new InterruptedIOException();
                     }
-            if ((this.jdField_if) || (this.jdField_int))
+                }
+            }
+            if ((this.jdField_if) || (this.jdField_int)) {
                 throw new IOException("Stream closed");
+            }
             this.jdField_for[(this.jdField_char++)] = ((byte) (paramInt & 0xFF));
-            if (this.jdField_char == this.jdField_for.length)
+            if (this.jdField_char == this.jdField_for.length) {
                 this.jdField_char = 0;
+            }
             notifyAll();
         }
     }
 
-    synchronized void a(byte[] paramArrayOfByte, int paramInt1, int paramInt2)
-        throws IOException {
+    synchronized void a(byte[] paramArrayOfByte, int paramInt1, int paramInt2) throws IOException {
         synchronized (this.a) {
-            if ((this.jdField_if) || (this.jdField_int))
+            if ((this.jdField_if) || (this.jdField_int)) {
                 throw new IOException("Stream closed");
-            if ((this.jdField_byte) && (paramInt2 > a()))
+            }
+            if ((this.jdField_byte) && (paramInt2 > a())) {
                 jdField_do(paramInt2 - a());
+            }
             while (paramInt2 > 0) {
-                while (a() == 0)
+                while (a() == 0) {
                     try {
                         wait();
                     } catch (InterruptedException localInterruptedException) {
                         throw new InterruptedIOException();
                     }
+                }
                 int i = a();
                 int j = paramInt2 > i ? i : paramInt2;
-                int k = this.jdField_for.length - this.jdField_char >= j ? j : this.jdField_for.length - this.jdField_char;
+                int k =
+                        this.jdField_for.length - this.jdField_char >= j
+                                ? j
+                                : this.jdField_for.length - this.jdField_char;
                 int m = j - k > 0 ? j - k : 0;
-                System.arraycopy(paramArrayOfByte, paramInt1, this.jdField_for, this.jdField_char, k);
+                System.arraycopy(
+                        paramArrayOfByte, paramInt1, this.jdField_for, this.jdField_char, k);
                 System.arraycopy(paramArrayOfByte, paramInt1 + k, this.jdField_for, 0, m);
                 paramInt1 += j;
                 paramInt2 -= j;
@@ -109,63 +121,76 @@ public class c {
         }
     }
 
-    synchronized int jdField_for()
-        throws IOException {
+    synchronized int jdField_for() throws IOException {
         synchronized (this.jdField_case) {
-            if (this.jdField_if)
+            if (this.jdField_if) {
                 throw new IOException("Stream closed");
+            }
             long l1 = System.currentTimeMillis();
             while (jdField_case() == 0) {
-                if (this.jdField_int)
+                if (this.jdField_int) {
                     return -1;
+                }
                 long l2 = System.currentTimeMillis();
-                if ((this.jdField_do != 0) && (l2 - l1 >= this.jdField_do))
+                if ((this.jdField_do != 0) && (l2 - l1 >= this.jdField_do)) {
                     throw new InterruptedIOException();
+                }
                 try {
-                    if (this.jdField_do == 0)
+                    if (this.jdField_do == 0) {
                         wait();
-                    else
+                    } else {
                         wait(this.jdField_do + l2 - l1);
+                    }
                 } catch (InterruptedException localInterruptedException) {
                     throw new InterruptedIOException();
                 }
-                if (this.jdField_if)
+                if (this.jdField_if) {
                     throw new IOException("Stream closed");
+                }
             }
             int i = this.jdField_for[(this.jdField_goto++)];
-            if (this.jdField_goto == this.jdField_for.length)
+            if (this.jdField_goto == this.jdField_for.length) {
                 this.jdField_goto = 0;
+            }
             notifyAll();
             return i < 0 ? i + 256 : i;
         }
     }
 
     synchronized int jdField_if(byte[] paramArrayOfByte, int paramInt1, int paramInt2)
-        throws IOException {
+            throws IOException {
         synchronized (this.jdField_case) {
-            if (this.jdField_if)
+            if (this.jdField_if) {
                 throw new IOException("Stream closed");
+            }
             long l1 = System.currentTimeMillis();
             while (jdField_case() == 0) {
-                if (this.jdField_int)
+                if (this.jdField_int) {
                     return -1;
+                }
                 long l2 = System.currentTimeMillis();
-                if ((this.jdField_do != 0) && (l2 - l1 >= this.jdField_do))
+                if ((this.jdField_do != 0) && (l2 - l1 >= this.jdField_do)) {
                     throw new InterruptedIOException();
+                }
                 try {
-                    if (this.jdField_do == 0)
+                    if (this.jdField_do == 0) {
                         wait();
-                    else
+                    } else {
                         wait(this.jdField_do + l2 - l1);
+                    }
                 } catch (InterruptedException localInterruptedException) {
                     throw new InterruptedIOException();
                 }
-                if (this.jdField_if)
+                if (this.jdField_if) {
                     throw new IOException("Stream closed");
+                }
             }
             int i = jdField_case();
             int j = paramInt2 > i ? i : paramInt2;
-            int k = this.jdField_for.length - this.jdField_goto > j ? j : this.jdField_for.length - this.jdField_goto;
+            int k =
+                    this.jdField_for.length - this.jdField_goto > j
+                            ? j
+                            : this.jdField_for.length - this.jdField_goto;
             int m = j - k > 0 ? j - k : 0;
             System.arraycopy(this.jdField_for, this.jdField_goto, paramArrayOfByte, paramInt1, k);
             System.arraycopy(this.jdField_for, 0, paramArrayOfByte, paramInt1 + k, m);
@@ -176,15 +201,17 @@ public class c {
     }
 
     synchronized void jdField_try() {
-        if (this.jdField_int)
+        if (this.jdField_int) {
             throw new IllegalStateException("Already closed");
+        }
         this.jdField_int = true;
         notifyAll();
     }
 
     synchronized void jdField_new() {
-        if (this.jdField_if)
+        if (this.jdField_if) {
             throw new IllegalStateException("Already closed");
+        }
         this.jdField_if = true;
         notifyAll();
     }
@@ -202,8 +229,9 @@ public class c {
     }
 
     public c(int paramInt, boolean paramBoolean) {
-        if (paramInt <= 0)
+        if (paramInt <= 0) {
             throw new IllegalArgumentException("The buffer size must be a positive integer");
+        }
         this.jdField_else = new a(this);
         this.jdField_try = new b(this);
         this.jdField_byte = paramBoolean;

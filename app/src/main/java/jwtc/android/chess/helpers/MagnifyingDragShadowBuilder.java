@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.view.View;
 
-
 public class MagnifyingDragShadowBuilder extends View.DragShadowBuilder {
     private static final float BITMAP_FACTOR = 1.25f;
     private static final float CIRCLE_FACTOR = 2.25f; // must be greater than BITMAP_FACTOR
@@ -43,7 +42,11 @@ public class MagnifyingDragShadowBuilder extends View.DragShadowBuilder {
 
     @Override
     public void onDrawShadow(Canvas canvas) {
-        canvas.drawBitmap(scaledBitmap, (int) ((circleSize - bitmapSize) / 2), (int) ((circleSize - bitmapSize) / 2), null);
+        canvas.drawBitmap(
+                scaledBitmap,
+                (int) ((circleSize - bitmapSize) / 2),
+                (int) ((circleSize - bitmapSize) / 2),
+                null);
 
         int radius = circleSize / 2;
 

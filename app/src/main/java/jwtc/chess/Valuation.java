@@ -33,7 +33,8 @@ public class Valuation {
         ROOK_OPEN_FILE = 10 * 3;
     }
 
-    // big bonus for a mate - make sure that no sum of an evaluation can ever get bigger than this value
+    // big bonus for a mate - make sure that no sum of an evaluation can ever get bigger than this
+    // value
     public static final int MATE = 10000;
     // zero sum based game, so a draw relates to 0
     public static final int DRAW = 0;
@@ -47,10 +48,8 @@ public class Valuation {
     public static int TRANSPOSITION_MOVE_SCORE = 2000;
     public static int KILLER_MOVE_SCORE = 1500;
 
-
-    public static int LONE_KING = 6; //6*8=48; best value ending = 48
+    public static int LONE_KING = 6; // 6*8=48; best value ending = 48
     public static int LONE_KING_BONUS = 150; // 150 after gnu-chess
-
 
     public static int MPD;
 
@@ -69,7 +68,8 @@ public class Valuation {
     public static final long CENTER_4x4_SQUARES = 0x00003C3C3C3C0000L;
     public static final long CENTER_SQUARES = 0x00003C7E7E3C0000L;
 
-    // positional values to where a king typically get's mated in an end game. 0 is bad is easily mated.
+    // positional values to where a king typically get's mated in an end game. 0 is bad is easily
+    // mated.
     // after gnu-chess
     public static final int[] KING_ENDINGS = {
         0, 6, 12, 18, 18, 12, 6, 0,
@@ -81,7 +81,8 @@ public class Valuation {
         6, 12, 18, 24, 24, 18, 12, 6,
         0, 6, 12, 18, 18, 12, 6, 0
     };
-    // kbnk score, first index is "square color" of the bishop, second index the position of the losing king
+    // kbnk score, first index is "square color" of the bishop, second index the position of the
+    // losing king
     // after gnu-chess
     public static final int KBNK_SCORE[][] = {
         {
@@ -104,7 +105,5 @@ public class Valuation {
             10, 20, 30, 40, 50, 60, 70, 60,
             0, 10, 20, 30, 40, 50, 60, 70,
         }
-
     };
-
 }

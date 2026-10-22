@@ -5,19 +5,16 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
@@ -74,19 +71,32 @@ public class LichessApi extends GameApi {
         default void onMySeekCancelled() {}
 
         default void onPuzzle(PuzzleAndGame puzzle) {}
-        default void onPuzzleSolve(PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {}
+
+        default void onPuzzleSolve(
+                PuzzleAndGame nextPuzzle, PuzzleBatchSolveRound solveRound, PuzzleGlicko glicko) {}
+
         default void onPuzzleMoveCorrect() {}
+
         default void onPuzzleUnexpectedMove(String sMove, int toPos) {}
+
         default void onPuzzleRetried() {}
+
         default void onPuzzleCompleted(int toPos) {}
 
         default void onMyTeams(List<Team> teams) {}
+
         default void onAllTeams(List<Team> teams, int page, int nbPages) {}
+
         default void onTeamJoined(String teamId) {}
+
         default void onTeamLeft(String teamId) {}
+
         default void onSwissList(List<SwissTournament> tournaments) {}
+
         default void onSwissDetail(SwissTournament tournament, List<SwissStanding> standings) {}
+
         default void onSwissJoined(String id) {}
+
         default void onSwissError(String message) {}
     }
 
@@ -110,7 +120,6 @@ public class LichessApi extends GameApi {
 
     public LichessApi() {
         super();
-
     }
 
     public void setAuth(Auth auth) {
@@ -129,19 +138,20 @@ public class LichessApi extends GameApi {
         if (auth.hasAccessToken()) {
             Log.d(TAG, "hasAccessToken");
 
-            auth.authenticateWithToken(new OAuth2AuthCodePKCE.Callback<String, Exception>() {
-                @Override
-                public void onSuccess(String result) {
-                    Log.d(TAG, "Logged in with token");
-                    onAuthenticate(result);
-                }
+            auth.authenticateWithToken(
+                    new OAuth2AuthCodePKCE.Callback<String, Exception>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Log.d(TAG, "Logged in with token");
+                            onAuthenticate(result);
+                        }
 
-                @Override
-                public void onError(Exception e) {
-                    Log.d(TAG, "Auth failed: " + e.getMessage());
-                    onAuthenticate(null);
-                }
-            });
+                        @Override
+                        public void onError(Exception e) {
+                            Log.d(TAG, "Auth failed: " + e.getMessage());
+                            onAuthenticate(null);
+                        }
+                    });
         } else {
             onAuthenticate(null);
         }
@@ -156,19 +166,21 @@ public class LichessApi extends GameApi {
     }
 
     public void handleLoginData(Intent data) {
-        auth.handleLoginResponse(data, new OAuth2AuthCodePKCE.Callback<String, Exception>() {
-            @Override
-            public void onSuccess(String result) {
-                Log.d(TAG, "Logged in!" + result);
-                onAuthenticate(result);
-            }
+        auth.handleLoginResponse(
+                data,
+                new OAuth2AuthCodePKCE.Callback<String, Exception>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.d(TAG, "Logged in!" + result);
+                        onAuthenticate(result);
+                    }
 
-            @Override
-            public void onError(Exception e) {
-                Log.d(TAG, "Auth failed: " + e.getMessage());
-                onAuthenticate(null);
-            }
-        });
+                    @Override
+                    public void onError(Exception e) {
+                        Log.d(TAG, "Auth failed: " + e.getMessage());
+                        onAuthenticate(null);
+                    }
+                });
     }
 
     /** Ensure the account event stream is running. Safe to call after every authentication. */
@@ -177,112 +189,142 @@ public class LichessApi extends GameApi {
             return;
         }
         eventStreamOpen = true;
-        this.auth.event(new Auth.AuthResponseHandler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                String type = jsonObject.get("type").getAsString();
-                Log.d(TAG, "event " + jsonObject.get("type").getAsString());
-                if (type.equals("gameStart")) {
-                    Game ongoingGame = (new Gson()).fromJson(jsonObject.get("game").getAsJsonObject(), Game.class);
+        this.auth.event(
+                new Auth.AuthResponseHandler() {
+                    @Override
+                    public void onResponse(JsonObject jsonObject) {
+                        String type = jsonObject.get("type").getAsString();
+                        Log.d(TAG, "event " + jsonObject.get("type").getAsString());
+                        if (type.equals("gameStart")) {
+                            Game ongoingGame =
+                                    (new Gson())
+                                            .fromJson(
+                                                    jsonObject.get("game").getAsJsonObject(),
+                                                    Game.class);
 
-                    // The Board API only streams/plays rapid, classical and correspondence games;
-                    // blitz/bullet (typical for swiss) come through with compat.board == false and would
-                    // 4xx on the game stream. Treat a missing compat as compatible so nothing else breaks.
-                    boolean boardCompatible = ongoingGame.compat == null || ongoingGame.compat.board;
-                    if (queuePendingGameStart(ongoingGame.gameId, boardCompatible) && apiListener != null) {
-                        apiListener.onGameInit(ongoingGame.gameId, boardCompatible);
+                            // The Board API only streams/plays rapid, classical and correspondence
+                            // games;
+                            // blitz/bullet (typical for swiss) come through with compat.board ==
+                            // false and would
+                            // 4xx on the game stream. Treat a missing compat as compatible so
+                            // nothing else breaks.
+                            boolean boardCompatible =
+                                    ongoingGame.compat == null || ongoingGame.compat.board;
+                            if (queuePendingGameStart(ongoingGame.gameId, boardCompatible)
+                                    && apiListener != null) {
+                                apiListener.onGameInit(ongoingGame.gameId, boardCompatible);
+                            }
+                        } else if (type.equals("gameFinish")) {
+                            onGameFinish();
+                        } else if (type.equals("challenge")) {
+                            Challenge challenge =
+                                    (new Gson())
+                                            .fromJson(
+                                                    jsonObject.get("challenge").getAsJsonObject(),
+                                                    Challenge.class);
+                            if (apiListener != null
+                                    && !user.equals(challenge.challenger.id)
+                                    && (challenge.variant.key.equals("standard")
+                                            || challenge.variant.key.equals("chess960"))) {
+                                // ignore own challenge and variants we do not support
+                                apiListener.onChallenge(challenge);
+                            }
+                        } else if (type.equals("challengeCanceled")) {
+                            Challenge challenge =
+                                    (new Gson())
+                                            .fromJson(
+                                                    jsonObject.get("challenge").getAsJsonObject(),
+                                                    Challenge.class);
+                            if (apiListener != null) {
+                                apiListener.onChallengeCancelled(challenge);
+                            }
+                        } else if (type.equals("challengeDeclined")) {
+                            Challenge challenge =
+                                    (new Gson())
+                                            .fromJson(
+                                                    jsonObject.get("challenge").getAsJsonObject(),
+                                                    Challenge.class);
+                            if (apiListener != null) {
+                                apiListener.onChallengeDeclined(challenge);
+                            }
+                        }
                     }
-                } else if (type.equals("gameFinish")) {
-                    onGameFinish();
-                } else if (type.equals("challenge")) {
-                    Challenge challenge = (new Gson()).fromJson(jsonObject.get("challenge").getAsJsonObject(), Challenge.class);
-                    if (apiListener != null && !user.equals(challenge.challenger.id) && (challenge.variant.key.equals("standard") || challenge.variant.key.equals("chess960"))) {
-                        // ignore own challenge and variants we do not support
-                        apiListener.onChallenge(challenge);
-                    }
-                } else if (type.equals("challengeCanceled")) {
-                    Challenge challenge = (new Gson()).fromJson(jsonObject.get("challenge").getAsJsonObject(), Challenge.class);
-                    if (apiListener != null) {
-                        apiListener.onChallengeCancelled(challenge);
-                    }
-                } else if (type.equals("challengeDeclined")) {
-                    Challenge challenge = (new Gson()).fromJson(jsonObject.get("challenge").getAsJsonObject(), Challenge.class);
-                    if (apiListener != null) {
-                        apiListener.onChallengeDeclined(challenge);
-                    }
-                }
-            }
 
-            @Override
-            public void onClose(boolean success) {
-                eventStreamOpen = false;
-                Log.d(TAG, "event closed " + success);
-                if (apiListener != null && !success) {
-                    apiListener.onConnectionError();
-                }
-            }
-        });
+                    @Override
+                    public void onClose(boolean success) {
+                        eventStreamOpen = false;
+                        Log.d(TAG, "event closed " + success);
+                        if (apiListener != null && !success) {
+                            apiListener.onConnectionError();
+                        }
+                    }
+                });
     }
 
     public void playing() {
-        this.auth.playing(new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Log.d(TAG, "playing");
-                List<Game> gameList = new ArrayList<Game>();
+        this.auth.playing(
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        Log.d(TAG, "playing");
+                        List<Game> gameList = new ArrayList<Game>();
 
-                JsonArray jsonArray = result.getAsJsonArray("nowPlaying");
-                for (JsonElement jsonElement : jsonArray) {
-                    JsonObject jsonObject = jsonElement.getAsJsonObject();
-                    gameList.add((new Gson()).fromJson(jsonObject, Game.class));
-                }
-                if (apiListener != null) {
-                    apiListener.onNowPlaying(gameList, user);
-                }
-            }
+                        JsonArray jsonArray = result.getAsJsonArray("nowPlaying");
+                        for (JsonElement jsonElement : jsonArray) {
+                            JsonObject jsonObject = jsonElement.getAsJsonObject();
+                            gameList.add((new Gson()).fromJson(jsonObject, Game.class));
+                        }
+                        if (apiListener != null) {
+                            apiListener.onNowPlaying(gameList, user);
+                        }
+                    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "playing " + e);
-                if (apiListener != null) {
-                    apiListener.onConnectionError();
-                }
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "playing " + e);
+                        if (apiListener != null) {
+                            apiListener.onConnectionError();
+                        }
+                    }
+                });
     }
 
     public void challenge(Map<String, Object> payload) {
-        this.auth.challenge(payload, new Auth.AuthResponseHandler() {
-            @Override
-            public void onResponse(JsonObject result) {
-                Log.d(TAG, "challenge response");
-            }
+        this.auth.challenge(
+                payload,
+                new Auth.AuthResponseHandler() {
+                    @Override
+                    public void onResponse(JsonObject result) {
+                        Log.d(TAG, "challenge response");
+                    }
 
-            @Override
-            public void onClose(boolean success) {
-                Log.d(TAG, "challenge closed " + success);
-                if (apiListener != null) {
-                    apiListener.onMyChallengeCancelled();
-                }
-            }
-        });
+                    @Override
+                    public void onClose(boolean success) {
+                        Log.d(TAG, "challenge closed " + success);
+                        if (apiListener != null) {
+                            apiListener.onMyChallengeCancelled();
+                        }
+                    }
+                });
     }
 
     public void seek(Map<String, Object> payload) {
-        this.auth.seek(payload, new Auth.AuthResponseHandler() {
-            @Override
-            public void onResponse(JsonObject result) {
-                Log.d(TAG, "seek response");
-            }
+        this.auth.seek(
+                payload,
+                new Auth.AuthResponseHandler() {
+                    @Override
+                    public void onResponse(JsonObject result) {
+                        Log.d(TAG, "seek response");
+                    }
 
-            @Override
-            public void onClose(boolean success) {
-                Log.d(TAG, "seek closed " + success);
-                if (apiListener != null) {
-                    apiListener.onMySeekCancelled();
-                }
-            }
-        });
+                    @Override
+                    public void onClose(boolean success) {
+                        Log.d(TAG, "seek closed " + success);
+                        if (apiListener != null) {
+                            apiListener.onMySeekCancelled();
+                        }
+                    }
+                });
     }
 
     public void fetchPuzzle(String angle, String difficulty, String color, boolean rated) {
@@ -291,31 +333,38 @@ public class LichessApi extends GameApi {
         currentPuzzleRated = rated;
         int puzzleCount = 1;
 
-        this.auth.puzzleBatchSelect(puzzleAngle, puzzleCount, difficulty, color, rated, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                try {
-                    PuzzleBatchSelectResponse response = (new Gson()).fromJson(result, PuzzleBatchSelectResponse.class);
-                    if (!response.puzzles.isEmpty() && apiListener != null) {
-                        ongoingPuzzle = response.puzzles.get(0);
-                        apiListener.onPuzzle(ongoingPuzzle);
-                        ongoingGameFull = null;
-                        processPuzzle();
+        this.auth.puzzleBatchSelect(
+                puzzleAngle,
+                puzzleCount,
+                difficulty,
+                color,
+                rated,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        try {
+                            PuzzleBatchSelectResponse response =
+                                    (new Gson()).fromJson(result, PuzzleBatchSelectResponse.class);
+                            if (!response.puzzles.isEmpty() && apiListener != null) {
+                                ongoingPuzzle = response.puzzles.get(0);
+                                apiListener.onPuzzle(ongoingPuzzle);
+                                ongoingGameFull = null;
+                                processPuzzle();
+                            }
+                        } catch (Exception ex) {
+                            Log.d(TAG, "fetchPuzzleBatch parse error " + ex);
+                            JsonObject error = new JsonObject();
+                            error.addProperty("error", "Could not parse puzzle batch response");
+                            // @TODO
+                        }
                     }
-                } catch (Exception ex) {
-                    Log.d(TAG, "fetchPuzzleBatch parse error " + ex);
-                    JsonObject error = new JsonObject();
-                    error.addProperty("error", "Could not parse puzzle batch response");
-                    // @TODO
-                }
-            }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "fetchPuzzleBatch onError " + e);
-                handlePuzzleError(e);
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "fetchPuzzleBatch onError " + e);
+                        handlePuzzleError(e);
+                    }
+                });
     }
 
     public void nextPuzzle() {
@@ -341,44 +390,50 @@ public class LichessApi extends GameApi {
         Map<String, Object> payload = new HashMap<>();
         payload.put("solutions", solutions);
 
-        this.auth.puzzleBatchSolve(puzzleAngle, puzzleCount, payload, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                try {
-                    PuzzleBatchSolveResponse response = (new Gson()).fromJson(result, PuzzleBatchSolveResponse.class);
-                    if (!response.puzzles.isEmpty() && !response.rounds.isEmpty()) {
-                        ongoingPuzzle = response.puzzles.get(0);
-                        ongoingGameFull = null;
-                        processPuzzle();
-                        if (apiListener != null) {
-                            apiListener.onPuzzleSolve(ongoingPuzzle, response.rounds.get(0), response.glicko);
+        this.auth.puzzleBatchSolve(
+                puzzleAngle,
+                puzzleCount,
+                payload,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        try {
+                            PuzzleBatchSolveResponse response =
+                                    (new Gson()).fromJson(result, PuzzleBatchSolveResponse.class);
+                            if (!response.puzzles.isEmpty() && !response.rounds.isEmpty()) {
+                                ongoingPuzzle = response.puzzles.get(0);
+                                ongoingGameFull = null;
+                                processPuzzle();
+                                if (apiListener != null) {
+                                    apiListener.onPuzzleSolve(
+                                            ongoingPuzzle, response.rounds.get(0), response.glicko);
+                                }
+                            }
+                        } catch (Exception ex) {
+                            Log.d(TAG, "solvePuzzleBatch parse error " + ex);
+                            JsonObject error = new JsonObject();
+                            error.addProperty("error", "Could not parse puzzle solve response");
+                            // @TODO
                         }
                     }
-                } catch (Exception ex) {
-                    Log.d(TAG, "solvePuzzleBatch parse error " + ex);
-                    JsonObject error = new JsonObject();
-                    error.addProperty("error", "Could not parse puzzle solve response");
-                    // @TODO
-                }
-            }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "solvePuzzleBatch onError " + e);
-                handlePuzzleError(e);
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "solvePuzzleBatch onError " + e);
+                        handlePuzzleError(e);
+                    }
+                });
     }
 
     private boolean applyUciMoveToBoard(String uciMove) {
         try {
             int from = Pos.fromString(uciMove.substring(0, 2));
             int to = Pos.fromString(uciMove.substring(2, 4));
-            if (uciMove.length() == 5) {
-                jni.setPromo(Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase()));
-            }
-            if (jni.requestMove(from, to) != 0) {
-                addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
+            Integer promo =
+                    uciMove.length() == 5
+                            ? Piece.fromUCIPromo(uciMove.substring(4, 5).toLowerCase())
+                            : null;
+            if (applyServerMove(from, to, promo) != 0) {
                 return true;
             } else {
                 Log.d(TAG, "applyUciMoveToBoard failed: " + uciMove);
@@ -400,7 +455,7 @@ public class LichessApi extends GameApi {
         }
         if (hasPendingWrongMove) {
             hasPendingWrongMove = false;
-            jni.undo();
+            discardLastMove();
             if (apiListener != null) {
                 apiListener.onPuzzleRetried();
             }
@@ -417,7 +472,7 @@ public class LichessApi extends GameApi {
             dispatchState();
             return;
         }
-        int move = jni.getMyMove();
+        int move = getMyMove();
         dispatchMove(move);
         puzzleMoveIndex++;
 
@@ -436,30 +491,32 @@ public class LichessApi extends GameApi {
         // Delay the computer's response for smoother UX
         final String computerMove = solution.get(puzzleMoveIndex);
         puzzleComputerMovePending = true;
-        puzzleHandler.postDelayed(() -> {
-            puzzleComputerMovePending = false;
-            if (!applyUciMoveToBoard(computerMove)) {
-                Log.e(TAG, "Computer puzzle move failed: " + computerMove);
-                dispatchState();
-                return;
-            }
-            int cpuMove = jni.getMyMove();
-            dispatchMove(cpuMove);
-            puzzleMoveIndex++;
-            dispatchState();
-            if (puzzleMoveIndex >= solution.size()) {
-                if (apiListener != null) apiListener.onPuzzleCompleted(Move.getTo(cpuMove));
-            }
-        }, 1000);
+        puzzleHandler.postDelayed(
+                () -> {
+                    puzzleComputerMovePending = false;
+                    if (!applyUciMoveToBoard(computerMove)) {
+                        Log.e(TAG, "Computer puzzle move failed: " + computerMove);
+                        dispatchState();
+                        return;
+                    }
+                    int cpuMove = getMyMove();
+                    dispatchMove(cpuMove);
+                    puzzleMoveIndex++;
+                    dispatchState();
+                    if (puzzleMoveIndex >= solution.size()) {
+                        if (apiListener != null) {
+                            apiListener.onPuzzleCompleted(Move.getTo(cpuMove));
+                        }
+                    }
+                },
+                1000);
     }
 
     private void handlePuzzleError(JsonObject e) {
         handleScopeError(e);
     }
 
-    /**
-     * Returns true when the error was a missing-scope error and a re-login was triggered.
-     */
+    /** Returns true when the error was a missing-scope error and a re-login was triggered. */
     private boolean handleScopeError(JsonObject e) {
         String error = LichessJsonError.message(e);
         if (error.startsWith("Missing scope")) {
@@ -478,54 +535,64 @@ public class LichessApi extends GameApi {
     // --- Teams & Swiss tournaments ---
 
     public void fetchMyTeams() {
-        this.auth.teamsOfUser(user, new OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject>() {
-            @Override
-            public void onSuccess(JsonArray result) {
-                List<Team> teams = new ArrayList<>();
-                for (JsonElement element : result) {
-                    teams.add((new Gson()).fromJson(element.getAsJsonObject(), Team.class));
-                }
-                if (apiListener != null) {
-                    apiListener.onMyTeams(teams);
-                }
-            }
+        this.auth.teamsOfUser(
+                user,
+                new OAuth2AuthCodePKCE.Callback<JsonArray, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonArray result) {
+                        List<Team> teams = new ArrayList<>();
+                        for (JsonElement element : result) {
+                            teams.add((new Gson()).fromJson(element.getAsJsonObject(), Team.class));
+                        }
+                        if (apiListener != null) {
+                            apiListener.onMyTeams(teams);
+                        }
+                    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "fetchMyTeams onError " + e);
-                if (apiListener != null) {
-                    apiListener.onSwissError(errorMessage(e));
-                }
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "fetchMyTeams onError " + e);
+                        if (apiListener != null) {
+                            apiListener.onSwissError(errorMessage(e));
+                        }
+                    }
+                });
     }
 
     public void fetchAllTeams(int page, String search) {
-        this.auth.allTeams(page, search, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                try {
-                    TeamPaginator paginator = (new Gson()).fromJson(result, TeamPaginator.class);
-                    List<Team> teams = paginator.currentPageResults != null ? paginator.currentPageResults : new ArrayList<>();
-                    if (apiListener != null) {
-                        apiListener.onAllTeams(teams, paginator.currentPage, paginator.nbPages);
+        this.auth.allTeams(
+                page,
+                search,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        try {
+                            TeamPaginator paginator =
+                                    (new Gson()).fromJson(result, TeamPaginator.class);
+                            List<Team> teams =
+                                    paginator.currentPageResults != null
+                                            ? paginator.currentPageResults
+                                            : new ArrayList<>();
+                            if (apiListener != null) {
+                                apiListener.onAllTeams(
+                                        teams, paginator.currentPage, paginator.nbPages);
+                            }
+                        } catch (Exception ex) {
+                            Log.d(TAG, "fetchAllTeams parse error " + ex);
+                            if (apiListener != null) {
+                                apiListener.onSwissError("Could not parse teams");
+                            }
+                        }
                     }
-                } catch (Exception ex) {
-                    Log.d(TAG, "fetchAllTeams parse error " + ex);
-                    if (apiListener != null) {
-                        apiListener.onSwissError("Could not parse teams");
-                    }
-                }
-            }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "fetchAllTeams onError " + e);
-                if (apiListener != null) {
-                    apiListener.onSwissError(errorMessage(e));
-                }
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "fetchAllTeams onError " + e);
+                        if (apiListener != null) {
+                            apiListener.onSwissError(errorMessage(e));
+                        }
+                    }
+                });
     }
 
     public void joinTeam(String teamId, String message, String password) {
@@ -536,94 +603,116 @@ public class LichessApi extends GameApi {
         if (password != null && !password.isEmpty()) {
             body.put("password", password);
         }
-        this.auth.joinTeam(teamId, body.isEmpty() ? null : body, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Log.d(TAG, "joinTeam success " + teamId);
-                if (apiListener != null) {
-                    apiListener.onTeamJoined(teamId);
-                }
-            }
+        this.auth.joinTeam(
+                teamId,
+                body.isEmpty() ? null : body,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        Log.d(TAG, "joinTeam success " + teamId);
+                        if (apiListener != null) {
+                            apiListener.onTeamJoined(teamId);
+                        }
+                    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "joinTeam onError " + e);
-                if (!handleScopeError(e) && apiListener != null) {
-                    apiListener.onSwissError(errorMessage(e));
-                }
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "joinTeam onError " + e);
+                        if (!handleScopeError(e) && apiListener != null) {
+                            apiListener.onSwissError(errorMessage(e));
+                        }
+                    }
+                });
     }
 
     public void quitTeam(String teamId) {
-        this.auth.quitTeam(teamId, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Log.d(TAG, "quitTeam success " + teamId);
-                if (apiListener != null) {
-                    apiListener.onTeamLeft(teamId);
-                }
-            }
+        this.auth.quitTeam(
+                teamId,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        Log.d(TAG, "quitTeam success " + teamId);
+                        if (apiListener != null) {
+                            apiListener.onTeamLeft(teamId);
+                        }
+                    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "quitTeam onError " + e);
-                if (!handleScopeError(e) && apiListener != null) {
-                    apiListener.onSwissError(errorMessage(e));
-                }
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "quitTeam onError " + e);
+                        if (!handleScopeError(e) && apiListener != null) {
+                            apiListener.onSwissError(errorMessage(e));
+                        }
+                    }
+                });
     }
 
     public void fetchTeamSwiss(String teamId, String status) {
         // Single-status fetch. Auth.teamSwiss cancels any in-flight stream, so switching
         // the status filter safely aborts a pending request.
         final List<SwissTournament> tournaments = new ArrayList<>();
-        this.auth.teamSwiss(teamId, status, new Auth.AuthResponseHandler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                tournaments.add((new Gson()).fromJson(jsonObject, SwissTournament.class));
-            }
-
-            @Override
-            public void onClose(boolean success) {
-                Log.d(TAG, "fetchTeamSwiss " + status + " closed " + success + " count " + tournaments.size());
-                if (apiListener != null) {
-                    apiListener.onSwissList(tournaments);
-                }
-            }
-        });
-    }
-
-    public void fetchSwissDetail(String id) {
-        this.auth.swissInfo(id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                final SwissTournament tournament = (new Gson()).fromJson(result, SwissTournament.class);
-                final List<SwissStanding> standings = new ArrayList<>();
-                auth.swissResults(id, new Auth.AuthResponseHandler() {
+        this.auth.teamSwiss(
+                teamId,
+                status,
+                new Auth.AuthResponseHandler() {
                     @Override
                     public void onResponse(JsonObject jsonObject) {
-                        standings.add((new Gson()).fromJson(jsonObject, SwissStanding.class));
+                        tournaments.add((new Gson()).fromJson(jsonObject, SwissTournament.class));
                     }
 
                     @Override
                     public void onClose(boolean success) {
+                        Log.d(
+                                TAG,
+                                "fetchTeamSwiss "
+                                        + status
+                                        + " closed "
+                                        + success
+                                        + " count "
+                                        + tournaments.size());
                         if (apiListener != null) {
-                            apiListener.onSwissDetail(tournament, standings);
+                            apiListener.onSwissList(tournaments);
                         }
                     }
                 });
-            }
+    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "fetchSwissDetail onError " + e);
-                if (apiListener != null) {
-                    apiListener.onSwissError(errorMessage(e));
-                }
-            }
-        });
+    public void fetchSwissDetail(String id) {
+        this.auth.swissInfo(
+                id,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        final SwissTournament tournament =
+                                (new Gson()).fromJson(result, SwissTournament.class);
+                        final List<SwissStanding> standings = new ArrayList<>();
+                        auth.swissResults(
+                                id,
+                                new Auth.AuthResponseHandler() {
+                                    @Override
+                                    public void onResponse(JsonObject jsonObject) {
+                                        standings.add(
+                                                (new Gson())
+                                                        .fromJson(jsonObject, SwissStanding.class));
+                                    }
+
+                                    @Override
+                                    public void onClose(boolean success) {
+                                        if (apiListener != null) {
+                                            apiListener.onSwissDetail(tournament, standings);
+                                        }
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "fetchSwissDetail onError " + e);
+                        if (apiListener != null) {
+                            apiListener.onSwissError(errorMessage(e));
+                        }
+                    }
+                });
     }
 
     public void joinSwiss(String id, String password) {
@@ -631,40 +720,45 @@ public class LichessApi extends GameApi {
         if (password != null && !password.isEmpty()) {
             body.put("password", password);
         }
-        this.auth.joinSwiss(id, body.isEmpty() ? null : body, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Log.d(TAG, "joinSwiss success " + id);
-                if (apiListener != null) {
-                    apiListener.onSwissJoined(id);
-                }
-            }
+        this.auth.joinSwiss(
+                id,
+                body.isEmpty() ? null : body,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        Log.d(TAG, "joinSwiss success " + id);
+                        if (apiListener != null) {
+                            apiListener.onSwissJoined(id);
+                        }
+                    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "joinSwiss onError " + e);
-                if (!handleScopeError(e) && apiListener != null) {
-                    apiListener.onSwissError(errorMessage(e));
-                }
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "joinSwiss onError " + e);
+                        if (!handleScopeError(e) && apiListener != null) {
+                            apiListener.onSwissError(errorMessage(e));
+                        }
+                    }
+                });
     }
 
     public void withdrawSwiss(String id) {
-        this.auth.withdrawSwiss(id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Log.d(TAG, "withdrawSwiss success " + id);
-            }
+        this.auth.withdrawSwiss(
+                id,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        Log.d(TAG, "withdrawSwiss success " + id);
+                    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "withdrawSwiss onError " + e);
-                if (!handleScopeError(e) && apiListener != null) {
-                    apiListener.onSwissError(errorMessage(e));
-                }
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "withdrawSwiss onError " + e);
+                        if (!handleScopeError(e) && apiListener != null) {
+                            apiListener.onSwissError(errorMessage(e));
+                        }
+                    }
+                });
     }
 
     public void cancelChallenge() {
@@ -676,31 +770,35 @@ public class LichessApi extends GameApi {
     }
 
     public void acceptChallenge(Challenge challenge) {
-        this.auth.acceptChallenge(challenge.id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Log.d(TAG, "challenge accepted");
-            }
+        this.auth.acceptChallenge(
+                challenge.id,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        Log.d(TAG, "challenge accepted");
+                    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "challenge " + e);
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "challenge " + e);
+                    }
+                });
     }
 
     public void declineChallenge(Challenge challenge) {
-        this.auth.declineChallenge(challenge.id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-            @Override
-            public void onSuccess(JsonObject result) {
-                Log.d(TAG, "challenge accepted");
-            }
+        this.auth.declineChallenge(
+                challenge.id,
+                new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                    @Override
+                    public void onSuccess(JsonObject result) {
+                        Log.d(TAG, "challenge accepted");
+                    }
 
-            @Override
-            public void onError(JsonObject e) {
-                Log.d(TAG, "challenge " + e);
-            }
-        });
+                    @Override
+                    public void onError(JsonObject e) {
+                        Log.d(TAG, "challenge " + e);
+                    }
+                });
     }
 
     public void move(int from, int to) {
@@ -709,21 +807,24 @@ public class LichessApi extends GameApi {
             uciMove += Piece.toPromoUCI(promotionPiece);
         }
         if (ongoingGameFull != null) {
-            this.auth.move(ongoingGameFull.id, uciMove, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-                @Override
-                public void onSuccess(JsonObject result) {
-                    Log.d(TAG, "moved");
-                }
+            this.auth.move(
+                    ongoingGameFull.id,
+                    uciMove,
+                    new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                        @Override
+                        public void onSuccess(JsonObject result) {
+                            Log.d(TAG, "moved");
+                        }
 
-                @Override
-                public void onError(JsonObject result) {
-                    Log.d(TAG, "moved " + result);
-                    dispatchIllegalMove();
-                    if (apiListener != null) {
-                        apiListener.onInvalidMove(result.get("error").getAsString());
-                    }
-                }
-            });
+                        @Override
+                        public void onError(JsonObject result) {
+                            Log.d(TAG, "moved " + result);
+                            dispatchIllegalMove();
+                            if (apiListener != null) {
+                                apiListener.onInvalidMove(result.get("error").getAsString());
+                            }
+                        }
+                    });
         } else if (ongoingPuzzle != null) {
             if (puzzleComputerMovePending) {
                 return;
@@ -738,10 +839,11 @@ public class LichessApi extends GameApi {
                 puzzleSolvedCleanly = false;
                 if (applyUciMoveToBoard(uciMove)) {
                     hasPendingWrongMove = true;
-                    dispatchMove(jni.getMyMove());
+                    dispatchMove(getMyMove());
                     dispatchState();
                     if (apiListener != null) {
-                        String displayMove = uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
+                        String displayMove =
+                                uciMove.substring(0, 2) + "-" + uciMove.substring(2, 4);
                         try {
                             int toPos = Pos.fromString(uciMove.substring(2, 4));
                             apiListener.onPuzzleUnexpectedMove(displayMove, toPos);
@@ -769,61 +871,65 @@ public class LichessApi extends GameApi {
 
     public void resign() {
         if (ongoingGameFull != null) {
-            this.auth.resign(ongoingGameFull.id, new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-                @Override
-                public void onSuccess(JsonObject result) {
+            this.auth.resign(
+                    ongoingGameFull.id,
+                    new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                        @Override
+                        public void onSuccess(JsonObject result) {}
 
-                }
-
-                @Override
-                public void onError(JsonObject e) {
-
-                }
-            });
+                        @Override
+                        public void onError(JsonObject e) {}
+                    });
         }
     }
 
     public void draw(boolean accept) {
         if (ongoingGameFull != null) {
-            this.auth.draw(ongoingGameFull.id, accept ? "yes" : "no", new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
-                @Override
-                public void onSuccess(JsonObject result) {
-                    Log.d(TAG, "Draw success " + result);
-                }
+            this.auth.draw(
+                    ongoingGameFull.id,
+                    accept ? "yes" : "no",
+                    new OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject>() {
+                        @Override
+                        public void onSuccess(JsonObject result) {
+                            Log.d(TAG, "Draw success " + result);
+                        }
 
-                @Override
-                public void onError(JsonObject e) {
-                    Log.d(TAG, "Draw error " + e);
-                }
-            });
+                        @Override
+                        public void onError(JsonObject e) {
+                            Log.d(TAG, "Draw error " + e);
+                        }
+                    });
         }
     }
 
     public void game(String gameId) {
-        jni.reset();
+        reset();
         dispatchState();
-        this.auth.game(gameId, new Auth.AuthResponseHandler() {
-            @Override
-            public void onResponse(JsonObject jsonObject) {
-                String type = jsonObject.get("type").getAsString();
-                Log.d(TAG, "game " + jsonObject.get("type").getAsString());
-                if (type.equals("gameState") && ongoingGameFull != null) {
-                    ongoingGameFull.state = (new Gson()).fromJson(jsonObject, GameState.class);
-                } else if (type.equals("gameFull")) {
-                    ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
-                    ongoingPuzzle = null;
-                }
-                processGameState();
-            }
+        this.auth.game(
+                gameId,
+                new Auth.AuthResponseHandler() {
+                    @Override
+                    public void onResponse(JsonObject jsonObject) {
+                        String type = jsonObject.get("type").getAsString();
+                        Log.d(TAG, "game " + jsonObject.get("type").getAsString());
+                        if (type.equals("gameState") && ongoingGameFull != null) {
+                            ongoingGameFull.state =
+                                    (new Gson()).fromJson(jsonObject, GameState.class);
+                        } else if (type.equals("gameFull")) {
+                            ongoingGameFull = (new Gson()).fromJson(jsonObject, GameFull.class);
+                            ongoingPuzzle = null;
+                        }
+                        processGameState();
+                    }
 
-            @Override
-            public void onClose(boolean success) {
-                Log.d(TAG, "game closed " + success);
-                if (apiListener != null && !success) {
-                    apiListener.onGameDisconnected();
-                }
-            }
-        });
+                    @Override
+                    public void onClose(boolean success) {
+                        Log.d(TAG, "game closed " + success);
+                        if (apiListener != null && !success) {
+                            apiListener.onGameDisconnected();
+                        }
+                    }
+                });
     }
 
     public String getPuzzleId() {
@@ -845,8 +951,9 @@ public class LichessApi extends GameApi {
     }
 
     public boolean isOngoingGameInProgress() {
-        return ongoingGameFull != null && ongoingGameFull.state != null
-            && "started".equals(ongoingGameFull.state.status);
+        return ongoingGameFull != null
+                && ongoingGameFull.state != null
+                && "started".equals(ongoingGameFull.state.status);
     }
 
     /** A gameStart retained until a foreground Lichess screen can act on it. */
@@ -882,8 +989,9 @@ public class LichessApi extends GameApi {
         if (isOngoingGameInProgress() && !gameId.equals(getOngoingGameId())) {
             return false;
         }
-        if (autoOpeningGameId != null && ongoingGameFull == null
-            && !gameId.equals(autoOpeningGameId)) {
+        if (autoOpeningGameId != null
+                && ongoingGameFull == null
+                && !gameId.equals(autoOpeningGameId)) {
             return false;
         }
         pendingGameStart = new PendingGameStart(gameId, boardCompatible);
@@ -891,8 +999,8 @@ public class LichessApi extends GameApi {
     }
 
     /**
-     * Consume the pending pairing, recording it so reconnects don't reopen the same board.
-     * Returns null when no foreground navigation is pending.
+     * Consume the pending pairing, recording it so reconnects don't reopen the same board. Returns
+     * null when no foreground navigation is pending.
      */
     public PendingGameStart consumePendingGameStart() {
         PendingGameStart result = pendingGameStart;
@@ -908,15 +1016,17 @@ public class LichessApi extends GameApi {
 
     public int getMyTurn() {
         if (ongoingGameFull != null) {
-            return ongoingGameFull.white != null && user != null && user.equals(ongoingGameFull.white.id) ? BoardConstants.WHITE : BoardConstants.BLACK;
+            return ongoingGameFull.white != null
+                            && user != null
+                            && user.equals(ongoingGameFull.white.id)
+                    ? BoardConstants.WHITE
+                    : BoardConstants.BLACK;
         } else if (ongoingPuzzle != null) {
-            return ongoingPuzzle.puzzle.initialPly % 2 == 1 ? BoardConstants.WHITE : BoardConstants.BLACK;
+            return ongoingPuzzle.puzzle.initialPly % 2 == 1
+                    ? BoardConstants.WHITE
+                    : BoardConstants.BLACK;
         }
         return BoardConstants.WHITE;
-    }
-
-    public int getTurn() {
-        return jni.getTurn();
     }
 
     public String getUser() {
@@ -945,15 +1055,14 @@ public class LichessApi extends GameApi {
         if (ongoingGameFull != null) {
             LichessGameStateSnapshot snapshot = LichessGameStateSnapshot.from(ongoingGameFull);
             LichessGameStateSnapshot.Transition transition =
-                snapshot.transitionFrom(lastGameStateSnapshot);
+                    snapshot.transitionFrom(lastGameStateSnapshot);
 
             Log.d(TAG, transition.toString());
 
-            // jni.initFEN(ongoingGame.fen);
             if (ongoingGameFull.initialFen.equals("startpos")) {
-                jni.newGame();
+                resetToStandardPositionWithoutHistory();
             } else {
-                jni.initFEN(ongoingGameFull.initialFen);
+                loadFENWithoutHistory(ongoingGameFull.initialFen);
             }
             resetForPGN();
             boolean replayedEntireSnapshot = processMoves(snapshot.moves);
@@ -983,8 +1092,8 @@ public class LichessApi extends GameApi {
             puzzleComputerMovePending = false;
             hasPendingWrongMove = false;
             puzzleHandler.removeCallbacksAndMessages(null);
-            jni.newGame();
-            pgnMoves.clear();
+            resetToStandardPositionWithoutHistory();
+            resetPGNHistory();
             String[] allMoves = ongoingPuzzle.game.pgn.split(" ");
             int limit = Math.min(ongoingPuzzle.puzzle.initialPly + 1, allMoves.length);
             for (int i = 0; i < limit; i++) {
@@ -992,7 +1101,7 @@ public class LichessApi extends GameApi {
                     Log.d(TAG, "processPuzzle: skipped token " + allMoves[i]);
                 }
             }
-            dispatchMove(jni.getMyMove());
+            dispatchMove(getMyMove());
             dispatchState();
         }
     }
@@ -1006,16 +1115,25 @@ public class LichessApi extends GameApi {
                     int from = Pos.fromString(sFrom);
                     int to = Pos.fromString(sTo);
 
-                    if (sMove.length() == 5) {
-                        String promo = sMove.substring(4, 5).toLowerCase();
-                        jni.setPromo(Piece.fromUCIPromo(promo));
-                    }
+                    Integer promo =
+                            sMove.length() == 5
+                                    ? Piece.fromUCIPromo(sMove.substring(4, 5).toLowerCase())
+                                    : null;
 
-                    if (jni.requestMove(from, to) == 0) {
-                        Log.d(TAG, "Could not make move " + sMove + " " + sFrom + " " + sTo + " => " + from + " " + to);
+                    if (applyServerMove(from, to, promo) == 0) {
+                        Log.d(
+                                TAG,
+                                "Could not make move "
+                                        + sMove
+                                        + " "
+                                        + sFrom
+                                        + " "
+                                        + sTo
+                                        + " => "
+                                        + from
+                                        + " "
+                                        + to);
                         return false;
-                    } else {
-                        addPGNEntry(jni.getNumBoard(), jni.getMyMoveToString(), "", jni.getMyMove(), -1);
                     }
 
                 } catch (Exception e) {
@@ -1031,18 +1149,16 @@ public class LichessApi extends GameApi {
     }
 
     private void dispatchGameStateTransition(
-        LichessGameStateSnapshot snapshot,
-        LichessGameStateSnapshot.Transition transition
-    ) {
-        if (transition.newGame) {
+            LichessGameStateSnapshot snapshot, LichessGameStateSnapshot.Transition transition) {
+        if (transition.gameLoaded) {
             if (snapshot.isStarted()) {
-                dispatchNewGameStarted(jni.getVariant());
+                dispatchGameLoaded();
             }
             return;
         }
 
         if (transition.moveApplied && !snapshot.moves.isEmpty()) {
-            dispatchMove(jni.getMyMove());
+            dispatchMove(getMyMove());
         } else if (transition.historyPositionChanged) {
             dispatchHistoryPositionChanged(snapshot.moves.size());
         }
@@ -1056,16 +1172,16 @@ public class LichessApi extends GameApi {
     }
 
     private boolean isBoardDetectedDraw() {
-        int state = jni.getState();
+        int state = getEngineState();
         return state == BoardConstants.DRAW_MATERIAL
-            || state == BoardConstants.DRAW_50
-            || state == BoardConstants.STALEMATE
-            || state == BoardConstants.DRAW_REPEAT;
+                || state == BoardConstants.DRAW_50
+                || state == BoardConstants.STALEMATE
+                || state == BoardConstants.DRAW_REPEAT;
     }
 
     public void retryWrongPuzzleMove() {
         hasPendingWrongMove = false;
-        jni.undo();
+        discardLastMove();
         dispatchState();
         if (apiListener != null) {
             apiListener.onPuzzleRetried();
@@ -1081,9 +1197,9 @@ public class LichessApi extends GameApi {
         if (ongoingGameFull.variant.key.equals("chess960")) {
             pgnTags.put("Variant", "Fischerandom");
             pgnTags.put("Setup", "1");
-            pgnTags.put("FEN", jni.toFEN());
+            pgnTags.put("FEN", getFEN());
         }
 
-        pgnMoves.clear();
+        resetPGNHistory();
     }
 }

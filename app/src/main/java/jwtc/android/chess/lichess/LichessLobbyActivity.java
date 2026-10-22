@@ -11,14 +11,11 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
-
 import com.google.android.material.button.MaterialButton;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
@@ -28,8 +25,8 @@ import jwtc.android.chess.lichess.models.Game;
 /**
  * Login + lobby: the OAuth entry point and the game list. This is the only Lichess activity that
  * runs the login flow (it keeps the oauth2redirect intent-filter and {@code singleTask}); the game
- * and swiss activities assume the shared api is already authenticated. Navigates to
- * {@link LichessGameActivity} (a game/puzzle) and {@link LichessSwissActivity} via startActivity.
+ * and swiss activities assume the shared api is already authenticated. Navigates to {@link
+ * LichessGameActivity} (a game/puzzle) and {@link LichessSwissActivity} via startActivity.
  */
 public class LichessLobbyActivity extends LichessBaseActivity
         implements ResultDialogListener<Map<String, Object>>, AdapterView.OnItemClickListener {
@@ -47,24 +44,26 @@ public class LichessLobbyActivity extends LichessBaseActivity
     private List<Game> nowPlayingGames;
 
     private final Handler lobbyRefreshHandler = new Handler(Looper.getMainLooper());
-    private final Runnable lobbyRefreshRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (!isLobbyVisible()) {
-                return;
-            }
-            lichessApi.playing();
-            lobbyRefreshHandler.postDelayed(this, LOBBY_REFRESH_INTERVAL_MS);
-        }
-    };
-    private final Runnable connectionRetryRunnable = () -> {
-        if (!session.isConnected() || lichessApi == null) {
-            return;
-        }
-        textViewLobbyStatus.setText("");
-        lichessApi.event();
-        lichessApi.playing();
-    };
+    private final Runnable lobbyRefreshRunnable =
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (!isLobbyVisible()) {
+                        return;
+                    }
+                    lichessApi.playing();
+                    lobbyRefreshHandler.postDelayed(this, LOBBY_REFRESH_INTERVAL_MS);
+                }
+            };
+    private final Runnable connectionRetryRunnable =
+            () -> {
+                if (!session.isConnected() || lichessApi == null) {
+                    return;
+                }
+                textViewLobbyStatus.setText("");
+                lichessApi.event();
+                lichessApi.playing();
+            };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,22 +77,25 @@ public class LichessLobbyActivity extends LichessBaseActivity
         textViewLobbyStatus = findViewById(R.id.TextViewLobbyStatus);
 
         MaterialButton buttonLogin = findViewById(R.id.ButtonLogin);
-        buttonLogin.setOnClickListener(v -> {
-            if (lichessApi != null) {
-                lichessApi.login(LichessLobbyActivity.this);
-            }
-        });
+        buttonLogin.setOnClickListener(
+                v -> {
+                    if (lichessApi != null) {
+                        lichessApi.login(LichessLobbyActivity.this);
+                    }
+                });
 
         MaterialButton buttonLogout = findViewById(R.id.ButtonLogout);
-        buttonLogout.setOnClickListener(v -> {
-            if (lichessApi != null) {
-                lichessApi.logout();
-            }
-            finish();
-        });
+        buttonLogout.setOnClickListener(
+                v -> {
+                    if (lichessApi != null) {
+                        lichessApi.logout();
+                    }
+                    finish();
+                });
 
         buttonChallenge = findViewById(R.id.ButtonChallenge);
-        buttonChallenge.setOnClickListener(v -> openChallengeDialog(ChallengeDialog.REQUEST_CHALLENGE));
+        buttonChallenge.setOnClickListener(
+                v -> openChallengeDialog(ChallengeDialog.REQUEST_CHALLENGE));
         buttonSeek = findViewById(R.id.ButtonSeek);
         buttonSeek.setOnClickListener(v -> openChallengeDialog(ChallengeDialog.REQUEST_SEEK));
 
@@ -101,11 +103,23 @@ public class LichessLobbyActivity extends LichessBaseActivity
         buttonPuzzle.setOnClickListener(v -> openPuzzleDialog());
 
         MaterialButton buttonTeams = findViewById(R.id.ButtonTeams);
-        buttonTeams.setOnClickListener(v -> startActivity(new Intent(this, LichessSwissActivity.class)));
+        buttonTeams.setOnClickListener(
+                v -> startActivity(new Intent(this, LichessSwissActivity.class)));
 
-        adapterGames = new SimpleAdapter(this, mapGames, R.layout.lichess_game_row,
-            new String[]{"image_turn_white", "text_white", "image_turn_black", "text_black"},
-            new int[]{R.id.image_turn_white, R.id.text_white, R.id.image_turn_black, R.id.text_black});
+        adapterGames =
+                new SimpleAdapter(
+                        this,
+                        mapGames,
+                        R.layout.lichess_game_row,
+                        new String[] {
+                            "image_turn_white", "text_white", "image_turn_black", "text_black"
+                        },
+                        new int[] {
+                            R.id.image_turn_white,
+                            R.id.text_white,
+                            R.id.image_turn_black,
+                            R.id.text_black
+                        });
         listViewGames = findViewById(R.id.ListViewGames);
         listViewGames.setAdapter(adapterGames);
         listViewGames.setOnItemClickListener(this);
@@ -163,9 +177,9 @@ public class LichessLobbyActivity extends LichessBaseActivity
 
     private boolean isLobbyVisible() {
         return session.isConnected()
-            && lichessApi != null
-            && viewAnimatorRoot != null
-            && viewAnimatorRoot.getDisplayedChild() == VIEW_LOBBY;
+                && lichessApi != null
+                && viewAnimatorRoot != null
+                && viewAnimatorRoot.getDisplayedChild() == VIEW_LOBBY;
     }
 
     private void startLobbyRefreshLoop() {
@@ -220,13 +234,21 @@ public class LichessLobbyActivity extends LichessBaseActivity
             Game game = games.get(i);
             HashMap<String, String> gameMap = new HashMap<>();
             if (game.color.equals("white")) {
-                gameMap.put("image_turn_white", "" + (game.isMyTurn ? R.drawable.turnwhite : R.drawable.turnempty));
-                gameMap.put("image_turn_black", "" + (game.isMyTurn ? R.drawable.turnempty : R.drawable.turnblack));
+                gameMap.put(
+                        "image_turn_white",
+                        "" + (game.isMyTurn ? R.drawable.turnwhite : R.drawable.turnempty));
+                gameMap.put(
+                        "image_turn_black",
+                        "" + (game.isMyTurn ? R.drawable.turnempty : R.drawable.turnblack));
                 gameMap.put("text_white", me);
                 gameMap.put("text_black", game.opponent.username);
             } else {
-                gameMap.put("image_turn_white", "" + (game.isMyTurn ? R.drawable.turnempty : R.drawable.turnwhite));
-                gameMap.put("image_turn_black", "" + (game.isMyTurn ? R.drawable.turnblack : R.drawable.turnempty));
+                gameMap.put(
+                        "image_turn_white",
+                        "" + (game.isMyTurn ? R.drawable.turnempty : R.drawable.turnwhite));
+                gameMap.put(
+                        "image_turn_black",
+                        "" + (game.isMyTurn ? R.drawable.turnblack : R.drawable.turnempty));
                 gameMap.put("text_white", game.opponent.username);
                 gameMap.put("text_black", me);
             }
@@ -244,12 +266,14 @@ public class LichessLobbyActivity extends LichessBaseActivity
 
     @Override
     public void onChallengeCancelled(Challenge challenge) {
-        textViewLobbyStatus.setText(getString(R.string.lichess_challenge_by_cancelled, challenge.challenger.name));
+        textViewLobbyStatus.setText(
+                getString(R.string.lichess_challenge_by_cancelled, challenge.challenger.name));
     }
 
     @Override
     public void onChallengeDeclined(Challenge challenge) {
-        textViewLobbyStatus.setText(getString(R.string.lichess_challenge_by_declined, challenge.challenger.name));
+        textViewLobbyStatus.setText(
+                getString(R.string.lichess_challenge_by_declined, challenge.challenger.name));
     }
 
     @Override
@@ -272,9 +296,12 @@ public class LichessLobbyActivity extends LichessBaseActivity
             if (data != null) {
                 Intent intent = new Intent(this, LichessGameActivity.class);
                 intent.putExtra(LichessGameActivity.EXTRA_PUZZLE_ANGLE, (String) data.get("angle"));
-                intent.putExtra(LichessGameActivity.EXTRA_PUZZLE_DIFFICULTY, (String) data.get("difficulty"));
-                intent.putExtra(LichessGameActivity.EXTRA_PUZZLE_RATED,
-                    data.get("rated") != null && (boolean) data.get("rated"));
+                intent.putExtra(
+                        LichessGameActivity.EXTRA_PUZZLE_DIFFICULTY,
+                        (String) data.get("difficulty"));
+                intent.putExtra(
+                        LichessGameActivity.EXTRA_PUZZLE_RATED,
+                        data.get("rated") != null && (boolean) data.get("rated"));
                 startActivity(intent);
             }
             return;
@@ -293,7 +320,9 @@ public class LichessLobbyActivity extends LichessBaseActivity
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (parent == listViewGames && nowPlayingGames != null && nowPlayingGames.size() > position) {
+        if (parent == listViewGames
+                && nowPlayingGames != null
+                && nowPlayingGames.size() > position) {
             Game game = nowPlayingGames.get(position);
             if (game.compat == null || game.compat.board) {
                 launchGame(game.gameId);

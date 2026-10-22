@@ -6,15 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineApi;
 import jwtc.android.chess.engine.oex.OexEngineDescriptor;
@@ -24,7 +20,12 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.views.FixedDropdownView;
 
 public class GameSettingsDialog extends ResultDialog<Bundle> {
-    public GameSettingsDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, final SharedPreferences prefs, boolean isDuckGame) {
+    public GameSettingsDialog(
+            @NonNull Context context,
+            ResultDialogListener<Bundle> listener,
+            int requestCode,
+            final SharedPreferences prefs,
+            boolean requiresBuiltinEngine) {
         super(context, listener, requestCode);
 
         setContentView(R.layout.game_settings);
@@ -50,9 +51,8 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
         spinnerLevelPly.setItems(context.getResources().getStringArray(R.array.levels_ply));
 
         toggleQuiescent.setChecked(quiescentSearchOn);
-        toggleQuiescent.setText(quiescentSearchOn
-            ? R.string.options_quiescent_on
-            : R.string.options_quiescent_off);
+        toggleQuiescent.setText(
+                quiescentSearchOn ? R.string.options_quiescent_on : R.string.options_quiescent_off);
 
         toggleOpponent.check(vsCPU ? R.id.radioAndroid : R.id.radioHuman);
 
@@ -66,8 +66,9 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
 
         List<OexEngineDescriptor> oexEngines = new OexEngineResolver(context).resolveEngines();
         for (OexEngineDescriptor descriptor : oexEngines) {
-            String label = context.getString(R.string.options_engine_oex) + ": " + descriptor.getName();
-            boolean selectable = !isDuckGame;
+            String label =
+                    context.getString(R.string.options_engine_oex) + ": " + descriptor.getName();
+            boolean selectable = !requiresBuiltinEngine;
             if (!selectable) {
                 label += " (" + context.getString(R.string.options_engine_unavailable_short) + ")";
             }
@@ -76,9 +77,9 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
         }
         spinnerEngine.setItems(engineLabels);
 
-        if (isDuckGame && oexEngines.size() > 0) {
+        if (requiresBuiltinEngine && oexEngines.size() > 0) {
             textEngineBackendHint.setVisibility(View.VISIBLE);
-            textEngineBackendHint.setText(R.string.options_engine_oex_duck_disabled);
+            textEngineBackendHint.setText(R.string.options_engine_oex_variant_disabled);
         } else if (oexEngines.isEmpty()) {
             textEngineBackendHint.setVisibility(View.VISIBLE);
             textEngineBackendHint.setText(R.string.options_engine_oex_unavailable);
@@ -96,10 +97,10 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
                 selectedEnginePos = i;
                 break;
             }
-            if ("oex".equals(engineBackend) &&
-                "oex".equals(option.backend) &&
-                option.oexEngineId != null &&
-                option.oexEngineId.equals(oexEngineId)) {
+            if ("oex".equals(engineBackend)
+                    && "oex".equals(option.backend)
+                    && option.oexEngineId != null
+                    && option.oexEngineId.equals(oexEngineId)) {
                 selectedEnginePos = i;
                 break;
             }
@@ -111,65 +112,76 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
         spinnerLevelTime.setVisibility(useTimeLevel ? View.VISIBLE : View.GONE);
         spinnerLevelPly.setVisibility(useTimeLevel ? View.GONE : View.VISIBLE);
 
-        toggleLevelMode.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (!isChecked) {
-                return;
-            }
-            boolean isTime = checkedId == R.id.RadioOptionsTime;
-            spinnerLevelTime.setVisibility(isTime ? View.VISIBLE : View.GONE);
-            spinnerLevelPly.setVisibility(isTime ? View.GONE : View.VISIBLE);
-        });
+        toggleLevelMode.addOnButtonCheckedListener(
+                (group, checkedId, isChecked) -> {
+                    if (!isChecked) {
+                        return;
+                    }
+                    boolean isTime = checkedId == R.id.RadioOptionsTime;
+                    spinnerLevelTime.setVisibility(isTime ? View.VISIBLE : View.GONE);
+                    spinnerLevelPly.setVisibility(isTime ? View.GONE : View.VISIBLE);
+                });
 
-        toggleQuiescent.setOnCheckedChangeListener((buttonView, isChecked) ->
-            toggleQuiescent.setText(isChecked
-                ? R.string.options_quiescent_on
-                : R.string.options_quiescent_off));
+        toggleQuiescent.setOnCheckedChangeListener(
+                (buttonView, isChecked) ->
+                        toggleQuiescent.setText(
+                                isChecked
+                                        ? R.string.options_quiescent_on
+                                        : R.string.options_quiescent_off));
 
         spinnerLevelTime.setSelection(levelTime - 1);
         spinnerLevelPly.setSelection(levelPly - 1);
 
         Button buttonOk = findViewById(R.id.ButtonOk);
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        buttonOk.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                SharedPreferences.Editor editor = prefs.edit();
+                        SharedPreferences.Editor editor = prefs.edit();
 
-                editor.putBoolean("opponent", toggleOpponent.getCheckedButtonId() == R.id.radioAndroid);
-                editor.putBoolean("myTurn", toggleColor.getCheckedButtonId() == R.id.radioWhite);
-                int engineSelection = spinnerEngine.getSelectedItemPosition();
-                EngineOption selectedOption = engineSelection >= 0 && engineSelection < engineOptions.size()
-                    ? engineOptions.get(engineSelection)
-                    : engineOptions.get(0);
-                if (!selectedOption.selectable) {
-                    selectedOption = engineOptions.get(0);
-                }
-                editor.putString("engineBackend", selectedOption.backend);
-                editor.putString("oexEngineId", selectedOption.oexEngineId);
+                        editor.putBoolean(
+                                "opponent",
+                                toggleOpponent.getCheckedButtonId() == R.id.radioAndroid);
+                        editor.putBoolean(
+                                "myTurn", toggleColor.getCheckedButtonId() == R.id.radioWhite);
+                        int engineSelection = spinnerEngine.getSelectedItemPosition();
+                        EngineOption selectedOption =
+                                engineSelection >= 0 && engineSelection < engineOptions.size()
+                                        ? engineOptions.get(engineSelection)
+                                        : engineOptions.get(0);
+                        if (!selectedOption.selectable) {
+                            selectedOption = engineOptions.get(0);
+                        }
+                        editor.putString("engineBackend", selectedOption.backend);
+                        editor.putString("oexEngineId", selectedOption.oexEngineId);
 
-                editor.putInt("levelMode", toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsTime
-                    ? EngineApi.LEVEL_TIME
-                    : EngineApi.LEVEL_PLY);
-                editor.putInt("level", spinnerLevelTime.getSelectedItemPosition() + 1);
-                editor.putInt("levelPly", spinnerLevelPly.getSelectedItemPosition() + 1);
+                        editor.putInt(
+                                "levelMode",
+                                toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsTime
+                                        ? EngineApi.LEVEL_TIME
+                                        : EngineApi.LEVEL_PLY);
+                        editor.putInt("level", spinnerLevelTime.getSelectedItemPosition() + 1);
+                        editor.putInt("levelPly", spinnerLevelPly.getSelectedItemPosition() + 1);
 
-                editor.putBoolean("quiescentSearchOn", toggleQuiescent.isChecked());
+                        editor.putBoolean("quiescentSearchOn", toggleQuiescent.isChecked());
 
-                editor.commit();
+                        editor.commit();
 
-                setResult(new Bundle());
+                        setResult(new Bundle());
 
-                dismiss();
-            }
-        });
+                        dismiss();
+                    }
+                });
 
         Button buttonCancel = findViewById(R.id.ButtonCancel);
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        buttonCancel.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dismiss();
+                    }
+                });
     }
 
     private static class EngineOption {

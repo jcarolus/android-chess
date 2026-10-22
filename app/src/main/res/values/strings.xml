@@ -202,6 +202,7 @@
     <string name="lichess_create_challenge_color_random">Random</string>
     <string name="lichess_create_challenge_color_white">White</string>
     <string name="lichess_create_challenge_player">Opponent</string>
+    <string name="lichess_create_challenge_player_required">Enter an opponent first.</string>
     <string name="lichess_create_challenge_rated">Rated</string>
     <string name="lichess_create_challenge_time">Time</string>
     <string name="lichess_create_challenge_time_control">Time control</string>
@@ -277,6 +278,8 @@
     <string name="msg_setup_turn">Turn</string>
     <string name="msg_setup_turn_black">black</string>
     <string name="msg_setup_turn_white">white</string>
+    <string name="game_ready_as_white">Game ready. You are playing with the white pieces.</string>
+    <string name="game_ready_as_black">Game ready. You are playing with the black pieces.</string>
     <string name="new_game_as_black">New game, you are playing with the black pieces</string>
     <string name="new_game_as_white">New game, you are playing with the white pieces</string>
     <string name="online_help">
@@ -385,6 +388,7 @@
     <string name="pref_haptic_feedback">Use haptic feedback</string>
     <string name="pref_speech">Speech</string>
     <string name="pref_user_long_move_descriptions">Use full move description</string>
+    <string name="pref_add_turn_in_move_description">Include whose turn it is in move descriptions</string>
     <string name="tts_locale_not_supported">Text to speech does not support your locale</string>
     <string name="tts_not_loaded">Could not load text to speech</string>
     <string name="tts_example_move">Bishop takes G7 check</string>
@@ -428,6 +432,11 @@
     <string name="gameslist_filter_switch_date_before_description">Enable or disable date before filter</string>
     <string name="gameslist_filter_switch_event_description">Enable or disable event filter</string>
     <string name="gameslist_filter_switch_result_description">Enable or disable result filter</string>
+    <string name="gameslist_open">Open</string>
+    <string name="gameslist_analyze">Analyze</string>
+    <string name="gameslist_result_placeholder" translatable="false">1-0</string>
+    <string name="gameslist_date_placeholder" translatable="false">YYYY.MM.DD</string>
+    <string name="gameslist_rating_placeholder" translatable="false">3.5</string>
     <string name="gameslist_result_count">Results: %1$d</string>
     <string name="gameslist_game_of_total">Game %1$d of %2$d</string>
     <string name="gameslist_filter_switch_white_description">Enable or disable white player filter</string>
@@ -478,7 +487,7 @@
     <string name="title_castle">Castle?</string>
     <string name="title_pick_engine">Engine</string>
     <string name="title_challenge">Challenge</string>
-    <string name="title_create_new_line">Create new line?</string>
+    <string name="title_overwrite_main_line">Overwrite main line from this position?</string>
     <string name="title_delete_game">Delete game</string>
     <string name="title_edit_command">Edit command</string>
     <string name="title_edit_or_delete">Edit or delete?</string>
@@ -522,7 +531,7 @@
     <string name="lichess_swiss_starts_at">starts %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · round %2$d/%3$d · %4$d players</string>
     <string name="lichess_swiss_no_teams">You are not in any team yet. Tap \"All teams\" to find one to join.</string>
-    <string name="lichess_swiss_no_tournaments">This team has no Swiss tournaments.</string>
+    <string name="lichess_swiss_no_tournaments">No tournaments found.</string>
     <string name="lichess_team_join_message_hint">Message (if the team reviews requests)</string>
     <string name="lichess_team_join_password_hint">Password (if required)</string>
     <string name="lichess_team_joined">Joined %1$s</string>
@@ -536,4 +545,42 @@
     <string name="players_agreed_draw">Draw by agreement</string>
     <string name="white_player_forfeits_on_time">White lost on time</string>
     <string name="white_player_resigned">White resigned</string>
+    <string name="analysis_main_line">Main line</string>
+    <string name="analysis_engine_likes">Engine likes:</string>
+    <string name="analysis_engine_matches">Last move matches the engine recommendation</string>
+    <string name="analysis_move_best">Best</string>
+    <string name="analysis_move_excellent">Excellent</string>
+    <string name="analysis_move_okay">Okay</string>
+    <string name="analysis_move_inaccuracy">Inaccuracy</string>
+    <string name="analysis_move_mistake">Mistake</string>
+    <string name="analysis_move_blunder">Blunder</string>
+    <string name="analysis_move_forced">Forced</string>
+    <string name="analysis_move_pending">Analyzing move…</string>
+    <string name="analysis_move_unavailable">Analysis unavailable</string>
+    <string name="analysis_white_to_move">White to move</string>
+    <string name="analysis_black_to_move">Black to move</string>
+    <string name="analysis_variation">Variation</string>
+    <string name="analysis_back_to_main">Back to main</string>
+    <string name="pgn_return_main_line">Return to main line</string>
+    <string name="pgn_promote_variation">Make preferred continuation</string>
+    <string name="pgn_delete_variation">Delete variation</string>
+    <string name="engine_evaluation_score">Engine evaluation: %1$+.1f pawns (positive favors White)</string>
+    <string name="engine_evaluation_pending">Engine evaluation unavailable</string>
+    <string name="analysis_settings">Analysis settings</string>
+    <string name="analysis_time_budget">Time budget per position (seconds)</string>
+    <string name="analysis_time_invalid">Enter a number from 0 to %1$d.</string>
+    <string name="analysis_move_position">Move position</string>
+    <string name="analysis_builtin_warning">For better analysis, install an OEX-compatible chess engine.</string>
+    <string name="analysis_dont_show_again">Don\'t show again</string>
+    <string name="analysis_continue">Continue</string>
+    <string name="analysis_duck_unsupported">Analysis for Duck chess is not supported.</string>
+    <string name="menu_analyse_game">Analyse game</string>
+    <string name="menu_new_king_of_the_hill">New King of the Hill game</string>
+    <string name="state_hill_win">King reached the hill</string>
+    <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
+    <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
+    <string name="new_game_variant_standard">Standard</string>
+    <string name="new_game_variant_duck">Duck (experimental)</string>
+    <string name="new_game_variant_king_of_the_hill">King of the Hill</string>
+    <string name="new_game_variant_chess960">Fischer random / 960</string>
 </resources>

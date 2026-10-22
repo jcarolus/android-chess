@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="false"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingStart="@dimen/control_padding"
+    android:paddingEnd="@dimen/control_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/ImageAnalysisTurn"
+                android:layout_width="12dip"
+                android:layout_height="12dip"
+                android:layout_marginStart="@dimen/control_gap"
+                android:layout_marginEnd="@dimen/control_gap"
+                android:src="@drawable/turnwhite"
+                android:contentDescription="@string/analysis_white_to_move" />
+
+            <TextView
+                android:id="@+id/TextViewLastMove"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/control_gap"
+                android:accessibilityLiveRegion="assertive" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonAnalysisSettings"
+                style="?attr/chessImageButtonStyle"
+                app:icon="@drawable/sliders"
+                android:contentDescription="@string/analysis_settings" />
+
+        </LinearLayout>
+
+        <TableLayout
+            android:id="@+id/LayoutHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/MyRowStyle">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ButtonPrevious"
+                    app:icon="@drawable/ic_chevron_left"
+                    android:contentDescription="@string/button_previous_move_description"
+                    style="?attr/chessImageButtonStyle" />
+
+                <SeekBar
+                    android:id="@+id/SeekBarAnalysisMove"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/analysis_move_position" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/ButtonNext"
+                    app:icon="@drawable/ic_chevron_right"
+                    android:contentDescription="@string/button_next_move_description"
+                    style="?attr/chessImageButtonStyle" />
+            </TableRow>
+        </TableLayout>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:alignItems="center">
+
+            <TextView
+                android:id="@+id/TextViewAnalysisMove"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/control_gap" />
+
+            <TextView
+                android:id="@+id/TextViewMoveFeedback"
+                style="@style/MyPaneTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/control_gap"
+                android:textStyle="bold"
+                android:accessibilityLiveRegion="none"
+                android:visibility="gone" />
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/control_gap"
+            android:layout_marginEnd="@dimen/control_gap"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonEngineMove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonBackToMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/analysis_back_to_main"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/LayoutVariations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="center"
+            android:visibility="gone" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="center">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchSound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ChessFlexItem"
+                android:text="@string/pref_sound"
+                android:checked="true" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchSpeech"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ChessFlexItem"
+                android:text="@string/pref_speech"
+                android:checked="true" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/SwitchAccessibilityDrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ChessFlexItem"
+                android:text="@string/pref_accessibility_drag"
+                android:checked="false" />
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <TextView
+            android:id="@+id/TextViewWhitePieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/control_gap"
+            android:accessibilityLiveRegion="none" />
+
+        <TextView
+            android:id="@+id/TextViewBlackPieces"
+            style="@style/MyPaneTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/control_gap"
+            android:accessibilityLiveRegion="none" />
+    </LinearLayout>
+</ScrollView>

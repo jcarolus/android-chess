@@ -1,25 +1,21 @@
 package jwtc.android.chess.tools;
 
-import jwtc.android.chess.R;
-import jwtc.android.chess.activities.BaseActivity;
-import jwtc.android.chess.helpers.ActivityHelper;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import jwtc.android.chess.R;
+import jwtc.android.chess.activities.BaseActivity;
+import jwtc.android.chess.helpers.ActivityHelper;
 
 public class ImportActivity extends BaseActivity implements ImportListener {
 
@@ -33,19 +29,20 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
     private final String TAG = "ImportActivity";
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.i(TAG, "onServiceConnected");
-            importService = ((ImportService.LocalBinder) service).getService();
-            importService.addListener(ImportActivity.this);
-            importService.startImport(_intent, _mode);
-        }
+    private ServiceConnection mConnection =
+            new ServiceConnection() {
+                public void onServiceConnected(ComponentName className, IBinder service) {
+                    Log.i(TAG, "onServiceConnected");
+                    importService = ((ImportService.LocalBinder) service).getService();
+                    importService.addListener(ImportActivity.this);
+                    importService.startImport(_intent, _mode);
+                }
 
-        public void onServiceDisconnected(ComponentName className) {
-            importService = null;
-            Log.i(TAG, "onServiceDisconnected");
-        }
-    };
+                public void onServiceDisconnected(ComponentName className) {
+                    importService = null;
+                    Log.i(TAG, "onServiceDisconnected");
+                }
+            };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,7 +82,8 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         super.onStart();
 
         if (importService == null) {
-            if (!bindService(new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
+            if (!bindService(
+                    new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
                 doToast("Could not start import");
             }
         }
@@ -108,7 +106,6 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     @Override
@@ -134,7 +131,6 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         t.setGravity(Gravity.CENTER, 0, 0);
         t.show();
     }
-
 
     @Override
     public void OnImportStarted(int mode) {

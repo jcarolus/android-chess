@@ -1,14 +1,9 @@
 package jwtc.android.chess.views;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
-import android.view.accessibility.AccessibilityEvent;
-
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.Piece;
 import jwtc.android.chess.constants.PieceSets;
@@ -59,14 +54,13 @@ public class ChessPieceView extends AppCompatImageView {
         resetImageResource();
     }
 
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         View parent = (View) this.getParent();
         int widthSize = parent.getWidth();
 
-//        Log.d("Piece", "onMeasure" + widthSize);
+        //        Log.d("Piece", "onMeasure" + widthSize);
 
         setMeasuredDimension(widthSize, widthSize);
     }
@@ -84,7 +78,8 @@ public class ChessPieceView extends AppCompatImageView {
                 setImageResource(PieceSets.PIECES[PieceSets.selectedSet][color][piece]);
             }
         } else if (PieceSets.selectedBlindfoldMode == PieceSets.BLINDFOLD_SHOW_PIECE_LOCATION) {
-            setImageResource(color == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack);
+            setImageResource(
+                    color == BoardConstants.WHITE ? R.drawable.turnwhite : R.drawable.turnblack);
         } else {
             setImageResource(android.R.color.transparent);
         }

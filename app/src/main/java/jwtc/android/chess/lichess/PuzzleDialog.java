@@ -4,12 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Button;
 import android.widget.CheckBox;
-
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
@@ -19,8 +16,12 @@ public class PuzzleDialog extends ResultDialog<Map<String, Object>> {
 
     public static final int REQUEST_PUZZLE = 3;
 
-    private static final String[] DIFFICULTY_VALUES = {"", "easiest", "easier", "normal", "harder", "hardest"};
-    private static final String[] DIFFICULTY_LABELS = {"Default", "Easiest", "Easier", "Normal", "Harder", "Hardest"};
+    private static final String[] DIFFICULTY_VALUES = {
+        "", "easiest", "easier", "normal", "harder", "hardest"
+    };
+    private static final String[] DIFFICULTY_LABELS = {
+        "Default", "Easiest", "Easier", "Normal", "Harder", "Hardest"
+    };
 
     private static final String[] ANGLE_VALUES = {
         "mix", "endgame", "opening", "middlegame",
@@ -29,7 +30,10 @@ public class PuzzleDialog extends ResultDialog<Map<String, Object>> {
         "discoveredAttack", "promotion", "enPassant"
     };
 
-    public PuzzleDialog(Context context, ResultDialogListener<Map<String, Object>> listener, SharedPreferences prefs) {
+    public PuzzleDialog(
+            Context context,
+            ResultDialogListener<Map<String, Object>> listener,
+            SharedPreferences prefs) {
         super(context, listener, REQUEST_PUZZLE);
 
         setContentView(R.layout.lichess_puzzle_dialog);
@@ -60,32 +64,40 @@ public class PuzzleDialog extends ResultDialog<Map<String, Object>> {
         }
 
         Button buttonOk = findViewById(R.id.ButtonPuzzleOk);
-        buttonOk.setOnClickListener(v -> {
-            SharedPreferences.Editor editor = prefs.edit();
-            Map<String, Object> data = new HashMap<>();
+        buttonOk.setOnClickListener(
+                v -> {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    Map<String, Object> data = new HashMap<>();
 
-            int diffPos = dropdownDifficulty.getSelectedItemPosition();
-            String difficulty = (diffPos >= 0 && diffPos < DIFFICULTY_VALUES.length) ? DIFFICULTY_VALUES[diffPos] : "";
-            editor.putString("lichess_puzzle_difficulty", difficulty);
-            data.put("difficulty", difficulty);
+                    int diffPos = dropdownDifficulty.getSelectedItemPosition();
+                    String difficulty =
+                            (diffPos >= 0 && diffPos < DIFFICULTY_VALUES.length)
+                                    ? DIFFICULTY_VALUES[diffPos]
+                                    : "";
+                    editor.putString("lichess_puzzle_difficulty", difficulty);
+                    data.put("difficulty", difficulty);
 
-            int anglePos = dropdownAngle.getSelectedItemPosition();
-            String angle = (anglePos >= 0 && anglePos < ANGLE_VALUES.length) ? ANGLE_VALUES[anglePos] : "mix";
-            editor.putString("lichess_puzzle_angle", angle);
-            data.put("angle", angle);
+                    int anglePos = dropdownAngle.getSelectedItemPosition();
+                    String angle =
+                            (anglePos >= 0 && anglePos < ANGLE_VALUES.length)
+                                    ? ANGLE_VALUES[anglePos]
+                                    : "mix";
+                    editor.putString("lichess_puzzle_angle", angle);
+                    data.put("angle", angle);
 
-            editor.putBoolean("lichess_puzzle_rated", checkBoxRated.isChecked());
-            data.put("rated", checkBoxRated.isChecked());
+                    editor.putBoolean("lichess_puzzle_rated", checkBoxRated.isChecked());
+                    data.put("rated", checkBoxRated.isChecked());
 
-            editor.apply();
-            PuzzleDialog.this.dismiss();
-            setResult(data);
-        });
+                    editor.apply();
+                    PuzzleDialog.this.dismiss();
+                    setResult(data);
+                });
 
         Button buttonCancel = findViewById(R.id.ButtonPuzzleCancel);
-        buttonCancel.setOnClickListener(v -> {
-            PuzzleDialog.this.dismiss();
-            setResult(null);
-        });
+        buttonCancel.setOnClickListener(
+                v -> {
+                    PuzzleDialog.this.dismiss();
+                    setResult(null);
+                });
     }
 }

@@ -2,7 +2,6 @@ package jwtc.android.chess.puzzle;
 
 import android.content.UriMatcher;
 import android.net.Uri;
-
 import jwtc.chess.ChessPuzzleProvider;
 
 public class MyPuzzleProvider extends ChessPuzzleProvider {
