@@ -579,4 +579,8 @@
     <string name="state_hill_win">King reached the hill</string>
     <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
     <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
+    <string name="new_game_variant_standard">Standard</string>
+    <string name="new_game_variant_duck">Duck (experimental)</string>
+    <string name="new_game_variant_king_of_the_hill">King of the Hill</string>
+    <string name="new_game_variant_chess960">Fischer random / 960</string>
 </resources>

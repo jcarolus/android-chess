@@ -67,6 +67,7 @@ public class PlayActivity extends ChessBoardActivity
     public static final int REQUEST_SAVE_POSITION_TO_FILE = 10;
     public static final int REQUEST_OPEN_POSITION_FILE = 11;
     public static final int REQUEST_OPEN_GAME_FILE = 12;
+    public static final int REQUEST_NEW_GAME = 13;
 
     private LocalClockApi localClock;
     private EngineSession engineSession;
@@ -811,20 +812,7 @@ public class PlayActivity extends ChessBoardActivity
                                     gameApi.requiresBuiltinEngine());
                     settingsDialog.show();
                 } else if (item.equals(getString(R.string.menu_new))) {
-                    gameApi.newGame();
-                    lGameID = 0;
-                } else if (item.equals(getString(R.string.menu_new_king_of_the_hill))) {
-                    gameApi.newGame(BoardConstants.VARIANT_KING_OF_THE_HILL);
-                    lGameID = 0;
-                } else if (item.equals(getString(R.string.menu_new_duck))) {
-                    gameApi.newGame(BoardConstants.VARIANT_DUCK);
-                    lGameID = 0;
-                } else if (item.equals(getString(R.string.menu_new_960))) {
-                    intent = new Intent();
-                    intent.setClass(
-                            PlayActivity.this,
-                            jwtc.android.chess.setup.SetupRandomFischerActivity.class);
-                    startActivityForResult(intent, REQUEST_RANDOM_FISCHER);
+                    new NewGameDialog(this, this, REQUEST_NEW_GAME, getPrefs()).show();
                 } else if (item.equals(getString(R.string.menu_setup))) {
                     intent = new Intent();
                     intent.setClass(
@@ -886,6 +874,26 @@ public class PlayActivity extends ChessBoardActivity
             case REQUEST_CLOCK:
                 updateClockByPrefs(false, localClock.getActivePlayer());
                 gameApi.resetForfeitTime();
+                break;
+
+            case REQUEST_NEW_GAME:
+                if (data.getBoolean(NewGameDialog.EXTRA_CHESS960)) {
+                    Intent setupIntent =
+                            new Intent(
+                                    this,
+                                    jwtc.android.chess.setup.SetupRandomFischerActivity.class);
+                    startActivityForResult(setupIntent, REQUEST_RANDOM_FISCHER);
+                } else {
+                    myTurn =
+                            getPrefs().getBoolean("myTurn", true)
+                                    ? BoardConstants.WHITE
+                                    : BoardConstants.BLACK;
+                    lGameID = 0;
+                    gameApi.newGame(
+                            data.getInt(
+                                    NewGameDialog.EXTRA_VARIANT, BoardConstants.VARIANT_DEFAULT));
+                    playIfEngineMove();
+                }
                 break;
 
             case REQUEST_GAME_SETTINGS:
