@@ -3,7 +3,8 @@
     android:id="@+id/LayoutBoardTop"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/compact_row_padding">
+    android:paddingTop="@dimen/compact_row_padding"
+    android:paddingBottom="@dimen/compact_row_padding">
 
     <TableRow android:gravity="center_vertical">
 

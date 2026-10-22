@@ -177,21 +177,21 @@
                 android:id="@+id/SwitchSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/board_control_gap"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_sound"
                 android:checked="true" />
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchSpeech"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/board_control_gap"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_speech"
                 android:checked="true" />
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchAccessibilityDrag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/board_control_gap"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_accessibility_drag"
                 android:checked="false" />
         </com.google.android.flexbox.FlexboxLayout>
