@@ -410,15 +410,15 @@ public class GameApi {
     }
 
     public boolean isPromotionMove(int from, int to) {
-        if (board.pieceAt(BoardConstants.WHITE, from) == BoardConstants.PAWN
-                        && BoardConstants.ROW_TURN[BoardConstants.WHITE][from] == 6
-                        && BoardConstants.ROW_TURN[BoardConstants.WHITE][to] == 7
-                        && board.getTurn() == BoardConstants.WHITE
-                || board.pieceAt(BoardConstants.BLACK, from) == BoardConstants.PAWN
-                        && BoardConstants.ROW_TURN[BoardConstants.BLACK][from] == 6
-                        && BoardConstants.ROW_TURN[BoardConstants.BLACK][to] == 7
-                        && board.getTurn() == BoardConstants.BLACK) {
-            return true;
+        if (pendingDuckMove != null || isEnded()) {
+            return false;
+        }
+        for (RustBoard.LegalMove move : board.legalMoves()) {
+            if (Move.getFrom(move.packed) == from
+                    && Move.getTo(move.packed) == to
+                    && Move.isPromotionMove(move.packed)) {
+                return true;
+            }
         }
         return false;
     }

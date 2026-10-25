@@ -29,8 +29,6 @@
             layout="@layout/chessboard"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/board_row_gap"
-            android:layout_marginBottom="@dimen/board_row_gap"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/play_board_top"

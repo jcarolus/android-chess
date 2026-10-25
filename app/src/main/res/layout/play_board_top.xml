@@ -38,7 +38,6 @@
         <jwtc.android.chess.views.ChessPiecesStackView
             android:layout_width="wrap_content"
             android:layout_height="24dip"
-            android:layout_marginEnd="@dimen/board_row_gap"
             android:id="@+id/topPieces" />
     </TableRow>
 </TableLayout>

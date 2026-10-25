@@ -234,7 +234,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                 } else {
                     gameApi.newGame();
                 }
-                gameApi.goTo(gameApi.getRootNode());
+                Node root = gameApi.getRootNode();
+                List<Node> continuations = gameApi.getContinuations(root);
+                gameApi.goTo(continuations.isEmpty() ? root : continuations.get(0));
             }
             sessionLoaded = true;
         } else {
