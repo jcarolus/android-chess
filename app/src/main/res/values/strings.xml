@@ -258,7 +258,7 @@
     <string name="menu_new_960">New random Fischer / 960</string>
     <string name="menu_new_command">New Command</string>
     <string name="menu_new_command_message">type \u003cNR\u003e at end of command for no return\nexample:  tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_new_duck">New Duck (experimental)</string>
+    <string name="menu_new_duck">New Duck</string>
     <string name="menu_open_game">Open game file</string>
     <string name="menu_open_position_file">Open position file</string>
     <string name="menu_prefs">Settings</string>
@@ -453,7 +453,7 @@
     <string name="start_database">Game database</string>
     <string name="start_wifiboard">WiFi board</string>
     <string name="start_ics">Freechess</string>
-    <string name="start_lichess">Lichess (beta)</string>
+    <string name="start_lichess">Lichess</string>
     <string name="start_pgn">Advanced</string>
     <string name="start_play">Play</string>
     <string name="start_practice">Practice</string>
@@ -580,7 +580,7 @@
     <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
     <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
     <string name="new_game_variant_standard">Standard</string>
-    <string name="new_game_variant_duck">Duck (experimental)</string>
+    <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">King of the Hill</string>
     <string name="new_game_variant_chess960">Fischer random / 960</string>
 </resources>

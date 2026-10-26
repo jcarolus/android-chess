@@ -238,7 +238,7 @@
     <string name="menu_new_960">Nou Fischer aleator / 960</string>
     <string name="menu_new_command">Comandă nouă</string>
     <string name="menu_new_command_message">scrie \u003cNR\u003e la finalul comenzii pentru fără retur\nexemplu: tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_new_duck">Partidă Duck (experimental)</string>
+    <string name="menu_new_duck">Partidă Duck</string>
     <string name="menu_open_game">Deschide fișierul de partidă</string>
     <string name="menu_open_position_file">Deschide fișierul de poziție</string>
     <string name="menu_prefs">Setări</string>
@@ -409,7 +409,7 @@
     <string name="start_database">Baza de date a partidelor</string>
     <string name="start_wifiboard">Tablă Wi‑Fi</string>
     <string name="start_ics">Joacă online</string>
-    <string name="start_lichess">Lichess (beta)</string>
+    <string name="start_lichess">Lichess</string>
     <string name="start_pgn">Avansat</string>
     <string name="start_play">Joacă</string>
     <string name="start_practice">Antrenament</string>
@@ -555,7 +555,7 @@
     <string name="analysis_continue">Continuă</string>
     <string name="analysis_duck_unsupported">Analiza pentru șahul cu rața nu este acceptată.</string>
     <string name="new_game_variant_standard">Standard</string>
-    <string name="new_game_variant_duck">Duck (experimental)</string>
+    <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Regele dealului</string>
     <string name="new_game_variant_chess960">Fischer aleator / 960</string>
 </resources>

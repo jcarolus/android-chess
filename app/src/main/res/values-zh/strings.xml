@@ -238,7 +238,7 @@
     <string name="menu_new_960">新随机费舍尔/960</string>
     <string name="menu_new_command">新命令</string>
     <string name="menu_new_command_message">在命令末尾输入 \u003cNR\u003e 表示无返回\n示例: tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_new_duck">新 Duck (实验性)</string>
+    <string name="menu_new_duck">新 Duck</string>
     <string name="menu_open_game">打开对局文件</string>
     <string name="menu_open_position_file">打开局面文件</string>
     <string name="menu_prefs">设置</string>
@@ -409,7 +409,7 @@
     <string name="start_database">对局数据库</string>
     <string name="start_wifiboard">WiFi 棋盘</string>
     <string name="start_ics">在线对弈</string>
-    <string name="start_lichess">Lichess（测试版）</string>
+    <string name="start_lichess">Lichess</string>
     <string name="start_pgn">高级</string>
     <string name="start_play">开始</string>
     <string name="start_practice">练习</string>
@@ -555,7 +555,7 @@
     <string name="analysis_continue">继续</string>
     <string name="analysis_duck_unsupported">不支持鸭子棋分析。</string>
     <string name="new_game_variant_standard">标准</string>
-    <string name="new_game_variant_duck">Duck (实验性)</string>
+    <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">占山为王</string>
     <string name="new_game_variant_chess960">费舍尔随机棋 / 960</string>
 </resources>

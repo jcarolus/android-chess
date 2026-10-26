@@ -6,7 +6,7 @@
 
 |            | Details                                                                                      |
 |-------------------|----------------------------------------------------------------------------------------------|
-| 👑| Standard chess, Chess 960, Duck chess *(experimental)*                                       |
+| 👑| Standard chess, Chess 960, Duck chess                                       |
 | 🌐| Play online on [Lichess](https://lichess.org) and [FICS](https://freechess.org)              |
 | 🧩| Lichess puzzles. Mate in two collection                                                      |
 | 📶| Cast the board to your Chromecast device                                                     |

@@ -238,7 +238,7 @@
     <string name="menu_new_960">Yeni rastgele Fischer / 960</string>
     <string name="menu_new_command">Yeni komut</string>
     <string name="menu_new_command_message">sonuna \u003cNR\u003e yaz komut dönüşsüz olsun\nörnek: tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_new_duck">Yeni Duck (deneysel)</string>
+    <string name="menu_new_duck">Yeni Duck</string>
     <string name="menu_open_game">Oyun dosyasını aç</string>
     <string name="menu_open_position_file">Pozisyon dosyasını aç</string>
     <string name="menu_prefs">Ayarlar</string>
@@ -409,7 +409,7 @@
     <string name="start_database">Oyun veritabanı</string>
     <string name="start_wifiboard">Wi‑Fi tahtası</string>
     <string name="start_ics">Çevrimiçi oyna</string>
-    <string name="start_lichess">Lichess (beta)</string>
+    <string name="start_lichess">Lichess</string>
     <string name="start_pgn">Gelişmiş</string>
     <string name="start_play">Oyna</string>
     <string name="start_practice">Alıştırma</string>
@@ -555,7 +555,7 @@
     <string name="analysis_continue">Devam et</string>
     <string name="analysis_duck_unsupported">Ördek satrancı için analiz desteklenmiyor.</string>
     <string name="new_game_variant_standard">Standart</string>
-    <string name="new_game_variant_duck">Duck (deneysel)</string>
+    <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Tepenin Şahı</string>
     <string name="new_game_variant_chess960">Rastgele Fischer / 960</string>
 </resources>

@@ -5,7 +5,7 @@ SPIELE, WIE DU MÖCHTEST
 • Spiele offline gegen die integrierte Schach-Engine.
 • Verbinde dich für Online-Partien mit Lichess oder FICS.
 • Erstelle oder akzeptiere Lichess-Herausforderungen und setze laufende Partien fort.
-• Wähle zwischen Standardschach, Schach960 und dem experimentellen Duck Chess.
+• Wähle zwischen Standardschach, Schach960 und Duck Chess.
 • Richte eigene Stellungen direkt auf dem Brett ein.
 
 TRAINIEREN UND VERBESSERN

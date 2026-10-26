@@ -238,7 +238,7 @@
     <string name="menu_new_960">Novo Fischer aleatório / 960</string>
     <string name="menu_new_command">Novo comando</string>
     <string name="menu_new_command_message">digite \u003cNR\u003e no fim do comando para sem retorno\nexemplo: tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_new_duck">Nova Duck (experimental)</string>
+    <string name="menu_new_duck">Nova Duck</string>
     <string name="menu_open_game">Abrir arquivo de partida</string>
     <string name="menu_open_position_file">Abrir arquivo de posição</string>
     <string name="menu_prefs">Configurações</string>
@@ -409,7 +409,7 @@
     <string name="start_database">Banco de dados de partidas</string>
     <string name="start_wifiboard">Tabuleiro Wi‑Fi</string>
     <string name="start_ics">Jogar online</string>
-    <string name="start_lichess">Lichess (beta)</string>
+    <string name="start_lichess">Lichess</string>
     <string name="start_pgn">Avançado</string>
     <string name="start_play">Jogar</string>
     <string name="start_practice">Treinar</string>
@@ -555,7 +555,7 @@
     <string name="analysis_continue">Continuar</string>
     <string name="analysis_duck_unsupported">A análise de xadrez de pato não é suportada.</string>
     <string name="new_game_variant_standard">Padrão</string>
-    <string name="new_game_variant_duck">Duck (experimental)</string>
+    <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Rei da colina</string>
     <string name="new_game_variant_chess960">Fischer aleatório / 960</string>
 </resources>

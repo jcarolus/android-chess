@@ -258,7 +258,7 @@
     <string name="menu_new_960">فیشر تصادفی جدید / ۹۶۰</string>
     <string name="menu_new_command">فرمان جدید</string>
     <string name="menu_new_command_message">برای بدون بازگشت، \u003cNR\u003e را در انتهای فرمان تایپ کنید\nمثال:  tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_new_duck">اردک جدید (آزمایشی)</string>
+    <string name="menu_new_duck">اردک جدید</string>
     <string name="menu_open_game">باز کردن فایل بازی</string>
     <string name="menu_open_position_file">باز کردن فایل موقعیت</string>
     <string name="menu_prefs">تنظیمات</string>
@@ -447,7 +447,7 @@
     <string name="start_database">پایگاه‌داده‌ی بازی‌ها</string>
     <string name="start_wifiboard">صفحه‌ی وای‌فای</string>
     <string name="start_ics">Freechess</string>
-    <string name="start_lichess">Lichess (بتا)</string>
+    <string name="start_lichess">Lichess</string>
     <string name="start_pgn">پیشرفته</string>
     <string name="start_play">بازی</string>
     <string name="start_practice">تمرین</string>
@@ -572,7 +572,7 @@
     <string name="analysis_continue">ادامه</string>
     <string name="analysis_duck_unsupported">تحلیل شطرنج اردک پشتیبانی نمی‌شود.</string>
     <string name="new_game_variant_standard">استاندارد</string>
-    <string name="new_game_variant_duck">اردک (آزمایشی)</string>
+    <string name="new_game_variant_duck">اردک</string>
     <string name="new_game_variant_king_of_the_hill">شاه تپه</string>
     <string name="new_game_variant_chess960">فیشر تصادفی / ۹۶۰</string>
 </resources>

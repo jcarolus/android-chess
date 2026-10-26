@@ -241,7 +241,7 @@
     <string name="menu_new_960">Neue Zufalls-Fischer / 960</string>
     <string name="menu_new_command">Neuer Befehl</string>
     <string name="menu_new_command_message">tippe \u003cNR\u003e am Ende des Befehls für keine Rückgabe\nBeispiel: tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_new_duck">Neue Duck (experimentell)</string>
+    <string name="menu_new_duck">Neue Duck</string>
     <string name="menu_open_game">Spieldatei öffnen</string>
     <string name="menu_open_position_file">Positionsdatei öffnen</string>
     <string name="menu_prefs">Einstellungen</string>
@@ -419,7 +419,7 @@
     <string name="start_database">Spieldatenbank</string>
     <string name="start_wifiboard">WLAN-Brett</string>
     <string name="start_ics">Online spielen</string>
-    <string name="start_lichess">Lichess (Beta)</string>
+    <string name="start_lichess">Lichess</string>
     <string name="start_pgn">Erweitert</string>
     <string name="start_play">Spielen</string>
     <string name="start_practice">Üben</string>
@@ -565,7 +565,7 @@
     <string name="analysis_continue">Weiter</string>
     <string name="analysis_duck_unsupported">Die Analyse von Entenschach wird nicht unterstützt.</string>
     <string name="new_game_variant_standard">Standard</string>
-    <string name="new_game_variant_duck">Duck (experimentell)</string>
+    <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">König des Hügels</string>
     <string name="new_game_variant_chess960">Fischer-Zufallsschach / 960</string>
 </resources>
