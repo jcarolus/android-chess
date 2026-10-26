@@ -61,13 +61,19 @@
                     android:contentDescription="@string/button_previous_move_description"
                     style="?attr/chessImageButtonStyle" />
 
-                <SeekBar
-                    android:id="@+id/SeekBarAnalysisMove"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/HistoryRecyclerView"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:contentDescription="@string/analysis_move_position" />
+                    android:layout_marginStart="@dimen/control_gap"
+                    android:layout_marginEnd="@dimen/control_gap"
+                    android:orientation="horizontal"
+                    android:scrollbars="horizontal"
+                    android:fadeScrollbars="false"
+                    android:background="?attr/paneBackground"
+                    android:scrollbarAlwaysDrawHorizontalTrack="true" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/ButtonNext"

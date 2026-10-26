@@ -24,20 +24,33 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
     private final OnItemClickListener listener;
     private final GameApi gameApi;
     private final Context context;
+    private final boolean showMoveNumber;
 
     public interface OnItemClickListener {
         void onMoveItemClick(int position);
     }
 
     public MoveRecyclerAdapter(Context context, GameApi gameApi, OnItemClickListener listener) {
+        this(context, gameApi, true, listener);
+    }
+
+    public MoveRecyclerAdapter(
+            Context context,
+            GameApi gameApi,
+            boolean showMoveNumber,
+            OnItemClickListener listener) {
         this.context = context;
         this.gameApi = gameApi;
         this.listener = listener;
+        this.showMoveNumber = showMoveNumber;
     }
 
     public void update() {
+        update(gameApi.getCurrentLineNodes());
+    }
+
+    public void update(List<Node> nodes) {
         ArrayList<HashMap<String, String>> newMapMoves = new ArrayList<HashMap<String, String>>();
-        List<Node> nodes = gameApi.getCurrentLineNodes();
 
         for (int i = 0; i < nodes.size(); i++) {
             String sMove = nodes.get(i).getEntry().sMove;
@@ -126,6 +139,7 @@ public class MoveRecyclerAdapter extends RecyclerView.Adapter<MoveRecyclerAdapte
             holder.textViewMove.setPaintFlags(
                     holder.textViewMove.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
         }
+        holder.textViewNumMove.setVisibility(showMoveNumber ? View.VISIBLE : View.GONE);
         holder.textViewNumMove.setText(item.get("nr"));
         holder.textViewMove.setText(item.get("move"));
     }

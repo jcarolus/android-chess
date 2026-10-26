@@ -10,9 +10,10 @@ import android.util.LruCache;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -28,7 +29,9 @@ import jwtc.android.chess.engine.EngineEvaluation;
 import jwtc.android.chess.engine.EngineListener;
 import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.helpers.ActivityHelper;
+import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
+import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.GameApi.PositionSnapshot;
@@ -65,8 +68,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private MaterialButton buttonEngineMove;
     private PositionMove displayedEngineMove;
     private View buttonNext;
-    private SeekBar moveSeekBar;
-    private boolean trackingMoveSeekBar;
+    private RecyclerView historyRecyclerView;
+    private MoveRecyclerAdapter moveAdapter;
+    private Node lastScrolledNode;
     private List<Node> navigationLine = new ArrayList<>();
     private final Handler analysisHandler = new Handler(Looper.getMainLooper());
     private boolean analysisDebouncing;
@@ -137,31 +141,22 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         textViewMoveFeedback = findViewById(R.id.TextViewMoveFeedback);
         buttonEngineMove = findViewById(R.id.ButtonEngineMove);
         buttonNext = findViewById(R.id.ButtonNext);
-        moveSeekBar = findViewById(R.id.SeekBarAnalysisMove);
-        moveSeekBar.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if (fromUser && progress < navigationLine.size()) {
-                            textViewLastMove.setText(
-                                    gameApi.getMoveNumber(navigationLine.get(progress)));
-                        }
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                        trackingMoveSeekBar = true;
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        trackingMoveSeekBar = false;
-                        int progress = seekBar.getProgress();
-                        if (progress < navigationLine.size()) {
-                            gameApi.goTo(navigationLine.get(progress));
-                        }
-                    }
-                });
+        historyRecyclerView = findViewById(R.id.HistoryRecyclerView);
+        historyRecyclerView.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        moveAdapter =
+                new MoveRecyclerAdapter(
+                        this,
+                        gameApi,
+                        false,
+                        position -> {
+                            int index = position + 1;
+                            if (index < navigationLine.size()) {
+                                gameApi.goTo(navigationLine.get(index));
+                            }
+                        });
+        historyRecyclerView.setAdapter(moveAdapter);
+        EinkMode.applyTo(historyRecyclerView);
         buttonBackToMain = findViewById(R.id.ButtonBackToMain);
         buttonBackToMain.setOnClickListener(
                 v -> {
@@ -571,18 +566,21 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
     private void updateNavigation() {
         Node current = gameApi.getCurrentNode();
-        // Retain the selected variation when scrubbing back across its branch point.
-        if (!navigationLine.contains(current)) {
+        // Retain the selected variation when navigating back across its branch point.
+        boolean lineChanged = !navigationLine.contains(current);
+        if (lineChanged) {
             navigationLine = new ArrayList<>();
             navigationLine.add(gameApi.getRootNode());
             navigationLine.addAll(gameApi.getCurrentLineNodes());
         }
         int index = navigationLine.indexOf(current);
-        moveSeekBar.setMax(Math.max(0, navigationLine.size() - 1));
-        if (!trackingMoveSeekBar) {
-            moveSeekBar.setProgress(Math.max(0, index));
+        moveAdapter.update(navigationLine.subList(1, navigationLine.size()));
+        if (lineChanged || lastScrolledNode != current) {
+            // Place the current move at the start so its continuation is visible.
+            ((LinearLayoutManager) historyRecyclerView.getLayoutManager())
+                    .scrollToPositionWithOffset(Math.max(0, index - 1), 0);
+            lastScrolledNode = current;
         }
-        moveSeekBar.setEnabled(navigationLine.size() > 1);
         findViewById(R.id.ButtonPrevious).setEnabled(current.getParent() != null);
         buttonNext.setEnabled(index >= 0 && index + 1 < navigationLine.size());
     }
@@ -672,7 +670,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
     private void updateMoveSummary() {
         updateAnalysisSummary();
-        if (trackingMoveSeekBar || gameApi.isDuckVariant()) {
+        if (gameApi.isDuckVariant()) {
             return;
         }
         Node current = gameApi.getCurrentNode();
