@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jwtc.android.chess.engine.oex.OexEngineDescriptor;
@@ -46,6 +47,38 @@ public class OexEngine extends EngineApi {
     private Search search;
     private Runnable timeout;
     private int latestValue;
+    private UciStrength strength = new UciStrength();
+    private Consumer<UciStrength> capabilityCallback;
+    private Integer targetElo;
+
+    public synchronized void setTargetElo(Integer elo) {
+        targetElo = elo;
+    }
+
+    /** Probe without searching; the caller owns and destroys this Engine afterwards. */
+    public synchronized void discoverStrength(Consumer<UciStrength> callback) {
+        capabilityCallback = callback;
+        scheduleTimeout(() -> failSearch("UCI discovery timed out"), RESPONSE_TIMEOUT_MILLIS);
+        new Thread(
+                        () -> {
+                            synchronized (OexEngine.this) {
+                                if (capabilityCallback != null && !ensureProcess()) {
+                                    failSearch("Unable to discover engine options");
+                                }
+                            }
+                        },
+                        "OexEngine-discovery")
+                .start();
+    }
+
+    private void completeDiscovery(UciStrength result) {
+        Consumer<UciStrength> callback = capabilityCallback;
+        capabilityCallback = null;
+        if (callback != null) {
+            cancelTimeout();
+            updateHandler.post(() -> callback.accept(result));
+        }
+    }
 
     private static class Search {
         final long id;
@@ -224,6 +257,7 @@ public class OexEngine extends EngineApi {
     @Override
     public synchronized void destroy() {
         discardSearchResults();
+        capabilityCallback = null;
         closeProcess();
         finishSearch();
     }
@@ -266,6 +300,7 @@ public class OexEngine extends EngineApi {
         engineReady = false;
         supportsThreads = false;
         supportsMultiPv = false;
+        strength = new UciStrength();
         if (oldProcess != null) {
             oldProcess.destroy();
         }
@@ -308,6 +343,7 @@ public class OexEngine extends EngineApi {
 
     private void parseLine(String line) {
         if (!uciReady) {
+            strength.accept(line);
             Matcher option = MOBILE_OPTION_PATTERN.matcher(line);
             if (option.matches()) {
                 try {
@@ -338,6 +374,7 @@ public class OexEngine extends EngineApi {
         }
         if ("readyok".equals(line) && !engineReady) {
             engineReady = true;
+            completeDiscovery(strength);
             sendSearch();
         } else if (search != null && search.sent) {
             if (line.startsWith("info ") && !search.cancelled) {
@@ -350,6 +387,22 @@ public class OexEngine extends EngineApi {
 
     private void sendSearch() {
         if (search == null || search.sent) {
+            return;
+        }
+        List<String> strengthCommands =
+                strength.configure(search.purpose == SearchPurpose.PLAY ? targetElo : null);
+        if (!strengthCommands.isEmpty()) {
+            for (String command : strengthCommands) {
+                if (!sendCommand(command)) {
+                    return;
+                }
+            }
+            engineReady = false;
+            if (sendCommand("isready")) {
+                scheduleTimeout(
+                        () -> failSearch("Strength configuration timed out"),
+                        RESPONSE_TIMEOUT_MILLIS);
+            }
             return;
         }
         cancelTimeout();
@@ -449,6 +502,7 @@ public class OexEngine extends EngineApi {
 
     private void failSearch(String reason) {
         Log.w(TAG, reason);
+        completeDiscovery(null);
         closeProcess();
         sendErrorMessageFromThread();
         finishSearch();

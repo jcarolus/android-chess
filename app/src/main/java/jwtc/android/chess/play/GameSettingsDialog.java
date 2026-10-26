@@ -10,9 +10,12 @@ import androidx.annotation.NonNull;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import jwtc.android.chess.R;
 import jwtc.android.chess.engine.EngineApi;
+import jwtc.android.chess.engine.OexEngine;
 import jwtc.android.chess.engine.oex.OexEngineDescriptor;
 import jwtc.android.chess.engine.oex.OexEngineResolver;
 import jwtc.android.chess.helpers.ResultDialog;
@@ -20,6 +23,87 @@ import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.views.FixedDropdownView;
 
 public class GameSettingsDialog extends ResultDialog<Bundle> {
+    private OexEngine capabilityProbe;
+    private int probeGeneration;
+    private String eloEngineId;
+    private List<Integer> eloChoices = new ArrayList<>();
+    private final Map<String, Integer> eloValues = new HashMap<>();
+
+    private void rememberElo() {
+        FixedDropdownView dropdown = findViewById(R.id.SpinnerOptionsElo);
+        int index = dropdown.getSelectedItemPosition();
+        if (eloEngineId != null && index >= 0 && index <= eloChoices.size()) {
+            eloValues.put(eloEngineId, index == 0 ? null : eloChoices.get(index - 1));
+        }
+    }
+
+    private void discoverElo(Context context, SharedPreferences prefs, String engineId) {
+        rememberElo();
+        int generation = ++probeGeneration;
+        if (capabilityProbe != null) {
+            capabilityProbe.destroy();
+            capabilityProbe = null;
+        }
+        eloEngineId = null;
+        eloChoices.clear();
+        findViewById(R.id.SpinnerOptionsElo).setVisibility(View.GONE);
+        findViewById(R.id.TextViewEloHint).setVisibility(View.GONE);
+        findViewById(R.id.ButtonOk).setEnabled(true);
+        if (engineId == null) {
+            return;
+        }
+        findViewById(R.id.ButtonOk).setEnabled(false);
+        TextView hint = findViewById(R.id.TextViewEloHint);
+        hint.setText(R.string.options_target_elo_checking);
+        hint.setVisibility(View.VISIBLE);
+        capabilityProbe = new OexEngine(context, null, engineId);
+        capabilityProbe.discoverStrength(
+                strength -> {
+                    if (generation != probeGeneration) {
+                        return;
+                    }
+                    capabilityProbe.destroy();
+                    capabilityProbe = null;
+                    findViewById(R.id.ButtonOk).setEnabled(true);
+                    hint.setText(R.string.options_target_elo_hint);
+                    hint.setVisibility(View.GONE);
+                    if (strength == null || !strength.supported()) {
+                        return;
+                    }
+                    eloEngineId = engineId;
+                    Integer saved =
+                            eloValues.containsKey(engineId)
+                                    ? eloValues.get(engineId)
+                                    : prefs.getBoolean("oexEloEnabled:" + engineId, false)
+                                            ? prefs.getInt(
+                                                    "oexElo:" + engineId, strength.defaultElo())
+                                            : null;
+                    Integer selected = saved == null ? null : strength.clamp(saved);
+                    eloChoices =
+                            strength.choices(selected == null ? strength.defaultElo() : selected);
+                    List<String> labels = new ArrayList<>();
+                    labels.add(context.getString(R.string.options_full_strength));
+                    for (int elo : eloChoices) {
+                        labels.add(Integer.toString(elo));
+                    }
+                    FixedDropdownView dropdown = findViewById(R.id.SpinnerOptionsElo);
+                    dropdown.setItems(labels);
+                    dropdown.setSelection(selected == null ? 0 : eloChoices.indexOf(selected) + 1);
+                    dropdown.setVisibility(View.VISIBLE);
+                    hint.setVisibility(View.VISIBLE);
+                });
+    }
+
+    @Override
+    protected void onStop() {
+        ++probeGeneration;
+        if (capabilityProbe != null) {
+            capabilityProbe.destroy();
+            capabilityProbe = null;
+        }
+        super.onStop();
+    }
+
     public GameSettingsDialog(
             @NonNull Context context,
             ResultDialogListener<Bundle> listener,
@@ -114,7 +198,7 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
         }
         spinnerEngine.setSelection(selectedEnginePos);
 
-        boolean useTimeLevel = levelMode == EngineApi.LEVEL_TIME;
+        boolean useTimeLevel = levelMode != EngineApi.LEVEL_PLY;
         toggleLevelMode.check(useTimeLevel ? R.id.RadioOptionsTime : R.id.RadioOptionsPly);
         spinnerLevelTime.setVisibility(useTimeLevel ? View.VISIBLE : View.GONE);
         spinnerLevelPly.setVisibility(useTimeLevel ? View.GONE : View.VISIBLE);
@@ -124,9 +208,9 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
                     if (!isChecked) {
                         return;
                     }
-                    boolean isTime = checkedId == R.id.RadioOptionsTime;
-                    spinnerLevelTime.setVisibility(isTime ? View.VISIBLE : View.GONE);
-                    spinnerLevelPly.setVisibility(isTime ? View.GONE : View.VISIBLE);
+                    boolean isPly = checkedId == R.id.RadioOptionsPly;
+                    spinnerLevelTime.setVisibility(isPly ? View.GONE : View.VISIBLE);
+                    spinnerLevelPly.setVisibility(isPly ? View.VISIBLE : View.GONE);
                 });
 
         toggleQuiescent.setOnCheckedChangeListener(
@@ -150,6 +234,7 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
                     selectedBackend[0] = position == 0 ? 0 : 1;
                     spinnerLevelTime.setSelection(levelTimes[selectedBackend[0]] - 1);
                     spinnerLevelPly.setSelection(levelPlies[selectedBackend[0]] - 1);
+                    discoverElo(context, prefs, engineOptions.get(position).oexEngineId);
                 });
 
         Button buttonOk = findViewById(R.id.ButtonOk);
@@ -178,9 +263,17 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
 
                         editor.putInt(
                                 "levelMode",
-                                toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsTime
-                                        ? EngineApi.LEVEL_TIME
-                                        : EngineApi.LEVEL_PLY);
+                                toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsPly
+                                        ? EngineApi.LEVEL_PLY
+                                        : EngineApi.LEVEL_TIME);
+                        rememberElo();
+                        for (Map.Entry<String, Integer> entry : eloValues.entrySet()) {
+                            editor.putBoolean(
+                                    "oexEloEnabled:" + entry.getKey(), entry.getValue() != null);
+                            if (entry.getValue() != null) {
+                                editor.putInt("oexElo:" + entry.getKey(), entry.getValue());
+                            }
+                        }
                         levelTimes[selectedBackend[0]] =
                                 spinnerLevelTime.getSelectedItemPosition() + 1;
                         levelPlies[selectedBackend[0]] =
@@ -199,6 +292,8 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
                         dismiss();
                     }
                 });
+
+        discoverElo(context, prefs, engineOptions.get(selectedEnginePos).oexEngineId);
 
         Button buttonCancel = findViewById(R.id.ButtonCancel);
         buttonCancel.setOnClickListener(

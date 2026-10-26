@@ -566,4 +566,8 @@
     <string name="new_game_variant_duck">البطة</string>
     <string name="new_game_variant_king_of_the_hill">ملك التل</string>
     <string name="new_game_variant_chess960">فيشر العشوائي / 960</string>
+    <string name="options_target_elo">تصنيف Elo المستهدف (تقريبي)</string>
+    <string name="options_target_elo_hint">تعتمد القوة الفعلية على المحرك ووقت التفكير.</string>
+    <string name="options_target_elo_checking">جارٍ التحقق من إعدادات القوة المتاحة…</string>
+    <string name="options_full_strength">القوة الكاملة</string>
 </resources>

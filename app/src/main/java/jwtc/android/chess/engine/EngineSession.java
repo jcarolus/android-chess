@@ -117,6 +117,12 @@ public final class EngineSession {
         engine.addListener(listener);
     }
 
+    public void setTargetElo(Integer elo) {
+        if (oex != null) {
+            oex.setTargetElo(elo);
+        }
+    }
+
     public boolean isBuiltin() {
         return !closed && current != null && current == rust;
     }

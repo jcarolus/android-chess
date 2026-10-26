@@ -557,4 +557,8 @@
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Rei da colina</string>
     <string name="new_game_variant_chess960">Fischer aleatório / 960</string>
+    <string name="options_target_elo">Elo alvo (aproximado)</string>
+    <string name="options_target_elo_hint">A força real depende do motor e do tempo de reflexão.</string>
+    <string name="options_target_elo_checking">Verificando as configurações de força disponíveis…</string>
+    <string name="options_full_strength">Força máxima</string>
 </resources>

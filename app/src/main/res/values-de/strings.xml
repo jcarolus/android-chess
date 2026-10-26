@@ -567,4 +567,8 @@
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">König des Hügels</string>
     <string name="new_game_variant_chess960">Fischer-Zufallsschach / 960</string>
+    <string name="options_target_elo">Ziel-Elo (ungefähr)</string>
+    <string name="options_target_elo_hint">Die tatsächliche Spielstärke hängt von der Engine und der Bedenkzeit ab.</string>
+    <string name="options_target_elo_checking">Verfügbare Spielstärkeeinstellungen werden geprüft…</string>
+    <string name="options_full_strength">Volle Spielstärke</string>
 </resources>

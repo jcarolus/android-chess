@@ -574,4 +574,8 @@
     <string name="new_game_variant_duck">اردک</string>
     <string name="new_game_variant_king_of_the_hill">شاه تپه</string>
     <string name="new_game_variant_chess960">فیشر تصادفی / ۹۶۰</string>
+    <string name="options_target_elo">الوی هدف (تقریبی)</string>
+    <string name="options_target_elo_hint">قدرت واقعی به موتور و زمان تفکر بستگی دارد.</string>
+    <string name="options_target_elo_checking">در حال بررسی تنظیمات قدرت موجود…</string>
+    <string name="options_full_strength">قدرت کامل</string>
 </resources>

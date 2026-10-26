@@ -582,4 +582,8 @@
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">King of the Hill</string>
     <string name="new_game_variant_chess960">Fischer random / 960</string>
+    <string name="options_target_elo">Target Elo (approximate)</string>
+    <string name="options_target_elo_hint">Actual strength depends on the engine and thinking time.</string>
+    <string name="options_target_elo_checking">Checking available strength settings…</string>
+    <string name="options_full_strength">Full strength</string>
 </resources>

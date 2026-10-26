@@ -1040,6 +1040,12 @@ public class PlayActivity extends ChessBoardActivity
         updateActiveEngine();
 
         int mode = prefs.getInt("levelMode", EngineApi.LEVEL_TIME);
+        String engineId = prefs.getString("oexEngineId", "");
+        String eloKey = "oexElo:" + engineId;
+        engineSession.setTargetElo(
+                prefs.getBoolean("oexEloEnabled:" + engineId, false) && prefs.contains(eloKey)
+                        ? prefs.getInt(eloKey, 1500)
+                        : null);
 
         int levelTime = prefs.getInt("level", 2);
         int levelPly = prefs.getInt("levelPly", 2);
@@ -1052,7 +1058,7 @@ public class PlayActivity extends ChessBoardActivity
         levelTime = Math.max(1, Math.min(levelTime, secs.length));
 
         searchLimit =
-                mode == EngineApi.LEVEL_TIME
+                mode != EngineApi.LEVEL_PLY
                         ? SearchLimit.millis(secs[levelTime - 1] * 1000)
                         : SearchLimit.ply(levelPly);
 

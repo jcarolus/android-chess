@@ -557,4 +557,8 @@
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">Regele dealului</string>
     <string name="new_game_variant_chess960">Fischer aleator / 960</string>
+    <string name="options_target_elo">Elo țintă (aproximativ)</string>
+    <string name="options_target_elo_hint">Forța reală depinde de motor și de timpul de gândire.</string>
+    <string name="options_target_elo_checking">Se verifică setările de forță disponibile…</string>
+    <string name="options_full_strength">Forță maximă</string>
 </resources>

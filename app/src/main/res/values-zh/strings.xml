@@ -557,4 +557,8 @@
     <string name="new_game_variant_duck">Duck</string>
     <string name="new_game_variant_king_of_the_hill">占山为王</string>
     <string name="new_game_variant_chess960">费舍尔随机棋 / 960</string>
+    <string name="options_target_elo">目标 Elo（近似值）</string>
+    <string name="options_target_elo_hint">实际棋力取决于引擎和思考时间。</string>
+    <string name="options_target_elo_checking">正在检查可用的棋力设置…</string>
+    <string name="options_full_strength">全力</string>
 </resources>

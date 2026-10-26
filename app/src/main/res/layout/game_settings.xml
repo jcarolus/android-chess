@@ -132,6 +132,20 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/title_pick_ply" />
 
+                <jwtc.android.chess.views.FixedDropdownView
+                    android:id="@+id/SpinnerOptionsElo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:hint="@string/options_target_elo" />
+
+                <TextView
+                    android:id="@+id/TextViewEloHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:text="@string/options_target_elo_hint" />
+
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/ToggleQuiescent"
                     android:layout_width="match_parent"
