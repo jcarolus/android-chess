@@ -60,13 +60,12 @@
     <string name="choice_delete">حذف</string>
     <string name="choice_edit">ویرایش</string>
     <string name="choice_level_1">۱ ثانیه</string>
-    <string name="choice_level_10">۱۵ دقیقه</string>
     <string name="choice_level_2">۲ ثانیه </string>
     <string name="choice_level_3">۴ ثانیه</string>
-    <string name="choice_level_4">۸ ثانیه (متوسط) </string>
+    <string name="choice_level_4">۸ ثانیه</string>
     <string name="choice_level_5">۱۰ ثانیه</string>
     <string name="choice_level_6">۲۰ ثانیه</string>
-    <string name="choice_level_7">۳۰ ثانیه (باتجربه) </string>
+    <string name="choice_level_7">۳۰ ثانیه</string>
     <string name="choice_level_8">۱ دقیقه</string>
     <string name="choice_level_9">۵ دقیقه</string>
     <string name="choice_random">تصادفی</string>
@@ -302,8 +301,8 @@
             بازیکنان بیکار را همراه با ریتینگ نشان می‌دهد.<br/>
                  ]]>
             </string>
-    <string name="options_level_ply">سطح (نیم‌حرکت)</string>
-    <string name="options_level_time">سطح (زمان)</string>
+    <string name="options_level_ply">عمق جستجو (نیم‌حرکت)</string>
+    <string name="options_level_time">زمان تفکر برای هر حرکت</string>
     <string name="options_engine_builtin">داخلی</string>
     <string name="options_engine_oex">OEX</string>
     <string name="options_engine_oex_unavailable">هیچ موتور OEX روی این دستگاه یافت نشد.</string>
@@ -491,8 +490,8 @@
     <string name="title_offers_adjourn">درخواست به تعویق انداختن</string>
     <string name="title_offers_draw">درخواست تساوی</string>
     <string name="title_offers_takeback">درخواست پس گرفتن حرکت</string>
-    <string name="title_pick_time">انتخاب سطح زمان</string>
-    <string name="title_pick_ply">انتخاب سطح نیم‌حرکت</string>
+    <string name="title_pick_time">زمان تفکر برای هر حرکت</string>
+    <string name="title_pick_ply">عمق جستجو (نیم‌حرکت)</string>
     <string name="title_pick_promo">انتخاب مهره‌ی ترفیع</string>
     <string name="title_save_game">ذخیره‌ی بازی</string>
     <string name="toast_challenge_posted">چالش ثبت شد</string>

@@ -95,6 +95,7 @@
                     android:visibility="gone" />
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/ToggleLevelModeGroup"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:selectionRequired="true"
@@ -103,18 +104,18 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioOptionsTime"
                         android:text="@string/options_level_time"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:insetBottom="0dp"
                         style="?attr/chessToggleButtonStyle"
                     />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/RadioOptionsPly"
                         android:text="@string/options_level_ply"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:insetTop="0dp"
                         style="?attr/chessToggleButtonStyle"
                     />
                 </com.google.android.material.button.MaterialButtonToggleGroup>

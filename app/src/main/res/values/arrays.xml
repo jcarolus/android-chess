@@ -47,7 +47,6 @@
         <item>@string/choice_level_7</item>
         <item>@string/choice_level_8</item>
         <item>@string/choice_level_9</item>
-        <item>@string/choice_level_10</item>
     </string-array>
     <string-array name="promotionpieces">
         <item>@string/piece_queen</item>

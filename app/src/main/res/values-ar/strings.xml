@@ -55,13 +55,12 @@
     <string name="choice_delete">حذف</string>
     <string name="choice_edit">تعديل</string>
     <string name="choice_level_1">1 ثانية</string>
-    <string name="choice_level_10">15 دقيقة</string>
     <string name="choice_level_2">2 ثانية</string>
     <string name="choice_level_3">4 ثوان</string>
-    <string name="choice_level_4">8 ثوان (متوسط)</string>
+    <string name="choice_level_4">8 ثوان</string>
     <string name="choice_level_5">10 ثوان</string>
     <string name="choice_level_6">20 ثانية</string>
-    <string name="choice_level_7">30 ثانية (خبير)</string>
+    <string name="choice_level_7">30 ثانية</string>
     <string name="choice_level_8">دقيقة واحدة</string>
     <string name="choice_level_9">5 دقائق</string>
     <string name="choice_random">عشوائي</string>
@@ -281,8 +280,8 @@
             يعرض اللاعبين غير المشغولين مع تقييماتهم.<br/>
                  ]]>
             </string>
-    <string name="options_level_ply">المستوى (عدد النقلات)</string>
-    <string name="options_level_time">المستوى (الوقت)</string>
+    <string name="options_level_ply">عمق البحث (أنصاف النقلات)</string>
+    <string name="options_level_time">وقت التفكير لكل نقلة</string>
     <string name="options_engine_builtin">مدمج</string>
     <string name="options_engine_oex">OEX</string>
     <string name="options_engine_oex_unavailable">لم يتم العثور على محركات OEX على هذا الجهاز.</string>
@@ -470,8 +469,8 @@
     <string name="title_offers_adjourn">طلب تأجيل</string>
     <string name="title_offers_draw">طلب تعادل</string>
     <string name="title_offers_takeback">طلب استرجاع نقلة</string>
-    <string name="title_pick_time">اختر مستوى الوقت</string>
-    <string name="title_pick_ply">اختر مستوى عدد النقلات</string>
+    <string name="title_pick_time">وقت التفكير لكل نقلة</string>
+    <string name="title_pick_ply">عمق البحث (أنصاف النقلات)</string>
     <string name="title_pick_promo">اختر قطعة الترقية</string>
     <string name="title_save_game">حفظ اللعبة</string>
     <string name="toast_challenge_posted">تم نشر التحدي</string>

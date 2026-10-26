@@ -36,6 +36,8 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
         final int levelMode = prefs.getInt("levelMode", EngineApi.LEVEL_TIME);
         final int levelTime = prefs.getInt("level", 2);
         final int levelPly = prefs.getInt("levelPly", 2);
+        final int[] levelTimes = {levelTime, prefs.getInt("oexLevel", levelTime)};
+        final int[] levelPlies = {levelPly, prefs.getInt("oexLevelPly", levelPly)};
         final boolean quiescentSearchOn = prefs.getBoolean("quiescentSearchOn", true);
 
         final MaterialButtonToggleGroup toggleOpponent = findViewById(R.id.ToggleOpponentGroup);
@@ -47,7 +49,11 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
         final SwitchMaterial toggleQuiescent = findViewById(R.id.ToggleQuiescent);
         final TextView textEngineBackendHint = findViewById(R.id.TextViewEngineBackendHint);
 
-        spinnerLevelTime.setItems(context.getResources().getStringArray(R.array.levels_time));
+        String[] timeChoices = context.getResources().getStringArray(R.array.levels_time);
+        spinnerLevelTime.setItems(timeChoices);
+        for (int i = 0; i < levelTimes.length; i++) {
+            levelTimes[i] = Math.max(1, Math.min(levelTimes[i], timeChoices.length));
+        }
         spinnerLevelPly.setItems(context.getResources().getStringArray(R.array.levels_ply));
 
         toggleQuiescent.setChecked(quiescentSearchOn);
@@ -97,7 +103,8 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
                 selectedEnginePos = i;
                 break;
             }
-            if ("oex".equals(engineBackend)
+            if (!requiresBuiltinEngine
+                    && "oex".equals(engineBackend)
                     && "oex".equals(option.backend)
                     && option.oexEngineId != null
                     && option.oexEngineId.equals(oexEngineId)) {
@@ -129,8 +136,21 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
                                         ? R.string.options_quiescent_on
                                         : R.string.options_quiescent_off));
 
-        spinnerLevelTime.setSelection(levelTime - 1);
-        spinnerLevelPly.setSelection(levelPly - 1);
+        final int[] selectedBackend = {selectedEnginePos == 0 ? 0 : 1};
+        spinnerLevelTime.setSelection(levelTimes[selectedBackend[0]] - 1);
+        spinnerLevelPly.setSelection(levelPlies[selectedBackend[0]] - 1);
+        spinnerEngine.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    levelTimes[selectedBackend[0]] = spinnerLevelTime.getSelectedItemPosition() + 1;
+                    levelPlies[selectedBackend[0]] = spinnerLevelPly.getSelectedItemPosition() + 1;
+                    if (!engineOptions.get(position).selectable) {
+                        spinnerEngine.setSelection(0);
+                        position = 0;
+                    }
+                    selectedBackend[0] = position == 0 ? 0 : 1;
+                    spinnerLevelTime.setSelection(levelTimes[selectedBackend[0]] - 1);
+                    spinnerLevelPly.setSelection(levelPlies[selectedBackend[0]] - 1);
+                });
 
         Button buttonOk = findViewById(R.id.ButtonOk);
         buttonOk.setOnClickListener(
@@ -161,8 +181,14 @@ public class GameSettingsDialog extends ResultDialog<Bundle> {
                                 toggleLevelMode.getCheckedButtonId() == R.id.RadioOptionsTime
                                         ? EngineApi.LEVEL_TIME
                                         : EngineApi.LEVEL_PLY);
-                        editor.putInt("level", spinnerLevelTime.getSelectedItemPosition() + 1);
-                        editor.putInt("levelPly", spinnerLevelPly.getSelectedItemPosition() + 1);
+                        levelTimes[selectedBackend[0]] =
+                                spinnerLevelTime.getSelectedItemPosition() + 1;
+                        levelPlies[selectedBackend[0]] =
+                                spinnerLevelPly.getSelectedItemPosition() + 1;
+                        editor.putInt("level", levelTimes[0]);
+                        editor.putInt("levelPly", levelPlies[0]);
+                        editor.putInt("oexLevel", levelTimes[1]);
+                        editor.putInt("oexLevelPly", levelPlies[1]);
 
                         editor.putBoolean("quiescentSearchOn", toggleQuiescent.isChecked());
 

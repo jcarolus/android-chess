@@ -53,13 +53,12 @@
     <string name="choice_delete">删除</string>
     <string name="choice_edit">编辑</string>
     <string name="choice_level_1">1 秒</string>
-    <string name="choice_level_10">15 分钟</string>
     <string name="choice_level_2">2 秒</string>
     <string name="choice_level_3">4 秒</string>
-    <string name="choice_level_4">8 秒 (中等)</string>
+    <string name="choice_level_4">8 秒</string>
     <string name="choice_level_5">10 秒</string>
     <string name="choice_level_6">20 秒</string>
-    <string name="choice_level_7">30 秒 (熟练)</string>
+    <string name="choice_level_7">30 秒</string>
     <string name="choice_level_8">1 分钟</string>
     <string name="choice_level_9">5 分钟</string>
     <string name="choice_random">随机</string>
@@ -272,8 +271,8 @@
         <strong>对局</strong><br/>观看正在进行的对局。GM 前缀代表特级大师。<br/>
         <strong>玩家</strong><br/>显示空闲玩家及其等级分。<br/>
         ]]></string>
-    <string name="options_level_ply">难度 (步数)</string>
-    <string name="options_level_time">难度 (时间)</string>
+    <string name="options_level_ply">搜索深度（半回合）</string>
+    <string name="options_level_time">每步思考时间</string>
     <string name="options_play_android">人机对战</string>
     <string name="options_play_black">黑方</string>
     <string name="options_play_human">人人对战</string>
@@ -452,8 +451,8 @@
     <string name="title_offers_adjourn">暂停请求</string>
     <string name="title_offers_draw">求和请求</string>
     <string name="title_offers_takeback">悔棋请求</string>
-    <string name="title_pick_time">选择时间难度</string>
-    <string name="title_pick_ply">选择半回合难度</string>
+    <string name="title_pick_time">每步思考时间</string>
+    <string name="title_pick_ply">搜索深度（半回合）</string>
     <string name="title_pick_promo">选择升变棋子</string>
     <string name="title_save_game">保存对局</string>
     <string name="toast_challenge_posted">挑战已发布</string>

@@ -56,13 +56,12 @@
     <string name="choice_delete">Löschen</string>
     <string name="choice_edit">Bearbeiten</string>
     <string name="choice_level_1">1 Sekunde</string>
-    <string name="choice_level_10">15 Minuten</string>
     <string name="choice_level_2">2 Sekunden</string>
     <string name="choice_level_3">4 Sekunden</string>
-    <string name="choice_level_4">8 Sekunden (durchschnittlich)</string>
+    <string name="choice_level_4">8 Sekunden</string>
     <string name="choice_level_5">10 Sekunden</string>
     <string name="choice_level_6">20 Sekunden</string>
-    <string name="choice_level_7">30 Sekunden (erfahren)</string>
+    <string name="choice_level_7">30 Sekunden</string>
     <string name="choice_level_8">1 Minute</string>
     <string name="choice_level_9">5 Minuten</string>
     <string name="choice_random">Zufällig</string>
@@ -282,8 +281,8 @@
             Zeigt inaktive Spieler mit Wertungen.<br/>
                  ]]>
             </string>
-    <string name="options_level_ply">Stufe (Halbzüge)</string>
-    <string name="options_level_time">Stufe (Zeit)</string>
+    <string name="options_level_ply">Suchtiefe (Halbzüge)</string>
+    <string name="options_level_time">Bedenkzeit pro Zug</string>
     <string name="options_play_android">Mensch gegen Android</string>
     <string name="options_play_black">Schwarz</string>
     <string name="options_play_human">Mensch gegen Mensch</string>
@@ -462,8 +461,8 @@
     <string name="title_offers_adjourn">Vertagungs-Anfrage</string>
     <string name="title_offers_draw">Remis-Anfrage</string>
     <string name="title_offers_takeback">Zurücknahme-Anfrage</string>
-    <string name="title_pick_time">Zeitstufe wählen</string>
-    <string name="title_pick_ply">Ply-Stufe wählen</string>
+    <string name="title_pick_time">Bedenkzeit pro Zug</string>
+    <string name="title_pick_ply">Suchtiefe (Halbzüge)</string>
     <string name="title_pick_promo">Umwandlungsfigur wählen</string>
     <string name="title_save_game">Partie speichern</string>
     <string name="toast_challenge_posted">Herausforderung gepostet</string>

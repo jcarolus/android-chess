@@ -60,13 +60,12 @@
     <string name="choice_delete">Delete</string>
     <string name="choice_edit">Edit</string>
     <string name="choice_level_1">1 sec</string>
-    <string name="choice_level_10">15 minutes</string>
     <string name="choice_level_2">2 sec </string>
     <string name="choice_level_3">4 sec</string>
-    <string name="choice_level_4">8 sec (average) </string>
+    <string name="choice_level_4">8 sec</string>
     <string name="choice_level_5">10 sec</string>
     <string name="choice_level_6">20 sec</string>
-    <string name="choice_level_7">30 sec (experienced) </string>
+    <string name="choice_level_7">30 sec</string>
     <string name="choice_level_8">1 minute</string>
     <string name="choice_level_9">5 minutes</string>
     <string name="choice_random">Random</string>
@@ -302,8 +301,8 @@
             Shows idle players with ratings.<br/>
                  ]]>
             </string>
-    <string name="options_level_ply">Level (ply)</string>
-    <string name="options_level_time">Level (time)</string>
+    <string name="options_level_ply">Search depth (half-moves)</string>
+    <string name="options_level_time">Thinking time per move</string>
     <string name="options_engine_builtin">Built-in</string>
     <string name="options_engine_oex">OEX</string>
     <string name="options_engine_oex_unavailable">No OEX engines found on this device.</string>
@@ -497,8 +496,8 @@
     <string name="title_offers_adjourn">Adjourn request</string>
     <string name="title_offers_draw">Draw request</string>
     <string name="title_offers_takeback">Take back request</string>
-    <string name="title_pick_time">Pick time level</string>
-    <string name="title_pick_ply">Pick ply level</string>
+    <string name="title_pick_time">Thinking time per move</string>
+    <string name="title_pick_ply">Search depth (half-moves)</string>
     <string name="title_pick_promo">Pick promotion piece</string>
     <string name="title_save_game">Save game</string>
     <string name="toast_challenge_posted">Challenge posted</string>

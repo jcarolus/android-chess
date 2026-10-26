@@ -56,13 +56,12 @@
     <string name="choice_delete">Eliminar</string>
     <string name="choice_edit">Editar</string>
     <string name="choice_level_1">1 segundo</string>
-    <string name="choice_level_10">15 minutos</string>
     <string name="choice_level_2">2 segundos</string>
     <string name="choice_level_3">4 segundos</string>
-    <string name="choice_level_4">8 segundos (medio)</string>
+    <string name="choice_level_4">8 segundos</string>
     <string name="choice_level_5">10 segundos</string>
     <string name="choice_level_6">20 segundos</string>
-    <string name="choice_level_7">30 segundos (experimentado)</string>
+    <string name="choice_level_7">30 segundos</string>
     <string name="choice_level_8">1 minuto</string>
     <string name="choice_level_9">5 minutos</string>
     <string name="choice_random">Aleatorio</string>
@@ -282,8 +281,8 @@
             Muestra jugadores inactivos con puntuación.<br/>
                  ]]>
             </string>
-    <string name="options_level_ply">Nivel (medio movimiento)</string>
-    <string name="options_level_time">Nivel (tiempo)</string>
+    <string name="options_level_ply">Profundidad de búsqueda (medias jugadas)</string>
+    <string name="options_level_time">Tiempo de reflexión por jugada</string>
     <string name="options_play_android">Humano contra Android</string>
     <string name="options_play_black">Negras</string>
     <string name="options_play_human">Humano contra Humano</string>
@@ -462,8 +461,8 @@
     <string name="title_offers_adjourn">Solicitud de aplazamiento</string>
     <string name="title_offers_draw">Solicitud de tablas</string>
     <string name="title_offers_takeback">Solicitud de retracto</string>
-    <string name="title_pick_time">Elige nivel de tiempo</string>
-    <string name="title_pick_ply">Elige nivel de ply</string>
+    <string name="title_pick_time">Tiempo de reflexión por jugada</string>
+    <string name="title_pick_ply">Profundidad de búsqueda (medias jugadas)</string>
     <string name="title_pick_promo">Elige pieza de promoción</string>
     <string name="title_save_game">Guardar partida</string>
     <string name="toast_challenge_posted">Desafío publicado</string>

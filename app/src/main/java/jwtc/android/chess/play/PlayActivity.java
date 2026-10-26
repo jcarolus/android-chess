@@ -1043,13 +1043,17 @@ public class PlayActivity extends ChessBoardActivity
 
         int levelTime = prefs.getInt("level", 2);
         int levelPly = prefs.getInt("levelPly", 2);
-        int[] secs = {
-            1, 1, 2, 4, 8, 10, 20, 30, 60, 300, 900, 1800
-        }; // 1 offset, so 3 extra 1 unused secs
+        if (!engineSession.isBuiltin()) {
+            levelTime = prefs.getInt("oexLevel", levelTime);
+            levelPly = prefs.getInt("oexLevelPly", levelPly);
+        }
+        // Preferences store one-based indices into the thinking-time choices.
+        int[] secs = {1, 2, 4, 8, 10, 20, 30, 60, 300};
+        levelTime = Math.max(1, Math.min(levelTime, secs.length));
 
         searchLimit =
                 mode == EngineApi.LEVEL_TIME
-                        ? SearchLimit.millis(secs[levelTime] * 1000)
+                        ? SearchLimit.millis(secs[levelTime - 1] * 1000)
                         : SearchLimit.ply(levelPly);
 
         updateBoardRotation();
