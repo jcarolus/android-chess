@@ -1,6 +1,5 @@
 package jwtc.android.chess;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +22,8 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import jwtc.android.chess.activities.StartBaseActivity;
+import jwtc.android.chess.links.AppLink;
+import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.services.GameApi;
 
 public class start extends StartBaseActivity {
@@ -113,14 +114,7 @@ public class start extends StartBaseActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_share) {
-            final String packageName = "jwtc.android.chess";
-            Intent i = new Intent(Intent.ACTION_SEND);
-            i.setType("text/plain");
-            i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
-            i.putExtra(
-                    Intent.EXTRA_TEXT,
-                    "https://play.google.com/store/apps/details?id=" + packageName);
-            startActivity(Intent.createChooser(i, "Share"));
+            LinkSharing.share(this, AppLink.HOME);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -561,4 +561,14 @@
     <string name="options_target_elo_hint">实际棋力取决于引擎和思考时间。</string>
     <string name="options_target_elo_checking">正在检查可用的棋力设置…</string>
     <string name="options_full_strength">全力</string>
+    <string name="share_game_link">分享棋局链接</string>
+    <string name="share_position_link">分享局面链接</string>
+    <string name="share_pgn">分享 PGN</string>
+    <string name="share_chess_link">分享</string>
+    <string name="share_invitation">分享邀请</string>
+    <string name="share_lichess_profile">分享我的 Lichess 个人资料</string>
+    <string name="app_link_invalid">此 Chess 链接无效或不受支持。</string>
+    <string name="app_link_too_large">棋局过大，无法通过链接分享。请改为分享完整的 PGN 棋局。</string>
+    <string name="app_link_no_engine">此变体不支持引擎分析。您可以浏览棋盘和着法。</string>
+    <string name="share_failed">无法分享棋局。请重试。</string>
 </resources>

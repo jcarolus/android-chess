@@ -37,6 +37,12 @@
                 android:accessibilityLiveRegion="assertive" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonShareBoard"
+                style="?attr/chessImageButtonStyle"
+                app:icon="@drawable/ic_share_fill"
+                android:contentDescription="@string/share_chess_link" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonAnalysisSettings"
                 style="?attr/chessImageButtonStyle"
                 app:icon="@drawable/sliders"

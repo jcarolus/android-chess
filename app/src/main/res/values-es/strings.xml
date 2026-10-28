@@ -571,4 +571,14 @@
     <string name="options_target_elo_hint">La fuerza real depende del motor y del tiempo de reflexión.</string>
     <string name="options_target_elo_checking">Comprobando los ajustes de fuerza disponibles…</string>
     <string name="options_full_strength">Fuerza máxima</string>
+    <string name="share_game_link">Compartir enlace de la partida</string>
+    <string name="share_position_link">Compartir enlace de la posición</string>
+    <string name="share_pgn">Compartir PGN</string>
+    <string name="share_chess_link">Compartir</string>
+    <string name="share_invitation">Compartir invitación</string>
+    <string name="share_lichess_profile">Compartir mi perfil de Lichess</string>
+    <string name="app_link_invalid">Este enlace de Chess no es válido o no es compatible.</string>
+    <string name="app_link_too_large">Esta partida es demasiado grande para un enlace. Comparte la partida completa como PGN.</string>
+    <string name="app_link_no_engine">El análisis con motor no está disponible para esta variante. Puedes explorar el tablero y las jugadas.</string>
+    <string name="share_failed">No se pudo compartir la partida. Inténtalo de nuevo.</string>
 </resources>

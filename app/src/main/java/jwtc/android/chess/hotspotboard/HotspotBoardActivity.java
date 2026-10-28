@@ -29,6 +29,9 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.Clipboard;
+import jwtc.android.chess.links.AppLink;
+import jwtc.android.chess.links.LinkActivity;
+import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.services.NetworkAddressHelper;
 import jwtc.chess.Move;
 import jwtc.chess.board.BoardConstants;
@@ -38,7 +41,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     private final String TAG = "HotspotBoardActivity";
     private Messenger messengerFromService;
     private MaterialButtonToggleGroup colorToggleGroup;
-    private MaterialButton buttonConnect, buttonDisconnect, buttonCopyIp;
+    private MaterialButton buttonConnect, buttonDisconnect, buttonCopyIp, buttonShareInvitation;
+    private AlertDialog connectionDialog;
     private LinearLayout layoutConnect;
     private LinearLayout layoutSessionSummary;
     private boolean isHost = true, isPlayAsWhite = true;
@@ -207,6 +211,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         public void handleMessage(Message msg) {
             if (msg.what == HotspotBoardService.MSG_SESSION_STATE) {
                 restoreSessionState(msg.getData());
+                showLinkedConnection();
             } else if (msg.what == HotspotBoardService.MSG_RECEIVED_GAME_UPDATE) {
                 String data = msg.getData().getString("data");
                 Log.d(TAG, "Received from service: " + data);
@@ -364,6 +369,13 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            getIntent().removeExtra(LinkActivity.EXTRA_HOST);
+            String host = savedInstanceState.getString(LinkActivity.EXTRA_HOST);
+            if (host != null) {
+                getIntent().putExtra(LinkActivity.EXTRA_HOST, host);
+            }
+        }
 
         Log.d(TAG, "onCreate");
         SharedPreferences prefs = getPrefs();
@@ -433,6 +445,16 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         buttonNew = findViewById(R.id.ButtonNew);
         buttonDisconnect = findViewById(R.id.ButtonDisconnect);
         buttonCopyIp = findViewById(R.id.ButtonCopyIp);
+        buttonShareInvitation = findViewById(R.id.ButtonShareInvitation);
+        buttonShareInvitation.setOnClickListener(
+                v -> {
+                    String ip = getCurrentLocalIp();
+                    if (ip != null) {
+                        LinkSharing.share(this, AppLink.join(ip));
+                    } else {
+                        doToast(getString(R.string.hotspot_local_ip_unavailable));
+                    }
+                });
         textStatus = findViewById(R.id.TextStatus);
         textSessionSummary = findViewById(R.id.TextSessionSummary);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
@@ -486,6 +508,8 @@ public class HotspotBoardActivity extends ChessBoardActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString(
+                LinkActivity.EXTRA_HOST, getIntent().getStringExtra(LinkActivity.EXTRA_HOST));
         outState.putString("hotspotLastMove", textViewLastMove.getText().toString());
         outState.putString("hotspotPosition", gameApi.getFEN());
         HotspotBoardApi api = (HotspotBoardApi) gameApi;
@@ -508,6 +532,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         configuredHostIp = prefs.getString("hotspotboardHostIp", configuredHostIp);
         syncRestoredSessionUi();
         refreshRestoredBoard();
+        showLinkedConnection();
     }
 
     @Override
@@ -649,6 +674,7 @@ public class HotspotBoardActivity extends ChessBoardActivity {
 
         textSessionSummary.setText(summary.toString());
         buttonCopyIp.setVisibility(showCopyIp ? View.VISIBLE : View.GONE);
+        buttonShareInvitation.setVisibility(isHost && localIp != null ? View.VISIBLE : View.GONE);
     }
 
     private void appendSummaryPart(StringBuilder summary, String value) {
@@ -661,7 +687,25 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         summary.append(value.trim());
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (connectionDialog != null) {
+            connectionDialog.dismiss();
+        }
+        setIntent(intent);
+    }
+
+    private void showLinkedConnection() {
+        if (isServiceBound
+                && connectionDialog == null
+                && getIntent().hasExtra(LinkActivity.EXTRA_HOST)) {
+            showConnectionDialog();
+        }
+    }
+
     private void showConnectionDialog() {
+        final String invitedHost = getIntent().getStringExtra(LinkActivity.EXTRA_HOST);
         View dialogView =
                 LayoutInflater.from(this).inflate(R.layout.hotspotboard_connection_dialog, null);
         SwitchMaterial dialogSwitchHost = dialogView.findViewById(R.id.SwitchHost);
@@ -675,12 +719,13 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         TextInputEditText dialogEditName = dialogView.findViewById(R.id.EditName);
         TextInputEditText dialogEditHostIp = dialogView.findViewById(R.id.EditHostIp);
 
-        dialogSwitchHost.setChecked(isHost);
+        dialogSwitchHost.setChecked(invitedHost == null && isHost);
         dialogSwitchShare.setChecked(isShareMode);
         dialogEditName.setText(configuredName);
-        dialogEditHostIp.setText(configuredHostIp);
+        dialogEditHostIp.setText(invitedHost == null ? configuredHostIp : invitedHost);
         dialogNetworkToggleGroup.check(
-                connectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
+                invitedHost != null
+                                || connectionMode == HotspotBoardService.CONNECTION_MODE_LOCAL_WIFI
                         ? R.id.buttonModeLocalWifi
                         : R.id.buttonModeHotspot);
 
@@ -765,6 +810,14 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 isHost ? R.string.hotspot_start_hosting : R.string.hotspot_connect,
                                 null)
                         .show();
+        connectionDialog = dialog;
+        dialog.setOnDismissListener(
+                d -> {
+                    if (!isChangingConfigurations()) {
+                        getIntent().removeExtra(LinkActivity.EXTRA_HOST);
+                    }
+                    connectionDialog = null;
+                });
         dialogHolder[0] = dialog;
         syncDialogControls.run();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)

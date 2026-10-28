@@ -130,6 +130,14 @@
             android:layout_marginTop="@dimen/board_row_gap">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonShareBoard"
+                app:icon="@drawable/ic_share_fill"
+                android:text="@string/share_chess_link"
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/board_row_gap"
+                style="?attr/chessButtonStyle" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSaveToFile"
                 app:icon="@drawable/save"
                 android:text="@string/lichess_save_game_to_file"

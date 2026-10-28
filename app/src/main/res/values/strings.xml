@@ -586,4 +586,14 @@
     <string name="options_target_elo_hint">Actual strength depends on the engine and thinking time.</string>
     <string name="options_target_elo_checking">Checking available strength settings…</string>
     <string name="options_full_strength">Full strength</string>
+    <string name="share_game_link">Share game link</string>
+    <string name="share_position_link">Share position link</string>
+    <string name="share_pgn">Share PGN</string>
+    <string name="share_chess_link">Share</string>
+    <string name="share_invitation">Share invitation</string>
+    <string name="share_lichess_profile">Share my Lichess profile</string>
+    <string name="app_link_invalid">This Chess link is invalid or unsupported.</string>
+    <string name="app_link_too_large">This game is too large to share as a link. Share the complete game as PGN instead.</string>
+    <string name="app_link_no_engine">Engine analysis is unavailable for this variant. You can browse the board and moves.</string>
+    <string name="share_failed">Could not share the game. Please try again.</string>
 </resources>

@@ -65,6 +65,13 @@
                 android:contentDescription="@string/hotspot_copy_ip"
                 android:visibility="gone"
                 app:icon="@drawable/ic_clipboard" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonShareInvitation"
+                android:contentDescription="@string/share_invitation"
+                android:visibility="gone"
+                app:icon="@drawable/ic_share_fill"
+                style="?attr/chessImageButtonStyle" />
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonDisconnect"

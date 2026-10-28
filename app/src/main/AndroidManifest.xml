@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     android:installLocation="auto"
-    android:versionCode="307"
-    android:versionName="10.6.9">
+    android:versionCode="308"
+    android:versionName="10.6.10">
     <queries>
         <intent>
             <action
@@ -37,6 +37,15 @@
             android:name=".lichess.LichessService"
             android:exported="true" />
 
+        <activity android:name=".links.LinkActivity" android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="jwtc.nl" android:path="/app" />
+                <data android:scheme="https" android:host="jwtc.nl" android:pathPrefix="/app/" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".start"
             android:label="@string/app_name"
@@ -269,6 +278,14 @@
                 android:value=".lichess.LichessLobbyActivity" />
         </activity>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.sharedgames"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/shared_game_paths" />
+        </provider>
         <provider
             android:name=".helpers.MyPGNProvider"
             android:authorities="jwtc.android.chess.helpers.MyPGNProvider"

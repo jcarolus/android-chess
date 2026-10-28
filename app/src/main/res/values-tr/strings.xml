@@ -561,4 +561,14 @@
     <string name="options_target_elo_hint">Gerçek oyun gücü motora ve düşünme süresine bağlıdır.</string>
     <string name="options_target_elo_checking">Kullanılabilir güç ayarları kontrol ediliyor…</string>
     <string name="options_full_strength">Tam güç</string>
+    <string name="share_game_link">Oyun bağlantısını paylaş</string>
+    <string name="share_position_link">Konum bağlantısını paylaş</string>
+    <string name="share_pgn">PGN paylaş</string>
+    <string name="share_chess_link">Paylaş</string>
+    <string name="share_invitation">Daveti paylaş</string>
+    <string name="share_lichess_profile">Lichess profilimi paylaş</string>
+    <string name="app_link_invalid">Bu Chess bağlantısı geçersiz veya desteklenmiyor.</string>
+    <string name="app_link_too_large">Bu oyun bağlantı olarak paylaşmak için çok büyük. Oyunun tamamını PGN olarak paylaşın.</string>
+    <string name="app_link_no_engine">Bu varyant için motor analizi kullanılamıyor. Tahtayı ve hamleleri inceleyebilirsiniz.</string>
+    <string name="share_failed">Oyun paylaşılamadı. Lütfen tekrar deneyin.</string>
 </resources>

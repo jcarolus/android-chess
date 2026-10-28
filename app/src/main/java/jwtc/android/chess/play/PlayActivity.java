@@ -37,6 +37,7 @@ import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
 import jwtc.android.chess.helpers.PGNHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
+import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.services.ClockListener;
 import jwtc.android.chess.services.EcoService;
 import jwtc.android.chess.services.GameApi;
@@ -825,6 +826,8 @@ public class PlayActivity extends ChessBoardActivity
                     intent = new Intent(this, AnalyzeActivity.class);
                     intent.putExtra(AnalyzeActivity.EXTRA_PGN, gameApi.exportFullPGN());
                     startActivity(intent);
+                } else if (item.equals(getString(R.string.share_chess_link))) {
+                    LinkSharing.show(this, gameApi);
                 } else if (item.equals(getString(R.string.menu_save_game))) {
                     saveGame();
                 } else if (item.equals(getString(R.string.menu_load_game))) {

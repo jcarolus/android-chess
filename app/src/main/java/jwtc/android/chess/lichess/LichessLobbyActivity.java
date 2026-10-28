@@ -21,6 +21,9 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.lichess.models.Challenge;
 import jwtc.android.chess.lichess.models.Game;
+import jwtc.android.chess.links.AppLink;
+import jwtc.android.chess.links.LinkActivity;
+import jwtc.android.chess.links.LinkSharing;
 
 /**
  * Login + lobby: the OAuth entry point and the game list. This is the only Lichess activity that
@@ -35,6 +38,7 @@ public class LichessLobbyActivity extends LichessBaseActivity
     private static final int REQUEST_LOGIN = 1001;
     private static final long LOBBY_REFRESH_INTERVAL_MS = 60_000L;
 
+    private ChallengeDialog linkedChallengeDialog;
     private ViewAnimator viewAnimatorRoot;
     private TextView textViewHandle, textViewLobbyStatus;
     private MaterialButton buttonSeek, buttonChallenge;
@@ -68,6 +72,13 @@ public class LichessLobbyActivity extends LichessBaseActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            getIntent().removeExtra(LinkActivity.EXTRA_USER);
+            String user = savedInstanceState.getString(LinkActivity.EXTRA_USER);
+            if (user != null) {
+                getIntent().putExtra(LinkActivity.EXTRA_USER, user);
+            }
+        }
         Log.d(TAG, "onCreate");
         setContentView(R.layout.lichess_lobby_activity);
         ActivityHelper.fixPaddings(this, findViewById(R.id.ViewAnimatorRoot));
@@ -93,6 +104,13 @@ public class LichessLobbyActivity extends LichessBaseActivity
                     finish();
                 });
 
+        findViewById(R.id.ButtonShareProfile)
+                .setOnClickListener(
+                        v -> {
+                            if (lichessApi != null && lichessApi.getUser() != null) {
+                                LinkSharing.share(this, AppLink.online(lichessApi.getUser()));
+                            }
+                        });
         buttonChallenge = findViewById(R.id.ButtonChallenge);
         buttonChallenge.setOnClickListener(
                 v -> openChallengeDialog(ChallengeDialog.REQUEST_CHALLENGE));
@@ -163,6 +181,13 @@ public class LichessLobbyActivity extends LichessBaseActivity
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putString(
+                LinkActivity.EXTRA_USER, getIntent().getStringExtra(LinkActivity.EXTRA_USER));
+    }
+
     // --- View switching ---
 
     protected void displayLogin() {
@@ -173,6 +198,38 @@ public class LichessLobbyActivity extends LichessBaseActivity
         lichessApi.playing();
         viewAnimatorRoot.setDisplayedChild(VIEW_LOBBY);
         startLobbyRefreshLoop();
+        showLinkedChallenge();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.hasExtra(LinkActivity.EXTRA_USER)) {
+            if (linkedChallengeDialog != null) {
+                linkedChallengeDialog.dismiss();
+            }
+            setIntent(intent);
+            showLinkedChallenge();
+        }
+    }
+
+    private void showLinkedChallenge() {
+        String user = getIntent().getStringExtra(LinkActivity.EXTRA_USER);
+        if (user == null || !isLobbyVisible() || linkedChallengeDialog != null) {
+            return;
+        }
+        linkedChallengeDialog =
+                new ChallengeDialog(this, this, ChallengeDialog.REQUEST_CHALLENGE, getPrefs());
+        ((android.widget.EditText) linkedChallengeDialog.findViewById(R.id.EditTextMatchOpponent))
+                .setText(user);
+        linkedChallengeDialog.setOnDismissListener(
+                dialog -> {
+                    if (!isChangingConfigurations()) {
+                        getIntent().removeExtra(LinkActivity.EXTRA_USER);
+                    }
+                    linkedChallengeDialog = null;
+                });
+        linkedChallengeDialog.show();
     }
 
     private boolean isLobbyVisible() {

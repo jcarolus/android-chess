@@ -570,4 +570,14 @@
     <string name="options_target_elo_hint">تعتمد القوة الفعلية على المحرك ووقت التفكير.</string>
     <string name="options_target_elo_checking">جارٍ التحقق من إعدادات القوة المتاحة…</string>
     <string name="options_full_strength">القوة الكاملة</string>
+    <string name="share_game_link">مشاركة رابط المباراة</string>
+    <string name="share_position_link">مشاركة رابط الوضعية</string>
+    <string name="share_pgn">مشاركة PGN</string>
+    <string name="share_chess_link">مشاركة</string>
+    <string name="share_invitation">مشاركة الدعوة</string>
+    <string name="share_lichess_profile">مشاركة ملفي على Lichess</string>
+    <string name="app_link_invalid">رابط Chess هذا غير صالح أو غير مدعوم.</string>
+    <string name="app_link_too_large">هذه المباراة أكبر من أن تتم مشاركتها كرابط. شارك المباراة كاملة بصيغة PGN بدلاً من ذلك.</string>
+    <string name="app_link_no_engine">تحليل المحرك غير متاح لهذا النوع. يمكنك استعراض الرقعة والنقلات.</string>
+    <string name="share_failed">تعذرت مشاركة المباراة. يرجى المحاولة مجددًا.</string>
 </resources>

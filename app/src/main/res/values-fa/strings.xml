@@ -578,4 +578,14 @@
     <string name="options_target_elo_hint">قدرت واقعی به موتور و زمان تفکر بستگی دارد.</string>
     <string name="options_target_elo_checking">در حال بررسی تنظیمات قدرت موجود…</string>
     <string name="options_full_strength">قدرت کامل</string>
+    <string name="share_game_link">اشتراک‌گذاری پیوند بازی</string>
+    <string name="share_position_link">اشتراک‌گذاری پیوند وضعیت</string>
+    <string name="share_pgn">اشتراک‌گذاری PGN</string>
+    <string name="share_chess_link">اشتراک‌گذاری</string>
+    <string name="share_invitation">اشتراک‌گذاری دعوت</string>
+    <string name="share_lichess_profile">اشتراک‌گذاری نمایهٔ Lichess من</string>
+    <string name="app_link_invalid">این پیوند Chess نامعتبر است یا پشتیبانی نمی‌شود.</string>
+    <string name="app_link_too_large">این بازی برای اشتراک‌گذاری با پیوند بیش از حد بزرگ است. بازی کامل را با قالب PGN به اشتراک بگذارید.</string>
+    <string name="app_link_no_engine">تحلیل موتور برای این گونه در دسترس نیست. می‌توانید صفحه و حرکت‌ها را مرور کنید.</string>
+    <string name="share_failed">اشتراک‌گذاری بازی ممکن نشد. دوباره تلاش کنید.</string>
 </resources>

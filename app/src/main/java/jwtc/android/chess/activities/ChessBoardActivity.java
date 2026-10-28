@@ -30,6 +30,7 @@ import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.HapticFeedback;
 import jwtc.android.chess.helpers.MagnifyingDragShadowBuilder;
 import jwtc.android.chess.helpers.Sounds;
+import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
 import jwtc.android.chess.services.MoveSpeech;
@@ -74,6 +75,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
     protected boolean useLongMoveFormat = false;
     protected boolean addTurnInMoveDescription = true;
     protected boolean includeAttackersAndDefendersInFieldDescription = false;
+
     // shared views
     protected TextView textViewWhitePieces, textViewBlackPieces;
     protected SwitchMaterial switchSound, switchMoveToSpeech, switchAccessibilityDrag;
@@ -234,6 +236,15 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
 
     public void afterCreate() {
         Log.d(TAG, " afterCreate");
+        View shareBoard = findViewById(R.id.ButtonShareBoard);
+        if (shareBoard != null) {
+            shareBoard.setOnClickListener(
+                    v -> {
+                        if (gameApi != null) {
+                            LinkSharing.show(this, gameApi);
+                        }
+                    });
+        }
 
         chessBoardView = findViewById(R.id.includeboard);
         chessBoardView.setNextFocusRightId(R.id.ButtonPlay);

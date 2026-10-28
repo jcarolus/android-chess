@@ -26,6 +26,8 @@ import jwtc.android.chess.helpers.StartItemAdapter;
 import jwtc.android.chess.hotspotboard.HotspotBoardActivity;
 import jwtc.android.chess.ics.ICSClient;
 import jwtc.android.chess.lichess.LichessLobbyActivity;
+import jwtc.android.chess.links.AppLink;
+import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.play.PlayActivity;
 import jwtc.android.chess.practice.PracticeActivity;
 import jwtc.android.chess.puzzle.PuzzleActivity;
@@ -37,6 +39,23 @@ public class StartBaseActivity extends AppCompatActivity {
     protected StartItemAdapter startItemAdapter;
     protected int layoutResource = R.layout.start;
     private boolean createdWithEinkTheme;
+
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        menu.add(0, R.id.action_share, 0, R.string.share_chess_link)
+                .setIcon(R.drawable.ic_share_fill)
+                .setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == R.id.action_share) {
+            LinkSharing.share(this, AppLink.HOME);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -571,4 +571,14 @@
     <string name="options_target_elo_hint">Die tatsächliche Spielstärke hängt von der Engine und der Bedenkzeit ab.</string>
     <string name="options_target_elo_checking">Verfügbare Spielstärkeeinstellungen werden geprüft…</string>
     <string name="options_full_strength">Volle Spielstärke</string>
+    <string name="share_game_link">Partielink teilen</string>
+    <string name="share_position_link">Stellungslink teilen</string>
+    <string name="share_pgn">PGN teilen</string>
+    <string name="share_chess_link">Teilen</string>
+    <string name="share_invitation">Einladung teilen</string>
+    <string name="share_lichess_profile">Mein Lichess-Profil teilen</string>
+    <string name="app_link_invalid">Dieser Chess-Link ist ungültig oder wird nicht unterstützt.</string>
+    <string name="app_link_too_large">Diese Partie ist zu groß für einen Link. Teile die vollständige Partie stattdessen als PGN.</string>
+    <string name="app_link_no_engine">Für diese Variante ist keine Engine-Analyse verfügbar. Du kannst das Brett und die Züge ansehen.</string>
+    <string name="share_failed">Die Partie konnte nicht geteilt werden. Bitte versuche es erneut.</string>
 </resources>

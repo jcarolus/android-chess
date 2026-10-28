@@ -561,4 +561,14 @@
     <string name="options_target_elo_hint">La force réelle dépend du moteur et du temps de réflexion.</string>
     <string name="options_target_elo_checking">Vérification des réglages de force disponibles…</string>
     <string name="options_full_strength">Force maximale</string>
+    <string name="share_game_link">Partager le lien de la partie</string>
+    <string name="share_position_link">Partager le lien de la position</string>
+    <string name="share_pgn">Partager le PGN</string>
+    <string name="share_chess_link">Partager</string>
+    <string name="share_invitation">Partager une invitation</string>
+    <string name="share_lichess_profile">Partager mon profil Lichess</string>
+    <string name="app_link_invalid">Ce lien Chess est invalide ou non pris en charge.</string>
+    <string name="app_link_too_large">Cette partie est trop longue pour un lien. Partagez plutôt la partie complète au format PGN.</string>
+    <string name="app_link_no_engine">Aucune analyse par moteur pour cette variante. Vous pouvez parcourir les positions et les coups.</string>
+    <string name="share_failed">Impossible de partager la partie. Veuillez réessayer.</string>
 </resources>

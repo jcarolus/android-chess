@@ -561,4 +561,14 @@
     <string name="options_target_elo_hint">Фактическая сила игры зависит от движка и времени обдумывания.</string>
     <string name="options_target_elo_checking">Проверка доступных настроек силы игры…</string>
     <string name="options_full_strength">Полная сила</string>
+    <string name="share_game_link">Поделиться ссылкой на партию</string>
+    <string name="share_position_link">Поделиться ссылкой на позицию</string>
+    <string name="share_pgn">Поделиться PGN</string>
+    <string name="share_chess_link">Поделиться</string>
+    <string name="share_invitation">Поделиться приглашением</string>
+    <string name="share_lichess_profile">Поделиться моим профилем Lichess</string>
+    <string name="app_link_invalid">Эта ссылка Chess недействительна или не поддерживается.</string>
+    <string name="app_link_too_large">Эта партия слишком велика для ссылки. Поделитесь полной партией в формате PGN.</string>
+    <string name="app_link_no_engine">Анализ движком недоступен для этого варианта. Можно просматривать доску и ходы.</string>
+    <string name="share_failed">Не удалось поделиться партией. Повторите попытку.</string>
 </resources>

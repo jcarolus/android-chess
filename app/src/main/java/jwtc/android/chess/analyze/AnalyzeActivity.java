@@ -32,6 +32,7 @@ import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.helpers.MoveRecyclerAdapter;
+import jwtc.android.chess.links.LinkActivity;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameApi.PositionMove;
 import jwtc.android.chess.services.GameApi.PositionSnapshot;
@@ -223,15 +224,38 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                 if (lGameID > 0 && loadGame()) {
                     Log.d(TAG, "Loaded game " + lGameID);
                 } else if (!getIntent().hasExtra(EXTRA_GAME_ID) && pgn != null) {
-                    gameApi.loadPGN(pgn);
+                    if (!gameApi.loadPGN(pgn)) {
+                        doToast(getString(R.string.app_link_invalid));
+                        finish();
+                        return;
+                    }
                 } else if (!getIntent().hasExtra(EXTRA_GAME_ID) && fen != null) {
-                    gameApi.initFEN(fen, true);
+                    if (!gameApi.initFEN(fen, true)) {
+                        doToast(getString(R.string.app_link_invalid));
+                        finish();
+                        return;
+                    }
                 } else {
                     gameApi.newGame();
                 }
                 Node root = gameApi.getRootNode();
                 List<Node> continuations = gameApi.getContinuations(root);
-                gameApi.goTo(continuations.isEmpty() ? root : continuations.get(0));
+                int[] sharedPath = getIntent().getIntArrayExtra(LinkActivity.EXTRA_PATH);
+                if (sharedPath != null) {
+                    Node selected = root;
+                    for (int index : sharedPath) {
+                        List<Node> children = gameApi.getContinuations(selected);
+                        if (index < 0 || index >= children.size()) {
+                            doToast(getString(R.string.app_link_invalid));
+                            finish();
+                            return;
+                        }
+                        selected = children.get(index);
+                    }
+                    gameApi.goTo(selected);
+                } else {
+                    gameApi.goTo(continuations.isEmpty() ? root : continuations.get(0));
+                }
             }
             sessionLoaded = true;
         } else {
@@ -240,6 +264,14 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
             analysisActive = false;
             closeEngineSession();
+            if (getIntent().hasExtra(LinkActivity.EXTRA_PATH)) {
+                restoredSession = null;
+                rebuildBoard();
+                updatePieceDescriptions();
+                textViewMoveFeedback.setText(R.string.app_link_no_engine);
+                textViewMoveFeedback.setVisibility(View.VISIBLE);
+                return;
+            }
             if (analysisDialog == null) {
                 analysisDialog =
                         new MaterialAlertDialogBuilder(this)
@@ -670,7 +702,10 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
     private void updateMoveSummary() {
         updateAnalysisSummary();
-        if (gameApi.isDuckVariant()) {
+        if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
+            textViewLastMove.setText(getLastMoveAndTurnDescription(false));
+            textViewMoveFeedback.setText(R.string.app_link_no_engine);
+            textViewMoveFeedback.setVisibility(View.VISIBLE);
             return;
         }
         Node current = gameApi.getCurrentNode();
