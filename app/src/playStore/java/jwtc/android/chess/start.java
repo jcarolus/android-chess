@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import androidx.annotation.NonNull;
 import androidx.core.view.MenuItemCompat;
 import androidx.mediarouter.app.MediaRouteActionProvider;
 import androidx.mediarouter.media.MediaRouteSelector;
@@ -22,8 +21,6 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import jwtc.android.chess.activities.StartBaseActivity;
-import jwtc.android.chess.links.AppLink;
-import jwtc.android.chess.links.LinkSharing;
 import jwtc.android.chess.services.GameApi;
 
 public class start extends StartBaseActivity {
@@ -109,15 +106,6 @@ public class start extends StartBaseActivity {
         // Set the MediaRouteActionProvider selector for device discovery.
         mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_share) {
-            LinkSharing.share(this, AppLink.HOME);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     /** Send a text message to the receiver */
