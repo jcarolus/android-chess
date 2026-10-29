@@ -433,6 +433,17 @@
     <string name="gameslist_filter_switch_result_description">Enable or disable result filter</string>
     <string name="gameslist_open">Open</string>
     <string name="gameslist_analyze">Analyze</string>
+    <string name="gameslist_filters_description">Filters</string>
+    <string name="gameslist_previous_game_description">Previous game</string>
+    <string name="gameslist_next_game_description">Next game</string>
+    <string name="gameslist_view_board">Board</string>
+    <string name="gameslist_view_pgn" translatable="false">PGN</string>
+    <string name="gameslist_view_list">List</string>
+    <string name="gameslist_filter_date_after">Date after</string>
+    <string name="gameslist_filter_date_before">Date before</string>
+    <string name="gameslist_filter_result">Result</string>
+    <string name="gameslist_filter_order_by">Order by</string>
+    <string name="gameslist_filter_order_direction">Order direction</string>
     <string name="gameslist_result_placeholder" translatable="false">1-0</string>
     <string name="gameslist_date_placeholder" translatable="false">YYYY.MM.DD</string>
     <string name="gameslist_rating_placeholder" translatable="false">3.5</string>

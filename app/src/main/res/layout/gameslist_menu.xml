@@ -22,26 +22,27 @@
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/image_button_size"
-            android:text="Board" />
+            android:text="@string/gameslist_view_board" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonTogglePgn"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/image_button_size"
-            android:text="PGN" />
+            android:text="@string/gameslist_view_pgn" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonToggleList"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/image_button_size"
-            android:text="List" />
+            android:text="@string/gameslist_view_list" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ButtonOpenFilters"
         app:icon="@drawable/sliders"
+        android:contentDescription="@string/gameslist_filters_description"
         android:checkable="true"
         style="?attr/chessImageButtonStyle" />
 </com.google.android.flexbox.FlexboxLayout>

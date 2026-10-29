@@ -524,6 +524,16 @@
     <string name="pref_add_turn_in_move_description">Indiquer à qui est le tour dans les descriptions des coups</string>
     <string name="gameslist_open">Ouvrir</string>
     <string name="gameslist_analyze">Analyser</string>
+    <string name="gameslist_filters_description">Filtres</string>
+    <string name="gameslist_previous_game_description">Partie précédente</string>
+    <string name="gameslist_next_game_description">Partie suivante</string>
+    <string name="gameslist_view_board">Échiquier</string>
+    <string name="gameslist_view_list">Liste</string>
+    <string name="gameslist_filter_date_after">Date après</string>
+    <string name="gameslist_filter_date_before">Date avant</string>
+    <string name="gameslist_filter_result">Résultat</string>
+    <string name="gameslist_filter_order_by">Trier par</string>
+    <string name="gameslist_filter_order_direction">Ordre de tri</string>
     <string name="analysis_main_line">Ligne principale</string>
     <string name="analysis_engine_likes">Le moteur recommande :</string>
     <string name="analysis_engine_matches">Le dernier coup correspond à la recommandation du moteur</string>

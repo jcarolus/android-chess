@@ -524,6 +524,16 @@
     <string name="pref_add_turn_in_move_description">Incluir de quem é a vez nas descrições das jogadas</string>
     <string name="gameslist_open">Abrir</string>
     <string name="gameslist_analyze">Analisar</string>
+    <string name="gameslist_filters_description">Filtros</string>
+    <string name="gameslist_previous_game_description">Partida anterior</string>
+    <string name="gameslist_next_game_description">Próxima partida</string>
+    <string name="gameslist_view_board">Tabuleiro</string>
+    <string name="gameslist_view_list">Lista</string>
+    <string name="gameslist_filter_date_after">Data após</string>
+    <string name="gameslist_filter_date_before">Data antes</string>
+    <string name="gameslist_filter_result">Resultado</string>
+    <string name="gameslist_filter_order_by">Ordenar por</string>
+    <string name="gameslist_filter_order_direction">Direção da ordenação</string>
     <string name="analysis_main_line">Linha principal</string>
     <string name="analysis_engine_likes">O mecanismo recomenda:</string>
     <string name="analysis_engine_matches">A última jogada corresponde à recomendação do mecanismo</string>

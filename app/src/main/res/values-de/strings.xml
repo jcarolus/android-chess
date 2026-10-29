@@ -534,6 +534,16 @@
     <string name="pref_add_turn_in_move_description">In Zugbeschreibungen angeben, wer am Zug ist</string>
     <string name="gameslist_open">Öffnen</string>
     <string name="gameslist_analyze">Analysieren</string>
+    <string name="gameslist_filters_description">Filter</string>
+    <string name="gameslist_previous_game_description">Vorherige Partie</string>
+    <string name="gameslist_next_game_description">Nächste Partie</string>
+    <string name="gameslist_view_board">Brett</string>
+    <string name="gameslist_view_list">Liste</string>
+    <string name="gameslist_filter_date_after">Datum nach</string>
+    <string name="gameslist_filter_date_before">Datum vor</string>
+    <string name="gameslist_filter_result">Ergebnis</string>
+    <string name="gameslist_filter_order_by">Sortieren nach</string>
+    <string name="gameslist_filter_order_direction">Sortierrichtung</string>
     <string name="analysis_main_line">Hauptvariante</string>
     <string name="analysis_engine_likes">Engine bevorzugt:</string>
     <string name="analysis_engine_matches">Der letzte Zug entspricht der Empfehlung der Engine</string>

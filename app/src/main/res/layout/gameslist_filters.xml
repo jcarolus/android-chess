@@ -92,7 +92,7 @@
                     android:id="@+id/PGNDateAfter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date after"
+                    android:hint="@string/gameslist_filter_date_after"
                     android:minWidth="220dp" />
 
             </TableRow>
@@ -109,7 +109,7 @@
                     android:id="@+id/PGNDateBefore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date before"
+                    android:hint="@string/gameslist_filter_date_before"
                     android:minWidth="220dp" />
             </TableRow>
 
@@ -125,7 +125,7 @@
                     android:id="@+id/DropdownResult"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Result"
+                    android:hint="@string/gameslist_filter_result"
                     android:minWidth="220dp" />
             </TableRow>
         </TableLayout>
@@ -141,14 +141,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="@dimen/control_gap"
-                android:hint="Order by" />
+                android:hint="@string/gameslist_filter_order_by" />
 
             <jwtc.android.chess.views.FixedDropdownView
                 android:id="@+id/DropdownOrderDirection"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Order direction" />
+                android:hint="@string/gameslist_filter_order_direction" />
         </LinearLayout>
 
         <LinearLayout
@@ -166,7 +166,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonFilterClose"
-                android:text="Close"
+                android:text="@string/button_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>

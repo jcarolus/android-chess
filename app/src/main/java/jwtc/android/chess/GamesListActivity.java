@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -20,6 +21,8 @@ import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -209,7 +212,34 @@ public class GamesListActivity extends ChessBoardActivity {
                             R.id.text_event,
                             R.id.rating,
                             R.id.text_result
-                        });
+                        }) {
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View row = super.getView(position, convertView, parent);
+                        // Accessibility services announce what a tap and a long press do on a
+                        // row, so the long-press delete is discoverable without sight.
+                        ViewCompat.replaceAccessibilityAction(
+                                row,
+                                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK,
+                                getString(R.string.gameslist_open),
+                                (view, arguments) -> {
+                                    cursor.moveToPosition(position);
+                                    openGame();
+                                    return true;
+                                });
+                        ViewCompat.replaceAccessibilityAction(
+                                row,
+                                AccessibilityNodeInfoCompat.AccessibilityActionCompat
+                                        .ACTION_LONG_CLICK,
+                                getString(R.string.choice_delete),
+                                (view, arguments) -> {
+                                    cursor.moveToPosition(position);
+                                    deleteGame();
+                                    return true;
+                                });
+                        return row;
+                    }
+                };
 
         adapterGames.setViewBinder(
                 (view, cursor, columnIndex) -> {

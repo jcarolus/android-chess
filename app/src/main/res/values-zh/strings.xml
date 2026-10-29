@@ -524,6 +524,16 @@
     <string name="pref_add_turn_in_move_description">在走法描述中说明轮到哪方行棋</string>
     <string name="gameslist_open">打开</string>
     <string name="gameslist_analyze">分析</string>
+    <string name="gameslist_filters_description">筛选</string>
+    <string name="gameslist_previous_game_description">上一局</string>
+    <string name="gameslist_next_game_description">下一局</string>
+    <string name="gameslist_view_board">棋盘</string>
+    <string name="gameslist_view_list">列表</string>
+    <string name="gameslist_filter_date_after">起始日期</string>
+    <string name="gameslist_filter_date_before">截止日期</string>
+    <string name="gameslist_filter_result">结果</string>
+    <string name="gameslist_filter_order_by">排序依据</string>
+    <string name="gameslist_filter_order_direction">排序方向</string>
     <string name="analysis_main_line">主线</string>
     <string name="analysis_engine_likes">引擎推荐：</string>
     <string name="analysis_engine_matches">上一步走法与引擎推荐一致</string>

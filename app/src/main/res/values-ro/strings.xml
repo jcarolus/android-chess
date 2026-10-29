@@ -524,6 +524,16 @@
     <string name="pref_add_turn_in_move_description">Include cine este la mutare în descrierile mutărilor</string>
     <string name="gameslist_open">Deschide</string>
     <string name="gameslist_analyze">Analizează</string>
+    <string name="gameslist_filters_description">Filtre</string>
+    <string name="gameslist_previous_game_description">Partida anterioară</string>
+    <string name="gameslist_next_game_description">Partida următoare</string>
+    <string name="gameslist_view_board">Tablă</string>
+    <string name="gameslist_view_list">Listă</string>
+    <string name="gameslist_filter_date_after">Dată după</string>
+    <string name="gameslist_filter_date_before">Dată înainte</string>
+    <string name="gameslist_filter_result">Rezultat</string>
+    <string name="gameslist_filter_order_by">Sortează după</string>
+    <string name="gameslist_filter_order_direction">Direcția sortării</string>
     <string name="analysis_main_line">Linia principală</string>
     <string name="analysis_engine_likes">Motorul recomandă:</string>
     <string name="analysis_engine_matches">Ultima mutare corespunde recomandării motorului</string>

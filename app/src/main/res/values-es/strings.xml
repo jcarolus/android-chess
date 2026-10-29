@@ -534,6 +534,16 @@
     <string name="pref_add_turn_in_move_description">Incluir a quién le toca jugar en las descripciones de los movimientos</string>
     <string name="gameslist_open">Abrir</string>
     <string name="gameslist_analyze">Analizar</string>
+    <string name="gameslist_filters_description">Filtros</string>
+    <string name="gameslist_previous_game_description">Partida anterior</string>
+    <string name="gameslist_next_game_description">Partida siguiente</string>
+    <string name="gameslist_view_board">Tablero</string>
+    <string name="gameslist_view_list">Lista</string>
+    <string name="gameslist_filter_date_after">Fecha desde</string>
+    <string name="gameslist_filter_date_before">Fecha hasta</string>
+    <string name="gameslist_filter_result">Resultado</string>
+    <string name="gameslist_filter_order_by">Ordenar por</string>
+    <string name="gameslist_filter_order_direction">Dirección del orden</string>
     <string name="analysis_main_line">Línea principal</string>
     <string name="analysis_engine_likes">El motor recomienda:</string>
     <string name="analysis_engine_matches">El último movimiento coincide con la recomendación del motor</string>

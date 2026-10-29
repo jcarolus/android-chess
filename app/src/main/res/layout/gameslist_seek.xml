@@ -11,7 +11,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonPrevious"
             app:icon="@drawable/ic_chevron_left"
-            android:contentDescription="Previous game"
+            android:contentDescription="@string/gameslist_previous_game_description"
             style="?attr/chessImageButtonStyle" />
 
         <SeekBar
@@ -29,7 +29,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ButtonNext"
             app:icon="@drawable/ic_chevron_right"
-            android:contentDescription="Next game"
+            android:contentDescription="@string/gameslist_next_game_description"
             style="?attr/chessImageButtonStyle" />
     </TableRow>
 </TableLayout>

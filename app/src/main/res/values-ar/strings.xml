@@ -533,6 +533,16 @@
     <string name="pref_add_turn_in_move_description">تضمين صاحب الدور في أوصاف النقلات</string>
     <string name="gameslist_open">فتح</string>
     <string name="gameslist_analyze">تحليل</string>
+    <string name="gameslist_filters_description">المرشحات</string>
+    <string name="gameslist_previous_game_description">اللعبة السابقة</string>
+    <string name="gameslist_next_game_description">اللعبة التالية</string>
+    <string name="gameslist_view_board">الرقعة</string>
+    <string name="gameslist_view_list">القائمة</string>
+    <string name="gameslist_filter_date_after">التاريخ بعد</string>
+    <string name="gameslist_filter_date_before">التاريخ قبل</string>
+    <string name="gameslist_filter_result">النتيجة</string>
+    <string name="gameslist_filter_order_by">ترتيب حسب</string>
+    <string name="gameslist_filter_order_direction">اتجاه الترتيب</string>
     <string name="analysis_main_line">الخط الرئيسي</string>
     <string name="analysis_engine_likes">يوصي المحرك بـ:</string>
     <string name="analysis_engine_matches">النقلة الأخيرة تطابق توصية المحرك</string>

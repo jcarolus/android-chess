@@ -541,6 +541,16 @@
     <string name="pref_add_turn_in_move_description">ذکر نوبت بازیکن در توضیحات حرکت‌ها</string>
     <string name="gameslist_open">باز کردن</string>
     <string name="gameslist_analyze">تحلیل</string>
+    <string name="gameslist_filters_description">فیلترها</string>
+    <string name="gameslist_previous_game_description">بازی قبلی</string>
+    <string name="gameslist_next_game_description">بازی بعدی</string>
+    <string name="gameslist_view_board">صفحه</string>
+    <string name="gameslist_view_list">فهرست</string>
+    <string name="gameslist_filter_date_after">تاریخ پس از</string>
+    <string name="gameslist_filter_date_before">تاریخ پیش از</string>
+    <string name="gameslist_filter_result">نتیجه</string>
+    <string name="gameslist_filter_order_by">مرتب‌سازی بر اساس</string>
+    <string name="gameslist_filter_order_direction">جهت مرتب‌سازی</string>
     <string name="analysis_main_line">خط اصلی</string>
     <string name="analysis_engine_likes">پیشنهاد موتور:</string>
     <string name="analysis_engine_matches">آخرین حرکت با پیشنهاد موتور مطابقت دارد</string>

@@ -524,6 +524,16 @@
     <string name="pref_add_turn_in_move_description">Includi di chi è il turno nelle descrizioni delle mosse</string>
     <string name="gameslist_open">Apri</string>
     <string name="gameslist_analyze">Analizza</string>
+    <string name="gameslist_filters_description">Filtri</string>
+    <string name="gameslist_previous_game_description">Partita precedente</string>
+    <string name="gameslist_next_game_description">Partita successiva</string>
+    <string name="gameslist_view_board">Scacchiera</string>
+    <string name="gameslist_view_list">Elenco</string>
+    <string name="gameslist_filter_date_after">Data dopo</string>
+    <string name="gameslist_filter_date_before">Data prima</string>
+    <string name="gameslist_filter_result">Risultato</string>
+    <string name="gameslist_filter_order_by">Ordina per</string>
+    <string name="gameslist_filter_order_direction">Direzione ordinamento</string>
     <string name="analysis_main_line">Linea principale</string>
     <string name="analysis_engine_likes">Il motore consiglia:</string>
     <string name="analysis_engine_matches">L\'ultima mossa corrisponde alla raccomandazione del motore</string>

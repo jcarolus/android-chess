@@ -524,6 +524,16 @@
     <string name="pref_add_turn_in_move_description">Hamle açıklamalarına sıranın kimde olduğunu ekle</string>
     <string name="gameslist_open">Aç</string>
     <string name="gameslist_analyze">Analiz et</string>
+    <string name="gameslist_filters_description">Filtreler</string>
+    <string name="gameslist_previous_game_description">Önceki oyun</string>
+    <string name="gameslist_next_game_description">Sonraki oyun</string>
+    <string name="gameslist_view_board">Tahta</string>
+    <string name="gameslist_view_list">Liste</string>
+    <string name="gameslist_filter_date_after">Tarih sonrası</string>
+    <string name="gameslist_filter_date_before">Tarih öncesi</string>
+    <string name="gameslist_filter_result">Sonuç</string>
+    <string name="gameslist_filter_order_by">Sırala</string>
+    <string name="gameslist_filter_order_direction">Sıralama yönü</string>
     <string name="analysis_main_line">Ana hat</string>
     <string name="analysis_engine_likes">Motorun önerisi:</string>
     <string name="analysis_engine_matches">Son hamle motorun önerisiyle eşleşiyor</string>
