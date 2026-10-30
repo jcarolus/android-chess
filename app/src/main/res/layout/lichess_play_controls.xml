@@ -14,9 +14,7 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:accessibilityLiveRegion="assertive" />
 
         <TextView
@@ -24,9 +22,7 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:accessibilityLiveRegion="assertive" />
 
         <TextView
@@ -34,9 +30,7 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:accessibilityLiveRegion="assertive" />
 
         <LinearLayout
@@ -44,7 +38,7 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dip">
+            android:layout_marginTop="@dimen/board_row_gap">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonResign"
@@ -52,7 +46,7 @@
                 android:text="@string/lichess_play_button_resign"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_margin="1dip"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
@@ -61,7 +55,7 @@
                 android:text="@string/lichess_play_button_draw"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_margin="1dip"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
         </LinearLayout>
 
@@ -70,13 +64,13 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dip">
+            android:layout_marginTop="@dimen/board_row_gap">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleShow"
                 android:text="@string/puzzle_show"
                 android:layout_width="wrap_content"
-                android:layout_margin="1dip"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
 
             <View
@@ -88,14 +82,14 @@
                 android:id="@+id/ButtonPuzzleRetry"
                 app:icon="@drawable/ic_arrow_clockwise"
                 android:contentDescription="@string/button_reset_position"
-                android:layout_margin="1dip"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessImageButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonPuzzleNext"
                 app:icon="@drawable/ic_chevron_right"
                 android:contentDescription="@string/button_next_position"
-                android:layout_margin="1dip"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessImageButtonStyle" />
 
         </LinearLayout>
@@ -105,7 +99,7 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dip">
+            android:layout_marginTop="@dimen/board_row_gap">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonCancelMove"
@@ -113,7 +107,7 @@
                 android:text="@string/lichess_game_cancel_move"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_margin="1dip"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
@@ -122,35 +116,50 @@
                 android:text=""
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_margin="1dip"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
         </LinearLayout>
 
-        <LinearLayout
+        <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/LayoutSave"
-            android:orientation="horizontal"
+            app:flexDirection="row"
+            app:flexWrap="wrap"
+            app:alignItems="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dip">
+            android:layout_marginTop="@dimen/board_row_gap">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonShareBoard"
+                app:icon="@drawable/ic_share_fill"
+                android:text="@string/share_chess_link"
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/board_row_gap"
+                style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSaveToFile"
                 app:icon="@drawable/save"
                 android:text="@string/lichess_save_game_to_file"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_margin="1dip"
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/ButtonSaveToDatabase"
                 app:icon="@drawable/database"
                 android:text="@string/lichess_save_game_to_database"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_margin="1dip"
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/board_row_gap"
                 style="?attr/chessButtonStyle" />
-        </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonAnalyseGame"
+                app:icon="@drawable/ic_search"
+                android:text="@string/menu_analyse_game"
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/board_row_gap"
+                style="?attr/chessButtonStyle" />
+        </com.google.android.flexbox.FlexboxLayout>
 
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
@@ -163,28 +172,28 @@
                 android:id="@+id/SwitchConfirmMoves"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dip"
+                android:layout_margin="@dimen/control_gap"
                 android:text="@string/lichess_game_confirm_moves"
                 android:checked="true" />
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchSound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_sound"
                 android:checked="true" />
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchSpeech"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_speech"
                 android:checked="true" />
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/SwitchAccessibilityDrag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                style="@style/ChessFlexItem"
                 android:text="@string/pref_accessibility_drag"
                 android:checked="false" />
         </com.google.android.flexbox.FlexboxLayout>
@@ -194,9 +203,7 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
 
         <TextView
@@ -204,9 +211,7 @@
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
-            android:layout_marginStart="8dip"
-            android:layout_marginEnd="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:accessibilityLiveRegion="none" />
     </LinearLayout>
 </ScrollView>

@@ -39,7 +39,7 @@ public class Move {
     }
 
     public static final int makeMoveHit(final int from, final int to) {
-        //co.pl("makeMovehit " + from + "-" + to);
+        // co.pl("makeMovehit " + from + "-" + to);
         return from | (to << SHIFT_TO) | (1 << SHIFT_HIT);
     }
 
@@ -55,8 +55,13 @@ public class Move {
         return from | (to << SHIFT_TO) | (1 << SHIFT_OOO);
     }
 
-    public static final int makeMovePromotion(final int from, final int to, final int piece, boolean bHit) {
-        return from | (to << SHIFT_TO) | (1 << SHIFT_PROMOTION) | (piece << SHIFT_PROMOTIONPIECE) | (bHit == true ? (1 << SHIFT_HIT) : 0);
+    public static final int makeMovePromotion(
+            final int from, final int to, final int piece, boolean bHit) {
+        return from
+                | (to << SHIFT_TO)
+                | (1 << SHIFT_PROMOTION)
+                | (piece << SHIFT_PROMOTIONPIECE)
+                | (bHit == true ? (1 << SHIFT_HIT) : 0);
     }
 
     public static final int setCheck(final int move) {
@@ -65,7 +70,8 @@ public class Move {
 
     // returns true when "from" and "to" are equal in both arguments
     public static final boolean equalPositions(final int m, final int m2) {
-        return (m & MASK_POS) == (m2 & MASK_POS) && ((m >> SHIFT_TO) & MASK_POS) == ((m2 >> SHIFT_TO) & MASK_POS);
+        return (m & MASK_POS) == (m2 & MASK_POS)
+                && ((m >> SHIFT_TO) & MASK_POS) == ((m2 >> SHIFT_TO) & MASK_POS);
     }
 
     // return true when "to" in both arguments are equal
@@ -114,13 +120,21 @@ public class Move {
         return move >> SHIFT_PROMOTIONPIECE;
     }
 
-    // returns pgn alike string representation of the move - not full pgn format because then more information is needed
+    // returns pgn alike string representation of the move - not full pgn format because then more
+    // information is needed
     public static final String toDbgString(final int move) {
-        if (Move.isOO(move))
+        if (Move.isOO(move)) {
             return "O-O";
-        if (Move.isOOO(move))
+        }
+        if (Move.isOOO(move)) {
             return "O-O-O";
-        return "[" + Pos.toString(Move.getFrom(move)) + (Move.isHIT(move) ? "x" : "-") + Pos.toString(Move.getTo(move)) + (Move.isCheck(move) ? "+" : "") + (Move.isEP(move) ? " ep" : "") + "]";
+        }
+        return "["
+                + Pos.toString(Move.getFrom(move))
+                + (Move.isHIT(move) ? "x" : "-")
+                + Pos.toString(Move.getTo(move))
+                + (Move.isCheck(move) ? "+" : "")
+                + (Move.isEP(move) ? " ep" : "")
+                + "]";
     }
-
 }

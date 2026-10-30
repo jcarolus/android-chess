@@ -1,7 +1,6 @@
 package jwtc.android.chess.hotspotboard;
 
 import android.util.Log;
-
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.board.BoardConstants;
 
@@ -9,6 +8,17 @@ public class HotspotBoardApi extends GameApi {
     private static final String TAG = "HotspotBoardApi";
     protected String myName = "", opponentName = "";
     protected boolean isPlayingAsWhite = true;
+
+    public HotspotBoardApi() {
+        // The service and other board screens share the Java-owned position.
+        super(true);
+    }
+
+    public void restorePlayers(String name, String opponent, boolean white) {
+        myName = name;
+        opponentName = opponent;
+        isPlayingAsWhite = white;
+    }
 
     public void setMyName(String myName) {
         this.myName = myName;
@@ -43,8 +53,9 @@ public class HotspotBoardApi extends GameApi {
     }
 
     public boolean isMyTurn() {
-        int turn = jni.getTurn();
-        return turn == BoardConstants.WHITE && isPlayingAsWhite || turn == BoardConstants.BLACK && !isPlayingAsWhite;
+        int turn = getTurn();
+        return turn == BoardConstants.WHITE && isPlayingAsWhite
+                || turn == BoardConstants.BLACK && !isPlayingAsWhite;
     }
 
     public boolean isPlayingAsWhite() {

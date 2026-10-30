@@ -1,24 +1,26 @@
 package jwtc.android.chess.ics;
 
 import android.util.Log;
-
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import jwtc.chess.board.BoardConstants;
 
 public class ICSPatterns {
     private static final String TAG = "ICSPatterns";
     // FICS
     // Challenge: withca (----) GuestFHYH (----) unrated blitz 10 0
-    protected static final Pattern challenge = Pattern.compile("Challenge\\: (\\w+) \\((.+)\\) (\\w+) \\((.+)\\) (rated |unrated )(standard |blitz |wild |lightning )(\\d+) (\\d+)( \\(adjourned\\))?.*");
+    protected static final Pattern challenge =
+            Pattern.compile(
+                    "Challenge\\: (\\w+) \\((.+)\\) (\\w+) \\((.+)\\) (rated |unrated )(standard |blitz |wild |lightning )(\\d+) (\\d+)( \\(adjourned\\))?.*");
 
-    // @TODO ===========================================================================================
+    // @TODO
+    // ===========================================================================================
     //    C Opponent       On Type          Str  M    ECO Date
     // 1: W jwtc            N [ sr 20   0] 39-39 W3   C44 Thu Nov  5, 12:41 PST 2009
     // 1: B jwtc            Y [ sr  7  12] 39-39 B3   B07 Sun Jun  2, 02:59 PDT 2013
-    protected static final Pattern storedRow = Pattern.compile("[\\s]*(\\d+)\\: (W|B) (\\w+)[\\s]*(Y|N).+");
+    protected static final Pattern storedRow =
+            Pattern.compile("[\\s]*(\\d+)\\: (W|B) (\\w+)[\\s]*(Y|N).+");
     // =================================================================================================
 
     // relay
@@ -27,47 +29,66 @@ public class ICSPatterns {
     // GuestNJVN (++++) seeking 5 0 unrated blitz ("play 104" to respond)
     // GuestFXXP (++++) seeking 7 0 unrated blitz f ("play 27" to respond)
     // Suffocate (++++) seeking 30 30 unrated standard [black] m ("play 29" to respond)
-    //Pattern _pattSeeking = Pattern.compile("(\\w+) \\((.+)\\) seeking (\\d+) (\\d+) (rated |unrated ?)(standard |blitz |lightning )(\\[white\\] |\\[black\\] )?(f |m )?\\(\"play (\\d+)\" to respond\\)");
+    // Pattern _pattSeeking = Pattern.compile("(\\w+) \\((.+)\\) seeking (\\d+) (\\d+) (rated
+    // |unrated ?)(standard |blitz |lightning )(\\[white\\] |\\[black\\] )?(f |m )?\\(\"play
+    // (\\d+)\" to respond\\)");
 
     protected static final Pattern chat = Pattern.compile("(\\w+)(\\(\\w+\\))? tells you\\: (.+)");
-    protected static final Pattern shouts = Pattern.compile("(\\w+)(\\(\\w+\\))? (c-)?shouts\\: (.+)");
+    protected static final Pattern shouts =
+            Pattern.compile("(\\w+)(\\(\\w+\\))? (c-)?shouts\\: (.+)");
 
-    //1269.allko                    ++++.kaspalesweb(U)
-    protected static final Pattern playerRow = Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
+    // 1269.allko                    ++++.kaspalesweb(U)
+    protected static final Pattern playerRow =
+            Pattern.compile("(\\s+)?(.{4})([\\.\\:\\^\\ ])(\\w+)(\\(\\w+\\))?");
 
     // FICS
-    //209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
-    //101 ++++ GuestYYLN          16   0 unrated standard               0-9999 mf
+    // 209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
+    // 101 ++++ GuestYYLN          16   0 unrated standard               0-9999 mf
     //   6 ++++ sdhisfh             2   0 unrated crazyhouse             0-9999
     //  11 ++++ GuestFGMX          20  10 unrated standard               0-9999 f
     //   7 ++++ Amhztb             10  90 unrated standard               0-9999 m
     //  26 ++++ GuestFFHQ           7   0 unrated wild/3     [white]     0-9999
-    protected static final Pattern sought = Pattern.compile("[\\s]*(\\d+)[\\s]+(\\d+|\\++|-+)[\\s]+([\\w\\(\\)]+)[\\s]+(\\d+)[\\s]+(\\d+)[\\s]+(rated|unrated?)[\\s]+([\\w/\\d]+?)[\\s]*(\\[white\\]|\\[black\\])?[\\s]*(\\d+)\\-(\\d+)[\\s]*([fm]+)?");
+    protected static final Pattern sought =
+            Pattern.compile(
+                    "[\\s]*(\\d+)[\\s]+(\\d+|\\++|-+)[\\s]+([\\w\\(\\)]+)[\\s]+(\\d+)[\\s]+(\\d+)[\\s]+(rated|unrated?)[\\s]+([\\w/\\d]+?)[\\s]*(\\[white\\]|\\[black\\])?[\\s]*(\\d+)\\-(\\d+)[\\s]*([fm]+)?");
 
     // FICS
     //  93 2036 WFMKierzek  2229 FMKarl     [ su120   0]  26:13 -  3:49 (22-22) W: 28
     //  1  2    3           4    5            678     9
-    protected static final Pattern gameRow = Pattern.compile("[\\s]*(\\d+) (\\d+) (\\w+)[\\s]+(\\d+) (\\w+)[\\s]+\\[ (s|b|l)(r|u)[\\s]*(\\d+)[\\s]*(\\d+)\\][\\s]*(\\d+):(\\d+)[\\s]*-[\\s]*(\\d+):(\\d+).+");
+    protected static final Pattern gameRow =
+            Pattern.compile(
+                    "[\\s]*(\\d+) (\\d+) (\\w+)[\\s]+(\\d+) (\\w+)[\\s]+\\[ (s|b|l)(r|u)[\\s]*(\\d+)[\\s]*(\\d+)\\][\\s]*(\\d+):(\\d+)[\\s]*-[\\s]*(\\d+):(\\d+).+");
 
     protected static final Pattern loggingYouInAs = Pattern.compile("Logging you in as \"(\\w+)\"");
-    protected static final Pattern returnToLoginAs = Pattern.compile("Press return to enter the server as \"(\\w+)\":");
+    protected static final Pattern returnToLoginAs =
+            Pattern.compile("Press return to enter the server as \"(\\w+)\":");
 
     //               1         2       3         4      5      6   7 8
-    //Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
-    protected static final Pattern _pattGameInfo1 = Pattern.compile("\\{?\\w+\\s?\\d+?: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
-    protected static final Pattern _pattGameInfo2 = Pattern.compile("\\w+: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
-    protected static final Pattern _pattGameInfo3 = Pattern.compile("\\{\\w+\\s(\\d+) \\((\\w+) vs. (\\w+)\\) (.*)\\} (.*)");
+    // Creating: bunnyhopone (++++) mardukedog (++++) unrated blitz 5 5
+    protected static final Pattern _pattGameInfo1 =
+            Pattern.compile(
+                    "\\{?\\w+\\s?\\d+?: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
+    protected static final Pattern _pattGameInfo2 =
+            Pattern.compile(
+                    "\\w+: (\\w+) \\((.{3,4})\\) (\\w+) \\((.{3,4})\\) (\\w+) (\\w+) (\\d+) (\\d+)");
+    protected static final Pattern _pattGameInfo3 =
+            Pattern.compile("\\{\\w+\\s(\\d+) \\((\\w+) vs. (\\w+)\\) (.*)\\} (.*)");
 
     protected static final Pattern gameNumber = Pattern.compile("\\{Game (\\d+) .*");
     protected static final Pattern clock = Pattern.compile("\\((\\d+):(\\d+)\\)");
 
-    protected static final Pattern pattEndGame = Pattern.compile("(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s+(\\w.+), initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\}");
+    protected static final Pattern pattEndGame =
+            Pattern.compile(
+                    "(\\w+) \\((\\w+)\\) vs. (\\w+) \\((\\w+)\\) --- \\w+ (\\w+\\s+\\d{1,2}, )\\w.*(\\d{4})\\s+(\\w.+), initial time: (\\d{1,3}) minutes, increment: (\\d{1,3})(.|\\n)*\\{(.*)\\}");
 
     public static final String EMPTY = "";
-    protected static final String loginChars = "\r\n\uefbf\ubdef\ubfbd\uefbf\ubdef\ubfbd\ud89e\u0001\ufffd\ufffd";
+    protected static final String loginChars =
+            "\r\n\uefbf\ubdef\ubfbd\uefbf\ubdef\ubfbd\ud89e\u0001\ufffd\ufffd";
 
     public boolean containsGamesDisplayed(String buffer, int lineCount) {
-        return lineCount > 3 && buffer.indexOf("\\") == -1 && buffer.indexOf("games displayed") >= 0;
+        return lineCount > 3
+                && buffer.indexOf("\\") == -1
+                && buffer.indexOf("games displayed") >= 0;
     }
 
     public boolean containsAdsDisplayed(String buffer, int lineCount) {
@@ -75,7 +96,9 @@ public class ICSPatterns {
     }
 
     public boolean containsPlayersDisplayed(String buffer, int lineCount) {
-        return lineCount > 3 && buffer.indexOf("\\") == -1 && buffer.indexOf("players displayed (of ") > 0;
+        return lineCount > 3
+                && buffer.indexOf("\\") == -1
+                && buffer.indexOf("players displayed (of ") > 0;
     }
 
     public Matcher gameHistoryMatcher(String buffer, int lineCount) {
@@ -135,8 +158,12 @@ public class ICSPatterns {
                     item.put("text_name", name);
                     item.put("text_rating", match.group(2));
                     return item;
-                } else if (code.equals("(U)") || code.equals("(FM)") || code.equals("(GM)") ||
-                    code.equals("(IM)") || code.equals("(WIM)") || code.equals("(WGM)")) {
+                } else if (code.equals("(U)")
+                        || code.equals("(FM)")
+                        || code.equals("(GM)")
+                        || code.equals("(IM)")
+                        || code.equals("(WIM)")
+                        || code.equals("(WGM)")) {
                     HashMap<String, String> item = new HashMap<String, String>();
                     name += code;
                     item.put("text_name", name);
@@ -149,11 +176,14 @@ public class ICSPatterns {
     }
 
     public HashMap<String, String> parseGameInfo(String line) {
-        if (line.contains("Game") || line.contains("Creating:") || line.contains("Issuing:") || line.contains("Challenge:")) {
+        if (line.contains("Game")
+                || line.contains("Creating:")
+                || line.contains("Issuing:")
+                || line.contains("Challenge:")) {
             Matcher mat = _pattGameInfo1.matcher(line);
             Matcher mat2 = _pattGameInfo2.matcher(line);
 
-            if (mat.matches() || mat2.matches()) {  //mat and mat2 are the beginning game info
+            if (mat.matches() || mat2.matches()) { // mat and mat2 are the beginning game info
                 HashMap<String, String> item = new HashMap<String, String>();
                 item.put("whiteHandle", mat.matches() ? mat.group(1) : mat2.group(1));
                 String rating = mat.matches() ? mat.group(2) : mat2.group(2);
@@ -226,7 +256,8 @@ public class ICSPatterns {
     }
 
     public int getCreatingOrContinuingGameNumber(String line) {
-        if (line.indexOf("{Game ") >= 0 && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
+        if (line.indexOf("{Game ") >= 0
+                && (line.indexOf(" Creating ") > 0 || line.indexOf(" Continuing ") > 0)) {
             Matcher m = gameNumber.matcher(line);
             if (m.matches()) {
                 try {
@@ -252,7 +283,8 @@ public class ICSPatterns {
     }
 
     public boolean isAbortRequest(String line, String opponent) {
-        return !line.contains("\\") && line.indexOf(opponent + " would like to abort the game") >= 0;
+        return !line.contains("\\")
+                && line.indexOf(opponent + " would like to abort the game") >= 0;
     }
 
     public boolean isAbortedConfirmed(String line) {
@@ -264,7 +296,9 @@ public class ICSPatterns {
     }
 
     public boolean isAdjournRequest(String line, String opponent) {
-        return !line.contains("\\") && line.contains(opponent + " would like to adjourn the game; type \"adjourn\" to accept.");
+        return !line.contains("\\")
+                && line.contains(
+                        opponent + " would like to adjourn the game; type \"adjourn\" to accept.");
     }
 
     public boolean isDrawRequest(String line, String opponent) {
@@ -276,17 +310,21 @@ public class ICSPatterns {
     }
 
     public boolean isAbortedOrAdourned(String line) {
-        return line.indexOf("{Game " /*+ getGameNum()*/) >= 0 && line.indexOf("} *") > 0 ||
-            line.contains("[You are not playing a game.]") ||
-            line.contains("[You are neither playing, observing nor examining a game.]");
+        return line.indexOf("{Game " /*+ getGameNum()*/) >= 0 && line.indexOf("} *") > 0
+                || line.contains("[You are not playing a game.]")
+                || line.contains("[You are neither playing, observing nor examining a game.]");
     }
 
     public int gameState(String line) {
         if (line.indexOf("{Game " /*+ getGameNum()*/) >= 0) {
             if (line.contains(" resigns} ")) {
-                return line.contains("} 1-0") ? BoardConstants.BLACK_RESIGNED : BoardConstants.WHITE_RESIGNED;
+                return line.contains("} 1-0")
+                        ? BoardConstants.BLACK_RESIGNED
+                        : BoardConstants.WHITE_RESIGNED;
             } else if (line.contains("forfeits")) {
-                return line.contains("} 1-0") ? BoardConstants.BLACK_FORFEIT_TIME : BoardConstants.WHITE_FORFEIT_TIME;
+                return line.contains("} 1-0")
+                        ? BoardConstants.BLACK_FORFEIT_TIME
+                        : BoardConstants.WHITE_FORFEIT_TIME;
             } else if (line.contains("checkmated")) {
                 return BoardConstants.MATE;
             }
@@ -307,7 +345,9 @@ public class ICSPatterns {
     }
 
     public boolean isAbortOrDrawOrAdjourneRequestSent(String line) {
-        return line.equals("Draw request sent.") || line.equals("Abort request sent.") || line.equals("Takeback request sent.");
+        return line.equals("Draw request sent.")
+                || line.equals("Abort request sent.")
+                || line.equals("Takeback request sent.");
     }
 
     public boolean isNowOservingGame(String line) {
@@ -338,13 +378,16 @@ public class ICSPatterns {
         Matcher match = sought.matcher(line);
         if (match.matches()) {
 
-            //Log.i("PATSOUGHT", "groupCount " + match.groupCount());
+            // Log.i("PATSOUGHT", "groupCount " + match.groupCount());
             if (match.groupCount() > 7) {
 
                 String s, type = match.group(7), rated = match.group(6);
                 // 1   2    3                  4   5  6       7          8
                 // 209 1739 rahulso            15  10 unrated standard   [white]     0-9999 m
-                s = String.format("%2dm+%2ds", Integer.parseInt(match.group(4)), Integer.parseInt(match.group(5)));
+                s =
+                        String.format(
+                                "%2dm+%2ds",
+                                Integer.parseInt(match.group(4)), Integer.parseInt(match.group(5)));
 
                 if (type.indexOf("blitz") >= 0 || type.indexOf("standard") >= 0) {
                     HashMap<String, String> item = new HashMap<String, String>();
@@ -405,25 +448,25 @@ public class ICSPatterns {
         if (firstMoveIndex >= 0) {
             sMoves = sEnd.substring(sEnd.indexOf("1."), sEnd.length());
 
-//        if (_bShowClockPGN){
-//            sBeg = convertTimeUsedToClock(sBeg);
-//        }
-// else:
-            sMoves = sMoves.replaceAll("\\s*\\([^\\)]*\\)\\s*", " ");  // gets rid of timestamp and parentheses
-
+            //        if (_bShowClockPGN){
+            //            sBeg = convertTimeUsedToClock(sBeg);
+            //        }
+            // else:
+            sMoves =
+                    sMoves.replaceAll(
+                            "\\s*\\([^\\)]*\\)\\s*", " "); // gets rid of timestamp and parentheses
         }
-        //Log.d(TAG, "\n" + sBeg);
+        // Log.d(TAG, "\n" + sBeg);
 
-
-//        if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
-//            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
-//            _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
-//            if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
-//                PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w KQkq - 0 1" + "\"]\n");
-//            }
-//            _FEN = "";  // reset to capture starting FEN for next game
-//        }
-
+        //        if(!_FEN.equals("")) {  // As for now, used for Chess960 FEN.
+        //            _FEN1 = _FEN.substring(0, _FEN.indexOf(" "));
+        //            _FEN2 = _FEN.substring(_FEN.indexOf("P") + 9, _FEN.indexOf("W") - 1);
+        //            if (!_FEN1.equals("rnbqkbnr") || !_FEN2.equals("RNBQKBNR")) {
+        //                PGN.append("[FEN \"" + _FEN1 + "/pppppppp/8/8/8/8/PPPPPPPP/" + _FEN2 + " w
+        // KQkq - 0 1" + "\"]\n");
+        //            }
+        //            _FEN = "";  // reset to capture starting FEN for next game
+        //        }
 
         return sMoves;
     }
@@ -448,7 +491,8 @@ public class ICSPatterns {
         return false;
     }
 
-    public static String replaceChars(final String str, final String searchChars, String replaceChars) {
+    public static String replaceChars(
+            final String str, final String searchChars, String replaceChars) {
         if (isEmpty(str) || isEmpty(searchChars)) {
             return str;
         }

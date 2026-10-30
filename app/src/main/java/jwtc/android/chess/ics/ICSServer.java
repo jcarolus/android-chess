@@ -1,29 +1,19 @@
 package jwtc.android.chess.ics;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
-
+import androidx.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
-
-import androidx.annotation.Nullable;
-
-import jwtc.android.chess.R;
 import jwtc.chess.board.BoardConstants;
 
 public class ICSServer extends Service {
@@ -61,11 +51,11 @@ public class ICSServer extends Service {
         notificationsOn = on;
     }
 
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId) {
-//        Log.i(TAG, "Received start id " + startId + ": " + intent);
-//        return START_STICKY;
-//    }
+    //    @Override
+    //    public int onStartCommand(Intent intent, int flags, int startId) {
+    //        Log.i(TAG, "Received start id " + startId + ": " + intent);
+    //        return START_STICKY;
+    //    }
 
     @Override
     public void onDestroy() {
@@ -91,7 +81,12 @@ public class ICSServer extends Service {
         expectingState = EXPECT_LOGIN_PROMPT;
     }
 
-    public void startSession(final String server, final int port, final String handle, final String password, final String prompt) {
+    public void startSession(
+            final String server,
+            final int port,
+            final String handle,
+            final String password,
+            final String prompt) {
         tearDown();
         Log.i(TAG, "startSession " + server + " " + port + " " + handle);
         currentBuffer = "";
@@ -155,7 +150,7 @@ public class ICSServer extends Service {
     }
 
     public void handleBufferMessage(String buffer) {
-//        Log.i(TAG, "handleBufferMessage: " + buffer);
+        //        Log.i(TAG, "handleBufferMessage: " + buffer);
         currentBuffer += buffer;
         String waitingFor = prompt;
         String contains = "**** ";
@@ -175,17 +170,15 @@ public class ICSServer extends Service {
                 waitingFor = null;
                 break;
         }
-        if (
-            waitingFor != null && currentBuffer.endsWith(waitingFor) ||
-                waitingFor == null && currentBuffer.contains(contains) && buffer.length() > 20
-        ) {
+        if (waitingFor != null && currentBuffer.endsWith(waitingFor)
+                || waitingFor == null && currentBuffer.contains(contains) && buffer.length() > 20) {
             this.parse(currentBuffer);
             currentBuffer = "";
         }
     }
 
     private void parse(String buffer) {
-//        Log.i(TAG, expectingState + "; parse: " + buffer);
+        //        Log.i(TAG, expectingState + "; parse: " + buffer);
         String[] lines = buffer.split("\n\r");
         int lineCount = lines.length;
 
@@ -293,7 +286,8 @@ public class ICSServer extends Service {
         }
 
         if (icsPatterns.containsAdsDisplayed(buffer, lineCount)) {
-            ArrayList<HashMap<String, String>> soughtList = new ArrayList<HashMap<String, String>>();
+            ArrayList<HashMap<String, String>> soughtList =
+                    new ArrayList<HashMap<String, String>>();
             for (int i = 0; i < lineCount - 2; i++) {
                 HashMap<String, String> sought = icsPatterns.parseSought(lines[i]);
                 if (sought != null) {
@@ -309,7 +303,8 @@ public class ICSServer extends Service {
         }
 
         if (icsPatterns.containsPlayersDisplayed(buffer, lineCount)) {
-            ArrayList<HashMap<String, String>> playerList = new ArrayList<HashMap<String, String>>();
+            ArrayList<HashMap<String, String>> playerList =
+                    new ArrayList<HashMap<String, String>>();
             for (int i = 0; i < lineCount - 2; i++) {
                 HashMap<String, String> player = icsPatterns.parsePlayerLine(lines[i]);
                 if (player != null) {
@@ -324,14 +319,13 @@ public class ICSServer extends Service {
             return;
         }
 
-
-        buffer = buffer
-            .replace(Character.valueOf((char) 7).toString(), "")
-            .replace(prompt, "")
-            .replace("\\", "")
-            .replace("\t", "")
-            .replace("\r", "")
-            .trim();
+        buffer =
+                buffer.replace(Character.valueOf((char) 7).toString(), "")
+                        .replace(prompt, "")
+                        .replace("\\", "")
+                        .replace("\t", "")
+                        .replace("\r", "")
+                        .trim();
         buffer = buffer.replaceAll("[\n]{2,}", "\n");
 
         Matcher endGame = icsPatterns.gameHistoryMatcher(buffer, lineCount);
@@ -383,7 +377,11 @@ public class ICSServer extends Service {
             HashMap<String, String> gameInfo = icsPatterns.parseGameInfo(line);
             if (gameInfo != null) {
                 for (ICSListener listener : listeners) {
-                    listener.OnPlayGameStarted(gameInfo.get("whiteHandle"), gameInfo.get("blackHandle"), gameInfo.get("whiteRating"), gameInfo.get("blackRating"));
+                    listener.OnPlayGameStarted(
+                            gameInfo.get("whiteHandle"),
+                            gameInfo.get("blackHandle"),
+                            gameInfo.get("whiteRating"),
+                            gameInfo.get("blackRating"));
                 }
                 continue;
             }
@@ -582,7 +580,6 @@ public class ICSServer extends Service {
          */
     }
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -615,7 +612,7 @@ public class ICSServer extends Service {
 
     private class MyRunnable implements Runnable {
 
-        final private String server;
+        private final String server;
         final int port;
 
         public MyRunnable(String server, int port) {

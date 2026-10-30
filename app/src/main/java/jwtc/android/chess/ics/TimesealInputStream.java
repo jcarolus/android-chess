@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This code was reverse engineered from the JIN project. JIN is a gpled
- * project. Its url can be found here: http://www.jinchess.com/
+ * This code was reverse engineered from the JIN project. JIN is a gpled project. Its url can be
+ * found here: http://www.jinchess.com/
  */
 class TimesealInputStream extends InputStream {
 

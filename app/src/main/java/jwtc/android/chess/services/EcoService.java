@@ -2,39 +2,46 @@ package jwtc.android.chess.services;
 
 import android.content.res.AssetManager;
 import android.util.Log;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import jwtc.android.chess.engine.RustBoardNative;
+import jwtc.android.chess.engine.RustBoardResult;
+import jwtc.android.chess.engine.RustSearchRequest;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import jwtc.chess.JNI;
-
 
 public class EcoService {
     private static final String TAG = "EcoService";
     private HMap hashMap = null;
-    JNI jni;
+    private final GameApi gameApi;
 
-    public EcoService() {
-        jni = JNI.getInstance();
+    public EcoService(GameApi gameApi) {
+        this.gameApi = gameApi;
     }
 
     public void load(final AssetManager assetManager) {
         if (hashMap == null) {
-            (new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                        long start = System.currentTimeMillis();
+            (new Thread(
+                            new Runnable() {
+                                public void run() {
+                                    try {
+                                        Thread.sleep(1000);
+                                        long start = System.currentTimeMillis();
 
-                        hashMap = HMap.read(assetManager, "hashmap.bin");
-                        Log.i(TAG, "ECO size: " + hashMap.getSize() + " load ms:" + (System.currentTimeMillis() - start));
-                    } catch (Exception e) {
-                        Log.d(TAG, "Could not read the opening database");
-                    }
-                }
-            })).start();
+                                        hashMap = HMap.read(assetManager, "hashmap.bin");
+                                        Log.i(
+                                                TAG,
+                                                "ECO size: "
+                                                        + hashMap.getSize()
+                                                        + " load ms:"
+                                                        + (System.currentTimeMillis() - start));
+                                    } catch (Exception e) {
+                                        Log.d(TAG, "Could not read the opening database");
+                                    }
+                                }
+                            }))
+                    .start();
         }
     }
 
@@ -48,66 +55,81 @@ public class EcoService {
         return null;
     }
 
-
     public ArrayList<Integer> getAvailableMoves() {
-        ArrayList<Integer> moveToPositions = getAllMoves();
-        ArrayList<Integer> retPositions = new ArrayList<Integer>();
-        if (hashMap != null) {
-            jni.scratchSyncFromCurrent();
-            for (Integer m : moveToPositions) {
-                if (jni.scratchMove(m) != 0) {
-                    long hash = jni.scratchGetHashKey();
-                    String sEco = hashMap.get(hash);
-                    if (sEco != null) {
-                        retPositions.add(m);
-                    }
-
-                    jni.scratchUndo();
-                }
-            }
+        ArrayList<Integer> moves = new ArrayList<>();
+        for (OpeningMove opening : probeMoves()) {
+            moves.add(opening.move);
         }
-        return retPositions;
+        return moves;
     }
 
     public JSONArray getAvailable() {
-        ArrayList<Integer> moveToPositions = getAllMoves();
-        JSONArray jRet = new JSONArray();
-
-        if (hashMap != null) {
-            jni.scratchSyncFromCurrent();
-            for (Integer m : moveToPositions) {
-                if (jni.scratchMove(m) != 0) {
-                    long hash = jni.scratchGetHashKey();
-                    String sEco = hashMap.get(hash);
-                    if (sEco != null) {
-                        String sMove = jni.scratchGetMyMoveToString();
-                        try {
-                            JSONObject jObj = new JSONObject();
-                            jObj.put("name", sEco);
-                            jObj.put("move", sMove);
-
-                            jRet.put(jObj);
-                        } catch (Exception ignored) {
-                        }
-                    }
-
-                    jni.scratchUndo();
-                }
+        JSONArray result = new JSONArray();
+        for (OpeningMove opening : probeMoves()) {
+            try {
+                JSONObject entry = new JSONObject();
+                entry.put("name", opening.name);
+                entry.put("move", opening.san);
+                result.put(entry);
+            } catch (Exception ignored) {
             }
         }
-
-        return jRet;
+        return result;
     }
 
-    private ArrayList<Integer> getAllMoves() {
-        int size = jni.getMoveArraySize();
-        ArrayList<Integer> moveToPositions = new ArrayList<Integer>();
-        int move;
-        for (int i = 0; i < size; i++) {
-            move = jni.getMoveArrayAt(i);
-
-            moveToPositions.add(move);
+    private ArrayList<OpeningMove> probeMoves() {
+        ArrayList<OpeningMove> openings = new ArrayList<>();
+        if (hashMap == null || gameApi.hasPendingDuckMove() || gameApi.isPositionEnded()) {
+            return openings;
         }
-        return moveToPositions;
+        String fen = gameApi.getFEN();
+        RustSearchRequest.Variant variant = gameApi.rustVariant();
+        int[] files =
+                variant == RustSearchRequest.Variant.CHESS_960
+                        ? RustSearchRequest.chess960Files(fen, fen.split(" ")[1].equals("w"))
+                        : null;
+        String[] history = new String[0];
+        Map<String, String> duckTurns = new HashMap<>();
+        if (variant == RustSearchRequest.Variant.DUCK) {
+            for (String turn :
+                    RustBoardResult.words(
+                            RustBoardNative.legalMoves(variant, fen, history).moves)) {
+                String pieceMove = turn.split("@")[0];
+                // ECO hashes ignore the duck square, so one legal placement per piece move
+                // suffices.
+                duckTurns.putIfAbsent(pieceMove, turn);
+            }
+        }
+        int count = gameApi.getMoveArraySize();
+        for (int i = 0; i < count; i++) {
+            int move = gameApi.getMoveArrayAt(i);
+            String coordinate = RustSearchRequest.toRustCoordinate(move, files);
+            String turn =
+                    variant == RustSearchRequest.Variant.DUCK
+                            ? duckTurns.get(coordinate)
+                            : coordinate;
+            if (turn == null) {
+                continue;
+            }
+            RustBoardResult applied = RustBoardNative.applyMove(variant, fen, history, turn);
+            String name = hashMap.get(applied.hashKey);
+            if (name != null) {
+                String san = RustBoardNative.san(variant, fen, history, coordinate).san;
+                openings.add(new OpeningMove(move, name, san));
+            }
+        }
+        return openings;
+    }
+
+    private static final class OpeningMove {
+        final int move;
+        final String name;
+        final String san;
+
+        OpeningMove(int move, String name, String san) {
+            this.move = move;
+            this.name = name;
+            this.san = san;
+        }
     }
 }

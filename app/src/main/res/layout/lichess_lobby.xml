@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:background="?attr/paneBackground"
         android:stretchColumns="1"
-        android:layout_marginBottom="1dip"
-        android:padding="8dip">
+        android:layout_marginBottom="@dimen/board_row_gap"
+        android:padding="@dimen/panel_padding">
 
         <TableRow android:gravity="center_vertical">
 
@@ -41,14 +41,14 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_margin="8dip">
+        android:layout_marginTop="@dimen/control_gap">
 
         <TextView
             android:id="@+id/TextViewLobbyStatus"
             style="@style/MyPaneTextStyle2Lines"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dip"
+            android:layout_marginBottom="@dimen/control_gap"
             android:text="@string/lichess_lobby_connected"
             android:accessibilityLiveRegion="polite" />
 
@@ -64,37 +64,43 @@
                 android:text="@string/lichess_lobby_button_challenge"
                 android:id="@+id/ButtonChallenge"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="8dip"
+                android:layout_marginTop="@dimen/control_gap"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_seek"
                 android:id="@+id/ButtonSeek"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="8dip"
+                android:layout_marginTop="@dimen/control_gap"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_puzzle"
                 android:id="@+id/ButtonPuzzle"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="8dip"
+                android:layout_marginTop="@dimen/control_gap"
                 style="?attr/chessButtonStyle" />
 
             <com.google.android.material.button.MaterialButton
                 android:text="@string/lichess_lobby_button_teams"
                 android:id="@+id/ButtonTeams"
                 android:layout_width="wrap_content"
-                android:layout_marginTop="8dip"
+                android:layout_marginTop="@dimen/control_gap"
                 style="?attr/chessButtonStyle" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/ButtonShareProfile"
+                android:text="@string/share_lichess_profile"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="@dimen/control_gap"
+                style="?attr/chessButtonStyle" />
         </com.google.android.flexbox.FlexboxLayout>
 
         <TextView
             style="@style/MyPaneTextStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dip"
+            android:layout_marginTop="@dimen/control_gap"
             android:text="@string/lichess_lobby_ongoing_games" />
 
         <ScrollView

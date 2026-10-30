@@ -34,18 +34,21 @@ public class HapticFeedback {
                     vibrator.vibrate(15);
                 }
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 
     public void feedbackSelect() {
         try {
             if (enabled && vibrator != null && vibrator.hasVibrator()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK));
+                    vibrator.vibrate(
+                            VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK));
                 } else {
                     vibrator.vibrate(100);
                 }
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 }

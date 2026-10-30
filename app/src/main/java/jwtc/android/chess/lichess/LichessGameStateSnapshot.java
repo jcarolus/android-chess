@@ -4,20 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
 import jwtc.android.chess.lichess.models.GameFull;
 import jwtc.chess.board.BoardConstants;
 
-/**
- * Immutable part of a Lichess game update used to distinguish stream snapshots from events.
- */
+/** Immutable part of a Lichess game update used to distinguish stream snapshots from events. */
 final class LichessGameStateSnapshot {
     final String gameId;
     final List<String> moves;
     final String status;
     final String winner;
 
-    private LichessGameStateSnapshot(String gameId, List<String> moves, String status, String winner) {
+    private LichessGameStateSnapshot(
+            String gameId, List<String> moves, String status, String winner) {
         this.gameId = gameId;
         this.moves = Collections.unmodifiableList(moves);
         this.status = status;
@@ -31,23 +29,20 @@ final class LichessGameStateSnapshot {
             Collections.addAll(moveList, moves.trim().split("\\s+"));
         }
         return new LichessGameStateSnapshot(
-            gameFull.id,
-            moveList,
-            gameFull.state.status,
-            gameFull.state.winner
-        );
+                gameFull.id, moveList, gameFull.state.status, gameFull.state.winner);
     }
 
     Transition transitionFrom(LichessGameStateSnapshot previous) {
-        boolean newGame = previous == null || !Objects.equals(gameId, previous.gameId);
-        if (newGame) {
+        // A new baseline can belong to a game that is already in progress.
+        boolean gameLoaded = previous == null || !Objects.equals(gameId, previous.gameId);
+        if (gameLoaded) {
             return new Transition(true, false, false, false, -1);
         }
 
-        boolean moveApplied = moves.size() > previous.moves.size()
-            && isPrefix(previous.moves, moves);
-        boolean historyPositionChanged = moves.size() < previous.moves.size()
-            && isPrefix(moves, previous.moves);
+        boolean moveApplied =
+                moves.size() > previous.moves.size() && isPrefix(previous.moves, moves);
+        boolean historyPositionChanged =
+                moves.size() < previous.moves.size() && isPrefix(moves, previous.moves);
         boolean statusChanged = !Objects.equals(status, previous.status);
 
         int resignedColor = -1;
@@ -60,12 +55,11 @@ final class LichessGameStateSnapshot {
         }
 
         return new Transition(
-            false,
-            moveApplied,
-            historyPositionChanged,
-            statusChanged && "draw".equals(status),
-            resignedColor
-        );
+                false,
+                moveApplied,
+                historyPositionChanged,
+                statusChanged && "draw".equals(status),
+                resignedColor);
     }
 
     boolean isStarted() {
@@ -90,20 +84,19 @@ final class LichessGameStateSnapshot {
     }
 
     static final class Transition {
-        final boolean newGame;
+        final boolean gameLoaded;
         final boolean moveApplied;
         final boolean historyPositionChanged;
         final boolean drawEnded;
         final int resignedColor;
 
         private Transition(
-            boolean newGame,
-            boolean moveApplied,
-            boolean historyPositionChanged,
-            boolean drawEnded,
-            int resignedColor
-        ) {
-            this.newGame = newGame;
+                boolean gameLoaded,
+                boolean moveApplied,
+                boolean historyPositionChanged,
+                boolean drawEnded,
+                int resignedColor) {
+            this.gameLoaded = gameLoaded;
             this.moveApplied = moveApplied;
             this.historyPositionChanged = historyPositionChanged;
             this.drawEnded = drawEnded;
@@ -112,13 +105,18 @@ final class LichessGameStateSnapshot {
 
         @Override
         public String toString() {
-            return "Transition{" +
-                "newGame=" + newGame +
-                ", moveApplied=" + moveApplied +
-                ", historyPositionChanged=" + historyPositionChanged +
-                ", drawEnded=" + drawEnded +
-                ", resignedColor=" + resignedColor +
-                '}';
+            return "Transition{"
+                    + "gameLoaded="
+                    + gameLoaded
+                    + ", moveApplied="
+                    + moveApplied
+                    + ", historyPositionChanged="
+                    + historyPositionChanged
+                    + ", drawEnded="
+                    + drawEnded
+                    + ", resignedColor="
+                    + resignedColor
+                    + '}';
         }
     }
 }

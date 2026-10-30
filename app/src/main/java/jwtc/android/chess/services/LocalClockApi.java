@@ -2,11 +2,9 @@ package jwtc.android.chess.services;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
-
 import java.util.ArrayList;
-
 import jwtc.chess.board.BoardConstants;
 
 public class LocalClockApi implements GameListener {
@@ -27,35 +25,37 @@ public class LocalClockApi implements GameListener {
         5 * 1000L
     };
 
-    protected long whiteRemaining = 0;
-    protected long blackRemaining = 0;
     protected ArrayList<ClockListener> listeners = new ArrayList<>();
 
-    protected int currentTurn;
-    protected long increment = 0;
-    protected long lastMeasureTime = 0;
-    protected boolean clockIsConfigured = false;
+    private final LocalClockState clock = new LocalClockState();
     protected int whiteWarningMask = 0;
     protected int blackWarningMask = 0;
     protected long whitePreviousWarningCheck = -1;
     protected long blackPreviousWarningCheck = -1;
 
     private final GameApi gameApi;
-    private Thread clockThread = null;
+    private boolean updatesEnabled;
 
     public LocalClockApi(GameApi gameApi) {
         this.gameApi = gameApi;
         this.gameApi.addListener(this);
     }
 
-    protected Handler updateHandler = new Handler(Looper.getMainLooper()) {
-        // @Override
-        public void handleMessage(Message msg) {
-            checkAndDispatchTimeWarning();
-            dispatchClockTime();
-            super.handleMessage(msg);
-        }
-    };
+    private final Handler updateHandler = new Handler(Looper.getMainLooper());
+    private final Runnable updateClock =
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (!updatesEnabled) {
+                        return;
+                    }
+                    checkAndDispatchTimeWarning();
+                    dispatchClockTime();
+                    if (updatesEnabled) {
+                        updateHandler.postDelayed(this, 500);
+                    }
+                }
+            };
 
     public void addListener(ClockListener listener) {
         this.listeners.add(listener);
@@ -66,66 +66,59 @@ public class LocalClockApi implements GameListener {
     }
 
     public long getRemaining(int turn) {
-        return turn == BoardConstants.WHITE ? getWhiteRemaining() : getBlackRemaining();
+        return clock.remaining(turn, SystemClock.elapsedRealtime());
     }
 
-    public void startClock(long increment, long whiteRemaining, long blackRemaining, int turn, long startTime) {
-        Log.d(TAG, "startClock " + increment + " " + whiteRemaining + " " + blackRemaining + " " + turn + " " + startTime);
+    public void startClock(
+            long increment, long whiteRemaining, long blackRemaining, int turn, long startTime) {
+        Log.d(
+                TAG,
+                "startClock "
+                        + increment
+                        + " "
+                        + whiteRemaining
+                        + " "
+                        + blackRemaining
+                        + " "
+                        + turn
+                        + " "
+                        + startTime);
 
-        currentTurn = turn;
-        this.increment = increment;
-        this.whiteRemaining = whiteRemaining;
-        this.blackRemaining = blackRemaining;
-        this.clockIsConfigured = whiteRemaining > 0 && blackRemaining > 0;
-        this.whiteWarningMask = 0;
-        this.blackWarningMask = 0;
-        this.whitePreviousWarningCheck = this.whiteRemaining;
-        this.blackPreviousWarningCheck = this.blackRemaining;
-
-        this.lastMeasureTime = startTime;
-        if (this.clockIsConfigured && startTime > 0) {
-            this.whitePreviousWarningCheck = getWhiteRemaining();
-            this.blackPreviousWarningCheck = getBlackRemaining();
+        updateHandler.removeCallbacks(updateClock);
+        long elapsed = startTime > 0 ? Math.max(0, System.currentTimeMillis() - startTime) : 0;
+        clock.start(
+                increment,
+                whiteRemaining,
+                blackRemaining,
+                turn,
+                SystemClock.elapsedRealtime() - elapsed,
+                startTime > 0);
+        whiteWarningMask = 0;
+        blackWarningMask = 0;
+        whitePreviousWarningCheck = getWhiteRemaining() - TIME_WARNING_LEAD_MILLIES;
+        blackPreviousWarningCheck = getBlackRemaining() - TIME_WARNING_LEAD_MILLIES;
+        updatesEnabled = startTime > 0;
+        if (updatesEnabled) {
+            updateHandler.post(updateClock);
         }
-
-        if (startTime > 0 && clockThread == null) {
-            clockThread = new Thread(new RunnableImp());
-            clockThread.start();
-        }
-
-        switchTurn();
     }
 
     public void stopClock() {
-        if (clockThread != null) {
-            synchronized (this) {
-                clockThread.interrupt();
-            }
-            clockThread = null;
-        }
+        clock.stop(SystemClock.elapsedRealtime());
+        updatesEnabled = false;
+        updateHandler.removeCallbacks(updateClock);
+    }
+
+    public int getActivePlayer() {
+        return clock.activePlayer();
     }
 
     public long getBlackRemaining() {
-        int currentTurn = gameApi.getTurn();
-        if (currentTurn == BoardConstants.BLACK) {
-            final long currentTime = System.currentTimeMillis();
-            final long usedMillies = (currentTime - lastMeasureTime);
-            final long remaining = blackRemaining - usedMillies;
-            return remaining >= 0 ? remaining : 0;
-        } else {
-            return blackRemaining >= 0 ? blackRemaining : 0;
-        }
+        return getRemaining(BoardConstants.BLACK);
     }
 
     public long getWhiteRemaining() {
-        int currentTurn = gameApi.getTurn();
-        if (currentTurn == BoardConstants.WHITE) {
-            final long currentTime = System.currentTimeMillis();
-            final long usedMillies = (currentTime - lastMeasureTime);
-            final long remaining = whiteRemaining - usedMillies;
-            return remaining >= 0 ? remaining : 0;
-        }
-        return whiteRemaining >= 0 ? whiteRemaining : 0;
+        return getRemaining(BoardConstants.WHITE);
     }
 
     public String getBlackRemainingTime() {
@@ -137,27 +130,13 @@ public class LocalClockApi implements GameListener {
     }
 
     public boolean isClockConfigured() {
-        return clockIsConfigured;
+        return clock.isConfigured();
     }
 
     protected void switchTurn() {
-        int newTurn = gameApi.getTurn();
-        if (clockIsConfigured && newTurn != currentTurn) {
-            currentTurn = newTurn;
-            final long currentTime = System.currentTimeMillis();
-            final long usedMillies = (currentTime - lastMeasureTime);
-
-            if (newTurn == BoardConstants.BLACK) {
-                whiteRemaining -= usedMillies;
-                whiteRemaining += increment;
-            } else {
-                blackRemaining -= usedMillies;
-                blackRemaining += increment;
-            }
-
-            lastMeasureTime = currentTime;
-            updatePreviousWarningCheck(newTurn, getRemaining(newTurn));
-        }
+        clock.completeTurn(SystemClock.elapsedRealtime());
+        int player = clock.activePlayer();
+        updatePreviousWarningCheck(player, getRemaining(player) - TIME_WARNING_LEAD_MILLIES);
     }
 
     protected String timeToString(final long millies) {
@@ -182,11 +161,11 @@ public class LocalClockApi implements GameListener {
     }
 
     protected void checkAndDispatchTimeWarning() {
-        if (!clockIsConfigured) {
+        if (!clock.isRunning()) {
             return;
         }
 
-        int turn = gameApi.getTurn();
+        int turn = clock.activePlayer();
         // Bring the warning forward by the lead time: both the threshold crossing and the
         // value handed to feedbackTimeWarning shift together, so the spoken label stays correct.
         long remaining = getRemaining(turn) - TIME_WARNING_LEAD_MILLIES;
@@ -200,7 +179,9 @@ public class LocalClockApi implements GameListener {
         for (int i = 0; i < TIME_WARNING_THRESHOLDS_MILLIES.length; i++) {
             long threshold = TIME_WARNING_THRESHOLDS_MILLIES[i];
             int warningBit = 1 << i;
-            if (previous > threshold && remaining <= threshold && (getWarningMask(turn) & warningBit) == 0) {
+            if (previous > threshold
+                    && remaining <= threshold
+                    && (getWarningMask(turn) & warningBit) == 0) {
                 setWarningMask(turn, getWarningMask(turn) | warningBit);
                 dispatchTimeWarning(turn, remaining);
             }
@@ -235,26 +216,45 @@ public class LocalClockApi implements GameListener {
 
     @Override
     public void onMoveApplied(int move) {
-        // only if on top of move stack
-        if (this.gameApi.isAtEndOfPGN()) {
-            switchTurn();
+        // Account for play at the end of whichever line is selected.
+        if (this.gameApi.isAtLineEnd()) {
+            int turn = clock.activePlayer();
+            if (this.gameApi.getTurn() != turn) {
+                switchTurn();
+            }
+            if (gameApi.isEnded()) {
+                stopClock();
+            }
         }
     }
 
-    private class RunnableImp implements Runnable {
-        @Override
-        public void run() {
-            try {
-                while (!Thread.currentThread().isInterrupted()) {
-                    Message m = new Message();
-                    m.what = 0;
-                    updateHandler.sendMessage(m);
-
-                    Thread.sleep(500);
-                }
-            } catch (InterruptedException e) {
-                Log.d(TAG, "Runnable interrupted");
+    @Override
+    public void onDuckMoveApplied(int duckMove) {
+        if (gameApi.isAtLineEnd()) {
+            switchTurn();
+            if (gameApi.isEnded()) {
+                stopClock();
             }
         }
+    }
+
+    @Override
+    public void onGameLoaded() {
+        // The clock may have been started before the game was loaded, so follow the
+        // loaded position's side to move.
+        clock.setActivePlayer(gameApi.getTurn(), SystemClock.elapsedRealtime());
+        if (gameApi.isEnded()) {
+            stopClock();
+        }
+    }
+
+    @Override
+    public void onPlayerResigned(int color) {
+        stopClock();
+    }
+
+    @Override
+    public void onDrawAgreed() {
+        stopClock();
     }
 }

@@ -60,13 +60,12 @@
     <string name="choice_delete">Delete</string>
     <string name="choice_edit">Edit</string>
     <string name="choice_level_1">1 sec</string>
-    <string name="choice_level_10">15 minutes</string>
     <string name="choice_level_2">2 sec </string>
     <string name="choice_level_3">4 sec</string>
-    <string name="choice_level_4">8 sec (average) </string>
+    <string name="choice_level_4">8 sec</string>
     <string name="choice_level_5">10 sec</string>
     <string name="choice_level_6">20 sec</string>
-    <string name="choice_level_7">30 sec (experienced) </string>
+    <string name="choice_level_7">30 sec</string>
     <string name="choice_level_8">1 minute</string>
     <string name="choice_level_9">5 minutes</string>
     <string name="choice_random">Random</string>
@@ -202,6 +201,8 @@
     <string name="lichess_create_challenge_color_random">Random</string>
     <string name="lichess_create_challenge_color_white">White</string>
     <string name="lichess_create_challenge_player">Opponent</string>
+    <string name="lichess_create_challenge_player_required">Enter an opponent first.</string>
+    <string name="lichess_create_challenge_player_invalid">That is not a valid Lichess username.</string>
     <string name="lichess_create_challenge_rated">Rated</string>
     <string name="lichess_create_challenge_time">Time</string>
     <string name="lichess_create_challenge_time_control">Time control</string>
@@ -257,7 +258,7 @@
     <string name="menu_new_960">New random Fischer / 960</string>
     <string name="menu_new_command">New Command</string>
     <string name="menu_new_command_message">type \u003cNR\u003e at end of command for no return\nexample:  tell ChessMaster \u003cNR\u003e\n</string>
-    <string name="menu_new_duck">New Duck (experimental)</string>
+    <string name="menu_new_duck">New Duck</string>
     <string name="menu_open_game">Open game file</string>
     <string name="menu_open_position_file">Open position file</string>
     <string name="menu_prefs">Settings</string>
@@ -277,6 +278,8 @@
     <string name="msg_setup_turn">Turn</string>
     <string name="msg_setup_turn_black">black</string>
     <string name="msg_setup_turn_white">white</string>
+    <string name="game_ready_as_white">Game ready. You are playing with the white pieces.</string>
+    <string name="game_ready_as_black">Game ready. You are playing with the black pieces.</string>
     <string name="new_game_as_black">New game, you are playing with the black pieces</string>
     <string name="new_game_as_white">New game, you are playing with the white pieces</string>
     <string name="online_help">
@@ -299,8 +302,8 @@
             Shows idle players with ratings.<br/>
                  ]]>
             </string>
-    <string name="options_level_ply">Level (ply)</string>
-    <string name="options_level_time">Level (time)</string>
+    <string name="options_level_ply">Search depth (half-moves)</string>
+    <string name="options_level_time">Thinking time per move</string>
     <string name="options_engine_builtin">Built-in</string>
     <string name="options_engine_oex">OEX</string>
     <string name="options_engine_oex_unavailable">No OEX engines found on this device.</string>
@@ -385,6 +388,7 @@
     <string name="pref_haptic_feedback">Use haptic feedback</string>
     <string name="pref_speech">Speech</string>
     <string name="pref_user_long_move_descriptions">Use full move description</string>
+    <string name="pref_add_turn_in_move_description">Include whose turn it is in move descriptions</string>
     <string name="tts_locale_not_supported">Text to speech does not support your locale</string>
     <string name="tts_not_loaded">Could not load text to speech</string>
     <string name="tts_example_move">Bishop takes G7 check</string>
@@ -423,11 +427,28 @@
     <string name="puzzle_show">Show</string>
     <string name="savegame_black">Black</string>
     <string name="savegame_event">Event</string>
+    <string name="gameslist_load_failed">This game could not be loaded.</string>
     <string name="gameslist_filter_switch_black_description">Enable or disable black player filter</string>
     <string name="gameslist_filter_switch_date_after_description">Enable or disable date after filter</string>
     <string name="gameslist_filter_switch_date_before_description">Enable or disable date before filter</string>
     <string name="gameslist_filter_switch_event_description">Enable or disable event filter</string>
     <string name="gameslist_filter_switch_result_description">Enable or disable result filter</string>
+    <string name="gameslist_open">Open</string>
+    <string name="gameslist_analyze">Analyze</string>
+    <string name="gameslist_filters_description">Filters</string>
+    <string name="gameslist_previous_game_description">Previous game</string>
+    <string name="gameslist_next_game_description">Next game</string>
+    <string name="gameslist_view_board">Board</string>
+    <string name="gameslist_view_pgn" translatable="false">PGN</string>
+    <string name="gameslist_view_list">List</string>
+    <string name="gameslist_filter_date_after">Date after</string>
+    <string name="gameslist_filter_date_before">Date before</string>
+    <string name="gameslist_filter_result">Result</string>
+    <string name="gameslist_filter_order_by">Order by</string>
+    <string name="gameslist_filter_order_direction">Order direction</string>
+    <string name="gameslist_result_placeholder" translatable="false">1-0</string>
+    <string name="gameslist_date_placeholder" translatable="false">YYYY.MM.DD</string>
+    <string name="gameslist_rating_placeholder" translatable="false">3.5</string>
     <string name="gameslist_result_count">Results: %1$d</string>
     <string name="gameslist_game_of_total">Game %1$d of %2$d</string>
     <string name="gameslist_filter_switch_white_description">Enable or disable white player filter</string>
@@ -444,7 +465,7 @@
     <string name="start_database">Game database</string>
     <string name="start_wifiboard">WiFi board</string>
     <string name="start_ics">Freechess</string>
-    <string name="start_lichess">Lichess (beta)</string>
+    <string name="start_lichess">Lichess</string>
     <string name="start_pgn">Advanced</string>
     <string name="start_play">Play</string>
     <string name="start_practice">Practice</string>
@@ -478,7 +499,7 @@
     <string name="title_castle">Castle?</string>
     <string name="title_pick_engine">Engine</string>
     <string name="title_challenge">Challenge</string>
-    <string name="title_create_new_line">Create new line?</string>
+    <string name="title_overwrite_main_line">Overwrite main line from this position?</string>
     <string name="title_delete_game">Delete game</string>
     <string name="title_edit_command">Edit command</string>
     <string name="title_edit_or_delete">Edit or delete?</string>
@@ -488,8 +509,8 @@
     <string name="title_offers_adjourn">Adjourn request</string>
     <string name="title_offers_draw">Draw request</string>
     <string name="title_offers_takeback">Take back request</string>
-    <string name="title_pick_time">Pick time level</string>
-    <string name="title_pick_ply">Pick ply level</string>
+    <string name="title_pick_time">Thinking time per move</string>
+    <string name="title_pick_ply">Search depth (half-moves)</string>
     <string name="title_pick_promo">Pick promotion piece</string>
     <string name="title_save_game">Save game</string>
     <string name="toast_challenge_posted">Challenge posted</string>
@@ -522,7 +543,7 @@
     <string name="lichess_swiss_starts_at">starts %1$s</string>
     <string name="lichess_swiss_detail_info">%1$s · round %2$d/%3$d · %4$d players</string>
     <string name="lichess_swiss_no_teams">You are not in any team yet. Tap \"All teams\" to find one to join.</string>
-    <string name="lichess_swiss_no_tournaments">This team has no Swiss tournaments.</string>
+    <string name="lichess_swiss_no_tournaments">No tournaments found.</string>
     <string name="lichess_team_join_message_hint">Message (if the team reviews requests)</string>
     <string name="lichess_team_join_password_hint">Password (if required)</string>
     <string name="lichess_team_joined">Joined %1$s</string>
@@ -536,4 +557,57 @@
     <string name="players_agreed_draw">Draw by agreement</string>
     <string name="white_player_forfeits_on_time">White lost on time</string>
     <string name="white_player_resigned">White resigned</string>
+    <string name="analysis_main_line">Main line</string>
+    <string name="analysis_engine_likes">Engine likes:</string>
+    <string name="analysis_engine_matches">Last move matches the engine recommendation</string>
+    <string name="analysis_move_best">Best</string>
+    <string name="analysis_move_excellent">Excellent</string>
+    <string name="analysis_move_okay">Okay</string>
+    <string name="analysis_move_inaccuracy">Inaccuracy</string>
+    <string name="analysis_move_mistake">Mistake</string>
+    <string name="analysis_move_blunder">Blunder</string>
+    <string name="analysis_move_forced">Forced</string>
+    <string name="analysis_move_pending">Analyzing move…</string>
+    <string name="analysis_move_unavailable">Analysis unavailable</string>
+    <string name="analysis_white_to_move">White to move</string>
+    <string name="analysis_black_to_move">Black to move</string>
+    <string name="analysis_variation">Variation</string>
+    <string name="analysis_back_to_main">Back to main</string>
+    <string name="pgn_return_main_line">Return to main line</string>
+    <string name="pgn_promote_variation">Make preferred continuation</string>
+    <string name="pgn_delete_variation">Delete variation</string>
+    <string name="engine_evaluation_score">Engine evaluation: %1$+.1f pawns (positive favors White)</string>
+    <string name="engine_evaluation_pending">Engine evaluation unavailable</string>
+    <string name="analysis_settings">Analysis settings</string>
+    <string name="analysis_time_budget">Time budget per position (seconds)</string>
+    <string name="analysis_time_invalid">Enter a number from 0 to %1$d.</string>
+    <string name="analysis_move_position">Move position</string>
+    <string name="analysis_builtin_warning">For better analysis, install an OEX-compatible chess engine.</string>
+    <string name="analysis_dont_show_again">Don\'t show again</string>
+    <string name="analysis_continue">Continue</string>
+    <string name="analysis_duck_unsupported">Analysis for Duck chess is not supported.</string>
+    <string name="menu_analyse_game">Analyse game</string>
+    <string name="menu_new_king_of_the_hill">New King of the Hill game</string>
+    <string name="state_hill_win">King reached the hill</string>
+    <string name="state_duck_stalemate_win">No moves left, which wins in Duck chess</string>
+    <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
+    <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
+    <string name="new_game_variant_standard">Standard</string>
+    <string name="new_game_variant_duck">Duck</string>
+    <string name="new_game_variant_king_of_the_hill">King of the Hill</string>
+    <string name="new_game_variant_chess960">Fischer random / 960</string>
+    <string name="options_target_elo">Target Elo (approximate)</string>
+    <string name="options_target_elo_hint">Actual strength depends on the engine and thinking time.</string>
+    <string name="options_target_elo_checking">Checking available strength settings…</string>
+    <string name="options_full_strength">Full strength</string>
+    <string name="share_game_link">Share game link</string>
+    <string name="share_position_link">Share position link</string>
+    <string name="share_pgn">Share PGN</string>
+    <string name="share_chess_link">Share</string>
+    <string name="share_invitation">Share invitation</string>
+    <string name="share_lichess_profile">Share my Lichess profile</string>
+    <string name="app_link_invalid">This Chess link is invalid or unsupported.</string>
+    <string name="app_link_too_large">This game is too large to share as a link. Share the complete game as PGN instead.</string>
+    <string name="app_link_no_engine">Engine analysis is unavailable for this variant. You can browse the board and moves.</string>
+    <string name="share_failed">Could not share the game. Please try again.</string>
 </resources>

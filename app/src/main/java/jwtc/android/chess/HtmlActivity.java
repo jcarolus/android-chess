@@ -1,13 +1,9 @@
 package jwtc.android.chess;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
-
 import androidx.core.text.HtmlCompat;
-
 import jwtc.android.chess.activities.BaseActivity;
 import jwtc.android.chess.helpers.ActivityHelper;
 
@@ -18,9 +14,7 @@ public class HtmlActivity extends BaseActivity {
 
     private TextView textViewHelp;
 
-    /**
-     * Called when the activity is first created.
-     */
+    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +36,8 @@ public class HtmlActivity extends BaseActivity {
         Bundle extras = intent.getExtras();
         if (extras != null) {
             int resource = extras.getInt(HELP_STRING_RESOURCE);
-            textViewHelp.setText(HtmlCompat.fromHtml(getString(resource), HtmlCompat.FROM_HTML_MODE_LEGACY));
+            textViewHelp.setText(
+                    HtmlCompat.fromHtml(getString(resource), HtmlCompat.FROM_HTML_MODE_LEGACY));
         }
     }
 }

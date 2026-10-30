@@ -3,7 +3,6 @@ package jwtc.android.chess.ics;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
 import java.lang.ref.WeakReference;
 
 public class ICSThreadMessageHandler extends Handler {
@@ -33,15 +32,16 @@ public class ICSThreadMessageHandler extends Handler {
     public void setTimeout(long ms) {
         cancelTimeout();
 
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                Message m = new Message();
-                m.what = MSG_TIMEOUT;
+        runnable =
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        Message m = new Message();
+                        m.what = MSG_TIMEOUT;
 
-                handleMessage(m);
-            }
-        };
+                        handleMessage(m);
+                    }
+                };
         postDelayed(runnable, ms);
     }
 

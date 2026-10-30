@@ -2,28 +2,27 @@ package jwtc.android.chess.play;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import androidx.annotation.NonNull;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
-import jwtc.android.chess.services.EcoService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class EcoDialog extends ResultDialog<Bundle> {
     private static final String TAG = "EcoDialog";
 
-    public EcoDialog(@NonNull Context context, ResultDialogListener<Bundle> listener, int requestCode, String title, JSONArray jArray) {
+    public EcoDialog(
+            @NonNull Context context,
+            ResultDialogListener<Bundle> listener,
+            int requestCode,
+            String title,
+            JSONArray jArray) {
         super(context, listener, requestCode);
 
         setTitle(title);
@@ -42,26 +41,24 @@ public class EcoDialog extends ResultDialog<Bundle> {
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-            context,
-            R.layout.simple_text,
-            itemList
-        );
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.simple_text, itemList);
 
         list.setAdapter(adapter);
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Bundle data = new Bundle();
-                try {
-                    JSONObject jObj = jArray.getJSONObject(position);
-                    data.putCharSequence("item", jObj.getString("move"));
-                } catch (Exception ignored) {
-                }
-                setResult(data);
-                dismiss();
-            }
-        });
+        list.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        Bundle data = new Bundle();
+                        try {
+                            JSONObject jObj = jArray.getJSONObject(position);
+                            data.putCharSequence("item", jObj.getString("move"));
+                        } catch (Exception ignored) {
+                        }
+                        setResult(data);
+                        dismiss();
+                    }
+                });
     }
 }

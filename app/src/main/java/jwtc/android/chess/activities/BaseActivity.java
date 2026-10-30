@@ -1,12 +1,9 @@
 package jwtc.android.chess.activities;
 
 import android.app.Activity;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,26 +11,20 @@ import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-
 import jwtc.android.chess.HtmlActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.EinkMode;
-import jwtc.android.chess.helpers.MyPGNProvider;
-import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.helpers.GameStore;
 import jwtc.android.chess.play.SaveGameDialog;
-import jwtc.chess.PGNColumns;
-
+import jwtc.chess.GameRecord;
 
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
@@ -95,26 +86,39 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    protected void openConfirmDialog(String message, String positiveText, String negativeText, Runnable onPositive, Runnable onNegative) {
+    protected void openConfirmDialog(
+            String message,
+            String positiveText,
+            String negativeText,
+            Runnable onPositive,
+            Runnable onNegative) {
         new MaterialAlertDialogBuilder(BaseActivity.this)
-            .setMessage(message)
-            .setPositiveButton(positiveText, (dialog, which) -> {
-                dialog.dismiss();
-                onPositive.run();
-            })
-            .setNegativeButton(negativeText, (dialog, which) -> {
-                dialog.dismiss();
-                if (onNegative != null) {
-                    onNegative.run();
-                }
-            })
-            .show();
+                .setMessage(message)
+                .setPositiveButton(
+                        positiveText,
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            onPositive.run();
+                        })
+                .setNegativeButton(
+                        negativeText,
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            if (onNegative != null) {
+                                onNegative.run();
+                            }
+                        })
+                .show();
     }
-
 
     public void showExitConfirmationDialog() {
         if (needExitConfirmationDialog()) {
-            openConfirmDialog(getString(R.string.menu_abort), getString(R.string.alert_yes), getString(R.string.alert_no), this::finish, null);
+            openConfirmDialog(
+                    getString(R.string.menu_abort),
+                    getString(R.string.alert_yes),
+                    getString(R.string.alert_no),
+                    this::finish,
+                    null);
         } else {
             finish();
         }
@@ -145,31 +149,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
-        saveGame(result.getContentValues(), result.createCopy, result.lGameID);
+        saveGame(result.getRecord(), result.createCopy, result.lGameID);
     }
 
-    protected long saveGame(ContentValues values, boolean bCopy, long lGameID) {
-
-        if (lGameID > 0 && (bCopy == false)) {
-            Uri uri = ContentUris.withAppendedId(MyPGNProvider.CONTENT_URI, lGameID);
-            getContentResolver().update(uri, values, null, null);
-        } else {
-            Uri uri = MyPGNProvider.CONTENT_URI;
-            Uri uriInsert = getContentResolver().insert(uri, values);
-            if (uriInsert != null) {
-                try {
-                    Cursor c = getContentResolver().query(uriInsert, new String[]{PGNColumns._ID}, null, null, null);
-                    if (c != null && c.getCount() == 1) {
-                        c.moveToFirst();
-                        lGameID = Utils.getColumnLong(c, PGNColumns._ID);
-                        c.close();
-                    }
-                } catch (Exception ex) {
-                    Log.d(TAG, "Could not insert game " + ex.getMessage());
-                }
-            }
-        }
-        return lGameID;
+    protected long saveGame(GameRecord record, boolean bCopy, long lGameID) {
+        return new GameStore(getContentResolver()).save(record, bCopy, lGameID);
     }
 
     public void shareString(String s) {
@@ -181,7 +165,6 @@ public class BaseActivity extends AppCompatActivity {
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
     }
-
 
     public void showHelp(int resource) {
         Intent i = new Intent();

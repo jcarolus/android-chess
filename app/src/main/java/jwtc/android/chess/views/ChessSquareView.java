@@ -5,9 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.chess.Pos;
@@ -98,15 +96,22 @@ public class ChessSquareView extends View {
         if (this.selected) {
             paint.setColor(ColorSchemes.getSelectedColor());
         } else {
-            paint.setColor(fieldColor == BoardConstants.WHITE ? ColorSchemes.getLight() : ColorSchemes.getDark());
+            paint.setColor(
+                    fieldColor == BoardConstants.WHITE
+                            ? ColorSchemes.getLight()
+                            : ColorSchemes.getDark());
         }
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paint);
 
         int patternDrawable = ColorSchemes.getSelectedPatternDrawable();
         if (patternDrawable > 0) {
-            if (fieldColor == BoardConstants.BLACK && patternDrawable == R.drawable.diagonal_stripes || patternDrawable != R.drawable.diagonal_stripes) {
+            if (fieldColor == BoardConstants.BLACK && patternDrawable == R.drawable.diagonal_stripes
+                    || patternDrawable != R.drawable.diagonal_stripes) {
                 Drawable d = getResources().getDrawable(patternDrawable, null);
-                d.setTint(patternDrawable == R.drawable.diagonal_stripes ? ColorSchemes.getLight() : ColorSchemes.getSelectedColor());
+                d.setTint(
+                        patternDrawable == R.drawable.diagonal_stripes
+                                ? ColorSchemes.getLight()
+                                : ColorSchemes.getSelectedColor());
                 d.setBounds(0, 0, getWidth(), getHeight());
                 d.draw(canvas);
             }
@@ -135,14 +140,19 @@ public class ChessSquareView extends View {
                 paint.setFlags(Paint.ANTI_ALIAS_FLAG);
                 paint.setColor(ColorSchemes.getCoordBackgroundColor());
                 canvas.drawRect(
-                    isRot ? size - textSize : 0,
-                    isRot ? 0 : size - textSize,
-                    isRot ? size : textSize,
-                    isRot ? textSize : size, paint);
+                        isRot ? size - textSize : 0,
+                        isRot ? 0 : size - textSize,
+                        isRot ? size : textSize,
+                        isRot ? textSize : size,
+                        paint);
 
                 paint.setColor(ColorSchemes.getCoordTextColor());
                 paint.setTextSize(textSize - 4);
-                canvas.drawText(coord, isRot ? size - textSize + 4 : 4, isRot ? textSize - 4 : size - 4, paint);
+                canvas.drawText(
+                        coord,
+                        isRot ? size - textSize + 4 : 4,
+                        isRot ? textSize - 4 : size - 4,
+                        paint);
             }
         }
 
@@ -150,15 +160,21 @@ public class ChessSquareView extends View {
             highlightPaint.setStyle(Paint.Style.FILL);
             highlightPaint.setColor(ColorSchemes.getHightlightColor());
             canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), highlightPaint);
-
         }
 
         if (move) {
             int strokeWidth = getWidth() / 16;
             highlightPaint.setStyle(Paint.Style.FILL);
             highlightPaint.setStrokeWidth(belowPiece ? strokeWidth : 0);
-            highlightPaint.setColor(fieldColor == BoardConstants.WHITE ? ColorSchemes.getDark() : ColorSchemes.getLight());
-            canvas.drawCircle(getWidth() / 2, getHeight() / 2, belowPiece ? getHeight() / 2 - strokeWidth : getHeight() / 8, highlightPaint);
+            highlightPaint.setColor(
+                    fieldColor == BoardConstants.WHITE
+                            ? ColorSchemes.getDark()
+                            : ColorSchemes.getLight());
+            canvas.drawCircle(
+                    getWidth() / 2,
+                    getHeight() / 2,
+                    belowPiece ? getHeight() / 2 - strokeWidth : getHeight() / 8,
+                    highlightPaint);
         }
     }
 

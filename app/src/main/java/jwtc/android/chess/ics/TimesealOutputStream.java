@@ -7,8 +7,8 @@ import java.io.OutputStream;
 //            c
 
 /**
- * This code was reverse engineered from the JIN project. JIN is a gpled
- * project. Its url can be found here: http://www.jinchess.com/
+ * This code was reverse engineered from the JIN project. JIN is a gpled project. Its url can be
+ * found here: http://www.jinchess.com/
  */
 public class TimesealOutputStream extends OutputStream {
 

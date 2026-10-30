@@ -14,7 +14,7 @@ public class QRCode {
                 return true;
             case R.id.action_to_qrcode:
                 s = "http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl=";
-                s += java.net.URLEncoder.encode(_chessView.getJNI().toFEN());
+                s += java.net.URLEncoder.encode(gameApi.getFEN());
                 copyToClipBoard(s);
                 doToast(getString(R.string.msg_qr_code_on_clipboard));
                 return true;

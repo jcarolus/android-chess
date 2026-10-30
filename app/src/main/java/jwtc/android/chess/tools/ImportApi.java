@@ -1,7 +1,6 @@
 package jwtc.android.chess.tools;
 
 import java.util.ArrayList;
-
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.HMap;
 

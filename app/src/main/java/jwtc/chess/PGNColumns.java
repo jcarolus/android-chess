@@ -7,9 +7,7 @@ public final class PGNColumns implements BaseColumns {
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.jwtc.pgn";
     public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.jwtc.pgn";
 
-    /**
-     * The default sort order for this table
-     */
+    /** The default sort order for this table */
     public static final String DEFAULT_SORT_ORDER = "date DESC";
 
     public static final String WHITE = "white";

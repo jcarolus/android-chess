@@ -1,14 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="imageButtonSize">48dp</dimen>
+    <!-- Shared spacing scale, in density-independent pixels. -->
+    <dimen name="space_hairline">1dp</dimen>
+    <dimen name="space_tiny">2dp</dimen>
+    <dimen name="space_small">4dp</dimen>
+    <dimen name="space_medium">8dp</dimen>
+    <dimen name="space_regular">12dp</dimen>
+    <dimen name="space_large">16dp</dimen>
+    <dimen name="space_extra_large">24dp</dimen>
+    <dimen name="space_double_large">32dp</dimen>
 
-    <dimen name="normalTextSize">16sp</dimen>
-    <dimen name="normalPaddingX">8dp</dimen>
-    <dimen name="normalPaddingY">1dp</dimen>
+    <!-- Layout roles keep independently adjustable spacing separate. -->
+    <dimen name="screen_padding">@dimen/space_large</dimen>
+    <dimen name="board_screen_padding">@dimen/space_small</dimen>
+    <dimen name="list_screen_padding">@dimen/space_tiny</dimen>
+    <dimen name="panel_padding">@dimen/space_medium</dimen>
+    <dimen name="dialog_padding">@dimen/space_extra_large</dimen>
+    <dimen name="section_gap">@dimen/space_large</dimen>
+    <dimen name="control_gap">@dimen/space_medium</dimen>
+    <dimen name="board_control_gap">@dimen/space_small</dimen>
+    <dimen name="compact_control_gap">@dimen/space_small</dimen>
+    <dimen name="tiny_control_gap">@dimen/space_tiny</dimen>
+    <dimen name="board_row_gap">@dimen/space_hairline</dimen>
+    <dimen name="row_padding">@dimen/space_medium</dimen>
+    <dimen name="compact_row_padding">@dimen/space_small</dimen>
+    <dimen name="control_padding">@dimen/space_small</dimen>
+    <dimen name="compact_control_padding">@dimen/space_tiny</dimen>
+    <dimen name="content_indent">@dimen/space_large</dimen>
+    <dimen name="preference_indent">@dimen/space_double_large</dimen>
+    <dimen name="preference_control_inset">@dimen/space_extra_large</dimen>
+    <dimen name="list_item_inset">@dimen/space_extra_large</dimen>
+    <dimen name="menu_padding_horizontal">@dimen/space_large</dimen>
+    <dimen name="menu_padding_vertical">@dimen/space_regular</dimen>
+    <dimen name="text_padding_horizontal">@dimen/space_medium</dimen>
+    <dimen name="text_padding_vertical">@dimen/space_hairline</dimen>
+    <dimen name="header_padding_horizontal">@dimen/space_medium</dimen>
+    <dimen name="header_padding_vertical">@dimen/space_small</dimen>
 
-    <dimen name="headerTextSize">16sp</dimen>
-    <dimen name="headerPaddingX">8dp</dimen>
-    <dimen name="headerPaddingY">4dp</dimen>
-
-    <dimen name="titleTextSize">30sp</dimen>
+    <dimen name="image_button_size">48dp</dimen>
+    <dimen name="body_text_size">16sp</dimen>
+    <dimen name="header_text_size">16sp</dimen>
+    <dimen name="title_text_size">30sp</dimen>
+    <dimen name="switch_label_gap">10dp</dimen>
 </resources>

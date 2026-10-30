@@ -13,10 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.lichess.models.SwissStanding;
@@ -37,9 +34,11 @@ import jwtc.android.chess.lichess.models.Team;
 
 /**
  * Team browser + Swiss tournament list/detail. A boardless Lichess screen launched from the lobby;
- * it shares the single service-owned {@link LichessApi} (auth + streams) via {@link LichessBaseActivity}.
+ * it shares the single service-owned {@link LichessApi} (auth + streams) via {@link
+ * LichessBaseActivity}.
  */
-public class LichessSwissActivity extends LichessBaseActivity implements AdapterView.OnItemClickListener {
+public class LichessSwissActivity extends LichessBaseActivity
+        implements AdapterView.OnItemClickListener {
     private static final String TAG = "LichessSwissActivity";
     private static final int VIEW_SWISS_TEAMS = 0, VIEW_SWISS_LIST = 1, VIEW_SWISS_DETAIL = 2;
     private static final long SWISS_REFRESH_INTERVAL_MS = 30_000L;
@@ -54,12 +53,24 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
     private List<Team> swissTeams = new ArrayList<>();
     private List<SwissTournament> swissTournaments = new ArrayList<>();
     private final Set<String> myTeamIds = new HashSet<>();
-    private MaterialButton buttonSwissMyTeams, buttonSwissAllTeams, buttonSwissSearch, buttonSwissPrevPage, buttonSwissNextPage, buttonTeamJoinLeave;
-    private MaterialButton buttonSwissFilterCreated, buttonSwissFilterStarted, buttonSwissFilterFinished;
+    private MaterialButton buttonSwissMyTeams,
+            buttonSwissAllTeams,
+            buttonSwissSearch,
+            buttonSwissPrevPage,
+            buttonSwissNextPage,
+            buttonTeamJoinLeave;
+    private MaterialButton buttonSwissFilterCreated,
+            buttonSwissFilterStarted,
+            buttonSwissFilterFinished;
     private String swissStatusFilter = "started";
     private EditText editTextTeamSearch;
     private LinearLayout layoutSwissPaging;
-    private TextView textViewSwissTeamsStatus, textViewSwissTeamName, textViewSwissListStatus, textViewSwissName, textViewSwissInfo, textViewSwissPage;
+    private TextView textViewSwissTeamsStatus,
+            textViewSwissTeamName,
+            textViewSwissListStatus,
+            textViewSwissName,
+            textViewSwissInfo,
+            textViewSwissPage;
     private boolean showingAllTeams = false;
     private int allTeamsPage = 1, allTeamsNbPages = 1;
     private Team currentTeam;
@@ -70,22 +81,23 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
     // Set true only for a background poll of the detail screen, so onSwissDetail refreshes
     // in place without forcing the view back to the detail child (see onSwissDetail).
     private boolean swissDetailRefresh = false;
-    private final Runnable swissRefreshRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (lichessApi == null) {
-                return;
-            }
-            int child = viewAnimatorSwiss.getDisplayedChild();
-            if (child == VIEW_SWISS_LIST && currentTeam != null) {
-                lichessApi.fetchTeamSwiss(currentTeam.id, swissStatusFilter);
-            } else if (child == VIEW_SWISS_DETAIL && currentSwiss != null) {
-                swissDetailRefresh = true;
-                lichessApi.fetchSwissDetail(currentSwiss.id);
-            }
-            swissRefreshHandler.postDelayed(this, SWISS_REFRESH_INTERVAL_MS);
-        }
-    };
+    private final Runnable swissRefreshRunnable =
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (lichessApi == null) {
+                        return;
+                    }
+                    int child = viewAnimatorSwiss.getDisplayedChild();
+                    if (child == VIEW_SWISS_LIST && currentTeam != null) {
+                        lichessApi.fetchTeamSwiss(currentTeam.id, swissStatusFilter);
+                    } else if (child == VIEW_SWISS_DETAIL && currentSwiss != null) {
+                        swissDetailRefresh = true;
+                        lichessApi.fetchSwissDetail(currentSwiss.id);
+                    }
+                    swissRefreshHandler.postDelayed(this, SWISS_REFRESH_INTERVAL_MS);
+                }
+            };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -142,19 +154,21 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         buttonSwissMyTeams = findViewById(R.id.ButtonSwissMyTeams);
         buttonSwissMyTeams.setOnClickListener(v -> showMyTeams());
         buttonSwissAllTeams = findViewById(R.id.ButtonSwissAllTeams);
-        buttonSwissAllTeams.setOnClickListener(v -> {
-            editTextTeamSearch.setText("");
-            showAllTeams(1);
-        });
+        buttonSwissAllTeams.setOnClickListener(
+                v -> {
+                    editTextTeamSearch.setText("");
+                    showAllTeams(1);
+                });
 
         editTextTeamSearch = findViewById(R.id.EditTextTeamSearch);
-        editTextTeamSearch.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                showAllTeams(1);
-                return true;
-            }
-            return false;
-        });
+        editTextTeamSearch.setOnEditorActionListener(
+                (v, actionId, event) -> {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        showAllTeams(1);
+                        return true;
+                    }
+                    return false;
+                });
         buttonSwissSearch = findViewById(R.id.ButtonSwissSearch);
         buttonSwissSearch.setOnClickListener(v -> showAllTeams(1));
 
@@ -174,44 +188,64 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         buttonSwissFilterFinished.setOnClickListener(v -> showSwissStatus("finished"));
 
         findViewById(R.id.ButtonSwissTeamsBack).setOnClickListener(v -> finish());
-        findViewById(R.id.ButtonSwissListBack).setOnClickListener(v -> viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_TEAMS));
-        findViewById(R.id.ButtonSwissDetailBack).setOnClickListener(v -> viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_LIST));
+        findViewById(R.id.ButtonSwissListBack)
+                .setOnClickListener(v -> viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_TEAMS));
+        findViewById(R.id.ButtonSwissDetailBack)
+                .setOnClickListener(v -> viewAnimatorSwiss.setDisplayedChild(VIEW_SWISS_LIST));
 
         MaterialButton buttonSwissJoin = findViewById(R.id.ButtonSwissJoin);
-        buttonSwissJoin.setOnClickListener(v -> {
-            if (currentSwiss == null) {
-                return;
-            }
-            if (currentSwiss.isBoardCompatible()) {
-                lichessApi.joinSwiss(currentSwiss.id, null);
-            } else {
-                Toast.makeText(this, R.string.lichess_swiss_not_board_compatible, Toast.LENGTH_LONG).show();
-            }
-        });
+        buttonSwissJoin.setOnClickListener(
+                v -> {
+                    if (currentSwiss == null) {
+                        return;
+                    }
+                    if (currentSwiss.isBoardCompatible()) {
+                        lichessApi.joinSwiss(currentSwiss.id, null);
+                    } else {
+                        Toast.makeText(
+                                        this,
+                                        R.string.lichess_swiss_not_board_compatible,
+                                        Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
         MaterialButton buttonSwissWithdraw = findViewById(R.id.ButtonSwissWithdraw);
-        buttonSwissWithdraw.setOnClickListener(v -> {
-            if (currentSwiss != null) {
-                lichessApi.withdrawSwiss(currentSwiss.id);
-            }
-        });
+        buttonSwissWithdraw.setOnClickListener(
+                v -> {
+                    if (currentSwiss != null) {
+                        lichessApi.withdrawSwiss(currentSwiss.id);
+                    }
+                });
 
-        adapterSwissTeams = new SimpleAdapter(this, mapSwissTeams, R.layout.lichess_swiss_team_row,
-            new String[]{"text_team_name", "text_team_members"},
-            new int[]{R.id.text_team_name, R.id.text_team_members});
+        adapterSwissTeams =
+                new SimpleAdapter(
+                        this,
+                        mapSwissTeams,
+                        R.layout.lichess_swiss_team_row,
+                        new String[] {"text_team_name", "text_team_members"},
+                        new int[] {R.id.text_team_name, R.id.text_team_members});
         listViewSwissTeams = findViewById(R.id.ListViewSwissTeams);
         listViewSwissTeams.setAdapter(adapterSwissTeams);
         listViewSwissTeams.setOnItemClickListener(this);
 
-        adapterSwissList = new SimpleAdapter(this, mapSwissList, R.layout.lichess_swiss_row,
-            new String[]{"text_swiss_name", "text_swiss_info"},
-            new int[]{R.id.text_swiss_name, R.id.text_swiss_info});
+        adapterSwissList =
+                new SimpleAdapter(
+                        this,
+                        mapSwissList,
+                        R.layout.lichess_swiss_row,
+                        new String[] {"text_swiss_name", "text_swiss_info"},
+                        new int[] {R.id.text_swiss_name, R.id.text_swiss_info});
         listViewSwissList = findViewById(R.id.ListViewSwissList);
         listViewSwissList.setAdapter(adapterSwissList);
         listViewSwissList.setOnItemClickListener(this);
 
-        adapterSwissStandings = new SimpleAdapter(this, mapSwissStandings, R.layout.lichess_swiss_standing_row,
-            new String[]{"text_rank", "text_player", "text_points"},
-            new int[]{R.id.text_rank, R.id.text_player, R.id.text_points});
+        adapterSwissStandings =
+                new SimpleAdapter(
+                        this,
+                        mapSwissStandings,
+                        R.layout.lichess_swiss_standing_row,
+                        new String[] {"text_rank", "text_player", "text_points"},
+                        new int[] {R.id.text_rank, R.id.text_player, R.id.text_points});
         listViewSwissStandings = findViewById(R.id.ListViewSwissStandings);
         listViewSwissStandings.setAdapter(adapterSwissStandings);
     }
@@ -241,9 +275,10 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         allTeamsPage = page;
         layoutSwissPaging.setVisibility(View.VISIBLE);
         String search = editTextTeamSearch.getText().toString().trim();
-        textViewSwissTeamsStatus.setText(search.isEmpty()
-            ? getString(R.string.lichess_swiss_all_teams)
-            : getString(R.string.lichess_team_search_results, search));
+        textViewSwissTeamsStatus.setText(
+                search.isEmpty()
+                        ? getString(R.string.lichess_swiss_all_teams)
+                        : getString(R.string.lichess_team_search_results, search));
         progressBarSwissTeams.setVisibility(View.VISIBLE);
         lichessApi.fetchAllTeams(page, search);
     }
@@ -286,12 +321,13 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
     }
 
     private boolean isMemberOfCurrentTeam() {
-        return currentTeam != null &&
-            (myTeamIds.contains(currentTeam.id) || Boolean.TRUE.equals(currentTeam.joined));
+        return currentTeam != null
+                && (myTeamIds.contains(currentTeam.id) || Boolean.TRUE.equals(currentTeam.joined));
     }
 
     private void refreshTeamJoinLeaveButton() {
-        buttonTeamJoinLeave.setText(isMemberOfCurrentTeam() ? R.string.lichess_team_leave : R.string.lichess_team_join);
+        buttonTeamJoinLeave.setText(
+                isMemberOfCurrentTeam() ? R.string.lichess_team_leave : R.string.lichess_team_join);
     }
 
     private void onTeamJoinLeaveClicked() {
@@ -322,12 +358,17 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         container.addView(editPassword);
 
         new MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.lichess_team_join)
-            .setView(container)
-            .setPositiveButton(R.string.lichess_team_join, (dialog, which) ->
-                lichessApi.joinTeam(team.id, editMessage.getText().toString(), editPassword.getText().toString()))
-            .setNegativeButton(R.string.button_cancel, null)
-            .show();
+                .setTitle(R.string.lichess_team_join)
+                .setView(container)
+                .setPositiveButton(
+                        R.string.lichess_team_join,
+                        (dialog, which) ->
+                                lichessApi.joinTeam(
+                                        team.id,
+                                        editMessage.getText().toString(),
+                                        editPassword.getText().toString()))
+                .setNegativeButton(R.string.button_cancel, null)
+                .show();
     }
 
     private String swissStatusLabel(String status) {
@@ -342,8 +383,7 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
     }
 
     private static final String[] ISO_DATE_PATTERNS = {
-        "yyyy-MM-dd'T'HH:mm:ss'Z'",
-        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+        "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     };
 
     private long parseIsoToMillis(String iso) {
@@ -407,9 +447,10 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         }
         progressBarSwissTeams.setVisibility(View.GONE);
         populateTeams(teams);
-        textViewSwissTeamsStatus.setText(teams.isEmpty()
-            ? getString(R.string.lichess_swiss_no_teams)
-            : getString(R.string.lichess_swiss_title));
+        textViewSwissTeamsStatus.setText(
+                teams.isEmpty()
+                        ? getString(R.string.lichess_swiss_no_teams)
+                        : getString(R.string.lichess_swiss_title));
     }
 
     @Override
@@ -421,7 +462,8 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         allTeamsPage = page > 0 ? page : allTeamsPage;
         allTeamsNbPages = nbPages > 0 ? nbPages : 1;
         populateTeams(teams);
-        textViewSwissPage.setText(getString(R.string.lichess_swiss_page, allTeamsPage, allTeamsNbPages));
+        textViewSwissPage.setText(
+                getString(R.string.lichess_swiss_page, allTeamsPage, allTeamsNbPages));
         buttonSwissPrevPage.setEnabled(allTeamsPage > 1);
         buttonSwissNextPage.setEnabled(allTeamsPage < allTeamsNbPages);
     }
@@ -429,8 +471,15 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
     @Override
     public void onTeamJoined(String teamId) {
         myTeamIds.add(teamId);
-        Toast.makeText(this, getString(R.string.lichess_team_joined,
-            currentTeam != null && currentTeam.name != null ? currentTeam.name : teamId), Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                        this,
+                        getString(
+                                R.string.lichess_team_joined,
+                                currentTeam != null && currentTeam.name != null
+                                        ? currentTeam.name
+                                        : teamId),
+                        Toast.LENGTH_SHORT)
+                .show();
         refreshTeamJoinLeaveButton();
         progressBarSwissList.setVisibility(View.VISIBLE);
         lichessApi.fetchTeamSwiss(teamId, swissStatusFilter);
@@ -442,8 +491,15 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         if (currentTeam != null) {
             currentTeam.joined = false;
         }
-        Toast.makeText(this, getString(R.string.lichess_team_left,
-            currentTeam != null && currentTeam.name != null ? currentTeam.name : teamId), Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                        this,
+                        getString(
+                                R.string.lichess_team_left,
+                                currentTeam != null && currentTeam.name != null
+                                        ? currentTeam.name
+                                        : teamId),
+                        Toast.LENGTH_SHORT)
+                .show();
         refreshTeamJoinLeaveButton();
     }
 
@@ -453,17 +509,20 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         if (currentTeam == null) {
             return;
         }
-        // Single-status list for the active filter; order by start time (ongoing sort is a no-op here).
+        // Single-status list for the active filter; order by start time (ongoing sort is a no-op
+        // here).
         List<SwissTournament> visible = new ArrayList<>(tournaments);
         // Order: ongoing first, then by start time (soonest first).
-        Collections.sort(visible, (a, b) -> {
-            int rankA = "started".equals(a.status) ? 0 : 1;
-            int rankB = "started".equals(b.status) ? 0 : 1;
-            if (rankA != rankB) {
-                return rankA - rankB;
-            }
-            return Long.compare(parseIsoToMillis(a.startsAt), parseIsoToMillis(b.startsAt));
-        });
+        Collections.sort(
+                visible,
+                (a, b) -> {
+                    int rankA = "started".equals(a.status) ? 0 : 1;
+                    int rankB = "started".equals(b.status) ? 0 : 1;
+                    if (rankA != rankB) {
+                        return rankA - rankB;
+                    }
+                    return Long.compare(parseIsoToMillis(a.startsAt), parseIsoToMillis(b.startsAt));
+                });
         swissTournaments = visible;
         mapSwissList.clear();
         for (SwissTournament t : visible) {
@@ -487,8 +546,8 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
             mapSwissList.add(row);
         }
         adapterSwissList.notifyDataSetChanged();
-        textViewSwissListStatus.setText(visible.isEmpty()
-            ? getString(R.string.lichess_swiss_no_tournaments) : "");
+        textViewSwissListStatus.setText(
+                visible.isEmpty() ? getString(R.string.lichess_swiss_no_tournaments) : "");
     }
 
     @Override
@@ -496,8 +555,13 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
         progressBarSwissStandings.setVisibility(View.GONE);
         currentSwiss = tournament;
         textViewSwissName.setText(tournament.name != null ? tournament.name : tournament.id);
-        String info = getString(R.string.lichess_swiss_detail_info,
-            swissStatusLabel(tournament.status), tournament.round, tournament.nbRounds, tournament.nbPlayers);
+        String info =
+                getString(
+                        R.string.lichess_swiss_detail_info,
+                        swissStatusLabel(tournament.status),
+                        tournament.round,
+                        tournament.nbRounds,
+                        tournament.nbPlayers);
         if (!tournament.isBoardCompatible()) {
             info += "\n" + getString(R.string.lichess_swiss_not_board_compatible);
         }
@@ -505,15 +569,18 @@ public class LichessSwissActivity extends LichessBaseActivity implements Adapter
 
         // Only rapid/classical standard/chess960 swiss games can be played through the Board API;
         // block joining the rest here (Withdraw stays available for games joined on the web).
-        boolean statusJoinable = "created".equals(tournament.status) || "started".equals(tournament.status);
-        findViewById(R.id.ButtonSwissJoin).setEnabled(statusJoinable && tournament.isBoardCompatible());
+        boolean statusJoinable =
+                "created".equals(tournament.status) || "started".equals(tournament.status);
+        findViewById(R.id.ButtonSwissJoin)
+                .setEnabled(statusJoinable && tournament.isBoardCompatible());
         findViewById(R.id.ButtonSwissWithdraw).setEnabled(statusJoinable);
 
         mapSwissStandings.clear();
         for (SwissStanding s : standings) {
             HashMap<String, String> row = new HashMap<>();
             row.put("text_rank", "" + s.rank);
-            String player = s.title != null && !s.title.isEmpty() ? s.title + " " + s.username : s.username;
+            String player =
+                    s.title != null && !s.title.isEmpty() ? s.title + " " + s.username : s.username;
             row.put("text_player", player);
             row.put("text_points", "" + s.points);
             mapSwissStandings.add(row);

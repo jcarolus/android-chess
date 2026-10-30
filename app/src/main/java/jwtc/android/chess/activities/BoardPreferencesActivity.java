@@ -9,14 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-
-import androidx.core.graphics.ColorUtils;
 import androidx.appcompat.app.AppCompatDelegate;
-
+import androidx.core.graphics.ColorUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.Slider;
-
 import jwtc.android.chess.R;
 import jwtc.android.chess.constants.ColorSchemes;
 import jwtc.android.chess.constants.PieceSets;
@@ -27,7 +24,18 @@ import jwtc.android.chess.views.FixedDropdownView;
 
 public class BoardPreferencesActivity extends ChessBoardActivity {
     private static final String TAG = "BoardPreferences";
-    private CheckBox checkBoxCoordinates, checkBoxShowMoves, checkBoxUsePieceAnimation, checkBoxShowCapturedPieces, checkBoxWakeLock, checkBoxFullscreen, checkBoxSound, checkBoxHapticFeedback, checkBoxNightMode, checkBoxDisableDrag, checkBoxEinkTheme, checkBoxReduceAnimations;
+    private CheckBox checkBoxCoordinates,
+            checkBoxShowMoves,
+            checkBoxUsePieceAnimation,
+            checkBoxShowCapturedPieces,
+            checkBoxWakeLock,
+            checkBoxFullscreen,
+            checkBoxSound,
+            checkBoxHapticFeedback,
+            checkBoxNightMode,
+            checkBoxDisableDrag,
+            checkBoxEinkTheme,
+            checkBoxReduceAnimations;
     private Slider sliderSaturation;
     private FixedDropdownView dropDownPieces, dropDownColorScheme, dropDownTileSet;
     private LinearLayout customColorControls;
@@ -62,61 +70,77 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         buttonCustomLightColor = findViewById(R.id.ButtonCustomLightColor);
 
         dropDownPieces.setItems(getResources().getStringArray(R.array.piecesetarray));
-        dropDownPieces.setOnItemClickListener((parent, view, position, id) -> {
-            PieceSets.selectedSet = position;
-            rebuildBoard();
-        });
+        dropDownPieces.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    PieceSets.selectedSet = position;
+                    rebuildBoard();
+                });
 
         dropDownColorScheme.setItems(getResources().getStringArray(R.array.colorschemes));
-        dropDownColorScheme.setOnItemClickListener((parent, view, position, id) -> {
-            ColorSchemes.selectedColorScheme = position;
-            updateCustomColorControls();
-            chessBoardView.invalidateSquares();
-        });
+        dropDownColorScheme.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    ColorSchemes.selectedColorScheme = position;
+                    updateCustomColorControls();
+                    chessBoardView.invalidateSquares();
+                });
 
-        buttonCustomDarkColor.setOnClickListener(view -> showColorPicker(
-            R.string.choose_dark_square_color, ColorSchemes.getCustomDarkColor(), true));
-        buttonCustomLightColor.setOnClickListener(view -> showColorPicker(
-            R.string.choose_light_square_color, ColorSchemes.getCustomLightColor(), false));
+        buttonCustomDarkColor.setOnClickListener(
+                view ->
+                        showColorPicker(
+                                R.string.choose_dark_square_color,
+                                ColorSchemes.getCustomDarkColor(),
+                                true));
+        buttonCustomLightColor.setOnClickListener(
+                view ->
+                        showColorPicker(
+                                R.string.choose_light_square_color,
+                                ColorSchemes.getCustomLightColor(),
+                                false));
 
         dropDownTileSet.setItems(getResources().getStringArray(R.array.tileArray));
-        dropDownTileSet.setOnItemClickListener((parent, view, position, id) -> {
-            ColorSchemes.selectedPattern = position;
-            chessBoardView.invalidateSquares();
-        });
+        dropDownTileSet.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    ColorSchemes.selectedPattern = position;
+                    chessBoardView.invalidateSquares();
+                });
 
-        checkBoxCoordinates.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            ColorSchemes.showCoords = isChecked;
-            chessBoardView.invalidateSquares();
-        });
+        checkBoxCoordinates.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    ColorSchemes.showCoords = isChecked;
+                    chessBoardView.invalidateSquares();
+                });
 
-        findViewById(R.id.ButtonApplyEinkSettings).setOnClickListener(view -> {
-            // Preserve edits to settings outside the preset before recreating.
-            saveControls();
-            EinkMode.applyPreset(getPrefs());
-            // Refresh controls before recreate() triggers onPause(), which saves
-            // them and would otherwise overwrite the newly applied values.
-            loadControls(getPrefs());
-            // Clear the active night configuration too; changing the saved
-            // preference alone leaves DayNight resources active until restart.
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            // Recreate to apply the theme selected during onCreate().
-            recreate();
-        });
+        findViewById(R.id.ButtonApplyEinkSettings)
+                .setOnClickListener(
+                        view -> {
+                            // Preserve edits to settings outside the preset before recreating.
+                            saveControls();
+                            EinkMode.applyPreset(getPrefs());
+                            // Refresh controls before recreate() triggers onPause(), which saves
+                            // them and would otherwise overwrite the newly applied values.
+                            loadControls(getPrefs());
+                            // Clear the active night configuration too; changing the saved
+                            // preference alone leaves DayNight resources active until restart.
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                            // Recreate to apply the theme selected during onCreate().
+                            recreate();
+                        });
 
-        checkBoxEinkTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked == EinkMode.isThemeEnabled()) {
-                return;
-            }
-            saveControls();
-            EinkMode.load(getPrefs());
-            recreate();
-        });
+        checkBoxEinkTheme.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    if (isChecked == EinkMode.isThemeEnabled()) {
+                        return;
+                    }
+                    saveControls();
+                    EinkMode.load(getPrefs());
+                    recreate();
+                });
 
-        sliderSaturation.addOnChangeListener((s, value, fromUser) -> {
-            ColorSchemes.saturationFactor = value;
-            chessBoardView.invalidateSquares();
-        });
+        sliderSaturation.addOnChangeListener(
+                (s, value, fromUser) -> {
+                    ColorSchemes.saturationFactor = value;
+                    chessBoardView.invalidateSquares();
+                });
 
         gameApi = new GameApi();
 
@@ -125,7 +149,12 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         if (boardAreaLayout == null) {
             boardAreaLayout = findViewById(R.id.includeboard);
         }
-        initBoardLayoutSizing(findViewById(R.id.LayoutMain), boardAreaLayout, findViewById(R.id.play_controls), null, null);
+        initBoardLayoutSizing(
+                findViewById(R.id.LayoutMain),
+                boardAreaLayout,
+                findViewById(R.id.play_controls),
+                null,
+                null);
     }
 
     @Override
@@ -134,7 +163,7 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
         SharedPreferences prefs = getPrefs();
 
-        jni.newGame();
+        gameApi.newGame();
 
         loadControls(prefs);
 
@@ -153,7 +182,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         checkBoxNightMode.setChecked(prefs.getBoolean("nightMode", false));
         checkBoxDisableDrag.setChecked(prefs.getBoolean(EinkMode.PREF_DISABLE_DRAG, false));
         checkBoxEinkTheme.setChecked(prefs.getBoolean(EinkMode.PREF_THEME, false));
-        checkBoxReduceAnimations.setChecked(prefs.getBoolean(EinkMode.PREF_REDUCE_ANIMATIONS, false));
+        checkBoxReduceAnimations.setChecked(
+                prefs.getBoolean(EinkMode.PREF_REDUCE_ANIMATIONS, false));
 
         dropDownPieces.setSelection(Integer.parseInt(prefs.getString("pieceset", "0")));
         dropDownColorScheme.setSelection(Integer.parseInt(prefs.getString("colorscheme", "0")));
@@ -199,7 +229,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
     }
 
     private void updateCustomColorControls() {
-        boolean customSelected = ColorSchemes.selectedColorScheme == ColorSchemes.CUSTOM_COLOR_SCHEME;
+        boolean customSelected =
+                ColorSchemes.selectedColorScheme == ColorSchemes.CUSTOM_COLOR_SCHEME;
         customColorControls.setVisibility(customSelected ? View.VISIBLE : View.GONE);
         updateColorButton(buttonCustomDarkColor, ColorSchemes.getCustomDarkColor());
         updateColorButton(buttonCustomLightColor, ColorSchemes.getCustomLightColor());
@@ -207,9 +238,8 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
 
     private void updateColorButton(MaterialButton button, int color) {
         button.setBackgroundTintList(ColorStateList.valueOf(color));
-        button.setTextColor(ColorUtils.calculateLuminance(color) > 0.179
-            ? Color.BLACK
-            : Color.WHITE);
+        button.setTextColor(
+                ColorUtils.calculateLuminance(color) > 0.179 ? Color.BLACK : Color.WHITE);
     }
 
     private void showColorPicker(int titleResource, int initialColor, boolean darkColor) {
@@ -232,40 +262,44 @@ public class BoardPreferencesActivity extends ChessBoardActivity {
         final int[] selectedColor = {ColorUtils.HSLToColor(hsl)};
         colorPreview.setBackgroundColor(selectedColor[0]);
 
-        Slider.OnChangeListener listener = (slider, value, fromUser) -> {
-            float[] selectedHsl = {
-                hueSlider.getValue(),
-                saturationSlider.getValue(),
-                lightnessSlider.getValue()
-            };
-            selectedColor[0] = ColorUtils.HSLToColor(selectedHsl);
-            colorPreview.setBackgroundColor(selectedColor[0]);
-        };
+        Slider.OnChangeListener listener =
+                (slider, value, fromUser) -> {
+                    float[] selectedHsl = {
+                        hueSlider.getValue(),
+                        saturationSlider.getValue(),
+                        lightnessSlider.getValue()
+                    };
+                    selectedColor[0] = ColorUtils.HSLToColor(selectedHsl);
+                    colorPreview.setBackgroundColor(selectedColor[0]);
+                };
         hueSlider.addOnChangeListener(listener);
         saturationSlider.addOnChangeListener(listener);
         lightnessSlider.addOnChangeListener(listener);
 
         new MaterialAlertDialogBuilder(this)
-            .setTitle(titleResource)
-            .setView(dialogView)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                int customDarkColor = darkColor
-                    ? selectedColor[0]
-                    : ColorSchemes.getCustomDarkColor();
-                int customLightColor = darkColor
-                    ? ColorSchemes.getCustomLightColor()
-                    : selectedColor[0];
-                ColorSchemes.setCustomColors(customDarkColor, customLightColor);
-                updateCustomColorControls();
-                chessBoardView.invalidateSquares();
-            })
-            .show();
+                .setTitle(titleResource)
+                .setView(dialogView)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(
+                        android.R.string.ok,
+                        (dialog, which) -> {
+                            int customDarkColor =
+                                    darkColor
+                                            ? selectedColor[0]
+                                            : ColorSchemes.getCustomDarkColor();
+                            int customLightColor =
+                                    darkColor
+                                            ? ColorSchemes.getCustomLightColor()
+                                            : selectedColor[0];
+                            ColorSchemes.setCustomColors(customDarkColor, customLightColor);
+                            updateCustomColorControls();
+                            chessBoardView.invalidateSquares();
+                        })
+                .show();
     }
 
     @Override
     public boolean requestMove(int from, int to) {
         return false;
     }
-
 }

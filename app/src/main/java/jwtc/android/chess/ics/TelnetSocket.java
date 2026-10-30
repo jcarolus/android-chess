@@ -1,13 +1,12 @@
 package jwtc.android.chess.ics;
 
-import java.net.*;
-import java.io.*;
-import java.util.concurrent.ExecutionException;
-
 import android.os.AsyncTask;
 import android.util.Log;
+import java.io.*;
+import java.net.*;
+import java.util.concurrent.ExecutionException;
 
-//public class TelnetSocket extends Socket    
+// public class TelnetSocket extends Socket
 public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket {
     private static final String TAG = "TelnetSocket";
 
@@ -15,16 +14,16 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket {
     protected static byte[] _outBytes;
 
     TelnetSocket(String host, int port) throws UnknownHostException, IOException {
-        //super (host, port);
+        // super (host, port);
         super(InetAddress.getByName(host), port);
-        //super (host, port, "TIMESTAMP|openseal|Running on Android|");
+        // super (host, port, "TIMESTAMP|openseal|Running on Android|");
 
         _inBytes = new byte[2048];
         _outBytes = new byte[128];
 
         /// own openseal
-        //String hello = "TIMESTAMP|openseal|Running on Android|";
-        //sendString(hello);
+        // String hello = "TIMESTAMP|openseal|Running on Android|";
+        // sendString(hello);
     }
 
     public String readString() {
@@ -48,7 +47,7 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket {
 
         for (int i = 0; i < data.length(); i++) {
             _outBytes[i] = (byte) data.charAt(i);
-            //Log.d(TAG, "_outBytes ->" + data.charAt(i) + "    i->" + i);
+            // Log.d(TAG, "_outBytes ->" + data.charAt(i) + "    i->" + i);
         }
 
         boolean result = false;
@@ -63,7 +62,6 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket {
         return result;
     }
 
-
     private class ATsendString extends AsyncTask<String, Void, Boolean> {
 
         @Override
@@ -72,13 +70,12 @@ public class TelnetSocket extends jwtc.android.timeseal.TimesealingSocket {
             try {
                 getOutputStream().write(_outBytes, 0, strings[0].length());
                 getOutputStream().flush();
-                //Log.i("TelnetSocket", "sendString: " + data);
+                // Log.i("TelnetSocket", "sendString: " + data);
                 return true;
             } catch (Exception e) {
                 Log.e("TelnetSocket", "sendString: " + e.toString());
                 return false;
             }
-
         }
 
         @Override
