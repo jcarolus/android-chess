@@ -24,10 +24,6 @@ public class OexEngine extends EngineApi {
     private static final long RESPONSE_TIMEOUT_MILLIS = 5000;
     private static final Pattern MOVE_PATTERN =
             Pattern.compile("^([a-h][1-8])([a-h][1-8])([qrbn])?$");
-    private static final Pattern SCORE_CP_PATTERN =
-            Pattern.compile(".*\\bscore\\s+cp\\s+(-?\\d+).*");
-    private static final Pattern SCORE_MATE_PATTERN =
-            Pattern.compile(".*\\bscore\\s+mate\\s+(-?\\d+).*");
     private static final Pattern MOBILE_OPTION_PATTERN =
             Pattern.compile(
                     "option name (Threads|MultiPV) type spin default \\d+ min (\\d+) max (\\d+)");
@@ -418,31 +414,25 @@ public class OexEngine extends EngineApi {
     }
 
     private void parseInfo(String line) {
+        // Only exact principal-line scores count; bound and secondary-line scores are skipped.
         EngineEvaluation evaluation = EngineEvaluation.fromInfo(line);
         if (evaluation != null) {
             search.evaluation = evaluation;
-        }
-        try {
-            Matcher cpMatch = SCORE_CP_PATTERN.matcher(line);
-            if (cpMatch.matches()) {
-                latestValue = Integer.parseInt(cpMatch.group(1));
+            if (evaluation.mate) {
+                int distance =
+                        (int)
+                                Math.min(
+                                        Math.abs((long) evaluation.value),
+                                        BoardConstants.VALUATION_MATE - 1);
+                // "mate 0": the side to move is mated.
+                latestValue =
+                        (evaluation.value > 0 ? 1 : -1)
+                                * (BoardConstants.VALUATION_MATE - distance);
             } else {
-                Matcher mateMatch = SCORE_MATE_PATTERN.matcher(line);
-                if (mateMatch.matches()) {
-                    int mateIn = Integer.parseInt(mateMatch.group(1));
-                    int distance =
-                            (int)
-                                    Math.min(
-                                            Math.abs((long) mateIn),
-                                            BoardConstants.VALUATION_MATE - 1);
-                    latestValue =
-                            (mateIn >= 0 ? 1 : -1) * (BoardConstants.VALUATION_MATE - distance);
-                }
+                latestValue = evaluation.value;
             }
-            sendMessageFromThread(search.id, line, (float) latestValue / 100.0F);
-        } catch (NumberFormatException ex) {
-            Log.w(TAG, "Ignoring malformed engine score: " + line);
         }
+        sendMessageFromThread(search.id, line, (float) latestValue / 100.0F);
     }
 
     private void parseBestMove(String line) {

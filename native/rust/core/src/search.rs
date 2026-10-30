@@ -181,8 +181,9 @@ impl Worker<'_> {
             }
         }
         if moves.is_empty() {
+            // Duck chess: having no moves wins.
             self.nodes += 1;
-            return -MATE;
+            return MATE;
         }
         best
     }
@@ -407,10 +408,10 @@ pub fn search_with_progress(
     match p.game_state() {
         GameState::Play | GameState::Check => {}
         state => {
-            result.score = if matches!(state, GameState::Mate | GameState::HillWin) {
-                -MATE
-            } else {
-                0
+            result.score = match state {
+                GameState::Mate | GameState::HillWin => -MATE,
+                GameState::DuckStalemateWin => MATE,
+                _ => 0,
             };
             result.has_evaluation = true;
             result.elapsed_micros = start.elapsed().as_micros() as u64;

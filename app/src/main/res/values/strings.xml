@@ -202,6 +202,7 @@
     <string name="lichess_create_challenge_color_white">White</string>
     <string name="lichess_create_challenge_player">Opponent</string>
     <string name="lichess_create_challenge_player_required">Enter an opponent first.</string>
+    <string name="lichess_create_challenge_player_invalid">That is not a valid Lichess username.</string>
     <string name="lichess_create_challenge_rated">Rated</string>
     <string name="lichess_create_challenge_time">Time</string>
     <string name="lichess_create_challenge_time_control">Time control</string>
@@ -426,6 +427,7 @@
     <string name="puzzle_show">Show</string>
     <string name="savegame_black">Black</string>
     <string name="savegame_event">Event</string>
+    <string name="gameslist_load_failed">This game could not be loaded.</string>
     <string name="gameslist_filter_switch_black_description">Enable or disable black player filter</string>
     <string name="gameslist_filter_switch_date_after_description">Enable or disable date after filter</string>
     <string name="gameslist_filter_switch_date_before_description">Enable or disable date before filter</string>
@@ -587,6 +589,7 @@
     <string name="menu_analyse_game">Analyse game</string>
     <string name="menu_new_king_of_the_hill">New King of the Hill game</string>
     <string name="state_hill_win">King reached the hill</string>
+    <string name="state_duck_stalemate_win">No moves left, which wins in Duck chess</string>
     <string name="analysis_king_of_the_hill_unsupported">Analysis is not available for King of the Hill games.</string>
     <string name="options_engine_oex_variant_disabled">This variant uses the built-in engine.</string>
     <string name="new_game_variant_standard">Standard</string>

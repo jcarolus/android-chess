@@ -25,6 +25,7 @@ public class BoardConstants {
     public static final int BLACK_RESIGNED = 12;
     public static final int DRAW_AGREEMENT = 13;
     public static final int HILL_WIN = 14;
+    public static final int DUCK_STALEMATE_WIN = 15; // Duck chess: the side to move has no moves
 
     // array index of data memebers that hold data for either black or white. these must be 0 and 1
     // cause arrays are of length 2

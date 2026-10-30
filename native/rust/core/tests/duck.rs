@@ -20,7 +20,7 @@ fn complete_turns_round_trip_and_incomplete_input_is_atomic() {
     p.apply("e7e5@e2").unwrap();
     assert_eq!(
         Position::from_fen(Variant::Duck, &p.fen()).unwrap().fen(),
-        p.fen().trim_end_matches("2").to_owned() + "1"
+        p.fen()
     );
     assert!(Position::from_fen(Variant::Standard, &p.fen()).is_err());
 }
@@ -162,4 +162,24 @@ fn piece_preview_is_detached_and_complete_turns_still_require_placement() {
         capture.preview_piece("e7e8").unwrap().game_state(),
         GameState::Mate
     );
+}
+
+#[test]
+fn a_side_without_moves_wins() {
+    // Black's king and pawns are walled in by each other and the duck.
+    let fen = "7K/8/8/8/8/8/pp6/k$6 b - - 0 1";
+    let p = Position::from_fen(Variant::Duck, fen).unwrap();
+    assert_eq!(p.game_state(), GameState::DuckStalemateWin);
+    assert!(p.legal_moves().is_empty());
+    let request = SearchRequest::new(
+        1,
+        Variant::Duck,
+        fen,
+        vec![],
+        SearchLimit::Depth(2),
+        SearchOptions { quiescence: false },
+    )
+    .unwrap();
+    let result = search(&request, &SearchControl::default()).unwrap();
+    assert_eq!(result.score, 100000);
 }

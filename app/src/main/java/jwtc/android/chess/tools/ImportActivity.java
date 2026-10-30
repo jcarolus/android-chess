@@ -24,6 +24,7 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     private LinearProgressIndicator _progress;
     private int _mode = 0;
     private Intent _intent;
+    private boolean importStarted;
 
     protected boolean _processing;
 
@@ -35,7 +36,11 @@ public class ImportActivity extends BaseActivity implements ImportListener {
                     Log.i(TAG, "onServiceConnected");
                     importService = ((ImportService.LocalBinder) service).getService();
                     importService.addListener(ImportActivity.this);
-                    importService.startImport(_intent, _mode);
+                    // A recreated screen re-attaches to the running job instead of starting over.
+                    if (!importStarted) {
+                        importStarted = true;
+                        importService.startImport(_intent, _mode);
+                    }
                 }
 
                 public void onServiceDisconnected(ComponentName className) {
@@ -60,6 +65,15 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         _progress = findViewById(R.id.ProgressDoImport);
 
         _progress.setVisibility(View.INVISIBLE);
+
+        importStarted =
+                savedInstanceState != null && savedInstanceState.getBoolean("importStarted");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("importStarted", importStarted);
     }
 
     @Override
@@ -82,6 +96,8 @@ public class ImportActivity extends BaseActivity implements ImportListener {
         super.onStart();
 
         if (importService == null) {
+            // Started as well as bound, so the job outlives this screen being recreated.
+            startService(new Intent(this, ImportService.class));
             if (!bindService(
                     new Intent(this, ImportService.class), mConnection, Context.BIND_AUTO_CREATE)) {
                 doToast("Could not start import");
@@ -99,6 +115,9 @@ public class ImportActivity extends BaseActivity implements ImportListener {
 
         unbindService(mConnection);
         importService = null;
+        if (isFinishing()) {
+            stopService(new Intent(this, ImportService.class));
+        }
 
         super.onDestroy();
     }

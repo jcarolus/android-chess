@@ -57,6 +57,8 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private String sessionId;
     private boolean sessionLoaded;
     private Bundle restoredSession;
+    // The game came from Play's "game_pgn" preference, so analysis changes are written back there.
+    private boolean fromGamePgnPref;
     private String configuredEngine;
     private int configuredMillis;
     private EngineSession engineSession;
@@ -205,6 +207,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             if (pgn == null && fen == null) {
                 pgn = prefs.getString("game_pgn", null);
                 fen = prefs.getString("FEN", null);
+                fromGamePgnPref = !getIntent().hasExtra(EXTRA_GAME_ID) && pgn != null;
             }
             if (restoredSession != null && sessionId.equals(restoredSession.getString("id"))) {
                 gameApi.loadPGN(restoredSession.getString("pgn"));
@@ -846,6 +849,13 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         analysisActive = false;
         analysisGeneration++;
         closeEngineSession();
+        if (sessionLoaded) {
+            if (lGameID > 0) {
+                saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);
+            } else if (fromGamePgnPref) {
+                getPrefs().edit().putString("game_pgn", gameApi.exportFullPGN()).apply();
+            }
+        }
         super.onPause();
     }
 

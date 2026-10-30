@@ -57,6 +57,7 @@ import jwtc.chess.board.BoardConstants;
 public class GamesListActivity extends ChessBoardActivity {
     private static final String TAG = "GamesListActivity";
     private static final int VIEW_BOARD = 1, VIEW_PGN = 2, VIEW_LIST = 3;
+    private static final String EMPTY_BOARD_FEN = "8/8/8/8/8/8/8/8 w - - 0 1";
     private String sortOrder, sortBy;
     private TextView textViewResult,
             textViewTotal,
@@ -67,7 +68,7 @@ public class GamesListActivity extends ChessBoardActivity {
             textViewFilterInfo,
             textViewRating;
     private TextInputEditText editTextFilterWhite, editTextFilterBlack, editTextFilterEvent;
-    private MaterialButton buttonFilters;
+    private MaterialButton buttonFilters, buttonOpen, buttonAnalyze;
     private PGNDateView pgnDateAfter, pgnDateBefore;
     private SwitchMaterial switchFilterWhite,
             switchFilterBlack,
@@ -146,10 +147,10 @@ public class GamesListActivity extends ChessBoardActivity {
                     }
                 });
 
-        MaterialButton buttonOpen = findViewById(R.id.ButtonOpen);
+        buttonOpen = findViewById(R.id.ButtonOpen);
         buttonOpen.setOnClickListener(v -> openGame());
 
-        MaterialButton buttonAnalyze = findViewById(R.id.ButtonAnalyze);
+        buttonAnalyze = findViewById(R.id.ButtonAnalyze);
         buttonAnalyze.setOnClickListener(v -> analyzeGame());
 
         MaterialButton buttonEdit = findViewById(R.id.ButtonEdit);
@@ -447,7 +448,14 @@ public class GamesListActivity extends ChessBoardActivity {
 
         GameRecord record = GameStore.fromCursor(cursor);
         currentGameId = record.id;
-        gameApi.loadGame(record);
+        boolean loaded = gameApi.loadGame(record);
+        if (!loaded) {
+            // Never leave the previous game's board under this record's header.
+            gameApi.initFEN(EMPTY_BOARD_FEN, true);
+            doToast(getString(R.string.gameslist_load_failed));
+        }
+        buttonOpen.setEnabled(loaded);
+        buttonAnalyze.setEnabled(loaded);
 
         String rating = Float.toString(record.rating == null ? 0f : record.rating) + "★";
 
@@ -458,7 +466,9 @@ public class GamesListActivity extends ChessBoardActivity {
         textViewResult.setText(record.result.equals("1/2-1/2") ? "½-½" : record.result);
         textViewRating.setText(rating);
 
-        gameApi.pgnTags.put("Result", record.result);
+        if (loaded) {
+            gameApi.pgnTags.put("Result", record.result);
+        }
 
         textViewWhitePieces.setText(getPiecesDescription(BoardConstants.WHITE));
         textViewBlackPieces.setText(getPiecesDescription(BoardConstants.BLACK));

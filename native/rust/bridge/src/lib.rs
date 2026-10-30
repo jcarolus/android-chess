@@ -232,6 +232,7 @@ fn game_state_code(state: GameState) -> i32 {
         GameState::DrawFiftyMove => 5,
         GameState::DrawRepetition => 6,
         GameState::HillWin => 7,
+        GameState::DuckStalemateWin => 8,
     }
 }
 /// # Safety

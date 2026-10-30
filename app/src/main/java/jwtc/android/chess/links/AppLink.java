@@ -20,6 +20,11 @@ public final class AppLink {
         this.path = path.clone();
     }
 
+    /** Lichess usernames: 2 to 30 letters, digits, underscores or hyphens. */
+    public static boolean isLichessUsername(String name) {
+        return name != null && name.matches("[A-Za-z0-9_-]{2,30}");
+    }
+
     public static String position(String fen) {
         return build("position", "fen", fen, "");
     }
@@ -142,7 +147,7 @@ public final class AppLink {
                         throw new IllegalArgumentException("Invalid IPv4 address");
                     }
                 }
-            } else if ("online".equals(route) && !content.matches("[A-Za-z0-9_-]{2,30}")) {
+            } else if ("online".equals(route) && !isLichessUsername(content)) {
                 throw new IllegalArgumentException("Invalid Lichess user ID");
             }
             if (!values.isEmpty()) {

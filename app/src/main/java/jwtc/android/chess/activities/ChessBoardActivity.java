@@ -822,6 +822,16 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                                 ? ChessPieceLabelView.MATE_WINNER
                                 : ChessPieceLabelView.MATE_LOSER;
                 break;
+            case BoardConstants.DUCK_STALEMATE_WIN:
+                labelForWhiteKing =
+                        turn == BoardConstants.WHITE
+                                ? ChessPieceLabelView.MATE_WINNER
+                                : ChessPieceLabelView.MATE_LOSER;
+                labelForBlackKing =
+                        turn == BoardConstants.BLACK
+                                ? ChessPieceLabelView.MATE_WINNER
+                                : ChessPieceLabelView.MATE_LOSER;
+                break;
             case BoardConstants.BLACK_RESIGNED:
             case BoardConstants.BLACK_FORFEIT_TIME:
                 labelForWhiteKing = ChessPieceLabelView.MATE_WINNER;
@@ -1265,7 +1275,7 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
                                 getString(Piece.toResource(blackPiece)))
                         + getFieldColorDescription(pos)
                         + getAttackersAndDefendersDescription(pos);
-            } else if (duckPos != -1) {
+            } else if (pos == duckPos) {
                 return (getString(
                                 selectedPosition == pos
                                         ? R.string.square_selected_with_duck_description
@@ -1707,6 +1717,8 @@ public abstract class ChessBoardActivity extends BaseActivity implements GameLis
         switch (s) {
             case BoardConstants.HILL_WIN:
                 return R.string.state_hill_win;
+            case BoardConstants.DUCK_STALEMATE_WIN:
+                return R.string.state_duck_stalemate_win;
             case BoardConstants.MATE:
                 return R.string.state_mate;
             case BoardConstants.DRAW_MATERIAL:

@@ -66,17 +66,28 @@ public final class RustBoardResult {
 
     /**
      * {@link RustBoardResult#gameState}
-     * (Play/Check/Mate/Stalemate/DrawMaterial/DrawFiftyMove/DrawRepetition/HillWin), indexed by its
-     * ordinal, mapped to {@link BoardConstants}'s legacy numbering.
+     * (Play/Check/Mate/Stalemate/DrawMaterial/DrawFiftyMove/DrawRepetition/HillWin/
+     * DuckStalemateWin), indexed by its ordinal, mapped to {@link BoardConstants}'s legacy
+     * numbering.
      */
     private static final int[] LEGACY_STATE_FOR_RUST_CODE = {
-        BoardConstants.PLAY, BoardConstants.CHECK, BoardConstants.MATE, BoardConstants.STALEMATE,
-        BoardConstants.DRAW_MATERIAL, BoardConstants.DRAW_50, BoardConstants.DRAW_REPEAT,
-                BoardConstants.HILL_WIN,
+        BoardConstants.PLAY,
+        BoardConstants.CHECK,
+        BoardConstants.MATE,
+        BoardConstants.STALEMATE,
+        BoardConstants.DRAW_MATERIAL,
+        BoardConstants.DRAW_50,
+        BoardConstants.DRAW_REPEAT,
+        BoardConstants.HILL_WIN,
+        BoardConstants.DUCK_STALEMATE_WIN,
     };
 
     public static int boardState(int rustGameStateCode) {
         return LEGACY_STATE_FOR_RUST_CODE[rustGameStateCode];
+    }
+
+    public int boardState() {
+        return boardState(gameState);
     }
 
     /** Splits {@link #moves} (or {@link #attackers}) on its separating spaces. */

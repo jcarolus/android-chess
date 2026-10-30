@@ -207,6 +207,8 @@ public class LichessLobbyActivity extends LichessBaseActivity
         if (intent.hasExtra(LinkActivity.EXTRA_USER)) {
             if (linkedChallengeDialog != null) {
                 linkedChallengeDialog.dismiss();
+                // The dismiss listener runs later and only cleans up after its own link.
+                linkedChallengeDialog = null;
             }
             setIntent(intent);
             showLinkedChallenge();
@@ -218,18 +220,22 @@ public class LichessLobbyActivity extends LichessBaseActivity
         if (user == null || !isLobbyVisible() || linkedChallengeDialog != null) {
             return;
         }
-        linkedChallengeDialog =
+        final Intent linkIntent = getIntent();
+        final ChallengeDialog challengeDialog =
                 new ChallengeDialog(this, this, ChallengeDialog.REQUEST_CHALLENGE, getPrefs());
-        ((android.widget.EditText) linkedChallengeDialog.findViewById(R.id.EditTextMatchOpponent))
+        ((android.widget.EditText) challengeDialog.findViewById(R.id.EditTextMatchOpponent))
                 .setText(user);
-        linkedChallengeDialog.setOnDismissListener(
+        challengeDialog.setOnDismissListener(
                 dialog -> {
                     if (!isChangingConfigurations()) {
-                        getIntent().removeExtra(LinkActivity.EXTRA_USER);
+                        linkIntent.removeExtra(LinkActivity.EXTRA_USER);
                     }
-                    linkedChallengeDialog = null;
+                    if (linkedChallengeDialog == challengeDialog) {
+                        linkedChallengeDialog = null;
+                    }
                 });
-        linkedChallengeDialog.show();
+        linkedChallengeDialog = challengeDialog;
+        challengeDialog.show();
     }
 
     private boolean isLobbyVisible() {

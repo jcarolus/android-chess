@@ -692,8 +692,11 @@ public class HotspotBoardActivity extends ChessBoardActivity {
         super.onNewIntent(intent);
         if (connectionDialog != null) {
             connectionDialog.dismiss();
+            // The dismiss listener runs later and only cleans up after its own link.
+            connectionDialog = null;
         }
         setIntent(intent);
+        showLinkedConnection();
     }
 
     private void showLinkedConnection() {
@@ -811,12 +814,15 @@ public class HotspotBoardActivity extends ChessBoardActivity {
                                 null)
                         .show();
         connectionDialog = dialog;
+        final Intent linkIntent = getIntent();
         dialog.setOnDismissListener(
                 d -> {
                     if (!isChangingConfigurations()) {
-                        getIntent().removeExtra(LinkActivity.EXTRA_HOST);
+                        linkIntent.removeExtra(LinkActivity.EXTRA_HOST);
                     }
-                    connectionDialog = null;
+                    if (connectionDialog == dialog) {
+                        connectionDialog = null;
+                    }
                 });
         dialogHolder[0] = dialog;
         syncDialogControls.run();

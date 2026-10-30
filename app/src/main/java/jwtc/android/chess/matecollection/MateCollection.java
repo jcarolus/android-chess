@@ -12,6 +12,7 @@ import jwtc.android.chess.engine.SearchLimit;
 import jwtc.android.chess.puzzle.MyPuzzleProvider;
 import jwtc.android.chess.services.GameApi;
 import jwtc.android.chess.services.GameListener;
+import jwtc.chess.GameTree.Node;
 import jwtc.chess.PGNEntry;
 
 /**
@@ -200,7 +201,12 @@ public final class MateCollection {
      */
     public void showSolution() {
         handler.removeCallbacks(requestReply);
-        gameApi.jumpToBoardNum(numMoved);
+        // Rewind along the line actually played: a wrong move stays on the board's main line.
+        Node node = gameApi.getCurrentNode();
+        while (node != null && node.getPly() > numMoved) {
+            node = node.getParent();
+        }
+        gameApi.goTo(node);
         if (!gameApi.isEnded()) {
             requestReply();
         }
@@ -229,6 +235,10 @@ public final class MateCollection {
 
     private void startPosition() {
         handler.removeCallbacks(requestReply);
+        // A reply still being searched belongs to the previous attempt.
+        if (engineSession != null) {
+            engineSession.abort(null);
+        }
 
         String pgn = pgnAt(position);
         if (pgn == null) {

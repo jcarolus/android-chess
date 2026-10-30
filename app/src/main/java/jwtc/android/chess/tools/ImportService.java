@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import androidx.annotation.Nullable;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
@@ -36,10 +40,21 @@ public class ImportService extends Service {
     private ImportApi importApi;
     private final IBinder mBinder = new ImportService.LocalBinder();
 
+    // The latest job's state, replayed to a listener that attaches later (e.g. after rotation).
+    private int jobMode = -1;
+    private boolean jobRunning;
+    private int jobSucceeded, jobFailed;
+    private Boolean jobOutcome;
+
     private final ImportListener dispatcher =
             new ImportListener() {
                 @Override
                 public void OnImportStarted(int mode) {
+                    jobMode = mode;
+                    jobRunning = true;
+                    jobSucceeded = 0;
+                    jobFailed = 0;
+                    jobOutcome = null;
                     for (ImportListener listener : listeners) {
                         listener.OnImportStarted(mode);
                     }
@@ -47,6 +62,8 @@ public class ImportService extends Service {
 
                 @Override
                 public void OnImportProgress(int mode, int succeeded, int failed) {
+                    jobSucceeded = succeeded;
+                    jobFailed = failed;
                     for (ImportListener listener : listeners) {
                         listener.OnImportProgress(mode, succeeded, failed);
                     }
@@ -54,6 +71,8 @@ public class ImportService extends Service {
 
                 @Override
                 public void OnImportFinished(int mode) {
+                    jobRunning = false;
+                    jobOutcome = true;
                     for (ImportListener listener : listeners) {
                         listener.OnImportFinished(mode);
                     }
@@ -61,6 +80,8 @@ public class ImportService extends Service {
 
                 @Override
                 public void OnImportFatalError(int mode) {
+                    jobRunning = false;
+                    jobOutcome = false;
                     for (ImportListener listener : listeners) {
                         listener.OnImportFatalError(mode);
                     }
@@ -69,8 +90,19 @@ public class ImportService extends Service {
 
     private final ImportPipeline pipeline = new ImportPipeline(dispatcher);
 
+    /** Adds the listener and brings it up to date with the latest job. */
     public void addListener(ImportListener listener) {
         this.listeners.add(listener);
+        if (jobRunning) {
+            listener.OnImportStarted(jobMode);
+            listener.OnImportProgress(jobMode, jobSucceeded, jobFailed);
+        } else if (jobOutcome != null) {
+            if (jobOutcome) {
+                listener.OnImportFinished(jobMode);
+            } else {
+                listener.OnImportFatalError(jobMode);
+            }
+        }
     }
 
     public void removeListener(ImportListener listener) {
@@ -97,6 +129,8 @@ public class ImportService extends Service {
         }
 
         importApi = new ImportApi();
+        jobMode = mode;
+        jobOutcome = null;
 
         switch (mode) {
             case IMPORT_PUZZLES:
@@ -117,13 +151,12 @@ public class ImportService extends Service {
                 Log.d(TAG, "IMPORT_GAMES");
                 if (uri != null) {
                     try {
-                        InputStream in = getContentResolver().openInputStream(uri);
+                        InputStream in =
+                                new BufferedInputStream(getContentResolver().openInputStream(uri));
                         pipeline.start(
                                 new ImportJob(
                                         mode,
-                                        uri.getPath().lastIndexOf(".zip") > 0
-                                                ? PgnSource.zip(in)
-                                                : PgnSource.file(in),
+                                        isZip(in) ? PgnSource.zip(in) : PgnSource.file(in),
                                         new GameImportHandler(importApi, getContentResolver())));
                     } catch (Exception ex) {
                         Log.e(TAG, ex.toString());
@@ -174,19 +207,32 @@ public class ImportService extends Service {
                 break;
             case EXPORT_GAME_DATABASE:
                 Log.d(TAG, "EXPORT_GAME_DATABASE");
-                try {
-                    if (uri != null) {
-                        OutputStream fos = getContentResolver().openOutputStream(uri);
-                        String PGN = collectGameDatabaseAsPGN();
-                        fos.write(PGN.getBytes());
-                        fos.flush();
-                        fos.close();
-
-                        dispatcher.OnImportFinished(mode);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                    dispatcher.OnImportFatalError(mode);
+                if (uri != null) {
+                    dispatcher.OnImportStarted(mode);
+                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                    new Thread(
+                                    () -> {
+                                        boolean exported;
+                                        try (OutputStream out =
+                                                getContentResolver().openOutputStream(uri)) {
+                                            out.write(collectGameDatabaseAsPGN().getBytes());
+                                            exported = true;
+                                        } catch (Exception e) {
+                                            Log.e(TAG, e.toString());
+                                            exported = false;
+                                        }
+                                        final boolean done = exported;
+                                        mainHandler.post(
+                                                () -> {
+                                                    if (done) {
+                                                        dispatcher.OnImportFinished(mode);
+                                                    } else {
+                                                        dispatcher.OnImportFatalError(mode);
+                                                    }
+                                                });
+                                    },
+                                    "ExportGameDatabase")
+                            .start();
                 }
                 break;
             case PICK_BINARY:
@@ -218,6 +264,29 @@ public class ImportService extends Service {
 
                 break;
         }
+    }
+
+    /**
+     * Whether the stream starts with a zip local file header ("PK\3\4"). Picker URIs rarely carry
+     * the file name, so the content decides; the stream is reset to its start.
+     */
+    private static boolean isZip(InputStream in) throws IOException {
+        byte[] header = new byte[4];
+        in.mark(header.length);
+        int read = 0;
+        while (read < header.length) {
+            int n = in.read(header, read, header.length - read);
+            if (n < 0) {
+                break;
+            }
+            read += n;
+        }
+        in.reset();
+        return read == header.length
+                && header[0] == 'P'
+                && header[1] == 'K'
+                && header[2] == 3
+                && header[3] == 4;
     }
 
     /** The file the user picked, or the bundled asset when none was picked. */

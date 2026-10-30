@@ -59,6 +59,8 @@ pub enum GameState {
     DrawFiftyMove,
     DrawRepetition,
     HillWin,
+    /// Duck chess: the side to move has no moves, which wins for that side.
+    DuckStalemateWin,
 }
 pub(crate) const VALUES: [i32; 6] = [100, 320, 340, 500, 900, 50000];
 pub(crate) const PAWN: usize = 0;
@@ -412,9 +414,10 @@ impl Position {
         let full: u32 = fields[5]
             .parse()
             .map_err(|_| invalid("Invalid fullmove number"))?;
-        if full == 0 || p.halfmove > 1_000_000 {
+        if full == 0 || full > 1_000_000 || p.halfmove > 1_000_000 {
             return Err(invalid("Invalid move counters"));
         }
+        p.ply = 2 * (full as usize - 1) + usize::from(p.turn == 0);
         if variant != Variant::Duck && p.attacked(p.turn ^ 1, p.king(p.turn ^ 1)) {
             return Err(invalid("Side not to move is in check"));
         }
@@ -632,7 +635,7 @@ impl Position {
             let mut turns = Vec::new();
             for m in self.legal_internal() {
                 let next = self.make(m);
-                if next.game_state() != GameState::Play {
+                if next.ends_before_duck() {
                     turns.push(self.external(self.turn, m));
                 } else {
                     for duck in 0..64 {
@@ -703,12 +706,12 @@ impl Position {
             match duck {
                 Some(d) => {
                     let d = square(d)?;
-                    if next.game_state() != GameState::Play || next.occupied() & bit(d) != 0 {
+                    if next.ends_before_duck() || next.occupied() & bit(d) != 0 {
                         return Err(invalid("Illegal duck placement"));
                     }
                     next.duck = Some(d);
                 }
-                None if next.game_state() == GameState::Play => {
+                None if !next.ends_before_duck() => {
                     if omit_pending {
                         return Ok(false);
                     }
@@ -875,10 +878,25 @@ impl Position {
     /// Fifty-move or threefold-repetition draw, given the positions seen since
     /// the last irreversible move.
     pub(crate) fn drawn_in_search(&self, seen: &[Repetition]) -> bool {
-        self.halfmove == 100 || {
+        self.fifty_move_draw() || {
             let current = self.repetition();
             seen.iter().filter(|p| **p == current).count() >= 2
         }
+    }
+    /// A checkmate delivered on the hundredth half-move still stands.
+    fn fifty_move_draw(&self) -> bool {
+        self.halfmove >= 100
+            && !(self.variant != Variant::Duck
+                && self.in_check()
+                && self.legal_internal().is_empty())
+    }
+    /// After a Duck piece move but before the duck is placed: only a captured king ends
+    /// the game, as the placement still decides whether the opponent has moves.
+    fn ends_before_duck(&self) -> bool {
+        !matches!(
+            self.game_state(),
+            GameState::Play | GameState::DuckStalemateWin
+        )
     }
     pub(crate) fn hill_won(&self) -> bool {
         self.variant == Variant::KingOfTheHill
@@ -888,7 +906,7 @@ impl Position {
         if self.variant == Variant::Duck && self.pieces.iter().any(|p| p[KING] == 0) {
             return GameState::Mate;
         }
-        if self.halfmove == 100 {
+        if self.fifty_move_draw() {
             return GameState::DrawFiftyMove;
         }
         let current = self.repetition();
@@ -911,7 +929,11 @@ impl Position {
             return GameState::DrawMaterial;
         }
         if self.variant == Variant::Duck {
-            return GameState::Play;
+            return if self.pseudo_moves().is_empty() {
+                GameState::DuckStalemateWin
+            } else {
+                GameState::Play
+            };
         }
         let check = self.in_check();
         if self.legal_internal().is_empty() {

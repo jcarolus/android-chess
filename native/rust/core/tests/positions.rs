@@ -252,3 +252,26 @@ fn chess960_castle_ignores_attacks_on_squares_the_king_never_crosses() {
     let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
     assert!(legal.contains(&"f1a1".to_string()), "{legal:?}");
 }
+
+#[test]
+fn fen_keeps_its_fullmove_number() {
+    let fen = "4k3/8/8/8/8/8/4P3/4K3 b - - 0 30";
+    let mut p = Position::from_fen(Variant::Standard, fen).unwrap();
+    assert_eq!(p.fen(), fen);
+    p.apply("e8d8").unwrap();
+    assert!(p.fen().ends_with(" w - - 1 31"), "{}", p.fen());
+}
+
+#[test]
+fn checkmate_on_the_hundredth_half_move_is_not_a_fifty_move_draw() {
+    let mut p =
+        Position::from_fen(Variant::Standard, "6k1/5ppp/8/8/8/8/8/R5K1 w - - 99 80").unwrap();
+    p.apply("a1a8").unwrap();
+    assert_eq!(p.game_state(), chess_core::GameState::Mate);
+}
+
+#[test]
+fn fifty_move_rule_applies_past_the_hundredth_half_move() {
+    let p = Position::from_fen(Variant::Standard, "4k3/8/8/8/8/8/8/R3K3 w - - 120 90").unwrap();
+    assert_eq!(p.game_state(), chess_core::GameState::DrawFiftyMove);
+}

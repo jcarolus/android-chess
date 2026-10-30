@@ -109,14 +109,6 @@ public final class RustBoard {
         return 0;
     }
 
-    /**
-     * Rust numbers the fullmove from the start of the history it replayed. Replaying from a later
-     * base would restart that count, so the FEN is renumbered from the game's own ply.
-     */
-    private static String numbered(String fen, int ply) {
-        return fen.substring(0, fen.lastIndexOf(' ') + 1) + (ply / 2 + 1);
-    }
-
     private String replayFen() {
         return frames.get(replayBase()).fen;
     }
@@ -392,8 +384,12 @@ public final class RustBoard {
             RustBoardResult result =
                     RustBoardNative.applyMove(
                             variant, replayFen(), replayHistory(), move.coordinate);
-            boolean pending = variant == RustSearchRequest.Variant.DUCK && result.gameState == 0;
-            String fen = numbered(result.fen, frames.size());
+            // The duck placement still decides whether the opponent is left without moves.
+            boolean pending =
+                    variant == RustSearchRequest.Variant.DUCK
+                            && (result.boardState() == BoardConstants.PLAY
+                                    || result.boardState() == BoardConstants.DUCK_STALEMATE_WIN);
+            String fen = result.fen;
             frames.add(
                     new Frame(
                             fen,
@@ -431,7 +427,7 @@ public final class RustBoard {
         frames.set(
                 frames.size() - 1,
                 new Frame(
-                        numbered(result.fen, frames.size() - 1),
+                        result.fen,
                         coordinate,
                         pending.san,
                         pending.move,

@@ -165,7 +165,8 @@ public class Auth {
         if (challengeStream != null) {
             challengeStream.close();
         }
-        challengeStream =
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
                 openStream(
                         "/api/challenge/" + username,
                         payload,
@@ -182,18 +183,26 @@ public class Auth {
                             public void onClose(boolean success) {
                                 mainHandler.post(
                                         () -> {
-                                            responseHandler.onClose(success);
+                                            if (challengeStream != null
+                                                    && challengeStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
                                             challengeStream = null;
+                                            responseHandler.onClose(success);
                                         });
                             }
                         });
+        challengeStream = self[0];
     }
 
     public void seek(Map<String, Object> payload, AuthResponseHandler responseHandler) {
         if (seekStream != null) {
             seekStream.close();
         }
-        seekStream =
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
                 openStream(
                         "/api/board/seek",
                         payload,
@@ -210,11 +219,17 @@ public class Auth {
                             public void onClose(boolean success) {
                                 mainHandler.post(
                                         () -> {
-                                            responseHandler.onClose(success);
+                                            if (seekStream != null && seekStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
                                             seekStream = null;
+                                            responseHandler.onClose(success);
                                         });
                             }
                         });
+        seekStream = self[0];
     }
 
     public void cancelChallenge() {
@@ -245,7 +260,8 @@ public class Auth {
         if (eventStream != null) {
             eventStream.close();
         }
-        eventStream =
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
                 openStream(
                         "/api/stream/event",
                         null,
@@ -262,11 +278,17 @@ public class Auth {
                             public void onClose(boolean success) {
                                 mainHandler.post(
                                         () -> {
-                                            responseHandler.onClose(success);
+                                            if (eventStream != null && eventStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
                                             eventStream = null;
+                                            responseHandler.onClose(success);
                                         });
                             }
                         });
+        eventStream = self[0];
     }
 
     // --- Teams & Swiss tournaments ---
@@ -312,7 +334,8 @@ public class Auth {
         if (swissListStream != null) {
             swissListStream.close();
         }
-        swissListStream =
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
                 openStream(
                         "/api/team/" + teamId + "/swiss?status=" + status,
                         null,
@@ -329,6 +352,12 @@ public class Auth {
                             public void onClose(boolean success) {
                                 mainHandler.post(
                                         () -> {
+                                            if (swissListStream != null
+                                                    && swissListStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
                                             // Clear the reference to this (now finished) stream
                                             // first, so that if
                                             // responseHandler.onClose() chains a new stream into
@@ -340,6 +369,7 @@ public class Auth {
                                         });
                             }
                         });
+        swissListStream = self[0];
     }
 
     public void swissInfo(String id, OAuth2AuthCodePKCE.Callback<JsonObject, JsonObject> callback) {
@@ -350,7 +380,8 @@ public class Auth {
         if (swissResultsStream != null) {
             swissResultsStream.close();
         }
-        swissResultsStream =
+        final NdJsonStream.Stream[] self = new NdJsonStream.Stream[1];
+        self[0] =
                 openStream(
                         "/api/swiss/" + id + "/results?nb=50",
                         null,
@@ -367,11 +398,18 @@ public class Auth {
                             public void onClose(boolean success) {
                                 mainHandler.post(
                                         () -> {
-                                            responseHandler.onClose(success);
+                                            if (swissResultsStream != null
+                                                    && swissResultsStream != self[0]) {
+                                                // Replaced by a newer stream; this close is
+                                                // intentional.
+                                                return;
+                                            }
                                             swissResultsStream = null;
+                                            responseHandler.onClose(success);
                                         });
                             }
                         });
+        swissResultsStream = self[0];
     }
 
     public void joinSwiss(

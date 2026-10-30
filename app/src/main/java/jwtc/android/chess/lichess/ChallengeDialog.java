@@ -16,6 +16,7 @@ import jwtc.android.chess.R;
 import jwtc.android.chess.helpers.ResultDialog;
 import jwtc.android.chess.helpers.ResultDialogListener;
 import jwtc.android.chess.helpers.Utils;
+import jwtc.android.chess.links.AppLink;
 
 public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
 
@@ -128,6 +129,14 @@ public class ChallengeDialog extends ResultDialog<Map<String, Object>> {
                                             .getString(
                                                     R.string
                                                             .lichess_create_challenge_player_required));
+                            return;
+                        }
+                        if (!AppLink.isLichessUsername(username)) {
+                            editTextPlayer.setError(
+                                    getContext()
+                                            .getString(
+                                                    R.string
+                                                            .lichess_create_challenge_player_invalid));
                             return;
                         }
                         editTextPlayer.setError(null);

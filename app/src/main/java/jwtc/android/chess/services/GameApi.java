@@ -1354,6 +1354,8 @@ public class GameApi {
             case BoardConstants.HILL_WIN:
             case BoardConstants.MATE:
                 return end.getTurn() == BoardConstants.WHITE ? "0-1" : "1-0";
+            case BoardConstants.DUCK_STALEMATE_WIN:
+                return end.getTurn() == BoardConstants.WHITE ? "1-0" : "0-1";
             case BoardConstants.BLACK_RESIGNED:
             case BoardConstants.BLACK_FORFEIT_TIME:
                 return "1-0";

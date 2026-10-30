@@ -4,6 +4,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import jwtc.android.chess.services.GameApi;
 import jwtc.chess.Pos;
+import jwtc.chess.board.BoardConstants;
 
 /** Built-in search backend. Every search owns its replayed Rust position. */
 public final class RustLocalEngine extends EngineApi {
@@ -214,13 +215,21 @@ public final class RustLocalEngine extends EngineApi {
             }
             String bestMove = resolvePrincipalVariation(result.bestMove, variant, fen);
             if (purpose == SearchPurpose.ANALYSIS) {
+                int score = sideToMoveScore(fen, result.score);
                 EngineEvaluation evaluation =
-                        !result.hasEvaluation || Math.abs(result.score) >= 100000
+                        !result.hasEvaluation
                                 ? null
-                                : new EngineEvaluation(
-                                        false,
-                                        sideToMoveScore(fen, result.score),
-                                        result.completedDepth);
+                                : isMateScore(score)
+                                        ? new EngineEvaluation(
+                                                true,
+                                                mateIn(
+                                                        score,
+                                                        resolvePrincipalVariation(
+                                                                result.principalVariation,
+                                                                variant,
+                                                                fen)),
+                                                result.completedDepth)
+                                        : new EngineEvaluation(false, score, result.completedDepth);
                 for (EngineListener listener : new ArrayList<>(listeners)) {
                     if (!isCurrentSearch(id) || destroyed) {
                         break;
@@ -299,12 +308,13 @@ public final class RustLocalEngine extends EngineApi {
                         + result.elapsedMicros / 1000
                         + " ms)";
         int score = sideToMoveScore(fen, result.score);
-        if (purpose == SearchPurpose.ANALYSIS && result.hasEvaluation && Math.abs(score) < 100000) {
+        if (purpose == SearchPurpose.ANALYSIS && result.hasEvaluation) {
             message =
                     "info depth "
                             + result.completedDepth
-                            + " score cp "
-                            + score
+                            + (isMateScore(score)
+                                    ? " score mate " + mateIn(score, pv)
+                                    : " score cp " + score)
                             + " pv "
                             + pv
                             + "\n"
@@ -353,6 +363,20 @@ public final class RustLocalEngine extends EngineApi {
     // Listeners consume side-to-move scores; Analysis converts to White at the view boundary.
     private static int sideToMoveScore(String fen, int whiteScore) {
         return fen.trim().split("\\s+")[1].equals("w") ? whiteScore : -whiteScore;
+    }
+
+    private static boolean isMateScore(int score) {
+        return Math.abs(score) >= BoardConstants.VALUATION_MATE;
+    }
+
+    /**
+     * UCI-style "mate N" for a side-to-move mate score. Rust scores carry no distance, so it is
+     * taken from the principal line: N full moves until the mating move.
+     */
+    private static int mateIn(int score, String principalVariation) {
+        String line = principalVariation.trim();
+        int plies = line.isEmpty() ? 1 : line.split("\\s+").length;
+        return (score > 0 ? 1 : -1) * ((plies + 1) / 2);
     }
 
     private void reportError(long id, Throwable error) {
