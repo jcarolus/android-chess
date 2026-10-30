@@ -99,4 +99,15 @@ public class LocalClockStateTest {
         assertEquals(60000, clock.remaining(WHITE, 5000));
         assertEquals(25000, clock.remaining(BLACK, 5000));
     }
+
+    @Test
+    public void handingOverChargesElapsedTimeWithoutIncrement() {
+        LocalClockState clock = new LocalClockState();
+        clock.start(2000, 60000, 60000, BLACK, 1000, true);
+
+        clock.setActivePlayer(WHITE, 3000);
+        assertEquals(WHITE, clock.activePlayer());
+        assertEquals(58000, clock.remaining(BLACK, 5000));
+        assertEquals(58000, clock.remaining(WHITE, 5000));
+    }
 }

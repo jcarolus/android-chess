@@ -111,6 +111,7 @@ public final class RustLocalEngine extends EngineApi {
                 throw new IllegalStateException("Rust search allocation failed");
             }
             final long ownedHandle = handle;
+            final boolean playing = purpose == SearchPurpose.PLAY;
             worker =
                     new Thread(
                             () -> {
@@ -130,6 +131,23 @@ public final class RustLocalEngine extends EngineApi {
                                                                                     fen,
                                                                                     request.variant,
                                                                                     progress)));
+                                    if (playing
+                                            && result != null
+                                            && result.interrupted
+                                            && result.bestMove.isEmpty()) {
+                                        // A stop before the first depth completed still owes
+                                        // the game a move; a depth-1 search is near-instant.
+                                        result =
+                                                RustNative.search(
+                                                        new RustSearchRequest(
+                                                                request.searchId,
+                                                                request.variant,
+                                                                request.startingPosition,
+                                                                request.getHistory(),
+                                                                1,
+                                                                0,
+                                                                request.quiescence));
+                                    }
                                 } catch (RuntimeException | LinkageError error) {
                                     failure = error;
                                 } finally {

@@ -41,6 +41,16 @@ final class LocalClockState {
                 activePlayer == BoardConstants.WHITE ? BoardConstants.BLACK : BoardConstants.WHITE;
     }
 
+    /** Hands the clock to {@code player} without completing a turn or awarding increment. */
+    void setActivePlayer(int player, long now) {
+        if (player == activePlayer) {
+            return;
+        }
+        remaining[activePlayer] = remaining(activePlayer, now);
+        measuredAt = now;
+        activePlayer = player;
+    }
+
     void stop(long now) {
         remaining[activePlayer] = remaining(activePlayer, now);
         measuredAt = now;

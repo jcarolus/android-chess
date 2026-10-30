@@ -16,8 +16,9 @@ public final class BoardPosition {
 
     public BoardPosition(String fen) {
         String[] fields = fen.trim().split("\\s+");
-        if (fields.length != 6) {
-            throw new IllegalArgumentException("Expected six FEN fields");
+        // The move counters are optional, as in EPD and many shared FENs.
+        if (fields.length < 4 || fields.length > 6) {
+            throw new IllegalArgumentException("Expected four to six FEN fields");
         }
         String[] ranks = fields[0].split("/");
         if (ranks.length != 8) {
@@ -43,16 +44,52 @@ public final class BoardPosition {
             throw new IllegalArgumentException("Invalid turn");
         }
         white = fields[1].equals("w");
-        castling = fields[2];
-        if (!castling.equals("-") && !castling.matches("K?Q?k?q?")) {
-            throw new IllegalArgumentException("Invalid castling rights");
-        }
+        castling = fields[2].equals("-") ? "" : normalizeCastling(fields[2]);
         ep = fields[3].equals("-") ? -1 : square(fields[3]);
-        halfmove = Integer.parseInt(fields[4]);
-        fullmove = Integer.parseInt(fields[5]);
+        halfmove = fields.length > 4 ? Integer.parseInt(fields[4]) : 0;
+        fullmove = fields.length > 5 ? Integer.parseInt(fields[5]) : 1;
         if (halfmove < 0 || fullmove < 1) {
             throw new IllegalArgumentException("Invalid move counters");
         }
+    }
+
+    /**
+     * Castling rights in {@code KQkq} order. Shredder/X-FEN rook files ({@code HAha}) count as
+     * kingside when the file lies beyond that side's king, else queenside.
+     */
+    private String normalizeCastling(String rights) {
+        boolean[] present = new boolean[4];
+        for (char c : rights.toCharArray()) {
+            boolean white = Character.isUpperCase(c);
+            char lower = Character.toLowerCase(c);
+            boolean kingside;
+            if (lower == 'k' || lower == 'q') {
+                kingside = lower == 'k';
+            } else if (lower >= 'a' && lower <= 'h') {
+                kingside = lower - 'a' > kingFile(white);
+            } else {
+                throw new IllegalArgumentException("Invalid castling rights");
+            }
+            present[(white ? 0 : 2) + (kingside ? 0 : 1)] = true;
+        }
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            if (present[i]) {
+                out.append("KQkq".charAt(i));
+            }
+        }
+        return out.toString();
+    }
+
+    private int kingFile(boolean white) {
+        int base = white ? 56 : 0;
+        char king = white ? 'K' : 'k';
+        for (int col = 0; col < 8; col++) {
+            if (squares[base + col] == king) {
+                return col;
+            }
+        }
+        return 4;
     }
 
     public static int square(String s) {

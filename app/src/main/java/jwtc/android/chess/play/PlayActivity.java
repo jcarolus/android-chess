@@ -927,7 +927,7 @@ public class PlayActivity extends ChessBoardActivity
             textViewBlackClockTime.setText(blackTime);
         }
 
-        if (localClock.isClockConfigured()) {
+        if (localClock.isClockConfigured() && !gameApi.isEnded()) {
             long white = localClock.getWhiteRemaining();
             long black = localClock.getBlackRemaining();
             if (white <= 0 || black <= 0) {
@@ -968,7 +968,7 @@ public class PlayActivity extends ChessBoardActivity
             blackRemaining = initialMillis;
         }
         long startTime = prefs.getLong("clockStartTime", 0);
-        if (startTime > 0 && newGame) {
+        if (newGame) {
             startTime = System.currentTimeMillis();
         }
         localClock.startClock(increment, whiteRemaining, blackRemaining, activePlayer, startTime);

@@ -24,6 +24,7 @@ import jwtc.chess.PgnDocument;
 import jwtc.chess.PgnSyntaxError;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
+import jwtc.chess.board.BoardPosition;
 
 /*
 Owns game history and coordinates Rust-backed board operations
@@ -694,6 +695,11 @@ public class GameApi {
     }
 
     public boolean initFEN(String sFEN, boolean resetHead) {
+        try {
+            sFEN = new BoardPosition(sFEN).fen();
+        } catch (IllegalArgumentException invalid) {
+            return false;
+        }
         Node oldNode = currentNode;
         PGNEntry oldPending = pendingDuckMove;
         if (board.initFEN(sFEN)) {
@@ -900,6 +906,10 @@ public class GameApi {
             pgnTags.clear();
             pgnTags.putAll(document.tags);
             String fen = pgnTags.get("FEN");
+            if (fen != null) {
+                fen = new BoardPosition(fen).fen();
+                pgnTags.put("FEN", fen);
+            }
             String variantTag = pgnTags.get("Variant");
             if (fen == null) {
                 board.newGame(
@@ -1144,7 +1154,8 @@ public class GameApi {
         int candidate = -1, matches = 0;
         for (RustBoard.LegalMove move : board.legalMoves()) {
             String pieceMove = move.coordinate;
-            if (pieceMove.length() < 4) {
+            // Castling has its own SAN, so a king move never resolves to it.
+            if (pieceMove.length() < 4 || move.san.startsWith("O-O")) {
                 continue;
             }
             int from, to;
@@ -1182,13 +1193,10 @@ public class GameApi {
         return matches == 1 ? candidate : -1;
     }
 
-    /**
-     * The moving piece's letter in a legal move's SAN: pawn moves have none and castling is the
-     * king's.
-     */
+    /** The moving piece's letter in a legal move's SAN: pawn moves have none. */
     private static char sanPiece(String san) {
         char first = san.charAt(0);
-        return first == 'O' ? 'K' : Character.isUpperCase(first) ? first : 'P';
+        return Character.isUpperCase(first) ? first : 'P';
     }
 
     private synchronized boolean requestMove(Matcher match, String castle, String annotation) {

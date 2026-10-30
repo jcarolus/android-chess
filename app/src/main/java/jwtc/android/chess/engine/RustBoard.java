@@ -347,13 +347,22 @@ public final class RustBoard {
     }
 
     public synchronized LegalMove resolveMove(int from, int to, int promotionPiece) {
+        // In Chess 960 a plain king move can share its squares with a castle; the plain move
+        // wins, castling is requested by moving the king onto its rook.
+        LegalMove castle = null;
         for (LegalMove move : legalMoves()) {
             if (Move.getFrom(move.packed) == from
                     && Move.getTo(move.packed) == to
                     && (!Move.isPromotionMove(move.packed)
                             || Move.getPromotionPiece(move.packed) == promotionPiece)) {
-                return move;
+                if (!Move.isOO(move.packed) && !Move.isOOO(move.packed)) {
+                    return move;
+                }
+                castle = move;
             }
+        }
+        if (castle != null) {
+            return castle;
         }
         // A king dragged onto its rook (or farther along its rank) requests castling.
         if (from != to

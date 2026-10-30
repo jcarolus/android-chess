@@ -221,3 +221,34 @@ fn chess960_queenside_castle_only_requires_the_kings_own_transit_to_be_safe() {
     let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
     assert!(legal.contains(&"e1a1".to_string()), "{legal:?}");
 }
+
+#[test]
+fn rook_leaving_a_non_back_rank_square_keeps_castling_rights() {
+    let mut p = Position::from_fen(Variant::Standard, "4k3/8/8/8/R7/8/8/R3K3 w Q - 0 1").unwrap();
+    p.apply("a4a5").unwrap();
+    assert!(p.fen().contains(" Q "), "{}", p.fen());
+}
+
+#[test]
+fn chess960_castle_may_not_jump_over_a_piece_beyond_the_rook() {
+    // The king travels b1 → g1 past the bishop on e1.
+    let p = Position::from_fen(Variant::Chess960, "4k3/8/8/8/8/8/8/1KR1B3 w K - 0 1").unwrap();
+    let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
+    assert!(!legal.contains(&"b1c1".to_string()), "{legal:?}");
+}
+
+#[test]
+fn chess960_castle_may_not_pass_through_an_attacked_rook_square() {
+    // The king passes over f1, which the bishop on b5 attacks.
+    let p = Position::from_fen(Variant::Chess960, "4k3/8/8/1b6/8/8/8/4KR2 w K - 0 1").unwrap();
+    let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
+    assert!(!legal.contains(&"e1f1".to_string()), "{legal:?}");
+}
+
+#[test]
+fn chess960_castle_ignores_attacks_on_squares_the_king_never_crosses() {
+    // b1 is attacked, but the king only travels f1 → c1.
+    let p = Position::from_fen(Variant::Chess960, "1r2k3/8/8/8/8/8/8/R4K2 w Q - 0 1").unwrap();
+    let legal: Vec<_> = p.legal_moves().iter().map(|m| m.to_string()).collect();
+    assert!(legal.contains(&"f1a1".to_string()), "{legal:?}");
+}

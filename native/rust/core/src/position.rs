@@ -569,9 +569,7 @@ impl Position {
                 if piece == KING && !self.attacked(t, self.king(t)) {
                     let base = if t == 1 { 56 } else { 0 };
                     let king = self.king(t);
-                    for (mask, dir, bound, short) in
-                        [(6u8, 1i32, base + 7, true), (5u8, -1i32, base, false)]
-                    {
+                    for (mask, short) in [(6u8, true), (5u8, false)] {
                         if self.castling[t] & mask != 0 {
                             continue;
                         }
@@ -581,62 +579,19 @@ impl Position {
                         } else {
                             (base + 2, base + 3)
                         };
-                        if king == base + 4 && target_file == if short { 7 } else { 0 } {
-                            // The classical king/rook squares: only the king's own transit
-                            // squares need be unattacked; squares further toward the rook
-                            // only need to be vacant.
-                            let transit: &[usize] = if short {
-                                &[base + 5, base + 6]
-                            } else {
-                                &[base + 2, base + 3]
-                            };
-                            let clear: &[usize] = if short {
-                                &[base + 5, base + 6]
-                            } else {
-                                &[base + 1, base + 2, base + 3]
-                            };
-                            if self.pieces[t][ROOK] & bit(base + target_file) != 0
-                                && clear.iter().all(|s| occ & bit(*s) == 0)
-                                && transit.iter().all(|s| !self.attacked(t, *s))
-                            {
-                                let mut m = Move::new(king, to);
-                                m.castle = true;
-                                moves.push(m);
-                            }
+                        let rook = base + target_file;
+                        if king / 8 != base / 8 || self.pieces[t][ROOK] & bit(rook) == 0 {
                             continue;
                         }
-                        let mut s = king as i32;
-                        let mut rook = None;
-                        loop {
-                            let next = s + dir;
-                            if dir > 0 {
-                                if next as usize > bound {
-                                    break;
-                                }
-                            } else if next < bound as i32 {
-                                break;
-                            }
-                            s = next;
-                            let sq = s as usize;
-                            if occ & bit(sq) != 0 {
-                                if self.pieces[t][ROOK] & bit(sq) != 0 && sq % 8 == target_file {
-                                    rook = Some(sq);
-                                }
-                                break;
-                            }
-                            if self.attacked(t, sq) {
-                                break;
-                            }
-                        }
-                        let Some(rook) = rook else { continue };
-                        let free = |sq: usize| occ & bit(sq) == 0;
-                        let legal = (free(rook_to) && free(to))
-                            || (rook == rook_to && free(to))
-                            || (rook == to && king == rook_to)
-                            || (rook == to && free(rook_to))
-                            || (king == to && free(rook_to))
-                            || (king == rook_to && free(to));
-                        if legal {
+                        // Every square either piece passes over or lands on must be
+                        // vacant apart from the castling king and rook themselves, and
+                        // the king may not pass over or land on an attacked square.
+                        let span = |a: usize, b: usize| a.min(b)..=a.max(b);
+                        let others = occ & !bit(king) & !bit(rook);
+                        let vacant = span(king, to)
+                            .chain(span(rook, rook_to))
+                            .all(|s| others & bit(s) == 0);
+                        if vacant && span(king, to).all(|s| !self.attacked(t, s)) {
                             let mut m = Move::new(king, to);
                             m.castle = true;
                             moves.push(m);
@@ -875,7 +830,8 @@ impl Position {
             }
         }
         n.pieces[t][m.promotion.unwrap_or(p)] |= bit(m.to);
-        if p == ROOK {
+        let own_back_rank = if t == WHITE { 7 } else { 0 };
+        if p == ROOK && m.from / 8 == own_back_rank {
             let file = m.from % 8;
             if file == self.rook_file[t][0] {
                 n.castling[t] |= 1;

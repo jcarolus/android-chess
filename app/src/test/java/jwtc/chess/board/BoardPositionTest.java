@@ -35,6 +35,24 @@ public class BoardPositionTest {
     }
 
     @Test
+    public void missingMoveCountersDefaultToTheGameStart() {
+        assertEquals(
+                "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+                new BoardPosition("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3").fen());
+    }
+
+    @Test
+    public void castlingRightsAreNormalizedFromAnyOrderAndRookFiles() {
+        assertEquals(
+                "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+                new BoardPosition("r3k2r/8/8/8/8/8/8/R3K2R w qkQK - 0 1").fen());
+        // Shredder/X-FEN: rook files beyond the king are kingside, others queenside.
+        assertEquals(
+                "1r2k1r1/8/8/8/8/8/8/1R2K1R1 w KQkq - 0 1",
+                new BoardPosition("1r2k1r1/8/8/8/8/8/8/1R2K1R1 w GBgb - 0 1").fen());
+    }
+
+    @Test
     public void allChess960SeedsAreUniqueAndHaveOppositeBishopsAndKingBetweenRooks() {
         Set<String> positions = new HashSet<>();
         for (int seed = 0; seed < 960; seed++) {

@@ -199,6 +199,7 @@ public final class MateCollection {
      * like after any move of the user.
      */
     public void showSolution() {
+        handler.removeCallbacks(requestReply);
         gameApi.jumpToBoardNum(numMoved);
         if (!gameApi.isEnded()) {
             requestReply();

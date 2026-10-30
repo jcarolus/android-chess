@@ -222,6 +222,9 @@ public class LocalClockApi implements GameListener {
             if (this.gameApi.getTurn() != turn) {
                 switchTurn();
             }
+            if (gameApi.isEnded()) {
+                stopClock();
+            }
         }
     }
 
@@ -229,6 +232,29 @@ public class LocalClockApi implements GameListener {
     public void onDuckMoveApplied(int duckMove) {
         if (gameApi.isAtLineEnd()) {
             switchTurn();
+            if (gameApi.isEnded()) {
+                stopClock();
+            }
         }
+    }
+
+    @Override
+    public void onGameLoaded() {
+        // The clock may have been started before the game was loaded, so follow the
+        // loaded position's side to move.
+        clock.setActivePlayer(gameApi.getTurn(), SystemClock.elapsedRealtime());
+        if (gameApi.isEnded()) {
+            stopClock();
+        }
+    }
+
+    @Override
+    public void onPlayerResigned(int color) {
+        stopClock();
+    }
+
+    @Override
+    public void onDrawAgreed() {
+        stopClock();
     }
 }
