@@ -761,6 +761,7 @@ impl Position {
                 !next.attacked(self.turn, next.king(self.turn))
             })
         });
+        // Duck placement is intentionally excluded from repetition identity.
         Repetition {
             pieces: self.pieces,
             turn: self.turn,

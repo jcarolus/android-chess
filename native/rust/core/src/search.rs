@@ -308,16 +308,28 @@ impl Worker<'_> {
             }
         }
         let value = p.evaluate();
-        if !p.last_check && value >= beta {
-            return beta;
-        }
-        if depth == 0 || !self.quiescence {
+        if !self.quiescence {
             return value;
         }
-        if value >= beta {
-            return beta;
+        if depth == 0 {
+            // Only mate is detected at the depth limit; looking for stalemate
+            // would mean playing every move at every leaf.
+            if p.last_check
+                && !moves.iter().any(|m| {
+                    let next = p.make_unrecorded(*m);
+                    !next.attacked(p.turn, next.king(p.turn))
+                })
+            {
+                return -MATE;
+            }
+            return value;
         }
-        alpha = alpha.max(value);
+        if !p.last_check {
+            if value >= beta {
+                return beta;
+            }
+            alpha = alpha.max(value);
+        }
         let mut scores: Vec<_> = moves.iter().map(|m| score_move(p, *m)).collect();
         let mut index = 0;
         while index < moves.len() {
@@ -329,7 +341,12 @@ impl Worker<'_> {
                 continue;
             }
             next.last_check = next.in_check();
-            if m.capture || m.promotion.is_some() || next.last_check || next.hill_won() {
+            if p.last_check
+                || m.capture
+                || m.promotion.is_some()
+                || next.last_check
+                || next.hill_won()
+            {
                 let mut children = next.pseudo_moves();
                 let seen_from = self.enter(p, m);
                 let value = -self.quiesce(&next, &mut children, depth - 1, -beta, -alpha);
@@ -343,8 +360,8 @@ impl Worker<'_> {
             }
             index += 1;
         }
-        if moves.is_empty() {
-            return if p.last_check { -MATE } else { 0 };
+        if moves.is_empty() && p.last_check {
+            return -MATE;
         }
         alpha
     }
@@ -473,4 +490,54 @@ pub fn search_with_progress(
     result.elapsed_micros = start.elapsed().as_micros() as u64;
     publish(SearchEvent::Finished(result.clone()));
     Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn quiescence(fen: &str, depth: u8, enabled: bool) -> (i32, u64) {
+        let p = Position::from_fen(Variant::Standard, fen).unwrap();
+        let control = SearchControl::default();
+        let mut worker = Worker {
+            control: &control,
+            start: Instant::now(),
+            budget: None,
+            quiescence: enabled,
+            nodes: 0,
+            interrupted: false,
+            seen: vec![],
+            seen_from: 0,
+            best: [None; 20],
+            values: [0; 20],
+            pv: std::array::from_fn(|_| Vec::new()),
+        };
+        let mut moves = p.pseudo_moves();
+        let score = worker.quiesce(&p, &mut moves, depth, -MATE, MATE);
+        (score, worker.nodes)
+    }
+
+    #[test]
+    fn quiescence_detects_mate_at_depth_limit() {
+        assert_eq!(
+            quiescence("7k/6Q1/5K2/8/8/8/8/8 b - - 0 1", 0, true).0,
+            -MATE
+        );
+    }
+
+    #[test]
+    fn quiescence_detects_mate_after_quiet_check_evasions_run_out() {
+        assert_eq!(
+            quiescence("7k/6Q1/5K2/8/8/8/8/8 b - - 0 1", 1, true).0,
+            -MATE
+        );
+    }
+
+    #[test]
+    fn quiescence_searches_quiet_check_evasions() {
+        let fen = "4k3/8/8/8/8/8/4R3/4K3 b - - 0 1";
+        assert!(quiescence(fen, 1, true).1 > 1);
+        assert_eq!(quiescence(fen, 0, true).1, 1);
+        assert_eq!(quiescence(fen, 1, false).1, 1);
+    }
 }
