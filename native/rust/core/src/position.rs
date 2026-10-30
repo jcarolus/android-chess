@@ -142,6 +142,30 @@ const RAYS: [[u64; 64]; 8] = {
     }
     rays
 };
+/// Zobrist keys: one per colour, piece and square, then the four castling rights
+/// (`[black, white]` × `[queenside, kingside]`), the eight en-passant files and
+/// White to move. Fixed SplitMix64 output, so keys are stable across builds and
+/// match the opening database generated from them.
+const ZOBRIST: [u64; 781] = {
+    let mut keys = [0u64; 781];
+    let mut state = 0x9e37_79b9_7f4a_7c15u64;
+    let mut i = 0;
+    while i < keys.len() {
+        state = state.wrapping_add(0x9e37_79b9_7f4a_7c15);
+        let mut z = state;
+        z = (z ^ (z >> 30)).wrapping_mul(0xbf58_476d_1ce4_e5b9);
+        z = (z ^ (z >> 27)).wrapping_mul(0x94d0_49bb_1331_11eb);
+        keys[i] = z ^ (z >> 31);
+        i += 1;
+    }
+    keys
+};
+fn piece_key(t: usize, p: usize, s: usize) -> u64 {
+    ZOBRIST[(t * 6 + p) * 64 + s]
+}
+const CASTLING_KEYS: usize = 768;
+const EP_KEYS: usize = 772;
+const WHITE_KEY: usize = 780;
 /// Squares a slider on `s` reaches along the given directions: each ray up to
 /// and including the first occupied square.
 fn slide(directions: std::ops::Range<usize>, occupied: u64, s: usize) -> u64 {
@@ -278,6 +302,8 @@ pub struct Position {
     history: Vec<String>,
     previous: Vec<Repetition>,
     pub(crate) last_check: bool,
+    /// Zobrist key of everything but the duck; see `hash_key`.
+    key: u64,
 }
 impl Position {
     pub fn from_fen(variant: Variant, fen: &str) -> Result<Self, Error> {
@@ -298,6 +324,7 @@ impl Position {
             history: vec![],
             previous: vec![],
             last_check: false,
+            key: 0,
         };
         let ranks: Vec<_> = fields[0].split('/').collect();
         if ranks.len() != 8 {
@@ -422,7 +449,53 @@ impl Position {
             return Err(invalid("Side not to move is in check"));
         }
         p.last_check = p.in_check();
+        p.key = p.computed_key();
         Ok(p)
+    }
+    /// Zobrist key of the pieces, side to move, castling rights and a capturable
+    /// en-passant square. The duck square is left out, so a Duck position keys the
+    /// same as its pieces alone.
+    pub fn hash_key(&self) -> u64 {
+        self.key
+    }
+    /// The key built from scratch; `make_unrecorded` keeps `key` equal to it.
+    fn computed_key(&self) -> u64 {
+        let mut key = self.castling_key() ^ self.ep_key();
+        for t in 0..2 {
+            for p in 0..6 {
+                for s in squares(self.pieces[t][p]) {
+                    key ^= piece_key(t, p, s);
+                }
+            }
+        }
+        if self.turn == WHITE {
+            key ^= ZOBRIST[WHITE_KEY];
+        }
+        key
+    }
+    fn castling_key(&self) -> u64 {
+        let rights = self.rights();
+        let mut key = 0;
+        for t in 0..2 {
+            for side in 0..2 {
+                if rights[t] & (1 << side) != 0 {
+                    key ^= ZOBRIST[CASTLING_KEYS + t * 2 + side];
+                }
+            }
+        }
+        key
+    }
+    /// The en-passant file counts only when a pawn of the side to move stands
+    /// ready to capture, so a double step nobody can take keys the same as any
+    /// other route to the position. Pins are ignored: checking them would mean
+    /// playing the capture.
+    fn ep_key(&self) -> u64 {
+        match self.ep {
+            Some(ep) if PAWN_ATTACKS[self.turn ^ 1][ep] & self.pieces[self.turn][PAWN] != 0 => {
+                ZOBRIST[EP_KEYS + ep % 8]
+            }
+            _ => 0,
+        }
     }
     pub fn history(&self) -> &[String] {
         &self.history
@@ -785,6 +858,7 @@ impl Position {
             history: Vec::new(),
             previous: Vec::new(),
             last_check: self.last_check,
+            key: self.key,
         }
     }
     /// Whether the move resets the repetition list (a pawn move or a capture).
@@ -808,6 +882,7 @@ impl Position {
         let mut n = self.without_records();
         let t = self.turn;
         let p = self.piece(t, m.from).unwrap();
+        n.key ^= self.castling_key() ^ self.ep_key() ^ ZOBRIST[WHITE_KEY] ^ piece_key(t, p, m.from);
         n.pieces[t][p] &= !bit(m.from);
         if m.capture {
             let back_rank = if t == WHITE { 0 } else { 7 };
@@ -829,11 +904,15 @@ impl Position {
             } else {
                 m.to
             };
+            if let Some(captured) = self.piece(t ^ 1, target) {
+                n.key ^= piece_key(t ^ 1, captured, target);
+            }
             for b in &mut n.pieces[t ^ 1] {
                 *b &= !bit(target);
             }
         }
         n.pieces[t][m.promotion.unwrap_or(p)] |= bit(m.to);
+        n.key ^= piece_key(t, m.promotion.unwrap_or(p), m.to);
         let own_back_rank = if t == WHITE { 7 } else { 0 };
         if p == ROOK && m.from / 8 == own_back_rank {
             let file = m.from % 8;
@@ -852,6 +931,7 @@ impl Position {
             let rook_from = self.castling_rook_square(t, m.from, short);
             let rook_to = if short { base + 5 } else { base + 3 };
             n.pieces[t][ROOK] = (n.pieces[t][ROOK] & !bit(rook_from)) | bit(rook_to);
+            n.key ^= piece_key(t, ROOK, rook_from) ^ piece_key(t, ROOK, rook_to);
             n.castling[t] |= 8;
         }
         n.ep = if m.double {
@@ -870,6 +950,7 @@ impl Position {
         if m.duck.is_some() {
             n.duck = m.duck;
         }
+        n.key ^= n.castling_key() ^ n.ep_key();
         n
     }
     /// The repetition list the search starts from.
@@ -1125,5 +1206,51 @@ impl Position {
             });
         }
         Ok(san)
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Plays every legal move `depth` plies deep, checking the incremental key at each node.
+    fn assert_keys(p: &Position, depth: u8) {
+        assert_eq!(p.key, p.computed_key(), "{}", p.fen());
+        if depth == 0 {
+            return;
+        }
+        for m in p.legal_internal() {
+            let mut m = m;
+            if p.variant == Variant::Duck {
+                m.duck = (0..64).find(|&s| p.make_unrecorded(m).occupied() & bit(s) == 0);
+            }
+            assert_keys(&p.make_unrecorded(m), depth - 1);
+        }
+    }
+
+    #[test]
+    fn incremental_key_matches_a_key_built_from_scratch() {
+        for (variant, fen) in [
+            (
+                Variant::Standard,
+                "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
+            ),
+            (
+                Variant::Standard,
+                "4k3/1P6/8/2pP4/8/8/6p1/R3K2R w KQ c6 0 1",
+            ),
+            (Variant::Chess960, "4k3/8/8/8/8/8/8/1R2K1R1 w KQ - 0 1"),
+            (Variant::Chess960, "4k3/8/8/8/8/8/8/5KR1 w K - 0 1"),
+            (Variant::Chess960, "rk4r1/8/8/8/8/8/8/RK4R1 w KQkq - 0 1"),
+            (
+                Variant::Duck,
+                "rnbqkbnr/pppppppp/8/8/8/7$/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+            ),
+            (
+                Variant::KingOfTheHill,
+                "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+            ),
+        ] {
+            assert_keys(&Position::from_fen(variant, fen).unwrap(), 3);
+        }
     }
 }

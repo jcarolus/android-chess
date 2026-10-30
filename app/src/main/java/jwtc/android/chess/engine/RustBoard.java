@@ -7,7 +7,6 @@ import jwtc.chess.Move;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 import jwtc.chess.board.BoardPosition;
-import jwtc.chess.board.EcoHash;
 
 /** Java-owned board snapshots. Rust validates moves; no live position is stored in native code. */
 public final class RustBoard {
@@ -270,7 +269,7 @@ public final class RustBoard {
                         "",
                         0,
                         new BoardPosition(fen).duck(),
-                        EcoHash.initial(fen),
+                        result == null ? 0 : result.hashKey,
                         result,
                         false));
         legal = null;
@@ -397,7 +396,7 @@ public final class RustBoard {
                             move.san,
                             packed,
                             -1,
-                            EcoHash.afterMove(getHashKey(), toFEN(), fen, packed),
+                            result.hashKey,
                             result,
                             pending));
             legal =

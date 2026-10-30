@@ -1226,21 +1226,27 @@ public final class RustEngineInstrumentation extends Instrumentation {
         runOnMainSync(
                 () -> {
                     GameApi game = new GameApi();
-                    check(game.initFEN("3r4/4P2k/8/8/8/8/7K/8 w - - 0 1", true),
+                    check(
+                            game.initFEN("3r4/4P2k/8/8/8/8/7K/8 w - - 0 1", true),
                             "Could not load white promotion position");
                     String fen = game.getFEN();
                     check(game.isPromotionMove(e7, e8), "Legal forward promotion rejected");
                     check(game.isPromotionMove(e7, d8), "Legal capture promotion rejected");
                     check(!game.isPromotionMove(e7, h8), "Illegal sideways promotion accepted");
                     check(fen.equals(game.getFEN()), "Promotion query changed the position");
-                    check(game.initFEN("4r3/4P2k/8/8/8/8/7K/8 w - - 0 1", true),
+                    check(
+                            game.initFEN("4r3/4P2k/8/8/8/8/7K/8 w - - 0 1", true),
                             "Could not load blocked promotion position");
                     check(!game.isPromotionMove(e7, e8), "Blocked forward promotion accepted");
-                    check(!game.isPromotionMove(e7, d8), "Promotion capture onto empty square accepted");
-                    check(game.initFEN("3rr3/4P2k/8/8/8/8/8/4K3 w - - 0 1", true),
+                    check(
+                            !game.isPromotionMove(e7, d8),
+                            "Promotion capture onto empty square accepted");
+                    check(
+                            game.initFEN("3rr3/4P2k/8/8/8/8/8/4K3 w - - 0 1", true),
                             "Could not load pinned promotion position");
                     check(!game.isPromotionMove(e7, d8), "Illegal pinned promotion accepted");
-                    check(game.initFEN("8/7k/8/8/8/8/4p2K/3R4 b - - 0 1", true),
+                    check(
+                            game.initFEN("8/7k/8/8/8/8/4p2K/3R4 b - - 0 1", true),
                             "Could not load black promotion position");
                     check(game.isPromotionMove(e2, e1), "Legal black forward promotion rejected");
                     check(game.isPromotionMove(e2, d1), "Legal black capture promotion rejected");
@@ -1277,6 +1283,10 @@ public final class RustEngineInstrumentation extends Instrumentation {
                     check(game[0].requestMove("O-O"), "Could not castle in opening");
                     assertEcoProbePreservesPosition(game[0], eco[0]);
                     check(
+                            "Ruy Lopez: Morphy Defense"
+                                    .equals(eco[0].getEcoNameByHash(game[0].getHashKey())),
+                            "Opening not named");
+                    check(
                             game[0].goTo(game[0].getRootNode()),
                             "Could not navigate to opening root");
                     assertEcoProbePreservesPosition(game[0], eco[0]);
@@ -1292,6 +1302,15 @@ public final class RustEngineInstrumentation extends Instrumentation {
                             game[0].initFEN("4k3/8/8/8/8/8/8/R5KR w KQ - 0 1", true),
                             "Could not load Chess 960");
                     assertEcoProbePreservesPosition(game[0], eco[0]);
+                    // The book lists this position only as 1. d4 d5 2. Nf3.
+                    game[0].newGame();
+                    for (String san : new String[] {"Nf3", "d5", "d4"}) {
+                        check(game[0].requestMove(san), "Could not play transposition " + san);
+                    }
+                    check(
+                            "Queen's Pawn Game: Zukertort Variation"
+                                    .equals(eco[0].getEcoNameByHash(game[0].getHashKey())),
+                            "Transposed opening not named");
                 });
     }
 

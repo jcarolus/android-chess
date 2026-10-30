@@ -101,10 +101,4 @@ public class BoardPositionTest {
                         new BoardPosition(BoardPosition.chess960Fen(518))
                                 .packedMove("e2e4", "e4")));
     }
-
-    @Test
-    public void ecoInitialHashRetainsBookConvention() {
-        String fen = BoardPosition.chess960Fen(518);
-        assertEquals(EcoHash.initial(fen), EcoHash.initial(fen.replace(" w KQkq ", " b - ")));
-    }
 }

@@ -7,6 +7,7 @@ struct BoardResult {
     int32_t turnWhite, gameState, inCheck;
     uint32_t halfmoveClock, repetitionCount;
     int32_t castling;
+    uint64_t hashKey;
     uint32_t captured[10];
     uint8_t piece;
     char fen[96], san[24], moves[32768], attackers[256], turns[8192], error[256];
@@ -53,7 +54,7 @@ static jobject toJava(JNIEnv* env, const BoardResult& result) {
     jclass type = env->FindClass("jwtc/android/chess/engine/RustBoardResult");
     if (!type) return nullptr;
     jmethodID constructor = env->GetMethodID(type, "<init>",
-        "(ZIZJJZZZZ[ICLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+        "(ZIZJJZZZZJ[ICLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
     if (!constructor) return nullptr;
     jintArray captured = env->NewIntArray(10);
     if (!captured) return nullptr;
@@ -71,7 +72,7 @@ static jobject toJava(JNIEnv* env, const BoardResult& result) {
         static_cast<jlong>(result.halfmoveClock), static_cast<jlong>(result.repetitionCount),
         static_cast<jboolean>((result.castling & 1) != 0), static_cast<jboolean>((result.castling & 2) != 0),
         static_cast<jboolean>((result.castling & 4) != 0), static_cast<jboolean>((result.castling & 8) != 0),
-        captured, static_cast<jchar>(result.piece), fen, san, moves, attackers, turns);
+        static_cast<jlong>(result.hashKey), captured, static_cast<jchar>(result.piece), fen, san, moves, attackers, turns);
     env->DeleteLocalRef(captured);
     env->DeleteLocalRef(fen);
     env->DeleteLocalRef(san);

@@ -275,3 +275,60 @@ fn fifty_move_rule_applies_past_the_hundredth_half_move() {
     let p = Position::from_fen(Variant::Standard, "4k3/8/8/8/8/8/8/R3K3 w - - 120 90").unwrap();
     assert_eq!(p.game_state(), chess_core::GameState::DrawFiftyMove);
 }
+fn key_after(variant: Variant, fen: &str, moves: &[&str]) -> u64 {
+    let mut p = Position::from_fen(variant, fen).unwrap();
+    for m in moves {
+        p.apply(m).unwrap();
+    }
+    p.hash_key()
+}
+#[test]
+fn hash_key_is_shared_by_transpositions() {
+    assert_eq!(
+        key_after(Variant::Standard, START, &["g1f3", "g8f6", "b1c3"]),
+        key_after(Variant::Standard, START, &["b1c3", "g8f6", "g1f3"])
+    );
+}
+#[test]
+fn hash_key_distinguishes_side_to_move_and_castling_rights() {
+    let fen = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1";
+    let key = key_after(Variant::Standard, fen, &[]);
+    assert_ne!(
+        key,
+        key_after(Variant::Standard, &fen.replace(" w ", " b "), &[])
+    );
+    assert_ne!(
+        key,
+        key_after(Variant::Standard, &fen.replace("KQkq", "Qkq"), &[])
+    );
+    // The king steps out and back: same placement, without White's rights.
+    assert_ne!(
+        key,
+        key_after(Variant::Standard, fen, &["e1f1", "e8f8", "f1e1", "f8e8"])
+    );
+}
+#[test]
+fn hash_key_counts_en_passant_only_when_a_pawn_can_capture() {
+    let after_e4 = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
+    assert_eq!(
+        key_after(Variant::Standard, START, &["e2e4"]),
+        key_after(Variant::Standard, &after_e4.replace("e3", "-"), &[])
+    );
+    let capturable = "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1";
+    assert_ne!(
+        key_after(Variant::Standard, capturable, &[]),
+        key_after(Variant::Standard, &capturable.replace("d6", "-"), &[])
+    );
+}
+#[test]
+fn hash_key_ignores_the_duck_square() {
+    let fen = "rnbqkbnr/pppppppp/8/8/8/7$/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    assert_eq!(
+        key_after(Variant::Duck, fen, &["e2e4@a6"]),
+        key_after(Variant::Duck, fen, &["e2e4@h6"])
+    );
+    assert_eq!(
+        key_after(Variant::Duck, fen, &[]),
+        key_after(Variant::Standard, START, &[])
+    );
+}

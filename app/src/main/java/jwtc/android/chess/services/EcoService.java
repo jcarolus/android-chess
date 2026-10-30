@@ -8,7 +8,6 @@ import java.util.Map;
 import jwtc.android.chess.engine.RustBoardNative;
 import jwtc.android.chess.engine.RustBoardResult;
 import jwtc.android.chess.engine.RustSearchRequest;
-import jwtc.chess.board.EcoHash;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -84,7 +83,6 @@ public class EcoService {
             return openings;
         }
         String fen = gameApi.getFEN();
-        long hash = gameApi.getHashKey();
         RustSearchRequest.Variant variant = gameApi.rustVariant();
         int[] files =
                 variant == RustSearchRequest.Variant.CHESS_960
@@ -114,8 +112,7 @@ public class EcoService {
                 continue;
             }
             RustBoardResult applied = RustBoardNative.applyMove(variant, fen, history, turn);
-            long childHash = EcoHash.afterMove(hash, fen, applied.fen, move);
-            String name = hashMap.get(childHash);
+            String name = hashMap.get(applied.hashKey);
             if (name != null) {
                 String san = RustBoardNative.san(variant, fen, history, coordinate).san;
                 openings.add(new OpeningMove(move, name, san));

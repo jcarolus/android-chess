@@ -67,6 +67,18 @@ invalidates delivery immediately; native teardown finishes on the worker.
 FEN fullmove counters are rebased to 1 at the Starting
 Position, and the early-queen heuristic counts plies from that position.
 
+## Opening database
+
+`Position::hash_key` is a Zobrist key of pieces, side to move, castling rights and an
+en-passant square a pawn stands ready to capture; the duck square is left out. Board
+results carry it to Java, where `app/src/main/assets/hashmap.bin` maps it to opening
+names. Rebuild that file from the lichess-org/chess-openings list converted to JSON
+whenever the key changes:
+
+```sh
+cargo run --release --manifest-path native/rust/Cargo.toml -p chess-core --example eco_hashmap -- eco_moves.json app/src/main/assets/hashmap.bin
+```
+
 ## Build
 
 Install Rust (tested with 1.99.1), Cargo, and the four Android targets:

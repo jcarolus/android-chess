@@ -169,6 +169,7 @@ pub struct BoardResult {
     halfmove_clock: u32,
     repetition_count: u32,
     castling: i32,
+    hash_key: u64,
     captured: [u32; 10],
     piece: u8,
     fen: [u8; 96],
@@ -186,6 +187,7 @@ fn default_board_result() -> BoardResult {
         halfmove_clock: 0,
         repetition_count: 0,
         castling: 0,
+        hash_key: 0,
         captured: [0; 10],
         piece: 0,
         fen: [0; 96],
@@ -265,6 +267,7 @@ fn fill_query(position: &Position, out: &mut BoardResult) -> Result<(), Error> {
         .iter()
         .enumerate()
         .fold(0, |acc, (i, &r)| acc | (i32::from(r) << i));
+    out.hash_key = position.hash_key();
     for (t, white) in [(0, false), (1, true)] {
         let captured = position.captured(white);
         out.captured[t * 5..t * 5 + 5].copy_from_slice(&captured);
@@ -301,8 +304,8 @@ fn report(output: &mut BoardResult, result: std::thread::Result<Result<(), Error
         write_truncated(&mut output.error, &e.to_string());
     }
 }
-/// A snapshot query: game state, turn, check, castling rights, captured pieces, FEN and the
-/// draw/repetition counters.
+/// A snapshot query: game state, turn, check, castling rights, hash key, captured pieces, FEN
+/// and the draw/repetition counters.
 ///
 /// # Safety
 /// All strings must be NUL-terminated and live for the call; `out` must be writable.

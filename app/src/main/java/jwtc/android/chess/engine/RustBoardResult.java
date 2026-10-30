@@ -19,6 +19,10 @@ public final class RustBoardResult {
     public final boolean castleWhiteQueenside;
     public final boolean castleBlackKingside;
     public final boolean castleBlackQueenside;
+
+    /** Zobrist key of the position, excluding the duck square; the key of the opening database. */
+    public final long hashKey;
+
     public final int[] captured;
     public final char piece;
     public final String fen;
@@ -39,6 +43,7 @@ public final class RustBoardResult {
             boolean castleWhiteQueenside,
             boolean castleBlackKingside,
             boolean castleBlackQueenside,
+            long hashKey,
             int[] captured,
             char piece,
             String fen,
@@ -55,6 +60,7 @@ public final class RustBoardResult {
         this.castleWhiteQueenside = castleWhiteQueenside;
         this.castleBlackKingside = castleBlackKingside;
         this.castleBlackQueenside = castleBlackQueenside;
+        this.hashKey = hashKey;
         this.captured = captured;
         this.piece = piece;
         this.fen = fen;
