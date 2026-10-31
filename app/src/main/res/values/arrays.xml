@@ -205,6 +205,7 @@
         <item>@string/pieceset_chessnut</item>
         <item>@string/pieceset_kosal</item>
         <item>@string/pieceset_staunty</item>
+        <item>@string/pieceset_elisa</item>
     </string-array>
     <string-array name="piecesetKeyarray">
         <item>0</item>
@@ -215,5 +216,6 @@
         <item>5</item>
         <item>6</item>
         <item>7</item>
+        <item>8</item>
     </string-array>
 </resources>

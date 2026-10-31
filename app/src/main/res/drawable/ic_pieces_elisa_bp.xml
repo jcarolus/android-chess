@@ -24,7 +24,7 @@
         android:fillType="nonZero"
         android:strokeLineCap="round" />
     <path
-        android:pathData="m17.8765,56.8043 l-4.4055,-5.0148c13.1648,0.5261 24.0744,-3.0552 33.1323,-5.5569l-4.8752,10.4148"
+        android:pathData="m17.8765,56.8043 l-4.4055,-5.0148c13.1648,0.5261 24.0744,-3.0552 33.1323,-5.5569l-4.8752,10.4148z"
         android:strokeAlpha="1"
         android:strokeLineJoin="miter"
         android:strokeWidth="1.02071260999999990"
@@ -82,7 +82,7 @@
         android:fillAlpha="1"
         android:strokeLineCap="round" />
     <path
-        android:pathData="m17.8765,56.8043 l-4.4055,-5.0148c13.1648,0.5261 24.0744,-3.0552 33.1323,-5.5569l-4.8752,10.4148"
+        android:pathData="m17.8765,56.8043 l-4.4055,-5.0148c13.1648,0.5261 24.0744,-3.0552 33.1323,-5.5569l-4.8752,10.4148z"
         android:strokeAlpha="1"
         android:strokeLineJoin="miter"
         android:strokeWidth="1.02071261"
