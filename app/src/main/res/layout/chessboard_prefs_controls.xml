@@ -15,6 +15,13 @@
             android:layout_height="wrap_content"
             android:hint="@string/chessboard_hint_piece_set" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:text="@string/pieceset_artwork_credits"
+            android:textSize="12sp" />
+
         <jwtc.android.chess.views.FixedDropdownView
             android:id="@+id/DropdownColorScheme"
             android:layout_width="match_parent"

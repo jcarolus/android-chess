@@ -343,6 +343,12 @@
     <string name="pieceset_chessnut">Chessnut</string>
     <string name="pieceset_companion">Companion</string>
     <string name="pieceset_elisa">Elisa</string>
+    <string name="pieceset_artwork_credits">Shapes by flugsio (CC BY-SA 4.0); Firi by James Faure and Kiwen-suwi by neverRare (CC BY 4.0); Celtic and Spatial by Maurizio Monge (MIT). Artwork adapted for Android; Firi recolored. https://github.com/lichess-org/lila/blob/master/COPYING.md</string>
+    <string name="pieceset_shapes">Shapes</string>
+    <string name="pieceset_firi">Firi</string>
+    <string name="pieceset_kiwen_suwi">Kiwen-suwi</string>
+    <string name="pieceset_spatial">Spatial</string>
+    <string name="pieceset_celtic">Celtic</string>
     <string name="pieceset_kosal">Kosal</string>
     <string name="pieceset_leipzig">Leipzig</string>
     <string name="pieceset_merida">Merida</string>

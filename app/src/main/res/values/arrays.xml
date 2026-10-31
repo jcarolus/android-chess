@@ -206,6 +206,11 @@
         <item>@string/pieceset_kosal</item>
         <item>@string/pieceset_staunty</item>
         <item>@string/pieceset_elisa</item>
+        <item>@string/pieceset_shapes</item>
+        <item>@string/pieceset_firi</item>
+        <item>@string/pieceset_kiwen_suwi</item>
+        <item>@string/pieceset_spatial</item>
+        <item>@string/pieceset_celtic</item>
     </string-array>
     <string-array name="piecesetKeyarray">
         <item>0</item>
@@ -217,5 +222,10 @@
         <item>6</item>
         <item>7</item>
         <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
     </string-array>
 </resources>

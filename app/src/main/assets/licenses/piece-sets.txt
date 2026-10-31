@@ -1,0 +1,20 @@
+Chess piece artwork notices
+
+Shapes by flugsio: https://github.com/flugsio/chess_shapes
+Licensed under Creative Commons Attribution-ShareAlike 4.0 International:
+https://creativecommons.org/licenses/by-sa/4.0/
+The Android vector drawables are adaptations; SVG filter effects were omitted.
+The adapted Shapes artwork remains under CC BY-SA 4.0.
+
+Firi by James Faure: https://github.com/jfaure/Firi-pieceset
+Kiwen-suwi by neverRare: https://github.com/lichess-org/lila/tree/master/public/piece/kiwen-suwi
+Licensed under Creative Commons Attribution 4.0 International:
+https://creativecommons.org/licenses/by/4.0/
+The SVG artwork was converted to Android vector drawables. Firi's dark pieces
+were recolored from yellow to black and gray.
+
+Celtic and Spatial by Maurizio Monge: https://github.com/maurimo/chess-art
+Licensed under the MIT License; see chess-art-mit.txt. The SVG artwork was
+converted to Android vector drawables.
+
+Original SVGs: https://github.com/lichess-org/lila/tree/master/public/piece
