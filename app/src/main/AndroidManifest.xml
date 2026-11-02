@@ -108,6 +108,33 @@
                 <data android:mimeType="application/x-chess-fen" />
             </intent-filter>
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="text/plain" />
+                <!-- Simple globs do not backtrack over dots in names on older Android versions. -->
+                <data android:pathPattern=".*\\.fen" />
+                <data android:pathPattern=".*\\..*\\.fen" />
+                <data android:pathPattern=".*\\..*\\..*\\.fen" />
+                <data android:pathPattern=".*\\.FEN" />
+                <data android:pathPattern=".*\\..*\\.FEN" />
+                <data android:pathPattern=".*\\..*\\..*\\.FEN" />
+                <data android:pathSuffix=".fen" />
+                <data android:pathSuffix=".FEN" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- Downloads document IDs do not contain the file's extension. -->
+                <data android:scheme="content"
+                    android:host="com.android.providers.downloads.documents"
+                    android:pathPrefix="/document/"
+                    android:mimeType="application/octet-stream" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/x-chess-fen" />

@@ -3,10 +3,12 @@ package jwtc.android.chess.play;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,12 +17,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-import java.util.ArrayList;
+
 import jwtc.android.chess.GamesListActivity;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
@@ -47,7 +51,11 @@ import jwtc.android.chess.views.ChessPiecesStackView;
 import jwtc.android.chess.views.ChessSquareView;
 import jwtc.chess.GameRecord;
 import jwtc.chess.board.BoardConstants;
+
 import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class PlayActivity extends ChessBoardActivity
         implements EngineListener,
@@ -338,40 +346,31 @@ public class PlayActivity extends ChessBoardActivity
 
         buttonEco.setEnabled(false);
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            Log.i("onResume", "action send with type " + type);
-            if ("application/x-chess-pgn".equals(type)) {
-                sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if (sPGN == null) {
-                    Uri sharedUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if ((Intent.ACTION_SEND.equals(action) && type != null) || uri != null) {
+            String contents = null;
+            if (Intent.ACTION_SEND.equals(action)) {
+                contents = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (uri == null) {
+                    uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
                     ClipData clipData = intent.getClipData();
-                    if (sharedUri == null && clipData != null && clipData.getItemCount() > 0) {
-                        sharedUri = clipData.getItemAt(0).getUri();
+                    if (uri == null && clipData != null && clipData.getItemCount() > 0) {
+                        uri = clipData.getItemAt(0).getUri();
                     }
-                    if (sharedUri != null) {
-                        sPGN = readInputStream(sharedUri, GameApi.MAX_PGN_SIZE);
-                        if (sPGN != null) {
-                            sPGN = sPGN.trim();
-                        }
-                    }
-                }
-                if (sPGN != null) {
-                    lGameID = 0;
-                }
-            } else {
-                sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
-                if (sFEN != null) {
-                    sFEN = sFEN.trim();
-                    sPGN = null;
-                    lGameID = 0;
                 }
             }
-        } else if (uri != null) {
-            Log.i(TAG, "onResume opening " + uri.toString());
-            sPGN = readInputStream(uri, GameApi.MAX_PGN_SIZE);
-            if (sPGN != null) {
-                sPGN = sPGN.trim();
-                lGameID = 0;
+            String fileName = uri == null ? "" : getIncomingFileName(uri);
+            boolean isFen = "application/x-chess-fen".equals(type) || fileName.endsWith(".fen");
+            if ("application/octet-stream".equals(type) && !isFen && !fileName.endsWith(".pgn")) {
+                doToast(getString(R.string.gameslist_load_failed));
+            } else {
+                if (contents == null && uri != null) {
+                    contents = readInputStream(uri, GameApi.MAX_PGN_SIZE);
+                }
+                if (contents != null) {
+                    sFEN = isFen ? contents.trim() : null;
+                    sPGN = isFen ? null : contents.trim();
+                    lGameID = 0;
+                }
             }
         }
         Log.d(
@@ -392,6 +391,27 @@ public class PlayActivity extends ChessBoardActivity
         }
 
         new Handler(Looper.getMainLooper()).postDelayed(this::playIfEngineMove, 500);
+    }
+
+    private String getIncomingFileName(Uri uri) {
+        if ("content".equals(uri.getScheme())) {
+            try (Cursor cursor =
+                    getContentResolver()
+                            .query(
+                                    uri,
+                                    new String[] {OpenableColumns.DISPLAY_NAME},
+                                    null,
+                                    null,
+                                    null)) {
+                if (cursor != null && cursor.moveToFirst() && !cursor.isNull(0)) {
+                    return cursor.getString(0).toLowerCase(Locale.ROOT);
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Cannot read document name", e);
+            }
+        }
+        String path = uri.getLastPathSegment();
+        return path == null ? "" : path.toLowerCase(Locale.ROOT);
     }
 
     private void applyCapturedPiecesVisibility() {
