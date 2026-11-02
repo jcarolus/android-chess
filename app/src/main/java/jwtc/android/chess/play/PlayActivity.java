@@ -1,5 +1,6 @@
 package jwtc.android.chess.play;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -343,6 +344,20 @@ public class PlayActivity extends ChessBoardActivity
             Log.i("onResume", "action send with type " + type);
             if ("application/x-chess-pgn".equals(type)) {
                 sPGN = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (sPGN == null) {
+                    Uri sharedUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                    ClipData clipData = intent.getClipData();
+                    if (sharedUri == null && clipData != null && clipData.getItemCount() > 0) {
+                        sharedUri = clipData.getItemAt(0).getUri();
+                    }
+                    if (sharedUri != null) {
+                        try (InputStream is = getContentResolver().openInputStream(sharedUri)) {
+                            sPGN = PGNHelper.getPGNFromInputStream(is);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to open shared PGN " + sharedUri, e);
+                        }
+                    }
+                }
                 if (sPGN != null) {
                     lGameID = 0;
                 }
@@ -350,6 +365,7 @@ public class PlayActivity extends ChessBoardActivity
                 sFEN = intent.getStringExtra(Intent.EXTRA_TEXT);
                 if (sFEN != null) {
                     sFEN = sFEN.trim();
+                    sPGN = null;
                     lGameID = 0;
                 }
             }
