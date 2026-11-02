@@ -1,98 +1,156 @@
 package jwtc.android.chess.tools;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+import java.util.concurrent.Executor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Runs one {@link ImportJob} at a time on its own thread, and reports to the listener on the main
- * thread. Every job starts with fresh counts. Cancelling stops between two items, never in the
- * middle of one.
+ * Owns one accepted Import job and its replayable progress. Admission, cancellation and replay are
+ * called on the delivery thread; its executor must preserve submission order. Sources and handlers
+ * run on the worker. Cancellation takes effect between items and suppresses queued delivery for
+ * that job.
  */
 public final class ImportPipeline {
-    private static final String TAG = "ImportPipeline";
+    public interface JobFactory {
+        ImportJob create() throws Exception;
+    }
 
+    private static final Logger LOG = Logger.getLogger(ImportPipeline.class.getName());
+    private final Executor worker;
+    private final Executor delivery;
     private final ImportListener listener;
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private boolean running = false;
-    private volatile boolean cancelled = false;
+    private Job latest;
+    private Job active;
 
-    public ImportPipeline(ImportListener listener) {
+    private static final class Job {
+        final int mode;
+        volatile boolean cancelled;
+        boolean workerFinished;
+        int succeeded;
+        int failed;
+        Boolean outcome;
+
+        Job(int mode) {
+            this.mode = mode;
+        }
+    }
+
+    public ImportPipeline(Executor worker, Executor delivery, ImportListener listener) {
+        this.worker = worker;
+        this.delivery = delivery;
         this.listener = listener;
     }
 
-    /**
-     * Starts the job. While another job runs, the new one is reported as a fatal error for its mode
-     * and the running job carries on.
-     *
-     * @return whether the job started
-     */
-    public boolean start(ImportJob job) {
-        synchronized (this) {
-            if (running) {
-                try {
-                    job.source.close();
-                } catch (Exception e) {
-                    Log.e(TAG, "Could not close the source of a rejected job " + e);
-                }
-                mainHandler.post(() -> listener.OnImportFatalError(job.mode));
-                return false;
-            }
-            running = true;
-            cancelled = false;
+    /** Rejects busy requests before opening a source or creating a handler. */
+    public synchronized boolean start(int mode, JobFactory factory) {
+        if (active != null) {
+            listener.OnImportRejected(mode);
+            return false;
         }
-        new Thread(() -> run(job), "ImportPipeline").start();
+        Job job = new Job(mode);
+        active = latest = job;
+        listener.OnImportStarted(mode);
+        try {
+            ImportJob input = factory.create();
+            try {
+                worker.execute(() -> run(job, input));
+            } catch (RuntimeException error) {
+                close(input.source);
+                throw error;
+            }
+        } catch (Exception error) {
+            LOG.log(Level.WARNING, "Could not start Import", error);
+            finish(job, false);
+        }
         return true;
     }
 
-    /** Asks the running job, if any, to stop after the item it is on; no further events follow. */
-    public void cancel() {
-        cancelled = true;
+    /** Replays the latest accepted job; rejected requests never replace it. */
+    public synchronized void replay(ImportListener target) {
+        Job job = latest;
+        if (job == null || job.cancelled) {
+            return;
+        }
+        if (job.outcome == null) {
+            target.OnImportStarted(job.mode);
+            target.OnImportProgress(job.mode, job.succeeded, job.failed);
+        } else if (job.outcome) {
+            target.OnImportFinished(job.mode);
+        } else {
+            target.OnImportFatalError(job.mode);
+        }
     }
 
-    private void run(ImportJob job) {
-        final int mode = job.mode;
-        final int[] counts = new int[2]; // succeeded, failed
-        mainHandler.post(() -> listener.OnImportStarted(mode));
+    public synchronized void cancel() {
+        if (active != null) {
+            active.cancelled = true;
+            if (active.workerFinished) {
+                active = null;
+            }
+        }
+    }
+
+    private void run(Job job, ImportJob input) {
+        int[] counts = new int[2];
+        boolean succeeded = false;
         try {
-            job.source.forEach(
+            input.source.forEach(
                     item -> {
-                        if (cancelled) {
+                        if (job.cancelled) {
                             return false;
                         }
-                        if (job.handler.handle(item)) {
-                            counts[0]++;
-                        } else {
-                            counts[1]++;
-                        }
-                        final int succeeded = counts[0];
-                        final int failed = counts[1];
-                        mainHandler.post(
-                                () -> {
-                                    if (!cancelled) {
-                                        listener.OnImportProgress(mode, succeeded, failed);
-                                    }
-                                });
-                        return true;
+                        counts[input.handler.handle(item) ? 0 : 1]++;
+                        int imported = counts[0];
+                        int failed = counts[1];
+                        delivery.execute(() -> progress(job, imported, failed));
+                        return !job.cancelled;
                     });
-            mainHandler.post(
-                    () -> {
-                        if (!cancelled) {
-                            listener.OnImportFinished(mode);
-                        }
-                    });
-        } catch (Exception e) {
-            Log.e(TAG, "Import failed " + e);
-            mainHandler.post(
-                    () -> {
-                        if (!cancelled) {
-                            listener.OnImportFatalError(mode);
-                        }
-                    });
+            succeeded = true;
+        } catch (Exception error) {
+            LOG.log(Level.WARNING, "Import failed", error);
         } finally {
+            // Ensure accepted sources are closed even when reading fails.
+            close(input.source);
             synchronized (this) {
-                running = false;
+                job.workerFinished = true;
+                if (job.cancelled && active == job) {
+                    active = null;
+                }
             }
+        }
+        boolean outcome = succeeded;
+        delivery.execute(() -> finish(job, outcome));
+    }
+
+    private synchronized void progress(Job job, int succeeded, int failed) {
+        if (latest != job || job.cancelled || job.outcome != null) {
+            return;
+        }
+        job.succeeded = succeeded;
+        job.failed = failed;
+        listener.OnImportProgress(job.mode, succeeded, failed);
+    }
+
+    private synchronized void finish(Job job, boolean succeeded) {
+        if (latest != job || job.cancelled || job.outcome != null) {
+            return;
+        }
+        job.outcome = succeeded;
+        if (active == job) {
+            active = null;
+        }
+        if (succeeded) {
+            listener.OnImportFinished(job.mode);
+        } else {
+            listener.OnImportFatalError(job.mode);
+        }
+    }
+
+    private static void close(ImportSource source) {
+        try {
+            source.close();
+        } catch (Exception error) {
+            LOG.log(Level.WARNING, "Could not close Import source", error);
         }
     }
 }

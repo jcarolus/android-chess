@@ -170,6 +170,11 @@ public class ImportActivity extends BaseActivity implements ImportListener {
     }
 
     @Override
+    public void OnImportRejected(int mode) {
+        doToast(getString(R.string.pgntool_import_busy));
+    }
+
+    @Override
     public void OnImportFatalError(int mode) {
         _progress.setVisibility(View.INVISIBLE);
         _tvWorkCnt.setText("An error occured, import failed");

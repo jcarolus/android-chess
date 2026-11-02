@@ -40,7 +40,8 @@ public class ImportService extends Service {
     private ImportApi importApi;
     private final IBinder mBinder = new ImportService.LocalBinder();
 
-    // The latest job's state, replayed to a listener that attaches later (e.g. after rotation).
+    // Export and reset keep their own status; shared Import state belongs to the pipeline.
+    private boolean latestIsImport;
     private int jobMode = -1;
     private boolean jobRunning;
     private int jobSucceeded, jobFailed;
@@ -88,12 +89,55 @@ public class ImportService extends Service {
                 }
             };
 
-    private final ImportPipeline pipeline = new ImportPipeline(dispatcher);
+    private final Handler importDelivery = new Handler(Looper.getMainLooper());
+    private final ImportPipeline pipeline =
+            new ImportPipeline(
+                    command -> new Thread(command, "ImportPipeline").start(),
+                    importDelivery::post,
+                    new ImportListener() {
+                        @Override
+                        public void OnImportStarted(int mode) {
+                            latestIsImport = true;
+                            for (ImportListener listener : new ArrayList<>(listeners)) {
+                                listener.OnImportStarted(mode);
+                            }
+                        }
+
+                        @Override
+                        public void OnImportProgress(int mode, int succeeded, int failed) {
+                            for (ImportListener listener : new ArrayList<>(listeners)) {
+                                listener.OnImportProgress(mode, succeeded, failed);
+                            }
+                        }
+
+                        @Override
+                        public void OnImportFinished(int mode) {
+                            for (ImportListener listener : new ArrayList<>(listeners)) {
+                                listener.OnImportFinished(mode);
+                            }
+                        }
+
+                        @Override
+                        public void OnImportFatalError(int mode) {
+                            for (ImportListener listener : new ArrayList<>(listeners)) {
+                                listener.OnImportFatalError(mode);
+                            }
+                        }
+
+                        @Override
+                        public void OnImportRejected(int mode) {
+                            for (ImportListener listener : new ArrayList<>(listeners)) {
+                                listener.OnImportRejected(mode);
+                            }
+                        }
+                    });
 
     /** Adds the listener and brings it up to date with the latest job. */
     public void addListener(ImportListener listener) {
         this.listeners.add(listener);
-        if (jobRunning) {
+        if (latestIsImport) {
+            pipeline.replay(listener);
+        } else if (jobRunning) {
             listener.OnImportStarted(jobMode);
             listener.OnImportProgress(jobMode, jobSucceeded, jobFailed);
         } else if (jobOutcome != null) {
@@ -128,71 +172,70 @@ public class ImportService extends Service {
             Log.d(TAG, "uri " + uri.toString());
         }
 
-        if (mode != IMPORT_GAMES) {
-            importApi = new ImportApi();
+        if (mode != IMPORT_GAMES
+                && mode != IMPORT_PUZZLES
+                && mode != IMPORT_PRACTICE
+                && mode != IMPORT_OPENINGS) {
+            latestIsImport = false;
+            jobMode = mode;
+            jobOutcome = null;
         }
-        jobMode = mode;
-        jobOutcome = null;
 
         switch (mode) {
             case IMPORT_PUZZLES:
-                Log.d(TAG, "IMPORT_PUZZLES");
-                try {
-                    pipeline.start(
-                            new ImportJob(
+                pipeline.start(
+                        mode,
+                        () -> {
+                            importApi = new ImportApi();
+                            return new ImportJob(
                                     mode,
                                     PgnSource.file(openInput(uri, "puzzles.pgn")),
-                                    new PuzzleImportHandler(importApi, getContentResolver())));
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                    dispatcher.OnImportFatalError(mode);
-                }
+                                    new PuzzleImportHandler(importApi, getContentResolver()));
+                        });
                 break;
-
             case IMPORT_GAMES:
-                Log.d(TAG, "IMPORT_GAMES");
                 if (uri != null) {
-                    try {
-                        InputStream in =
-                                new BufferedInputStream(getContentResolver().openInputStream(uri));
-                        pipeline.start(
-                                new ImportJob(
-                                        mode,
-                                        isZip(in) ? PgnSource.zip(in) : PgnSource.file(in),
-                                        new GameImportHandler(getContentResolver())));
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.toString());
-                        dispatcher.OnImportFatalError(mode);
-                    }
+                    pipeline.start(
+                            mode,
+                            () -> {
+                                InputStream in =
+                                        new BufferedInputStream(
+                                                getContentResolver().openInputStream(uri));
+                                try {
+                                    return new ImportJob(
+                                            mode,
+                                            isZip(in) ? PgnSource.zip(in) : PgnSource.file(in),
+                                            new GameImportHandler(getContentResolver()));
+                                } catch (Exception error) {
+                                    in.close();
+                                    throw error;
+                                }
+                            });
                 }
                 break;
             case IMPORT_PRACTICE:
-                Log.d(TAG, "IMPORT_PRACTICE");
-                try {
-                    pipeline.start(
-                            new ImportJob(
+                pipeline.start(
+                        mode,
+                        () -> {
+                            importApi = new ImportApi();
+                            return new ImportJob(
                                     mode,
                                     PgnSource.file(openInput(uri, "practice.pgn")),
-                                    new PracticeImportHandler(importApi, getContentResolver())));
-                } catch (Exception e) {
-                    Log.e(TAG, e.toString());
-                    dispatcher.OnImportFatalError(mode);
-                }
+                                    new PracticeImportHandler(importApi, getContentResolver()));
+                        });
                 break;
             case IMPORT_OPENINGS:
-                Log.d(TAG, "IMPORT_OPENINGS " + uri);
                 if (uri != null) {
-                    try {
-                        pipeline.start(
-                                new ImportJob(
+                    pipeline.start(
+                            mode,
+                            () -> {
+                                importApi = new ImportApi();
+                                return new ImportJob(
                                         mode,
                                         new OpeningJsonSource(
                                                 getContentResolver().openInputStream(uri)),
-                                        new OpeningImportHandler(importApi)));
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.toString());
-                        dispatcher.OnImportFatalError(mode);
-                    }
+                                        new OpeningImportHandler(importApi));
+                            });
                 }
                 break;
             case PRACTICE_RESET:
@@ -239,6 +282,9 @@ public class ImportService extends Service {
                 break;
             case PICK_BINARY:
                 Log.d(TAG, "PICK_BINARY");
+                if (importApi == null) {
+                    importApi = new ImportApi();
+                }
                 ArrayList<HMap.Pair> hashMap = importApi.getHashMap();
                 if (hashMap != null) {
 

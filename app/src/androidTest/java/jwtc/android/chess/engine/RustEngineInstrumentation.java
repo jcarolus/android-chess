@@ -38,6 +38,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
         Bundle report = new Bundle();
         try {
             if (importOnly) {
+                jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
                 importedGamesValidateOnOpening();
                 pgnReplayPreservesBranchesAndRollback();
                 report.putString(
@@ -60,6 +61,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 finish(-1, report);
                 return;
             }
+            jwtc.android.chess.tools.ImportPipelineInstrumentation.verify(this);
             boardSnapshots();
             boardOwnership();
             importedGamesValidateOnOpening();
