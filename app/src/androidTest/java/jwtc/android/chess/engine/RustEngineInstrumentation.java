@@ -52,6 +52,7 @@ public final class RustEngineInstrumentation extends Instrumentation {
                 finish(-1, report);
                 return;
             }
+            jwtc.android.chess.analyze.AnalysisInstrumentation.verify(this);
             sessionSequentialAnalysis(false);
             sessionSequentialAnalysis(true);
             if (analysisOnly) {

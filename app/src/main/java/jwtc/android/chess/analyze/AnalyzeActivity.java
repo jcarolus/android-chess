@@ -3,10 +3,7 @@ package jwtc.android.chess.analyze;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -20,14 +17,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.WeakHashMap;
 import jwtc.android.chess.R;
 import jwtc.android.chess.activities.ChessBoardActivity;
 import jwtc.android.chess.engine.EngineEvaluation;
-import jwtc.android.chess.engine.EngineListener;
-import jwtc.android.chess.engine.EngineSession;
 import jwtc.android.chess.helpers.ActivityHelper;
 import jwtc.android.chess.helpers.EinkMode;
 import jwtc.android.chess.helpers.GameStore;
@@ -39,14 +32,12 @@ import jwtc.android.chess.services.GameApi.PositionSnapshot;
 import jwtc.android.chess.views.EngineEvaluationView;
 import jwtc.chess.GameRecord;
 import jwtc.chess.GameTree.Node;
-import jwtc.chess.Move;
 import jwtc.chess.PGNEntry;
 import jwtc.chess.Pos;
 import jwtc.chess.board.BoardConstants;
 
-public class AnalyzeActivity extends ChessBoardActivity implements EngineListener {
+public class AnalyzeActivity extends ChessBoardActivity {
     private static final String TAG = "AnalyzeActivity";
-    private static final long ANALYSIS_DEBOUNCE_MILLIS = 200;
     public static final String EXTRA_FEN = "analysisFen";
     public static final String EXTRA_PGN = "analysisPgn";
     public static final String EXTRA_GAME_ID = "analysisGameId";
@@ -59,9 +50,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private Bundle restoredSession;
     // The game came from Play's "game_pgn" preference, so analysis changes are written back there.
     private boolean fromGamePgnPref;
-    private String configuredEngine;
-    private int configuredMillis;
-    private EngineSession engineSession;
     private long lGameID;
     private EngineEvaluationView evaluationView;
     private ImageView imageAnalysisTurn;
@@ -75,49 +63,9 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     private MoveRecyclerAdapter moveAdapter;
     private Node lastScrolledNode;
     private List<Node> navigationLine = new ArrayList<>();
-    private final Handler analysisHandler = new Handler(Looper.getMainLooper());
-    private boolean analysisDebouncing;
-    private final Runnable resumeAnalysis =
-            () -> {
-                analysisDebouncing = false;
-                startNextAnalysis();
-            };
-    private final LruCache<String, PositionAnalysis> positionAnalyses = new LruCache<>(128);
-    private final Map<Node, PositionSnapshot> positions = new WeakHashMap<>();
-    private Node displayedNode;
-    private PositionSnapshot requestedPosition;
-
-    private static class PositionAnalysis {
-        final PositionMove preferredMove;
-        final EngineEvaluation evaluation;
-        final String bestMove;
-
-        PositionAnalysis(PositionMove preferredMove, EngineEvaluation evaluation) {
-            this.bestMove = preferredMove == null ? null : preferredMove.uci;
-            this.preferredMove = preferredMove;
-            this.evaluation = evaluation;
-        }
-
-        PositionAnalysis(Bundle saved) {
-            preferredMove = null;
-            bestMove = saved.getString("move");
-            evaluation =
-                    saved.containsKey("value")
-                            ? new EngineEvaluation(
-                                    saved.getBoolean("mate"),
-                                    saved.getInt("value"),
-                                    saved.getInt("depth"))
-                            : null;
-        }
-    }
-
+    private Analysis analysis;
     private View buttonBackToMain;
     private FlexboxLayout layoutVariations;
-    private boolean analysisActive;
-    private String analysisFen;
-    private int analysisTurn;
-    private int analysisGeneration;
-    private boolean analysisSwitchPending;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -137,6 +85,27 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
 
         evaluationView = findViewById(R.id.engine_evaluation);
         gameApi = new GameApi();
+        analysis =
+                new Analysis(
+                        this,
+                        gameApi,
+                        new Analysis.Listener() {
+                            @Override
+                            public void onChanged() {
+                                updateNavigation();
+                                updateMoveSummary();
+                                showCachedEvaluation();
+                            }
+
+                            @Override
+                            public void onEvaluation(Float value) {
+                                if (value == null) {
+                                    evaluationView.clearEvaluation();
+                                } else {
+                                    evaluationView.setEvaluation(value);
+                                }
+                            }
+                        });
         layoutVariations = findViewById(R.id.LayoutVariations);
         imageAnalysisTurn = findViewById(R.id.ImageAnalysisTurn);
         textViewLastMove = findViewById(R.id.TextViewLastMove);
@@ -265,8 +234,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             gameApi.restoreCurrentBoard();
         }
         if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
-            analysisActive = false;
-            closeEngineSession();
+            analysis.pause();
             if (getIntent().hasExtra(LinkActivity.EXTRA_PATH)) {
                 restoredSession = null;
                 rebuildBoard();
@@ -290,33 +258,10 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
         String engineId = prefs.getString(AnalysisSettingsDialog.PREF_ENGINE, null);
         int millis = AnalysisSettingsDialog.getTimeMillis(prefs);
-        if (!Objects.equals(engineId, configuredEngine) || millis != configuredMillis) {
-            positionAnalyses.evictAll();
-        }
-        if (restoredSession != null
-                && sessionId.equals(restoredSession.getString("id"))
-                && Objects.equals(engineId, restoredSession.getString("engine"))
-                && millis == restoredSession.getInt("millis")) {
-            ArrayList<Bundle> results = restoredSession.getParcelableArrayList("results");
-            if (results != null) {
-                for (Bundle result : results) {
-                    if (result.containsKey("position")) {
-                        positionAnalyses.put(
-                                result.getString("position"), new PositionAnalysis(result));
-                    }
-                }
-            }
-        }
+        Analysis.Saved saved = readAnalysisState(restoredSession);
+        analysis.resume(engineId, millis, saved);
         restoredSession = null;
-        configuredEngine = engineId;
-        configuredMillis = millis;
-        engineSession = EngineSession.forAnalysis(this, gameApi, this, engineId);
         showEngineWarning();
-        analysisFen = null;
-        requestedPosition = null;
-        analysisSwitchPending = false;
-        displayedNode = gameApi.getCurrentNode();
-        analysisActive = true;
         rebuildBoard();
         updatePieceDescriptions();
     }
@@ -331,9 +276,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         setIntent(intent);
         sessionId = incomingId == null ? UUID.randomUUID().toString() : incomingId;
         intent.putExtra(EXTRA_SESSION_ID, sessionId);
-        analysisActive = false;
-        analysisGeneration++;
-        closeEngineSession();
         sessionLoaded = false;
         engineWarningAcknowledged = false;
         if (analysisDialog != null) {
@@ -341,8 +283,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             analysisDialog = null;
         }
         restoredSession = null;
-        positionAnalyses.evictAll();
-        positions.clear();
+        analysis.reset();
         navigationLine = new ArrayList<>();
         evaluationView.clearEvaluation();
     }
@@ -368,11 +309,12 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             path[i] = reversed.get(path.length - 1 - i);
         }
         session.putIntArray("path", path);
-        session.putString("engine", configuredEngine);
-        session.putInt("millis", configuredMillis);
+        Analysis.Saved saved = analysis.save();
+        session.putString("engine", saved.engine);
+        session.putInt("millis", saved.millis);
         ArrayList<Bundle> results = new ArrayList<>();
-        for (Map.Entry<String, PositionAnalysis> entry : positionAnalyses.snapshot().entrySet()) {
-            PositionAnalysis analysis = entry.getValue();
+        for (Map.Entry<String, Analysis.Result> entry : saved.results.entrySet()) {
+            Analysis.Result analysis = entry.getValue();
             Bundle result = new Bundle();
             result.putString("position", entry.getKey());
             result.putString("move", analysis.bestMove);
@@ -400,57 +342,20 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
                                 : R.string.analysis_black_to_move));
         boolean onMainLine = gameApi.isOnMainLine();
         buttonBackToMain.setVisibility(onMainLine ? View.INVISIBLE : View.VISIBLE);
-        boolean changed = displayedNode != gameApi.getCurrentNode();
-        displayedNode = gameApi.getCurrentNode();
-        if (!gameApi.isDuckVariant()) {
-            rememberPosition(displayedNode);
-            if (displayedNode.getParent() != null) {
-                rememberPosition(displayedNode.getParent());
-            }
-        }
+        boolean changed = analysis.selectPosition();
         updateMoveSummary();
         updateVariations();
         updateNavigation();
-        if (!analysisActive || engineSession == null || !engineSession.supportsAnalysis()) {
-            return;
-        }
-        if (changed) {
+        if (changed && analysis.isActive()) {
             evaluationView.clearEvaluation();
-            analysisHandler.removeCallbacks(resumeAnalysis);
-            analysisDebouncing = true;
-            analysisHandler.postDelayed(resumeAnalysis, ANALYSIS_DEBOUNCE_MILLIS);
-            // Rust drops results after navigation; OEX can retain searches needed for feedback.
-            PositionSnapshot current = positions.get(displayedNode);
-            PositionSnapshot parent = positions.get(displayedNode.getParent());
-            if (analysisFen != null
-                    && (engineSession.isBuiltin()
-                            || (!matchesAnalysis(current) && !matchesAnalysis(parent)))) {
-                analysisFen = null;
-                requestedPosition = null;
-                analysisSwitchPending = true;
-                final int generation = ++analysisGeneration;
-                engineSession.abort(
-                        () -> {
-                            if (analysisActive && generation == analysisGeneration) {
-                                analysisSwitchPending = false;
-                                startNextAnalysis();
-                            }
-                        });
-            }
         }
         showCachedEvaluation();
-        startNextAnalysis();
-    }
-
-    private boolean matchesAnalysis(PositionSnapshot position) {
-        return position != null
-                && requestedPosition != null
-                && position.positionCommand.equals(requestedPosition.positionCommand);
+        analysis.startNextAnalysis();
     }
 
     private void showCachedEvaluation() {
-        PositionSnapshot current = positions.get(displayedNode);
-        PositionAnalysis result = getAnalysis(current);
+        PositionSnapshot current = analysis.position(gameApi.getCurrentNode());
+        Analysis.Result result = analysis.result(current);
         if (result == null || result.evaluation == null) {
             return;
         }
@@ -465,37 +370,19 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     }
 
     private void restartAnalysis() {
-        if (!analysisActive) {
-            return;
+        if (analysis.configure(
+                getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null),
+                AnalysisSettingsDialog.getTimeMillis(getPrefs()))) {
+            showEngineWarning();
+            evaluationView.clearEvaluation();
+            updateMoveSummary();
+            updateNavigation();
+            analysis.startNextAnalysis();
         }
-        String engineId = getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null);
-        int millis = AnalysisSettingsDialog.getTimeMillis(getPrefs());
-        if (Objects.equals(engineId, configuredEngine) && millis == configuredMillis) {
-            return;
-        }
-        configuredEngine = engineId;
-        configuredMillis = millis;
-        analysisGeneration++;
-        closeEngineSession();
-        engineSession =
-                EngineSession.forAnalysis(
-                        this,
-                        gameApi,
-                        this,
-                        getPrefs().getString(AnalysisSettingsDialog.PREF_ENGINE, null));
-        showEngineWarning();
-        analysisFen = null;
-        requestedPosition = null;
-        analysisSwitchPending = false;
-        positionAnalyses.evictAll();
-        evaluationView.clearEvaluation();
-        updateMoveSummary();
-        updateNavigation();
-        startNextAnalysis();
     }
 
     private void showEngineWarning() {
-        if (!engineSession.isBuiltin()
+        if (!analysis.isBuiltin()
                 || engineWarningAcknowledged
                 || analysisDialog != null
                 || getPrefs().getBoolean(PREF_HIDE_ENGINE_WARNING, false)) {
@@ -529,74 +416,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             analysisDialog = null;
         }
         super.onDestroy();
-    }
-
-    private void rememberPosition(Node node) {
-        if (positions.containsKey(node)) {
-            return;
-        }
-        PositionSnapshot position = gameApi.getPositionSnapshot(node);
-        if (position != null) {
-            positions.put(node, position);
-        }
-    }
-
-    private static boolean isDraw(int state) {
-        return state == BoardConstants.STALEMATE
-                || state == BoardConstants.DRAW_MATERIAL
-                || state == BoardConstants.DRAW_50
-                || state == BoardConstants.DRAW_REPEAT;
-    }
-
-    private PositionAnalysis getAnalysis(PositionSnapshot position) {
-        if (position == null) {
-            return null;
-        }
-        // Terminal outcomes come from the board, including repetition history absent from FEN.
-        if (isDraw(position.state)) {
-            return new PositionAnalysis(null, new EngineEvaluation(false, 0, 0));
-        }
-        if (position.state == BoardConstants.MATE) {
-            return new PositionAnalysis(null, new EngineEvaluation(true, 0, 0));
-        }
-        PositionAnalysis result = positionAnalyses.get(position.positionCommand);
-        if (result != null && result.preferredMove == null && result.bestMove != null) {
-            result = new PositionAnalysis(position.findMove(result.bestMove), result.evaluation);
-            positionAnalyses.put(position.positionCommand, result);
-        }
-        return result;
-    }
-
-    private void startNextAnalysis() {
-        if (!analysisActive
-                || analysisDebouncing
-                || analysisSwitchPending
-                || analysisFen != null
-                || engineSession == null
-                || !engineSession.supportsAnalysis()
-                || displayedNode != gameApi.getCurrentNode()) {
-            return;
-        }
-        PositionSnapshot current = positions.get(displayedNode);
-        if (current == null) {
-            return;
-        }
-        PositionSnapshot parent = positions.get(displayedNode.getParent());
-        // Feedback needs both sides of the move, even when navigation skips uncached positions.
-        PositionSnapshot next =
-                parent != null && getAnalysis(parent) == null
-                        ? parent
-                        : getAnalysis(current) == null ? current : null;
-        if (next == null) {
-            showCachedEvaluation();
-            updateMoveSummary();
-            updateNavigation();
-            return;
-        }
-        requestedPosition = next;
-        analysisFen = next.fen;
-        analysisTurn = next.turn;
-        engineSession.analyze(next, AnalysisSettingsDialog.getTimeMillis(getPrefs()));
     }
 
     private void updateNavigation() {
@@ -651,58 +470,6 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
     }
 
-    @Override
-    public void OnEngineInfo(String message, float value) {
-        // UCI scores are relative to the side to move in the searched position.
-        if (analysisActive
-                && analysisFen != null
-                && matchesAnalysis(positions.get(displayedNode))
-                && message != null
-                && message.contains(" score ")) {
-            evaluationView.setEvaluation(analysisTurn == BoardConstants.WHITE ? value : -value);
-        }
-    }
-
-    @Override
-    public void OnEngineError() {
-        evaluationView.clearEvaluation();
-        if (!analysisActive || analysisFen == null) {
-            return;
-        }
-        positionAnalyses.put(requestedPosition.positionCommand, new PositionAnalysis(null, null));
-        analysisFen = null;
-        requestedPosition = null;
-        updateMoveSummary();
-        updateNavigation();
-        // Continue after the engine's error callback has unwound and released its search.
-        textViewMoveFeedback.post(this::startNextAnalysis);
-    }
-
-    @Override
-    public void onAnalysisComplete(String fen, String bestMove, EngineEvaluation evaluation) {
-        if (!analysisActive
-                || !fen.equals(analysisFen)
-                || requestedPosition == null
-                || displayedNode != gameApi.getCurrentNode()) {
-            return;
-        }
-        PositionMove preferredMove = requestedPosition.findMove(bestMove);
-        EngineEvaluation whiteEvaluation =
-                evaluation == null
-                        ? null
-                        : evaluation.forWhite(requestedPosition.turn == BoardConstants.WHITE);
-        positionAnalyses.put(
-                requestedPosition.positionCommand,
-                new PositionAnalysis(preferredMove, whiteEvaluation));
-        analysisFen = null;
-        requestedPosition = null;
-        updateNavigation();
-        updateMoveSummary();
-        showCachedEvaluation();
-        // The engine releases its completed search after this callback returns.
-        analysisHandler.post(this::startNextAnalysis);
-    }
-
     private void updateMoveSummary() {
         updateAnalysisSummary();
         if (gameApi.isDuckVariant() || gameApi.isKingOfTheHillVariant()) {
@@ -713,9 +480,7 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         }
         Node current = gameApi.getCurrentNode();
         // Keep the previous announcement until all results needed for feedback are ready.
-        if (getAnalysis(positions.get(current)) == null
-                || (current.getParent() != null
-                        && getAnalysis(positions.get(current.getParent())) == null)) {
+        if (!analysis.summary(current).ready) {
             return;
         }
 
@@ -756,52 +521,20 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
             return;
         }
 
-        PositionSnapshot parent = positions.get(current.getParent());
-        PositionSnapshot position = positions.get(current);
-        PositionAnalysis before = getAnalysis(parent);
-        PositionAnalysis after = getAnalysis(position);
-        boolean hasEngineContinuation =
-                gameApi.getContinuations(current).isEmpty()
-                        && after != null
-                        && after.preferredMove != null;
-        if (hasEngineContinuation) {
-            showEngineMove(current, after.preferredMove);
+        Analysis.Summary summary = analysis.summary(current);
+        if (summary.recommendation != null) {
+            showEngineMove(summary.branchPoint, summary.recommendation);
         }
         if (entry == null) {
             return;
         }
-
-        PositionMove recommendation = before == null ? null : before.preferredMove;
-        boolean matches =
-                recommendation != null
-                        && Move.equalPositions(entry.move, recommendation.move)
-                        && Move.isPromotionMove(entry.move)
-                                == Move.isPromotionMove(recommendation.move)
-                        && (!Move.isPromotionMove(entry.move)
-                                || Move.getPromotionPiece(entry.move)
-                                        == Move.getPromotionPiece(recommendation.move));
         textViewMoveFeedback.setVisibility(View.VISIBLE);
-        MoveClassifier.Feedback feedback =
-                parent == null || position == null
-                        ? null
-                        : MoveClassifier.classify(
-                                before == null ? null : before.evaluation,
-                                after == null ? null : after.evaluation,
-                                parent.turn == BoardConstants.WHITE,
-                                matches,
-                                parent.moves.size(),
-                                position.state == BoardConstants.MATE,
-                                isDraw(position.state));
         textViewMoveFeedback.setText(
-                feedback != null
-                        ? feedbackText(feedback)
-                        : before == null || after == null
-                                ? R.string.analysis_move_pending
-                                : R.string.analysis_move_unavailable);
-        if (hasEngineContinuation || recommendation == null || matches) {
-            return;
-        }
-        showEngineMove(current.getParent(), recommendation);
+                summary.feedback != null
+                        ? feedbackText(summary.feedback)
+                        : summary.unavailable
+                                ? R.string.analysis_move_unavailable
+                                : R.string.analysis_move_pending);
     }
 
     private void showEngineMove(Node branchPoint, PositionMove recommendation) {
@@ -834,21 +567,8 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
     }
 
     @Override
-    public void OnEngineMove(int move, int duckMove, int value) {
-        // Analysis must never play the engine's suggested move.
-    }
-
-    @Override
-    public void OnEngineStarted() {}
-
-    @Override
-    public void OnEngineAborted() {}
-
-    @Override
     protected void onPause() {
-        analysisActive = false;
-        analysisGeneration++;
-        closeEngineSession();
+        analysis.pause();
         if (sessionLoaded) {
             if (lGameID > 0) {
                 saveGame(GameRecord.of(gameApi.exportFullPGN(), gameApi.pgnTags), false, lGameID);
@@ -859,13 +579,29 @@ public class AnalyzeActivity extends ChessBoardActivity implements EngineListene
         super.onPause();
     }
 
-    private void closeEngineSession() {
-        analysisHandler.removeCallbacks(resumeAnalysis);
-        analysisDebouncing = false;
-        if (engineSession != null) {
-            engineSession.close();
-            engineSession = null;
+    private Analysis.Saved readAnalysisState(Bundle session) {
+        if (session == null || !sessionId.equals(session.getString("id"))) {
+            return null;
         }
+        Map<String, Analysis.Result> results = new java.util.LinkedHashMap<>();
+        ArrayList<Bundle> bundles = session.getParcelableArrayList("results");
+        if (bundles != null) {
+            for (Bundle result : bundles) {
+                if (result.containsKey("position")) {
+                    results.put(
+                            result.getString("position"),
+                            new Analysis.Result(
+                                    result.getString("move"),
+                                    result.containsKey("value")
+                                            ? new EngineEvaluation(
+                                                    result.getBoolean("mate"),
+                                                    result.getInt("value"),
+                                                    result.getInt("depth"))
+                                            : null));
+                }
+            }
+        }
+        return new Analysis.Saved(session.getString("engine"), session.getInt("millis"), results);
     }
 
     protected boolean loadGame() {
