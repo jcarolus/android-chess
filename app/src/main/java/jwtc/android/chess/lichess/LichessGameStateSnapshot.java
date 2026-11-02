@@ -66,6 +66,28 @@ final class LichessGameStateSnapshot {
         return "created".equals(status) || "started".equals(status);
     }
 
+    int finalState() {
+        if ("draw".equals(status) || ("outoftime".equals(status) && winner == null)) {
+            return BoardConstants.DRAW_AGREEMENT;
+        }
+        if ("white".equals(winner)) {
+            if ("resign".equals(status)) {
+                return BoardConstants.BLACK_RESIGNED;
+            }
+            if ("outoftime".equals(status) || "timeout".equals(status)) {
+                return BoardConstants.BLACK_FORFEIT_TIME;
+            }
+        } else if ("black".equals(winner)) {
+            if ("resign".equals(status)) {
+                return BoardConstants.WHITE_RESIGNED;
+            }
+            if ("outoftime".equals(status) || "timeout".equals(status)) {
+                return BoardConstants.WHITE_FORFEIT_TIME;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public String toString() {
         return "Snapshot {status=" + status + ", moves " + moves.size() + "}";

@@ -1068,6 +1068,11 @@ public class LichessApi extends GameApi {
             boolean replayedEntireSnapshot = processMoves(snapshot.moves);
 
             if (replayedEntireSnapshot) {
+                int finalState = snapshot.finalState();
+                if (finalState != -1
+                        && (finalState != BoardConstants.DRAW_AGREEMENT || !isBoardDetectedDraw())) {
+                    setFinalState(finalState);
+                }
                 dispatchGameStateTransition(snapshot, transition);
                 lastGameStateSnapshot = snapshot;
             }
