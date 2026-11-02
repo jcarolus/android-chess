@@ -68,7 +68,7 @@ public class GamesListActivity extends ChessBoardActivity {
             textViewFilterInfo,
             textViewRating;
     private TextInputEditText editTextFilterWhite, editTextFilterBlack, editTextFilterEvent;
-    private MaterialButton buttonFilters, buttonOpen, buttonAnalyze;
+    private MaterialButton buttonFilters, buttonOpen, buttonAnalyze, buttonEdit, buttonDelete;
     private PGNDateView pgnDateAfter, pgnDateBefore;
     private SwitchMaterial switchFilterWhite,
             switchFilterBlack,
@@ -91,7 +91,7 @@ public class GamesListActivity extends ChessBoardActivity {
     private final ExecutorService queryExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private int queryGeneration = 0;
-    private boolean reloadAfterQuery = false;
+    private boolean updatingSelection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,7 +119,9 @@ public class GamesListActivity extends ChessBoardActivity {
                 new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        loadGame();
+                        if (!updatingSelection) {
+                            loadGame();
+                        }
                     }
 
                     @Override
@@ -142,7 +144,7 @@ public class GamesListActivity extends ChessBoardActivity {
         butNext.setOnClickListener(
                 v -> {
                     int progress = seekBarGames.getProgress();
-                    if (progress + 1 < cursor.getCount()) {
+                    if (cursor != null && progress + 1 < cursor.getCount()) {
                         seekBarGames.setProgress(progress + 1);
                     }
                 });
@@ -153,10 +155,10 @@ public class GamesListActivity extends ChessBoardActivity {
         buttonAnalyze = findViewById(R.id.ButtonAnalyze);
         buttonAnalyze.setOnClickListener(v -> analyzeGame());
 
-        MaterialButton buttonEdit = findViewById(R.id.ButtonEdit);
+        buttonEdit = findViewById(R.id.ButtonEdit);
         buttonEdit.setOnClickListener(v -> editGame());
 
-        MaterialButton buttonDelete = findViewById(R.id.ButtonDelete);
+        buttonDelete = findViewById(R.id.ButtonDelete);
         buttonDelete.setOnClickListener(v -> deleteGame());
 
         textViewDate = findViewById(R.id.TextViewDate);
@@ -399,52 +401,39 @@ public class GamesListActivity extends ChessBoardActivity {
     @Override
     protected void saveGameFromDialog(SaveGameDialog.SaveGameResult result) {
         super.saveGameFromDialog(result);
-        reloadAfterQuery = true;
         doFilterSort();
     }
 
     private void onQueryUpdated() {
-        if (cursor == null) {
+        int count = cursor == null ? 0 : cursor.getCount();
+        textViewFilterInfo.setText(getString(R.string.gameslist_result_count, count));
+        adapterGames.swapCursor(cursor);
+        if (count == 0) {
             seekBarGames.setVisibility(View.INVISIBLE);
-            textViewFilterInfo.setText(getString(R.string.gameslist_result_count, 0));
-            adapterGames.swapCursor(null);
+            clearPreview();
             return;
         }
-        int count = cursor.getCount();
 
         int position = findPositionById(cursor, currentGameId);
-
-        if (position >= 0) {
-            seekBarGames.setProgress(position);
-            seekBarGames.setMax(count > 0 ? count - 1 : 0);
-            seekBarGames.setVisibility(count == 0 ? View.INVISIBLE : View.VISIBLE);
-            textViewFilterInfo.setText(getString(R.string.gameslist_result_count, count));
-        } else {
-            // @TODO
-        }
-
-        adapterGames.swapCursor(cursor);
-
-        if (reloadAfterQuery) {
-            reloadAfterQuery = false;
-            loadGame();
-        }
+        updatingSelection = true;
+        seekBarGames.setMax(count - 1);
+        seekBarGames.setProgress(position);
+        updatingSelection = false;
+        seekBarGames.setVisibility(View.VISIBLE);
+        loadGame();
     }
 
     private void loadGame() {
         int position = seekBarGames.getProgress();
-        if (cursor == null) {
-            return; // @TODO
+        if (cursor == null || cursor.isClosed() || !cursor.moveToPosition(position)) {
+            clearPreview();
+            return;
         }
         int count = cursor.getCount();
-        if (count <= position) {
-            return; // @TODO
-        }
 
         String totalText =
-                getString(R.string.gameslist_game_of_total, position + (count == 0 ? 0 : 1), count);
+                getString(R.string.gameslist_game_of_total, position + 1, count);
         textViewTotal.setText(totalText);
-        cursor.moveToPosition(position);
 
         GameRecord record = GameStore.fromCursor(cursor);
         currentGameId = record.id;
@@ -456,6 +445,8 @@ public class GamesListActivity extends ChessBoardActivity {
         }
         buttonOpen.setEnabled(loaded);
         buttonAnalyze.setEnabled(loaded);
+        buttonEdit.setEnabled(loaded);
+        buttonDelete.setEnabled(true);
 
         String rating = Float.toString(record.rating == null ? 0f : record.rating) + "★";
 
@@ -494,8 +485,40 @@ public class GamesListActivity extends ChessBoardActivity {
         gridLayoutPgn.smoothScrollToPosition(adapterMoves.getCount());
     }
 
+    private void clearPreview() {
+        gameApi.initFEN(EMPTY_BOARD_FEN, true);
+        textViewTotal.setText(getString(R.string.gameslist_game_of_total, 0, 0));
+        textViewPlayerWhite.setText("");
+        textViewPlayerBlack.setText("");
+        textViewEvent.setText("");
+        textViewDate.setText("");
+        textViewResult.setText("");
+        textViewRating.setText("");
+        textViewWhitePieces.setText("");
+        textViewBlackPieces.setText("");
+        mapMoves.clear();
+        adapterMoves.notifyDataSetChanged();
+        buttonOpen.setEnabled(false);
+        buttonAnalyze.setEnabled(false);
+        buttonEdit.setEnabled(false);
+        buttonDelete.setEnabled(false);
+    }
+
+    private Long selectedGameId() {
+        if (cursor == null
+                || cursor.isClosed()
+                || cursor.getPosition() < 0
+                || cursor.getPosition() >= cursor.getCount()) {
+            return null;
+        }
+        return Utils.getColumnLong(cursor, PGNColumns._ID);
+    }
+
     private void openGame() {
-        long id = Utils.getColumnLong(cursor, PGNColumns._ID);
+        Long id = selectedGameId();
+        if (id == null) {
+            return;
+        }
 
         Log.d(TAG, "openGame " + id);
         SharedPreferences.Editor editor = getPrefs().edit();
@@ -511,7 +534,10 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private void analyzeGame() {
-        long id = Utils.getColumnLong(cursor, PGNColumns._ID);
+        Long id = selectedGameId();
+        if (id == null) {
+            return;
+        }
 
         Log.d(TAG, "openGame " + id);
         Intent i = new Intent();
@@ -524,8 +550,8 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private void deleteGame() {
-        final long id = Utils.getColumnLong(cursor, PGNColumns._ID);
-        if (id < 0) {
+        Long id = selectedGameId();
+        if (id == null || id < 0) {
             return;
         }
 
@@ -541,7 +567,10 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private void editGame() {
-        final long id = Utils.getColumnLong(cursor, PGNColumns._ID);
+        Long id = selectedGameId();
+        if (id == null) {
+            return;
+        }
         // the game is loaded via the GameApi
         SaveGameDialog saveDialog = new SaveGameDialog(this, gameApi, id, this::saveGameFromDialog);
         saveDialog.show();
@@ -604,11 +633,15 @@ public class GamesListActivity extends ChessBoardActivity {
     }
 
     private int findPositionById(Cursor c, long id) {
-        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+        if (!c.moveToFirst()) {
+            return -1;
+        }
+        do {
             if (Utils.getColumnLong(c, PGNColumns._ID) == id) {
                 return c.getPosition();
             }
-        }
+        } while (c.moveToNext());
+        c.moveToFirst();
         return 0;
     }
 
