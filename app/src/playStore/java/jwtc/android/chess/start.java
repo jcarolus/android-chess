@@ -41,7 +41,7 @@ public class start extends StartBaseActivity {
 
     private GameApi gameApi;
     private Timer _timer;
-    private String _lastMessage;
+    private volatile String _lastMessage;
 
     /** Called when the activity is first created. */
     @Override
@@ -49,19 +49,6 @@ public class start extends StartBaseActivity {
         super.onCreate(savedInstanceState);
 
         gameApi = new GameApi(true);
-
-        _lastMessage = "";
-
-        _timer = new Timer(true);
-        _timer.schedule(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        sendMessage(gameApi.getFEN());
-                    }
-                },
-                1000,
-                500);
 
         // Configure Cast device discovery
         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
@@ -112,7 +99,7 @@ public class start extends StartBaseActivity {
     private void sendMessage(final String message) {
         if (mApiClient != null && mChessChannel != null && message != null) {
             try {
-                if (!_lastMessage.equals(message)) {
+                if (!message.equals(_lastMessage)) {
                     // Log.i(TAG, "Try to send " + message);
                     Cast.CastApi.sendMessage(mApiClient, mChessChannel.getNamespace(), message)
                             .setResultCallback(
@@ -131,6 +118,23 @@ public class start extends StartBaseActivity {
                 Log.e(TAG, "Exception while sending message", e);
             }
         }
+    }
+
+    private void startBoardUpdates() {
+        _lastMessage = null;
+        if (_timer != null) {
+            return;
+        }
+        _timer = new Timer(true);
+        _timer.schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        sendMessage(gameApi.getFEN());
+                    }
+                },
+                0,
+                500);
     }
 
     /** Callback for MediaRouter events */
@@ -180,6 +184,7 @@ public class start extends StartBaseActivity {
                         try {
                             Cast.CastApi.setMessageReceivedCallbacks(
                                     mApiClient, mChessChannel.getNamespace(), mChessChannel);
+                            startBoardUpdates();
                         } catch (IOException e) {
                             Log.e(TAG, "Exception while creating channel", e);
                         }
@@ -224,6 +229,7 @@ public class start extends StartBaseActivity {
                                                             mApiClient,
                                                             mChessChannel.getNamespace(),
                                                             mChessChannel);
+                                                    startBoardUpdates();
                                                 } catch (IOException e) {
                                                     Log.e(
                                                             TAG,
@@ -318,6 +324,7 @@ public class start extends StartBaseActivity {
             _timer.purge();
             _timer = null;
         }
+        _lastMessage = null;
         if (mApiClient != null) {
             if (mApplicationStarted) {
                 if (mApiClient.isConnected() || mApiClient.isConnecting()) {
